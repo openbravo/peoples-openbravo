@@ -567,7 +567,9 @@ OB.ViewFormProperties = {
     var parentId = this.view.getParentId(),
         i, fldNames = [],
         requestParams, allProperties, parentColumn, me = this,
-        mode, length = this.getFields().length;
+        mode, length = this.getFields().length,
+        gridVisibleProperties = [],
+        len;
 
     this.setParentDisplayInfo();
 
@@ -592,6 +594,18 @@ OB.ViewFormProperties = {
       parentColumn = this.view.getPropertyDefinition(this.view.parentProperty).inpColumn;
       requestParams[parentColumn] = parentId;
     }
+
+    if (this.view && this.view.viewGrid && this.view.viewGrid.fields) {
+      gridVisibleProperties.push('id');
+      len = this.view.viewGrid.fields.length;
+      for (i = 0; i < len; i++) {
+        if (this.view.viewGrid.fields[i].name[0] !== '_') {
+          gridVisibleProperties.push(this.view.viewGrid.fields[i].name);
+        }
+      }
+      allProperties._gridVisibleProperties = gridVisibleProperties;
+    }
+
 
     allProperties._entityName = this.view.entity;
 
@@ -1413,6 +1427,12 @@ OB.ViewFormProperties = {
 
   // always let the saveRow callback handle the error
   saveEditorReply: function (response, data, request) {
+    var form, isNewRecord;
+    form = request.editor.view.isShowingForm ? request.editor.view.viewForm : request.editor.view.viewGrid.getEditForm();
+    isNewRecord = form === null ? false : form.isNew;
+    if (request.editor && request.editor.view && isNewRecord) {
+      delete request.editor.view._savingNewRecord;
+    }
     return true;
   },
 

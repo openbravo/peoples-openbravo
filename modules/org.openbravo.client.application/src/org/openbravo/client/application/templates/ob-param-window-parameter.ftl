@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,9 @@
     type: '${param.type}',
     title: '${param.title?js_string}',
     name: '${param.name?js_string}',
+    
+  <#if param.type != "OBSectionItem">
+    paramId: '${param.id}',
     width: '${param.width?js_string}',
     <#if param.redrawOnChange>
       redrawOnChange: true,
@@ -34,7 +37,24 @@
         return (${param.showIf});
       },
     </#if>
+    <#if param.readOnlyIf != "" >
+      readOnlyIf: function(currentValues) {
+        return (${param.readOnlyIf});
+      },
+    </#if>
+    <#if param.length != -1>
+      length: ${param.length},
+    </#if>
     required: ${param.required?string}
     ${param.parameterProperties}
+  <#else>
+    defaultValue: '${param.title?js_string}',
+    sectionExpanded: ${param.expanded?string},
+    itemIds: [
+    <#list param.children as childParam>
+      '${childParam.dBColumnName?js_string}'<#if childParam_has_next>,</#if>
+    </#list>
+    ]
+  </#if>
 }
 </#macro>

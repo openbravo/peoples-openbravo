@@ -114,6 +114,7 @@ public class Property {
   private int indexInEntity;
 
   private Boolean hasDisplayColumn;
+  private Boolean isDisplayValue;
   private String displayProperty;
 
   private Property trlParentProperty;
@@ -1137,6 +1138,23 @@ public class Property {
       }
     }
     return hasDisplayColumn;
+  }
+
+  /**
+   * @return true if the property is a table reference which defines an explicit display column.
+   *         This display column is then used as the identifier of objects referenced through this
+   *         property.
+   */
+  public boolean isDisplayValue() {
+    if (isDisplayValue == null) {
+      if (domainType instanceof TableDomainType) {
+        final TableDomainType tableDomainType = (TableDomainType) domainType;
+        isDisplayValue = tableDomainType.getRefTable().getDisplayedValue();
+      } else {
+        isDisplayValue = false;
+      }
+    }
+    return isDisplayValue;
   }
 
   public String getDisplayPropertyName() {

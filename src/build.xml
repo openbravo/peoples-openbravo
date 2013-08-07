@@ -117,22 +117,6 @@ build.war: build a war file in the lib directory.
     <validateModules userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" moduleJavaPackage="${module}"/>
   </target>
 
-  <target name="load.logoimages.forked">
-    <taskdef name="imageloading" classname="org.openbravo.erpCommon.utility.ImageToDatabaseLoader">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <imageloading userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" basePath="${basedir}/../"
-      imagePaths="web/images/CompanyLogo_big.png,web/images/SupportLogo_big.png,web/images/CompanyLogo_small.png,web/skins/Default/Login/initialOpenbravoLogo.png,web/images/CompanyLogo_big.png"
-      propertyNames="yourCompanyLoginImage,yourItServiceLoginImage,yourCompanyMenuImage,yourCompanyBigImage,yourCompanyDocumentImage"/>
-  </target>
-
-  <target name="load.logoimages">
-    <java classname="org.openbravo.erpCommon.utility.ImageToDatabaseLoader" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
-      <arg line="'${base.src}'" />
-      <classpath refid="apply.module.runtime.classpath" />
-    </java>
-  </target>
-  
   <target name="trl.clean" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="clean '${base.config}/Openbravo.properties'" />
@@ -216,7 +200,7 @@ build.war: build a war file in the lib directory.
     </delete>
   </target>
 
-  <target name="export.sample.data" description="Exports Sample Data">
+  <target name="export.sample.data.old" description="Exports Sample Data">
     <taskdef name="exportsampledata" classname="org.openbravo.service.db.ExportReferenceDataTask">
       <classpath refid="project.class.path" />
     </taskdef>
@@ -225,7 +209,7 @@ build.war: build a war file in the lib directory.
     <exportsampledata userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" clients="QA Testing" />
   </target>
 
-  <target name="import.sample.data" description="Import Sample Data" depends="generate.entities">
+  <target name="import.sample.data.old" description="Import Sample Data" depends="generate.entities">
     <taskdef name="importsampledata" classname="org.openbravo.service.db.ImportReferenceDataTask">
       <classpath refid="project.class.path" />
     </taskdef>

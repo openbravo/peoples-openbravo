@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
@@ -73,7 +74,12 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     final Organization org = OBDal.getInstance()
         .get(org.openbravo.model.timeandexpense.Sheet.class, strTimeExpenseId).getOrganization();
-    String c_Currency_To_ID = org.getCurrency().getId();
+    String c_Currency_To_ID = getCurrency(org.getId());
+    if (c_Currency_To_ID == null) {
+      c_Currency_To_ID = OBDal.getInstance()
+          .get(org.openbravo.model.timeandexpense.Sheet.class, strTimeExpenseId).getClient()
+          .getCurrency().toString();
+    }
 
     // Checks if there is a conversion rate for each of the transactions of
     // the report
@@ -142,5 +148,18 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+
+  private static String getCurrency(String org) {
+    if (org.equals("0")) {
+      return null;
+    } else {
+      Organization organization = OBDal.getInstance().get(Organization.class, org);
+      if (organization.getCurrency() != null) {
+        return organization.getCurrency().getId();
+      } else {
+        return getCurrency(new OrganizationStructureProvider().getParentOrg(org));
+      }
+    }
   }
 }

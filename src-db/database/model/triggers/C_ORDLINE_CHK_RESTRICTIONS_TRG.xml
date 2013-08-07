@@ -95,7 +95,7 @@ BEGIN
     v_Docaction
   FROM C_ORDER
   WHERE C_ORDER_ID=v_C_ORDER_ID;
-    IF (v_Processed='Y') THEN
+    IF (v_Processed='Y' and v_Docaction<> 'CL') THEN
     RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   END IF;
   END IF;

@@ -378,13 +378,11 @@ public abstract class AcctServer {
       log4j.debug("AcctServer.run - AD_Client_ID: " + AD_Client_ID);
 
       AcctServerData[] data = null;
-      final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
-          .getChildTree(AD_Org_ID, true);
+      final Set<String> orgSet = OBContext.getOBContext()
+          .getOrganizationStructureProvider(AD_Client_ID).getChildTree(AD_Org_ID, true);
       String strOrgs = Utility.getInStrSet(orgSet);
-
       data = AcctServerData.select(connectionProvider, tableName, strDateColumn, AD_Client_ID,
           strOrgs, strDateFrom, strDateTo, 0, Integer.valueOf(batchSize).intValue());
-
       if (data != null && data.length > 0) {
         if (log4j.isDebugEnabled()) {
           log4j.debug("AcctServer - Run -Select inicial realizada N = " + data.length + " - Key: "
@@ -1701,97 +1699,103 @@ public abstract class AcctServer {
       throws ServletException {
 
     String strValidCombination = "";
-    if (isReceipt) {
-      final StringBuilder whereClause = new StringBuilder();
-      if (isDoubtfuldebt) {
-        BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, cBPartnerId);
-        whereClause.append(" as cuscata ");
-        whereClause.append(" where cuscata.businessPartnerCategory.id = :bpCategoryID");
-        whereClause.append(" and cuscata.accountingSchema.id = :acctSchemaID");
+    OBContext.setAdminMode();
+    try {
+      if (isReceipt) {
+        final StringBuilder whereClause = new StringBuilder();
+        if (isDoubtfuldebt) {
+          BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, cBPartnerId);
+          whereClause.append(" as cuscata ");
+          whereClause.append(" where cuscata.businessPartnerCategory.id = :bpCategoryID");
+          whereClause.append(" and cuscata.accountingSchema.id = :acctSchemaID");
 
-        final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance().createQuery(
-            CategoryAccounts.class, whereClause.toString());
+          final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance().createQuery(
+              CategoryAccounts.class, whereClause.toString());
+          obqParameters.setFilterOnReadableClients(false);
+          obqParameters.setFilterOnReadableOrganization(false);
+          obqParameters.setNamedParameter("bpCategoryID", bp.getBusinessPartnerCategory().getId());
+          obqParameters.setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID);
+          final List<CategoryAccounts> customerAccounts = obqParameters.list();
+          if (customerAccounts != null && customerAccounts.size() > 0
+              && customerAccounts.get(0).getDoubtfulDebtAccount() != null) {
+            strValidCombination = customerAccounts.get(0).getDoubtfulDebtAccount().getId();
+          }
+          if (strValidCombination.equals("")) {
+            Map<String, String> parameters = new HashMap<String, String>();
+            parameters.put("Account", "@DoubtfulDebt@");
+            parameters.put("Entity", bp.getBusinessPartnerCategory().getIdentifier());
+            parameters.put(
+                "AccountingSchema",
+                OBDal
+                    .getInstance()
+                    .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                        as.getC_AcctSchema_ID()).getIdentifier());
+            setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
+            throw new IllegalStateException();
+          }
+          return new Account(conn, strValidCombination);
+        }
+
+        whereClause.append(" as cusa ");
+        whereClause.append(" where cusa.businessPartner.id = '" + cBPartnerId + "'");
+        whereClause.append(" and cusa.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+        whereClause.append(" and (cusa.status is null or cusa.status = 'DE')");
+
+        final OBQuery<CustomerAccounts> obqParameters = OBDal.getInstance().createQuery(
+            CustomerAccounts.class, whereClause.toString());
         obqParameters.setFilterOnReadableClients(false);
         obqParameters.setFilterOnReadableOrganization(false);
-        obqParameters.setNamedParameter("bpCategoryID", bp.getBusinessPartnerCategory().getId());
-        obqParameters.setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID);
-        final List<CategoryAccounts> customerAccounts = obqParameters.list();
+        final List<CustomerAccounts> customerAccounts = obqParameters.list();
         if (customerAccounts != null && customerAccounts.size() > 0
-            && customerAccounts.get(0).getDoubtfulDebtAccount() != null) {
-          strValidCombination = customerAccounts.get(0).getDoubtfulDebtAccount().getId();
+            && customerAccounts.get(0).getCustomerReceivablesNo() != null && !isPrepayment) {
+          strValidCombination = customerAccounts.get(0).getCustomerReceivablesNo().getId();
         }
-        if (strValidCombination.equals("")) {
-          Map<String, String> parameters = new HashMap<String, String>();
-          parameters.put("Account", "@DoubtfulDebt@");
-          parameters.put("Entity", bp.getBusinessPartnerCategory().getIdentifier());
-          parameters.put(
-              "AccountingSchema",
-              OBDal
-                  .getInstance()
-                  .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-                      as.getC_AcctSchema_ID()).getIdentifier());
-          setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
-          throw new IllegalStateException();
+        if (customerAccounts != null && customerAccounts.size() > 0
+            && customerAccounts.get(0).getCustomerPrepayment() != null && isPrepayment) {
+          strValidCombination = customerAccounts.get(0).getCustomerPrepayment().getId();
         }
-        return new Account(conn, strValidCombination);
-      }
+      } else {
+        final StringBuilder whereClause = new StringBuilder();
 
-      whereClause.append(" as cusa ");
-      whereClause.append(" where cusa.businessPartner.id = '" + cBPartnerId + "'");
-      whereClause.append(" and cusa.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
-      whereClause.append(" and (cusa.status is null or cusa.status = 'DE')");
+        whereClause.append(" as vena ");
+        whereClause.append(" where vena.businessPartner.id = '" + cBPartnerId + "'");
+        whereClause.append(" and vena.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
+        whereClause.append(" and (vena.status is null or vena.status = 'DE')");
 
-      final OBQuery<CustomerAccounts> obqParameters = OBDal.getInstance().createQuery(
-          CustomerAccounts.class, whereClause.toString());
-      obqParameters.setFilterOnReadableClients(false);
-      obqParameters.setFilterOnReadableOrganization(false);
-      final List<CustomerAccounts> customerAccounts = obqParameters.list();
-      if (customerAccounts != null && customerAccounts.size() > 0
-          && customerAccounts.get(0).getCustomerReceivablesNo() != null && !isPrepayment) {
-        strValidCombination = customerAccounts.get(0).getCustomerReceivablesNo().getId();
+        final OBQuery<VendorAccounts> obqParameters = OBDal.getInstance().createQuery(
+            VendorAccounts.class, whereClause.toString());
+        obqParameters.setFilterOnReadableClients(false);
+        obqParameters.setFilterOnReadableOrganization(false);
+        final List<VendorAccounts> vendorAccounts = obqParameters.list();
+        if (vendorAccounts != null && vendorAccounts.size() > 0
+            && vendorAccounts.get(0).getVendorLiability() != null && !isPrepayment) {
+          strValidCombination = vendorAccounts.get(0).getVendorLiability().getId();
+        }
+        if (vendorAccounts != null && vendorAccounts.size() > 0
+            && vendorAccounts.get(0).getVendorPrepayment() != null && isPrepayment) {
+          strValidCombination = vendorAccounts.get(0).getVendorPrepayment().getId();
+        }
       }
-      if (customerAccounts != null && customerAccounts.size() > 0
-          && customerAccounts.get(0).getCustomerPrepayment() != null && isPrepayment) {
-        strValidCombination = customerAccounts.get(0).getCustomerPrepayment().getId();
+      if (strValidCombination.equals("")) {
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("Account", isReceipt ? (isPrepayment ? "@CustomerPrepayment@"
+            : "@CustomerReceivables@")
+            : (isPrepayment ? "@VendorPrepayment@" : "@VendorLiability@"));
+        BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, cBPartnerId);
+        if (bp != null) {
+          parameters.put("Entity", bp.getIdentifier());
+        }
+        parameters.put(
+            "AccountingSchema",
+            OBDal
+                .getInstance()
+                .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
+                    as.getC_AcctSchema_ID()).getIdentifier());
+        setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
+        throw new IllegalStateException();
       }
-    } else {
-      final StringBuilder whereClause = new StringBuilder();
-
-      whereClause.append(" as vena ");
-      whereClause.append(" where vena.businessPartner.id = '" + cBPartnerId + "'");
-      whereClause.append(" and vena.accountingSchema.id = '" + as.m_C_AcctSchema_ID + "'");
-      whereClause.append(" and (vena.status is null or vena.status = 'DE')");
-
-      final OBQuery<VendorAccounts> obqParameters = OBDal.getInstance().createQuery(
-          VendorAccounts.class, whereClause.toString());
-      obqParameters.setFilterOnReadableClients(false);
-      obqParameters.setFilterOnReadableOrganization(false);
-      final List<VendorAccounts> vendorAccounts = obqParameters.list();
-      if (vendorAccounts != null && vendorAccounts.size() > 0
-          && vendorAccounts.get(0).getVendorLiability() != null && !isPrepayment) {
-        strValidCombination = vendorAccounts.get(0).getVendorLiability().getId();
-      }
-      if (vendorAccounts != null && vendorAccounts.size() > 0
-          && vendorAccounts.get(0).getVendorPrepayment() != null && isPrepayment) {
-        strValidCombination = vendorAccounts.get(0).getVendorPrepayment().getId();
-      }
-    }
-    if (strValidCombination.equals("")) {
-      Map<String, String> parameters = new HashMap<String, String>();
-      parameters.put("Account", isReceipt ? (isPrepayment ? "@CustomerPrepayment@"
-          : "@CustomerReceivables@") : (isPrepayment ? "@VendorPrepayment@" : "@VendorLiability@"));
-      BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, cBPartnerId);
-      if (bp != null) {
-        parameters.put("Entity", bp.getIdentifier());
-      }
-      parameters.put(
-          "AccountingSchema",
-          OBDal
-              .getInstance()
-              .get(org.openbravo.model.financialmgmt.accounting.coa.AcctSchema.class,
-                  as.getC_AcctSchema_ID()).getIdentifier());
-      setMessageResult(conn, STATUS_InvalidAccount, "error", parameters);
-      throw new IllegalStateException();
+    } finally {
+      OBContext.restorePreviousMode();
     }
     return new Account(conn, strValidCombination);
   } // getAccount
@@ -2094,8 +2098,8 @@ public abstract class AcctServer {
         AD_Client_ID);
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
-    final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
-        .getChildTree(AD_Org_ID, true);
+    final Set<String> orgSet = OBContext.getOBContext()
+        .getOrganizationStructureProvider(AD_Client_ID).getChildTree(AD_Org_ID, true);
     String strorgs = Utility.getInStrSet(orgSet);
 
     String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;

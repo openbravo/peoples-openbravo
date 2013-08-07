@@ -560,7 +560,6 @@ isc.OBCalendar.addProperties({
   },
 
   addEvent: function (startDate, endDate, name, description, otherFields, ignoreDataChanged) {
-    var i, legend = this.multiCalendar.leftControls.getLegendValueMap();
     otherFields = otherFields || {};
 
     // solve bug that otherwise time fields are not passed in

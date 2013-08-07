@@ -25,6 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.type.YesNoType;
 import org.openbravo.base.exception.OBException;
@@ -195,7 +196,8 @@ public class DalMappingGenerator implements OBSingleton {
     sb.append(" type=\"" + type + "\"");
 
     if (p.getSqlLogic() != null) {
-      sb.append(" formula=\"" + processSqlLogic(p.getSqlLogic()) + "\"");
+      sb.append(" formula=\"" + StringEscapeUtils.escapeHtml(processSqlLogic(p.getSqlLogic()))
+          + "\"");
     } else {
       sb.append(" column=\"" + p.getColumnName() + "\"");
     }
@@ -231,7 +233,8 @@ public class DalMappingGenerator implements OBSingleton {
     } else {
       sb.append(TAB2 + "<many-to-one name=\"" + p.getName() + "\" ");
       if (p.getSqlLogic() != null) {
-        sb.append("formula=\"" + processSqlLogic(p.getSqlLogic()) + "\"");
+        sb.append("formula=\"" + StringEscapeUtils.escapeHtml(processSqlLogic(p.getSqlLogic()))
+            + "\"");
       } else {
         sb.append("column=\"" + p.getColumnName() + "\"");
       }

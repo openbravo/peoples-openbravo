@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -68,7 +68,10 @@
   v_newreservedqty      NUMBER;
   v_availablestock      NUMBER;
   v_dummy               VARCHAR2(2000);
-  
+  v_attr_description    VARCHAR2(255);
+  v_product_value       VARCHAR2(40);
+  v_locator_value       VARCHAR2(40);
+  v_uom_value           VARCHAR2(3);
 
   TYPE RECORD IS REF CURSOR;
   cur_reserved_stock       RECORD;
@@ -87,8 +90,32 @@ BEGIN
       r.m_warehouse_id, r.m_locator_id, r.m_attributesetinstance_id, r.res_status;
   v_this_noalloc := v_this_reservedqty - v_this_allocated;
 
+  SELECT value
+    INTO v_product_value
+  FROM M_Product
+  WHERE M_Product_ID = v_product_id;
+
+  IF(p_attributesetinstance_id IS NOT NULL) THEN
+    SELECT description
+      INTO v_attr_description
+    FROM M_AttributeSetInstance
+    WHERE M_AttributeSetInstance_ID = p_attributesetinstance_id;
+  END IF;
+
+  SELECT uomsymbol
+    INTO v_uom_value
+  FROM C_Uom
+  WHERE C_Uom_ID = v_uom_id;
+
+  IF (p_locator_id IS NOT NULL) THEN
+    SELECT value
+      INTO v_locator_value
+    FROM M_Locator
+    WHERE M_Locator_ID = p_locator_id;
+  END IF;
+    
   IF (v_res_status = 'HO') THEN
-    RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeHoldReservation@');
+    RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeHoldReservation@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')||', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
   END IF;
 
   SELECT sd.qtyonhand, sd.m_storage_detail_id, loc.m_warehouse_id
@@ -116,25 +143,25 @@ BEGIN
   IF (COALESCE(v_dim_warehouse_id, v_warehouse_id) != v_warehouse_id
       OR COALESCE(v_dim_locator_id, p_locator_id) != p_locator_id
       OR COALESCE(v_dim_asi_id, p_attributesetinstance_id) != p_attributesetinstance_id) THEN
-    RAISE_APPLICATION_ERROR(-20000, '@WrongStockDimensionMismatch@');
+    RAISE_APPLICATION_ERROR(-20000, '@WrongStockDimensionMismatch@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')||', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
   END IF;
 
   v_pendingtorelease := p_qty;
   IF (v_pendingtorelease > v_this_reservedqty - v_this_releasedqty) THEN
     v_pendingtorelease := v_this_reservedqty - v_this_releasedqty;
     p_result := 2;
-    p_message := '@MoreQuantityToReleaseThanPending@';
+    p_message := '@MoreQuantityToReleaseThanPending@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')|| ', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-');
   END IF;
 
   -- Check that quantity to release is lower than available quantity considering other reservations allocated stock.
   IF (v_pendingtorelease > v_stock_onhand - (v_stock_alloc - v_this_sd_alloc)) THEN
-    RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeAllStock@');
+    RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeAllStock@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')|| ', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
   END IF;
 
   IF (v_pendingtorelease > v_this_sd_alloc + v_this_noalloc) THEN
     -- The quantity to release is higher than the currently allocated stock with given dimensions and the no allocated
     -- reserved stock.
-    RAISE_APPLICATION_ERROR(-20000, '@CannotModifyAllocatedReserve@');
+    RAISE_APPLICATION_ERROR(-20000, '@CannotModifyAllocatedReserve@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')|| ', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
   END IF;
   
   IF (v_pendingtorelease <= v_this_sd_alloc + v_this_sd_noalloc) THEN
@@ -161,7 +188,7 @@ BEGIN
           WHERE m_reservation_id = p_reservation_id
             AND isallocated = 'N'
             AND quantity != COALESCE(releasedqty,0)
-            AND (m_attributesetinstance_id != p_attributesetinstance_id OR m_locator_id != p_locator_id)
+            AND ((m_attributesetinstance_id != p_attributesetinstance_id OR m_attributesetinstance_id is null) OR m_locator_id != p_locator_id)
           ORDER BY quantity - COALESCE(releasedqty,0)
       ) LOOP
         v_qtytounreserve_aux := LEAST(v_qtytounreserve, cur_reserved_stock.reservedqty);
@@ -330,7 +357,7 @@ BEGIN
     AND quantity = 0;
 
   IF (v_pendingtorelease > 0) THEN
-    RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeAllStock@');
+    RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeAllStock@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')||', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
   END IF;
 EXCEPTION
 WHEN OTHERS THEN

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,8 +72,8 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    String strPaymentrule, strPaymentterm, strPricelist, strPaymentMethod;
-    strPaymentrule = strPaymentterm = strPricelist = strPaymentMethod = "";
+    String strPaymentrule, strPaymentterm, strPricelist, strPaymentMethod, strUserRep;
+    strPaymentrule = strPaymentterm = strPricelist = strPaymentMethod = strUserRep = "";
     BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
     if (data != null && data.length > 0) {
       strPaymentrule = (strIsSOTrx.equals("Y") ? data[0].paymentrule : data[0].paymentrulepo);
@@ -81,6 +81,8 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
       strPricelist = (strIsSOTrx.equals("Y") ? data[0].mPricelistId : data[0].poPricelistId);
       strPaymentMethod = (strIsSOTrx.equals("Y") ? data[0].finPaymentmethodId
           : data[0].poPaymentmethodId);
+      strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
+      strUserRep = strUserRep.equals("") ? vars.getStringParameter("inpsalesrepId") : strUserRep;
     }
 
     StringBuffer resultado = new StringBuffer();
@@ -146,6 +148,37 @@ public class SE_Project_BPartner extends HttpSecureAppServlet {
       resultado.append("null");
     }
     resultado.append("\n),");
+
+    // Sales Representative
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
+          "AD_User SalesRep", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
+              this, vars, "#User_Client", strWindowId), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
+      tdv = comboTableData.select(false);
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    resultado.append("new Array(\"inpsalesrepId\", ");
+    if (tdv != null && tdv.length > 0) {
+      resultado.append("new Array(");
+      for (int i = 0; i < tdv.length; i++) {
+        resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
+            + FormatUtilities.replaceJS(tdv[i].getField("name")) + "\", \""
+            + (tdv[i].getField("id").equalsIgnoreCase(strUserRep) ? "true" : "false") + "\")");
+        if (i < tdv.length - 1) {
+          resultado.append(",\n");
+        }
+      }
+      resultado.append("\n)");
+    } else {
+      resultado.append("null");
+    }
+    resultado.append("\n),");
+
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_User_ID", "",
           "AD_User C_BPartner User/Contacts", Utility.getContext(this, vars, "#AccessibleOrgTree",

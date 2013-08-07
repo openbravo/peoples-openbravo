@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +48,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -63,6 +65,7 @@ import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.accounting.Costcenter;
 import org.openbravo.model.financialmgmt.accounting.UserDimension1;
@@ -122,9 +125,10 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       final String strAmountFrom = vars.getNumericParameter("inpAmountFrom", "");
       final String strAmountTo = vars.getNumericParameter("inpAmountTo", "");
 
-      printGrid(response, vars, strFinancialAccountId, strBusinessPartnerId, strExpectedDateFrom,
-          strExpectedDateTo, strTransDateFrom, strTransDateTo, strDocumentType, strDocumentNo,
-          strSelectedPaymentDetails, isReceipt, strCurrencyId, strAmountFrom, strAmountTo);
+      printGrid(response, request, vars, strFinancialAccountId, strBusinessPartnerId,
+          strExpectedDateFrom, strExpectedDateTo, strTransDateFrom, strTransDateTo,
+          strDocumentType, strDocumentNo, strSelectedPaymentDetails, isReceipt, strCurrencyId,
+          strAmountFrom, strAmountTo);
 
     } else if (vars.commandIn("PAYMENTMETHODCOMBO")) {
       final String strBusinessPartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "");
@@ -398,8 +402,6 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       final PrintWriter out = response.getWriter();
       out.println(xmlDocument.print());
       out.close();
-
-      // "../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html");
     }
 
   }
@@ -630,15 +632,15 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
-      String strFinancialAccountId, String strBusinessPartnerId, String strExpectedDateFrom,
-      String strExpectedDateTo, String strTransDateFrom, String strTransDateTo,
-      String strDocumentType, String strDocumentNo, String strSelectedPaymentDetails,
-      boolean isReceipt, String strCurrencyId, String strAmountFrom, String strAmountTo)
-      throws IOException, ServletException {
+  private void printGrid(HttpServletResponse response, HttpServletRequest request,
+      VariablesSecureApp vars, String strFinancialAccountId, String strBusinessPartnerId,
+      String strExpectedDateFrom, String strExpectedDateTo, String strTransDateFrom,
+      String strTransDateTo, String strDocumentType, String strDocumentNo,
+      String strSelectedPaymentDetails, boolean isReceipt, String strCurrencyId,
+      String strAmountFrom, String strAmountTo) throws IOException, ServletException {
 
     log4j.debug("Output: Grid with pending payments");
-
+    String message = "";
     dao = new AdvPaymentMngtDao();
     FIN_FinancialAccount financialAccount = dao.getObject(FIN_FinancialAccount.class,
         strFinancialAccountId);
@@ -681,12 +683,45 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     final FieldProvider[] data = FIN_AddPayment.getShownScheduledPaymentDetails(vars,
         selectedScheduledPaymentDetails, filteredScheduledPaymentDetails, false, null, null,
         displayDoubtfulDebtAmount(isReceipt));
+    String invoiceIdentifier = "";
+    if ((data == null || data.length == 0) && !"".equals(strDocumentNo) && strDocumentNo != null) {
+      final OBCriteria<Invoice> obc = OBDal.getInstance().createCriteria(Invoice.class);
+      if (isReceipt) {
+        obc.add(Restrictions.eq(Invoice.PROPERTY_DOCUMENTNO, strDocumentNo));
+      } else {
+        obc.add(Restrictions.eq(Invoice.PROPERTY_ORDERREFERENCE, strDocumentNo));
+      }
+      obc.add(Restrictions.eq(Invoice.PROPERTY_PROCESSED, true));
+      obc.add(Restrictions.eq(Invoice.PROPERTY_SALESTRANSACTION, isReceipt));
+      if (strBusinessPartnerId != null && !"".equals(strBusinessPartnerId)) {
+        obc.add(Restrictions.eq(Invoice.PROPERTY_BUSINESSPARTNER, strBusinessPartnerId));
+      }
+      obc.add(Restrictions.eq(Invoice.PROPERTY_PAYMENTCOMPLETE, true));
+      obc.add(Restrictions.in(Invoice.PROPERTY_ORGANIZATION,
+          getOrganizationList(new OrganizationStructureProvider().getChildTree(financialAccount
+              .getOrganization().getId(), true))));
+      obc.addOrderBy(Invoice.PROPERTY_INVOICEDATE, false);
+      Invoice invoice = (Invoice) obc.uniqueResult();
+      if (invoice != null) {
+        invoiceIdentifier = invoice.getIdentifier();
+        message = "APRM_PaidInvoice";
+      }
+    }
     xmlDocument.setData("structure", (data == null) ? set() : data);
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    try {
+      JSONObject json = new JSONObject();
+      ArrayList<String> params = new ArrayList<String>();
+      params.add(invoiceIdentifier);
+      json.put("message", message);
+      json.put("params", params);
+      json.put("grid", xmlDocument.print());
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("objson = " + json);
+      out.close();
+    } catch (JSONException e) {
+      log4j.error("AddPaymentFromTransaction - CallbackGrid", e);
+    }
   }
 
   /**
@@ -854,22 +889,34 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
     // end of getServletInfo() method
   }
 
+  private List<Organization> getOrganizationList(Set<String> orgIds) {
+    List<Organization> result = new ArrayList<Organization>();
+    for (String orgId : orgIds) {
+      result.add(OBDal.getInstance().get(Organization.class, orgId));
+    }
+    return result;
+  }
+
   boolean displayDoubtfulDebtAmount(boolean isReceipt) {
     if (!isReceipt) {
       return false;
     }
-    OBCriteria<Preference> obCriteria = OBDal.getInstance().createCriteria(Preference.class);
-    obCriteria.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "Doubtful_Debt_Visibility"));
-    obCriteria.add(Restrictions.eq(Preference.PROPERTY_CLIENT, OBContext.getOBContext()
-        .getCurrentClient()));
-    obCriteria.add(Restrictions.in(Preference.PROPERTY_ORGANIZATION + ".id", OBContext
-        .getOBContext().getReadableOrganizations()));
-    Preference preference = (Preference) obCriteria.uniqueResult();
-    if (preference != null) {
-      return "Y".equals(preference.getSearchKey());
-    } else {
-      return false;
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<Preference> obCriteria = OBDal.getInstance().createCriteria(Preference.class);
+      obCriteria.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "Doubtful_Debt_Visibility"));
+      obCriteria.add(Restrictions.eq(Preference.PROPERTY_CLIENT, OBContext.getOBContext()
+          .getCurrentClient()));
+      obCriteria.add(Restrictions.in(Preference.PROPERTY_ORGANIZATION + ".id", OBContext
+          .getOBContext().getReadableOrganizations()));
+      Preference preference = (Preference) obCriteria.uniqueResult();
+      if (preference != null) {
+        return "Y".equals(preference.getSearchKey());
+      } else {
+        return false;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
-
   }
 }

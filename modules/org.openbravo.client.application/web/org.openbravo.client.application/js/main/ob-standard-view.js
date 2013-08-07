@@ -969,6 +969,22 @@ isc.OBStandardView.addProperties({
     }
   },
 
+  /**
+   * Empties the data of the child tabs and shows emptyMessage
+   */
+  initChildViewsForNewRecord: function () {
+    var i, length, tabViewPane;
+
+    if (this.childTabSet) {
+      length = this.childTabSet.tabs.length;
+      for (i = 0; i < length; i++) {
+        tabViewPane = this.childTabSet.tabs[i].pane;
+        tabViewPane.viewGrid.setData([]);
+        tabViewPane.viewGrid.resetEmptyMessage();
+      }
+    }
+  },
+
   refreshMeAndMyChildViewsWithEntity: function (entity, excludedTabIds) {
     var i, length, tabViewPane, excludeTab = false;
     if (entity && excludedTabIds) {
@@ -1117,7 +1133,7 @@ isc.OBStandardView.addProperties({
 
     if (!record) { //  new case
       this.viewGrid.deselectAllRecords();
-      this.refreshChildViews();
+      this.initChildViewsForNewRecord();
       this.viewForm.editNewRecord(preventFocus);
     } else {
       this.viewGrid.doSelectSingleRecord(record);
@@ -1302,6 +1318,10 @@ isc.OBStandardView.addProperties({
     var tabViewPane = null,
         i;
 
+    // Do not try to refresh the child tabs of a new record
+    if (this.viewGrid.getEditForm() && this.viewGrid.getEditForm().isNew) {
+      return;
+    }
     // refresh the tabs
     if (this.childTabSet && (differentRecordId || !this.isOpenDirectModeParent)) {
       length = this.childTabSet.tabs.length;
@@ -2131,6 +2151,7 @@ isc.OBStandardView.addProperties({
   },
 
   setContextInfo: function (sessionProperties, callbackFunction, forced) {
+    var newCallback, me = this;
     // no need to set the context in this case
     if (!forced && (this.isEditingGrid || this.isShowingForm)) {
       if (callbackFunction) {
@@ -2143,12 +2164,23 @@ isc.OBStandardView.addProperties({
       sessionProperties = this.getContextInfo(true, true, false, true);
     }
 
+    newCallback = function (response, data, request) {
+      var context = {}, grid = me.viewGrid;
+      context.rowNum = grid.getRecordIndex(grid.getSelectedRecord());
+      context.grid = grid;
+      response.clientContext = context;
+      grid.processFICReturn (response, data, request);
+      if (callbackFunction) {
+        callbackFunction();
+      }
+    };
+
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
-      MODE: 'SETSESSION',
+      MODE: 'EDIT',
       TAB_ID: this.tabId,
       PARENT_ID: this.getParentId(),
       ROW_ID: this.viewGrid.getSelectedRecord() ? this.viewGrid.getSelectedRecord().id : this.getCurrentValues().id
-    }, callbackFunction);
+    }, newCallback);
 
   },
 

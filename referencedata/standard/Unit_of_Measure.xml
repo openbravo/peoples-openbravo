@@ -11,6 +11,7 @@
     <costingPrecision>4</costingPrecision>
     <default>true</default>
     <breakdown>false</breakdown>
+    <uOMType xsi:nil="true"/>
   </UOM>
   <UOM id="101" identifier="Hour">
     <id>101</id>
@@ -23,6 +24,7 @@
     <costingPrecision>2</costingPrecision>
     <default>false</default>
     <breakdown>false</breakdown>
+    <uOMType>T</uOMType>
   </UOM>
   <UOM id="102" identifier="Day">
     <id>102</id>
@@ -35,6 +37,7 @@
     <costingPrecision>2</costingPrecision>
     <default>false</default>
     <breakdown>false</breakdown>
+    <uOMType>T</uOMType>
   </UOM>
   <UOM id="103" identifier="Minutes">
     <id>103</id>
@@ -47,6 +50,7 @@
     <costingPrecision>0</costingPrecision>
     <default>false</default>
     <breakdown>false</breakdown>
+    <uOMType>T</uOMType>
   </UOM>
   <UOM id="104" identifier="Labour day">
     <id>104</id>
@@ -59,6 +63,7 @@
     <costingPrecision>2</costingPrecision>
     <default>false</default>
     <breakdown>false</breakdown>
+    <uOMType xsi:nil="true"/>
   </UOM>
   <UOM id="105" identifier="Week">
     <id>105</id>
@@ -71,6 +76,7 @@
     <costingPrecision>2</costingPrecision>
     <default>false</default>
     <breakdown>false</breakdown>
+    <uOMType>T</uOMType>
   </UOM>
   <UOM id="106" identifier="Month">
     <id>106</id>
@@ -83,6 +89,7 @@
     <costingPrecision>2</costingPrecision>
     <default>false</default>
     <breakdown>false</breakdown>
+    <uOMType>T</uOMType>
   </UOM>
   <UOM id="107" identifier="Labour month">
     <id>107</id>
@@ -95,6 +102,7 @@
     <costingPrecision>2</costingPrecision>
     <default>false</default>
     <breakdown>false</breakdown>
+    <uOMType xsi:nil="true"/>
   </UOM>
   <UOM id="108" identifier="Year">
     <id>108</id>
@@ -107,6 +115,7 @@
     <costingPrecision>2</costingPrecision>
     <default>false</default>
     <breakdown>false</breakdown>
+    <uOMType>T</uOMType>
   </UOM>
   <UOM id="2EBC93C05D75431E9EEFB29CEC76F244" identifier="Ounce">
     <id>2EBC93C05D75431E9EEFB29CEC76F244</id>
@@ -119,6 +128,7 @@
     <costingPrecision>2</costingPrecision>
     <default>false</default>
     <breakdown>false</breakdown>
+    <uOMType>W</uOMType>
   </UOM>
   <UOM id="6FA87C4EE1FD4C86940A5F2E47C429DA" identifier="Pound">
     <id>6FA87C4EE1FD4C86940A5F2E47C429DA</id>
@@ -131,6 +141,7 @@
     <costingPrecision>2</costingPrecision>
     <default>false</default>
     <breakdown>false</breakdown>
+    <uOMType>W</uOMType>
   </UOM>
   <UOM id="72BA247D31F745F3AF11F74A5E2CCBEF" identifier="Kilogram">
     <id>72BA247D31F745F3AF11F74A5E2CCBEF</id>
@@ -143,5 +154,6 @@
     <costingPrecision>2</costingPrecision>
     <default>false</default>
     <breakdown>false</breakdown>
+    <uOMType>W</uOMType>
   </UOM>
 </ob:Openbravo>

@@ -53,6 +53,11 @@
       </script>
 <script language="JavaScript" type="text/javascript">
 
+// prevent refocus after the tab containing this window
+// gets selected, this prevents change of scroll position
+// for that tab
+OB_NoRefocusAfterTabSelection = true;
+
 function printPDF()
 {
     initialize_MessageBox('messageBoxID');
@@ -71,6 +76,8 @@ function printXLS()
 }
 </script>
 <script language="JavaScript" type="text/javascript">
+
+
 
 function onloadFunctions() {
  //keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBPartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");

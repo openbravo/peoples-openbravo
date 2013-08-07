@@ -73,6 +73,7 @@ public class OBViewFieldHandler {
 
   private List<String> windowEntities = null;
   private List<OBViewFieldDefinition> fields;
+  private List<String> propertiesInButtonFieldDisplayLogic = new ArrayList<String>();
 
   private List<Field> ignoredFields = new ArrayList<Field>();
 
@@ -94,7 +95,8 @@ public class OBViewFieldHandler {
   }
 
   public List<OBViewFieldDefinition> getFields() {
-
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+        getTab().getTable().getId());
     if (fields != null) {
       return fields;
     }
@@ -128,6 +130,13 @@ public class OBViewFieldHandler {
       for (Field fieldExpression : parser.getFields()) {
         if (!fieldsInDynamicExpression.contains(fieldExpression)) {
           fieldsInDynamicExpression.add(fieldExpression);
+        }
+        if ("Button".equals(f.getColumn().getReference().getName())) {
+          Property property = entity.getPropertyByColumnName(fieldExpression.getColumn()
+              .getDBColumnName());
+          if (!propertiesInButtonFieldDisplayLogic.contains(property.getName())) {
+            propertiesInButtonFieldDisplayLogic.add(property.getName());
+          }
         }
       }
     }
@@ -197,6 +206,7 @@ public class OBViewFieldHandler {
     OBViewFieldGroup currentFieldGroup = null;
     FieldGroup currentADFieldGroup = null;
     int colNum = 1;
+    long previousFieldRowSpan = 0, previousFieldColSpan = 0;
     for (Field field : adFields) {
 
       if ((field.getColumn() == null && field.getClientclass() == null) || !field.isActive()
@@ -214,6 +224,17 @@ public class OBViewFieldHandler {
 
       if (field.isStartnewline()) {
         colNum = 1;
+        // if rowspan is greater than 1 add spaces appropriately to start the field in new line
+        if (previousFieldRowSpan >= 2) {
+          final OBViewFieldSpacer spacer = new OBViewFieldSpacer();
+          for (int i = 0; i < previousFieldRowSpan; i++) {
+            // for each rowspan added, add spaces based on the colSpan. 4 is the default columns
+            // allowed in a row.
+            for (int j = 0; j < (4 - previousFieldColSpan); j++) {
+              fields.add(spacer);
+            }
+          }
+        }
       }
 
       if (field.getColumn() == null) {
@@ -257,6 +278,8 @@ public class OBViewFieldHandler {
         if (colNum > 4) {
           colNum = 1;
         }
+        previousFieldRowSpan = viewField.getRowSpan();
+        previousFieldColSpan = viewField.getColSpan();
       } else {
         final OBViewField viewField = new OBViewField();
 
@@ -302,6 +325,8 @@ public class OBViewFieldHandler {
         if (colNum > 4) {
           colNum = 1;
         }
+        previousFieldRowSpan = viewField.getRowSpan();
+        previousFieldColSpan = viewField.getColSpan();
       }
     }
 
@@ -2027,4 +2052,9 @@ public class OBViewFieldHandler {
     getFields(); // initializes stuff
     return ignoredFields;
   }
+
+  public List<String> getPropertiesInButtonFieldDisplayLogic() {
+    return propertiesInButtonFieldDisplayLogic;
+  }
+
 }

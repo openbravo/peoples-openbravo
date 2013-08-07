@@ -297,17 +297,19 @@ public class DocFINReconciliation extends AcctServer {
         FieldProviderFactory.setField(data[i], "cSalesregionId", paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getSalesRegion() != null ? paymentDetails
             .get(i).getFINPaymentScheduleDetailList().get(0).getSalesRegion().getId() : "");
+        FieldProviderFactory
+            .setField(data[i], "cCostcenterId", paymentDetails.get(i)
+                .getFINPaymentScheduleDetailList().get(0).getCostCenter() != null ? paymentDetails
+                .get(i).getFINPaymentScheduleDetailList().get(0).getCostCenter().getId() : "");
         FieldProviderFactory.setField(data[i], "lineno", transaction.getLineNo().toString());
-        try { // Get User1_ID and User2_ID using xsql
-          ConnectionProvider conn = new DalConnectionProvider(false);
-          DocFINPaymentData[] paymentInfo = DocFINPaymentData.select(conn, payment.getId());
-          if (paymentInfo.length > 0) {
-            FieldProviderFactory.setField(data[i], "user1Id", paymentInfo[0].user1Id);
-            FieldProviderFactory.setField(data[i], "user2Id", paymentInfo[0].user2Id);
-          }
-        } catch (Exception e) {
-          log4j.error("Error while retreiving user1 and user2 - ", e);
-        }
+
+        FieldProviderFactory.setField(data[i], "user1Id", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getStDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getStDimension().getId() : "");
+
+        FieldProviderFactory.setField(data[i], "user2Id", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getNdDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getNdDimension().getId() : "");
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -372,6 +374,7 @@ public class DocFINReconciliation extends AcctServer {
           if (trxInfo.length > 0) {
             FieldProviderFactory.setField(data[i], "user1Id", trxInfo[0].user1Id);
             FieldProviderFactory.setField(data[i], "user2Id", trxInfo[0].user2Id);
+            FieldProviderFactory.setField(data[i], "cCostcenterId", trxInfo[0].cCostcenterId);
           }
         } catch (Exception e) {
           log4j.error("Error while retreiving user1 and user2 - ", e);
@@ -427,6 +430,7 @@ public class DocFINReconciliation extends AcctServer {
         if (trxInfo.length > 0) {
           FieldProviderFactory.setField(data[0], "user1Id", trxInfo[0].user1Id);
           FieldProviderFactory.setField(data[0], "user2Id", trxInfo[0].user2Id);
+          FieldProviderFactory.setField(data[0], "cCostcenterId", trxInfo[0].cCostcenterId);
         }
       } catch (Exception e) {
         log4j.error("Error while retreiving user1 and user2 - ", e);
@@ -669,6 +673,7 @@ public class DocFINReconciliation extends AcctServer {
         detail.finFinAccTransactionId = transaction.getId();
         detail.m_User1_ID = data[i].getField("user1Id");
         detail.m_User2_ID = data[i].getField("user2Id");
+        detail.m_C_Costcenter_ID = data[i].getField("cCostcenterId");
         detail.setAmount(data[i].getField("Amount"));
         // Cambiar line to reflect BPs
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,

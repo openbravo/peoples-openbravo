@@ -691,7 +691,7 @@ FROM DUAL]]>
 			<line>
 				<reportElement key="line-1" style="Report_Footer" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="25"/>
 			</line>
-			<textField isBlankWhenNull="false">
+			<textField isBlankWhenNull="true">
 				<reportElement key="textField-2" style="Report_Footer" x="2" y="0" width="98" height="25"/>
 				<box leftPadding="2"/>
 				<textElement>

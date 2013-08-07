@@ -386,8 +386,8 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
           calLastDayOfPeriod.set(Calendar.MONTH, calAux.getActualMaximum(Calendar.MONTH));
         }
 
-        AmortizationLine amortizationLine = getAmortizationLine(asset,
-            calFirstDayOfPeriod.getTime(), calLastDayOfPeriod.getTime());
+        AmortizationLine amortizationLine = getAmortizationLine(asset, null,
+            calLastDayOfPeriod.getTime());
 
         if (amortizationLine != null) {
           // Recalculate percentage because the amount could have been changed
@@ -442,7 +442,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
           proportionalAmount = proportionalAmount.setScale(stdPrecision, RoundingMode.HALF_UP);
 
           // Last period. Adjust for avoiding rounding issues.
-          if (new BigDecimal(contPeriods).compareTo(totalPeriods) == 0
+          if (((!isPercentage && new BigDecimal(contPeriods).compareTo(totalPeriods) == 0))
               || totalizedAmount.add(proportionalAmount).compareTo(amount) > 0) {
             proportionalAmount = amount.subtract(totalizedAmount);
             proportionaldPercentage = HUNDRED.subtract(totalizedPercentage);
@@ -562,13 +562,17 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     final List<Object> parameters = new ArrayList<Object>();
     whereClause.append(" as aml join aml.amortization as am ");
     whereClause.append(" where aml.asset.id = ? ");
-    whereClause.append("       and am.startingDate = ?");
+    if (startDate != null) {
+      whereClause.append("       and am.startingDate = ?");
+    }
     whereClause.append("       and am.endingDate = ?");
     final OBQuery<AmortizationLine> obq = OBDal.getInstance().createQuery(AmortizationLine.class,
         whereClause.toString());
     obq.setFilterOnReadableOrganization(false);
     parameters.add(asset.getId());
-    parameters.add(startDate);
+    if (startDate != null) {
+      parameters.add(startDate);
+    }
     parameters.add(endDate);
     obq.setParameters(parameters);
     List<AmortizationLine> amortizationLineList = obq.list();

@@ -336,6 +336,7 @@ th.DataGrid_Header_Cell {
   border-bottom: 1px solid #A7ABB4;
   border-right: 1px solid #BBBFB6;
   border-left : 1px solid #BBBFB6;
+  background-position: bottom left;
   background-image: url(Common/DataGrid/backgroundHeader.normal.png);  
   background-color: #ECEEE9;
   _background-color: #ECEEE9;
@@ -349,6 +350,7 @@ th.DataGrid_Header_Cell_Amount {
   border-bottom: 1px solid #A7ABB4;
   border-right: 1px solid #BBBFB6;
   border-left : 1px solid #BBBFB6;
+  background-position: bottom left;
   background-image: url(Common/DataGrid/backgroundHeader.normal.png);  
   background-color: #ECEEE9;
   _background-color: #ECEEE9;
@@ -360,18 +362,21 @@ th.DataGrid_Header_Cell_Inverse {
 }
 
 th.DataGrid_Header_Cell_hover {
+  background-position: bottom left;
   background-image: url(Common/DataGrid/backgroundHeader.rollover.png);  
   background-color: #FFFFFF;
   _background-color: #FFFFFF;
 }
 
 th.DataGrid_Header_Cell_active {
+  background-position: top left;
   background-image: url(Common/DataGrid/backgroundHeader.pressed.png);  
   background-color: #FFFFFF;
   _background-color: #FFFFFF;
 }
 
 th.DataGrid_Header_Cell_sorted {
+  background-position: bottom left;
   background-image: url(Common/DataGrid/backgroundHeader.selected.png);  
   background-color: #FFFFFF;
   _background-color: #FFFFFF;

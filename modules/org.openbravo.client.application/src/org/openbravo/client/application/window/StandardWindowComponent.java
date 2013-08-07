@@ -177,9 +177,15 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     for (OBViewTab tabComponent : tempTabs) {
       if (tabComponent.getParentTabComponent() == null) {
         if (rootTabComponent != null) {
-          // warn for a special case, multiple root tab components
-          log.warn("Window " + window.getName() + " " + window.getId()
-              + " has more than on tab on level 0, choosing an arbitrary root tab");
+          if (tabComponent.getTab().getTabLevel() == rootTabComponent.getTab().getTabLevel()) {
+            // warn for a special case, multiple root tab components
+            log.warn("Window " + window.getName() + " " + window.getId()
+                + " has more than on tab on level 0, choosing an arbitrary root tab");
+          } else {
+            // warn for a special case, two tabs with different tab levels but same sequence number
+            log.warn("Window " + window.getName() + " " + window.getId()
+                + " two tabs with the same sequence number but different tab level");
+          }
           rootTabComponent.addChildTabComponent(tabComponent);
         } else {
           rootTabComponent = tabComponent;

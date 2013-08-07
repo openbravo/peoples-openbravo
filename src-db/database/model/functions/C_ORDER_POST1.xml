@@ -1132,10 +1132,16 @@
                 SELECT ol.c_orderline_id, ol.create_reservation, ol.qtyordered
                 FROM c_orderline ol
                     JOIN m_product p ON ol.m_product_id = p.m_product_id
+                    LEFT JOIN m_reservation r ON ol.c_orderline_id = r.c_orderline_id
                 WHERE ol.c_order_id = v_record_id
-                  AND ol.qtyordered > 0
-                  AND p.isstocked = 'Y'
-                  AND p.producttype = 'I'
+                  AND ((
+                      ol.qtyordered > 0
+                      AND p.isstocked = 'Y'
+                      AND p.producttype = 'I'
+                    ) OR (
+                      r.m_reservation_id IS NOT NULL
+                    )
+                  )
             ) LOOP
               SELECT count(*), max(m_reservation_id)
                 INTO v_aux, v_reservation_id

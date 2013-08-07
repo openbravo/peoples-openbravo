@@ -25,7 +25,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -116,7 +116,14 @@
           AND pp.M_PRODUCTIONPLAN_ID=Cur_ProductionPlan.M_ProductionPlan_ID
           AND wp.GROUPUSE='Y'
           AND wpp.M_PRODUCT_ID=Cur_GlobalUse.M_Product_ID;
-        IF(v_Factor<>0) THEN
+
+        SELECT COUNT(*)
+        INTO v_Count
+        FROM M_PRODUCTIONLINE
+        WHERE M_PRODUCTIONPLAN_ID=Cur_ProductionPlan.M_ProductionPlan_ID
+        AND M_PRODUCT_ID=Cur_GlobalUse.M_Product_ID;
+        
+        IF(v_Factor<>0 AND v_Count = 0) THEN
           SELECT MAX(Line) +10
           INTO v_Line
           FROM M_PRODUCTIONLINE

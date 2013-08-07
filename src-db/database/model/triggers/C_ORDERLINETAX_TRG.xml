@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2010-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2010-2013 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -32,6 +32,8 @@ v_DocTaxAmount C_TAX.DOCTAXAMOUNT%TYPE;
 v_Rate  C_TAX.RATE%TYPE;
 v_Increment_Amount C_ORDERTAX.TAXAMT%TYPE ;
 v_Increment_Base C_ORDERTAX.TAXBASEAMT%TYPE ;
+v_Processed VARCHAR(60) ;
+v_DocAction VARCHAR(60);
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -95,7 +97,15 @@ BEGIN
       :NEW.UPDATEDBY, :NEW.TAXBASEAMT, :NEW.TAXAMT, v_LineNo);
     END IF;
   ELSE
-    
+    SELECT PROCESSED,
+    DOCACTION
+    INTO v_Processed,
+    v_DocAction
+    FROM C_ORDER
+    WHERE C_ORDER_ID=v_C_ORDER_ID;
+    IF (v_Processed='Y' AND v_DocAction <> 'CL') THEN
+	RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
+    END IF;
     UPDATE C_ORDERTAX SET TAXAMT = (CASE WHEN v_DocTaxAmount='D' THEN ROUND((TAXBASEAMT - :OLD.TAXBASEAMT) * v_Rate/100, v_Prec) ELSE (TAXAMT - :OLD.TAXAMT) END), TAXBASEAMT=TAXBASEAMT - :OLD.TAXBASEAMT
     WHERE C_ORDER_ID = :OLD.C_Order_ID
     AND C_TAX_ID = :OLD.C_TAX_ID;

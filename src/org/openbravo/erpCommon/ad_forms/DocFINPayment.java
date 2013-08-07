@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,7 +55,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
-import org.openbravo.service.db.DalConnectionProvider;
 
 public class DocFINPayment extends AcctServer {
   private static final long serialVersionUID = 1L;
@@ -203,17 +202,17 @@ public class DocFINPayment extends AcctServer {
         FieldProviderFactory.setField(data[i], "cSalesregionId", paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getSalesRegion() != null ? paymentDetails
             .get(i).getFINPaymentScheduleDetailList().get(0).getSalesRegion().getId() : "");
+        FieldProviderFactory
+            .setField(data[i], "cCostcenterId", paymentDetails.get(i)
+                .getFINPaymentScheduleDetailList().get(0).getCostCenter() != null ? paymentDetails
+                .get(i).getFINPaymentScheduleDetailList().get(0).getCostCenter().getId() : "");
 
-        try { // Get User1_ID and User2_ID using xsql
-          ConnectionProvider conn = new DalConnectionProvider(false);
-          DocFINPaymentData[] paymentInfo = DocFINPaymentData.select(conn, payment.getId());
-          if (paymentInfo.length > 0) {
-            FieldProviderFactory.setField(data[i], "user1Id", paymentInfo[0].user1Id);
-            FieldProviderFactory.setField(data[i], "user2Id", paymentInfo[0].user2Id);
-          }
-        } catch (Exception e) {
-          log4j.error("Error while retreiving user1 and user2 - ", e);
-        }
+        FieldProviderFactory.setField(data[i], "user1Id", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getStDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getStDimension().getId() : "");
+        FieldProviderFactory.setField(data[i], "user2Id", paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getNdDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getNdDimension().getId() : "");
 
       }
     } finally {
@@ -335,57 +334,59 @@ public class DocFINPayment extends AcctServer {
           String bpAmountConverted = bpAmount;
           Invoice invoice = line.getInvoice();
           String strcCurrencyId = C_Currency_ID;
-          if (!isPrepayment && invoice != null) {
+          if (!isOrderPrepayment(line.getLine_ID()) && invoice != null) {
             // To force opposite posting isReceipt is opposite as well. this is required when
             // looking backwards
             bpAmountConverted = convertAmount(new BigDecimal(bpAmount), !isReceipt, DateAcct,
                 TABLEID_Invoice, invoice.getId(), C_Currency_ID, as.m_C_Currency_ID, line, as,
                 fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn).toString();
-            if (line.getDoubtFulDebtAmount().signum() != 0) {
-              BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(),
-                  isReceipt, DateAcct, TABLEID_Invoice, invoice.getId(), C_Currency_ID,
-                  as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn,
-                  false);
-              fact.createLine(line, getAccountBPartner(bpartnerId, as, true, false, true, conn),
-                  strcCurrencyId, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID,
-                  nextSeqNo(SeqNo), DocumentType, conn);
-              bpAmountConverted = new BigDecimal(bpAmountConverted).subtract(doubtFulDebtAmount)
-                  .toString();
-              fact.createLine(line,
-                  getAccountBPartnerAllowanceForDoubtfulDebt(bpartnerId, as, conn),
-                  this.C_Currency_ID, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
-                  nextSeqNo(SeqNo), DocumentType, conn);
-              // Assign expense to the dimensions of the invoice lines
-              BigDecimal assignedAmount = BigDecimal.ZERO;
-              DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn, invoice.getId());
-              Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
-              for (int j = 0; j < data.length; j++) {
-                BigDecimal lineAmount = doubtFulDebtAmount.multiply(
-                    new BigDecimal(data[j].percentage)).setScale(
-                    currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
-                if (j == data.length - 1) {
-                  lineAmount = doubtFulDebtAmount.subtract(assignedAmount);
+            if (!isPrepayment) {
+              if (line.getDoubtFulDebtAmount().signum() != 0) {
+                BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(),
+                    isReceipt, DateAcct, TABLEID_Invoice, invoice.getId(), C_Currency_ID,
+                    as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn,
+                    false);
+                fact.createLine(line, getAccountBPartner(bpartnerId, as, true, false, true, conn),
+                    strcCurrencyId, "", doubtFulDebtAmount.toString(), Fact_Acct_Group_ID,
+                    nextSeqNo(SeqNo), DocumentType, conn);
+                bpAmountConverted = new BigDecimal(bpAmountConverted).subtract(doubtFulDebtAmount)
+                    .toString();
+                fact.createLine(line,
+                    getAccountBPartnerAllowanceForDoubtfulDebt(bpartnerId, as, conn),
+                    this.C_Currency_ID, doubtFulDebtAmount.toString(), "", Fact_Acct_Group_ID2,
+                    nextSeqNo(SeqNo), DocumentType, conn);
+                // Assign expense to the dimensions of the invoice lines
+                BigDecimal assignedAmount = BigDecimal.ZERO;
+                DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn, invoice.getId());
+                Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
+                for (int j = 0; j < data.length; j++) {
+                  BigDecimal lineAmount = doubtFulDebtAmount.multiply(
+                      new BigDecimal(data[j].percentage)).setScale(
+                      currency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
+                  if (j == data.length - 1) {
+                    lineAmount = doubtFulDebtAmount.subtract(assignedAmount);
+                  }
+                  DocLine lineDD = new DocLine(DocumentType, Record_ID, "");
+                  lineDD.m_A_Asset_ID = data[j].aAssetId;
+                  lineDD.m_M_Product_ID = data[j].mProductId;
+                  lineDD.m_C_Project_ID = data[j].cProjectId;
+                  lineDD.m_C_BPartner_ID = data[j].cBpartnerId;
+                  lineDD.m_C_Costcenter_ID = data[j].cCostcenterId;
+                  lineDD.m_C_Campaign_ID = data[j].cCampaignId;
+                  lineDD.m_C_Activity_ID = data[j].cActivityId;
+                  lineDD.m_C_Glitem_ID = data[j].mCGlitemId;
+                  lineDD.m_User1_ID = data[j].user1id;
+                  lineDD.m_User2_ID = data[j].user2id;
+                  lineDD.m_AD_Org_ID = data[j].adOrgId;
+                  fact.createLine(
+                      lineDD,
+                      getAccountBPartnerBadDebt(
+                          (lineDD.m_C_BPartner_ID == null || lineDD.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
+                              : lineDD.m_C_BPartner_ID, false, as, conn), this.C_Currency_ID, "",
+                      lineAmount.toString(), Fact_Acct_Group_ID2, nextSeqNo(SeqNo), DocumentType,
+                      conn);
+                  assignedAmount = assignedAmount.add(lineAmount);
                 }
-                DocLine lineDD = new DocLine(DocumentType, Record_ID, "");
-                lineDD.m_A_Asset_ID = data[j].aAssetId;
-                lineDD.m_M_Product_ID = data[j].mProductId;
-                lineDD.m_C_Project_ID = data[j].cProjectId;
-                lineDD.m_C_BPartner_ID = data[j].cBpartnerId;
-                lineDD.m_C_Costcenter_ID = data[j].cCostcenterId;
-                lineDD.m_C_Campaign_ID = data[j].cCampaignId;
-                lineDD.m_C_Activity_ID = data[j].cActivityId;
-                lineDD.m_C_Glitem_ID = data[j].mCGlitemId;
-                lineDD.m_User1_ID = data[j].user1id;
-                lineDD.m_User2_ID = data[j].user2id;
-                lineDD.m_AD_Org_ID = data[j].adOrgId;
-                fact.createLine(
-                    lineDD,
-                    getAccountBPartnerBadDebt(
-                        (lineDD.m_C_BPartner_ID == null || lineDD.m_C_BPartner_ID.equals("")) ? this.C_BPartner_ID
-                            : lineDD.m_C_BPartner_ID, false, as, conn), this.C_Currency_ID, "",
-                    lineAmount.toString(), Fact_Acct_Group_ID2, nextSeqNo(SeqNo), DocumentType,
-                    conn);
-                assignedAmount = assignedAmount.add(lineAmount);
               }
             }
           }
@@ -462,6 +463,14 @@ public class DocFINPayment extends AcctServer {
 
     SeqNo = "0";
     return fact;
+  }
+
+  public boolean isOrderPrepayment(String paymentDetailID) {
+    FIN_PaymentDetail pd = OBDal.getInstance().get(FIN_PaymentDetail.class, paymentDetailID);
+    if (pd != null) {
+      return pd.isPrepayment();
+    }
+    return false;
   }
 
   public String nextSeqNo(String oldSeqNo) {
@@ -603,6 +612,7 @@ public class DocFINPayment extends AcctServer {
     if (paymentInfo.length > 0) {
       FieldProviderFactory.setField(data[0], "User1_ID", paymentInfo[0].user1Id);
       FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].user2Id);
+      FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].cCostcenterId);
     }
 
     setObjectFieldProvider(data);

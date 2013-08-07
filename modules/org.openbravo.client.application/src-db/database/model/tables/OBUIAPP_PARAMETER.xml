@@ -109,6 +109,21 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_VAL_RULE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_FIELDGROUP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="READONLYLOGIC" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_VAL_RULE" name="OBUIAPP_PARAM_AD_VALRULE">
+        <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_PARAMETER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -121,6 +136,9 @@
       <foreign-key foreignTable="AD_ORG" name="OBUIAPP_PARAMETER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_FIELDGROUP" name="OBUIAPP_PARAMETER_FLDGRP">
+        <reference local="AD_FIELDGROUP_ID" foreign="AD_FIELDGROUP_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="OBUIAPP_PROCESS" name="OBUIAPP_PARAMETER_PROCESS">
         <reference local="OBUIAPP_PROCESS_ID" foreign="OBUIAPP_PROCESS_ID"/>
       </foreign-key>
@@ -130,6 +148,9 @@
       <foreign-key foreignTable="AD_REFERENCE" name="OBUIAPP_PARAMETER_REFERENCE_V">
         <reference local="AD_REFERENCE_VALUE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
+      <index name="OBUIAPP_PARAMETER_PROCESS" unique="false">
+        <index-column name="OBUIAPP_PROCESS_ID"/>
+      </index>
       <check name="OBUIAPP_PARAMETER_CENTR_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_EVFIXVAL_CHK"><![CDATA[EVALUATEFIXEDVALUE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

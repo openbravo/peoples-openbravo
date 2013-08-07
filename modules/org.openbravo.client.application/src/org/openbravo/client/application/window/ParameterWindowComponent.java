@@ -19,10 +19,15 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
@@ -31,6 +36,9 @@ import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.domain.Validation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The component which takes care of creating a class for a specific paramter window.
@@ -39,6 +47,7 @@ import org.openbravo.dal.service.OBDal;
  */
 public class ParameterWindowComponent extends BaseTemplateComponent {
   private static final String DEFAULT_TEMPLATE_ID = "FF80818132F916130132F9357DE10016";
+  private static final Logger log = LoggerFactory.getLogger(ParameterWindowComponent.class);
 
   static final String BUTTON_LIST_REFERENCE_ID = "FF80818132F94B500132F9575619000A";
 
@@ -130,5 +139,85 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
       }
     }
     return new ArrayList<org.openbravo.model.ad.domain.List>();
+  }
+
+  public String getDynamicColumns() {
+    List<Parameter> paramsWithValidation = new ArrayList<Parameter>();
+    List<String> allParams = new ArrayList<String>();
+    Map<String, List<String>> dynCols = new HashMap<String, List<String>>();
+
+    for (Parameter param : process.getOBUIAPPParameterList()) {
+      Validation validation = param.getValidation();
+      if (validation != null) {
+        if (validation.getType().equals("HQL_JS")) {
+          paramsWithValidation.add(param);
+        } else {
+          log.error("Unsupported validation type {} for param {} in process {}", new Object[] {
+              "HQL_JS", param, process });
+        }
+      }
+      allParams.add(param.getDBColumnName());
+    }
+
+    for (Parameter paramWithVal : paramsWithValidation) {
+      parseValidation(paramWithVal.getValidation(), dynCols, allParams,
+          paramWithVal.getDBColumnName());
+    }
+
+    JSONObject jsonDynCols = new JSONObject();
+
+    for (String dynColName : dynCols.keySet()) {
+      JSONArray affectedColumns = new JSONArray();
+      for (String affectedCol : dynCols.get(dynColName)) {
+        affectedColumns.put(affectedCol);
+      }
+      try {
+        jsonDynCols.put(dynColName, affectedColumns);
+      } catch (JSONException e) {
+        log.error("Error generating dynamic columns for process {}", process.getName(), e);
+      }
+    }
+    return jsonDynCols.toString();
+  }
+
+  /**
+   * Dynamic columns is a list of columns that cause others to be modified, it includes the ones
+   * causing the modification as well as the affected ones.
+   * 
+   * Columns are identified as strings surrounded by quotes (" or ') matching one of the names of
+   * the parameters.
+   */
+  private void parseValidation(Validation validation, Map<String, List<String>> dynCols,
+      List<String> allParams, String paramName) {
+    String token = validation.getValidationCode().replace("\"", "'");
+
+    List<String> columns;
+
+    int i = token.indexOf("'");
+    while (i != -1) {
+      token = token.substring(i + 1);
+      i = token.indexOf("'");
+      if (i != -1) {
+        String strAux = token.substring(0, i);
+        token = token.substring(i + 1);
+        columns = dynCols.get(token);
+
+        if (!strAux.equals(paramName) && allParams.contains(strAux)) {
+          if (dynCols.containsKey(strAux)) {
+            columns = dynCols.get(strAux);
+          } else {
+            columns = new ArrayList<String>();
+            dynCols.put(strAux, columns);
+          }
+          if (!columns.contains(paramName)) {
+            columns.add(paramName);
+          }
+        }
+      }
+      if (token.indexOf("'") != -1) {
+        token = "'" + token;
+      }
+      i = token.indexOf("'");
+    }
   }
 }

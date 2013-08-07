@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -51,10 +51,18 @@
   v_locator_id              VARCHAR2(32);
   v_asi_id                  VARCHAR2(32);
   v_poline_id               VARCHAR2(32);
+  v_reserve_attr_id         VARCHAR2(32);
+  v_reserve_product_id      VARCHAR2(32);
+  v_reserve_locator_id      VARCHAR2(32);
+  v_reserve_uom_id          VARCHAR2(32);
+  v_attr_description        VARCHAR2(255);
+  v_product_value           VARCHAR2(40);
+  v_locator_value           VARCHAR2(40);
+  v_uom_value               VARCHAR2(3);
   v_count                   NUMBER;
 BEGIN
-  SELECT ad_client_id, ad_org_id
-    INTO v_client_id, v_org_id
+  SELECT ad_client_id, ad_org_id, m_product_id, c_uom_id, m_locator_id, m_attributesetinstance_id
+    INTO v_client_id, v_org_id, v_reserve_product_id, v_reserve_uom_id, v_reserve_locator_id, v_reserve_attr_id
   FROM m_reservation
   WHERE m_reservation_id = p_reservation_id;
   IF (p_type_id = 'SD') THEN
@@ -68,7 +76,30 @@ BEGIN
       AND sd.m_locator_id = COALESCE(res.m_locator_id, sd.m_locator_id)
       AND loc.m_warehouse_id = COALESCE(res.m_warehouse_id, loc.m_warehouse_id);
     IF (v_count = 0) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@GivenStorageDetailDoesNotMatchReservationRequirements@');
+      SELECT value
+        INTO v_product_value
+      FROM M_Product
+      WHERE M_Product_ID = v_reserve_product_id;
+
+      IF(v_reserve_attr_id IS NOT NULL) THEN
+        SELECT description
+          INTO v_attr_description
+        FROM M_AttributeSetInstance
+        WHERE M_AttributeSetInstance_ID = v_reserve_attr_id;
+      END IF;
+
+      SELECT uomsymbol
+        INTO v_uom_value
+      FROM C_Uom
+      WHERE C_Uom_ID = v_reserve_uom_id;
+
+      IF (v_reserve_locator_id IS NOT NULL) THEN
+        SELECT value
+          INTO v_locator_value
+        FROM M_Locator
+        WHERE M_Locator_ID = v_reserve_locator_id;
+      END IF;
+      RAISE_APPLICATION_ERROR(-20000, '@GivenStorageDetailDoesNotMatchReservationRequirements@' || ' @of@' || ' @Product@: ' || v_product_value || ', @AttributeSetInstance@: ' || COALESCE(v_attr_description, '-') || ', @UOM@: ' || v_uom_value || ' @And@'||' @StorageBin@: ' || COALESCE(v_locator_value, '-'));
     END IF;
 
     SELECT m_locator_id, m_attributesetinstance_id

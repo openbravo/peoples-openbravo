@@ -35,7 +35,7 @@ isc.DataSource.addProperties({
   compareDates: function (date1, date2, fieldName, otherFieldName) {
     var field = this.getField(fieldName),
         otherField = otherFieldName ? this.getField(otherFieldName) : null;
-    if ((field && (field.type === "datetime" || field.type === "_id_24")) || (otherField && (otherField.type === "datetime" || otherField.type === "_id_24"))) {
+    if ((field && (field.type === "datetime" || field.type === "_id_24" || field.type === "_id_16")) || (otherField && (otherField.type === "datetime" || otherField.type === "_id_24" || otherField.type === "_id_16"))) {
       return Date.compareDates(date1, date2);
     } else {
       return Date.compareLogicalDates(date1, date2);

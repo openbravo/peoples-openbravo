@@ -72,6 +72,9 @@
       <index name="M_STOCK_PROPOSED_PINSTANCE_ID" unique="false">
         <index-column name="AD_PINSTANCE_ID"/>
       </index>
+      <index name="M_STOCK_PROPOSED_STORAGE_DET" unique="false">
+        <index-column name="M_STORAGE_DETAIL_ID"/>
+      </index>
       <check name="M_STOCK_PROPOSED_ISFINAL_CHK"><![CDATA[ISFINAL IN ('Y', 'N')]]></check>
       <check name="M_STOCKPROPOSED_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

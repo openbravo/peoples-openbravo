@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -46,7 +46,6 @@ import org.openbravo.advpaymentmngt.utility.FIN_MatchedTransaction;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchingTransaction;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -61,6 +60,8 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.domain.ListTrl;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -83,220 +84,204 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class MatchTransaction extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   VariablesSecureApp vars = null;
+  static ArrayList<String> runingReconciliations = new ArrayList<String>();
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+    // long init = System.currentTimeMillis();
     vars = new VariablesSecureApp(request);
-
-    if (vars.commandIn("DEFAULT")) {
-      String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "MatchTransaction.adOrgId");
-      String strWindowId = vars.getGlobalVariable("inpwindowId", "MatchTransaction.adWindowId");
-      String strTabId = vars.getGlobalVariable("inpTabId", "MatchTransaction.adTabId");
-      String strFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId",
-          "MatchTransaction.finFinancialAccountId");
-      String strPaymentTypeFilter = vars.getGlobalVariable("inpPaymentTypeFilter",
-          "MatchTransaction.paymentTypeFilter", "ALL");
-      String strShowCleared = vars.getGlobalVariable("inpShowCleared",
-          "MatchTransaction.showCleared", "N");
-      String strHideDate = vars.getGlobalVariable("inpHideDate", "MatchTransaction.hideDate", "Y");
-      FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strFinancialAccountId);
-      FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal.getInstance()
-          .get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
-      int reconciledItems = 0;
-      if (reconciliation != null) {
-        if (isManualReconciliation(reconciliation)) {
-          OBDal.getInstance().rollbackAndClose();
+    String strReconciliationId = "";
+    try {
+      if (vars.commandIn("DEFAULT")) {
+        String strOrgId = vars.getRequestGlobalVariable("inpadOrgId", "MatchTransaction.adOrgId");
+        String strWindowId = vars.getGlobalVariable("inpwindowId", "MatchTransaction.adWindowId");
+        String strTabId = vars.getGlobalVariable("inpTabId", "MatchTransaction.adTabId");
+        String strFinancialAccountId = vars.getGlobalVariable("inpfinFinancialAccountId",
+            "MatchTransaction.finFinancialAccountId");
+        String strPaymentTypeFilter = vars.getGlobalVariable("inpPaymentTypeFilter",
+            "MatchTransaction.paymentTypeFilter", "ALL");
+        String strShowCleared = vars.getGlobalVariable("inpShowCleared",
+            "MatchTransaction.showCleared", "N");
+        String strHideDate = vars
+            .getGlobalVariable("inpHideDate", "MatchTransaction.hideDate", "Y");
+        FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
+            strFinancialAccountId);
+        FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal
+            .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
+        int reconciledItems = 0;
+        if (reconciliation != null) {
+          strReconciliationId = reconciliation.getId();
+          if (runingReconciliations.contains(strReconciliationId)) {
+            wait(strReconciliationId);
+          }
+          runingReconciliations.add(reconciliation.getId());
+          if (isManualReconciliation(reconciliation)) {
+            OBDal.getInstance().rollbackAndClose();
+            OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
+                .parseTranslation(this, vars, vars.getLanguage(), "@APRM_ReconciliationMixed@"));
+            vars.setMessage(strTabId, message);
+            printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
+            return;
+          }
+          OBContext.setAdminMode();
+          try {
+            getSnapShot(reconciliation);
+            reconciledItems = reconciliation.getFINReconciliationLineVList().size();
+          } finally {
+            OBContext.restorePreviousMode();
+          }
+        }
+        if (MatchTransactionDao.getUnMatchedBankStatementLines(account).size() == 0
+            && reconciledItems == 0) {
           OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
-              .parseTranslation(this, vars, vars.getLanguage(), "@APRM_ReconciliationMixed@"));
+              .parseTranslation(this, vars, vars.getLanguage(), "@APRM_NoStatementsToMatch@"));
           vars.setMessage(strTabId, message);
           printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
-          return;
+        } else {
+          if (reconciliation == null) {
+            reconciliation = MatchTransactionDao.addNewReconciliation(this, vars,
+                strFinancialAccountId);
+            strReconciliationId = reconciliation.getId();
+            if (runingReconciliations.contains(strReconciliationId)) {
+              wait(strReconciliationId);
+            }
+            runingReconciliations.add(strReconciliationId);
+            getSnapShot(reconciliation);
+          } else {
+            updateReconciliation(reconciliation.getId(), strFinancialAccountId, strTabId, false);
+          }
+          printPage(response, vars, strOrgId, strWindowId, strTabId, strPaymentTypeFilter,
+              strFinancialAccountId, reconciliation.getId(), strShowCleared, strHideDate);
         }
+        // log4j.error("Default took: " + (System.currentTimeMillis() - init));
+      } else if (vars.commandIn("GRID")) {
+        String strFinancialAccountId = vars.getRequestGlobalVariable("inpfinFinancialAccountId",
+            "MatchTransaction.finFinancialAccountId");
+        strReconciliationId = vars.getRequestGlobalVariable("inpfinReconciliationId",
+            "MatchTransaction.finReconciliationId");
+        if (runingReconciliations.contains(strReconciliationId)) {
+          wait(strReconciliationId);
+        }
+        runingReconciliations.add(strReconciliationId);
+        String strPaymentTypeFilter = vars.getRequestGlobalVariable("inpPaymentTypeFilter",
+            "MatchTransaction.paymentTypeFilter");
+        String strShowCleared = vars.getRequestGlobalVariable("inpShowCleared",
+            "MatchTransaction.showCleared");
+        String executeMatching = vars.getSessionValue("MatchTransaction.executeMatching");
+        vars.setSessionValue("MatchTransaction.executeMatching", "");
+        if (executeMatching.equals("")) {
+          executeMatching = vars.getStringParameter("inpExecuteMatching", "Y");
+        }
+        if (strShowCleared.equals("")) {
+          strShowCleared = "N";
+          vars.setSessionValue("MatchTransaction.showCleared", strShowCleared);
+        }
+        String strHideDate = vars.getRequestGlobalVariable("inphideDate",
+            "MatchTransaction.hideDate");
+        if (strHideDate.equals("")) {
+          strHideDate = "N";
+          vars.setSessionValue("MatchTransaction.hideDate", strHideDate);
+        }
+        String showJSMessage = vars.getSessionValue("AddTransaction|ShowJSMessage");
+        vars.setSessionValue("AddTransaction|ShowJSMessage", "N");
+
+        printGrid(response, vars, strPaymentTypeFilter, strFinancialAccountId, strReconciliationId,
+            strShowCleared, strHideDate, showJSMessage, "Y".equals(executeMatching));
+        // log4j.error("PrintGrid took: " + (System.currentTimeMillis() - init));
+      } else if (vars.commandIn("UNMATCH")) {
+        strReconciliationId = vars.getRequiredStringParameter("inpfinReconciliationId");
+        if (runingReconciliations.contains(strReconciliationId)) {
+          wait(strReconciliationId);
+        }
+        runingReconciliations.add(strReconciliationId);
+        String strUnmatchBankStatementLineId = vars
+            .getRequiredStringParameter("inpFinBankStatementLineId");
+        unMatchBankStatementLine(response, strUnmatchBankStatementLineId);
+        // log4j.error("UnMatch took: " + (System.currentTimeMillis() - init));
+      } else if (vars.commandIn("MATCH")) {
+        strReconciliationId = vars.getRequiredStringParameter("inpfinReconciliationId");
+        if (runingReconciliations.contains(strReconciliationId)) {
+          wait(strReconciliationId);
+        }
+        runingReconciliations.add(strReconciliationId);
+        String strMatchedBankStatementLineId = vars
+            .getRequiredStringParameter("inpFinBankStatementLineId");
+        String strFinancialTransactionId = vars
+            .getRequiredStringParameter("inpFinancialTransactionId_"
+                + strMatchedBankStatementLineId);
+        matchBankStatementLine(strMatchedBankStatementLineId, strFinancialTransactionId,
+            strReconciliationId, null);
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("data = " + new JSONObject().toString());
+        out.close();
+        // log4j.error("Match took: " + (System.currentTimeMillis() - init));
+      } else if (vars.commandIn("CANCEL")) {
+        strReconciliationId = vars.getRequiredStringParameter("inpfinReconciliationId");
+        if (runingReconciliations.contains(strReconciliationId)) {
+          wait(strReconciliationId);
+        }
+        runingReconciliations.add(strReconciliationId);
+        restoreSnapShot(OBDal.getInstance().get(FIN_Reconciliation.class, strReconciliationId));
+        String strTabId = vars.getGlobalVariable("inpTabId", "MatchTransaction.adTabId");
+        String strWindowPath = Utility.getTabURL(strTabId, "R", true);
+        if (strWindowPath.equals(""))
+          strWindowPath = strDefaultServlet;
+        printPageClosePopUp(response, vars, strWindowPath);
+        // log4j.error("Cancel took: " + (System.currentTimeMillis() - init));
+      } else if (vars.commandIn("SPLIT")) {
+        strReconciliationId = vars.getRequiredStringParameter("inpfinReconciliationId");
+        if (runingReconciliations.contains(strReconciliationId)) {
+          wait(strReconciliationId);
+        }
+        runingReconciliations.add(strReconciliationId);
+        String strBankStatementLineId = vars
+            .getRequiredStringParameter("inpFinBankStatementLineId");
+        String strTransactionId = vars.getSessionValue("AddTransaction|SelectedTransaction");
+        vars.setSessionValue("AddTransaction|SelectedTransaction", "");
+        if ("".equals(strTransactionId)) {
+          strTransactionId = vars.getRequiredStringParameter("inpSelectedFindTransactionId");
+        }
+        splitBankStatementLine(response, strReconciliationId, strBankStatementLineId,
+            strTransactionId);
+        // log4j.error("Split took: " + (System.currentTimeMillis() - init));
+      } else if (vars.commandIn("SAVE", "RECONCILE")) {
         OBContext.setAdminMode();
         try {
-          getSnapShot(reconciliation);
-          reconciledItems = reconciliation.getFINReconciliationLineVList().size();
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-      }
-      if (MatchTransactionDao.getUnMatchedBankStatementLines(account).size() == 0
-          && reconciledItems == 0) {
-        OBError message = Utility.translateError(this, vars, vars.getLanguage(),
-            Utility.parseTranslation(this, vars, vars.getLanguage(), "@APRM_NoStatementsToMatch@"));
-        vars.setMessage(strTabId, message);
-        printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
-      } else {
-        if (reconciliation == null) {
-          reconciliation = MatchTransactionDao.addNewReconciliation(this, vars,
-              strFinancialAccountId);
-          getSnapShot(reconciliation);
-        } else {
-          updateReconciliation(vars, reconciliation.getId(), strFinancialAccountId, strTabId, false);
-        }
-
-        printPage(response, vars, strOrgId, strWindowId, strTabId, strPaymentTypeFilter,
-            strFinancialAccountId, reconciliation.getId(), strShowCleared, strHideDate);
-      }
-    } else if (vars.commandIn("GRID")) {
-      String strFinancialAccountId = vars.getRequestGlobalVariable("inpfinFinancialAccountId",
-          "MatchTransaction.finFinancialAccountId");
-      String strReconciliationId = vars.getRequestGlobalVariable("inpfinReconciliationId",
-          "MatchTransaction.finReconciliationId");
-      String strPaymentTypeFilter = vars.getRequestGlobalVariable("inpPaymentTypeFilter",
-          "MatchTransaction.paymentTypeFilter");
-      String strShowCleared = vars.getRequestGlobalVariable("inpShowCleared",
-          "MatchTransaction.showCleared");
-      String executeMatching = vars.getStringParameter("inpExecuteMatching", "Y");
-      if (strShowCleared.equals("")) {
-        strShowCleared = "N";
-        vars.setSessionValue("MatchTransaction.showCleared", strShowCleared);
-      }
-      String strHideDate = vars
-          .getRequestGlobalVariable("inphideDate", "MatchTransaction.hideDate");
-      if (strHideDate.equals("")) {
-        strHideDate = "N";
-        vars.setSessionValue("MatchTransaction.hideDate", strHideDate);
-      }
-      String showJSMessage = vars.getSessionValue("AddTransaction|ShowJSMessage");
-      vars.setSessionValue("AddTransaction|ShowJSMessage", "N");
-
-      printGrid(response, vars, strPaymentTypeFilter, strFinancialAccountId, strReconciliationId,
-          strShowCleared, strHideDate, showJSMessage, "Y".equals(executeMatching));
-    } else if (vars.commandIn("UNMATCH")) {
-      String strUnmatchBankStatementLineId = vars
-          .getRequiredStringParameter("inpFinBankStatementLineId");
-      unMatchBankStatementLine(response, strUnmatchBankStatementLineId);
-
-    } else if (vars.commandIn("CANCEL")) {
-      String strReconciliationId = vars.getRequiredStringParameter("inpfinReconciliationId");
-      restoreSnapShot(OBDal.getInstance().get(FIN_Reconciliation.class, strReconciliationId));
-      String strTabId = vars.getGlobalVariable("inpTabId", "MatchTransaction.adTabId");
-      String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-      if (strWindowPath.equals(""))
-        strWindowPath = strDefaultServlet;
-
-      printPageClosePopUp(response, vars, strWindowPath);
-    } else if (vars.commandIn("SPLIT")) {
-      String strReconciliationId = vars.getRequiredStringParameter("inpfinReconciliationId");
-      String strBankStatementLineId = vars.getRequiredStringParameter("inpFinBankStatementLineId");
-      String strTransactionId = vars.getRequiredStringParameter("inpSelectedFindTransactionId");
-      splitBankStatementLine(response, strReconciliationId, strBankStatementLineId,
-          strTransactionId);
-    } else if (vars.commandIn("SAVE", "RECONCILE")) {
-      OBContext.setAdminMode();
-      try {
-        String strFinancialAccountId = vars.getRequiredStringParameter("inpfinFinancialAccountId");
-        // String strRecords = vars.getRequiredInParameter("inpRecordId", IsIDFilter.instance);
-        String strReconciliationId = vars.getRequiredStringParameter("inpfinReconciliationId");
-        String strTabId = vars.getGlobalVariable("inpTabId", "MatchTransaction.adTabId");
-        String message = "";
-        // checkReconciliationPending(vars, strReconciliationId, strTabId);
-        if (message == null || message.length() == 0) {
-
-          String strRecordsChecked = vars.getInParameter("inpBankStatementLineId",
-              IsIDFilter.instance);
-          List<FIN_BankStatementLine> items = FIN_Utility.getOBObjectList(
-              FIN_BankStatementLine.class, strRecordsChecked);
-
-          for (FIN_BankStatementLine item : items) {
-            if (item.getFinancialAccountTransaction() != null) {
-              // Unmatch Transaction
-              FIN_FinaccTransaction oldTransaction = item.getFinancialAccountTransaction();
-              final String DEPOSITED_NOT_CLEARED = "RDNC";
-              final String WITHDRAWN_NOT_CLEARED = "PWNC";
-              oldTransaction
-                  .setStatus(oldTransaction.getDepositAmount()
-                      .subtract(oldTransaction.getPaymentAmount()).signum() == 1 ? DEPOSITED_NOT_CLEARED
-                      : WITHDRAWN_NOT_CLEARED);
-              oldTransaction.setReconciliation(null);
-              OBDal.getInstance().save(oldTransaction);
-            }
-            String strTransaction = vars.getStringParameter(
-                "inpFinancialTransactionId_" + item.getId(), "");
-            String strMatchingType = vars.getStringParameter("inpMatchingType_" + item.getId(),
-                FIN_MatchedTransaction.NOMATCH);
-            if (strTransaction == null || strTransaction.equalsIgnoreCase("")) {
-              item.setFinancialAccountTransaction(null);
-              item.setMatchingtype(FIN_MatchedTransaction.NOMATCH);
-            } else {
-              FIN_FinaccTransaction transactionLine = MatchTransactionDao.getObject(
-                  FIN_FinaccTransaction.class, strTransaction);
-              transactionLine.setReconciliation(MatchTransactionDao.getObject(
-                  FIN_Reconciliation.class, strReconciliationId));
-              if (isInArray(strRecordsChecked, item.getId())) {
-                transactionLine.setStatus("RPPC");
-                if (transactionLine.getFinPayment() != null) {
-                  transactionLine.getFinPayment().setStatus("RPPC");
-                }
-                if (item.getTransactionDate().compareTo(transactionLine.getTransactionDate()) < 0) {
-                  // Set processed to false before changing dates to avoid trigger exception
-                  boolean posted = "Y".equals(transactionLine.getPosted());
-                  if (posted) {
-                    transactionLine.setPosted("N");
-                    OBDal.getInstance().save(transactionLine);
-                    OBDal.getInstance().flush();
-                  }
-                  transactionLine.setProcessed(false);
-                  OBDal.getInstance().save(transactionLine);
-                  OBDal.getInstance().flush();
-                  transactionLine.setTransactionDate(item.getTransactionDate());
-                  transactionLine.setDateAcct(item.getTransactionDate());
-                  OBDal.getInstance().save(transactionLine);
-                  OBDal.getInstance().flush();
-                  // Set processed to true afterwards
-                  transactionLine.setProcessed(true);
-                  OBDal.getInstance().save(transactionLine);
-                  OBDal.getInstance().flush();
-                  if (posted) {
-                    transactionLine.setPosted("Y");
-                    OBDal.getInstance().save(transactionLine);
-                    OBDal.getInstance().flush();
-                  }
-                  // Changing dates for accounting entries as well
-                  TransactionsDao.updateAccountingDate(transactionLine);
-                }
-              } else {
-                boolean isReceipt = true;
-                if (transactionLine.getFinPayment() != null)
-                  isReceipt = transactionLine.getFinPayment().isReceipt();
-                else
-                  isReceipt = (transactionLine.getDepositAmount().compareTo(
-                      transactionLine.getPaymentAmount()) >= 0);
-                transactionLine.setStatus((isReceipt) ? "RDNC" : "PWNC");
-              }
-              OBDal.getInstance().save(transactionLine);
-              OBDal.getInstance().flush();
-              item.setFinancialAccountTransaction(transactionLine);
-              item.setMatchingtype(strMatchingType);
-              if (transactionLine.getFinPayment() != null)
-                item.setBusinessPartner(transactionLine.getFinPayment().getBusinessPartner());
-            }
-            OBDal.getInstance().save(item);
-            OBDal.getInstance().flush();
+          String strFinancialAccountId = vars
+              .getRequiredStringParameter("inpfinFinancialAccountId");
+          // String strRecords = vars.getRequiredInParameter("inpRecordId", IsIDFilter.instance);
+          strReconciliationId = vars.getRequiredStringParameter("inpfinReconciliationId");
+          if (runingReconciliations.contains(strReconciliationId)) {
+            wait(strReconciliationId);
           }
-          if (updateReconciliation(vars, strReconciliationId, strFinancialAccountId, strTabId,
+          runingReconciliations.add(strReconciliationId);
+          String strTabId = vars.getGlobalVariable("inpTabId", "MatchTransaction.adTabId");
+          if (updateReconciliation(strReconciliationId, strFinancialAccountId, strTabId,
               vars.commandIn("RECONCILE"))) {
             OBError msg = new OBError();
             msg.setType("Success");
             msg.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
             vars.setMessage(strTabId, msg);
           }
-        }
-        String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-        if (strWindowPath.equals(""))
-          strWindowPath = strDefaultServlet;
+          // }
+          String strWindowPath = Utility.getTabURL(strTabId, "R", true);
+          if (strWindowPath.equals(""))
+            strWindowPath = strDefaultServlet;
 
-        printPageClosePopUp(response, vars, strWindowPath);
-      } finally {
-        OBContext.restorePreviousMode();
+          printPageClosePopUp(response, vars, strWindowPath);
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+        // log4j.error("Save took: " + (System.currentTimeMillis() - init));
       }
+    } finally {
+      runingReconciliations.remove(strReconciliationId);
     }
   }
 
-  private boolean updateReconciliation(VariablesSecureApp vars, String strReconciliationId,
-      String strFinancialAccountId, String strTabId, boolean process) {
+  private boolean updateReconciliation(String strReconciliationId, String strFinancialAccountId,
+      String strTabId, boolean process) {
     OBContext.setAdminMode(true);
     try {
       FIN_Reconciliation reconciliation = MatchTransactionDao.getObject(FIN_Reconciliation.class,
@@ -343,12 +328,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
     return true;
   }
 
-  private boolean isInArray(String inString, String value) {
-    if (inString.indexOf(value) == -1)
-      return false;
-    return true;
-  }
-
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strOrgId,
       String strWindowId, String strTabId, String strPaymentTypeFilter,
       String strFinancialAccountId, String reconciliationId, String strShowCleared,
@@ -363,6 +342,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     final String MATCHED_AGAINST_TRANSACTION = FIN_Utility.messageBD("APRM_Transaction");
+    final String CONFIRMATION_MESSAGE = FIN_Utility.messageBD("APRM_AlgorithmConfirm");
 
     FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
         reconciliationId);
@@ -373,6 +353,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("financialAccountId", strFinancialAccountId);
     xmlDocument.setParameter("reconciliationId", reconciliationId);
     xmlDocument.setParameter("matchedAgainstTransaction", MATCHED_AGAINST_TRANSACTION);
+    xmlDocument.setParameter("confirmationMessage", CONFIRMATION_MESSAGE);
     xmlDocument.setParameter("trlSplitConfirmText",
         FIN_Utility.messageBD("APRM_SplitBankStatementLineConfirm"));
 
@@ -437,8 +418,10 @@ public class MatchTransaction extends HttpSecureAppServlet {
     FieldProvider[] data = null;
     try {
       OBContext.setAdminMode(true);
+      // long init = System.currentTimeMillis();
       data = getMatchedBankStatementLinesData(vars, strFinancialAccountId, strReconciliationId,
           strPaymentTypeFilter, strShowCleared, strHideDate, executeMatching);
+      // log4j.error("Getting Grid Data: " + (System.currentTimeMillis() - init));
     } catch (Exception e) {
       log4j.debug("Output: Exception ocurred while retrieving Bank Statement Lines.", e);
       e.printStackTrace();
@@ -456,9 +439,11 @@ public class MatchTransaction extends HttpSecureAppServlet {
       log4j.debug("JSON object error" + table.toString());
     }
     response.setContentType("text/html; charset=UTF-8");
+    // long init = System.currentTimeMillis();
     PrintWriter out = response.getWriter();
     out.println("data = " + table.toString());
     out.close();
+    // log4j.error("Printing Grid Data: " + (System.currentTimeMillis() - init));
   }
 
   private void unMatchBankStatementLine(HttpServletResponse response,
@@ -493,23 +478,26 @@ public class MatchTransaction extends HttpSecureAppServlet {
         strFinancialAccountId);
     MatchingAlgorithm ma = financial.getMatchingAlgorithm();
     FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(ma.getJavaClassName());
-
+    // long init = System.currentTimeMillis();
     List<FIN_BankStatementLine> bankLines = MatchTransactionDao.getMatchingBankStatementLines(
         strFinancialAccountId, strReconciliationId, strPaymentTypeFilter, strShowCleared);
+    // log4j.error("Getting bankLines took: " + (System.currentTimeMillis() - init));
     FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
         strReconciliationId);
     FIN_BankStatementLine[] FIN_BankStatementLines = new FIN_BankStatementLine[0];
     FIN_BankStatementLines = bankLines.toArray(FIN_BankStatementLines);
     FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(bankLines);
-
+    // init = System.currentTimeMillis();
     OBContext.setAdminMode();
     final String MATCHED_AGAINST_TRANSACTION = FIN_Utility.messageBD("APRM_Transaction");
     final String MATCHED_AGAINST_PAYMENT = FIN_Utility.messageBD("APRM_Payment");
     final String MATCHED_AGAINST_INVOICE = FIN_Utility.messageBD("APRM_Invoice");
     final String MATCHED_AGAINST_ORDER = FIN_Utility.messageBD("APRM_Order");
     final String MATCHED_AGAINST_CREDIT = FIN_Utility.messageBD("APRM_Credit");
+    HashMap<String, String> matchingTypes = getMatchingTypes();
     try {
       List<FIN_FinaccTransaction> excluded = new ArrayList<FIN_FinaccTransaction>();
+      // long initMatch = 0l;
       for (int i = 0; i < data.length; i++) {
         final String COLOR_STRONG = "#66CC00";
         final String COLOR_WEAK = "#99CC66";
@@ -521,49 +509,41 @@ public class MatchTransaction extends HttpSecureAppServlet {
 
         String matchingType = line.getMatchingtype();
         FIN_FinaccTransaction transaction = line.getFinancialAccountTransaction();
-        if (transaction == null && executeMatching) {
+        if (transaction == null) {
           FIN_MatchedTransaction matched = null;
-          // try to match if exception is thrown continue
-          try {
-            matched = matchingTransaction.match(line, excluded);
-            OBDal.getInstance().getConnection().commit();
-          } catch (Exception e) {
-            OBDal.getInstance().rollbackAndClose();
+          if (executeMatching) {
+            // try to match if exception is thrown continue
+            try {
+              long initMatchLine = System.currentTimeMillis();
+              matched = matchingTransaction.match(line, excluded);
+              // initMatch = initMatch + (System.currentTimeMillis() - initMatchLine);
+              OBDal.getInstance().getConnection().commit();
+            } catch (Exception e) {
+              OBDal.getInstance().rollbackAndClose();
+              line = OBDal.getInstance().get(FIN_BankStatementLine.class,
+                  FIN_BankStatementLines[i].getId());
+              matchingType = line.getMatchingtype();
+              transaction = line.getFinancialAccountTransaction();
+              matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
+            }
+          } else {
             matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
+          }
+          transaction = matched.getTransaction();
+          if (transaction != null) {
+            matchBankStatementLine(line.getId(), transaction.getId(), strReconciliationId,
+                matched.getMatchLevel());
           }
           // When hide flag checked then exclude matchings for transactions out of date range
           if ("Y".equals(strHideDate)
               && matched.getTransaction() != null
               && matched.getTransaction().getTransactionDate()
                   .compareTo(reconciliation.getEndingDate()) > 0) {
+            transaction = null;
             matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
-          }
-          transaction = matched.getTransaction();
-          if (transaction != null && FIN_MatchedTransaction.STRONG.equals(matched.getMatchLevel())) {
-            FIN_BankStatementLine bsl = line;
-            if (bsl.getFinancialAccountTransaction() != null) {
-              // Unmatch Transaction
-              FIN_FinaccTransaction oldTransaction = bsl.getFinancialAccountTransaction();
-              final String DEPOSITED_NOT_CLEARED = "RDNC";
-              final String WITHDRAWN_NOT_CLEARED = "PWNC";
-              oldTransaction
-                  .setStatus(oldTransaction.getDepositAmount()
-                      .subtract(oldTransaction.getPaymentAmount()).signum() == 1 ? DEPOSITED_NOT_CLEARED
-                      : WITHDRAWN_NOT_CLEARED);
-              oldTransaction.setReconciliation(null);
-              OBDal.getInstance().save(oldTransaction);
-            }
-            bsl.setFinancialAccountTransaction(transaction);
-            bsl.setMatchingtype(matched.getMatchLevel());
-            transaction.setStatus("RPPC");
-            transaction.setReconciliation(MatchTransactionDao.getObject(FIN_Reconciliation.class,
-                strReconciliationId));
-            if (transaction.getFinPayment() != null) {
-              transaction.getFinPayment().setStatus("RPPC");
-            }
-            OBDal.getInstance().save(transaction);
-            OBDal.getInstance().save(bsl);
-            OBDal.getInstance().flush();
+            unmatch(line);
+            line = OBDal.getInstance().get(FIN_BankStatementLine.class,
+                FIN_BankStatementLines[i].getId());
           }
           if (transaction != null) {
             excluded.add(transaction);
@@ -604,12 +584,16 @@ public class MatchTransaction extends HttpSecureAppServlet {
                         : ((FIN_MatchedTransaction.NOMATCH.equals(matchingType) || FIN_MatchedTransaction.MANUALMATCH
                             .equals(matchingType)) ? COLOR_WHITE : matchingType)));
         FieldProviderFactory.setField(data[i], "matchingType", matchingType);
+        FieldProviderFactory.setField(data[i], "matchingTypeDescription", "");
 
         if (transaction != null) {
           FieldProviderFactory.setField(data[i], "disabled", "N");
+          FieldProviderFactory.setField(data[i], "matchingTypeDescription",
+              matchingTypes.get(matchingType));
           // Auto Matching or already matched
-          FieldProviderFactory.setField(data[i], "checked",
-              FIN_MatchedTransaction.STRONG.equals(matchingType) || alreadyMatched ? "Y" : "N");
+          // FieldProviderFactory.setField(data[i], "checked",
+          // FIN_MatchedTransaction.STRONG.equals(matchingType) || alreadyMatched ? "Y" : "N");
+          FieldProviderFactory.setField(data[i], "checked", "Y");
           FieldProviderFactory.setField(data[i], "finTransactionId", transaction.getId());
           FieldProviderFactory.setField(data[i], "trxDescription", transaction.getDescription());
           FieldProviderFactory
@@ -662,10 +646,47 @@ public class MatchTransaction extends HttpSecureAppServlet {
           FieldProviderFactory.setField(data[i], "transactionAmount", "");
         }
       }
+      // log4j.error("matching took: " + initMatch);
     } finally {
       OBContext.restorePreviousMode();
     }
+    // log4j.error("Getting fieldprovider took: " + (System.currentTimeMillis() - init));
     return data;
+  }
+
+  private HashMap<String, String> getMatchingTypes() {
+    final Reference MATCHING_TYPE_REFERENCE = OBDal.getInstance().get(Reference.class,
+        "BCABCED4983A4ECB814A6D142593ACEA");
+    HashMap<String, String> result = new HashMap<String, String>();
+    OBContext.setAdminMode(false);
+    try {
+      OBCriteria<org.openbravo.model.ad.domain.List> obc = OBDal.getInstance().createCriteria(
+          org.openbravo.model.ad.domain.List.class);
+      obc.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
+          MATCHING_TYPE_REFERENCE));
+      for (org.openbravo.model.ad.domain.List element : obc.list()) {
+        List<ListTrl> trlList = element.getADListTrlList();
+        if (trlList.size() > 0) {
+          boolean found = false;
+          for (ListTrl trl : trlList) {
+            if (trl.getLanguage().getLanguage()
+                .equals(OBContext.getOBContext().getLanguage().getLanguage())) {
+              result.put(element.getSearchKey(), trl.getName());
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            result.put(element.getSearchKey(), element.getName());
+          }
+        } else {
+          result.put(element.getSearchKey(), element.getName());
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return result;
   }
 
   public String checkReconciliationNotProcessed(VariablesSecureApp vars,
@@ -704,8 +725,9 @@ public class MatchTransaction extends HttpSecureAppServlet {
   }
 
   private void getSnapShot(FIN_Reconciliation reconciliation) {
-    if (reconciliation == null)
+    if (reconciliation == null) {
       return;
+    }
     OBContext.setAdminMode();
     try {
       // First remove old temp info if exists
@@ -804,21 +826,29 @@ public class MatchTransaction extends HttpSecureAppServlet {
   private void unmatch(FIN_BankStatementLine bsline) {
     OBContext.setAdminMode();
     try {
-      // merge if the bank statement line was splited before
+      bsline = OBDal.getInstance().get(FIN_BankStatementLine.class, bsline.getId());
+      // merge if the bank statement line was split before
       mergeBankStatementLine(bsline);
 
       FIN_FinaccTransaction finTrans = bsline.getFinancialAccountTransaction();
+      if (finTrans == null) {
+        String strTransactionId = vars.getStringParameter("inpFinancialTransactionId_"
+            + bsline.getId());
+        if (strTransactionId != null && !"".equals(strTransactionId)) {
+          finTrans = OBDal.getInstance().get(FIN_FinaccTransaction.class, strTransactionId);
+        }
+      }
       if (finTrans != null) {
         finTrans.setReconciliation(null);
         finTrans.setStatus((finTrans.getDepositAmount().subtract(finTrans.getPaymentAmount())
             .signum() == 1) ? "RDNC" : "PWNC");
         bsline.setFinancialAccountTransaction(null);
         OBDal.getInstance().save(finTrans);
-        OBDal.getInstance().flush();
+        // OBDal.getInstance().flush();
       }
       bsline.setMatchingtype(null);
       OBDal.getInstance().save(bsline);
-      OBDal.getInstance().flush();
+      // OBDal.getInstance().flush();
 
       if (finTrans != null) {
         if (finTrans.getFinPayment() != null) {
@@ -834,7 +864,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
         finTrans.setStatus(isReceipt ? "RDNC" : "PWNC");
         finTrans.setReconciliation(null);
         OBDal.getInstance().save(finTrans);
-        OBDal.getInstance().flush();
+        // OBDal.getInstance().flush();
       }
       // Execute un-matching logic defined by algorithm
       MatchingAlgorithm ma = bsline.getBankStatement().getAccount().getMatchingAlgorithm();
@@ -855,7 +885,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
         OBDal.getInstance().save(bs);
         OBDal.getInstance().flush();
       }
-
+      OBDal.getInstance().getConnection().commit();
     } catch (Exception e) {
       throw new OBException(e);
     } finally {
@@ -1292,5 +1322,54 @@ public class MatchTransaction extends HttpSecureAppServlet {
 
   public String getServletInfo() {
     return "This servlet match imported bank statement lines for a financial account";
+  }
+
+  void matchBankStatementLine(String strFinBankStatementLineId, String strFinancialTransactionId,
+      String strReconciliationId, String matchLevel) {
+    OBContext.setAdminMode(false);
+    try {
+      FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
+          strFinBankStatementLineId);
+      // OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
+      // .lock(BankStatementLine.ENTITY_NAME, bsl);
+      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+          strFinancialTransactionId);
+      if (transaction != null) {
+        if (bsl.getFinancialAccountTransaction() != null) {
+          log4j.error("Bank Statement Line Already Matched: " + bsl.getIdentifier());
+          unmatch(bsl);
+        }
+        bsl.setFinancialAccountTransaction(transaction);
+        if (matchLevel == null || "".equals(matchLevel)) {
+          matchLevel = FIN_MatchedTransaction.MANUALMATCH;
+        }
+        bsl.setMatchingtype(matchLevel);
+        transaction.setStatus("RPPC");
+        transaction.setReconciliation(MatchTransactionDao.getObject(FIN_Reconciliation.class,
+            strReconciliationId));
+        if (transaction.getFinPayment() != null) {
+          transaction.getFinPayment().setStatus("RPPC");
+        }
+        OBDal.getInstance().save(transaction);
+        OBDal.getInstance().save(bsl);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().getConnection().commit();
+      }
+    } catch (Exception e) {
+      log4j.error("Error during matchBankStatementLine");
+      OBDal.getInstance().rollbackAndClose();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private void wait(String strReconciliationId) {
+    while (runingReconciliations.contains(strReconciliationId)) {
+      long t0, t1;
+      t0 = System.currentTimeMillis();
+      do {
+        t1 = System.currentTimeMillis();
+      } while ((t1 - t0) < 200);
+    }
   }
 }

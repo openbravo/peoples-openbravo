@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -265,6 +266,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     }
 
     Connection conn = null;
+    OBContext.setAdminMode();
     try {
       conn = this.getTransactionConnection();
       if (strcOrderLineId.startsWith("("))
@@ -414,6 +416,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+    } finally {
+      OBContext.restorePreviousMode();
     }
     return myMessage;
   }

@@ -28,6 +28,7 @@
     ************************************************************************/
    v_Posted VARCHAR2(32) ;
    v_HasReversal CHAR(1);
+   v_Count NUMBER;
         
 BEGIN
     
@@ -95,12 +96,19 @@ BEGIN
 		SELECT POSTED INTO v_Posted 
 		FROM C_INVOICE
 		WHERE C_INVOICE_ID = :OLD.C_INVOICE_ID;
-
+    
 		-- Looking if the invoice has reversal invoices
-		SELECT 'Y' as hasreversal
-		INTO v_HasReversal
-		FROM DUAL 
-		WHERE EXISTS (SELECT 1 FROM C_INVOICE_REVERSE WHERE C_INVOICE_ID = :OLD.C_INVOICE_ID);
+		SELECT COUNT(C_INVOICE_REVERSE_ID)
+		INTO v_Count
+		FROM C_INVOICE_REVERSE
+		WHERE C_INVOICE_ID = :OLD.C_INVOICE_ID;
+    
+		IF v_Count > 0 THEN
+			SELECT 'Y' as hasreversal
+			INTO v_HasReversal
+			FROM DUAL 
+			WHERE EXISTS (SELECT 1 FROM C_INVOICE_REVERSE WHERE C_INVOICE_ID = :OLD.C_INVOICE_ID);
+		END IF;      
 	END IF;
 
 	IF :OLD.FIN_PAYMENT_ID IS NOT NULL THEN

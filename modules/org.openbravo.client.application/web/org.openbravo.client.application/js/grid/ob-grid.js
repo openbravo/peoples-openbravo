@@ -711,7 +711,8 @@ isc.OBGrid.addProperties({
         dsURL = this.dataSource.dataURL;
     var sortCriteria;
     var lcriteria = this.getCriteria();
-    var gdata = this.getData();
+    var gdata = this.getData(),
+        isExporting = true;
     if (gdata && gdata.dataSource) {
       lcriteria = gdata.dataSource.convertRelativeDates(lcriteria);
     }
@@ -728,7 +729,7 @@ isc.OBGrid.addProperties({
       exportToFile: true,
       _textMatchStyle: 'substring',
       _UTCOffsetMiliseconds: OB.Utilities.Date.getUTCOffsetInMiliseconds()
-    }, lcriteria, this.getFetchRequestParams());
+    }, lcriteria, this.getFetchRequestParams(null, isExporting));
     if (this.getSortField()) {
       sortCriteria = this.getSort();
       if (sortCriteria && sortCriteria.length > 0) {

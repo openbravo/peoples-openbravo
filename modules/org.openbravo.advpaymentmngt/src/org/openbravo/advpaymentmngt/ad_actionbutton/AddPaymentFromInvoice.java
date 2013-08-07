@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -409,7 +409,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     if (account != null) {
       if (!financialAccounts.contains(account)) {
         strFinancialAccountId = financialAccounts.get(0).getId();
-        if (financialAccounts.get(0).getWriteofflimit() != null) {
+        if (financialAccounts.size() > 0 && financialAccounts.get(0).getWriteofflimit() != null) {
           strtypewriteoff = financialAccounts.get(0).getTypewriteoff();
           strAmountwriteoff = financialAccounts.get(0).getWriteofflimit().toString();
           xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
@@ -425,7 +425,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         }
       }
     } else {
-      if (financialAccounts.get(0).getWriteofflimit() != null) {
+      if (financialAccounts.size() > 0 && financialAccounts.get(0).getWriteofflimit() != null) {
         strtypewriteoff = financialAccounts.get(0).getTypewriteoff();
         strAmountwriteoff = financialAccounts.get(0).getWriteofflimit().toString();
         xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
@@ -594,7 +594,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
 
     JSONObject msg = new JSONObject();
     try {
-      if (financialAccount.getWriteofflimit() != null) {
+      if (financialAccount != null && financialAccount.getWriteofflimit() != null) {
         msg.put("twriteoff", financialAccount.getTypewriteoff());
         msg.put("awriteoff", financialAccount.getWriteofflimit().toString());
       }
@@ -667,8 +667,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
     }
     String processOprtionsComboHtml = null;
 
-    boolean forcedFinancialAccountTransaction = finAccPaymentMethod.isAutomaticDeposit()
-        || finAccPaymentMethod.isAutomaticWithdrawn();
+    boolean forcedFinancialAccountTransaction = isReceipt ? finAccPaymentMethod
+        .isAutomaticDeposit() : finAccPaymentMethod.isAutomaticWithdrawn();
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",

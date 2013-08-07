@@ -37,6 +37,8 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.financialmgmt.calendar.Period;
 
 public class DocInvoice extends AcctServer {
@@ -49,6 +51,8 @@ public class DocInvoice extends AcctServer {
   public DocLine_FinPaymentSchedule[] getM_payments() {
     return m_payments;
   }
+
+  DocLine[] p_lines_taxes = null;
 
   String SeqNo = "0";
 
@@ -624,10 +628,7 @@ public class DocInvoice extends AcctServer {
         DocLine docLine = new DocLine(DocumentType, Record_ID, "");
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
 
-        if (m_taxes[i].m_isTaxUndeductable) {
-          computeTaxUndeductableLine(conn, as, fact, docLine, Fact_Acct_Group_ID,
-              m_taxes[i].m_C_Tax_ID, m_taxes[i].getAmount());
-        } else {
+        if (!m_taxes[i].m_isTaxUndeductable) {
           if (IsReversal.equals("Y")) {
             fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
                 this.C_Currency_ID, "", m_taxes[i].getAmount(), Fact_Acct_Group_ID,
@@ -638,6 +639,66 @@ public class DocInvoice extends AcctServer {
                 this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID,
                 nextSeqNo(SeqNo), DocumentType, conn);
           }
+        }
+      }
+
+      DocLineInvoiceData[] data = null;
+      try {
+        data = DocLineInvoiceData.selectUndeductable(connectionProvider, Record_ID);
+      } catch (ServletException e) {
+        log4jDocInvoice.warn(e);
+      }
+
+      BigDecimal cumulativeTaxLineAmount = new BigDecimal(0);
+      BigDecimal taxAmount = new BigDecimal(0);
+      for (int i = 0; data != null && i < data.length; i++) {
+        DocLine docLine = new DocLine(DocumentType, Record_ID, "");
+        docLine.m_C_Tax_ID = data[i].cTaxId;
+        docLine.m_C_BPartner_ID = data[i].cBpartnerId;
+        docLine.m_M_Product_ID = data[i].mProductId;
+        docLine.m_C_Costcenter_ID = data[i].cCostcenterId;
+        docLine.m_C_Project_ID = data[i].cProjectId;
+        docLine.m_User1_ID = data[i].user1id;
+        docLine.m_User2_ID = data[i].user2id;
+        docLine.m_C_Activity_ID = data[i].cActivityId;
+        docLine.m_C_Campaign_ID = data[i].cCampaignId;
+        docLine.m_A_Asset_ID = data[i].aAssetId;
+        String strtaxAmount = null;
+
+        strtaxAmount = m_taxes[i].getAmount();
+        taxAmount = new BigDecimal(strtaxAmount.equals("") ? "0.00" : strtaxAmount);
+
+        try {
+          DocInvoiceData[] dataEx = DocInvoiceData.selectProductAcct(conn, as.getC_AcctSchema_ID(),
+              m_taxes[i].m_C_Tax_ID, Record_ID);
+
+          if (i == data.length - 1) {
+            data[i].taxamt = taxAmount.subtract(cumulativeTaxLineAmount).toPlainString();
+          }
+          try {
+
+            if (this.DocumentType.equals(AcctServer.DOCTYPE_APInvoice)) {
+              if (IsReversal.equals("Y")) {
+                fact.createLine(docLine, Account.getAccount(conn, dataEx[0].pExpenseAcct),
+                    this.C_Currency_ID, "", data[i].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                    DocumentType, conn);
+
+              } else {
+                fact.createLine(docLine, Account.getAccount(conn, dataEx[0].pExpenseAcct),
+                    this.C_Currency_ID, data[i].taxamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                    DocumentType, conn);
+              }
+            } else if (this.DocumentType.equals(AcctServer.DOCTYPE_APCredit)) {
+              fact.createLine(docLine, Account.getAccount(conn, dataEx[0].pExpenseAcct),
+                  this.C_Currency_ID, "", data[i].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                  DocumentType, conn);
+            }
+            cumulativeTaxLineAmount = cumulativeTaxLineAmount.add(new BigDecimal(data[i].taxamt));
+          } catch (ServletException e) {
+            log4jDocInvoice.error("Exception in createLineForTaxUndeductable method: " + e);
+          }
+        } catch (ServletException e) {
+          log4jDocInvoice.warn(e);
         }
       }
       // Expense DR
@@ -1121,13 +1182,20 @@ public class DocInvoice extends AcctServer {
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     DocInvoiceData[] data = null;
     FieldProvider dataFP[] = getObjectFieldProvider();
-
     if (ZERO.compareTo(new BigDecimal(dataFP[0].getField("GrandTotal"))) == 0) {
-      strMessage = "@TotalGrossIsZero@";
-      setStatus(STATUS_DocumentDisabled);
-      return false;
+      Invoice invoice = OBDal.getInstance().get(Invoice.class, strRecordId);
+      boolean zero = true;
+      for (InvoiceLine invoiceline : invoice.getInvoiceLineList()) {
+        if (ZERO.compareTo(invoiceline.getLineNetAmount()) != 0) {
+          zero = false;
+        }
+      }
+      if (zero) {
+        strMessage = "@TotalGrossIsZero@";
+        setStatus(STATUS_DocumentDisabled);
+        return false;
+      }
     }
-
     try {
       data = DocInvoiceData.selectRegistro(conn, AD_Client_ID, strRecordId);
       AcctSchema[] m_acctSchemas = reloadLocalAcctSchemaArray(data[0].adOrgId);
@@ -1246,8 +1314,9 @@ public class DocInvoice extends AcctServer {
       } catch (ServletException e) {
         log4jDocInvoice.error("Exception in createLineForTaxUndeductable method: " + e);
       }
+
     }
+
     return cumulativeTaxLineAmount;
   }
-
 }

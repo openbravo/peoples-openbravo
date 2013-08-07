@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010 Openbravo SLU
+* All portions are Copyright (C) 2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -114,48 +114,50 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20000, '@APRM_ORDER_MAN_PAYMENTS@');
       END IF;
       v_payment_schedule_order := get_uuid();
-      INSERT INTO fin_payment_schedule
-      (
-        fin_payment_schedule_id, ad_client_id, ad_org_id, isactive,
-        created, createdby, updated, updatedby,
-        c_invoice_id, c_currency_id, c_order_id,
-        fin_paymentmethod_id, amount, duedate, expecteddate,
-        outstandingamt, fin_payment_priority_id
-       )
-      VALUES
-      (
-        v_payment_schedule_order, v_Client_ID, v_Org_ID, 'Y',
-        now(), p_user, now(), p_user,
-        null, v_currency_id, p_record_id,
-        v_paymentmethod_id, v_grandtotal, v_orderdate, v_orderdate,
-        v_grandtotal, v_PaymentPriority
-      );
+      IF v_grandtotal <> 0 THEN
+	INSERT INTO fin_payment_schedule
+	(
+	  fin_payment_schedule_id, ad_client_id, ad_org_id, isactive,
+	  created, createdby, updated, updatedby,
+	  c_invoice_id, c_currency_id, c_order_id,
+	  fin_paymentmethod_id, amount, duedate, expecteddate,
+	  outstandingamt, fin_payment_priority_id
+        )
+        VALUES
+        (
+          v_payment_schedule_order, v_Client_ID, v_Org_ID, 'Y',
+          now(), p_user, now(), p_user,
+          null, v_currency_id, p_record_id,
+          v_paymentmethod_id, v_grandtotal, v_orderdate, v_orderdate,
+          v_grandtotal, v_PaymentPriority
+        );
 
-      v_pendingamount := v_grandtotal;
-      --If exist a payment plan for an invoice it will always be an invoice generated completing this order
-      --so we can asume that all fin_payment_scheduledetail records are also related to the order.
-      --With the same asumption if the invoice has some paid amount it will always be by a paymetn for the whole
-      --amount generated on the invoice completion, so we can safely set as paid amount the whole amount of the
-      --payment plan.
-      FOR cur_invoicepayments IN (
-        SELECT distinct psd.fin_payment_scheduledetail_id, ps.paidamt
-        FROM fin_payment_scheduledetail psd, c_orderline ol, c_invoiceline il, fin_payment_schedule ps
-        WHERE ol.c_order_id = p_record_id
+        v_pendingamount := v_grandtotal;
+        --If exist a payment plan for an invoice it will always be an invoice generated completing this order
+        --so we can asume that all fin_payment_scheduledetail records are also related to the order.
+        --With the same asumption if the invoice has some paid amount it will always be by a paymetn for the whole
+        --amount generated on the invoice completion, so we can safely set as paid amount the whole amount of the
+        --payment plan.
+        FOR cur_invoicepayments IN (
+          SELECT distinct psd.fin_payment_scheduledetail_id, ps.paidamt
+          FROM fin_payment_scheduledetail psd, c_orderline ol, c_invoiceline il, fin_payment_schedule ps
+          WHERE ol.c_order_id = p_record_id
           AND ol.c_orderline_id = il.c_orderline_id
           AND il.c_invoice_id = ps.c_invoice_id
           AND psd.fin_payment_schedule_invoice = ps.fin_payment_schedule_id
         ) LOOP
-        UPDATE fin_payment_scheduledetail
-        SET fin_payment_schedule_order = v_payment_schedule_order
-        WHERE fin_payment_scheduledetail_id = cur_invoicepayments.fin_payment_scheduledetail_id;
-        SELECT v_pendingamount -(amount + coalesce(writeoffamt, 0)) INTO v_pendingamount
-        FROM fin_payment_scheduledetail
-        WHERE fin_payment_scheduledetail_id = cur_invoicepayments.fin_payment_scheduledetail_id;
-        UPDATE fin_payment_schedule
-        SET paidamt = paidamt + cur_invoicepayments.paidamt,
-            outstandingamt = outstandingamt - cur_invoicepayments.paidamt
-        WHERE fin_payment_schedule_id = v_payment_schedule_order;
-      END LOOP;
+          UPDATE fin_payment_scheduledetail
+          SET fin_payment_schedule_order = v_payment_schedule_order
+          WHERE fin_payment_scheduledetail_id = cur_invoicepayments.fin_payment_scheduledetail_id;
+          SELECT v_pendingamount -(amount + coalesce(writeoffamt, 0)) INTO v_pendingamount
+          FROM fin_payment_scheduledetail
+          WHERE fin_payment_scheduledetail_id = cur_invoicepayments.fin_payment_scheduledetail_id;
+          UPDATE fin_payment_schedule
+          SET paidamt = paidamt + cur_invoicepayments.paidamt,
+          outstandingamt = outstandingamt - cur_invoicepayments.paidamt
+          WHERE fin_payment_schedule_id = v_payment_schedule_order;
+        END LOOP;
+      END IF;
   
       IF (v_pendingamount <> 0) THEN
         INSERT INTO fin_payment_scheduledetail

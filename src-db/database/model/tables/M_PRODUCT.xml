@@ -321,6 +321,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="C_UOM_WEIGHT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="M_BRAND_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -402,6 +406,9 @@
       </foreign-key>
       <foreign-key foreignTable="S_RESOURCE" name="M_PRODUCT_S_RESOURCE">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="M_PRODUCT_WEIGHT_UOM">
+        <reference local="C_UOM_WEIGHT_ID" foreign="C_UOM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MPRODUCT">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>

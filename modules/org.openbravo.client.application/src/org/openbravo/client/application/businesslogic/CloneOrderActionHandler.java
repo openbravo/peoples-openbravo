@@ -72,6 +72,11 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       objCloneOrder.setUpdated(new Date());
       objCloneOrder.setCreatedBy(currentUser);
       objCloneOrder.setUpdatedBy(currentUser);
+      // Setting order date and scheduled delivery date of header and the order lines to current
+      // date to avoid issues with tax rates. Refer issue
+      // https://issues.openbravo.com/view.php?id=23671
+      objCloneOrder.setOrderDate(new Date());
+      objCloneOrder.setScheduledDeliveryDate(new Date());
 
       // save the cloned order object
       OBDal.getInstance().save(objCloneOrder);
@@ -97,6 +102,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
         objCloneOrdLine.setUpdated(new Date());
         objCloneOrdLine.setCreatedBy(currentUser);
         objCloneOrdLine.setUpdatedBy(currentUser);
+        objCloneOrdLine.setOrderDate(new Date());
+        objCloneOrdLine.setScheduledDeliveryDate(new Date());
         objCloneOrder.getOrderLineList().add(objCloneOrdLine);
         objCloneOrdLine.setSalesOrder(objCloneOrder);
       }

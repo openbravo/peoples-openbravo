@@ -412,15 +412,17 @@ public class CostingMigrationProcess implements Process {
         trx.setCostingStatus("CC");
         OBDal.getInstance().save(trx);
         Currency legalEntityCur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
-        BigDecimal cost = trxCost.divide(trx.getMovementQuantity().abs(), costPrecision,
-            BigDecimal.ROUND_HALF_UP);
+        BigDecimal cost = BigDecimal.ZERO;
+        if (BigDecimal.ZERO.compareTo(trx.getMovementQuantity()) != 0) {
+          cost = trxCost.divide(trx.getMovementQuantity().abs(), costPrecision,
+              BigDecimal.ROUND_HALF_UP);
+        }
         if (!legalEntityCur.equals(cur)) {
           cost = FinancialUtils.getConvertedAmount(cost, cur, legalEntityCur, new Date(),
               icl.getOrganization(), FinancialUtils.PRECISION_COSTING);
         }
-        OBDal.getInstance().refresh(icl.getPhysInventory());
-        CostingRuleInit cri = icl.getPhysInventory().getCostingRuleInitCloseInventoryList().get(0);
-        InventoryCountLine initICL = crp.getInitIcl(cri.getInitInventory(), icl);
+
+        InventoryCountLine initICL = icl.getRelatedInventory();
         initICL.setCost(cost);
         OBDal.getInstance().save(initICL);
 
@@ -549,8 +551,8 @@ public class CostingMigrationProcess implements Process {
         + Costing.PROPERTY_STARTINGDATE);
     where.append("       and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = c."
         + Costing.PROPERTY_PRODUCT);
-    where.append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < c."
-        + Costing.PROPERTY_ENDINGDATE);
+    where.append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < (c."
+        + Costing.PROPERTY_ENDINGDATE + " + 1) ");
     where.append("     )");
     where.append("   and " + Costing.PROPERTY_COST + " is not null");
     where.append(" order by " + Costing.PROPERTY_PRODUCT + ", " + Costing.PROPERTY_STARTINGDATE

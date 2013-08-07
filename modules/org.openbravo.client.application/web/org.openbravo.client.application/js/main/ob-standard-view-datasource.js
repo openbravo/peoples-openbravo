@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,7 +72,7 @@ isc.OBViewDataSource.addProperties({
   },
 
   performDSOperation: function (operationType, data, callback, requestProperties) {
-    var currentRecord;
+    var currentRecord, isNewRecord;
 
     requestProperties = requestProperties || {};
     requestProperties.clientContext = requestProperties.clientContext || {};
@@ -120,7 +120,23 @@ isc.OBViewDataSource.addProperties({
     if (!newRequestProperties.dataSource) {
       newRequestProperties.dataSource = this;
     }
-    this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
+    isNewRecord = false;
+    if (this.view.isShowingForm) {
+      isNewRecord = this.view.viewForm.isNew;
+    } else {
+      if (this.view.viewGrid.getEditForm()) {
+        isNewRecord = this.view.viewGrid.getEditForm().isNew;
+      } else {
+        isNewRecord = false;
+      }
+    }
+    // Do not save a new record if it is already being saved
+    if (!this.view._savingNewRecord || !isNewRecord) {
+      if (isNewRecord) {
+        this.view._savingNewRecord = true;
+      }
+      this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
+    }
   },
 
   getAdditionalProps: function () {

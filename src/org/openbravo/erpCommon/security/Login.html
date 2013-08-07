@@ -85,6 +85,12 @@ var recBrowserSafari = '5.0.0.0';
   function hideMenuFrame() {
     if (parent.document.getElementById('framesetMenu')) {
       parent.document.getElementById('framesetMenu').cols = parent.document.getElementById('framesetMenu').cols.replace(parent.menuWidth, '0%');
+      if (navigator.userAgent.indexOf('Trident/6.0') !== -1) {
+        // There is an issue with IE10 while resizing frameset columns or rows:
+        // https://connect.microsoft.com/IE/feedback/details/776054/cannot-resize-frameset-columns-or-rows-with-javascript
+        // The solution is do a dummy style change to force window re-rendering
+        parent.document.getElementById('framesetMenu').style.backgroundColor = 'white';
+      }
     }
   }
 </script>

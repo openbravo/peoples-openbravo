@@ -623,6 +623,10 @@ public class OBContext implements OBNotSingleton {
     additionalWritableOrganizations.remove(orgId);
   }
 
+  public void removeFromWritableOrganization(String orgId) {
+    writableOrganizations.remove(orgId);
+  }
+
   /**
    * Adds a new organization for which write access is allowed.
    * 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
@@ -340,6 +341,15 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     }
 
     final Role role = OBDal.getInstance().get(Role.class, roleId);
+
+    // In case the client is deleted using 'Delete Client' and immediately accessed from the profile
+    // widget throw error. Refer https://issues.openbravo.com/view.php?id=24092
+    if (role == null || role.getClient() == null) {
+      String errorMessage = Utility.messageBD(new DalConnectionProvider(false), "ClientDeleted",
+          OBContext.getOBContext().getLanguage().getLanguage());
+      throw new OBException(errorMessage);
+    }
+
     final String clientId = role.getClient().getId();
 
     String warehouseId = getStringValue(json, "warehouse");

@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License. 
  * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.erpCommon.businessUtility.TabAttachments;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.utils.FileUtility;
@@ -79,8 +80,9 @@ public class AttachmentsAH extends BaseActionHandler {
   private void deleteFile(Attachment attachment) {
     String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
-    String fileDirPath = attachmentFolder + "/" + DalUtil.getId(attachment.getTable()) + "-"
-        + attachment.getRecord();
+    String fileDir = TabAttachments.getAttachmentDirectory(attachment.getTable().getId(),
+        attachment.getRecord(), attachment.getName());
+    String fileDirPath = attachmentFolder + "/" + fileDir;
     FileUtility f = new FileUtility();
     final File file = new File(fileDirPath, attachment.getName());
     if (file.exists()) {

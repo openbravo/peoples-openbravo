@@ -36,6 +36,17 @@ isc.OBRichTextItem.addProperties({
     controlGroups: ["fontControls", "styleControls", "formatControls"],
 
     keyDown: function (event, eventInfo) {
+      var me = this;
+      if (this.parentElement && typeof this.parentElement.handleItemChange === 'function' && (isc.EH.getKey() === 'Backspace' || isc.EH.getKey() === 'Delete') && !isc.EH.altKeyDown()) {
+        var oldValue = this.getValue();
+        setTimeout(function () {
+          var newValue = me.getValue();
+          if (oldValue !== newValue) {
+            me._hasChanged = true;
+            me.parentElement.handleItemChange(me);
+          }
+        }, 100);
+      }
       var response = OB.KeyboardManager.Shortcuts.monitor('OBViewForm');
       if (response !== false) {
         response = this.Super('keyDown', arguments);

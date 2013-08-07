@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -80,8 +80,11 @@ function transactionFind(selected) {
   document.getElementById("inpReferenceNo_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = selected["finPayment" + OB.Constants.FIELDSEPARATOR + "referenceNo"]==undefined?'':selected["finPayment" + OB.Constants.FIELDSEPARATOR + "referenceNo"];
   document.getElementById("inpAmount_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = subtract(depositAmt, paymentAmt);
   document.getElementById("inpMatchingType_" + sc_FIN_FinAcc_Transaction_ID.bslId).value = "MA";
+  document.getElementById("inpMatchType_" + sc_FIN_FinAcc_Transaction_ID.bslId).innerHTML = "Manual";
   document.getElementById("inpCheckBox_" + sc_FIN_FinAcc_Transaction_ID.bslId).checked = true;
   document.getElementById("inpCheckBox_" + sc_FIN_FinAcc_Transaction_ID.bslId).disabled = false;
+  document.frmMain.inpFinBankStatementLineId.value = sc_FIN_FinAcc_Transaction_ID.bslId;
+  sendActionToServer("MATCH");
 }
 
 function openSelector(bslId) {
@@ -127,8 +130,9 @@ function disableChecks(){
 function unMatchLine(bankStatementLineId, isChecked) {
   if (!isChecked) {
     disableChecks();
-    APRMMatchStatementIds[bankStatementLineId]=false;
     document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
+    APRMMatchStatementIds[bankStatementLineId]=false;
+    sendActionToServer("UNMATCH");
     document.getElementById("inpMatchedDocument_" + bankStatementLineId).innerHTML = "";
     document.getElementById("inpTransactionDate_" + bankStatementLineId).innerHTML = "";
     document.getElementById("inpBPartner_" + bankStatementLineId).innerHTML = "";
@@ -137,11 +141,13 @@ function unMatchLine(bankStatementLineId, isChecked) {
     document.getElementById("inpFinancialTransactionId_" + bankStatementLineId).value = "";
     document.getElementById("inpMatchStyle_" + bankStatementLineId).style.backgroundColor = "white";
     document.getElementById("inpMatchingType_" + bankStatementLineId).value = "";
+    document.getElementById("inpMatchType_" + bankStatementLineId).innerHTML = "";
     document.getElementById("inpExecuteMatching").value = "N";
-    sendActionToServer("UNMATCH");
   }
   else {
     APRMMatchStatementIds[bankStatementLineId]=true;
+    document.frmMain.inpFinBankStatementLineId.value = bankStatementLineId;
+    sendActionToServer("MATCH");
   }
   return true;
 }
@@ -172,12 +178,15 @@ function openAddTransaction(bankStatementLineId){
 }
 </script>
 <script language="JavaScript" type="text/javascript">
-    function loadGrid() {
+    function loadGrid(skipMatching) {
       try {
         var url = "../org.openbravo.advpaymentmngt.ad_actionbutton/MatchTransaction.html";
         var paramXMLReq = null;
         serverWorking = true;
         document.frmMain.buttonProcess.disabled = true;
+        if(skipMatching){
+         document.getElementById("inpExecuteMatching").value = "N";
+        }
         return submitXmlHttpRequest(callBackGrid, document.frmMain, "GRID", url, false, null, paramXMLReq);
       } catch (e) {
         alert(e);
@@ -215,7 +224,12 @@ function openAddTransaction(bankStatementLineId){
               document.frmMain.isFirstLoad.value="false";
             }
             if (showJSMessage === "Y") {
-              displayMessageBox('APRM_TransactionLinesAmountNotMatch');
+              if (confirm(document.frmMain.inpTrlSplitConfirmText.value)) {
+                document.frmMain.inpSelectedFindTransactionId.value = selected.id;
+                splitRow();
+              } else {
+                showJSMessage('APRM_LinesAmountMismatch');
+              }
             }else{
               initialize_MessageBox('messageBoxID');
             }
@@ -329,7 +343,11 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
     try {
       onloadFunctions();
     } catch (e) {}
-    loadGrid();
+    if(confirm(document.getElementById("paramConfirmationMessage").value)){
+      loadGrid();   
+    }else{
+      loadGrid(true);
+    }
     resizeAreaCreateFrom();
   }
   function validate(action) {
@@ -346,6 +364,7 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
   <input type="hidden" name="Command" />
   <input type="hidden" name="IsPopUpCall" value="1" />
   <input type="hidden" name="paraMatchedAgainstTransaction" value="xxTransaction" id="paraMatchedAgainstTransaction"/>
+  <input type="hidden" name="paramConfirmationMessage" value="xxMessage" id="paramConfirmationMessage"/>
   <input type="hidden" name="inpadOrgId" value="" id="fieldOrg"/>
   <input type="hidden" name="inpwindowId" value="MBS" id="fieldWindowId"/>
   <input type="hidden" name="inpTabId" value="" id="fieldTabId"/>
@@ -572,14 +591,14 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                     <thead>
                       <tr>
-                        <td colspan="5" style="text-align: center; font-weight: bold;">Imported Bank Statement Lines</td>
+                        <td colspan="6" style="text-align: center; font-weight: bold;">Imported Bank Statement Lines</td>
                         <td style="text-align: center;"></td>
-                        <td colspan="5" style="text-align: center; font-weight: bold;">Transactions in Openbravo</td>
+                        <td colspan="6" style="text-align: center; font-weight: bold;">Transactions in Openbravo</td>
                       </tr>
                       <tr style="border-top: thin solid gray;">
-                        <td colspan="5" style="border-right: thin solid gray;"><span class="LabelText">Show</span>&nbsp;<span><select name="inpPaymentTypeFilter" class="ComboKey Combo_TwoCells_width required" id="inpPaymentTypeFilter" onchange="loadGrid(); return true;"><option value="" class="discard">Deposits and payments</option></select></span>&nbsp;<nobr><span class="LabelText">Cleared</span>&nbsp;<span><input type="checkbox" name="inpShowCleared" id="inpShowCleared" disabled=true value="Y" onclick="loadGrid(); return true;" /></span></nobr></td>
+                        <td colspan="6" style="border-right: thin solid gray;"><span class="LabelText">Show</span>&nbsp;<span><select name="inpPaymentTypeFilter" class="ComboKey Combo_TwoCells_width required" id="inpPaymentTypeFilter" onchange="loadGrid(true); return true;"><option value="" class="discard">Deposits and payments</option></select></span>&nbsp;<nobr><span class="LabelText">Cleared</span>&nbsp;<span><input type="checkbox" name="inpShowCleared" id="inpShowCleared" disabled=true value="Y" onclick="loadGrid(true); return true;" /></span></nobr></td>
                         <td style="text-align: center;"></td>
-                        <td colspan="5" style="border-left: thin solid gray;"></span>&nbsp;&nbsp;<span>Hide transactions after statement date</span>&nbsp;&nbsp;<span><input type="checkbox" name="inphideDate" id="fieldhideDate" disabled=true value="Y" onClick="loadGrid(); return true;"/></span>&nbsp;&nbsp;<span>Ending Date</span>&nbsp;&nbsp;<span type="LabelText" id="paramDateTo"></span></td>
+                        <td colspan="6" style="border-left: thin solid gray;"></span>&nbsp;&nbsp;<span>Hide transactions after statement date</span>&nbsp;&nbsp;<span><input type="checkbox" name="inphideDate" id="fieldhideDate" disabled=true value="Y" onClick="loadGrid(); return true;"/></span>&nbsp;&nbsp;<span>Ending Date</span>&nbsp;&nbsp;<span type="LabelText" id="paramDateTo"></span></td>
                       </tr>
                       <tr class="DataGrid_Body_Row">
                         <th class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox" width="25">
@@ -590,6 +609,7 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100">Amount</th>
                         <th class="DataGrid_Header_Cell" style="text-align: center;" width="100">Match</th>
                         <th class="DataGrid_Header_Cell" width="70">Matched Document</th>
+                        <th class="DataGrid_Header_Cell" width="70">Match Type</th>
                         <th class="DataGrid_Header_Cell" width="70">Date</th>
                         <th class="DataGrid_Header_Cell" width="100">Bus. Partner</th>
                         <th class="DataGrid_Header_Cell" width="100">Reference</th>
@@ -629,19 +649,19 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
                     id="buttonProcess"
                     class="ButtonLink"
                     onclick="submitThisPage('SAVE');return false;"
-                    onfocus="buttonEvent('onfocus', this); window.status='Save'; return true;"
+                    onfocus="buttonEvent('onfocus', this); window.status='OK'; return true;"
                     onblur="buttonEvent('onblur', this);"
                     onkeyup="buttonEvent('onkeyup', this);"
                     onkeydown="buttonEvent('onkeydown', this);"
                     onkeypress="buttonEvent('onkeypress', this);"
                     onmouseup="buttonEvent('onmouseup', this);"
                     onmousedown="buttonEvent('onmousedown', this);"
-                    onmouseover="buttonEvent('onmouseover', this); window.status='Save'; return true;"
+                    onmouseover="buttonEvent('onmouseover', this); window.status='OK'; return true;"
                     onmouseout="buttonEvent('onmouseout', this);">
                     <table class="Button">
                       <tr>
-                        <td class="Button_left"><img class="Button_Icon Button_Icon_save" alt="Save" title="Save" src="../../../../../web/images/blank.gif" border="0" /></td>
-                        <td class="Button_text Button_width">Save</td>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_save" alt="OK" title="OK" src="../../../../../web/images/blank.gif" border="0" /></td>
+                        <td class="Button_text Button_width">OK</td>
                         <td class="Button_right"></td>
                       </tr>
                     </table>
@@ -679,19 +699,19 @@ function splitCallback(paramXMLParticular, XMLHttpRequestObj) {
                     id="buttonCancel"
                     class="ButtonLink"
                     onclick="submitThisPage('CANCEL');return false;"
-                    onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;"
+                    onfocus="buttonEvent('onfocus', this); window.status='Undo'; return true;"
                     onblur="buttonEvent('onblur', this);"
                     onkeyup="buttonEvent('onkeyup', this);"
                     onkeydown="buttonEvent('onkeydown', this);"
                     onkeypress="buttonEvent('onkeypress', this);"
                     onmouseup="buttonEvent('onmouseup', this);"
                     onmousedown="buttonEvent('onmousedown', this);"
-                    onmouseover="buttonEvent('onmouseover', this); window.status='Cancel'; return true;"
+                    onmouseover="buttonEvent('onmouseover', this); window.status='Undo'; return true;"
                     onmouseout="buttonEvent('onmouseout', this);">
                     <table class="Button">
                       <tr>
-                        <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border="0" /></td>
-                        <td class="Button_text Button_width">Cancel</td>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Undo" title="Undo" src="../../../../../web/images/blank.gif" border="0" /></td>
+                        <td class="Button_text Button_width">Undo</td>
                         <td class="Button_right"></td>
                       </tr>
                     </table>

@@ -555,6 +555,10 @@ public class DatabaseValidator implements SystemValidator {
     // + " it is set as mandatory");
     // }
 
+    if ("VARCHAR".equals(dbColumn.getType()) || "NVARCHAR".equals(dbColumn.getType())) {
+      checkMaxLength(dbColumn, dbTable, result, 4000);
+    }
+
     // check the default value
     if (property != null && property.getActualDefaultValue() != null) {
       try {
@@ -667,6 +671,15 @@ public class DatabaseValidator implements SystemValidator {
           + "length is either 32 (a uuid) or based on"
           + " the fieldLength (so not the db columnlength) of the referenced column"
           + ", as defined in AD_COLUMN.");
+    }
+  }
+
+  private void checkMaxLength(org.apache.ddlutils.model.Column dbColumn,
+      org.apache.ddlutils.model.Table dbTable, SystemValidationResult result, int maxLength) {
+    if (dbColumn.getSizeAsInt() > maxLength) {
+      result.addError(SystemValidationType.WRONG_LENGTH, "Column " + dbTable.getName() + "."
+          + dbColumn.getName() + " has incorrect length, it is  " + dbColumn.getSizeAsInt()
+          + " but the maximum size allowed for that type of column is " + maxLength + ".");
     }
   }
 

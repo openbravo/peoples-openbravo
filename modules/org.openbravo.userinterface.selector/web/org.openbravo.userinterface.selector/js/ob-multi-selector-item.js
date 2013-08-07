@@ -244,7 +244,12 @@ isc.OBMultiSelectorItem.addProperties({
   },
 
   destroy: function () {
-    // Explicitly destroy the selector window to avoid memory leaks
+    // Explicitly destroy elements avoid memory leaks
+    if (this.canvas) {
+      this.canvas.destroy();
+      this.canvas = null;
+    }
+
     if (this.selectorWindow) {
       this.selectorWindow.destroy();
       this.selectorWindow = null;

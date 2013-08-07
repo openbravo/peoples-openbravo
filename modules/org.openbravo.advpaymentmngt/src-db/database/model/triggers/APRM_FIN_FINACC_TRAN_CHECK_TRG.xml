@@ -67,7 +67,7 @@ BEGIN
 							WHERE fin_financial_account_id = :OLD.FIN_FINANCIAL_ACCOUNT_ID
 							AND ((:OLD.TRXTYPE IN ('BPW','BF') AND fin_withdrawal_acct IS NULL)
 							OR (:OLD.TRXTYPE = 'BPD' AND fin_deposit_acct IS NULL));
-			        IF(v_Count>0) THEN
+			        IF(v_Count>0 OR (COALESCE(:OLD.DATEACCT, v_DateNull) <> COALESCE(:NEW.DATEACCT, v_DateNull))) THEN
 			      		RAISE_APPLICATION_ERROR(-20000, '@APRM_RelatedPostedDocument@');
 			        END IF;
 				    ELSIF((COALESCE(:OLD.DATEACCT, v_DateNull) <> COALESCE(:NEW.DATEACCT, v_DateNull))) THEN

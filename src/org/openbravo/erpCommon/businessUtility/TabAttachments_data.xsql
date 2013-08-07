@@ -96,11 +96,11 @@
         <Parameter name="adTabId"/>
    </SqlMethod>
    <SqlMethod name="insert" type="preparedStatement" connection="true" return="rowCount">
-      <SqlMethodComment></SqlMethodComment>
+      <SqlMethodComment>This method is depreciated. Use the insert method with path argument</SqlMethodComment>
       <Sql> <![CDATA[
-        INSERT INTO C_FILE (C_FILE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, 
+        INSERT INTO C_FILE (C_FILE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
         UPDATED, UPDATEDBY, AD_TABLE_ID, AD_RECORD_ID, C_DATATYPE_ID, TEXT, NAME, SEQNO)
-        VALUES(?, ?, ?, 'Y', now(), ?, 
+        VALUES(?, ?, ?, 'Y', now(), ?,
         now(), ?, ?, ?, ?, ?, ?, (SELECT COALESCE(MAX(SEQNO), 0) + 10 FROM C_FILE WHERE AD_TABLE_ID = ? AND AD_RECORD_ID=?))
       ]]></Sql>
         <Parameter name="cFileId"/>
@@ -115,6 +115,28 @@
         <Parameter name="name"/>
         <Parameter name="adTableId"/>
         <Parameter name="adRecordId"/>
+   </SqlMethod>
+   <SqlMethod name="insert" type="preparedStatement" connection="true" return="rowCount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql> <![CDATA[
+        INSERT INTO C_FILE (C_FILE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, 
+        UPDATED, UPDATEDBY, AD_TABLE_ID, AD_RECORD_ID, C_DATATYPE_ID, TEXT, NAME, SEQNO, PATH)
+        VALUES(?, ?, ?, 'Y', now(), ?, 
+        now(), ?, ?, ?, ?, ?, ?, (SELECT COALESCE(MAX(SEQNO), 0) + 10 FROM C_FILE WHERE AD_TABLE_ID = ? AND AD_RECORD_ID=?),?)
+      ]]></Sql>
+        <Parameter name="cFileId"/>
+        <Parameter name="adClientId"/>
+        <Parameter name="adOrgId"/>
+        <Parameter name="adUserId"/>
+        <Parameter name="adUserId"/>
+        <Parameter name="adTableId"/>
+        <Parameter name="adRecordId"/>
+        <Parameter name="cDatatypeId"/>
+        <Parameter name="text"/>
+        <Parameter name="name"/>
+        <Parameter name="adTableId"/>
+        <Parameter name="adRecordId"/>
+        <Parameter name="path"/>
    </SqlMethod>
    <SqlMethod name="update" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>

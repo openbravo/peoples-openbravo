@@ -28,7 +28,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -37,11 +37,15 @@
   v_message VARCHAR2(2000):='';
   v_NetPrice NUMBER;
   v_TaxAmount NUMBER;
+  v_calcPrecision NUMBER:=50;
 BEGIN --BODY
   IF (p_qty = 0 OR p_grossamt = 0) THEN
     RETURN 0;
   END IF;
-  v_TaxAmount := C_GET_TAX_AMT_FROM_NET(p_tax_id, p_grossamt, p_alternatetaxbaseamt, p_priceprecision, 0);
+  IF (p_priceprecision > 50) THEN
+    v_calcPrecision := p_priceprecision;
+  END IF;
+  v_TaxAmount := C_GET_TAX_AMT_FROM_NET(p_tax_id, p_grossamt, p_alternatetaxbaseamt, v_calcPrecision, 0);
   DBMS_OUTPUT.PUT_LINE('Unit tax ' || v_TaxAmount);
   v_NetPrice:= ROUND(p_grossamt * (p_grossamt  / (p_grossamt + v_TaxAmount)) / p_qty, p_priceprecision);
 

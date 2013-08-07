@@ -502,6 +502,18 @@ isc.OBToolbar.addClassProperties({
         this.setDisabled(disabled);
       },
       keyboardShortcutId: 'ToolBar_Email'
+    },
+    'tree': {
+      updateState: function () {
+        var view = this.view,
+            grid = view.viewGrid;
+        var selectedRecords = grid.getSelectedRecords();
+        var disabled = false;
+        if (selectedRecords && selectedRecords.length === 0) {
+          disabled = true;
+        }
+        this.setDisabled(disabled);
+      }
     }
   },
 

@@ -18,11 +18,14 @@
  */
 package org.openbravo.client.application.window;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.client.application.window.OBViewFieldHandler.OBViewField;
 import org.openbravo.client.application.window.OBViewFieldHandler.OBViewFieldDefinition;
 import org.openbravo.client.kernel.BaseTemplateComponent;
@@ -231,4 +234,27 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     this.viewTab = viewTab;
   }
 
+  /**
+   * Returns the string representation of an array that contains all the properties that must always
+   * be returned from the datasource when the grid asks for data: - id - all the properties that
+   * compose the identifier of the entity - all the properties that are part of the display logic of
+   * the tab buttons
+   */
+  public List<String> getRequiredGridProperties() {
+    List<String> requiredGridProperties = new ArrayList<String>();
+    requiredGridProperties.add("id");
+
+    for (Property identifierProperty : this.entity.getIdentifierProperties()) {
+      requiredGridProperties.add(identifierProperty.getName());
+    }
+
+    List<String> propertiesInButtonFieldDisplayLogic = getViewTab().getFieldHandler()
+        .getPropertiesInButtonFieldDisplayLogic();
+
+    for (String propertyName : propertiesInButtonFieldDisplayLogic) {
+      requiredGridProperties.add(propertyName);
+    }
+
+    return requiredGridProperties;
+  }
 }

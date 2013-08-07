@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -202,7 +202,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
               this,
               strCOrderlineID,
               orderData[0].adClientId,
-              data[i].adOrgId,
+              orderData[0].adOrgId,
               vars.getUser(),
               strKey,
               Integer.toString(line),
@@ -215,8 +215,8 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
               data[i].quantityorder, data[i].cCurrencyId, strNetPriceList, strPriceActual,
               strPriceLimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline,
               data[i].mAttributesetinstanceId, strGrossPriceList, strGrossUnitPrice,
-              strGrossAmount, strGrossBaseUnitPrice, data[0].cProjectId, data[0].user1Id,
-              data[0].user2Id, data[0].cCostcenterId, data[0].aAssetId);
+              strGrossAmount, strGrossBaseUnitPrice, data[i].cProjectId, data[i].user1Id,
+              data[i].user2Id, data[i].cCostcenterId, data[i].aAssetId);
         } catch (ServletException ex) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);

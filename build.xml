@@ -12,7 +12,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -371,6 +371,13 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="compile.complete" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <target name="migrate.attachments" depends="init">
+    <taskdef name="MigrateAttachments" classname="org.openbravo.erpCommon.utility.MigrateAttachments" >
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <MigrateAttachments/>
+  </target>
+
   <target name="smartbuild" depends="init">
     <property name="smart.mode" value="true" />
     <property name="onlyIfModified" value="true" />
@@ -603,12 +610,12 @@ export.database: exports database structure and data to xml files.
     />    
   </target>
 
-  <target name="export.sample.data" depends="code.rev">
-    <ant dir="${base.src}" target="export.sample.data" inheritAll="true" inheritRefs="true" />
+  <target name="export.sample.data.old" depends="code.rev">
+    <ant dir="${base.src}" target="export.sample.data.old" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="import.sample.data" depends="code.rev">
-    <ant dir="${base.src}" target="import.sample.data" inheritAll="true" inheritRefs="true" />
+  <target name="import.sample.data.old" depends="code.rev">
+    <ant dir="${base.src}" target="import.sample.data.old" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="compile.src" depends="init">
@@ -700,7 +707,6 @@ export.database: exports database structure and data to xml files.
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
 
     <antcall target="import.sample.data" />
-    <antcall target="load.logoimages" />
     <updatesystemstatus v="RB51"/> 
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
@@ -759,6 +765,14 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="export.config.script" inheritAll="true" inheritRefs="true" />
   </target>
 
+  <target name="export.sample.data" depends="init, core.lib">
+    <ant dir="${base.db}" target="export.sample.data" inheritAll="true" inheritRefs="true" />
+  </target>
+
+  <target name="import.sample.data" depends="init, core.lib">
+    <ant dir="${base.db}" target="import.sample.data" inheritAll="true" inheritRefs="true" />
+  </target>
+
   <target name="db.apply.modules" if="apply.modules.on.update">
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
   </target>
@@ -767,7 +781,6 @@ export.database: exports database structure and data to xml files.
     <antcall target="generate.entities" />
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
-    <antcall target="load.logoimages" />
   </target>
 
 
@@ -1057,7 +1070,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="setup" depends="setup.check.os, setup.check.arch, setup.exists.test" unless="setup.exists">
-    <get src="https://dev.openbravo.com/svn/packaging/setup/output/setup-properties-${osname}${osarch}.${bin.ext}" dest="config/setup-properties-${osname}${osarch}.${bin.ext}" verbose="true" />
+    <get src="https://code.openbravo.com/tools/rm/erp-setup-tool/raw-file/tip/setup/output/setup-properties-${osname}${osarch}.${bin.ext}" dest="config/setup-properties-${osname}${osarch}.${bin.ext}" verbose="true" />
 
     <chmod file="config/setup-properties-${osname}${osarch}.${bin.ext}" perm="+x" />
   </target>
@@ -1122,15 +1135,6 @@ export.database: exports database structure and data to xml files.
         <striplinebreaks/>
       </filterchain>
     </loadfile>
-  </target>
-  
-  
-  <target name="load.logoimages.forked">
-    <ant dir="${base.src}" target="load.logoimages.forked" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="load.logoimages">
-    <ant dir="${base.src}" target="load.logoimages" inheritAll="true" inheritRefs="true" />
   </target>
   
   <target name="validate.wad">

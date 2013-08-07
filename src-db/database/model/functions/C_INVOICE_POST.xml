@@ -395,8 +395,34 @@ BEGIN --BODY
       RAISE_APPLICATION_ERROR(-20000, '@AlreadyPosted@');
     END IF;
   END IF;--FINISH_PROCESS
-  --cbt taxpayment
 
+IF (NOT FINISH_PROCESS) THEN
+   --C_Invoice_Post - Valistaion Process Extension Point
+    SELECT count(*) INTO v_count
+    FROM DUAL
+    where exists (select 1 from ad_ep_procedures where ad_extension_points_id = 'C3A4ABF2DF544F4694142DA9E79495F7');
+    IF (v_count=1) THEN
+      DECLARE
+        v_ep_instance VARCHAR2(32);
+        v_extension_point_id VARCHAR2(32) := 'C3A4ABF2DF544F4694142DA9E79495F7';
+      BEGIN
+        v_ep_instance := get_uuid();
+        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Record_ID',
+          v_record_id, NULL, NULL, NULL, NULL, NULL, NULL);
+        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'DocAction',
+          v_DocAction, NULL, NULL, NULL, NULL, NULL, NULL);
+        AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'User',
+          v_User_ID, NULL, NULL, NULL, NULL, NULL, NULL);
+        AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);
+
+        DELETE FROM ad_ep_instance_para
+        WHERE ad_ep_instance_id = v_ep_instance;
+      END;
+    END IF;
+ END IF;
+    
+
+  --cbt taxpayment
   IF (NOT FINISH_PROCESS) THEN
     IF (v_docaction IN ('VO', 'RE', 'RC')
        AND v_docstatus IN('CO', 'CL')) THEN
@@ -567,7 +593,7 @@ BEGIN --BODY
             v_UpdatedBy, IsSOTrx, v_RDocumentNo, 'DR',
              'CO', 'N', 'N', v_DoctypeReversed_ID,
             v_DoctypeReversed_ID, '(*R*: ' || DocumentNo || ') ' || Description, SalesRep_ID,
-            now(), NULL, 'N', now(),
+            now(), NULL, 'N', NULL,
             now(), C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID,
             AD_User_ID, POReference, DateOrdered, IsDiscountPrinted,
             C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt * -1,

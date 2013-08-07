@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -154,10 +154,15 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
 
         // Update the HashMap of the Taxes. HashMap<TaxId, TotalAmount>
         BigDecimal price = BigDecimal.ZERO;
-        if (objCloneOrder.getPriceList().isPriceIncludesTax()) {
-          price = objCloneOrdLine.getGrossUnitPrice();
-        } else {
-          price = objCloneOrdLine.getUnitPrice();
+        try {
+          OBContext.setAdminMode(true);
+          if (objCloneOrder.getPriceList().isPriceIncludesTax()) {
+            price = objCloneOrdLine.getLineGrossAmount();
+          } else {
+            price = objCloneOrdLine.getLineNetAmount();
+          }
+        } finally {
+          OBContext.restorePreviousMode();
         }
         if (taxForDiscounts.containsKey(strCTaxID)) {
           taxForDiscounts.put(strCTaxID, taxForDiscounts.get(strCTaxID).add(price));
@@ -435,21 +440,25 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     OrderLine olDiscount = OBProvider.getInstance().get(OrderLine.class);
     olDiscount.setOrderDiscount(objCloneDiscount);
     olDiscount.setTax(OBDal.getInstance().get(TaxRate.class, e.getKey()));
-
-    if (objOrder.getPriceList().isPriceIncludesTax()) {
-      olDiscount.setGrossUnitPrice(discountedAmount.negate());
-      olDiscount.setLineGrossAmount(discountedAmount.negate());
-      olDiscount.setGrossListPrice(discountedAmount.negate());
-      BigDecimal net = getNetFromGross(discountedAmount,
-          OBDal.getInstance().get(TaxRate.class, e.getKey()), objCloneOrder.getCurrency()
-              .getPricePrecision(), BigDecimal.ONE);
-      olDiscount.setUnitPrice(net.negate());
-      olDiscount.setLineNetAmount(net.negate());
-      olDiscount.setListPrice(net.negate());
-    } else {
-      olDiscount.setUnitPrice(discountedAmount.negate());
-      olDiscount.setLineNetAmount(discountedAmount.negate());
-      olDiscount.setListPrice(discountedAmount.negate());
+    try {
+      OBContext.setAdminMode(true);
+      if (objOrder.getPriceList().isPriceIncludesTax()) {
+        olDiscount.setGrossUnitPrice(discountedAmount.negate());
+        olDiscount.setLineGrossAmount(discountedAmount.negate());
+        olDiscount.setGrossListPrice(discountedAmount.negate());
+        BigDecimal net = getNetFromGross(discountedAmount,
+            OBDal.getInstance().get(TaxRate.class, e.getKey()), objCloneOrder.getCurrency()
+                .getPricePrecision(), BigDecimal.ONE);
+        olDiscount.setUnitPrice(net.negate());
+        olDiscount.setLineNetAmount(net.negate());
+        olDiscount.setListPrice(net.negate());
+      } else {
+        olDiscount.setUnitPrice(discountedAmount.negate());
+        olDiscount.setLineNetAmount(discountedAmount.negate());
+        olDiscount.setListPrice(discountedAmount.negate());
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
 
     olDiscount.setSalesOrder(objCloneOrder);

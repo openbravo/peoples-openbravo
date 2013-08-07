@@ -120,7 +120,7 @@ public class ReportProductionCost extends HttpSecureAppServlet {
         myMessage = new OBError();
         try {
           data = ReportProductionCostData.select(this, strBaseCurrencyId, strCurrencyId, strLevel,
-              strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strmProductId);
+              strdateFrom, DateTimeData.nDaysAfter(this, strdateTo, "1"), strmProductId,vars.getClient());
         } catch (ServletException ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
         }

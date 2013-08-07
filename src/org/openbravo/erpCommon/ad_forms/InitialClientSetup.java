@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -144,8 +144,17 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     xmlDocument.setParameter("messageType", obeResult.getType());
     xmlDocument.setParameter("messageTitle",
         Utility.parseTranslation(this, vars, strLanguage, obeResult.getTitle()));
-    xmlDocument.setParameter("messageMessage",
-        Utility.parseTranslation(this, vars, strLanguage, obeResult.getMessage()));
+    // In case the client creation is successful, the context has to be reloaded to use the created
+    // client in user profile widget. Refer https://issues.openbravo.com/view.php?id=24092
+    if (obeResult.getType().equalsIgnoreCase("success")) {
+      xmlDocument.setParameter("messageTitle",
+          Utility.parseTranslation(this, vars, strLanguage, obeResult.getMessage()));
+      xmlDocument.setParameter("messageMessage",
+          Utility.parseTranslation(this, vars, strLanguage, "@ReloadClientContext@"));
+    } else {
+      xmlDocument.setParameter("messageMessage",
+          Utility.parseTranslation(this, vars, strLanguage, obeResult.getMessage()));
+    }
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -27,15 +27,16 @@
     <td class="DataGrid_Body_Cell"><span id="fieldBLReferenceNo">xx11100011</span></td>
     <td class="DataGrid_Body_Cell_Amount"><span id="fieldAmount">xx12233</span></td>
     <td class="DataGrid_Body_LineNoCell" style="background-color: xx; text-align: center;" id="inpMatchStyle_xx" name="inpMatchStyle_xx">
-      <a href="#" onClick="openSelector('xx');" id="fieldFindLink"><img src="../../../../../web/org.openbravo.advpaymentmngt/images/view.png" style="border-style: none"/></a>
+      <a href="#" onClick="openSelector('xx');" id="fieldFindLink" name="fieldFindLink"><img src="../../../../../web/org.openbravo.advpaymentmngt/images/view.png" style="border-style: none"/></a>
       <!--span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span-->
       <input id="inpCheckBox_xx" type="checkbox" name="inpBankStatementLineId" value="" onclick="unMatchLine('xx', this.checked); "/>
       <input type="hidden" name="inpFinancialTransactionId_xx" id="inpFinancialTransactionId_xx" value=""></input>
       <input type="hidden" name="inpMatchingType_xx" id="inpMatchingType_xx" value=""></input>
       <!--span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span-->
-      <a href="#" onclick="openAddTransaction('xx');" id="fieldAddLink"><img src="../../../../../web/org.openbravo.advpaymentmngt/images/add.png" style="border-style: none"/></a>
+      <a href="#" onclick="openAddTransaction('xx');" id="fieldAddLink" name="fieldAddLink"><img src="../../../../../web/org.openbravo.advpaymentmngt/images/add.png" style="border-style: none"/></a>
     </td>
-    <td class="DataGrid_Body_Cell" id="inpMatchedDocument_xx">xxTransaction</td>
+    <td class="DataGrid_Body_Cell" id="inpMatchedDocument_xx" title="">xxTransaction</td>
+    <td class="DataGrid_Body_Cell" id="inpMatchType_xx" title="">xxMatchType</td>
     <td class="DataGrid_Body_Cell" id="inpTransactionDate_xx" title="">xx01-01-2010</td>
     <td class="DataGrid_Body_Cell" id="inpBPartner_xx" title="">xxBP Name</td>
     <td class="DataGrid_Body_Cell" id="inpReferenceNo_xx" title="">xx111999111</td>

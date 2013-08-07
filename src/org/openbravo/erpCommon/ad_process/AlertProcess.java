@@ -358,6 +358,9 @@ public class AlertProcess implements Process {
                       currentAlertRecipient.getRole()));
                   userRolesCriteria.add(Restrictions.eq(AlertRecipient.PROPERTY_CLIENT,
                       currentAlertRecipient.getClient()));
+                  userRolesCriteria.setFilterOnReadableClients(false);
+                  userRolesCriteria.setFilterOnReadableOrganization(false);
+
                   final List<UserRoles> userRolesList = userRolesCriteria.list();
                   for (UserRoles currenUserRole : userRolesList) {
                     usersList.add(currenUserRole.getUserContact());

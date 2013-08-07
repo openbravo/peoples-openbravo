@@ -166,6 +166,7 @@
     initWidget: function() {
         this.prepareFields();
         this.dataSource = ${tabComponent.dataSourceJavaScript};
+        this.notesDataSource = ${tabComponent.notesDataSourceJavaScript};
         this.dataSource.potentiallyShared = true;
         this.viewForm = isc.OBViewForm.create(isc.clone(OB.ViewFormProperties), ${tabComponent.viewForm}); 
         this.viewGrid = ${tabComponent.viewGrid};
