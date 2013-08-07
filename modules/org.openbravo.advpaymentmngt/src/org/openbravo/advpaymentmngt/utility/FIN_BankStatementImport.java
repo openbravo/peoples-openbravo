@@ -409,7 +409,20 @@ public abstract class FIN_BankStatementImport {
       } else if (businessPartners.size() == 1) {
         return businessPartners.get(0);
       } else {
-        return closest(businessPartners, partnername);
+        BusinessPartner closest = closest(businessPartners, partnername);
+
+        /*
+         * The query above did load a potentially huge number of bp objects into the hibernate
+         * session. This leads to a very high runtime of sub-sequent flush() calls which needs to
+         * iterate over all those objects. As we know that those objects have not been modified in
+         * this function remove them directly from the session to avoid this problem.
+         */
+        for (BusinessPartner bp : businessPartners) {
+          if (bp != closest) {
+            OBDal.getInstance().getSession().evict(bp);
+          }
+        }
+        return closest;
       }
 
     } finally {
