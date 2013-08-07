@@ -73,7 +73,6 @@ public class OBViewFieldHandler {
 
   private List<String> windowEntities = null;
   private List<OBViewFieldDefinition> fields;
-  private List<String> propertiesInButtonFieldDisplayLogic = new ArrayList<String>();
 
   private List<Field> ignoredFields = new ArrayList<Field>();
 
@@ -95,8 +94,7 @@ public class OBViewFieldHandler {
   }
 
   public List<OBViewFieldDefinition> getFields() {
-    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        getTab().getTable().getId());
+
     if (fields != null) {
       return fields;
     }
@@ -130,13 +128,6 @@ public class OBViewFieldHandler {
       for (Field fieldExpression : parser.getFields()) {
         if (!fieldsInDynamicExpression.contains(fieldExpression)) {
           fieldsInDynamicExpression.add(fieldExpression);
-        }
-        if ("Button".equals(f.getColumn().getReference().getName())) {
-          Property property = entity.getPropertyByColumnName(fieldExpression.getColumn()
-              .getDBColumnName());
-          if (!propertiesInButtonFieldDisplayLogic.contains(property.getName())) {
-            propertiesInButtonFieldDisplayLogic.add(property.getName());
-          }
         }
       }
     }
@@ -2052,9 +2043,4 @@ public class OBViewFieldHandler {
     getFields(); // initializes stuff
     return ignoredFields;
   }
-
-  public List<String> getPropertiesInButtonFieldDisplayLogic() {
-    return propertiesInButtonFieldDisplayLogic;
-  }
-
 }
