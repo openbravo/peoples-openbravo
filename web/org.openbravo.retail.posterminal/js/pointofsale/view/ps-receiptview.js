@@ -38,6 +38,9 @@ enyo.kind({
                 kind: 'OB.UI.BusinessPartner',
                 name: 'bpbutton'
               }, {
+                kind: 'OB.UI.BPLocation',
+                name: 'bplocbutton'
+              }, {
                 style: 'clear:both;'
               }]
             }]
@@ -58,6 +61,7 @@ enyo.kind({
   }],
   orderChanged: function (oldValue) {
     this.$.bpbutton.setOrder(this.order);
+    this.$.bplocbutton.setOrder(this.order);
     this.$.orderdetails.setOrder(this.order);
     this.$.orderview.setOrder(this.order);
   },

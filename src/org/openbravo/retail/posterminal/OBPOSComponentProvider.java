@@ -79,6 +79,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/terminal",
         // "model/user",
         "model/bpcategory",
+        "model/bplocation", // Model for Customer Address
         "model/currencypanel",
         "model/salesrepresentative",
         "model/changedbusinesspartners",
@@ -112,6 +113,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/order",
         "components/orderdetails",
         "components/businesspartner",
+        "components/bplocationbutton", // Button for selecting customer address
         "components/salesrepresentative",
         "components/listreceiptscounter",
         "components/menu",
@@ -191,7 +193,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/mockpayments",
 
         // Discounts
-        "model/discounts"
+        "model/discounts",
+        "components/bplocationselector" // Modal for selecting customer address
 
     };
 
