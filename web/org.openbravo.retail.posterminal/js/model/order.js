@@ -1287,7 +1287,6 @@
         order.set('isLayaway', true);
         order.set('id', model.orderid);
         order.set('createdBy', OB.POS.terminal.terminal.usermodel.id);
-        order.set('documentType', model.documenttypeid);
         order.set('hasbeenpaid', 'N');
         order.set('session', OB.POS.modelterminal.get('session'));
       } else {
@@ -1296,7 +1295,6 @@
           order.set('paidOnCredit', true);
         }
         order.set('id', model.orderid);
-        order.set('documentType', model.documenttypeid);
         if (order.get('documentType') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
           //return
           order.set('orderType', 1);
@@ -1312,7 +1310,6 @@
       order.set('gross', model.totalamount);
       order.set('net', model.net);
       order.trigger('calculategross');
-      order.set('salesRepresentative$_identifier', model.salesrepresentative_identifier);
 
       _.each(model.receiptLines, function (iter) {
         var price;
