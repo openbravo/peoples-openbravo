@@ -1486,7 +1486,8 @@
   var MultiOrders = Backbone.Model.extend({
     modelName: 'MultiOrders',
     initialize: function () {
-      this.off();
+      //ISSUE 24487: Callbacks of this collection still exists if you come back from other page.
+      //Force to remove callbacks
       this.get('multiOrdersList').off();
     },
     defaults: {
