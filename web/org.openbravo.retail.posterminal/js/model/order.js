@@ -579,7 +579,7 @@
       if (!OB.DEC.isNumber(qty)) {
         qty = OB.DEC.One;
       }
-      this.setUnit(line, OB.DEC.add(line.get('qty'), qty), OB.I18N.getLabel('OBPOS_AddUnits', [qty, line.get('product').get('_identifier')]));
+      this.setUnit(line, OB.DEC.add(line.get('qty'), qty), OB.I18N.getLabel('OBPOS_AddUnits', [OB.DEC.toNumber(new BigDecimal((String)(qty.toString()))), line.get('product').get('_identifier')]));
     },
 
     setUnit: function (line, qty, text) {
