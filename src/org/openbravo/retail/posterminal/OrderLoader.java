@@ -285,6 +285,9 @@ public class OrderLoader extends JSONProcessSimple {
 
         // Shipment lines
         createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
+        if (shipment != null) {
+          OBDal.getInstance().save(shipment);
+        }
       }
       long t115 = System.currentTimeMillis();
       if (createInvoice) {
@@ -301,9 +304,6 @@ public class OrderLoader extends JSONProcessSimple {
       createApprovals(order, jsonorder);
 
       t11 = System.currentTimeMillis();
-      if (shipment != null) {
-        OBDal.getInstance().save(shipment);
-      }
 
       t2 = System.currentTimeMillis();
       updateAuditInfo(order, invoice, jsonorder);

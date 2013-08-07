@@ -70,7 +70,6 @@ public class Terminal extends ProcessHQLQuery {
             + pricesList.getCurrency().getIdentifier()
             + "' as "
             + getIdentifierAlias("currency")
-            + ", pos.organization.obretcoTaxexemptid.id as taxexempid "
             + ", pos.organization.obretcoDbpIrulesid as defaultbp_invoiceterm "
             + ", pos.organization.obretcoDbpPtermid.id as defaultbp_paymentterm "
             + ", pos.organization.obretcoDbpPmethodid.id as defaultbp_paymentmethod "

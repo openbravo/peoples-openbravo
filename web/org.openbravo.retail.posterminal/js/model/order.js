@@ -347,12 +347,16 @@
             net: OB.DEC.toNumber(line.get('discountedNet')),
             pricenet: OB.DEC.toNumber(line.get('discountedNetPrice')),
             listPrice: line.get('priceList'),
-            price: 0,
             grossListPrice: 0,
             lineGrossAmount: 0
           }, {
             silent: true
           });
+          if (!this.get('isQuotation')) {
+            line.set('price', 0, {
+              silent: true
+            });
+          }
         }
       }, this);
 
@@ -904,7 +908,7 @@
       var order = this;
       this.get('lines').each(function (line) {
         var successCallbackPrices, criteria = {
-          'product': line.get('product').get('id')
+          'id': line.get('product').get('id')
         };
         successCallbackPrices = function (dataPrices, line) {
           dataPrices.each(function (price) {
@@ -1288,7 +1292,7 @@
         order.set('session', OB.POS.modelterminal.get('session'));
       } else {
         order.set('isPaid', true);
-        if (model.receiptPayments.length === 0) {
+        if (model.receiptPayments.length === 0 && model.totalamount > 0) {
           order.set('paidOnCredit', true);
         }
         order.set('id', model.orderid);
@@ -1484,6 +1488,10 @@
   });
   var MultiOrders = Backbone.Model.extend({
     modelName: 'MultiOrders',
+    initialize: function () {
+      this.off();
+      this.get('multiOrdersList').off();
+    },
     defaults: {
       //isMultiOrders: false,
       multiOrdersList: new Backbone.Collection(),

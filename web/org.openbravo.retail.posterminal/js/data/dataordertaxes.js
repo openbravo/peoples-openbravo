@@ -107,7 +107,7 @@
                 linepricenet = new BigDecimal('0');
                 linegross = 0;
               } else {
-                linenet = new BigDecimal(String(orggross)).multiply(new BigDecimal(String(orggross))).divide(new BigDecimal(String(taxamt)));
+                linenet = new BigDecimal(String(orggross)).multiply(new BigDecimal(String(orggross))).divide(new BigDecimal(String(taxamt)), 20, BigDecimal.prototype.ROUND_HALF_UP);
                 linepricenet = linenet.divide(new BigDecimal(String(element.get('qty'))));
                 linegross = element.get('lineGrossAmount') || element.get('gross');
               }
@@ -269,9 +269,9 @@
             element.set('pricenet', element.get('net'));
             element.set('gross', element.get('net'));
             element.set('discountedGross', element.get('net'));
-            element.set('discountedNet', element.get('net'));
+            element.set('discountedNet', new BigDecimal(String(element.get('net'))));
             element.set('taxAmount', OB.DEC.Zero);
-            element.set('discountedNetPrice', element.get('net'));
+            element.set('discountedNetPrice', new BigDecimal(String(element.get('net'))));
             taxLine[OB.MobileApp.model.get('terminal').taxexempid] = {
               amount: 0,
               rate: 0,
@@ -330,7 +330,7 @@
                     } else {
                       linerate = linerate.add(rate);
                       linegross = linegross.add(new BigDecimal(String(linenet)).multiply(new BigDecimal(String(rate))));
-                      discountedGross = discountedGross .add(new BigDecimal(String(discountedNet)).multiply(rate));
+                      discountedGross = discountedGross.add(new BigDecimal(String(discountedNet)).multiply(rate));
                     }
                   } else {
                     linetaxid = taxRate.get('id');

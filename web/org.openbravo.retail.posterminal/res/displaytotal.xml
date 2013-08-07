@@ -9,7 +9,7 @@
 -->
 <output>
   <display>
-    <% if(order.getPaymentStatus().pending === order.getPaymentStatus().total){ 
+    <% if(order.getPending() === order.getTotal()){ 
     %>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total'))%></text>
@@ -17,29 +17,29 @@
       </line>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_RemainingToPay'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(order.getPaymentStatus().pending))%></text>
+        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(order.getPending()))%></text>
       </line>
     <% }else{ 
     %>
-      <% if(!order.getPaymentStatus().change){   
+      <% if(!order.getChange()){   
       %>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_Paid'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(OB.DEC.sub(order.getPaymentStatus().total, order.getPaymentStatus().pending))) %></text>
+        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(OB.DEC.sub(order.getTotal(), order.getPending()))) %></text>
       </line>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_RemainingToPay'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(order.getPaymentStatus().pending))%></text>
+        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(order.getPending()))%></text>
       </line>
     <% }else{ 
     %>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_Paid'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(OB.DEC.add(order.getPaymentStatus().total, order.getPaymentStatus().change))) %></text>
+        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(OB.DEC.add(order.getTotal(), order.getChange()))) %></text>
       </line>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(order.getPaymentStatus().change))%></text>
+        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(order.getChange()))%></text>
       </line>
     <% } 
     %>
