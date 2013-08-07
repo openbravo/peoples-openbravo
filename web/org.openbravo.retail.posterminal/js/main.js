@@ -14,9 +14,12 @@
       executeWhenDOMReady;
 
   // alert all errors
-  window.onerror = function (e) {
+  window.onerror = function (e, url, line) {
+    var errorInfo;
     if (typeof (e) === 'string') {
-      OB.UTIL.showError(e);
+      errorInfo = e + '. Line number: ' + line + '. File uuid: ' + url + '.';
+      OB.UTIL.showError(errorInfo);
+      console.error(errorInfo);
     }
   };
 
