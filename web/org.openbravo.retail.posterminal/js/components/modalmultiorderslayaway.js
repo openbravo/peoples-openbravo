@@ -57,7 +57,7 @@ enyo.kind({
       }
     }
     if (_.isNaN(amount)) {
-      this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).setOrderType(null,0);
+      this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).setOrderType(null, 0);
       this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', null);
       this.doHideThisPopup();
       return;

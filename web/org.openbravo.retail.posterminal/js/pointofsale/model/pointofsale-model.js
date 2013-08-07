@@ -480,7 +480,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   },
 
   /**
-   * Hooks for OBPOS_CheckPaymentApproval can modify args.approved to check if 
+   * Hooks for OBPOS_CheckPaymentApproval can modify args.approved to check if
    * payment is approved. In case value is true the process will continue, if not
    * it is aborted
    */
@@ -499,7 +499,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   /**
    * Generic approval checker. It validates user/password can approve the approvalType.
    * It can work online in case that user has done at least once the same approvalType
-   * in this same browser. Data regarding privileged users is stored in supervisor table 
+   * in this same browser. Data regarding privileged users is stored in supervisor table
    */
   checkApproval: function (approvalType, username, password) {
     OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
@@ -592,7 +592,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
   /**
    * Approval final stage. Where approvalChecked event is triggered, with approved
-   * property set to true or false regarding if approval was finally granted. In 
+   * property set to true or false regarding if approval was finally granted. In
    * case of granted approval, the approval is added to the order so it can be saved
    * in backend for audit purposes.
    */

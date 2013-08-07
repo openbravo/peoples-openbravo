@@ -400,7 +400,7 @@ enyo.kind({
   },
   updateVisibility: function () {
     var me = this;
-    if (this.model.get('leftColumnViewManager').isMultiOrder()){
+    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       me.setDisabled(true);
       return;
     }
@@ -478,7 +478,7 @@ enyo.kind({
       this.updateVisibility(receipt);
       this.adjustVisibilityBasedOnPermissions();
     }, this);
-    
+
     model.get('leftColumnViewManager').on('multiorder', function () {
       me.hide();
     }, this);

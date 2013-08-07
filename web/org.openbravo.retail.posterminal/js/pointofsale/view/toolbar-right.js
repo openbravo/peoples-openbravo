@@ -217,7 +217,7 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-//    var me = this;
+    //    var me = this;
     //    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
     //      if (!model.get('isMultiOrders')) {
     //        this.doTabChange({

@@ -122,7 +122,7 @@
 
               //We follow the same formula of function c_get_net_price_from_gross to compute the discounted net
               if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
-                if (taxamtdc && OB.DEC.toNumber(taxamtdc)!==0) {
+                if (taxamtdc && OB.DEC.toNumber(taxamtdc) !== 0) {
                   discountedNet = OB.DEC.div(new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))), taxamtdc);
                   pricenet = new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))).divide(taxamtdc).divide(new BigDecimal(String(element.get('qty'))));
                 } else {
@@ -212,13 +212,13 @@
                 delete taxes[taxId];
                 me.get('lines').each(function (line, taxIndex) {
                   var taxLines = line.get('taxLines');
-                  if(!taxLines || !taxLines[taxId]){
+                  if (!taxLines || !taxLines[taxId]) {
                     return;
                   }
                   if (!taxRate.get('summaryLevel')) {
                     if (taxes[taxId]) {
                       taxes[taxId].net = taxes[taxId].net.add(taxLines[taxId].fullnet);
-                      taxes[taxId].amount =taxes[taxId].amount.add(taxLines[taxId].fullamount);
+                      taxes[taxId].amount = taxes[taxId].amount.add(taxLines[taxId].fullamount);
                     } else {
                       taxes[taxId] = {};
                       taxes[taxId].name = taxRate.get('name');
@@ -232,12 +232,12 @@
 
               _.each(coll, function (taxRate, taxIndex) {
                 var taxId = taxRate.get('id');
-                if(taxes[taxId]){
+                if (taxes[taxId]) {
                   taxes[taxId].net = OB.DEC.toNumber(taxes[taxId].net);
                   taxes[taxId].amount = OB.DEC.toNumber(taxes[taxId].amount);
                 }
               });
-              
+
               // triggering next steps
               if (triggerNext) {
                 me.set('taxes', taxes);
@@ -402,7 +402,7 @@
 
                 _.each(coll, function (taxRate, taxIndex) {
                   var taxId = taxRate.get('id');
-                  if(taxes[taxId]){
+                  if (taxes[taxId]) {
                     taxes[taxId].net = OB.DEC.toNumber(taxes[taxId].net);
                     taxes[taxId].amount = OB.DEC.toNumber(taxes[taxId].amount);
                   }

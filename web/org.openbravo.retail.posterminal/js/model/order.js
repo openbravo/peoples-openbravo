@@ -1275,7 +1275,6 @@
       order.set('hasbeenpaid', 'Y');
       order.set('isEditable', false);
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
-
       order.set('paidOnCredit', false);
       if (model.isQuotation) {
         order.set('isQuotation', true);
