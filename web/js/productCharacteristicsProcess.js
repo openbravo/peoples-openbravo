@@ -87,10 +87,11 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
           title: this.characteristicList[i].name,
           valueMap: this.characteristicList[i].valueMap,
           defaultValue: this.characteristicList[i].selectedValue,
+          existingProdChValue: this.characteristicList[i].existingProdChValue,
           height: 20,
           width: 255,
-          required: true,
-          type: '_id_17',
+          required: false,
+          type: '_id_17'
         }]
       });
     }
@@ -100,7 +101,7 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
       popup: this,
       action: function () {
         var callback, action, updatedValues = {},
-            i, characteristicCombo;
+            i, characteristicCombo, existingProdChValues = {};
 
         callback = function (rpcResponse, data, rpcRequest) {
           rpcRequest.clientContext.popup.closeClick();
@@ -112,12 +113,14 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
         // Saves in updatedValues the product invariant values selected by the user 
         for (i = 0; i < this.popup.items[0].members[0].members.length; i++) {
           characteristicCombo = this.popup.items[0].members[0].members[i];
-          updatedValues[characteristicCombo.fields[0].id] = characteristicCombo.values[characteristicCombo.fields[0].name]
+          updatedValues[characteristicCombo.fields[0].id] = characteristicCombo.values[characteristicCombo.fields[0].name];
+          existingProdChValues[characteristicCombo.fields[0].id] = characteristicCombo.fields[0].existingProdChValue;
         }
         // Send the updated values to the handler so that the product invariant selected values are updated
         OB.RemoteCallManager.call(this.popup.actionHandler, {
           productId: this.popup.productId,
           updatedValues: updatedValues,
+          existingProdChValues: existingProdChValues,
           action: 'UPDATE'
         }, {}, callback, {
           originalView: this.popup.view,

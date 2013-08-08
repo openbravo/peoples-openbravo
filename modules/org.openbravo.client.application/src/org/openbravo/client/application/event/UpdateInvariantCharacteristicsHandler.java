@@ -26,10 +26,12 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
@@ -90,9 +92,15 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
               characteristic.getProduct()));
           ProductCharacteristicValue selectedValue = (ProductCharacteristicValue) criteriaSelectedValue
               .uniqueResult();
-          productChar.put("id", selectedValue.getId());
+          productChar.put("id", characteristic.getCharacteristic().getId());
+          if (selectedValue == null) {
+            productChar.put("selectedValue", "");
+            productChar.put("existingProdChValue", "");
+          } else {
+            productChar.put("selectedValue", selectedValue.getCharacteristicValue().getId());
+            productChar.put("existingProdChValue", selectedValue.getId());
+          }
           productChar.put("name", characteristic.getCharacteristic().getName());
-          productChar.put("selectedValue", selectedValue.getCharacteristicValue().getId());
 
           // Retrieves all the possible values for the characteristic
           List<CharacteristicValue> values = characteristic.getCharacteristic()
@@ -108,16 +116,34 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
         response.put("productId", productId);
         return response;
       } else {
+        String productId = (String) request.getString("productId");
+        Product product = OBDal.getInstance().get(Product.class, productId);
         final JSONObject updatedValues = request.getJSONObject("updatedValues");
+        final JSONObject existingProdChValues = request.getJSONObject("existingProdChValues");
+
         Iterator<String> keysIterator = updatedValues.keys();
         while (keysIterator.hasNext()) {
           String characteristicId = keysIterator.next();
           String updatedValueId = updatedValues.getString(characteristicId);
+          String strProdChValueId = existingProdChValues.getString(characteristicId);
+          Characteristic ch = OBDal.getInstance().get(Characteristic.class, characteristicId);
           CharacteristicValue charValue = OBDal.getInstance().get(CharacteristicValue.class,
               updatedValueId);
           ProductCharacteristicValue prodCharValue = OBDal.getInstance().get(
-              ProductCharacteristicValue.class, characteristicId);
-          prodCharValue.setCharacteristicValue(charValue);
+              ProductCharacteristicValue.class, strProdChValueId);
+          if (prodCharValue == null && charValue != null) {
+            prodCharValue = OBProvider.getInstance().get(ProductCharacteristicValue.class);
+            prodCharValue.setCharacteristic(ch);
+            prodCharValue.setProduct(product);
+            prodCharValue.setOrganization(product.getOrganization());
+            prodCharValue.setCharacteristicValue(charValue);
+            OBDal.getInstance().save(prodCharValue);
+          } else if (prodCharValue != null && charValue != null) {
+            prodCharValue.setCharacteristicValue(charValue);
+            OBDal.getInstance().save(prodCharValue);
+          } else if (prodCharValue != null && charValue == null) {
+            OBDal.getInstance().remove(prodCharValue);
+          }
 
         }
         OBDal.getInstance().flush();
