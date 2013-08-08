@@ -86,6 +86,7 @@ public class ManageVariants extends BaseProcessActionHandler {
       log.error("Error in Manage Variants Action Handler", e);
 
       try {
+        OBDal.getInstance().rollbackAndClose();
         jsonRequest = new JSONObject();
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
