@@ -493,6 +493,12 @@ public class AdvancedQueryBuilder {
     // or uses the display column to display that in the grid
     Property useProperty = property;
     String useFieldName = fieldName.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT);
+
+    if (useProperty.isComputedColumn()) {
+      // Computed columns are not directly accessed but through _computedColumns proxy
+      useFieldName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + useFieldName;
+    }
+
     if (properties.size() >= 2) {
       final Property refProperty = properties.get(properties.size() - 2);
       if (refProperty.getDomainType() instanceof TableDomainType) {
@@ -1214,6 +1220,13 @@ public class AdvancedQueryBuilder {
         }
       }
     } else {
+      Entity searchEntity = getEntity();
+      Property property = searchEntity.getProperty(localOrderBy, false);
+      if (property != null && property.isComputedColumn()) {
+        // Computed columns are accessed through proxy
+        localOrderBy = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + localOrderBy;
+      }
+
       paths.add(localOrderBy);
     }
 

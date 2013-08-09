@@ -32,6 +32,7 @@ import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.jdbc.BorrowedConnectionProxy;
+import org.hibernate.stat.SessionStatistics;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -184,11 +185,33 @@ public class OBDal implements OBSingleton {
   }
 
   /**
+   * Utility method to log all entities loaded into the current hibernate session. Useful to debug
+   * slow flush() calls.
+   */
+  private void dumpSessionEntities() {
+    SessionStatistics sessStat = SessionHandler.getInstance().getSession().getStatistics();
+    log.debug("Dumping all entities in session");
+    for (Object o : sessStat.getEntityKeys()) {
+      log.debug(o);
+    }
+  }
+
+  /**
    * Flushes the current state to the database.
    */
   public void flush() {
     if (SessionHandler.isSessionHandlerPresent()) {
+      long s1 = System.currentTimeMillis();
       SessionHandler.getInstance().getSession().flush();
+      if (log.isDebugEnabled()) {
+        long s2 = System.currentTimeMillis();
+        SessionStatistics sessStat = SessionHandler.getInstance().getSession().getStatistics();
+        dumpSessionEntities();
+        log.debug(
+            "Flush of " + sessStat.getEntityCount() + " entities and "
+                + sessStat.getCollectionCount() + " collections took: " + (s2 - s1),
+            new Throwable());
+      }
     }
   }
 

@@ -229,6 +229,7 @@ public class ModelProvider implements OBSingleton {
       entitiesWithTreeType = new ArrayList<Entity>();
       for (final Table t : tables) {
         log.debug("Building model for table " + t.getName());
+
         final Entity e = new Entity();
         e.initialize(t);
         model.add(e);
@@ -240,6 +241,19 @@ public class ModelProvider implements OBSingleton {
         entitiesByTableId.put(t.getId(), e);
         if (e.getTreeType() != null) {
           entitiesWithTreeType.add(e);
+        }
+
+        if (e.hasComputedColumns()) {
+          // When the entity has computed columns, an extra virtual entity is generated in order to
+          // access these computed columns through a proxy that allows to compute them lazily.
+          log.debug("Generating computed columns proxy entity for entity " + e.getName());
+          final Entity computedColsEntity = new Entity();
+          computedColsEntity.initializeComputedColumns(t, e);
+
+          model.add(computedColsEntity);
+          entitiesByClassName.put(computedColsEntity.getClassName(), computedColsEntity);
+          entitiesByName.put(computedColsEntity.getName(), computedColsEntity);
+          entitiesByTableId.put(computedColsEntity.getTableId(), computedColsEntity);
         }
       }
 
@@ -270,14 +284,16 @@ public class ModelProvider implements OBSingleton {
         for (final Property p : e.getProperties()) {
           if (!p.isOneToMany()) {
             p.initializeName();
-            // don't do mandatory value setting for views or datasource based tables
-            if (!e.isView() && p.getColumnName() != null && !e.isDataSourceBased()) {
+            // don't do mandatory value setting for views, computed columns or datasource based
+            // tables
+            if (!e.isView() && p.getColumnName() != null && !e.isDataSourceBased()
+                && !e.isVirtualEntity()) {
               final Boolean mandatory = colMandatories.get(createColumnMandatoryKey(
                   e.getTableName(), p.getColumnName()));
               if (mandatory != null) {
                 p.setMandatory(mandatory);
-              } else if (p.getSqlLogic() == null) {
-                // only log in case the sql logic is not set
+              } else if (!p.isComputedColumn() && !p.isProxy() && !e.isVirtualEntity()) {
+                // only log in case the sql logic is not set and it is not a proxy
                 log.warn("Column " + p + " mandatory setting not found in the database metadata. "
                     + "A cause can be that the column does not exist in the database schema");
               }
@@ -494,8 +510,38 @@ public class ModelProvider implements OBSingleton {
       setReferencedPropertiesForTable(translatableColumns, t);
     }
 
-    return translatableColumns;
+    // setting referenced properties from computed columns
+    for (final Entity entity : model) {
+      if (!entity.isVirtualEntity()) {
+        continue;
+      }
 
+      Entity baseEntity = entitiesByTableId.get(entity.getTableId().substring(0,
+          entity.getTableId().indexOf("_CC")));
+      if (baseEntity == null) {
+        log.warn("Not found base entity for computed column entity " + entity);
+        continue;
+      }
+
+      Table baseTable = tablesByTableName.get(baseEntity.getTableName().toLowerCase());
+      if (baseTable == null) {
+        log.warn("Not found base table for computed column entity " + entity);
+        continue;
+      }
+
+      for (Property p : entity.getProperties()) {
+        for (Column c : baseTable.getColumns()) {
+          if (c.getColumnName().equals(p.getColumnName())) {
+            if (!c.isPrimitiveType() && c.getReferenceType() != null) {
+              p.setReferencedProperty(c.getReferenceType().getProperty());
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    return translatableColumns;
   }
 
   private void setReferencedPropertiesForTable(List<Column> translatableColumns, final Table t) {

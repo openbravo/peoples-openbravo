@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -162,6 +162,7 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
       checkDanglingObjects();
       return result;
     } catch (XMLStreamException e) {
+      log.error("Error del horror", e);
       throw new EntityXMLException(e);
     }
   }
@@ -222,9 +223,10 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
 
         // TODO: make this option controlled
         final boolean isNotImportableProperty = p.isTransient(bob)
-            || (p.isAuditInfo() && !isOptionImportAuditInfo()) || p.isInactive();
+            || (p.isAuditInfo() && !isOptionImportAuditInfo()) || p.isInactive()
+            || p.isComputedColumn();
         if (isNotImportableProperty) {
-          log.debug("Property " + p + " is inactive, transient or auditinfo, ignoring it");
+          log.debug("Property " + p + " is inactive, transient, computed or auditinfo, ignoring it");
           skipElement(xmlReader);
           continue;
         }
@@ -332,6 +334,7 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
       return bob;
     } catch (final Exception e) {
       error("Exception when parsing entity " + entityName + " (" + id + "):" + e.getMessage());
+      log.error("Error processing entity " + entityName, e);
       return null;
     }
   }

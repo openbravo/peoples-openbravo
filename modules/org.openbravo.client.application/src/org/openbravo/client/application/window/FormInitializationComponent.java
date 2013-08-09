@@ -821,21 +821,13 @@ public class FormInitializationComponent extends BaseActionHandler {
     // database
     if (mode.equals("EDIT") && !dataSourceBasedTable) {
       // In EDIT mode we initialize them from the database
-      List<Column> columns = getADColumnList(tab.getTable().getId());
-      for (Column column : columns) {
-        setValueOfColumnInRequest(row, null, column.getDBColumnName());
+      for (Field field : fields) {
+        if (field.getColumn() == null) {
+          continue;
+        }
+        setValueOfColumnInRequest(row, field, field.getColumn().getDBColumnName());
       }
     }
-
-    List<String> gridVisibleProperties = new ArrayList<String>();
-    if (jsContent.has("_visibleProperties")) {
-      try {
-        gridVisibleProperties = convertJSONArray(jsContent.getJSONArray("_gridVisibleProperties"));
-      } catch (JSONException e) {
-        log.error("Error while retrieving _gridVisibleProperties from jsContent" + jsContent, e);
-      }
-    }
-
     // and then overwrite with what gets passed in
     if (mode.equals("EDIT") || mode.equals("CHANGE") || mode.equals("SETSESSION")) {
       // In CHANGE and SETSESSION we get them from the request
@@ -843,14 +835,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (field.getColumn() == null) {
           continue;
         }
-        // Do not overwrite the value of fields that are not visible in the grid, because they are
-        // empty in the request
-
         final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-        if ((mode.equals("EDIT") || mode.equals("SETSESSION"))
-            && !gridVisibleProperties.contains(prop.getName())) {
-          continue;
-        }
         String inpColName = "inp"
             + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
         try {

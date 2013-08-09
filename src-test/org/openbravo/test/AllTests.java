@@ -23,6 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
+import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalConnectionProviderTest;
 import org.openbravo.test.dal.DalCopyTest;
 import org.openbravo.test.dal.DalFilterTest;
@@ -80,6 +81,7 @@ public class AllTests {
     suite.addTestSuite(DalStoredProcedureTest.class);
     suite.addTestSuite(ReadByNameTest.class);
     suite.addTestSuite(DalPerformanceProxyTest.class);
+    suite.addTestSuite(ComputedColumnsTest.class);
 
     // model
     suite.addTestSuite(RuntimeModelTest.class);

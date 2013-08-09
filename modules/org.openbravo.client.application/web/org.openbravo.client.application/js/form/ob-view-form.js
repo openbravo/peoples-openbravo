@@ -567,9 +567,7 @@ OB.ViewFormProperties = {
     var parentId = this.view.getParentId(),
         i, fldNames = [],
         requestParams, allProperties, parentColumn, me = this,
-        mode, length = this.getFields().length,
-        gridVisibleProperties = [],
-        len;
+        mode, length = this.getFields().length;
 
     this.setParentDisplayInfo();
 
@@ -594,18 +592,6 @@ OB.ViewFormProperties = {
       parentColumn = this.view.getPropertyDefinition(this.view.parentProperty).inpColumn;
       requestParams[parentColumn] = parentId;
     }
-
-    if (this.view && this.view.viewGrid && this.view.viewGrid.fields) {
-      gridVisibleProperties.push('id');
-      len = this.view.viewGrid.fields.length;
-      for (i = 0; i < len; i++) {
-        if (this.view.viewGrid.fields[i].name[0] !== '_') {
-          gridVisibleProperties.push(this.view.viewGrid.fields[i].name);
-        }
-      }
-      allProperties._gridVisibleProperties = gridVisibleProperties;
-    }
-
 
     allProperties._entityName = this.view.entity;
 

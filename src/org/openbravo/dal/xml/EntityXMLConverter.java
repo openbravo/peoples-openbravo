@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,6 +89,9 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   // controls if many-toreferences objects are also exported
   private boolean optionIncludeReferenced = false;
+
+  // controls if computed columns should be included in the exported data
+  private boolean includedComputedColumns = false;
 
   // controls if the children (mostly one-to-many) are also included
   // If the dataset is complete
@@ -349,7 +352,8 @@ public class EntityXMLConverter implements OBNotSingleton {
       exportableProperties = DataSetService.getInstance().getExportableProperties(obObject, dst,
           dst.getDataSetColumnList(), optionExportTransientInfo);
     } else {
-      exportableProperties = new ArrayList<Property>(obObject.getEntity().getProperties());
+      exportableProperties = new ArrayList<Property>(obObject.getEntity().getRealProperties(
+          includedComputedColumns));
       if (excludeAuditInfo != null && excludeAuditInfo) {
         DataSetService.getInstance().removeAuditInfo(exportableProperties);
       }
@@ -609,6 +613,10 @@ public class EntityXMLConverter implements OBNotSingleton {
    */
   public void setOptionIncludeReferenced(boolean optionIncludeReferenced) {
     this.optionIncludeReferenced = optionIncludeReferenced;
+  }
+
+  public void setIncludedComputedColumns(boolean includedComputedColumns) {
+    this.includedComputedColumns = includedComputedColumns;
   }
 
   /**

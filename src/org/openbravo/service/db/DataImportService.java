@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -355,7 +355,7 @@ public class DataImportService implements OBSingleton {
     int i = 0;
     final StringBuilder msgs = new StringBuilder();
     for (Property p : bob.getEntity().getProperties()) {
-      if (p.isOneToMany() || p.isAuditInfo() || p.isClientOrOrganization()) {
+      if (p.isOneToMany() || p.isAuditInfo() || p.isClientOrOrganization() || p.isComputedColumn()) {
         continue;
       }
       final Object value = bob.get(p.getName());

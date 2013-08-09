@@ -122,6 +122,7 @@ public class Property {
 
   private Integer seqno;
   private boolean usedSequence;
+  private boolean isProxy;
 
   /**
    * Initializes this Property using the information from the Column.
@@ -130,7 +131,13 @@ public class Property {
    *          the column used to initialize this Property.
    */
   public void initializeFromColumn(Column fromColumn) {
-    fromColumn.setProperty(this);
+    initializeFromColumn(fromColumn, true);
+  }
+
+  void initializeFromColumn(Column fromColumn, boolean setPropertyInColumn) {
+    if (setPropertyInColumn) {
+      fromColumn.setProperty(this);
+    }
     setId(fromColumn.isKey());
     setIdentifier(fromColumn.isIdentifier());
     setParent(fromColumn.isParent());
@@ -192,7 +199,7 @@ public class Property {
     setInactive(!fromColumn.isActive());
 
     setModule(fromColumn.getModule());
-
+    isProxy = false;
   }
 
   // TODO: remove this hack when possible
@@ -604,6 +611,8 @@ public class Property {
       } else {
         typeName = getPrimitiveType().getName();
       }
+    } else if ("_computedColumns".equals(getColumnName())) {
+      return getEntity().getSimpleClassName() + "_ComputedColumns";
     } else if (getTargetEntity() == null) {
       log.warn("ERROR NO REFERENCETYPE " + getEntity().getName() + "." + getColumnName());
       return "java.lang.Object";
@@ -882,6 +891,27 @@ public class Property {
 
   public void setCompositeId(boolean isCompositeId) {
     this.isCompositeId = isCompositeId;
+  }
+
+  /**
+   * A property is a computed column when it has sql logic, in this case it is calculated based on a
+   * sql formula and is accessed through a proxy.
+   */
+  public boolean isComputedColumn() {
+    return getSqlLogic() != null;
+  }
+
+  /**
+   * Proxy properties are used to access to computed columns. Computed columns are not directly
+   * within the entity they are defined in, but in a extra entity that is accessed through a proxy,
+   * in this way computed columns are lazily calculated.
+   */
+  public boolean isProxy() {
+    return isProxy;
+  }
+
+  public void setProxy(boolean isProxy) {
+    this.isProxy = isProxy;
   }
 
   public List<Property> getIdParts() {

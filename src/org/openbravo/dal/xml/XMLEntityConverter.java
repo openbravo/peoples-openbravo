@@ -220,7 +220,8 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
 
           // TODO: make this option controlled
           final boolean isNotImportableProperty = p.isTransient(bob)
-              || (p.isAuditInfo() && !isOptionImportAuditInfo()) || p.isInactive();
+              || (p.isAuditInfo() && !isOptionImportAuditInfo()) || p.isInactive() || p.isProxy()
+              || p.getEntity().isVirtualEntity();
           if (isNotImportableProperty) {
             log.debug("Property " + p + " is inactive, transient or auditinfo, " + "ignoring it");
             continue;
@@ -338,6 +339,7 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
       }
     } catch (final Exception e) {
       error("Exception when parsing entity " + entityName + " (" + id + "):" + e.getMessage());
+      log.error("Exception when parsing entity " + entityName + " (" + id + ")", e);
       return null;
     }
   }

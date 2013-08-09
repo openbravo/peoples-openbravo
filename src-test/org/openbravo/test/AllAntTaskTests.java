@@ -24,6 +24,7 @@ import junit.framework.TestSuite;
 
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.AdminContextTest;
+import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
 import org.openbravo.test.dal.DalComplexQueryTestOrderLine;
 import org.openbravo.test.dal.DalConnectionProviderTest;
@@ -104,6 +105,7 @@ public class AllAntTaskTests {
     suite.addTestSuite(ReadByNameTest.class);
     suite.addTestSuite(AdminContextTest.class);
     suite.addTestSuite(ViewTest.class);
+    suite.addTestSuite(ComputedColumnsTest.class);
 
     // expression
     suite.addTestSuite(EvaluationTest.class);
