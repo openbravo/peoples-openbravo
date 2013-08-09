@@ -416,12 +416,12 @@
           var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
             if (netLine) {
-              return memo.add(netLine);
+              return OB.DEC.add(memo, netLine);
             } else {
               return memo;
             }
-          }, new BigDecimal("0"));
-          me.set('net', OB.DEC.toNumber(net));
+          }, OB.DEC.Zero);
+          me.set('net', net);
           me.adjustPayment();
           me.trigger('calculategross');
           me.trigger('saveCurrent');
