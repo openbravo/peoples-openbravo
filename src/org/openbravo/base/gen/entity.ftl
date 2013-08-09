@@ -50,16 +50,17 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     public static final String PROPERTY_${p.name?upper_case} = "${p.name}";
     </#if>
     </#list>
-    
+
     <#if entity.hasComputedColumns()>
+
     // Computed columns properties, these properties cannot be directly accessed, they need
     // to be read through _commputedColumns proxy. They cannot be directly used in HQL, OBQuery
     // nor OBCriteria. 
     <#list entity.computedColumnProperties as p>
     public static final String COMPUTED_COLUMN_${p.name?upper_case} = "${p.name}";
     </#list>
-    </#if>
 
+    </#if>
     public ${entity.simpleClassName}() {
     <#list entity.properties as p>
         <#if p.hasDefaultValue() && !p.computedColumn>
@@ -112,9 +113,8 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     @SuppressWarnings("unchecked")
     public ${theList(entity)}<${p.shorterNameTargetEntity}> get${p.name?cap_first}() {
       <#if !p.computedColumn>
-      return (${theList(entity)}<${p.shorterNameTargetEntity}>) get(PROPERTY_${p.name?upper_case});        
+      return (${theList(entity)}<${p.shorterNameTargetEntity}>) get(PROPERTY_${p.name?upper_case});
       <#else>
-      //ss
       return (${theList(entity)}<${p.shorterNameTargetEntity}>) get(COMPUTED_COLUMN_${p.name?upper_case});
       </#if>
     }
@@ -194,8 +194,8 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 		}		
 	}
 	</#if>
-	
 	<#if entity.hasComputedColumns()>
+
     @Override
     public Object get(String propName) {
       <#list entity.computedColumnProperties as p>

@@ -52,7 +52,7 @@ public class ComputedColumnsTest extends BaseTest {
     // load one order
     OBCriteria<Order> qOrder = OBDal.getInstance().createCriteria(Order.class);
     qOrder.setMaxResults(1);
-    Order order = qOrder.list().get(0);
+    Order order = (Order) qOrder.uniqueResult();
 
     // check it is in memory but computed columns are not already loaded
     assertTrue("DAL Order loaded",

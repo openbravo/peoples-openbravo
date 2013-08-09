@@ -234,7 +234,7 @@ public class Entity {
     return computedColumnProperties;
   }
 
-  public void initializeComputedColumns(Table t, Entity e) {
+  void initializeComputedColumns(Table t, Entity e) {
     setTableName(t.getTableName() + "_CC");
     setTableId(t.getId() + "_CC");
     setClassName(e.getPackageName() + "." + e.getSimpleClassName()
@@ -804,7 +804,7 @@ public class Entity {
     return getJavaImportsInternal(properties);
   }
 
-  List<String> getJavaImportsInternal(List<Property> propertyList) {
+  private List<String> getJavaImportsInternal(List<Property> propertyList) {
     List<String> imports = new ArrayList<String>();
     Set<String> simpleImports = new HashSet<String>();
     imports.add("org.openbravo.base.structure.BaseOBObject");

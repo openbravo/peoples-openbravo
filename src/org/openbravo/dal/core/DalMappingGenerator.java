@@ -86,6 +86,10 @@ public class DalMappingGenerator implements OBSingleton {
   public String generateMapping() {
     final String hibernateFileLocation = OBPropertiesProvider.getInstance()
         .getOpenbravoProperties().getProperty(HIBERNATE_FILE_PROPERTY);
+
+    // If readMappingFromFile is true and the mapping is already generated to a file, this file will
+    // be read instead of generating a new one. Useful while developing changes in mapping to edit
+    // the file before generating it.
     final String readMappingFromFile = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty(HIBERNATE_READ_FILE_PROPERTY);
 

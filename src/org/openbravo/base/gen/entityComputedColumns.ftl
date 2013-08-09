@@ -38,8 +38,7 @@ ${i}
 /**
  * Virtual entity class to hold computed columns for entity ${entity.name}.
  *
- * NOTE: This class should not be instantiated directly. To instantiate this
- * class the {@link org.openbravo.base.provider.OBProvider} should be used.
+ * NOTE: This class should not be instantiated directly.
  */
 public class ${entity.simpleClassName}_ComputedColumns extends BaseOBObject implements ClientEnabled, OrganizationEnabled {
     private static final long serialVersionUID = 1L;

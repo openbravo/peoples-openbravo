@@ -162,7 +162,7 @@ public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OB
       checkDanglingObjects();
       return result;
     } catch (XMLStreamException e) {
-      log.error("Error del horror", e);
+      log.error("Error parsing", e);
       throw new EntityXMLException(e);
     }
   }
