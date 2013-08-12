@@ -70,7 +70,7 @@ BEGIN
   IF((DELETING OR INSERTING) AND v_Processed='Y') THEN
     RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   END IF;
-  IF (INSERTING) THEN
+  IF (INSERTING OR UPDATING) THEN
     IF (:NEW.m_product_id IS NOT NULL) THEN
       SELECT isgeneric, name INTO v_isgeneric, v_productname
       FROM m_product

@@ -192,7 +192,7 @@
           FOR Cur_SOLINES IN
             (
             SELECT 'phase' AS PROV, pp.SEQNO, pp.NAME AS LINE_NAME, pp.DESCRIPTION, pr.NAME AS PRODUCT_NAME, pp.M_PRODUCT_ID, pp.QTY, pp.PRICEACTUAL,
-              COALESCE(pr.isgeneric, 'N') as isgeneric
+              pr.isgeneric
             FROM C_PROJECTPHASE pp, M_PRODUCT pr
             WHERE pp.C_PROJECTPHASE_ID = v_Record_ID
               AND pp.M_PRODUCT_ID = pr.M_PRODUCT_ID
@@ -200,7 +200,7 @@
               AND pp.IsActive = 'Y'
             UNION
             SELECT 'task' as PROV, pt.SEQNO, pt.NAME AS LINE_NAME, pt.DESCRIPTION, pr.NAME AS PRODUCT_NAME, pt.M_PRODUCT_ID, pt.QTY, pt.PRICEACTUAL,
-              COALESCE(pr.isgeneric, 'N') as isgeneric
+              pr.isgeneric
             FROM C_PROJECTTASK pt, C_PROJECTPHASE pp, M_PRODUCT pr
             WHERE pp.C_PROJECTPHASE_ID = v_Record_ID
               AND pp.C_PROJECTPHASE_ID = pt.C_PROJECTPHASE_ID

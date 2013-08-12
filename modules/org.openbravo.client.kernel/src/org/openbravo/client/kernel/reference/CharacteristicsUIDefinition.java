@@ -24,6 +24,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.ui.Field;
@@ -45,6 +46,7 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
   @Override
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     String result = super.getFieldProperties(field, getValueFromSession);
+    OBContext.setAdminMode(true);
     try {
       JSONObject jsnobject = new JSONObject(result);
 
@@ -57,7 +59,6 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
       String productId = rq.getRequestParameter("inpmProductId");
       Product product = null;
       if (!StringUtils.isEmpty(productId)) {
-        // TODO: admin mode?
         product = OBDal.getInstance().get(Product.class, productId);
       }
       if (product == null) {
@@ -80,6 +81,9 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
       return jsnobject.toString();
     } catch (JSONException e) {
       throw new OBException("Exception when parsing date ", e);
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
+
 }

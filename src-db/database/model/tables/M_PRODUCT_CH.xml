@@ -80,9 +80,6 @@
         <index-column name="M_PRODUCT_ID"/>
         <index-column name="M_CHARACTERISTIC_ID"/>
       </index>
-      <index name="M_PRODUCT_CH_PRODUCT" unique="false">
-        <index-column name="M_PRODUCT_ID"/>
-      </index>
       <check name="M_PRODUCT_CH_DEFINE_IMAGE_CHK"><![CDATA[DEFINE_IMAGE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_CH_DEFINE_PRICE_CHK"><![CDATA[DEFINE_PRICE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_CH_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

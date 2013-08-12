@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ManageVariants extends BaseProcessActionHandler {
-  final static Logger log = LoggerFactory.getLogger(ManageVariants.class);
+  final static private Logger log = LoggerFactory.getLogger(ManageVariants.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -96,7 +96,6 @@ public class ManageVariants extends BaseProcessActionHandler {
         jsonRequest.put("message", errorMessage);
       } catch (Exception e2) {
         log.error(e.getMessage(), e2);
-        // do nothing, give up
       }
     } finally {
       OBContext.restorePreviousMode();

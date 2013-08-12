@@ -82,7 +82,6 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
 
       } catch (Exception e2) {
         log.error(e.getMessage(), e2);
-        // do nothing, give up
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -99,13 +98,13 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
     obc.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, order));
     obc.setProjection(Projections.max(OrderLine.PROPERTY_LINENO));
     Long lineNo = 0L;
-    Object o = obc.list().get(0);
+    Object o = obc.uniqueResult();
     if (o != null) {
       lineNo = (Long) o;
     }
 
-    for (long i = 0; i < selectedLines.length(); i++) {
-      JSONObject selectedLine = selectedLines.getJSONObject((int) i);
+    for (int i = 0; i < selectedLines.length(); i++) {
+      JSONObject selectedLine = selectedLines.getJSONObject(i);
       log.debug("{}", selectedLine);
 
       OrderLine newOrderLine = OBProvider.getInstance().get(OrderLine.class);

@@ -87,7 +87,6 @@ public class VariantAutomaticGenerationProcess implements Process {
             ProductCharacteristicConf.class);
         prChConfCrit.add(Restrictions.eq(
             ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
-        prChConfCrit.add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_ACTIVE, true));
         List<ProductCharacteristicConf> prChConfs = prChConfCrit.list();
         long valuesCount = prChConfs.size();
 
@@ -254,7 +253,7 @@ public class VariantAutomaticGenerationProcess implements Process {
     }
   }
 
-  private class ProductCharacteristicAux {
+  private static class ProductCharacteristicAux {
     private boolean useCode;
     private boolean isIteratorReset;
     private List<ProductCharacteristicConf> values;

@@ -294,11 +294,18 @@ BEGIN --BODY
     IF (v_count=0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@InvoicesNeedLines@');
     END IF;
-    SELECT count(*), max(p.name) INTO v_count, v_productname
-    FROM c_invoiceline il JOIN m_product p ON il.m_product_id = p.m_product_id
-    WHERE COALESCE(p.isgeneric, 'N') = 'Y'
-      AND il.c_invoice_id = v_record_id;
+    SELECT count(*) INTO v_count
+    FROM dual
+    WHERE EXISTS (
+        SELECT 1
+        FROM c_invoiceline il JOIN m_product p ON il.m_product_id = p.m_product_id
+        WHERE p.isgeneric = 'Y'
+          AND il.c_invoice_id = v_record_id);
     IF (v_count > 0) THEN
+      SELECT max(p.name) INTO v_productname
+      FROM c_invoiceline il JOIN m_product p ON il.m_product_id = p.m_product_id
+      WHERE p.isgeneric = 'Y'
+        AND il.c_invoice_id = v_record_id;
       RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
     END IF;
 

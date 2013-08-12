@@ -61,6 +61,9 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     }
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
     if (prCh.isVariant() && prCh.getProduct().isGeneric()) {
+      if (!prCh.getProduct().getProductGenericProductList().isEmpty()) {
+        throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
+      }
       if (prCh.isDefinesPrice()) {
         // Check there is only 1.
         for (ProductCharacteristic prChAux : prCh.getProduct().getProductCharacteristicList()) {
@@ -98,8 +101,14 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     }
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
     if (prCh.isVariant() && prCh.getProduct().isGeneric()) {
-      if (!prCh.getProduct().getProductGenericProductList().isEmpty()) {
-        // throw new OBException();
+      final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
+          ProductCharacteristic.ENTITY_NAME);
+      final Property variantProperty = prodCharEntity
+          .getProperty(ProductCharacteristic.PROPERTY_VARIANT);
+      boolean oldIsVariant = (Boolean) event.getPreviousState(variantProperty);
+
+      if (!prCh.getProduct().getProductGenericProductList().isEmpty() && !oldIsVariant) {
+        throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
       }
       if (prCh.isDefinesPrice()) {
         // Check there is only 1.
@@ -117,8 +126,6 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
           }
         }
       }
-      final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
-          ProductCharacteristic.ENTITY_NAME);
 
       final Property charConfListProperty = prodCharEntity
           .getProperty(ProductCharacteristic.PROPERTY_PRODUCTCHARACTERISTICCONFLIST);

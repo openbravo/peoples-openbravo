@@ -133,14 +133,21 @@
     IF v_Count<>0 THEN
       RAISE_APPLICATION_ERROR(-20000, '@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@') ;
     END IF;
-    SELECT count(*), max(p.name)
-      INTO v_count, v_productname
-    FROM m_inventoryline il JOIN m_product p ON il.m_product_id = p.m_product_id
-    WHERE il.m_inventory_id = v_record_id
-      AND COALESCE(p.isgeneric, 'N') = 'Y';
+    SELECT count(*) INTO v_count
+    FROM dual
+    WHERE EXISTS (
+        SELECT 1
+        FROM m_inventoryline il JOIN m_product p ON il.m_product_id = p.m_product_id
+        WHERE il.m_inventory_id = v_record_id
+          AND p.isgeneric = 'Y');
     IF (v_count > 0) THEN
+      SELECT max(p.name) INTO v_productname
+      FROM m_inventoryline il JOIN m_product p ON il.m_product_id = p.m_product_id
+      WHERE il.m_inventory_id = v_record_id
+        AND p.isgeneric = 'Y';
       RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
     END IF;
+
   END IF;--PROCESS_ERROR
   IF(NOT PROCESS_ERROR AND NOT END_PROCESS AND NOT END_PROCESSING) THEN
     -- Check for products in multiple lines

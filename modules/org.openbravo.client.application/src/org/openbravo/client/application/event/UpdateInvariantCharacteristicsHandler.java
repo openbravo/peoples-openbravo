@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * Process in charge of updating the product characteristics
  * 
  * When this process is called with the INITIALIZE action, it will provide the data needed to
- * initializar a popup that displays the invariant characteristics of the provided product
+ * initialize a popup that displays the invariant characteristics of the provided product
  * 
  * This process can also be called with the UPDATE action. In that case, it will update the value of
  * the product invariant characteristics using the provided data
@@ -54,7 +54,8 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
-  final static Logger log = LoggerFactory.getLogger(UpdateInvariantCharacteristicsHandler.class);
+  final static private Logger log = LoggerFactory
+      .getLogger(UpdateInvariantCharacteristicsHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -121,6 +122,7 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
         final JSONObject updatedValues = request.getJSONObject("updatedValues");
         final JSONObject existingProdChValues = request.getJSONObject("existingProdChValues");
 
+        @SuppressWarnings("unchecked")
         Iterator<String> keysIterator = updatedValues.keys();
         while (keysIterator.hasNext()) {
           String characteristicId = keysIterator.next();

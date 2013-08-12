@@ -65,7 +65,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
   @Override
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     try {
       readCriteria(parameters);
@@ -92,7 +92,6 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
             ProductCharacteristicConf.class);
         prChConfCrit.add(Restrictions.eq(
             ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
-        prChConfCrit.add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_ACTIVE, true));
         List<ProductCharacteristicConf> prChConfs = prChConfCrit.list();
         long valuesCount = prChConfs.size();
 
@@ -177,8 +176,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = currentValues[i];
           Characteristic characteristic = prChConf.getCharacteristicOfProduct().getCharacteristic();
-          where.append(buildExistsClause(characteristic.getId(), prChConf.getCharacteristicValue()
-              .getId()));
+          where.append(buildExistsClause(i));
           if (StringUtils.isNotBlank(strChDesc)) {
             strChDesc += ", ";
           }
@@ -198,6 +196,12 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         OBQuery<Product> variantQry = OBDal.getInstance().createQuery(Product.class,
             where.toString());
         variantQry.setNamedParameter("product", product);
+        for (i = 0; i < chNumber; i++) {
+          ProductCharacteristicConf prChConf = currentValues[i];
+          Characteristic characteristic = prChConf.getCharacteristicOfProduct().getCharacteristic();
+          variantQry.setNamedParameter("ch" + i, characteristic.getId());
+          variantQry.setNamedParameter("chvalue" + i, prChConf.getCharacteristicValue().getId());
+        }
         Product existingProduct = variantQry.uniqueResult();
         if (existingProduct != null) {
           variantMap.put("name", existingProduct.getName());
@@ -303,15 +307,15 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     }
   }
 
-  private String buildExistsClause(String strChId, String strChValueId) {
+  private String buildExistsClause(int i) {
     StringBuffer clause = new StringBuffer();
     clause.append(" and exists (select 1 from " + ProductCharacteristicValue.ENTITY_NAME
         + " as pcv");
     clause.append("    where pcv." + ProductCharacteristicValue.PROPERTY_PRODUCT + " = p");
-    clause.append("      and pcv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC + ".id = '"
-        + strChId + "'");
+    clause.append("      and pcv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC
+        + ".id = :ch" + i);
     clause.append("      and pcv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTICVALUE
-        + ".id = '" + strChValueId + "'");
+        + ".id = :chvalue" + i);
     clause.append("     )");
     return clause.toString();
   }

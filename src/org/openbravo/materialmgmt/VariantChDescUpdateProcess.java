@@ -95,7 +95,7 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
    *          assigned.
    */
   public void update(String strProductId, String strChValueId) {
-    OBContext.setAdminMode(false);
+    OBContext.setAdminMode(true);
     try {
       if (StringUtils.isNotBlank(strProductId)) {
         Product product = OBDal.getInstance().get(Product.class, strProductId);
@@ -119,7 +119,6 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       if (StringUtils.isNotBlank(strChValueId)) {
         productQuery.setNamedParameter("chvid", strChValueId);
       }
-      productQuery.setFetchSize(1000);
       productQuery.setFilterOnReadableOrganization(false);
       productQuery.setFilterOnActive(false);
 

@@ -107,11 +107,18 @@ BEGIN
       END IF;
     END IF;
 
-    SELECT count(*), max(p.name) INTO v_aux, v_productname
-    FROM m_requisitionline rl JOIN m_product p ON rl.m_product_id = p.m_product_id
-    WHERE rl.m_requisition_id = v_record_id
-      AND COALESCE(p.isgeneric, 'N') = 'Y';
+    SELECT count(*) INTO v_aux
+    FROM dual
+    WHERE EXISTS (
+        SELECT 1
+        FROM m_requisitionline rl JOIN m_product p ON rl.m_product_id = p.m_product_id
+        WHERE rl.m_requisition_id = v_record_id
+          AND p.isgeneric = 'Y');
     IF (v_aux > 0) THEN
+      SELECT max(p.name) INTO v_productname
+      FROM m_requisitionline rl JOIN m_product p ON rl.m_product_id = p.m_product_id
+      WHERE rl.m_requisition_id = v_record_id
+        AND p.isgeneric = 'Y';
       RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
     END IF;
 

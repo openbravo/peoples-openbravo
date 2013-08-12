@@ -128,7 +128,7 @@
             (SELECT * FROM C_PROJECTLINE WHERE C_PROJECT_ID=v_Record_ID)
           LOOP
             IF (solines.m_product_id IS NOT NULL) THEN
-              SELECT COALESCE(isgeneric, 'N'), name INTO v_isgeneric, v_productname
+              SELECT isgeneric, name INTO v_isgeneric, v_productname
               FROM m_product
               WHERE m_product_id = solines.m_product_id;
               IF (v_isgeneric = 'Y') THEN

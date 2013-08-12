@@ -64,11 +64,7 @@ public class CharacteristicsUtils {
     obCriteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
         characteristic));
     obCriteria.setMaxResults(1);
-    if (obCriteria.count() > 0) {
-      return ((ProductCharacteristicValue) obCriteria.uniqueResult());
-    } else {
-      return null;
-    }
+    return (ProductCharacteristicValue) obCriteria.uniqueResult();
   }
 
   private static void setCharacteristic(Product product, Characteristic characteristic) {

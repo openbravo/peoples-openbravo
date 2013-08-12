@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AddProductsToChValue extends BaseProcessActionHandler {
-  final static Logger log = LoggerFactory.getLogger(AddProductsToChValue.class);
+  final static private Logger log = LoggerFactory.getLogger(AddProductsToChValue.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {

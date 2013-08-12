@@ -105,7 +105,7 @@ BEGIN
       WHERE c_order_id = v_sales_order_id;
     END IF;
   END IF;
-  IF (INSERTING) THEN
+  IF (INSERTING OR UPDATING) THEN
     IF (:NEW.m_product_id IS NOT NULL) THEN
       SELECT isgeneric, name INTO v_isgeneric, v_productname
       FROM m_product
