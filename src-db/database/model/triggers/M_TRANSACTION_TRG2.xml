@@ -36,7 +36,6 @@ BEGIN
 
   IF (INSERTING) THEN
     IF (:NEW.isreservationtriggerdisabled = 'Y') THEN
-      RAISE NOTICE 'skipping reservation check because isreservationtriggerdisabled = Y';
       RETURN NEW;
     END IF;
     IF (:NEW.movementqty < 0 AND :NEW.m_product_uom_id IS NULL) THEN
