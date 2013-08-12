@@ -61,6 +61,9 @@
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_ACCESS_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
+      <index name="AD_TABLEACCESS_TABLE_IDX" unique="false">
+        <index-column name="AD_TABLE_ID"/>
+      </index>
       <unique name="AD_TABLE_ACCESS_ROLE_TABLE_UN">
         <unique-column name="AD_ROLE_ID"/>
         <unique-column name="AD_TABLE_ID"/>

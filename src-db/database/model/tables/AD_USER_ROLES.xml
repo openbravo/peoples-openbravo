@@ -57,6 +57,9 @@
       <foreign-key foreignTable="AD_ORG" name="AD_USERROLESORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="AD_USERROLES_ROLE_IDX" unique="false">
+        <index-column name="AD_ROLE_ID"/>
+      </index>
       <unique name="AD_USER_ROLES_USER_ROLE_UN">
         <unique-column name="AD_USER_ID"/>
         <unique-column name="AD_ROLE_ID"/>

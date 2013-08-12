@@ -61,6 +61,9 @@
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_FORM_ID"/>
       </index>
+      <index name="AD_FORMACCESS_FORM_IDX" unique="false">
+        <index-column name="AD_FORM_ID"/>
+      </index>
       <check name="AD_FORM_ACCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_FORM_ACCESS_ISREADWRITE_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
