@@ -48,6 +48,9 @@
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_ORDERAPPR_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_ORDER" name="OBPOS_ORDERAPPR_ORDER">
+        <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBPOS_ORDERAPPR_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
