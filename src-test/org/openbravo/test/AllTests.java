@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,6 +40,7 @@ import org.openbravo.test.dal.ReadByNameTest;
 import org.openbravo.test.dal.ValidationTest;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.model.ClassLoaderTest;
+import org.openbravo.test.model.IndexesTest;
 import org.openbravo.test.model.OneToManyTest;
 import org.openbravo.test.model.RuntimeModelTest;
 import org.openbravo.test.security.AccessLevelTest;
@@ -87,6 +88,7 @@ public class AllTests {
     suite.addTestSuite(RuntimeModelTest.class);
     suite.addTestSuite(OneToManyTest.class);
     suite.addTestSuite(ClassLoaderTest.class);
+    suite.addTestSuite(IndexesTest.class);
 
     // expression
     suite.addTestSuite(EvaluationTest.class);
