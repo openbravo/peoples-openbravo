@@ -15,6 +15,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.model.common.order.Order;
 
 public class PaidReceiptsHeader extends ProcessHQLQuery {
 
@@ -65,9 +66,12 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       hqlPaidReceipts += " and ord.orderDate <='" + json.getString("endDate") + "'";
     }
     if (json.getBoolean("isLayaway")) {
-      hqlPaidReceipts += " and ord.deliveryStatus = 0 and ord.documentStatus = 'CO' ";
+      hqlPaidReceipts += " and "
+          + "ord.".concat(POSUtils.getComputedColumn(Order.class, "deliveryStatus"))
+          + " = 0 and ord.documentStatus = 'CO' ";
     } else {
-      hqlPaidReceipts += " and ord.deliveryStatus > 0 ";
+      hqlPaidReceipts += " and "
+          + "ord.".concat(POSUtils.getComputedColumn(Order.class, "deliveryStatus")) + " > 0 ";
     }
     hqlPaidReceipts += " order by ord.orderDate asc, ord.documentNo asc";
     return Arrays.asList(new String[] { hqlPaidReceipts });

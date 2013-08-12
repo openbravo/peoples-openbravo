@@ -15,6 +15,7 @@ import java.util.List;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.model.common.order.Order;
 
 /**
  * Defines hql properties for the PaidReceips Order header
@@ -51,8 +52,10 @@ public class PaidReceiptProperties extends ModelExtension {
             "(case when ord.documentType.id =  ord.obposApplications.obposTerminaltype.documentTypeForQuotations.id then true else false end)",
             "isQuotation"));
         add(new HQLProperty("ord.summedLineAmount", "totalNetAmount"));
-        add(new HQLProperty("(case when ord.deliveryStatus = 0 then true else false end)",
-            "isLayaway")); // TODO: computed column, it should be refactored
+        add(new HQLProperty("(case when "
+            + "ord.".concat(POSUtils.getComputedColumn(Order.class, "deliveryStatus"))
+            + " = 0 then true else false end)", "isLayaway")); // TODO: computed column, it should
+                                                               // be refactored
         add(new HQLProperty("ord.priceList.priceIncludesTax", "priceIncludesTax"));
       }
     };
