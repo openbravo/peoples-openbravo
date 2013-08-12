@@ -344,7 +344,7 @@
           line.set({
             nondiscountedprice: line.get('price'),
             nondiscountednet: line.get('net'),
-            net: OB.DEC.toNumber(line.get('discountedNet')),
+            net: line.get('discountedNet'),
             pricenet: OB.DEC.toNumber(line.get('discountedNetPrice')),
             listPrice: line.get('priceList'),
             grossListPrice: 0,
