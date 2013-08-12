@@ -53,6 +53,9 @@
       <foreign-key foreignTable="OBUIAPP_NAVBAR_COMPONENT" name="OBUIAPP_NVBRA_NAVBACOMPONENT" onDelete="cascade">
         <reference local="OBUIAPP_NAVBAR_COMPONENT_ID" foreign="OBUIAPP_NAVBAR_COMPONENT_ID"/>
       </foreign-key>
+      <index name="OBUIAPP_NAVBARACC_NAVBAR_IDX" unique="false">
+        <index-column name="OBUIAPP_NAVBAR_COMPONENT_ID"/>
+      </index>
       <check name="OBUIAPP_NVBRA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

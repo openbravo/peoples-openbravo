@@ -72,6 +72,9 @@
       <foreign-key foreignTable="M_PRODUCTIONPLAN" name="MA_PL_EMPLOYEE_M_PRODUCTIONPLA">
         <reference local="M_PRODUCTIONPLAN_ID" foreign="M_PRODUCTIONPLAN_ID"/>
       </foreign-key>
+      <index name="MA_PLEMPLOYEE_PRODUCTIONPL_IDX" unique="false">
+        <index-column name="M_PRODUCTIONPLAN_ID"/>
+      </index>
       <check name="MA_PL_EMPLOYEE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

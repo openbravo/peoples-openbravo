@@ -74,5 +74,8 @@
       <foreign-key foreignTable="C_REGION" name="C_TO_REGION_C_TAX_ZONE">
         <reference local="TO_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
+      <index name="C_TAXZONE_TAX_IDX" unique="false">
+        <index-column name="C_TAX_ID"/>
+      </index>
     </table>
   </database>

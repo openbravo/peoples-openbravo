@@ -168,6 +168,9 @@
       <index name="M_TRANSACTION_INVENTORYLINE" unique="false">
         <index-column name="M_INVENTORYLINE_ID"/>
       </index>
+      <index name="M_TRANSACTION_LOCATOR_IDX" unique="false">
+        <index-column name="M_LOCATOR_ID"/>
+      </index>
       <index name="M_TRANSACTION_MOVEMENTLINE" unique="false">
         <index-column name="M_MOVEMENTLINE_ID"/>
       </index>

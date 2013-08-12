@@ -205,6 +205,12 @@
       <foreign-key foreignTable="USER2" name="S_TIMEXPLINE_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="S_TIMEEXPENSELINE_BPARTNER_IDX" unique="false">
+        <index-column name="C_BPARTNER_ID"/>
+      </index>
+      <index name="S_TIMEEXPENSELN_TIMEEXPESE_IDX" unique="false">
+        <index-column name="S_TIMEEXPENSE_ID"/>
+      </index>
       <check name="S_TIMEEXPENSELINE_CHECK1"><![CDATA[(ISINVOICED = 'N') OR (C_BPARTNER_ID IS NOT NULL)]]></check>
       <check name="S_TIMEEXPENSELINE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="S_TIMEEXPENSELINE_ISINVOIC_CHK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>

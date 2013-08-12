@@ -53,6 +53,9 @@
       <foreign-key foreignTable="AD_WINDOW" name="OBUIAPP_REF_W_AD_WINDOW">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
+      <index name="OBUIAPP_REFWINDOW_REF_IDX" unique="false">
+        <index-column name="AD_REFERENCE_ID"/>
+      </index>
       <check name="OBUIAPP_REF_W_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

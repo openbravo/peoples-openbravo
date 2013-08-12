@@ -62,6 +62,9 @@
       <foreign-key foreignTable="OBKMO_WIDGET_CLASS" name="OBKMO_WIDCLASSMENU_WIDGETCLASS" onDelete="cascade">
         <reference local="OBKMO_WIDGET_CLASS_ID" foreign="OBKMO_WIDGET_CLASS_ID"/>
       </foreign-key>
+      <index name="OBKMO_WDGTCLSMENU_WDGTCLS_IDX" unique="false">
+        <index-column name="OBKMO_WIDGET_CLASS_ID"/>
+      </index>
       <check name="OBKMO_WIDCLMENU_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBKMO_WIDCLMENU_SEPARATOR_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

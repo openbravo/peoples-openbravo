@@ -92,6 +92,9 @@
       <index name="M_RESERVATION_STOCK_SD" unique="false">
         <index-column name="M_STORAGE_DETAIL_ID"/>
       </index>
+      <index name="M_RESERVSTOCK_ORDERLINE_IDX" unique="false">
+        <index-column name="C_ORDERLINE_ID"/>
+      </index>
       <check name="M_RESERVATION_STOCK_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_RESERVATION_STOCK_ALLOC_CHK"><![CDATA[ISALLOCATED IN ('Y', 'N')]]></check>
     </table>

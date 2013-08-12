@@ -57,6 +57,9 @@
       <foreign-key foreignTable="AD_CLIENT" name="MA_TOOLSETUSED_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <index name="MA_TOOLSETUSED_PRODPLAN_IDX" unique="false">
+        <index-column name="M_PRODUCTIONPLAN_ID"/>
+      </index>
       <check name="MA_TOOLSETUSED_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -58,6 +58,9 @@
       <foreign-key foreignTable="AD_ORG" name="M_RAPPEL_SCALE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="M_RAPPELSCALE_RAPPEL_IDX" unique="false">
+        <index-column name="M_RAPPEL_ID"/>
+      </index>
       <check name="M_RAPPEL_SCALE_DISCOUNT_CHK"><![CDATA[(DISCOUNT >= 0) AND (DISCOUNT <= 100)]]></check>
     </table>
   </database>

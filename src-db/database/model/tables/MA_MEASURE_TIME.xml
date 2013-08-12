@@ -58,6 +58,9 @@
       <foreign-key foreignTable="AD_CLIENT" name="MA_MEASURE_TIME_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <index name="MA_MEASURETIME_MEASUREGRP_IDX" unique="false">
+        <index-column name="MA_MEASURE_GROUP_ID"/>
+      </index>
       <check name="MA_MEASURE_TIME_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

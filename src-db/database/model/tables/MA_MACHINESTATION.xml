@@ -53,6 +53,9 @@
       <foreign-key foreignTable="MA_WORKSTATION" name="MA_WORKSTATION_MAMACHINSTAT">
         <reference local="MA_WORKSTATION_ID" foreign="MA_WORKSTATION_ID"/>
       </foreign-key>
+      <index name="MA_MACHINESTATION_WKST_IDX" unique="false">
+        <index-column name="MA_WORKSTATION_ID"/>
+      </index>
       <check name="MA_MACHINESTATI_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

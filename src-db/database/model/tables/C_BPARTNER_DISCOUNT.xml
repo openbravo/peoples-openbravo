@@ -73,6 +73,9 @@
       <foreign-key foreignTable="C_DISCOUNT" name="C_BPARTNER_DISCOUNT_C_DISCOUNT">
         <reference local="C_DISCOUNT_ID" foreign="C_DISCOUNT_ID"/>
       </foreign-key>
+      <index name="C_BPARTNERDISCOUNT_BP_IDX" unique="false">
+        <index-column name="C_BPARTNER_ID"/>
+      </index>
       <check name="C_BPDISC_APPLYINORDER_CHECK"><![CDATA[APPLYINORDER IN ('N', 'Y')]]></check>
     </table>
   </database>

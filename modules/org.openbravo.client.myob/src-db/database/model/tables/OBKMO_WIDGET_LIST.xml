@@ -50,6 +50,9 @@
       <foreign-key foreignTable="AD_ORG" name="OBKMO_WIDGET_LIST_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="OBKMO_WDTLIST_WDTCLS_IDX" unique="false">
+        <index-column name="OBKMO_WIDGET_CLASS_ID"/>
+      </index>
       <check name="OBKMO_WIDGET_LIST_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

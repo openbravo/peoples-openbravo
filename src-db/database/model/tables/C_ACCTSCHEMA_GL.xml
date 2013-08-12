@@ -125,6 +125,9 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHM_GL_C_VLDCMBNTN">
         <reference local="CFS_ORDER_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
+      <index name="C_ACCTSCHEMAGL_ACCTSCHEMA_IDX" unique="false">
+        <index-column name="C_ACCTSCHEMA_ID"/>
+      </index>
       <check name="C_ACCTSCHEMA_GL_CREATECL_CHK"><![CDATA[CREATECLOSING IN ('Y', 'N')]]></check>
       <check name="C_ACCTSCHEMA_GL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_ACCTSCHEMA_GL_USECURRENC_CHK"><![CDATA[USECURRENCYBALANCING IN ('Y', 'N')]]></check>

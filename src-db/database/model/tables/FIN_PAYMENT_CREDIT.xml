@@ -64,6 +64,9 @@
       <foreign-key foreignTable="FIN_PAYMENT" name="FIN_CR_FIN_PAYMENT_USED">
         <reference local="FIN_PAYMENT_ID_USED" foreign="FIN_PAYMENT_ID"/>
       </foreign-key>
+      <index name="FIN_PAYMENTCREDIT_PAYMENT_IDX" unique="false">
+        <index-column name="FIN_PAYMENT_ID"/>
+      </index>
       <check name="FIN_CR_PAYMENT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

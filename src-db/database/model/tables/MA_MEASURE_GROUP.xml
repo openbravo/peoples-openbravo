@@ -57,6 +57,9 @@
       <foreign-key foreignTable="MA_MEASURE_SHIFT" name="MA_MEASURESHIFT_MAMEASUREGROUP">
         <reference local="MA_MEASURE_SHIFT_ID" foreign="MA_MEASURE_SHIFT_ID"/>
       </foreign-key>
+      <index name="MA_MEASUREGRP_MEASURESHIFT_IDX" unique="false">
+        <index-column name="MA_MEASURE_SHIFT_ID"/>
+      </index>
       <check name="MA_MEASURE_GROU_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -96,5 +96,8 @@
       <foreign-key foreignTable="C_TAXREGISTER" name="C_TAXREGISTERLINE_C_TAXREGISTE">
         <reference local="C_TAXREGISTER_ID" foreign="C_TAXREGISTER_ID"/>
       </foreign-key>
+      <index name="C_TAXREGISTERLINE_TAXREGIS_IDX" unique="false">
+        <index-column name="C_TAXREGISTER_ID"/>
+      </index>
     </table>
   </database>

@@ -61,6 +61,9 @@
       <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCTSCHEMA_PROCESS_C_ACCTSCH">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
+      <index name="C_ACCTSCHEMAPRC_ACCTSCHEMA_IDX" unique="false">
+        <index-column name="C_ACCTSCHEMA_ID"/>
+      </index>
       <check name="C_ACCTSCHEMA_PROCESS_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_ACCTSCHEMA_PROCESS_ISDAT_CHK"><![CDATA[ISDATASET IN ('Y', 'N')]]></check>
     </table>

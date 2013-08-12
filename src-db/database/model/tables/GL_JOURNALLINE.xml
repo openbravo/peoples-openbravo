@@ -238,6 +238,9 @@
       <foreign-key foreignTable="USER2" name="GL_JOURNALLINE_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="GL_JOURNALLINE_JOURNAL_IDX" unique="false">
+        <index-column name="GL_JOURNAL_ID"/>
+      </index>
       <check name="GL_JOURNALLINE_C_TAX_ID_CHK"><![CDATA[(C_TAX_ID IS NULL) OR (C_WITHHOLDING_ID IS NULL)]]></check>
       <check name="GL_JOURNALLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="GL_JOURNALLINE_ISGENERATED_CHK"><![CDATA[ISGENERATED IN ('Y', 'N')]]></check>

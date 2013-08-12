@@ -61,6 +61,9 @@
       <foreign-key foreignTable="FIN_PAY_EXEC_PROCESS_PARA" name="FIN_PAYRUNPARA_PAYEXECPROCPARA">
         <reference local="FIN_PAY_EXEC_PROCESS_PARA_ID" foreign="FIN_PAY_EXEC_PROCESS_PARA_ID"/>
       </foreign-key>
+      <index name="FIN_PYMTRUNPARA_PYMTRUN_IDX" unique="false">
+        <index-column name="FIN_PAYMENT_RUN_ID"/>
+      </index>
       <check name="FIN_PAYMENTRUNPARA_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

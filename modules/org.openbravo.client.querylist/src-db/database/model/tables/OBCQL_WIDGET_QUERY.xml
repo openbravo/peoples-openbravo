@@ -61,6 +61,9 @@
       <foreign-key foreignTable="AD_ORG" name="OBCQL_WIDGET_QUERY_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="OBCQL_WDGTQRY_WDGTCLASS_IDX" unique="false">
+        <index-column name="OBKMO_WIDGET_CLASS_ID"/>
+      </index>
       <index name="OBCQL_WIDGET_QUERY_DS" unique="false">
         <index-column name="OBSERDS_DATASOURCE_ID"/>
       </index>

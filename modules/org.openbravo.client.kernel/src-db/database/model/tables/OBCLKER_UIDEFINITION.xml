@@ -57,6 +57,9 @@
       <foreign-key foreignTable="AD_ORG" name="OBCLKER_VI_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="OBCLKER_UIDEFINITION_REF_IDX" unique="false">
+        <index-column name="AD_REFERENCE_ID"/>
+      </index>
       <check name="OBCLKER_VUID_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

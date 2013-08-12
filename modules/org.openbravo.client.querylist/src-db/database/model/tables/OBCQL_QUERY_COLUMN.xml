@@ -111,6 +111,9 @@
       <foreign-key foreignTable="AD_REFERENCE" name="OBCQL_QUERY_COLUMN_REFERENCE">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
+      <index name="OBCQL_QRYCOL_WDGTQRY_IDX" unique="false">
+        <index-column name="OBCQL_WIDGET_QUERY_ID"/>
+      </index>
       <check name="OBCQL_COLUMN_CANBEFILTERED_CHK"><![CDATA[CAN_BE_FILTERED IN ('Y', 'N')]]></check>
       <check name="OBCQL_COLUMN_WHERECLAUSE_CHK"><![CDATA[((CAN_BE_FILTERED = 'Y') AND (WHERECLAUSE_LEFT_PART IS NOT NULL)) OR (CAN_BE_FILTERED = 'N')]]></check>
       <check name="OBCQL_QUERY_COLUMN_ACTIVECHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

@@ -82,6 +82,9 @@
       <foreign-key foreignTable="FIN_PAY_EXEC_PROCESS" name="FIN_PAYEXECPROCPARA_PAYEXECPRO">
         <reference local="FIN_PAY_EXEC_PROCESS_ID" foreign="FIN_PAY_EXEC_PROCESS_ID"/>
       </foreign-key>
+      <index name="FIN_PAYEXCPRCPAR_PAYEXCPRC_IDX" unique="false">
+        <index-column name="FIN_PAY_EXEC_PROCESS_ID"/>
+      </index>
       <check name="FIN_PAYEXECPROCPARA_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="FIN_PAYEXECPROCPARA_MANDAT_CHK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
     </table>

@@ -104,6 +104,12 @@
       <foreign-key foreignTable="USER2" name="A_AMORTLINE_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="A_AMORTIZATIONLINE_AMORTIZ_IDX" unique="false">
+        <index-column name="A_AMORTIZATION_ID"/>
+      </index>
+      <index name="A_AMORTIZATIONLINE_ASSET_IDX" unique="false">
+        <index-column name="A_ASSET_ID"/>
+      </index>
       <check name="A_AMORTIZATIONL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

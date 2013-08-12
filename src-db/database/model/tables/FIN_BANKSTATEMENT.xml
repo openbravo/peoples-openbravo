@@ -96,6 +96,9 @@
       <foreign-key foreignTable="FIN_RECONCILIATION" name="FIN_BANKSTAT_FINRECONCILIATION">
         <reference local="FIN_RECONCILIATION_ID" foreign="FIN_RECONCILIATION_ID"/>
       </foreign-key>
+      <index name="FIN_BNKSTMT_FINACCT_IDX" unique="false">
+        <index-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
+      </index>
       <check name="FIN_BANKSTAT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="FIN_BANKSTAT_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
       <check name="FIN_BANKSTAT_PROCESSING_CHECK"><![CDATA[PROCESSING IN ('Y', 'N')]]></check>

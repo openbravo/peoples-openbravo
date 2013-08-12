@@ -65,5 +65,8 @@
       <foreign-key foreignTable="C_ELEMENTVALUE" name="C_ACCT_RPT_NODE_C_ELEMENTVALUE">
         <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
+      <index name="C_ACCTRPTNODE_ACCTRPTGROUP_IDX" unique="false">
+        <index-column name="C_ACCT_RPT_GROUP_ID"/>
+      </index>
     </table>
   </database>

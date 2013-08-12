@@ -81,6 +81,9 @@
       <foreign-key foreignTable="AD_ORG" name="AD_MODULE_DEPENDENCY_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="AD_MODULEDEPENDENCY_MODULE_IDX" unique="false">
+        <index-column name="AD_MODULE_ID"/>
+      </index>
       <check name="AD_MODULE_DEPENDENCY_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_MODULE_ISINCLUDED_CHK"><![CDATA[ISINCLUDED IN ('Y', 'N')]]></check>
     </table>

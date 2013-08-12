@@ -196,6 +196,9 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCT_CATEGORY_CBUDGETLINE">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
+      <index name="C_BUDGETLINE_BUDGET_IDX" unique="false">
+        <index-column name="C_BUDGET_ID"/>
+      </index>
       <check name="C_BUDGETLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

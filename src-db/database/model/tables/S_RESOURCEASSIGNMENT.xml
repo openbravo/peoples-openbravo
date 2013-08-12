@@ -70,6 +70,9 @@
       <foreign-key foreignTable="S_RESOURCE" name="S_RESOURCEASSIGNMENT_S_RESOURC">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
       </foreign-key>
+      <index name="S_RESOURCEASSIGNMENT_RESRC_IDX" unique="false">
+        <index-column name="S_RESOURCE_ID"/>
+      </index>
       <check name="S_RESOURCEASSIGNMENT_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="S_RESOURCEASSIGNMENT_ISCON_CHK"><![CDATA[ISCONFIRMED IN ('Y', 'N')]]></check>
     </table>

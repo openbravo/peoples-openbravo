@@ -94,6 +94,9 @@
       <foreign-key foreignTable="MA_MACHINE" name="MA_MACHINE_COST_MA_MACHINE">
         <reference local="MA_MACHINE_ID" foreign="MA_MACHINE_ID"/>
       </foreign-key>
+      <index name="MA_MACHINECOST_MACHINE_IDX" unique="false">
+        <index-column name="MA_MACHINE_ID"/>
+      </index>
       <check name="MA_MACHINE_COST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

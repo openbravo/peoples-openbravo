@@ -61,6 +61,9 @@
       <foreign-key foreignTable="MRP_SALESFORECAST" name="MRP_SALESFORECASTLINE_MRP_SALE">
         <reference local="MRP_SALESFORECAST_ID" foreign="MRP_SALESFORECAST_ID"/>
       </foreign-key>
+      <index name="MRP_SALEFRCTLINE_SALEFRCT_IDX" unique="false">
+        <index-column name="MRP_SALESFORECAST_ID"/>
+      </index>
       <check name="MRP_SALESFORECASTLINE_ISAC_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

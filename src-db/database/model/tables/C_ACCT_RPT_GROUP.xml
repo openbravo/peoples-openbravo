@@ -58,5 +58,8 @@
       <foreign-key foreignTable="C_ACCT_RPT" name="C_ACCT_RPT_GROUP_C_ACCT_RPT">
         <reference local="C_ACCT_RPT_ID" foreign="C_ACCT_RPT_ID"/>
       </foreign-key>
+      <index name="C_ACCTRPTGROUP_ACCTRPT_IDX" unique="false">
+        <index-column name="C_ACCT_RPT_ID"/>
+      </index>
     </table>
   </database>

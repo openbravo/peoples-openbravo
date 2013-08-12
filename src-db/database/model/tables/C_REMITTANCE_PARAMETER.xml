@@ -54,5 +54,8 @@
       <foreign-key foreignTable="C_REMITTANCE_TYPE" name="C_REMITTANCE_PARAMETER_C_REMIT">
         <reference local="C_REMITTANCE_TYPE_ID" foreign="C_REMITTANCE_TYPE_ID"/>
       </foreign-key>
+      <index name="C_REMITPARAMETER_REMITTYPE_IDX" unique="false">
+        <index-column name="C_REMITTANCE_TYPE_ID"/>
+      </index>
     </table>
   </database>

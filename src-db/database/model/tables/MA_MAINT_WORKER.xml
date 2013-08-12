@@ -53,6 +53,9 @@
       <foreign-key foreignTable="MA_MAINT_PART" name="MA_MAINT_WORKER_MA_MAINT_PART">
         <reference local="MA_MAINT_PART_ID" foreign="MA_MAINT_PART_ID"/>
       </foreign-key>
+      <index name="MA_MAINTWORKER_MAINTPART_IDX" unique="false">
+        <index-column name="MA_MAINT_PART_ID"/>
+      </index>
       <check name="MA_MAINT_WORKER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

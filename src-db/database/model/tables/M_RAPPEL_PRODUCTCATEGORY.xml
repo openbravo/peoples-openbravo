@@ -53,6 +53,9 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_RAPPEL_PRODUCTCATEGORY_M_PRO">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
+      <index name="M_RAPPELPRODUCTCTG_RAPPEL_IDX" unique="false">
+        <index-column name="M_RAPPEL_ID"/>
+      </index>
       <check name="M_RAPPEL_PRODUCTCATEGORY_I_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -58,6 +58,9 @@
       <foreign-key foreignTable="AD_ORG" name="AD_MODEL_OBJECT_PARA_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="AD_MODELOJTPARA_MODELOBJ_IDX" unique="false">
+        <index-column name="AD_MODEL_OBJECT_ID"/>
+      </index>
       <check name="AD_MOD_OBJ_PARA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

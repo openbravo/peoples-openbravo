@@ -68,5 +68,8 @@
       <foreign-key foreignTable="C_DEBT_PAYMENT" name="C_REMITTANCELINE_C_DEBT_PAYMEN">
         <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
       </foreign-key>
+      <index name="C_REMITLINE_REMIT_IDX" unique="false">
+        <index-column name="C_REMITTANCE_ID"/>
+      </index>
     </table>
   </database>

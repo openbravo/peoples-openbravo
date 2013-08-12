@@ -53,5 +53,8 @@
       <foreign-key foreignTable="C_INVOICE" name="C_INVOICE_REVERSE_REVERSED_C_I">
         <reference local="REVERSED_C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
+      <index name="C_INVOICEREVERSE_INVOICE_IDX" unique="false">
+        <index-column name="C_INVOICE_ID"/>
+      </index>
     </table>
   </database>

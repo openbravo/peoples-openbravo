@@ -61,6 +61,9 @@
       <foreign-key foreignTable="MA_PC_TEST" name="MA_PC_TEST_MAPCVALUE">
         <reference local="MA_PC_TEST_ID" foreign="MA_PC_TEST_ID"/>
       </foreign-key>
+      <index name="MA_PCVALUE_PCCASE_IDX" unique="false">
+        <index-column name="MA_PC_CASE_ID"/>
+      </index>
       <check name="MA_PC_VALUE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

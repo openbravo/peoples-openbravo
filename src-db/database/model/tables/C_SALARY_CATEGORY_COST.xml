@@ -54,5 +54,8 @@
       <foreign-key foreignTable="C_SALARY_CATEGORY" name="C_SALARY_CATEGORY_COST_C_SALAR">
         <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
       </foreign-key>
+      <index name="C_SALCTGCOST_SALACTG_IDX" unique="false">
+        <index-column name="C_SALARY_CATEGORY_ID"/>
+      </index>
     </table>
   </database>

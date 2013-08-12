@@ -53,6 +53,12 @@
       <foreign-key foreignTable="OBUIAPP_VIEW_IMPL" name="OBUIAPP_VIRA_VIEW" onDelete="cascade">
         <reference local="OBUIAPP_VIEW_IMPL_ID" foreign="OBUIAPP_VIEW_IMPL_ID"/>
       </foreign-key>
+      <index name="OBUIAPP_VIEWRCCESS_VIEWIMP_IDX" unique="false">
+        <index-column name="OBUIAPP_VIEW_IMPL_ID"/>
+      </index>
+      <index name="OBUIAPP_VIEWROLEACC_ROLE_IDX" unique="false">
+        <index-column name="AD_ROLE_ID"/>
+      </index>
       <check name="OBUIAPP_VIRA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

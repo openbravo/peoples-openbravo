@@ -77,5 +77,8 @@
       <foreign-key foreignTable="M_PRODUCT" name="C_TASK_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <index name="C_TASK_PHASE_IDX" unique="false">
+        <index-column name="C_PHASE_ID"/>
+      </index>
     </table>
   </database>

@@ -138,6 +138,9 @@
       <foreign-key foreignTable="OBUISEL_SELECTOR" name="OBUISEL_SF_SELECTOR" onDelete="cascade">
         <reference local="OBUISEL_SELECTOR_ID" foreign="OBUISEL_SELECTOR_ID"/>
       </foreign-key>
+      <index name="OBUISEL_SELECTFLD_SELECTOR_IDX" unique="false">
+        <index-column name="OBUISEL_SELECTOR_ID"/>
+      </index>
       <check name="OBUISEL_SF_CM_CHECK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
       <check name="OBUISEL_SF_FILTER_CHECK"><![CDATA[FILTER IN ('Y', 'N')]]></check>
       <check name="OBUISEL_SF_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

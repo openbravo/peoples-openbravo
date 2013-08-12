@@ -214,6 +214,9 @@
       <index name="C_DEBT_PAYMENT_SETTGENERAT_IDX" unique="false">
         <index-column name="C_SETTLEMENT_GENERATE_ID"/>
       </index>
+      <index name="C_DEBTPAYMENT_ORDER_IDX" unique="false">
+        <index-column name="C_ORDER_ID"/>
+      </index>
       <check name="C_DEBT_PAYMENT_C_BANKSTATE_CHK"><![CDATA[((C_BANKSTATEMENTLINE_ID IS NULL) AND (C_CASHLINE_ID IS NULL)) OR (ISPAID = 'Y')]]></check>
       <check name="C_DEBT_PAYMENT_C_BPARTNER__CHK"><![CDATA[C_BPARTNER_ID IS NOT NULL]]></check>
       <check name="C_DEBT_PAYMENT_C_CASHLINE__CHK"><![CDATA[(C_CASHLINE_ID IS NULL) OR (C_BANKSTATEMENTLINE_ID IS NULL)]]></check>

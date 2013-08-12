@@ -58,6 +58,9 @@
       <foreign-key foreignTable="S_RESOURCE" name="S_RESOURCEUNAVAILABLE_S_RESOUR" onDelete="cascade">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
       </foreign-key>
+      <index name="S_RESRCUNAVAILABLE_RESRC_IDX" unique="false">
+        <index-column name="S_RESOURCE_ID"/>
+      </index>
       <check name="S_RESOURCEUNAVA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -61,6 +61,9 @@
       <foreign-key foreignTable="AD_CLIENT" name="FIN_PAYMENTRUNPAYMENT_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <index name="FIN_PYMTRUNPYMT_PYMTRUN_IDX" unique="false">
+        <index-column name="FIN_PAYMENT_RUN_ID"/>
+      </index>
       <check name="FIN_PAYMENTRUNPAY_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="FIN_PAYMENTRUNPAY_VALCHK_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

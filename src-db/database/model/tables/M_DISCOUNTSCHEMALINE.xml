@@ -175,6 +175,9 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_DISCOUNTSCHEMALINE_M_PRODUCT" onDelete="setnull">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <index name="M_DISCTSCHMLINE_DISCTSCHM_IDX" unique="false">
+        <index-column name="M_DISCOUNTSCHEMA_ID"/>
+      </index>
       <check name="M_DISCOUNTSCHEMALINE_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

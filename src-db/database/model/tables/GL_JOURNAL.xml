@@ -209,6 +209,9 @@
       <foreign-key foreignTable="USER2" name="GL_JOURNAL_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="GL_JOURNAL_JOURNALBATCH_IDX" unique="false">
+        <index-column name="GL_JOURNALBATCH_ID"/>
+      </index>
       <unique name="GL_JOURNAL_DOCNO">
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="C_PERIOD_ID"/>

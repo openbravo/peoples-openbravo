@@ -61,5 +61,8 @@
       <foreign-key foreignTable="C_ORDER" name="C_ORDER_DISCOUNT_C_ORDER">
         <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
+      <index name="C_ORDERDISCOUNT_ORDER_IDX" unique="false">
+        <index-column name="C_ORDER_ID"/>
+      </index>
     </table>
   </database>

@@ -58,6 +58,9 @@
       <foreign-key foreignTable="AD_ORG" name="AD_PACKAGE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="AD_PACKAGE_MODULE_IDX" unique="false">
+        <index-column name="AD_MODULE_ID"/>
+      </index>
       <unique name="AD_PACKAGE_JAVANAME">
         <unique-column name="JAVAPACKAGE"/>
       </unique>

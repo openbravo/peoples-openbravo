@@ -80,6 +80,9 @@
       <foreign-key foreignTable="AD_TABLE" name="AD_DATASET_TABLE_AD_TABLE">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
+      <index name="AD_DATASETTABLE_DATASET_IDX" unique="false">
+        <index-column name="AD_DATASET_ID"/>
+      </index>
       <check name="AD_DATASET_TABLE_INCLUDEAL_CHK"><![CDATA[INCLUDEALLCOLUMNS IN ('Y', 'N')]]></check>
       <check name="AD_DATASET_TABLE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_DATASET_TABLE_ISBUSINES_CHK"><![CDATA[ISBUSINESSOBJECT IN ('Y', 'N')]]></check>

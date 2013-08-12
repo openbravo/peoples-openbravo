@@ -57,6 +57,9 @@
       <foreign-key foreignTable="C_PROJECTPROPOSAL" name="C_PROJECTPROPOSALTASK_C_PROJEC">
         <reference local="C_PROJECTPROPOSAL_ID" foreign="C_PROJECTPROPOSAL_ID"/>
       </foreign-key>
+      <index name="C_PRJPROPOSTASK_PRJPROPOS_IDX" unique="false">
+        <index-column name="C_PROJECTPROPOSAL_ID"/>
+      </index>
       <check name="C_PRPROPTK_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

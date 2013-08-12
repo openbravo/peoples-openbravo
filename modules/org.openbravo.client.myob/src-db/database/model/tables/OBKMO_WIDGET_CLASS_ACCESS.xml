@@ -53,6 +53,12 @@
       <foreign-key foreignTable="OBKMO_WIDGET_CLASS" name="OBKMO_WIDCLASSACC_WIDGETCLASS" onDelete="cascade">
         <reference local="OBKMO_WIDGET_CLASS_ID" foreign="OBKMO_WIDGET_CLASS_ID"/>
       </foreign-key>
+      <index name="OBKMO_WDGTCLSACC_WDGTCLASS_IDX" unique="false">
+        <index-column name="OBKMO_WIDGET_CLASS_ID"/>
+      </index>
+      <index name="OBKMO_WGTCLASSACCESS_ROLE_IDX" unique="false">
+        <index-column name="AD_ROLE_ID"/>
+      </index>
       <check name="OBKMO_WIDCLASSACC_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

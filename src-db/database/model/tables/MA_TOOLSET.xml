@@ -65,6 +65,9 @@
       <foreign-key foreignTable="MA_TOOLSET_TYPE" name="MA_TOOLSET_TYPEMATOOLSET">
         <reference local="MA_TOOLSET_TYPE_ID" foreign="MA_TOOLSET_TYPE_ID"/>
       </foreign-key>
+      <index name="MA_TOOLSET_TOOLSETTYPE_IDX" unique="false">
+        <index-column name="MA_TOOLSET_TYPE_ID"/>
+      </index>
       <check name="MA_TOOLSET_DISCARDED_CHECK"><![CDATA[DISCARDED IN ('Y', 'N')]]></check>
       <check name="MA_TOOLSET_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

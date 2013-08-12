@@ -65,5 +65,8 @@
       <foreign-key foreignTable="C_POC_DOCTYPE_TEMPLATE" name="C_POC_EMAILDEFINITION_C_POC_DO">
         <reference local="C_POC_DOCTYPE_TEMPLATE_ID" foreign="C_POC_DOCTYPE_TEMPLATE_ID"/>
       </foreign-key>
+      <index name="C_POCEMAILDEF_DOCTYPETEMPL_IDX" unique="false">
+        <index-column name="C_POC_DOCTYPE_TEMPLATE_ID"/>
+      </index>
     </table>
   </database>

@@ -57,6 +57,9 @@
       <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="FIN_BANKFILE_EXCEPTION_FA">
         <reference local="FIN_FINANCIAL_ACCOUNT_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
       </foreign-key>
+      <index name="FIN_BNKFILEEXC_BNKFILEFRMT_IDX" unique="false">
+        <index-column name="FIN_BANKFILE_FORMAT_ID"/>
+      </index>
       <check name="FIN_BANKFILE_EX_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -89,6 +89,9 @@
       <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCYRATEDOCRATETO">
         <reference local="C_CURRENCY_ID_TO" foreign="C_CURRENCY_ID"/>
       </foreign-key>
+      <index name="C_CONVRATEDOC_FINACCTRX_IDX" unique="false">
+        <index-column name="FIN_FINACC_TRANSACTION_ID"/>
+      </index>
       <unique name="C_CONVERSIONRATEDOC_ONCE">
         <unique-column name="C_CURRENCY_ID"/>
         <unique-column name="C_CURRENCY_ID_TO"/>

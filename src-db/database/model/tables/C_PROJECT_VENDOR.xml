@@ -86,6 +86,9 @@
       <foreign-key foreignTable="M_PRICELIST_VERSION" name="C_PROJECT_VENDOR_M_PRICELIST_V">
         <reference local="M_PRICELIST_VERSION_ID" foreign="M_PRICELIST_VERSION_ID"/>
       </foreign-key>
+      <index name="C_PROJECTVENDOR_PROJECT_IDX" unique="false">
+        <index-column name="C_PROJECT_ID"/>
+      </index>
       <check name="C_PROJECT_VENDO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

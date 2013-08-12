@@ -81,6 +81,9 @@
       <foreign-key foreignTable="M_PRODUCT" name="C_PROJECTPROPOSALLINE_M_PRODUC">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <index name="C_PRJPROPOSALLN_PRJPROPOS_IDX" unique="false">
+        <index-column name="C_PROJECTPROPOSAL_ID"/>
+      </index>
       <check name="C_PROJECTPROPOSALLINE_ISAC_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

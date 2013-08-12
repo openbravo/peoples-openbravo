@@ -57,6 +57,9 @@
       <foreign-key foreignTable="OBCLKER_TEMPLATE" name="OBCLKER_TD_PARENT" onDelete="cascade">
         <reference local="OBCLKER_TEMPLATE_ID" foreign="OBCLKER_TEMPLATE_ID"/>
       </foreign-key>
+      <index name="OBCLKER_TEMPLATEDEP_TEMPL_IDX" unique="false">
+        <index-column name="OBCLKER_TEMPLATE_ID"/>
+      </index>
       <check name="OBCLKER_CTD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

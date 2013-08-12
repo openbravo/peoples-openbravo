@@ -61,6 +61,9 @@
       <foreign-key foreignTable="OBKMO_WIDGET_CLASS_MENU" name="OBKMO_WCLM_TR_WCLM" onDelete="cascade">
         <reference local="OBKMO_WIDGET_CLASS_MENU_ID" foreign="OBKMO_WIDGET_CLASS_MENU_ID"/>
       </foreign-key>
+      <index name="OBKMO_WDTCMENUTRL_WDTCMENU_IDX" unique="false">
+        <index-column name="OBKMO_WIDGET_CLASS_MENU_ID"/>
+      </index>
       <check name="OBKMO_WCLM_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBKMO_WCLM_TRL_ISTR_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>

@@ -72,6 +72,12 @@
       <foreign-key foreignTable="M_PRODUCTIONPLAN" name="MA_WEINCIDENCE_M_PRODUCTIONPLA">
         <reference local="M_PRODUCTIONPLAN_ID" foreign="M_PRODUCTIONPLAN_ID"/>
       </foreign-key>
+      <index name="MA_WEINCIDENCE_PRODPLAN_IDX" unique="false">
+        <index-column name="M_PRODUCTIONPLAN_ID"/>
+      </index>
+      <index name="MA_WEINCIDENCE_PRODUCTION_IDX" unique="false">
+        <index-column name="M_PRODUCTION_ID"/>
+      </index>
       <check name="MA_WEINCIDENCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

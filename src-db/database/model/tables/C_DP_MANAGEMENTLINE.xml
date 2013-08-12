@@ -65,5 +65,8 @@
       <foreign-key foreignTable="C_DP_MANAGEMENT" name="C_DP_MANAGEMENTLINE_C_DP_MANAG">
         <reference local="C_DP_MANAGEMENT_ID" foreign="C_DP_MANAGEMENT_ID"/>
       </foreign-key>
+      <index name="C_DPMGTLINE_DPMGT_IDX" unique="false">
+        <index-column name="C_DP_MANAGEMENT_ID"/>
+      </index>
     </table>
   </database>

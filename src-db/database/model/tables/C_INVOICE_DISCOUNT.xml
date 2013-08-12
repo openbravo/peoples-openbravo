@@ -61,5 +61,8 @@
       <foreign-key foreignTable="C_INVOICE" name="C_INVOICE_DISCOUNT_C_INVOICE">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
+      <index name="C_INVOICEDISCOUNT_INVOICE_IDX" unique="false">
+        <index-column name="C_INVOICE_ID"/>
+      </index>
     </table>
   </database>

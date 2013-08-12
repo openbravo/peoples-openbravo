@@ -70,6 +70,9 @@
       <foreign-key foreignTable="MA_MAINTENANCE" name="MA_MAINT_PERIODICITY_MA_MAINTE">
         <reference local="MA_MAINTENANCE_ID" foreign="MA_MAINTENANCE_ID"/>
       </foreign-key>
+      <index name="MA_MAINTPERIOD_MAINTENANCE_IDX" unique="false">
+        <index-column name="MA_MAINTENANCE_ID"/>
+      </index>
       <check name="MA_MAINT_PERIODICITY_EXCLU_CHK"><![CDATA[EXCLUDEWEEKEND IN ('Y', 'N')]]></check>
       <check name="MA_MAINT_PERIODICITY_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

@@ -53,6 +53,9 @@
       <foreign-key foreignTable="MA_INDIRECT_COST" name="MA_COSTCENTER_IC_MA_INDIRECT_C">
         <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
       </foreign-key>
+      <index name="MA_COSTCNTRIC_COSTCNTRVER_IDX" unique="false">
+        <index-column name="MA_COSTCENTER_VERSION_ID"/>
+      </index>
       <check name="MA_COSTCENTER_I_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

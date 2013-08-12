@@ -108,5 +108,8 @@
       <foreign-key foreignTable="M_PRODUCT" name="C_PROJECTTASK_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <index name="C_PROJECTTASK_PROJECTPHASE_IDX" unique="false">
+        <index-column name="C_PROJECTPHASE_ID"/>
+      </index>
     </table>
   </database>

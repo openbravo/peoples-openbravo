@@ -64,5 +64,8 @@
       <foreign-key foreignTable="AD_USER" name="AD_ALERTRECIPIENT_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <index name="AD_ALERTRECIP_ALERTRULE_IDX" unique="false">
+        <index-column name="AD_ALERTRULE_ID"/>
+      </index>
     </table>
   </database>

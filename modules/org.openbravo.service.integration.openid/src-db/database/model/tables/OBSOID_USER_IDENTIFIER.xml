@@ -50,6 +50,9 @@
       <foreign-key foreignTable="AD_USER" name="OBSOID_USER_OID_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <index name="OBSOID_USERIDENTIFIER_USER_IDX" unique="false">
+        <index-column name="AD_USER_ID"/>
+      </index>
       <unique name="OBSOID_UN_IDENTIFIER">
         <unique-column name="OPENID_IDENTIFIER"/>
       </unique>

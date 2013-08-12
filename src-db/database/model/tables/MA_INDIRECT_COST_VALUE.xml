@@ -74,6 +74,9 @@
       <foreign-key foreignTable="MA_INDIRECT_COST" name="MA_INDIRECT_COST_VALUE_MA_INDI">
         <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
       </foreign-key>
+      <index name="MA_INDCOSTVALUE_INDCOST_IDX" unique="false">
+        <index-column name="MA_INDIRECT_COST_ID"/>
+      </index>
       <check name="MA_INDIRECT_COST_VALUE_CAL_CH1"><![CDATA[CALCULATED IN ('Y', 'N')]]></check>
       <check name="MA_INDIRECT_COST_VALUE_CAL_CHK"><![CDATA[CALCULATE IN ('Y', 'N')]]></check>
       <check name="MA_INDIRECT_COST_VALUE_ISA_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

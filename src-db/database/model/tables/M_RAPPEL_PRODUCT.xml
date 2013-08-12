@@ -53,5 +53,8 @@
       <foreign-key foreignTable="AD_ORG" name="M_RAPPEL_PRODUCT_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="M_RAPPELPRODUCT_RAPPEL_IDX" unique="false">
+        <index-column name="M_RAPPEL_ID"/>
+      </index>
     </table>
   </database>

@@ -50,6 +50,9 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="AD_ORG_WAREHOUSE_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <index name="AD_ORGWAREHOUSE_ORG_IDX" unique="false">
+        <index-column name="AD_ORG_ID"/>
+      </index>
       <check name="AD_ORG_WAREHOUSE_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

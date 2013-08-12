@@ -62,6 +62,9 @@
       <foreign-key foreignTable="AD_REF_SEARCH" name="AD_REF_SEARCH_COLUMN_AD_REF_SE">
         <reference local="AD_REF_SEARCH_ID" foreign="AD_REF_SEARCH_ID"/>
       </foreign-key>
+      <index name="AD_REFSEARCHCOL_REFSEARCH_IDX" unique="false">
+        <index-column name="AD_REF_SEARCH_ID"/>
+      </index>
       <check name="AD_REF_SEARCH_C_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

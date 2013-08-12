@@ -61,6 +61,9 @@
       <foreign-key foreignTable="C_UOM" name="C_UOMCONVERSIONTO">
         <reference local="C_UOM_TO_ID" foreign="C_UOM_ID"/>
       </foreign-key>
+      <index name="C_UOMCONVERSION_UOM_IDX" unique="false">
+        <index-column name="C_UOM_ID"/>
+      </index>
       <check name="C_UOM_CONVERSIO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -57,6 +57,9 @@
       <foreign-key foreignTable="M_RAPPEL_BPARTNER" name="M_RAPPEL_INVOICE_M_RAPPEL_BPAR">
         <reference local="M_RAPPEL_BPARTNER_ID" foreign="M_RAPPEL_BPARTNER_ID"/>
       </foreign-key>
+      <index name="M_RAPPELINVOICE_RAPPELBP_IDX" unique="false">
+        <index-column name="M_RAPPEL_BPARTNER_ID"/>
+      </index>
       <check name="M_RAPPEL_INVOIC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

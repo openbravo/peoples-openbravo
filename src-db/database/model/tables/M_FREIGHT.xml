@@ -120,5 +120,8 @@
       <foreign-key foreignTable="C_REGION" name="M_FREIGHT_TO_REGION">
         <reference local="TO_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
+      <index name="M_FREIGHT_SHIPPER_IDX" unique="false">
+        <index-column name="M_SHIPPER_ID"/>
+      </index>
     </table>
   </database>

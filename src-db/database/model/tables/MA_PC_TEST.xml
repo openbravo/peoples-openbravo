@@ -58,6 +58,9 @@
       <foreign-key foreignTable="MA_PERIODIC_CONTROL" name="MA_PERIODIC_CONTROL_MAPCTEST">
         <reference local="MA_PERIODIC_CONTROL_ID" foreign="MA_PERIODIC_CONTROL_ID"/>
       </foreign-key>
+      <index name="MA_PCTEST_PERIODICCONTROL_IDX" unique="false">
+        <index-column name="MA_PERIODIC_CONTROL_ID"/>
+      </index>
       <check name="MA_PC_TEST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

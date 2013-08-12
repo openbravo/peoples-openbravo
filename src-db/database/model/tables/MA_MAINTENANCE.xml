@@ -80,6 +80,12 @@
       <foreign-key foreignTable="MA_MAINT_OPERATION" name="MA_MAINTENANCE_MA_MAINT_OPERAT">
         <reference local="MA_MAINT_OPERATION_ID" foreign="MA_MAINT_OPERATION_ID"/>
       </foreign-key>
+      <index name="MA_MAINTENANCE_MACHINE_IDX" unique="false">
+        <index-column name="MA_MACHINE_ID"/>
+      </index>
+      <index name="MA_MAINTENANCE_MACHINETYPE_IDX" unique="false">
+        <index-column name="MA_MACHINE_TYPE_ID"/>
+      </index>
       <check name="MA_MAINTENANCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

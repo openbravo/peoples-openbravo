@@ -89,6 +89,9 @@
       <foreign-key foreignTable="M_PRODUCTION" name="MA_GLOBALUSE_M_PRODUCTION">
         <reference local="M_PRODUCTION_ID" foreign="M_PRODUCTION_ID"/>
       </foreign-key>
+      <index name="MA_GLOBALUSE_PRODUCTION_IDX" unique="false">
+        <index-column name="M_PRODUCTION_ID"/>
+      </index>
       <check name="MA_GLOBALUSE_CHECK1"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
       <check name="MA_GLOBALUSE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

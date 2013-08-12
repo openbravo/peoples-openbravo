@@ -156,6 +156,9 @@
       <foreign-key foreignTable="C_TAX" name="C_TAX_FK_PROJECTLINE">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
+      <index name="C_PROJECTLINE_PROJECT_IDX" unique="false">
+        <index-column name="C_PROJECT_ID"/>
+      </index>
       <check name="C_PROJECTLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

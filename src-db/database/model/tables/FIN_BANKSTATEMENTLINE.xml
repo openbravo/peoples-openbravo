@@ -102,6 +102,9 @@
       <index name="FIN_BANKSTATEMENTLINE_TRX" unique="false">
         <index-column name="FIN_FINACC_TRANSACTION_ID"/>
       </index>
+      <index name="FIN_BNKSTMTLINE_BNKSTMT_IDX" unique="false">
+        <index-column name="FIN_BANKSTATEMENT_ID"/>
+      </index>
       <check name="FIN_BANKSTATLINE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

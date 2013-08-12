@@ -60,6 +60,9 @@
       <index name="OBUIAPP_PROCESSACC_PROCESS_IDX" unique="false">
         <index-column name="OBUIAPP_PROCESS_ID"/>
       </index>
+      <index name="OBUIAPP_PROCESSACCESS_ROLE_IDX" unique="false">
+        <index-column name="AD_ROLE_ID"/>
+      </index>
       <check name="OBUIAPP_PROC_ACC_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PROC_ACC_ISREADWR_CHK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>

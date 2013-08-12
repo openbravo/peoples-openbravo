@@ -61,6 +61,9 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_ADEPPROCEDURES">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="AD_EPPROC_EXTENSIONPOINT_IDX" unique="false">
+        <index-column name="AD_EXTENSION_POINTS_ID"/>
+      </index>
       <check name="AD_EP_PROC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
