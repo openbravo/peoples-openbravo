@@ -143,6 +143,9 @@
       <foreign-key foreignTable="FIN_PAY_EXEC_PROCESS" name="FIN_FINACCMETH_PAYOUTEXECPROC">
         <reference local="PAYOUT_EXECUTION_PROCESS_ID" foreign="FIN_PAY_EXEC_PROCESS_ID"/>
       </foreign-key>
+      <index name="FIN_FINACCTPYMTMETH_FINACC_IDX" unique="false">
+        <index-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
+      </index>
       <unique name="FIN_FINACC_PAYMENTMETHOD_UN">
         <unique-column name="FIN_PAYMENTMETHOD_ID"/>
         <unique-column name="FIN_FINANCIAL_ACCOUNT_ID"/>

@@ -162,6 +162,9 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="FIN_FINACC_ACCT_WITHDRAWAL">
         <reference local="FIN_WITHDRAWAL_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
+      <index name="FIN_FINACCT_ACCTSCHEMA_IDX" unique="false">
+        <index-column name="C_ACCTSCHEMA_ID"/>
+      </index>
       <unique name="FIN_FINACC_ACCT_ACCTSCHEMA_UN">
         <unique-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
         <unique-column name="C_ACCTSCHEMA_ID"/>

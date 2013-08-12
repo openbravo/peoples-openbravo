@@ -92,6 +92,9 @@
       <index name="C_CONVRATEDOC_FINACCTRX_IDX" unique="false">
         <index-column name="FIN_FINACC_TRANSACTION_ID"/>
       </index>
+      <index name="C_CONVRATEDOC_PAYMENT_IDX" unique="false">
+        <index-column name="FIN_PAYMENT_ID"/>
+      </index>
       <unique name="C_CONVERSIONRATEDOC_ONCE">
         <unique-column name="C_INVOICE_ID"/>
         <unique-column name="C_CURRENCY_ID"/>
