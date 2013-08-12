@@ -983,7 +983,7 @@ public class OrderLoader extends JSONProcessSimple {
         transaction.setAttributeSetValue(line.getAttributeSetValue());
         if (ModelProvider.getInstance().getEntity(MaterialTransaction.class)
             .hasProperty("isreservationtriggerdisabled")) {
-          transaction.setReservationtriggerdisabled(true);
+          transaction.set("isreservationtriggerdisabled", true);
         }
 
         OBDal.getInstance().save(transaction);
