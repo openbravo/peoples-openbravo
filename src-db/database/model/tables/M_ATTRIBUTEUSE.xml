@@ -57,6 +57,9 @@
       <foreign-key foreignTable="M_ATTRIBUTESET" name="M_ATTRIBUTEUSE_M_ATTRIBUTESET">
         <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
       </foreign-key>
+      <index name="M_ATTRIBUTEUSE_ATTRIBSET_IDX" unique="false">
+        <index-column name="M_ATTRIBUTESET_ID"/>
+      </index>
       <unique name="M_ATTRIBUTEUSE_ATTRIBUTE_AT_UN">
         <unique-column name="M_ATTRIBUTE_ID"/>
         <unique-column name="M_ATTRIBUTESET_ID"/>
