@@ -74,10 +74,10 @@
         <reference local="C_CURRENCY_ID_TO" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <unique name="C_CONVERSIONRATE_ONCE">
-        <unique-column name="AD_CLIENT_ID"/>
-        <unique-column name="AD_ORG_ID"/>
         <unique-column name="C_CURRENCY_ID"/>
         <unique-column name="C_CURRENCY_ID_TO"/>
+        <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="AD_ORG_ID"/>
         <unique-column name="CONVERSIONRATETYPE"/>
         <unique-column name="VALIDFROM"/>
       </unique>

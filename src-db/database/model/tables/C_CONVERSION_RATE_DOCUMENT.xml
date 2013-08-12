@@ -93,9 +93,9 @@
         <index-column name="FIN_FINACC_TRANSACTION_ID"/>
       </index>
       <unique name="C_CONVERSIONRATEDOC_ONCE">
+        <unique-column name="C_INVOICE_ID"/>
         <unique-column name="C_CURRENCY_ID"/>
         <unique-column name="C_CURRENCY_ID_TO"/>
-        <unique-column name="C_INVOICE_ID"/>
         <unique-column name="FIN_PAYMENT_ID"/>
         <unique-column name="APRM_FINACC_TRANSACTION_V_ID"/>
       </unique>

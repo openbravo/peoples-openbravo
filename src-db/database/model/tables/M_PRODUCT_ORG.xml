@@ -111,8 +111,8 @@
         <reference local="M_PRODUCT_PO_ID" foreign="M_PRODUCT_PO_ID"/>
       </foreign-key>
       <unique name="M_PRODUCT_ORG_ORG_PRODUCT_UN">
-        <unique-column name="AD_ORG_ID"/>
         <unique-column name="M_PRODUCT_ID"/>
+        <unique-column name="AD_ORG_ID"/>
       </unique>
       <check name="M_PRODUCT_ORG_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

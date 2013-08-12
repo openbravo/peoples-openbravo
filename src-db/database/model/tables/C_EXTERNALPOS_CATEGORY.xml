@@ -54,8 +54,8 @@
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
       <unique name="C_EXTPOSCAT_PRODCATEGORY_UN">
-        <unique-column name="M_PRODUCT_CATEGORY_ID"/>
         <unique-column name="C_EXTERNALPOS_ID"/>
+        <unique-column name="M_PRODUCT_CATEGORY_ID"/>
       </unique>
       <check name="C_EXTERNALPOS_C_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

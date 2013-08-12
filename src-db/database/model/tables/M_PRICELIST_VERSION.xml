@@ -81,9 +81,9 @@
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
       <unique name="M_PRICELIST_NAME_VALIDFROM">
-        <unique-column name="NAME"/>
-        <unique-column name="VALIDFROM"/>
         <unique-column name="M_PRICELIST_ID"/>
+        <unique-column name="VALIDFROM"/>
+        <unique-column name="NAME"/>
       </unique>
       <check name="M_PRICELIST_VERSION_ISACTI_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_PRICELIST_VERSION_M_PRIC_CHK"><![CDATA[M_PRICELIST_VERSION_GENERATE IN ('Y', 'N')]]></check>

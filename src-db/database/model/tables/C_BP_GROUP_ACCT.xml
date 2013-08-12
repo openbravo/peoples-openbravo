@@ -209,8 +209,8 @@
         <reference local="WRITEOFF_REV_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <unique name="C_BP_GROUP_ACCT_SCHEM_GROUP_UN">
-        <unique-column name="C_ACCTSCHEMA_ID"/>
         <unique-column name="C_BP_GROUP_ID"/>
+        <unique-column name="C_ACCTSCHEMA_ID"/>
       </unique>
       <check name="C_BP_GROUP_ACCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
