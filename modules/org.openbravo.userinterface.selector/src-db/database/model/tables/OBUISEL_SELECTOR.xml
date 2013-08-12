@@ -136,8 +136,8 @@
         <reference local="VALUEFIELD_ID" foreign="OBUISEL_SELECTOR_FIELD_ID"/>
       </foreign-key>
       <unique name="OBUISEL_S_NAME">
-        <unique-column name="NAME"/>
         <unique-column name="AD_REFERENCE_ID"/>
+        <unique-column name="NAME"/>
       </unique>
       <check name="OBUISEL_CUSTOM_QUERY_CHK"><![CDATA[CUSTOM_QUERY IN ('Y', 'N')]]></check>
       <check name="OBUISEL_SEL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

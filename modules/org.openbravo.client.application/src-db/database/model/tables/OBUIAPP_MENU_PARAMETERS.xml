@@ -66,8 +66,8 @@
         <reference local="AD_MENU_ID" foreign="AD_MENU_ID"/>
       </foreign-key>
       <unique name="OBUIAPP_MENU_PARAMETERS_NAME">
-        <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="AD_MENU_ID"/>
+        <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
       <check name="OBUIAPP_MP_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
