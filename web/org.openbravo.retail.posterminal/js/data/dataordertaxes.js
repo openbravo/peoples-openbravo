@@ -307,7 +307,7 @@
                 var discountedprice, calculatedDiscountedprice, orgDiscountedprice;
                 if (!(_.isNull(discAmt) || _.isUndefined(discAmt))) {
                   discountedprice = discAmt.divide(new BigDecimal(String(element.get('qty'))));
-                  discountedNet = discAmt;
+                  discountedNet = OB.DEC.toNumber(discAmt);
                   //sometimes with packs or discounts we are losing precision and this precision is reflected wrongly in the tax net
                   //we save the number with total precision and bellow if there are differences they are corrected.
                   calculatedDiscountedprice = true;
