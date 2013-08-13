@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -35,6 +35,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.gl.GLJournal;
 import org.openbravo.model.financialmgmt.gl.GLJournalLine;
 import org.openbravo.scheduling.ProcessBundle;
@@ -100,7 +101,9 @@ public class FIN_AddPaymentFromJournal extends DalBaseProcess {
         mm.call(procedureName, parameters, null, false, false);
       } catch (Exception e) {
         OBDal.getInstance().rollbackAndClose();
-        throw new OBException(e.getCause().getMessage());
+        OBError error = OBMessageUtils.translateError(conn, vars, vars.getLanguage(), e.getCause()
+            .getMessage());
+        throw new OBException(error.getMessage());
       }
 
       OBDal.getInstance().refresh(journal);
