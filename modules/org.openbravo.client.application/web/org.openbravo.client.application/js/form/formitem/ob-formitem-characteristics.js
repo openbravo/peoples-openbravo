@@ -50,7 +50,7 @@ isc.OBCharacteristicsItem.addProperties({
 
     //Remove all members the widget might have
     //this.canvas.removeMembers(this.canvas.getMembers());
-    //    
+    //
     if (value.characteristics) {
       for (field in value.characteristics) {
         if (value.characteristics.hasOwnProperty(field)) {
@@ -164,7 +164,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
   /**
    * Based on values selected in the tree, returns the ones that are
    * going to be used for visualization and/or filtering:
-   * 
+   *
    *   -Filtering: includes all selected leaf nodes
    *   -Visualization: includes the top in branch fully selected nodes
    */
@@ -412,7 +412,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
 
   /**
    * Criterion obtained queries the text field with the concatenation of all characteristics.
-   * 
+   *
    * It might be changed to query actual table of characteristic values, but this would make it
    * not usable in other views than Product
    */
@@ -449,11 +449,11 @@ isc.OBCharacteristicsFilterItem.addProperties({
           value: inValues
         };
 
-        if (this.selectorWindow
-            && this.selectorWindow.selectorGrid
-            && this.selectorWindow.selectorGrid.dataSource
-            && this.selectorWindow.selectorGrid.dataSource.dataURL !== (OB.Application.contextUrl + 'org.openbravo.model.common.plm/Product')) {
-        //if (this.selectorWindow && this.selectorWindow.selector && this.selectorWindow.selector.selectorDefinitionId === this.productSelectorID) {
+        if (this.selectorWindow //
+        && this.selectorWindow.selectorGrid //
+        && this.selectorWindow.selectorGrid.dataSource //
+        && this.selectorWindow.selectorGrid.dataSource.dataURL !== (OB.Application.contextUrl + 'org.openbravo.model.common.plm/Product')) { //
+          //if (this.selectorWindow && this.selectorWindow.selector && this.selectorWindow.selector.selectorDefinitionId === this.productSelectorID) {
           charCriteria.existsQuery = this.productSelectorHqlExists;
         } else {
           charCriteria.existsQuery = this.defaultHqlExists;
