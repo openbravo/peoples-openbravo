@@ -27,7 +27,10 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingStatus;
+import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -224,6 +227,7 @@ public class DocMatchInv extends AcctServer {
     Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
         Organization.class, AD_Org_ID));
     BigDecimal bdCost = BigDecimal.ZERO;
+    BigDecimal trxCost = null;
     if (inOutLine.getProduct().isBookUsingPurchaseOrderPrice()) {
       // If the Product is checked as book using PO Price, the Price of the Purchase Order will
       // be used to create the FactAcct Line
@@ -242,16 +246,34 @@ public class DocMatchInv extends AcctServer {
       // If the Product is not checked as book using PO Price, the Cost of the
       // Transaction will be used to create the FactAcct Line
       MaterialTransaction transaction = getTransaction(Record_ID);
+      Organization legalEntity = OBContext.getOBContext()
+          .getOrganizationStructureProvider(AD_Client_ID)
+          .getLegalEntity(inOutLine.getShipmentReceipt().getOrganization());
+      HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
+      if (inOutLine.getStorageBin() == null) {
+        costDimensions.put(CostDimension.Warehouse, inOutLine.getShipmentReceipt().getWarehouse());
+      } else {
+        costDimensions.put(CostDimension.Warehouse, inOutLine.getStorageBin().getWarehouse());
+      }
       if (transaction == null) {
-        Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put("Product", inOutLine.getProduct().getIdentifier());
-        parameters.put(
-            "Date",
-            (OBDateUtils.formatDate(OBDal.getInstance().get(ReceiptInvoiceMatch.class, Record_ID)
-                .getTransactionDate())).toString());
-        setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
-        throw new IllegalStateException();
+        if (!CostingUtils.hasStandardCostDefinition(inOutLine.getProduct(), legalEntity, inOutLine
+            .getShipmentReceipt().getAccountingDate(), costDimensions)) {
+          Map<String, String> parameters = new HashMap<String, String>();
+          parameters.put("Product", inOutLine.getProduct().getIdentifier());
+          parameters.put(
+              "Date",
+              (OBDateUtils.formatDate(OBDal.getInstance().get(ReceiptInvoiceMatch.class, Record_ID)
+                  .getTransactionDate())).toString());
+          setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+          throw new IllegalStateException();
 
+        } else {
+          trxCost = CostingUtils.getStandardCost(inOutLine.getProduct(), legalEntity,
+              inOutLine.getShipmentReceipt().getAccountingDate(), costDimensions,
+              legalEntity.getCurrency()).multiply(new BigDecimal(data[0].getField("Qty")));
+        }
+      } else {
+        trxCost = transaction.getTransactionCost();
       }
       if (!CostingStatus.getInstance().isMigrated()) {
         costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
@@ -264,13 +286,14 @@ public class DocMatchInv extends AcctServer {
         setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
         throw new IllegalStateException();
       }
-      BigDecimal trxCost = transaction.getTransactionCost();
+
       // Cost is retrieved from the transaction and if it does not exist It calls the old way
       // The precision of the divide is set to 10 because the rounding is needed to avoid
       // exceptions.
       // The rounding itself is not needed because it is done some lines later.
-      bdCost = CostingStatus.getInstance().isMigrated() ? trxCost.divide(transaction
-          .getMovementQuantity().abs(), 10, RoundingMode.HALF_UP) : new BigDecimal(
+      bdCost = CostingStatus.getInstance().isMigrated() ? trxCost.divide(
+          transaction == null ? new BigDecimal(data[0].getField("Qty")).abs() : transaction
+              .getMovementQuantity().abs(), 10, RoundingMode.HALF_UP) : new BigDecimal(
           DocMatchInvData.selectProductAverageCost(conn, data[0].getField("M_Product_Id"),
               data[0].getField("orderAcctDate")));
       Long scale = costCurrency.getStandardPrecision();
