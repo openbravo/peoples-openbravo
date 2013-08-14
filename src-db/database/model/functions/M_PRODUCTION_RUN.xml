@@ -45,6 +45,7 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
+    CUR_ProductionPlan RECORD;
     CUR_PP RECORD;
     CUR_PLineBOM RECORD;
     CUR_BOM_PRODUCT RECORD;
@@ -456,6 +457,58 @@ BEGIN --BODY
       v_Message:='@Product@'||' "' ||v_Product_Name ||'" ' || '@ProductWithoutAttributeSet@';
       RAISE_APPLICATION_ERROR(-20000, v_Message);
     END IF;
+
+    SELECT COUNT(M_ProductionPlan_ID)
+    INTO v_count
+    FROM M_ProductionPlan pp
+    WHERE pp.M_Production_ID = v_Record_ID
+    AND NOT EXISTS (SELECT 1 FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND MovementQty > 0);
+
+    v_Message := NULL;      
+    IF(v_count <> 0) THEN
+      FOR CUR_ProductionPlan IN (
+	SELECT DISTINCT(pp.line)
+	FROM M_ProductionPlan pp
+	WHERE pp.M_Production_ID = v_Record_ID
+	AND NOT EXISTS (SELECT 1 FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND MovementQty > 0)
+	ORDER BY Line
+        )
+      LOOP
+        IF v_Message IS NULL THEN
+          v_Message := CUR_ProductionPlan.line;
+        ELSE
+	  v_Message := v_Message || ', ' || CUR_ProductionPlan.line;
+	END IF;
+      END LOOP;
+      v_Message := '@ProducedProductWithNegativeQty@' || ' @ReferProductionPlanLines@' || ': ' || v_Message;
+      RAISE_APPLICATION_ERROR(-20000, v_Message);
+    END IF;   
+
+    SELECT COUNT(M_ProductionPlan_ID)
+    INTO v_count
+    FROM M_ProductionPlan pp
+    WHERE pp.M_Production_ID = v_Record_ID
+    AND (SELECT COUNT(M_ProductionLine_ID) FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND movementQty > 0) > 1;
+    
+    IF (v_count <> 0) THEN
+      FOR CUR_ProductionPlan IN (
+	SELECT DISTINCT(pp.line)
+	FROM M_ProductionPlan pp
+	WHERE pp.M_Production_ID = v_Record_ID
+	AND (SELECT COUNT(M_ProductionLine_ID) FROM M_ProductionLine WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID AND movementQty > 0) > 1
+	ORDER BY Line
+      )
+      LOOP
+        IF v_Message IS NULL THEN
+          v_Message := CUR_ProductionPlan.line;
+        ELSE
+	  v_Message := v_Message || ', ' || CUR_ProductionPlan.line;
+	END IF;
+      END LOOP;
+      v_Message:= '@ConsumedProductWithPostiveQty@' || ' @ReferProductionPlanLines@' || ': ' || v_Message;
+      RAISE_APPLICATION_ERROR(-20000, v_Message);
+    END IF;
+    
     SELECT count(*) INTO v_count
     FROM dual
     WHERE EXISTS (
