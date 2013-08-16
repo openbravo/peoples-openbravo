@@ -55,12 +55,12 @@ BEGIN
              Description = :NEW.Description,
              HELP = :NEW.HELP,             
              Updated = now()
-       WHERE AD_Field_ID IN (
-               SELECT F.AD_Field_ID
+       WHERE F.IsCentrallyMaintained = 'Y'
+         AND EXISTS (
+               SELECT 1
                  FROM AD_Column C, ad_module m
                 WHERE F.AD_Column_ID = C.AD_Column_ID
                   AND C.AD_Process_ID = :NEW.AD_Process_ID
-                  AND F.IsCentrallyMaintained = 'Y'
                   and m.ad_module_id = f.ad_module_id
                   and m.ad_language = :new.ad_language);
                   

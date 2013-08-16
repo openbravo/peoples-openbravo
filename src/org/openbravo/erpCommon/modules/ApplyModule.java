@@ -129,9 +129,10 @@ public class ApplyModule {
 
         // Import language modules
         for (int i = 0; i < data.length; i++) {
-          log4j.info("Importing language " + data[i].adLanguage + " from module " + data[i].name);
-          TranslationManager.importTrlDirectory(pool, obDir + "/modules/" + data[i].javapackage
-              + "/referencedata/translation", data[i].adLanguage, "0", null);
+          String folder = obDir + "/modules/" + data[i].javapackage + "/referencedata/translation";
+          log4j.info("Importing language " + data[i].adLanguage + " from module " + data[i].name
+              + " from folder: " + folder);
+          TranslationManager.importTrlDirectory(pool, folder, data[i].adLanguage, "0", null);
         }
       }
       // ************ Reference data for system client modules ************

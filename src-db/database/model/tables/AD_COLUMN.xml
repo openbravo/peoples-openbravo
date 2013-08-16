@@ -241,6 +241,9 @@
       <index name="AD_COLUMN_TABLE" unique="false">
         <index-column name="AD_TABLE_ID"/>
       </index>
+      <index name="AD_COLUMN_PROCESS" unique="false">
+        <index-column name="AD_PROCESS_ID"/>
+      </index>
       <unique name="AD_COLUMN_NAME">
         <unique-column name="AD_TABLE_ID"/>
         <unique-column name="COLUMNNAME"/>

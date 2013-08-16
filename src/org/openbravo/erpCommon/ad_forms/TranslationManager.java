@@ -634,7 +634,8 @@ public class TranslationManager {
       // factory.setValidating(true);
       final SAXParser parser = factory.newSAXParser();
       parser.parse(in, handler);
-      log4j.info("importTrl - Updated=" + handler.getUpdateCount() + " - from file " + fileName);
+      log4j
+          .info("importTrl - Updated=" + handler.getUpdateCount() + " - from file " + in.getName());
       // return Msg.getMsg(Env.getCtx(), "Updated") + "=" +
       // handler.getUpdateCount();
       return "";

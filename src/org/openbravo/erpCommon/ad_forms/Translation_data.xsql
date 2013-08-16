@@ -89,6 +89,7 @@
          select upper(tablename) AS c
            from ad_table 
           where upper(tablename) like '%TRL'
+          order by tablename
       </Sql>
   </SqlMethod> 
 
