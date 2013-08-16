@@ -19,7 +19,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     generatedModel: true,
     modelName: 'TaxRate'
   },
-  OB.Model.Product, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.BPLocation, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners,
+  OB.Model.Product, OB.Model.ProductCategory, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.BPLocation, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.ChangedBPlocation,
   {
     generatedModel: true,
     modelName: 'Discount'
@@ -132,6 +132,28 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       me.loadCheckedMultiorders();
     }
   },
+  processChangedCustomerAddress: function () {
+    // Processes the customers address who has been changed
+    var me = this;
+    if (OB.POS.modelterminal.get('connectedToERP')) {
+      OB.Dal.find(OB.Model.ChangedBPlocation, null, function (customerAddrChangedNotProcessed) { //OB.Dal.find success
+        var successCallback, errorCallback;
+        if (!customerAddrChangedNotProcessed || customerAddrChangedNotProcessed.length === 0) {
+          return;
+        }
+        successCallback = function () {
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomerAddrProcessed'));
+        };
+        errorCallback = function () {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomerAddrPendingData'));
+        };
+        customerAddrChangedNotProcessed.each(function (cusAddr) {
+        	cusAddr.set('json', enyo.json.parse(cusAddr.get('json')));
+        });
+        OB.UTIL.processCustomerAddr(customerAddrChangedNotProcessed, successCallback, errorCallback);
+      });
+    }
+  },
   isValidMultiOrderState: function () {
     if (this.get('leftColumnViewManager') && this.get('multiOrders')) {
       return this.get('leftColumnViewManager').isMultiOrder() && this.get('multiOrders').hasDataInList();
@@ -182,7 +204,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
         me = this,
         iter, isNew = false,
-        discounts, ordersave, customersave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction;
+        discounts, ordersave, customersave, customeraddrsave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction;
 
 
     function success() {
@@ -260,6 +282,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     orderList = new OB.Collection.OrderList(receipt);
     this.set('orderList', orderList);
     this.set('customer', new OB.Model.BusinessPartner());
+    this.set('customerAddr', new OB.Model.BPLocation());
     this.set('multiOrders', multiOrders);
 
     this.get('multiOrders').on('paymentAccepted', function () {
@@ -345,6 +368,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     }, this);
 
     customersave = new OB.DATA.CustomerSave(this);
+    customeraddrsave = new OB.DATA.CustomerAddrSave(this);
 
     this.set('leftColumnViewManager', new LeftColumnViewManager());
     this.set('subWindowManager', new ViewManager());
@@ -354,6 +378,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
     this.processChangedCustomers();
+    this.processChangedCustomerAddress();
 
     receipt.on('paymentAccepted', function () {
       receipt.prepareToSend(function () {

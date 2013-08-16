@@ -1,0 +1,72 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2012 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ *
+ * Contributed by Qualian Technologies Pvt. Ltd.
+ ************************************************************************************
+ */
+
+/*global B,_*/
+
+(function () {
+
+    OB = window.OB || {};
+    OB.DATA = window.OB.DATA || {};
+
+    OB.DATA.CustomerAddrSave = function (model) {
+        this.context = model;
+        this.customerAddr = model.get('customerAddr');
+        this.customerAddr.on('customerAddrSaved', function () {
+            var me = this,
+                customerAddrList, customerAddrId = this.customerAddr.get('id'),
+                isNew = false,
+                bpLocToSave = new OB.Model.ChangedBPlocation(),
+                customerAddrListToChange;
+
+            bpLocToSave.set('isbeingprocessed', 'N');
+            if (customerAddrId) {
+                this.customerAddr.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
+                bpLocToSave.set('json', JSON.stringify(this.customerAddr.serializeToJSON()));
+                bpLocToSave.set('c_bpartner_location_id', this.customerAddr.get('id'));
+            } else {
+                isNew = true;
+            }
+            //save that the customer address is being processed by server
+            OB.Dal.save(this.customerAddr, function () {
+                if (isNew) {
+                    me.customerAddr.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
+                    bpLocToSave.set('json', JSON.stringify(me.customerAddr.serializeToJSON()));
+                    bpLocToSave.set('c_bpartner_location_id', me.customerAddr.get('id'));
+                }
+                if (OB.POS.modelterminal.get('connectedToERP')) {
+                    bpLocToSave.set('isbeingprocessed', 'Y');
+                }
+                OB.Dal.save(bpLocToSave, function () {
+                    bpLocToSave.set('json', me.customerAddr.serializeToJSON());
+                    if (OB.POS.modelterminal.get('connectedToERP') === false) {
+                        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrChnSavedSuccessfullyLocally', [me.customerAddr.get('_identifier')]));
+                    }
+                    if (OB.POS.modelterminal.get('connectedToERP')) {
+                        var successCallback, errorCallback, List;
+                        successCallback = function () {
+                            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrSaved', [me.customerAddr.get('_identifier')]));
+                        };
+                        customerAddrListToChange = new OB.Collection.ChangedBPlocationList();
+                        customerAddrListToChange.add(bpLocToSave);
+                        OB.UTIL.processCustomerAddr(customerAddrListToChange, successCallback, null);
+                    }
+                }, function () {
+                    //error saving BP changes with changes in changedbusinesspartners
+                    OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrChn', [me.customerAddr.get('_identifier')]));
+                });
+            }, function () {
+                //error saving BP Location with new values in c_bpartner_location
+                window.console.error(arguments);
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrLocally', [me.customerAddr.get('_identifier')]));
+            });
+        }, this);
+    };
+}());

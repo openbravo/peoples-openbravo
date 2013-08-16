@@ -83,6 +83,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/currencypanel",
         "model/salesrepresentative",
         "model/changedbusinesspartners",
+        "model/changedbplocation",
         "model/executor",
         "components/modalcancel",
         "components/subwindow",
@@ -97,10 +98,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Web POS window
         "utils/ordersSyncUtils",
         "utils/customersSyncUtils",
+        "utils/customerAddrSyncUtils",
         "components/keypadcoins",
         "data/dataordersave",
         "data/dataordertaxes",
         "data/datacustomersave",
+        "data/datacustomeraddrsave",
         "data/dataorderdiscount",
         "components/modalreceipts",
         "components/modalmultiorderslayaway",
@@ -113,7 +116,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/order",
         "components/orderdetails",
         "components/businesspartner",
-        "components/bplocationbutton", // Button for selecting customer address
+        "components/bplocation", // Button for selecting customer address
         "components/salesrepresentative",
         "components/listreceiptscounter",
         "components/menu",
@@ -158,6 +161,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/subwindows/customers/customersadvancedsearch",
         "pointofsale/view/subwindows/customers/editcreatecustomerform",
         "pointofsale/view/subwindows/customers/customerdetailview",
+        
+        "pointofsale/view/subwindows/customeraddress/components/sharedcomponents",
+        "pointofsale/view/subwindows/customeraddress/editcreatecustomeraddress",
+        "pointofsale/view/subwindows/customeraddress/customeraddrsearch",
+        "pointofsale/view/subwindows/customeraddress/customeraddrdetailview",
         // Point of sale modals
         "pointofsale/view/modals/modalstockinstore",
         "pointofsale/view/modals/modalstockinotherstore",
@@ -194,7 +202,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Discounts
         "model/discounts",
-        "components/bplocationselector" // Modal for selecting customer address
 
     };
 

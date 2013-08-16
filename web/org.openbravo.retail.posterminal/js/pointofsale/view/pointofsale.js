@@ -85,6 +85,15 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
       name: 'customerView'
     }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customeraddr.cas',
+      name: 'customerAddressSearch'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr',
+      name: 'customerAddrCreateAndEdit'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomeraddr',
+      name: 'customerAddressView'
+    }, {
       kind: 'OB.UI.ModalDeleteReceipt',
       name: 'modalConfirmReceiptDelete'
     }, {
@@ -99,6 +108,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalBusinessPartners',
       name: "modalcustomer"
+    }, {
+      kind: 'OB.UI.ModalBPLocation',
+      name: "modalcustomeraddress"
     }, {
       kind: 'OB.UI.ModalReceipts',
       name: 'modalreceipts'

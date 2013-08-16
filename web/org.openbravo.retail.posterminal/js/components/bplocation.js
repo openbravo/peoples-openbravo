@@ -11,13 +11,116 @@
 
 /*global enyo, Backbone */
 
-/*header of scrollable table*/
+enyo.kind({
+    kind: 'OB.UI.SmallButton',
+    name: 'OB.UI.BPLocation',
+    classes: 'btnlink btnlink-small btnlink-gray',
+    published: {
+        order: null
+    },
+    events: {
+        onShowPopup: ''
+    },
+    handlers: {
+        onBPLocSelectionDisabled: 'buttonDisabled'
+    },
+    buttonDisabled: function (inSender, inEvent) {
+        this.setDisabled(inEvent.status);
+    },
+    tap: function () {
+        if (!this.disabled) {
+            this.doShowPopup({
+                popup: 'modalcustomeraddress'
+            });
+        }
+    },
+    initComponents: function () {},
+    renderBPLocation: function (newLocation) {
+        this.setContent(newLocation);
+    },
+    orderChanged: function (oldValue) {
+        if (this.order.get('bp')) {
+            this.renderBPLocation(this.order.get('bp').get('locName'));
+        } else {
+            this.renderBPLocation('');
+        }
+
+        this.order.on('change:bp', function (model) {
+            if (model.get('bp')) {
+                this.renderBPLocation(model.get('bp').get('locName'));
+            } else {
+                this.renderBPLocation('');
+            }
+        }, this);
+    }
+});
+
 enyo.kind({
     kind: 'OB.UI.Button',
-    name: 'OB.UI.AdvancedSearchCustomerWindowButton',
-    style: 'margin: 0px 0px 8px 5px;',
+    name: 'OB.UI.NewCustomerAddressWindowButton',
+    events: {
+        onChangeSubWindow: '',
+        onHideThisPopup: ''
+    },
+    disabled: false,
+    style: 'width: 170px; margin: 0px 5px 8px 19px;',
     classes: 'btnlink-yellow btnlink btnlink-small',
-    i18nLabel: 'OBPOS_LblAdvancedSearch',
+    i18nLabel: 'OBPOS_LblNewCustomerAddress',
+    handlers: {
+        onSetModel: 'setModel'
+    },
+    setModel: function (inSender, inEvent) {
+        this.model = inEvent.model;
+    },
+    tap: function (model) {
+        if (this.disabled) {
+            return true;
+        }
+        this.doHideThisPopup();
+        var me = this;
+
+        function errorCallback(tx, error) {
+            window.console.error(tx);
+            window.console.error(error);
+        }
+
+        function successCallbackBPs(dataBps) {
+            me.doChangeSubWindow({
+                newWindow: {
+                    name: 'customerAddrCreateAndEdit',
+                    params: {
+                        navigateOnClose: 'mainSubWindow',
+                        businessPartner: dataBps
+                    }
+                }
+            });
+        }
+        OB.Dal.get(OB.Model.BusinessPartner, this.model.get('order').get('bp').get('id'), successCallbackBPs, errorCallback);
+    },
+    putDisabled: function (status) {
+        if (status === false) {
+            this.disabled = false;
+            this.setDisabled(false);
+            this.removeClass('disabled');
+            return;
+        } else {
+            this.disabled = true;
+            this.setDisabled();
+            this.addClass('disabled');
+        }
+    },
+    initComponents: function () {
+        this.inherited(arguments);
+        this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    }
+});
+
+enyo.kind({
+    kind: 'OB.UI.Button',
+    name: 'OB.UI.SearchCustomerAddressWindowButton',
+    style: 'width: 170px; margin: 0px 0px 8px 5px;',
+    classes: 'btnlink-yellow btnlink btnlink-small',
+    i18nLabel: 'OBPOS_LblEditAddress',
     disabled: false,
     handlers: {
         onSetModel: 'setModel'
@@ -34,9 +137,10 @@ enyo.kind({
         }
         this.doHideThisPopup();
         this.model.get('subWindowManager').set('currentWindow', {
-            name: 'customerAdvancedSearch',
+            name: 'customerAddressSearch',
             params: {
-                caller: 'mainSubWindow'
+                caller: 'mainSubWindow',
+                bPartner: this.model.get('order').get('bp').get('id')
             }
         });
     },
@@ -105,7 +209,12 @@ enyo.kind({
             components: [{
                 style: 'display: table-cell;',
                 components: [{
-                    kind: 'OB.UI.AdvancedSearchCustomerWindowButton'
+                    kind: 'OB.UI.NewCustomerAddressWindowButton'
+                }]
+            }, {
+                style: 'display: table-cell;',
+                components: [{
+                    kind: 'OB.UI.SearchCustomerAddressWindowButton'
                 }]
             }]
         }]
@@ -189,6 +298,7 @@ enyo.kind({
     },
     searchAction: function (inSender, inEvent) {
         var me = this,
+            criteria = {},
             filter = inEvent.locName;
 
         function errorCallback(tx, error) {
@@ -202,13 +312,12 @@ enyo.kind({
                 me.bpsList.reset();
             }
         }
-        OB.Dal.find(OB.Model.BPLocation, {
-            bpartner: this.bPartnerId,
-            name: {
-                operator: OB.Dal.CONTAINS,
-                value: filter
-            }
-        }, successCallbackBPsLoc, errorCallback);
+        criteria.name = {
+            operator: OB.Dal.CONTAINS,
+            value: filter
+        };
+        criteria.bpartner = this.bPartnerId;
+        OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
         return true;
     },
     bpsList: null,
@@ -216,7 +325,7 @@ enyo.kind({
         this.bpsList = new Backbone.Collection();
         this.$.bpsloclistitemprinter.setCollection(this.bpsList);
         this.bpsList.on('click', function (model) {
-            var parent = this;
+            var me = this;
 
             function errorCallback(tx, error) {
                 window.console.error(tx);
@@ -225,7 +334,7 @@ enyo.kind({
 
             function successCallbackBPs(dataBps) {
                 function success(tx) {
-                    parent.doChangeBusinessPartner({
+                    me.doChangeBusinessPartner({
                         businessPartner: dataBps
                     });
                 }
@@ -248,8 +357,7 @@ enyo.kind({
     topPosition: '125px',
     kind: 'OB.UI.Modal',
     executeOnShow: function () {
-        var bId = this.model.get('order').get('bp').get('id');
-        this.$.body.$.listBpsLoc.setBPartnerId(bId);
+        this.$.body.$.listBpsLoc.setBPartnerId(this.model.get('order').get('bp').get('id'));
         this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
         return true;
     },
@@ -267,10 +375,4 @@ enyo.kind({
         });
 
     }
-});
-
-// Register Popup
-OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
-    kind: 'OB.UI.ModalBPLocation',
-    name: 'OB_UI_ModalBPLocation'
 });
