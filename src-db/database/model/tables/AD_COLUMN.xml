@@ -238,11 +238,11 @@
       <index name="AD_COLUMN_ELEMENT_IDX" unique="false">
         <index-column name="AD_ELEMENT_ID"/>
       </index>
-      <index name="AD_COLUMN_TABLE" unique="false">
-        <index-column name="AD_TABLE_ID"/>
-      </index>
       <index name="AD_COLUMN_PROCESS" unique="false">
         <index-column name="AD_PROCESS_ID"/>
+      </index>
+      <index name="AD_COLUMN_TABLE" unique="false">
+        <index-column name="AD_TABLE_ID"/>
       </index>
       <unique name="AD_COLUMN_NAME">
         <unique-column name="AD_TABLE_ID"/>
