@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU
+ * All portions are Copyright (C) 2008-2013 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -282,7 +282,7 @@
 						<td style="width: 1%; text-align: right;">
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">From</span>
 						</td>
-						<td id="fromEmailArea"colspan="2">
+						<td id="fromEmailArea"colspan="3">
 							<input type="hidden" name="fromEmailId" id="fromEmailId" value=""></input>
 							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid readonly TextBox_btn_TwoCells_width"
@@ -298,7 +298,7 @@
 						<td style="width: 1%; text-align: right;">
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">To</span>
 						</td>
-						<td id="toEmailArea"colspan="2">
+						<td id="toEmailArea"colspan="3">
 							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid required TextBox_btn_TwoCells_width"
 									maxlength="200" name="toEmail" id="toEmail" value=""
@@ -381,11 +381,25 @@
 						<td style="width: 1%; text-align: right;">
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Subject</span>
 						</td>
-						<td colspan="2">
-							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
+						<td colspan="1">
+							<input style="width: 100%;" type="text" dojoType="openbravo:ValidationTextBox"
 										class="dojoValidateValid required TextBox_btn_TwoCells_width"
 										maxlength="200" name="emailSubject" id="emailSubject" value=""
 										required="true">
+						</td>
+						<td rowspan="5">
+						  <ul class="LabelText"  style="list-style: none; padding-left: 10px;" >
+								<li>References will be replaced by values:</li>
+								<li>@cus_ref@: The document reference of the customer</li>
+								<li>@our_ref@: The reference of the document</li>
+								<li>@cus_nam@: The name of the customer</li>
+								<li>@sal_nam@: The name of the sales rep.</li>
+								<li>@bp_nam@: The Business Partner name</li>
+								<li>@doc_date@: The document date</li>
+								<li>@doc_desc@: The document description</li>
+								<li>@doc_nextduedate@: The next due date (if any)</li>
+								<li>@doc_lastduedate@: The last due date (if any)</li>
+						  </ul>
 						</td>
 						
 					</tr>
@@ -397,16 +411,7 @@
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Message Body</span>
 						</td>
 						<td nowrap="nowrap" style="width: 55%;">
-							<textarea id="emailBody" style="height: 100px; width: 99.1%;" class="dojoValidateValid" maxlength="2000" name="emailBody" onkeyup="" onchange=""></textarea>
-						</td>
-						<td>
-							<ul class="LabelText"  style="list-style: none; padding-left: 10px;" >
-								<li>References will be replaced by values:</li>
-								<li>@cus_ref@: The document reference of the customer</li>
-								<li>@our_ref@: The reference of the document</li>
-								<li>@cus_nam@: The name of the customer</li>
-								<li>@sal_nam@: The name of the sales rep.</li>
-							</u>
+							<textarea id="emailBody" style="height: 180px; width: 99.1%;" class="dojoValidateValid" maxlength="2000" name="emailBody" onkeyup="" onchange=""></textarea>
 						</td>
 					</tr>
 					<tr style="height: 8px">

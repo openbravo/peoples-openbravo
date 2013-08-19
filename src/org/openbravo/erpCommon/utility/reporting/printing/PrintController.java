@@ -698,11 +698,21 @@ public class PrintController extends HttpSecureAppServlet {
     emailSubject = emailSubject.replaceAll("@our_ref@", ourReference);
     emailSubject = emailSubject.replaceAll("@cus_nam@", toName);
     emailSubject = emailSubject.replaceAll("@sal_nam@", replyToName);
+    emailSubject = emailSubject.replaceAll("@bp_nam@", report.getBPName());
+    emailSubject = emailSubject.replaceAll("@doc_date@", report.getDocDate());
+    emailSubject = emailSubject.replaceAll("@doc_nextduedate@", report.getMinDueDate());
+    emailSubject = emailSubject.replaceAll("@doc_lastduedate@", report.getMaxDueDate());
+    emailSubject = emailSubject.replaceAll("@doc_desc@", report.getDocDescription());
 
     emailBody = emailBody.replaceAll("@cus_ref@", cusReference);
     emailBody = emailBody.replaceAll("@our_ref@", ourReference);
     emailBody = emailBody.replaceAll("@cus_nam@", toName);
     emailBody = emailBody.replaceAll("@sal_nam@", replyToName);
+    emailBody = emailBody.replaceAll("@bp_nam@", report.getBPName());
+    emailBody = emailBody.replaceAll("@doc_date@", report.getDocDate());
+    emailBody = emailBody.replaceAll("@doc_nextduedate@", report.getMinDueDate());
+    emailBody = emailBody.replaceAll("@doc_lastduedate@", report.getMaxDueDate());
+    emailBody = emailBody.replaceAll("@doc_desc@", report.getDocDescription());
 
     String host = null;
     boolean auth = true;

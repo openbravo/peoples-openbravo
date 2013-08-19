@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2012 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2013 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -53,6 +53,10 @@ public class Report {
   private String _BPartnerId;
   private String _BPartnerName;
   private String _BPartnerLanguage;
+  private String _DocDate; // Date Ordered, Date Invoices, etc.
+  private String _MinDueDate; // Useful for Orders and Invoices
+  private String _MaxDueDate; // Useful for Orders and Invoices
+  private String _DocDescription;
   private String _Filename;
   private File _targetDirectory;
   private boolean _isAttached;
@@ -118,6 +122,10 @@ public class Report {
       _BPartnerName = reportData[0].getField("bpartner_name");
       _BPartnerLanguage = reportData[0].getField("bpartner_language");
       _DocumentStatus = reportData[0].getField("docstatus");
+      _DocDate = reportData[0].getField("docdate");
+      _MinDueDate = reportData[0].getField("minduedate");
+      _MaxDueDate = reportData[0].getField("maxduedate");
+      _DocDescription = reportData[0].getField("docdesc");
       templateInfo = new TemplateInfo(connectionProvider, docTypeId, orgId, strLanguage, templateId);
 
       _Filename = generateReportFileName();
@@ -139,6 +147,11 @@ public class Report {
     reportFilename = reportFilename.replaceAll("@our_ref@", _OurReference);
     reportFilename = reportFilename.replaceAll("@cus_ref@", _CusReference);
     reportFilename = reportFilename.replaceAll("@cus_nam@", _BPartnerName);
+    reportFilename = reportFilename.replaceAll("@bp_nam@", _BPartnerName);
+    reportFilename = reportFilename.replaceAll("@doc_date@", _DocDate);
+    reportFilename = reportFilename.replaceAll("@doc_nextduedate@", _MinDueDate);
+    reportFilename = reportFilename.replaceAll("@doc_lastduedate@", _MaxDueDate);
+    // reportFilename = reportFilename.replaceAll("@doc_desc@", _DocDescription); // Too long
     if (checkSalesOrder.equalsIgnoreCase("y")
         && !_DocumentType.toString().equalsIgnoreCase("PAYMENT")) {
       reportFilename = reportFilename.replaceAll("@sal_nam@", _SalNam);
@@ -193,6 +206,26 @@ public class Report {
 
   public String getBPartnerId() {
     return _BPartnerId;
+  }
+
+  public String getBPName() {
+    return _BPartnerName;
+  }
+
+  public String getDocDate() {
+    return _DocDate;
+  }
+
+  public String getMinDueDate() {
+    return _MinDueDate;
+  }
+
+  public String getMaxDueDate() {
+    return _MaxDueDate;
+  }
+
+  public String getDocDescription() {
+    return _DocDescription;
   }
 
   public boolean isDraft() {

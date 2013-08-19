@@ -19126,7 +19126,11 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
     * @our_ref@: The reference of the document
     * @cus_nam@: The name of the customer
     * @sal_nam@: The name of the sales rep.
-]]></HELP>
+    * @bp_nam@: The Business Partner name
+    * @doc_date@: The document date
+    * @doc_desc@: The document description
+    * @doc_nextduedate@: The next due date (if document has associated any payment plan)
+    * @doc_lastduedate@: The last due date (if document has associated any payment plan)]]></HELP>
 <!--1000500008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500008-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1000500008--></AD_ELEMENT>
@@ -19222,7 +19226,11 @@ References will be replaced by values:
     * @our_ref@: The reference of the document
     * @cus_nam@: The name of the customer
     * @sal_nam@: The name of the sales rep.
-]]></HELP>
+    * @bp_nam@: The Business Partner name
+    * @doc_date@: The document date
+    * @doc_desc@: The document description
+    * @doc_nextduedate@: The next due date (if document has associated any payment plan)
+    * @doc_lastduedate@: The last due date (if document has associated any payment plan)]]></HELP>
 <!--1000500015-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500015-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1000500015--></AD_ELEMENT>
