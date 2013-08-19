@@ -57,6 +57,7 @@ public class Report {
   private String _MinDueDate; // Useful for Orders and Invoices
   private String _MaxDueDate; // Useful for Orders and Invoices
   private String _DocDescription;
+  private String _ContactName;
   private String _Filename;
   private File _targetDirectory;
   private boolean _isAttached;
@@ -126,6 +127,7 @@ public class Report {
       _MinDueDate = reportData[0].getField("minduedate");
       _MaxDueDate = reportData[0].getField("maxduedate");
       _DocDescription = reportData[0].getField("docdesc");
+      _ContactName = reportData[0].getField("contact_name");
       templateInfo = new TemplateInfo(connectionProvider, docTypeId, orgId, strLanguage, templateId);
 
       _Filename = generateReportFileName();
@@ -146,7 +148,7 @@ public class Report {
     String reportFilename = templateInfo.getReportFilename();
     reportFilename = reportFilename.replaceAll("@our_ref@", _OurReference);
     reportFilename = reportFilename.replaceAll("@cus_ref@", _CusReference);
-    reportFilename = reportFilename.replaceAll("@cus_nam@", _BPartnerName);
+    reportFilename = reportFilename.replaceAll("@cus_nam@", _ContactName);
     reportFilename = reportFilename.replaceAll("@bp_nam@", _BPartnerName);
     reportFilename = reportFilename.replaceAll("@doc_date@", _DocDate);
     reportFilename = reportFilename.replaceAll("@doc_nextduedate@", _MinDueDate);
