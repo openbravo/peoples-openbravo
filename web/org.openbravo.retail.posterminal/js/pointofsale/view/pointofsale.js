@@ -314,8 +314,17 @@ enyo.kind({
       }
     }
 
-    this.model.get('order').addProduct(inEvent.product, inEvent.qty, inEvent.options);
-    this.model.get('orderList').saveCurrent();
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreAddProductToOrder', {
+      context: this,
+      receipt: this.model.get('order'),
+      productToAdd: inEvent.product
+    }, function (args) {
+      if (args.cancelOperation && args.cancelOperation === true) {
+        return true;
+      }
+      args.context.model.get('order').addProduct(inEvent.product, inEvent.qty, inEvent.options);
+      args.context.model.get('orderList').saveCurrent();
+    });
     return true;
   },
   showOrder: function (inSender, inEvent) {
