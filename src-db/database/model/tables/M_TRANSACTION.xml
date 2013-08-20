@@ -117,10 +117,6 @@
         <default><![CDATA[NC]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ISRESERVATIONTRIGGERDISABLED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="M_INTERNAL_CONSUMPTIONLINE" name="M_INTL_CONSUMP_MTRANSACTION">
         <reference local="M_INTERNAL_CONSUMPTIONLINE_ID" foreign="M_INTERNAL_CONSUMPTIONLINE_ID"/>
       </foreign-key>
