@@ -1,6 +1,5 @@
 package org.openbravo.retail.posterminal;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,8 +12,6 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
@@ -383,22 +380,5 @@ public class POSUtils {
     cal.set(Calendar.MILLISECOND, 0);
     Date currentDate = cal.getTime();
     return currentDate;
-  }
-
-  public static String getComputedColumn(Class<?> clz, String computedColumnName) {
-    Entity myEntity = ModelProvider.getInstance().getEntity(clz);
-    Method methodToFind = null;
-    try {
-      methodToFind = myEntity.getClass().getMethod("hasComputedColumns", (Class<?>[]) null);
-    } catch (SecurityException e) {
-      return computedColumnName;
-    } catch (NoSuchMethodException e) {
-      return computedColumnName;
-    }
-    if (methodToFind != null) {
-      return "_computedColumns." + computedColumnName;
-    } else {
-      return computedColumnName;
-    }
   }
 }
