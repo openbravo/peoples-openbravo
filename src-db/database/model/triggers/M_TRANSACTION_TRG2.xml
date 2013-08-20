@@ -35,7 +35,8 @@ BEGIN
   END IF;
 
   IF (INSERTING) THEN
-    IF (:NEW.isreservationtriggerdisabled = 'Y') THEN RETURN;
+    IF (:NEW.isreservationtriggerdisabled = 'Y') THEN
+      RETURN NEW;
     END IF;
     IF (:NEW.movementqty < 0 AND :NEW.m_product_uom_id IS NULL) THEN
       -- Check reservations. Reserved stock must be released before inserting the transacion.
