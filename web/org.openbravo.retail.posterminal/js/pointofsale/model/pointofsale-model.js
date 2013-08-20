@@ -333,11 +333,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           }
         }
 
-        iter.prepareToSend(function () {
+        iter.prepareToSend(function (order) {
           //things to do with each order
           //Finally call to SyncReadyToSendFunction
-          me.get('multiOrders').trigger('closed', iter);
-          me.get('multiOrders').trigger('print', iter); // to guaranty execution order
+          me.get('multiOrders').trigger('closed', order);
+          me.get('multiOrders').trigger('print', order); // to guaranty execution order
           SyncReadyToSendFunction();
         });
       }

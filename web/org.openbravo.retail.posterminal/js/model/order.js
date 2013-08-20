@@ -284,7 +284,7 @@
       var me = this;
       this.calculateTaxes(function () {
         me.adjustPrices();
-        callback();
+        callback(me);
       });
     },
 
@@ -529,6 +529,7 @@
       this.set('isLayaway', false);
       this.set('isEditable', true);
       this.set('openDrawer', false);
+      this.set('totalamount', null);
       this.set('approvals', []);
     },
 
