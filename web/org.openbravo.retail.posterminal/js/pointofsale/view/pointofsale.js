@@ -283,12 +283,28 @@ enyo.kind({
     this.model.get('orderList').addNewOrder();
     return true;
   },
-  deleteCurrentOrder: function () {
-    if (this.model.get('order').get('id')) {
-      this.model.get('orderList').saveCurrent();
-      OB.Dal.remove(this.model.get('orderList').current, null, null);
+  deleteCurrentOrder: function (inSender, inEvent) {
+    function removeOrder(context) {
+      if (context.model.get('order').get('id')) {
+        context.model.get('orderList').saveCurrent();
+        OB.Dal.remove(context.model.get('orderList').current, null, null);
+      }
+      context.model.get('orderList').deleteCurrent();
     }
-    this.model.get('orderList').deleteCurrent();
+
+    if (inEvent && inEvent.notSavedOrder === true) {
+      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
+        context: this,
+        receipt: this.model.get('order')
+      }, function (args) {
+        if (args && args.cancelOperation && args.cancelOperation === true) {
+          return;
+        }
+        removeOrder(args.context);
+      });
+    } else {
+      removeOrder(this);
+    }
     return true;
   },
   addProductToOrder: function (inSender, inEvent) {
