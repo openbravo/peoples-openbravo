@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.regex.Matcher;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -694,25 +695,33 @@ public class PrintController extends HttpSecureAppServlet {
 
     // Replace special tags
 
-    emailSubject = emailSubject.replaceAll("@cus_ref@", cusReference);
-    emailSubject = emailSubject.replaceAll("@our_ref@", ourReference);
-    emailSubject = emailSubject.replaceAll("@cus_nam@", toName);
-    emailSubject = emailSubject.replaceAll("@sal_nam@", replyToName);
-    emailSubject = emailSubject.replaceAll("@bp_nam@", report.getBPName());
-    emailSubject = emailSubject.replaceAll("@doc_date@", report.getDocDate());
-    emailSubject = emailSubject.replaceAll("@doc_nextduedate@", report.getMinDueDate());
-    emailSubject = emailSubject.replaceAll("@doc_lastduedate@", report.getMaxDueDate());
-    emailSubject = emailSubject.replaceAll("@doc_desc@", report.getDocDescription());
+    emailSubject = emailSubject.replaceAll("@cus_ref@", Matcher.quoteReplacement(cusReference));
+    emailSubject = emailSubject.replaceAll("@our_ref@", Matcher.quoteReplacement(ourReference));
+    emailSubject = emailSubject.replaceAll("@cus_nam@", Matcher.quoteReplacement(toName));
+    emailSubject = emailSubject.replaceAll("@sal_nam@", Matcher.quoteReplacement(replyToName));
+    emailSubject = emailSubject
+        .replaceAll("@bp_nam@", Matcher.quoteReplacement(report.getBPName()));
+    emailSubject = emailSubject.replaceAll("@doc_date@",
+        Matcher.quoteReplacement(report.getDocDate()));
+    emailSubject = emailSubject.replaceAll("@doc_nextduedate@",
+        Matcher.quoteReplacement(report.getMinDueDate()));
+    emailSubject = emailSubject.replaceAll("@doc_lastduedate@",
+        Matcher.quoteReplacement(report.getMaxDueDate()));
+    emailSubject = emailSubject.replaceAll("@doc_desc@",
+        Matcher.quoteReplacement(report.getDocDescription()));
 
-    emailBody = emailBody.replaceAll("@cus_ref@", cusReference);
-    emailBody = emailBody.replaceAll("@our_ref@", ourReference);
-    emailBody = emailBody.replaceAll("@cus_nam@", toName);
-    emailBody = emailBody.replaceAll("@sal_nam@", replyToName);
-    emailBody = emailBody.replaceAll("@bp_nam@", report.getBPName());
-    emailBody = emailBody.replaceAll("@doc_date@", report.getDocDate());
-    emailBody = emailBody.replaceAll("@doc_nextduedate@", report.getMinDueDate());
-    emailBody = emailBody.replaceAll("@doc_lastduedate@", report.getMaxDueDate());
-    emailBody = emailBody.replaceAll("@doc_desc@", report.getDocDescription());
+    emailBody = emailBody.replaceAll("@cus_ref@", Matcher.quoteReplacement(cusReference));
+    emailBody = emailBody.replaceAll("@our_ref@", Matcher.quoteReplacement(ourReference));
+    emailBody = emailBody.replaceAll("@cus_nam@", Matcher.quoteReplacement(toName));
+    emailBody = emailBody.replaceAll("@sal_nam@", Matcher.quoteReplacement(replyToName));
+    emailBody = emailBody.replaceAll("@bp_nam@", Matcher.quoteReplacement(report.getBPName()));
+    emailBody = emailBody.replaceAll("@doc_date@", Matcher.quoteReplacement(report.getDocDate()));
+    emailBody = emailBody.replaceAll("@doc_nextduedate@",
+        Matcher.quoteReplacement(report.getMinDueDate()));
+    emailBody = emailBody.replaceAll("@doc_lastduedate@",
+        Matcher.quoteReplacement(report.getMaxDueDate()));
+    emailBody = emailBody.replaceAll("@doc_desc@",
+        Matcher.quoteReplacement(report.getDocDescription()));
 
     String host = null;
     boolean auth = true;

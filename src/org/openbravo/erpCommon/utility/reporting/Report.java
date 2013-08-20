@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
+import java.util.regex.Matcher;
 
 import javax.servlet.ServletException;
 
@@ -146,17 +147,22 @@ public class Report {
     // Generate the target report filename
     final String dateStamp = Utility.formatDate(new Date(), "yyyyMMdd-HHmmss");
     String reportFilename = templateInfo.getReportFilename();
-    reportFilename = reportFilename.replaceAll("@our_ref@", _OurReference);
-    reportFilename = reportFilename.replaceAll("@cus_ref@", _CusReference);
-    reportFilename = reportFilename.replaceAll("@cus_nam@", _ContactName);
-    reportFilename = reportFilename.replaceAll("@bp_nam@", _BPartnerName);
-    reportFilename = reportFilename.replaceAll("@doc_date@", _DocDate);
-    reportFilename = reportFilename.replaceAll("@doc_nextduedate@", _MinDueDate);
-    reportFilename = reportFilename.replaceAll("@doc_lastduedate@", _MaxDueDate);
-    // reportFilename = reportFilename.replaceAll("@doc_desc@", _DocDescription); // Too long
+    reportFilename = reportFilename
+        .replaceAll("@our_ref@", Matcher.quoteReplacement(_OurReference));
+    reportFilename = reportFilename
+        .replaceAll("@cus_ref@", Matcher.quoteReplacement(_CusReference));
+    reportFilename = reportFilename.replaceAll("@cus_nam@", Matcher.quoteReplacement(_ContactName));
+    reportFilename = reportFilename.replaceAll("@bp_nam@", Matcher.quoteReplacement(_BPartnerName));
+    reportFilename = reportFilename.replaceAll("@doc_date@", Matcher.quoteReplacement(_DocDate));
+    reportFilename = reportFilename.replaceAll("@doc_nextduedate@",
+        Matcher.quoteReplacement(_MinDueDate));
+    reportFilename = reportFilename.replaceAll("@doc_lastduedate@",
+        Matcher.quoteReplacement(_MaxDueDate));
+    // reportFilename = reportFilename.replaceAll("@doc_desc@",
+    // Matcher.quoteReplacement(_DocDescription)); // Too long
     if (checkSalesOrder.equalsIgnoreCase("y")
         && !_DocumentType.toString().equalsIgnoreCase("PAYMENT")) {
-      reportFilename = reportFilename.replaceAll("@sal_nam@", _SalNam);
+      reportFilename = reportFilename.replaceAll("@sal_nam@", Matcher.quoteReplacement(_SalNam));
     } else {
       reportFilename = reportFilename.replaceAll("@sal_nam@", "");
     }
