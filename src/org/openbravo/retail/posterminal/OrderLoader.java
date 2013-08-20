@@ -981,10 +981,6 @@ public class OrderLoader extends JSONProcessSimple {
         transaction.setMovementDate(shipment.getMovementDate());
         transaction.setGoodsShipmentLine(line);
         transaction.setAttributeSetValue(line.getAttributeSetValue());
-        if (ModelProvider.getInstance().getEntity(MaterialTransaction.class)
-            .hasProperty("isreservationtriggerdisabled")) {
-          transaction.setReservationtriggerdisabled(true);
-        }
 
         OBDal.getInstance().save(transaction);
       }
