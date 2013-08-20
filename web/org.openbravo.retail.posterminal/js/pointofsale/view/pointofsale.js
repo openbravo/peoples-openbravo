@@ -334,7 +334,7 @@ enyo.kind({
       context: this,
       receipt: this.model.get('order'),
       productToAdd: inEvent.product,
-      qtyToAdd: inEvent.product,
+      qtyToAdd: inEvent.qty,
       options: inEvent.options
     }, function (args) {
       if (args.cancelOperation && args.cancelOperation === true) {
