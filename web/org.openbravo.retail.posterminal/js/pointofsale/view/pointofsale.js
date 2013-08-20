@@ -333,12 +333,14 @@ enyo.kind({
     OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreAddProductToOrder', {
       context: this,
       receipt: this.model.get('order'),
-      productToAdd: inEvent.product
+      productToAdd: inEvent.product,
+      qtyToAdd: inEvent.product,
+      options: inEvent.options
     }, function (args) {
       if (args.cancelOperation && args.cancelOperation === true) {
         return true;
       }
-      args.context.model.get('order').addProduct(inEvent.product, inEvent.qty, inEvent.options);
+      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options);
       args.context.model.get('orderList').saveCurrent();
     });
     return true;
