@@ -61,25 +61,6 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.MenuToggleFullScreen',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_fullScreenMode',
-  //TODO create preference
-  //i18nLabel: 'OBPOS_ToggleFullScreen',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    OB.MobileApp.view.toggleFullScreen();
-  },
-  initComponents: function () {
-    this.inherited(arguments);
-    this.$.lbl.setContent('Toggle full screen');
-  }
-});
-
-enyo.kind({
   name: 'OB.UI.MenuVoidLayaway',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.voidLayaway',

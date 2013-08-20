@@ -289,9 +289,6 @@ enyo.kind({
     //Menu entries is used for modularity. cannot be initialized
     //this.menuEntries = [];
     this.menuEntries.push({
-      kind: 'OB.UI.MenuToggleFullScreen'
-    });
-    this.menuEntries.push({
       kind: 'OB.UI.MenuReturn'
     });
     this.menuEntries.push({
