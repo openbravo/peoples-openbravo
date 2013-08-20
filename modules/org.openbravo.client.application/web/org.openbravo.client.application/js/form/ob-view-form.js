@@ -978,8 +978,14 @@ OB.ViewFormProperties = {
       isImage = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'image';
       if (isDate) {
         this.setItemValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
+        if (field.textField) {
+          delete field.textField._textChanged;
+        }
       } else if (isDateTime) {
         this.setItemValue(field.name, isc.Date.parseStandardDate(columnValue.value));
+        if (field.textField) {
+          delete field.textField._textChanged;
+        }
       } else if (isImage) {
         //calls setValue to handle buttons display for read-only windows
         this.setValue(field.name, assignValue);
