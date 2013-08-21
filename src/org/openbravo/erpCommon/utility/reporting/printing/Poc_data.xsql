@@ -167,7 +167,7 @@
                 contact.name as contact_name
             from
                 fin_payment
-                    join c_bpartner bp on fin_payment.c_bpartner_id = bp.c_bpartner_id
+                    left join c_bpartner bp on fin_payment.c_bpartner_id = bp.c_bpartner_id
                     left join ad_user contact on bp.c_bpartner_id = contact.c_bpartner_id
                     left join ad_user salesrep on bp.salesrep_id = salesrep.c_bpartner_id
             where
