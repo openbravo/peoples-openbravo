@@ -379,7 +379,7 @@ enyo.kind({
           if (data) {
             me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
               order.set('loadedFromServer', true);
-              order.set('checked', iter.get('checked'))
+              order.set('checked', iter.get('checked'));
               taxes = OB.DATA.OrderTaxes(order);
               order.save();
               selectedMultiOrders.push(order);

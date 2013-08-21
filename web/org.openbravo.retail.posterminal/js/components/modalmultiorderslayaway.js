@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, $ */
+/*global enyo, $, _ */
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
@@ -44,14 +44,14 @@ enyo.kind({
       try {
         tmp = this.owner.$.btnModalMultiSearchInput.getValue().replace('%', '');
         amount = OB.DEC.div(OB.DEC.mul(this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).getPending(), tmp), 100);
-      } catch (e) {
+      } catch (ex) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
         return;
       }
     } else {
       try {
         amount = OB.I18N.parseNumber(this.owner.$.btnModalMultiSearchInput.getValue());
-      } catch (e) {
+      } catch (exc) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
         return;
       }

@@ -63,6 +63,7 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
+    var i;
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       for (i = 0; this.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
         if (!this.model.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global $ Backbone enyo _ */
+/*global $ Backbone enyo _ localStorage */
 
 OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
 OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};
@@ -79,9 +79,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         'session': OB.POS.modelterminal.get('session')
         };
     OB.Dal.find(OB.Model.Order, criteria, function (possibleMultiOrder) { //OB.Dal.find success
-      if (!possibleMultiOrder || possibleMultiOrder.length === 0) {
-        //nothing
-      } else {
+      if (possibleMultiOrder && possibleMultiOrder.length > 0) {
         checkedMultiOrders = _.compact(possibleMultiOrder.map(function (e) {
           if (e.get('checked')) {
             return e;
@@ -269,6 +267,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         //this function is executed when all orders are ready to be sent
         me.get('leftColumnViewManager').setOrderMode();
       }
+      
+      function prepareToSendCallback(order) {
+        me.get('multiOrders').trigger('closed', order);
+        me.get('multiOrders').trigger('print', order); // to guaranty execution order
+        SyncReadyToSendFunction();
+      }
 
       //this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
       SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
@@ -276,7 +280,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       for (j = 0; j < ordersLength; j++) {
         //Create the negative payment for change
         iter = this.get('multiOrders').get('multiOrdersList').at(j);
-        lastIter = iter;
         amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
         while (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
           for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
@@ -333,13 +336,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           }
         }
 
-        iter.prepareToSend(function (order) {
-          //things to do with each order
-          //Finally call to SyncReadyToSendFunction
-          me.get('multiOrders').trigger('closed', order);
-          me.get('multiOrders').trigger('print', order); // to guaranty execution order
-          SyncReadyToSendFunction();
-        });
+        iter.prepareToSend(prepareToSendCallback);
       }
     }, this);
 
@@ -599,7 +596,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   approvedTicket: function (approved, supervisor, approvalType) {
     var order = this.get('order'),
         newApprovals = [],
-        approvals, approval, i;
+        approvals, approval, i, date;
 
 
     approvals = order.get('approvals') || [];
@@ -618,7 +615,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         approvalType: approvalType,
         userContact: supervisor.get('id'),
         created: (new Date()).getTime()
-      }
+      };
       newApprovals.push(approval);
       order.set('approvals', newApprovals);
     }

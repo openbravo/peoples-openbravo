@@ -7,6 +7,7 @@
  ************************************************************************************
  */
 
+/*global Backbone*/
 
 /**
  * Local model to keep the supervisor and which type of approval can do each of them

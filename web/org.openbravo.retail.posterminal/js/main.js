@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $, _, Backbone, window, confirm, OB, localStorage */
+/*global B, $, _, Backbone, window, confirm, OB, console, localStorage */
 
 (function () {
   var modelterminal = OB.POS.modelterminal,
