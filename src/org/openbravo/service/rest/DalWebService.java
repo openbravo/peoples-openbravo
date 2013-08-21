@@ -387,6 +387,9 @@ public class DalWebService implements WebService {
 
     try {
       final SAXReader reader = new SAXReader();
+      reader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+      reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+      reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
       final Document document = reader.read(request.getInputStream());
 
       // now parse the xml and let it be translated to a set of
