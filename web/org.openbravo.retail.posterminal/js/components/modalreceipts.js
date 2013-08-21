@@ -142,7 +142,9 @@ enyo.kind({
   },
   tap: function () {
     this.doHideThisPopup();
-    this.doDeleteOrder({notSavedOrder: true});
+    this.doDeleteOrder({
+      notSavedOrder: true
+    });
   }
 });
 

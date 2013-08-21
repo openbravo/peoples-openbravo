@@ -267,7 +267,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         //this function is executed when all orders are ready to be sent
         me.get('leftColumnViewManager').setOrderMode();
       }
-      
+
       function prepareToSendCallback(order) {
         me.get('multiOrders').trigger('closed', order);
         me.get('multiOrders').trigger('print', order); // to guaranty execution order

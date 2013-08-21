@@ -20,7 +20,7 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
-    if (this.disabled){
+    if (this.disabled) {
       return true;
     }
     if (this.model.get('cashUpSent')) {
