@@ -992,6 +992,8 @@ isc.OBViewGrid.addProperties({
       }
     }
 
+    state.filterClause = this.filterClause;
+
     // set summary information, can not be stored in the field state
     // because smartclient does not provide a nice override point
     // when setting the fieldstate back to also set the summary function
@@ -1074,6 +1076,8 @@ isc.OBViewGrid.addProperties({
       if (this.view.messageBar) {
         this.view.messageBar.hide();
       }
+    } else if (localState.filterClause) {
+      this.filterClause = localState.filterClause;
     }
 
     // and no additional filter clauses passed in

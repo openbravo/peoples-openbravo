@@ -500,43 +500,6 @@ isc.OBStandardWindow.addProperties({
     if (this.getClass().personalization.views) {
       views = this.getClass().personalization.views;
       length = views.length;
-      if (persDefaultValue) {
-        for (i = 0; i < length; i++) {
-          if (persDefaultValue === views[i].personalizationId) {
-            defaultView = views[i];
-            break;
-          }
-        }
-      }
-      if (!defaultView) {
-        for (i = 0; i < length; i++) {
-          if (views[i].viewDefinition && views[i].viewDefinition.isDefault) {
-            defaultView = views[i];
-            break;
-          }
-        }
-      }
-
-      // apply the default view
-      // maybe do this in a separate thread
-      if (defaultView) {
-        OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
-      } else {
-        // only apply the default form/grid if there are no views
-        // otherwise you get strange interference
-        // check the default form and grid viewstates
-        length = this.views.length;
-        for (i = 0; i < length; i++) {
-          if (personalization.forms && personalization.forms[this.views[i].tabId]) {
-            this.lastViewApplied = true;
-            OB.Personalization.personalizeForm(personalization.forms[this.views[i].tabId], this.views[i].viewForm);
-          }
-          if (this.viewState && this.viewState[this.views[i].tabId]) {
-            this.lastViewApplied = true;
-            this.views[i].viewGrid.setViewState(this.viewState[this.views[i].tabId]);
-          }
-        }
-      }
 
       this.getClass().personalization.views.sort(function (v1, v2) {
         var t1 = v1.viewDefinition.name,
@@ -548,6 +511,46 @@ isc.OBStandardWindow.addProperties({
         }
         return 1;
       });
+
+      if (persDefaultValue !== 'dummyId') {
+        if (persDefaultValue) {
+          for (i = 0; i < length; i++) {
+            if (persDefaultValue === views[i].personalizationId) {
+              defaultView = views[i];
+              break;
+            }
+          }
+        }
+        if (!defaultView) {
+          for (i = 0; i < length; i++) {
+            if (views[i].viewDefinition && views[i].viewDefinition.isDefault) {
+              defaultView = views[i];
+              break;
+            }
+          }
+        }
+
+        // apply the default view
+        // maybe do this in a separate thread
+        if (defaultView) {
+          OB.Personalization.applyViewDefinition(defaultView.personalizationId, defaultView.viewDefinition, this);
+        } else {
+          // only apply the default form/grid if there are no views
+          // otherwise you get strange interference
+          // check the default form and grid viewstates
+          length = this.views.length;
+          for (i = 0; i < length; i++) {
+            if (personalization.forms && personalization.forms[this.views[i].tabId]) {
+              this.lastViewApplied = true;
+              OB.Personalization.personalizeForm(personalization.forms[this.views[i].tabId], this.views[i].viewForm);
+            }
+            if (this.viewState && this.viewState[this.views[i].tabId]) {
+              this.lastViewApplied = true;
+              this.views[i].viewGrid.setViewState(this.viewState[this.views[i].tabId]);
+            }
+          }
+        }
+      }
     }
 
     // restore focus as the focusitem may have been hidden now

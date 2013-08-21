@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -139,13 +139,14 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
         valueMap = {},
         flds = [],
         standardWindow = this.standardWindow,
-        length;
+        length, originalView = standardWindow.getClass().originalView;
 
     if (views) {
       length = views.length;
       for (i = 0; i < length; i++) {
         valueMap[views[i].personalizationId] = views[i].viewDefinition.name;
       }
+      valueMap[originalView.personalizationId] = originalView.viewDefinition.name;
     }
 
     flds[0] = isc.addProperties({
@@ -155,7 +156,6 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
       editorType: 'select',
       addUnknownValues: false,
       required: true,
-      allowEmptyValue: true,
       changed: function () {
         // enable the save button when there is a change
         this.form.saveButton.setDisabled(false);
@@ -166,8 +166,10 @@ OB.Personalization.ManageViewsPopupPropertiesDefault = {
 
     // set the value
     value = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.standardWindow.windowId);
-    if (value) {
+    if (value && flds[0].valueMap[value]) {
       flds[0].value = value;
+    } else {
+      flds[0].value = 'dummyId';
     }
 
     return flds;
