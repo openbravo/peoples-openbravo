@@ -344,6 +344,8 @@
       </foreign-key>
       <index name="C_PROJECT_VALUE" unique="true">
         <index-column name="AD_CLIENT_ID"/>
+        <index-column name="AD_ORG_ID"/>
+        <index-column name="PROJECTCATEGORY"/>
         <index-column name="VALUE"/>
       </index>
       <check name="C_PROJECT_GENERATETO_CHECK"><![CDATA[GENERATETO IN ('Y', 'N')]]></check>
