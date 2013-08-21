@@ -174,6 +174,10 @@ isc.OBDateTimeItem.addProperties({
     date = this.getValue();
     date.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
     this.setValue(date);
+  },
+
+  compareValues: function (value1, value2) {
+    return (0 === isc.Date.compareDates(value1, value2));
   }
 });
 
