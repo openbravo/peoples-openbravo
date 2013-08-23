@@ -14,6 +14,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BusinessPartner',
   classes: 'btnlink btnlink-small btnlink-gray',
+  style: 'width: 175px; text-overflow:ellipsis; white-space: nowrap; overflow: hidden;',
   published: {
     order: null
   },

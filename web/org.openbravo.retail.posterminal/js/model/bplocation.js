@@ -20,20 +20,19 @@
         source: 'org.openbravo.retail.posterminal.master.BPLocation',
         dataLimit: 300,
         local: false,
-        properties: ['id', 'bpartner', 'location', 'name', 'postalCode', 'cityName', '_identifier', '_idx'],
+        properties: ['id', 'bpartner', 'name', 'postalCode', 'cityName', '_identifier', '_idx'],
         propertyMap: {
             'id': 'c_bpartner_location_id',
             'bpartner': 'c_bpartner_id',
-            'location': 'c_location_id',
             'name': 'name',
             'postalCode': 'postalCode',
             'cityName': 'cityName',
             '_identifier': '_identifier',
             '_idx': '_idx'
         },
-        createStatement: 'CREATE TABLE IF NOT EXISTS c_bpartner_location (c_bpartner_location_id TEXT PRIMARY KEY, c_bpartner_id TEXT, c_location_id TEXT, name TEXT, postalCode TEXT, cityName TEXT, _identifier TEXT , _idx NUMERIC)',
+        createStatement: 'CREATE TABLE IF NOT EXISTS c_bpartner_location (c_bpartner_location_id TEXT PRIMARY KEY, c_bpartner_id TEXT, name TEXT, postalCode TEXT, cityName TEXT, _identifier TEXT , _idx NUMERIC)',
         dropStatement: 'DROP TABLE IF EXISTS c_bpartner_location',
-        insertStatement: 'INSERT INTO c_bpartner_location (c_bpartner_location_id, c_bpartner_id, c_location_id, name, postalCode, cityName, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        insertStatement: 'INSERT INTO c_bpartner_location (c_bpartner_location_id, c_bpartner_id, name, postalCode, cityName, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?)',
         saveCustomerAddr: function (silent) {
             var nameLength, newSk;
             if (!this.get("name")) {
@@ -48,10 +47,6 @@
             if (!this.get("cityName")) {
                 OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CityReqForBPAddress'));
                 return false;
-            }
-            
-            if (!this.get("location")) {
-                this.set('location', OB.UTIL.get_UUID());
             }
 
             this.set('_identifier', this.get('name'));
@@ -90,7 +85,6 @@
             if (cusToLoad === null) {
                 this.set('id', null);
                 this.set('bpartner', null);
-                this.set('location', null);
                 this.set('name', null);
                 this.set('postalCode', null);
                 this.set('cityName', null);

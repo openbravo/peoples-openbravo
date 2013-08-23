@@ -29,7 +29,7 @@ public class BPLocation extends ProcessHQLQuery {
 	Organization org = POSUtils.getOrganization(OBContext.getOBContext()
 		.getCurrentOrganization().getId());
 	hqlQueries
-		.add("select bploc.id as id, bploc.businessPartner.id as bpartner, bploc.locationAddress.id as location, bploc.locationAddress.addressLine1 as name, bploc.locationAddress.postalCode as postalCode, bploc.locationAddress.cityName as cityName, bploc.locationAddress.addressLine1 as _identifier "
+		.add("select bploc.id as id, bploc.businessPartner.id as bpartner, bploc.locationAddress.addressLine1 as name, bploc.locationAddress.postalCode as postalCode, bploc.locationAddress.cityName as cityName, bploc.locationAddress.addressLine1 as _identifier "
 			+ "from BusinessPartnerLocation bploc "
 			+ "where bploc.businessPartner.id in ("
 			+ "SELECT bpl.businessPartner.id "
