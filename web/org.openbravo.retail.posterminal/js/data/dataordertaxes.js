@@ -330,11 +330,11 @@
                     if (taxRate.get('cascade')) {
                       linerate = linerate.multiply(rate.add(BigDecimal.prototype.ONE));
                       linegross = linegross.multiply(rate.add(BigDecimal.prototype.ONE));
-                      discountedGross = discountedGross.multiply(rate.add(BigDecimal.prototype.ONE));
+                      discountedGross = discountedGross.add(new BigDecimal(OB.DEC.toNumber(discountedGross.multiply(rate)).toString()));
                     } else {
                       linerate = linerate.add(rate);
                       linegross = linegross.add(new BigDecimal(String(linenet)).multiply(new BigDecimal(String(rate))));
-                      discountedGross = discountedGross.add(new BigDecimal(String(discountedNet)).multiply(rate));
+                      discountedGross = discountedGross.add(new BigDecimal(OB.DEC.toNumber(new BigDecimal(String(discountedNet)).multiply(rate)).toString()));
                     }
                   } else {
                     linetaxid = taxRate.get('id');
@@ -389,14 +389,12 @@
                           taxes[taxId].net = OB.DEC.add(taxes[taxId].net, roundingLoses);
                         }
                       }
-                      taxes[taxId].fullnet = taxes[taxId].fullnet.add(pricenet.multiply(new BigDecimal(String(element.get('qty')))));
-                      taxes[taxId].amount = taxes[taxId].fullamount.add(pricenet.multiply(new BigDecimal(String(element.get('qty')))).multiply(rate));
-                      taxes[taxId].fullamount = taxes[taxId].fullamount.add(pricenet.multiply(new BigDecimal(String(element.get('qty')))).multiply(rate));
+                      taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
                     } else {
                       taxes[taxId] = {};
                       taxes[taxId].name = taxRate.get('name');
                       taxes[taxId].rate = taxRate.get('rate');
-                      taxes[taxId].net = OB.DEC.mul(discountedprice, element.get('qty'));
+                      taxes[taxId].net = net;
                       if (calculatedDiscountedprice) {
                         //If we lost precision because the price that we are showing is not the real one
                         //we correct this small number in tax net.
@@ -406,9 +404,7 @@
                           taxes[taxId].net = OB.DEC.add(taxes[taxId].net, roundingLoses);
                         }
                       }
-                      taxes[taxId].fullnet = pricenet.multiply(new BigDecimal(String(element.get('qty'))));
-                      taxes[taxId].amount = taxes[taxId].fullnet.multiply(rate);
-                      taxes[taxId].fullamount = taxes[taxId].fullnet.multiply(rate);
+                      taxes[taxId].amount = amount;
                     }
                   }
                 }, this);
