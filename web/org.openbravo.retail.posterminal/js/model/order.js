@@ -1308,7 +1308,7 @@
         // TODO: Report errors properly
       });
       order.set('gross', model.totalamount);
-      order.set('net', model.net);
+      order.set('net', model.totalNetAmount);
       order.trigger('calculategross');
 
       _.each(model.receiptLines, function (iter) {
