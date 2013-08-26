@@ -79,7 +79,7 @@
 
                 if (!taxRate.get('summaryLevel')) {
                   rate = new BigDecimal(String(taxRate.get('rate'))); // 10
-                  rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_UNNECESSARY); // 0.10
+                  rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP); // 0.10
                   if (taxRate.get('cascade')) {
                     linerate = linerate.multiply(rate.add(BigDecimal.prototype.ONE));
                     taxamt = taxamt.multiply(new BigDecimal(String(OB.DEC.add(1, rate))));
@@ -142,7 +142,7 @@
                   taxId = taxRate.get('id');
 
                   rate = new BigDecimal(String(taxRate.get('rate')));
-                  rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_UNNECESSARY);
+                  rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP);
 
                   if (taxRate.get('cascade')) {
                     pricenet = pricenetcascade;
@@ -311,7 +311,7 @@
                   //sometimes with packs or discounts we are losing precision and this precision is reflected wrongly in the tax net
                   //we save the number with total precision and bellow if there are differences they are corrected.
                   calculatedDiscountedprice = true;
-                  orgDiscountedprice = discAmt.divide(new BigDecimal(String(element.get('qty'))), 20, BigDecimal.prototype.ROUND_UNNECESSARY);
+                  orgDiscountedprice = discAmt.divide(new BigDecimal(String(element.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
                 } else {
                   discountedprice = new BigDecimal(String(element.get('price')));
                   discountedNet = OB.DEC.mul(discountedprice, element.get('qty'));
@@ -326,7 +326,7 @@
 
                   if (!taxRate.get('summaryLevel')) {
                     rate = new BigDecimal(String(taxRate.get('rate'))); // 10
-                    rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_UNNECESSARY); // 0.10
+                    rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP); // 0.10
                     if (taxRate.get('cascade')) {
                       linerate = linerate.multiply(rate.add(BigDecimal.prototype.ONE));
                       linegross = linegross.multiply(rate.add(BigDecimal.prototype.ONE));
@@ -366,7 +366,7 @@
                     taxId = taxRate.get('id');
 
                     rate = new BigDecimal(String(taxRate.get('rate')));
-                    rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_UNNECESSARY);
+                    rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP);
 
                     if (taxRate.get('cascade')) {
                       pricenet = pricenetcascade;
