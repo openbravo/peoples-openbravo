@@ -405,14 +405,14 @@
         this.calculateTaxes(function () {
           //If the price doesn't include tax, the discounted gross has already been calculated
           var gross = me.get('lines').reduce(function (memo, e) {
-            var grossLine = e.get('fulldiscountedGross');
+            var grossLine = OB.DEC.toNumber(e.get('fulldiscountedGross'));
             if (grossLine) {
-              return memo.add(grossLine);
+              return OB.DEC.add(memo, grossLine);
             } else {
               return memo;
             }
-          }, new BigDecimal("0"));
-          me.set('gross', OB.DEC.toNumber(gross));
+          }, 0);
+          me.set('gross', gross);
           var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
             if (netLine) {
