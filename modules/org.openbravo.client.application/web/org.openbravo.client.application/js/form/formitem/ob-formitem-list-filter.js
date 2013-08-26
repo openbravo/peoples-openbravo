@@ -49,9 +49,18 @@ isc.OBListFilterItem.addProperties({
   selectDefaultItem: function () {},
 
   showPickList: function () {
-    var ret = this.Super('showPickList', arguments);
-
-    this.selectItemFromValue(this.getValue());
+    var ret = this.Super('showPickList', arguments),
+        value, i;
+    //remove double equals symbol used for filtering purposes, so that the appropriate item is selected.
+    value = this.getValue();
+    if (value && value.length > 0) {
+      for (i = 0; i < value.length; i++) {
+        if (value[i].indexOf("==") === 0) {
+          value[i] = value[i].substring(2, value[i].length);
+        }
+      }
+    }
+    this.selectItemFromValue(value);
   },
 
   // note: can't override changed as it is used by the filter editor 

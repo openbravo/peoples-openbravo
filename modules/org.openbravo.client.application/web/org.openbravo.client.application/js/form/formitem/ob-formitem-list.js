@@ -66,12 +66,19 @@ isc.OBListItem.addProperties({
 
   // is overridden to keep track that a value has been explicitly picked
   pickValue: function (value) {
+    var i;
     this._pickedValue = true;
     // force the update of the list
     // if the user has entered with the keyboard the exact content of a list option,
     // its callout would not be called because the change would not be detected
     // see issue https://issues.openbravo.com/view.php?id=21491
     this._value = (this.value) ? this._value.concat(Math.random()) : Math.random();
+    //adding double equals to filter the exact value and not all matching sub strings. Refer issue https://issues.openbravo.com/view.php?id=24574.
+    if (value) {
+      for (i = 0; i < value.length; i++) {
+        value[i] = "==" + value[i];
+      }
+    }
     this.Super('pickValue', arguments);
     delete this._pickedValue;
     if (this.moveFocusOnPickValue && this.form.focusInNextItem) {
