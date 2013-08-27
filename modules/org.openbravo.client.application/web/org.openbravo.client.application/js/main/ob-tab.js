@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,6 +75,12 @@ isc.OBTabSetMain.addProperties({
   },
 
   tabDeselected: function (tabNum, tabPane, ID, tab, newTab) {
+    if (navigator.userAgent.indexOf('Trident/6.0') !== -1) {
+      // To fix a problem with Internet Explorer 10 and classic OB windows: http://forums.smartclient.com/showthread.php?t=27389
+      if (tabPane.viewId === 'OBClassicWindow' || tabPane.viewId === 'ClassicOBHelp') {
+        tabPane.sendToBack();
+      }
+    }
     if (tabPane.tabDeselected) { //Redirect if tabPane has its own tabDeselected handler
       tabPane.tabDeselected(tabNum, tabPane, ID, tab, newTab);
     }
