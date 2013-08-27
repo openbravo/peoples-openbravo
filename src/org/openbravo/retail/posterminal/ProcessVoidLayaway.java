@@ -170,17 +170,21 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         transaction.setCurrency(acc.getCurrency());
         transaction.setAccount(acc);
         transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
-        transaction.setPaymentAmount(amount.negate());
+        transaction.setPaymentAmount(foreignAmount.negate());
         transaction.setProcessed(true);
         transaction.setTransactionType("BPW");
         transaction.setStatus("RDNC");
+        if (foreignAmount != amount) {
+          transaction.setForeignAmount(amount.negate());
+          transaction.setForeignCurrency(order.getCurrency());
+        }
         transaction.setDescription(description);
         transaction.setDateAcct(POSUtils.getCurrentDate());
         transaction.setTransactionDate(POSUtils.getCurrentDate());
         transaction.setFinPayment(finPayment);
         transaction.setBusinessPartner(order.getBusinessPartner());
         OBDal.getInstance().save(transaction);
-        acc.setCurrentBalance(account.getCurrentBalance().subtract(amount.negate()));
+        acc.setCurrentBalance(account.getCurrentBalance().subtract(foreignAmount.negate()));
 
       }
     } catch (Exception e) {
