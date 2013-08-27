@@ -50,7 +50,7 @@ public class BigDecimalDomainType extends BasePrimitiveDomainType {
 
   public static class Number extends BigDecimalDomainType {
     public String getFormatId() {
-      return "euro";
+      return "generalQty";
     }
   }
 
