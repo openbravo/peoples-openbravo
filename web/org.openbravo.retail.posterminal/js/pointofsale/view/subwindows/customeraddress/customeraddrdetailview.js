@@ -65,19 +65,11 @@ enyo.kind({
     },
     tap: function () {
         var me = this;
-
-        function success(tx) {
-            me.doChangeBusinessPartner({
-                businessPartner: me.customer
-            });
-        }
-
-        function error(tx) {
-            window.console.error(tx);
-        }
         me.customer.set('locId', me.customerAddr.get('id'));
         me.customer.set('locName', me.customerAddr.get('name'));
-        OB.Dal.save(me.customer, success, error);
+        me.doChangeBusinessPartner({
+            businessPartner: me.customer
+        });
         var sw = me.subWindow;
         sw.doChangeSubWindow({
             newWindow: {

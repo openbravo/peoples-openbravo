@@ -36,6 +36,26 @@
             }
             //save that the customer address is being processed by server
             OB.Dal.save(this.customerAddr, function () {
+            	// Update Default Address
+            	function errorCallback(tx, error) {
+            		window.console.error(tx);
+          	    }
+          	    function successCallbackBPs(dataBps) {
+          	    	if(dataBps.length==0) {
+              	    	function success(dataBps) {
+              	    		dataBps.set('locId', me.customerAddr.get('id'));
+              	    		dataBps.set('locName', me.customerAddr.get('name'));
+              	    		OB.Dal.save(dataBps, function() { }, function(tx) { window.console.error(tx); });
+              	    	}
+              	    	function error(tx) { window.console.error(tx); }
+          	    		OB.Dal.get(OB.Model.BusinessPartner, me.customerAddr.get('bpartner'), success, error);
+          	    	}
+          	    }
+          	    var criteria = {};
+          	    criteria._whereClause = "where c_bpartner_id = '"+me.customerAddr.get('bpartner')+"' and c_bpartnerlocation_id > '"+me.customerAddr.get('id')+"'";
+          	    criteria.params = [];
+          	    OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback);
+            	
                 if (isNew) {
                     me.customerAddr.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
                     bpLocToSave.set('json', JSON.stringify(me.customerAddr.serializeToJSON()));

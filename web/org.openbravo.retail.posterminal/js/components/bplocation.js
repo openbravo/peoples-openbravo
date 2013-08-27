@@ -15,7 +15,7 @@ enyo.kind({
     kind: 'OB.UI.SmallButton',
     name: 'OB.UI.BPLocation',
     classes: 'btnlink btnlink-small btnlink-gray',
-    style: 'width: 175px; text-overflow:ellipsis; white-space: nowrap; overflow: hidden;',
+    style: 'width: 170px; text-overflow:ellipsis; white-space: nowrap; overflow: hidden;',
     published: {
         order: null
     },
@@ -334,18 +334,11 @@ enyo.kind({
             }
 
             function successCallbackBPs(dataBps) {
-                function success(tx) {
-                    me.doChangeBusinessPartner({
-                        businessPartner: dataBps
-                    });
-                }
-
-                function error(tx) {
-                    window.console.error(tx);
-                }
                 dataBps.set('locId', model.get('id'));
                 dataBps.set('locName', model.get('name'));
-                OB.Dal.save(dataBps, success, error);
+                me.doChangeBusinessPartner({
+                    businessPartner: dataBps
+                });
             }
             OB.Dal.get(OB.Model.BusinessPartner, this.bPartnerId, successCallbackBPs, errorCallback);
         }, this);

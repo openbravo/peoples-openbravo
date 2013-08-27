@@ -26,26 +26,28 @@ enyo.kind({
       }, {
         style: 'padding: 5px;',
         components: [{
-          classes: 'row-fluid',
-          components: [{
-            classes: 'span12',
+            classes: 'row-fluid',
             components: [{
+              classes: 'span12',
               style: 'padding: 5px 0px 10px 0px; border-bottom: 1px solid #cccccc;',
               components: [{
-                kind: 'OB.UI.OrderDetails',
-                name: 'orderdetails'
+                classes: 'row-fluid',
+                components: [{
+                  kind: 'OB.UI.OrderDetails',
+                  name: 'orderdetails'
+                }] 
               }, {
-                kind: 'OB.UI.BusinessPartner',
-                name: 'bpbutton'
-              }, {
-                kind: 'OB.UI.BPLocation',
-                name: 'bplocbutton'
-              }, {
-                style: 'clear:both;'
+              	classes: 'span8',
+                 components: [{
+                  kind: 'OB.UI.BusinessPartner',
+                  name: 'bpbutton'
+                }, {
+                  kind: 'OB.UI.BPLocation',
+                  name: 'bplocbutton'
+                }]
               }]
             }]
-          }]
-        }, {
+          }, {
           classes: 'row-fluid',
           style: 'max-height: 536px;',
           components: [{
