@@ -535,17 +535,6 @@ isc.FormItem.addProperties({
     }
   },
 
-  // replaced because icon url was not considering 
-  // showDisabled false
-  // http://forums.smartclient.com/showthread.php?p=70308#post70308
-  getIconURL: function (icon, over, disabled, focused) {
-    var src = icon.src || this.defaultIconSrc,
-        state = (this.showDisabled && (disabled || this.iconIsDisabled(icon))) ? isc.StatefulCanvas.STATE_DISABLED : over ? isc.StatefulCanvas.STATE_OVER : null;
-
-    src = isc.Img.urlForState(src, false, focused, state);
-    return src;
-  },
-
   changed: function (form, item, value) {
     this._hasChanged = true;
     this.clearErrors();
@@ -738,42 +727,6 @@ isc.RelativeDateItem.addProperties({
     return [this.getPageLeft() + form.getLeft(), this.getPageTop() + form.getTop() - 40];
   }
 
-});
-
-isc.addProperties(isc.Date, {
-  //http://forums.smartclient.com/showthread.php?p=77883#post77883
-  createLogicalDate: function (year, month, date, suppressConversion) {
-    var d = new Date();
-    d.setHours(12);
-    d.setMinutes(0);
-    d.setSeconds(0);
-    d.setMilliseconds(0);
-    if (date !== null) {
-      d.setDate(1);
-    }
-    if (year !== null) {
-      d.setFullYear(year);
-    }
-    if (month !== null) {
-      d.setMonth(month);
-    }
-    if (date !== null) {
-      d.setDate(date);
-    }
-
-    if (suppressConversion) {
-      // If the 'suppressConversion' flag was passed, we will want to return null to indicate
-      // we were passed an invalid date if the values passed in had to be converted
-      // (For example a month of 13 effecting the year, etc)
-      var isValid = (d.getFullYear() === year && d.getMonth() === month && d.getDate() === date);
-      if (!isValid) {
-        return null;
-      }
-    }
-
-    d.logicalDate = true;
-    return d;
-  }
 });
 
 isc.DateItem.changeDefaults('textFieldDefaults', {
