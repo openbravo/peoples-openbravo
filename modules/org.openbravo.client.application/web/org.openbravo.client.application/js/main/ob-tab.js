@@ -63,6 +63,12 @@ isc.OBTabSetMain.addProperties({
   }),
 
   tabSelected: function (tabNum, tabPane, ID, tab) {
+    if (navigator.userAgent.indexOf('Trident/6.0') !== -1) {
+      // To fix a problem with Internet Explorer 10 and classic OB windows: http://forums.smartclient.com/showthread.php?t=27389
+      if (tabPane.viewId === 'OBClassicWindow' || tabPane.viewId === 'ClassicOBHelp') {
+        tabPane.bringToFront();
+      }
+    }
     if (!tabPane.isLoadingTab) {
       OB.Layout.HistoryManager.updateHistory();
     }
