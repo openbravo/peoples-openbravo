@@ -221,24 +221,29 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
           // Copy the Invoice Lines that are created from the Discounts
           Iterator it = taxForDiscounts.entrySet().iterator();
           OBDal.getInstance().flush();
-          while (it.hasNext()) {
-            Map.Entry e = (Map.Entry) it.next();
-            BigDecimal discountAmount = BigDecimal.ZERO;
+          try {
+            OBContext.setAdminMode(true);
+            while (it.hasNext()) {
+              Map.Entry e = (Map.Entry) it.next();
+              BigDecimal discountAmount = BigDecimal.ZERO;
 
-            if (objCloneDiscount.isCascade()) {
-              discountAmount = objCloneDiscount.getDiscount().getDiscount();
-              discountAmount = cumulativeDiscount.multiply(discountAmount).divide(
-                  new BigDecimal(100));
+              if (objCloneDiscount.isCascade()) {
+                discountAmount = objCloneDiscount.getDiscount().getDiscount();
+                discountAmount = cumulativeDiscount.multiply(discountAmount).divide(
+                    new BigDecimal(100));
 
-            } else {
-              discountAmount = objCloneDiscount.getDiscount().getDiscount();
+              } else {
+                discountAmount = objCloneDiscount.getDiscount().getDiscount();
+              }
+              cumulativeDiscount = cumulativeDiscount.subtract(discountAmount);
+
+              OrderLine olDiscount = generateOrderLineDiscount(e, objCloneDiscount, objOrder,
+                  objCloneOrder, lineNo, cumulativeDiscount, discountAmount);
+              lineNo = lineNo + 10;
+              objCloneOrder.getOrderLineList().add(olDiscount);
             }
-            cumulativeDiscount = cumulativeDiscount.subtract(discountAmount);
-
-            OrderLine olDiscount = generateOrderLineDiscount(e, objCloneDiscount, objOrder,
-                objCloneOrder, lineNo, cumulativeDiscount, discountAmount);
-            lineNo = lineNo + 10;
-            objCloneOrder.getOrderLineList().add(olDiscount);
+          } finally {
+            OBContext.restorePreviousMode();
           }
         }
       }
@@ -253,13 +258,17 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
         OBDal.getInstance().refresh(objCloneOrder);
       } else {
         // Create the Payment Plan for the new Sales Order
-        FIN_PaymentSchedule ps = generatePaymentPlan(objCloneOrder);
-        FIN_PaymentScheduleDetail psd = generatePaymentPlanDetails(objCloneOrder, ps);
-        ps.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(psd);
-        objCloneOrder.getFINPaymentScheduleList().add(ps);
-        OBDal.getInstance().save(ps);
-
-        OBDal.getInstance().save(psd);
+        try {
+          OBContext.setAdminMode(true);
+          FIN_PaymentSchedule ps = generatePaymentPlan(objCloneOrder);
+          FIN_PaymentScheduleDetail psd = generatePaymentPlanDetails(objCloneOrder, ps);
+          ps.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(psd);
+          objCloneOrder.getFINPaymentScheduleList().add(ps);
+          OBDal.getInstance().save(ps);
+          OBDal.getInstance().save(psd);
+        } finally {
+          OBContext.restorePreviousMode();
+        }
       }
 
       // Change Sales Order Status to Completed
@@ -440,25 +449,20 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     OrderLine olDiscount = OBProvider.getInstance().get(OrderLine.class);
     olDiscount.setOrderDiscount(objCloneDiscount);
     olDiscount.setTax(OBDal.getInstance().get(TaxRate.class, e.getKey()));
-    try {
-      OBContext.setAdminMode(true);
-      if (objOrder.getPriceList().isPriceIncludesTax()) {
-        olDiscount.setGrossUnitPrice(discountedAmount.negate());
-        olDiscount.setLineGrossAmount(discountedAmount.negate());
-        olDiscount.setGrossListPrice(discountedAmount.negate());
-        BigDecimal net = getNetFromGross(discountedAmount,
-            OBDal.getInstance().get(TaxRate.class, e.getKey()), objCloneOrder.getCurrency()
-                .getPricePrecision(), BigDecimal.ONE);
-        olDiscount.setUnitPrice(net.negate());
-        olDiscount.setLineNetAmount(net.negate());
-        olDiscount.setListPrice(net.negate());
-      } else {
-        olDiscount.setUnitPrice(discountedAmount.negate());
-        olDiscount.setLineNetAmount(discountedAmount.negate());
-        olDiscount.setListPrice(discountedAmount.negate());
-      }
-    } finally {
-      OBContext.restorePreviousMode();
+    if (objOrder.getPriceList().isPriceIncludesTax()) {
+      olDiscount.setGrossUnitPrice(discountedAmount.negate());
+      olDiscount.setLineGrossAmount(discountedAmount.negate());
+      olDiscount.setGrossListPrice(discountedAmount.negate());
+      BigDecimal net = getNetFromGross(discountedAmount,
+          OBDal.getInstance().get(TaxRate.class, e.getKey()), objCloneOrder.getCurrency()
+              .getPricePrecision(), BigDecimal.ONE);
+      olDiscount.setUnitPrice(net.negate());
+      olDiscount.setLineNetAmount(net.negate());
+      olDiscount.setListPrice(net.negate());
+    } else {
+      olDiscount.setUnitPrice(discountedAmount.negate());
+      olDiscount.setLineNetAmount(discountedAmount.negate());
+      olDiscount.setListPrice(discountedAmount.negate());
     }
 
     olDiscount.setSalesOrder(objCloneOrder);
