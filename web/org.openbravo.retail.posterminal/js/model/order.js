@@ -1333,7 +1333,7 @@
           // add the created line
           lines.add(newline);
           numberOfLines--;
-          orderQty += iter.quantity;
+          orderQty = OB.DEC.add(iter.quantity, orderQty);
           if (numberOfLines === 0) {
             order.set('lines', lines);
             order.set('qty', orderQty);
