@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@
   background-color: #FFFFFF;
   background-image: url(./images/tab/tabBarMain_bg.png);
   background-position: center top;
-  background-repeat: repeat-x scroll;
+  background-repeat: repeat-x;
 }
 
 .OBTabSetMainContainer {
@@ -54,7 +54,6 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarButtonMainTopSelectedDisabledInactive,
 .OBTabBarButtonMainTopSelectedOverInactive {
   color: #fff;
-  margin-left: 25;
   padding: 0;
   outline: none;
   height: 30px;
@@ -190,7 +189,7 @@ if the tab headers are on the right, left or bottom the same styles can be used 
   background-color: #FFFFFF;
   background-image: url(./images/tab/tabBarChild_bg.png);
   background-position: center top;
-  background-repeat: repeat-x scroll;
+  background-repeat: repeat-x;
 }
 
 .OBTabSetChildContainer {
@@ -218,7 +217,6 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBTabBarButtonChildTopSelectedDisabledInactive,
 .OBTabBarButtonChildTopSelectedOverInactive {
   color: #fff;
-  margin-left: 25;
   padding: 0;
   height: 38px;
 }
