@@ -151,7 +151,7 @@ enyo.kind({
     //Required: property where the selected value will be get and where the value will be saved
     modelPropertyText: 'businessPartnerCategory_name',
     //optional: When saving, the property which will store the selected text
-    collection: new OB.Collection.BPCategoryList(),
+    collectionName: 'BPCategoryList',
     // defaultValue: OB.POS.modelterminal.get('terminal').defaultbp_bpcategory,
     //Default value for new lines
     retrievedPropertyForValue: 'id',
