@@ -207,7 +207,6 @@
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
               //Precision used by arithmetics operations is set using the currency
-              OB.DEC.scale = data[0].pricePrecision;
               terminalModel.propertiesReady(me.properties);
             }
           });

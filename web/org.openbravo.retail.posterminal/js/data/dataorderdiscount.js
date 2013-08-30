@@ -19,7 +19,7 @@
 
       if (line) {
         if (OB.DEC.compare(percentage) > 0 && OB.DEC.compare(OB.DEC.sub(percentage, OB.DEC.number(100))) <= 0) {
-          receipt.setPrice(line, OB.DEC.toNumber(new BigDecimal(String(line.get('price'))).multiply(new BigDecimal(String(OB.DEC.sub(OB.DEC.number(100), percentage)))).divide(new BigDecimal("100"), OB.DEC.scale, BigDecimal.prototype.ROUND_HALF_UP)));
+          receipt.setPrice(line, OB.DEC.toNumber(new BigDecimal(String(line.get('price'))).multiply(new BigDecimal(String(OB.DEC.sub(OB.DEC.number(100), percentage)))).divide(new BigDecimal("100"), OB.DEC.getScale(), OB.DEC.getRoundingMode())));
         } else if (OB.DEC.compare(percentage) === 0) {
           receipt.setPrice(line, line.get('price'));
         }
