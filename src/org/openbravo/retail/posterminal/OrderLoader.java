@@ -723,30 +723,34 @@ public class OrderLoader extends JSONProcessSimple {
 
         ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
         boolean foundStockProposed = false;
-        while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
-          foundStockProposed = true;
-          // TODO: Can we safely clear session here?
-          StockProposed stock = (StockProposed) bins.get(0);
-          BigDecimal qty;
+        try {
+          while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
+            foundStockProposed = true;
+            // TODO: Can we safely clear session here?
+            StockProposed stock = (StockProposed) bins.get(0);
+            BigDecimal qty;
 
-          Object stockQty = stock.get("quantity");
-          if (stockQty instanceof Long) {
-            stockQty = new BigDecimal((Long) stockQty);
+            Object stockQty = stock.get("quantity");
+            if (stockQty instanceof Long) {
+              stockQty = new BigDecimal((Long) stockQty);
+            }
+            if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
+              qty = (BigDecimal) stockQty;
+              pendingQty = pendingQty.subtract(qty);
+            } else {
+              qty = pendingQty;
+              pendingQty = BigDecimal.ZERO;
+            }
+            lineNo += 10;
+            if (jsonorder.getLong("orderType") == 1) {
+              qty = qty.negate();
+            }
+            addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+                jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
+                    .getStorageDetail().getAttributeSetValue());
           }
-          if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
-            qty = (BigDecimal) stockQty;
-            pendingQty = pendingQty.subtract(qty);
-          } else {
-            qty = pendingQty;
-            pendingQty = BigDecimal.ZERO;
-          }
-          lineNo += 10;
-          if (jsonorder.getLong("orderType") == 1) {
-            qty = qty.negate();
-          }
-          addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-              jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
-                  .getStorageDetail().getAttributeSetValue());
+        } finally {
+          bins.close();
         }
         if (!foundStockProposed && orderLine.getProduct().getAttributeSet() != null) {
           // M_GetStock couldn't find any valid stock, and the product has an attribute set. We will

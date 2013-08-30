@@ -59,40 +59,43 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
       String curOrgName = "";
       JSONObject orgInfo = new JSONObject();
       JSONArray arrWarehousesInfo = new JSONArray();
+      try {
+        while (results.next()) {
+          if (curOrgId == null) {
+            resultsAvailable = true;
+            curOrgName = (String) results.get(1);
+            curOrgId = (String) results.get(0);
+            qtyCounterPerOrg = BigDecimal.ZERO;
+          }
+          if (!curOrgId.equals((String) results.get(0))) {
+            orgInfo.put("organizationid", curOrgId);
+            orgInfo.put("organizationname", curOrgName);
+            orgInfo.put("organizationqty", qtyCounterPerOrg);
+            orgInfo.put("warehouses", arrWarehousesInfo);
+            responseArray.put(orgInfo);
 
-      while (results.next()) {
-        if (curOrgId == null) {
-          resultsAvailable = true;
-          curOrgName = (String) results.get(1);
-          curOrgId = (String) results.get(0);
-          qtyCounterPerOrg = BigDecimal.ZERO;
+            orgInfo = new JSONObject();
+            arrWarehousesInfo = new JSONArray();
+
+            curOrgName = (String) results.get(1);
+            curOrgId = (String) results.get(0);
+            qtyCounterPerOrg = BigDecimal.ZERO;
+          }
+          JSONObject warehouseInfo = new JSONObject();
+          warehouseInfo.put("warehouseid", (String) results.get(2));
+          if (!countedWarehouses.contains((String) results.get(2))) {
+            countedWarehouses.add((String) results.get(2));
+            totalQtyCounter = totalQtyCounter.add((BigDecimal) results.get(4));
+          }
+          warehouseInfo.put("warehousename", (String) results.get(3));
+          warehouseInfo.put("warehouseqty", ((BigDecimal) results.get(4)).toString());
+
+          arrWarehousesInfo.put(warehouseInfo);
+
+          qtyCounterPerOrg = qtyCounterPerOrg.add((BigDecimal) results.get(4));
         }
-        if (!curOrgId.equals((String) results.get(0))) {
-          orgInfo.put("organizationid", curOrgId);
-          orgInfo.put("organizationname", curOrgName);
-          orgInfo.put("organizationqty", qtyCounterPerOrg);
-          orgInfo.put("warehouses", arrWarehousesInfo);
-          responseArray.put(orgInfo);
-
-          orgInfo = new JSONObject();
-          arrWarehousesInfo = new JSONArray();
-
-          curOrgName = (String) results.get(1);
-          curOrgId = (String) results.get(0);
-          qtyCounterPerOrg = BigDecimal.ZERO;
-        }
-        JSONObject warehouseInfo = new JSONObject();
-        warehouseInfo.put("warehouseid", (String) results.get(2));
-        if (!countedWarehouses.contains((String) results.get(2))) {
-          countedWarehouses.add((String) results.get(2));
-          totalQtyCounter = totalQtyCounter.add((BigDecimal) results.get(4));
-        }
-        warehouseInfo.put("warehousename", (String) results.get(3));
-        warehouseInfo.put("warehouseqty", ((BigDecimal) results.get(4)).toString());
-
-        arrWarehousesInfo.put(warehouseInfo);
-
-        qtyCounterPerOrg = qtyCounterPerOrg.add((BigDecimal) results.get(4));
+      } finally {
+        results.close();
       }
 
       if (resultsAvailable) {
