@@ -56,7 +56,7 @@ enyo.kind({
             name: subWindow.caller,
             params: {
               navigateOnClose: 'customerAdvancedSearch',
-              businessPartner: this.headerContainer.customer
+              businessPartner: (this.headerContainer && this.headerContainer.customer) ? this.headerContainer.customer : (this.customer ? this.customer : null)
             }
           }
         });
