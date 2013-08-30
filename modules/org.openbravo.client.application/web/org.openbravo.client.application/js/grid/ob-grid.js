@@ -787,7 +787,7 @@ isc.ClassFactory.defineClass('OBGridSummary', isc.OBGrid);
 
 isc.OBGridSummary.addProperties({
   getCellStyle: function (record, rowNum, colNum) {
-    var field = this.getField(colNum);
+    var field = this.parentElement.getField(colNum);
     if (field.summaryFunction && this['summaryRowStyle_' + field.summaryFunction]) {
       return this['summaryRowStyle_' + field.summaryFunction];
     } else {
