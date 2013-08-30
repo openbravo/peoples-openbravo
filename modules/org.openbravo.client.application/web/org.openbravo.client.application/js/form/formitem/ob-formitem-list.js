@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,17 +66,23 @@ isc.OBListItem.addProperties({
 
   // is overridden to keep track that a value has been explicitly picked
   pickValue: function (value) {
-    var i;
+    var i, referenceType;
     this._pickedValue = true;
     // force the update of the list
     // if the user has entered with the keyboard the exact content of a list option,
     // its callout would not be called because the change would not be detected
     // see issue https://issues.openbravo.com/view.php?id=21491
     this._value = (this.value) ? this._value.concat(Math.random()) : Math.random();
-    //adding double equals to filter the exact value and not all matching sub strings. Refer issue https://issues.openbravo.com/view.php?id=24574.
-    if (value) {
+    //in case the reference is a foreign key reference,
+    //adding double equals to filter the exact value and not all matching sub strings.
+    //Refer issue https://issues.openbravo.com/view.php?id=24574.
+    referenceType = isc.SimpleType.getType(this.type).editorType;
+    if (value && referenceType !== 'OBListItem') {
       for (i = 0; i < value.length; i++) {
-        value[i] = "==" + value[i];
+        //do not append when composite identifiers are present.
+        if (value[i].indexOf(" - ") === -1) {
+          value[i] = "==" + value[i];
+        }
       }
     }
     this.Super('pickValue', arguments);
