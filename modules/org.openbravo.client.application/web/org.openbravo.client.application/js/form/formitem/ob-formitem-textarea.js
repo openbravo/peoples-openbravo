@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,12 +82,7 @@ isc.OBPopUpTextAreaItem.addProperties({
   popUpOnEnter: true
 });
 
-// hack until this gets answered:
-// http://forums.smartclient.com/showthread.php?p=61621#post61621
-// to solve this: https://issues.openbravo.com/view.php?id=16327
-if (isc.ListGrid.getPrototype()._popUpTextAreaEditorTypes) {
-  // handle case when loading source code
-  isc.ListGrid.getPrototype()._popUpTextAreaEditorTypes.OBPopUpTextAreaItem = true;
-} else if (isc.ListGrid.getPrototype().$52x) {
-  isc.ListGrid.getPrototype().$52x.OBPopUpTextAreaItem = true;
+// To solve this: https://issues.openbravo.com/view.php?id=16327
+if (isc.ListGrid.getPrototype().popUpTextAreaEditorTypes) {
+  isc.ListGrid.getPrototype().popUpTextAreaEditorTypes.OBPopUpTextAreaItem = true;
 }
