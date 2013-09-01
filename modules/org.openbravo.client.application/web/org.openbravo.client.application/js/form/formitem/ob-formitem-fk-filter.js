@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -172,7 +172,7 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   itemHoverHTML: function () {
-    return this.getDisplayValue();
+    return this.getElementValue();
   },
 
   mapValueToDisplay: function (value) {
@@ -326,7 +326,7 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   valueIsExpression: function () {
-    var prop, opDefs, val = this.getDisplayValue();
+    var prop, opDefs, val = this.getElementValue();
     // if someone starts typing and and or then do not filter
     // onkeypress either
     if (val.contains(' and')) {
