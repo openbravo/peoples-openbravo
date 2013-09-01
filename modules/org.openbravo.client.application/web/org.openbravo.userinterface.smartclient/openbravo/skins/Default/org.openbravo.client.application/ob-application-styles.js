@@ -24,12 +24,6 @@
  * 3) Changes to standard isc.Dialog buttons
  =======================================================================*/
 
-if (isc.Menu && isc.Browser.isFirefox && isc.Browser.version >= 16) {
-  // To fix issue: http://forums.smartclient.com/showthread.php?t=24978
-  isc.Menu.addProperties({
-    fixedRecordHeights: true
-  });
-}
 
 /* =====================================================================
  * Main layout styling properties
