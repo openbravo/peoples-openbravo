@@ -464,6 +464,9 @@
 .OBDateChooserNavButton,
 .OBDateChooserNavButtonOver,
 .OBDateChooserNavButtonDown,
+.OBDateChooserNavButtonFocused,
+.OBDateChooserNavButtonFocusedOver,
+.OBDateChooserNavButtonFocusedDown,
 .OBDateChooserNavButtonSelected,
 .OBDateChooserNavButtonSelectedOver,
 .OBDateChooserNavButtonSelectedDown,
@@ -474,22 +477,29 @@
 .OBDateChooserWeekdaySelectedOver,
 .OBDateChooserWeekdaySelectedDown,
 .OBDateChooserWeekdayDisabled,
+.OBDateChooserWeekdayDisabledOver,
+.OBDateChooserWeekdayDisabledDown,
 .OBDateChooserWeekend,
 .OBDateChooserWeekendOver,
 .OBDateChooserWeekendDown,
 .OBDateChooserWeekendSelected,
 .OBDateChooserWeekendSelectedOver,
 .OBDateChooserWeekendSelectedDown,
-.OBDateChooserWeekendDisabled {
+.OBDateChooserWeekendDisabled,
+.OBDateChooserWeekendDisabledOver,
+.OBDateChooserWeekendDisabledDown {
   font-family: 'lucida sans', sans-serif;
-  font-size: 12px;
-  background-color: transparent;
+  font-size: 11px;
+  background-color: white;
   color: #333333;
 }
 
 .OBDateChooserBottomButton,
 .OBDateChooserBottomButtonOver,
 .OBDateChooserBottomButtonDown,
+.OBDateChooserBottomButtonFocused,
+.OBDateChooserBottomButtonFocusedOver,
+.OBDateChooserBottomButtonFocusedDown,
 .OBDateChooserBottomButtonSelected,
 .OBDateChooserBottomButtonSelectedOver,
 .OBDateChooserBottomButtonSelectedDown {
@@ -500,6 +510,7 @@
 }
 
 .OBDateChooserBottomButton,
+.OBDateChooserBottomButtonFocused,
 .OBDateChooserBottomButtonSelected {
   background-image: url(./images/form/dateChooser-bg-button.png);
   background-position: left top;
@@ -507,6 +518,7 @@
 }
 
 .OBDateChooserBottomButtonOver,
+.OBDateChooserBottomButtonFocusedOver,
 .OBDateChooserBottomButtonSelectedOver {
   background-image: url(./images/form/dateChooser-bg-button_Over.png);
   background-position: left top;
@@ -514,6 +526,7 @@
 }
 
 .OBDateChooserBottomButtonDown,
+.OBDateChooserBottomButtonFocusedDown,
 .OBDateChooserBottomButtonSelectedDown {
   background-image: url(./images/form/dateChooser-bg-button_Down.png);
   background-position: left top;
@@ -523,11 +536,14 @@
 .OBDateChooserNavButton,
 .OBDateChooserNavButtonOver,
 .OBDateChooserNavButtonDown,
+.OBDateChooserNavButtonFocused,
+.OBDateChooserNavButtonFocusedOver,
+.OBDateChooserNavButtonFocusedDown,
 .OBDateChooserNavButtonSelected,
 .OBDateChooserNavButtonSelectedOver,
 .OBDateChooserNavButtonSelectedDown {
   font-family: 'lucida sans', sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   background-color: transparent;
   color: #333333;
 }
@@ -536,6 +552,9 @@
 .OBDateChooserNavButton,
 .OBDateChooserNavButtonOver,
 .OBDateChooserNavButtonDown,
+.OBDateChooserNavButtonFocused,
+.OBDateChooserNavButtonFocusedOver,
+.OBDateChooserNavButtonFocusedDown,
 .OBDateChooserNavButtonSelected,
 .OBDateChooserNavButtonSelectedOver,
 .OBDateChooserNavButtonSelectedDown {
@@ -560,6 +579,9 @@
 .OBDateChooserNavButton,
 .OBDateChooserNavButtonOver,
 .OBDateChooserNavButtonDown,
+.OBDateChooserNavButtonFocused,
+.OBDateChooserNavButtonFocusedOver,
+.OBDateChooserNavButtonFocusedDown,
 .OBDateChooserNavButtonSelected,
 .OBDateChooserNavButtonSelectedOver,
 .OBDateChooserNavButtonSelectedDown {
@@ -587,6 +609,9 @@
 .OBDateChooserNavButton,
 .OBDateChooserNavButtonOver,
 .OBDateChooserNavButtonDown,
+.OBDateChooserNavButtonFocused,
+.OBDateChooserNavButtonFocusedOver,
+.OBDateChooserNavButtonFocusedDown,
 .OBDateChooserNavButtonSelected,
 .OBDateChooserNavButtonSelectedOver,
 .OBDateChooserNavButtonSelectedDown {
@@ -602,7 +627,10 @@
 /* Today, Cancel buttons */
 .OBDateChooserBottomButton,
 .OBDateChooserBottomButtonOver,
-.OBDateChooserBottomButtonDown {
+.OBDateChooserBottomButtonDown,
+.OBDateChooserBottomButtonFocused,
+.OBDateChooserBottomButtonFocusedOver,
+.OBDateChooserBottomButtonFocusedDown {
   cursor: pointer;
   font-weight: bold;
   color: #4C4C4C;
@@ -620,13 +648,17 @@
 .OBDateChooserWeekdaySelectedOver,
 .OBDateChooserWeekdaySelectedDown,
 .OBDateChooserWeekdayDisabled,
+.OBDateChooserWeekdayDisabledOver,
+.OBDateChooserWeekdayDisabledDown,
 .OBDateChooserWeekend,
 .OBDateChooserWeekendOver,
 .OBDateChooserWeekendDown,
 .OBDateChooserWeekendSelected,
 .OBDateChooserWeekendSelectedOver,
 .OBDateChooserWeekendSelectedDown,
-.OBDateChooserWeekendDisabled {
+.OBDateChooserWeekendDisabled,
+.OBDateChooserWeekendDisabledOver,
+.OBDateChooserWeekendDisabledDown {
   cursor: pointer;
   color: #333333;
   border: 2px solid white;
@@ -634,14 +666,20 @@
 }
 
 .OBDateChooserWeekdayDisabled,
-.OBDateChooserWeekendDisabled {
+.OBDateChooserWeekdayDisabledOver,
+.OBDateChooserWeekdayDisabledDown,
+.OBDateChooserWeekendDisabled,
+.OBDateChooserWeekendDisabledOver,
+.OBDateChooserWeekendDisabledDown {
   color: #C0C3CA;
 }
 
 .OBDateChooserWeekend,
 .OBDateChooserWeekendOver,
 .OBDateChooserWeekendSelected,
-.OBDateChooserWeekendDisabled {
+.OBDateChooserWeekendDisabled,
+.OBDateChooserWeekendDisabledOver,
+.OBDateChooserWeekendDisabledDown {
   border: 2px solid #CDD7BB;
   background-color: #CDD7BB;
 }
