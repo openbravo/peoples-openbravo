@@ -308,7 +308,7 @@ OB.Styles.OBFormField.DefaultDateInput = {
     textBoxStyle: 'OBFormFieldDateInput'
   },
 
-  height: 25,
+  height: 21,
 
   pickerIconWidth: 21,
   pickerIconHeight: 21,
