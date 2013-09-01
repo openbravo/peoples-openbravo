@@ -1742,7 +1742,7 @@ isc.OBViewGrid.addProperties({
 
     newCallBack = function () {
       theView.recordSelected();
-      if (callback) {
+      if (typeof callback === 'function') {
         callback();
       }
     };
