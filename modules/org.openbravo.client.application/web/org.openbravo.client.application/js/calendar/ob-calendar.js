@@ -73,7 +73,7 @@ isc.OBCalendar.addProperties({
     this.controlsBarDefaults.layoutTopMargin = OB.Styles.OBCalendar.controlsTopMarging;
 
     this.mainViewDefaults._constructor = isc.OBCalendarTabSet;
-    this.eventDialogDefaults._constructor = isc.OBCalendar_EventDialogBridge;
+    this.eventDialogConstructor = isc.OBCalendar_EventDialogBridge;
     this.eventDialogDefaults.calendar = this;
 
     if (!this.eventIdField) {
@@ -244,6 +244,7 @@ isc.OBCalendar.addProperties({
     this.workdayBaseStyle = OB.Styles.OBCalendar.workdayBaseStyle;
     this.selectedCellStyle = OB.Styles.OBCalendar.selectedCellStyle;
     if (this.showDayView !== false) {
+      this.dayView.alternateRecordStyles = OB.Styles.OBCalendar.dayView_alternateRecordStyles;
       this.dayView.baseStyle = OB.Styles.OBCalendar.dayView_baseStyle;
     }
     if (this.showWeekView !== false) {
