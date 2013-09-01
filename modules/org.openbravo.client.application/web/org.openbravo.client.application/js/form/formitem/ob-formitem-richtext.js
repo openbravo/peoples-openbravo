@@ -109,7 +109,7 @@ isc.OBRichTextItem.addProperties({
       },
 
       focusChanged: function (hasFocus) {
-        this.parentElement.handleFocus(hasFocus);
+        this.parentElement.parentElement.handleFocus(hasFocus);
       },
 
       // autochild of the autochild
