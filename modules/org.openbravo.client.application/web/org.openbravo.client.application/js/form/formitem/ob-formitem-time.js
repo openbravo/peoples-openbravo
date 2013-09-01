@@ -22,6 +22,7 @@
 isc.ClassFactory.defineClass('OBTimeItem', isc.TimeItem);
 
 isc.OBTimeItem.addProperties({
+  useTextField: true,
   operator: 'equals',
   validateOnExit: true,
   showHint: false,
