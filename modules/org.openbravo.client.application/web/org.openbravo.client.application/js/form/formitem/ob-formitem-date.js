@@ -379,6 +379,12 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     return true;
   },
 
+  formSaved: function (request, response, data) {
+    if (this.textField) {
+      delete this.textField._textChanged;
+    }
+  },
+
   validators: [{
     type: 'custom',
     condition: function (item, validator, value) {
