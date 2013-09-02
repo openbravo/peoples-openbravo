@@ -285,8 +285,8 @@ enyo.kind({
       }, function (data) {
         OB.UTIL.showLoading(false);
         if (data) {
-          if (me.model.get('leftColumnViewManager').isMultiOrder()){
-            if (me.model.get('multiorders')){
+          if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+            if (me.model.get('multiorders')) {
               me.model.get('multiorders').resetValues();
             }
             me.model.get('leftColumnViewManager').setOrderMode();

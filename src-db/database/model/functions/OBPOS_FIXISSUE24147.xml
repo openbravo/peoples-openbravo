@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION OBPOS_FIXISSUE24147">
+    <function name="OBPOS_FIXISSUE24147" type="NULL">
+      <body><![CDATA[v_inoutline_id VARCHAR(32);
+TYPE RECORD IS REF CURSOR;
+v_nullInvoiceLinesIds RECORD;
+v_needToExecute NUMBER:=0;
+BEGIN
+  SELECT count(*) as exist into v_needToExecute FROM DUAL
+  WHERE EXISTS (SELECT 1 FROM ad_preference
+     WHERE attribute = 'obpos_fixissue24147');
+  IF (v_needToExecute > 0) THEN
+    DBMS_OUTPUT.PUT_LINE('skip obpos_fixissue24147. Already executed - ' || v_needToExecute);
+    RETURN;
+  END IF;
+  DBMS_OUTPUT.PUT_LINE('Fixing wrong data because off issue 24147');
+  FOR v_nullInvoiceLinesIds IN (select invline.c_invoiceline_id, invline.c_orderline_id from c_invoiceline invline inner join c_orderline ordline on invline.c_orderline_id = ordline.c_orderline_id inner join c_order ord on ord.c_order_id = ordline.c_order_id where invline.m_inoutline_id is NULL and ord.em_obpos_applications_id is not NULL and invline.qtyinvoiced = ordline.qtyordered) LOOP
+    SELECT m_inoutline_id into v_inoutline_id from m_inoutline where c_orderline_id = v_nullInvoiceLinesIds.c_orderline_id;
+    DBMS_OUTPUT.PUT_LINE('Invoice line ' || v_nullInvoiceLinesIds.c_invoiceline_id || ' will be set with ' || v_inoutline_id || ' for field m_inoutline_id');    
+    UPDATE c_invoiceline SET m_inoutline_id = v_inoutline_id WHERE c_invoiceline_id = v_nullInvoiceLinesIds.c_invoiceline_id;
+  END LOOP;
+  INSERT INTO ad_preference (ad_preference_id, ad_client_id, ad_org_id, isactive, createdby, created, updatedby, updated, attribute) 
+    VALUES ( get_uuid(), '0', '0', 'Y', '0', now(), '0', now(), 'obpos_fixissue24147' );
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error fixing data off issue 24147');
+END OBPOS_FIXISSUE24147
+]]></body>
+    </function>
+  </database>

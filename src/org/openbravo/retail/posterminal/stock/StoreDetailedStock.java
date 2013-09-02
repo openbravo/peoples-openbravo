@@ -54,37 +54,40 @@ public class StoreDetailedStock extends JSONProcessSimple {
       String curWHName = "";
       JSONObject warehouseInfo = new JSONObject();
       JSONArray arrBinInfo = new JSONArray();
+      try {
+        while (results.next()) {
+          if (curWHId == null) {
+            resultsAvailable = true;
+            curWHName = (String) results.get(1);
+            curWHId = (String) results.get(0);
+            qtyCounterPerWH = BigDecimal.ZERO;
+          }
+          if (!curWHId.equals((String) results.get(0))) {
+            warehouseInfo.put("warehouseid", curWHId);
+            warehouseInfo.put("warehousename", curWHName);
+            warehouseInfo.put("warehouseqty", qtyCounterPerWH);
+            warehouseInfo.put("bins", arrBinInfo);
+            responseArray.put(warehouseInfo);
 
-      while (results.next()) {
-        if (curWHId == null) {
-          resultsAvailable = true;
-          curWHName = (String) results.get(1);
-          curWHId = (String) results.get(0);
-          qtyCounterPerWH = BigDecimal.ZERO;
+            warehouseInfo = new JSONObject();
+            arrBinInfo = new JSONArray();
+
+            curWHName = (String) results.get(1);
+            curWHId = (String) results.get(0);
+            qtyCounterPerWH = BigDecimal.ZERO;
+          }
+          JSONObject binInfo = new JSONObject();
+          binInfo.put("binid", (String) results.get(2));
+          binInfo.put("binname", (String) results.get(3));
+          binInfo.put("binqty", ((BigDecimal) results.get(4)).toString());
+
+          arrBinInfo.put(binInfo);
+
+          qtyCounterPerWH = qtyCounterPerWH.add((BigDecimal) results.get(4));
+          totalQtyCounter = totalQtyCounter.add((BigDecimal) results.get(4));
         }
-        if (!curWHId.equals((String) results.get(0))) {
-          warehouseInfo.put("warehouseid", curWHId);
-          warehouseInfo.put("warehousename", curWHName);
-          warehouseInfo.put("warehouseqty", qtyCounterPerWH);
-          warehouseInfo.put("bins", arrBinInfo);
-          responseArray.put(warehouseInfo);
-
-          warehouseInfo = new JSONObject();
-          arrBinInfo = new JSONArray();
-
-          curWHName = (String) results.get(1);
-          curWHId = (String) results.get(0);
-          qtyCounterPerWH = BigDecimal.ZERO;
-        }
-        JSONObject binInfo = new JSONObject();
-        binInfo.put("binid", (String) results.get(2));
-        binInfo.put("binname", (String) results.get(3));
-        binInfo.put("binqty", ((BigDecimal) results.get(4)).toString());
-
-        arrBinInfo.put(binInfo);
-
-        qtyCounterPerWH = qtyCounterPerWH.add((BigDecimal) results.get(4));
-        totalQtyCounter = totalQtyCounter.add((BigDecimal) results.get(4));
+      } finally {
+        results.close();
       }
 
       if (resultsAvailable) {

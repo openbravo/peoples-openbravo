@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -308,9 +309,20 @@ public class OrderLoader extends JSONProcessSimple {
       t2 = System.currentTimeMillis();
       updateAuditInfo(order, invoice, jsonorder);
       t3 = System.currentTimeMillis();
+
+      if (!isQuotation) {
+        if (!isLayaway && !partialpayLayaway) {
+          // Stock manipulation
+          handleStock(shipment);
+          // Send email
+        }
+      }
+      long t4 = System.currentTimeMillis();
+
       log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
           + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t116 - t115) + "; Approvals"
-          + (t11 - t116));
+          + (t11 - t116) + "; stock" + (t4 - t3));
+
     } finally {
       TriggerHandler.getInstance().enable();
     }
@@ -322,11 +334,6 @@ public class OrderLoader extends JSONProcessSimple {
       JSONObject paymentResponse = handlePayments(jsonorder, order, invoice);
       if (paymentResponse != null) {
         return paymentResponse;
-      }
-      if (!isLayaway && !partialpayLayaway) {
-        // Stock manipulation
-        handleStock(shipment);
-        // Send email
       }
       if (sendEmail) {
         EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
@@ -716,30 +723,34 @@ public class OrderLoader extends JSONProcessSimple {
 
         ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
         boolean foundStockProposed = false;
-        while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
-          foundStockProposed = true;
-          // TODO: Can we safely clear session here?
-          StockProposed stock = (StockProposed) bins.get(0);
-          BigDecimal qty;
+        try {
+          while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
+            foundStockProposed = true;
+            // TODO: Can we safely clear session here?
+            StockProposed stock = (StockProposed) bins.get(0);
+            BigDecimal qty;
 
-          Object stockQty = stock.get("quantity");
-          if (stockQty instanceof Long) {
-            stockQty = new BigDecimal((Long) stockQty);
+            Object stockQty = stock.get("quantity");
+            if (stockQty instanceof Long) {
+              stockQty = new BigDecimal((Long) stockQty);
+            }
+            if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
+              qty = (BigDecimal) stockQty;
+              pendingQty = pendingQty.subtract(qty);
+            } else {
+              qty = pendingQty;
+              pendingQty = BigDecimal.ZERO;
+            }
+            lineNo += 10;
+            if (jsonorder.getLong("orderType") == 1) {
+              qty = qty.negate();
+            }
+            addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+                jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
+                    .getStorageDetail().getAttributeSetValue());
           }
-          if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
-            qty = (BigDecimal) stockQty;
-            pendingQty = pendingQty.subtract(qty);
-          } else {
-            qty = pendingQty;
-            pendingQty = BigDecimal.ZERO;
-          }
-          lineNo += 10;
-          if (jsonorder.getLong("orderType") == 1) {
-            qty = qty.negate();
-          }
-          addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-              jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
-                  .getStorageDetail().getAttributeSetValue());
+        } finally {
+          bins.close();
         }
         if (!foundStockProposed && orderLine.getProduct().getAttributeSet() != null) {
           // M_GetStock couldn't find any valid stock, and the product has an attribute set. We will
@@ -982,8 +993,56 @@ public class OrderLoader extends JSONProcessSimple {
         transaction.setGoodsShipmentLine(line);
         transaction.setAttributeSetValue(line.getAttributeSetValue());
 
+        updateInventory(transaction);
+
         OBDal.getInstance().save(transaction);
       }
+    }
+  }
+
+  protected void updateInventory(MaterialTransaction transaction) {
+    try {
+      org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
+      CallableStatement cs = cp.getConnection().prepareCall(
+          "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+
+      // client
+      cs.setString(1, OBContext.getOBContext().getCurrentClient().getId());
+      // org
+      cs.setString(2, OBContext.getOBContext().getCurrentOrganization().getId());
+      // user
+      cs.setString(3, OBContext.getOBContext().getUser().getId());
+      // product
+      cs.setString(4, transaction.getProduct().getId());
+      // locator
+      cs.setString(5, transaction.getStorageBin().getId());
+      // attributesetinstance
+      cs.setString(6, transaction.getAttributeSetValue() != null ? transaction
+          .getAttributeSetValue().getId() : null);
+      // uom
+      cs.setString(7, transaction.getUOM().getId());
+      // product uom
+      cs.setString(8, null);
+      // p_qty
+      cs.setBigDecimal(9,
+          transaction.getMovementQuantity() != null ? transaction.getMovementQuantity() : null);
+      // p_qtyorder
+      cs.setBigDecimal(10, transaction.getOrderQuantity() != null ? transaction.getOrderQuantity()
+          : null);
+      // p_dateLastInventory --- **
+      cs.setDate(11, null);
+      // p_preqty
+      cs.setBigDecimal(12, transaction.getMovementQuantity() != null ? transaction
+          .getMovementQuantity().multiply(NEGATIVE_ONE) : null);
+      // p_preqtyorder
+      cs.setBigDecimal(13, transaction.getOrderQuantity() != null ? transaction.getOrderQuantity()
+          .multiply(NEGATIVE_ONE) : null);
+
+      cs.execute();
+      cs.close();
+    } catch (Exception e) {
+      System.out.println("Error calling to M_UPDATE_INVENTORY");
+      throw new OBException(e.getMessage());
     }
   }
 

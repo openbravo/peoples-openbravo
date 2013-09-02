@@ -13,8 +13,12 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
@@ -56,15 +60,28 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
   String paymentDescription = null;
   private static final Logger log = Logger.getLogger(ProcessVoidLayaway.class);
 
+  @Inject
+  @Any
+  private Instance<VoidLayawayHook> layawayhooks;
+
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
 
     JSONArray respArray = new JSONArray();
     JSONObject jsonorder = (JSONObject) jsonsent.get("order");
     try {
+
+      Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+      
+      for (Iterator<VoidLayawayHook> layawayhookiter = layawayhooks.iterator(); layawayhookiter
+          .hasNext();) {
+        VoidLayawayHook layawayhook = layawayhookiter.next();
+        layawayhook.exec(jsonorder, order);
+      }
+      
       TriggerHandler.getInstance().disable();
       OBContext.setAdminMode(true);
-      Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+
       order.setDocumentStatus("CL");
       order.setGrandTotalAmount(BigDecimal.ZERO);
       order.setSummedLineAmount(BigDecimal.ZERO);
@@ -170,17 +187,21 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         transaction.setCurrency(acc.getCurrency());
         transaction.setAccount(acc);
         transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
-        transaction.setPaymentAmount(amount.negate());
+        transaction.setPaymentAmount(foreignAmount.negate());
         transaction.setProcessed(true);
         transaction.setTransactionType("BPW");
         transaction.setStatus("RDNC");
+        if (foreignAmount != amount) {
+          transaction.setForeignAmount(amount.negate());
+          transaction.setForeignCurrency(order.getCurrency());
+        }
         transaction.setDescription(description);
         transaction.setDateAcct(POSUtils.getCurrentDate());
         transaction.setTransactionDate(POSUtils.getCurrentDate());
         transaction.setFinPayment(finPayment);
         transaction.setBusinessPartner(order.getBusinessPartner());
         OBDal.getInstance().save(transaction);
-        acc.setCurrentBalance(account.getCurrentBalance().subtract(amount.negate()));
+        acc.setCurrentBalance(account.getCurrentBalance().subtract(foreignAmount.negate()));
 
       }
     } catch (Exception e) {
@@ -190,6 +211,7 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
       OBContext.restorePreviousMode();
       TriggerHandler.getInstance().enable();
     }
+    
 
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_DATA, respArray);

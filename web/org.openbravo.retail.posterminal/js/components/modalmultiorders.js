@@ -218,7 +218,7 @@ enyo.kind({
       returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
     }
     this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + (this.model.get('bp') ? this.model.get('bp').get('_identifier') : this.model.get('businessPartner')) + returnLabel);
-    this.$.bottonLine.setContent(((this.model.get('totalamount') || this.model.get('totalamount') === 0)  ? this.model.get('totalamount') : this.model.getPending()) + ' (' + OB.I18N.formatDate(new Date(this.model.get('orderDate'))) + ') ');
+    this.$.bottonLine.setContent(((this.model.get('totalamount') || this.model.get('totalamount') === 0) ? this.model.get('totalamount') : this.model.getPending()) + ' (' + OB.I18N.formatDate(new Date(this.model.get('orderDate'))) + ') ');
     if (this.model.get('checked')) {
       this.addClass('active');
     } else {
@@ -379,7 +379,7 @@ enyo.kind({
           if (data) {
             me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
               order.set('loadedFromServer', true);
-              order.set('checked', iter.get('checked'))
+              order.set('checked', iter.get('checked'));
               taxes = OB.DATA.OrderTaxes(order);
               order.save();
               selectedMultiOrders.push(order);

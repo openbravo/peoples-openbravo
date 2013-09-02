@@ -157,7 +157,7 @@ public class PaidReceipts extends JSONProcessSimple {
           + " from OBPOS_App_Payment as p where p.obposApplications.id=? ";
       Query paymentsTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsType);
       // paidReceiptsQuery.setString(0, id);
-      paymentsTypeQuery.setString(0, objpaidReceipts[15].toString());
+      paymentsTypeQuery.setString(0, paidReceipt.getString("posTerminal"));
       for (Object objPaymentType : paymentsTypeQuery.list()) {
         Object[] objPaymentsType = (Object[]) objPaymentType;
         JSONObject paymentsType = new JSONObject();

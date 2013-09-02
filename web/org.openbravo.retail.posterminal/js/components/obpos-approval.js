@@ -15,10 +15,10 @@ enyo.kind({
   statics: {
     /**
      * Static method to display the approval popup.
-     * 
+     *
      * When the approval is requested and checked, 'approvalChecked' event is
      * triggered in model parameter. This event has a boolean parameter 'approved'
-     * that determines whether the approval was accepted or rejected. 
+     * that determines whether the approval was accepted or rejected.
      */
     requestApproval: function (model, approvalType) {
       var dialog;

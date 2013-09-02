@@ -7,16 +7,19 @@
  ************************************************************************************
  */
 
-/*global B, $, _, Backbone, window, confirm, OB, localStorage */
+/*global B, $, _, Backbone, window, confirm, OB, console, localStorage */
 
 (function () {
   var modelterminal = OB.POS.modelterminal,
       executeWhenDOMReady;
 
   // alert all errors
-  window.onerror = function (e) {
+  window.onerror = function (e, url, line) {
+    var errorInfo;
     if (typeof (e) === 'string') {
-      OB.UTIL.showError(e);
+      errorInfo = e + '. Line number: ' + line + '. File uuid: ' + url + '.';
+      OB.UTIL.showError(errorInfo);
+      console.error(errorInfo);
     }
   };
 
@@ -28,7 +31,7 @@
     OB.POS.hwserver = new OB.DS.HWServer(terminal.hardwareurl, terminal.scaleurl);
 
     // Set Arithmetic properties:
-    OB.DEC.setContext(OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_UP);
+    OB.DEC.setContext(OB.POS.modelterminal.get('currency').obposPosprecision || OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_UP);
 
 
     // TODO: check permissions: this has been removed because windows are not already loaded

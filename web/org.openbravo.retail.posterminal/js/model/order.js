@@ -284,7 +284,7 @@
       var me = this;
       this.calculateTaxes(function () {
         me.adjustPrices();
-        callback();
+        callback(me);
       });
     },
 
@@ -344,7 +344,7 @@
           line.set({
             nondiscountedprice: line.get('price'),
             nondiscountednet: line.get('net'),
-            net: OB.DEC.toNumber(line.get('discountedNet')),
+            net: line.get('discountedNet'),
             pricenet: OB.DEC.toNumber(line.get('discountedNetPrice')),
             listPrice: line.get('priceList'),
             grossListPrice: 0,
@@ -405,14 +405,14 @@
         this.calculateTaxes(function () {
           //If the price doesn't include tax, the discounted gross has already been calculated
           var gross = me.get('lines').reduce(function (memo, e) {
-            var grossLine = e.get('fulldiscountedGross');
+            var grossLine = OB.DEC.toNumber(e.get('fulldiscountedGross'));
             if (grossLine) {
-              return memo.add(grossLine);
+              return OB.DEC.add(memo, grossLine);
             } else {
               return memo;
             }
-          }, new BigDecimal("0"));
-          me.set('gross', OB.DEC.toNumber(gross));
+          }, 0);
+          me.set('gross', gross);
           var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
             if (netLine) {
@@ -430,7 +430,7 @@
       //total qty
       var qty = this.get('lines').reduce(function (memo, e) {
         var qtyLine = e.getQty();
-        return OB.DEC.add(memo, qtyLine);
+        return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
       }, OB.DEC.Zero);
       this.set('qty', qty);
     },
@@ -529,6 +529,7 @@
       this.set('isLayaway', false);
       this.set('isEditable', true);
       this.set('openDrawer', false);
+      this.set('totalamount', null);
       this.set('approvals', []);
     },
 
@@ -572,14 +573,14 @@
       if (!OB.DEC.isNumber(qty)) {
         qty = OB.DEC.One;
       }
-      this.setUnit(line, OB.DEC.sub(line.get('qty'), qty), OB.I18N.getLabel('OBPOS_RemoveUnits', [qty, line.get('product').get('_identifier')]));
+      this.setUnit(line, OB.DEC.sub(line.get('qty'), qty, OB.I18N.qtyScale()), OB.I18N.getLabel('OBPOS_RemoveUnits', [qty, line.get('product').get('_identifier')]));
     },
 
     addUnit: function (line, qty) {
       if (!OB.DEC.isNumber(qty)) {
         qty = OB.DEC.One;
       }
-      this.setUnit(line, OB.DEC.add(line.get('qty'), qty), OB.I18N.getLabel('OBPOS_AddUnits', [qty, line.get('product').get('_identifier')]));
+      this.setUnit(line, OB.DEC.add(line.get('qty'), qty, OB.I18N.qtyScale()), OB.I18N.getLabel('OBPOS_AddUnits', [OB.DEC.toNumber(new BigDecimal((String)(qty.toString()))), line.get('product').get('_identifier')]));
     },
 
     setUnit: function (line, qty, text) {
@@ -1275,7 +1276,6 @@
       order.set('hasbeenpaid', 'Y');
       order.set('isEditable', false);
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
-
       order.set('paidOnCredit', false);
       if (model.isQuotation) {
         order.set('isQuotation', true);
@@ -1287,7 +1287,6 @@
         order.set('isLayaway', true);
         order.set('id', model.orderid);
         order.set('createdBy', OB.POS.terminal.terminal.usermodel.id);
-        order.set('documentType', model.documenttypeid);
         order.set('hasbeenpaid', 'N');
         order.set('session', OB.POS.modelterminal.get('session'));
       } else {
@@ -1296,7 +1295,6 @@
           order.set('paidOnCredit', true);
         }
         order.set('id', model.orderid);
-        order.set('documentType', model.documenttypeid);
         if (order.get('documentType') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
           //return
           order.set('orderType', 1);
@@ -1310,9 +1308,8 @@
         // TODO: Report errors properly
       });
       order.set('gross', model.totalamount);
-      order.set('net', model.net);
+      order.set('net', model.totalNetAmount);
       order.trigger('calculategross');
-      order.set('salesRepresentative$_identifier', model.salesrepresentative_identifier);
 
       _.each(model.receiptLines, function (iter) {
         var price;
@@ -1336,7 +1333,7 @@
           // add the created line
           lines.add(newline);
           numberOfLines--;
-          orderQty += iter.quantity;
+          orderQty = OB.DEC.add(iter.quantity, orderQty);
           if (numberOfLines === 0) {
             order.set('lines', lines);
             order.set('qty', orderQty);
@@ -1489,7 +1486,8 @@
   var MultiOrders = Backbone.Model.extend({
     modelName: 'MultiOrders',
     initialize: function () {
-      this.off();
+      //ISSUE 24487: Callbacks of this collection still exists if you come back from other page.
+      //Force to remove callbacks
       this.get('multiOrdersList').off();
     },
     defaults: {

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global $ Backbone enyo _ */
+/*global $ Backbone enyo _ localStorage */
 
 OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
 OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};
@@ -79,9 +79,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         'session': OB.POS.modelterminal.get('session')
         };
     OB.Dal.find(OB.Model.Order, criteria, function (possibleMultiOrder) { //OB.Dal.find success
-      if (!possibleMultiOrder || possibleMultiOrder.length === 0) {
-        //nothing
-      } else {
+      if (possibleMultiOrder && possibleMultiOrder.length > 0) {
         checkedMultiOrders = _.compact(possibleMultiOrder.map(function (e) {
           if (e.get('checked')) {
             return e;
@@ -246,7 +244,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         currentView: {}
       },
       initialize: function () {
-        this.off();
         this.on('change:currentView', function (changedModel) {
           localStorage.setItem('leftColumnCurrentView', JSON.stringify(changedModel.get('currentView')));
           this.trigger(changedModel.get('currentView').name);
@@ -294,13 +291,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         me.get('leftColumnViewManager').setOrderMode();
       }
 
+      function prepareToSendCallback(order) {
+        me.get('multiOrders').trigger('closed', order);
+        me.get('multiOrders').trigger('print', order); // to guaranty execution order
+        SyncReadyToSendFunction();
+      }
+
       //this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
       SyncReadyToSendFunction = _.after(this.get('multiOrders').get('multiOrdersList').length, readyToSendFunction);
 
       for (j = 0; j < ordersLength; j++) {
         //Create the negative payment for change
         iter = this.get('multiOrders').get('multiOrdersList').at(j);
-        lastIter = iter;
         amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
         while (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
           for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
@@ -357,13 +359,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           }
         }
 
-        iter.prepareToSend(function () {
-          //things to do with each order
-          //Finally call to SyncReadyToSendFunction
-          me.get('multiOrders').trigger('closed', iter);
-          me.get('multiOrders').trigger('print', iter); // to guaranty execution order
-          SyncReadyToSendFunction();
-        });
+        iter.prepareToSend(prepareToSendCallback);
       }
     }, this);
 
@@ -506,7 +502,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   },
 
   /**
-   * Hooks for OBPOS_CheckPaymentApproval can modify args.approved to check if 
+   * Hooks for OBPOS_CheckPaymentApproval can modify args.approved to check if
    * payment is approved. In case value is true the process will continue, if not
    * it is aborted
    */
@@ -525,7 +521,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   /**
    * Generic approval checker. It validates user/password can approve the approvalType.
    * It can work online in case that user has done at least once the same approvalType
-   * in this same browser. Data regarding privileged users is stored in supervisor table 
+   * in this same browser. Data regarding privileged users is stored in supervisor table
    */
   checkApproval: function (approvalType, username, password) {
     OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
@@ -618,14 +614,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
 
   /**
    * Approval final stage. Where approvalChecked event is triggered, with approved
-   * property set to true or false regarding if approval was finally granted. In 
+   * property set to true or false regarding if approval was finally granted. In
    * case of granted approval, the approval is added to the order so it can be saved
    * in backend for audit purposes.
    */
   approvedTicket: function (approved, supervisor, approvalType) {
     var order = this.get('order'),
         newApprovals = [],
-        approvals, approval, i;
+        approvals, approval, i, date;
 
 
     approvals = order.get('approvals') || [];
@@ -644,7 +640,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         approvalType: approvalType,
         userContact: supervisor.get('id'),
         created: (new Date()).getTime()
-      }
+      };
       newApprovals.push(approval);
       order.set('approvals', newApprovals);
     }

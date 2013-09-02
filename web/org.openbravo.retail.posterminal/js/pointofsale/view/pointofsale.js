@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo, $, confirm, _ */
+/*global OB, Backbone, enyo, $, confirm, _, localStorage */
 
 // Point of sale main window view
 enyo.kind({
@@ -295,12 +295,28 @@ enyo.kind({
     this.model.get('orderList').addNewOrder();
     return true;
   },
-  deleteCurrentOrder: function () {
-    if (this.model.get('order').get('id')) {
-      this.model.get('orderList').saveCurrent();
-      OB.Dal.remove(this.model.get('orderList').current, null, null);
+  deleteCurrentOrder: function (inSender, inEvent) {
+    function removeOrder(context) {
+      if (context.model.get('order').get('id')) {
+        context.model.get('orderList').saveCurrent();
+        OB.Dal.remove(context.model.get('orderList').current, null, null);
+      }
+      context.model.get('orderList').deleteCurrent();
     }
-    this.model.get('orderList').deleteCurrent();
+
+    if (inEvent && inEvent.notSavedOrder === true) {
+      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
+        context: this,
+        receipt: this.model.get('order')
+      }, function (args) {
+        if (args && args.cancelOperation && args.cancelOperation === true) {
+          return;
+        }
+        removeOrder(args.context);
+      });
+    } else {
+      removeOrder(this);
+    }
     return true;
   },
   addProductToOrder: function (inSender, inEvent) {
@@ -326,8 +342,19 @@ enyo.kind({
       }
     }
 
-    this.model.get('order').addProduct(inEvent.product, inEvent.qty, inEvent.options);
-    this.model.get('orderList').saveCurrent();
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreAddProductToOrder', {
+      context: this,
+      receipt: this.model.get('order'),
+      productToAdd: inEvent.product,
+      qtyToAdd: inEvent.qty,
+      options: inEvent.options
+    }, function (args) {
+      if (args.cancelOperation && args.cancelOperation === true) {
+        return true;
+      }
+      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options);
+      args.context.model.get('orderList').saveCurrent();
+    });
     return true;
   },
   showOrder: function (inSender, inEvent) {

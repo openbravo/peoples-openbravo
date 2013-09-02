@@ -111,7 +111,6 @@
   PrintReceipt.prototype.displayTotalMultiorders = function () {
     // Clone the receipt
     var multiOrders;
-    multiOrders = new OB.Model.MultiOrders();
     multiOrders = this.multiOrders;
     this.template = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.DisplayTotal);
     OB.POS.hwserver.print(this.template, {

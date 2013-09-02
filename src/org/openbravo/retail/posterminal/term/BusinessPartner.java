@@ -50,7 +50,7 @@ public class BusinessPartner extends ProcessHQLQuery {
             // selected (check issues 22249 and 22256)
             + " AND bpl.id in (SELECT max(bpl2.id)"
             + "FROM BusinessPartnerLocation AS bpl2 "
-            + "WHERE (bpl2.businessPartner.$incrementalUpdateCriteria) AND ("
+            + "WHERE ("
             + "(bpl2.id = '"
             + org.getObretcoCBpLocation().getId()
             + "')"

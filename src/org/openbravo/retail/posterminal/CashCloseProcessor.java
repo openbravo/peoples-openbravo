@@ -115,18 +115,21 @@ public class CashCloseProcessor {
     openTransactionsForAccount.add(Restrictions.eq("account", paymentType.getFinancialAccount()));
     openTransactionsForAccount.add(Restrictions.isNull("reconciliation"));
     ScrollableResults transactions = openTransactionsForAccount.scroll();
-    while (transactions.next()) {
-      FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) transactions.get(0);
-      transaction.setStatus("RPPC");
-      transaction.setReconciliation(reconciliation);
+    try {
+      while (transactions.next()) {
+        FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) transactions.get(0);
+        transaction.setStatus("RPPC");
+        transaction.setReconciliation(reconciliation);
 
-      // not all transactions have payment (i.e. deposits don't have), if there is payment, set it
-      // as cleared
-      if (transaction.getFinPayment() != null) {
-        transaction.getFinPayment().setStatus("RPPC");
+        // not all transactions have payment (i.e. deposits don't have), if there is payment, set it
+        // as cleared
+        if (transaction.getFinPayment() != null) {
+          transaction.getFinPayment().setStatus("RPPC");
+        }
       }
+    } finally {
+      transactions.close();
     }
-
   }
 
   protected FIN_Reconciliation createReconciliation(JSONObject cashCloseObj,
