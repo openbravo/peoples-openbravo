@@ -373,12 +373,12 @@
       for (i = 0; i < nPreviousOrders; i++) {
         orderCompleteDocumentNo = pendingOrders[i].get('documentNo');
         if (!pendingOrders[i].get('isQuotation')) {
-          orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posDocumentNoPrefix.length + 1), 10);
+          orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posDocumentNoPrefix.length + 1), 10) + 1;
           if (orderDocumentSequence > maxDocumentSequence) {
             maxDocumentSequence = orderDocumentSequence;
           }
         } else {
-          orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posQuotationDocumentNoPrefix.length + 1), 10);
+          orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posQuotationDocumentNoPrefix.length + 1) + 1, 10);
           if (orderDocumentSequence > maxQuotationDocumentSequence) {
             maxQuotationDocumentSequence = orderDocumentSequence;
           }
