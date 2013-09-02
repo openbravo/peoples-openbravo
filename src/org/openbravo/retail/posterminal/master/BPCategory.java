@@ -27,6 +27,8 @@ public class BPCategory extends ProcessHQLQuery {
         .add("select bpcat.id as id, bpcat.searchKey as searchKey,bpcat.name as name, bpcat.name as _identifier "
             + "from BusinessPartnerCategory bpcat "
             + "where "
+            + "bpcat.$readableClientCriteria AND "
+            + "bpcat.$naturalOrgCriteria AND "
             + "(bpcat.$incrementalUpdateCriteria) AND (bpcat.$incrementalUpdateCriteria)) order by bpcat.name");
 
     return hqlQueries;
