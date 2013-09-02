@@ -405,7 +405,32 @@ public class OrderLoader extends JSONProcessSimple {
           "documentNo=? and obposApplications.id=? and businessPartner.id=?");
       orders.setParameters(parameters);
       if (orders.count() > 0) {
-        return true;
+        JSONArray orderlines = jsonorder.getJSONArray("lines");
+        // We've found orders with the same documentno+terminalId+bp
+        // We are going to compare them with the order, and only if one of them
+        // is identical we will not create it
+        for (Order order : orders.list()) {
+          if (order.getOrderLineList().size() == orderlines.length()
+              && order.getGrandTotalAmount()
+                  .compareTo(new BigDecimal(jsonorder.getString("gross"))) == 0) {
+            boolean linesAreIdentical = true;
+            int i = 0;
+            for (OrderLine line : order.getOrderLineList()) {
+              JSONObject jsonline = orderlines.getJSONObject(i);
+              if (line.getOrderedQuantity().compareTo(new BigDecimal(jsonline.getString("qty"))) != 0
+                  || !line.getProduct().getId()
+                      .equals(jsonline.getJSONObject("product").getString("id"))) {
+                linesAreIdentical = false;
+              }
+              i++;
+            }
+            if (linesAreIdentical) {
+              log.error("Detected duplicate order with document number "
+                  + jsonorder.getString("documentNo"));
+              return true;
+            }
+          }
+        }
       }
     }
     OBContext.setAdminMode(false);
