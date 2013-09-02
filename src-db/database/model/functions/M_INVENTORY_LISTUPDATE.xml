@@ -106,27 +106,7 @@
       FROM M_Storage_Detail s
       WHERE s.M_Product_ID=M_InventoryLine.M_Product_ID
         AND s.M_Locator_ID=M_InventoryLine.M_Locator_ID
-        AND COALESCE(s.M_ATTRIBUTESETINSTANCE_ID, '-1')=COALESCE(M_InventoryLine.M_ATTRIBUTESETINSTANCE_ID, '-1')
-        AND s.C_UOM_ID=M_InventoryLine.C_UOM_ID
-        AND COALESCE(s.M_Product_UOM_ID, '-1')=COALESCE(M_InventoryLine.M_Product_UOM_ID, '-1')
-      )
-      ,
-      QtyCount=
-      (SELECT QtyOnHand
-      FROM M_Storage_Detail s
-      WHERE s.M_Product_ID=M_InventoryLine.M_Product_ID
-        AND s.M_Locator_ID=M_InventoryLine.M_Locator_ID
-        AND COALESCE(s.M_ATTRIBUTESETINSTANCE_ID, '-1')=COALESCE(M_InventoryLine.M_ATTRIBUTESETINSTANCE_ID, '-1')
-        AND s.C_UOM_ID=M_InventoryLine.C_UOM_ID
-        AND COALESCE(s.M_Product_UOM_ID, '-1')=COALESCE(M_InventoryLine.M_Product_UOM_ID, '-1')
-      )
-      ,
-      QuantityOrder=
-      (SELECT QtyOrderOnHand
-      FROM M_Storage_Detail s
-      WHERE s.M_Product_ID=M_InventoryLine.M_Product_ID
-        AND s.M_Locator_ID=M_InventoryLine.M_Locator_ID
-        AND COALESCE(s.M_ATTRIBUTESETINSTANCE_ID, '-1')=COALESCE(M_InventoryLine.M_ATTRIBUTESETINSTANCE_ID, '-1')
+        AND COALESCE(s.M_ATTRIBUTESETINSTANCE_ID, '0')=COALESCE(M_InventoryLine.M_ATTRIBUTESETINSTANCE_ID, '0')
         AND s.C_UOM_ID=M_InventoryLine.C_UOM_ID
         AND COALESCE(s.M_Product_UOM_ID, '-1')=COALESCE(M_InventoryLine.M_Product_UOM_ID, '-1')
       )
@@ -136,7 +116,7 @@
       FROM M_Storage_Detail s
       WHERE s.M_Product_ID=M_InventoryLine.M_Product_ID
         AND s.M_Locator_ID=M_InventoryLine.M_Locator_ID
-        AND COALESCE(s.M_ATTRIBUTESETINSTANCE_ID, '-1')=COALESCE(M_InventoryLine.M_ATTRIBUTESETINSTANCE_ID, '-1')
+        AND COALESCE(s.M_ATTRIBUTESETINSTANCE_ID, '0')=COALESCE(M_InventoryLine.M_ATTRIBUTESETINSTANCE_ID, '0')
         AND s.C_UOM_ID=M_InventoryLine.C_UOM_ID
         AND COALESCE(s.M_Product_UOM_ID, '-1')=COALESCE(M_InventoryLine.M_Product_UOM_ID, '-1')
       )
@@ -149,7 +129,7 @@
       FROM M_Storage_Detail s
       WHERE s.M_Product_ID=M_InventoryLine.M_Product_ID
         AND s.M_Locator_ID=M_InventoryLine.M_Locator_ID
-        AND COALESCE(s.M_ATTRIBUTESETINSTANCE_ID, '-1')=COALESCE(M_InventoryLine.M_ATTRIBUTESETINSTANCE_ID, '-1')
+        AND COALESCE(s.M_ATTRIBUTESETINSTANCE_ID, '0')=COALESCE(M_InventoryLine.M_ATTRIBUTESETINSTANCE_ID, '0')
         AND s.C_UOM_ID=M_InventoryLine.C_UOM_ID
         AND COALESCE(s.M_Product_UOM_ID, '-1')=COALESCE(M_InventoryLine.M_Product_UOM_ID, '-1')
       )
