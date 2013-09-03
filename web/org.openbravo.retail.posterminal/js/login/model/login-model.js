@@ -49,11 +49,33 @@
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(null, function (data) {
             if (data.exception) {
-              OB.POS.navigate('login');
               if (OB.I18N.hasLabel(data.exception.message)) {
-                OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
+                OB.UTIL.showLoading(false);
+                OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel(data.exception.message), [{
+                  label: 'OK',
+                  action: function () {
+                    terminalModel.logout();
+                    OB.UTIL.showLoading(true);
+                  }
+                }], {
+                  onHideFunction: function () {
+                    OB.UTIL.showLoading(true);
+                    terminalModel.logout();
+                  }
+                });
               } else {
-                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorLoadingTerminal'));
+                OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal'), [{
+                  label: 'OK',
+                  action: function () {
+                    OB.UTIL.showLoading(true);
+                    terminalModel.logout();
+                  }
+                }], {
+                  onHideFunction: function () {
+                    OB.UTIL.showLoading(true);
+                    terminalModel.logout();
+                  }
+                });
               }
             } else if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
