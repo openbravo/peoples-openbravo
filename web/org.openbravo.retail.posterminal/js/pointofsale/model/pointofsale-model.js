@@ -39,7 +39,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterRole'
   },
-  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
@@ -212,6 +212,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     function error() {
       OB.UTIL.showError('Error removing');
     }
+    this.set('filter', []);
+    this.set('brandFilter', []);
 
     function searchCurrentBP() {
       function errorCallback(tx, error) {

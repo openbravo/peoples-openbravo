@@ -13,6 +13,11 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_SHOW_CH_DESC" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
       <check name="EM_OBPOS_SCALE_CHK"><![CDATA[EM_OBPOS_SCALE IN ('Y', 'N')]]></check>
+      <check name="EM_OBPOS_SHOW_CH_DESC_CHK"><![CDATA[EM_OBPOS_SHOW_CH_DESC IN ('Y', 'N')]]></check>
     </table>
   </database>

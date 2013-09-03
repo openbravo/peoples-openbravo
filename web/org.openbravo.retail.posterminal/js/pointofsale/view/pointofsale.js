@@ -64,7 +64,9 @@ enyo.kind({
     onMultiOrders: 'multiOrders',
     onSelectMultiOrders: 'selectMultiOrders',
     onRemoveMultiOrders: 'removeMultiOrders',
-    onRightToolDisabled: 'rightToolbarDisabled'
+    onRightToolDisabled: 'rightToolbarDisabled',
+    onSelectCharacteristicValue: 'selectCharacteristicValue',
+    onSelectBrand: 'selectBrand'
   },
   events: {
     onShowPopup: '',
@@ -165,6 +167,12 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalMultiOrdersLayaway',
       name: "modalmultiorderslayaway"
+    }, {
+      kind: 'OB.UI.ModalProductCharacteristic',
+      name: "modalproductcharacteristic"
+    }, {
+      kind: 'OB.UI.ModalProductBrand',
+      name: "modalproductbrand"
     }]
   }, {
     name: 'mainSubWindow',
@@ -753,11 +761,21 @@ enyo.kind({
     this.model.get('orderList').saveCurrent();
     return true;
   },
+  selectCharacteristicValue: function (inSender, inEvent) {
+    this.waterfall('onUpdateFilter', {
+      value: inEvent
+    });
+  },
   multiOrders: function (inSender, inEvent) {
     this.doShowPopup({
       popup: 'modalMultiOrders'
     });
     return true;
+  },
+  selectBrand: function (inSender, inEvent) {
+    this.waterfall('onUpdateBrandFilter', {
+      value: inEvent
+    });
   },
   selectMultiOrders: function (inSender, inEvent) {
     var me = this;
