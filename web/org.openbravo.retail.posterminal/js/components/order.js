@@ -475,9 +475,12 @@ enyo.kind({
       }, this);
       this.$.totalMultiReceiptLine.renderTotal(this.total);
       me.listMultiOrders.reset(me.model.get('multiOrders').get('multiOrdersList').models);
-      this.doChangeTotal({
-        newTotal: this.total
-      });
+
+      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+        this.doChangeTotal({
+          newTotal: this.total
+        });
+      }
       this.$.totalMultiReceiptLine.renderQty(me.model.get('multiOrders').get('multiOrdersList').length);
     }, this);
   },
