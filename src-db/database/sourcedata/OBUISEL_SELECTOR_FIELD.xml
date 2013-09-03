@@ -243,6 +243,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1F1EC6A3DC45452DB5C029FD89420C13-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1F1EC6A3DC45452DB5C029FD89420C13-->  <AD_COLUMN_ID><![CDATA[2012]]></AD_COLUMN_ID>
 <!--1F1EC6A3DC45452DB5C029FD89420C13-->  <NAME><![CDATA[Product Category]]></NAME>
+<!--1F1EC6A3DC45452DB5C029FD89420C13-->  <DESCRIPTION><![CDATA[A classification of items based on similar characteristics or attributes.]]></DESCRIPTION>
+<!--1F1EC6A3DC45452DB5C029FD89420C13-->  <HELP><![CDATA[Identifies the category which this product belongs to.  Product categories are used for pricing.]]></HELP>
 <!--1F1EC6A3DC45452DB5C029FD89420C13-->  <PROPERTY><![CDATA[productCategory]]></PROPERTY>
 <!--1F1EC6A3DC45452DB5C029FD89420C13-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--1F1EC6A3DC45452DB5C029FD89420C13-->  <SORT><![CDATA[Y]]></SORT>
@@ -528,6 +530,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--3C35BB29BB2249DD916FFAAA32BD7021-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3C35BB29BB2249DD916FFAAA32BD7021-->  <AD_COLUMN_ID><![CDATA[1410]]></AD_COLUMN_ID>
 <!--3C35BB29BB2249DD916FFAAA32BD7021-->  <NAME><![CDATA[Name]]></NAME>
+<!--3C35BB29BB2249DD916FFAAA32BD7021-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
+<!--3C35BB29BB2249DD916FFAAA32BD7021-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
 <!--3C35BB29BB2249DD916FFAAA32BD7021-->  <PROPERTY><![CDATA[name]]></PROPERTY>
 <!--3C35BB29BB2249DD916FFAAA32BD7021-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--3C35BB29BB2249DD916FFAAA32BD7021-->  <SORT><![CDATA[Y]]></SORT>
@@ -1103,6 +1107,10 @@ Usually, company's internal identifiers for various records (products, customers
 <!--66838C3228C94AE695DB3D294CFDCDC8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--66838C3228C94AE695DB3D294CFDCDC8-->  <AD_COLUMN_ID><![CDATA[2011]]></AD_COLUMN_ID>
 <!--66838C3228C94AE695DB3D294CFDCDC8-->  <NAME><![CDATA[Search Key]]></NAME>
+<!--66838C3228C94AE695DB3D294CFDCDC8-->  <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
+<!--66838C3228C94AE695DB3D294CFDCDC8-->  <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--66838C3228C94AE695DB3D294CFDCDC8-->  <PROPERTY><![CDATA[searchKey]]></PROPERTY>
 <!--66838C3228C94AE695DB3D294CFDCDC8-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--66838C3228C94AE695DB3D294CFDCDC8-->  <SORT><![CDATA[Y]]></SORT>
@@ -1580,7 +1588,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--943A10BE2F494F768A8DC4BC44B5B092-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--943A10BE2F494F768A8DC4BC44B5B092-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--943A10BE2F494F768A8DC4BC44B5B092-->  <AD_COLUMN_ID><![CDATA[D7192114A6A5B6B7E040007F01001270]]></AD_COLUMN_ID>
-<!--943A10BE2F494F768A8DC4BC44B5B092-->  <NAME><![CDATA[Generic]]></NAME>
+<!--943A10BE2F494F768A8DC4BC44B5B092-->  <NAME><![CDATA[Is Generic]]></NAME>
+<!--943A10BE2F494F768A8DC4BC44B5B092-->  <HELP><![CDATA[Identifies a generic product. A generic product cannot be purchased or sold.]]></HELP>
 <!--943A10BE2F494F768A8DC4BC44B5B092-->  <PROPERTY><![CDATA[isGeneric]]></PROPERTY>
 <!--943A10BE2F494F768A8DC4BC44B5B092-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--943A10BE2F494F768A8DC4BC44B5B092-->  <SORT><![CDATA[Y]]></SORT>
