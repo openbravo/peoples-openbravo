@@ -424,6 +424,7 @@ public class OrderGroupingProcessor {
     invoice.setAccountingDate(POSUtils.getCurrentDate());
     invoice.setInvoiceDate(POSUtils.getCurrentDate());
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
+    invoice.setSalesOrder(order);
     return invoice;
   }
 
