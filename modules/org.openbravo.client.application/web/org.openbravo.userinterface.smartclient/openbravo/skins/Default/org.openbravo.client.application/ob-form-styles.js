@@ -58,8 +58,6 @@ OB.Styles.OBFormField.DefaultTextItem = {
 
 isc.OBTextItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 
-isc.OBTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
-
 isc.OBFKFilterTextItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 
 isc.OBEncryptedItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
@@ -321,6 +319,12 @@ isc.OBDateItem.addProperties({
 });
 
 isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
+
+isc.OBTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
+
+isc.OBTimeItem.addProperties({
+  height: 25
+});
 
 isc.OBTimeItemGrid.addProperties({
   baseStyle: 'OBFormFieldPickListCell',
