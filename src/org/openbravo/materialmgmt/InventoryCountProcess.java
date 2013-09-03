@@ -194,6 +194,8 @@ public class InventoryCountProcess implements Process {
     insert.append(" , " + AttributeSetInstance.ENTITY_NAME + " as asi");
     insert.append(" , " + Product.ENTITY_NAME + " as p");
     insert.append(" \nwhere e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inv");
+    insert.append(" and e." + InventoryCountLine.PROPERTY_QUANTITYCOUNT + " != e."
+        + InventoryCountLine.PROPERTY_BOOKQUANTITY);
     insert.append(" and u.id = :user");
     insert.append(" and asi.id = COALESCE(e." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
         + ".id , '0')");
