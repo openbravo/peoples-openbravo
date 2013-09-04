@@ -146,7 +146,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomerAddrPendingData'));
         };
         customerAddrChangedNotProcessed.each(function (cusAddr) {
-        	cusAddr.set('json', enyo.json.parse(cusAddr.get('json')));
+          cusAddr.set('json', enyo.json.parse(cusAddr.get('json')));
         });
         OB.UTIL.processCustomerAddr(customerAddrChangedNotProcessed, successCallback, errorCallback);
       });

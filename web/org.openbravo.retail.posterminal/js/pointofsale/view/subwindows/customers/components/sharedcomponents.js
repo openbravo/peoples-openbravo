@@ -145,7 +145,7 @@ enyo.kind({
     }
   },
   initComponents: function () {
-    if (this.collectionName && OB && OB.Collection && OB.Collection[this.collectionName]){
+    if (this.collectionName && OB && OB.Collection && OB.Collection[this.collectionName]) {
       this.collection = new OB.Collection[this.collectionName]();
     } else {
       console.log('OB.UI.CustomerComboProperty: Collection is required');
