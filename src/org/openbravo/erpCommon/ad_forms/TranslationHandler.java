@@ -10,10 +10,11 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
+import java.sql.Connection;
 import java.sql.Statement;
 
 import org.apache.log4j.Logger;
@@ -38,14 +39,16 @@ class TranslationHandler extends DefaultHandler {
     DB = cDB;
   }
 
-  public TranslationHandler(int AD_Client_ID, ConnectionProvider cDB) {
+  public TranslationHandler(int AD_Client_ID, ConnectionProvider cDB, Connection con) {
 
     m_AD_Client_ID = AD_Client_ID;
     DB = cDB;
+    this.con = con;
 
   } // TranslationHandler
 
   private ConnectionProvider DB;
+  private Connection con;
 
   /** Client */
   private int m_AD_Client_ID = -1;
@@ -166,14 +169,13 @@ class TranslationHandler extends DefaultHandler {
       //
       Statement st = null;
       try {
-        st = DB.getStatement();
+        st = DB.getStatement(con);
         no = st.executeUpdate(m_sql.toString());
       } catch (Exception e) {
         log4j.error("183:" + m_sql.toString() + e.toString());
       } finally {
         try {
-          if (st != null)
-            DB.releaseStatement(st);
+          DB.releaseTransactionalStatement(st);
         } catch (Exception ignored) {
         }
       }
