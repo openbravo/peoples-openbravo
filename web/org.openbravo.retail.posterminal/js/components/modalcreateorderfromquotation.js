@@ -40,6 +40,8 @@ enyo.kind({
   init: function () {
     this.checked = !OB.MobileApp.model.get('permissions')['OBPOS_quotation.defaultNotFirm'];
     this.addRemoveClass('active', this.checked);
+
+    this.setDisabled(!OB.MobileApp.model.hasPermission('OBPOS_quotation.editableFirmCheck'));
   }
 });
 

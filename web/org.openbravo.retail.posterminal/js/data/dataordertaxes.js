@@ -108,7 +108,7 @@
                 linegross = 0;
               } else {
                 linenet = new BigDecimal(String(orggross)).multiply(new BigDecimal(String(orggross))).divide(new BigDecimal(String(taxamt)), 20, BigDecimal.prototype.ROUND_HALF_UP);
-                linepricenet = linenet.divide(new BigDecimal(String(element.get('qty'))));
+                linepricenet = linenet.divide(new BigDecimal(String(element.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
                 linegross = element.get('lineGrossAmount') || element.get('gross');
               }
 
@@ -124,7 +124,7 @@
               if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
                 if (taxamtdc && OB.DEC.toNumber(taxamtdc) !== 0) {
                   discountedNet = OB.DEC.div(new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))), taxamtdc);
-                  pricenet = new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))).divide(taxamtdc).divide(new BigDecimal(String(element.get('qty'))));
+                  pricenet = new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))).divide(taxamtdc, 20, BigDecimal.prototype.ROUND_HALF_UP).divide(new BigDecimal(String(element.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
                 } else {
                   //taxamtdc === 0
                   discountedNet = new BigDecimal("0");
@@ -156,8 +156,6 @@
                   taxesline[taxId].rate = taxRate.get('rate');
                   taxesline[taxId].net = OB.DEC.toNumber(new BigDecimal(String(pricenet)).multiply(new BigDecimal(String(element.get('qty')))));
                   taxesline[taxId].amount = amount;
-                  taxesline[taxId].fullamount = new BigDecimal(String(net)).multiply(rate);
-                  taxesline[taxId].fullnet = new BigDecimal(String(pricenet)).multiply(new BigDecimal(String(element.get('qty'))));
                 }
               }, this);
 
@@ -217,14 +215,14 @@
                   }
                   if (!taxRate.get('summaryLevel')) {
                     if (taxes[taxId]) {
-                      taxes[taxId].net = taxes[taxId].net.add(taxLines[taxId].fullnet);
-                      taxes[taxId].amount = taxes[taxId].amount.add(taxLines[taxId].fullamount);
+                      taxes[taxId].net = OB.DEC.add(taxes[taxId].net, taxLines[taxId].net);
+                      taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, taxLines[taxId].amount);
                     } else {
                       taxes[taxId] = {};
                       taxes[taxId].name = taxRate.get('name');
                       taxes[taxId].rate = taxRate.get('rate');
-                      taxes[taxId].net = taxLines[taxId].fullnet;
-                      taxes[taxId].amount = taxLines[taxId].fullamount;
+                      taxes[taxId].net = taxLines[taxId].net;
+                      taxes[taxId].amount = taxLines[taxId].amount;
                     }
                   }
                 });

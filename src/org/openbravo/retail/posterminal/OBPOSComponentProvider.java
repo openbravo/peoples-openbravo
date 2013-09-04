@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,6 +82,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/bplocation", // Model for Customer Address
         "model/currencypanel",
         "model/salesrepresentative",
+        "model/productcharacteristic",
+        "model/productchvalue",
+        "model/brand",
         "model/changedbusinesspartners",
         "model/changedbplocation",
         "model/executor",
@@ -109,6 +112,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalmultiorderslayaway",
         "components/rendercategory",
         "components/renderproduct",
+        "components/renderproductch",
         "components/total",
         "components/modalpayment",
         "components/renderorderline",
@@ -127,6 +131,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalreactivatequotation",
         // Detection of change in context
         "components/modalcontextchanged",
+        "components/modalproductcharacteristic",
+        "components/modalproductbrand",
 
         // Point of sale models
         "model/order",

@@ -77,9 +77,6 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.TotalTaxLine',
-  handlers: {
-    onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
-  },
   style: 'position: relative; padding: 10px;',
   components: [{
     name: 'lblTotalTax',
@@ -98,17 +95,6 @@ enyo.kind({
   },
   renderBase: function (newBase) {
     //this.$.totalbase.setContent(newBase);
-  },
-  checkBoxForTicketLines: function (inSender, inEvent) {
-    if (inEvent.status) {
-      this.$.lblTotalTax.hasNode().style.width = '48%';
-      this.$.totalbase.hasNode().style.width = '16%';
-      this.$.totaltax.hasNode().style.width = '36%';
-    } else {
-      this.$.lblTotalTax.hasNode().style.width = '40%';
-      this.$.totalbase.hasNode().style.width = '20%';
-      this.$.totaltax.hasNode().style.width = '40%';
-    }
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -475,9 +461,12 @@ enyo.kind({
       }, this);
       this.$.totalMultiReceiptLine.renderTotal(this.total);
       me.listMultiOrders.reset(me.model.get('multiOrders').get('multiOrdersList').models);
-      this.doChangeTotal({
-        newTotal: this.total
-      });
+
+      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+        this.doChangeTotal({
+          newTotal: this.total
+        });
+      }
       this.$.totalMultiReceiptLine.renderQty(me.model.get('multiOrders').get('multiOrdersList').length);
     }, this);
   },

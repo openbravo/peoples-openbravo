@@ -125,8 +125,8 @@ enyo.kind({
     name: 'catalog',
     span: 3
   }, {
-    kind: 'OB.OBPOSPointOfSale.UI.ButtonTabSearch',
-    name: 'search',
+    kind: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
+    name: 'searchCharacteristic',
     span: 3
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
@@ -290,9 +290,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearch',
+  name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
   kind: 'OB.UI.ToolbarButtonTab',
-  tabPanel: 'search',
+  tabPanel: 'searchCharacteristic',
   i18nLabel: 'OBPOS_LblSearch',
   events: {
     onTabChange: '',
@@ -389,8 +389,8 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.TabBrowse',
     name: 'catalog'
   }, {
-    kind: 'OB.OBPOSPointOfSale.UI.TabSearch',
-    name: 'search'
+    kind: 'OB.OBPOSPointOfSale.UI.TabSearchCharacteristic',
+    name: 'searchCharacteristic'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabPayment',
     name: 'payment'
@@ -420,24 +420,24 @@ enyo.kind({
   modelChanged: function () {
     var receipt = this.model.get('order');
     this.$.scan.setReceipt(receipt);
-    this.$.search.setReceipt(receipt);
+    this.$.searchCharacteristic.setReceipt(receipt);
     this.$.payment.setReceipt(receipt);
     this.$.edit.setReceipt(receipt);
   }
 });
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.TabSearch',
+  name: 'OB.OBPOSPointOfSale.UI.TabSearchCharacteristic',
   kind: 'OB.UI.TabPane',
   published: {
     receipt: null
   },
   components: [{
-    kind: 'OB.UI.SearchProduct',
-    name: 'search'
+    kind: 'OB.UI.SearchProductCharacteristic',
+    name: 'searchCharacteristic'
   }],
   receiptChanged: function () {
-    this.$.search.setReceipt(this.receipt);
+    this.$.searchCharacteristic.setReceipt(this.receipt);
   }
 });
 
