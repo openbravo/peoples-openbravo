@@ -1737,6 +1737,12 @@ isc.OBStandardView.addProperties({
         var i, doUpdateTotalRows, data, deleteData, error, recordInfos = [],
             length, removeCallBack, selection;
 
+        //modal dialog shown to restrict the user from accessing records when deleting records. Will be closed after successful deletion in removeCallback.
+        //refer issue https://issues.openbravo.com/view.php?id=24611
+        isc.showPrompt(OB.I18N.getLabel('OBUIAPP_DeletingRecords') + isc.Canvas.imgHTML({
+          src: "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/system/windowLoading.gif"
+        }));
+
         removeCallBack = function (resp, data, req) {
           var length, localData = resp.dataObject || resp.data || data,
               i, updateTotalRows;
@@ -1793,8 +1799,8 @@ isc.OBStandardView.addProperties({
               }
             }
           }
+          isc.clearPrompt();
         };
-
         if (ok) {
           selection = view.viewGrid.getSelection().duplicate();
           // deselect the current records
