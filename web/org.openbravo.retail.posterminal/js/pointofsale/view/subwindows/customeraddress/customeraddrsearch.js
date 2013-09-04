@@ -210,14 +210,11 @@ enyo.kind({
       var listCustAddr = this.$.subWindowBody.$.casbody.$.listCustomerAddress;
       listCustAddr.setBPartnerId(params.bPartner);
 
-      function errorCallback(tx, error) {
-
-      }
-
-      function successCallbackBPs(dataBps) {
+      OB.Dal.get(OB.Model.BusinessPartner, params.bPartner, function successCallbackBPs(dataBps) {
         listCustAddr.setBPartnerModel(dataBps);
-      }
-      OB.Dal.get(OB.Model.BusinessPartner, params.bPartner, successCallbackBPs, errorCallback);
+      }, function errorCallback(tx, error) {
+
+      });
     }
     if (this.caller === 'mainSubWindow') {
       this.waterfall('onSearchAction', {

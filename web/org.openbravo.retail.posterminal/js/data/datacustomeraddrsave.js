@@ -38,25 +38,21 @@
       OB.Dal.save(this.customerAddr, function () {
         // Update Default Address
 
-
         function errorCallback(tx, error) {
           window.console.error(tx);
         }
 
         function successCallbackBPs(dataBps) {
-          if (dataBps.length == 0) {
-            function success(dataBps) {
+          if (dataBps.length === 0) {
+            OB.Dal.get(OB.Model.BusinessPartner, me.customerAddr.get('bpartner'), function success(dataBps) {
               dataBps.set('locId', me.customerAddr.get('id'));
               dataBps.set('locName', me.customerAddr.get('name'));
               OB.Dal.save(dataBps, function () {}, function (tx) {
                 window.console.error(tx);
               });
-            }
-
-            function error(tx) {
+            }, function error(tx) {
               window.console.error(tx);
-            }
-            OB.Dal.get(OB.Model.BusinessPartner, me.customerAddr.get('bpartner'), success, error);
+            });
           }
         }
         var criteria = {};

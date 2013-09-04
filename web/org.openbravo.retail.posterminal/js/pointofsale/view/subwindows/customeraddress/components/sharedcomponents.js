@@ -153,7 +153,6 @@ enyo.kind({
         });
       }
     } else {
-      var me = this;
       this.model.get('customerAddr').loadById(this.customerAddr.get('id'), function (customerAddr) {
         getCustomerAddrValues({
           customerAddr: customerAddr
@@ -163,19 +162,17 @@ enyo.kind({
             customer: me.customer,
             customerAddr: customerAddr
           });
-          if (customerAddr.get('id') == me.customer.get("locId")) {
-            function success(tx) {
+          if (customerAddr.get('id') === me.customer.get("locId")) {
+
+            me.customer.set('locId', customerAddr.get('id'));
+            me.customer.set('locName', customerAddr.get('name'));
+            OB.Dal.save(me.customer, function success(tx) {
               me.doChangeBusinessPartner({
                 businessPartner: me.customer
               });
-            }
-
-            function error(tx) {
+            }, function error(tx) {
               window.console.error(tx);
-            }
-            me.customer.set('locId', customerAddr.get('id'));
-            me.customer.set('locName', customerAddr.get('name'));
-            OB.Dal.save(me.customer, success, error);
+            });
           }
         }
       });
