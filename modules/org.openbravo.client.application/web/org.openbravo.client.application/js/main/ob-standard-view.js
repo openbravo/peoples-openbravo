@@ -292,6 +292,17 @@ isc.OBStandardView.addProperties({
     }
     this.dataSource.view = this;
 
+    // In case of grid configuration, apply it now. In this way:
+    //   -No extra fetch is done for root tab
+    //   -Grid is not rendered twice (one for the standard confing and another
+    //    one for the saved config)
+    if (this.standardWindow && this.standardWindow.viewState && this.standardWindow.viewState[this.tabId]) {
+      this.viewGrid.setViewState(this.standardWindow.viewState[this.tabId]);
+      // lastViewApplied is set because there are modifications in grid, so not
+      // marking "Standard View" in view's menu
+      this.standardWindow.lastViewApplied = true;
+    }
+
     // directTabInfo is set when we are in direct link mode, i.e. directly opening
     // a specific tab with a record, the direct link logic will already take care
     // of fetching data

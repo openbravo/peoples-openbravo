@@ -94,7 +94,13 @@ isc.OBStandardWindow.addProperties({
     if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       this.viewProperties.allowDefaultEditMode = false;
     }
-    this.viewState = OB.PropertyStore.get('OBUIAPP_GridConfiguration', this.windowId);
+
+    if (OB.Utilities.checkProfessionalLicense(null, true)) {
+      this.viewState = OB.PropertyStore.get('OBUIAPP_GridConfiguration', this.windowId);
+    } else {
+      this.viewState = null;
+    }
+
     this.allowDelete = OB.PropertyStore.get("AllowDelete", this.windowId);
     this.allowAttachment = OB.PropertyStore.get("AllowAttachment", this.windowId);
     this.view = isc.OBStandardView.create(this.viewProperties);
@@ -543,10 +549,6 @@ isc.OBStandardWindow.addProperties({
             if (personalization.forms && personalization.forms[this.views[i].tabId]) {
               this.lastViewApplied = true;
               OB.Personalization.personalizeForm(personalization.forms[this.views[i].tabId], this.views[i].viewForm);
-            }
-            if (this.viewState && this.viewState[this.views[i].tabId]) {
-              this.lastViewApplied = true;
-              this.views[i].viewGrid.setViewState(this.viewState[this.views[i].tabId]);
             }
           }
         }
