@@ -19,14 +19,19 @@
 
 package org.openbravo.materialmgmt;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.service.datasource.DefaultDataSourceService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -130,9 +135,19 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
 
   private String getClientOrgFilter() {
     String clientId = OBContext.getOBContext().getCurrentClient().getId();
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
-        .getNaturalTree(orgId);
+    final Set<String> orgs = new HashSet<String>();
+    OrganizationStructureProvider orgStructure = OBContext.getOBContext()
+        .getOrganizationStructureProvider();
+
+    // Role in OBContext has not organization list initialized, force reload to attach to current
+    // DAL's session
+    Role currentRole = OBDal.getInstance().get(Role.class,
+        OBContext.getOBContext().getRole().getId());
+
+    // Adding organizations in the trees of all granted ones
+    for (RoleOrganization org : currentRole.getADRoleOrganizationList()) {
+      orgs.addAll(orgStructure.getNaturalTree((String) DalUtil.getId(org.getOrganization())));
+    }
 
     StringBuilder hqlBuilder = new StringBuilder();
     hqlBuilder.append(" and c.client.id = '" + clientId + "' ");
