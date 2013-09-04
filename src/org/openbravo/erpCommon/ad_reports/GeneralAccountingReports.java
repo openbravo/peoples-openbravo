@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,15 +21,23 @@ package org.openbravo.erpCommon.ad_reports;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.util.Vector;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.AccountTree;
 import org.openbravo.erpCommon.businessUtility.AccountTreeData;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
@@ -39,10 +47,15 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.WindowTreeData;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.financialmgmt.accounting.OrganizationClosing;
+import org.openbravo.model.financialmgmt.calendar.Calendar;
+import org.openbravo.model.financialmgmt.calendar.Year;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class GeneralAccountingReports extends HttpSecureAppServlet {
@@ -112,7 +125,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   }
 
   private void printPagePDF(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, String strAgno, String strAgnoRef, String strDateFrom,
+      VariablesSecureApp vars, String strYearId, String strYearRefId, String strDateFrom,
       String strDateTo, String strDateFromRef, String strDateToRef, String strAsDateTo,
       String strAsDateToRef, String strElementValue, String strConImporte, String strOrg,
       String strLevel, String strConCodigo, String strcAcctSchemaId, String strPageNo)
@@ -155,133 +168,128 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String TreeID = "";
       if (dataTree != null && dataTree.length != 0)
         TreeID = dataTree[0].id;
+      OBContext.setAdminMode(false);
+      try {
+        // For each year, the initial and closing date is obtained
+        Year year = OBDal.getInstance().get(Year.class, strYearId);
+        Year yearRef = OBDal.getInstance().get(Year.class, strYearRefId);
+        HashMap<String, Date> startingEndingDate = getStartingEndingDate(year);
+        HashMap<String, Date> startingEndingDateRef = getStartingEndingDate(yearRef);
+        // Years to be included as no closing is present
+        String strYearsToClose = "";
+        String strYearsToCloseRef = "";
 
-      // For each year, the initial and closing date is obtained
-      GeneralAccountingReportsData[] startEndYear = GeneralAccountingReportsData.startEndYear(this,
-          vars.getClient(), "'" + strAgno + "'");
-      GeneralAccountingReportsData[] startEndYearRef = GeneralAccountingReportsData.startEndYear(
-          this, vars.getClient(), "'" + strAgnoRef + "'");
-      String strYear = "'" + startEndYear[0].name + "'";
-      String strYearRef = "'" + startEndYearRef[0].name + "'";
-      String strYearsToClose = "";
-      String strYearsToCloseRef = "";
-
-      Vector<Object> vec = new Vector<Object>();
-      // Relation of open and closed years is obtained
-      GeneralAccountingReportsData[] closedYears = GeneralAccountingReportsData
-          .checkFiscalYearsGenLed(this, vars.getClient(), strcAcctSchemaId);
-      GeneralAccountingReportsData[] previousYears = GeneralAccountingReportsData.previousYear(
-          this, vars.getClient());
-      if (strCalculateOpening.equals("Y")) {
-        strCalculateOpening = "N";
-        strDateTo = strAsDateTo;
-        strDateToRef = strAsDateToRef;
-        strDateFrom = "";
-        strDateFromRef = "";
-        fulfillYearsToClose(vec, startEndYear[0].name, closedYears, previousYears);
-        // If there is some year to close, will be appended to the year to show in report when
-        // calculating amounts, through strYearsToClose and strYearsToCloseRef variables
-        if (vec.size() > 0) {
-          for (int i = 0; i < vec.size(); i++) {
-            strCalculateOpening = "Y"; // If we finally calculate the opening variable takes "Y"
-            strYearsToClose = strYearsToClose + ",'" + vec.elementAt(i) + "'";
+        if (strCalculateOpening.equals("Y")) {
+          strCalculateOpening = "N";
+          strDateTo = strAsDateTo;
+          strDateToRef = strAsDateToRef;
+          strDateFrom = "";
+          strDateFromRef = "";
+          strYearsToClose = getYearsToClose(startingEndingDate.get("startingDate"), strOrg,
+              year.getCalendar());
+          if (strYearsToClose.length() > 0) {
+            strCalculateOpening = "Y";
+            strYearsToClose = "," + strYearsToClose;
+          }
+          strYearsToCloseRef = getYearsToClose(startingEndingDateRef.get("startingDate"), strOrg,
+              yearRef.getCalendar());
+          if (strYearsToCloseRef.length() > 0) {
+            strCalculateOpening = "Y";
+            strYearsToCloseRef = "," + strYearsToCloseRef;
           }
         }
-        vec = new Vector<Object>();
-        fulfillYearsToClose(vec, startEndYearRef[0].name, closedYears, previousYears);
-        // If there is some year to close
-        if (vec.size() > 0) {
-          for (int i = 0; i < vec.size(); i++) {
-            strCalculateOpening = "Y"; // If we finally calculate the opening variable takes "Y"
-            strYearsToCloseRef = strYearsToCloseRef + ",'" + vec.elementAt(i) + "'";
+        // Income summary amount is calculated and included in the balance sheet data
+        String strIncomeSummaryAccount = GeneralAccountingReportsData.incomesummary(this,
+            strcAcctSchemaId);
+
+        for (int i = 0; i < strGroups.length; i++) {
+          // All account tree is obtained
+          if (vars.getLanguage().equals("en_US")) {
+            elements[i] = AccountTreeData.select(this, strConCodigo, TreeID);
+          } else {
+            elements[i] = AccountTreeData.selectTrl(this, strConCodigo, vars.getLanguage(), TreeID);
           }
+          // For each account with movements in the year, debit and credit total amounts are
+          // calculated according to fact_acct movements.
+          AccountTreeData[] accounts = AccountTreeData.selectAcct(this,
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
+              Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
+              strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcAcctSchemaId,
+              Tree.getMembers(this, strTreeOrg, strOrg), "'" + year.getFiscalYear() + "'"
+                  + strYearsToClose, strDateFromRef,
+              DateTimeData.nDaysAfter(this, strDateToRef, "1"), "'" + yearRef.getFiscalYear() + "'"
+                  + strYearsToCloseRef);
+          {
+            if (log4j.isDebugEnabled())
+              log4j.debug("*********** strIncomeSummaryAccount: " + strIncomeSummaryAccount);
+            String strISyear = processIncomeSummary(strDateFrom,
+                DateTimeData.nDaysAfter(this, strDateTo, "1"), "'" + year.getFiscalYear() + "'"
+                    + strYearsToClose, strTreeOrg, strOrg, strcAcctSchemaId);
+            if (log4j.isDebugEnabled())
+              log4j.debug("*********** strISyear: " + strISyear);
+            String strISyearRef = processIncomeSummary(strDateFromRef,
+                DateTimeData.nDaysAfter(this, strDateToRef, "1"), "'" + yearRef.getFiscalYear()
+                    + "'" + strYearsToCloseRef, strTreeOrg, strOrg, strcAcctSchemaId);
+            if (log4j.isDebugEnabled())
+              log4j.debug("*********** strISyearRef: " + strISyearRef);
+            accounts = appendRecords(accounts, strIncomeSummaryAccount, strISyear, strISyearRef);
+
+          }
+          // Report tree is built with given the account tree, and the amounts obtained from
+          // fact_acct
+          acct[i] = new AccountTree(vars, this, elements[i], accounts, strElementValueDes[i]);
+          if (acct[i] != null) {
+            acct[i].filterSVC();
+            acct[i].filter(strConImporte.equals("Y"), strLevel, false);
+          } else if (log4j.isDebugEnabled())
+            log4j.debug("acct null!!!");
         }
+
+        xmlDocument.setData("group", strGroups);
+
+        xmlDocument.setParameter("agno", year.getFiscalYear());
+        xmlDocument.setParameter("agno2", yearRef.getFiscalYear());
+        xmlDocument.setParameter("column", year.getFiscalYear());
+        xmlDocument.setParameter("columnRef", yearRef.getFiscalYear());
+        xmlDocument.setParameter("org", OrganizationData.selectOrgName(this, strOrg));
+        xmlDocument.setParameter("column1", year.getFiscalYear());
+        xmlDocument.setParameter("columnRef1", yearRef.getFiscalYear());
+        xmlDocument.setParameter("companyName",
+            GeneralAccountingReportsData.companyName(this, vars.getClient()));
+        xmlDocument.setParameter("date", DateTimeData.today(this));
+        if (strDateFrom.equals(""))
+          strDateFrom = OBDateUtils.formatDate(startingEndingDate.get("startingDate"));
+        if (strDateTo.equals(""))
+          strDateTo = OBDateUtils.formatDate(startingEndingDate.get("endingDate"));
+        if (strDateFromRef.equals(""))
+          strDateFromRef = OBDateUtils.formatDate(startingEndingDateRef.get("startingDate"));
+        if (strDateToRef.equals(""))
+          strDateToRef = OBDateUtils.formatDate(startingEndingDateRef.get("endingDate"));
+        xmlDocument.setParameter("period", strDateFrom + " - " + strDateTo);
+        xmlDocument.setParameter("periodRef", strDateFromRef + " - " + strDateToRef);
+        xmlDocument.setParameter("agnoInitial", year.getFiscalYear());
+        xmlDocument.setParameter("agnoRef", yearRef.getFiscalYear());
+
+        xmlDocument.setParameter(
+            "principalTitle",
+            strCalculateOpening.equals("Y") ? GeneralAccountingReportsData.rptTitle(this,
+                strElementValue) + " (Provisional)" : GeneralAccountingReportsData.rptTitle(this,
+                strElementValue));
+
+        xmlDocument.setParameter("pageNo", strPageNo);
+
+        AccountTreeData[][] trees = new AccountTreeData[strGroups.length][];
+
+        for (int i = 0; i < strGroups.length; i++)
+          trees[i] = acct[i].getAccounts();
+
+        xmlDocument.setDataArray("reportDetail", "structure1", trees);
+
+        String strResult = xmlDocument.print();
+        renderFO(strResult, response);
+      } finally {
+        OBContext.restorePreviousMode();
       }
-      // Income summary amount is calculated and included in the balance sheet data
-      String strIncomeSummary = GeneralAccountingReportsData.incomesummary(this, strcAcctSchemaId);
-
-      for (int i = 0; i < strGroups.length; i++) {
-        // All account tree is obtained
-        if (vars.getLanguage().equals("en_US")) {
-          elements[i] = AccountTreeData.select(this, strConCodigo, TreeID);
-        } else {
-          elements[i] = AccountTreeData.selectTrl(this, strConCodigo, vars.getLanguage(), TreeID);
-        }
-        // For each account with movements in the year, debit and credit total amounts are
-        // calculated according to fact_acct movements.
-        AccountTreeData[] accounts = AccountTreeData.selectAcct(this,
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
-            Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
-            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcAcctSchemaId,
-            Tree.getMembers(this, strTreeOrg, strOrg), strYear + strYearsToClose, strDateFromRef,
-            DateTimeData.nDaysAfter(this, strDateToRef, "1"), strYearRef + strYearsToCloseRef);
-        {
-          if (log4j.isDebugEnabled())
-            log4j.debug("*********** strIncomeSummary: " + strIncomeSummary);
-          String strISyear = processIncomeSummary(strDateFrom,
-              DateTimeData.nDaysAfter(this, strDateTo, "1"), strYear + strYearsToClose, strTreeOrg,
-              strOrg, strcAcctSchemaId);
-          if (log4j.isDebugEnabled())
-            log4j.debug("*********** strISyear: " + strISyear);
-          String strISyearRef = processIncomeSummary(strDateFromRef,
-              DateTimeData.nDaysAfter(this, strDateToRef, "1"), strYearRef + strYearsToCloseRef,
-              strTreeOrg, strOrg, strcAcctSchemaId);
-          if (log4j.isDebugEnabled())
-            log4j.debug("*********** strISyearRef: " + strISyearRef);
-          accounts = appendRecords(accounts, strIncomeSummary, strISyear, strISyearRef);
-
-        }
-        // Report tree is built with given the account tree, and the amounts obtained from fact_acct
-        acct[i] = new AccountTree(vars, this, elements[i], accounts, strElementValueDes[i]);
-        if (acct[i] != null) {
-          acct[i].filterSVC();
-          acct[i].filter(strConImporte.equals("Y"), strLevel, false);
-        } else if (log4j.isDebugEnabled())
-          log4j.debug("acct null!!!");
-      }
-
-      xmlDocument.setData("group", strGroups);
-
-      xmlDocument.setParameter("agno", startEndYear[0].name);
-      xmlDocument.setParameter("agno2", startEndYearRef[0].name);
-      xmlDocument.setParameter("column", startEndYear[0].name);
-      xmlDocument.setParameter("columnRef", startEndYearRef[0].name);
-      xmlDocument.setParameter("org", OrganizationData.selectOrgName(this, strOrg));
-      xmlDocument.setParameter("column1", startEndYear[0].name);
-      xmlDocument.setParameter("columnRef1", startEndYearRef[0].name);
-      xmlDocument.setParameter("companyName",
-          GeneralAccountingReportsData.companyName(this, vars.getClient()));
-      xmlDocument.setParameter("date", DateTimeData.today(this));
-      if (strDateFrom.equals(""))
-        strDateFrom = startEndYear[0].begining;
-      if (strDateTo.equals(""))
-        strDateTo = startEndYear[0].end;
-      if (strDateFromRef.equals(""))
-        strDateFromRef = startEndYearRef[0].begining;
-      if (strDateToRef.equals(""))
-        strDateToRef = startEndYearRef[0].end;
-      xmlDocument.setParameter("period", strDateFrom + " - " + strDateTo);
-      xmlDocument.setParameter("periodRef", strDateFromRef + " - " + strDateToRef);
-      xmlDocument.setParameter("agnoInitial", startEndYear[0].name);
-      xmlDocument.setParameter("agnoRef", startEndYearRef[0].name);
-
-      xmlDocument.setParameter(
-          "principalTitle",
-          strCalculateOpening.equals("Y") ? GeneralAccountingReportsData.rptTitle(this,
-              strElementValue) + " (Provisional)" : GeneralAccountingReportsData.rptTitle(this,
-              strElementValue));
-
-      xmlDocument.setParameter("pageNo", strPageNo);
-
-      AccountTreeData[][] trees = new AccountTreeData[strGroups.length][];
-
-      for (int i = 0; i < strGroups.length; i++)
-        trees[i] = acct[i].getAccounts();
-
-      xmlDocument.setDataArray("reportDetail", "structure1", trees);
-
-      String strResult = xmlDocument.print();
-      renderFO(strResult, response);
 
     } catch (ArrayIndexOutOfBoundsException e) {
       advisePopUp(request, response, "ERROR",
@@ -290,30 +298,70 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     }
   }
 
-  private Vector<Object> fulfillYearsToClose(Vector<Object> vec, String yearID,
-      GeneralAccountingReportsData[] closedYears, GeneralAccountingReportsData[] previousYears) {
-    Vector<Object> vecAux = vec;
-    String previous = "";
-    // Let's see if this year has a previous one
-    for (int i = 0; i < previousYears.length; i++) {
-      if (previousYears[i].name.equals(yearID))
-        previous = previousYears[i].previousYear;
+  private String getYearsToClose(Date startingDate, String strOrg, Calendar calendar) {
+    Set<Year> previousYears = getOrderedPreviousYears(startingDate, calendar);
+    Set<String> notClosedYears = new HashSet<String>();
+    for (Year previousYear : previousYears) {
+      if (isNotClosed(previousYear, strOrg)) {
+        notClosedYears.add(previousYear.getFiscalYear());
+      }
     }
-    // If not, return with what we have got until now
-    if ("".equals(previous))
-      return vecAux;
+    return Utility.getInStrSet(notClosedYears);
+  }
 
-    // Let's see if the previous year was closed or not
-    for (int i = 0; i < closedYears.length; i++) {
-      if (closedYears[i].name.substring(0, 4).equals(yearID))
-        if ("N".equals(closedYears[i].id.substring(0, 1))) {
-          if (!vecAux.contains(previous))
-            vecAux.add(previous);
-          // If not, let's check if previous of the previous was closed
-          vecAux = fulfillYearsToClose(vecAux, previous, closedYears, previousYears);
-        }
+  private boolean isNotClosed(Year year, String strOrg) {
+    OBContext.setAdminMode(false);
+    try {
+      OBCriteria<OrganizationClosing> obc = OBDal.getInstance().createCriteria(
+          OrganizationClosing.class);
+      obc.add(Restrictions.eq(OrganizationClosing.PROPERTY_ORGANIZATION,
+          OBDal.getInstance().get(Organization.class, strOrg)));
+      obc.add(Restrictions.eq(OrganizationClosing.PROPERTY_YEAR, year));
+      obc.setMaxResults(1);
+      return obc.uniqueResult() == null ? true : false;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return vecAux;
+  }
+
+  private Set<Year> getOrderedPreviousYears(Date startingDate, Calendar calendar) {
+    final StringBuilder hqlString = new StringBuilder();
+    Set<Year> result = new HashSet<Year>();
+    hqlString.append("select y");
+    hqlString.append(" from FinancialMgmtYear y, FinancialMgmtPeriod as p");
+    hqlString
+        .append(" where p.year = y  and p.endingDate < :date and y.calendar = :calendar order by p.startingDate");
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(hqlString.toString());
+    query.setParameter("date", startingDate);
+    query.setParameter("calendar", calendar);
+    for (Object resultObject : query.list()) {
+      final Year previousYear = (Year) resultObject;
+      result.add(previousYear);
+    }
+    return result;
+  }
+
+  private HashMap<String, Date> getStartingEndingDate(Year year) {
+    final StringBuilder hqlString = new StringBuilder();
+    HashMap<String, Date> result = new HashMap<String, Date>();
+    result.put("startingDate", null);
+    result.put("endingDate", null);
+    hqlString.append("select min(p.startingDate) as startingDate, max(p.endingDate) as endingDate");
+    hqlString.append(" from FinancialMgmtPeriod as p");
+    hqlString.append(" where p.year = :year");
+
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(hqlString.toString());
+    query.setParameter("year", year);
+    for (Object resultObject : query.list()) {
+      if (resultObject.getClass().isArray()) {
+        final Object[] values = (Object[]) resultObject;
+        result.put("startingDate", (Date) values[0]);
+        result.put("endingDate", (Date) values[1]);
+      }
+    }
+    return result;
   }
 
   private AccountTreeData[] appendRecords(AccountTreeData[] data, String strIncomeSummary,
