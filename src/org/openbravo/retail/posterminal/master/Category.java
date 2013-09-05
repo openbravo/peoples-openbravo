@@ -14,9 +14,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.model.HQLPropertyList;
+import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
@@ -24,6 +32,12 @@ import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class Category extends ProcessHQLQuery {
+  public static final String productCategoryPropertyExtension = "OBPOS_ProductCategoryExtension";
+
+  @Inject
+  @Any
+  @Qualifier(productCategoryPropertyExtension)
+  private Instance<ModelExtension> extensions;
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
@@ -47,27 +61,20 @@ public class Category extends ProcessHQLQuery {
 
     List<String> hqlQueries = new ArrayList<String>();
 
-    // standard product categories
-    hqlQueries
-        .add("select pCat.id as id, pCat.searchKey as searchKey,pCat.name as name, pCat.name as _identifier, img.bindaryData as img  from ProductCategory as pCat left outer join pCat.image as img  "
-            + " where exists("
-            + "from OBRETCO_Prol_Product pli, "
-            + "PricingProductPrice ppp, "
-            + "PricingPriceListVersion pplv "
-            + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist = '"
-            + productList.getId()
-            + "') "
-            + "AND (pplv.id='"
-            + priceListVersion.getId()
-            + "') AND ("
-            + "ppp.priceListVersion.id = pplv.id"
-            + ") AND ("
-            + "pli.product.id = ppp.product.id"
-            + ") AND ("
-            + "pli.product.active = true"
-            + ") AND "
-            + "(ppp.$incrementalUpdateCriteria) AND (pplv.$incrementalUpdateCriteria))"
-            + "AND pCat.active = true order by pCat.name");
+    HQLPropertyList regularProductsCategoriesHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
+
+    hqlQueries.add("select"
+        + regularProductsCategoriesHQLProperties.getHqlSelect() //
+        + "from ProductCategory as pCat left outer join pCat.image as img  " + " where exists("
+        + "from OBRETCO_Prol_Product pli, " + "PricingProductPrice ppp, "
+        + "PricingPriceListVersion pplv "
+        + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist = '"
+        + productList.getId() + "') " + "AND (pplv.id='" + priceListVersion.getId() + "') AND ("
+        + "ppp.priceListVersion.id = pplv.id" + ") AND (" + "pli.product.id = ppp.product.id"
+        + ") AND (" + "pli.product.active = true" + ") AND "
+        + "(ppp.$incrementalUpdateCriteria) AND (pplv.$incrementalUpdateCriteria))"
+        + "AND pCat.active = true order by pCat.name");
 
     // Discounts marked as category
     hqlQueries

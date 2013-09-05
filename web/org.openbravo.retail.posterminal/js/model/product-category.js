@@ -18,19 +18,6 @@
     source: 'org.openbravo.retail.posterminal.master.Category',
     dataLimit: 300,
     includeTerminalDate: true,
-    properties: ['id', 'searchKey', 'name', 'img', '_identifier', '_idx'],
-    propertyMap: {
-      'id': 'm_product_category_id',
-      'searchKey': 'value',
-      'name': 'name',
-      'img': 'ad_image_id',
-      '_identifier': '_identifier',
-      '_idx': '_idx'
-    },
-    createStatement: 'CREATE TABLE IF NOT EXISTS m_product_category (m_product_category_id TEXT PRIMARY KEY , value TEXT , name TEXT , ad_image_id TEXT , _identifier TEXT , _idx NUMERIC)',
-    dropStatement: 'DROP TABLE IF EXISTS m_product_category',
-    insertStatement: 'INSERT INTO m_product_category(m_product_category_id, value, name, ad_image_id, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?)',
-    updateStatement: '',
     createBestSellerCategory: function () {
       this.set('id', 'OBPOS_bestsellercategory');
       this.set('searchKey', 'bestseller');
@@ -39,6 +26,29 @@
       this.set('_identifier', this.get('name'));
     }
   });
+
+  ProductCategory.addProperties([{
+    name: 'id',
+    column: 'm_product_category_id',
+    primaryKey: true,
+    type: 'TEXT'
+  }, {
+    name: 'searchKey',
+    column: 'value',
+    type: 'TEXT'
+  }, {
+    name: 'name',
+    column: 'name',
+    type: 'TEXT'
+  }, {
+    name: 'img',
+    column: 'ad_image_id',
+    type: 'TEXT'
+  }, {
+    name: '_identifier',
+    column: '_identifier',
+    type: 'TEXT'
+  }]);
 
   OB.Data.Registry.registerModel(ProductCategory);
 }());
