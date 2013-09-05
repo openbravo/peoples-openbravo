@@ -56,32 +56,20 @@ isc.OBCalendarTabSet.addProperties({
   pickerButtonSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/tab/tabBarButtonMain_OverflowIconPicker.png'
 });
 
+
+isc.OBCalendar.addProperties({
+  workdayBaseStyle: 'OBCalendarGridCellWorkday',
+  selectedCellStyle: 'OBCalendarGridCellSelected'
+});
+
 OB.Styles.OBCalendar = {
-  controlsTopMarging: 6,
   eventWindowStyle: 'OBEventWindow',
-  datePickerButton: {
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/date_control.png',
-    width: 21,
-    height: 21
-  },
   addEventButton: {
     src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/add_icon.png',
     // It doesn't exist yet
     width: 21,
     height: 21
   },
-  previousButton: {
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/iconButton-previous.png',
-    width: 20,
-    height: 20
-  },
-  nextButton: {
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/iconButton-next.png',
-    width: 20,
-    height: 20
-  },
-  workdayBaseStyle: 'OBCalendarGridCellWorkday',
-  selectedCellStyle: 'OBCalendarGridCellSelected',
   dayView_alternateRecordStyles: false,
   dayView_baseStyle: 'OBCalendarGridCell',
   weekView_baseStyle: 'OBCalendarGridCell',
@@ -89,3 +77,25 @@ OB.Styles.OBCalendar = {
   monthView_baseStyle: 'OBCalendarGridCell',
   monthView_headerBaseStyle: 'OBCalendarGridHeaderCell'
 };
+
+isc.OBCalendar.changeDefaults('datePickerButtonDefaults', {
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/date_control.png',
+  width: 21,
+  height: 21
+});
+
+isc.OBCalendar.changeDefaults('previousButtonDefaults', {
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/iconButton-previous.png',
+  width: 20,
+  height: 20
+});
+
+isc.OBCalendar.changeDefaults('nextButtonDefaults', {
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/iconButton-next.png',
+  width: 20,
+  height: 20
+});
+
+isc.OBCalendar.changeDefaults('controlsBarDefaults', {
+  layoutTopMargin: 6
+});

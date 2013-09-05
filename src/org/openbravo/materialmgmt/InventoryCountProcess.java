@@ -192,10 +192,16 @@ public class InventoryCountProcess implements Process {
     insert.append(" \nfrom " + InventoryCountLine.ENTITY_NAME + " as e");
     insert.append(" , " + User.ENTITY_NAME + " as u");
     insert.append(" , " + AttributeSetInstance.ENTITY_NAME + " as asi");
+    insert.append(" , " + Product.ENTITY_NAME + " as p");
     insert.append(" \nwhere e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inv");
+    insert.append(" and e." + InventoryCountLine.PROPERTY_QUANTITYCOUNT + " != e."
+        + InventoryCountLine.PROPERTY_BOOKQUANTITY);
     insert.append(" and u.id = :user");
     insert.append(" and asi.id = COALESCE(e." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
         + ".id , '0')");
+    // Non Stockable Products should not generate warehouse transactions
+    insert.append(" and e." + InventoryCountLine.PROPERTY_PRODUCT + ".id = p.id and p."
+        + Product.PROPERTY_STOCKED + " = 'Y' and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
 
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
     queryInsert.setString("inv", inventory.getId());

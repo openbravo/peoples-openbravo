@@ -1249,12 +1249,19 @@ isc.OBViewGrid.addProperties({
       this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
       return;
     }
-    var field = this.fields[fieldNum];
+    var field = this.fields[fieldNum],
+        res;
     if (this.isCheckboxField(field) && this.singleRecordSelection) {
       this.deselectAllRecords();
       this.singleRecordSelection = false;
     }
-    return this.Super('headerClick', arguments);
+    res = this.Super('headerClick', arguments);
+
+    if (field.canSort !== false) {
+      // saving grid configuration after sorting by new a field
+      this.view.standardWindow.storeViewState();
+    }
+    return res;
   },
 
   keyPress: function () {

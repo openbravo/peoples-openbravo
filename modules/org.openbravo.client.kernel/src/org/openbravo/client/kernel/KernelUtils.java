@@ -403,7 +403,9 @@ public class KernelUtils {
         entity = ModelProvider.getInstance().getEntityByTableName(aTab.getTable().getDBTableName());
       }
       entities.add(entity);
-      tabOfEntity.put(entity, aTab);
+      if (!tabOfEntity.containsKey(entity)){
+        tabOfEntity.put(entity, aTab);
+      }
     }
 
     if (tab.getColumn() != null) {

@@ -354,7 +354,6 @@ isc.OBCharacteristicsFilterDialog.addProperties({
 
 isc.ClassFactory.defineClass('OBCharacteristicsFilterItem', isc.OBTextItem);
 
-
 isc.OBCharacteristicsFilterItem.addClassProperties({
   getDisplayValue: function (displayValue) {
     var c, characteristic, v, value, hasAny = false,
@@ -507,5 +506,23 @@ isc.OBCharacteristicsFilterItem.addProperties({
     this.filterDialog = null;
     this.Super('destroy', arguments);
 
+  }
+});
+
+// == OBCharacteristicsGridItem ==
+// If the Form Item used when editing in grid characteristics, it is an OBTextItem
+// but its value is not complete (js object with information about all characteristics)
+// but just database value.
+isc.ClassFactory.defineClass('OBCharacteristicsGridItem', isc.OBTextItem);
+
+isc.OBCharacteristicsGridItem.addProperties({
+  setValue: function (value) {
+    // forget about complex object value and use just what is in DB
+    if (!value || !value.characteristics || !value.dbValue) {
+      this.Super('setValue', arguments);
+      return;
+    }
+
+    this.setValue(value.dbValue);
   }
 });

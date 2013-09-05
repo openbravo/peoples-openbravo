@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -19,7 +19,9 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.OutputStreamWriter;
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -628,19 +630,25 @@ public class TranslationManager {
       return msg;
     }
 
+    Connection con = null;
     try {
-      final TranslationHandler handler = new TranslationHandler(AD_Client_ID, conn);
+      con = conn.getTransactionConnection();
+      final TranslationHandler handler = new TranslationHandler(AD_Client_ID, conn, con);
       final SAXParserFactory factory = SAXParserFactory.newInstance();
       // factory.setValidating(true);
       final SAXParser parser = factory.newSAXParser();
       parser.parse(in, handler);
+      conn.releaseCommitConnection(con);
       log4j
           .info("importTrl - Updated=" + handler.getUpdateCount() + " - from file " + in.getName());
-      // return Msg.getMsg(Env.getCtx(), "Updated") + "=" +
-      // handler.getUpdateCount();
       return "";
     } catch (final Exception e) {
       log4j.error("importTrlFile - error parsing file: " + fileName, e);
+      try {
+        conn.releaseRollbackConnection(con);
+      } catch (SQLException e1) {
+        log4j.error("Error on releaseRollbackConnection", e1);
+      }
       throw new OBException(fileName);
     }
   }

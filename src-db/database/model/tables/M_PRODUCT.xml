@@ -419,6 +419,9 @@
       <index name="M_PRODUCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
+      <index name="M_PRODUCT_GEN_PROD" unique="false">
+        <index-column name="GENERIC_PRODUCT_ID"/>
+      </index>
       <index name="M_PRODUCT_NAME" unique="false">
         <index-column name="NAME"/>
       </index>

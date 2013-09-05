@@ -292,6 +292,17 @@ isc.OBStandardView.addProperties({
     }
     this.dataSource.view = this;
 
+    // In case of grid configuration, apply it now. In this way:
+    //   -No extra fetch is done for root tab
+    //   -Grid is not rendered twice (one for the standard confing and another
+    //    one for the saved config)
+    if (this.standardWindow && this.standardWindow.viewState && this.standardWindow.viewState[this.tabId]) {
+      this.viewGrid.setViewState(this.standardWindow.viewState[this.tabId]);
+      // lastViewApplied is set because there are modifications in grid, so not
+      // marking "Standard View" in view's menu
+      this.standardWindow.lastViewApplied = true;
+    }
+
     // directTabInfo is set when we are in direct link mode, i.e. directly opening
     // a specific tab with a record, the direct link logic will already take care
     // of fetching data
@@ -1726,6 +1737,12 @@ isc.OBStandardView.addProperties({
         var i, doUpdateTotalRows, data, deleteData, error, recordInfos = [],
             length, removeCallBack, selection;
 
+        //modal dialog shown to restrict the user from accessing records when deleting records. Will be closed after successful deletion in removeCallback.
+        //refer issue https://issues.openbravo.com/view.php?id=24611
+        isc.showPrompt(OB.I18N.getLabel('OBUIAPP_DeletingRecords') + isc.Canvas.imgHTML({
+          src: "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/system/windowLoading.gif"
+        }));
+
         removeCallBack = function (resp, data, req) {
           var length, localData = resp.dataObject || resp.data || data,
               i, updateTotalRows;
@@ -1782,8 +1799,8 @@ isc.OBStandardView.addProperties({
               }
             }
           }
+          isc.clearPrompt();
         };
-
         if (ok) {
           selection = view.viewGrid.getSelection().duplicate();
           // deselect the current records
