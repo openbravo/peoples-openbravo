@@ -11,14 +11,28 @@ package org.openbravo.retail.posterminal.master;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.model.HQLPropertyList;
+import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.mobile.core.process.ProcessHQLQuery;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 
 public class ProductCharacteristic extends ProcessHQLQuery {
+  public static final String productCharacteristicPropertyExtension = "OBPOS_ProductCharacteristicExtension";
+
+  @Inject
+  @Any
+  @Qualifier(productCharacteristicPropertyExtension)
+  private Instance<ModelExtension> extensions;
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
@@ -26,11 +40,12 @@ public class ProductCharacteristic extends ProcessHQLQuery {
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     List<String> hqlQueries = new ArrayList<String>();
 
-    // standard product categories
+    HQLPropertyList regularProductsCharacteristicHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
+
     hqlQueries
-        .add("select pcv.id as m_product_ch_id, pcv.product.id as m_product, pcv.characteristic.id as characteristic_id, "
-            + "pcv.characteristic.name as characteristic, pcv.characteristicValue.id as ch_value_id, "
-            + "pcv.characteristicValue.name as ch_value, pcv.characteristic.name as _identifier "
+        .add("select "
+            + regularProductsCharacteristicHQLProperties.getHqlSelect()
             + "from ProductCharacteristicValue pcv "
             + "where pcv.product.id in (select product.id from OBRETCO_Prol_Product assort where obretcoProductlist.id= '"
             + productList.getId()
