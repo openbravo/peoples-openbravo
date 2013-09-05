@@ -1077,7 +1077,7 @@
           }
         }
       }
-      if (payment.get('openDrawer')) {
+      if (payment.get('openDrawer') && (payment.get('allowOpenDrawer') || payment.get('isCash'))) {
         this.set('openDrawer', payment.get('openDrawer'));
       }
       payment.set('date', new Date());
@@ -1613,7 +1613,7 @@
           }
         }
       }
-      if (payment.get('openDrawer')) {
+      if (payment.get('openDrawer') && (payment.get('allowOpenDrawer') || payment.get('isCash'))) {
         this.set('openDrawer', payment.get('openDrawer'));
       }
       payment.set('date', new Date());

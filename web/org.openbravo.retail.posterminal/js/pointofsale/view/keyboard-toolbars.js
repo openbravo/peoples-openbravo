@@ -115,6 +115,8 @@ enyo.kind({
           'rate': rate,
           'mulrate': mulrate,
           'isocode': isocode,
+          'allowOpenDrawer': paymentMethod.allowopendrawer,
+          'isCash': paymentMethod.iscash,
           'openDrawer': paymentMethod.openDrawer
         }));
       }

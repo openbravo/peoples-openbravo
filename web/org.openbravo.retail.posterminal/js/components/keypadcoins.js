@@ -182,12 +182,18 @@ enyo.kind({
       //FIXME: TOO MANY OWNERS
       var i, max, p, receipt = myWindowModel.get('order'),
           multiOrders = myWindowModel.get('multiOrders'),
-          openDrawer = false;
+          openDrawer = false, isCash = false, allowOpenDrawer = false;
       for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
         p = OB.POS.modelterminal.get('payments')[i];
         if (p.payment.searchKey === me.paymenttype) {
           if (p.paymentMethod.openDrawer) {
             openDrawer = p.paymentMethod.openDrawer;
+          }
+          if (p.paymentMethod.iscash) {
+            isCash = p.paymentMethod.iscash;
+          }
+          if (p.paymentMethod.allowopendrawer) {
+            allowOpenDrawer = p.paymentMethod.allowopendrawer;
           }
           break;
         }
@@ -199,6 +205,8 @@ enyo.kind({
         rate: p.rate,
         mulrate: p.mulrate,
         isocode: p.isocode,
+        isCash: isCash,
+        allowOpenDrawer: allowOpenDrawer,
         openDrawer: openDrawer
       }));
     }

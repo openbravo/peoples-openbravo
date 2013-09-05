@@ -324,6 +324,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
                 'rate': paymentMethod.rate,
                 'mulrate': paymentMethod.mulrate,
                 'isocode': paymentMethod.isocode,
+                'allowOpenDrawer': payment.get('allowopendrawer'),
+                'isCash': payment.get('iscash'),
                 'openDrawer': payment.get('openDrawer')
               }));
               if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
@@ -350,6 +352,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
                 'rate': paymentMethod.rate,
                 'mulrate': paymentMethod.mulrate,
                 'isocode': paymentMethod.isocode,
+                'allowOpenDrawer': payment.get('allowopendrawer'),
+                'isCash': payment.get('iscash'),
                 'openDrawer': payment.get('openDrawer')
               }));
               if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
@@ -399,6 +403,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
               'rate': payment.rate,
               'mulrate': payment.mulrate,
               'isocode': payment.isocode,
+              'allowOpenDrawer': payment.paymentMethod.allowopendrawer,
+              'isCash': payment.paymentMethod.iscash,
               'openDrawer': payment.paymentMethod.openDrawer
             }));
           }
