@@ -39,17 +39,15 @@
       //save that the customer is being processed by server
       OB.Dal.save(this.customer, function () {
         //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[me.customer.get('_identifier')]));
-        // Saving Customer Address locally
-        bpLocToSave.set('id', me.customer.get('locId'));
+    	// Saving Customer Address locally
+    	bpLocToSave.set('id', me.customer.get('locId'));
         bpLocToSave.set('bpartner', me.customer.get('id'));
         bpLocToSave.set('name', me.customer.get('locName'));
         bpLocToSave.set('postalCode', me.customer.get('postalCode'));
         bpLocToSave.set('cityName', me.customer.get('cityName'));
         bpLocToSave.set('_identifier', me.customer.get('locName'));
-        OB.Dal.save(bpLocToSave, function () {}, function () {
-          window.console.error(arguments);
-        }, true);
-
+        OB.Dal.save(bpLocToSave, function () { }, function() { window.console.error(arguments); }, isNew);
+    	
         if (isNew) {
           me.customer.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
           bpToSave.set('json', JSON.stringify(me.customer.serializeToJSON()));
