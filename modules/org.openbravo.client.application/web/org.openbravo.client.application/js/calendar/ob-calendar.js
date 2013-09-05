@@ -26,7 +26,7 @@ isc.OBCalendar_EventDialogBridge.addProperties({
   show: function () {
     this.Super('show', arguments);
 
-    var calendar = this.calendar,
+    var calendar = this.creator,
         currentStart = this.currentStart,
         currentEnd = this.currentEnd,
         event = this.event;
@@ -61,20 +61,6 @@ isc.OBCalendar.addProperties({
         multiCalendar = this.multiCalendar;
 
     this.eventWindowStyle = OB.Styles.OBCalendar.eventWindowStyle;
-    this.datePickerButtonDefaults.src = OB.Styles.OBCalendar.datePickerButton.src;
-    this.datePickerButtonDefaults.width = OB.Styles.OBCalendar.datePickerButton.width;
-    this.datePickerButtonDefaults.height = OB.Styles.OBCalendar.datePickerButton.height;
-    this.previousButtonDefaults.src = OB.Styles.OBCalendar.previousButton.src;
-    this.previousButtonDefaults.width = OB.Styles.OBCalendar.previousButton.width;
-    this.previousButtonDefaults.height = OB.Styles.OBCalendar.previousButton.height;
-    this.nextButtonDefaults.src = OB.Styles.OBCalendar.nextButton.src;
-    this.nextButtonDefaults.width = OB.Styles.OBCalendar.nextButton.width;
-    this.nextButtonDefaults.height = OB.Styles.OBCalendar.nextButton.height;
-    this.controlsBarDefaults.layoutTopMargin = OB.Styles.OBCalendar.controlsTopMarging;
-
-    this.mainViewDefaults._constructor = isc.OBCalendarTabSet;
-    this.eventDialogDefaults._constructor = isc.OBCalendar_EventDialogBridge;
-    this.eventDialogDefaults.calendar = this;
 
     if (!this.eventIdField) {
       this.eventIdField = 'eventId';
@@ -241,8 +227,6 @@ isc.OBCalendar.addProperties({
       this.datePickerButton.hide();
     }
 
-    this.workdayBaseStyle = OB.Styles.OBCalendar.workdayBaseStyle;
-    this.selectedCellStyle = OB.Styles.OBCalendar.selectedCellStyle;
     if (this.showDayView !== false) {
       this.dayView.baseStyle = OB.Styles.OBCalendar.dayView_baseStyle;
     }
@@ -569,4 +553,13 @@ isc.OBCalendar.addProperties({
     return this.Super('addEvent', [startDate, endDate, name, description, otherFields, ignoreDataChanged]);
   }
 
+});
+
+
+isc.OBCalendar.changeDefaults('mainViewDefaults', {
+  _constructor: isc.OBCalendarTabSet
+});
+
+isc.OBCalendar.changeDefaults('eventDialogDefaults', {
+  _constructor: isc.OBCalendar_EventDialogBridge
 });
