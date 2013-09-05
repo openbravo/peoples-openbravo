@@ -14,9 +14,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.model.HQLPropertyList;
+import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
@@ -25,6 +33,12 @@ import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class Product extends ProcessHQLQuery {
+  public static final String productPropertyExtension = "OBPOS_ProductExtension";
+
+  @Inject
+  @Any
+  @Qualifier(productPropertyExtension)
+  private Instance<ModelExtension> extensions;
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
@@ -48,23 +62,13 @@ public class Product extends ProcessHQLQuery {
 
     List<String> products = new ArrayList<String>();
 
+    HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
+
     // regular products
     products
-        .add("select pli.product.id as id, pli.product.searchKey as searchkey, pli.product.name as _identifier, pli.product.taxCategory.id as taxCategory, "
-            + "pli.product.productCategory.id as productCategory, pli.product.obposScale as obposScale, pli.product.uOM.id as uOM, pli.product.uOM.symbol as uOMsymbol, pli.product.uPCEAN as uPCEAN, img.bindaryData as img "
-            + ", pli.product.description as description "
-            + ", pli.product.obposGroupedproduct as groupProduct "
-            + ", pli.product.stocked as stocked "
-            + ", pli.product.obposShowstock as showstock "
-            + ", pli.product.isGeneric as isGeneric "
-            + ", pli.product.genericProduct.id as generic_product_id "
-            + ", pli.product.brand.id as brand "
-            + ", pli.product.characteristicDescription as characteristicDescription "
-            + ", pli.product.obposShowChDesc as showchdesc "
-            + ", pli.bestseller as bestseller "
-            + ", 'false' as ispack, "
-            + "ppp.listPrice as listPrice, ppp.standardPrice as standardPrice, ppp.priceLimit as priceLimit, "
-            + "ppp.cost as cost "
+        .add("select"
+            + regularProductsHQLProperties.getHqlSelect()
             + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img, "
             + "PricingProductPrice ppp, "
             + "PricingPriceListVersion pplv "
