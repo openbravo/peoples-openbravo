@@ -11,14 +11,28 @@ package org.openbravo.retail.posterminal.master;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.model.HQLPropertyList;
+import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class Brand extends ProcessHQLQuery {
+  public static final String brandPropertyExtension = "OBPOS_BrandExtension";
+
+  @Inject
+  @Any
+  @Qualifier(brandPropertyExtension)
+  private Instance<ModelExtension> extensions;
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
@@ -26,14 +40,15 @@ public class Brand extends ProcessHQLQuery {
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     List<String> hqlQueries = new ArrayList<String>();
 
-    // standard product categories
-    hqlQueries
-        .add("select distinct(product.brand.id) as id, product.brand.name as name, product.brand.name as _identifier "
-            + "from Product product "
-            + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist= '"
-            + productList.getId()
-            + "' and assort.product = product) "
-            + "and $naturalOrgCriteria and $incrementalUpdateCriteria ");
+    HQLPropertyList regularBrandsHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
+
+    hqlQueries.add("select"
+        + regularBrandsHQLProperties.getHqlSelect() //
+        + "from Product product " //
+        + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist= '"
+        + productList.getId() + "' and assort.product = product) "
+        + "and $naturalOrgCriteria and $incrementalUpdateCriteria ");
 
     return hqlQueries;
   }

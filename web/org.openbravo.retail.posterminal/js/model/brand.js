@@ -11,25 +11,29 @@
 
 (function () {
 
-  var Brand = Backbone.Model.extend({
+  var Brand = OB.Data.ExtensibleModel.extend({
     modelName: 'Brand',
     tableName: 'm_brand',
     entityName: 'Brand',
     source: 'org.openbravo.retail.posterminal.master.Brand',
-    dataLimit: 300,
-    properties: ['id', 'name', '_identifier', '_idx'],
-    propertiesFilter: ['_identifier'],
-    propertyMap: {
-      'id': 'id',
-      'name': 'name',
-      '_identifier': '_identifier',
-      '_filter': '_filter',
-      '_idx': '_idx'
-    },
-    createStatement: 'CREATE TABLE IF NOT EXISTS m_brand (id TEXT PRIMARY KEY, name TEXT, _identifier TEXT, _filter TEXT, _idx NUMERIC)',
-    dropStatement: 'DROP TABLE IF EXISTS m_brand',
-    insertStatement: 'INSERT INTO m_brand(id, name,  _identifier,  _filter, _idx)  VALUES (?, ?, ?, ?, ?)'
+    dataLimit: 300
   });
+  
+  Brand.addProperties([{
+    name: 'id',
+    column: 'm_product_id',
+    primaryKey: true,
+    type: 'TEXT'
+  },{
+    name: 'name',
+    column: 'name',
+    type: 'TEXT'
+  },{
+    name: '_identifier',
+    column: '_identifier',
+    filter: true,
+    type: 'TEXT'
+  }]);
 
   OB.Data.Registry.registerModel(Brand);
 }());
