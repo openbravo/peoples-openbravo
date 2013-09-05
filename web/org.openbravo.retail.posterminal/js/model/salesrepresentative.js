@@ -11,24 +11,32 @@
 
 (function () {
 
-  var SalesRepresentative = Backbone.Model.extend({
+  var SalesRepresentative = OB.Data.ExtensibleModel.extend({
     modelName: 'SalesRepresentative',
     tableName: 'ad_sales_representative',
     entityName: 'SalesRepresentative',
     source: 'org.openbravo.retail.posterminal.master.SalesRepresentative',
-    dataLimit: 300,
-    properties: ['id', 'name', 'username', '_identifier', '_idx'],
-    propertyMap: {
-      'id': 'ad_sales_representative_id',
-      'name': 'name',
-      'username': 'username',
-      '_identifier': '_identifier',
-      '_idx': '_idx'
-    },
-    createStatement: 'CREATE TABLE IF NOT EXISTS ad_sales_representative (ad_sales_representative_id TEXT PRIMARY KEY, username TEXT , name TEXT, _identifier TEXT, _idx NUMERIC)',
-    dropStatement: 'DROP TABLE IF EXISTS ad_sales_representative',
-    insertStatement: 'INSERT INTO ad_sales_representative(ad_sales_representative_id, name, username, _identifier, _idx)  VALUES (?, ?, ?, ?, ?)'
+    dataLimit: 300
   });
+
+  SalesRepresentative.addProperties([{
+    name: 'id',
+    column: 'ad_sales_representative_id',
+    primaryKey: true,
+    type: 'TEXT'
+  }, {
+    name: 'name',
+    column: 'name',
+    type: 'TEXT'
+  }, {
+    name: 'username',
+    column: 'username',
+    type: 'TEXT'
+  }, {
+    name: '_identifier',
+    column: '_identifier',
+    type: 'TEXT'
+  }]);
 
   OB.Data.Registry.registerModel(SalesRepresentative);
 }());

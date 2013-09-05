@@ -11,20 +11,36 @@ package org.openbravo.retail.posterminal.master;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.mobile.core.model.HQLPropertyList;
+import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class SalesRepresentative extends ProcessHQLQuery {
+  public static final String salesRepresentativePropertyExtension = "OBPOS_SalesRepresentativeExtension";
+
+  @Inject
+  @Any
+  @Qualifier(salesRepresentativePropertyExtension)
+  private Instance<ModelExtension> extensions;
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
     List<String> hqlQueries = new ArrayList<String>();
+    HQLPropertyList regularSalesRepresentativeHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
 
-    // standard product categories
     hqlQueries
-        .add("select user.id as id, user.name as name, user.username as username, user.name as _identifier "
+        .add("select"
+            + regularSalesRepresentativeHQLProperties.getHqlSelect() //
             + "from ADUser user "
             + "where "
             + " exists (select 1 from BusinessPartner bp where user.businessPartner = bp AND bp.isSalesRepresentative = true) "
