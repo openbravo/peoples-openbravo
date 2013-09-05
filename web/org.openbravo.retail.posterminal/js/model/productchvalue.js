@@ -11,25 +11,36 @@
 
 (function () {
 
-  var ProductChValue = Backbone.Model.extend({
+  var ProductChValue = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductChValue',
     tableName: 'm_ch_value',
     entityName: 'ProductChValue',
     source: 'org.openbravo.retail.posterminal.master.ProductChValue',
-    dataLimit: 300,
-    properties: ['id', 'name', 'characteristic_id', 'parent', '_identifier', '_idx'],
-    propertyMap: {
-      'id': 'id',
-      'name': 'name',
-      'characteristic_id': 'characteristic_id',
-      'parent': 'parent',
-      '_identifier': '_identifier',
-      '_idx': '_idx'
-    },
-    createStatement: 'CREATE TABLE IF NOT EXISTS m_ch_value (id TEXT PRIMARY KEY, name TEXT , characteristic_id TEXT, parent TEXT,  _identifier TEXT, _idx NUMERIC)',
-    dropStatement: 'DROP TABLE IF EXISTS m_ch_value',
-    insertStatement: 'INSERT INTO m_ch_value(id, name, characteristic_id, parent, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?)'
+    dataLimit: 300
   });
+  
+  ProductChValue.addProperties([{
+    name: 'id',
+    column: 'id',
+    primaryKey: true,
+    type: 'TEXT'
+  }, {
+    name: 'name',
+    column: 'name',
+    type: 'TEXT'
+  }, {
+    name: 'characteristic_id',
+    column: 'characteristic_id',
+    type: 'TEXT'
+  }, {
+    name: 'parent',
+    column: 'parent',
+    type: 'TEXT'
+  },{
+    name: '_identifier',
+    column: '_identifier',
+    type: 'TEXT'
+  }]);
 
   OB.Data.Registry.registerModel(ProductChValue);
 }());
