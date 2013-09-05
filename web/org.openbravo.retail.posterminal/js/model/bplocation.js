@@ -9,30 +9,17 @@
  ************************************************************************************
  */
 
-/*global Backbone, _ */
+/*global Backbone */
 
 (function () {
 
-  var BPLocation = Backbone.Model.extend({
+  var BPLocation = OB.Data.ExtensibleModel.extend({
     modelName: 'BPLocation',
     tableName: 'c_bpartner_location',
     entityName: 'BPLocation',
     source: 'org.openbravo.retail.posterminal.master.BPLocation',
     dataLimit: 300,
     local: false,
-    properties: ['id', 'bpartner', 'name', 'postalCode', 'cityName', '_identifier', '_idx'],
-    propertyMap: {
-      'id': 'c_bpartner_location_id',
-      'bpartner': 'c_bpartner_id',
-      'name': 'name',
-      'postalCode': 'postalCode',
-      'cityName': 'cityName',
-      '_identifier': '_identifier',
-      '_idx': '_idx'
-    },
-    createStatement: 'CREATE TABLE IF NOT EXISTS c_bpartner_location (c_bpartner_location_id TEXT PRIMARY KEY, c_bpartner_id TEXT, name TEXT, postalCode TEXT, cityName TEXT, _identifier TEXT , _idx NUMERIC)',
-    dropStatement: 'DROP TABLE IF EXISTS c_bpartner_location',
-    insertStatement: 'INSERT INTO c_bpartner_location (c_bpartner_location_id, c_bpartner_id, name, postalCode, cityName, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?)',
     saveCustomerAddr: function (silent) {
       var nameLength, newSk;
       if (!this.get("name")) {
@@ -128,6 +115,33 @@
       return JSON.parse(JSON.stringify(this.toJSON()));
     }
   });
+
+  BPLocation.addProperties([{
+    name: 'id',
+    column: 'c_bpartner_location_id',
+    primaryKey: true,
+    type: 'TEXT'
+  }, {
+    name: 'bpartner',
+    column: 'c_bpartner_id',
+    type: 'TEXT'
+  }, {
+    name: 'name',
+    column: 'name',
+    type: 'TEXT'
+  },{
+    name: 'postalCode',
+    column: 'postalCode',
+    type: 'TEXT'
+  },{
+    name: 'cityName',
+    column: 'cityName',
+    type: 'TEXT'
+  }, {
+    name: '_identifier',
+    column: '_identifier',
+    type: 'TEXT'
+  }]);
 
   OB.Data.Registry.registerModel(BPLocation);
 }());
