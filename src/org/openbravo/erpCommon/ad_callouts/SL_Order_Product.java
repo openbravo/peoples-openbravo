@@ -170,7 +170,8 @@ public class SL_Order_Product extends HttpSecureAppServlet {
           + (strPriceLimit.equals("") ? "0" : strPriceLimit) + "),");
       resultado.append("new Array(\"inppricestd\", " + (strPriceStd.equals("") ? "0" : strPriceStd)
           + "),");
-      resultado.append("new Array(\"inppriceactual\", " + strPriceActual + "),");
+      resultado.append("new Array(\"inppriceactual\", "
+          + (strPriceActual.equals("") ? "0" : strPriceActual) + "),");
     }
     if (!"".equals(strCurrency)) {
       resultado.append("new Array(\"inpcCurrencyId\", \"" + strCurrency + "\"),");
