@@ -10,7 +10,7 @@
 /*global B, $, _, Backbone */
 (function () {
 
-  var taxRate = Backbone.Model.extend({
+  var taxRate = OB.Data.ExtensibleModel.extend({
     modelName: 'TaxRate',
     generatedStructure: true,
     entityName: 'FinancialMgmtTaxRate',
