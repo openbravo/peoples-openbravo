@@ -11,27 +11,35 @@ package org.openbravo.retail.posterminal.master;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.mobile.core.model.HQLPropertyList;
+import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class BusinessPartner extends ProcessHQLQuery {
+  public static final String businessPartnerPropertyExtension = "OBPOS_BusinessPartnerExtension";
+
+  @Inject
+  @Any
+  @Qualifier(businessPartnerPropertyExtension)
+  private Instance<ModelExtension> extensions;
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+    HQLPropertyList regularBusinessPartnerHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
+
     return Arrays
         .asList(new String[] {
-            "SELECT bpl.businessPartner.id as id, bpl.businessPartner.organization.id as organization, bpl.businessPartner.name as name, bpl.businessPartner.name as _identifier, "
-                + "bpl.businessPartner.searchKey as searchKey, bpl.businessPartner.description as description, bpl.businessPartner.taxID as taxID, "
-                + "bpl.businessPartner.sOBPTaxCategory.id as taxCategory, bpl.businessPartner.priceList.id as priceList, "
-                + "bpl.businessPartner.paymentMethod.id as paymentMethod, bpl.businessPartner.paymentTerms.id as paymentTerms, "
-                + "bpl.businessPartner.invoiceTerms as invoiceTerms, bpl.id as locId, max(bpl.locationAddress.addressLine1) as locName, ulist.email as email, "
-                + "ulist.id as contactId, "
-                + "ulist.phone as phone, bpl.locationAddress.cityName as cityName, bpl.locationAddress.postalCode as postalCode, "
-                + "bpl.businessPartner.businessPartnerCategory.id as businessPartnerCategory, "
-                + "bpl.businessPartner.businessPartnerCategory.name as businessPartnerCategory_name, "
-                + "bpl.businessPartner.creditLimit as creditLimit, "
-                + "bpl.businessPartner.creditUsed as creditUsed "
+            "SELECT "
+                + regularBusinessPartnerHQLProperties.getHqlSelect() //
                 + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
                 + "WHERE "
                 + "bpl.invoiceToAddress = true AND "
@@ -45,17 +53,8 @@ public class BusinessPartner extends ProcessHQLQuery {
                 + " and ulist.id is null "
                 + " GROUP BY bpl.businessPartner.id, bpl.businessPartner.organization.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.priceList.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, ulist.email, ulist.phone,bpl.locationAddress.cityName, bpl.locationAddress.postalCode, bpl.businessPartner.businessPartnerCategory.id, bpl.businessPartner.businessPartnerCategory.name, bpl.businessPartner.creditLimit, bpl.businessPartner.creditUsed, bpl.id , ulist.id  "
                 + " ORDER BY bpl.businessPartner.name",
-            "SELECT bpl.businessPartner.id as id, bpl.businessPartner.organization.id as organization, bpl.businessPartner.name as name, bpl.businessPartner.name as _identifier, "
-                + "bpl.businessPartner.searchKey as searchKey, bpl.businessPartner.description as description, bpl.businessPartner.taxID as taxID, "
-                + "bpl.businessPartner.sOBPTaxCategory.id as taxCategory, bpl.businessPartner.priceList.id as priceList, "
-                + "bpl.businessPartner.paymentMethod.id as paymentMethod, bpl.businessPartner.paymentTerms.id as paymentTerms, "
-                + "bpl.businessPartner.invoiceTerms as invoiceTerms, bpl.id as locId, max(bpl.locationAddress.addressLine1) as locName, ulist.email as email, "
-                + "ulist.id as contactId, "
-                + "ulist.phone as phone, bpl.locationAddress.cityName as cityName, bpl.locationAddress.postalCode as postalCode, "
-                + "bpl.businessPartner.businessPartnerCategory.id as businessPartnerCategory, "
-                + "bpl.businessPartner.businessPartnerCategory.name as businessPartnerCategory_name, "
-                + "bpl.businessPartner.creditLimit as creditLimit, "
-                + "bpl.businessPartner.creditUsed as creditUsed "
+            "SELECT"
+                + regularBusinessPartnerHQLProperties.getHqlSelect() //
                 + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
                 + "WHERE "
                 + "bpl.invoiceToAddress = true AND "

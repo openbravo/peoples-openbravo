@@ -11,45 +11,12 @@
 
 (function () {
 
-  var BusinessPartner = Backbone.Model.extend({
+  var BusinessPartner = OB.Data.ExtensibleModel.extend({
     modelName: 'BusinessPartner',
     tableName: 'c_bpartner',
     entityName: 'BusinessPartner',
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
     dataLimit: 300,
-    properties: ['id', 'organization', 'searchKey', 'name', 'description', 'taxID', 'taxCategory', 'paymentMethod', 'paymentTerms', 'priceList', 'invoiceTerms', 'locId', 'locName', 'postalCode', 'cityName', 'contactId', 'phone', 'email', 'businessPartnerCategory', 'businessPartnerCategory_name', 'creditLimit', 'creditUsed', '_identifier', '_idx'],
-    propertiesFilter: ['_identifier', 'taxID', 'email', 'phone'],
-    propertyMap: {
-      'id': 'c_bpartner_id',
-      'organization': 'ad_org_id',
-      'searchKey': 'value',
-      'name': 'name',
-      'description': 'description',
-      'taxID': 'taxID',
-      'taxCategory': 'so_bp_taxcategory_id',
-      'paymentMethod': 'FIN_Paymentmethod_ID',
-      'paymentTerms': 'c_paymentterm_id',
-      'priceList': 'm_pricelist_id',
-      'invoiceTerms': 'invoicerule',
-      'locId': 'c_bpartnerlocation_id',
-      'locName': 'c_bpartnerlocation_name',
-      'postalCode': 'postalCode',
-      'cityName': 'cityName',
-      'contactId': 'ad_user_id',
-      'phone': 'phone',
-      'email': 'email',
-      'businessPartnerCategory': 'c_bp_group_id',
-      'businessPartnerCategory_name': 'c_bp_group_name',
-      'creditLimit': 'creditLimit',
-      'creditUsed': 'creditUsed',
-      '_identifier': '_identifier',
-      '_filter': '_filter',
-      '_idx': '_idx'
-    },
-    createStatement: 'CREATE TABLE IF NOT EXISTS c_bpartner (c_bpartner_id TEXT PRIMARY KEY, ad_org_id TEXT, value TEXT , name TEXT , description TEXT , taxID TEXT , so_bp_taxcategory_id TEXT, FIN_Paymentmethod_ID TEXT, c_paymentterm_id TEXT, m_pricelist_id TEXT,invoicerule TEXT, c_bpartnerlocation_id TEXT , c_bpartnerlocation_name TEXT , postalCode TEXT, cityName TEXT, ad_user_id TEXT, phone TEXT, email TEXT, c_bp_group_id TEXT, c_bp_group_name TEXT, creditLimit NUMERIC, creditUsed NUMERIC, _identifier TEXT, _filter TEXT, _idx NUMERIC)',
-    dropStatement: 'DROP TABLE IF EXISTS c_bpartner',
-    insertStatement: 'INSERT INTO c_bpartner(c_bpartner_id, ad_org_id, value, name, description, taxID, so_bp_taxcategory_id, FIN_Paymentmethod_ID, c_paymentterm_id, m_pricelist_id, invoicerule, c_bpartnerlocation_id, c_bpartnerlocation_name, postalCode, cityName, ad_user_id, phone, email, c_bp_group_id, c_bp_group_name, creditLimit, creditUsed, _identifier, _filter, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    updateStatement: '',
     saveCustomer: function (silent) {
       var nameLength, newSk;
 
@@ -173,6 +140,107 @@
       return JSON.parse(JSON.stringify(this.toJSON()));
     }
   });
+
+  BusinessPartner.addProperties([{
+    name: 'id',
+    column: 'c_bpartner_id',
+    primaryKey: true,
+    type: 'TEXT'
+  }, {
+    name: 'organization',
+    column: 'ad_org_id',
+    type: 'TEXT'
+  }, {
+    name: 'searchKey',
+    column: 'value',
+    type: 'TEXT'
+  },{
+    name: '_identifier',
+    column: '_identifier',
+    filter: true,
+    type: 'NUMERIC'
+  }, {
+    name: 'name',
+    column: 'name',
+    type: 'TEXT'
+  }, {
+    name: 'description',
+    column: 'description',
+    type: 'TEXT'
+  }, {
+    name: 'taxID',
+    column: 'taxID',
+    filter: true,
+    type: 'TEXT'
+  }, {
+    name: 'taxCategory',
+    column: 'so_bp_taxcategory_id',
+    type: 'TEXT'
+  }, {
+    name: 'paymentMethod',
+    column: 'FIN_Paymentmethod_ID',
+    type: 'TEXT'
+  }, {
+    name: 'paymentTerms',
+    column: 'c_paymentterm_id',
+    type: 'TEXT'
+  }, {
+    name: 'priceList ',
+    column: 'm_pricelist_id',
+    type: 'TEXT '
+  }, {
+    name: 'invoiceTerms',
+    column: 'invoicerule',
+    type: 'TEXT'
+  }, {
+    name: 'locId',
+    column: 'c_bpartnerlocation_id',
+    type: 'TEXT'
+  }, {
+    name: 'locName',
+    column: 'c_bpartnerlocation_name',
+    type: 'TEXT'
+  }, {
+    name: 'postalCode',
+    column: 'postalCode',
+    type: 'TEXT'
+  }, {
+    name: 'cityName',
+    column: 'cityName',
+    type: 'TEXT'
+  }, {
+    name: 'contactId',
+    column: 'ad_user_id',
+    type: 'TEXT'
+  }, {
+    name: 'phone',
+    column: 'phone',
+    filter: true,
+    type: 'TEXT'
+  }, {
+    name: 'email',
+    column: 'email',
+    filter: true,
+    type: 'TEXT'
+  }, {
+    name: 'businessPartnerCategory',
+    column: 'c_bp_group_id',
+    type: 'TEXT'
+  }, {
+    name: 'businessPartnerCategory_name',
+    column: 'c_bp_group_name',
+    type: 'TEXT'
+  }, {
+    name: 'creditLimit',
+    column: 'creditLimit',
+    type: 'NUMERIC'
+  }, {
+    name: 'creditUsed',
+    column: 'creditUsed',
+    type: 'NUMERIC'
+  }]);
+
+
 
   OB.Data.Registry.registerModel(BusinessPartner);
 }());
