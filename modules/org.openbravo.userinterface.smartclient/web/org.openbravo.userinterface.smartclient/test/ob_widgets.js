@@ -4,18 +4,18 @@
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009 Openbravo SLU 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2009 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 Page.setAppImgDir('[APP]../../skins/ltr/Default/');
 
@@ -24,146 +24,137 @@ isc.ClassFactory.defineClass("OBListGrid", isc.VLayout);
 isc.OBListGrid.addProperties({
 
   // Override initWidget to populate the editor with a resizeable ListGrid and editor pane
-  initWidget : function () {
+  initWidget: function () {
 
     // Always call the superclass implementation when overriding initWidget
     this.Super("initWidget", arguments);
 
 
     this.newButton = isc.IButton.create({
-      icon : "Main/ToolBar/iconNew.png",
-      autoDraw : false,
-      layoutAlign : "left",
-      title : 'New',
-      widget : this,
-      click : function () {
+      icon: "Main/ToolBar/iconNew.png",
+      autoDraw: false,
+      layoutAlign: "left",
+      title: 'New',
+      widget: this,
+      click: function () {
         this.widget.newButtonAction();
       }
     });
 
     this.saveButton = isc.IButton.create({
       // have the saveButton be initially disabled - enable when a record is selected
-      icon : "Main/ToolBar/iconSave.png",
-      disabled : false,
-      autoDraw : false,
-      layoutAlign : "left",
-      title : "Save",
-      widget : this,
-      click : function () {
+      icon: "Main/ToolBar/iconSave.png",
+      disabled: false,
+      autoDraw: false,
+      layoutAlign: "left",
+      title: "Save",
+      widget: this,
+      click: function () {
         this.widget.saveButtonAction();
       }
     });
 
     this.copyButton = isc.IButton.create({
-      icon : "Main/ToolBar/iconOrganzieMenu.png",
-      autoDraw : false,
-      layoutAlign : "left",
-      title : 'Copy',
-      grid : this.grid,
-      widget : this,
-      click : function () {
+      icon: "Main/ToolBar/iconOrganzieMenu.png",
+      autoDraw: false,
+      layoutAlign: "left",
+      title: 'Copy',
+      grid: this.grid,
+      widget: this,
+      click: function () {
         this.widget.copyButtonAction();
       }
     });
 
     this.deleteButton = isc.IButton.create({
-      icon : "Main/ToolBar/iconErase.png",
-      autoDraw : false,
-      layoutAlign : "left",
-      title : 'Delete',
-      grid : this.grid,
-      widget : this,
-      click : function () {
+      icon: "Main/ToolBar/iconErase.png",
+      autoDraw: false,
+      layoutAlign: "left",
+      title: 'Delete',
+      grid: this.grid,
+      widget: this,
+      click: function () {
         this.widget.deleteButtonAction();
       }
     });
 
     this.previousButton = isc.IButton.create({
-      icon : "Main/ToolBar/iconPrevious.png",
-      autoDraw : false,
-      layoutAlign : "left",
-      title : 'Previous',
-      grid : this.grid,
-      widget : this,
-      click : function () {
+      icon: "Main/ToolBar/iconPrevious.png",
+      autoDraw: false,
+      layoutAlign: "left",
+      title: 'Previous',
+      grid: this.grid,
+      widget: this,
+      click: function () {
         this.widget.previousButtonAction();
       }
     });
 
     this.nextButton = isc.IButton.create({
-      icon : "Main/ToolBar/iconNext.png",
-      autoDraw : false,
-      layoutAlign : "left",
-      title : 'Next',
-      grid : this.grid,
-      widget : this,
-      click : function () {
+      icon: "Main/ToolBar/iconNext.png",
+      autoDraw: false,
+      layoutAlign: "left",
+      title: 'Next',
+      grid: this.grid,
+      widget: this,
+      click: function () {
         this.widget.nextButtonAction();
       }
     });
 
 
     this.grid = isc.ListGrid.create({
-      advancedListGrid : this,
-      form : this.form,
-      saveButton : this.saveButton,
-      autoDraw : false,
-      showResizeBar : true,
-      showFilterEditor : this.showFilterEditor,
-      filterOnKeypress : true,
-      dataSource : this.dataSource,
-      data : this.data,
-      fields : this.fields,
+      advancedListGrid: this,
+      form: this.form,
+      saveButton: this.saveButton,
+      autoDraw: false,
+      showResizeBar: true,
+      showFilterEditor: this.showFilterEditor,
+      filterOnKeypress: true,
+      dataSource: this.dataSource,
+      data: this.data,
+      fields: this.fields,
       //autoFetchData : true,
-      canEdit : true,
+      canEdit: true,
 
       canRemoveRecords: this.canRemoveRecords,
       // canEdit : this.canEdit, FIXME:  JSLInt Duplicate member 'canEdit'
-      confirmDiscardEdits : this.confirmDiscardEdits,
-      modalEditing : this.modalEditing,
-      minFieldWidth : this.minFieldWidth,
-      wrapCells : this.wrapCells,
+      confirmDiscardEdits: this.confirmDiscardEdits,
+      modalEditing: this.modalEditing,
+      minFieldWidth: this.minFieldWidth,
+      wrapCells: this.wrapCells,
 
-      dataPageSize : this.dataPageSize,
+      dataPageSize: this.dataPageSize,
       // showResizeBar : this.showResizeBar, FIXME: JSLint Duplicate member 'showResizeBar'
-      recordClick : this.recordClick,
-      canFreezeFields : this.canFreezeFields,
-      canAddFormulaFields : this.canAddFormulaFields,
-      canAddSummaryFields : this.canAddSummaryFields,
-      autoFetchData : this.autoFetchGridData, //With different param name to avoid unexpected crash
-      alternateRecordStyles : this.alternateRecordStyles/*,
-
-      recordClick: function (viewer, record, rowNum, field, fieldNum, value, rawValue) {
-        //alert(rowNum);
-        this.saveButton.enable();
-      },
-      rowClick : function (record, recordNum, fieldNum) {
-
-      }*/
+      recordClick: this.recordClick,
+      canFreezeFields: this.canFreezeFields,
+      canAddFormulaFields: this.canAddFormulaFields,
+      canAddSummaryFields: this.canAddSummaryFields,
+      autoFetchData: this.autoFetchGridData,
+      //With different param name to avoid unexpected crash
+      alternateRecordStyles: this.alternateRecordStyles //,
+      // recordClick: function (viewer, record, rowNum, field, fieldNum, value, rawValue) {
+      //  alert(rowNum);
+      //  this.saveButton.enable();
+      //} ,
+      // rowClick : function (record, recordNum, fieldNum) {
+      //}
     });
 
 
     this.toolbarLayout = isc.HLayout.create({
-      height : "20",
-      autoDraw : false,
-      membersMargin : 5,
-      members : [
-        this.newButton,
-        this.saveButton,
-        this.copyButton,
-        this.deleteButton,
-        this.previousButton,
-        this.nextButton
-      ]
+      height: "20",
+      autoDraw: false,
+      membersMargin: 5,
+      members: [
+      this.newButton, this.saveButton, this.copyButton, this.deleteButton, this.previousButton, this.nextButton]
     });
 
     this.widgetLayout = isc.VLayout.create({
-      autoDraw : false,
-      membersMargin : 5,
-      members : [
-        this.toolbarLayout,
-        this.grid
-      ]
+      autoDraw: false,
+      membersMargin: 5,
+      members: [
+      this.toolbarLayout, this.grid]
     });
 
     // Slot the compount into
@@ -180,36 +171,40 @@ isc.OBListGrid.addProperties({
 
   // setDataSource()
   // Method to update the dataSource of both the grid and the form
-  setDataSource : function (dataSource) {
+  setDataSource: function (dataSource) {
     this.grid.setDataSource(dataSource);
     this.saveButton.disable();
     this.grid.filterData();
   },
 
-  newButtonAction : function () {
+  newButtonAction: function () {
     this.grid.startEditingNew();
   },
 
-  saveButtonAction : function () {
+  saveButtonAction: function () {
     this.setRowEditing(7, true);
   },
 
-  copyButtonAction : function () {
+  copyButtonAction: function () {
     this.setRowEditing(7, false);
   },
 
-  deleteButtonAction : function () {  //Work in progress
+  deleteButtonAction: function () { //Work in progress
     grid = this.grid;
     ident = grid.getSelectedRecord()._identifier;
     var func = function (value) {
-      if (value !== null && value) {
-        isc.DataSource.getDataSource(grid.dataSource).removeData('', '', {params : {id: grid.getSelectedRecord().id}});
-      }
-    };
+        if (value !== null && value) {
+          isc.DataSource.getDataSource(grid.dataSource).removeData('', '', {
+            params: {
+              id: grid.getSelectedRecord().id
+            }
+          });
+        }
+        };
     isc.confirm("Are you sure you want to delete " + ident + "?", func);
   },
 
-  previousButtonAction : function () {
+  previousButtonAction: function () {
     var selectedRowNum = this.grid.findRowNum(this.grid.getSelectedRecord());
     if (selectedRowNum === 0) {
       selectedRowNum = 1;
@@ -217,7 +212,7 @@ isc.OBListGrid.addProperties({
     this.grid.selectSingleRecord(selectedRowNum - 1);
   },
 
-  nextButtonAction : function () {
+  nextButtonAction: function () {
     var selectedRowNum = this.grid.findRowNum(this.grid.getSelectedRecord());
     this.grid.selectSingleRecord(selectedRowNum + 1);
   }
@@ -228,8 +223,8 @@ isc.OBListGrid.addProperties({
 isc.ClassFactory.defineClass("OBDateItem", DateItem);
 
 isc.OBDateItem.addClassProperties({
-  OBDateItemElement : null,
-  autoCompleteDate : function (value) {
+  OBDateItemElement: null,
+  autoCompleteDate: function (value) {
     //if (!isTabPressed) {
     var fmt = this.OBDateItemElement.dateFormat;
     fmt = OB.Utilities.Date.normalizeDisplayFormat(fmt);
@@ -240,7 +235,8 @@ isc.OBDateItem.addClassProperties({
     } catch (ignored) {}
     var strDate = value;
     var b = fmt.match(/%./g);
-    var i = 0, j = -1;
+    var i = 0,
+        j = -1;
     var text = "";
     var length = 0;
     var pos = fmt.indexOf(b[0]) + b[0].length;
@@ -263,11 +259,9 @@ isc.OBDateItem.addClassProperties({
         if (j > 0) {
           if (b[j] === "%H") {
             text += " ";
-          }
-          else if (b[j] === "%M" || b[j] === "%S") {
+          } else if (b[j] === "%M" || b[j] === "%S") {
             text += separatorH;
-          }
-          else {
+          } else {
             text += separator;
           }
         }
@@ -316,7 +310,7 @@ isc.OBDateItem.addClassProperties({
     // if (i > 7 && (typeof (field.onchange)!="undefined")) field.onchange();
     //}
   },
-  validateDate : function (inputDate) {
+  validateDate: function (inputDate) {
     var inputDateFormat = this.getDateFormat();
     if (OB.Utilities.Date.OBToJS(inputDate, inputDateFormat)) {
       return true;
@@ -324,7 +318,7 @@ isc.OBDateItem.addClassProperties({
       return false;
     }
   },
-  getTimeBlock : function (str_time, block) {
+  getTimeBlock: function (str_time, block) {
     //time parsing and formatting routimes. modify them if you wish other time format
     //function str2dt (str_time) {
     if (str_time.indexOf(".") === -1 && str_time.indexOf(":") === -1) {
@@ -337,27 +331,24 @@ isc.OBDateItem.addClassProperties({
     var timeBlock = str_time.match(/(\d+)(\d+)/g);
     if (block === 1 || block === '1') {
       response = timeBlock[0];
-    }
-    else if (block === 2 || block === '2') {
+    } else if (block === 2 || block === '2') {
       response = timeBlock[1];
-    }
-    else if (block === 3 || block === '3') {
+    } else if (block === 3 || block === '3') {
       response = timeBlock[2];
-    }
-    else {
+    } else {
       response = timeBlock;
     }
-    if ((block === 3 || block === '3') && typeof response  === 'undefined') {
+    if ((block === 3 || block === '3') && typeof response === 'undefined') {
       response = "00";
     }
     return response;
   },
-  getDateFormat : function () {
+  getDateFormat: function () {
     var dateFormat = this.OBDateItemElement.dateFormat;
     return dateFormat;
   },
 
-  getDateBlock : function (str_date, block) {
+  getDateBlock: function (str_date, block) {
     var datePattern = "^(\\d+)[\\-|\\/|/|:|.|\\.](\\d+)[\\-|\\/|/|:|.|\\.](\\d+)$";
     var dateRegExp = new RegExp(datePattern);
     if (!dateRegExp.exec(str_date)) {
@@ -377,7 +368,7 @@ isc.OBDateItem.addClassProperties({
       return dateBlock;
     }
   },
-  expandDateYear : function (value) {
+  expandDateYear: function (value) {
     var str_date = value;
     var str_dateFormat = this.OBDateItemElement.dateFormat;
     if (str_date === null) {
@@ -425,7 +416,7 @@ isc.OBDateItem.addClassProperties({
     }
     return true;
   },
-  getRandomInteger : function (minInt, maxInt) {
+  getRandomInteger: function (minInt, maxInt) {
     if (typeof minInt === "undefined") {
       minInt = 0;
     }
@@ -436,7 +427,7 @@ isc.OBDateItem.addClassProperties({
     randomInteger = Math.round(randomInteger);
     return randomInteger;
   },
-  getRandomString : function (num) {
+  getRandomString: function (num) {
     if (typeof num === "undefined") {
       num = 10;
     }
@@ -448,9 +439,9 @@ isc.OBDateItem.addClassProperties({
     }
     return randomString;
   },
-  validateOBDateItem : function () {
+  validateOBDateItem: function () {
     var validatorLength = this.OBDateItemElement.validators.length;
-    var isValid = this.OBDateItemElement.validators[validatorLength-1].condition(this.OBDateItemElement, this.OBDateItemElement.form, this.OBDateItemElement.getValue());
+    var isValid = this.OBDateItemElement.validators[validatorLength - 1].condition(this.OBDateItemElement, this.OBDateItemElement.form, this.OBDateItemElement.getValue());
     var isRequired = this.OBDateItemElement.required;
     if (typeof this.OBDateItemElement.name === "undefined") {
       this.name = "isc_" + OBDateItem.getRandomString(OBDateItem.getRandomInteger(6, 12));
@@ -466,20 +457,20 @@ isc.OBDateItem.addClassProperties({
 });
 
 isc.OBDateItem.addProperties({
-  useTextField : true,
+  useTextField: true,
   changeOnKeypress: true,
-  validateOnChange : false,
-  focus : function () {
+  validateOnChange: false,
+  focus: function () {
     OBDateItem.OBDateItemElement = this;
   },
-  change :  function (form, item, value, oldValue) { /*transformInput*/
+  change: function (form, item, value, oldValue) { //transformInput
     OBDateItem.OBDateItemElement = this;
     OBDateItem.autoCompleteDate(value);
   },
-  iconClick : function () {
+  iconClick: function () {
     OBDateItem.OBDateItemElement = this;
   },
-  blur : function () {
+  blur: function () {
     OBDateItem.OBDateItemElement = this;
     OBDateItem.expandDateYear(this.getValue());
     OBDateItem.validateOBDateItem();
@@ -490,9 +481,9 @@ isc.OBDateItem.addProperties({
     return displayedDate;
   },
   inputFormat: "toDateStamp",
-  validators : [{
-    type : "custom",
-    condition : function (form, item, value) {
+  validators: [{
+    type: "custom",
+    condition: function (form, item, value) {
       return OBDateItem.validateDate(value);
     }
   }]
@@ -503,24 +494,24 @@ isc.OBDateItem.addProperties({
 isc.ClassFactory.defineClass("OBNumberItem", TextItem);
 
 isc.OBNumberItem.addClassProperties({
-  OBNumberItemElement : null,
-  getDefaultMaskNumeric : function () {
+  OBNumberItemElement: null,
+  getDefaultMaskNumeric: function () {
     var maskNumeric = "#,###.#";
     return maskNumeric;
   },
-  getGlobalDecSeparator : function () {
+  getGlobalDecSeparator: function () {
     var decSeparator = ".";
     return decSeparator;
   },
-  getGlobalGroupSeparator : function () {
+  getGlobalGroupSeparator: function () {
     var groupSeparator = ",";
     return groupSeparator;
   },
-  getGlobalGroupInterval : function () {
+  getGlobalGroupInterval: function () {
     var groupInterval = "3";
     return groupInterval;
   },
-  returnNewCaretPosition : function (number, oldCaretPosition, groupSeparator) {
+  returnNewCaretPosition: function (number, oldCaretPosition, groupSeparator) {
     var newCaretPosition = oldCaretPosition;
     for (var i = oldCaretPosition; i > 0; i--) {
       if (number.substring(i - 1, i) == groupSeparator) {
@@ -529,7 +520,7 @@ isc.OBNumberItem.addClassProperties({
     }
     return newCaretPosition;
   },
-  focusNumberInput : function (maskNumeric, decSeparator, groupSeparator, groupInterval) {
+  focusNumberInput: function (maskNumeric, decSeparator, groupSeparator, groupInterval) {
     if (maskNumeric === null || maskNumeric === "" || typeof maskNumeric === "undefined") {
       maskNumeric = this.OBNumberItemElement.maskNumeric;
     }
@@ -571,7 +562,7 @@ isc.OBNumberItem.addClassProperties({
     this.OBNumberItemElement.setValue(plainNumber);
     this.OBNumberItemElement.setSelectionRange(newCaretPosition, newCaretPosition);
   },
-  blurNumberInput : function (maskNumeric, decSeparator, groupSeparator, groupInterval) {
+  blurNumberInput: function (maskNumeric, decSeparator, groupSeparator, groupInterval) {
     if (maskNumeric === null || maskNumeric === "" || typeof maskNumeric === "undefined") {
       maskNumeric = this.OBNumberItemElement.maskNumeric;
     }
@@ -600,12 +591,12 @@ isc.OBNumberItem.addClassProperties({
 
     var number = this.OBNumberItemElement.getValue();
     var isValid = this.validateNumber(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
-    /*if (obj.getAttribute('maxlength')) {
-      if (obj.value.length > obj.getAttribute('maxlength')) {
-        isValid = false;
-      }
-    }
-    updateNumberMiniMB(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it*/
+    // if (obj.getAttribute('maxlength')) {
+    //   if (obj.value.length > obj.getAttribute('maxlength')) {
+    //     isValid = false;
+    //   }
+    // }
+    // updateNumberMiniMB(obj, isValid); //It doesn't apply in dojo043 inputs since it has its own methods to update it
     if (!isValid) {
       return false;
     }
@@ -613,7 +604,7 @@ isc.OBNumberItem.addClassProperties({
     var formattedNumber = OB.Utilities.Number.OBPlainToOBMasked(number, maskNumeric, decSeparator, groupSeparator, groupInterval);
     this.OBNumberItemElement.setValue(formattedNumber);
   },
-  replaceAt : function (string, what, ini, end) {
+  replaceAt: function (string, what, ini, end) {
     if (typeof end === "undefined" || end === null || end === "null" || end === "") {
       end = ini;
     }
@@ -626,7 +617,7 @@ isc.OBNumberItem.addClassProperties({
     newString = string.substring(0, ini) + what + string.substring(end + 1, string.length);
     return newString;
   },
-  manageDecPoint : function (keyCode, decSeparator) {
+  manageDecPoint: function (keyCode, decSeparator) {
     if (decSeparator === null || decSeparator === "") {
       decSeparator = this.getGlobalDecSeparator();
     }
@@ -636,11 +627,11 @@ isc.OBNumberItem.addClassProperties({
     }
 
     var caretPosition = this.OBNumberItemElement.getSelectionRange()[0];
-    /*
-    * if(keyCode>=65 && keyCode<=90) { setTimeout(function()
-    * {obj.value = replaceAt(obj.value, "", caretPosition);
-    * setCaretToPos(obj, caretPosition);},5); }
-    */
+    //
+    // if(keyCode >= 65 && keyCode <= 90) { setTimeout(function()
+    // {obj.value = replaceAt(obj.value, "", caretPosition);
+    // setCaretToPos(obj, caretPosition);},5); }
+    //
     var inpMaxlength = this.OBNumberItemElement.length;
     var inpLength = this.OBNumberItemElement.getValue().length;
     var isInpMaxLength = false;
@@ -650,7 +641,7 @@ isc.OBNumberItem.addClassProperties({
       isInpMaxLength = true;
     }
 
-    if (navigator.userAgent.toUpperCase().indexOf("OPERA") != -1 && keyCode==78) {
+    if (navigator.userAgent.toUpperCase().indexOf("OPERA") != -1 && keyCode == 78) {
       keyCode = 110;
     }
 
@@ -664,7 +655,7 @@ isc.OBNumberItem.addClassProperties({
     }
     return true;
   },
-  validateNumber :  function (number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
+  validateNumber: function (number, maskNumeric, decSeparator, groupSeparator, groupInterval) {
     if (number === null || number === "" || typeof number === "undefined") {
       number = this.OBNumberItemElement.getValue();
     }
@@ -724,7 +715,7 @@ isc.OBNumberItem.addClassProperties({
     }
     return false;
   },
-  getRandomInteger : function (minInt, maxInt) {
+  getRandomInteger: function (minInt, maxInt) {
     if (typeof minInt === "undefined") {
       minInt = 0;
     }
@@ -735,7 +726,7 @@ isc.OBNumberItem.addClassProperties({
     randomInteger = Math.round(randomInteger);
     return randomInteger;
   },
-  getRandomString : function (num) {
+  getRandomString: function (num) {
     if (typeof num === "undefined") {
       num = 10;
     }
@@ -747,10 +738,10 @@ isc.OBNumberItem.addClassProperties({
     }
     return randomString;
   },
-  validateOBNumberItem : function () {
+  validateOBNumberItem: function () {
     var value = this.OBNumberItemElement.getValue();
     var validatorLength = this.OBDateItemElement.validators.length;
-    var isValid = this.OBNumberItemElement.validators[validatorLength-1].condition(this.OBNumberItemElement, this.OBNumberItemElement.form, value);
+    var isValid = this.OBNumberItemElement.validators[validatorLength - 1].condition(this.OBNumberItemElement, this.OBNumberItemElement.form, value);
     var isRequired = this.OBNumberItemElement.required;
     if (typeof this.OBNumberItemElement.name === "undefined") {
       this.name = "isc_" + OBNumberItem.getRandomString(OBNumberItem.getRandomInteger(6, 12));
@@ -766,7 +757,7 @@ isc.OBNumberItem.addClassProperties({
 });
 
 isc.OBNumberItem.addProperties({
-  validateOnChange : false,
+  validateOnChange: false,
   keyPressFilter: "[0-9.,]",
   focus: function () {
     OBNumberItem.OBNumberItemElement = this;
@@ -782,11 +773,11 @@ isc.OBNumberItem.addProperties({
     OBNumberItem.OBNumberItemElement = this;
     OBNumberItem.manageDecPoint(keyCode, this.decSeparator);
   },
-  validators : [{
-    type : "custom",
-    condition : function (form, item, value) {
+  validators: [{
+    type: "custom",
+    condition: function (form, item, value) {
       return OBNumberItem.validateNumber(value);
     }
   }]
- // keyPress: function (keyName, character) { OBNumberItem.OBNumberItemElement = this; var event = isc.Event; OBNumberItem.manageDecPoint(event); }
+  // keyPress: function (keyName, character) { OBNumberItem.OBNumberItemElement = this; var event = isc.Event; OBNumberItem.manageDecPoint(event); }
 });
