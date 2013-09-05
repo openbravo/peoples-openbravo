@@ -26,13 +26,11 @@
   }, {
     name: 'currency',
     column: 'c_currency_id',
-    filter: true,
     type: 'TEXT'
   }, {
     name: 'amount',
     column: 'amount',
-    filter: true,
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'backcolor',
     column: 'backcolor',
@@ -44,7 +42,7 @@
   }, {
     name: 'lineNo',
     column: 'line',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: '_identifier',
     column: '_identifier',

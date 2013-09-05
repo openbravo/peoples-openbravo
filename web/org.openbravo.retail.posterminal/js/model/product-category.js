@@ -11,7 +11,7 @@
 
 (function () {
 
-  var ProductCategory = Backbone.Model.extend({
+  var ProductCategory = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductCategory',
     tableName: 'm_product_category',
     entityName: 'ProductCategory',
