@@ -233,8 +233,8 @@ public class POSUtils {
                   + priceListId
                   + "' and plv.validFromDate = (select max(pplv.validFromDate) "
                   + "from PricingPriceListVersion as pplv where pplv.active=true and pplv.priceList.id = '"
-                  + priceListId + "' and pplv.validFromDate <= '" + format.format(terminalDate)
-                  + "' )");
+                  + priceListId + "' and to_char(pplv.validFromDate,'yyyy-mm-dd') <= '"
+                  + format.format(terminalDate) + "' )");
       for (Object plv : priceListVersionQuery.list()) {
         return (PriceListVersion) plv;
       }
