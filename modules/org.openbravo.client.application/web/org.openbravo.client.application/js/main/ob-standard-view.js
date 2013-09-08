@@ -1749,6 +1749,8 @@ isc.OBStandardView.addProperties({
 
           if (!localData) {
             // bail out, an error occured which should be displayed to the user now
+            //clear deleting prompt
+            isc.clearPrompt();
             return;
           }
           var status = resp.status;
