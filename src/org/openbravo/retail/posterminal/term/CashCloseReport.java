@@ -46,16 +46,17 @@ public class CashCloseReport extends JSONProcessSimple {
 
     // Total sales computation
 
-    String hqlTaxes = "select ordertax.tax.id, ordertax.tax.name, sum(ordertax.taxAmount) from OrderTax as ordertax "
+    String hqlTaxes = "select olt.tax.id, olt.tax.name, sum(olt.taxAmount)"   		
+        + " from OrderLineTax as olt"
         + " where exists (select 1 "
-        + "                 from FIN_Payment_ScheduleDetail d"
-        + "              where d.orderPaymentSchedule.order = ordertax.salesOrder"
-        + "                 and exists (select 1 "
-        + "                               from FIN_Finacc_Transaction t"
-        + "                              where t.reconciliation is null"
-        + "                                and t.finPayment = d.paymentDetails.finPayment))"
-        + "and ordertax.salesOrder.documentType.id=? and ordertax.salesOrder.obposApplications.id=? "
-        + "group by ordertax.tax.id, ordertax.tax.name";
+        + "               from FIN_Payment_ScheduleDetail d"
+        + "               where d.orderPaymentSchedule.order = olt.salesOrderLine.salesOrder"
+        + "               and exists (select 1 "
+        + "                           from FIN_Finacc_Transaction t"
+        + "                           where t.reconciliation is null"
+        + "                           and t.finPayment = d.paymentDetails.finPayment))"
+        + " and olt.salesOrderLine.salesOrder.documentType.id=?  and olt.salesOrderLine.salesOrder.obposApplications.id=? "
+        + " group by olt.tax.id, olt.tax.name";
     Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
     salesTaxesQuery.setString(0,
         (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentType()));
