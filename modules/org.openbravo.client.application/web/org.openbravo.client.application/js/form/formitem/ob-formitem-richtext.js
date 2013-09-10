@@ -52,9 +52,9 @@ isc.OBRichTextItem.addProperties({
     },
 
     handleFocus: function (hasFocus) {
-      if (hasFocus) {
+      if (hasFocus && !this.styleName.endsWith('Focused')) {
         this.setStyleName(this.styleName + 'Focused');
-      } else if (this.styleName.endsWith('Focused')) {
+      } else if (!hasFocus && this.styleName.endsWith('Focused')) {
         this.setStyleName(this.styleName.substring(0, this.styleName.length - 'Focused'.length));
       }
       if (hasFocus && !this.hasFocus) {
