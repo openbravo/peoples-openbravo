@@ -109,11 +109,7 @@ enyo.kind({
       this.setDisabled();
       this.addClass('disabled');
     }
-  } //,
-  //  initComponents: function () {
-  //    this.inherited(arguments);
-  //    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
-  //  }
+  }
 });
 
 enyo.kind({
