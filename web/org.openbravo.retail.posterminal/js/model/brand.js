@@ -18,17 +18,17 @@
     source: 'org.openbravo.retail.posterminal.master.Brand',
     dataLimit: 300
   });
-  
+
   Brand.addProperties([{
     name: 'id',
     column: 'm_product_id',
     primaryKey: true,
     type: 'TEXT'
-  },{
+  }, {
     name: 'name',
     column: 'name',
     type: 'TEXT'
-  },{
+  }, {
     name: '_identifier',
     column: '_identifier',
     filter: true,

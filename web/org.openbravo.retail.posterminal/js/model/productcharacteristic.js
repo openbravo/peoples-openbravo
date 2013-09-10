@@ -18,7 +18,7 @@
     source: 'org.openbravo.retail.posterminal.master.ProductCharacteristic',
     dataLimit: 300
   });
-  
+
   ProductCharacteristic.addProperties([{
     name: 'm_product_ch_id',
     column: 'm_product_id',

@@ -405,7 +405,7 @@
         this.calculateTaxes(function () {
           //If the price doesn't include tax, the discounted gross has already been calculated
           var gross = me.get('lines').reduce(function (memo, e) {
-            if (_.isUndefined(e.get('fulldiscountedGross'))){
+            if (_.isUndefined(e.get('fulldiscountedGross'))) {
               return memo;
             }
             var grossLine = OB.DEC.toNumber(e.get('fulldiscountedGross'));

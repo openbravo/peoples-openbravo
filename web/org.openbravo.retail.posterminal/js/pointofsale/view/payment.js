@@ -395,8 +395,8 @@ enyo.kind({
     this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
     this.model.get('order').on('change:openDrawer', function () {
       this.drawerpreference = this.model.get('order').get('openDrawer');
-      var me = this; 
-      
+      var me = this;
+
       if (this.drawerpreference) {
         this.drawerOpened = false;
         this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
@@ -418,19 +418,20 @@ enyo.kind({
   },
   tap: function () {
     var myModel = this.owner.model;
-    this.allowOpenDrawer=false;
-    
-    var me = this, payments;
-    if(myModel.get('leftColumnViewManager').isOrder()){
-    	payments = this.owner.receipt.get('payments');
+    this.allowOpenDrawer = false;
+
+    var me = this,
+        payments;
+    if (myModel.get('leftColumnViewManager').isOrder()) {
+      payments = this.owner.receipt.get('payments');
     } else {
-    	payments = this.owner.model.get('multiOrders').get('payments');
+      payments = this.owner.model.get('multiOrders').get('payments');
     }
-    
-    payments.each(function(payment){
-    	if (payment.get('allowOpenDrawer') || payment.get('isCash')){
-           me.allowOpenDrawer=true;
-    	}
+
+    payments.each(function (payment) {
+      if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
+        me.allowOpenDrawer = true;
+      }
     });
     //if (this.owner.model.get('multiOrders').get('multiOrdersList').length === 0 && !this.owner.model.get('multiOrders').get('isMultiOrders')) {
     if (myModel.get('leftColumnViewManager').isOrder()) {
@@ -454,7 +455,7 @@ enyo.kind({
           this.owner.receipt.trigger('voidLayaway');
         } else {
           this.owner.receipt.trigger('paymentDone');
-          if (this.allowOpenDrawer){
+          if (this.allowOpenDrawer) {
             this.owner.receipt.trigger('openDrawer');
           }
         }
@@ -474,8 +475,8 @@ enyo.kind({
       } else {
         this.owner.model.get('multiOrders').trigger('paymentDone');
         this.owner.model.get('multiOrders').set('openDrawer', false);
-        if (this.allowOpenDrawer){
-            this.owner.receipt.trigger('openDrawer');
+        if (this.allowOpenDrawer) {
+          this.owner.receipt.trigger('openDrawer');
         }
       }
     }

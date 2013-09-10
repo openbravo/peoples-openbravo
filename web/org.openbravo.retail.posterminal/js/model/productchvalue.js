@@ -18,7 +18,7 @@
     source: 'org.openbravo.retail.posterminal.master.ProductChValue',
     dataLimit: 300
   });
-  
+
   ProductChValue.addProperties([{
     name: 'id',
     column: 'id',
@@ -36,7 +36,7 @@
     name: 'parent',
     column: 'parent',
     type: 'TEXT'
-  },{
+  }, {
     name: '_identifier',
     column: '_identifier',
     type: 'TEXT'
