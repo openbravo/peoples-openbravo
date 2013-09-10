@@ -26,7 +26,15 @@ isc.ClassFactory.defineClass('OBRichTextEditor', isc.RichTextEditor);
 isc.OBRichTextItem.addProperties({
   operator: 'iContains',
   validateOnExit: true,
+  moveFocusOnTab: true,
   canvasConstructor: 'OBRichTextEditor',
+
+  editAreaFocusChanged: function () {
+    var ret = this.Super('editAreaFocusChanged', arguments);
+    this.canvas.handleFocus(this.hasFocus);
+    return ret;
+  },
+
   canvasProperties: {
     canFocus: true,
     editAreaBackgroundColor: 'transparent',
@@ -91,10 +99,6 @@ isc.OBRichTextItem.addProperties({
           response = this.Super('keyDown', arguments);
         }
         return response;
-      },
-
-      focusChanged: function (hasFocus) {
-        this.parentElement.handleFocus(hasFocus);
       }
     },
     toolbarProperties: {
