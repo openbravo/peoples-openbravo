@@ -26,7 +26,7 @@ enyo.kind({
         executeLastCriteria: true
       });
     }
-
+    this.$.subWindowBody.$.casbody.$.listcustomers.$.leftbar.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;
   },
   beforeClose: function (dest) {
@@ -42,7 +42,8 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.customers.casheader'
   },
   body: {
-    kind: 'OB.OBPOSPointOfSale.UI.customers.casbody'
+    kind: 'OB.OBPOSPointOfSale.UI.customers.casbody',
+    name: 'casbody'
   }
 });
 
@@ -184,7 +185,6 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     this.setContent(this.i18nLabel ? OB.I18N.getLabel(this.i18nLabel) : this.label);
   }
 });
@@ -194,7 +194,8 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.CustomerLeftBar',
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.customers.NewCustomerButton',
-    i18nLabel: 'OBPOS_LblNew'
+    i18nLabel: 'OBPOS_LblNew',
+    name: 'newAction'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.customers.SearchCustomerButton',
     i18nLabel: 'OBPOS_LblAC',
@@ -284,7 +285,8 @@ enyo.kind({
   components: [{
     style: 'text-align: center; padding-top: 10px; float: left; width: 19%;',
     components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.customers.CustomerLeftBar'
+      kind: 'OB.OBPOSPointOfSale.UI.customers.CustomerLeftBar',
+      name: 'leftbar'
     }]
   }, {
     style: 'float: left; width: 80%;',
@@ -414,6 +416,8 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.casbody',
   components: [{
-    kind: 'OB.OBPOSPointOfSale.UI.customers.ListCustomers'
+    kind: 'OB.OBPOSPointOfSale.UI.customers.ListCustomers',
+    name: 'listcustomers'
+
   }]
 });

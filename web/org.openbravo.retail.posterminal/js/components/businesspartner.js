@@ -101,11 +101,11 @@ enyo.kind({
       this.setDisabled();
       this.addClass('disabled');
     }
-  },
-  initComponents: function () {
-    this.inherited(arguments);
-    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
-  }
+  } //,
+  //  initComponents: function () {
+  //    this.inherited(arguments);
+  //    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+  //  }
 });
 
 enyo.kind({
@@ -201,7 +201,8 @@ enyo.kind({
       components: [{
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.UI.NewCustomerWindowButton'
+          kind: 'OB.UI.NewCustomerWindowButton',
+          name: 'newAction'
         }]
       }, {
         style: 'display: table-cell;',
@@ -330,6 +331,11 @@ enyo.kind({
   name: 'OB.UI.ModalBusinessPartners',
   topPosition: '125px',
   kind: 'OB.UI.Modal',
+  executeOnShow: function () {
+    this.$.body.$.listBps.$.bpslistitemprinter.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    return true;
+  },
+
   executeOnHide: function () {
     this.$.body.$.listBps.$.bpslistitemprinter.$.theader.$.modalBpScrollableHeader.clearAction();
   },
