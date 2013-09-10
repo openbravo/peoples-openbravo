@@ -1031,8 +1031,13 @@ OB.Utilities.isUUID = function (object) {
   if (typeof object !== 'string') {
     return false;
   }
-  if (object.length !== 32) {
+  if (object.length !== 7 && object.length !== 32) {
     return false;
+  }
+  if (object.length === 32) {
+    return (/[A-Fa-f0-9]{32,32}/).test(object);
+  } else if (object.length === 7) {
+    return (/[A-Fa-f0-9]{7,7}/).test(object);
   }
   return (/[A-Fa-f0-9]{32,32}/).test(object);
 };
