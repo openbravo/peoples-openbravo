@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
@@ -284,6 +285,13 @@ public class POSUtils {
   }
 
   public static int getLastDocumentNumberForPOS(String searchKey, List<String> documentTypeIds) {
+    OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance().createCriteria(
+        OBPOSApplications.class);
+    termCrit.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, searchKey));
+    if (termCrit.count() != 1) {
+      throw new OBException("Error while loading the terminal " + searchKey);
+    }
+    OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
 
     String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("bbdd.rdbms");
@@ -314,17 +322,39 @@ public class POSUtils {
     SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
     query.setString(0, searchKey);
     query.setString(1, searchKey);
+    int maxDocNo;
     List result = query.list();
     if (result.size() == 0 || result.get(0) == null) {
-      return 0;
-    }
-    if (curDbms.equals("POSTGRE")) {
-      return ((BigDecimal) result.get(0)).intValue();
+      maxDocNo = 0;
+    } else if (curDbms.equals("POSTGRE")) {
+      maxDocNo = ((BigDecimal) result.get(0)).intValue();
     } else if (curDbms.equals("ORACLE")) {
-      return ((Long) result.get(0)).intValue();
+      maxDocNo = ((Long) result.get(0)).intValue();
     } else {
-      return 0;
+      maxDocNo = 0;
     }
+
+    // This number will be compared against the maximum number of the failed orders
+    OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
+    List<OBPOSErrors> errors = errorCrit.list();
+    for (OBPOSErrors error : errors) {
+      try {
+        JSONObject jsonError = new JSONObject(error.getJsoninfo());
+        String documentNo = jsonError.getString("documentNo");
+        if (documentNo.indexOf("/") != 0) {
+          String number = documentNo.substring(documentNo.indexOf("/") + 1);
+          int errorNumber = new Long(number).intValue();
+          if (errorNumber > maxDocNo) {
+            maxDocNo = errorNumber;
+          }
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        // If not parseable, we continue
+      }
+    }
+    return maxDocNo;
   }
 
   public static int getLastDocumentNumberForPOS(String searchKey, String documentTypeId) {
