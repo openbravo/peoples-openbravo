@@ -129,10 +129,10 @@ enyo.kind({
         components: [{
           classes: 'span7',
           kind: 'Scroller',
-          maxHeight: '120px',
+          maxHeight: '130px',
           thumb: true,
           horizontal: 'hidden',
-          style: 'padding: 16px 0px 10px 25px; line-height: 140%;',
+          style: 'padding: 5px 0px 5px 10px; line-height: 135%;',
           components: [{
             classes: 'row-fluid',
             style: 'clear: both;',
@@ -144,6 +144,19 @@ enyo.kind({
               components: [{
                 tag: 'span',
                 name: 'editlinename'
+              }]
+            }]
+          }, {
+            classes: 'row-fluid',
+            style: 'clear: both;',
+            components: [{
+              classes: 'span4',
+              name: 'editlinedetailLbl'
+            }, {
+              classes: 'span8',
+              components: [{
+                tag: 'span',
+                name: 'editlinedetail'
               }]
             }]
           }, {
@@ -269,6 +282,14 @@ enyo.kind({
       this.$.msgedit.show();
       this.$.editlineimage.setImg(this.line.get('product').get('img'));
       this.$.editlinename.setContent(this.line.get('product').get('_identifier'));
+      if (this.line.get('product').get('characteristicDescription') === null) {
+        this.$.editlinedetail.hide();
+        this.$.editlinedetailLbl.hide();
+      } else {
+        this.$.editlinedetail.show();
+        this.$.editlinedetailLbl.show();
+        this.$.editlinedetail.setContent(this.line.get('product').get('characteristicDescription'));
+      }
       this.$.editlineqty.setContent(this.line.printQty());
       this.$.editlinediscount.setContent(this.line.printDiscount());
       this.$.editlineprice.setContent(this.line.printPrice());
@@ -283,12 +304,14 @@ enyo.kind({
       this.$.msgaction.show();
       this.$.editlineimage.setImg(null);
       this.$.editlinename.setContent('');
+      this.$.editlinedetail.setContent('');
       this.$.editlineqty.setContent('');
       this.$.editlinediscount.setContent('');
       this.$.editlineprice.setContent('');
       this.$.editlinegross.setContent('');
     }
     this.$.editlinenameLbl.setContent(OB.I18N.getLabel('OBPOS_LineDescription'));
+    this.$.editlinedetailLbl.setContent(OB.I18N.getLabel('OBPOS_LineDetail'));
     this.$.editlineqtyLbl.setContent(OB.I18N.getLabel('OBPOS_LineQuantity'));
     this.$.editlinepriceLbl.setContent(OB.I18N.getLabel('OBPOS_LinePrice'));
     this.$.editlinediscountLbl.setContent(OB.I18N.getLabel('OBPOS_LineDiscount'));
