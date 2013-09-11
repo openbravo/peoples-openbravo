@@ -379,6 +379,7 @@ isc.OBCharacteristicsFilterItem.addClassProperties({
 });
 
 isc.OBCharacteristicsFilterItem.addProperties({
+  operator: 'exists',
   canEdit: false,
   disableIconsOnReadOnly: false,
   defaultHqlExists: 'exists (from ProductCharacteristicValue v where e = v.product and v.characteristicValue.id in ($value))',
