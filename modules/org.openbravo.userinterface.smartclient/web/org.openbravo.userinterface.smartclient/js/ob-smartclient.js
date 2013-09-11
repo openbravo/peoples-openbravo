@@ -811,7 +811,7 @@ isc.DataSource.addProperties({
   };
 
   // replace all the operators that have the same string comparator iContains has
-  operators = isc.DataSource._operators || isc.DataSource.$4r; // Iternal SC property
+  operators = isc.DataSource._operators || isc.DataSource.$57z; // Internal SC property
   originalCondition = operators.iContains.condition;
 
   for (i in operators) {
