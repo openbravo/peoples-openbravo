@@ -2414,6 +2414,10 @@ isc.OBStandardView.addProperties({
         fld.filterEditorType = type.filterEditorType;
       }
 
+      if (type.sortNormalizer) {
+        fld.sortNormalizer = type.sortNormalizer;
+      }
+
       if (!fld.filterEditorProperties) {
         fld.filterEditorProperties = {};
       }

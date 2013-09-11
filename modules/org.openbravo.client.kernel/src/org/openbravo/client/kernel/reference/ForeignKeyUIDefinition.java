@@ -76,4 +76,9 @@ public class ForeignKeyUIDefinition extends UIDefinition {
   protected String getSuperGridFieldName(Field field) {
     return super.getGridFieldName(field);
   }
+
+  @Override
+  public String getTypeProperties() {
+    return "sortNormalizer: function (item, field, context){ return OB.Utilities.enumSortNormalizer(item, field, context);},";
+  }
 }

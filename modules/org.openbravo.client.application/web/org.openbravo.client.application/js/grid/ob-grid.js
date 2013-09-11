@@ -508,10 +508,17 @@ isc.OBGrid.addProperties({
     var i = 0,
         fld, length;
     if (!keepFilterClause) {
+      // forcing fetch from server in case default filters are removed, in other
+      // cases adaptive filtering can be used if possible
+      if (this.data) {
+        this.data.forceRefresh = this.filterClause || this.sqlFilterClause;
+        delete this.data.context.params._where;
+      }
+
       delete this.filterClause;
       delete this.sqlFilterClause;
     }
-    this.forceRefresh = true;
+
     if (this.filterEditor) {
       if (this.filterEditor.getEditForm()) {
         this.filterEditor.getEditForm().clearValues();

@@ -1201,3 +1201,23 @@ OB.Utilities.getProcessTabBarPosition = function (processView) {
   return -1;
 
 };
+
+OB.Utilities.yesNoSortNormalizer = function (item, field, context) {
+  var value = item[field];
+  if (value === true) {
+    return 1;
+  } else if (value === false) {
+    return 2;
+  } else {
+    return 3;
+  }
+};
+
+OB.Utilities.enumSortNormalizer = function (item, field, context) {
+  var value = item[field],
+      undef;
+  if (value === null || value === undef) {
+    return '-'; // hack to sort nulls last
+  }
+  return ' ' + value;
+};
