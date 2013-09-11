@@ -380,6 +380,12 @@ isc.OBCharacteristicsFilterItem.addClassProperties({
 
 isc.OBCharacteristicsFilterItem.addProperties({
   operator: 'exists',
+
+  // Allow expressions so when multiple expressions (different characteristics
+  // are selected) they are properly grouped and not stored in _extraAdvancedCriteria
+  // in DynamicForm.setValuesAsCriteria method, being possible in this way to properly
+  // clear filters. See issue #24739
+  allowExpressions: true,
   canEdit: false,
   disableIconsOnReadOnly: false,
   hqlExists: 'exists (from ProductCharacteristicValue v where {productInEntity} = v.product and v.characteristicValue.id in ($value))',
