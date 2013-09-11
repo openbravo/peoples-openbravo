@@ -272,6 +272,10 @@ isc.OBRelativeDateItem.changeDefaults('valueFieldDefaults', {
 
 isc.ClassFactory.defineClass('OBDateRangeItem', isc.DateRangeItem);
 
+isc.OBDateRangeItem.addProperties({
+  relativeItemConstructor: 'OBRelativeDateItem'
+});
+
 
 // == OBMiniDateRangeItem ==
 // OBMiniDateRangeItem inherits from SmartClient MiniDateRangeItem
@@ -327,10 +331,6 @@ isc.OBDateRangeDialog.addProperties({
     }
   }
 
-});
-
-isc.OBDateRangeDialog.changeDefaults('rangeItemDefaults', {
-  relativeItemConstructor: 'OBRelativeDateItem'
 });
 
 
