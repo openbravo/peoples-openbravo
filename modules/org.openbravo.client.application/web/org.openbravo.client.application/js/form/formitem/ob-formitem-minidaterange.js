@@ -21,6 +21,7 @@ isc.ClassFactory.defineClass('OBRelativeDateItem', isc.RelativeDateItem);
 
 isc.OBRelativeDateItem.addProperties({
   showChooserIcon: false,
+  showPickerTimeItem: false,
   timeUnitOptions: ['day', 'week', 'month', 'quarter', 'year'],
   todayTitle: OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
 
