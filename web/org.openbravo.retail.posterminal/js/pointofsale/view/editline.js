@@ -288,7 +288,7 @@ enyo.kind({
       } else {
         this.$.editlinedetail.show();
         this.$.editlinedetailLbl.show();
-        this.$.editlinedetail.setContent(this.line.get('product').get('characteristicDescription'));
+        this.$.editlinedetail.setContent(OB.UTIL.getCharacteristicValues(this.line.get('product').get('characteristicDescription')));
       }
       this.$.editlineqty.setContent(this.line.printQty());
       this.$.editlinediscount.setContent(this.line.printDiscount());

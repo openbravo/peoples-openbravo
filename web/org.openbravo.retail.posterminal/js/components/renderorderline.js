@@ -62,6 +62,19 @@ enyo.kind({
     } else {
       this.$.gross.setContent(this.model.printNet());
     }
+    if (this.model.get('product').get('characteristicDescription')) {
+      this.createComponent({
+        style: 'display: block;',
+        components: [{
+          content: OB.UTIL.getCharacteristicValues(this.model.get('product').get('characteristicDescription')),
+          attributes: {
+            style: 'float: left; width: 60%; color:grey'
+          }
+        }, {
+          style: 'clear: both;'
+        }]
+      });
+    }
     if (this.model.get('promotions')) {
       enyo.forEach(this.model.get('promotions'), function (d) {
         if (d.hidden) {
