@@ -11,13 +11,15 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
-isc.RelativeDateItem.addProperties({
+isc.ClassFactory.defineClass('OBRelativeDateItem', isc.RelativeDateItem);
+
+isc.OBRelativeDateItem.addProperties({
   showChooserIcon: false,
   timeUnitOptions: ['day', 'week', 'month', 'quarter', 'year'],
   todayTitle: OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
@@ -134,10 +136,95 @@ isc.RelativeDateItem.addProperties({
     }
 
     this.Super('blur', arguments);
+  },
+
+  displayFormat: OB.Format.date,
+  inputFormat: OB.Format.date,
+  pickerConstructor: 'OBDateChooser',
+
+  // overridden as the displayDateFormat does not seem to work fine
+  formatDate: function (dt) {
+    return OB.Utilities.Date.JSToOB(dt, OB.Format.date);
+  },
+
+  // updateEditor() Fired when the value changes (via updateValue or setValue)
+  // Shows or hides the quantity box and updates the hint to reflect the current value.
+  // overridden to solve: https://issues.openbravo.com/view.php?id=16295
+  updateEditor: function () {
+
+    if (!this.valueField || !this.quantityField) {
+      return;
+    }
+
+    var focusItem, selectionRange, mustRefocus = false;
+
+    if (this.valueField.hasFocus) {
+      focusItem = this.valueField;
+      selectionRange = this.valueField.getSelectionRange();
+    } else if (this.quantityField.hasFocus) {
+      focusItem = this.quantityField;
+      selectionRange = this.quantityField.getSelectionRange();
+    }
+
+    var value = this.valueField.getValue(),
+        quantity = this.quantityField.getValue();
+
+    var showQuantity = (value && isc.isA.String(value) && this.relativePresets[value]);
+
+    if (!showQuantity) {
+      if (this.quantityField.isVisible()) {
+        mustRefocus = true;
+        this.quantityField.hide();
+      }
+    } else {
+      if (!this.quantityField.isVisible()) {
+        mustRefocus = true;
+        this.quantityField.show();
+      }
+    }
+
+    if (this.calculatedDateField) {
+      value = this.getValue();
+      var displayValue = this.editor.getValue('valueField');
+      // only show if the value is not a direct date
+      // https://issues.openbravo.com/view.php?id=16295
+      if (displayValue && displayValue.length > 0) {
+        displayValue = OB.Utilities.trim(displayValue);
+        // if it starts with a number then it must be a real date
+        if (displayValue.charAt(0) < '0' || displayValue.charAt(0) > '9') {
+          this.calculatedDateField.setValue(!value ? '' : '(' + this.formatDate(value) + ')');
+        } else {
+          this.calculatedDateField.setValue('');
+        }
+      } else {
+        this.calculatedDateField.setValue('');
+      }
+    }
+
+    // If we redrew the form to show or hide the qty field, we may need to refocus and
+    // reset the selection range
+    if (mustRefocus && focusItem !== null) {
+      if (!showQuantity && focusItem === this.quantityField) {
+        this.valueField.focusInItem();
+      } else {
+        if (selectionRange) {
+          focusItem.delayCall('setSelectionRange', [selectionRange[0], selectionRange[1]]);
+        }
+      }
+    }
+    this.calculatedDateField.canFocus = false;
+  },
+
+  // overridden because the picker is now part of the combo and not a separate field.
+  // custom code to center the picker over the picker icon
+  getPickerRect: function () {
+    // we want the date chooser to float centered over the picker icon.
+    var form = this.canvas;
+    return [this.getPageLeft() + form.getLeft(), this.getPageTop() + form.getTop() - 40];
   }
 });
 
-isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {
+isc.OBRelativeDateItem.changeDefaults('quantityFieldDefaults', {
   // max 1000 days/months in the past/future
   max: 1000,
   alwaysTakeSpace: false,
@@ -154,7 +241,7 @@ isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {
   }
 });
 
-isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
+isc.OBRelativeDateItem.changeDefaults('valueFieldDefaults', {
   keyPress: function (item, form, keyName, characterValue) {
     if (keyName === 'Enter' && !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
       // canvasItem is the rangeItem
@@ -181,6 +268,10 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
   }
 });
 
+
+isc.ClassFactory.defineClass('OBDateRangeItem', isc.DateRangeItem);
+
+
 // == OBMiniDateRangeItem ==
 // OBMiniDateRangeItem inherits from SmartClient MiniDateRangeItem
 // Is used for filtering dates in the grid. Contains the following classes:
@@ -189,6 +280,8 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
 isc.ClassFactory.defineClass('OBDateRangeDialog', isc.DateRangeDialog);
 
 isc.OBDateRangeDialog.addProperties({
+  rangeItemConstructor: "OBDateRangeItem",
+
   initWidget: function () {
     this.Super('initWidget', arguments);
     this.rangeForm.setFocusItem(this.rangeItem);
@@ -235,6 +328,10 @@ isc.OBDateRangeDialog.addProperties({
 
 });
 
+isc.OBDateRangeDialog.changeDefaults('rangeItemDefaults', {
+  relativeItemConstructor: 'OBRelativeDateItem'
+});
+
 
 // == OBMinDateRangeItem ==
 // Item used for filtering by dates in the grid. Replaces the normal Smartclient
@@ -251,12 +348,11 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
 
   // note this one needs to be set to let the formatDate be called below
   dateDisplayFormat: OB.Format.date,
-  rangeDialogConstructor: isc.OBDateRangeDialog,
 
   textBoxStyle: 'textItem',
   shouldSaveValue: true,
+  rangeDialogConstructor: 'OBDateRangeDialog',
   rangeDialogDefaults: {
-    _constructor: 'DateRangeDialog',
     autoDraw: false,
     destroyOnClose: false,
     clear: function () {
@@ -561,7 +657,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     value = this.rangeItemValue;
     var fromDate = value.start,
         toDate = value.end,
-        RDI = isc.RelativeDateItem,
+        RDI = isc.OBRelativeDateItem,
         start = (RDI.isRelativeDate(fromDate) ? RDI.getAbsoluteDate(fromDate.value, null, null, 'start') : fromDate),
         end = (RDI.isRelativeDate(toDate) ? RDI.getAbsoluteDate(toDate.value, null, null, 'end') : toDate);
 

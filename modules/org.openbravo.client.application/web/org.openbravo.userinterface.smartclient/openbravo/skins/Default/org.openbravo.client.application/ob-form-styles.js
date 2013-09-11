@@ -438,7 +438,7 @@ isc.OBMiniDateRangeItem.addProperties({
   pickerIconPrompt: OB.I18N.getLabel('OBUIAPP_pickerIconPrompt')
 });
 
-isc.DateRangeItem.changeDefaults('dateRangeFormDefaults', {
+isc.OBDateRangeItem.changeDefaults('dateRangeFormDefaults', {
   titleSuffix: '</b>',
   titlePrefix: '<b>',
   requiredTitleSuffix: ' *</b>',
@@ -447,7 +447,7 @@ isc.DateRangeItem.changeDefaults('dateRangeFormDefaults', {
   rightTitleSuffix: '</b>'
 });
 
-isc.DateRangeItem.addProperties({
+isc.OBDateRangeItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput',
@@ -456,14 +456,14 @@ isc.DateRangeItem.addProperties({
   toTitle: OB.I18N.getLabel('OBUIAPP_To')
 });
 
-isc.RelativeDateItem.addProperties({
+isc.OBRelativeDateItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
   controlStyle: 'OBFormFieldSelectControl'
 });
 
-isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {
+isc.OBRelativeDateItem.changeDefaults('quantityFieldDefaults', {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
@@ -471,7 +471,7 @@ isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {
   width: 65
 });
 
-isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
+isc.OBRelativeDateItem.changeDefaults('valueFieldDefaults', {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
@@ -487,7 +487,7 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
   calendarIconHspace: 0
 });
 
-isc.RelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
+isc.OBRelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
   canFocus: false,
   disabled: true,
   showDisabled: false,
