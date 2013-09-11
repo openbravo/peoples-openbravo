@@ -1236,6 +1236,8 @@ overwritten by _base.scss.
 .selectItemTextError,
 .selectItemTextDisabled,
 .selectItemTextFocused,
+.selectItemTextHint,
+.selectItemTextDisabledHint,
 .comboBoxItemPendingText,
 .pickListCell,
 .pickListCellSelected,
@@ -1307,7 +1309,8 @@ overwritten by _base.scss.
 .selectItemTextError,
 .selectItemTextFocused,
 .selectItemTextDisabled,
-.selectItemTextHint {
+.selectItemTextHint,
+.selectItemTextDisabledHint {
   background: white;
   border: 1px solid #ababab;
   color: black;
@@ -1325,7 +1328,8 @@ overwritten by _base.scss.
 .selectItemTextError,
 .selectItemTextFocused,
 .selectItemTextDisabled,
-.selectItemTextHint {
+.selectItemTextHint,
+.selectItemTextDisabledHint {
   border-right: 0;
 }
 
@@ -1339,7 +1343,8 @@ overwritten by _base.scss.
 
 .textItemDisabled,
 .textItemDisabledHint,
-.selectItemTextDisabled {
+.selectItemTextDisabled,
+.selectItemTextDisabledHint {
   background-color: white;
   border: 1px solid #ababab;
   color: #ababab;
@@ -1395,7 +1400,9 @@ overwritten by _base.scss.
 .selectItemText,
 .selectItemTextError,
 .selectItemTextFocused,
-.selectItemTextDisabled {
+.selectItemTextDisabled,
+.selectItemTextHint,
+.selectItemTextDisabledHint {
   padding-top: 4px;
   padding-bottom: 4px;
   padding-left: 2px;
