@@ -86,8 +86,9 @@
         AD_FIELD F left join AD_FIELD_TRL Ft on F.AD_FIELD_ID = Ft.AD_FIELD_ID
                                             AND Ft.AD_LANGUAGE  = ? 
         WHERE W.AD_WINDOW_ID = TB.AD_WINDOW_ID
-        AND TB.AD_TABLE_ID = T.AD_TABLE_ID 
+        AND TB.AD_TABLE_ID = T.AD_TABLE_ID
         AND T.AD_TABLE_ID = C.AD_TABLE_ID 
+        AND UPPER(T.dataorigintype) = 'TABLE'
         AND C.AD_COLUMN_ID = A.AD_COLUMN_ID 
         AND C.AD_COLUMN_ID = F.AD_COLUMN_ID 
         AND W.AD_WINDOW_ID = M.AD_WINDOW_ID 

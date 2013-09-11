@@ -80,6 +80,7 @@ BEGIN
                       from c_orderline 
                      where c_order_id = p_doc_id
                        and p_type = 'O'
+                       and qtyinvoiced = 0 -- Can't change prices on invoiced lines
                      union
                     select c_invoiceline_id, gross_unit_price, c_tax_id, 'N', 
                            M_Product_ID, ad_client_id, ad_org_id, c_orderline_id, line

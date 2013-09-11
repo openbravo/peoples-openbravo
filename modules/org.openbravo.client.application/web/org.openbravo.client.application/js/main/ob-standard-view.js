@@ -1749,6 +1749,8 @@ isc.OBStandardView.addProperties({
 
           if (!localData) {
             // bail out, an error occured which should be displayed to the user now
+            //clear deleting prompt
+            isc.clearPrompt();
             return;
           }
           var status = resp.status;
@@ -2410,6 +2412,10 @@ isc.OBStandardView.addProperties({
 
       if (type.filterEditorType && !fld.filterEditorType) {
         fld.filterEditorType = type.filterEditorType;
+      }
+
+      if (type.sortNormalizer) {
+        fld.sortNormalizer = type.sortNormalizer;
       }
 
       if (!fld.filterEditorProperties) {

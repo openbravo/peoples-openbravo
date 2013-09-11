@@ -379,11 +379,16 @@ isc.OBCharacteristicsFilterItem.addClassProperties({
 });
 
 isc.OBCharacteristicsFilterItem.addProperties({
+  operator: 'exists',
+
+  // Allow expressions so when multiple expressions (different characteristics
+  // are selected) they are properly grouped and not stored in _extraAdvancedCriteria
+  // in DynamicForm.setValuesAsCriteria method, being possible in this way to properly
+  // clear filters. See issue #24739
+  allowExpressions: true,
   canEdit: false,
   disableIconsOnReadOnly: false,
-  defaultHqlExists: 'exists (from ProductCharacteristicValue v where e = v.product and v.characteristicValue.id in ($value))',
-  productSelectorHqlExists: 'exists (from ProductCharacteristicValue v where e.product = v.product and v.characteristicValue.id in ($value))',
-  productSelectorID: '2E64F551C7C4470C80C29DBA24B34A5F',
+  hqlExists: 'exists (from ProductCharacteristicValue v where {productInEntity} = v.product and v.characteristicValue.id in ($value))',
   showPickerIcon: false,
   filterDialogConstructor: isc.OBCharacteristicsFilterDialog,
   pickerIconDefaults: {
@@ -448,16 +453,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
           value: inValues
         };
 
-        if (this.selectorWindow //
-        && this.selectorWindow.selectorGrid //
-        && this.selectorWindow.selectorGrid.dataSource //
-        && this.selectorWindow.selectorGrid.dataSource.dataURL !== (OB.Application.contextUrl + 'org.openbravo.model.common.plm/Product')) { //
-          //if (this.selectorWindow && this.selectorWindow.selector && this.selectorWindow.selector.selectorDefinitionId === this.productSelectorID) {
-          charCriteria.existsQuery = this.productSelectorHqlExists;
-        } else {
-          charCriteria.existsQuery = this.defaultHqlExists;
-        }
-
+        charCriteria.existsQuery = this.hqlExists;
         result.criteria.push(charCriteria);
       }
     }
@@ -485,6 +481,19 @@ isc.OBCharacteristicsFilterItem.addProperties({
   },
 
   init: function () {
+    var propertyPath, propertyName, i;
+
+    // Getting the product property in the entity we are filtering it.
+    // It is obtained based on fieldName, in case its path is compound (i.e.
+    // product$characteristicDescription), path is included up to the element
+    // previous to the last one
+    propertyName = 'e'; // "e" is the base entity
+    propertyPath = this.getFieldName().split(OB.Constants.FIELDSEPARATOR);
+    for (i = 0; i < propertyPath.length - 1; i++) {
+      propertyName += '.' + propertyPath[i];
+    }
+    this.hqlExists = this.hqlExists.replace('{productInEntity}', propertyName);
+
     this.addAutoChild('filterDialog', {
       title: this.title,
       callback: this.getID() + '.filterDialogCallback(value)'

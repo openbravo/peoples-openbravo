@@ -277,8 +277,12 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     if (entity == null) {
       dsProperties = super.getDataSourceProperties(parameters);
     } else {
-      dsProperties = getInitialProperties(entity,
-          parameters.containsKey(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT));
+      if (false) {
+        dsProperties = getInitialProperties(entity,
+            parameters.containsKey(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT));
+      } else {
+        dsProperties = getInitialProperties(entity, false);
+      }
     }
 
     // now see if there are additional properties, these are often property paths
@@ -312,6 +316,10 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       // than the original property
       for (String additionalProp : additionalProps) {
         final Property property = DalUtil.getPropertyFromPath(entity, additionalProp);
+        if (property == null) {
+          log4j.warn("Couldn't find propery from additional property: " + additionalProp);
+          continue;
+        }
         final DataSourceProperty dsProperty = DataSourceProperty.createFromProperty(property);
         dsProperty.setAdditional(true);
         dsProperty.setName(additionalProp.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR));

@@ -23,7 +23,6 @@ isc.OBQuickLaunchRecentLinkButton.addProperties({
   recentObject: null,
   prefixLabel: null,
   action: function () {
-    OB.RecentUtilities.addRecent(this.recentPropertyName, this.recentObject);
     if (this.recentObject.viewId) {
       OB.Layout.ViewManager.openView(this.recentObject.viewId, this.recentObject);
     } else {

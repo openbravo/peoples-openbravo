@@ -63,6 +63,8 @@ isc.OBViewGrid.addProperties({
   // prevent this.
   editGrid: true,
 
+  textMatchStyle: 'substring',
+
   // ** {{{ editLinkFieldProperties }}} **
   // The properties of the ListGridField created for the edit links.
   editLinkFieldProperties: {
@@ -196,8 +198,8 @@ isc.OBViewGrid.addProperties({
     // that the _dummy criteria can mean that new/updated records are not
     // shown in the grid
     neverDropUpdatedRows: true,
-    useClientFiltering: false,
-    useClientSorting: false,
+    useClientFiltering: true,
+    useClientSorting: true,
     fetchDelay: 300,
 
     // overridden to update the context/request properties for the fetch
@@ -279,6 +281,14 @@ isc.OBViewGrid.addProperties({
         this.localData[dsResponse.totalRows] = null;
       }
       return newData;
+    },
+
+    shouldUseClientFiltering: function () {
+      if (this.forceRefresh) {
+        // forcing fetch from server
+        return false;
+      }
+      return this.Super('shouldUseClientFiltering', arguments);
     }
   },
 
@@ -1835,19 +1845,6 @@ isc.OBViewGrid.addProperties({
 
       // add a dummy criteria to force a fetch
       criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-    } else if (this.forceRefresh) {
-      // add a dummy criteria to force a fetch
-      criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-      delete this.forceRefresh;
-    } else {
-      // remove the _dummy
-      length = criteria.criteria.length;
-      for (i = 0; i < length; i++) {
-        if (criteria.criteria[i].fieldName === isc.OBRestDataSource.DUMMY_CRITERION_NAME) {
-          criteria.criteria.removeAt(i);
-          break;
-        }
-      }
     }
 
     // note pass in criteria otherwise infinite looping!
@@ -1956,6 +1953,15 @@ isc.OBViewGrid.addProperties({
   },
 
   onFetchData: function (criteria, requestProperties) {
+    if (this.data && this.data.forceRefresh) {
+      // to force fetch from server, remove all cached data
+      delete this.data.forceRefresh;
+      delete this.data.localData;
+      delete this.data.allRows;
+      this.data.totalRows = 0;
+      this.data.cachedRows = 0;
+    }
+
     requestProperties = requestProperties || {};
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
   },
@@ -2642,6 +2648,16 @@ isc.OBViewGrid.addProperties({
   addToCacheData: function (record, rowNum) {
     // originalData is used when the grid is grouped
     var data = this.originalData || this.data;
+
+    // When a new record is inserted and added to cache, existent cache of
+    // rows received from server is replaced with current localData.
+    // Not doing it causes problems when localData does not match allRows
+    // beacause it has been restricted in client through adaptive filters.
+    data.allRows = data.localData;
+    data.allRowsCriteria = data.criteria || {};
+    data.cachedRows = data.localData.length;
+    data.totalRows = data.localData.length;
+
     data.insertCacheData(record, rowNum);
   },
 
@@ -3147,6 +3163,8 @@ isc.OBViewGrid.addProperties({
 
     this.recomputeCanvasComponents(rowNum);
 
+    this.body.markForRedraw();
+
     return ret;
   },
 
@@ -3454,6 +3472,11 @@ isc.OBViewGrid.addProperties({
       layout.editButton.setErrorState(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       layout.editButton.setErrorMessage(record[isc.OBViewGrid.ERROR_MESSAGE_PROP]);
       record.editColumnLayout = layout;
+
+      if (this.selection && this.selection.lastSelectionItem && this.selection.lastSelectionItem._new) {
+        this.selection.lastSelectionItem.editColumnLayout = layout;
+      }
+
       if (record._new) {
         layout.showSaveCancel();
       } else {

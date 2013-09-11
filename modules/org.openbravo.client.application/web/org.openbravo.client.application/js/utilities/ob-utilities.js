@@ -1031,8 +1031,14 @@ OB.Utilities.isUUID = function (object) {
   if (typeof object !== 'string') {
     return false;
   }
-  if (object.length !== 32) {
+  if (object.length > 10 && object.length !== 32) {
     return false;
+  }
+  if (object.length === 32) {
+    return (/[A-Fa-f0-9]{32,32}/).test(object);
+  } else if (object.length <= 10) {
+    //return true if uuid contains only numbers
+    return (/^\d+$/).test(object);
   }
   return (/[A-Fa-f0-9]{32,32}/).test(object);
 };
@@ -1195,4 +1201,24 @@ OB.Utilities.getProcessTabBarPosition = function (processView) {
   }
   return -1;
 
+};
+
+OB.Utilities.yesNoSortNormalizer = function (item, field, context) {
+  var value = item[field];
+  if (value === true) {
+    return 1;
+  } else if (value === false) {
+    return 2;
+  } else {
+    return 3;
+  }
+};
+
+OB.Utilities.enumSortNormalizer = function (item, field, context) {
+  var value = item[field],
+      undef;
+  if (value === null || value === undef) {
+    return '-'; // hack to sort nulls last
+  }
+  return ' ' + value;
 };
