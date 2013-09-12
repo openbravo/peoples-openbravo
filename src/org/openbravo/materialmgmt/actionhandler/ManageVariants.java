@@ -20,21 +20,20 @@ package org.openbravo.materialmgmt.actionhandler;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.VariantChDescUpdateProcess;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.plm.Characteristic;
@@ -51,6 +50,8 @@ import org.slf4j.LoggerFactory;
 
 public class ManageVariants extends BaseProcessActionHandler {
   final static private Logger log = LoggerFactory.getLogger(ManageVariants.class);
+  private static final String SALES_PRICELIST = "SALES";
+  private static final String PURCHASE_PRICELIST = "PURCHASE";
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -132,7 +133,8 @@ public class ManageVariants extends BaseProcessActionHandler {
           chValue.getString("characteristicConf"));
       if (prChConf.getCharacteristicOfProduct().isDefinesPrice()
           && prChConf.getNetUnitPrice() != null) {
-        setPrice(variant, prChConf.getNetUnitPrice());
+        setPrice(variant, prChConf.getNetUnitPrice(), prChConf.getCharacteristicOfProduct()
+            .getPriceListType());
       }
       if (prChConf.getCharacteristicOfProduct().isDefinesImage() && prChConf.getImage() != null) {
         Image newImage = (Image) DalUtil.copy(prChConf.getImage(), false);
@@ -154,14 +156,20 @@ public class ManageVariants extends BaseProcessActionHandler {
     OBDal.getInstance().save(variant);
   }
 
-  private void setPrice(Product variant, BigDecimal price) {
-    ProductPrice prodPrice = FinancialUtils.getProductPrice(variant, new Date(), true, null, false);
-    if (prodPrice == null) {
-      throw new OBException(OBMessageUtils.parseTranslation("@GenericMustHavePriceDefined@"));
+  private void setPrice(Product variant, BigDecimal price, String strPriceListType) {
+    List<ProductPrice> prodPrices = OBDao.getActiveOBObjectList(variant,
+        Product.PROPERTY_PRICINGPRODUCTPRICELIST);
+    for (ProductPrice prodPrice : prodPrices) {
+      boolean isSOPriceList = prodPrice.getPriceListVersion().getPriceList().isSalesPriceList();
+      if (SALES_PRICELIST.equals(strPriceListType) && !isSOPriceList) {
+        continue;
+      } else if (PURCHASE_PRICELIST.equals(strPriceListType) && isSOPriceList) {
+        continue;
+      }
+      prodPrice.setStandardPrice(price);
+      prodPrice.setListPrice(price);
+      prodPrice.setPriceLimit(price);
+      OBDal.getInstance().save(prodPrice);
     }
-    prodPrice.setStandardPrice(price);
-    prodPrice.setListPrice(price);
-    prodPrice.setPriceLimit(price);
-    OBDal.getInstance().save(prodPrice);
   }
 }
