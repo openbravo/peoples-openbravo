@@ -108,6 +108,62 @@ enyo.kind({
   }
 });
 
+/* Buttons Left bar*/
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.customeraddr.CustomerAddrLeftBar',
+  components: [{
+    kind: 'OB.OBPOSPointOfSale.UI.customeraddr.NewCustomerAddrButton',
+    i18nLabel: 'OBPOS_LblNew'
+  }]
+});
+
+/*New Customer Button*/
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.customeraddr.NewCustomerAddrButton',
+  kind: 'OB.UI.Button',
+  events: {
+    onChangeSubWindow: ''
+  },
+  published: {
+    businessPartner: null
+  },
+  disabled: false,
+  classes: 'btnlink-left-toolbar',
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    var sw = this.subWindow;
+    this.doChangeSubWindow({
+      newWindow: {
+        name: 'customerAddrCreateAndEdit',
+        params: {
+          navigateOnClose: 'customerAddrCreateAndEdit',
+          businessPartner: this.businessPartner
+        }
+      }
+    });
+  },
+  putDisabled: function (status) {
+    if (status === false) {
+      this.disabled = false;
+      this.setDisabled(false);
+      this.removeClass('disabled');
+      return;
+    } else {
+      this.disabled = true;
+      this.setDisabled();
+      this.addClass('disabled');
+    }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    this.setContent(this.i18nLabel ? OB.I18N.getLabel(this.i18nLabel) : this.label);
+  }
+});
+
+
 /*scrollable table (body of customer)*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.ListCustomerAddress',
@@ -124,7 +180,12 @@ enyo.kind({
     onChangeSubWindow: ''
   },
   components: [{
-    style: 'float: left; width: 100%;',
+    style: 'text-align: center; padding-top: 10px; float: left; width: 19%;',
+    components: [{
+      kind: 'OB.OBPOSPointOfSale.UI.customeraddr.CustomerAddrLeftBar'
+    }]
+  }, {
+    style: 'float: left; width: 80%;',
     components: [{
       classes: 'row-fluid',
       components: [{
@@ -209,12 +270,10 @@ enyo.kind({
     if (params.bPartner) {
       var listCustAddr = this.$.subWindowBody.$.casbody.$.listCustomerAddress;
       listCustAddr.setBPartnerId(params.bPartner);
-
       OB.Dal.get(OB.Model.BusinessPartner, params.bPartner, function successCallbackBPs(dataBps) {
         listCustAddr.setBPartnerModel(dataBps);
-      }, function errorCallback(tx, error) {
-
-      });
+        listCustAddr.$.customerAddrLeftBar.$.newCustomerAddrButton.setBusinessPartner(dataBps);
+      }, function errorCallback(tx, error) {});
     }
     if (this.caller === 'mainSubWindow') {
       this.waterfall('onSearchAction', {
