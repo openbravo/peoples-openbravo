@@ -475,6 +475,17 @@ isc.OBCharacteristicsFilterItem.addProperties({
   },
 
   filterDialogCallback: function (value) {
+    // Whenever filter is changed, new criteria must force a backend call, adaptive
+    // filter cannot be used for characteristics as the information to do the matching
+    // is not present in client. Cache of localData needs to be cleaned up to force it;
+    // if not, this criteria can be considered to be more restrictive without even
+    // executing compare criteria method in case the whole page was originally retrieved
+    // without any criteria.
+    // See issue #24750
+    if (this.grid.parentElement.data) {
+      this.grid.parentElement.data.localData = null;
+    }
+
     this.internalValue = value;
     this.setElementValue(isc.OBCharacteristicsFilterItem.getDisplayValue(value));
     this.form.grid.performAction();
