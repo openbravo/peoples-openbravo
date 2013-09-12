@@ -32,6 +32,7 @@ import org.jfree.util.Log;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
@@ -40,6 +41,7 @@ import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Tree;
@@ -67,18 +69,11 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     BaseOBObject bob = event.getTargetInstance();
     Table table = OBDal.getInstance().get(Table.class,
         event.getTargetInstance().getEntity().getTableId());
-    Tree adTree = getTree(table);
+
+    Tree adTree = getTree(table, bob);
     if (adTree == null) {
       // The adTree does not exists, create it
-      adTree = OBProvider.getInstance().get(Tree.class);
-      adTree.setClient(client);
-      adTree.setOrganization(org);
-      adTree.setName(bob.getClass().getName());
-      adTree.setAllNodes(true);
-      // TODO: Change this
-      adTree.setTypeArea("NEW");
-      adTree.setTable(table);
-      OBDal.getInstance().save(adTree);
+      adTree = createTree(table, bob);
     }
     // Adds the node to the adTree
     TreeNode adTreeNode = OBProvider.getInstance().get(TreeNode.class);
@@ -99,7 +94,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     BaseOBObject bob = event.getTargetInstance();
     Table table = OBDal.getInstance().get(Table.class,
         event.getTargetInstance().getEntity().getTableId());
-    Tree adTree = getTree(table);
+    Tree adTree = getTree(table, bob);
     OBCriteria<TreeNode> adTreeNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
     adTreeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, adTree));
     adTreeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, bob.getId().toString()));
@@ -125,14 +120,71 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
       throw new OBException("NO GUARDAR!");
     }
 
+    OBDal.getInstance().remove(treeNode);
+
   }
 
-  private Tree getTree(Table table) {
+  private Tree getTree(Table table, BaseOBObject bob) {
+    Tree tree = null;
     OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
     adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-    // TODO: Assuming one tree per table
-    // TODO: Assuming ADTreeNode tree structure
-    return (Tree) adTreeCriteria.uniqueResult();
+
+    List<Column> parentColumns = getParentColumns(table);
+    // If it is a subtab, the tree must be associated to the id of its parent tab
+    if (parentColumns != null && !parentColumns.isEmpty()) {
+      // TODO: Support tables with multple parent columns
+      String referencedColumnValue = getReferencedColumnValue(bob, parentColumns);
+      if (referencedColumnValue != null && !referencedColumnValue.isEmpty()) {
+        adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_PARENTRECORDID, referencedColumnValue));
+      }
+    }
+
+    tree = (Tree) adTreeCriteria.uniqueResult();
+    return tree;
+  }
+
+  private String getReferencedColumnValue(BaseOBObject bob, List<Column> parentColumns) {
+    Column parentColumn = parentColumns.get(0);
+    Property property = getPropertyFromColumn(parentColumn);
+    BaseOBObject referencedBOB = (BaseOBObject) bob.getValue(property.getName());
+    return referencedBOB.getId().toString();
+  }
+
+  private Tree createTree(Table table, BaseOBObject bob) {
+    Client client = OBContext.getOBContext().getCurrentClient();
+    Organization org = OBContext.getOBContext().getCurrentOrganization();
+
+    Tree adTree = OBProvider.getInstance().get(Tree.class);
+    adTree.setClient(client);
+    adTree.setOrganization(org);
+    adTree.setAllNodes(true);
+    // TODO: Change this
+    adTree.setTypeArea("NEW");
+    adTree.setTable(table);
+    String name = bob.getClass().getName();
+    List<Column> parentColumns = getParentColumns(table);
+    if (parentColumns != null && !parentColumns.isEmpty()) {
+      String referencedColumnValue = getReferencedColumnValue(bob, parentColumns);
+      adTree.setParentRecordID(referencedColumnValue);
+      name = name + referencedColumnValue;
+      // TODO: Fix this!
+      name = name.substring(0, 59);
+    }
+    adTree.setName(name);
+    OBDal.getInstance().save(adTree);
+    return adTree;
+  }
+
+  private List<Column> getParentColumns(Table table) {
+    OBCriteria<Column> isParentColumnsCriteria = OBDal.getInstance().createCriteria(Column.class);
+    isParentColumnsCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, table));
+    isParentColumnsCriteria.add(Restrictions.eq(Column.PROPERTY_LINKTOPARENTCOLUMN, true));
+    return isParentColumnsCriteria.list();
+  }
+
+  private Property getPropertyFromColumn(Column column) {
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(column.getTable().getId());
+    return entity.getPropertyByColumnName(column.getDBColumnName());
   }
 
   private static Entity[] getTreeTables() {

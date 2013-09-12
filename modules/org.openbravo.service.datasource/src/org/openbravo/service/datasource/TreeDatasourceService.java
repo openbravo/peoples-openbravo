@@ -13,6 +13,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.service.json.JsonConstants;
@@ -27,8 +28,9 @@ public class TreeDatasourceService extends DefaultDataSourceService {
   public String fetch(Map<String, String> parameters) {
     OBContext.setAdminMode(true);
     try {
-      String treeId = parameters.get("treeId");
-      Tree tree = OBDal.getInstance().get(Tree.class, treeId);
+      String referencedTableId = parameters.get("referencedTableId");
+      String parentRecordId = parameters.get("parentRecordId");
+      Tree tree = this.getTree(referencedTableId, parentRecordId);
       String parentId = parameters.get("parentId");
       // boolean rootNode = (parentId == null || "null".equals(parentId) || "0".equals(parentId) ||
       // parentId
@@ -47,7 +49,7 @@ public class TreeDatasourceService extends DefaultDataSourceService {
 
       return jsonResult.toString();
     } catch (Throwable t) {
-      log.error("Error building characteristics tree", t);
+      log.error("Error on tree datasource", t);
       return JsonUtils.convertExceptionToJson(t);
     } finally {
       OBContext.restorePreviousMode();
@@ -112,15 +114,12 @@ public class TreeDatasourceService extends DefaultDataSourceService {
         return "";
       }
 
-      String treeId = parameters.get("treeId");
-      if (treeId == null) {
-        return "";
-      }
-
-      Tree tree = OBDal.getInstance().get(Tree.class, treeId);
+      String referencedTableId = parameters.get("referencedTableId");
+      String parentRecordId = parameters.get("parentRecordId");
+      Tree tree = this.getTree(referencedTableId, parentRecordId);
 
       final JSONObject data = jsonObject.getJSONObject("data");
-      final JSONObject oldValues = jsonObject.getJSONObject("oldValues");
+      // final JSONObject oldValues = jsonObject.getJSONObject("oldValues");
 
       String nodeId = data.getString("id");
       String newParentId = data.getString("parentId");
@@ -149,5 +148,16 @@ public class TreeDatasourceService extends DefaultDataSourceService {
       OBContext.restorePreviousMode();
     }
     return jsonResult.toString();
+  }
+
+  private Tree getTree(String referencedTableId, String parentRecordId) {
+    Table referencedTable = OBDal.getInstance().get(Table.class, referencedTableId);
+
+    OBCriteria<Tree> treeCriteria = OBDal.getInstance().createCriteria(Tree.class);
+    treeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, referencedTable));
+    if (parentRecordId != null && !parentRecordId.isEmpty() && !"null".equals(parentRecordId)) {
+      treeCriteria.add(Restrictions.eq(Tree.PROPERTY_PARENTRECORDID, parentRecordId));
+    }
+    return (Tree) treeCriteria.uniqueResult();
   }
 }

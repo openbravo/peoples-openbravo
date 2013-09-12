@@ -19,13 +19,15 @@
 isc.ClassFactory.defineClass('OBTreeGrid', isc.TreeGrid);
 
 isc.OBTreeGrid.addProperties({
-    treeId: null,
+    referencedTableId: null,
+    parentRecordId: null,
     
     setDataSource: function(ds, fields) {
         var me = this;
         ds.transformRequest = function(dsRequest) {
             dsRequest.params = dsRequest.params || {};
-            dsRequest.params.treeId =  me.treeId;
+            dsRequest.params.referencedTableId =  me.referencedTableId;
+            dsRequest.params.parentRecordId =  me.parentRecordId;
             return this.Super('transformRequest', arguments);
         };
         ds.primaryKeys = {id:'id'};
@@ -173,7 +175,8 @@ isc.OBTreeGridPopup.addProperties({
         //	      return null;
         //	    };
         this.tree = isc.OBTreeGrid.create({
-            treeId: 'A26F2DD989C248D8992CAFA483528EDA',
+            referencedTableId: '3C7E0EEF116B4AD383AD9E25E712F281',
+            parentRecordId: null,
             width: 500,
             height: 400,
             canReorderRecords: true,
