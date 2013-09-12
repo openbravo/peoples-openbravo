@@ -156,6 +156,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
   @Override
   protected JSONObject getPrerrenderData(HttpServletRequest request) throws JSONException {
+
+    JSONObject result = super.getPrerrenderData(request);
+
     if (RequestContext.get().getSessionAttribute("POSTerminal") == null) {
       final VariablesSecureApp vars = new VariablesSecureApp(request);
       final String terminalSearchKey = vars.getStringParameter("terminalName");
@@ -167,8 +170,11 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       List<OBPOSApplications> apps = qApp.list();
       OBPOSApplications terminal = apps.get(0);
       RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
+
+      result.put("appCaption", terminal.getIdentifier() + " - "
+          + terminal.getOrganization().getIdentifier());
     }
-    return super.getPrerrenderData(request);
+    return result;
   }
 
   @Override
