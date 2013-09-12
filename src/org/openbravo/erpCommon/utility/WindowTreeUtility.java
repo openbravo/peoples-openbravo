@@ -18,12 +18,20 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
 /**
@@ -86,7 +94,8 @@ class WindowTreeUtility {
     } else
       TreeType = "";
     if (TreeType.equals(""))
-      log4j.error("WindowTreeUtility.getTreeID() - Could not map " + keyColumnName);
+      log4j.warn("WindowTreeUtility.getTreeID() - Could not map " + keyColumnName
+          + ". It could be a tree that uses the new tree structure");
     return TreeType;
   }
 
@@ -163,6 +172,56 @@ class WindowTreeUtility {
           + "|M_Characteristic_ID");
       data = WindowTreeData.selectChValue(conn, strEditable, strParentID, strNodeId, TreeID,
           strCharacteristicId);
+    } else if (TreeType.equals("NEW")) {
+
+      Tab tab = OBDal.getInstance().get(Tab.class, strTabID);
+      Table table = tab.getTable();
+      String tableName = table.getDBTableName();
+      String idFieldName = tableName + "_id";
+
+      StringBuilder sqlQuery = new StringBuilder();
+      sqlQuery.append(" SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo, ");
+      sqlQuery.append(" t." + idFieldName + " AS ID, t.Name ");
+      sqlQuery.append(" FROM AD_TreeNode tn, ");
+      sqlQuery.append(" " + tableName + " t ");
+      sqlQuery.append(" WHERE tn.Node_ID = t." + idFieldName + " ");
+      sqlQuery.append(" AND tn.AD_Tree_ID = ? ");
+      if (strParentID != null && !strParentID.isEmpty()) {
+        sqlQuery.append(" AND tn.Parent_ID = ? ");
+      }
+      if (strNodeId != null && !strNodeId.isEmpty()) {
+        sqlQuery.append(" AND tn.Node_ID = ? ");
+      }
+      sqlQuery.append(" ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo ");
+
+      try {
+        PreparedStatement query = new DalConnectionProvider(false).getPreparedStatement(sqlQuery
+            .toString());
+        query.setString(1, TreeID);
+        int optionalParameterSeq = 2;
+        if (strParentID != null && !strParentID.isEmpty()) {
+          query.setString(optionalParameterSeq++, strParentID);
+        }
+        if (strNodeId != null && !strNodeId.isEmpty()) {
+          query.setString(optionalParameterSeq++, strNodeId);
+        }
+        query.execute();
+        ResultSet rs = query.getResultSet();
+        ArrayList<WindowTreeData> dataList = new ArrayList<WindowTreeData>();
+        while (rs.next()) {
+          WindowTreeData dataItem = new WindowTreeData();
+          dataItem.nodeId = rs.getString(1);
+          dataItem.parentId = rs.getString(2);
+          dataItem.seqno = rs.getString(3);
+          dataItem.id = rs.getString(4);
+          dataItem.name = rs.getString(5);
+          dataItem.issummary = "Y";
+          dataList.add(dataItem);
+        }
+        data = dataList.toArray(new WindowTreeData[dataList.size()]);
+      } catch (Exception e) {
+        log4j.error(e.getMessage(), e);
+      }
     }
 
     return data;

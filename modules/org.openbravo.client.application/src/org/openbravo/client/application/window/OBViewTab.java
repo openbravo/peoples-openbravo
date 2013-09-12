@@ -227,7 +227,7 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
     // Tree button
-    if (tab.isTreeIncluded()) {
+    if (tab.isTreeIncluded() || tab.getTable().isTree()) {
       IconButton treeBtn = new IconButton();
       treeBtn.type = "tree";
       treeBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Tree", OBContext
@@ -602,6 +602,18 @@ public class OBViewTab extends BaseTemplateComponent {
       }
     }
     return preferenceAttributes;
+  }
+
+  public boolean isTree() {
+    return tab.getTable().isTree();
+  }
+
+  public String getTreeTypeId() {
+    if (tab.getTable().getTreetype34() != null) {
+      return tab.getTable().getTreetype34().getId();
+    } else {
+      return "";
+    }
   }
 
   public class ButtonField {

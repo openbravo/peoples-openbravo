@@ -133,6 +133,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISTREE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_TREETYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBSERDS_DATASOURCE" name="AD_COLUMN_DATASOURCE">
         <reference local="OBSERDS_DATASOURCE_ID" foreign="OBSERDS_DATASOURCE_ID"/>
       </foreign-key>
@@ -147,6 +155,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_TABLE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREETYPE" name="AD_TABLE_AD_TREETYPE">
+        <reference local="AD_TREETYPE_ID" foreign="AD_TREETYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_TABLE_AD_WINDOW">
         <reference local="PO_WINDOW_ID" foreign="AD_WINDOW_ID"/>
@@ -176,6 +187,7 @@
       <check name="AD_TABLE_ISFULLYAUDITED_CHK2"><![CDATA[(ISFULLYAUDITED = 'N') OR (UPPER((TABLENAME)) <> 'AD_AUDIT_TRAIL')]]></check>
       <check name="AD_TABLE_ISHIGHVOLUME_CHK"><![CDATA[ISHIGHVOLUME IN ('Y', 'N')]]></check>
       <check name="AD_TABLE_ISSECUR_YENABLED_CHK"><![CDATA[ISSECURITYENABLED IN ('Y', 'N')]]></check>
+      <check name="AD_TABLE_ISTREE_CHK"><![CDATA[ISTREE IN ('Y', 'N')]]></check>
       <check name="AD_TABLE_ISVIEW_CHK"><![CDATA[ISVIEW IN ('Y', 'N')]]></check>
     </table>
   </database>

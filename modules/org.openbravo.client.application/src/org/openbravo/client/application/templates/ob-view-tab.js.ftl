@@ -54,6 +54,12 @@
     <#if tabComponent.trlTab>
     isTrlTab: ${tabComponent.trlTab?string},
     </#if> 
+    <#if tabComponent.tree>
+    isTree: ${tabComponent.tree?string},
+      <#if tabComponent.treeTypeId != "" >
+    treeTypeId: '${tabComponent.treeTypeId?string}',
+      </#if>
+    </#if>     
     
     standardProperties:{
 <@compress single_line=true>
