@@ -39,6 +39,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.Image;
@@ -54,6 +55,8 @@ import org.openbravo.scheduling.ProcessBundle;
 public class VariantAutomaticGenerationProcess implements Process {
   private static final Logger log4j = Logger.getLogger(VariantAutomaticGenerationProcess.class);
   private static final int searchKeyLength = getSearchKeyColumnLength();
+  private static final String SALES_PRICELIST = "SALES";
+  private static final String PURCHASE_PRICELIST = "PURCHASE";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -155,7 +158,8 @@ public class VariantAutomaticGenerationProcess implements Process {
           OBDal.getInstance().save(newPrChValue);
           if (prChConf.getCharacteristicOfProduct().isDefinesPrice()
               && prChConf.getNetUnitPrice() != null) {
-            setPrice(variant, prChConf.getNetUnitPrice());
+            setPrice(variant, prChConf.getNetUnitPrice(), prChConf.getCharacteristicOfProduct()
+                .getPriceListType());
           }
           if (prChConf.getCharacteristicOfProduct().isDefinesImage() && prChConf.getImage() != null) {
             Image newImage = (Image) DalUtil.copy(prChConf.getImage(), false);
@@ -244,8 +248,16 @@ public class VariantAutomaticGenerationProcess implements Process {
     }
   }
 
-  private void setPrice(Product variant, BigDecimal price) {
-    for (ProductPrice prodPrice : variant.getPricingProductPriceList()) {
+  private void setPrice(Product variant, BigDecimal price, String strPriceListType) {
+    List<ProductPrice> prodPrices = OBDao.getActiveOBObjectList(variant,
+        Product.PROPERTY_PRICINGPRODUCTPRICELIST);
+    for (ProductPrice prodPrice : prodPrices) {
+      boolean isSOPriceList = prodPrice.getPriceListVersion().getPriceList().isSalesPriceList();
+      if (SALES_PRICELIST.equals(strPriceListType) && !isSOPriceList) {
+        continue;
+      } else if (PURCHASE_PRICELIST.equals(strPriceListType) && isSOPriceList) {
+        continue;
+      }
       prodPrice.setStandardPrice(price);
       prodPrice.setListPrice(price);
       prodPrice.setPriceLimit(price);
