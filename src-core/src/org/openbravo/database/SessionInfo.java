@@ -116,7 +116,7 @@ public class SessionInfo {
 
         if (rs.next() && rs.getString(1).equals("0")) {
           StringBuffer sql = new StringBuffer();
-          sql.append("CREATE GLOBAL TEMPORARY TABLE AD_CONTEXT_INFO");
+          sql.append("CREATE TEMPORARY TABLE AD_CONTEXT_INFO");
           sql.append("(AD_USER_ID VARCHAR(32), ");
           sql.append("  AD_SESSION_ID VARCHAR(32),");
           sql.append("  PROCESSTYPE VARCHAR(60), ");
