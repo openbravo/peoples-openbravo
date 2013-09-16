@@ -57,26 +57,28 @@ isc.OBCalendarTabSet.addProperties({
 });
 
 
+isc.OBDaySchedule.addProperties({
+  alternateRecordStyles: false,
+  baseStyle: 'OBCalendarGridCell',
+  headerBaseStyle: 'OBCalendarGridHeaderCell'
+});
+
+isc.OBWeekSchedule.addProperties({
+  baseStyle: 'OBCalendarGridCell',
+  headerBaseStyle: 'OBCalendarGridHeaderCell'
+});
+
+isc.OBMonthSchedule.addProperties({
+  baseStyle: 'OBCalendarGridCell',
+  headerBaseStyle: 'OBCalendarGridHeaderCell'
+});
+
+
 isc.OBCalendar.addProperties({
+  eventWindowStyle: 'OBEventWindow',
   workdayBaseStyle: 'OBCalendarGridCellWorkday',
   selectedCellStyle: 'OBCalendarGridCellSelected'
 });
-
-OB.Styles.OBCalendar = {
-  eventWindowStyle: 'OBEventWindow',
-  addEventButton: {
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/add_icon.png',
-    // It doesn't exist yet
-    width: 21,
-    height: 21
-  },
-  dayView_alternateRecordStyles: false,
-  dayView_baseStyle: 'OBCalendarGridCell',
-  weekView_baseStyle: 'OBCalendarGridCell',
-  weekView_headerBaseStyle: 'OBCalendarGridHeaderCell',
-  monthView_baseStyle: 'OBCalendarGridCell',
-  monthView_headerBaseStyle: 'OBCalendarGridHeaderCell'
-};
 
 isc.OBCalendar.changeDefaults('datePickerButtonDefaults', {
   src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/date_control.png',
@@ -96,6 +98,11 @@ isc.OBCalendar.changeDefaults('nextButtonDefaults', {
   height: 20
 });
 
+//isc.OBCalendar.changeDefaults('addEventButtonDefaults', {
+//  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/add_icon.png',
+//  width: 21,
+//  height: 21
+//});
 isc.OBCalendar.changeDefaults('controlsBarDefaults', {
   layoutTopMargin: 6
 });

@@ -49,6 +49,20 @@ isc.OBCalendar_EventDialogBridge.addProperties({
 // Hack to allow calendar TabSet style personalization
 isc.ClassFactory.defineClass('OBCalendarTabSet', isc.TabSet);
 
+
+// == OBDaySchedule ==
+// To perform style personalizations
+isc.ClassFactory.defineClass("OBDaySchedule", "DaySchedule");
+
+// == OBWeekSchedule ==
+// To perform style personalizations
+isc.ClassFactory.defineClass("OBWeekSchedule", "WeekSchedule");
+
+// == OBMonthSchedule ==
+// To perform style personalizations
+isc.ClassFactory.defineClass("OBMonthSchedule", "MonthSchedule");
+
+
 // == OBClientClassCanvasItem ==
 // Extends Calendar, with some customizations (most of them styling related)
 isc.ClassFactory.defineClass('OBCalendar', isc.Calendar);
@@ -56,12 +70,13 @@ isc.ClassFactory.defineClass('OBCalendar', isc.Calendar);
 
 isc.OBCalendar.addProperties({
   autoFetchData: true,
+  dayViewConstructor: "OBDaySchedule",
+  weekViewConstructor: "OBWeekSchedule",
+  monthViewConstructor: "OBMonthSchedule",
   eventDialogConstructor: isc.OBCalendar_EventDialogBridge,
   initWidget: function () {
     var calendar = this,
         multiCalendar = this.multiCalendar;
-
-    this.eventWindowStyle = OB.Styles.OBCalendar.eventWindowStyle;
 
     if (!this.eventIdField) {
       this.eventIdField = 'eventId';
@@ -76,145 +91,148 @@ isc.OBCalendar.addProperties({
       this.OBEventEditor = isc[this.OBEventEditorClass].create({});
     }
 
-    this.dataSource = OB.Datasource.create({
-      dataURL: this.dataSourceProps.dataURL,
-      fields: [{
-        name: this.eventIdField,
-        primaryKey: true
-      }, {
-        name: this.nameField
-      }, {
-        name: this.descriptionField
-      }, {
-        name: this.startDateField,
-        type: "datetime"
-      }, {
-        name: this.endDateField,
-        type: "datetime"
-      }],
+    if (this.dataSourceProps) {
+      this.dataSource = OB.Datasource.create({
+        dataURL: this.dataSourceProps.dataURL,
+        fields: [{
+          name: this.eventIdField,
+          primaryKey: true
+        }, {
+          name: this.nameField
+        }, {
+          name: this.descriptionField
+        }, {
+          name: this.startDateField,
+          type: "datetime"
+        }, {
+          name: this.endDateField,
+          type: "datetime"
+        }],
 
-      // these are read extra from the server with the events
-      additionalProperties: this.dataSourceProps.additionalProperties,
+        // these are read extra from the server with the events
+        additionalProperties: this.dataSourceProps.additionalProperties,
 
-      dataSourceProps: this.dataSourceProps,
+        dataSourceProps: this.dataSourceProps,
 
-      transformRequest: function (dsRequest) {
-        dsRequest.params = dsRequest.params || {};
-        dsRequest.params._extraProperties = this.additionalProperties;
-        dsRequest.willHandleError = true;
+        transformRequest: function (dsRequest) {
+          dsRequest.params = dsRequest.params || {};
+          dsRequest.params._extraProperties = this.additionalProperties;
+          dsRequest.willHandleError = true;
 
-        return this.Super('transformRequest', arguments);
-      },
-      transformResponse: function (dsResponse, dsRequest, data) {
-        var showDSAlert, records = data && data.response && data.response.data,
-            i, j;
+          return this.Super('transformRequest', arguments);
+        },
+        transformResponse: function (dsResponse, dsRequest, data) {
+          var showDSAlert, records = data && data.response && data.response.data,
+              i, j;
 
-        showDSAlert = function (text) {
-          if (calendar.OBEventEditor && calendar.OBEventEditor.messageBar) {
-            // Display message in event editor
-            calendar.OBEventEditor.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, OB.I18N.getLabel('OBUIAPP_Error'), text);
+          showDSAlert = function (text) {
+            if (calendar.OBEventEditor && calendar.OBEventEditor.messageBar) {
+              // Display message in event editor
+              calendar.OBEventEditor.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, OB.I18N.getLabel('OBUIAPP_Error'), text);
+            } else {
+              // there is no message bar in editor, showing a popup warn
+              isc.warn(text, function () {
+                return true;
+              }, {
+                icon: '[SKINIMG]Dialog/error.png',
+                title: OB.I18N.getLabel('OBUIAPP_Error')
+              });
+            }
+            if (calendar.OBEventEditor) {
+              // needs to keep the popup open once, because data is refreshed
+              calendar.OBEventEditor.keepOpen = true;
+            }
+          };
+
+          // handle error
+          if (data && data.response && data.response.error) {
+            showDSAlert(data.response.error.message);
+            calendar.filterData();
+          } else if (data && data.response && data.response.errors) {
+            showDSAlert(JSON.stringify(data.response.errors));
+            calendar.filterData();
           } else {
-            // there is no message bar in editor, showing a popup warn
-            isc.warn(text, function () {
-              return true;
-            }, {
-              icon: '[SKINIMG]Dialog/error.png',
-              title: OB.I18N.getLabel('OBUIAPP_Error')
-            });
-          }
-          if (calendar.OBEventEditor) {
-            // needs to keep the popup open once, because data is refreshed
-            calendar.OBEventEditor.keepOpen = true;
-          }
-        };
-
-        // handle error
-        if (data && data.response && data.response.error) {
-          showDSAlert(data.response.error.message);
-          calendar.filterData();
-        } else if (data && data.response && data.response.errors) {
-          showDSAlert(JSON.stringify(data.response.errors));
-          calendar.filterData();
-        } else {
-          if (records) {
-            for (i = 0; i < records.getLength(); i++) {
-              if (typeof records[i][calendar.nameField] === 'undefined') {
-                //To avoid the event displays 'undefined' when no name has been set
-                records[i][calendar.nameField] = '';
-              }
-              if (typeof records[i][calendar.descriptionField] === 'undefined') {
-                records[i][calendar.descriptionField] = '';
-              }
-              if (multiCalendar && multiCalendar.showCustomEventsBgColor) {
-                records[i].eventWindowStyle = multiCalendar.eventStyles[records[i][calendar.legendIdField]] + ' ' + OB.Styles.OBCalendar.eventWindowStyle;
-              }
-              if (typeof calendar.customTransformResponse === 'function') {
-                records[i] = calendar.customTransformResponse(records[i], calendar);
-              }
-              if (multiCalendar && multiCalendar.calendarData.hasCustomFilters) {
-                for (j = 0; j < multiCalendar.calendarData.customFilters.length; j++) {
-                  if (typeof multiCalendar.calendarData.customFilters[j].handler.transformResponse === 'function') {
-                    records[i] = multiCalendar.calendarData.customFilters[j].handler.transformResponse(records[i], calendar, multiCalendar.calendarData.customFilters[j]);
+            if (records) {
+              for (i = 0; i < records.getLength(); i++) {
+                if (typeof records[i][calendar.nameField] === 'undefined') {
+                  //To avoid the event displays 'undefined' when no name has been set
+                  records[i][calendar.nameField] = '';
+                }
+                if (typeof records[i][calendar.descriptionField] === 'undefined') {
+                  records[i][calendar.descriptionField] = '';
+                }
+                if (multiCalendar && multiCalendar.showCustomEventsBgColor) {
+                  records[i].eventWindowStyle = multiCalendar.eventStyles[records[i][calendar.legendIdField]] + ' ' + calendar.eventWindowStyle;
+                }
+                if (typeof calendar.customTransformResponse === 'function') {
+                  records[i] = calendar.customTransformResponse(records[i], calendar);
+                }
+                if (multiCalendar && multiCalendar.calendarData.hasCustomFilters) {
+                  for (j = 0; j < multiCalendar.calendarData.customFilters.length; j++) {
+                    if (typeof multiCalendar.calendarData.customFilters[j].handler.transformResponse === 'function') {
+                      records[i] = multiCalendar.calendarData.customFilters[j].handler.transformResponse(records[i], calendar, multiCalendar.calendarData.customFilters[j]);
+                    }
                   }
                 }
               }
             }
+            if (typeof calendar.OBEventEditor.closeClick === 'function') {
+              // close editor popup on success
+              calendar.OBEventEditor.closeClick();
+            }
           }
-          if (typeof calendar.OBEventEditor.closeClick === 'function') {
-            // close editor popup on success
-            calendar.OBEventEditor.closeClick();
-          }
-        }
-        return this.Super('transformResponse', arguments);
-      },
+          return this.Super('transformResponse', arguments);
+        },
 
-      // override the addData, updateData and removeData to wrap
-      // the calendar callback to prevent adding events in cased
-      // of errors
-      addData: function (newRecord, callback, requestProperties) {
-        var dataSourceProps = this.dataSourceProps,
-            newCallBack = function (dsResponse, data, dsRequest) {
-            // don't call if there is an error
-            if (dsResponse.status < 0) {
-              return;
-            }
-            callback(dsResponse, data, dsRequest);
-            if (dataSourceProps.addEventCallback) {
-              dataSourceProps.addEventCallback(newRecord, requestProperties);
-            }
-            };
-        return this.Super('addData', [newRecord, newCallBack, requestProperties]);
-      },
-      updateData: function (updatedRecord, callback, requestProperties) {
-        var dataSourceProps = this.dataSourceProps,
-            newCallBack = function (dsResponse, data, dsRequest) {
-            // don't call if there is an error
-            if (dsResponse.status < 0) {
-              return;
-            }
-            callback(dsResponse, data, dsRequest);
-            if (dataSourceProps.updateEventCallback) {
-              dataSourceProps.updateEventCallback(updatedRecord, requestProperties);
-            }
-            };
-        return this.Super('updateData', [
-        updatedRecord, newCallBack, requestProperties]);
-      },
-      removeData: function (recordKeys, callback, requestProperties) {
-        var dataSourceProps = this.dataSourceProps,
-            newCallBack = function (dsResponse, data, dsRequest) {
-            // don't call if there is an error
-            if (dsResponse.status < 0) {
-              return;
-            }
-            callback(dsResponse, data, dsRequest);
-            if (dataSourceProps.removeEventCallback) {
-              dataSourceProps.removeEventCallback(recordKeys, requestProperties);
-            }
-            };
-        return this.Super('removeData', [recordKeys, newCallBack, requestProperties]);
-      }
-    });
+        // override the addData, updateData and removeData to wrap
+        // the calendar callback to prevent adding events in cased
+        // of errors
+        addData: function (newRecord, callback, requestProperties) {
+          var dataSourceProps = this.dataSourceProps,
+              newCallBack = function (dsResponse, data, dsRequest) {
+              // don't call if there is an error
+              if (dsResponse.status < 0) {
+                return;
+              }
+              callback(dsResponse, data, dsRequest);
+              if (dataSourceProps.addEventCallback) {
+                dataSourceProps.addEventCallback(newRecord, requestProperties);
+              }
+              };
+          return this.Super('addData', [newRecord, newCallBack, requestProperties]);
+        },
+        updateData: function (updatedRecord, callback, requestProperties) {
+          var dataSourceProps = this.dataSourceProps,
+              newCallBack = function (dsResponse, data, dsRequest) {
+              // don't call if there is an error
+              if (dsResponse.status < 0) {
+                return;
+              }
+              callback(dsResponse, data, dsRequest);
+              if (dataSourceProps.updateEventCallback) {
+                dataSourceProps.updateEventCallback(updatedRecord, requestProperties);
+              }
+              };
+          return this.Super('updateData', [
+          updatedRecord, newCallBack, requestProperties]);
+        },
+        removeData: function (recordKeys, callback, requestProperties) {
+          var dataSourceProps = this.dataSourceProps,
+              newCallBack = function (dsResponse, data, dsRequest) {
+              // don't call if there is an error
+              if (dsResponse.status < 0) {
+                return;
+              }
+              callback(dsResponse, data, dsRequest);
+              if (dataSourceProps.removeEventCallback) {
+                dataSourceProps.removeEventCallback(recordKeys, requestProperties);
+              }
+              };
+          return this.Super('removeData', [recordKeys, newCallBack, requestProperties]);
+        }
+      });
+    }
+
     this.Super('initWidget', arguments);
     this.controlsBar.reorderMember(4, 1); // Moves the 'next' button to the second position
     this.controlsBar.reorderMember(2, 4); // Moves the 'displayed date' to last position
@@ -226,19 +244,6 @@ isc.OBCalendar.addProperties({
     }
     if (!this.showDatePickerControl) {
       this.datePickerButton.hide();
-    }
-
-    if (this.showDayView !== false) {
-      this.dayView.alternateRecordStyles = OB.Styles.OBCalendar.dayView_alternateRecordStyles;
-      this.dayView.baseStyle = OB.Styles.OBCalendar.dayView_baseStyle;
-    }
-    if (this.showWeekView !== false) {
-      this.weekView.baseStyle = OB.Styles.OBCalendar.weekView_baseStyle;
-      this.weekView.headerBaseStyle = OB.Styles.OBCalendar.weekView_headerBaseStyle;
-    }
-    if (this.showMonthView !== false) {
-      this.monthView.baseStyle = OB.Styles.OBCalendar.monthView_baseStyle;
-      this.monthView.headerBaseStyle = OB.Styles.OBCalendar.monthView_headerBaseStyle;
     }
   },
 
