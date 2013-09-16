@@ -118,6 +118,19 @@
         }
       }
       return false;
+    },
+
+    lastAppliedPromotion: function () {
+      var promotions = this.get('promotions'),
+          i;
+      if (this.get('promotions')) {
+        for (i = 0; i < promotions.length; i++) {
+          if (promotions[i].lastApplied) {
+            return promotions[i];
+          }
+        }
+      }
+      return null;
     }
   });
 
@@ -739,6 +752,7 @@
       disc.discountType = rule.get('discountType');
       disc.manual = discount.manual;
       disc.userAmt = discount.userAmt;
+      disc.lastApplied = discount.lastApplied;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
 

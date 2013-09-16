@@ -184,12 +184,18 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     // new info in line
     appliedPromotions = line.get('promotions');
     if (appliedPromotions) {
-      _.forEach(appliedPromotions, function (promotion) {
-        if (promotion.manual) {
-          manualPromotions.push(promotion);
-        }
-      });
+      if (line.lastAppliedPromotion() && !line.lastAppliedPromotion().applyNext) {
+        manualPromotions.push(line.lastAppliedPromotion());
+      } else {
+        _.forEach(appliedPromotions, function (promotion) {
+          if (promotion.manual) {
+            manualPromotions.push(promotion);
+          }
+        });
+      }
     }
+
+
 
     line.set({
       promotions: null,
@@ -203,7 +209,8 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
         definition: {
           userAmt: promo.userAmt,
-          applyNext: promo.applyNext
+          applyNext: promo.applyNext,
+          lastApplied: promo.lastApplied
         },
         alreadyCalculated: true // to prevent loops
       };

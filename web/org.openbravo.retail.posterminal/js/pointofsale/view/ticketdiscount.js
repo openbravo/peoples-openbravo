@@ -295,6 +295,7 @@ enyo.kind({
     promotionToAplly.definition = {};
     promotionToAplly.definition.userAmt = comp.amt;
     promotionToAplly.definition.applyNext = !this.$.checkOverride.checked;
+    promotionToAplly.definition.lastApplied = true;
 
     if (comp.requiresQty && !comp.amt) {
       //Show a modal pop up with the error

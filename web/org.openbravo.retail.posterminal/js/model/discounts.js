@@ -52,6 +52,11 @@
       }
 
       lines.forEach(function (line) {
+        if (line.get('promotions')) {
+          line.get('promotions').forEach(function (promotion) {
+            promotion.lastApplied = undefined;
+          });
+        }
         rule.addManual(receipt, line, promotion);
       });
 
