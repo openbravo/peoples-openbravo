@@ -50,6 +50,8 @@ public class TaxRate extends ProcessHQLQuery {
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
     String hql = "from FinancialMgmtTaxRate as financialMgmtTaxRate where "
+        + "financialMgmtTaxRate.$readableClientCriteria AND "
+        + "financialMgmtTaxRate.$naturalOrgCriteria AND "
         + "(financialMgmtTaxRate.$incrementalUpdateCriteria) AND active = true "
         + "and salesPurchaseType in ('S', 'B') ";
 
