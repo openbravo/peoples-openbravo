@@ -69,7 +69,7 @@ public class Product extends ProcessHQLQuery {
     products
         .add("select"
             + regularProductsHQLProperties.getHqlSelect()
-            + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img, "
+            + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img inner join pli.product as product, "
             + "PricingProductPrice ppp, "
             + "PricingPriceListVersion pplv "
             + "WHERE (pli.obretcoProductlist = '"
@@ -104,6 +104,33 @@ public class Product extends ProcessHQLQuery {
             + "'"
             + "   and (p.$incrementalUpdateCriteria) "//
         );
+
+    // generic products
+    products
+        .add("select "
+            + regularProductsHQLProperties.getHqlSelect()
+            + "from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli, PricingProductPrice ppp "
+            + "where product = ppp.product and ppp.priceListVersion.id = '"
+            + priceListVersion.getId()
+            + "' and product.id in (select pli2.product.genericProduct.id as genericProduct "
+            + "FROM OBRETCO_Prol_Product as pli2 left outer join pli2.product.image img, "
+            + "PricingProductPrice ppp2, "
+            + "PricingPriceListVersion pplv "
+            + "WHERE (pli2.obretcoProductlist = '"
+            + productList.getId()
+            + "') "
+            + "AND ("
+            + "pplv.id='"
+            + priceListVersion.getId()
+            + "'"
+            + ") AND ("
+            + "ppp.priceListVersion.id = pplv.id"
+            + ") AND ("
+            + "pli2.product.id = ppp2.product.id"
+            + ") AND ("
+            + "pli2.product.active = true"
+            + ") AND "
+            + "((pli2.$incrementalUpdateCriteria) or (pli2.product.$incrementalUpdateCriteria) or (ppp.$incrementalUpdateCriteria) ) order by pli2.product.name)");
 
     return products;
 
