@@ -110,6 +110,11 @@
         }
       }
 
+      //if found and the current index is 0, skip
+      if (currentIndex === 0) {
+        return;
+      }
+
       // if found then first remove it, re-add it later
       if (currentIndex > -1) {
         var currentLength = currentRecentValue.length;
