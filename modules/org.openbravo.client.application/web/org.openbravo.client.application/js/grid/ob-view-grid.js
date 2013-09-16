@@ -2912,6 +2912,15 @@ isc.OBViewGrid.addProperties({
       return;
     }
 
+    if (newRow && editCompletionEvent === 'tab' && !ficCallDone) {
+      this.setEditValue(rowNum, 'actionAfterFicReturn', {
+        target: this,
+        method: this.cellEditEnd,
+        parameters: [editCompletionEvent, newValue, true, autoSaveDone]
+      }, true, true);
+      return;
+    }
+
     // If leaving the row...
     if (editCompletionEvent === 'enter' || editCompletionEvent === 'arrow_up' || editCompletionEvent === 'arrow_down') {
       // See issue https://issues.openbravo.com/view.php?id=19830
