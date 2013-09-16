@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -396,63 +396,63 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
       throws IOException, ServletException {
     log4j.debug("Output: Add Payment button pressed on Make / Receipt Payment windows");
 
-    FIN_Payment payment = new AdvPaymentMngtDao().getObject(FIN_Payment.class, strPaymentId);
-    String[] discard = { "discard" };
-    if (payment.getBusinessPartner() != null) {
-      discard[0] = "bpGridColumn";
-    }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddOrderOrInvoice", discard)
-        .createXmlDocument();
-
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-
-    if (payment.isReceipt())
-      xmlDocument.setParameter("title",
-          Utility.messageBD(this, "APRM_AddPaymentIn", vars.getLanguage()));
-    else
-      xmlDocument.setParameter("title",
-          Utility.messageBD(this, "APRM_AddPaymentOut", vars.getLanguage()));
-    xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    if (payment.getBusinessPartner() != null) {
-      xmlDocument.setParameter("businessPartner", payment.getBusinessPartner().getIdentifier());
-      xmlDocument.setParameter("businessPartnerId", payment.getBusinessPartner().getId());
-      xmlDocument.setParameter(
-          "credit",
-          dao.getCustomerCredit(payment.getBusinessPartner(), payment.isReceipt(),
-              payment.getOrganization()).toString());
-      xmlDocument.setParameter("customerBalance",
-          payment.getBusinessPartner().getCreditUsed() != null ? payment.getBusinessPartner()
-              .getCreditUsed().toString() : BigDecimal.ZERO.toString());
-    } else {
-      xmlDocument.setParameter("businessPartner", "");
-      xmlDocument.setParameter("businessPartnerId", "");
-      xmlDocument.setParameter("credit", "");
-      xmlDocument.setParameter("customerBalance", "");
-
-    }
-    xmlDocument.setParameter("windowId", strWindowId);
-    xmlDocument.setParameter("tabId", strTabId);
-    xmlDocument.setParameter("orgId", payment.getOrganization().getId());
-    xmlDocument.setParameter("paymentId", strPaymentId);
-    xmlDocument.setParameter("actualPayment", payment.getAmount().toString());
-    xmlDocument.setParameter("headerAmount", payment.getAmount().toString());
-    xmlDocument.setParameter("isReceipt", (payment.isReceipt() ? "Y" : "N"));
-    xmlDocument.setParameter("isSoTrx", (payment.isReceipt()) ? "Y" : "N");
-    if (payment.getBusinessPartner() == null
-        && (payment.getGeneratedCredit() == null || BigDecimal.ZERO.compareTo(payment
-            .getGeneratedCredit()) != 0)) {
-      payment.setGeneratedCredit(BigDecimal.ZERO);
-      OBDal.getInstance().save(payment);
-      OBDal.getInstance().flush();
-    }
-    xmlDocument.setParameter("generatedCredit", payment.getGeneratedCredit() != null ? payment
-        .getGeneratedCredit().toString() : BigDecimal.ZERO.toString());
-
     OBContext.setAdminMode(true);
     try {
+      FIN_Payment payment = new AdvPaymentMngtDao().getObject(FIN_Payment.class, strPaymentId);
+      String[] discard = { "discard" };
+      if (payment.getBusinessPartner() != null) {
+        discard[0] = "bpGridColumn";
+      }
+      XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/advpaymentmngt/ad_actionbutton/AddOrderOrInvoice", discard)
+          .createXmlDocument();
+
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("theme", vars.getTheme());
+
+      if (payment.isReceipt())
+        xmlDocument.setParameter("title",
+            Utility.messageBD(this, "APRM_AddPaymentIn", vars.getLanguage()));
+      else
+        xmlDocument.setParameter("title",
+            Utility.messageBD(this, "APRM_AddPaymentOut", vars.getLanguage()));
+      xmlDocument.setParameter("dateDisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      if (payment.getBusinessPartner() != null) {
+        xmlDocument.setParameter("businessPartner", payment.getBusinessPartner().getIdentifier());
+        xmlDocument.setParameter("businessPartnerId", payment.getBusinessPartner().getId());
+        xmlDocument.setParameter(
+            "credit",
+            dao.getCustomerCredit(payment.getBusinessPartner(), payment.isReceipt(),
+                payment.getOrganization()).toString());
+        xmlDocument.setParameter("customerBalance",
+            payment.getBusinessPartner().getCreditUsed() != null ? payment.getBusinessPartner()
+                .getCreditUsed().toString() : BigDecimal.ZERO.toString());
+      } else {
+        xmlDocument.setParameter("businessPartner", "");
+        xmlDocument.setParameter("businessPartnerId", "");
+        xmlDocument.setParameter("credit", "");
+        xmlDocument.setParameter("customerBalance", "");
+
+      }
+      xmlDocument.setParameter("windowId", strWindowId);
+      xmlDocument.setParameter("tabId", strTabId);
+      xmlDocument.setParameter("orgId", payment.getOrganization().getId());
+      xmlDocument.setParameter("paymentId", strPaymentId);
+      xmlDocument.setParameter("actualPayment", payment.getAmount().toString());
+      xmlDocument.setParameter("headerAmount", payment.getAmount().toString());
+      xmlDocument.setParameter("isReceipt", (payment.isReceipt() ? "Y" : "N"));
+      xmlDocument.setParameter("isSoTrx", (payment.isReceipt()) ? "Y" : "N");
+      if (payment.getBusinessPartner() == null
+          && (payment.getGeneratedCredit() == null || BigDecimal.ZERO.compareTo(payment
+              .getGeneratedCredit()) != 0)) {
+        payment.setGeneratedCredit(BigDecimal.ZERO);
+        OBDal.getInstance().save(payment);
+        OBDal.getInstance().flush();
+      }
+      xmlDocument.setParameter("generatedCredit", payment.getGeneratedCredit() != null ? payment
+          .getGeneratedCredit().toString() : BigDecimal.ZERO.toString());
+
       final Currency financialAccountCurrency = payment.getAccount().getCurrency();
       if (financialAccountCurrency != null) {
         xmlDocument.setParameter("financialAccountCurrencyId", financialAccountCurrency.getId());
@@ -461,178 +461,179 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
         xmlDocument.setParameter("financialAccountCurrencyPrecision", financialAccountCurrency
             .getStandardPrecision().toString());
       }
+      xmlDocument.setParameter("exchangeRate",
+          payment.getFinancialTransactionConvertRate() == null ? "" : payment
+              .getFinancialTransactionConvertRate().toPlainString());
+      xmlDocument.setParameter("actualConverted",
+          payment.getFinancialTransactionAmount() == null ? "" : payment
+              .getFinancialTransactionAmount().toString());
+      xmlDocument.setParameter("expectedConverted",
+          payment.getFinancialTransactionAmount() == null ? "" : payment
+              .getFinancialTransactionAmount().toPlainString());
+      xmlDocument.setParameter("currencyId", payment.getCurrency().getId());
+      xmlDocument.setParameter("currencyName", payment.getCurrency().getISOCode());
+
+      boolean forcedFinancialAccountTransaction = false;
+      forcedFinancialAccountTransaction = FIN_AddPayment
+          .isForcedFinancialAccountTransaction(payment);
+      // Action Regarding Document
+      xmlDocument.setParameter("ActionDocument", (payment.isReceipt() ? "PRP" : "PPP"));
+      try {
+        ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
+            (payment.isReceipt() ? "F903F726B41A49D3860243101CEEBA25"
+                : "F15C13A199A748F1B0B00E985A64C036"),
+            forcedFinancialAccountTransaction ? "29010995FD39439D97A5C0CE8CE27D70" : "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "AddPaymentFromInvoice"),
+            Utility.getContext(this, vars, "#User_Client", "AddPaymentFromInvoice"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "AddOrderOrInvoice", "");
+        xmlDocument.setData("reportActionDocument", "liststructure", comboTableData.select(false));
+        comboTableData = null;
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+
+      // Accounting Dimensions
+      String doctype;
+      if (payment.isReceipt()) {
+        doctype = AcctServer.DOCTYPE_ARReceipt;
+      } else {
+        doctype = AcctServer.DOCTYPE_APPayment;
+      }
+      final String strCentrally = Utility.getContext(this, vars,
+          DimensionDisplayUtility.IsAcctDimCentrally, strWindowId);
+      final String strElement_BP = Utility.getContext(this, vars, DimensionDisplayUtility
+          .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_BPartner, doctype,
+              DimensionDisplayUtility.DIM_Header), strWindowId);
+      final String strElement_PR = Utility.getContext(this, vars, DimensionDisplayUtility
+          .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Product, doctype,
+              DimensionDisplayUtility.DIM_Header), strWindowId);
+      final String strElement_PJ = Utility.getContext(this, vars, DimensionDisplayUtility
+          .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Project, doctype,
+              DimensionDisplayUtility.DIM_Header), strWindowId);
+      final String strElement_AY = Utility.getContext(this, vars, "$Element_AY", strWindowId);
+      final String strElement_CC = Utility.getContext(this, vars, DimensionDisplayUtility
+          .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_CostCenter, doctype,
+              DimensionDisplayUtility.DIM_Header), strWindowId);
+      final String strElement_MC = Utility.getContext(this, vars, "$Element_MC", strWindowId);
+      final String strElement_U1 = Utility.getContext(this, vars, DimensionDisplayUtility
+          .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User1, doctype,
+              DimensionDisplayUtility.DIM_Header), strWindowId);
+      final String strElement_U2 = Utility.getContext(this, vars, DimensionDisplayUtility
+          .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User2, doctype,
+              DimensionDisplayUtility.DIM_Header), strWindowId);
+      xmlDocument.setParameter("strElement_BP", strElement_BP);
+      xmlDocument.setParameter("strElement_PR", strElement_PR);
+      xmlDocument.setParameter("strElement_PJ", strElement_PJ);
+      xmlDocument.setParameter("strElement_AY", strElement_AY);
+      xmlDocument.setParameter("strElement_CC", strElement_CC);
+      xmlDocument.setParameter("strElement_MC", strElement_MC);
+      xmlDocument.setParameter("strElement_U1", strElement_U1);
+      xmlDocument.setParameter("strElement_U2", strElement_U2);
+
+      // Add GL Items
+      JSONArray addedGLITemsArray = new JSONArray();
+      List<FIN_PaymentScheduleDetail> gLItemScheduleDetailLines = FIN_AddPayment
+          .getGLItemScheduleDetails(payment);
+      for (FIN_PaymentScheduleDetail psdGLItem : gLItemScheduleDetailLines) {
+        try {
+          JSONObject glItem = new JSONObject();
+          glItem.put("glitemId", psdGLItem.getPaymentDetails().getGLItem().getId());
+          glItem.put("glitemDesc", psdGLItem.getPaymentDetails().getGLItem().getIdentifier());
+          glItem.put("finPaymentScheduleDetailId", psdGLItem.getId());
+          // Amounts
+          if (payment.isReceipt()) {
+            glItem.put("glitemPaidOutAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem
+                .getAmount().abs() : BigDecimal.ZERO);
+            glItem.put("glitemReceivedInAmt",
+                psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount() : BigDecimal.ZERO);
+          } else {
+            glItem.put("glitemReceivedInAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem
+                .getAmount().abs() : BigDecimal.ZERO);
+            glItem.put("glitemPaidOutAmt",
+                psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount() : BigDecimal.ZERO);
+          }
+          // Accounting Dimensions
+          glItem.put("cBpartnerDim", psdGLItem.getBusinessPartner() != null ? psdGLItem
+              .getBusinessPartner().getId() : "");
+          glItem.put("cBpartnerDimDesc", psdGLItem.getBusinessPartner() != null ? psdGLItem
+              .getBusinessPartner().getIdentifier() : "");
+          glItem.put("mProductDim", psdGLItem.getProduct() != null ? psdGLItem.getProduct().getId()
+              : "");
+          glItem.put("mProductDimDesc", psdGLItem.getProduct() != null ? psdGLItem.getProduct()
+              .getIdentifier() : "");
+          glItem.put("cProjectDim", psdGLItem.getProject() != null ? psdGLItem.getProject().getId()
+              : "");
+          glItem.put("cProjectDimDesc", psdGLItem.getProject() != null ? psdGLItem.getProject()
+              .getIdentifier() : "");
+          glItem.put("cActivityDim", psdGLItem.getActivity() != null ? psdGLItem.getActivity()
+              .getId() : "");
+          glItem.put("cActivityDimDesc", psdGLItem.getActivity() != null ? psdGLItem.getActivity()
+              .getIdentifier() : "");
+          glItem.put("cCostcenterDim", psdGLItem.getCostCenter() != null ? psdGLItem
+              .getCostCenter().getId() : "");
+          glItem.put("cCostcenterDimDesc", psdGLItem.getCostCenter() != null ? psdGLItem
+              .getCostCenter().getIdentifier() : "");
+          glItem.put("cCampaignDim", psdGLItem.getSalesCampaign() != null ? psdGLItem
+              .getSalesCampaign().getId() : "");
+          glItem.put("cCampaignDimDesc", psdGLItem.getSalesCampaign() != null ? psdGLItem
+              .getSalesCampaign().getIdentifier() : "");
+          glItem.put("user1Dim", psdGLItem.getStDimension() != null ? psdGLItem.getStDimension()
+              .getId() : "");
+          glItem.put("user1DimDesc", psdGLItem.getStDimension() != null ? psdGLItem
+              .getStDimension().getIdentifier() : "");
+          glItem.put("user2Dim", psdGLItem.getNdDimension() != null ? psdGLItem.getNdDimension()
+              .getId() : "");
+          glItem.put("user2DimDesc", psdGLItem.getNdDimension() != null ? psdGLItem
+              .getNdDimension().getIdentifier() : "");
+          // DisplayLogics
+          glItem.put("cBpartnerDimDisplayed", strElement_BP);
+          glItem.put("mProductDimDisplayed", strElement_PR);
+          glItem.put("cProjectDimDisplayed", strElement_PJ);
+          glItem.put("cActivityDimDisplayed", strElement_AY);
+          glItem.put("cCostcenterDimDisplayed", strElement_CC);
+          glItem.put("cCampaignDimDisplayed", strElement_MC);
+          glItem.put("user1DimDisplayed", strElement_U1);
+          glItem.put("user2DimDisplayed", strElement_U2);
+          addedGLITemsArray.put(glItem);
+        } catch (JSONException e) {
+          log4j.error(e);
+        }
+      }
+      xmlDocument.setParameter("glItems",
+          addedGLITemsArray.toString().replace("'", "").replaceAll("\"", "'"));
+      // If UsedCredit is not equal zero, check Use available credit
+      xmlDocument.setParameter("useCredit", payment.getUsedCredit().signum() != 0 ? "Y" : "N");
+
+      // Not allow to change exchange rate and amount
+      final String strNotAllowExchange = Utility.getContext(this, vars, "NotAllowChangeExchange",
+          strWindowId);
+      xmlDocument.setParameter("strNotAllowExchange", strNotAllowExchange);
+
+      dao = new AdvPaymentMngtDao();
+      FIN_FinancialAccount financialAccount = dao.getObject(FIN_FinancialAccount.class,
+          strFinancialAccountId);
+
+      if (financialAccount.getWriteofflimit() != null) {
+        final String strtypewriteoff;
+        final String strAmountwriteoff;
+
+        strtypewriteoff = financialAccount.getTypewriteoff();
+        strAmountwriteoff = financialAccount.getWriteofflimit().toString();
+        xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
+        xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
+
+        // Not allow to write off
+        final String strWriteOffLimit = Utility.getContext(this, vars, "WriteOffLimitPreference",
+            strWindowId);
+        xmlDocument.setParameter("strWriteOffLimit", strWriteOffLimit);
+      }
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
     } finally {
       OBContext.restorePreviousMode();
     }
-    xmlDocument.setParameter("exchangeRate",
-        payment.getFinancialTransactionConvertRate() == null ? "" : payment
-            .getFinancialTransactionConvertRate().toPlainString());
-    xmlDocument.setParameter("actualConverted",
-        payment.getFinancialTransactionAmount() == null ? "" : payment
-            .getFinancialTransactionAmount().toString());
-    xmlDocument.setParameter("expectedConverted",
-        payment.getFinancialTransactionAmount() == null ? "" : payment
-            .getFinancialTransactionAmount().toPlainString());
-    xmlDocument.setParameter("currencyId", payment.getCurrency().getId());
-    xmlDocument.setParameter("currencyName", payment.getCurrency().getISOCode());
-
-    boolean forcedFinancialAccountTransaction = false;
-    forcedFinancialAccountTransaction = FIN_AddPayment.isForcedFinancialAccountTransaction(payment);
-    // Action Regarding Document
-    xmlDocument.setParameter("ActionDocument", (payment.isReceipt() ? "PRP" : "PPP"));
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          (payment.isReceipt() ? "F903F726B41A49D3860243101CEEBA25"
-              : "F15C13A199A748F1B0B00E985A64C036"),
-          forcedFinancialAccountTransaction ? "29010995FD39439D97A5C0CE8CE27D70" : "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "AddPaymentFromInvoice"),
-          Utility.getContext(this, vars, "#User_Client", "AddPaymentFromInvoice"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "AddOrderOrInvoice", "");
-      xmlDocument.setData("reportActionDocument", "liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
-    // Accounting Dimensions
-    String doctype;
-    if (payment.isReceipt()) {
-      doctype = AcctServer.DOCTYPE_ARReceipt;
-    } else {
-      doctype = AcctServer.DOCTYPE_APPayment;
-    }
-    final String strCentrally = Utility.getContext(this, vars,
-        DimensionDisplayUtility.IsAcctDimCentrally, strWindowId);
-    final String strElement_BP = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_BPartner, doctype,
-            DimensionDisplayUtility.DIM_Header), strWindowId);
-    final String strElement_PR = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Product, doctype,
-            DimensionDisplayUtility.DIM_Header), strWindowId);
-    final String strElement_PJ = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Project, doctype,
-            DimensionDisplayUtility.DIM_Header), strWindowId);
-    final String strElement_AY = Utility.getContext(this, vars, "$Element_AY", strWindowId);
-    final String strElement_CC = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_CostCenter, doctype,
-            DimensionDisplayUtility.DIM_Header), strWindowId);
-    final String strElement_MC = Utility.getContext(this, vars, "$Element_MC", strWindowId);
-    final String strElement_U1 = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User1, doctype,
-            DimensionDisplayUtility.DIM_Header), strWindowId);
-    final String strElement_U2 = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User2, doctype,
-            DimensionDisplayUtility.DIM_Header), strWindowId);
-    xmlDocument.setParameter("strElement_BP", strElement_BP);
-    xmlDocument.setParameter("strElement_PR", strElement_PR);
-    xmlDocument.setParameter("strElement_PJ", strElement_PJ);
-    xmlDocument.setParameter("strElement_AY", strElement_AY);
-    xmlDocument.setParameter("strElement_CC", strElement_CC);
-    xmlDocument.setParameter("strElement_MC", strElement_MC);
-    xmlDocument.setParameter("strElement_U1", strElement_U1);
-    xmlDocument.setParameter("strElement_U2", strElement_U2);
-
-    // Add GL Items
-    JSONArray addedGLITemsArray = new JSONArray();
-    List<FIN_PaymentScheduleDetail> gLItemScheduleDetailLines = FIN_AddPayment
-        .getGLItemScheduleDetails(payment);
-    for (FIN_PaymentScheduleDetail psdGLItem : gLItemScheduleDetailLines) {
-      try {
-        JSONObject glItem = new JSONObject();
-        glItem.put("glitemId", psdGLItem.getPaymentDetails().getGLItem().getId());
-        glItem.put("glitemDesc", psdGLItem.getPaymentDetails().getGLItem().getIdentifier());
-        glItem.put("finPaymentScheduleDetailId", psdGLItem.getId());
-        // Amounts
-        if (payment.isReceipt()) {
-          glItem.put("glitemPaidOutAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem.getAmount()
-              .abs() : BigDecimal.ZERO);
-          glItem.put("glitemReceivedInAmt",
-              psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount() : BigDecimal.ZERO);
-        } else {
-          glItem.put("glitemReceivedInAmt", psdGLItem.getAmount().signum() < 0 ? psdGLItem
-              .getAmount().abs() : BigDecimal.ZERO);
-          glItem.put("glitemPaidOutAmt", psdGLItem.getAmount().signum() > 0 ? psdGLItem.getAmount()
-              : BigDecimal.ZERO);
-        }
-        // Accounting Dimensions
-        glItem.put("cBpartnerDim", psdGLItem.getBusinessPartner() != null ? psdGLItem
-            .getBusinessPartner().getId() : "");
-        glItem.put("cBpartnerDimDesc", psdGLItem.getBusinessPartner() != null ? psdGLItem
-            .getBusinessPartner().getIdentifier() : "");
-        glItem.put("mProductDim", psdGLItem.getProduct() != null ? psdGLItem.getProduct().getId()
-            : "");
-        glItem.put("mProductDimDesc", psdGLItem.getProduct() != null ? psdGLItem.getProduct()
-            .getIdentifier() : "");
-        glItem.put("cProjectDim", psdGLItem.getProject() != null ? psdGLItem.getProject().getId()
-            : "");
-        glItem.put("cProjectDimDesc", psdGLItem.getProject() != null ? psdGLItem.getProject()
-            .getIdentifier() : "");
-        glItem.put("cActivityDim", psdGLItem.getActivity() != null ? psdGLItem.getActivity()
-            .getId() : "");
-        glItem.put("cActivityDimDesc", psdGLItem.getActivity() != null ? psdGLItem.getActivity()
-            .getIdentifier() : "");
-        glItem.put("cCostcenterDim", psdGLItem.getCostCenter() != null ? psdGLItem.getCostCenter()
-            .getId() : "");
-        glItem.put("cCostcenterDimDesc", psdGLItem.getCostCenter() != null ? psdGLItem
-            .getCostCenter().getIdentifier() : "");
-        glItem.put("cCampaignDim", psdGLItem.getSalesCampaign() != null ? psdGLItem
-            .getSalesCampaign().getId() : "");
-        glItem.put("cCampaignDimDesc", psdGLItem.getSalesCampaign() != null ? psdGLItem
-            .getSalesCampaign().getIdentifier() : "");
-        glItem.put("user1Dim", psdGLItem.getStDimension() != null ? psdGLItem.getStDimension()
-            .getId() : "");
-        glItem.put("user1DimDesc", psdGLItem.getStDimension() != null ? psdGLItem.getStDimension()
-            .getIdentifier() : "");
-        glItem.put("user2Dim", psdGLItem.getNdDimension() != null ? psdGLItem.getNdDimension()
-            .getId() : "");
-        glItem.put("user2DimDesc", psdGLItem.getNdDimension() != null ? psdGLItem.getNdDimension()
-            .getIdentifier() : "");
-        // DisplayLogics
-        glItem.put("cBpartnerDimDisplayed", strElement_BP);
-        glItem.put("mProductDimDisplayed", strElement_PR);
-        glItem.put("cProjectDimDisplayed", strElement_PJ);
-        glItem.put("cActivityDimDisplayed", strElement_AY);
-        glItem.put("cCostcenterDimDisplayed", strElement_CC);
-        glItem.put("cCampaignDimDisplayed", strElement_MC);
-        glItem.put("user1DimDisplayed", strElement_U1);
-        glItem.put("user2DimDisplayed", strElement_U2);
-        addedGLITemsArray.put(glItem);
-      } catch (JSONException e) {
-        log4j.error(e);
-      }
-    }
-    xmlDocument.setParameter("glItems",
-        addedGLITemsArray.toString().replace("'", "").replaceAll("\"", "'"));
-    // If UsedCredit is not equal zero, check Use available credit
-    xmlDocument.setParameter("useCredit", payment.getUsedCredit().signum() != 0 ? "Y" : "N");
-
-    // Not allow to change exchange rate and amount
-    final String strNotAllowExchange = Utility.getContext(this, vars, "NotAllowChangeExchange",
-        strWindowId);
-    xmlDocument.setParameter("strNotAllowExchange", strNotAllowExchange);
-
-    dao = new AdvPaymentMngtDao();
-    FIN_FinancialAccount financialAccount = dao.getObject(FIN_FinancialAccount.class,
-        strFinancialAccountId);
-
-    if (financialAccount.getWriteofflimit() != null) {
-      final String strtypewriteoff;
-      final String strAmountwriteoff;
-
-      strtypewriteoff = financialAccount.getTypewriteoff();
-      strAmountwriteoff = financialAccount.getWriteofflimit().toString();
-      xmlDocument.setParameter("strtypewriteoff", strtypewriteoff);
-      xmlDocument.setParameter("strAmountwriteoff", strAmountwriteoff);
-
-      // Not allow to write off
-      final String strWriteOffLimit = Utility.getContext(this, vars, "WriteOffLimitPreference",
-          strWindowId);
-      xmlDocument.setParameter("strWriteOffLimit", strWriteOffLimit);
-    }
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 
   private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
