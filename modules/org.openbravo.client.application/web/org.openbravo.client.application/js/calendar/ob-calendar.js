@@ -245,6 +245,15 @@ isc.OBCalendar.addProperties({
     if (!this.showDatePickerControl) {
       this.datePickerButton.hide();
     }
+
+    if (this.showDayView !== false && isc.OBDaySchedule.getPrototype().baseStyle) {
+      // Hack to avoid problem that Smartclient doesn't put the good style in working hours
+      this.dayView.baseStyle = isc.OBDaySchedule.getPrototype().baseStyle;
+    }
+    if (this.showWeekView !== false && isc.OBWeekSchedule.getPrototype().baseStyle) {
+      // Hack to avoid problem that Smartclient doesn't put the good style in working hours
+      this.weekView.baseStyle = isc.OBWeekSchedule.getPrototype().baseStyle;
+    }
   },
 
   directEventEdit: function (event, popupCallback) {
