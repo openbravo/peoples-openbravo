@@ -809,10 +809,12 @@ isc.DataSource.addProperties({
 // When filtering strings in backend, spaces are replaced by % in the resultant
 // ilike expression. For example if filter is "jo sm" the query will be 
 // "ilike '%jo%sm%'", so "John Smith" would be found. When filtering in client
-// Smartclient doesn't do this conversion. This code, overwrittes Smartclioent
-// string comparator to work like in backend.
+// Smartclient doesn't do this conversion. This code, overwrittes Smartclient
+// isc.contains comparator to work like in backend when it is called from stringComparasion
+// function.
 (function () {
-  var i, containsNoBlanks, originalCondition, stringComparisonNoBlanks, operators;
+  var containsNoBlanks, stringComparison = isc.DataSource.getSearchOperators().iContains.condition,
+      originalContains = isc.clone(isc.contains);
 
   // Replaces isc.contains in the custom string comparator. Blank spaces are not
   // part of the comparision, but they separate different tokens to be found in 
@@ -837,74 +839,16 @@ isc.DataSource.addProperties({
     return true;
   };
 
-  // Copied from SmartClient's DataSource.js. The only difference is how contains
-  // is computed.
-  // Instead of using isc.contains, containsNoBlanks is used.
-  stringComparisonNoBlanks = function (value, record, fieldName, criterion, operator, ds) {
-    var field = ds.getField(fieldName);
-    var tested = isc.DataSource.getPathValue(record, field ? field : fieldName);
-    var test = value;
-    var result;
-    if (isc.isA.Number(tested)) {
-      tested = tested.toString();
+  isc.addMethods(isc, {
+    contains: function (string1, substring) {
+      var args = arguments;
+      if (args.callee.caller === stringComparison) {
+        // invoking from stringComparsin function to do local (adaptive) filtering
+        return containsNoBlanks(string1, substring);
+      } else {
+        // in other cases, use default logic
+        return OB.Utilities.callAction({method: originalContains, target: this, parameters: arguments});
+      }
     }
-
-    // Special-case code to match server-side exception when we get a request to do a string-
-    // match on a non-text field (note that numbers are OK - they are converted above)
-    if (tested !== null && !isc.isA.String(tested)) {
-      return operator.negate;
-    }
-
-    // - a null data value cannot contain anything, including null.
-    // - a non-null data value is considered to contain null. We originally followed Javascript
-    //   and considered non-null values to NOT contain null; however, it is not possible to implement
-    //   this scheme in Hibernate without resorting to hackery.  It was easier to change the 
-    //   client-side rule
-    if (tested === null) {
-      return ds._strictMode ? ds._withinLogicalNot : operator.negate;
-    }
-
-    // Convert a null filter to the empty string, so our comparisons will work
-    if (test === null) {
-      test = "";
-    }
-
-    if (isc.isA.Number(test)) {
-      test = test.toString();
-    }
-
-    if (!isc.isA.String(test) || !isc.isA.String(tested)) {
-      return operator.negate;
-    }
-
-    if (operator.caseInsensitive) {
-      tested = tested.toLowerCase();
-      test = test.toLowerCase();
-    }
-    if (operator.startsWith) {
-      result = isc.startsWith(tested, test);
-    } else if (operator.endsWith) {
-      result = isc.endsWith(tested, test);
-    } else if (operator.equals) {
-      result = (tested === test);
-    } else {
-      result = containsNoBlanks(tested, test); // using custom contains instead of isc.contains
-    }
-
-    if (operator.negate) {
-      return !result;
-    } else {
-      return result;
-    }
-  };
-
-  // replace all the operators that have the same string comparator iContains has
-  operators = isc.DataSource._operators || isc.DataSource.$4r; // Iternal SC property
-  originalCondition = operators.iContains.condition;
-
-  for (i in operators) {
-    if (operators.hasOwnProperty(i) && operators[i].condition === originalCondition) {
-      operators[i].condition = stringComparisonNoBlanks;
-    }
-  }
+  });
 }());
