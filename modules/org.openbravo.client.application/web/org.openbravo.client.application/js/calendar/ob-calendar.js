@@ -236,6 +236,23 @@ isc.OBCalendar.addProperties({
     this.Super('initWidget', arguments);
     this.controlsBar.reorderMember(4, 1); // Moves the 'next' button to the second position
     this.controlsBar.reorderMember(2, 4); // Moves the 'displayed date' to last position
+    if (this.showDayView !== false && this.showDayLanesToggleControl) {
+      this.controlsBar.addMember(
+      isc.ImgButton.create({
+        prompt: OB.I18N.getLabel('OBUIAPP_CalendarShowHideLanes'),
+        showDown: false,
+        showRollOver: false,
+        action: function () {
+          var calendar = this.parentElement.creator;
+          if (calendar.showDayLanes) {
+            calendar.setShowDayLanes(false);
+          } else {
+            calendar.setShowDayLanes(true);
+          }
+        }
+      }, this.dayLanesToggleButtonDefaults), 2);
+    }
+
     if (this.defaultViewName && ((this.showDayView !== false && this.showWeekView !== false) || (this.showDayView !== false && this.showMonthView !== false) || (this.showWeekView !== false && this.showMonthView !== false))) {
       this.setCurrentViewName(this.defaultViewName);
     }

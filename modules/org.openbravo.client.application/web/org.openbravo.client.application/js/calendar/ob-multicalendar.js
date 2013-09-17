@@ -651,6 +651,9 @@ isc.OBMultiCalendar.addProperties({
     if (typeof this.calendarProps.canCreateEvents !== 'undefined') {
       this.canCreateEvents = this.calendarProps.canCreateEvents;
     }
+    if (this.calendarProps.showDayView === false) {
+      this.calendarProps.showDayLanesToggleControl = false;
+    }
     this.addMembers([OB.Utilities.createLoadingLayout()]);
     callback = function (rpcResponse, data, rpcRequest) {
       if (data.message) {
@@ -674,6 +677,11 @@ isc.OBMultiCalendar.addProperties({
     this.Super('initWidget', arguments);
   },
   drawComponents: function () {
+    var initialLanes;
+    if (this.calendarProps.showDayLanes || this.calendarProps.showDayLanesToggleControl !== false) {
+      //Inside this 'if' statement to avoid extra computational tasks if lanes are not going to be shown
+      initialLanes = this.calculateLanes();
+    }
     if (this.canCreateEvents) {
       this.showCustomEventsBgColor = true;
     }
@@ -682,8 +690,10 @@ isc.OBMultiCalendar.addProperties({
       multiCalendar: this
     });
     this.calendar = isc.OBMultiCalendarCalendar.create(isc.addProperties(this.calendarProps, {
-      multiCalendar: this
+      multiCalendar: this,
+      lanes: initialLanes
     }));
+
     this.setLoading(false);
     if (this.showLeftControls) {
       this.addMembers([this.leftControls]);
@@ -694,8 +704,33 @@ isc.OBMultiCalendar.addProperties({
     this.refreshCalendar();
   },
 
+  calculateLanes: function () {
+    var showedLanes = [],
+        laneDefObj = {},
+        selectedOrg, i, calendarData = this.calendarData;
+    for (i = 0; i < calendarData.filters.length; i++) {
+      if (calendarData.filters[i].checked) {
+        selectedOrg = calendarData.filters[i].id;
+        break;
+      }
+    }
+    for (i = 0; i < calendarData.calendars.length; i++) {
+      if (calendarData.calendars[i].filterId === selectedOrg && calendarData.calendars[i].checked) {
+        laneDefObj = {};
+        laneDefObj.name = calendarData.calendars[i].id;
+        laneDefObj.title = calendarData.calendars[i].name;
+        showedLanes.push(laneDefObj);
+      }
+    }
+    return showedLanes;
+  },
+
   refreshCalendar: function () {
     if (this.calendar) {
+      if (this.calendar.showDayLanes || this.calendar.showDayLanesToggleControl !== false) {
+        //Inside this 'if' statement to avoid extra computational tasks if lanes are not going to be shown
+        this.calendar.setLanes(this.calculateLanes());
+      }
       this.calendar.filterData();
     }
   }
