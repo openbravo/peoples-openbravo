@@ -753,8 +753,7 @@ isc.DataSource.addProperties({
   // is computed.
   // Instead of using isc.contains, containsNoBlanks is used.
   stringComparisonNoBlanks = function (value, record, fieldName, criterion, operator, ds) {
-    var field = ds.getField(fieldName);
-    var tested = isc.DataSource.getPathValue(record, field ? field : fieldName);
+    var tested = isc.DataSource.getPathValue(record, fieldName);
     var test = value;
     var result;
     if (isc.isA.Number(tested)) {
