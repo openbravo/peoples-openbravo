@@ -40,6 +40,7 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty("ppp.standardPrice", "standardPrice"));
         add(new HQLProperty("ppp.priceLimit", "priceLimit"));
         add(new HQLProperty("ppp.cost", "cost"));
+        add(new HQLProperty("ppp.algorithm", "algorithm"));
       }
     };
     return list;

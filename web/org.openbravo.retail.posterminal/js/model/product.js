@@ -120,6 +120,10 @@
     column: 'cost',
     type: 'NUMERIC'
   }, {
+    name: 'algorithm',
+    column: 'algorithm',
+    type: 'TEXT'
+  }, {
     name: '_identifier',
     column: '_identifier',
     filter: true,
