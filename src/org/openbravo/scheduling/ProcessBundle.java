@@ -30,7 +30,6 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.ad_process.JasperProcess;
 import org.openbravo.erpCommon.ad_process.PinstanceProcedure;
-import org.openbravo.erpCommon.ad_process.ProcedureProcess;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
@@ -316,7 +315,7 @@ public class ProcessBundle {
 
     } else if (data.procedurename != null && !data.procedurename.equals("")) {
       this.impl = data.procedurename;
-      this.processClass = ProcedureProcess.class;
+      this.processClass = PinstanceProcedure.class;
     }
     // TODO Load parameters - not required as we're still using pinstanceId
     setParams(new HashMap<String, Object>());
