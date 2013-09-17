@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2013 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -126,12 +126,20 @@
     */
     IF(NOT FINISH_PROCESS) THEN
       IF(v_DocAction='XL') THEN
-        UPDATE GL_Journal
-          SET Processing='N',
-          DocAction='--',
-          Updated=now(),
-          UpdatedBy=v_AD_User_ID
-        WHERE GL_Journal_ID=v_Record_ID;
+        IF(v_AD_User_ID IS NOT NULL) THEN
+          UPDATE GL_Journal
+            SET Processing='N',
+            DocAction='--',
+            Updated=now(),
+            UpdatedBy=v_AD_User_ID
+          WHERE GL_Journal_ID=v_Record_ID;
+        ELSE
+          UPDATE GL_Journal
+            SET Processing='N',
+            DocAction='--',
+            Updated=now()
+          WHERE GL_Journal_ID=v_Record_ID;
+        END IF;
         FINISH_PROCESS:=true;
       END IF;
     END IF; --FINISH_PROCESS
@@ -145,13 +153,22 @@
     */
     IF(NOT FINISH_PROCESS) THEN
       IF(v_DocAction='CL') THEN
-        UPDATE GL_Journal
-          SET DocStatus='CL',
-          DocAction='--',
-          Processed='Y',
-          Updated=now(),
-          UpdatedBy=v_AD_User_ID
-        WHERE GL_Journal_ID=v_Record_ID;
+        IF(v_AD_User_ID IS NOT NULL) THEN
+          UPDATE GL_Journal
+            SET DocStatus='CL',
+            DocAction='--',
+            Processed='Y',
+            Updated=now(),
+            UpdatedBy=v_AD_User_ID
+          WHERE GL_Journal_ID=v_Record_ID;
+        ELSE
+          UPDATE GL_Journal
+            SET DocStatus='CL',
+            DocAction='--',
+            Processed='Y',
+            Updated=now()
+          WHERE GL_Journal_ID=v_Record_ID;
+        END IF;
         FINISH_PROCESS:=true;
       END IF;
     END IF; --FINISH_PROCESS
