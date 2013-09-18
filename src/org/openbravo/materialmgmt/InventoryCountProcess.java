@@ -335,6 +335,8 @@ public class InventoryCountProcess implements Process {
         + InventoryCountLine.PROPERTY_PRODUCT);
     where.append("   and sd." + StorageDetail.PROPERTY_ORGANIZATION + " = icl."
         + InventoryCountLine.PROPERTY_ORGANIZATION);
+    where.append("   and sd." + StorageDetail.PROPERTY_STORAGEBIN + " = icl."
+        + InventoryCountLine.PROPERTY_STORAGEBIN);
     where.append("   and (sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " < 0");
     where.append("     or sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + " < 0");
     where.append("     )");

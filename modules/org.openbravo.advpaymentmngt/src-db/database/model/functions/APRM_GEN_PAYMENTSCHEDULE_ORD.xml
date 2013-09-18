@@ -182,6 +182,8 @@ BEGIN
     -- check there is not any paid payment
     DECLARE
       Cur_PaymentScheduleDetail RECORD;
+      v_FinPaymentScheduleDetailId VARCHAR2(32);
+      v_payment_schedule_invoice VARCHAR2(32);
     BEGIN
       SELECT count(*) INTO v_count
       FROM fin_payment_schedule
@@ -198,6 +200,10 @@ BEGIN
           AND ps.c_order_id = p_record_id
         ) LOOP
         IF (cur_paymentscheduledetail.fin_payment_schedule_invoice IS NOT NULL) THEN
+          IF cur_paymentscheduledetail.fin_payment_schedule_order IS NOT NULL THEN
+            v_FinPaymentScheduleDetailId:=cur_paymentscheduledetail.fin_payment_scheduledetail_id;
+            v_payment_schedule_invoice:=cur_paymentscheduledetail.fin_payment_schedule_invoice;
+          END IF;
           UPDATE fin_payment_scheduledetail
           SET fin_payment_schedule_order = null
           WHERE fin_payment_scheduledetail_id = cur_paymentscheduledetail.fin_payment_scheduledetail_id;
@@ -210,6 +216,21 @@ BEGIN
       v_resultstr:='Delete scheduled payments';
       DELETE FROM fin_payment_schedule
       WHERE c_order_id = p_record_id;
+
+      -- When there are more than one payment schedule for the invoice related to the order, merge the payment schedules
+      IF v_FinPaymentScheduleDetailId IS NOT NULL THEN
+        UPDATE fin_payment_scheduledetail
+        SET amount = (SELECT SUM(amount)
+			FROM fin_payment_scheduledetail
+			WHERE fin_payment_schedule_invoice = v_payment_schedule_invoice
+			AND fin_payment_schedule_order IS NULL)
+        WHERE fin_payment_scheduledetail_id = v_FinPaymentScheduleDetailId;
+
+        DELETE FROM fin_payment_scheduledetail
+        WHERE fin_payment_scheduledetail_id <> v_FinPaymentScheduleDetailId
+        AND fin_payment_schedule_invoice = v_payment_schedule_invoice
+        AND fin_payment_schedule_order IS NULL;
+      END IF;
     END;
   ELSIF (p_docaction = 'CL') THEN
     DECLARE

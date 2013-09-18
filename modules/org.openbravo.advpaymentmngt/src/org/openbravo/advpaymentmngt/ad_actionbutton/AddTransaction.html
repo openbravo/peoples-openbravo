@@ -279,7 +279,7 @@ function submitThisPage(strCommand) {
           }else{
             if (validate() ) {
               setProcessingMode('popup', true);
-              submitCommandForm(strCommand, false, null, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html');
+              submitCommandForm(strCommand, false, null, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html', '_self');
               disableButtonProcess();
               return true;
             } else {

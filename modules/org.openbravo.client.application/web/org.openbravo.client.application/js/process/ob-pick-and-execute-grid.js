@@ -44,7 +44,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   minFieldWidth: 75,
   width: '100%',
   height: '100%',
-  autoFitFieldsFillViewport: false,
+  autoFitFieldsFillViewport: true,
   confirmDiscardEdits: false,
   animateRemoveRecord: false,
   removeFieldProperties: {
@@ -138,7 +138,22 @@ isc.OBPickAndExecuteGrid.addProperties({
       window.warn('grid fiel not found!');
     }
 
+    this.autoFitExpandField = this.getLongestFieldName();
+
     this.Super('initWidget', arguments);
+  },
+
+  getLongestFieldName: function () {
+    var len = this.fields.length,
+        maxWidth = -1,
+        i, longestFieldName;
+    for (i = 0; i < len; i++) {
+      if (this.fields[i].displaylength > maxWidth) {
+        longestFieldName = this.fields[i].name;
+        maxWidth = this.fields[i].displaylength;
+      }
+    }
+    return longestFieldName;
   },
 
   // when starting row editing make sure that the current

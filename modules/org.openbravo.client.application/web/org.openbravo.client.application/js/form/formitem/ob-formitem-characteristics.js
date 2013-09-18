@@ -110,20 +110,21 @@ isc.OBCharacteristicsFilterDialog.addProperties({
   vertical: true,
   showMinimizeButton: false,
   destroyOnClose: false,
+  width: 100,
+  height: 200,
 
   mainLayoutDefaults: {
     _constructor: 'VLayout',
-    width: 380,
-    height: 105,
+    width: 300,
     layoutMargin: 5
   },
 
   buttonLayoutDefaults: {
     _constructor: 'HLayout',
     width: '100%',
-    height: 22,
+    height: 40,
     layoutAlign: 'right',
-    align: 'right',
+    align: 'center',
     membersMargin: 5,
     autoParent: 'mainLayout'
   },
@@ -306,6 +307,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     };
 
     this.tree = isc.TreeGrid.create({
+      styleName: '',
       showHeader: false,
       autoFetchData: true,
       dataArrived: dataArrived,
@@ -313,7 +315,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       getNodeByID: getNodeByID,
       loadDataOnDemand: false,
       // loading the whole tree in a single request
-      height: 400,
+      height: 200,
       showOpenIcons: false,
       showDropIcons: false,
       nodeIcon: null,
@@ -475,6 +477,17 @@ isc.OBCharacteristicsFilterItem.addProperties({
   },
 
   filterDialogCallback: function (value) {
+    // Whenever filter is changed, new criteria must force a backend call, adaptive
+    // filter cannot be used for characteristics as the information to do the matching
+    // is not present in client. Cache of localData needs to be cleaned up to force it;
+    // if not, this criteria can be considered to be more restrictive without even
+    // executing compare criteria method in case the whole page was originally retrieved
+    // without any criteria.
+    // See issue #24750
+    if (this.grid.parentElement.data) {
+      this.grid.parentElement.data.localData = null;
+    }
+
     this.internalValue = value;
     this.setElementValue(isc.OBCharacteristicsFilterItem.getDisplayValue(value));
     this.form.grid.performAction();

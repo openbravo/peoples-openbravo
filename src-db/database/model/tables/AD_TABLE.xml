@@ -103,7 +103,7 @@
       </column>
       <column name="AD_PACKAGE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default><![CDATA[0]]></default>
-        <onCreateDefault><![CDATA[SELECT AD_PACKAGE_ID FROM AD_PACKAGE WHERE AD_MODULE_ID<>'0']]></onCreateDefault>
+        <onCreateDefault/>
       </column>
       <column name="TREETYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
