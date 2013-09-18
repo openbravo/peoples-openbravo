@@ -5177,6 +5177,7 @@ IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
   font-size: 11px;
 }
 
+.calendarWorkdaySelected,
 .calendarCellSelected {
   background-color: #cccccc;
   border-bottom: 1px solid #ababab;
