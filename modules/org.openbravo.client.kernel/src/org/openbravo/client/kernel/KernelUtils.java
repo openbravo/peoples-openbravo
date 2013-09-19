@@ -20,8 +20,9 @@ package org.openbravo.client.kernel;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+
+import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -33,17 +34,18 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * Contains several utility methods used in the kernel.
@@ -385,47 +387,17 @@ public class KernelUtils {
    * @return The parent tab of the given tab
    */
   public Tab getParentTab(Tab tab) {
-    List<Tab> tabsOfWindow = tab.getWindow().getADTabList();
-    ArrayList<Entity> entities = new ArrayList<Entity>();
-    HashMap<Entity, Tab> tabOfEntity = new HashMap<Entity, Tab>();
-    Entity theEntity = null;
-    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
-      theEntity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
-    } else {
-      theEntity = ModelProvider.getInstance().getEntityByTableName(tab.getTable().getDBTableName());
-    }
-
-    for (Tab aTab : tabsOfWindow) {
-      Entity entity = null;
-      if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(aTab.getTable().getDataOriginType())) {
-        entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
-      } else {
-        entity = ModelProvider.getInstance().getEntityByTableName(aTab.getTable().getDBTableName());
-      }
-      entities.add(entity);
-      if (!tabOfEntity.containsKey(entity)){
-        tabOfEntity.put(entity, aTab);
-      }
-    }
-
-    if (tab.getColumn() != null) {
-      final String colId = (String) DalUtil.getId(tab.getColumn());
-      for (Property prop : theEntity.getProperties()) {
-        if (prop.getColumnId() != null && prop.getColumnId().equals(colId)
-            && prop.getTargetEntity() != null && prop.isParent()
-            && tabOfEntity.containsKey(prop.getTargetEntity())) {
-          return tabOfEntity.get(prop.getTargetEntity());
-        }
-      }
-    }
-
+    ConnectionProvider connection = new DalConnectionProvider();
     Tab targetTab = null;
-    for (Property property : theEntity.getProperties()) {
-      if (property.isParent()) {
-        if (property.getTargetEntity() != null && entities.contains(property.getTargetEntity())) {
-          targetTab = tabOfEntity.get(property.getTargetEntity());
-        }
+    String tabId = null;
+    try {
+      tabId = KernelUtilsData.getParentTab(connection, tab.getWindow().getId(), tab.getTabLevel()
+          .toString(), tab.getSequenceNumber().toString());
+      if (tabId != null) {
+        targetTab = OBDal.getInstance().get(Tab.class, tabId);
       }
+    } catch (ServletException e) {
+      log.error(e.getMessage(), e);
     }
     return targetTab;
   }
