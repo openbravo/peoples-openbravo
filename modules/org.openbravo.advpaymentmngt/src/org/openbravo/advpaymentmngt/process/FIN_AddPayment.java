@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.process;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -333,8 +334,8 @@ public class FIN_AddPayment {
         isRefund, null, null, null);
   }
 
-  public static FIN_Payment setFinancialTransactionAmountAndRate(FIN_Payment payment,
-      BigDecimal finTxnConvertRate, BigDecimal finTxnAmount) {
+  public static FIN_Payment setFinancialTransactionAmountAndRate(VariablesSecureApp vars,
+      FIN_Payment payment, BigDecimal finTxnConvertRate, BigDecimal finTxnAmount) {
     if (payment == null) {
       return payment;
     }
@@ -352,12 +353,22 @@ public class FIN_AddPayment {
     } else if (paymentAmount.compareTo(BigDecimal.ZERO) != 0) {
       // Correct exchange rate for rounding that occurs in UI
       finTxnConvertRate = finTxnAmount.divide(paymentAmount, MathContext.DECIMAL64);
+      if (vars != null) {
+        DecimalFormat generalQtyRelationFmt = Utility.getFormat(vars, "generalQtyEdition");
+        finTxnConvertRate = finTxnConvertRate.setScale(
+            generalQtyRelationFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP);
+      }
     }
 
     payment.setFinancialTransactionAmount(finTxnAmount);
     payment.setFinancialTransactionConvertRate(finTxnConvertRate);
 
     return payment;
+  }
+
+  public static FIN_Payment setFinancialTransactionAmountAndRate(FIN_Payment payment,
+      BigDecimal finTxnConvertRate, BigDecimal finTxnAmount) {
+    return setFinancialTransactionAmountAndRate(null, payment, finTxnConvertRate, finTxnAmount);
   }
 
   public static FIN_Payment createRefundPayment(ConnectionProvider conProvider,
