@@ -404,7 +404,7 @@ enyo.kind({
       me.setDisabled(true);
       return;
     }
-    
+
     me.setDisabled(OB.UTIL.isDisableDiscount(this.receipt));
 
     me.adjustVisibilityBasedOnPermissions();

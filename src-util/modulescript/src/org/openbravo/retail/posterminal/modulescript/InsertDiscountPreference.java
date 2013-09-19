@@ -41,12 +41,14 @@ public class InsertDiscountPreference extends ModuleScript {
 
       String exists1 = InsertDiscountPreferenceData.selectExistsControlPreference(cp);
       String exists2 = InsertDiscountPreferenceData.selectIsNewInstance(cp);
+      // if preference not exists and it is not a new instance then preference "discount to button" is inserted
       if (exists1.equals("0") && !exists2.equals("0")) {
     	int prefs = InsertDiscountPreferenceData.insert(cp);
         log4j.debug("Inserted " + prefs + " preference -open discount button-");  
       } else {
         log4j.debug("No need to insert preference -open discount button-");
       }
+      // insert control preferente to avoid that the preference "discount to button"  is inserted in the future
       if (exists1.equals("0"))
       {
         InsertDiscountPreferenceData.insertControlPreference(cp);

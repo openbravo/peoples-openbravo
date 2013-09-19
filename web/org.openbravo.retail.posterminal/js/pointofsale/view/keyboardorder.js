@@ -205,20 +205,21 @@ enyo.kind({
         }
       }
     });
-        
+
     this.addCommand('screen:dto', {
-        stateless: true,
-        permission: 'OBPOS_order.discount',
-        action: function (keyboard, txt) {
-	        me.doDiscountsMode({
-		        tabPanel: 'edit',
-		        keyboard: 'toolbardiscounts',
-		        edit: false,
-		        options: {
-		          discounts: true
-		        }
-	      });
-        }});
+      stateless: true,
+      permission: 'OBPOS_order.discount',
+      action: function (keyboard, txt) {
+        me.doDiscountsMode({
+          tabPanel: 'edit',
+          keyboard: 'toolbardiscounts',
+          edit: false,
+          options: {
+            discounts: true
+          }
+        });
+      }
+    });
 
     //To be used in the discounts side bar
     this.addCommand('ticket:discount', {

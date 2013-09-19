@@ -59,7 +59,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT COUNT(1) FROM OBPOS_APPLICATIONS WHERE ad_client_id <> '39363B0921BB4293B48383844325E84C'
+      SELECT COUNT(1) FROM OBPOS_APPLICATIONS
       ]]>
     </Sql>
   </SqlMethod>
