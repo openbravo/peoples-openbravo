@@ -513,6 +513,11 @@ isc.OBToolbar.addClassProperties({
           disabled = true;
         }
         this.setDisabled(disabled);
+      },
+      'treeGrid': {
+        updateState: function () {
+          this.setDisabled(false);
+        }
       }
     }
   },
@@ -1698,6 +1703,13 @@ OB.ToolbarUtils.showTree = function (view) {
   }
 
   view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
+};
+
+OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
+  var treeGridPopup = view.treePopup;
+  if (!treeGridPopup.isVisible()) {
+    treeGridPopup.show();
+  }
 };
 
 

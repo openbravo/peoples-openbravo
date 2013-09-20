@@ -227,12 +227,20 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
     // Tree button
-    if (tab.isTreeIncluded() || tab.getTable().isTree()) {
+    if (tab.isTreeIncluded()) {
       IconButton treeBtn = new IconButton();
       treeBtn.type = "tree";
       treeBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Tree", OBContext
           .getOBContext().getLanguage().getLanguage());
       treeBtn.action = "OB.ToolbarUtils.showTree(this.view);";
+      iconButtons.add(treeBtn);
+    }
+
+    if (tab.getTable().isTree()) {
+      IconButton treeBtn = new IconButton();
+      treeBtn.type = "treeGrid";
+      treeBtn.label = "Toggle Tree Grid Visibility";
+      treeBtn.action = "OB.ToolbarUtils.toggleTreeGridVisibility(this.view);";
       iconButtons.add(treeBtn);
     }
 
@@ -604,10 +612,6 @@ public class OBViewTab extends BaseTemplateComponent {
     return preferenceAttributes;
   }
 
-  public boolean isTree() {
-    return tab.getTable().isTree();
-  }
-
   public String getTreeTypeId() {
     if (tab.getTable().getTreetype34() != null) {
       return tab.getTable().getTreetype34().getId();
@@ -936,6 +940,22 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public boolean isShowParentButtons() {
     return tab.isShowParentsButtons();
+  }
+
+  public boolean isTree() {
+    return tab.getTable().isTree();
+  }
+
+  public String getTreeGrid() {
+    final OBTreeGridComponent treeGridComponent = createComponent(OBTreeGridComponent.class);
+    treeGridComponent.setParameters(getParameters());
+    treeGridComponent.setTab(tab);
+    treeGridComponent.setViewTab(this);
+    return treeGridComponent.generate();
+  }
+
+  public String getReferencedTableId() {
+    return tab.getTable().getId();
   }
 
   private class FormFieldComparator implements Comparator<Field> {

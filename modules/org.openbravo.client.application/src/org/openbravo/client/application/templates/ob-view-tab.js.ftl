@@ -169,6 +169,10 @@
             </#list>
         },
     </#if>
+    
+
+    
+    
     initWidget: function() {
         this.prepareFields();
         this.dataSource = ${tabComponent.dataSourceJavaScript};
@@ -176,6 +180,9 @@
         this.dataSource.potentiallyShared = true;
         this.viewForm = isc.OBViewForm.create(isc.clone(OB.ViewFormProperties), ${tabComponent.viewForm}); 
         this.viewGrid = ${tabComponent.viewGrid};
+    <#if tabComponent.tree>
+        this.treePopup = ${tabComponent.treeGrid};
+    </#if>
         this.Super('initWidget', arguments);
     }
 </#macro>

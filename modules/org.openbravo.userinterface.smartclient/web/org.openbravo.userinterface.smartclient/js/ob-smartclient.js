@@ -74,6 +74,16 @@ isc.DataSource.addSearchOperator({
   }
 });
 
+isc.Tree.addProperties({
+  getLoadState: function (node) {
+    if (node._hasChildren === false) {
+      return isc.Tree.LOADED;
+    } else {
+      return this.Super('getLoadState', arguments);
+    }
+  }
+});
+
 
 isc.Canvas.addProperties({
 

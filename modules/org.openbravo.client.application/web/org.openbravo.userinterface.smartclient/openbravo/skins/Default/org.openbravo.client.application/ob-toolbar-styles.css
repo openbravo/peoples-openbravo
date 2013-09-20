@@ -262,6 +262,12 @@
   background-image: url(./images/toolbar/iconButton-tree.png);
 }
 
+.OBToolbarIconButton_icon_treeGrid {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/toolbar/iconButton-tree.png);
+}
+
 .OBToolbarIconButton_icon_clone {
   background-repeat: no-repeat;
   background-position: center center;
