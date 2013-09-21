@@ -78,6 +78,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       String orderId = (String) bundle.getParams().get("C_Order_ID");
       Order objOrder = OBDal.getInstance().get(Order.class, orderId);
       Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
+      boolean update = false;
+      BigDecimal Zero = BigDecimal.ZERO;
 
       if (FIN_Utility.isBlockedBusinessPartner(objOrder.getBusinessPartner().getId(), true, 1)) {
         // If the Business Partner is blocked, the Order should not be completed.
@@ -287,7 +289,19 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       OBDal.getInstance().refresh(objOrder);
 
       for (OrderLine orderLine : objCloneOrder.getOrderLineList()) {
-        callUpdateStoragePending(objCloneOrder, orderLine);
+        if (("I".equals(orderLine.getProduct().getProductType()))
+            && (orderLine.getProduct().isStocked())) {
+          if (orderLine.isDirectShipment()) {
+            update = ((Zero.subtract(orderLine.getReservedQuantity())).subtract(orderLine
+                .getDeliveredQuantity())) != Zero;
+          } else {
+            update = ((orderLine.getOrderedQuantity().subtract(orderLine.getReservedQuantity()))
+                .subtract(orderLine.getDeliveredQuantity())) != Zero;
+          }
+          if (update) {
+            callUpdateStoragePending(objCloneOrder, orderLine);
+          }
+        }
       }
       OBDal.getInstance().commitAndClose();
       OBError result = OBErrorBuilder.buildMessage(null, "success", "@SalesOrderDocumentno@ "
@@ -412,9 +426,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
 
       // update orderline
-      if ("I".equals(objCloneOrderLine.getProduct().getProductType())) {
-        objCloneOrderLine.setReservedQuantity(objCloneOrderLine.getReservedQuantity().add(qtySo));
-      }
+      objCloneOrderLine.setReservedQuantity(objCloneOrderLine.getReservedQuantity().add(qtySo));
+
     } catch (Exception e) {
       throw new OBException(e);
     }
