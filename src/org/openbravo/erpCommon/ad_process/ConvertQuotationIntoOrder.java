@@ -410,6 +410,11 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       parameters.add(null);
       final String procedureName = "m_update_storage_pending";
       CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
+
+      // update orderline
+      if ("I".equals(objCloneOrderLine.getProduct().getProductType())) {
+        objCloneOrderLine.setReservedQuantity(objCloneOrderLine.getReservedQuantity().add(qtySo));
+      }
     } catch (Exception e) {
       throw new OBException(e);
     }
