@@ -522,7 +522,13 @@ isc.OBSelectorItem.addProperties({
     }
 
     //Setting the element value again to align the cursor position correctly.
-    this.setElementValue(identifier);
+    //Before setting the value check if the identifier is part of the value map or the full identifier is entered.
+    //If it fails set newValue as value.
+    if ((this.valueMap && this.valueMap[newValue] === identifier && identifier.trim() !== '') || this.fullIdentifierEntered) {
+      this.setElementValue(identifier);
+    } else {
+      this.setElementValue(newValue);
+    }
   },
 
   setPickListWidth: function () {

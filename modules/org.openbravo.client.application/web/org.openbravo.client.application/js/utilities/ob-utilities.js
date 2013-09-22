@@ -1025,16 +1025,21 @@ OB.Utilities.generateRandomString = function (stringLength, allowLowerCaseChars,
 
 /* This function will return true if it receives a string parameter, and 
  * which complies with the OB UUID format (that is, its a
- * hexadecimal number of length 32)
+ * hexadecimal number of length 32 or numeric numbers of length less than or equal to 10)
  */
 OB.Utilities.isUUID = function (object) {
   if (typeof object !== 'string') {
     return false;
   }
-  if (object.length !== 32) {
+  if (object.length > 10 && object.length !== 32) {
     return false;
   }
-  return (/[A-Fa-f0-9]{32,32}/).test(object);
+  if (object.length === 32) {
+    return (/[A-Fa-f0-9]{32,32}/).test(object);
+  } else if (object.length <= 10) {
+    //return true if uuid contains only numbers
+    return (/^\d+$/).test(object);
+  }
 };
 
 //** {{{ OB.Utilities.clientClassSplitProps }}} **
