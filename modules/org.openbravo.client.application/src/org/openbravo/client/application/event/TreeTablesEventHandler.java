@@ -19,40 +19,47 @@
 
 package org.openbravo.client.application.event;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
-import org.jfree.util.Log;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.ad.utility.Tree;
-import org.openbravo.model.ad.utility.TreeNode;
-import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.ad.utility.ADTreeType;
+import org.openbravo.service.datasource.DataSourceService;
+import org.openbravo.service.datasource.DataSourceServiceProvider;
 
 public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = getTreeTables();
 
+  private static final String TREENODE_DATASOURCE = "90034CAE96E847D78FBEF6D38CB1930D";
+  private static final String LINKTOPARENT_DATASOURCE = "90034CAE96E847D78FBEF6D38CB1930D";
+
+  private static final String TREENODE_STRUCTURE = "ADTree";
+  private static final String LINKTOPARENT_STRUCTURE = "LinkToParent";
+  // private static final String CUSTOM_STRUCTURE = "Custom";
+
   protected Logger logger = Logger.getLogger(this.getClass());
+
+  @Inject
+  private DataSourceServiceProvider dataSourceServiceProvider;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -64,26 +71,12 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
-    Client client = OBContext.getOBContext().getCurrentClient();
-    Organization org = OBContext.getOBContext().getCurrentOrganization();
     BaseOBObject bob = event.getTargetInstance();
-    Table table = OBDal.getInstance().get(Table.class,
-        event.getTargetInstance().getEntity().getTableId());
-
-    Tree adTree = getTree(table, bob);
-    if (adTree == null) {
-      // The adTree does not exists, create it
-      adTree = createTree(table, bob);
-    }
-    // Adds the node to the adTree
-    TreeNode adTreeNode = OBProvider.getInstance().get(TreeNode.class);
-    adTreeNode.setClient(client);
-    adTreeNode.setOrganization(org);
-    adTreeNode.setTree(adTree);
-    adTreeNode.setNode(bob.getId().toString());
-    adTreeNode.setSequenceNumber(100L);
-    adTreeNode.setReportSet("0");
-    OBDal.getInstance().save(adTreeNode);
+    DataSourceService dataSource = getDataSource(bob.getEntity().getTableId());
+    JSONObject jsonBob = this.fromBobToJSONObject(bob);
+    Map<String, String> parameters = new HashMap<String, String>();
+    parameters.put("jsonBob", jsonBob.toString());
+    dataSource.add(parameters, null);
   }
 
   public void onDelete(@Observes
@@ -92,99 +85,44 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     BaseOBObject bob = event.getTargetInstance();
-    Table table = OBDal.getInstance().get(Table.class,
-        event.getTargetInstance().getEntity().getTableId());
-    Tree adTree = getTree(table, bob);
-    OBCriteria<TreeNode> adTreeNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
-    adTreeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, adTree));
-    adTreeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, bob.getId().toString()));
-    TreeNode treeNode = (TreeNode) adTreeNodeCriteria.uniqueResult();
-    // Hay que:
-    // - Borrar el treeNode
-    // - Hacer un reparent de los nodos hijos de este treeNode
-    String newParentId = treeNode.getReportSet();
-    StringBuilder sql = new StringBuilder();
-    sql.append(" UPDATE AD_TREENODE set parent_id = ? ");
-    sql.append(" WHERE ad_tree_id = ? ");
-    sql.append(" AND parent_id= ? ");
+    DataSourceService dataSource = getDataSource(bob.getEntity().getTableId());
+    JSONObject jsonBob = this.fromBobToJSONObject(bob);
+    Map<String, String> parameters = new HashMap<String, String>();
+    parameters.put("jsonBob", jsonBob.toString());
+    dataSource.remove(parameters);
+  }
+
+  private DataSourceService getDataSource(String tableId) {
+    Table table = OBDal.getInstance().get(Table.class, tableId);
+    ADTreeType treeType = table.getTreetype34();
+
+    DataSourceService dataSource = null;
+    if (TREENODE_STRUCTURE.equals(treeType.getTreeStructure())) {
+      dataSource = dataSourceServiceProvider.getDataSource(TREENODE_DATASOURCE);
+    } else if (LINKTOPARENT_STRUCTURE.equals(treeType.getTreeStructure())) {
+      dataSource = dataSourceServiceProvider.getDataSource(LINKTOPARENT_DATASOURCE);
+    }
+    return dataSource;
+  }
+
+  public JSONObject fromBobToJSONObject(BaseOBObject bob) {
+    Entity entity = bob.getEntity();
+    List<Property> propertyList = entity.getProperties();
+    JSONObject jsonBob = new JSONObject();
     try {
-      PreparedStatement ps = OBDal.getInstance().getConnection(false)
-          .prepareStatement(sql.toString());
-      ps.setString(1, newParentId);
-      ps.setString(2, adTree.getId());
-      ps.setString(3, treeNode.getNode());
-      int nChildrenMoved = ps.executeUpdate();
-      Log.info(nChildrenMoved + " children have been moved to another parent");
-    } catch (SQLException e) {
-      Log.error("Error while deleting tree node: ", e);
-      throw new OBException("NO GUARDAR!");
-    }
-
-    OBDal.getInstance().remove(treeNode);
-
-  }
-
-  private Tree getTree(Table table, BaseOBObject bob) {
-    Tree tree = null;
-    OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
-    adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-
-    List<Column> parentColumns = getParentColumns(table);
-    // If it is a subtab, the tree must be associated to the id of its parent tab
-    if (parentColumns != null && !parentColumns.isEmpty()) {
-      // TODO: Support tables with multple parent columns
-      String referencedColumnValue = getReferencedColumnValue(bob, parentColumns);
-      if (referencedColumnValue != null && !referencedColumnValue.isEmpty()) {
-        adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_PARENTRECORDID, referencedColumnValue));
+      for (Property property : propertyList) {
+        if (property.getReferencedProperty() != null) {
+          BaseOBObject referencedbob = (BaseOBObject) bob.get(property.getName());
+          jsonBob.put(property.getName(), referencedbob.getId());
+        } else {
+          jsonBob.put(property.getName(), bob.get(property.getName()));
+        }
       }
+      jsonBob.put("_entity", entity.getName());
+    } catch (JSONException e) {
+      logger.error("Error while converting the BOB to JsonObject", e);
     }
-
-    tree = (Tree) adTreeCriteria.uniqueResult();
-    return tree;
-  }
-
-  private String getReferencedColumnValue(BaseOBObject bob, List<Column> parentColumns) {
-    Column parentColumn = parentColumns.get(0);
-    Property property = getPropertyFromColumn(parentColumn);
-    BaseOBObject referencedBOB = (BaseOBObject) bob.getValue(property.getName());
-    return referencedBOB.getId().toString();
-  }
-
-  private Tree createTree(Table table, BaseOBObject bob) {
-    Client client = OBContext.getOBContext().getCurrentClient();
-    Organization org = OBContext.getOBContext().getCurrentOrganization();
-
-    Tree adTree = OBProvider.getInstance().get(Tree.class);
-    adTree.setClient(client);
-    adTree.setOrganization(org);
-    adTree.setAllNodes(true);
-    // TODO: Change this
-    adTree.setTypeArea("NEW");
-    adTree.setTable(table);
-    String name = bob.getClass().getName();
-    List<Column> parentColumns = getParentColumns(table);
-    if (parentColumns != null && !parentColumns.isEmpty()) {
-      String referencedColumnValue = getReferencedColumnValue(bob, parentColumns);
-      adTree.setParentRecordID(referencedColumnValue);
-      name = name + referencedColumnValue;
-      // TODO: Fix this!
-      name = name.substring(0, 59);
-    }
-    adTree.setName(name);
-    OBDal.getInstance().save(adTree);
-    return adTree;
-  }
-
-  private List<Column> getParentColumns(Table table) {
-    OBCriteria<Column> isParentColumnsCriteria = OBDal.getInstance().createCriteria(Column.class);
-    isParentColumnsCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, table));
-    isParentColumnsCriteria.add(Restrictions.eq(Column.PROPERTY_LINKTOPARENTCOLUMN, true));
-    return isParentColumnsCriteria.list();
-  }
-
-  private Property getPropertyFromColumn(Column column) {
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(column.getTable().getId());
-    return entity.getPropertyByColumnName(column.getDBColumnName());
+    return jsonBob;
   }
 
   private static Entity[] getTreeTables() {
