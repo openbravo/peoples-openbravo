@@ -87,8 +87,9 @@ static Logger log4j = Logger.getLogger(UpdateTransactionBPExchangeRateData.class
     String strSql = "";
     strSql = strSql + 
       "        SELECT COUNT(1) AS NAME FROM DUAL" +
-      "        WHERE EXISTS(SELECT 1 FROM FIN_FINACC_TRANSACTION, FIN_PAYMENT " +
-      "                              WHERE FIN_FINACC_TRANSACTION.C_BPARTNER_ID IS NULL AND FIN_PAYMENT.C_BPARTNER_ID IS NOT NULL)";
+      "        WHERE EXISTS(SELECT 1 FROM FIN_FINACC_TRANSACTION FT" +
+      "                     LEFT JOIN FIN_PAYMENT FP ON FP.FIN_PAYMENT_ID = FT.FIN_PAYMENT_ID " +
+      "                     WHERE FT.C_BPARTNER_ID IS NULL AND FP.C_BPARTNER_ID IS NOT NULL)";
 
     ResultSet result;
     boolean boolReturn = false;
@@ -122,9 +123,10 @@ static Logger log4j = Logger.getLogger(UpdateTransactionBPExchangeRateData.class
     String strSql = "";
     strSql = strSql + 
       "        UPDATE FIN_FINACC_TRANSACTION SET C_BPARTNER_ID = (SELECT C_BPARTNER_ID FROM FIN_PAYMENT WHERE FIN_PAYMENT_ID = FIN_FINACC_TRANSACTION.FIN_PAYMENT_ID)" +
-      "        WHERE EXISTS(SELECT 1 FROM FIN_FINACC_TRANSACTION FT, FIN_PAYMENT " +
-      "                                                    WHERE FT.C_BPARTNER_ID IS NULL AND FIN_PAYMENT.C_BPARTNER_ID IS NOT NULL" +
-      "                                                    AND FT.FIN_FINACC_TRANSACTION_ID = FIN_FINACC_TRANSACTION.FIN_FINACC_TRANSACTION_ID)";
+      "        WHERE EXISTS(SELECT 1 FROM FIN_FINACC_TRANSACTION FT " +
+      "                     LEFT JOIN FIN_PAYMENT FP ON FP.FIN_PAYMENT_ID = FT.FIN_PAYMENT_ID" +
+      "                     WHERE FT.C_BPARTNER_ID IS NULL AND FP.C_BPARTNER_ID IS NOT NULL" +
+      "                     AND FT.FIN_FINACC_TRANSACTION_ID = FIN_FINACC_TRANSACTION.FIN_FINACC_TRANSACTION_ID)";
 
     int updateCount = 0;
     PreparedStatement st = null;

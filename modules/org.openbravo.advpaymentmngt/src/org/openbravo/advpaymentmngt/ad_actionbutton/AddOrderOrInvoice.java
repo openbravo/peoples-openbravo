@@ -258,7 +258,8 @@ public class AddOrderOrInvoice extends HttpSecureAppServlet {
                 user2);
           }
         }
-        FIN_AddPayment.setFinancialTransactionAmountAndRate(payment, exchangeRate, convertedAmount);
+        FIN_AddPayment.setFinancialTransactionAmountAndRate(vars, payment, exchangeRate,
+            convertedAmount);
         payment = FIN_AddPayment.savePayment(payment, isReceipt, null, null, null, null, null,
             strPaymentAmount, null, null, null, selectedPaymentDetails,
             selectedPaymentDetailAmounts, strDifferenceAction.equals("writeoff"),

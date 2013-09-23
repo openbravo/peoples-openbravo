@@ -78,6 +78,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       String orderId = (String) bundle.getParams().get("C_Order_ID");
       Order objOrder = OBDal.getInstance().get(Order.class, orderId);
       Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
+      boolean update = false;
+      BigDecimal Zero = BigDecimal.ZERO;
 
       if (FIN_Utility.isBlockedBusinessPartner(objOrder.getBusinessPartner().getId(), true, 1)) {
         // If the Business Partner is blocked, the Order should not be completed.
@@ -286,6 +288,21 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       OBDal.getInstance().refresh(objCloneOrder);
       OBDal.getInstance().refresh(objOrder);
 
+      for (OrderLine orderLine : objCloneOrder.getOrderLineList()) {
+        if (("I".equals(orderLine.getProduct().getProductType()))
+            && (orderLine.getProduct().isStocked())) {
+          if (orderLine.isDirectShipment()) {
+            update = ((Zero.subtract(orderLine.getReservedQuantity())).subtract(orderLine
+                .getDeliveredQuantity())) != Zero;
+          } else {
+            update = ((orderLine.getOrderedQuantity().subtract(orderLine.getReservedQuantity()))
+                .subtract(orderLine.getDeliveredQuantity())) != Zero;
+          }
+          if (update) {
+            callUpdateStoragePending(objCloneOrder, orderLine);
+          }
+        }
+      }
       OBDal.getInstance().commitAndClose();
       OBError result = OBErrorBuilder.buildMessage(null, "success", "@SalesOrderDocumentno@ "
           + objCloneOrder.getDocumentNo() + " @beenCreated@");
@@ -368,6 +385,49 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       parameters.add(objCloneOrder.getId());
       final String procedureName = "c_order_post1";
       CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  /**
+   * Update storage details
+   */
+  private void callUpdateStoragePending(Order objCloneOrder, OrderLine objCloneOrderLine) {
+    BigDecimal qtySo = BigDecimal.ZERO;
+    BigDecimal qtyOrderSo = BigDecimal.ZERO;
+    String productUom = null;
+    try {
+      final List<Object> parameters = new ArrayList<Object>();
+      parameters.add(objCloneOrder.getClient().getId());
+      parameters.add(objCloneOrder.getOrganization().getId());
+      parameters.add(objCloneOrder.getUpdatedBy().getId());
+      parameters.add(objCloneOrderLine.getProduct().getId());
+      parameters.add(objCloneOrderLine.getWarehouse().getId());
+      parameters.add(objCloneOrderLine.getAttributeSetValue() != null ? objCloneOrderLine
+          .getAttributeSetValue().getId() : null);
+      parameters.add(objCloneOrderLine.getUOM().getId());
+      productUom = objCloneOrderLine.getOrderUOM() != null ? objCloneOrderLine.getOrderUOM()
+          .getId() : null;
+      parameters.add(productUom);
+      if (objCloneOrderLine.isDirectShipment()) {
+        qtySo = BigDecimal.ZERO;
+      } else {
+        qtySo = objCloneOrderLine.getOrderedQuantity();
+      }
+      qtySo = qtySo.subtract(objCloneOrderLine.getReservedQuantity());
+      qtySo = qtySo.subtract(objCloneOrderLine.getDeliveredQuantity());
+      parameters.add(qtySo);
+      qtyOrderSo = objCloneOrderLine.getOrderQuantity();
+      parameters.add(qtyOrderSo);
+      parameters.add(BigDecimal.ZERO); // PO quantity
+      parameters.add(null);
+      final String procedureName = "m_update_storage_pending";
+      CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
+
+      // update orderline
+      objCloneOrderLine.setReservedQuantity(objCloneOrderLine.getReservedQuantity().add(qtySo));
+
     } catch (Exception e) {
       throw new OBException(e);
     }

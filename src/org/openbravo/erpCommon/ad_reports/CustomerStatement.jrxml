@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Customer Statement" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="4.0"/>
-	<property name="ireport.x" value="869"/>
-	<property name="ireport.y" value="547"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="org.openbravo.erpCommon.ReportsUtility"/>
@@ -68,7 +68,7 @@
 		<defaultValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat("", $P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT trunc(f.dateacct) as date,
+		<![CDATA[SELECT trunc(f.dateacct) as dateacct,
         CASE WHEN f.c_doctype_id IS NOT NULL THEN (SELECT MIN(name)
                                        FROM c_doctype
                                        WHERE c_doctype_id = f.c_doctype_id)
@@ -82,7 +82,7 @@
     f.amtacctcr as credit,
     (f.amtacctdr-f.amtacctcr) as net,
     bp.name as bpname, o.ad_org_id as organizationid,
-    loc.address1 || COALESCE(' ' || loc.address2, '') as org_address,
+    loc.address1 || ' ' || COALESCE(TO_CHAR(loc.address2), TO_CHAR('')) as org_address,
     loc.city || ', ' || ad_column_identifier('C_Region', loc.c_region_id, 'en_US') || ' ' || loc.postal
     || ' ' || ad_column_identifier('C_Country', loc.c_country_id, 'en_US') AS org_postal,
     (SELECT MAX(email) FROM ad_user WHERE ad_user_id=oinfo.ad_user_id) as email,
@@ -109,16 +109,16 @@ WHERE o.ad_org_id=$P{AD_Org_ID}
                  AND c_acctschema_id = $P{C_AcctSchema_ID})))
     AND f.c_bpartner_id =  $P{C_BPartner_ID}
     AND f.c_acctschema_id = $P{C_AcctSchema_ID}
-    AND CASE WHEN ($P{DateFrom} IS NULL OR $P{DateFrom}='') THEN trunc(f.dateacct) >= TO_DATE('01-01-0001')
-        ELSE trunc(f.dateacct) >=TO_DATE($P{DateFrom}) END
-    AND CASE WHEN ($P{DateTo} IS NULL OR $P{DateTo}='') THEN trunc(f.dateacct) <= TO_DATE('09-09-9999')
-        ELSE trunc(f.dateacct) <=TO_DATE($P{DateTo}) END
+    AND trunc(f.dateacct) >= (CASE WHEN ($P{DateFrom} IS NULL OR $P{DateFrom}='') THEN TO_DATE('01-01-0001')
+        ELSE TO_DATE($P{DateFrom}) END)
+    AND trunc(f.dateacct) <= (CASE WHEN ($P{DateTo} IS NULL OR $P{DateTo}='') THEN TO_DATE('09-09-9999')
+        ELSE TO_DATE($P{DateTo}) END)
     AND f.ad_table_id IN ('318','D1A97202E832470285C9B1EB026D54E2','4D8C3B3C31D1410DA046140C9F024D17','B1B7075C46934F0A9FD4C4D0F1457B42')
 ORDER BY f.dateacct, f.created]]>
 	</queryString>
 	<field name="org_address" class="java.lang.String"/>
 	<field name="org_postal" class="java.lang.String"/>
-	<field name="date" class="java.util.Date"/>
+	<field name="dateacct" class="java.util.Date"/>
 	<field name="organizationid" class="java.lang.String"/>
 	<field name="documenttype" class="java.lang.String"/>
 	<field name="description" class="java.lang.String"/>
@@ -132,10 +132,10 @@ ORDER BY f.dateacct, f.created]]>
 		<variableExpression><![CDATA[$F{net}]]></variableExpression>
 	</variable>
 	<variable name="DateFrom" class="java.util.Date" calculation="Lowest">
-		<variableExpression><![CDATA[$F{date}]]></variableExpression>
+		<variableExpression><![CDATA[$F{dateacct}]]></variableExpression>
 	</variable>
 	<variable name="DateTo" class="java.util.Date" calculation="Highest">
-		<variableExpression><![CDATA[$F{date}]]></variableExpression>
+		<variableExpression><![CDATA[$F{dateacct}]]></variableExpression>
 	</variable>
 	<variable name="initialBalance" class="java.math.BigDecimal">
 		<variableExpression><![CDATA[ReportsUtility.getBeginningBalance($P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_BPartner_ID}, $P{DateFrom})]]></variableExpression>
@@ -329,7 +329,7 @@ ORDER BY f.dateacct, f.created]]>
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[DateFormat.getDateInstance(DateFormat.SHORT,
-        $P{LOCALE}).format($F{date})]]></textFieldExpression>
+        $P{LOCALE}).format($F{dateacct})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="47" y="0" width="81" height="14"/>
