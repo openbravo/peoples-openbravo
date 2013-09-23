@@ -290,7 +290,7 @@ isc.OBCalendar.addProperties({
           calendar.eventDialog.calendar = calendar;
           try {
             //To avoid js error due to conflicts with Smartclient default EventDialog
-            if (event.canEdit === false && event.canDelete === false) {
+            if (event[calendar.canEditField] === false && event[calendar.canRemoveField] === false) {
               isc.warn(OB.I18N.getLabel('OBUIAPP_CalendarCanNotUpdateEvent'), function () {
                 return true;
               }, {
