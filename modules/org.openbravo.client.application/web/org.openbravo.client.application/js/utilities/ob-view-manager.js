@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -179,6 +179,12 @@
       // see https://issues.openbravo.com/view.php?id=15953
       if (viewInstance.notClosable) {
         tabDef.canClose = false;
+      }
+
+      // 'Workspace' tab should be always in first position,
+      // so it cannot be reordered
+      if (tabDef.myOB) {
+        tabDef.canReorder = false;
       }
 
       // Adding to the MainView tabSet

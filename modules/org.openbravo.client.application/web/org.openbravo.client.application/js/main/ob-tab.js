@@ -27,12 +27,26 @@ isc.ClassFactory.defineClass('OBTabBar', isc.TabBar);
 
 isc.ClassFactory.defineClass('OBTabBarButtonMain', isc.OBTabBarButton);
 
+isc.OBTabBarButtonMain.addProperties({
+  mouseDown: function () {
+    this.select();
+    return this.Super('mouseDown', arguments);
+  }
+});
+
 isc.ClassFactory.defineClass('OBTabSetMain', isc.OBTabSet);
 
 isc.OBTabSetMain.addProperties({
   destroyPanes: true,
 
   stateAsString: null,
+
+  canReorderTabs: true,
+  reorderTab: function (tab, moveToPosition) {
+    var ret = this.Super('reorderTab', arguments);
+    OB.Layout.HistoryManager.updateHistory();
+    return ret;
+  },
 
   // note see the smartclient autochild concept for why tabBarProperties is valid
   tabBarProperties: isc.addProperties({
