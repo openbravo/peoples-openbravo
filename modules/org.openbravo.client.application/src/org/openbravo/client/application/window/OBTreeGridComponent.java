@@ -74,7 +74,7 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
   }
 
   public boolean isOrderedTree() {
-    ADTreeType treeType = tab.getTable().getTreetype34();
+    ADTreeType treeType = tab.getTable().getTreeCategory();
     return treeType.isOrdered();
   }
 

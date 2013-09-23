@@ -94,7 +94,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
 
   private DataSourceService getDataSource(String tableId) {
     Table table = OBDal.getInstance().get(Table.class, tableId);
-    ADTreeType treeType = table.getTreetype34();
+    ADTreeType treeType = table.getTreeCategory();
 
     DataSourceService dataSource = null;
     if (TREENODE_STRUCTURE.equals(treeType.getTreeStructure())) {

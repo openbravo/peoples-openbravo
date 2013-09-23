@@ -220,7 +220,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   private boolean isOrdered(Tree tree) {
     Table table = tree.getTable();
-    ADTreeType treeType = table.getTreetype34();
+    ADTreeType treeType = table.getTreeCategory();
     return treeType.isOrdered();
   }
 

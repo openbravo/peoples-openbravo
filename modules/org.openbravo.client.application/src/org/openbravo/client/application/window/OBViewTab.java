@@ -613,8 +613,8 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getTreeTypeId() {
-    if (tab.getTable().getTreetype34() != null) {
-      return tab.getTable().getTreetype34().getId();
+    if (tab.getTable().getTreeCategory() != null) {
+      return tab.getTable().getTreeCategory().getId();
     } else {
       return "";
     }
