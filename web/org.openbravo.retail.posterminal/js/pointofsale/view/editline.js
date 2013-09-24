@@ -9,7 +9,130 @@
 
 /*global enyo, _ */
 enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.LineProperty',
+  components: [{
+    classes: 'row-fluid',
+    style: 'clear: both;',
+    components: [{
+      classes: 'span4',
+      name: 'propertyLabel'
+    }, {
+      classes: 'span8',
+      components: [{
+        tag: 'span',
+        name: 'propertyValue'
+      }]
+    }]
+  }],
+  render: function (model) {
+    if (model) {
+      this.$.propertyValue.setContent(model.get(this.propertyToPrint));
+    } else {
+      this.$.propertyValue.setContent('');
+    }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.propertyLabel.setContent(OB.I18N.getLabel(this.I18NLabel));
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.LinePropertyDiv',
+  components: [{
+    classes: 'row-fluid',
+    style: 'clear: both;',
+    components: [{
+      classes: 'span4',
+      name: 'propertyLabel'
+    }, {
+      classes: 'span8',
+      components: [{
+        tag: 'div',
+        name: 'propertyValue'
+      }]
+    }]
+  }],
+  render: function (model) {
+    if (model) {
+      this.$.propertyValue.setContent(model.get(this.propertyToPrint));
+    } else {
+      this.$.propertyValue.setContent('');
+    }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.propertyLabel.setContent(OB.I18N.getLabel(this.I18NLabel));
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.EditLine',
+  propertiesToShow: [{
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 10,
+    name: 'descLine',
+    I18NLabel: 'OBPOS_LineDescription',
+    render: function (line) {
+      if (line) {
+        this.$.propertyValue.setContent(line.get('product').get('_identifier'));
+      } else {
+        this.$.propertyValue.setContent('');
+      }
+    }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 20,
+    name: 'qtyLine',
+    I18NLabel: 'OBPOS_LineQuantity',
+    render: function (line) {
+      if (line) {
+        this.$.propertyValue.setContent(line.printQty());
+      } else {
+        this.$.propertyValue.setContent('');
+      }
+    }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 30,
+    name: 'priceLine',
+    I18NLabel: 'OBPOS_LinePrice',
+    render: function (line) {
+      if (line) {
+        this.$.propertyValue.setContent(line.printPrice());
+      } else {
+        this.$.propertyValue.setContent('');
+      }
+    }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 40,
+    name: 'discountedAmountLine',
+    I18NLabel: 'OBPOS_LineDiscount',
+    render: function (line) {
+      if (line) {
+        this.$.propertyValue.setContent(line.printDiscount());
+      } else {
+        this.$.propertyValue.setContent('');
+      }
+    }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 50,
+    name: 'grossLine',
+    I18NLabel: 'OBPOS_LineTotal',
+    render: function (line) {
+      if (line) {
+        if (line.get('priceIncludesTax')) {
+          this.$.propertyValue.setContent(line.printGross());
+        } else {
+          this.$.propertyValue.setContent(line.printNet());
+        }
+      } else {
+        this.$.propertyValue.setContent('');
+      }
+    }
+  }],
   published: {
     receipt: null
   },
@@ -129,76 +252,11 @@ enyo.kind({
         components: [{
           classes: 'span7',
           kind: 'Scroller',
+          name: 'linePropertiesContainer',
           maxHeight: '120px',
           thumb: true,
           horizontal: 'hidden',
-          style: 'padding: 16px 0px 10px 25px; line-height: 140%;',
-          components: [{
-            classes: 'row-fluid',
-            style: 'clear: both;',
-            components: [{
-              classes: 'span4',
-              name: 'editlinenameLbl'
-            }, {
-              classes: 'span8',
-              components: [{
-                tag: 'span',
-                name: 'editlinename'
-              }]
-            }]
-          }, {
-            classes: 'row-fluid',
-            style: 'clear: both;',
-            components: [{
-              classes: 'span4',
-              name: 'editlineqtyLbl'
-            }, {
-              classes: 'span8',
-              components: [{
-                tag: 'span',
-                name: 'editlineqty'
-              }]
-            }]
-          }, {
-            classes: 'row-fluid',
-            style: 'clear: both;',
-            components: [{
-              classes: 'span4',
-              name: 'editlinepriceLbl'
-            }, {
-              classes: 'span8',
-              components: [{
-                tag: 'span',
-                name: 'editlineprice'
-              }]
-            }]
-          }, {
-            classes: 'row-fluid',
-            style: 'clear: both;',
-            components: [{
-              classes: 'span4',
-              name: 'editlinediscountLbl'
-            }, {
-              classes: 'span8',
-              components: [{
-                tag: 'span',
-                name: 'editlinediscount'
-              }]
-            }]
-          }, {
-            classes: 'row-fluid',
-            style: 'clear: both;',
-            components: [{
-              classes: 'span4',
-              name: 'editlinegrossLbl'
-            }, {
-              classes: 'span8',
-              components: [{
-                tag: 'span',
-                name: 'editlinegross'
-              }]
-            }]
-          }]
+          style: 'padding: 16px 0px 10px 25px; line-height: 140%;'
         }, {
           classes: 'span4',
           sytle: 'text-align: right',
@@ -268,31 +326,27 @@ enyo.kind({
       this.$.msgaction.hide();
       this.$.msgedit.show();
       this.$.editlineimage.setImg(this.line.get('product').get('img'));
-      this.$.editlinename.setContent(this.line.get('product').get('_identifier'));
-      this.$.editlineqty.setContent(this.line.printQty());
-      this.$.editlinediscount.setContent(this.line.printDiscount());
-      this.$.editlineprice.setContent(this.line.printPrice());
-      if (this.line.get('priceIncludesTax')) {
-        this.$.editlinegross.setContent(this.line.printGross());
-      } else {
-        this.$.editlinegross.setContent(this.line.printNet());
-      }
     } else {
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
       this.$.msgedit.hide();
       this.$.msgaction.show();
       this.$.editlineimage.setImg(null);
-      this.$.editlinename.setContent('');
-      this.$.editlineqty.setContent('');
-      this.$.editlinediscount.setContent('');
-      this.$.editlineprice.setContent('');
-      this.$.editlinegross.setContent('');
     }
-    this.$.editlinenameLbl.setContent(OB.I18N.getLabel('OBPOS_LineDescription'));
-    this.$.editlineqtyLbl.setContent(OB.I18N.getLabel('OBPOS_LineQuantity'));
-    this.$.editlinepriceLbl.setContent(OB.I18N.getLabel('OBPOS_LinePrice'));
-    this.$.editlinediscountLbl.setContent(OB.I18N.getLabel('OBPOS_LineDiscount'));
-    this.$.editlinegrossLbl.setContent(OB.I18N.getLabel('OBPOS_LineTotal'));
+    enyo.forEach(this.$.linePropertiesContainer.getComponents(), function (compToRender) {
+      if (compToRender.kindName !== 'enyo.ScrollStrategy'){
+        compToRender.render(this.line);  
+      }
+    }, this);
+  },
+  initComponents: function () {
+    var sortedPropertiesByPosition;
+    this.inherited(arguments);
+    sortedPropertiesByPosition = _.sortBy(this.propertiesToShow, function (comp) {
+      return (comp.position ? comp.position : (comp.position === 0 ? 0 : 999));
+    });
+    enyo.forEach(sortedPropertiesByPosition, function (compToCreate) {
+      this.$.linePropertiesContainer.createComponent(compToCreate);
+    }, this);
   }
 });
 
