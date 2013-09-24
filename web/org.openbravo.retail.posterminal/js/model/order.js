@@ -383,6 +383,16 @@
       return OB.I18N.formatCurrency(this.getTotal());
     },
 
+    getLinesByProduct: function (productId) {
+      var affectedLines;
+      if (this.get('lines') && this.get('lines').length > 0) {
+        var affectedLines = _.filter(this.get('lines').models, function (line) {
+          return line.get('product').id === productId;
+        });
+      }
+      return affectedLines ? affectedLines : null;
+    },
+
     calculateGross: function () {
       var me = this;
       if (this.get('priceIncludesTax')) {
@@ -405,7 +415,7 @@
         this.calculateTaxes(function () {
           //If the price doesn't include tax, the discounted gross has already been calculated
           var gross = me.get('lines').reduce(function (memo, e) {
-            if (_.isUndefined(e.get('fulldiscountedGross'))){
+            if (_.isUndefined(e.get('fulldiscountedGross'))) {
               return memo;
             }
             var grossLine = OB.DEC.toNumber(e.get('fulldiscountedGross'));
@@ -619,7 +629,9 @@
       }
     },
 
-    setPrice: function (line, price) {
+    setPrice: function (line, price, options) {
+      var options = options || {};
+      options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
 
       if (OB.DEC.isNumber(price)) {
         var oldprice = line.get('price');
@@ -629,16 +641,18 @@
           line.set('price', price);
           line.calculateGross();
           // sets the undo action
-          this.set('undo', {
-            text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
-            oldprice: oldprice,
-            line: line,
-            undo: function () {
-              line.set('price', oldprice);
-              line.calculateGross();
-              me.set('undo', null);
-            }
-          });
+          if (options.setUndo) {
+            this.set('undo', {
+              text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
+              oldprice: oldprice,
+              line: line,
+              undo: function () {
+                line.set('price', oldprice);
+                line.calculateGross();
+                me.set('undo', null);
+              }
+            });
+          }
         }
         this.adjustPayment();
       }
@@ -677,9 +691,7 @@
       this.calculateGross();
     },
 
-    addProduct: function (p, qty, options) {
-      var me = this;
-
+    _addProduct: function (p, qty, options) {
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
@@ -688,7 +700,7 @@
         return;
       }
       qty = qty || 1;
-      if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
+      if (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
       }
@@ -699,7 +711,7 @@
           } else if (data.result === 0) {
             alert(OB.I18N.getLabel('OBPOS_WeightZero'));
           } else {
-            me.createLine(p, data.result, options);
+            this.createLine(p, data.result, options);
           }
         });
       } else {
@@ -725,6 +737,57 @@
         }
       }
       this.save();
+    },
+
+    _drawLinesDistribution: function (data) {
+      debugger;
+      if (data && data.linesToModify && data.linesToModify.length > 0) {
+        _.each(data.linesToModify, function (lineToChange) {
+          var line = this.get('lines').getByCid(lineToChange.lineCid);
+          var unitsToAdd = lineToChange.newQty - line.get('qty');
+          if (unitsToAdd > 0) {
+            this.addUnit(line, unitsToAdd);
+          } else if (unitsToAdd < 0) {
+            this.removeUnit(line, -unitsToAdd);
+          }
+          this.setPrice(line, lineToChange.newPrice, {
+            setUndo: false
+          });
+          _.each(lineToChange.productProperties, function (propToSet) {
+            line.get('product').set(propToSet.name, propToSet.value);
+          });
+          _.each(lineToChange.lineProperties, function (propToSet) {
+            line.set(propToSet.name, propToSet.value);
+          });
+        }, this);
+      }
+      if (data && data.linesToRemove && data.linesToRemove.length > 0) {
+        _.each(data.linesToRemove, function (lineCidToRemove) {
+          var line = this.get('lines').getByCid(lineCidToRemove);
+          this.deleteLine(line);
+        }, this);
+      }
+      if (data && data.linesToAdd && data.linesToAdd.length > 0) {
+        _.each(data.linesToAdd, function (lineToAdd) {
+          this.createLine(lineToAdd.product, lineToAdd.qtyToAdd);
+        }, this);
+      }
+    },
+
+    addProduct: function (p, qty, options) {
+      var me = this;
+      OB.MobileApp.model.hookManager.executeHooks('OBPOS_AddProductToOrder', {
+        receipt: this,
+        productToAdd: p,
+        qtyToAdd: qty,
+        options: options
+      }, function (args) {
+        if (args && args.useLines) {
+          me._drawLinesDistribution(args);
+        } else {
+          me._addProduct(p, qty, options);
+        }
+      });
     },
 
     addPromotion: function (line, rule, discount) {
