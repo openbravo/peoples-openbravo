@@ -57,11 +57,30 @@
     },
 
     printDiscount: function () {
-      var d = OB.DEC.sub(this.get('priceList'), this.get('price'));
-      if (OB.DEC.compare(d) === 0) {
-        return '';
+      var disc = OB.DEC.sub(this.get('priceList'), this.get('price'));
+      var prom = this.getTotalAmountOfPromotions();
+      // if there is a discount no promotion then only discount no promotion is shown
+      // if there is not a discount no promotion and there is a promotion then promotion is shown
+      if (OB.DEC.compare(disc) === 0) {
+        if (OB.DEC.compare(prom) === 0) {
+          return '';
+        } else {
+          return OB.I18N.formatCurrency(prom);
+        }
       } else {
-        return OB.I18N.formatCurrency(d);
+        return OB.I18N.formatCurrency(disc);
+      }
+    },
+
+    // returns the discount to substract in total
+    discountInTotal: function () {
+      var disc = OB.DEC.sub(this.get('priceList'), this.get('price'));
+      // if there is a discount no promotion then total is price*qty  
+      // otherwise total is price*qty - discount 
+      if (OB.DEC.compare(disc) === 0) {
+        return this.getTotalAmountOfPromotions();
+      } else {
+        return 0;
       }
     },
 
