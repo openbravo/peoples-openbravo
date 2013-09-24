@@ -593,7 +593,9 @@ isc.OBNumberFilterItem.addProperties({
 
   // If the filter has not been applied yet, apply it when it loses the focus
   blur: function () {
-    this.form.grid.performAction();
+    if (this.form && this.form.getFocusItem() !== this) {
+      this.form.grid.performAction();
+    }
     return this.Super('blur', arguments);
   },
 
