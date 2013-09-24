@@ -159,7 +159,7 @@ enyo.kind({
           if (value > 0) {
             actionAddProduct(keyboard, value);
           } else if (value < 0) {
-            actionRemoveProduct(keyboard, -value);
+            actionAddProduct(keyboard, value);
           }
         }
       }
@@ -229,7 +229,11 @@ enyo.kind({
     this.addCommand('-', {
       stateless: true,
       action: function (keyboard, txt) {
-        actionRemoveProduct(keyboard, OB.I18N.parseNumber(txt));
+        var qty = 1;
+        if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))){
+          qty = OB.I18N.parseNumber(txt);
+        }
+        actionAddProduct(keyboard, -qty);
       }
     });
     // add a command that will handle the DELETE keyboard key
