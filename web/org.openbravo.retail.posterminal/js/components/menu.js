@@ -76,10 +76,6 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    // check if this order has been voided previously
-    if (this.model.get('order').get('orderType') === 3) {
-      return;
-    }
     enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
       if (_.isUndefined(curPayment.get('isPrePayment')) || _.isNull(curPayment.get('isPrePayment'))) {
         voidAllowed = false;

@@ -294,9 +294,9 @@ enyo.kind({
       this.$.editlinediscount.setContent(this.line.printDiscount());
       this.$.editlineprice.setContent(this.line.printPrice());
       if (this.line.get('priceIncludesTax')) {
-        this.$.editlinegross.setContent(OB.I18N.formatCurrency(this.line.getGross() - this.line.discountInTotal()));
+        this.$.editlinegross.setContent(this.line.printGross());
       } else {
-        this.$.editlinegross.setContent(OB.I18N.formatCurrency(this.line.getNet() - this.line.discountInTotal()));
+        this.$.editlinegross.setContent(this.line.printNet());
       }
     } else {
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
