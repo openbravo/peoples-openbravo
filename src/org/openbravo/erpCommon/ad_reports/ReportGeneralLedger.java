@@ -664,7 +664,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
           Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
     } else {
-
+      if (data.length > 65532) {
+        throw new IOException(Utility.messageBD(this, "numberOfRowsExceeded", vars.getLanguage()));
+      }
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerExcel.jrxml";
 
       HashMap<String, Object> parameters = new HashMap<String, Object>();
