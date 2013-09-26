@@ -26,6 +26,7 @@ isc.OBTreeGrid.addProperties({
 
   canPickFields: false,
   canDropOnLeaves: true,
+  canHover: false,
   canReorderRecords: true,
   canAcceptDroppedRecords: true,
   dropIconSuffix: "into",
@@ -35,6 +36,11 @@ isc.OBTreeGrid.addProperties({
   folderIcon: null,
   autoFetchData: true,
   closedIconSuffix: "",
+  selectionAppearance: "checkbox",
+  showSelectedStyle: true,
+  // Can't reparent with cascade selection 
+  //  showPartialSelection: true,
+  //  cascadeSelection: true,
   dataProperties: {
     modelType: "parent",
     rootValue: "0",
@@ -55,32 +61,17 @@ isc.OBTreeGrid.addProperties({
   setDataSource: function (ds, fields) {
     var me = this;
     ds.transformRequest = function (dsRequest) {
-      var childrenOfNewParent, prevNode, nextNode;
       dsRequest.params = dsRequest.params || {};
       dsRequest.params.referencedTableId = me.referencedTableId;
       me.parentTabRecordId = me.getParentTabRecordId();
       dsRequest.params.parentRecordId = me.parentTabRecordId;
+      dsRequest.params.tabId = me.view.tabId;
       if (dsRequest.dropIndex || dsRequest.dropIndex === 0) {
         //Only send the index if the tree is ordered
-        if (me.orderedTree) {
-          dsRequest.params.dropIndex = dsRequest.dropIndex;
-          childrenOfNewParent = me.getData().getChildren(dsRequest.newParentNode);
-          if (childrenOfNewParent.length !== 0) {
-            if (dsRequest.dropIndex === 0) {
-              nextNode = childrenOfNewParent[dsRequest.dropIndex];
-              dsRequest.params.nextNodeId = nextNode.id;
-            } else if (dsRequest.dropIndex === childrenOfNewParent.length) {
-              prevNode = childrenOfNewParent[dsRequest.dropIndex - 1];
-              dsRequest.params.prevNodeId = prevNode.id;
-            } else {
-              prevNode = childrenOfNewParent[dsRequest.dropIndex - 1];
-              dsRequest.params.prevNodeId = prevNode.id;
-              nextNode = childrenOfNewParent[dsRequest.dropIndex];
-              dsRequest.params.nextNodeId = nextNode.id;
-            }
-          }
-        }
+        dsRequest = me.addOrderedTreeParameters(dsRequest);
       }
+
+      dsRequest.params.selectedRecords = me.getSelectedRecordsString();
       dsRequest.params._selectedProperties = me.getSelectedPropertiesString();
       return this.Super('transformRequest', arguments);
     };
@@ -93,6 +84,47 @@ isc.OBTreeGrid.addProperties({
     return this.Super("setDataSource", [ds, fields]);
   },
 
+  addOrderedTreeParameters: function (dsRequest) {
+    var childrenOfNewParent, prevNode, nextNode;
+    if (this.orderedTree) {
+      dsRequest.params.dropIndex = dsRequest.dropIndex;
+      childrenOfNewParent = this.getData().getChildren(dsRequest.newParentNode);
+      if (childrenOfNewParent.length !== 0) {
+        if (dsRequest.dropIndex === 0) {
+          nextNode = childrenOfNewParent[dsRequest.dropIndex];
+          dsRequest.params.nextNodeId = nextNode.id;
+        } else if (dsRequest.dropIndex === childrenOfNewParent.length) {
+          prevNode = childrenOfNewParent[dsRequest.dropIndex - 1];
+          dsRequest.params.prevNodeId = prevNode.id;
+        } else {
+          prevNode = childrenOfNewParent[dsRequest.dropIndex - 1];
+          dsRequest.params.prevNodeId = prevNode.id;
+          nextNode = childrenOfNewParent[dsRequest.dropIndex];
+          dsRequest.params.nextNodeId = nextNode.id;
+        }
+      }
+    }
+    return dsRequest;
+  },
+
+  getSelectedRecordsString: function () {
+    var selectedRecordsString = '[',
+        first = true,
+        selectedRecords = this.view.viewGrid.getSelectedRecords(),
+        len = selectedRecords.length,
+        i;
+    for (i = 0; i < len; i++) {
+      if (first) {
+        first = false;
+        selectedRecordsString = selectedRecordsString + "'" + selectedRecords[i][OB.Constants.ID] + "'";
+      } else {
+        selectedRecordsString = selectedRecordsString + ',' + "'" + selectedRecords[i][OB.Constants.ID] + "'";
+      }
+    }
+    selectedRecordsString = selectedRecordsString + ']';
+    return selectedRecordsString;
+  },
+
   getParentTabRecordId: function () {
     var parentRecordId = null;
     if (!this.view.parentView) {
@@ -103,7 +135,9 @@ isc.OBTreeGrid.addProperties({
 
   getSelectedPropertiesString: function () {
     var selectedProperties = '[',
-        first = true, len = this.fields.length, i;
+        first = true,
+        len = this.fields.length,
+        i;
     for (i = 0; i < len; i++) {
       if (first) {
         first = false;
@@ -152,6 +186,17 @@ isc.OBTreeGrid.addProperties({
       }
     }
     return true;
+  },
+
+  getNodeByID: function (nodeId) {
+    var i, node, nodeList = this.data.getNodeList();
+    for (i = 0; i < nodeList.length; i++) {
+      node = nodeList[i];
+      if (node.id === nodeId) {
+        return node;
+      }
+    }
+    return null;
   }
 });
 
@@ -304,11 +349,13 @@ isc.OBTreeGridPopup.addProperties({
       referencedTableId: this.referencedTableId,
       fields: gridFields,
       orderedTree: this.orderedTree,
+      treeStructure: this.treeStructure,
+
       width: 500,
       height: 400
     });
 
-    OB.Datasource.get('90034CAE96E847D78FBEF6D38CB1930D', this.tree, null, true);
+    OB.Datasource.get(this.dataSourceId, this.tree, null, true);
 
     this.mainLayout.addMember(this.tree);
     this.addAutoChild('buttonLayout');
@@ -351,5 +398,12 @@ isc.OBTreeGridPopup.addProperties({
       this.tree.fetchData(null, callback);
     }
     return this.Super('show', arguments);
+  },
+
+  hide: function () {
+    this.Super('hide', arguments);
+    if (this.treeStructure === 'LinkToParent') {
+      this.view.viewGrid.refreshGrid();
+    }
   }
 });

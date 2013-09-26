@@ -75,11 +75,12 @@ isc.DataSource.addSearchOperator({
 });
 
 isc.Tree.addProperties({
+	  _original_getLoadState: isc.Tree.getPrototype().getLoadState,
   getLoadState: function (node) {
     if (node._hasChildren === false) {
       return isc.Tree.LOADED;
     } else {
-      return this.Super('getLoadState', arguments);
+      return  this._original_getLoadState(node);
     }
   }
 });

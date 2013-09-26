@@ -141,6 +141,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="LINKTOPARENTCOLUMN" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TREESEQUENCECOLUMN" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBSERDS_DATASOURCE" name="AD_COLUMN_DATASOURCE">
         <reference local="OBSERDS_DATASOURCE_ID" foreign="OBSERDS_DATASOURCE_ID"/>
       </foreign-key>
@@ -161,6 +169,12 @@
       </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_TABLE_AD_WINDOW">
         <reference local="PO_WINDOW_ID" foreign="AD_WINDOW_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_TABLE_PARENT_LINK">
+        <reference local="LINKTOPARENTCOLUMN" foreign="AD_COLUMN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_TABLE_SEQ_COL">
+        <reference local="TREESEQUENCECOLUMN" foreign="AD_COLUMN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TABLE" onDelete="setnull">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>

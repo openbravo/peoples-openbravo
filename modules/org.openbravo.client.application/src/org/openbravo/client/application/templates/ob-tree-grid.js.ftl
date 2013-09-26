@@ -23,6 +23,7 @@ isc.OBTreeGridPopup.create({
     view: this,
     referencedTableId: '${data.referencedTableId}',
     orderedTree:  ${data.orderedTree?string},
-    // the this is the view instance
+    dataSourceId:  '${data.dataSourceId}',
+    treeStructure:  '${data.treeStructure}',
     fields: this.gridFields
 })

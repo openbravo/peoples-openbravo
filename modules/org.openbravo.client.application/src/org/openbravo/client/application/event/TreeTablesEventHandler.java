@@ -50,7 +50,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = getTreeTables();
 
   private static final String TREENODE_DATASOURCE = "90034CAE96E847D78FBEF6D38CB1930D";
-  private static final String LINKTOPARENT_DATASOURCE = "90034CAE96E847D78FBEF6D38CB1930D";
+  private static final String LINKTOPARENT_DATASOURCE = "610BEAE5E223447DBE6FF672B703F72F";
 
   private static final String TREENODE_STRUCTURE = "ADTree";
   private static final String LINKTOPARENT_STRUCTURE = "LinkToParent";
@@ -111,9 +111,16 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     JSONObject jsonBob = new JSONObject();
     try {
       for (Property property : propertyList) {
+        if (property.isOneToMany()) {
+          continue;
+        }
         if (property.getReferencedProperty() != null) {
           BaseOBObject referencedbob = (BaseOBObject) bob.get(property.getName());
-          jsonBob.put(property.getName(), referencedbob.getId());
+          if (referencedbob != null) {
+            jsonBob.put(property.getName(), referencedbob.getId());
+          } else {
+            jsonBob.put(property.getName(), (Object) null);
+          }
         } else {
           jsonBob.put(property.getName(), bob.get(property.getName()));
         }

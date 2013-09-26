@@ -37,6 +37,12 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
   private static final String DEFAULT_TEMPLATE_ID = "74451C30650946FC855FCFDB4577070C";
   protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
 
+  private static final String TREENODE_DATASOURCE = "90034CAE96E847D78FBEF6D38CB1930D";
+  private static final String LINKTOPARENT_DATASOURCE = "610BEAE5E223447DBE6FF672B703F72F";
+
+  private static final String TREENODE_STRUCTURE = "ADTree";
+  private static final String LINKTOPARENT_STRUCTURE = "LinkToParent";
+
   private Tab tab;
   private OBViewTab viewTab;
   private String referencedTableId;
@@ -76,6 +82,22 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
   public boolean isOrderedTree() {
     ADTreeType treeType = tab.getTable().getTreeCategory();
     return treeType.isOrdered();
+  }
+
+  public String getDataSourceId() {
+    String dataSourceId = null;
+    ADTreeType treeCategory = tab.getTable().getTreeCategory();
+    if (TREENODE_STRUCTURE.equals(treeCategory.getTreeStructure())) {
+      dataSourceId = TREENODE_DATASOURCE;
+    } else if (LINKTOPARENT_STRUCTURE.equals(treeCategory.getTreeStructure())) {
+      dataSourceId = LINKTOPARENT_DATASOURCE;
+    }
+    return dataSourceId;
+  }
+
+  public String getTreeStructure() {
+    ADTreeType treeCategory = tab.getTable().getTreeCategory();
+    return treeCategory.getTreeStructure();
   }
 
 }
