@@ -39,10 +39,10 @@ BEGIN
 			into v_count
 			from m_storage_detail
 			where m_locator_id = :old.m_locator_id 
-			and COALESCE(qtyonhand,0) <> 0 
+			and (COALESCE(qtyonhand,0) <> 0 
 			or COALESCE(qtyorderonhand, 0) <> 0 
 			or COALESCE(preqtyonhand, 0) <> 0 
-			or COALESCE(preqtyorderonhand, 0) <> 0;
+			or COALESCE(preqtyorderonhand, 0) <> 0);
 
 		if (v_count <> '0') then
 			RAISE_APPLICATION_ERROR(-20000, '@StockAvailable@');
