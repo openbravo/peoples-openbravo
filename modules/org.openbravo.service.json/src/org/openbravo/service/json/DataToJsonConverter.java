@@ -268,12 +268,12 @@ public class DataToJsonConverter {
       // statements. The values will be automatically translated if
       // getIdentifier() is called.
       if (referencingProperty.hasDisplayColumn()) {
-        String identifier = (String) obObject.get(referencingProperty.getDisplayPropertyName(),
-            OBContext.getOBContext().getLanguage(), (String) obObject.getId());
+        String identifier = obObject.get(referencingProperty.getDisplayPropertyName(),
+            OBContext.getOBContext().getLanguage(), (String) obObject.getId()).toString();
         if (referencingProperty.isDisplayValue()) {
           if (obObject.getEntity().hasProperty("searchKey")) {
-            String value = (String) obObject.get("searchKey", OBContext.getOBContext()
-                .getLanguage(), (String) obObject.getId());
+            String value = obObject.get("searchKey", OBContext.getOBContext().getLanguage(),
+                (String) obObject.getId()).toString();
             identifier = value + " - " + identifier;
           } else {
             log.warn("Entity "
@@ -290,10 +290,11 @@ public class DataToJsonConverter {
             + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
             .get(referencingProperty.getDisplayPropertyName())).getIdentifier());
       } else {
-        jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
-            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, (String) obObject.get(
-            referencingProperty.getDisplayPropertyName(), OBContext.getOBContext().getLanguage(),
-            (String) obObject.getId()));
+        jsonObject.put(
+            propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR) + DalUtil.FIELDSEPARATOR
+                + JsonConstants.IDENTIFIER,
+            obObject.get(referencingProperty.getDisplayPropertyName(),
+                OBContext.getOBContext().getLanguage(), (String) obObject.getId()).toString());
       }
     } else {
       jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
