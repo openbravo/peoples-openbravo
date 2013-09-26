@@ -14,10 +14,12 @@
   var PrintReceipt = function (model) {
       this.receipt = model.get('order');
       this.multiOrders = model.get('multiOrders');
-      this.multiOrders.on('print', function (order) {
-        this.print(order);
+      this.multiOrders.on('print', function (order, forcePrint) {
+        this.print(order, forcePrint);
       }, this);
-      this.receipt.on('print', this.print, this);
+      this.receipt.on('print', function (order, forcePrint) {
+        this.print(null, forcePrint);
+      }, this);
       this.receipt.on('popenDrawer', this.openDrawer, this);
       this.receipt.on('displayTotal', this.displayTotal, this);
       this.multiOrders.on('displayTotal', function () {
@@ -34,59 +36,72 @@
       this.templatecashup = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.CashUpTemplate);
       };
 
-  PrintReceipt.prototype.print = function (order) {
+  PrintReceipt.prototype.print = function (order, forcePrint) {
+
     // Clone the receipt
     var receipt = new OB.Model.Order();
     var me = this;
     var template;
-    if (!_.isUndefined(order)) {
-      receipt.clearWith(order);
-    } else {
-      receipt.clearWith(this.receipt);
-    }
 
-    if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
-      if (receipt.get('orderType') === 1) {
-        template = this.templatereturninvoice;
-      } else {
-        template = this.templateinvoice;
+    OB.MobileApp.model.hookManager.executeHooks('OBPRINT_PrePrint', {
+      forcePrint: forcePrint
+    }, function (args) {
+      if (args.cancelOperation && args.cancelOperation === true) {
+        return true;
       }
-    } else {
-      if (receipt.get('isPaid')) {
+      if (!_.isUndefined(order) && !_.isNull(order)) {
+        receipt.clearWith(order);
+      } else {
+        receipt.clearWith(me.receipt);
+      }
+
+      if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
         if (receipt.get('orderType') === 1) {
-          template = this.templatereturn;
+          template = me.templatereturninvoice;
         } else {
-          template = this.templateclosedreceipt;
+          template = me.templateinvoice;
         }
       } else {
-        if (receipt.get('orderType') === 1) {
-          template = this.templatereturn;
-        } else if (receipt.get('orderType') === 2 || receipt.get('isLayaway') || receipt.get('orderType') === 3) {
-          template = this.templatelayaway;
-        } else {
-          template = this.templatereceipt;
-        }
-      }
-    }
-
-    OB.POS.hwserver.print(template, {
-      order: receipt
-    }, function (result) {
-      var otherMe = me;
-      var myreceipt = receipt;
-      if (result && result.exception) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          action: function () {
-            var otherOtherMe = otherMe;
-            otherOtherMe.print();
-            return true;
+        if (receipt.get('isPaid')) {
+          if (receipt.get('orderType') === 1) {
+            template = me.templatereturn;
+          } else {
+            template = me.templateclosedreceipt;
           }
-        }, {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
-        }]);
+        } else {
+          if (receipt.get('orderType') === 1) {
+            template = me.templatereturn;
+          } else if (receipt.get('orderType') === 2 || receipt.get('isLayaway') || receipt.get('orderType') === 3) {
+            template = me.templatelayaway;
+          } else {
+            template = me.templatereceipt;
+          }
+        }
       }
+      OB.POS.hwserver.print(template, {
+        order: receipt
+      }, function (result) {
+        var otherMe = me;
+        var myreceipt = receipt;
+        if (result && result.exception) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            action: function () {
+              var otherOtherMe = otherMe;
+              otherOtherMe.print();
+              return true;
+            }
+          }, {
+            label: OB.I18N.getLabel('OBMOBC_LblCancel')
+          }]);
+        }
+      });
     });
+
+
+
+
+
   };
 
   PrintReceipt.prototype.openDrawer = function () {

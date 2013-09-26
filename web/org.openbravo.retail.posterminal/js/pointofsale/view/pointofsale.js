@@ -257,17 +257,17 @@ enyo.kind({
       if (this.model.get('leftColumnViewManager').isOrder()) {
         var receipt = this.model.get('order');
         if (receipt.get("isPaid")) {
-          receipt.trigger('print');
+          receipt.trigger('print', null, true);
           return;
         }
         receipt.calculateTaxes(function () {
-          receipt.trigger('print');
+          receipt.trigger('print', null, true);
         });
         return;
       }
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
         _.each(this.model.get('multiOrders').get('multiOrdersList').models, function (order) {
-          this.model.get('multiOrders').trigger('print', order);
+          this.model.get('multiOrders').trigger('print', order, true);
         }, this);
       }
     }
