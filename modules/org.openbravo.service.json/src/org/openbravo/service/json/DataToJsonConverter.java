@@ -264,11 +264,16 @@ public class DataToJsonConverter {
 
       Property displayColumnProperty = DalUtil.getPropertyFromPath(referencedProperty.getEntity(),
           referencingProperty.getDisplayPropertyName());
+      // translating the displayPropertyName before retrieving inside the condition
+      // statements. The values will be automatically translated if
+      // getIdentifier() is called.
       if (referencingProperty.hasDisplayColumn()) {
-        String identifier = obObject.get(referencingProperty.getDisplayPropertyName()).toString();
+        String identifier = (String) obObject.get(referencingProperty.getDisplayPropertyName(),
+            OBContext.getOBContext().getLanguage(), (String) obObject.getId());
         if (referencingProperty.isDisplayValue()) {
           if (obObject.getEntity().hasProperty("searchKey")) {
-            String value = (String) obObject.get("searchKey");
+            String value = (String) obObject.get("searchKey", OBContext.getOBContext()
+                .getLanguage(), (String) obObject.getId());
             identifier = value + " - " + identifier;
           } else {
             log.warn("Entity "
@@ -286,8 +291,9 @@ public class DataToJsonConverter {
             .get(referencingProperty.getDisplayPropertyName())).getIdentifier());
       } else {
         jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
-            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
-            obObject.get(referencingProperty.getDisplayPropertyName()));
+            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, (String) obObject.get(
+            referencingProperty.getDisplayPropertyName(), OBContext.getOBContext().getLanguage(),
+            (String) obObject.getId()));
       }
     } else {
       jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
