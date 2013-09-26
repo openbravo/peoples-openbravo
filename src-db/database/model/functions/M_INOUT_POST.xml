@@ -95,6 +95,7 @@
     v_Aux NUMBER;
     v_ProductName M_Product.name%TYPE;
     v_reservation_id    VARCHAR2(32);
+    v_M_Warehouse_ID    VARCHAR2(32);
     v_voidmovementdate M_Inout.MovementDate%TYPE;
     v_voiddate_acct M_Inout.DateAcct%TYPE;
     v_bpartner_blocked VARCHAR2(1):='N';
@@ -148,8 +149,8 @@
   BEGIN --BODY
   	IF(NOT FINISH_PROCESS) THEN
   	  v_PUser:=v_User;
-      SELECT io.AD_Client_ID, io.AD_Org_ID, io.CreatedBy, io.C_DocType_ID, io.DateAcct, dt.isreturn
-        INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct, v_isreturndoctype
+      SELECT io.AD_Client_ID, io.AD_Org_ID, io.CreatedBy, io.C_DocType_ID, io.DateAcct, dt.isreturn, io.m_warehouse_id
+        INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct, v_isreturndoctype, v_M_Warehouse_ID
         FROM M_InOut io JOIN c_doctype dt ON io.c_doctype_id = dt.c_doctype_id
         WHERE io.M_InOut_ID=v_Record_ID;
         IF(v_PUser IS NOT NULL) THEN
@@ -173,7 +174,18 @@
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerInout@') ;
         END IF;
       END IF;
-      
+
+      --Check whether warehouse belongs to the organization.
+      SELECT count(AD_ORG_ID)
+      INTO v_count
+      FROM AD_Org_Warehouse
+      WHERE M_Warehouse_ID=v_M_Warehouse_ID
+      AND AD_Org_ID = v_AD_Org_ID;
+
+      IF v_count = 0 THEN
+        RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@');
+      END IF;
+
       SELECT CASE WHEN (m.ISSOTRX='Y') THEN customer_blocking ELSE vendor_blocking END, CASE WHEN (m.ISSOTRX='Y') 
       THEN so_goods_blocking ELSE po_goods_blocking END, name, DocAction
       INTO v_bpartner_blocked, v_goods_blocked, v_bpartner_name, v_DocAction
