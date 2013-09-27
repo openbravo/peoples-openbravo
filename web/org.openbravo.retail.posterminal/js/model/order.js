@@ -740,7 +740,6 @@
     },
 
     _drawLinesDistribution: function (data) {
-      debugger;
       if (data && data.linesToModify && data.linesToModify.length > 0) {
         _.each(data.linesToModify, function (lineToChange) {
           var line = this.get('lines').getByCid(lineToChange.lineCid);
