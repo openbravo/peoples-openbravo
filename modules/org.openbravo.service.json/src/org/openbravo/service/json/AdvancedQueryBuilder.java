@@ -499,9 +499,11 @@ public class AdvancedQueryBuilder {
       useFieldName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + useFieldName;
     }
 
+    boolean tableReference = false;
     if (properties.size() >= 2) {
       final Property refProperty = properties.get(properties.size() - 2);
-      if (refProperty.getDomainType() instanceof TableDomainType) {
+      tableReference = refProperty.getDomainType() instanceof TableDomainType;
+      if (tableReference) {
         // special case table reference itself
         final boolean isTable = property.getEntity() == ModelProvider.getInstance().getEntity(
             Table.ENTITY_NAME);
@@ -552,6 +554,10 @@ public class AdvancedQueryBuilder {
       }
     } else if (!useProperty.isPrimitive()) {
       clause = clause + ".id";
+    } else if (tableReference && useProperty.isTranslatable()
+        && OBContext.hasTranslationInstalled()) {
+      // filtering by table reference translatable field: use translation table
+      clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause);
     }
 
     if (ignoreCase(useProperty, operator)) {
