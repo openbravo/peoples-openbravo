@@ -21,6 +21,8 @@ package org.openbravo.erpCommon.ad_process;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -84,6 +86,9 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
 
   private OBError processButton(VariablesSecureApp vars, String strKey, String strGLJournalBatch,
       String windowId) {
+    String strDateFormat = vars.getJavaDateFormat();
+    SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+
     if (log4j.isDebugEnabled())
       log4j.debug("Save: GLJournal");
     if (strGLJournalBatch.equals(""))
@@ -130,7 +135,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
                 dataLines[j].cSalesregionId, dataLines[j].mProductId, dataLines[j].cBpartnerId,
                 dataLines[j].aAssetId, dataLines[j].cCostcenterId, dataLines[j].openItems,
                 dataLines[j].finFinancialAccountId, dataLines[j].finPaymentmethodId,
-                dataLines[j].cGlitemId, dataLines[j].paymentdate, null) == 0)
+                dataLines[j].cGlitemId, dateFormat.format(new Date()), null) == 0)
               log4j.warn("Save: GLJournalLine record " + j + " not inserted. Sequence = "
                   + strLineSequence);
           } catch (ServletException ex) {
