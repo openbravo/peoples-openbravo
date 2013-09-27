@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -90,6 +91,10 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
       List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
           Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
+
+      // Forcing object initialization to prevent LazyInitializationException in case session is
+      // cleared when number of records is big enough
+      Hibernate.initialize(fields);
 
       // Parse the HQL in case that optional filters are required
       String HQL = parseOptionalFilters(parameters, sel, xmlDateFormat);
