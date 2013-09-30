@@ -197,6 +197,17 @@
     FROM C_DOCTYPE
     WHERE C_DocType_ID=v_DocTypetarget_ID;
 
+    --Check whether warehouse belongs to the organization.
+    SELECT count(AD_ORG_ID)
+    INTO v_count
+    FROM AD_Org_Warehouse
+    WHERE M_Warehouse_ID=v_M_Warehouse_ID
+    AND AD_Org_ID = v_Org_ID;
+
+    IF v_count = 0 THEN
+    RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@') ;
+    END IF;
+
     SELECT CASE WHEN (m.ISSOTRX='Y') THEN customer_blocking  ELSE vendor_blocking END ,  
     CASE WHEN (m.ISSOTRX='Y') THEN so_order_blocking ELSE po_order_blocking  END, name, DocAction
       INTO v_bpartner_blocked, v_orderBlocking, v_bpartner_name, v_DocAction

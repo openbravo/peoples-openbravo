@@ -323,7 +323,7 @@ public class DynamicExpressionParser {
         if (field.getColumn() == null) {
           continue;
         }
-        if (token.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
+        if (token.equalsIgnoreCase(field.getColumn().getDBColumnName()) && !tabLevelDisplayLogic) {
           fieldsInExpression.add(field);
           final String fieldName = KernelUtils.getInstance()
               .getPropertyFromColumn(field.getColumn()).getName();

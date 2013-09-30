@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.SessionScoped;
 
@@ -30,6 +31,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.model.ad.datamodel.Column;
@@ -40,9 +42,12 @@ import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class caches some AD structures used by the Form Initialization component. Basically, it
@@ -59,7 +64,11 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   private Map<String, List<Field>> fieldMap = new HashMap<String, List<Field>>();
   private Map<String, List<Column>> columnMap = new HashMap<String, List<Column>>();
   private Map<String, List<AuxiliaryInput>> auxInputMap = new HashMap<String, List<AuxiliaryInput>>();
-  private Map<String, ComboTableData> comboTableDataMap = new HashMap<String, ComboTableData>();
+  private Map<String, ComboTableData> comboTableDataMap = new ConcurrentHashMap<String, ComboTableData>();
+  private List<String> initializedWindows = new ArrayList<String>();
+
+  private static final Logger log = LoggerFactory
+      .getLogger(ApplicationDictionaryCachedStructures.class);
 
   private boolean useCache;
 
@@ -70,18 +79,66 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     useCache = indevelMods.list().size() == 0;
   }
 
-  public Tab getTab(String tabId) {
+  /**
+   * In case caching is enabled, Tab for tabId is returned from cache if present. If it is not, this
+   * tab and all the ones in the same window are initialized and cached.
+   * <p>
+   * Note as this method is in charge of doing the full initialization, it should be invoked before
+   * any other getter in this class. Other case, partially initialized object could be cached, being
+   * potentially harmful if obtained from another thread and tried to be initialized.
+   * 
+   * @param tabId
+   *          , ID of the tab to look for
+   * @return Tab for the tabId, from cache if it is enabled
+   */
+  public synchronized Tab getTab(String tabId) {
+    log.debug("get tab {}", tabId);
     if (useCache() && tabMap.containsKey(tabId)) {
+      log.debug("got tab {} from cache", tabId);
       return tabMap.get(tabId);
     }
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    initializeDALObject(tab);
-    initializeDALObject(tab.getADAuxiliaryInputList());
-    initializeDALObject(tab.getADFieldList());
-    initializeDALObject(tab.getTable());
-    initializeDALObject(tab.getTable().getADColumnList());
-    tabMap.put(tabId, tab);
+    if (!useCache()) {
+      // not using cache, initialize just current tab and go
+      return tab;
+    } else {
+      // using cache, do complete initialization
+      initializeWindow(tab.getWindow().getId());
+    }
     return tab;
+  }
+
+  /**
+   * Initialized all the tabs for a given window
+   */
+  private void initializeWindow(String windowId) {
+    if (!useCache() || initializedWindows.contains(windowId)) {
+      return;
+    }
+    Window window = OBDal.getInstance().get(Window.class, windowId);
+    for (Tab tab : window.getADTabList()) {
+      initializeTab(tab);
+    }
+    initializedWindows.add(windowId);
+  }
+
+  /**
+   * Initializes a tab and its related elements (table, fields, columns, auxiliary inputs and table
+   * combo data). If cache is enabled, tab is obtained from cache if it is already present and if
+   * not, it is put in cache after initialization
+   * 
+   * @param tab
+   */
+  private void initializeTab(Tab tab) {
+    String tabId = tab.getId();
+    initializeDALObject(tab);
+    if (useCache()) {
+      tabMap.put(tabId, tab);
+    }
+    // initialize other elements related with the tab
+    getAuxiliarInputList(tabId);
+    getFieldsOfTab(tabId);
+    getColumnsOfTable(tab.getTable().getId());
   }
 
   public Table getTable(String tableId) {
@@ -91,7 +148,9 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     Table table = OBDal.getInstance().get(Table.class, tableId);
     initializeDALObject(table);
     initializeDALObject(table.getADColumnList());
-    tableMap.put(tableId, table);
+    if (useCache()) {
+      tableMap.put(tableId, table);
+    }
     return table;
   }
 
@@ -100,6 +159,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       return fieldMap.get(tabId);
     }
     Tab tab = getTab(tabId);
+    String tableId = (String) DalUtil.getId(tab.getTable());
     List<Field> fields = tab.getADFieldList();
     for (Field f : fields) {
       if (f.getColumn() == null) {
@@ -107,8 +167,16 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       }
       initializeDALObject(f.getColumn());
       initializeColumn(f.getColumn());
+
+      // Property fields can link to columns in a different table than tab's one, in this case
+      // initialize table
+      if (!tableId.equals(DalUtil.getId(f.getColumn().getTable()))) {
+        initializeDALObject(f.getColumn().getTable());
+      }
     }
-    fieldMap.put(tabId, fields);
+    if (useCache()) {
+      fieldMap.put(tabId, fields);
+    }
     return fields;
   }
 
@@ -121,7 +189,9 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     for (Column c : columns) {
       initializeColumn(c);
     }
-    columnMap.put(tableId, columns);
+    if (useCache()) {
+      columnMap.put(tableId, columns);
+    }
     return columns;
   }
 
@@ -172,7 +242,9 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     for (AuxiliaryInput auxIn : auxInputs) {
       initializeDALObject(auxIn);
     }
-    auxInputMap.put(tabId, auxInputs);
+    if (useCache()) {
+      auxInputMap.put(tabId, auxInputs);
+    }
     return auxInputs;
   }
 
@@ -193,7 +265,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     } catch (Exception e) {
       throw new OBException("Error while computing combo table data for column " + colName, e);
     }
-    if (comboTableData.canBeCached()) {
+    if (useCache() && comboTableData.canBeCached()) {
       comboTableDataMap.put(comboId, comboTableData);
     }
     return comboTableData;

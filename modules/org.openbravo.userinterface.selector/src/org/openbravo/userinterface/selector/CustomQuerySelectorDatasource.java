@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -45,6 +46,7 @@ import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.LongDomainType;
+import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.model.domaintype.UniqueIdDomainType;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.RequestContext;
@@ -89,6 +91,10 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
       List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
           Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
+
+      // Forcing object initialization to prevent LazyInitializationException in case session is
+      // cleared when number of records is big enough
+      Hibernate.initialize(fields);
 
       // Parse the HQL in case that optional filters are required
       String HQL = parseOptionalFilters(parameters, sel, xmlDateFormat);
@@ -361,8 +367,38 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     } else if (domainType instanceof ForeignKeyDomainType) {
       // Assume left part definition is full object reference from HQL select
       whereClause = field.getClauseLeftPart() + ".id = '" + value + "'";
-    } else {
+    } else if (domainType instanceof StringEnumerateDomainType) {
+      // For enumerations value can be in two formats:
+      // 1- VAL: in this case the expression should be property='VAL'
+      // 2- ["VAL1", "VAL2"] (JSONArray): the expression should be property in ('VAL1', 'VAL2')
+      JSONArray values = null;
+      if (value.startsWith("[")) {
+        try {
+          values = new JSONArray(value);
+        } catch (JSONException ignore) {
+          // It is not a JSONArray: assuming format 1
+        }
+      }
 
+      if (values == null) {
+        // format 1
+        whereClause = field.getClauseLeftPart() + " = '" + value + "'";
+      } else {
+        // format 2
+        whereClause = field.getClauseLeftPart() + " IN (";
+        for (int i = 0; i < values.length(); i++) {
+          if (i > 0) {
+            whereClause += ", ";
+          }
+          try {
+            whereClause += "'" + values.getString(i) + "'";
+          } catch (JSONException e) {
+            log.error("Error parsing values as JSONArray:" + value, e);
+          }
+        }
+        whereClause += ")";
+      }
+    } else {
       if ("iStartsWith".equals(operator)) {
         whereClause = "lower(" + field.getClauseLeftPart() + ") LIKE '"
             + value.toLowerCase().replaceAll(" ", "%") + "%'";

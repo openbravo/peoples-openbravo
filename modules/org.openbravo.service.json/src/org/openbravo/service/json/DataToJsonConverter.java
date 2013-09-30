@@ -264,11 +264,16 @@ public class DataToJsonConverter {
 
       Property displayColumnProperty = DalUtil.getPropertyFromPath(referencedProperty.getEntity(),
           referencingProperty.getDisplayPropertyName());
+      // translating the displayPropertyName before retrieving inside the condition
+      // statements. The values will be automatically translated if
+      // getIdentifier() is called.
       if (referencingProperty.hasDisplayColumn()) {
-        String identifier = obObject.get(referencingProperty.getDisplayPropertyName()).toString();
+        String identifier = obObject.get(referencingProperty.getDisplayPropertyName(),
+            OBContext.getOBContext().getLanguage(), (String) obObject.getId()).toString();
         if (referencingProperty.isDisplayValue()) {
           if (obObject.getEntity().hasProperty("searchKey")) {
-            String value = (String) obObject.get("searchKey");
+            String value = obObject.get("searchKey", OBContext.getOBContext().getLanguage(),
+                (String) obObject.getId()).toString();
             identifier = value + " - " + identifier;
           } else {
             log.warn("Entity "
@@ -285,9 +290,11 @@ public class DataToJsonConverter {
             + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
             .get(referencingProperty.getDisplayPropertyName())).getIdentifier());
       } else {
-        jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
-            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
-            obObject.get(referencingProperty.getDisplayPropertyName()));
+        jsonObject.put(
+            propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR) + DalUtil.FIELDSEPARATOR
+                + JsonConstants.IDENTIFIER,
+            obObject.get(referencingProperty.getDisplayPropertyName(),
+                OBContext.getOBContext().getLanguage(), (String) obObject.getId()).toString());
       }
     } else {
       jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)

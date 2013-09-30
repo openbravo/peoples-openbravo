@@ -236,7 +236,7 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   canEditCriterion: function (criterion) {
-    return criterion && (criterion.fieldName === this.name || criterion.fieldName === this.criteriaField);
+    return criterion && (criterion.fieldName === this.name || (this.criteriaField && (criterion.fieldName === this.criteriaField)));
   },
 
   getCriterion: function (textMatchStyle) {

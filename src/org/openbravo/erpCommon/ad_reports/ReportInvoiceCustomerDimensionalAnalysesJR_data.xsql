@@ -54,7 +54,7 @@
 	  C_INVOICELINE.AD_ORG_ID AS TRORGID,
                 CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(C_CURRENCY_CONVERT_PRECISION (trxcost.cost, trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(C_CURRENCY_CONVERT_PRECISION (CASE WHEN (c_invoiceline.qtyinvoiced >= 0) THEN trxcost.cost ELSE trxcost.cost * -1 END, trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*C_INVOICELINE.QTYINVOICED)
                 END AS COST,
                 0 AS COSTREF,
@@ -96,7 +96,7 @@
                 CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
                 0 AS COST,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(C_CURRENCY_CONVERT_PRECISION (trxcost.cost, trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(C_CURRENCY_CONVERT_PRECISION (CASE WHEN (c_invoiceline.qtyinvoiced >= 0) THEN trxcost.cost ELSE trxcost.cost * -1 END, trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*C_INVOICELINE.QTYINVOICED)
                 END AS COSTREF,
                 0 AS COSTEDAMT,
@@ -264,7 +264,7 @@
                 C_INVOICELINE.AD_ORG_ID AS TRORGID,
                 CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 1 ELSE 0
                 END AS COSTCALCULATED,
-                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(C_CURRENCY_CONVERT_PRECISION (trxcost.cost, trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0)
+                CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN COALESCE(C_CURRENCY_CONVERT_PRECISION (CASE WHEN (c_invoiceline.qtyinvoiced >= 0) THEN trxcost.cost ELSE trxcost.cost * -1 END, trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0)
                      ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*C_INVOICELINE.QTYINVOICED)
                 END AS COST,
                 CASE WHEN trxcost.cost is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0

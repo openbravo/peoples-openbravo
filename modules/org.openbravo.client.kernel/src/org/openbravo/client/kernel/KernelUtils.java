@@ -384,9 +384,14 @@ public class KernelUtils {
    * 
    * @param tab
    *          The tab the object belongs to
-   * @return The parent tab of the given tab
+   * @return The parent tab of the given tab, <code>null</code> in case the tab is root
    */
   public Tab getParentTab(Tab tab) {
+    if (tab.getTabLevel() == 0L) {
+      // root level, there is no parent
+      return null;
+    }
+
     ConnectionProvider connection = new DalConnectionProvider();
     Tab targetTab = null;
     String tabId = null;

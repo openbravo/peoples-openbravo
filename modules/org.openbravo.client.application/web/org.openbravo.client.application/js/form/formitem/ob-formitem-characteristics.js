@@ -395,7 +395,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
   filterDialogConstructor: isc.OBCharacteristicsFilterDialog,
   pickerIconDefaults: {
     name: 'showDateRange',
-    src: '../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/form/productCharacteristicsFilter_ico.png',
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/productCharacteristicsFilter_ico.png',
     width: 21,
     height: 21,
     showOver: false,
