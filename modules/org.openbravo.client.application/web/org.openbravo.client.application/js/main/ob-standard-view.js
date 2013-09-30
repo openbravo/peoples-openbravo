@@ -1358,7 +1358,7 @@ isc.OBStandardView.addProperties({
         tabViewPane = this.childTabSet.tabs[i].pane;
         // Calling getContextInfo with (false, true, true) in order to obtain also the value of the
         // session attributes of the form
-        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(tabViewPane.getContextInfo(false, true, true)))) {
+        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(this.getContextInfo(false, true, true)))) {
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
         } else {
