@@ -253,10 +253,10 @@ enyo.kind({
           classes: 'span7',
           kind: 'Scroller',
           name: 'linePropertiesContainer',
-          maxHeight: '120px',
+          maxHeight: '134px',
           thumb: true,
           horizontal: 'hidden',
-          style: 'padding: 16px 0px 10px 25px; line-height: 140%;'
+          style: 'padding: 8px 0px 4px 25px; line-height: 140%;'
         }, {
           classes: 'span4',
           sytle: 'text-align: right',
