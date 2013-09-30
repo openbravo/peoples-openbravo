@@ -15137,7 +15137,7 @@ return _1}
 ,isc.A.validateJSONRecord=function isc_DataSource_validateJSONRecord(_1){var _2=this.getFieldNames(),_3={};for(var i=0;i<_2.length;i++){var _5=_2[i],_6=this.getField(_5),_7;if(_6.valueXPath){_7=isc.xml.selectObjects(_1,_6.valueXPath,true)}else{_7=_1[_5]}
 if(_6.getFieldValue){if(!isc.isA.Function(_6.getFieldValue)){isc.Func.replaceWithMethod(_6,"getFieldValue","record,value,field,fieldName")}
 _7=_6.getFieldValue(_1,_7,_6,_5)}
-var _8;if(_7!=_8){var _9=isc.DS.get(_6.type);if(_9&&!(_9.skipJSONValidation)){if(!(isc.isAn.Array(_7))){_7=_9.validateJSONRecord(_7)}else{for(var i=0;i<_7.length;i++){_7[i]=_9.validateJSONRecord(_7[i])}}}
+var _8;if(_7!==_8){var _9=isc.DS.get(_6.type);if(_9&&!(_9.skipJSONValidation)){if(!(isc.isAn.Array(_7))){_7=_9.validateJSONRecord(_7)}else{for(var i=0;i<_7.length;i++){_7[i]=_9.validateJSONRecord(_7[i])}}}
 _3[_5]=this.validateFieldValue(_6,_7)}}
 if(this.dropExtraFields)return _3;for(var i=0;i<_2.length;i++){var _5=_2[i];_1[_5]=_3[_5]}
 return _1}

@@ -197,33 +197,5 @@ isc.OBRestDataSource.addProperties({
       return true;
     }
     return this.Super('evaluateCriterion', arguments);
-  },
-
-  // SC's validateJSONRecord causes fields which value in the DataSource response
-  // is null to become in undefined. This method workarounds the problem until SC
-  // solves it in isc.DataSource.
-  //   see https://issues.openbravo.com/view.php?id=24834
-  //       http://forums.smartclient.com/showthread.php?p=110346#post110346
-  validateJSONRecord: function (record) {
-    var originalNulls = [],
-        validatedRecord, fieldNames = this.getFieldNames(),
-        i;
-
-    // save all fields which value was null in the JSON response
-    for (i = 0; i < fieldNames.length; i++) {
-      if (record[fieldNames[i]] === null) {
-        originalNulls.push(fieldNames[i]);
-      }
-    }
-
-    // SC converts nulls in undefined
-    validatedRecord = this.Super('validateJSONRecord', arguments);
-
-    // let's recover null values
-    for (i = 0; i < originalNulls.length; i++) {
-      validatedRecord[originalNulls[i]] = null;
-    }
-
-    return validatedRecord;
   }
 });
