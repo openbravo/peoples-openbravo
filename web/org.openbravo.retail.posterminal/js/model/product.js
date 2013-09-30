@@ -130,5 +130,19 @@
     type: 'TEXT'
   }]);
 
+  Product.addIndex([{
+    name: 'obpos_in_prodCat',
+    columns: [{
+      name: 'm_product_category_id',
+      sort: 'desc'
+    }]
+  }, {
+    name: 'obpos_in_bestseller',
+    columns: [{
+      name: 'bestseller',
+      sort: 'asc'
+    }]
+  }]);
+
   OB.Data.Registry.registerModel(Product);
 }());

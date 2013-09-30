@@ -109,10 +109,6 @@ enyo.kind({
       this.setDisabled();
       this.addClass('disabled');
     }
-  },
-  initComponents: function () {
-    this.inherited(arguments);
-    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
   }
 });
 
@@ -210,7 +206,8 @@ enyo.kind({
       components: [{
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.UI.NewCustomerAddressWindowButton'
+          kind: 'OB.UI.NewCustomerAddressWindowButton',
+          name: 'newAction'
         }]
       }, {
         style: 'display: table-cell;',
@@ -353,6 +350,7 @@ enyo.kind({
   executeOnShow: function () {
     this.$.body.$.listBpsLoc.setBPartnerId(this.model.get('order').get('bp').get('id'));
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
+    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;
   },
   executeOnHide: function () {

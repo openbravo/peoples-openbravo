@@ -22,9 +22,9 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.mobile.core.process.ProcessHQLQuery;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
+import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class ProductChValue extends ProcessHQLQuery {
   public static final String productChValuePropertyExtension = "OBPOS_ProductChValueExtension";

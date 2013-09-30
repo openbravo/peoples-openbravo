@@ -17,7 +17,7 @@ public class ProductCharacteristicProperties extends ModelExtension {
       {
         add(new HQLProperty("pcv.id", "m_product_ch_id"));
         add(new HQLProperty("pcv.product.id", "m_product"));
-        add(new HQLProperty("pcv.product.id", "characteristic_id"));
+        add(new HQLProperty("pcv.characteristic.id", "characteristic_id"));
         add(new HQLProperty("pcv.characteristic.name", "characteristic"));
         add(new HQLProperty("pcv.characteristicValue.id", "ch_value_id"));
         add(new HQLProperty("pcv.characteristicValue.name", "ch_value"));

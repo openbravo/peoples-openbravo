@@ -9,7 +9,7 @@
  ************************************************************************************
  */
 
-/*global Backbone */
+/*global Backbone, _ */
 
 (function () {
 
@@ -129,11 +129,11 @@
     name: 'name',
     column: 'name',
     type: 'TEXT'
-  },{
+  }, {
     name: 'postalCode',
     column: 'postalCode',
     type: 'TEXT'
-  },{
+  }, {
     name: 'cityName',
     column: 'cityName',
     type: 'TEXT'

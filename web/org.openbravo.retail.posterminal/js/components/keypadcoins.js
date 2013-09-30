@@ -182,7 +182,9 @@ enyo.kind({
       //FIXME: TOO MANY OWNERS
       var i, max, p, receipt = myWindowModel.get('order'),
           multiOrders = myWindowModel.get('multiOrders'),
-          openDrawer = false, isCash = false, allowOpenDrawer = false;
+          openDrawer = false,
+          isCash = false,
+          allowOpenDrawer = false;
       for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
         p = OB.POS.modelterminal.get('payments')[i];
         if (p.payment.searchKey === me.paymenttype) {

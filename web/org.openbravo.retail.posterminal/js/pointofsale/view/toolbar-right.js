@@ -390,7 +390,8 @@ enyo.kind({
     name: 'catalog'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabSearchCharacteristic',
-    name: 'searchCharacteristic'
+    name: 'searchCharacteristic',
+    style: 'margin: 5px'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.TabPayment',
     name: 'payment'

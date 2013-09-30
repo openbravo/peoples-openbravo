@@ -67,7 +67,8 @@ public class PaidReceipts extends JSONProcessSimple {
 
       // TODO: make this extensible
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
-          + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.unitPrice as netPrice from OrderLine as ordLine where ordLine.salesOrder.id=?";
+          + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.unitPrice as netPrice , ordLine.salesOrder.currency.pricePrecision as pricePrecision "
+    	  + "from OrderLine as ordLine where ordLine.salesOrder.id=?";
       Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
           .createQuery(hqlPaidReceiptsLines);
       paidReceiptsLinesQuery.setString(0, orderid);
@@ -108,7 +109,7 @@ public class PaidReceipts extends JSONProcessSimple {
           hasPromotions = true;
           if (!paidReceipt.getBoolean("priceIncludesTax")) {
             paidReceiptLine.put("netPrice", ((BigDecimal) objpaidReceiptsLines[7])
-                .add(displayedAmount.divide((BigDecimal) objpaidReceiptsLines[3])));
+                .add(displayedAmount.divide((BigDecimal) objpaidReceiptsLines[3], new Integer(String.valueOf(objpaidReceiptsLines[8])).intValue(), BigDecimal.ROUND_HALF_UP)));
           }
         }
 

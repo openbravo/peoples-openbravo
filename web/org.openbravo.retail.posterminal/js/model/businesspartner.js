@@ -154,7 +154,7 @@
     name: 'searchKey',
     column: 'value',
     type: 'TEXT'
-  },{
+  }, {
     name: '_identifier',
     column: '_identifier',
     filter: true,

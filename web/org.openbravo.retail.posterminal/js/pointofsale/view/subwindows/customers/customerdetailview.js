@@ -79,6 +79,43 @@ enyo.kind({
   }
 });
 
+/**/
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.OBPOSPointOfSale.UI.customers.editnewaddress',
+  style: 'margin: 0px 0px 8px 5px;',
+  classes: 'btnlink btnlink-small',
+  handlers: {
+    onSetCustomer: 'setCustomer'
+  },
+  events: {
+    onHideThisPopup: ''
+  },
+  setCustomer: function (inSender, inEvent) {
+    this.customer = inEvent.customer;
+  },
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.doHideThisPopup();
+    this.model.get('subWindowManager').set('currentWindow', {
+      name: 'customerAddressSearch',
+      params: {
+        caller: 'mainSubWindow',
+        bPartner: this.customer.get('id')
+      }
+    });
+  },
+  init: function (model) {
+    this.model = model;
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel('OBPOS_TitleEditNewAddress'));
+  }
+});
+
 /*header of window body*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerWindowHeader',
@@ -129,6 +166,11 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
+        }]
+      }, {
+        style: 'display: table-cell;',
+        components: [{
+          kind: 'OB.OBPOSPointOfSale.UI.customers.editnewaddress'
         }]
       }]
     }]

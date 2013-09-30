@@ -151,6 +151,12 @@ enyo.kind({
   windowHeader: 'OB.OBPOSPointOfSale.UI.customeraddr.subwindowNewCustomer_bodyheader',
   newAttributes: [{
     kind: 'OB.UI.CustomerAddrTextProperty',
+    name: 'customerAddrCustomerName',
+    modelProperty: 'customerName',
+    i18nLabel: 'OBPOS_LblCustomer',
+    readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerAddrTextProperty',
     name: 'customerAddrName',
     modelProperty: 'name',
     i18nLabel: 'OBPOS_LblAddress',

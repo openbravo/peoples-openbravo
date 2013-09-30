@@ -20,7 +20,8 @@ enyo.kind({
   events: {
     onShowPopup: '',
     onAddProduct: '',
-    onSetDiscountQty: ''
+    onSetDiscountQty: '',
+    onDiscountsMode: ''
   },
   discountsMode: false,
   handlers: {
@@ -202,6 +203,21 @@ enyo.kind({
         if (keyboard.line) {
           keyboard.receipt.trigger('discount', keyboard.line, OB.I18N.parseNumber(txt));
         }
+      }
+    });
+
+    this.addCommand('screen:dto', {
+      stateless: true,
+      permission: 'OBPOS_order.discount',
+      action: function (keyboard, txt) {
+        me.doDiscountsMode({
+          tabPanel: 'edit',
+          keyboard: 'toolbardiscounts',
+          edit: false,
+          options: {
+            discounts: true
+          }
+        });
       }
     });
 

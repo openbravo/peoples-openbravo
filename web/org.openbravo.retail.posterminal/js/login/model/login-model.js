@@ -288,7 +288,7 @@
     },
 
     renderMain: function () {
-      var i, paymentcashcurrency, paymentcash, paymentlegacy, minIncRefresh, max, loadModelsIncFunc;
+      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, loadModelsIncFunc;
       if (!OB.UTIL.isSupportedBrowser()) {
         OB.MobileApp.model.renderLogin();
         return false;
@@ -318,15 +318,16 @@
       // sets the default payment method
       this.set('paymentcash', paymentcashcurrency || paymentcash || paymentlegacy);
 
-      //MASTER DATA REFRESH
-      minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
-      if (minIncRefresh) {
-        loadModelsIncFunc = function () {
-          OB.MobileApp.model.loadModels(null, true);
-          setTimeout(loadModelsIncFunc, minIncRefresh);
-        };
-        setTimeout(loadModelsIncFunc, minIncRefresh);
-      }
+      OB.MobileApp.model.on('window:ready', function(){
+        //MASTER DATA REFRESH
+        var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
+        if (minIncRefresh) {
+          loadModelsIncFunc = function () {
+            OB.MobileApp.model.loadModels(null, true);
+          };
+          setInterval(loadModelsIncFunc, minIncRefresh);
+        }
+      });
 
       this.on('seqNoReady', function () {
         this.trigger('ready'); //NAVIGATE

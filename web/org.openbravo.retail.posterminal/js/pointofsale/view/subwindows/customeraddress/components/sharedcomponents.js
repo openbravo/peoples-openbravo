@@ -67,6 +67,9 @@ enyo.kind({
     } else {
       this.setValue('');
     }
+    if (this.modelProperty === 'customerName' && inEvent.customer !== undefined && inEvent.customer.get('name') !== undefined) {
+      this.setValue(inEvent.customer.get('name'));
+    }
   },
   saveChange: function (inSender, inEvent) {
     inEvent.customerAddr.set(this.modelProperty, this.getValue());

@@ -1191,7 +1191,7 @@ public class OrderLoader extends JSONProcessSimple {
         FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
             FIN_PaymentScheduleDetail.class);
         paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
-        paymentScheduleDetail.setAmount(writeoffAmt.abs());
+        paymentScheduleDetail.setAmount(writeoffAmt.negate());
         if (paymentScheduleInvoice != null) {
           paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
         }
