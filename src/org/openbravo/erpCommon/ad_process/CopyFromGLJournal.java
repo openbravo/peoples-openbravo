@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -124,18 +123,20 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
         for (int j = 0; dataLines != null && j < dataLines.length; j++) {
           String strLineSequence = SequenceIdData.getUUID();
           try {
-            if (CopyFromGLJournalData.insertGLJournalLine(conn, this, strLineSequence,
-                vars.getClient(), dataLines[j].adOrgId, vars.getUser(), strSequence,
-                dataLines[j].line, dataLines[j].isgenerated, dataLines[j].description,
-                dataLines[j].amtsourcedr, dataLines[j].amtsourcecr, dataLines[j].cCurrencyId,
-                dataLines[j].currencyratetype, dataLines[j].currencyrate, dataLines[j].amtacctdr,
-                dataLines[j].amtacctcr, dataLines[j].cUomId, dataLines[j].qty,
-                dataLines[j].cValidcombinationId, dataLines[j].user1Id, dataLines[j].user2Id,
-                dataLines[j].cCampaignId, dataLines[j].cProjectId, dataLines[j].cActivityId,
-                dataLines[j].cSalesregionId, dataLines[j].mProductId, dataLines[j].cBpartnerId,
-                dataLines[j].aAssetId, dataLines[j].cCostcenterId, dataLines[j].openItems,
+            if (CopyFromGLJournalData.insertGLJournalLine(conn, this, strLineSequence, vars
+                .getClient(), dataLines[j].adOrgId, vars.getUser(), strSequence, dataLines[j].line,
+                dataLines[j].isgenerated, dataLines[j].description, dataLines[j].amtsourcedr,
+                dataLines[j].amtsourcecr, dataLines[j].cCurrencyId, dataLines[j].currencyratetype,
+                dataLines[j].currencyrate, dataLines[j].amtacctdr, dataLines[j].amtacctcr,
+                dataLines[j].cUomId, dataLines[j].qty, dataLines[j].cValidcombinationId,
+                dataLines[j].user1Id, dataLines[j].user2Id, dataLines[j].cCampaignId,
+                dataLines[j].cProjectId, dataLines[j].cActivityId, dataLines[j].cSalesregionId,
+                dataLines[j].mProductId, dataLines[j].cBpartnerId, dataLines[j].aAssetId,
+                dataLines[j].cCostcenterId, dataLines[j].openItems,
                 dataLines[j].finFinancialAccountId, dataLines[j].finPaymentmethodId,
-                dataLines[j].cGlitemId, dateFormat.format(new Date()), null) == 0)
+                dataLines[j].cGlitemId,
+                (dataLines[j].paymentdate.isEmpty()) ? dataLines[j].paymentdate : data[i].dateacct,
+                null) == 0)
               log4j.warn("Save: GLJournalLine record " + j + " not inserted. Sequence = "
                   + strLineSequence);
           } catch (ServletException ex) {
