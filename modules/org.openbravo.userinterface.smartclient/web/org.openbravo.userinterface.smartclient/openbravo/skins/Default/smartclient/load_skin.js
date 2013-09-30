@@ -524,6 +524,7 @@ with (theWindow) {
                 height:22,
                 pickerIconSrc:"[SKIN]/pickers/comboBoxPicker.png",
                 pickerIconWidth:18,
+                valueIconSize:12,
                 showFocusedPickerIcon:false,
                 textBoxStyle:"selectItemText"
             });
@@ -563,7 +564,7 @@ with (theWindow) {
                 textBoxStyle:"selectItemText"
             });
 
-            isc.SpinnerItem.INCREASE_ICON = isc.addProperties(isc.SpinnerItem.INCREASE_ICON,
+            isc.SpinnerItem.changeDefaults("increaseIconDefaults",
             {
                 height:11,
                 imgOnly:true,
@@ -573,7 +574,7 @@ with (theWindow) {
                 width:16
             });
 
-            isc.SpinnerItem.DECREASE_ICON = isc.addProperties(isc.SpinnerItem.DECREASE_ICON,
+            isc.SpinnerItem.changeDefaults("decreaseIconDefaults",
             {
                 height:11,
                 imgOnly:true,
@@ -1519,7 +1520,8 @@ with (theWindow) {
         showFocusedPickerIcon:false,
         pickerIconSrc:"[SKIN]/pickers/comboBoxPicker.png",
         height:22,
-        pickerIconWidth:18
+        pickerIconWidth:18,
+        valueIconSize:12
     })}
 
     if (isc.ComboBoxItem) {isc.ComboBoxItem.addProperties({
@@ -1549,7 +1551,7 @@ with (theWindow) {
             textBoxStyle:"selectItemText",
             height:22
         });
-        isc.SpinnerItem.INCREASE_ICON = isc.addProperties(isc.SpinnerItem.INCREASE_ICON, {
+        isc.SpinnerItem.changeDefaults("increaseIconDefaults", {
             width:16,
             height:11,
             showFocused:true,
@@ -1557,7 +1559,7 @@ with (theWindow) {
             imgOnly:true,
             src:"[SKIN]/DynamicForm/spinner_control_increase.png"
         });
-        isc.SpinnerItem.DECREASE_ICON = isc.addProperties(isc.SpinnerItem.DECREASE_ICON, {
+        isc.SpinnerItem.changeDefaults("decreaseIconDefaults", {
             width:16,
             height:11,
             showFocused:true,
@@ -1867,7 +1869,7 @@ with (theWindow) {
     //----------------------------------------
     // 14) Form controls
     //----------------------------------------
-    if (isc.ComboBoxItem && useSpriting) {
+    if (isc.ComboBoxItem) {
         isc.ComboBoxItem.addProperties({
             showFocusedPickerIcon: false
         });
@@ -1910,14 +1912,14 @@ with (theWindow) {
         }
     }
     if (isc.SpinnerItem) {
-        isc.SpinnerItem.INCREASE_ICON = isc.addProperties(isc.SpinnerItem.INCREASE_ICON, {
+        isc.SpinnerItem.changeDefaults("increaseIconDefaults", {
             width:16,
             height:11,
             showOver:false,
             showFocused:true,
             showFocusedWithItem:false
         });
-        isc.SpinnerItem.DECREASE_ICON = isc.addProperties(isc.SpinnerItem.DECREASE_ICON, {
+        isc.SpinnerItem.changeDefaults("decreaseIconDefaults", {
             width:16,
             height:11,
             showOver:false,
@@ -1925,11 +1927,11 @@ with (theWindow) {
             showFocusedWithItem:false
         });
         if (useSpriting) {
-            isc.SpinnerItem.INCREASE_ICON = isc.addProperties(isc.SpinnerItem.INCREASE_ICON, {
+            isc.SpinnerItem.changeDefaults("increaseIconDefaults", {
                 src:"blank",
                 baseStyle:"spinnerItemIncrease"
             });
-            isc.SpinnerItem.DECREASE_ICON = isc.addProperties(isc.SpinnerItem.DECREASE_ICON, {
+            isc.SpinnerItem.changeDefaults("decreaseIconDefaults", {
                 src:"blank",
                 baseStyle:"spinnerItemDecrease"
             });

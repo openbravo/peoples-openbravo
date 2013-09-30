@@ -1522,6 +1522,7 @@ overwritten by _base.scss.
 .checkboxPartial,
 .checkboxPartialOver,
 .checkboxPartialDown {
+  background-size: auto !important;
   background-image: url(./images/DynamicForm/checkbox_sprite.png) !important;
 }
 
