@@ -462,7 +462,7 @@
               v_QtyPO:=0;
               v_QtyOrderPO:=NULL;
             END IF;
-            IF ((v_DocStatus<>'IP' OR v_DocAction<>'CO') AND v_DocSubTypeSO<>'OB') THEN
+            IF ((v_DocStatus<>'IP' OR v_DocAction<>'CO') AND COALESCE(v_DocSubTypeSO, '')<>'OB') THEN
               M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO) ;
             END IF;
           END LOOP;
@@ -1060,7 +1060,7 @@
                 v_QtyOrderPO := C_Uom_Convert(v_QtyPO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
               END IF;
             END IF;
-            IF ((v_DocStatus<>'IP' OR v_DocAction<>'CO') AND v_DocSubTypeSO<>'OB') THEN
+            IF ((v_DocStatus<>'IP' OR v_DocAction<>'CO') AND COALESCE(v_DocSubTypeSO, '')<>'OB') THEN
               M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID,
               Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO);
             END IF;
