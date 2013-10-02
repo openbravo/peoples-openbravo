@@ -132,7 +132,7 @@ isc.OBViewDataSource.addProperties({
     }
     // Do not save a new record if it is already being saved
     if (!this.view._savingNewRecord || !isNewRecord) {
-      if (isNewRecord) {
+      if (isNewRecord && (operationType === 'update' || operationType === 'add')) {
         this.view._savingNewRecord = true;
       }
       this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
