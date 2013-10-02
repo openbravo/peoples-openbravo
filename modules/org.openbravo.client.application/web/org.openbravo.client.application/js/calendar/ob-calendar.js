@@ -29,6 +29,7 @@ isc.OBCalendar_EventDialogBridge.addProperties({
     var calendar = this.creator,
         currentStart = this.currentStart,
         currentEnd = this.currentEnd,
+        currentLane = this.currentLane,
         event = this.event;
 
     if (calendar.OBEventEditor) {
@@ -36,6 +37,7 @@ isc.OBCalendar_EventDialogBridge.addProperties({
         calendar: calendar,
         currentStart: currentStart,
         currentEnd: currentEnd,
+        currentLane: currentLane,
         event: event
       });
       calendar.OBEventEditor.initComponents();
@@ -287,6 +289,7 @@ isc.OBCalendar.addProperties({
           calendar.eventDialog.event.popupCallback = popupCallback;
           calendar.eventDialog.currentStart = event[calendar.startDateField];
           calendar.eventDialog.currentEnd = event[calendar.endDateField];
+          calendar.eventDialog.currentLane = event[calendar.laneNameField];
           calendar.eventDialog.calendar = calendar;
           try {
             //To avoid js error due to conflicts with Smartclient default EventDialog
@@ -318,6 +321,7 @@ isc.OBCalendar.addProperties({
       this.eventDialog.event = event;
       this.eventDialog.currentStart = event[this.startDateField];
       this.eventDialog.currentEnd = newDate;
+      this.eventDialog.currentLane = event[this.laneNameField];
       this.eventDialog.calendar = this;
       try {
         //To avoid js error due to conflicts with Smartclient default EventDialog
@@ -328,7 +332,7 @@ isc.OBCalendar.addProperties({
       return this.Super('eventResized', arguments);
     }
   },
-  eventMoved: function (newDate, event) {
+  eventMoved: function (newDate, event, newLane) {
     newDate.setSeconds(0);
     if (this.showEventDialogOnEventMove) {
       //Event duration
@@ -338,6 +342,7 @@ isc.OBCalendar.addProperties({
       this.eventDialog.event = event;
       this.eventDialog.currentStart = newDate;
       this.eventDialog.currentEnd = newEndDate;
+      this.eventDialog.currentLane = newLane;
       this.eventDialog.calendar = this;
       try {
         //To avoid js error due to conflicts with Smartclient default EventDialog
@@ -353,6 +358,7 @@ isc.OBCalendar.addProperties({
       this.eventDialog.event = event;
       this.eventDialog.currentStart = event[this.startDateField];
       this.eventDialog.currentEnd = event[this.endDateField];
+      this.eventDialog.currentLane = event[this.laneNameField];
       this.eventDialog.calendar = this;
       try {
         //To avoid js error due to conflicts with Smartclient default EventDialog
