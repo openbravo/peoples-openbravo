@@ -100,11 +100,11 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   }
 
   @Override
-  protected JSONArray fetchNodeChildren(Map<String, String> parameters) throws JSONException {
+  protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId)
+      throws JSONException {
 
     final String ROOT_NODE = "0";
     String tabId = parameters.get("tabId");
-    String parentId = parameters.get("parentId");
 
     boolean fetchRoot = ROOT_NODE.equals(parentId);
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
@@ -249,6 +249,34 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       recomputeSequenceNumbers(tree, newParentId, seqNo);
     }
     return seqNo;
+  }
+
+  @Override
+  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId) {
+    String referencedTableId = parameters.get("referencedTableId");
+    Table table = OBDal.getInstance().get(Table.class, referencedTableId);
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    Property linkToParentProperty = getLinkToParentProperty(table);
+    JSONObject json = null;
+
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
+        DataToJsonConverter.class);
+
+    try {
+      BaseOBObject bob = OBDal.getInstance().get(entity.getName(), nodeId);
+      json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
+      BaseOBObject parent = (BaseOBObject) bob.get(linkToParentProperty.getName());
+      if (parent != null) {
+        json.put("parentId", parent.getId().toString());
+      } else {
+        json.put("parentId", (String) null);
+      }
+      json.put("_hasChildren", (this.nodeHasChildren(entity, bob)) ? true : false);
+    } catch (JSONException e) {
+      logger.error("Error on tree datasource", e);
+    }
+
+    return json;
   }
 
 }

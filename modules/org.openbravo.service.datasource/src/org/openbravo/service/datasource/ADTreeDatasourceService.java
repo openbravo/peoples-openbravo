@@ -8,6 +8,7 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.HibernateException;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -29,6 +30,8 @@ import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.json.DataResolvingMode;
+import org.openbravo.service.json.DataToJsonConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,18 +113,21 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   }
 
   @Override
-  protected JSONArray fetchNodeChildren(Map<String, String> parameters) throws JSONException {
+  protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId)
+      throws JSONException {
 
     String referencedTableId = parameters.get("referencedTableId");
     String parentRecordId = parameters.get("parentRecordId");
     Tree tree = this.getTree(referencedTableId, parentRecordId);
-    String parentId = parameters.get("parentId");
 
     JSONArray responseData = new JSONArray();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tree.getTable().getId());
 
     String selectedPropertiesStr = parameters.get("_selectedProperties");
     JSONArray selectedProperties = new JSONArray(selectedPropertiesStr);
+
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
+        DataToJsonConverter.class);
 
     StringBuilder joinClause = new StringBuilder();
     joinClause.append(" as tn ");
@@ -143,13 +149,12 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
     for (Object rawNode : obq.createQuery().list()) {
       Object[] node = (Object[]) rawNode;
-      JSONObject value = new JSONObject();
+      JSONObject value = null;
       BaseOBObject bob = (BaseOBObject) node[ENTITY];
       try {
-        value.put("id", node[NODE_ID]);
+        value = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
         value.put("parentId", node[PARENT_ID]);
         value.put("seqno", node[SEQNO]);
-        value.put("canAcceptDroppedRecords", false);
         value.put("_hasChildren", (this.nodeHasChildren((String) node[NODE_ID])) ? true : false);
         for (int i = 0; i < selectedProperties.length(); i++) {
           value.put(selectedProperties.getString(i), bob.get(selectedProperties.getString(i)));
@@ -326,6 +331,35 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       treeNode.setSequenceNumber(seqNo);
     }
     OBDal.getInstance().flush();
+  }
+
+  @Override
+  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId) {
+    String referencedTableId = parameters.get("referencedTableId");
+    String parentRecordId = parameters.get("parentRecordId");
+    Tree tree = this.getTree(referencedTableId, parentRecordId);
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(tree.getTable().getId());
+
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
+        DataToJsonConverter.class);
+
+    JSONObject json = null;
+    try {
+      OBCriteria<TreeNode> treeNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
+      treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
+      treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, nodeId));
+      TreeNode treeNode = (TreeNode) treeNodeCriteria.uniqueResult();
+      BaseOBObject bob = OBDal.getInstance().get(entity.getName(), treeNode.getNode());
+      json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
+      json.put("parentId", treeNode.getReportSet());
+      json.put("_hasChildren", this.nodeHasChildren(treeNode.getNode()));
+    } catch (HibernateException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (JSONException e) {
+      log.error("Error on tree datasource", e);
+    }
+    return json;
   }
 
 }

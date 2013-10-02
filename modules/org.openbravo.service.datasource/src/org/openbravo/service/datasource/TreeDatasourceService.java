@@ -1,5 +1,6 @@
 package org.openbravo.service.datasource;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -56,8 +57,17 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     OBContext.setAdminMode(true);
     final JSONObject jsonResult = new JSONObject();
     try {
-      JSONArray responseData = fetchNodeChildren(parameters);
-
+      JSONArray responseData = null;
+      JSONArray selectedNodes = null;
+      if (parameters.containsKey("selectedRecords")) {
+        selectedNodes = new JSONArray(parameters.get("selectedRecords"));
+      }
+      if (selectedNodes != null && selectedNodes.length() > 0) {
+        responseData = fetchSelectedNodes(parameters, selectedNodes);
+      } else {
+        String parentId = parameters.get("parentId");
+        responseData = fetchNodeChildren(parameters, parentId);
+      }
       final JSONObject jsonResponse = new JSONObject();
       jsonResponse.put(JsonConstants.RESPONSE_DATA, responseData);
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -74,7 +84,57 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return jsonResult.toString();
   }
 
-  protected abstract JSONArray fetchNodeChildren(Map<String, String> parameters)
+  private JSONArray fetchSelectedNodes(Map<String, String> parameters, JSONArray selectedNodes) {
+    JSONArray responseData = new JSONArray();
+    try {
+      ArrayList<String> addedNodes = new ArrayList<String>();
+      ArrayList<String> parentsToExpand = new ArrayList<String>();
+      int maxLevel = -1;
+      for (int i = 0; i < selectedNodes.length(); i++) {
+        String nodeId = selectedNodes.getString(i);
+        JSONObject node = getJSONObjectByNodeId(parameters, nodeId);
+        if (!addedNodes.contains(node.getString("id"))) {
+          addedNodes.add(node.getString("id"));
+          responseData.put(node);
+        }
+        int level = 0;
+        while (node.has("parentId") && !"0".equals(node.getString("parentId"))) {
+          nodeId = node.getString("parentId");
+          node = getJSONObjectByNodeId(parameters, nodeId);
+          node.put("isOpen", true);
+          if (!parentsToExpand.contains(node.getString("id"))) {
+            parentsToExpand.add(node.getString("id"));
+          }
+          if (!addedNodes.contains(node.getString("id"))) {
+            addedNodes.add(node.getString("id"));
+            responseData.put(node);
+          }
+          level++;
+        }
+        if (level > maxLevel) {
+          maxLevel = level;
+        }
+      }
+      // Expand all the parents
+      for (String parentId : parentsToExpand) {
+        JSONArray nodeChildren = this.fetchNodeChildren(parameters, parentId);
+        for (int i = 0; i < nodeChildren.length(); i++) {
+          JSONObject node = nodeChildren.getJSONObject(i);
+          if (!addedNodes.contains(node.getString("id"))) {
+            addedNodes.add(node.getString("id"));
+            responseData.put(node);
+          }
+        }
+      }
+    } catch (JSONException e) {
+      log.error("Error on tree datasource", e);
+    }
+    return responseData;
+  }
+
+  protected abstract JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId);
+
+  protected abstract JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId)
       throws JSONException;
 
   @Override

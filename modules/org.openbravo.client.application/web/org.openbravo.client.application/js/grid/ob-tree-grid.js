@@ -24,6 +24,7 @@ isc.OBTreeGrid.addProperties({
   view: null,
   orderedTree: false,
 
+  arrowKeyAction: "select",
   canPickFields: false,
   canDropOnLeaves: true,
   canHover: false,
@@ -34,10 +35,14 @@ isc.OBTreeGrid.addProperties({
   showDropIcons: false,
   nodeIcon: null,
   folderIcon: null,
-  autoFetchData: true,
+  autoFetchData: false,
   closedIconSuffix: "",
   selectionAppearance: "checkbox",
   showSelectedStyle: true,
+  // the grid will be refreshed when:
+  // - The tree category is LinkToParent and
+  // - There has been at least a reparent
+  needsViewGridRefresh: false,
   // Can't reparent with cascade selection 
   //  showPartialSelection: true,
   //  cascadeSelection: true,
@@ -70,18 +75,31 @@ isc.OBTreeGrid.addProperties({
         //Only send the index if the tree is ordered
         dsRequest = me.addOrderedTreeParameters(dsRequest);
       }
-
-      dsRequest.params.selectedRecords = me.getSelectedRecordsString();
+      if (!me.view.isShowingTree) {
+        dsRequest.params.selectedRecords = me.getSelectedRecordsString();
+      } else {
+        delete dsRequest.params.selectedRecords;
+      }
       dsRequest.params._selectedProperties = me.getSelectedPropertiesString();
       return this.Super('transformRequest', arguments);
     };
-    if (!fields) {
-      fields = me.fields;
-    }
+    fields = this.getTreeGridFields(me.fields);
     ds.primaryKeys = {
       id: 'id'
     };
     return this.Super("setDataSource", [ds, fields]);
+  },
+
+  getTreeGridFields: function (fields) {
+    var treeGridFields = isc.shallowClone(fields),
+        i, nDeleted = 0;
+    for (i = 0; i < treeGridFields.length; i++) {
+      if (treeGridFields[i].name[0] === '_') {
+        treeGridFields.splice(i - nDeleted, 1);
+        nDeleted = nDeleted + 1;
+      }
+    }
+    return treeGridFields;
   },
 
   addOrderedTreeParameters: function (dsRequest) {
@@ -174,6 +192,10 @@ isc.OBTreeGrid.addProperties({
         }
         this.updateDataViaDataSource(node, dataSource, dataSourceProperties, sourceWidget);
       }
+    } else {
+      if (this.treeStructure === 'LinkToParent') {
+        this.needsViewGridRefresh = true;
+      }
     }
     this.Super('transferNodes', arguments);
   },
@@ -197,213 +219,54 @@ isc.OBTreeGrid.addProperties({
       }
     }
     return null;
-  }
-});
-
-isc.ClassFactory.defineClass('OBTreeGridPopup', isc.OBPopup);
-
-isc.OBTreeGridPopup.addProperties({
-  isModal: true,
-  showModalMask: true,
-  dismissOnEscape: true,
-  autoCenter: true,
-  autoSize: true,
-  vertical: true,
-  showMinimizeButton: false,
-  destroyOnClose: false,
-  referencedTableId: null,
-  parentRecordId: null,
-  visibility: 'hidden',
-
-  mainLayoutDefaults: {
-    _constructor: 'VLayout',
-    width: 380,
-    height: 105,
-    layoutMargin: 5
   },
 
-  buttonLayoutDefaults: {
-    _constructor: 'HLayout',
-    width: '100%',
-    height: 22,
-    layoutAlign: 'right',
-    align: 'right',
-    membersMargin: 5,
-    autoParent: 'mainLayout'
+  setView: function (view) {
+    this.view = view;
   },
 
-  okButtonDefaults: {
-    _constructor: 'OBFormButton',
-    height: 22,
-    width: 80,
-    canFocus: true,
-    autoParent: 'buttonLayout',
-    click: function () {
-      this.creator.accept();
+  _dataArrived: function (parentNode) {
+    var i, selectedRecords, node;
+    this.Super('_dataArrived', arguments);
+    selectedRecords = this.view.viewGrid.getSelectedRecords();
+    for (i = 0; i < selectedRecords.length; i++) {
+      node = this.getNodeByID(selectedRecords[i].id);
+      this.selectRecord(node);
     }
   },
 
-  clearButtonDefaults: {
-    _constructor: 'OBFormButton',
-    height: 22,
-    width: 80,
-    canFocus: true,
-    autoParent: 'buttonLayout',
-    click: function () {
-      this.creator.clearValues();
-    }
-  },
-
-  cancelButtonDefaults: {
-    _constructor: 'OBFormButton',
-    height: 22,
-    width: 80,
-    canFocus: true,
-    autoParent: 'buttonLayout',
-    click: function () {
-      this.creator.cancel();
-    }
-  },
-
-  //	  /**
-  //	   * Based on values selected in the tree, returns the ones that are
-  //	   * going to be used for visualization and/or filtering:
-  //	   *
-  //	   *   -Filtering: includes all selected leaf nodes
-  //	   *   -Visualization: includes the top in branch fully selected nodes
-  //	   */
-  //	  getValue: function () {
-  //	  },
-  accept: function () {
-    if (this.callback) {
-      this.fireCallback(this.callback, 'value', [this.getValue()]);
-    }
-    this.hide();
-  },
-
-  clearValues: function () {
-    this.tree.deselectAllRecords();
-  },
-
-  cancel: function () {
-    this.hide();
-  },
-
-  initWidget: function () {
-    var me = this,
-        dataArrived, checkInitialNodes, getNodeByID, gridFields;
-
-    this.Super('initWidget', arguments);
-
-    this.addAutoChild('mainLayout');
-
-    //	    /**
-    //	     * Overrides dataArrived to initialize the tree initial selection
-    //	     * based on the filter initial criteria
-    //	     */
-    //	    dataArrived = function () {
-    //	      var internalValue, nodeList, i, j;
-    //	      this.Super('dataArrived', arguments);
-    //	      if (this.topElement && this.topElement.creator && this.topElement.creator.internalValue) {
-    //	        this.checkInitialNodes(this.topElement.creator.internalValue);
-    //	      }
-    //	    };
-    //	    /**
-    //	     * Marks the checkboxes of the nodes that
-    //	     * are present in the initial criteria
-    //	     */
-    //	    checkInitialNodes = function (internalValue) {
-    //	      var c, v, value, node, characteristic;
-    //	      for (c in internalValue) {
-    //	        if (internalValue.hasOwnProperty(c)) {
-    //	          characteristic = internalValue[c];
-    //	          for (v = 0; v < characteristic.values.length; v++) {
-    //	            value = characteristic.values[v];
-    //	            if (value.filter) {
-    //	              node = this.getNodeByID(value.value);
-    //	              if (node) {
-    //	                this.selectRecord(node);
-    //	              }
-    //	            }
-    //	          }
-    //	        }
-    //	      }
-    //	    };
-    //	    /**
-    //	     * Returns a tree node given its id
-    //	     */
-    //	    getNodeByID = function (nodeId) {
-    //	      var i, node, nodeList = this.data.getNodeList();
-    //	      for (i = 0; i < nodeList.length; i++) {
-    //	        node = nodeList[i];
-    //	        if (node.id === nodeId) {
-    //	          return node;
-    //	        }
-    //	      }
-    //	      return null;
-    //	    };
-    gridFields = this.getTreeGridFields();
-
-    this.tree = isc.OBTreeGrid.create({
-      view: this.view,
-      referencedTableId: this.referencedTableId,
-      fields: gridFields,
-      orderedTree: this.orderedTree,
-      treeStructure: this.treeStructure,
-
-      width: 500,
-      height: 400
-    });
-
-    OB.Datasource.get(this.dataSourceId, this.tree, null, true);
-
-    this.mainLayout.addMember(this.tree);
-    this.addAutoChild('buttonLayout');
-    this.addAutoChild('okButton', {
-      canFocus: true,
-      title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE')
-    });
-    this.addAutoChild('clearButton', {
-      canFocus: true,
-      title: OB.I18N.getLabel('OBUIAPP_Clear')
-    });
-    this.addAutoChild('cancelButton', {
-      canFocus: true,
-      title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE')
-    });
-    this.addItem(this.mainLayout);
-  },
-
-  getTreeGridFields: function () {
-    var fields = isc.clone(this.view.gridFields),
-        i, nDeleted = 0;
-    for (i = 0; i < fields.length; i++) {
-      if (fields[i].name[0] === '_') {
-        fields.splice(i - nDeleted, 1);
-        nDeleted = nDeleted + 1;
-      }
-    }
-    return fields;
+  recordDoubleClick: function (viewer, record, recordNum, field, fieldNum, value, rawValue) {
+    this.view.editRecordFromTreeGrid(record, false, (field ? field.name : null));
   },
 
   show: function () {
-    var callback;
-    // If the parent record id has changed, fetch the data again
-    var currentParentTabRecordId = this.tree.getParentTabRecordId();
-    if (currentParentTabRecordId !== this.tree.parentTabRecordId) {
-      callback = function () {
-        var me = this;
-        me.show();
-      };
-      this.tree.fetchData(null, callback);
-    }
-    return this.Super('show', arguments);
+    this.view.toolBar.updateButtonState();
+    this.Super('show', arguments);
   },
 
   hide: function () {
-    this.Super('hide', arguments);
-    if (this.treeStructure === 'LinkToParent') {
+    if (this.needsViewGridRefresh) {
+      this.needsViewGridRefresh = false;
       this.view.viewGrid.refreshGrid();
     }
+    this.Super('hide', arguments);
+  },
+
+  rowMouseDown: function (record, rowNum, colNum) {
+    this.Super('rowMouseDown', arguments);
+    if (!isc.EventHandler.ctrlKeyDown()) {
+      this.deselectAllRecords();
+    }
+    this.selectRecord(rowNum);
+  },
+
+  recordClick: function (viewer, record, recordNum, field, fieldNum, value, rawValue) {
+    if (isc.EH.getEventType() === 'mouseUp') {
+      // Don't do anything on the mouseUp event, the record is actually selected in the mouseDown event
+      return;
+    }
+    this.deselectAllRecords();
+    this.selectRecord(recordNum);
   }
+
 });

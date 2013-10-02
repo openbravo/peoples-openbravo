@@ -193,6 +193,8 @@ isc.OBStandardView.addProperties({
 
   propertyToColumns: [],
 
+  isShowingTree: false,
+
   initWidget: function (properties) {
     var length, rightMemberButtons = [],
         leftMemberButtons = [],
@@ -481,6 +483,14 @@ isc.OBStandardView.addProperties({
         this.viewGrid.setWidth('100%');
         this.viewGrid.setView(this);
         this.formGridLayout.addMember(this.viewGrid);
+      }
+
+      if (this.treeGrid) {
+        this.treeGrid.setWidth('100%');
+        this.treeGrid.setView(this);
+        OB.Datasource.get(this.treeGrid.dataSourceId, this.treeGrid, null, true);
+        this.treeGrid.hide();
+        this.formGridLayout.addMember(this.treeGrid);
       }
 
       if (this.viewForm) {
@@ -1061,6 +1071,7 @@ isc.OBStandardView.addProperties({
   // Switch from form to grid view or the other way around
   switchFormGridVisibility: function () {
     if (!this.isShowingForm) {
+      this.treeGrid.hide();
       this.viewGrid.hide();
       this.statusBarFormLayout.show();
       this.statusBarFormLayout.setHeight('100%');
@@ -1074,7 +1085,11 @@ isc.OBStandardView.addProperties({
       this.viewForm.resetForm();
       this.isShowingForm = false;
       this.viewGrid.markForRedraw('showing');
-      this.viewGrid.show();
+      if (this.isShowingTree) {
+        this.treeGrid.show();
+      } else {
+        this.viewGrid.show();
+      }
       if (this.isActiveView()) {
         if (this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
           this.viewGrid.focus();
@@ -1154,6 +1169,21 @@ isc.OBStandardView.addProperties({
       rowNum = this.viewGrid.getRecordIndex(record);
       this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName, localTime);
     }
+  },
+
+  // ** {{{ editRecord }}} **
+  // Opens the edit form and selects the record in the grid, will refresh
+  // child views also
+  editRecordFromTreeGrid: function (record, preventFocus, focusFieldName) {
+    var rowNum,
+    // at this point the time fields of the record are formatted in local time
+    localTime = true;
+    this.messageBar.hide();
+
+    if (!this.isShowingForm) {
+      this.switchFormGridVisibility();
+    }
+    this.viewForm.editRecord(record, preventFocus, false, focusFieldName, localTime);
   },
 
   setMaximizeRestoreButtonState: function () {

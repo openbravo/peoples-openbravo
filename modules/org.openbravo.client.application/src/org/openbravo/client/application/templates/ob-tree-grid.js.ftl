@@ -19,7 +19,7 @@
 */
 -->
 
-isc.OBTreeGridPopup.create({
+isc.OBTreeGrid.create({
     view: this,
     referencedTableId: '${data.referencedTableId}',
     orderedTree:  ${data.orderedTree?string},

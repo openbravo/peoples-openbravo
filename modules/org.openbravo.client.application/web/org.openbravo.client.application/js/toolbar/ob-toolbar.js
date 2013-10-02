@@ -503,6 +503,15 @@ isc.OBToolbar.addClassProperties({
       },
       keyboardShortcutId: 'ToolBar_Email'
     },
+    'treeGrid': {
+      updateState: function () {
+        if (this.view) {
+          this.setDisabled(this.view.isShowingForm || this.view.isEditingGrid);
+        } else {
+          this.setDisabled(true);
+        }
+      }
+    },
     'tree': {
       updateState: function () {
         var view = this.view,
@@ -513,11 +522,6 @@ isc.OBToolbar.addClassProperties({
           disabled = true;
         }
         this.setDisabled(disabled);
-      },
-      'treeGrid': {
-        updateState: function () {
-          this.setDisabled(false);
-        }
       }
     }
   },
@@ -1706,9 +1710,17 @@ OB.ToolbarUtils.showTree = function (view) {
 };
 
 OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
-  var treeGridPopup = view.treePopup;
-  if (!treeGridPopup.isVisible()) {
-    treeGridPopup.show();
+  var treeGrid = view.treeGrid,
+      viewGrid = view.viewGrid;
+  if (view.isShowingTree) {
+    viewGrid.show();
+    treeGrid.hide();
+    view.isShowingTree = false;
+  } else {
+	treeGrid.fetchData();
+    treeGrid.show();
+    viewGrid.hide();
+    view.isShowingTree = true;
   }
 };
 
