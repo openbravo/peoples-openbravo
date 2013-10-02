@@ -323,6 +323,7 @@ isc.OBCalendar.addProperties({
         //To avoid js error due to conflicts with Smartclient default EventDialog
         this.eventDialog.show();
       } catch (e) {}
+      return false;
     } else {
       return this.Super('eventResized', arguments);
     }
@@ -342,6 +343,7 @@ isc.OBCalendar.addProperties({
         //To avoid js error due to conflicts with Smartclient default EventDialog
         this.eventDialog.show();
       } catch (e) {}
+      return false;
     } else {
       return this.Super('eventMoved', arguments);
     }
