@@ -45,6 +45,7 @@
 .OBCalendarGridCell,
 .OBCalendarGridCellWorkday,
 .OBCalendarGridCellWorkdaySelected,
+.OBCalendarGridCellWorkdayDisabled,
 .OBCalendarGridCellSelected,
 .OBCalendarGridCellDark,
 .OBCalendarGridCellDisabled {
@@ -55,7 +56,8 @@
 }
 
 .OBCalendarGridCell,
-.OBCalendarGridCellDisabled {
+.OBCalendarGridCellDisabled,
+.OBCalendarGridCellWorkdayDisabled {
   background-color: #D8D8D8;
 }
 
