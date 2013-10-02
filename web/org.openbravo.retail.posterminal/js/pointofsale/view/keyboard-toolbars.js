@@ -268,6 +268,11 @@ enyo.kind({
         break;
       }
     }
+
+    if (keyboard.status === '') {
+      keyboard.defaultcommand = OB.POS.modelterminal.get('paymentcash');
+      keyboard.setStatus(OB.POS.modelterminal.get('paymentcash'));
+    }
   }
 });
 
