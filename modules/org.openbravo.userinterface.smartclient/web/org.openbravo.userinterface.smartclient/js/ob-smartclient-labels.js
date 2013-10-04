@@ -127,8 +127,8 @@
   isc.Validator.mustBeExactLength = getLabel('OBUISC_Validator.mustBeExactLength');
   isc.Validator.requiredField = getLabel('OBUISC_Validator.requiredField');
   isc.Validator.notOneOf = getLabel('OBUISC_Validator.notOneOf');
-  isc.Time.AMIndicator = getLabel('OBUISC_Time.AMIndicator');
-  isc.Time.PMIndicator = getLabel('OBUISC_Time.PMIndicator');
+  isc.Time.AMIndicator = ' ' + getLabel('OBUISC_Time.AMIndicator');
+  isc.Time.PMIndicator = ' ' + getLabel('OBUISC_Time.PMIndicator');
   isc.Window.title = getLabel('OBUISC_Window.title');
   isc.FilterBuilder.removeButtonPrompt = getLabel('OBUISC_FilterBuilder.removeButtonPrompt');
   isc.FilterBuilder.addButtonPrompt = getLabel('OBUISC_FilterBuilder.addButtonPrompt');

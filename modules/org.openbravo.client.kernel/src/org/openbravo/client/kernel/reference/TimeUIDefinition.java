@@ -69,6 +69,11 @@ public class TimeUIDefinition extends UIDefinition {
     return convertedValue.toString();
   }
 
+  public String getGridFieldProperties(Field field) {
+    final String superResult = super.getGridFieldProperties(field);
+    return superResult + ", timeFormatter: isc.Time.shortDisplayFormat";
+  }
+
   private SimpleDateFormat getClassicFormat() {
     if (classicFormat == null) {
       String dateTimeFormat = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
