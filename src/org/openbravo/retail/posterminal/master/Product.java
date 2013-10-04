@@ -107,30 +107,12 @@ public class Product extends ProcessHQLQuery {
 
     // generic products
     products
-        .add("select "
+        .add("select distinct "
             + regularProductsHQLProperties.getHqlSelect()
-            + "from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli, PricingProductPrice ppp "
-            + "where product = ppp.product and ppp.priceListVersion.id = '"
+            + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli, PricingProductPrice ppp, OBRETCO_Prol_Product pli2 where  product = ppp.product and ppp.priceListVersion.id = '"
             + priceListVersion.getId()
-            + "' and product.id in (select pli2.product.genericProduct.id as genericProduct "
-            + "FROM OBRETCO_Prol_Product as pli2 left outer join pli2.product.image img, "
-            + "PricingProductPrice ppp2, "
-            + "PricingPriceListVersion pplv "
-            + "WHERE (pli2.obretcoProductlist = '"
-            + productList.getId()
-            + "') "
-            + "AND ("
-            + "pplv.id='"
-            + priceListVersion.getId()
-            + "'"
-            + ") AND ("
-            + "ppp.priceListVersion.id = pplv.id"
-            + ") AND ("
-            + "pli2.product.id = ppp2.product.id"
-            + ") AND ("
-            + "pli2.product.active = true"
-            + ") AND "
-            + "((pli2.$incrementalUpdateCriteria) or (pli2.product.$incrementalUpdateCriteria) or (ppp.$incrementalUpdateCriteria) ) order by pli2.product.name)");
+            + "' and pli2.product.genericProduct=product and pli2.obretcoProductlist = '"
+            + productList.getId() + "'");
 
     return products;
 
