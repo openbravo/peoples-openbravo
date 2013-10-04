@@ -65,6 +65,7 @@ isc.OBTreeGrid.addProperties({
 
   setDataSource: function (ds, fields) {
     var me = this;
+
     ds.transformRequest = function (dsRequest) {
       dsRequest.params = dsRequest.params || {};
       dsRequest.params.referencedTableId = me.referencedTableId;
@@ -81,8 +82,17 @@ isc.OBTreeGrid.addProperties({
         delete dsRequest.params.selectedRecords;
       }
       dsRequest.params._selectedProperties = me.getSelectedPropertiesString();
+      dsRequest.willHandleError = true;
       return this.Super('transformRequest', arguments);
     };
+
+    ds.transformResponse = function (dsResponse, dsRequest, jsonData) {
+      if (jsonData.response.message) {
+        me.view.messageBar.setMessage(jsonData.response.message.messageType, null, jsonData.response.message.message);
+      }
+      return this.Super('transformResponse', arguments);
+    };
+
     fields = this.getTreeGridFields(me.fields);
     ds.primaryKeys = {
       id: 'id'
@@ -197,6 +207,7 @@ isc.OBTreeGrid.addProperties({
         this.needsViewGridRefresh = true;
       }
     }
+
     this.Super('transferNodes', arguments);
   },
 

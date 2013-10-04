@@ -3,11 +3,18 @@ package org.openbravo.service.datasource;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.UnsatisfiedResolutionException;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.service.datasource.CheckTreeOperationManager.ActionResponse;
 import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +23,10 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   final static Logger log = LoggerFactory.getLogger(TreeDatasourceService.class);
   final static String JSON_PREFIX = "<SCRIPT>//'\"]]>>isc_JSONResponseStart>>";
   final static String JSON_SUFFIX = "//isc_JSONResponseEnd";
+
+  @Inject
+  @Any
+  private Instance<CheckTreeOperationManager> checkTreeOperationManagers;
 
   @Override
   public String add(Map<String, String> parameters, String content) {
@@ -151,16 +162,19 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       String nextNodeId = parameters.get("nextNodeId");
 
       if (jsonObject.has("data")) {
-        response = processNodeMovement(parameters, jsonObject.getJSONObject("data"), prevNodeId,
-            nextNodeId);
+        JSONObject data = jsonObject.getJSONObject("data");
+        JSONObject oldValues = jsonObject.getJSONObject("oldValues");
+        response = processNodeMovement(parameters, data, oldValues, prevNodeId, nextNodeId);
       } else if (jsonObject.has("transaction")) {
         JSONArray jsonResultArray = new JSONArray();
         JSONObject transaction = jsonObject.getJSONObject("transaction");
         JSONArray operations = transaction.getJSONArray("operations");
         for (int i = 0; i < operations.length(); i++) {
           JSONObject operation = operations.getJSONObject(i);
-          jsonResultArray.put(processNodeMovement(parameters, operation.getJSONObject("data"),
-              prevNodeId, nextNodeId));
+          JSONObject data = operation.getJSONObject("data");
+          JSONObject oldValues = operation.getJSONObject("oldValues");
+          jsonResultArray.put(processNodeMovement(parameters, data, oldValues, prevNodeId,
+              nextNodeId));
         }
         response = JSON_PREFIX + jsonResultArray.toString() + JSON_SUFFIX;
       }
@@ -174,7 +188,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   }
 
   private String processNodeMovement(Map<String, String> parameters, JSONObject data,
-      String prevNodeId, String nextNodeId) throws Exception {
+      JSONObject oldValues, String prevNodeId, String nextNodeId) throws Exception {
     String nodeId = data.getString("id");
     String newParentId = data.getString("parentId");
 
@@ -182,10 +196,43 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     JSONObject jsonResponse = new JSONObject();
     JSONArray dataResponse = new JSONArray();
 
-    moveNode(parameters, nodeId, newParentId, prevNodeId, nextNodeId);
+    String treeType = "EmployeeTree";
 
-    dataResponse.put(data);
-    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    CheckTreeOperationManager ctom = null;
+
+    try {
+      ctom = checkTreeOperationManagers.select(new ComponentProvider.Selector(treeType)).get();
+    } catch (UnsatisfiedResolutionException e) {
+      // Controlled exception, there aren't any CheckTreeOperationManager
+    }
+
+    boolean success = true;
+    String messageType = null;
+    String message = null;
+    if (ctom != null) {
+      ActionResponse actionResponse = ctom.checkNodeMovement(parameters, nodeId, newParentId,
+          prevNodeId, nextNodeId);
+      success = actionResponse.isSuccess();
+      messageType = actionResponse.getMessageType();
+      message = actionResponse.getMessage();
+    }
+
+    if (success) {
+      moveNode(parameters, nodeId, newParentId, prevNodeId, nextNodeId);
+      dataResponse.put(data);
+      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    } else {
+      dataResponse.put(oldValues);
+      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+    }
+
+    if (messageType != null && message != null) {
+      JSONObject jsonMessage = new JSONObject();
+      jsonMessage.put("messageType", messageType);
+      jsonMessage.put("message", message);
+      jsonResponse.put("message", jsonMessage);
+    }
+
     jsonResponse.put(JsonConstants.RESPONSE_DATA, dataResponse);
     jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
     jsonResponse.put(JsonConstants.RESPONSE_ENDROW, 0);
@@ -196,5 +243,4 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   protected abstract void moveNode(Map<String, String> parameters, String nodeId,
       String newParentId, String prevNodeId, String nextNodeId) throws Exception;
-
 }
