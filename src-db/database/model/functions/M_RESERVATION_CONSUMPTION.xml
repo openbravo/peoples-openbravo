@@ -234,27 +234,29 @@ BEGIN
             FROM m_reservation_stock
             WHERE m_reservation_id = p_reservation_id
               AND isallocated = 'N'
+              AND ((m_attributesetinstance_id != p_attributesetinstance_id OR m_attributesetinstance_id is null) OR m_locator_id != p_locator_id)
               AND quantity != COALESCE(releasedqty,0)
         ) LOOP
+
           v_qtytounreserve_aux := LEAST(v_qtytounreserve, cur_reserved_stock.reservedqty);
           UPDATE m_reservation_stock
           SET quantity = quantity - v_qtytounreserve_aux
           WHERE m_reservation_stock_id = cur_reserved_stock.m_reservation_stock_id;
           v_qtytounreserve := v_qtytounreserve - v_qtytounreserve_aux;
-  
+
           IF (v_qtytounreserve = 0) THEN
             EXIT;
           END IF;
         END LOOP;
       END IF;
-      
+
       UPDATE m_reservation_stock
       SET quantity = quantity - v_qtytorelease
       WHERE m_reservation_stock_id = cur_not_allocated_stock.m_reservation_stock_id;
       DELETE FROM m_reservation_stock
       WHERE quantity = 0
         AND m_reservation_stock_id = cur_not_allocated_stock.m_reservation_stock_id;
-  
+        
       M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', v_storage_detail_id, v_qtytorelease, p_user_id, 'N', v_res_stock_id);
   
       -- Call get stock to check availability
