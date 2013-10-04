@@ -1071,7 +1071,9 @@ isc.OBStandardView.addProperties({
   // Switch from form to grid view or the other way around
   switchFormGridVisibility: function () {
     if (!this.isShowingForm) {
-      this.treeGrid.hide();
+      if (this.treeGrid) {
+        this.treeGrid.hide();
+      }
       this.viewGrid.hide();
       this.statusBarFormLayout.show();
       this.statusBarFormLayout.setHeight('100%');
