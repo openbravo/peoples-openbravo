@@ -37,7 +37,7 @@ OB.Utilities.Date.centuryReference = 50; // Notice that change this value
 //
 // Parameters:
 // * {{{displayFormat}}}: the string displayFormat definition to repair.
-OB.Utilities.Date.normalizeDisplayFormat = function(displayFormat) {
+OB.Utilities.Date.normalizeDisplayFormat = function (displayFormat) {
   var newFormat = '';
   displayFormat = displayFormat.replace('mm', 'MM').replace('dd', 'DD').replace('yyyy', 'YYYY').replace('yy', 'YY');
   displayFormat = displayFormat.replace('%D', '%d').replace('%M', '%m');
@@ -69,7 +69,7 @@ OB.Utilities.Date.normalizeDisplayFormat = function(displayFormat) {
 //
 // Returns an object with the timeformatter, a boolean if 24 hours 
 // time clock are being used and the timeformat itself
-OB.Utilities.getTimeFormatDefinition = function() {
+OB.Utilities.getTimeFormatDefinition = function () {
   var timeFormat, is24h = true;
   if (OB.Format.dateTime.indexOf(' ') === -1) {
     return 'to24HourTime';
@@ -104,7 +104,7 @@ OB.Utilities.getTimeFormatDefinition = function() {
 // * {{{dateFormat}}}: the dateFormat pattern to use
 // Return:
 // * a Date object or null if conversion was not possible.
-OB.Utilities.Date.OBToJS = function(OBDate, dateFormat) {
+OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
   if (!OBDate) {
     return null;
   }
@@ -207,7 +207,7 @@ OB.Utilities.Date.OBToJS = function(OBDate, dateFormat) {
 // * {{{dateFormat}}}: the dateFormat pattern to use
 // Return:
 // * a String or null if the JSDate is not a date.
-OB.Utilities.Date.JSToOB = function(JSDate, dateFormat) {
+OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
   dateFormat = OB.Utilities.Date.normalizeDisplayFormat(dateFormat);
 
   var isADate = Object.prototype.toString.call(JSDate) === '[object Date]';
@@ -276,7 +276,7 @@ OB.Utilities.Date.JSToOB = function(JSDate, dateFormat) {
 // * {{{allFields}}}: complete list of fields
 // Return:
 // * an array with the names of the time fields contained in allFields.
-OB.Utilities.Date.getTimeFields = function(allFields) {
+OB.Utilities.Date.getTimeFields = function (allFields) {
   var i, field, timeFields = [],
       length = allFields.length;
   for (i = 0; i < length; i++) {
@@ -297,7 +297,7 @@ OB.Utilities.Date.getTimeFields = function(allFields) {
 // * {{{allFields}}}: array with the fields of the records
 // Return:
 // * Nothing. newData, after converting its time fields from UTC timezone the the client side timezone
-OB.Utilities.Date.convertUTCTimeToLocalTime = function(newData, allFields) {
+OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
   var textField, fieldToDate, i, j, UTCOffsetInMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds(),
       timeFields = OB.Utilities.Date.getTimeFields(allFields),
       timeFieldsLength = timeFields.length,
@@ -319,7 +319,7 @@ OB.Utilities.Date.convertUTCTimeToLocalTime = function(newData, allFields) {
 //** {{{ OB.Utilities.Date.getUTCOffsetInMiliseconds }}} **
 //
 // Return the offset with UTC measured in miliseconds
-OB.Utilities.Date.getUTCOffsetInMiliseconds = function() {
+OB.Utilities.Date.getUTCOffsetInMiliseconds = function () {
   var UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
       UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date());
   return (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000);

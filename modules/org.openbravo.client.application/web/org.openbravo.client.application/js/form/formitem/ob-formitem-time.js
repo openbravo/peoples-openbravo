@@ -37,7 +37,7 @@ isc.OBTimeItem.addProperties({
   long24TimeFormat: 'HH:MM:SS',
   longTimeFormat: 'HH:MM:SS',
 
-  mapValueToDisplay: function(value) {
+  mapValueToDisplay: function (value) {
     if (isc.isA.Date(value)) {
       return isc.Time.toShortTime(value, this.timeFormatter);
     }
@@ -48,7 +48,7 @@ isc.OBTimeItem.addProperties({
   // this because changeOnKeypress is false. Activating changeOnKeypress makes the
   // item not editable as it is reformatted on keyStroke, the same happens calling
   // from this method form.itemChangeActions
-  keyPress: function(item, form, keyName, characterValue) {
+  keyPress: function (item, form, keyName, characterValue) {
     var i, f = this.form,
         toolBarButtons;
 
@@ -67,7 +67,7 @@ isc.OBTimeItem.addProperties({
 
   // SmartClient's TimeItem doesn't keep time zone. Preserve it in case the
   // string contains time zone. So time in this format is kept: 12:00+01:00
-  setValue: function(value) {
+  setValue: function (value) {
     if (isc.isA.String(value) && (value.contains('+') || value.contains('-'))) {
       value = isc.Time.parseInput(value, null, null, true);
     }
@@ -80,7 +80,7 @@ isc.OBTimeItem.addProperties({
     return this.Super('setValue', arguments);
   },
 
-  getValue: function() {
+  getValue: function () {
     var value = this.Super('getValue', arguments);
     if (value && isc.isA.Date(value)) {
       this.setTodaysDate(value);
@@ -88,7 +88,7 @@ isc.OBTimeItem.addProperties({
     return value;
   },
 
-  setTodaysDate: function(date) {
+  setTodaysDate: function (date) {
     var today = new Date();
     date.setYear(today.getFullYear());
     date.setMonth(today.getMonth());
@@ -97,7 +97,7 @@ isc.OBTimeItem.addProperties({
 
   /* The following functions allow proper timeGrid operation */
 
-  doShowTimeGrid: function(timeValue) {
+  doShowTimeGrid: function (timeValue) {
     if (this.timeGrid && !this.timeGrid.isVisible()) {
       this.timeGrid.show();
       if (this.getValue()) {
@@ -105,16 +105,16 @@ isc.OBTimeItem.addProperties({
       }
     }
   },
-  doHideTimeGrid: function(timeValue) {
+  doHideTimeGrid: function (timeValue) {
     var me = this;
     if (this.timeGrid) {
-      setTimeout(function() {
+      setTimeout(function () {
         me.timeGrid.hide();
       }, 100);
     }
   },
 
-  init: function() {
+  init: function () {
     var oldShowHint, hint, formatDefinition = OB.Utilities.getTimeFormatDefinition();
 
     this.timeFormatter = formatDefinition.timeFormatter;
@@ -137,7 +137,7 @@ isc.OBTimeItem.addProperties({
     }
   },
 
-  keyDown: function() {
+  keyDown: function () {
     if (this.timeGrid) {
       if (isc.EH.getKey() === 'Arrow_Up' && (!isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown()) && this.timeGrid.isVisible()) {
         this.timeGrid.selectPreviousRecord();
@@ -149,18 +149,18 @@ isc.OBTimeItem.addProperties({
     }
     return this.Super('keyDown', arguments);
   },
-  click: function() {
+  click: function () {
     this.doShowTimeGrid(isc.Time.parseInput(this.getEnteredValue()));
   },
-  focus: function() {
+  focus: function () {
     this.doShowTimeGrid(this.getValue());
     return this.Super('focus', arguments);
   },
-  blur: function() {
+  blur: function () {
     this.doHideTimeGrid();
     return this.Super('blur', arguments);
   },
-  moved: function() {
+  moved: function () {
     if (this.timeGrid) {
       this.timeGrid.updatePosition();
     }
@@ -193,7 +193,7 @@ isc.OBTimeItemGrid.addProperties({
   _avoidHideOnBlur: false,
   _waitingForReFocus: [],
 
-  dateObjToTimeString: function(dateObj) {
+  dateObjToTimeString: function (dateObj) {
     var lengthThreshold, tmpString, isPM = false,
         dateString = '';
     if (this.precission === 'hour' || this.precission === 'minute' || this.precission === 'second') {
@@ -235,7 +235,7 @@ isc.OBTimeItemGrid.addProperties({
 
     return dateString;
   },
-  timeStringToDateObj: function(stringTime) {
+  timeStringToDateObj: function (stringTime) {
     var lengthThreshold;
     if (stringTime.length < 3) {
       stringTime = stringTime + ':00:00';
@@ -252,7 +252,7 @@ isc.OBTimeItemGrid.addProperties({
     }
     return stringTime;
   },
-  normalizeDateObj: function(dateObj) {
+  normalizeDateObj: function (dateObj) {
     var timeRefHrs, timeRefMins, timeRefSecs, newTimeRef;
     if (this.precission === 'hour' || this.precission === 'minute' || this.precission === 'second') {
       timeRefHrs = dateObj.getHours();
@@ -276,7 +276,7 @@ isc.OBTimeItemGrid.addProperties({
     newTimeRef = new Date(newTimeRef.setMilliseconds(0));
     return newTimeRef;
   },
-  getDiffText: function(date, reference) {
+  getDiffText: function (date, reference) {
     var diffMs = (date - reference),
         diffDays = (diffMs / 86400000),
         diffHrs = ((diffMs % 86400000) / 3600000),
@@ -339,12 +339,12 @@ isc.OBTimeItemGrid.addProperties({
 
     return diffText;
   },
-  convertTimes: function() {
+  convertTimes: function () {
     this.minTime = this.timeStringToDateObj(this.minTime);
     this.maxTime = this.timeStringToDateObj(this.maxTime);
     this.timeReference = this.timeStringToDateObj(this.timeReference);
   },
-  selectTimeInList: function(time) {
+  selectTimeInList: function (time) {
     var rowNum, i;
 
     time = this.timeStringToDateObj(time);
@@ -363,14 +363,14 @@ isc.OBTimeItemGrid.addProperties({
     this.doSelectionUpdated = true;
   },
   doSelectionUpdated: true,
-  selectionUpdated: function(record) {
+  selectionUpdated: function (record) {
     if (this.formItem && record && this.doSelectionUpdated) {
       this.formItem.setValue(record.jsTime);
     }
     return this.Super('selectionUpdated ', arguments);
   },
 
-  show: function() {
+  show: function () {
     var timeRef, formItemWidth;
     if (this.isVisible()) {
       return;
@@ -405,16 +405,16 @@ isc.OBTimeItemGrid.addProperties({
     this.updatePosition();
     return this.Super('show', arguments);
   },
-  scrolled: function() {
+  scrolled: function () {
     var me = this;
     if (isc.Browser.isIE) {
       //To avoid a problem in IE that once the scroll is pressed, the formItem loses the focus
       this._avoidHideOnBlur = true;
       this._waitingForReFocus.push('dummy');
-      setTimeout(function() {
+      setTimeout(function () {
         me.formItem.form.focus();
       }, 10);
-      setTimeout(function() {
+      setTimeout(function () {
         me._waitingForReFocus.pop();
         if (me._waitingForReFocus.length === 0) {
           me._avoidHideOnBlur = false;
@@ -423,12 +423,12 @@ isc.OBTimeItemGrid.addProperties({
     }
     this.Super('scrolled', arguments);
   },
-  hide: function() {
+  hide: function () {
     if (!this._avoidHideOnBlur) {
       return this.Super('hide', arguments);
     }
   },
-  generateData: function() {
+  generateData: function () {
     var dateObj, timeGranularityInMilliSeconds, timeRef, dateArray = [];
     this.convertTimes();
     this.maxTimeStringLength = 0;
@@ -463,7 +463,7 @@ isc.OBTimeItemGrid.addProperties({
     }
     return dateArray;
   },
-  selectPreviousRecord: function() {
+  selectPreviousRecord: function () {
     var selectedRecord = this.getSelectedRecord(),
         i;
     if (selectedRecord) {
@@ -479,7 +479,7 @@ isc.OBTimeItemGrid.addProperties({
       this.selectSingleRecord(0);
     }
   },
-  selectNextRecord: function() {
+  selectNextRecord: function () {
     var selectedRecord = this.getSelectedRecord(),
         i;
     if (selectedRecord) {
@@ -495,14 +495,14 @@ isc.OBTimeItemGrid.addProperties({
       this.selectSingleRecord(0);
     }
   },
-  updatePosition: function() {
+  updatePosition: function () {
     var me = this,
         interval;
     if (this.formItem) {
       this.placeNear(this.formItem.getPageLeft() + 2, this.formItem.getPageTop() + 26);
     }
   },
-  initWidget: function() {
+  initWidget: function () {
     var labels;
     if (this.timeFormat.indexOf('SS') !== -1) {
       this.precission = 'second';
