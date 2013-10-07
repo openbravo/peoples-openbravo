@@ -686,6 +686,18 @@
     deleteLine: function (line) {
       var me = this;
       var index = this.get('lines').indexOf(line);
+      var pack = line.isAffectedByPack();
+
+      if (pack) {
+        // When deleting a line, check other lines that might be affected by
+        // same pack than deleted one and merge splitted lines created for those
+        this.get('lines').forEach(function (l) {
+          var affected = l.isAffectedByPack();
+          if (affected && affected.ruleId === pack.ruleId) {
+            this.mergeLines(l);
+          }
+        }, this);
+      }
 
       // trigger
       line.trigger('removed', line);
@@ -793,6 +805,36 @@
         this.setUnit(newLine, qtyToMove);
       } else {
         this.setUnit(newLine, newLine.get('qty') + qtyToMove);
+      }
+    },
+
+    /**
+     * Checks other lines with the same product to be merged in a single one
+     */
+    mergeLines: function (line) {
+      var p = line.get('product'),
+          lines = this.get('lines'),
+          merged = false;
+      line.set('promotions', null)
+      lines.forEach(function (l) {
+        var promos = l.get('promotions');
+        if (l === line) {
+          return;
+        }
+        if (!promos || promos.length == 0) { //TODO?
+        }
+
+        if (!l.get('addedBySplit') && l.get('product').id === p.id) {
+          line.set({
+            qty: line.get('qty') + l.get('qty'),
+            promotions: null
+          });
+          lines.remove(l);
+          merged = true;
+        }
+      }, this);
+      if (merged) {
+        line.calculateGross();
       }
     },
 
