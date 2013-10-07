@@ -49,6 +49,7 @@
   v_Record_ID VARCHAR2(32);
   v_User VARCHAR2(32);
   v_PUser VARCHAR2(32);
+  v_DocStatus VARCHAR2(60);
   v_is_included NUMBER:=0;
   v_DocType_ID VARCHAR2(32);
   v_isreturndoctype CHAR(1);
@@ -602,12 +603,25 @@
               -- stocked product
               IF(Cur_InOutLine.M_Product_ID IS NOT NULL AND v_IsStocked=1) THEN
                 -- Update OrderLine (if C-, Qty is negative)
-                UPDATE C_ORDERLINE
-                  SET QtyReserved=QtyReserved - v_QtyPO - v_QtySO,
-                  QtyDelivered=QtyDelivered + v_QtySO,
-                  Updated=now(),
-                  UpdatedBy=v_User
-                WHERE C_OrderLine_ID=Cur_InOutLine.C_OrderLine_ID;
+                SELECT DOCSTATUS into v_DocStatus
+                FROM C_ORDER
+                WHERE C_ORDER_ID = (SELECT C_ORDER_ID
+                                    FROM C_ORDERLINE 
+                                    WHERE C_ORDERLINE_ID=Cur_InOutLine.C_OrderLine_ID);
+                IF (v_DocStatus = 'DR') THEN
+                  UPDATE C_ORDERLINE
+                    SET QtyDelivered=QtyDelivered + v_QtySO,
+                    Updated=now(),
+                    UpdatedBy=v_User
+                  WHERE C_OrderLine_ID=Cur_InOutLine.C_OrderLine_ID;
+                ELSE 
+                  UPDATE C_ORDERLINE
+                    SET QtyReserved=QtyReserved - v_QtyPO - v_QtySO,
+                    QtyDelivered=QtyDelivered + v_QtySO,
+                    Updated=now(),
+                    UpdatedBy=v_User
+                   WHERE C_OrderLine_ID=Cur_InOutLine.C_OrderLine_ID;
+                END IF;
                 -- Products not stocked
               ELSE
                 -- Update OrderLine (if C-, Qty is negative)

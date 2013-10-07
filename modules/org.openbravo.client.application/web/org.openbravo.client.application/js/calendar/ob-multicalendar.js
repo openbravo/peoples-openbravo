@@ -471,7 +471,10 @@ isc.OBMultiCalendarLeftControls.addProperties({
       width: 180,
       title: this.multiCalendar.addEventButtonName,
       click: function () {
-        leftControls.multiCalendar.calendar.addEventButton.click();
+        var startDate = OB.Utilities.Date.roundToNextQuarter(new Date()),
+            endDate = new Date(startDate);
+        endDate.setHours(endDate.getHours() + 1);
+        leftControls.multiCalendar.calendar.addEventWithDialog(startDate, endDate);
       }
     });
     this.dateChooser = isc.OBDateChooser.create({
