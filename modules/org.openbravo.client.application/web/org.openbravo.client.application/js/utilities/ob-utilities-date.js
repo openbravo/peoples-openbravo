@@ -329,9 +329,33 @@ OB.Utilities.Date.getUTCOffsetInMiliseconds = function () {
 //
 // Round any date to the next quarter
 OB.Utilities.Date.roundToNextQuarter = function (date) {
-  var newDate = new Date(date);
-  var minutes = newDate.getMinutes();
-  var roundedMinutes = (parseInt((minutes + 15) / 15, 10) * 15) % 60;
+  var newDate = new Date(date),
+      minutes = newDate.getMinutes(),
+      timeBreak = 15;
+  if (newDate.getMilliseconds() === 0 && newDate.getSeconds() === 0 && minutes % timeBreak === 0) {
+    return newDate;
+  }
+  var roundedMinutes = (parseInt((minutes + timeBreak) / timeBreak, 10) * timeBreak) % 60;
+  newDate.setMilliseconds(0);
+  newDate.setSeconds(0);
+  newDate.setMinutes(roundedMinutes);
+  if (roundedMinutes === 0) {
+    newDate.setHours(newDate.getHours() + 1);
+  }
+  return newDate;
+};
+
+//** {{{ OB.Utilities.Date.roundToNextHalfHour }}} **
+//
+// Round any date to the next half hour
+OB.Utilities.Date.roundToNextHalfHour = function (date) {
+  var newDate = new Date(date),
+      minutes = newDate.getMinutes(),
+      timeBreak = 30;
+  if (newDate.getMilliseconds() === 0 && newDate.getSeconds() === 0 && minutes % timeBreak === 0) {
+    return newDate;
+  }
+  var roundedMinutes = (parseInt((minutes + timeBreak) / timeBreak, 10) * timeBreak) % 60;
   newDate.setMilliseconds(0);
   newDate.setSeconds(0);
   newDate.setMinutes(roundedMinutes);
