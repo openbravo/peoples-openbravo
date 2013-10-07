@@ -62,10 +62,11 @@ public class MInOutLineEventHandler extends EntityPersistenceEventObserver {
     if (criteria.count() == 1) {
       ShipmentInOut shipmentInOut = OBDal.getInstance().get(ShipmentInOut.class,
           shipmentInOutLine.getShipmentReceipt().getId());
-      shipmentInOut.setSalesOrder(null);
-      OBDal.getInstance().save(shipmentInOut);
-      OBDal.getInstance().flush();
+      if (shipmentInOut != null) {
+        shipmentInOut.setSalesOrder(null);
+        OBDal.getInstance().save(shipmentInOut);
+        OBDal.getInstance().flush();
+      }
     }
   }
-
 }
