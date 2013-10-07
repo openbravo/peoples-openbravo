@@ -876,6 +876,8 @@ public class OrderLoader extends JSONProcessSimple {
       orderline.setSalesOrder(order);
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           stdPrecision, RoundingMode.HALF_UP));
+      orderline.setLineGrossAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("gross")).setScale(
+          stdPrecision, RoundingMode.HALF_UP));
 
       if (!isLayaway && !partialpayLayaway) {
         // shipment is created, so all is delivered
