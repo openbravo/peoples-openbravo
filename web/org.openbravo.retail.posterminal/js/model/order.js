@@ -750,13 +750,50 @@
             this.addUnit(line, qty);
             line.trigger('selected', line);
           } else {
-            this.createLine(p, qty, options);
+            line = this.createLine(p, qty, options);
           }
         } else {
           this.createLine(p, qty, options);
         }
       }
       this.save();
+    },
+
+    /**
+     * Splits a line from the ticket keeping in the line the qtyToKeep quantity,
+     * the rest is moved to another line with the same product and no packs, or
+     * to a new one if there's no other line.
+     */
+    splitLine: function (line, qtyToKeep) {
+      var originalQty = line.get('qty'),
+          newLine, p, qtyToMove;
+
+      if (originalQty === qtyToKeep) {
+        return;
+      }
+
+      qtyToMove = originalQty - qtyToKeep;
+
+      this.setUnit(line, qtyToKeep);
+
+      p = line.get('product');
+
+      newLine = this.get('lines').find(function (l) {
+        return l !== line && l.get('product').id === p.id && !l.isAffectedByPack();
+      });
+
+      if (!newLine) {
+        newLine = line.clone();
+        newLine.set({
+          promotionCandidates: null,
+          promotions: null,
+          addedBySplit: true
+        });
+        this.get('lines').add(newLine);
+        this.setUnit(newLine, qtyToMove);
+      } else {
+        this.setUnit(newLine, newLine.get('qty') + qtyToMove);
+      }
     },
 
     addPromotion: function (line, rule, discount) {
@@ -879,6 +916,7 @@
         }
       });
       this.adjustPayment();
+      return newline;
     },
 
     setBPandBPLoc: function (businessPartner, showNotif, saveChange) {
