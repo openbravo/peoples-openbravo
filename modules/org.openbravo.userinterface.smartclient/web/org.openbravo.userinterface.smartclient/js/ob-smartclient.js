@@ -847,7 +847,11 @@ isc.DataSource.addProperties({
         return containsNoBlanks(string1, substring);
       } else {
         // in other cases, use default logic
-        return OB.Utilities.callAction({method: originalContains, target: this, parameters: arguments});
+        return OB.Utilities.callAction({
+          method: originalContains,
+          target: this,
+          parameters: arguments
+        });
       }
     }
   });
