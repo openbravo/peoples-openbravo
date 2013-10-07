@@ -104,7 +104,7 @@ isc.OBTreeGrid.addProperties({
     var treeGridFields = isc.shallowClone(fields),
         i, nDeleted = 0;
     for (i = 0; i < treeGridFields.length; i++) {
-      if (treeGridFields[i].name[0] === '_') {
+      if (treeGridFields[i - nDeleted].name[0] === '_') {
         treeGridFields.splice(i - nDeleted, 1);
         nDeleted = nDeleted + 1;
       }
@@ -251,6 +251,7 @@ isc.OBTreeGrid.addProperties({
   },
 
   show: function () {
+    this.setFields(this.getTreeGridFields(this.view.viewGrid.getFields()));
     this.view.toolBar.updateButtonState();
     this.Super('show', arguments);
   },
