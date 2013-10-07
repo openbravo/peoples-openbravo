@@ -138,6 +138,12 @@
       name: 'bestseller',
       sort: 'asc'
     }]
+  },  {
+    name: 'obpos_in_upc',
+    columns: [{
+      name: 'upc',
+      sort: 'asc'
+    }]
   }]);
 
   OB.Data.Registry.registerModel(Product);
