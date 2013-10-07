@@ -471,7 +471,7 @@ isc.OBMultiCalendarLeftControls.addProperties({
       width: 180,
       title: this.multiCalendar.addEventButtonName,
       click: function () {
-        var startDate = OB.Utilities.Date.roundToNextQuarter(new Date()),
+        var startDate = OB.Utilities.Date.roundToNextHalfHour(new Date()),
             endDate = new Date(startDate);
         endDate.setHours(endDate.getHours() + 1);
         leftControls.multiCalendar.calendar.addEventWithDialog(startDate, endDate);
