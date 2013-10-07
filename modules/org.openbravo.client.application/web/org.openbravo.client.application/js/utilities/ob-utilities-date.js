@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2012 Openbravo SLU
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -293,4 +293,20 @@ OB.Utilities.Date.getUTCOffsetInMiliseconds = function () {
   var UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
       UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date());
   return (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000);
+};
+
+//** {{{ OB.Utilities.Date.roundToNextQuarter }}} **
+//
+// Round any date to the next quarter
+OB.Utilities.Date.roundToNextQuarter = function (date) {
+  var newDate = new Date(date);
+  var minutes = newDate.getMinutes();
+  var roundedMinutes = (parseInt((minutes + 15) / 15, 10) * 15) % 60;
+  newDate.setMilliseconds(0);
+  newDate.setSeconds(0);
+  newDate.setMinutes(roundedMinutes);
+  if (roundedMinutes === 0) {
+    newDate.setHours(newDate.getHours() + 1);
+  }
+  return newDate;
 };

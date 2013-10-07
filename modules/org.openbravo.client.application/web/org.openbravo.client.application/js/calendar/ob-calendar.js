@@ -551,6 +551,24 @@ isc.OBCalendar.addProperties({
     endDate.logicalDate = false;
 
     return this.Super('addEvent', [startDate, endDate, name, description, otherFields, ignoreDataChanged]);
+  },
+
+  addEventWithDialog: function (startDate, endDate) {
+    if (!startDate) {
+      startDate = new Date();
+    }
+    if (!endDate) {
+      endDate = new Date();
+    }
+    this.eventDialog.event = null;
+    this.eventDialog.currentStart = startDate;
+    this.eventDialog.currentEnd = endDate;
+    this.eventDialog.currentLane = null;
+    this.eventDialog.calendar = this;
+    try {
+      //To avoid js error due to conflicts with Smartclient default EventDialog
+      this.eventDialog.show();
+    } catch (e) {}
   }
 
 });
