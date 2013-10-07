@@ -135,8 +135,21 @@ isc.OBViewDataSource.addProperties({
       if (isNewRecord && (operationType === 'update' || operationType === 'add')) {
         this.view._savingNewRecord = true;
       }
+      data = this.deleteNulls(data);
       this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
     }
+  },
+
+  deleteNulls: function (data) {
+    var column;
+    for (column in data) {
+      if (data.hasOwnProperty(column)) {
+        if (!data[column] && data[column] !== false && data[column] !== 0 && !this.view.viewForm.getFieldFromFieldName(column)) {
+          delete data[column];
+        }
+      }
+    }
+    return data;
   },
 
   getAdditionalProps: function () {
