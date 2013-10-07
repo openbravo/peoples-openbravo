@@ -741,7 +741,7 @@
               affectedByPack = l.isAffectedByPack();
               if (!affectedByPack) {
                 return true;
-              } else if (options && options.packId === affectedByPack.ruleId) {
+              } else if ((options && options.packId === affectedByPack.ruleId) || !(options && options.packId)) {
                 return true;
               }
             }
