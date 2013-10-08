@@ -3,9 +3,12 @@ package org.openbravo.retail.posterminal.master;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.model.pricing.pricelist.ProductPrice;
 
 @Qualifier(Product.productPropertyExtension)
 public class ProductProperties extends ModelExtension {
@@ -40,9 +43,12 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty("ppp.standardPrice", "standardPrice"));
         add(new HQLProperty("ppp.priceLimit", "priceLimit"));
         add(new HQLProperty("ppp.cost", "cost"));
+        Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
+        if (ProductPrice.hasProperty("algorithm") == true) {
+          add(new HQLProperty("ppp.algorithm", "algorithm"));
+        }
       }
     };
     return list;
   }
-
 }
