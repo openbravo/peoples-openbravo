@@ -263,6 +263,16 @@ enyo.kind({
           components: [{
             style: 'padding: 2px 10px 10px 10px;',
             components: [{
+              tag: 'div',
+              classes: 'image-wrap image-editline',
+              contentType: 'image/png',
+              style: 'width: 128px; height: 128px',
+              components: [{
+                tag: 'img',
+                name: 'icon',
+                style: 'margin: auto; height: 100%; width: 100%; background-size: contain; background-repeat:no-repeat; background-position:center;'
+              }]
+            }, {
               name: 'editlineimage',
               kind: 'OB.UI.Thumbnail',
               classes: 'image-wrap image-editline',
@@ -325,12 +335,26 @@ enyo.kind({
     if (this.line) {
       this.$.msgaction.hide();
       this.$.msgedit.show();
-      this.$.editlineimage.setImg(this.line.get('product').get('img'));
+      if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
+        this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.line.get('product').get('id')) + '), url(' + "/openbravo/web/org.openbravo.mobile.core/assets/img/box.png" + ')');
+        this.$.editlineimage.hide();
+      } else {
+        this.$.editlineimage.setImg(this.line.get('product').get('img'));
+        this.$.icon.parent.hide();
+      }
     } else {
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
       this.$.msgedit.hide();
       this.$.msgaction.show();
-      this.$.editlineimage.setImg(null);
+      if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
+        this.$.icon.applyStyle('background-image', '');
+      } else {
+        if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
+          this.$.icon.applyStyle('background-image', '');
+        } else {
+          this.$.editlineimage.setImg(null);
+        }
+      }
     }
     enyo.forEach(this.$.linePropertiesContainer.getComponents(), function (compToRender) {
       if (compToRender.kindName !== 'enyo.ScrollStrategy'){

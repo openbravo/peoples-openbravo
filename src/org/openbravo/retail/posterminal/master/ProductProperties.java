@@ -6,6 +6,9 @@ import java.util.List;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
@@ -27,7 +30,17 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty("product.uOM.id", "uOM"));
         add(new HQLProperty("product.uOM.symbol", "uOMsymbol"));
         add(new HQLProperty("product.uPCEAN", "uPCEAN"));
-        add(new HQLProperty("img.bindaryData", "img"));
+        try {
+          if ("Y".equals(Preferences.getPreferenceValue("OBPOS_retail.productImages", true,
+              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                  .getOBContext().getRole(), null))) {
+          } else {
+            add(new HQLProperty("img.bindaryData", "img"));
+          }
+        } catch (PropertyException e) {
+          add(new HQLProperty("img.bindaryData", "img"));
+        }
         add(new HQLProperty("product.description", "description"));
         add(new HQLProperty("product.obposGroupedproduct", "groupProduct"));
         add(new HQLProperty("product.stocked", "stocked"));

@@ -26,3 +26,16 @@ OB.UTIL.isDisableDiscount = function (receipt) {
     return true;
   }
 };
+
+OB.UTIL.getImageURL = function (id) {
+  var imageUrl = '/openbravo/web/org.openbravo.retail.posterminal/productImages/';
+  var i;
+  for (i = 0; i < id.length; i += 3) {
+    if (i != 0) {
+      imageUrl += "/";
+    }
+    imageUrl += id.substring(i, ((i + 3)< id.length)?(i+3):id.length);
+  }
+  imageUrl += "/"+id;
+  return imageUrl;
+};
