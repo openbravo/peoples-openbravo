@@ -1247,7 +1247,9 @@ isc.OBToolbar.addProperties({
             theForm = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm,
             isNew = currentContext.viewForm.isNew,
             hideAllButtons = selectedRecords.size() === 0 && !currentContext.isShowingForm,
-            currentValues = currentContext.getCurrentValues(), gridVisibleProperties = [], len;
+            currentValues = currentContext.getCurrentValues(),
+            gridVisibleProperties = [],
+            len;
 
         if (!hideAllButtons && (this.view.isEditingGrid || this.view.isShowingForm)) {
           hideAllButtons = theForm.hasErrors() || !theForm.allRequiredFieldsSet();
