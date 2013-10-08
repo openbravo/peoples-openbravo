@@ -169,6 +169,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SHOWTREEGRID" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_AD_TAB">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
@@ -224,5 +228,6 @@
       <check name="AD_TAB_ISTRANSLATIONTAB_CHK"><![CDATA[ISTRANSLATIONTAB IN ('Y', 'N')]]></check>
       <check name="AD_TAB_NAME_CHK"><![CDATA[INSTR(NAME, TO_CHAR('_')) = 0]]></check>
       <check name="AD_TAB_SHOWPARENTBUTTONS_CHK"><![CDATA[SHOWPARENTBUTTONS IN ('Y', 'N')]]></check>
+      <check name="AD_TAB_SHOWTREEGRID_CHK"><![CDATA[SHOWTREEGRID IN ('Y', 'N')]]></check>
     </table>
   </database>

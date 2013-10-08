@@ -236,7 +236,7 @@ public class OBViewTab extends BaseTemplateComponent {
       iconButtons.add(treeBtn);
     }
 
-    if (tab.getTable().isTree()) {
+    if (tab.isShowtreegrid()) {
       IconButton treeBtn = new IconButton();
       treeBtn.type = "treeGrid";
       treeBtn.label = "Toggle Tree Grid Visibility";
@@ -943,7 +943,7 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public boolean isTree() {
-    return tab.getTable().isTree();
+    return tab.isShowtreegrid();
   }
 
   public String getTreeGrid() {
