@@ -83,6 +83,9 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       prChCrit.addOrderBy(ProductCharacteristic.PROPERTY_SEQUENCENUMBER, true);
       List<ProductCharacteristic> prChs = prChCrit.list();
       int chNumber = prChs.size();
+      if (chNumber == 0) {
+        return result;
+      }
       ProductCharacteristicConf[] currentValues = new ProductCharacteristicConf[chNumber];
       boolean includeInResult = true;
 
