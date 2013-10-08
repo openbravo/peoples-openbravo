@@ -1353,7 +1353,7 @@
     newPaidReceipt: function (model, callback) {
       var order = new Order(),
           lines, me = this,
-          documentseq, documentseqstr, bp, newline, prod, payments, curPayment, taxes, bpId, numberOfLines = model.receiptLines.length,
+          documentseq, documentseqstr, bp, newline, prod, payments, curPayment, taxes, bpId, bpLocId, numberOfLines = model.receiptLines.length,
           orderQty = 0;
 
       // Call orderLoader plugings to adjust remote model to local model first
@@ -1399,49 +1399,57 @@
         }
       }
 
+      bpLocId = model.bpLocId;
       bpId = model.businessPartner;
       OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
-        order.set('bp', bp);
+        OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
+          bp.set('locName', bpLoc.get('name'));
+          bp.set('locId', bpLoc.get('id'));
+          order.set('bp', bp);
+          order.set('gross', model.totalamount);
+          order.set('net', model.totalNetAmount);
+          order.trigger('calculategross');
+
+          _.each(model.receiptLines, function (iter) {
+            var price;
+            if (order.get('priceIncludesTax')) {
+              price = OB.DEC.number(iter.unitPrice);
+            } else {
+              price = OB.DEC.number(iter.netPrice);
+            }
+
+            OB.Dal.get(OB.Model.Product, iter.id, function (prod) {
+              newline = new OrderLine({
+                product: prod,
+                uOM: iter.uOM,
+                qty: OB.DEC.number(iter.quantity),
+                price: price,
+                priceList: price,
+                promotions: iter.promotions,
+                priceIncludesTax: order.get('priceIncludesTax')
+              });
+              newline.calculateGross();
+              // add the created line
+              lines.add(newline);
+              numberOfLines--;
+              orderQty = OB.DEC.add(iter.quantity, orderQty);
+              if (numberOfLines === 0) {
+                order.set('lines', lines);
+                order.set('qty', orderQty);
+                if (order.get('orderType') === 1) {
+                  order.changeSignToShowReturns();
+                }
+                order.set('json', JSON.stringify(order.toJSON()));
+                callback(order);
+              }
+            });
+          });
+        }, function () {
+          // TODO: Report errors properly
+        });
+
       }, function () {
         // TODO: Report errors properly
-      });
-      order.set('gross', model.totalamount);
-      order.set('net', model.totalNetAmount);
-      order.trigger('calculategross');
-
-      _.each(model.receiptLines, function (iter) {
-        var price;
-        if (order.get('priceIncludesTax')) {
-          price = OB.DEC.number(iter.unitPrice);
-        } else {
-          price = OB.DEC.number(iter.netPrice);
-        }
-
-        OB.Dal.get(OB.Model.Product, iter.id, function (prod) {
-          newline = new OrderLine({
-            product: prod,
-            uOM: iter.uOM,
-            qty: OB.DEC.number(iter.quantity),
-            price: price,
-            priceList: price,
-            promotions: iter.promotions,
-            priceIncludesTax: order.get('priceIncludesTax')
-          });
-          newline.calculateGross();
-          // add the created line
-          lines.add(newline);
-          numberOfLines--;
-          orderQty = OB.DEC.add(iter.quantity, orderQty);
-          if (numberOfLines === 0) {
-            order.set('lines', lines);
-            order.set('qty', orderQty);
-            if (order.get('orderType') === 1) {
-              order.changeSignToShowReturns();
-            }
-            order.set('json', JSON.stringify(order.toJSON()));
-            callback(order);
-          }
-        });
       });
       order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
       //order.set('payments', model.receiptPayments);
