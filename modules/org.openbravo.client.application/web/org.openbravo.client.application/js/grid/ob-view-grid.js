@@ -292,6 +292,19 @@ isc.OBViewGrid.addProperties({
     }
   },
 
+  // To avoid JS error if OBViewGrid doesn't extend OBGrid (for debugging purposes)
+  isGridFiltered: function () {
+    return this.Super('isGridFiltered', arguments);
+  },
+  // To avoid JS error if OBViewGrid doesn't extend OBGrid (for debugging purposes)
+  checkShowFilterFunnelIcon: function () {
+    return this.Super('checkShowFilterFunnelIcon', arguments);
+  },
+  // To avoid JS error if OBViewGrid doesn't extend OBGrid (for debugging purposes)
+  focusInFirstFilterEditor: function () {
+    return this.Super('focusInFirstFilterEditor', arguments);
+  },
+
   initWidget: function () {
     var i, vwState;
 
@@ -1766,7 +1779,7 @@ isc.OBViewGrid.addProperties({
 
     newCallBack = function () {
       theView.recordSelected();
-      if (callback) {
+      if (typeof callback === 'function') {
         callback();
       }
     };

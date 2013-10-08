@@ -44,16 +44,18 @@ isc.OBViewDataSource.addProperties({
     }
 
     // Always show progress in save button and disable save and close one
-    btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
-    btn.setDisabled(true);
-    btn.customState = 'Progress';
-    btn.resetBaseStyle();
-    btn.markForRedraw();
+    if (this.view.toolBar) {
+      btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
+      btn.setDisabled(true);
+      btn.customState = 'Progress';
+      btn.resetBaseStyle();
+      btn.markForRedraw();
 
-    btn2 = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVECLOSE);
-    if (btn2) {
-      btn2.setDisabled(true);
-      btn2.markForRedraw();
+      btn2 = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVECLOSE);
+      if (btn2) {
+        btn2.setDisabled(true);
+        btn2.markForRedraw();
+      }
     }
   },
 
@@ -64,11 +66,13 @@ isc.OBViewDataSource.addProperties({
       editedRecord.editColumnLayout.toggleProgressIcon(false);
     }
 
-    // always remove the progress style here anyway
-    btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
-    btn.customState = '';
-    btn.resetBaseStyle();
-    btn.markForRedraw();
+    if (this.view.toolBar) {
+      // always remove the progress style here anyway
+      btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
+      btn.customState = '';
+      btn.resetBaseStyle();
+      btn.markForRedraw();
+    }
   },
 
   performDSOperation: function (operationType, data, callback, requestProperties) {
