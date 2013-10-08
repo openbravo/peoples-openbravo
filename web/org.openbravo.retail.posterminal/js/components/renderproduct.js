@@ -11,11 +11,20 @@
 
 enyo.kind({
   name: 'OB.UI.RenderProduct',
-
   kind: 'OB.UI.SelectButton',
   components: [{
     style: 'float: left; width: 25%',
     components: [{
+      tag: 'div',
+      classes: 'image-wrap',
+      contentType: 'image/png',
+      style: 'width: 49px; height: 49px',
+      components: [{
+        tag: 'img',
+        name: 'icon',
+        style: 'margin: auto; height: 100%; width: 100%; background-size: contain; background-repeat:no-repeat; background-position:center;'
+      }]
+    }, {
       kind: 'OB.UI.Thumbnail',
       name: 'thumbnail'
     }]
@@ -43,7 +52,15 @@ enyo.kind({
       this.$.bottonLine.setContent(this.model.get('characteristicDescription'));
     }
     this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
-    this.$.thumbnail.setImg(this.model.get('img'));
+
+    if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
+      this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '), url(' + "/openbravo/web/org.openbravo.mobile.core/assets/img/box.png" + ')');
+      this.$.thumbnail.hide();
+    } else {
+      this.$.thumbnail.setImg(this.model.get('img'));
+      this.$.icon.parent.hide();
+    }
+
     if (this.model.get('isGeneric')) {
       this.$.generic.setContent(OB.I18N.getLabel('OBMOBC_LblGeneric'));
     }

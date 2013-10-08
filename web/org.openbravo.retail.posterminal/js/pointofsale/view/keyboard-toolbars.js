@@ -269,7 +269,7 @@ enyo.kind({
       }
     }
 
-    if (keyboard && OB.POS.modelterminal.get('paymentcash') && keyboard.status === '' ) {
+    if (keyboard && OB.POS.modelterminal.get('paymentcash') && keyboard.status === '') {
       keyboard.defaultcommand = OB.POS.modelterminal.get('paymentcash');
       keyboard.setStatus(OB.POS.modelterminal.get('paymentcash'));
     }
