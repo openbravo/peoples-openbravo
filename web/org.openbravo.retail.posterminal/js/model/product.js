@@ -142,7 +142,7 @@
       name: 'bestseller',
       sort: 'asc'
     }]
-  },  {
+  }, {
     name: 'obpos_in_upc',
     columns: [{
       name: 'upc',

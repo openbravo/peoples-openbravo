@@ -34,8 +34,8 @@ OB.UTIL.getImageURL = function (id) {
     if (i != 0) {
       imageUrl += "/";
     }
-    imageUrl += id.substring(i, ((i + 3)< id.length)?(i+3):id.length);
+    imageUrl += id.substring(i, ((i + 3) < id.length) ? (i + 3) : id.length);
   }
-  imageUrl += "/"+id;
+  imageUrl += "/" + id;
   return imageUrl;
 };

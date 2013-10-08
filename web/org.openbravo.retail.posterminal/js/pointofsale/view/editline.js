@@ -357,8 +357,8 @@ enyo.kind({
       }
     }
     enyo.forEach(this.$.linePropertiesContainer.getComponents(), function (compToRender) {
-      if (compToRender.kindName !== 'enyo.ScrollStrategy'){
-        compToRender.render(this.line);  
+      if (compToRender.kindName !== 'enyo.ScrollStrategy') {
+        compToRender.render(this.line);
       }
     }, this);
   },
