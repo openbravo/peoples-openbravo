@@ -52,19 +52,6 @@ isc.OBCalendar_EventDialogBridge.addProperties({
 isc.ClassFactory.defineClass('OBCalendarTabSet', isc.TabSet);
 
 
-// == OBDaySchedule ==
-// To perform style personalizations
-isc.ClassFactory.defineClass("OBDaySchedule", "DaySchedule");
-
-// == OBWeekSchedule ==
-// To perform style personalizations
-isc.ClassFactory.defineClass("OBWeekSchedule", "WeekSchedule");
-
-// == OBMonthSchedule ==
-// To perform style personalizations
-isc.ClassFactory.defineClass("OBMonthSchedule", "MonthSchedule");
-
-
 // == OBClientClassCanvasItem ==
 // Extends Calendar, with some customizations (most of them styling related)
 isc.ClassFactory.defineClass('OBCalendar', isc.Calendar);
@@ -72,9 +59,6 @@ isc.ClassFactory.defineClass('OBCalendar', isc.Calendar);
 
 isc.OBCalendar.addProperties({
   autoFetchData: true,
-  dayViewConstructor: "OBDaySchedule",
-  weekViewConstructor: "OBWeekSchedule",
-  monthViewConstructor: "OBMonthSchedule",
   eventDialogConstructor: isc.OBCalendar_EventDialogBridge,
   initWidget: function () {
     var calendar = this,
@@ -263,15 +247,6 @@ isc.OBCalendar.addProperties({
     }
     if (!this.showDatePickerControl) {
       this.datePickerButton.hide();
-    }
-
-    if (this.showDayView !== false && isc.OBDaySchedule.getPrototype().baseStyle) {
-      // Hack to avoid problem that Smartclient doesn't put the good style in working hours
-      this.dayView.baseStyle = isc.OBDaySchedule.getPrototype().baseStyle;
-    }
-    if (this.showWeekView !== false && isc.OBWeekSchedule.getPrototype().baseStyle) {
-      // Hack to avoid problem that Smartclient doesn't put the good style in working hours
-      this.weekView.baseStyle = isc.OBWeekSchedule.getPrototype().baseStyle;
     }
   },
 
