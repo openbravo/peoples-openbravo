@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2172,6 +2172,9 @@ isc.OBStandardView.addProperties({
   },
 
   setContextInfo: function (sessionProperties, callbackFunction, forced) {
+    var newCallback, me = this,
+        gridVisibleProperties = [],
+        len, i;
     // no need to set the context in this case
     if (!forced && (this.isEditingGrid || this.isShowingForm)) {
       if (callbackFunction) {
@@ -2181,15 +2184,39 @@ isc.OBStandardView.addProperties({
     }
 
     if (!sessionProperties) {
-      sessionProperties = this.getContextInfo(true, true, false, true);
+      // Call to the FIC in EDIT mode, all properties must be sent, not only the session properties
+      sessionProperties = this.getContextInfo(false, true, false, true);
+    }
+
+    newCallback = function (response, data, request) {
+      var context = {},
+          grid = me.viewGrid;
+      context.rowNum = grid.getRecordIndex(grid.getSelectedRecord());
+      context.grid = grid;
+      response.clientContext = context;
+      grid.processFICReturn(response, data, request);
+      if (callbackFunction) {
+        callbackFunction();
+      }
+    };
+
+    if (this.viewGrid && this.viewGrid.fields) {
+      gridVisibleProperties.push('id');
+      len = this.viewGrid.fields.length;
+      for (i = 0; i < len; i++) {
+        if (this.viewGrid.fields[i].name[0] !== '_') {
+          gridVisibleProperties.push(this.viewGrid.fields[i].name);
+        }
+      }
+      sessionProperties._gridVisibleProperties = gridVisibleProperties;
     }
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
-      MODE: 'SETSESSION',
+      MODE: 'EDIT',
       TAB_ID: this.tabId,
       PARENT_ID: this.getParentId(),
       ROW_ID: this.viewGrid.getSelectedRecord() ? this.viewGrid.getSelectedRecord().id : this.getCurrentValues().id
-    }, callbackFunction);
+    }, newCallback);
 
   },
 

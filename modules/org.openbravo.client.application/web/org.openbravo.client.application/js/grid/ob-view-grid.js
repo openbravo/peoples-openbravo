@@ -292,6 +292,19 @@ isc.OBViewGrid.addProperties({
     }
   },
 
+  // To avoid JS error if OBViewGrid doesn't extend OBGrid (for debugging purposes)
+  isGridFiltered: function () {
+    return this.Super('isGridFiltered', arguments);
+  },
+  // To avoid JS error if OBViewGrid doesn't extend OBGrid (for debugging purposes)
+  checkShowFilterFunnelIcon: function () {
+    return this.Super('checkShowFilterFunnelIcon', arguments);
+  },
+  // To avoid JS error if OBViewGrid doesn't extend OBGrid (for debugging purposes)
+  focusInFirstFilterEditor: function () {
+    return this.Super('focusInFirstFilterEditor', arguments);
+  },
+
   initWidget: function () {
     var i, vwState;
 
@@ -974,12 +987,19 @@ isc.OBViewGrid.addProperties({
 
   showField: function (field, suppressRelayout) {
     var res;
+    // Do not allow to add a new field while the grid is being edited. Adding a new field implies a grid refresh, 
+    // and the refresh toolbar button is disabled while the grid/form is being edited
+    if (this.view.isEditingGrid) {
+      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, OB.I18N.getLabel('OBUIAPP_Error'), OB.I18N.getLabel('OBUIAPP_NotAddingFieldsWhileGridEditing'));
+      return;
+    }
     this._showingField = true;
     this._savedEditValues = this.getEditValues(this.getEditRow());
     res = this.Super('showField', arguments);
     delete this._savedEditValues;
     delete this._showingField;
     this.view.standardWindow.storeViewState();
+    this.invalidateCache();
     this.refreshContents();
     return res;
   },
@@ -1966,7 +1986,8 @@ isc.OBViewGrid.addProperties({
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
   },
 
-  getFetchRequestParams: function (params) {
+  getFetchRequestParams: function (params, isExporting) {
+    var i, len, first, selectedProperties;
     params = params || {};
 
     if (this.targetRecordId) {
@@ -2009,6 +2030,29 @@ isc.OBViewGrid.addProperties({
       params[OB.Constants.WHERE_PARAMETER] = this.whereClause;
     } else {
       params[OB.Constants.WHERE_PARAMETER] = null;
+    }
+
+    if (!isExporting) {
+      first = true;
+      selectedProperties = '';
+      len = this.requiredGridProperties.length;
+      for (i = 0; i < len; i++) {
+        if (first) {
+          first = false;
+          selectedProperties = selectedProperties + this.requiredGridProperties[i];
+        } else {
+          selectedProperties = selectedProperties + ',' + this.requiredGridProperties[i];
+        }
+      }
+
+      len = this.fields.length;
+      for (i = 0; i < len; i++) {
+        if (this.fields[i].name[0] !== '_') {
+          selectedProperties = selectedProperties + ',';
+          selectedProperties = selectedProperties + this.fields[i].name;
+        }
+      }
+      params._selectedProperties = selectedProperties;
     }
     return params;
   },
@@ -2694,7 +2738,7 @@ isc.OBViewGrid.addProperties({
     }
   },
 
-  recordHasChanges: function (rowNum) {
+  recordHasChanges: function (rowNum, colNum, checkEditor) {
     var record = this.getRecord(rowNum);
     // If a record has validation errors but had all the mandatory fields set,
     // smartclient's recordHasChanges will return false, and the record will be cleared (see ListGrid.hideInlineEditor function)
@@ -2702,9 +2746,42 @@ isc.OBViewGrid.addProperties({
     // See issue https://issues.openbravo.com/view.php?id=22123
     if (record && record._hasValidationErrors) {
       return true;
+    } else if (!this.recordHasActualChanges(rowNum, colNum, checkEditor)) {
+      return false;
     } else {
       return this.Super('recordHasChanges', arguments);
     }
+  },
+
+  // Checks if there are changes in the other other than a field changing from undefined to not undefined
+  // Those kind of changes happen when a row is opened in edit mode, they should not be detected as an actual change
+  recordHasActualChanges: function (rowNum, colNum, checkEditor) {
+    var newValues, oldValues, changes = false,
+        fieldName, oldFieldValue, newFieldValue, i, len, isNew;
+    if (!checkEditor) {
+      checkEditor = true;
+    }
+    newValues = (checkEditor ? this.getEditValues(rowNum, colNum) : this.getEditSession(rowNum, colNum));
+    oldValues = this.getCellRecord(rowNum);
+    if (!oldValues) {
+      return true;
+    }
+    isNew = this.getEditForm() ? this.getEditForm().isNew : false;
+    for (fieldName in newValues) {
+      if (newValues.hasOwnProperty(fieldName)) {
+        if (fieldName === this.removeRecordProperty) {
+          continue;
+        }
+        oldFieldValue = oldValues[fieldName];
+        newFieldValue = newValues[fieldName];
+        // Use custom comparator to catch things like Dates where '==' check is not sufficient
+        if ((isNew || oldFieldValue !== undefined) && !this.fieldValuesAreEqual(this.getField(fieldName), oldFieldValue, newFieldValue)) {
+          changes = true;
+          break;
+        }
+      }
+    }
+    return changes;
   },
 
   editComplete: function (rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse) {
@@ -2840,7 +2917,7 @@ isc.OBViewGrid.addProperties({
         totalRows, me = this,
         record = this.getRecord(rowNum);
 
-    if (!preventConfirm && (editForm.hasChanged || this.rowHasErrors(rowNum))) {
+    if (!preventConfirm && ((editForm && editForm.hasChanged) || this.rowHasErrors(rowNum))) {
       me.Super('discardEdits', localArguments);
 
       // remove the record if new
@@ -3532,31 +3609,56 @@ isc.OBViewGrid.addProperties({
     return this.editLinkColNum === colNum;
   },
 
-  // This method forces a FIC call in case the user has changed the visible fields,
-  // if there is a record being edited
-  // This is done to load all the potentially missing combos
-  fieldStateChanged: function () {
-    var undef;
-    if (this.getEditRow() !== undef && this.getEditRow() !== null) {
-      this.getEditForm().doChangeFICCall(null, true);
-    }
-    this.Super('fieldStateChanged', arguments);
-  },
-
   getFieldFromColumnName: function (columnName) {
-    var i, field, length, fields = this.completeFields;
+    var i, field, length, fields = this.view.propertyToColumns;
 
     length = fields.length;
 
     for (i = 0; i < fields.length; i++) {
-      if (fields[i].columnName === columnName) {
+      if (fields[i].dbColumn === columnName) {
         field = fields[i];
         break;
       }
     }
     return field;
-  }
+  },
 
+  processColumnValue: function (rowNum, columnName, columnValue) {
+    var field, newValue;
+    if (!columnValue) {
+      return;
+    }
+    field = this.getFieldFromColumnName(columnName);
+    if (!field) {
+      return;
+    }
+    newValue = {};
+    newValue[field.property] = columnValue.value;
+    this.setEditValue(rowNum, field.property, columnValue.value);
+  },
+
+  processFICReturn: function (response, data, request) {
+    var context = response && response.clientContext,
+        rowNum = context && context.rowNum,
+        grid = context && context.grid,
+        columnValues, prop, value, undef, field;
+
+    if (rowNum === undef || !data || !data.columnValues) {
+      return;
+    }
+    columnValues = data.columnValues;
+
+    for (prop in columnValues) {
+      if (columnValues.hasOwnProperty(prop)) {
+        field = this.getFieldFromColumnName(prop);
+        // This call to the FIC was done to retrieve the missing values
+        // Do not try to overwrite the existing values
+        if (!this.getRecord(rowNum)[field.property]) {
+          grid.processColumnValue(rowNum, prop, columnValues[prop]);
+        }
+      }
+    }
+  }
 });
 
 // = OBGridToolStripIcon =

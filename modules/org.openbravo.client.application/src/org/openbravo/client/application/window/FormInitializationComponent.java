@@ -169,6 +169,10 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (jsContent.has("_visibleProperties")) {
         visibleProperties = convertJSONArray(jsContent.getJSONArray("_visibleProperties"));
       }
+      List<String> gridVisibleProperties = new ArrayList<String>();
+      if (jsContent.has("_gridVisibleProperties")) {
+        gridVisibleProperties = convertJSONArray(jsContent.getJSONArray("_gridVisibleProperties"));
+      }
 
       // If the table is based in a datasource, don't try to create a BaseOBObject
       if (!dataSourceBasedTable) {
@@ -242,7 +246,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t5 = System.currentTimeMillis();
       computeColumnValues(mode, tab, allColumns, columnValues, parentRecord, parentId,
           changedColumn, jsContent, changeEventCols, calloutsToCall, lastfieldChanged,
-          visibleProperties);
+          visibleProperties, gridVisibleProperties);
 
       if (mode.equals("NEW")) {
         // In the case of NEW mode, we compute auxiliary inputs again to take into account that
@@ -537,7 +541,8 @@ public class FormInitializationComponent extends BaseActionHandler {
   private void computeColumnValues(String mode, Tab tab, List<String> allColumns,
       Map<String, JSONObject> columnValues, BaseOBObject parentRecord, String parentId,
       String changedColumn, JSONObject jsContent, List<String> changeEventCols,
-      List<String> calloutsToCall, List<String> lastfieldChanged, List<String> visibleProperties) {
+      List<String> calloutsToCall, List<String> lastfieldChanged, List<String> visibleProperties,
+      List<String> gridVisibleProperties) {
     boolean forceComboReload = (mode.equals("CHANGE") && changedColumn == null);
     if (mode.equals("CHANGE") && changedColumn != null) {
       RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
@@ -654,12 +659,23 @@ public class FormInitializationComponent extends BaseActionHandler {
               changedCols.add(field.getColumn().getDBColumnName());
             }
           }
+
           columnValues
               .put("inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()),
                   jsonobject);
           setRequestContextParameter(field, jsonobject);
+
+          String fullPropertyName = null;
+          if (field.getProperty() != null) {
+            fullPropertyName = field.getProperty().replace('.', '$');
+          } else {
+            fullPropertyName = prop.getName();
+          }
+
           // We also set the session value for the column in Edit or SetSession mode
-          if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
+          if (gridVisibleProperties.contains(fullPropertyName)
+              && (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION"))) {
+
             if (field.getColumn().isStoredInSession() || field.getColumn().isKeyColumn()) {
               setSessionValue(tab.getWindow().getId() + "|"
                   + field.getColumn().getDBColumnName().toUpperCase(),
@@ -821,13 +837,22 @@ public class FormInitializationComponent extends BaseActionHandler {
     // database
     if (mode.equals("EDIT") && !dataSourceBasedTable) {
       // In EDIT mode we initialize them from the database
-      for (Field field : fields) {
-        if (field.getColumn() == null) {
-          continue;
-        }
-        setValueOfColumnInRequest(row, field, field.getColumn().getDBColumnName());
+      List<Column> columns = getADColumnList(tab.getTable().getId());
+
+      for (Column column : columns) {
+        setValueOfColumnInRequest(row, null, column.getDBColumnName());
       }
     }
+
+    List<String> gridVisibleProperties = new ArrayList<String>();
+    if (jsContent.has("_gridVisibleProperties")) {
+      try {
+        gridVisibleProperties = convertJSONArray(jsContent.getJSONArray("_gridVisibleProperties"));
+      } catch (JSONException e) {
+        log.error("Error while retrieving _gridVisibleProperties from jsContent" + jsContent, e);
+      }
+    }
+
     // and then overwrite with what gets passed in
     if (mode.equals("EDIT") || mode.equals("CHANGE") || mode.equals("SETSESSION")) {
       // In CHANGE and SETSESSION we get them from the request
@@ -835,7 +860,20 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (field.getColumn() == null) {
           continue;
         }
+        // Do not overwrite the value of fields that are not visible in the grid, because they are
+        // empty in the request
+
         final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
+        String fullPropertyName = null;
+        if (field.getProperty() != null) {
+          fullPropertyName = field.getProperty().replace('.', '$');
+        } else {
+          fullPropertyName = prop.getName();
+        }
+        if ((mode.equals("EDIT") || mode.equals("SETSESSION"))
+            && !gridVisibleProperties.contains(fullPropertyName)) {
+          continue;
+        }
         String inpColName = "inp"
             + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
         try {
