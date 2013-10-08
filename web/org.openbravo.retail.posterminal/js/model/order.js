@@ -418,7 +418,7 @@
     getLinesByProduct: function (productId) {
       var affectedLines;
       if (this.get('lines') && this.get('lines').length > 0) {
-        var affectedLines = _.filter(this.get('lines').models, function (line) {
+        affectedLines = _.filter(this.get('lines').models, function (line) {
           return line.get('product').id === productId;
         });
       }
@@ -662,7 +662,7 @@
     },
 
     setPrice: function (line, price, options) {
-      var options = options || {};
+      options = options || {};
       options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
 
       if (OB.DEC.isNumber(price)) {

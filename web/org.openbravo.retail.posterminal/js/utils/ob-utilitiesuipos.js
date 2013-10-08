@@ -12,19 +12,17 @@
 OB = window.OB || {};
 OB.UTIL = window.OB.UTIL || {};
 
-OB.UTIL.isDisableDiscount = function (receipt) {    
-    if (receipt.get('lines').length > 0) {
-        OB.Dal.find(OB.Model.Discount, {
-          _whereClause: "where m_offer_type_id in ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280')"
-        }, function (promos) {
-          return (promos.length === 0);
-        }, function () {
-          return true;
-        });
-        return false;
-      } else {
-        return true;
-      }
-
-	  return true;
+OB.UTIL.isDisableDiscount = function (receipt) {
+  if (receipt.get('lines').length > 0) {
+    OB.Dal.find(OB.Model.Discount, {
+      _whereClause: "where m_offer_type_id in ('D1D193305A6443B09B299259493B272A', '20E4EC27397344309A2185097392D964', '7B49D8CC4E084A75B7CB4D85A6A3A578', '8338556C0FBF45249512DB343FEFD280')"
+    }, function (promos) {
+      return (promos.length === 0);
+    }, function () {
+      return true;
+    });
+    return false;
+  } else {
+    return true;
+  }
 };
