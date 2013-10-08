@@ -66,10 +66,7 @@ public class OrderGroupingProcessor {
         + "                 and exists (select 1 "
         + "                               from FIN_Finacc_Transaction t"
         + "                              where t.reconciliation is null"
-        + "                                and t.finPayment = d.paymentDetails.finPayment))"
-        + "or not exists (select 1 "
-        + "                 from FIN_Payment_ScheduleDetail d"
-        + "              where d.orderPaymentSchedule.order = line.salesOrder))"
+        + "                                and t.finPayment = d.paymentDetails.finPayment)))"
         + " and line.salesOrder.obposApplications = :terminal and line.deliveredQuantity=line.orderedQuantity"
         + " and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
         + " order by line.businessPartner.id";
