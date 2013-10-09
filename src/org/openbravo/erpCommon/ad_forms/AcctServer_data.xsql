@@ -523,39 +523,6 @@
       </Sql>
       <Parameter name="adUserClient" type="replace" optional="true" after="AD_Org.AD_Client_ID IN (" text="'1'"/>
    </SqlMethod>
-    <SqlMethod name="selectDocuments" type="preparedStatement" return="single">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-      <![CDATA[
-        select 1 as id from dual where exists (
-        select  C_INVOICE_ID as id
-        from  c_invoice a, ad_org
-        where posted = 'N'
-        and processed = 'Y'
-        and (processing = 'N' or processing is null)
-        AND ad_org.ad_org_id=a.ad_org_id
-        AND a.ad_client_id = ?
-        AND AD_ISORGINCLUDED(ad_org.ad_org_id, ?, ad_org.ad_client_id)<>-1
-        AND EXISTS (select 1
-               from c_year, c_period, c_periodcontrol, ad_org
-               where c_year.c_year_id = c_period.c_year_id
-              and c_period.c_period_id = c_periodcontrol.c_period_id
-              and c_year.c_calendar_id = ad_org.c_calendar_id
-              and ad_org.ad_client_id = a.ad_client_id
-              and c_periodcontrol.docbasetype = ?
-              and c_periodcontrol.periodstatus = 'O'
-              and    a.dateacct >= c_period.StartDate
-              and     a.dateacct < c_period.EndDate + 1))
-      ]]>
-      </Sql>
-      <Parameter name="tableName" type="replace" optional="true" after="select  " text="C_INVOICE"/>
-      <Parameter name="tableName" type="replace" optional="true" after="from  " text="c_invoice"/>
-      <Parameter name="adClientId" />
-      <Parameter name="adOrgId"/>
-      <Parameter name="docbasetype"/>
-      <Parameter name="dateColumn" type="replace" optional="true" after="and    a." text="dateacct"/>
-      <Parameter name="dateColumn" type="replace" optional="true" after="and     a." text="dateacct"/>
-   </SqlMethod>
    <SqlMethod name="selectDocumentsDates" type="preparedStatement" return="single">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
