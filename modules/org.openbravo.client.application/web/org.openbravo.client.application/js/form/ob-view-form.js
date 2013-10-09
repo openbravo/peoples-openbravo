@@ -546,7 +546,7 @@ OB.ViewFormProperties = {
   getFieldFromFieldName: function (fieldName) {
     var i, length, localResult, fields;
     if (!this.fieldsByFieldName) {
-      localResult = [];
+      localResult = {};
       fields = this.getFields();
       length = fields.length;
       for (i = 0; i < fields.length; i++) {
