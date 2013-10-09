@@ -31,6 +31,7 @@
       this.templatereturn = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn);
       this.templatereturninvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice);
       this.templatelayaway = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway);
+      this.templatecashup = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.CashUpTemplate);
       };
 
   PrintReceipt.prototype.print = function (order) {
@@ -162,5 +163,6 @@
   OB.OBPOSPointOfSale.Print.OpenDrawerTemplate = 'res/opendrawer.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway = 'res/printlayaway.xml';
   OB.OBPOSPointOfSale.Print.DisplayTotal = 'res/displaytotal.xml';
+  OB.OBPOSPointOfSale.Print.CashUpTemplate = 'res/printcashup.xml';
 
 }());

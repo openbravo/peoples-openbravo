@@ -12,7 +12,7 @@
 (function () {
 
   var PrintCashUp = function () {
-      this.templatecashup = new OB.DS.HWResource(OB.OBPOSCashUp.Print.CashUpTemplate);
+	  this.templatecashup = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.CashUpTemplate);
       };
 
   PrintCashUp.prototype.print = function (report, sumary) {
@@ -29,6 +29,5 @@
   OB.OBPOSCashUp.Print = OB.OBPOSCashUp.Print || {};
 
   OB.OBPOSCashUp.Print.CashUp = PrintCashUp;
-  OB.OBPOSCashUp.Print.CashUpTemplate = 'res/printcashup.xml';
 
 }());
