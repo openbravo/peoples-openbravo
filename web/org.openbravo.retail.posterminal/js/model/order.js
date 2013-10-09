@@ -1318,7 +1318,7 @@
         }
       }
 
-      bpId = model.businessPartner;
+      bpId = model.bp;
       OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
         order.set('bp', bp);
       }, function () {
