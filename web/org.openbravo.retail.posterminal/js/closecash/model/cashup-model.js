@@ -315,6 +315,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     server.exec(objToSend, function (data) {
       if (data.error || data.exception) {
         OB.UTIL.showLoading(false);
+        if (data.errorMessage){
+            me.set("errorMessage", data.errorMessage);
+            me.set("errorDetail", data.errorDetail)
+        }
         me.set("finishedWrongly", true);
       } else {
         // console.log("cash up processed correctly. -> show modal");

@@ -14,11 +14,14 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 
 public class ProcessCashClose extends JSONProcessSimple {
 
@@ -36,6 +39,23 @@ public class ProcessCashClose extends JSONProcessSimple {
           jsonsent.getString("terminalId"));
       OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class,
           jsonsent.getString("cashUpId"));
+      
+      // check if there is a reconciliation in draft status
+      for (OBPOSAppPayment payment: posTerminal.getOBPOSAppPaymentList()){    	  
+    	  final OBCriteria<FIN_Reconciliation> recconciliations = OBDal.getInstance().createCriteria(
+    			  FIN_Reconciliation.class);
+    	  recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_DOCUMENTSTATUS, "DR"));
+    	  recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT , payment.getFinancialAccount()));
+    	  for (final FIN_Reconciliation r : recconciliations.list()) {
+    	      log.error("Error processing cash close: the reconciliation "+ r.getDocumentNo() +" ("+ r.getAccount().getName()+") is in draft status");
+    	      jsonData.put("error", "1");
+    	      jsonData.put("errorMessage", "OBPOS_LblCashupWithReconciliationDraft");
+    	      jsonData.put("errorDetail",  payment.getCommercialName());
+    	      jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
+    	      return jsonResponse;
+    	  }
+      }   
+      
       if (cashUp == null
           && RequestContext.get().getSessionAttribute(
               "cashupTerminalId|" + jsonsent.getString("terminalId")) == null) {
