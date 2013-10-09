@@ -320,5 +320,104 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
       addResult(param, (Object) (value == null ? null : "\"" + FormatUtilities.replaceJS(value)
           + "\""));
     }
+
+    /**
+     * Shows a message in the browser with the value indicated.
+     * 
+     * @param value
+     *          The message to display in the browser.
+     */
+    public void showMessage(String value) {
+      addResult("MESSAGE", value);
+    }
+
+    /**
+     * Shows an error message in the browser with the value indicated.
+     * 
+     * @param value
+     *          The error message to display in the browser.
+     */
+    public void showError(String value) {
+      addResult("ERROR", value);
+    }
+
+    /**
+     * Shows a warning message in the browser with the value indicated.
+     * 
+     * @param value
+     *          The warning message to display in the browser.
+     */
+    public void showWarning(String value) {
+      addResult("WARNING", value);
+    }
+
+    /**
+     * Shows an information message in the browser with the value indicated.
+     * 
+     * @param value
+     *          The information message to display in the browser.
+     */
+    public void showInformation(String value) {
+      addResult("INFO", value);
+    }
+
+    /**
+     * Shows a success message in the browser with the value indicated.
+     * 
+     * @param value
+     *          The success message to display in the browser.
+     */
+    public void showSuccess(String value) {
+      addResult("SUCCESS", value);
+    }
+
+    /**
+     * Executes the javascript code indicated in the value in the browser.
+     * 
+     * @param value
+     *          The javascript code to execute in the browser.
+     */
+    public void executeCode(String value) {
+      addResult("EXECUTE", value);
+    }
+
+    /**
+     * Executes the validation defined by the display logic of window fields after the execution of
+     * the callout.
+     * 
+     */
+    public void executeDisplayLogic() {
+      addResult("EXECUTE", "displayLogic();");
+    }
+
+    /**
+     * Shows the field defined indicated in the value.
+     * 
+     * @param value
+     *          The field to show.
+     */
+    public void displayElement(String value) {
+      addResult("DISPLAY", value);
+    }
+
+    /**
+     * Hides the field defined indicated in the value.
+     * 
+     * @param value
+     *          The field to hide.
+     */
+    public void hideElement(String value) {
+      addResult("HIDE", value);
+    }
+
+    /**
+     * Defines the field to put the focus after the execution of the callout.
+     * 
+     * @param value
+     *          The field to focus.
+     */
+    public void cursorElement(String value) {
+      addResult("CURSOR_FIELD", value);
+    }
   }
 }
