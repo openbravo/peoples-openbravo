@@ -2815,21 +2815,25 @@ public abstract class AcctServer {
    *          Invoice Payment Schedule of actual Payment Detail
    * @param pso
    *          Order Payment Schedule of actual Payment Detail
-   * @param i
+   * @param currentPaymentDetailIndex
    *          Index
    */
+  @Deprecated
   public BigDecimal getPaymentDetailAmount(List<FIN_PaymentDetail> paymentDetails,
-      FIN_PaymentSchedule ps, FIN_PaymentSchedule psi, FIN_PaymentSchedule pso, int i) {
+      FIN_PaymentSchedule ps, FIN_PaymentSchedule psi, FIN_PaymentSchedule pso,
+      int currentPaymentDetailIndex) {
     if (psi == null && pso == null) {
-      return paymentDetails.get(i).getAmount();
+      return paymentDetails.get(currentPaymentDetailIndex).getAmount();
     }
     // If the actual Payment Detail belongs to the same Invoice Payment Schedule as the previous
     // record, or it has no Order related.
     if ((psi != null && psi.equals(ps)) || pso == null) {
-      FIN_PaymentScheduleDetail psdNext = (i == paymentDetails.size() - 1) ? null : paymentDetails
-          .get(i + 1).getFINPaymentScheduleDetailList().get(0);
-      FIN_PaymentScheduleDetail psdPrevious = (i == 0) ? null : paymentDetails.get(i - 1)
-          .getFINPaymentScheduleDetailList().get(0);
+      FIN_PaymentScheduleDetail psdNext = (currentPaymentDetailIndex == paymentDetails.size() - 1) ? null
+          : paymentDetails.get(currentPaymentDetailIndex + 1).getFINPaymentScheduleDetailList()
+              .get(0);
+      FIN_PaymentScheduleDetail psdPrevious = (currentPaymentDetailIndex == 0) ? null
+          : paymentDetails.get(currentPaymentDetailIndex - 1).getFINPaymentScheduleDetailList()
+              .get(0);
       // If it has no Order related, and the next record belongs to the same Invoice Payment
       // Schedule and the next record has an Order related.
       if (pso == null && psdNext != null && psdNext.getInvoicePaymentSchedule() == psi
@@ -2839,13 +2843,77 @@ public abstract class AcctServer {
         // record has no Order related.
       } else if (psdPrevious != null && psdPrevious.getInvoicePaymentSchedule() == psi
           && psdPrevious.getOrderPaymentSchedule() == null) {
-        return paymentDetails.get(i).getAmount().add(paymentDetails.get(i - 1).getAmount());
+        return paymentDetails.get(currentPaymentDetailIndex).getAmount()
+            .add(paymentDetails.get(currentPaymentDetailIndex - 1).getAmount());
       } else {
-        return paymentDetails.get(i).getAmount();
+        return paymentDetails.get(currentPaymentDetailIndex).getAmount();
       }
     } else {
-      return paymentDetails.get(i).getAmount();
+      return paymentDetails.get(currentPaymentDetailIndex).getAmount();
     }
+  }
+
+  /**
+   * Returns the writeoff and the amount of a Payment Detail. In case the related Payment Schedule
+   * Detail was generated for compensate the difference between an Order and a related Invoice, it
+   * merges it's amount with the next Payment Schedule Detail. Issue 19567:
+   * https://issues.openbravo.com/view.php?id=19567
+   * 
+   * @param paymentDetails
+   *          List of payment Details
+   * @param ps
+   *          Previous Payment Schedule
+   * @param psi
+   *          Invoice Payment Schedule of actual Payment Detail
+   * @param pso
+   *          Order Payment Schedule of actual Payment Detail
+   * @param currentPaymentDetailIndex
+   *          Index
+   */
+  public HashMap<String, BigDecimal> getPaymentDetailWriteOffAndAmount(
+      List<FIN_PaymentDetail> paymentDetails, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
+      FIN_PaymentSchedule pso, int currentPaymentDetailIndex) {
+
+    HashMap<String, BigDecimal> amountAndWriteOff = new HashMap<String, BigDecimal>();
+
+    // If the Payment Detail has either an Invoice or an Order associated to it
+    if (psi != null || pso != null) {
+      // If the Payment Detail has no Order associated to it, or it has an Invoice associated and is
+      // the same one as the previous Payment Detail
+      if ((psi != null && psi.equals(ps)) || pso == null) {
+        FIN_PaymentScheduleDetail psdNext = (currentPaymentDetailIndex == paymentDetails.size() - 1) ? null
+            : paymentDetails.get(currentPaymentDetailIndex + 1).getFINPaymentScheduleDetailList()
+                .get(0);
+        FIN_PaymentScheduleDetail psdPrevious = (currentPaymentDetailIndex == 0) ? null
+            : paymentDetails.get(currentPaymentDetailIndex - 1).getFINPaymentScheduleDetailList()
+                .get(0);
+        // If the Payment Detail has no Order associated, and the next Payment Detail belongs to the
+        // same Invoice and it has an Order related, then return null
+        if (pso == null && psdNext != null && psdNext.getInvoicePaymentSchedule() == psi
+            && psdNext.getOrderPaymentSchedule() != null) {
+          amountAndWriteOff.put("amount", null);
+          amountAndWriteOff.put("writeoff", null);
+          // If there is a previous Payment Detail that belongs to the same Invoice and has no Order
+          // related to it, return the sum of amounts.
+        } else if (psdPrevious != null && psdPrevious.getInvoicePaymentSchedule() == psi
+            && psdPrevious.getOrderPaymentSchedule() == null) {
+          amountAndWriteOff.put("amount", paymentDetails.get(currentPaymentDetailIndex).getAmount()
+              .add(paymentDetails.get(currentPaymentDetailIndex - 1).getAmount()));
+          amountAndWriteOff.put(
+              "writeoff",
+              paymentDetails.get(currentPaymentDetailIndex).getWriteoffAmount()
+                  .add(paymentDetails.get(currentPaymentDetailIndex - 1).getWriteoffAmount()));
+        }
+      }
+    }
+
+    // In any other case
+    amountAndWriteOff.put("amount", paymentDetails.get(currentPaymentDetailIndex).getAmount());
+    amountAndWriteOff.put("writeoff", paymentDetails.get(currentPaymentDetailIndex)
+        .getWriteoffAmount());
+
+    return amountAndWriteOff;
+
   }
 
 }
