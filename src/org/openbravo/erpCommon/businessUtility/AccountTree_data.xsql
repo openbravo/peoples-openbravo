@@ -66,7 +66,7 @@
         (COALESCE(f.AMTACCTCR,0) - COALESCE(f.AMTACCTDR, 0)) AS qtyCredit, 0 as qty_ref, 0 as qtyCredit_ref
                 FROM C_ElementValue m, Fact_Acct f, C_Period p, C_Year y 
                 WHERE m.AD_Org_ID IN ('1') 
-                AND m.AD_Client_ID IN ('1') 
+                AND m.AD_Client_ID IN ('1')
                 AND 1=1 
                 AND f.FACTACCTTYPE <> 'R'
                 AND f.FACTACCTTYPE <> 'C'
@@ -107,6 +107,66 @@
         <Parameter name="org" optional="true" type="replace" after="AND 1=1 AND f.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="agnoRef" optional="true" type="replace" after="AND y.YEAR IN (" text="'1'"/>
   </SqlMethod>
+  <SqlMethod name="selectFactAcct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT ID, SUM(QTY) AS QTY, SUM(QTYCREDIT) AS QTYCREDIT, SUM(QTY_REF) AS QTY_REF, SUM(QTYCREDIT_REF) AS QTYCREDIT_REF 
+        FROM (
+        SELECT m.C_ElementValue_ID as id, (COALESCE(f.AMTACCTDR,0) - COALESCE(f.AMTACCTCR, 0)) AS qty, 
+        (COALESCE(f.AMTACCTCR,0) - COALESCE(f.AMTACCTDR, 0)) AS qtyCredit, 0 as qty_ref, 0 as qtyCredit_ref
+                FROM C_ElementValue m, Fact_Acct f, C_Period p, C_Year y 
+                WHERE m.AD_Org_ID IN ('1') 
+                AND m.AD_Client_ID IN ('1')
+                AND 1=1 
+                AND f.FACTACCTTYPE <> 'R'
+                AND f.FACTACCTTYPE <> 'C'
+                AND m.C_ElementValue_ID = f.Account_ID
+            AND 0=0 AND f.AD_ORG_ID IN ('1')
+            AND f.C_PERIOD_ID = p.C_PERIOD_ID 
+            AND p.C_YEAR_ID = y.C_YEAR_ID
+            AND Y.YEAR IN ('1') 
+            and not exists (select 1 from ad_org_closing, c_year year 
+                           where open_fact_acct_group_id = f.fact_acct_group_id
+                           and ad_org_closing.c_year_id = year.c_year_id
+                           and year.year <> ?)
+        UNION ALL
+        SELECT m.C_ElementValue_ID as id, 0 AS QTY, 0 as qtyCredit, (COALESCE(f.AMTACCTDR,0) - COALESCE(f.AMTACCTCR, 0)) AS qty_ref, 
+                (COALESCE(f.AMTACCTCR,0) - COALESCE(f.AMTACCTDR, 0)) AS qtyCredit_ref 
+                FROM C_ElementValue m, Fact_Acct f, C_Period p, C_Year y 
+                WHERE m.AD_Org_ID IN('2') 
+                AND m.AD_Client_ID IN('2') 
+                AND 2=2 
+                AND f.FACTACCTTYPE <> 'R'
+                AND f.FACTACCTTYPE <> 'C'
+                AND m.C_ElementValue_ID = f.Account_ID
+            AND 1=1 AND f.AD_ORG_ID IN ('1')
+            AND f.C_PERIOD_ID = p.C_PERIOD_ID 
+            AND p.C_YEAR_ID = y.C_YEAR_ID
+            AND y.YEAR IN ('1') 
+            and not exists (select 1 from ad_org_closing, c_year year 
+                           where open_fact_acct_group_id = f.fact_acct_group_id
+                           and ad_org_closing.c_year_id = year.c_year_id
+                           and year.year <> ?)
+        ) AA
+        GROUP BY ID
+      ]]></Sql>
+        <Parameter name="adOrgClient" type="replace" optional="true" after="m.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_Client_ID IN (" text="'1'"/>
+        <Parameter name="dateFrom" optional="true" after="AND 1=1 "><![CDATA[ AND f.DATEACCT >= to_date(?)]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="AND 1=1 "><![CDATA[ AND f.DATEACCT < to_date(?)]]></Parameter>
+        <Parameter name="acctschema" optional="true" after="AND 1=1 "><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
+        <Parameter name="org" optional="true" type="replace" after="AND 0=0 AND f.AD_ORG_ID IN (" text="'1'"/>
+        <Parameter name="agno" optional="true" type="replace" after="AND Y.YEAR IN (" text="'1'"/>
+        <Parameter name="openingEntryOwner"/>
+        <Parameter name="adOrgClient" type="replace" optional="true" after="m.AD_Org_ID IN(" text="'2'"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_Client_ID IN(" text="'2'"/>
+        <Parameter name="dateFromRef" optional="true" after="AND 2=2 "><![CDATA[ AND f.DATEACCT >= to_date(?)]]></Parameter>
+        <Parameter name="dateToRef" optional="true" after="AND 2=2 "><![CDATA[ AND f.DATEACCT < to_date(?)]]></Parameter>
+        <Parameter name="acctschema" optional="true" after="AND 2=2 "><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
+        <Parameter name="org" optional="true" type="replace" after="AND 1=1 AND f.AD_ORG_ID IN (" text="'1'"/>
+        <Parameter name="agnoRef" optional="true" type="replace" after="AND y.YEAR IN (" text="'1'"/>
+        <Parameter name="openingEntryOwnerRef"/>
+  </SqlMethod>  
   <SqlMethod name="selectForms" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
