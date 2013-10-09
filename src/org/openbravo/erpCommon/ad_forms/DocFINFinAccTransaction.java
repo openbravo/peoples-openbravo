@@ -713,7 +713,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     // Total
     retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
     if (usedCredit.compareTo(ZERO) != 0 && generatedCredit.compareTo(ZERO) == 0)
-      retValue.add(usedCredit);
+      retValue = retValue.add(usedCredit);
     sb.append(retValue);
     FIN_Payment payment = OBDal.getInstance().get(FIN_FinaccTransaction.class, Record_ID)
         .getFinPayment();
