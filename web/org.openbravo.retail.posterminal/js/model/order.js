@@ -1400,7 +1400,7 @@
       }
 
       bpLocId = model.bpLocId;
-      bpId = model.businessPartner;
+      bpId = model.bp;
       OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
         OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
           bp.set('locName', bpLoc.get('name'));
