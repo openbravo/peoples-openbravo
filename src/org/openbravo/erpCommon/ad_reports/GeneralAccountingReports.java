@@ -36,6 +36,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.AccountTree;
@@ -60,6 +61,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class GeneralAccountingReports extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  String openingEntryOwner;
+  String openingEntryOwnerRef;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -170,6 +173,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         TreeID = dataTree[0].id;
       OBContext.setAdminMode(false);
       try {
+        openingEntryOwner = "";
+        openingEntryOwnerRef = "";
         // For each year, the initial and closing date is obtained
         Year year = OBDal.getInstance().get(Year.class, strYearId);
         Year yearRef = OBDal.getInstance().get(Year.class, strYearRefId);
@@ -178,7 +183,6 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         // Years to be included as no closing is present
         String strYearsToClose = "";
         String strYearsToCloseRef = "";
-
         if (strCalculateOpening.equals("Y")) {
           strCalculateOpening = "N";
           strDateTo = strAsDateTo;
@@ -186,13 +190,13 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           strDateFrom = "";
           strDateFromRef = "";
           strYearsToClose = getYearsToClose(startingEndingDate.get("startingDate"), strOrg,
-              year.getCalendar());
+              year.getCalendar(), strcAcctSchemaId, false);
           if (strYearsToClose.length() > 0) {
             strCalculateOpening = "Y";
             strYearsToClose = "," + strYearsToClose;
           }
           strYearsToCloseRef = getYearsToClose(startingEndingDateRef.get("startingDate"), strOrg,
-              yearRef.getCalendar());
+              yearRef.getCalendar(), strcAcctSchemaId, true);
           if (strYearsToCloseRef.length() > 0) {
             strCalculateOpening = "Y";
             strYearsToCloseRef = "," + strYearsToCloseRef;
@@ -211,14 +215,14 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           }
           // For each account with movements in the year, debit and credit total amounts are
           // calculated according to fact_acct movements.
-          AccountTreeData[] accounts = AccountTreeData.selectAcct(this,
+          AccountTreeData[] accounts = AccountTreeData.selectFactAcct(this,
               Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
               Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcAcctSchemaId,
               Tree.getMembers(this, strTreeOrg, strOrg), "'" + year.getFiscalYear() + "'"
-                  + strYearsToClose, strDateFromRef,
+                  + strYearsToClose, openingEntryOwner, strDateFromRef,
               DateTimeData.nDaysAfter(this, strDateToRef, "1"), "'" + yearRef.getFiscalYear() + "'"
-                  + strYearsToCloseRef);
+                  + strYearsToCloseRef, openingEntryOwnerRef);
           {
             if (log4j.isDebugEnabled())
               log4j.debug("*********** strIncomeSummaryAccount: " + strIncomeSummaryAccount);
@@ -298,25 +302,48 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     }
   }
 
-  private String getYearsToClose(Date startingDate, String strOrg, Calendar calendar) {
+  private String getYearsToClose(Date startingDate, String strOrg, Calendar calendar,
+      String strcAcctSchemaId, boolean isYearRef) {
     Set<Year> previousYears = getOrderedPreviousYears(startingDate, calendar);
     Set<String> notClosedYears = new HashSet<String>();
     for (Year previousYear : previousYears) {
-      if (isNotClosed(previousYear, strOrg)) {
-        notClosedYears.add(previousYear.getFiscalYear());
+      for (Organization org : getCalendarOwnerOrgs(strOrg)) {
+        if (isNotClosed(previousYear, org, strcAcctSchemaId)) {
+          notClosedYears.add(previousYear.getFiscalYear());
+        } else {
+          if (isYearRef) {
+            openingEntryOwnerRef = previousYear.getFiscalYear();
+          } else {
+            openingEntryOwner = previousYear.getFiscalYear();
+          }
+        }
       }
     }
     return Utility.getInStrSet(notClosedYears);
   }
 
-  private boolean isNotClosed(Year year, String strOrg) {
+  private Set<Organization> getCalendarOwnerOrgs(String strOrg) {
+    Set<Organization> calendarOwnerOrgs = new HashSet<Organization>();
+    Organization organization = OBDal.getInstance().get(Organization.class, strOrg);
+    if (organization.isAllowPeriodControl()) {
+      calendarOwnerOrgs.add(organization);
+    }
+    for (String child : new OrganizationStructureProvider().getChildTree(strOrg, false)) {
+      calendarOwnerOrgs.addAll(getCalendarOwnerOrgs(child));
+    }
+    return calendarOwnerOrgs;
+  }
+
+  private boolean isNotClosed(Year year, Organization org, String strcAcctSchemaId) {
     OBContext.setAdminMode(false);
     try {
       OBCriteria<OrganizationClosing> obc = OBDal.getInstance().createCriteria(
           OrganizationClosing.class);
-      obc.add(Restrictions.eq(OrganizationClosing.PROPERTY_ORGANIZATION,
-          OBDal.getInstance().get(Organization.class, strOrg)));
+      obc.createAlias(OrganizationClosing.PROPERTY_ORGACCTSCHEMA, "oa");
+      obc.add(Restrictions.eq("organization", org));
       obc.add(Restrictions.eq(OrganizationClosing.PROPERTY_YEAR, year));
+      obc.add(Restrictions.eq("oa.accountingSchema.id", strcAcctSchemaId));
+      obc.add(Restrictions.isNotNull(OrganizationClosing.PROPERTY_CLOSINGFACTACCTGROUP));
       obc.setMaxResults(1);
       return obc.uniqueResult() == null ? true : false;
     } finally {
