@@ -12,12 +12,16 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.MimeTypeUtil;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
+import org.openbravo.model.pricing.priceadjustment.PromotionType;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.config.OBRETCOProlProduct;
 import org.openbravo.scheduling.ProcessBundle;
@@ -47,20 +51,17 @@ public class GenerateProductImages extends DalBaseProcess {
 
       for (OBRETCOProlProduct prolProduct : assortment.getOBRETCOProlProductList()) {
         if (prolProduct.getProduct().getImage() != null) {
-          byte[] img = Utility.getImage(prolProduct.getProduct().getImage().getId());
-          img = Utility.resizeImageByte(img, 128, 0, true, true);
-
-          img = resizeImageByteToSquare(img);
-
-          if (img != null) {
-            String imageDir = getProductImage(imagesDir, prolProduct.getProduct().getId());
-            File f = new File(imageDir, prolProduct.getProduct().getId());
-            f.createNewFile();
-            FileOutputStream is = new FileOutputStream(f);
-            is.write(img);
-            is.close();
-          }
+          generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct().getImage()
+              .getId(), imagesDir);
         }
+      }
+
+      OBCriteria<PriceAdjustment> packs = OBDal.getInstance().createCriteria(PriceAdjustment.class);
+      packs.add(Restrictions.eq(PriceAdjustment.PROPERTY_DISCOUNTTYPE,
+          OBDal.getInstance().get(PromotionType.class, "BE5D42E554644B6AA262CCB097753951")));
+      packs.add(Restrictions.isNotNull(PriceAdjustment.PROPERTY_OBDISCIMAGE));
+      for (PriceAdjustment pack : packs.list()) {
+        generateImageFile(pack.getId(), pack.getObdiscImage().getId(), imagesDir);
       }
 
       // Show a result
@@ -82,6 +83,23 @@ public class GenerateProductImages extends DalBaseProcess {
       msg.setMessage(e.getMessage());
       msg.setTitle("Error occurred");
       bundle.setResult(msg);
+    }
+  }
+
+  private void generateImageFile(String id, String imageId, File imagesDir) throws Exception {
+
+    byte[] img = Utility.getImage(imageId);
+    img = Utility.resizeImageByte(img, 160, 0, true, true);
+
+    img = resizeImageByteToSquare(img);
+
+    if (img != null) {
+      String imageDir = getProductImage(imagesDir, id);
+      File f = new File(imageDir, id);
+      f.createNewFile();
+      FileOutputStream is = new FileOutputStream(f);
+      is.write(img);
+      is.close();
     }
   }
 
