@@ -283,12 +283,12 @@ public class OrderLoader extends JSONProcessSimple {
         // Shipment header
         shipment = OBProvider.getInstance().get(ShipmentInOut.class);
         createShipment(shipment, order, jsonorder);
-
-        // Shipment lines
-        createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
         if (shipment != null) {
           OBDal.getInstance().save(shipment);
         }
+        // Shipment lines
+        createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
+
       }
       long t115 = System.currentTimeMillis();
       if (createInvoice) {
@@ -829,6 +829,8 @@ public class OrderLoader extends JSONProcessSimple {
     line.setLineNo(lineNo);
     line.setShipmentReceipt(shipment);
     line.setSalesOrderLine(orderLine);
+    orderLine.setGoodsShipmentLine(line);
+
     orderLine.getMaterialMgmtShipmentInOutLineList().add(line);
 
     line.setMovementQuantity(qty);
@@ -837,6 +839,7 @@ public class OrderLoader extends JSONProcessSimple {
       line.setAttributeSetValue(attributeSetInstance);
     }
     shipment.getMaterialMgmtShipmentInOutLineList().add(line);
+    OBDal.getInstance().save(line);
   }
 
   protected void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder)

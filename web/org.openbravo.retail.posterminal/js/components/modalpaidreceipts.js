@@ -295,19 +295,13 @@ enyo.kind({
           }
           OB.MobileApp.model.hookManager.executeHooks('OBRETUR_ReturnFromOrig', {
             order: data[0],
-            context: me
+            context: me,
+            params: me.parent.parent.params
           }, function (args) {
-            if (!args.returnReceipt) {
+            if (!args.cancelOperation) {
               me.model.get('orderList').newPaidReceipt(data[0], function (order) {
                 me.doChangePaidReceipt({
                   newPaidReceipt: order
-                });
-              });
-            } else {
-              _.each(data[0].receiptLines, function (line) {
-                OB.Dal.get(OB.Model.Product, line.id, function (prod) {
-                  me.model.get('order').addProduct(prod, -line.quantity, null);
-                  me.model.get('orderList').saveCurrent();
                 });
               });
             }

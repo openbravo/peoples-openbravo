@@ -501,21 +501,30 @@
     },
 
     getPending: function () {
-      return OB.DEC.sub(this.getTotal(), this.getPayment());
+      return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
     },
     printPending: function () {
       return OB.I18N.formatCurrency(this.getPending());
     },
 
     getPaymentStatus: function () {
-      var total = this.getTotal();
-      var pay = this.getPayment();
+      var total = OB.DEC.abs(this.getTotal()),
+          pay = this.getPayment(),
+          isReturn = true;
+
+      _.each(this.get('lines').models, function (line) {
+        if (line.get('gross') > 0) {
+          isReturn = false;
+        }
+      }, this);
       return {
         'done': (this.get('lines').length > 0 && OB.DEC.compare(total) >= 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0),
         'total': OB.I18N.formatCurrency(total),
         'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
-        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null
+        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
+        'isReturn': isReturn,
+        'isNegative': this.get('gross') < 0 ? true : false
       };
     },
 
@@ -723,7 +732,7 @@
       this.calculateGross();
     },
 
-    _addProduct: function (p, qty, options) {
+    _addProduct: function (p, qty, options, attrs) {
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
@@ -743,7 +752,7 @@
           } else if (data.result === 0) {
             alert(OB.I18N.getLabel('OBPOS_WeightZero'));
           } else {
-            this.createLine(p, data.result, options);
+            this.createLine(p, data.result, options, attrs);
           }
         });
       } else {
@@ -762,10 +771,10 @@
             this.addUnit(line, qty);
             line.trigger('selected', line);
           } else {
-            this.createLine(p, qty, options);
+            this.createLine(p, qty, options, attrs);
           }
         } else {
-          this.createLine(p, qty, options);
+          this.createLine(p, qty, options, attrs);
         }
       }
       this.save();
@@ -805,7 +814,7 @@
       }
     },
 
-    addProduct: function (p, qty, options) {
+    addProduct: function (p, qty, options, attrs) {
       var me = this;
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_AddProductToOrder', {
         receipt: this,
@@ -816,7 +825,7 @@
         if (args && args.useLines) {
           me._drawLinesDistribution(args);
         } else {
-          me._addProduct(p, qty, options);
+          me._addProduct(p, qty, options, attrs);
         }
       });
     },
@@ -916,7 +925,7 @@
       }
     },
 
-    createLine: function (p, units, options) {
+    createLine: function (p, units, options, attrs) {
       var me = this;
       var newline = new OrderLine({
         product: p,
@@ -926,6 +935,12 @@
         priceList: OB.DEC.number(p.get('standardPrice')),
         priceIncludesTax: this.get('priceIncludesTax')
       });
+      if (!_.isUndefined(attrs)) {
+        _.each(_.keys(attrs), function (key) {
+          newline.set(key, attrs[key]);
+        });
+      }
+
       newline.calculateGross();
 
       // add the created line
@@ -941,6 +956,32 @@
         }
       });
       this.adjustPayment();
+    },
+    returnLine: function (line, options) {
+      var me = this;
+      if (line.get('qty') > 0) {
+        line.get('product').set('ignorePromotions', true);
+      } else {
+        line.get('product').set('ignorePromotions', false);
+      }
+      line.set('qty', -line.get('qty'));
+      line.calculateGross();
+
+      // set the undo action
+      this.set('undo', {
+        text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
+        line: line,
+        undo: function () {
+          line.set('qty', -line.get('qty'))
+          me.set('undo', null);
+        }
+      });
+      this.adjustPayment();
+      if (line.get('promotions')) {
+        line.unset('promotions');
+      }
+      me.calculateGross();
+
     },
 
     setBPandBPLoc: function (businessPartner, showNotif, saveChange) {
@@ -1075,7 +1116,7 @@
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
-      var total = this.getTotal();
+      var total = OB.DEC.abs(this.getTotal());
 
       var nocash = OB.DEC.Zero;
       var cash = OB.DEC.Zero;
@@ -1155,7 +1196,7 @@
       }
 
       payments = this.get('payments');
-      total = this.getTotal();
+      total = OB.DEC.abs(this.getTotal());
       if (!payment.get('paymentData')) {
         // search for an existing payment only if there is not paymentData info.
         // this avoids to merge for example card payments of different cards.
@@ -1210,29 +1251,10 @@
 
       // convert returns
       if (jsonorder.orderType === 1) {
-        jsonorder.gross = -jsonorder.gross;
-        jsonorder.change = -jsonorder.change;
-        jsonorder.payment = -jsonorder.payment;
-        jsonorder.net = -jsonorder.net;
-        _.forEach(jsonorder.lines, function (item) {
-          item.lineGrossAmount = -item.lineGrossAmount;
-          item.gross = -item.gross;
-          item.net = -item.net;
-          item.qty = -item.qty;
-          item.taxAmount = -item.taxAmount;
-          _.forEach(item.taxLines, function (itemtax) {
-            itemtax.amount = -itemtax.amount;
-            itemtax.net = -itemtax.net;
-          });
-        });
         _.forEach(jsonorder.payments, function (item) {
           item.amount = -item.amount;
           item.origAmount = -item.origAmount;
           item.paid = -item.paid;
-        });
-        _.forEach(jsonorder.taxes, function (item) {
-          item.amount = -item.amount;
-          item.net = -item.net;
         });
       }
 
@@ -1606,19 +1628,20 @@
       additionalInfo: null
     },
     getPaymentStatus: function () {
-      var total = this.getTotal();
+      var total = OB.DEC.abs(this.getTotal());
       var pay = this.getPayment();
       return {
-        'total': OB.I18N.formatCurrency(this.getTotal()),
+        'total': OB.I18N.formatCurrency(total),
         'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
-        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null
+        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
+        'isReturn': this.get('gross') < 0 ? true : false
       };
     },
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
-      var total = this.getTotal();
+      var total = OB.DEC.abs(this.getTotal());
 
       var nocash = OB.DEC.Zero;
       var cash = OB.DEC.Zero;
@@ -1697,7 +1720,7 @@
       }
 
       payments = this.get('payments');
-      total = this.getTotal();
+      total = OB.DEC.abs(this.getTotal());
       if (!payment.get('paymentData')) {
         // search for an existing payment only if there is not paymentData info.
         // this avoids to merge for example card payments of different cards.
@@ -1743,7 +1766,7 @@
       return this.get('payment');
     },
     getPending: function () {
-      return OB.DEC.sub(this.getTotal(), this.getPayment());
+      return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
     },
     toInvoice: function (status) {
       if (status === false) {

@@ -34,6 +34,7 @@ enyo.kind({
     onTabChange: 'tabChange',
     onDeleteLine: 'deleteLine',
     onEditLine: 'editLine',
+    onReturnLine: 'returnLine',
     onExactPayment: 'exactPayment',
     onRemovePayment: 'removePayment',
     onChangeCurrentOrder: 'changeCurrentOrder',
@@ -273,9 +274,7 @@ enyo.kind({
     }
   },
   paidReceipts: function (inSender, inEvent) {
-    this.$.modalPaidReceipts.setParams({
-      isQuotation: false
-    });
+    this.$.modalPaidReceipts.setParams(inEvent);
     this.$.modalPaidReceipts.waterfall('onClearAction');
     this.doShowPopup({
       popup: 'modalPaidReceipts'
@@ -624,6 +623,15 @@ enyo.kind({
     this.doShowPopup({
       popup: 'receiptLinesPropertiesDialog'
     });
+  },
+  returnLine: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
+      return true;
+    }
+    this.model.get('order').returnLine(inEvent.line);
   },
   exactPayment: function (inSender, inEvent) {
     this.$.multiColumn.$.rightPanel.$.keyboard.execStatelessCommand('cashexact');

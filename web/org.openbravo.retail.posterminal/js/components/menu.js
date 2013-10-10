@@ -588,7 +588,9 @@ enyo.kind({
       return;
     }
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
-      this.doPaidReceipts();
+      this.doPaidReceipts({
+        isQuotation: false
+      });
     }
   }
 });
