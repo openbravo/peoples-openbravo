@@ -75,12 +75,26 @@ isc.DataSource.addSearchOperator({
 });
 
 isc.Tree.addProperties({
-	  _original_getLoadState: isc.Tree.getPrototype().getLoadState,
+  _original_getLoadState: isc.Tree.getPrototype().getLoadState,
   getLoadState: function (node) {
     if (node._hasChildren === false) {
       return isc.Tree.LOADED;
     } else {
-      return  this._original_getLoadState(node);
+      return this._original_getLoadState(node);
+    }
+  }
+});
+
+isc.ResultTree.addProperties({
+  _original_loadChildrenReply: isc.ResultTree.getPrototype().loadChildrenReply,
+  loadChildrenReply: function (dsResponse, data, request) {
+    var target;
+    this._original_loadChildrenReply(dsResponse, data, request);
+    if (request && request.params && request.params.selectedRecords) {
+      target = window[this.componentId];
+      if (target && target.treeDataArrived) {
+        target.treeDataArrived();
+      }
     }
   }
 });

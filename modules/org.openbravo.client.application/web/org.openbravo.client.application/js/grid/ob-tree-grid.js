@@ -236,9 +236,8 @@ isc.OBTreeGrid.addProperties({
     this.view = view;
   },
 
-  _dataArrived: function (parentNode) {
+  treeDataArrived: function () {
     var i, selectedRecords, node;
-    this.Super('_dataArrived', arguments);
     selectedRecords = this.view.viewGrid.getSelectedRecords();
     for (i = 0; i < selectedRecords.length; i++) {
       node = this.getNodeByID(selectedRecords[i].id);
