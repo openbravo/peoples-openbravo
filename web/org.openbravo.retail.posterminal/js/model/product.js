@@ -17,7 +17,10 @@
     entityName: 'Product',
     source: 'org.openbravo.retail.posterminal.master.Product',
     dataLimit: 300,
-    includeTerminalDate: true
+    includeTerminalDate: true,
+    initialize: function () {
+      this.set('originalStandardPrice', this.get('standardPrice'));
+    }
   });
 
   Product.addProperties([{
