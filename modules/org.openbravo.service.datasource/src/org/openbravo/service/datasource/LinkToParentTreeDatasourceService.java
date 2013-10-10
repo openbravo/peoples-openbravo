@@ -197,7 +197,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return entity.getPropertyByColumnName(column.getDBColumnName());
   }
 
-  protected void moveNode(Map<String, String> parameters, String nodeId, String newParentId,
+  protected JSONObject moveNode(Map<String, String> parameters, String nodeId, String newParentId,
       String prevNodeId, String nextNodeId) throws Exception {
 
     String referencedTableId = parameters.get("referencedTableId");
@@ -221,6 +221,17 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     // treeNode.setSequenceNumber(seqNo);
     // }
     OBDal.getInstance().flush();
+
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
+        DataToJsonConverter.class);
+
+    JSONObject updatedData = toJsonConverter.toJsonObject((BaseOBObject) bob,
+        DataResolvingMode.FULL);
+    BaseOBObject parent = (BaseOBObject) bob.get(linkToParentProperty.getName());
+    updatedData.put("parentId", parentBob.getId().toString());
+    updatedData.put("_hasChildren", (this.nodeHasChildren(entity, bob)) ? true : false);
+
+    return updatedData;
   }
 
   private Long calculateSequenceNumberAndRecompute(Tree tree, String prevNodeId, String nextNodeId,

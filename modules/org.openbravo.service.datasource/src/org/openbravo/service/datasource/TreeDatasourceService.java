@@ -233,8 +233,12 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     }
 
     if (success) {
-      moveNode(parameters, nodeId, newParentId, prevNodeId, nextNodeId);
-      dataResponse.put(data);
+      JSONObject updatedData = moveNode(parameters, nodeId, newParentId, prevNodeId, nextNodeId);
+      if (updatedData != null) {
+        dataResponse.put(updatedData);
+      } else {
+        dataResponse.put(data);
+      }
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     } else {
       dataResponse.put(oldValues);
@@ -256,6 +260,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return jsonResult.toString();
   }
 
-  protected abstract void moveNode(Map<String, String> parameters, String nodeId,
+  protected abstract JSONObject moveNode(Map<String, String> parameters, String nodeId,
       String newParentId, String prevNodeId, String nextNodeId) throws Exception;
 }

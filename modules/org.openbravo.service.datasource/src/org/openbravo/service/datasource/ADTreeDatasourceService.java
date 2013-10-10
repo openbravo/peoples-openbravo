@@ -307,7 +307,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return adTree;
   }
 
-  protected void moveNode(Map<String, String> parameters, String nodeId, String newParentId,
+  protected JSONObject moveNode(Map<String, String> parameters, String nodeId, String newParentId,
       String prevNodeId, String nextNodeId) throws Exception {
 
     String referencedTableId = parameters.get("referencedTableId");
@@ -331,6 +331,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       treeNode.setSequenceNumber(seqNo);
     }
     OBDal.getInstance().flush();
+
+    return null;
   }
 
   @Override
