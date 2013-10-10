@@ -138,7 +138,8 @@ enyo.kind({
   },
   events: {
     onDeleteLine: '',
-    onEditLine: ''
+    onEditLine: '',
+    onReturnLine: ''
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior'
@@ -224,6 +225,34 @@ enyo.kind({
                 }
               }
               this.setShowing(true);
+            }, this);
+          }
+        }, {
+          kind: 'OB.UI.SmallButton',
+          name: 'returnLine',
+          i18nContent: 'OBPOS_LblReturnLine',
+          permission: 'OBPOS_ReturnLine',
+          classes: 'btnlink-orange',
+          tap: function () {
+            this.owner.doReturnLine({
+              line: this.owner.line
+            });
+          },
+          init: function (model) {
+            this.model = model;
+            if (OB.POS.modelterminal.hasPermission(this.permission)) {
+              this.setShowing(true);
+            }
+            this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
+              if (newValue) {
+                if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
+                  this.setShowing(false);
+                  return;
+                }
+              }
+              if (OB.POS.modelterminal.hasPermission(this.permission)) {
+                this.setShowing(true);
+              }
             }, this);
           }
         }, {
