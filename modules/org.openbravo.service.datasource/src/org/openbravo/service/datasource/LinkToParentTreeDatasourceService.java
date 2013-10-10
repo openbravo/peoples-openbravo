@@ -103,7 +103,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId)
       throws JSONException {
 
-    final String ROOT_NODE = "0";
     String tabId = parameters.get("tabId");
 
     boolean fetchRoot = ROOT_NODE.equals(parentId);

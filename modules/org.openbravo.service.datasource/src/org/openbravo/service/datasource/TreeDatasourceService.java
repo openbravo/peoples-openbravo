@@ -24,6 +24,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   final static String JSON_PREFIX = "<SCRIPT>//'\"]]>>isc_JSONResponseStart>>";
   final static String JSON_SUFFIX = "//isc_JSONResponseEnd";
 
+  final String ROOT_NODE = "0";
+
   @Inject
   @Any
   private Instance<CheckTreeOperationManager> checkTreeOperationManagers;
@@ -137,10 +139,23 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           }
         }
       }
+      // Include all the first level nodes
+      JSONArray firstLevelNodes = this.fetchFirstLevelNodes(parameters);
+      for (int i = 0; i < firstLevelNodes.length(); i++) {
+        JSONObject node = firstLevelNodes.getJSONObject(i);
+        if (!addedNodes.contains(node.getString("id"))) {
+          addedNodes.add(node.getString("id"));
+          responseData.put(node);
+        }
+      }
     } catch (JSONException e) {
       log.error("Error on tree datasource", e);
     }
     return responseData;
+  }
+
+  protected JSONArray fetchFirstLevelNodes(Map<String, String> parameters) throws JSONException {
+    return this.fetchNodeChildren(parameters, ROOT_NODE);
   }
 
   protected abstract JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId);
