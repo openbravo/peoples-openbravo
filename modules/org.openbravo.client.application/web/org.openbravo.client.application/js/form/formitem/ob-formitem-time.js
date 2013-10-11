@@ -367,6 +367,7 @@ isc.OBTimeItemGrid.addProperties({
     if (this.formItem && record && this.doSelectionUpdated) {
       this.formItem.setValue(record.jsTime);
     }
+    return this.Super('selectionUpdated ', arguments);
   },
 
   show: function () {
