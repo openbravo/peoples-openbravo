@@ -51,7 +51,11 @@
     //      OB.UTIL.showLoading(false);
     //      alert(OB.I18N.getLabel('OBPOS_WindowNotFound', [OB.POS.paramWindow]));
     //    }
-    OB.POS.navigate('retail.pointofsale');
+
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
+      OB.POS.navigate('retail.pointofsale');
+    });
+
     if (OB.POS.modelterminal.get('loggedOffline') === true) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
     }
