@@ -251,12 +251,12 @@ enyo.kind({
     //finishedWrongly
     this.model.on('change:finishedWrongly', function (model) {
       var message = "";
-      if (model.get('errorMessage')){
-    	  message = OB.I18N.getLabel(model.get('errorMessage'), [model.get('errorDetail')]);
-      }else{
-    	  message = OB.I18N.getLabel('OBPOS_CashUpWrongly');  
+      if (model.get('errorMessage')) {
+        message = OB.I18N.getLabel(model.get('errorMessage'), [model.get('errorDetail')]);
+      } else {
+        message = OB.I18N.getLabel('OBPOS_CashUpWrongly');
       }
-    	
+
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message, [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         action: function () {
