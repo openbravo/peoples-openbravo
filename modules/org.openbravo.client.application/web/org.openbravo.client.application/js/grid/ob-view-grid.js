@@ -2775,7 +2775,7 @@ isc.OBViewGrid.addProperties({
         oldFieldValue = oldValues[fieldName];
         newFieldValue = newValues[fieldName];
         // Use custom comparator to catch things like Dates where '==' check is not sufficient
-        if ((isNew || oldFieldValue !== undefined) && !this.fieldValuesAreEqual(this.getField(fieldName), oldFieldValue, newFieldValue)) {
+        if ((isNew || oldFieldValue !== undefined) && !this.fieldValuesAreEqual(this.getField(fieldName), oldFieldValue, newFieldValue) && !(newFieldValue === '' && oldFieldValue === null)) {
           changes = true;
           break;
         }
