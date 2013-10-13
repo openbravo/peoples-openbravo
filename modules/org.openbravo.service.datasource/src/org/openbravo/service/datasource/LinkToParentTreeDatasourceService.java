@@ -2,7 +2,6 @@ package org.openbravo.service.datasource;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -62,7 +61,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     }
   }
 
-  public int reparentChildrenOfDeletedNode(Entity entity, String newParentId, String deletedNodeId) {
+  public int reparentChildrenOfDeletedNode(Entity entity, String newParentId, String oldParentId) {
     int nChildrenMoved = -1;
     Table table = OBDal.getInstance().get(Table.class, entity.getTableId());
     Property linkToParentProperty = getLinkToParentProperty(table);
@@ -81,10 +80,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
           .prepareStatement(sql.toString());
 
       if (newParentId == null) {
-        ps.setString(1, deletedNodeId);
+        ps.setString(1, oldParentId);
       } else {
         ps.setString(1, newParentId);
-        ps.setString(2, deletedNodeId);
+        ps.setString(2, oldParentId);
       }
       nChildrenMoved = ps.executeUpdate();
     } catch (SQLException e) {
@@ -116,8 +115,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     if (fetchRoot) {
       whereClause.append(" is null ");
     } else {
-      BaseOBObject parentBob = OBDal.getInstance().get(entity.getName(), parentId);
-      whereClause.append(".id = '" + parentBob.getId() + "' ");
+      whereClause.append(".id = '" + parentId + "' ");
     }
 
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
@@ -171,30 +169,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     } catch (Exception e) {
       logger.error("Exception while recomputing sequence numbers: ", e);
     }
-  }
-
-  private String getReferencedColumnValue(JSONObject bobProperties, List<Column> parentColumns) {
-    Column parentColumn = parentColumns.get(0);
-    Property property = getPropertyFromColumn(parentColumn);
-    String referencedBobId = null;
-    try {
-      referencedBobId = (String) bobProperties.get(property.getName());
-    } catch (JSONException e) {
-      logger.error("Error on tree datasource", e);
-    }
-    return referencedBobId;
-  }
-
-  private List<Column> getParentColumns(Table table) {
-    OBCriteria<Column> isParentColumnsCriteria = OBDal.getInstance().createCriteria(Column.class);
-    isParentColumnsCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, table));
-    isParentColumnsCriteria.add(Restrictions.eq(Column.PROPERTY_LINKTOPARENTCOLUMN, true));
-    return isParentColumnsCriteria.list();
-  }
-
-  private Property getPropertyFromColumn(Column column) {
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(column.getTable().getId());
-    return entity.getPropertyByColumnName(column.getDBColumnName());
   }
 
   protected JSONObject moveNode(Map<String, String> parameters, String nodeId, String newParentId,
