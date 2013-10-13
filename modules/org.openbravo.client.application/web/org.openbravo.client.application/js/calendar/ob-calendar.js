@@ -559,14 +559,15 @@ isc.OBCalendar.addProperties({
     this.filterData();
   },
 
-  addEvent: function (startDate, endDate, name, description, otherFields, ignoreDataChanged) {
+  addEvent: function (startDate, endDate, name, description, otherFields, laneName, ignoreDataChanged) {
+
     otherFields = otherFields || {};
 
     // solve bug that otherwise time fields are not passed in
     startDate.logicalDate = false;
     endDate.logicalDate = false;
 
-    return this.Super('addEvent', [startDate, endDate, name, description, otherFields, ignoreDataChanged]);
+    return this.Super('addEvent', arguments);
   },
 
   addEventWithDialog: function (startDate, endDate) {

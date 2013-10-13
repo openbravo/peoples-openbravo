@@ -62,7 +62,6 @@ isc.OBTimeItem.addProperties({
         }
       }
     }
-    this.Super('keyPress', arguments);
   },
 
   // SmartClient's TimeItem doesn't keep time zone. Preserve it in case the
@@ -147,11 +146,12 @@ isc.OBTimeItem.addProperties({
         this.timeGrid.hide();
       }
     }
-    return this.Super('keyDown', arguments);
   },
+
   click: function () {
     this.doShowTimeGrid(isc.Time.parseInput(this.getEnteredValue()));
   },
+  
   focus: function () {
     this.doShowTimeGrid(this.getValue());
     return this.Super('focus', arguments);
@@ -367,7 +367,6 @@ isc.OBTimeItemGrid.addProperties({
     if (this.formItem && record && this.doSelectionUpdated) {
       this.formItem.setValue(record.jsTime);
     }
-    return this.Super('selectionUpdated ', arguments);
   },
 
   show: function () {
