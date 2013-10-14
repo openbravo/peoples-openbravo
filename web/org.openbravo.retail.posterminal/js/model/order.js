@@ -1444,42 +1444,40 @@
               }
             });
           });
+          order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
+          //order.set('payments', model.receiptPayments);
+          payments = new PaymentLineList();
+          _.each(model.receiptPayments, function (iter) {
+            var paymentProp;
+            curPayment = new PaymentLine();
+            for (paymentProp in iter) {
+              if (iter.hasOwnProperty(paymentProp)) {
+                curPayment.set(paymentProp, iter[paymentProp]);
+              }
+            }
+            payments.add(curPayment);
+          });
+          order.set('payments', payments);
+          order.adjustPayment();
+
+          taxes = {};
+          _.each(model.receiptTaxes, function (iter) {
+            var taxProp;
+            taxes[iter.taxid] = {};
+            for (taxProp in iter) {
+              if (iter.hasOwnProperty(taxProp)) {
+                taxes[iter.taxid][taxProp] = iter[taxProp];
+              }
+            }
+          });
+          order.set('taxes', taxes);
         }, function () {
           // TODO: Report errors properly
         });
 
       }, function () {
         // TODO: Report errors properly
-      });
-      order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
-      //order.set('payments', model.receiptPayments);
-      payments = new PaymentLineList();
-      _.each(model.receiptPayments, function (iter) {
-        var paymentProp;
-        curPayment = new PaymentLine();
-        for (paymentProp in iter) {
-          if (iter.hasOwnProperty(paymentProp)) {
-            curPayment.set(paymentProp, iter[paymentProp]);
-          }
-        }
-        payments.add(curPayment);
-      });
-      order.set('payments', payments);
-      order.adjustPayment();
-
-      taxes = {};
-      _.each(model.receiptTaxes, function (iter) {
-        var taxProp;
-        taxes[iter.taxid] = {};
-        for (taxProp in iter) {
-          if (iter.hasOwnProperty(taxProp)) {
-            taxes[iter.taxid][taxProp] = iter[taxProp];
-          }
-        }
-      });
-      order.set('taxes', taxes);
-
-
+      });    
     },
     newDynamicOrder: function (model, callback) {
       var order = new Backbone.Model(),
