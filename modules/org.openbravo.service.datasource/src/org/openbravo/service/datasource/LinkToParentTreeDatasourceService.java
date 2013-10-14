@@ -2,6 +2,7 @@ package org.openbravo.service.datasource;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -24,6 +25,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -93,8 +95,21 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   }
 
   private Property getLinkToParentProperty(Table table) {
-    Column linkToParentColumn = table.getLinkToParentColumn();
+    // TODO: Terminar. Soportar tablas con varios árboles asociados
+    List<TableTree> tableTreeList = table.getADTableTreeList();
+    if (tableTreeList.size() != 1) {
+      return null;
+    }
+    TableTree tableTree = tableTreeList.get(0);
+    Column linkToParentColumn = tableTree.getLinkToParentColumn();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    return entity.getPropertyByColumnName(linkToParentColumn.getDBColumnName());
+  }
+
+  private Property getLinkToParentProperty(Tab tab) {
+    TableTree tableTree = tab.getTableTree();
+    Column linkToParentColumn = tableTree.getLinkToParentColumn();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
     return entity.getPropertyByColumnName(linkToParentColumn.getDBColumnName());
   }
 
@@ -102,13 +117,12 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId)
       throws JSONException {
 
-    String tabId = parameters.get("tabId");
-
     boolean fetchRoot = ROOT_NODE.equals(parentId);
+    String tabId = parameters.get("tabId");
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
     Table table = tab.getTable();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-    Property linkToParentProperty = getLinkToParentProperty(table);
+    Property linkToParentProperty = getLinkToParentProperty(tab);
 
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" where " + linkToParentProperty.getName());
@@ -132,16 +146,17 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) bob,
           DataResolvingMode.FULL);
       json.put("parentId", parentId);
-      json.put("_hasChildren", (this.nodeHasChildren(entity, bob)) ? true : false);
+      json.put("_hasChildren", (this.nodeHasChildren(tab, bob)) ? true : false);
       responseData.put(json);
 
     }
     return responseData;
   }
 
-  private boolean nodeHasChildren(Entity entity, BaseOBObject node) {
-    Table table = OBDal.getInstance().get(Table.class, entity.getTableId());
-    Property linkToParentProperty = getLinkToParentProperty(table);
+  private boolean nodeHasChildren(Tab tab, BaseOBObject node) {
+    Table table = tab.getTable();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    Property linkToParentProperty = getLinkToParentProperty(tab);
     OBCriteria<BaseOBObject> nodeChildrenCriteria = OBDal.getInstance().createCriteria(
         entity.getName());
     nodeChildrenCriteria.add(Restrictions.eq(linkToParentProperty.getName(), node));
@@ -177,23 +192,16 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     String referencedTableId = parameters.get("referencedTableId");
     Table table = OBDal.getInstance().get(Table.class, referencedTableId);
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-    Property linkToParentProperty = getLinkToParentProperty(table);
-    boolean isOrdered = table.getTreeCategory().isOrdered();
+    String tabId = parameters.get("tabId");
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    Property linkToParentProperty = getLinkToParentProperty(tab);
 
-    // TODO:Testing
-    // Long seqNo = null;
-    // if (isOrdered) {
-    // seqNo = this.calculateSequenceNumberAndRecompute(tree, prevNodeId, nextNodeId,
-    // newParentId);
-    // }
+    boolean isOrdered = tab.getTableTree().getTreeCategory().isOrdered();
 
     BaseOBObject bob = OBDal.getInstance().get(entity.getName(), nodeId);
     BaseOBObject parentBob = OBDal.getInstance().get(entity.getName(), newParentId);
     bob.set(linkToParentProperty.getName(), parentBob);
 
-    // if (isOrdered) {
-    // treeNode.setSequenceNumber(seqNo);
-    // }
     OBDal.getInstance().flush();
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
@@ -203,7 +211,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         DataResolvingMode.FULL);
     BaseOBObject parent = (BaseOBObject) bob.get(linkToParentProperty.getName());
     updatedData.put("parentId", parentBob.getId().toString());
-    updatedData.put("_hasChildren", (this.nodeHasChildren(entity, bob)) ? true : false);
+    updatedData.put("_hasChildren", (this.nodeHasChildren(tab, bob)) ? true : false);
 
     return updatedData;
   }
@@ -237,10 +245,11 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
   @Override
   protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId) {
-    String referencedTableId = parameters.get("referencedTableId");
-    Table table = OBDal.getInstance().get(Table.class, referencedTableId);
+    String tabId = parameters.get("tabId");
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    Table table = tab.getTable();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-    Property linkToParentProperty = getLinkToParentProperty(table);
+    Property linkToParentProperty = getLinkToParentProperty(tab);
     JSONObject json = null;
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
@@ -255,7 +264,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       } else {
         json.put("parentId", (String) null);
       }
-      json.put("_hasChildren", (this.nodeHasChildren(entity, bob)) ? true : false);
+      json.put("_hasChildren", (this.nodeHasChildren(tab, bob)) ? true : false);
     } catch (JSONException e) {
       logger.error("Error on tree datasource", e);
     }

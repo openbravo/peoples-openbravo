@@ -42,6 +42,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.ADTreeType;
+import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.datasource.DataSourceService;
 import org.openbravo.service.datasource.DataSourceServiceProvider;
 
@@ -73,6 +74,9 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     }
     BaseOBObject bob = event.getTargetInstance();
     DataSourceService dataSource = getDataSource(bob.getEntity().getTableId());
+    if (dataSource == null) {
+      return;
+    }
     JSONObject jsonBob = this.fromBobToJSONObject(bob);
     Map<String, String> parameters = new HashMap<String, String>();
     parameters.put("jsonBob", jsonBob.toString());
@@ -86,6 +90,9 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     }
     BaseOBObject bob = event.getTargetInstance();
     DataSourceService dataSource = getDataSource(bob.getEntity().getTableId());
+    if (dataSource == null) {
+      return;
+    }
     JSONObject jsonBob = this.fromBobToJSONObject(bob);
     Map<String, String> parameters = new HashMap<String, String>();
     parameters.put("jsonBob", jsonBob.toString());
@@ -94,7 +101,13 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
 
   private DataSourceService getDataSource(String tableId) {
     Table table = OBDal.getInstance().get(Table.class, tableId);
-    ADTreeType treeType = table.getTreeCategory();
+    // TODO: Terminar. Soportar tablas con varios árboles asociados
+    List<TableTree> tableTreeList = table.getADTableTreeList();
+    if (tableTreeList.size() != 1) {
+      return null;
+    }
+    TableTree tableTree = tableTreeList.get(0);
+    ADTreeType treeType = tableTree.getTreeCategory();
 
     DataSourceService dataSource = null;
     if (TREENODE_STRUCTURE.equals(treeType.getTreeStructure())) {

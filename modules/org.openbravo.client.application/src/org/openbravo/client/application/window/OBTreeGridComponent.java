@@ -26,6 +26,7 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.ADTreeType;
+import org.openbravo.model.ad.utility.TableTree;
 
 /**
  * The backing bean for generating the OBTreeGridPopup client-side representation.
@@ -80,24 +81,38 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
   }
 
   public boolean isOrderedTree() {
-    ADTreeType treeType = tab.getTable().getTreeCategory();
-    return treeType.isOrdered();
+    TableTree tableTree = tab.getTableTree();
+    if (tableTree != null) {
+      return tableTree.getTreeCategory().isOrdered();
+    } else {
+      return false;
+    }
   }
 
   public String getDataSourceId() {
     String dataSourceId = null;
-    ADTreeType treeCategory = tab.getTable().getTreeCategory();
-    if (TREENODE_STRUCTURE.equals(treeCategory.getTreeStructure())) {
-      dataSourceId = TREENODE_DATASOURCE;
-    } else if (LINKTOPARENT_STRUCTURE.equals(treeCategory.getTreeStructure())) {
-      dataSourceId = LINKTOPARENT_DATASOURCE;
+    TableTree tableTree = tab.getTableTree();
+    if (tableTree != null) {
+      ADTreeType treeCategory = tableTree.getTreeCategory();
+      if (TREENODE_STRUCTURE.equals(treeCategory.getTreeStructure())) {
+        dataSourceId = TREENODE_DATASOURCE;
+      } else if (LINKTOPARENT_STRUCTURE.equals(treeCategory.getTreeStructure())) {
+        dataSourceId = LINKTOPARENT_DATASOURCE;
+      }
+      return dataSourceId;
+    } else {
+      return null;
     }
-    return dataSourceId;
   }
 
   public String getTreeStructure() {
-    ADTreeType treeCategory = tab.getTable().getTreeCategory();
-    return treeCategory.getTreeStructure();
+    TableTree tableTree = tab.getTableTree();
+    if (tableTree != null) {
+      ADTreeType treeCategory = tableTree.getTreeCategory();
+      return treeCategory.getTreeStructure();
+    } else {
+      return null;
+    }
   }
 
 }

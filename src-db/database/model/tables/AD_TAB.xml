@@ -169,8 +169,8 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SHOWTREEGRID" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
+      <column name="AD_TABLE_TREE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_AD_TAB">
@@ -203,6 +203,9 @@
       <foreign-key foreignTable="AD_TAB" name="AD_TAB_INCLUDED_TAB">
         <reference local="INCLUDED_TAB_ID" foreign="AD_TAB_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_TABLE_TREE" name="AD_TAB_TABLETREE_FK">
+        <reference local="AD_TABLE_TREE_ID" foreign="AD_TABLE_TREE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_TAB">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
@@ -214,6 +217,9 @@
       </index>
       <index name="AD_TAB_WINDOW" unique="false">
         <index-column name="AD_WINDOW_ID"/>
+      </index>
+      <index name="FKI_AD_TAB_TABLETREE_FK" unique="false">
+        <index-column name="AD_TABLE_TREE_ID"/>
       </index>
       <unique name="AD_TAB_WINDOW_NAME_UNIQUE">
         <unique-column name="AD_WINDOW_ID"/>
@@ -228,6 +234,5 @@
       <check name="AD_TAB_ISTRANSLATIONTAB_CHK"><![CDATA[ISTRANSLATIONTAB IN ('Y', 'N')]]></check>
       <check name="AD_TAB_NAME_CHK"><![CDATA[INSTR(NAME, TO_CHAR('_')) = 0]]></check>
       <check name="AD_TAB_SHOWPARENTBUTTONS_CHK"><![CDATA[SHOWPARENTBUTTONS IN ('Y', 'N')]]></check>
-      <check name="AD_TAB_SHOWTREEGRID_CHK"><![CDATA[SHOWTREEGRID IN ('Y', 'N')]]></check>
     </table>
   </database>

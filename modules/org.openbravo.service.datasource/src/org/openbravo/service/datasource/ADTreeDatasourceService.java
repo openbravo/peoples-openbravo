@@ -8,7 +8,6 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.HibernateException;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -26,6 +25,7 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.ADTreeType;
+import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
@@ -225,8 +225,14 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   private boolean isOrdered(Tree tree) {
     Table table = tree.getTable();
-    ADTreeType treeType = table.getTreeCategory();
-    return treeType.isOrdered();
+    List<TableTree> tableTreeList = table.getADTableTreeList();
+    if (tableTreeList.size() != 1) {
+      return false;
+    } else {
+      TableTree tableTree = tableTreeList.get(0);
+      ADTreeType treeType = tableTree.getTreeCategory();
+      return treeType.isOrdered();
+    }
   }
 
   private Tree getTree(String referencedTableId, String parentRecordId) {
@@ -355,10 +361,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
       json.put("parentId", treeNode.getReportSet());
       json.put("_hasChildren", this.nodeHasChildren(treeNode.getNode()));
-    } catch (HibernateException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (JSONException e) {
+    } catch (Exception e) {
       log.error("Error on tree datasource", e);
     }
     return json;
