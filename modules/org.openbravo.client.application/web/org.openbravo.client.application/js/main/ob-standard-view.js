@@ -963,6 +963,9 @@ isc.OBStandardView.addProperties({
       callback = null;
     }
 
+    if (this.treeGrid && this.isShowingTree) {
+      this.treeGrid.fetchData();
+    }
     this.viewGrid.refreshContents(callback);
 
     this.toolBar.updateButtonState(true);
