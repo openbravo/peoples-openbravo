@@ -49,7 +49,7 @@ isc.OBTreeGrid.addProperties({
   dataProperties: {
     modelType: "parent",
     rootValue: "0",
-    idField: "id",
+    idField: "nodeId",
     parentIdField: "parentId",
     openProperty: "isOpen"
   },
@@ -82,6 +82,8 @@ isc.OBTreeGrid.addProperties({
         delete dsRequest.params.selectedRecords;
       }
       dsRequest.params._selectedProperties = me.getSelectedPropertiesString();
+      // Includes the context, it could be used in the hqlwhereclause
+      isc.addProperties(dsRequest.params, me.view.getContextInfo(true, false));
       dsRequest.willHandleError = true;
       return this.Super('transformRequest', arguments);
     };

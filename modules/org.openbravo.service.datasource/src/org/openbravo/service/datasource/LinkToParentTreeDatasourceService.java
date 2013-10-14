@@ -10,25 +10,19 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
-import org.openbravo.model.ad.utility.TreeNode;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.slf4j.Logger;
@@ -45,17 +39,21 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   @Override
   protected void deleteNode(JSONObject bobProperties) {
     try {
-      String bobId = bobProperties.getString("id");
       String entityName = bobProperties.getString("_entity");
       Entity entity = ModelProvider.getInstance().getEntity(entityName);
       Table table = OBDal.getInstance().get(Table.class, entity.getTableId());
       Property linkToParentProperty = getLinkToParentProperty(table);
+      Property nodeIdProperty = getNodeIdProperty(table);
       String bobParentNode = null;
+      String bobNodeId = null;
       if (bobProperties.has(linkToParentProperty.getName())) {
-        bobProperties.getString(linkToParentProperty.getName());
+        bobParentNode = bobProperties.getString(linkToParentProperty.getName());
+      }
+      if (bobProperties.has(nodeIdProperty.getName())) {
+        bobNodeId = bobProperties.getString(nodeIdProperty.getName());
       }
 
-      int nChildrenMoved = reparentChildrenOfDeletedNode(entity, bobParentNode, bobId);
+      int nChildrenMoved = reparentChildrenOfDeletedNode(entity, bobParentNode, bobNodeId);
       logger.info(nChildrenMoved + " children have been moved to another parent");
     } catch (Exception e) {
       logger.error("Error while deleting tree node: ", e);
@@ -106,6 +104,18 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return entity.getPropertyByColumnName(linkToParentColumn.getDBColumnName());
   }
 
+  private Property getNodeIdProperty(Table table) {
+    // TODO: Terminar. Soportar tablas con varios árboles asociados
+    List<TableTree> tableTreeList = table.getADTableTreeList();
+    if (tableTreeList.size() != 1) {
+      return null;
+    }
+    TableTree tableTree = tableTreeList.get(0);
+    Column nodeIdColumn = tableTree.getNodeIdColumn();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    return entity.getPropertyByColumnName(nodeIdColumn.getDBColumnName());
+  }
+
   private Property getLinkToParentProperty(Tab tab) {
     TableTree tableTree = tab.getTableTree();
     Column linkToParentColumn = tableTree.getLinkToParentColumn();
@@ -113,9 +123,16 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return entity.getPropertyByColumnName(linkToParentColumn.getDBColumnName());
   }
 
+  private Property getNodeIdProperty(Tab tab) {
+    TableTree tableTree = tab.getTableTree();
+    Column nodeIdColumn = tableTree.getNodeIdColumn();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+    return entity.getPropertyByColumnName(nodeIdColumn.getDBColumnName());
+  }
+
   @Override
-  protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId)
-      throws JSONException {
+  protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId,
+      String hqlWhereClause) throws JSONException {
 
     boolean fetchRoot = ROOT_NODE.equals(parentId);
     String tabId = parameters.get("tabId");
@@ -123,13 +140,17 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     Table table = tab.getTable();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property linkToParentProperty = getLinkToParentProperty(tab);
-
+    Property nodeIdProperty = getNodeIdProperty(tab);
     StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" where " + linkToParentProperty.getName());
+    whereClause.append(" as e where e." + linkToParentProperty.getName());
     if (fetchRoot) {
       whereClause.append(" is null ");
     } else {
       whereClause.append(".id = '" + parentId + "' ");
+    }
+
+    if (hqlWhereClause != null) {
+      whereClause.append(" and " + hqlWhereClause);
     }
 
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
@@ -146,6 +167,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) bob,
           DataResolvingMode.FULL);
       json.put("parentId", parentId);
+      String nodeId = (String) bob.get(nodeIdProperty.getName());
+      json.put("nodeId", nodeId);
       json.put("_hasChildren", (this.nodeHasChildren(tab, bob)) ? true : false);
       responseData.put(json);
 
@@ -157,33 +180,18 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     Table table = tab.getTable();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property linkToParentProperty = getLinkToParentProperty(tab);
-    OBCriteria<BaseOBObject> nodeChildrenCriteria = OBDal.getInstance().createCriteria(
-        entity.getName());
-    nodeChildrenCriteria.add(Restrictions.eq(linkToParentProperty.getName(), node));
-    return nodeChildrenCriteria.count() > 0;
+    Property nodeIdProperty = getNodeIdProperty(tab);
+    String nodeId = (String) node.get(nodeIdProperty.getName());
+    StringBuilder whereClause = new StringBuilder();
+    whereClause.append(" where " + linkToParentProperty.getName());
+    whereClause.append(".id = '" + nodeId + "' ");
+    final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
+        whereClause.toString());
+
+    return query.count() > 0;
   }
 
   private void recomputeSequenceNumbers(Tree tree, String newParentId, Long seqNo) {
-    StringBuilder queryStr = new StringBuilder();
-    queryStr.append(" UPDATE ad_treenode ");
-    queryStr.append(" SET seqno = (seqno + 10) ");
-    queryStr.append(" WHERE ad_tree_id = ? ");
-    queryStr.append(" AND parent_id = ? ");
-    queryStr.append(" AND seqno >= ? ");
-
-    ConnectionProvider conn = new DalConnectionProvider(false);
-    PreparedStatement st;
-    try {
-      st = conn.getPreparedStatement(queryStr.toString());
-      st.setString(1, tree.getId());
-      st.setString(2, newParentId);
-      st.setLong(3, seqNo);
-      int nUpdated = st.executeUpdate();
-      logger.debug("Recomputing sequence numbers: " + nUpdated + " nodes updated");
-      conn.releasePreparedStatement(st);
-    } catch (Exception e) {
-      logger.error("Exception while recomputing sequence numbers: ", e);
-    }
   }
 
   protected JSONObject moveNode(Map<String, String> parameters, String nodeId, String newParentId,
@@ -218,45 +226,24 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
   private Long calculateSequenceNumberAndRecompute(Tree tree, String prevNodeId, String nextNodeId,
       String newParentId) throws Exception {
-    Long seqNo = null;
-    if (prevNodeId == null && nextNodeId == null) {
-      // Only child, no need to recompute sequence numbers
-      seqNo = 10L;
-    } else if (nextNodeId == null) {
-      // Last positioned child. Pick the highest sequence number of its brothers and add 10
-      // No need to recompute sequence numbers
-      OBCriteria<TreeNode> maxSeqNoCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
-      maxSeqNoCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
-      maxSeqNoCriteria.add(Restrictions.eq(TreeNode.PROPERTY_REPORTSET, newParentId));
-      maxSeqNoCriteria.setProjection(Projections.max(TreeNode.PROPERTY_SEQUENCENUMBER));
-      Long maxSeqNo = (Long) maxSeqNoCriteria.uniqueResult();
-      seqNo = maxSeqNo + 10;
-    } else {
-      // Sequence numbers of the nodes that are positioned after the new one needs to be recomputed
-      OBCriteria<TreeNode> nextNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
-      nextNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
-      nextNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, nextNodeId));
-      TreeNode nextNode = (TreeNode) nextNodeCriteria.uniqueResult();
-      seqNo = nextNode.getSequenceNumber();
-      recomputeSequenceNumbers(tree, newParentId, seqNo);
-    }
-    return seqNo;
+    return 0L;
   }
 
   @Override
-  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId) {
+  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String bobId) {
     String tabId = parameters.get("tabId");
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
     Table table = tab.getTable();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property linkToParentProperty = getLinkToParentProperty(tab);
+    Property nodeIdProperty = getNodeIdProperty(tab);
     JSONObject json = null;
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
 
     try {
-      BaseOBObject bob = OBDal.getInstance().get(entity.getName(), nodeId);
+      BaseOBObject bob = OBDal.getInstance().get(entity.getName(), bobId);
       json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
       BaseOBObject parent = (BaseOBObject) bob.get(linkToParentProperty.getName());
       if (parent != null) {
@@ -264,6 +251,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       } else {
         json.put("parentId", (String) null);
       }
+      String nodeId = (String) bob.get(nodeIdProperty.getName());
+      json.put("nodeId", nodeId);
       json.put("_hasChildren", (this.nodeHasChildren(tab, bob)) ? true : false);
     } catch (JSONException e) {
       logger.error("Error on tree datasource", e);

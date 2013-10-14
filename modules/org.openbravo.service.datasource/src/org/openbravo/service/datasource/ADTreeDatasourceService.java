@@ -113,8 +113,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   }
 
   @Override
-  protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId)
-      throws JSONException {
+  protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId,
+      String hqlWhereClause) throws JSONException {
 
     String referencedTableId = parameters.get("referencedTableId");
     String parentRecordId = parameters.get("parentRecordId");
@@ -131,12 +131,12 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
     StringBuilder joinClause = new StringBuilder();
     joinClause.append(" as tn ");
-    joinClause.append(" , " + entity.getName() + " as t ");
-    joinClause.append(" where tn.node = t.id ");
+    joinClause.append(" , " + entity.getName() + " as e ");
+    joinClause.append(" where tn.node = e.id ");
     joinClause.append(" and tn.tree.id = '" + tree.getId() + "' ");
     joinClause.append(" and tn.reportSet = '" + parentId + "' order by tn.sequenceNumber ");
 
-    String selectClause = " tn.id as treeNodeId, tn.reportSet as parentId, tn.sequenceNumber as seqNo, tn.node as nodeId, t as entity";
+    String selectClause = " tn.id as treeNodeId, tn.reportSet as parentId, tn.sequenceNumber as seqNo, tn.node as nodeId, e as entity";
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
     obq.setSelectClause(selectClause);
@@ -153,6 +153,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       BaseOBObject bob = (BaseOBObject) node[ENTITY];
       try {
         value = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
+        value.put("nodeId", bob.getId().toString());
         value.put("parentId", node[PARENT_ID]);
         value.put("seqno", node[SEQNO]);
         value.put("_hasChildren", (this.nodeHasChildren((String) node[NODE_ID])) ? true : false);
@@ -342,7 +343,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   }
 
   @Override
-  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId) {
+  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String bobId) {
     String referencedTableId = parameters.get("referencedTableId");
     String parentRecordId = parameters.get("parentRecordId");
     Tree tree = this.getTree(referencedTableId, parentRecordId);
@@ -355,10 +356,11 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     try {
       OBCriteria<TreeNode> treeNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
       treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
-      treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, nodeId));
+      treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, bobId));
       TreeNode treeNode = (TreeNode) treeNodeCriteria.uniqueResult();
       BaseOBObject bob = OBDal.getInstance().get(entity.getName(), treeNode.getNode());
       json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
+      json.put("nodeId", bobId);
       json.put("parentId", treeNode.getReportSet());
       json.put("_hasChildren", this.nodeHasChildren(treeNode.getNode()));
     } catch (Exception e) {

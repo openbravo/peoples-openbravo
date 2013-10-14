@@ -1,7 +1,10 @@
 package org.openbravo.service.datasource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -14,6 +17,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.datasource.CheckTreeOperationManager.ActionResponse;
 import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
@@ -79,7 +84,16 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         responseData = fetchSelectedNodes(parameters, selectedNodes);
       } else {
         String parentId = parameters.get("parentId");
-        responseData = fetchNodeChildren(parameters, parentId);
+        String tabId = parameters.get("tabId");
+        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+        String hqlTreeWhereClause = null;
+
+        if (parentId.equals(ROOT_NODE)) {
+          if (tab.getHqlTreeWhereClause() != null) {
+            hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
+          }
+        }
+        responseData = fetchNodeChildren(parameters, parentId, hqlTreeWhereClause);
       }
       final JSONObject jsonResponse = new JSONObject();
       jsonResponse.put(JsonConstants.RESPONSE_DATA, responseData);
@@ -130,7 +144,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       }
       // Expand all the parents
       for (String parentId : parentsToExpand) {
-        JSONArray nodeChildren = this.fetchNodeChildren(parameters, parentId);
+        JSONArray nodeChildren = this.fetchNodeChildren(parameters, parentId, null);
         for (int i = 0; i < nodeChildren.length(); i++) {
           JSONObject node = nodeChildren.getJSONObject(i);
           if (!addedNodes.contains(node.getString("id"))) {
@@ -155,13 +169,35 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   }
 
   protected JSONArray fetchFirstLevelNodes(Map<String, String> parameters) throws JSONException {
-    return this.fetchNodeChildren(parameters, ROOT_NODE);
+    String tabId = parameters.get("tabId");
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    String hqlTreeWhereClause = null;
+    if (tab.getHqlTreeWhereClause() != null) {
+      hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
+    }
+    return this.fetchNodeChildren(parameters, ROOT_NODE, hqlTreeWhereClause);
+  }
+
+  private String substituteParameters(String hqlTreeWhereClause, Map<String, String> parameters) {
+    Pattern pattern = Pattern.compile("@\\S*@");
+    Matcher matcher = pattern.matcher(hqlTreeWhereClause);
+    HashMap<String, String> replacements = new HashMap<String, String>();
+    while (matcher.find()) {
+      String contextPropertyName = hqlTreeWhereClause.substring(matcher.start(), matcher.end());
+      String value = parameters.get(contextPropertyName);
+      replacements.put(contextPropertyName, "'" + value + "'");
+    }
+    String hqlCopy = new String(hqlTreeWhereClause);
+    for (String key : replacements.keySet()) {
+      hqlCopy = hqlCopy.replaceAll(key, replacements.get(key));
+    }
+    return hqlCopy;
   }
 
   protected abstract JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId);
 
-  protected abstract JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId)
-      throws JSONException;
+  protected abstract JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId,
+      String hqlWhereClause) throws JSONException;
 
   @Override
   public String update(Map<String, String> parameters, String content) {
