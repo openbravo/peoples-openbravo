@@ -65,31 +65,31 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
 
     // Check whether the preference is set to sync with order header
     try {
-      syncDateOrdered = Preferences.getPreferenceValue("SyncDateOrdered", true, OBContext
+      syncDateOrdered = Preferences.getPreferenceValue("DoNotSyncDateOrdered", true, OBContext
           .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     } catch (PropertyException e) {
-      // if property not found, do not sync the ordered date
-      syncDateOrdered = "N";
+      // if property not found, sync the ordered date
+      syncDateOrdered = "Y";
     }
     try {
-      syncDateDelivered = Preferences.getPreferenceValue("SyncDateDelivered", true, OBContext
+      syncDateDelivered = Preferences.getPreferenceValue("DoNotSyncDateDelivered", true, OBContext
           .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     } catch (PropertyException e) {
-      // if property not found, do not sync the delivered date
-      syncDateDelivered = "N";
+      // if property not found, sync the delivered date
+      syncDateDelivered = "Y";
     }
     OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
     orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER,
         OBDal.getInstance().get(Order.class, orderId)));
     if (orderLineCriteria.count() > 0) {
-      if (newOrderDate.compareTo(oldOrderDate) != 0 && "Y".equals(syncDateOrdered)) {
+      if (newOrderDate.compareTo(oldOrderDate) != 0 && "N".equals(syncDateOrdered)) {
         for (OrderLine lines : orderLineCriteria.list()) {
           lines.setOrderDate(newOrderDate);
         }
       }
-      if (newScheduledDate.compareTo(oldScheduledDate) != 0 && "Y".equals(syncDateDelivered)) {
+      if (newScheduledDate.compareTo(oldScheduledDate) != 0 && "N".equals(syncDateDelivered)) {
         for (OrderLine lines : orderLineCriteria.list()) {
           lines.setScheduledDeliveryDate(newScheduledDate);
         }
