@@ -1953,7 +1953,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--BD59EB3C7F684361B4408CACE67910E9-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--BD59EB3C7F684361B4408CACE67910E9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--BD59EB3C7F684361B4408CACE67910E9-->  <AD_COLUMN_ID><![CDATA[442785061FCD49598885533884F4589A]]></AD_COLUMN_ID>
-<!--BD59EB3C7F684361B4408CACE67910E9-->  <NAME><![CDATA[Tree Category]]></NAME>
+<!--BD59EB3C7F684361B4408CACE67910E9-->  <NAME><![CDATA[Name]]></NAME>
+<!--BD59EB3C7F684361B4408CACE67910E9-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
+<!--BD59EB3C7F684361B4408CACE67910E9-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
 <!--BD59EB3C7F684361B4408CACE67910E9-->  <PROPERTY><![CDATA[treeCategory.name]]></PROPERTY>
 <!--BD59EB3C7F684361B4408CACE67910E9-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--BD59EB3C7F684361B4408CACE67910E9-->  <SORT><![CDATA[Y]]></SORT>
