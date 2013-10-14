@@ -54,7 +54,6 @@
       } else {
         receipt.clearWith(me.receipt);
       }
-
       if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
         if (receipt.get('orderType') === 1) {
           template = me.templatereturninvoice;
@@ -96,6 +95,26 @@
           }]);
         }
       });
+      if (receipt.get('orderType') === 1 && !OB.POS.modelterminal.hasPermission('OBPOS_print.once')) {
+        OB.POS.hwserver.print(template, {
+          order: receipt
+        }, function (result) {
+          var otherMe = me;
+          var myreceipt = receipt;
+          if (result && result.exception) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              action: function () {
+                var otherOtherMe = otherMe;
+                otherOtherMe.print();
+                return true;
+              }
+            }, {
+              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+            }]);
+          }
+        });
+      }
     });
 
 

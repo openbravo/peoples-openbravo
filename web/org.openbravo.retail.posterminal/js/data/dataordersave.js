@@ -34,15 +34,6 @@
         //The receipt has already been sent, it should not be sent again
         return;
       }
-      if (this.receipt.get('orderType') !== 2 && this.receipt.get('orderType') !== 3) {
-        this.receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One);
-        _.each(this.receipt.get('lines').models, function (line) {
-          if (line.get('gross') > 0) {
-            this.receipt.setOrderType('', OB.DEC.Zero);
-          }
-        }, this);
-      }
-
       this.receipt.set('hasbeenpaid', 'Y');
 
       OB.UTIL.updateDocumentSequenceInDB(docno);

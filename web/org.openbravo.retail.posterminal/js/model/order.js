@@ -641,29 +641,25 @@
 
       if (OB.DEC.isNumber(qty)) {
         var oldqty = line.get('qty');
-        if (OB.DEC.compare(qty) > 0) {
-          if (line.get('product').get('groupProduct') === false) {
-            this.addProduct(line.get('product'));
-            return true;
-          } else {
-            var me = this;
-            // sets the new quantity
-            line.set('qty', qty);
-            line.calculateGross();
-            // sets the undo action
-            this.set('undo', {
-              text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
-              oldqty: oldqty,
-              line: line,
-              undo: function () {
-                line.set('qty', oldqty);
-                line.calculateGross();
-                me.set('undo', null);
-              }
-            });
-          }
+        if (line.get('product').get('groupProduct') === false) {
+          this.addProduct(line.get('product'));
+          return true;
         } else {
-          this.deleteLine(line);
+          var me = this;
+          // sets the new quantity
+          line.set('qty', qty);
+          line.calculateGross();
+          // sets the undo action
+          this.set('undo', {
+            text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
+            oldqty: oldqty,
+            line: line,
+            undo: function () {
+              line.set('qty', oldqty);
+              line.calculateGross();
+              me.set('undo', null);
+            }
+          });
         }
         this.adjustPayment();
         this.save();
@@ -740,7 +736,12 @@
         OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
         return;
       }
-      qty = qty || 1;
+      if (this.get('orderType') === 1) {
+        qty = -qty || -1;
+      } else {
+        qty = qty || 1;
+      }
+
       if (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
@@ -1010,6 +1011,9 @@
       if (OB.POS.modelterminal.hasPermission(permission)) {
         if (permission === 'OBPOS_receipt.return') {
           this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
+          _.each(this.get('lines').models, function (line) {
+            me.returnLine(line);
+          }, this);
         } else {
           this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
         }
