@@ -51,6 +51,7 @@ public class ProcessCashClose extends JSONProcessSimple {
     	      jsonData.put("error", "1");
     	      jsonData.put("errorMessage", "OBPOS_LblCashupWithReconciliationDraft");
     	      jsonData.put("errorDetail",  payment.getCommercialName());
+    	      jsonData.put("errorNoNavigateToInitialScreen", "true");
     	      jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
     	      return jsonResponse;
     	  }

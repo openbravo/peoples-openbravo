@@ -257,13 +257,21 @@ enyo.kind({
         message = OB.I18N.getLabel('OBPOS_CashUpWrongly');
       }
 
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message, [{
-        label: OB.I18N.getLabel('OBMOBC_LblOk'),
-        action: function () {
-          OB.POS.navigate('retail.pointofsale');
-          return true;
-        }
-      }]);
+      var errorNoNavigateToInitialScreen = model.get('errorNoNavigateToInitialScreen');
+      if(errorNoNavigateToInitialScreen && errorNoNavigateToInitialScreen==='true'){
+    	  model.set('cashUpSent', false);
+    	  model.set("finishedWrongly", false);
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message);
+      }
+      else{
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message, [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              action: function () {
+                OB.POS.navigate('retail.pointofsale');
+                return true;
+              }
+            }]);    	  
+      }
     }, this);
 
     this.refresh();

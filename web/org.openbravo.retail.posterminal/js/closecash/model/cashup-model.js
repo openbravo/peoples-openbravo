@@ -317,7 +317,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
         OB.UTIL.showLoading(false);
         if (data.errorMessage) {
           me.set("errorMessage", data.errorMessage);
-          me.set("errorDetail", data.errorDetail)
+          me.set("errorDetail", data.errorDetail);
+          me.set("errorNoNavigateToInitialScreen", data.errorNoNavigateToInitialScreen);
         }
         me.set("finishedWrongly", true);
       } else {
