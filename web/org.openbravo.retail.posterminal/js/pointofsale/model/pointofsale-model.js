@@ -39,7 +39,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterRole'
   },
-  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
@@ -295,7 +295,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
       function prepareToSendCallback(order) {
         me.get('multiOrders').trigger('closed', order);
-        me.get('multiOrders').trigger('print', order); // to guaranty execution order
+        if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
+           var negativeLines = _.filter(receipt.get('lines').models, function (line) {
+            return line.get('gross') < 0;
+          }).length;
+          if (negativeLines === receipt.get('lines').models.length) {
+            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One);
+          }
+          me.get('multiOrders').trigger('print', order); // to guaranty execution order
+        } else {
+          me.get('multiOrders').trigger('print', order); // to guaranty execution order
+        }
         SyncReadyToSendFunction();
       }
 
@@ -419,8 +429,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         } else {
           receipt.trigger('closed');
         }
+        if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
+          var negativeLines = _.filter(receipt.get('lines').models, function (line) {
+            return line.get('gross') < 0;
+          }).length;
+          if (negativeLines === receipt.get('lines').models.length) {
+            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One);
+          }
+          receipt.trigger('print'); // to guaranty execution order
+        } else {
+          receipt.trigger('print'); // to guaranty execution order
+        }
 
-        receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
       });
     }, this);
