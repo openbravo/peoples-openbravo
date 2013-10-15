@@ -24,6 +24,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.ADTreeType;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
@@ -343,7 +344,14 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   }
 
   @Override
-  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String bobId) {
+  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId)
+      throws MultipleParentsException {
+    // In the ADTree structure, nodeId = recordId
+    return this.getJSONObjectByRecordId(parameters, nodeId);
+  }
+
+  @Override
+  protected JSONObject getJSONObjectByRecordId(Map<String, String> parameters, String bobId) {
     String referencedTableId = parameters.get("referencedTableId");
     String parentRecordId = parameters.get("parentRecordId");
     Tree tree = this.getTree(referencedTableId, parentRecordId);
@@ -367,6 +375,11 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       log.error("Error on tree datasource", e);
     }
     return json;
+  }
+
+  protected boolean nodeConformsToWhereClause(Tab tab, String nodeId, String hqlWhereClause) {
+    // TODO: Implementar
+    return true;
   }
 
 }

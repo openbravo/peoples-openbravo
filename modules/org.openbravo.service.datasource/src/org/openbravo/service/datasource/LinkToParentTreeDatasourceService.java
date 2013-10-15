@@ -142,15 +142,17 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     Property linkToParentProperty = getLinkToParentProperty(tab);
     Property nodeIdProperty = getNodeIdProperty(tab);
     StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as e where e." + linkToParentProperty.getName());
-    if (fetchRoot) {
-      whereClause.append(" is null ");
-    } else {
-      whereClause.append(".id = '" + parentId + "' ");
-    }
+    whereClause.append(" as e ");
 
     if (hqlWhereClause != null) {
-      whereClause.append(" and " + hqlWhereClause);
+      whereClause.append(" where " + hqlWhereClause);
+    } else {
+      whereClause.append(" where e." + linkToParentProperty.getName());
+      if (fetchRoot) {
+        whereClause.append(" is null ");
+      } else {
+        whereClause.append(".id = '" + parentId + "' ");
+      }
     }
 
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
@@ -167,8 +169,14 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) bob,
           DataResolvingMode.FULL);
       json.put("parentId", parentId);
-      String nodeId = (String) bob.get(nodeIdProperty.getName());
-      json.put("nodeId", nodeId);
+      Object nodeId = bob.get(nodeIdProperty.getName());
+      String nodeIdStr = null;
+      if (nodeId instanceof String) {
+        nodeIdStr = (String) nodeId;
+      } else if (nodeId instanceof BaseOBObject) {
+        nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
+      }
+      json.put("nodeId", nodeIdStr);
       json.put("_hasChildren", (this.nodeHasChildren(tab, bob)) ? true : false);
       responseData.put(json);
 
@@ -181,10 +189,17 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property linkToParentProperty = getLinkToParentProperty(tab);
     Property nodeIdProperty = getNodeIdProperty(tab);
-    String nodeId = (String) node.get(nodeIdProperty.getName());
+
+    Object nodeId = node.get(nodeIdProperty.getName());
+    String nodeIdStr = null;
+    if (nodeId instanceof String) {
+      nodeIdStr = (String) nodeId;
+    } else if (nodeId instanceof BaseOBObject) {
+      nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
+    }
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" where " + linkToParentProperty.getName());
-    whereClause.append(".id = '" + nodeId + "' ");
+    whereClause.append(".id = '" + nodeIdStr + "' ");
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
 
@@ -230,7 +245,47 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   }
 
   @Override
-  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String bobId) {
+  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId)
+      throws MultipleParentsException {
+    String tabId = parameters.get("tabId");
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+
+    // Obtain the recordId based on the nodeId
+    Table table = tab.getTable();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    Property nodeIdProperty = getNodeIdProperty(tab);
+
+    StringBuilder whereClause = new StringBuilder();
+    whereClause.append(" where " + nodeIdProperty.getName());
+    whereClause.append(".id = '" + nodeId + "' ");
+    final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
+        whereClause.toString());
+    if (query.count() != 1) {
+      throw new MultipleParentsException();
+    }
+    BaseOBObject bob = query.uniqueResult();
+    return this.getJSONObjectByRecordId(parameters, bob.getId().toString());
+  }
+
+  protected boolean nodeConformsToWhereClause(Tab tab, String nodeId, String hqlWhereClause) {
+    if (tab.getHqlTreeWhereClause() == null || tab.getHqlTreeWhereClause().isEmpty()) {
+      return true;
+    }
+    Table table = tab.getTable();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    Property nodeIdProperty = getNodeIdProperty(tab);
+
+    StringBuilder whereClause = new StringBuilder();
+    whereClause.append(" as e where e." + nodeIdProperty.getName());
+    whereClause.append(".id = '" + nodeId + "' ");
+    whereClause.append(" and " + hqlWhereClause);
+    final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
+        whereClause.toString());
+    return (query.count() == 1);
+  }
+
+  @Override
+  protected JSONObject getJSONObjectByRecordId(Map<String, String> parameters, String bobId) {
     String tabId = parameters.get("tabId");
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
     Table table = tab.getTable();
@@ -251,13 +306,18 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       } else {
         json.put("parentId", (String) null);
       }
-      String nodeId = (String) bob.get(nodeIdProperty.getName());
-      json.put("nodeId", nodeId);
+      Object nodeId = bob.get(nodeIdProperty.getName());
+      String nodeIdStr = null;
+      if (nodeId instanceof String) {
+        nodeIdStr = (String) nodeId;
+      } else if (nodeId instanceof BaseOBObject) {
+        nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
+      }
+      json.put("nodeId", nodeIdStr);
       json.put("_hasChildren", (this.nodeHasChildren(tab, bob)) ? true : false);
     } catch (JSONException e) {
       logger.error("Error on tree datasource", e);
     }
-
     return json;
   }
 

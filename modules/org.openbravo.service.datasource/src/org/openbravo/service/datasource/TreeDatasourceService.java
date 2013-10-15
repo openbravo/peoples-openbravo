@@ -74,6 +74,18 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   public String fetch(Map<String, String> parameters) {
     OBContext.setAdminMode(true);
     final JSONObject jsonResult = new JSONObject();
+
+    String parentId = parameters.get("parentId");
+    String tabId = parameters.get("tabId");
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    String hqlTreeWhereClause = null;
+
+    if (parentId.equals(ROOT_NODE)) {
+      if (tab.getHqlTreeWhereClause() != null) {
+        hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
+      }
+    }
+
     try {
       JSONArray responseData = null;
       JSONArray selectedNodes = null;
@@ -81,18 +93,15 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         selectedNodes = new JSONArray(parameters.get("selectedRecords"));
       }
       if (selectedNodes != null && selectedNodes.length() > 0) {
-        responseData = fetchSelectedNodes(parameters, selectedNodes);
-      } else {
-        String parentId = parameters.get("parentId");
-        String tabId = parameters.get("tabId");
-        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-        String hqlTreeWhereClause = null;
-
-        if (parentId.equals(ROOT_NODE)) {
-          if (tab.getHqlTreeWhereClause() != null) {
-            hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
-          }
+        try {
+          responseData = fetchSelectedNodes(parameters, selectedNodes);
+        } catch (MultipleParentsException e) {
+          // If a node has multiple parents, we can't select them
+          log.warn("Node found with multiple parents. It can't be selected, displaying root nodes closed");
+          responseData = fetchNodeChildren(parameters, parentId, hqlTreeWhereClause);
         }
+      } else {
+
         responseData = fetchNodeChildren(parameters, parentId, hqlTreeWhereClause);
       }
       final JSONObject jsonResponse = new JSONObject();
@@ -111,21 +120,31 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return jsonResult.toString();
   }
 
-  private JSONArray fetchSelectedNodes(Map<String, String> parameters, JSONArray selectedNodes) {
+  private JSONArray fetchSelectedNodes(Map<String, String> parameters, JSONArray selectedNodes)
+      throws MultipleParentsException {
     JSONArray responseData = new JSONArray();
+    String tabId = parameters.get("tabId");
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
     try {
       ArrayList<String> addedNodes = new ArrayList<String>();
       ArrayList<String> parentsToExpand = new ArrayList<String>();
       int maxLevel = -1;
       for (int i = 0; i < selectedNodes.length(); i++) {
         String nodeId = selectedNodes.getString(i);
-        JSONObject node = getJSONObjectByNodeId(parameters, nodeId);
+        JSONObject node = getJSONObjectByRecordId(parameters, nodeId);
         if (!addedNodes.contains(node.getString("id"))) {
           addedNodes.add(node.getString("id"));
           responseData.put(node);
         }
         int level = 0;
-        while (node.has("parentId") && !"0".equals(node.getString("parentId"))) {
+
+        String hqlTreeWhereClause = null;
+        if (tab.getHqlTreeWhereClause() != null) {
+          hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
+        }
+
+        while (node.has("parentId") && !"0".equals(node.getString("parentId"))
+            && this.nodeConformsToWhereClause(tab, node.getString("parentId"), hqlTreeWhereClause)) {
           nodeId = node.getString("parentId");
           node = getJSONObjectByNodeId(parameters, nodeId);
           node.put("isOpen", true);
@@ -168,6 +187,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return responseData;
   }
 
+  protected abstract boolean nodeConformsToWhereClause(Tab tab, String nodeId, String hqlWhereClause);
+
   protected JSONArray fetchFirstLevelNodes(Map<String, String> parameters) throws JSONException {
     String tabId = parameters.get("tabId");
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
@@ -194,7 +215,11 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return hqlCopy;
   }
 
-  protected abstract JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId);
+  protected abstract JSONObject getJSONObjectByRecordId(Map<String, String> parameters,
+      String nodeId);
+
+  protected abstract JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId)
+      throws MultipleParentsException;
 
   protected abstract JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId,
       String hqlWhereClause) throws JSONException;
@@ -298,4 +323,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   protected abstract JSONObject moveNode(Map<String, String> parameters, String nodeId,
       String newParentId, String prevNodeId, String nextNodeId) throws Exception;
+
+  protected class MultipleParentsException extends Exception {
+
+  }
 }
