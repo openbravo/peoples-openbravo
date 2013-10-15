@@ -294,18 +294,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
 
       function prepareToSendCallback(order) {
-        me.get('multiOrders').trigger('closed', order);
         if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
-           var negativeLines = _.filter(receipt.get('lines').models, function (line) {
+          var negativeLines = _.filter(order.get('lines').models, function (line) {
             return line.get('gross') < 0;
           }).length;
-          if (negativeLines === receipt.get('lines').models.length) {
-            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One);
+          if (negativeLines === order.get('lines').models.length) {
+            order.setOrderType('OBPOS_receipt.return', OB.DEC.One);
+          } else {
+            receipt.setOrderType('', OB.DEC.Zero);
           }
-          me.get('multiOrders').trigger('print', order); // to guaranty execution order
-        } else {
-          me.get('multiOrders').trigger('print', order); // to guaranty execution order
         }
+        me.get('multiOrders').trigger('closed', order);
+        me.get('multiOrders').trigger('print', order); // to guaranty execution order
         SyncReadyToSendFunction();
       }
 
@@ -397,6 +397,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         //Create the negative payment for change
         var oldChange = receipt.get('change');
         var clonedCollection = new Backbone.Collection();
+        if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
+          var negativeLines = _.filter(receipt.get('lines').models, function (line) {
+            return line.get('gross') < 0;
+          }).length;
+          if (negativeLines === receipt.get('lines').models.length) {
+            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One);
+          } else {
+            receipt.setOrderType('', OB.DEC.Zero);
+          }
+        }
         if (!_.isUndefined(receipt.selectedPayment) && receipt.getChange() > 0) {
           var payment = OB.POS.terminal.terminal.paymentnames[receipt.selectedPayment];
           receipt.get('payments').each(function (model) {
@@ -429,18 +439,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         } else {
           receipt.trigger('closed');
         }
-        if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
-          var negativeLines = _.filter(receipt.get('lines').models, function (line) {
-            return line.get('gross') < 0;
-          }).length;
-          if (negativeLines === receipt.get('lines').models.length) {
-            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One);
-          }
-          receipt.trigger('print'); // to guaranty execution order
-        } else {
-          receipt.trigger('print'); // to guaranty execution order
-        }
-
+        receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
       });
     }, this);

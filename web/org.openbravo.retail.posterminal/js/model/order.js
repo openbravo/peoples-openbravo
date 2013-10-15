@@ -740,7 +740,7 @@
         return;
       }
       if (this.get('orderType') === 1) {
-        qty = -qty || -1;
+        qty = qty ? -qty : -1;
       } else {
         qty = qty || 1;
       }
@@ -976,7 +976,7 @@
         text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
         line: line,
         undo: function () {
-          line.set('qty', -line.get('qty'))
+          line.set('qty', -line.get('qty'));
           me.set('undo', null);
         }
       });
