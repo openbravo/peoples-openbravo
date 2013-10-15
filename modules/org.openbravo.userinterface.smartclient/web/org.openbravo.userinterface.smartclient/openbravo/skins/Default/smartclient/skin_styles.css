@@ -513,24 +513,22 @@ overwritten by _base.scss.
   background: -moz-linear-gradient(left, #f5f5f5, #dbdbdb) padding-box;
   background: -o-linear-gradient(left, #f5f5f5, #dbdbdb) padding-box;
   background: linear-gradient(left, #f5f5f5, #dbdbdb) padding-box;
-  background-color: white;
   -webkit-background-size: 24px;
   -moz-background-size: 24px;
   -o-background-size: 24px;
   background-size: 24px;
-  background-repeat: repeat-y;
-  background-attachment: scroll;
 }
 
 .menuMainRTL {
-  background-color: white;
-  background-image: url("./images/Menu/menu_background_rtl.png");
-  background-repeat: repeat-y;
-  background-attachment: scroll;
+  background-image: url(./images/Menu/menu_background_rtl.png);
 }
 
-.menuTable {
+.menuMain,
+.menuMainRTL {
   border: 1px solid #ababab;
+  background-color: white;
+  background-repeat: repeat-y;
+  background-attachment: scroll;
 }
 
 .treeMenuBody {

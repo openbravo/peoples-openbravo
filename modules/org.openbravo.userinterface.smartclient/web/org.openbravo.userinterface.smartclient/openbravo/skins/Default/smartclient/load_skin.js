@@ -1329,7 +1329,6 @@ with (theWindow) {
 	        checkmarkDisabledImage:{src:"[SKIN]check_disabled.png", width:7, height:6},
             bodyStyleName:"gridBody",
 			iconBodyStyleName:"menuMain",
-			iconBodyStyleName_rtl:"menuMainRTL",
             bodyBackgroundColor:null
         });
 		isc.addProperties(isc.Menu.ICON_FIELD, {
