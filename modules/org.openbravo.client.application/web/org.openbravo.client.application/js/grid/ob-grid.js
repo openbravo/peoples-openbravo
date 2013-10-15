@@ -60,6 +60,79 @@ isc.OBGrid.addProperties({
     }
   },
 
+  //prevent multi-line content to show strangely
+  //https://issues.openbravo.com/view.php?id=17531, https://issues.openbravo.com/view.php?id=24878
+  formatDisplayValue: function (value, record, rowNum, colNum) {
+    var fld = this.getFields()[colNum],
+        index;
+
+    if (this.inCellHoverHTML || !isc.isA.String(value)) {
+      return value;
+    }
+
+    index = value.indexOf('\n');
+    if (index !== -1) {
+      return value.substring(0, index) + '...';
+    }
+
+    return value;
+  },
+
+  cellHoverHTML: function (record, rowNum, colNum) {
+
+    var ret, field = this.getField(colNum),
+        cellErrors, msg = '',
+        prefix = '',
+        i, func = this.getGridSummaryFunction(field),
+        isGroupOrSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
+
+    if (!record) {
+      return;
+    }
+
+    if (func && (isGroupOrSummary)) {
+      if (func === 'sum') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionSum');
+      }
+      if (func === 'min') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionMin');
+      }
+      if (func === 'max') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionMax');
+      }
+      if (func === 'count') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionCount');
+      }
+      if (func === 'avg') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionAvg');
+      }
+      if (prefix) {
+        prefix = prefix + ' ';
+      }
+    }
+
+    if (this.isCheckboxField(field)) {
+      return OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt');
+    }
+
+    if (this.cellHasErrors(rowNum, colNum)) {
+      cellErrors = this.getCellErrors(rowNum, colNum);
+      // note cellErrors can be a string or array
+      // accidentally both have the length property
+      if (cellErrors && cellErrors.length > 0) {
+        return OB.Utilities.getPromptString(cellErrors);
+      }
+    }
+    if (record && record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
+      return record[isc.OBViewGrid.ERROR_MESSAGE_PROP];
+    }
+
+    this.inCellHoverHTML = true;
+    ret = this.Super('cellHoverHTML', arguments);
+    delete this.inCellHoverHTML;
+    return prefix + (ret ? ret : '');
+  },
+
   enableShortcuts: function () {
     var ksAction_FocusFilter, ksAction_FocusGrid, ksAction_ClearFilter, ksAction_SelectAll, ksAction_UnselectAll;
 
