@@ -410,7 +410,7 @@ enyo.kind({
           selectedReason = _.filter(this.$.returnreason.children, function (reason) {
             return reason.getValue() === me.line.get('returnReason');
           })[0];
-          this.$.returnreason.setSelected(selectedReason.name);
+          this.$.returnreason.setSelected(selectedReason.getNodeProperty('index'));
         }
         this.$.returnreason.show();
       } else {
