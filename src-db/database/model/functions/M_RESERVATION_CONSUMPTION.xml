@@ -94,7 +94,7 @@ BEGIN
   END IF;
     
   IF (v_res_status = 'HO') THEN
-    RAISE_APPLICATION_ERROR(-20000, '@CannotModifyHoldReservation@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')||', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
+    RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeHoldReservation@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')||', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
   END IF;
 
   IF (COALESCE(v_dim_warehouse_id, v_warehouse_id) != v_warehouse_id
