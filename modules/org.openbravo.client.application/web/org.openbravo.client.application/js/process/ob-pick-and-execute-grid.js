@@ -566,7 +566,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       MODE: (newRow ? 'NEW' : 'EDIT'),
       PARENT_ID: null,
       TAB_ID: this.viewProperties.tabId,
-      ROW_ID: (record ? record[OB.Constants.ID] : null)
+      ROW_ID: (!newRow && record ? record[OB.Constants.ID] : null)
     };
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, this.processFICReturn, {
