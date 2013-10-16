@@ -336,7 +336,7 @@ enyo.kind({
       this.$.msgaction.hide();
       this.$.msgedit.show();
       if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
-        this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.line.get('product').get('id')) + '), url(' + "/openbravo/web/org.openbravo.mobile.core/assets/img/box.png" + ')');
+        this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.line.get('product').get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
         this.$.editlineimage.hide();
       } else {
         this.$.editlineimage.setImg(this.line.get('product').get('img'));

@@ -218,7 +218,7 @@ enyo.kind({
     this.otherStoresStockModel = null;
     this.headerComponent.$.productName.setContent(params.product.get('_identifier') + ' (' + params.product.get('uOMsymbol') + ')');
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
-      this.bodyComponent.$.productImage.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(params.product.get('id')) + '), url(' + "/openbravo/web/org.openbravo.mobile.core/assets/img/box.png" + ')');
+      this.bodyComponent.$.productImage.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(params.product.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
     } else {
       this.bodyComponent.$.productImage.applyStyle('background-image', 'url(data:image/png;base64,' + params.product.get('img') + ')');
     }
