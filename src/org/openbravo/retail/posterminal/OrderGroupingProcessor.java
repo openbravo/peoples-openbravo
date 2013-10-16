@@ -60,14 +60,7 @@ public class OrderGroupingProcessor {
     // reconciled. This query must be kept in sync with the one in CashCloseReport
 
     String hqlWhereClause = "as line"
-        + " where (exists (select 1 "
-        + "                 from FIN_Payment_ScheduleDetail d"
-        + "              where d.orderPaymentSchedule.order = line.salesOrder"
-        + "                 and exists (select 1 "
-        + "                               from FIN_Finacc_Transaction t"
-        + "                              where t.reconciliation is null"
-        + "                                and t.finPayment = d.paymentDetails.finPayment)))"
-        + " and line.salesOrder.obposApplications = :terminal and line.deliveredQuantity=line.orderedQuantity"
+        + " where line.salesOrder.obposApplications = :terminal and line.deliveredQuantity=line.orderedQuantity and line.orderedQuantity <> 0"
         + " and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
         + " order by line.businessPartner.id";
 
