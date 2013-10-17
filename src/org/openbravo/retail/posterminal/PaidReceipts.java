@@ -68,7 +68,7 @@ public class PaidReceipts extends JSONProcessSimple {
       // TODO: make this extensible
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
           + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.unitPrice as netPrice , ordLine.salesOrder.currency.pricePrecision as pricePrecision "
-    	  + "from OrderLine as ordLine where ordLine.salesOrder.id=?";
+          + "from OrderLine as ordLine where ordLine.salesOrder.id=?";
       Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
           .createQuery(hqlPaidReceiptsLines);
       paidReceiptsLinesQuery.setString(0, orderid);
@@ -81,6 +81,7 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceiptLine.put("uOM", objpaidReceiptsLines[2]);
         paidReceiptLine.put("quantity", objpaidReceiptsLines[3]);
         paidReceiptLine.put("unitPrice", objpaidReceiptsLines[4]);
+        paidReceiptLine.put("lineId", objpaidReceiptsLines[6]);
         paidReceiptLine.put("netPrice", objpaidReceiptsLines[7]);
 
         // promotions per line
@@ -108,8 +109,11 @@ public class PaidReceipts extends JSONProcessSimple {
           promotions.put(jsonPromo);
           hasPromotions = true;
           if (!paidReceipt.getBoolean("priceIncludesTax")) {
-            paidReceiptLine.put("netPrice", ((BigDecimal) objpaidReceiptsLines[7])
-                .add(displayedAmount.divide((BigDecimal) objpaidReceiptsLines[3], new Integer(String.valueOf(objpaidReceiptsLines[8])).intValue(), BigDecimal.ROUND_HALF_UP)));
+            paidReceiptLine
+                .put("netPrice", ((BigDecimal) objpaidReceiptsLines[7]).add(displayedAmount.divide(
+                    (BigDecimal) objpaidReceiptsLines[3],
+                    new Integer(String.valueOf(objpaidReceiptsLines[8])).intValue(),
+                    BigDecimal.ROUND_HALF_UP)));
           }
         }
 

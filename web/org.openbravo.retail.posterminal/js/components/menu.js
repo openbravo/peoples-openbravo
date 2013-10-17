@@ -28,9 +28,16 @@ enyo.kind({
     });
   },
   displayLogic: function () {
+    var negativeLines = _.filter(this.model.get('order').get('lines').models, function (line) {
+      return line.get('gross') < 0;
+    }).length;
     if (!this.model.get('order').get('isQuotation')) {
       this.show();
     } else {
+      this.hide();
+      return;
+    }
+    if (negativeLines > 0) {
       this.hide();
       return;
     }
@@ -38,13 +45,14 @@ enyo.kind({
       this.setShowing(false);
       return;
     }
+
     this.adjustVisibilityBasedOnPermissions();
   },
   init: function (model) {
     this.model = model;
     var receipt = model.get('order'),
         me = this;
-    receipt.on('change:isEditable change:isQuotation', function (changedModel) {
+    receipt.on('change:isEditable change:isQuotation change:gross', function (changedModel) {
       this.displayLogic();
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {

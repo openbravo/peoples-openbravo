@@ -380,6 +380,11 @@ enyo.kind({
     } else {
       this.$.removeDiscountButton.hide();
     }
+    if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1) {
+      this.$.returnLine.hide();
+    } else {
+      this.$.returnLine.show();
+    }
     this.render();
   },
   receiptChanged: function () {

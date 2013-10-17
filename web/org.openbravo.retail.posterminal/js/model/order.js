@@ -475,7 +475,11 @@
       //total qty
       var qty = this.get('lines').reduce(function (memo, e) {
         var qtyLine = e.getQty();
-        return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
+        if (qtyLine > 0) {
+          return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
+        } else {
+          return memo;
+        }
       }, OB.DEC.Zero);
       this.set('qty', qty);
     },
