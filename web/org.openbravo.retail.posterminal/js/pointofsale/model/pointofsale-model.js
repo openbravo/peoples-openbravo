@@ -14,7 +14,7 @@ OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};
 OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 
 //Window model
-OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
+OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [{
     generatedModel: true,
     modelName: 'TaxRate'
@@ -527,106 +527,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   },
 
   /**
-   * Generic approval checker. It validates user/password can approve the approvalType.
-   * It can work online in case that user has done at least once the same approvalType
-   * in this same browser. Data regarding privileged users is stored in supervisor table
-   */
-  checkApproval: function (approvalType, username, password) {
-    OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
-    if (OB.MobileApp.model.get('connectedToERP')) {
-      new OB.DS.Process('org.openbravo.retail.posterminal.utility.CheckApproval').exec({
-        u: username,
-        p: password,
-        approvalType: approvalType
-      }, enyo.bind(this, function (response, message) {
-        var approved = false;
-        if (response.exception) {
-          OB.UTIL.showError(response.exception.message);
-          this.approvedTicket(false);
-        } else {
-          approved = response.canApprove;
-          if (!approved) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
-          }
-
-          // saving supervisor in local so next time it is possible to approve offline
-          OB.Dal.find(OB.Model.Supervisor, {
-            'id': response.userId
-          }, enyo.bind(this, function (users) {
-            var supervisor, date, permissions = [];
-            if (users.models.length === 0) {
-              // new user
-              if (response.canApprove) {
-                // insert in local db only in case it is supervisor for current type
-                date = new Date().toString();
-                supervisor = new OB.Model.Supervisor();
-
-                supervisor.set('id', response.userId);
-                supervisor.set('name', username);
-                supervisor.set('password', OB.MobileApp.model.generate_sha1(password + date));
-                supervisor.set('created', date);
-                supervisor.set('permissions', JSON.stringify([approvalType]));
-                OB.Dal.save(supervisor, null, null, true);
-              }
-            } else {
-              // update existent user granting or revoking permission
-              supervisor = users.models[0];
-
-              supervisor.set('password', OB.MobileApp.model.generate_sha1(password + supervisor.get('created')));
-              if (supervisor.get('permissions')) {
-                permissions = JSON.parse(supervisor.get('permissions'));
-              }
-
-              if (response.canApprove) {
-                // grant permission if it does not exist
-                if (!_.contains(permissions, approvalType)) {
-                  permissions.push(approvalType);
-                }
-              } else {
-                // revoke permission if it exists
-                if (_.contains(permissions, approvalType)) {
-                  permissions = _.without(permissions, approvalType);
-                }
-              }
-              supervisor.set('permissions', JSON.stringify(permissions));
-
-              OB.Dal.save(supervisor);
-            }
-            this.approvedTicket(approved, supervisor, approvalType);
-          }));
-        }
-      }));
-    } else { // offline
-      OB.Dal.find(OB.Model.Supervisor, {
-        'name': username
-      }, enyo.bind(this, function (users) {
-        var supervisor, approved = false;
-        if (users.models.length === 0) {
-          alert(OB.I18N.getLabel('OBPOS_OfflineSupervisorNotRegistered'));
-        } else {
-          supervisor = users.models[0];
-          if (supervisor.get('password') === OB.MobileApp.model.generate_sha1(password + supervisor.get('created'))) {
-            if (_.contains(JSON.parse(supervisor.get('permissions')), approvalType)) {
-              approved = true;
-            } else {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
-            }
-          } else {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_InvalidUserPassword'));
-          }
-        }
-        this.approvedTicket(approved, supervisor, approvalType);
-      }), function () {});
-    }
-  },
-
-  /**
    * Approval final stage. Where approvalChecked event is triggered, with approved
    * property set to true or false regarding if approval was finally granted. In
    * case of granted approval, the approval is added to the order so it can be saved
    * in backend for audit purposes.
    */
-  approvedTicket: function (approved, supervisor, approvalType) {
+  approvedRequest: function (approved, supervisor, approvalType) {
     var order = this.get('order'),
         newApprovals = [],
         approvals, approval, i, date;
