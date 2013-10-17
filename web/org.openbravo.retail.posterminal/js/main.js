@@ -51,7 +51,6 @@
     //      OB.UTIL.showLoading(false);
     //      alert(OB.I18N.getLabel('OBPOS_WindowNotFound', [OB.POS.paramWindow]));
     //    }
-
     OB.MobileApp.model.hookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
       OB.POS.navigate('retail.pointofsale');
     });
