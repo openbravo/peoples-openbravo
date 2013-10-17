@@ -70,7 +70,7 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     } catch (PropertyException e) {
       // if property not found, sync the ordered date
-      syncDateOrdered = "Y";
+      syncDateOrdered = "N";
     }
     try {
       syncDateDelivered = Preferences.getPreferenceValue("DoNotSyncDateDelivered", true, OBContext
@@ -78,18 +78,19 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     } catch (PropertyException e) {
       // if property not found, sync the delivered date
-      syncDateDelivered = "Y";
+      syncDateDelivered = "N";
     }
     OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
     orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER,
         OBDal.getInstance().get(Order.class, orderId)));
     if (orderLineCriteria.count() > 0) {
-      if (newOrderDate.compareTo(oldOrderDate) != 0 && "N".equals(syncDateOrdered)) {
+      if (newOrderDate.compareTo(oldOrderDate) != 0 && !"Y".equals(syncDateOrdered)) {
         for (OrderLine lines : orderLineCriteria.list()) {
           lines.setOrderDate(newOrderDate);
         }
       }
-      if (newScheduledDate.compareTo(oldScheduledDate) != 0 && "N".equals(syncDateDelivered)) {
+      if (newScheduledDate != null && oldScheduledDate != null
+          && newScheduledDate.compareTo(oldScheduledDate) != 0 && !"Y".equals(syncDateDelivered)) {
         for (OrderLine lines : orderLineCriteria.list()) {
           lines.setScheduledDeliveryDate(newScheduledDate);
         }
