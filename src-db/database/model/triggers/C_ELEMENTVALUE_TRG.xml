@@ -186,7 +186,9 @@ BEGIN
 		    END IF;
      END IF;         
 
-     UPDATE Fact_Acct SET AcctValue=:new.VALUE,AcctDescription=:new.NAME WHERE Account_ID=:new.C_ElementValue_ID;
+     IF (COALESCE(:old.value, '.') <> COALESCE(:new.value, '.')) OR (COALESCE(:old.name, '.') <> COALESCE(:new.name, '.')) THEN
+        UPDATE Fact_Acct SET AcctValue=:new.VALUE,AcctDescription=:new.NAME WHERE Account_ID=:new.C_ElementValue_ID;
+     END IF;
   END IF;
   -- Updating
   IF DELETING THEN
