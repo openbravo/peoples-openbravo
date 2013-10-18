@@ -87,6 +87,12 @@ isc.OBCalendar.changeDefaults('nextButtonDefaults', {
   height: 20
 });
 
+isc.OBCalendar.changeDefaults('addEventButtonDefaults', {
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/iconButton-add.png',
+  width: 18,
+  height: 18
+});
+
 isc.OBCalendar.changeDefaults('dayLanesToggleButtonDefaults', {
   src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/calendar/iconDayLanesToggle.png',
   width: 21,
