@@ -157,6 +157,9 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           }
           level++;
         }
+        if (this.nodeConformsToWhereClause(tab, node.getString("parentId"), hqlTreeWhereClause)) {
+          node.put("parentId", ROOT_NODE);
+        }
         if (level > maxLevel) {
           maxLevel = level;
         }

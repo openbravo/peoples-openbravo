@@ -142,6 +142,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         .createQuery("ADTreeNode", joinClause.toString());
     obq.setSelectClause(selectClause);
 
+    boolean fetchRoot = ROOT_NODE.equals(parentId);
+
     int TREE_NODE_ID = 0;
     int PARENT_ID = 1;
     int SEQNO = 2;
@@ -155,7 +157,11 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       try {
         value = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
         value.put("nodeId", bob.getId().toString());
-        value.put("parentId", node[PARENT_ID]);
+        if (fetchRoot) {
+          value.put("parentId", ROOT_NODE);
+        } else {
+          value.put("parentId", node[PARENT_ID]);
+        }
         value.put("seqno", node[SEQNO]);
         value.put("_hasChildren", (this.nodeHasChildren((String) node[NODE_ID])) ? true : false);
         for (int i = 0; i < selectedProperties.length(); i++) {

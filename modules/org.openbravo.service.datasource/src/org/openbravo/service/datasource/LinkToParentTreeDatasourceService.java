@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   final static Logger logger = LoggerFactory.getLogger(LinkToParentTreeDatasourceService.class);
+  final static String ID_SEPARATOR = "-";
 
   @Override
   protected void addNewNode(JSONObject bobProperties) {
@@ -144,6 +145,16 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as e ");
 
+    TableTree tableTree = tab.getTableTree();
+    boolean isMultiParentTree = tableTree.isHasMultiparentNodes();
+
+    String actualParentId = new String(parentId);
+    if (isMultiParentTree) {
+      if (parentId.contains(ID_SEPARATOR)) {
+        actualParentId = parentId.substring(parentId.lastIndexOf(ID_SEPARATOR) + 1);
+      }
+    }
+
     if (hqlWhereClause != null) {
       whereClause.append(" where " + hqlWhereClause);
     } else {
@@ -151,7 +162,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       if (fetchRoot) {
         whereClause.append(" is null ");
       } else {
-        whereClause.append(".id = '" + parentId + "' ");
+        whereClause.append(".id = '" + actualParentId + "' ");
       }
     }
 
@@ -168,7 +179,11 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       BaseOBObject bob = (BaseOBObject) scrollableResults.get()[0];
       final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) bob,
           DataResolvingMode.FULL);
-      json.put("parentId", parentId);
+      if (fetchRoot) {
+        json.put("parentId", ROOT_NODE);
+      } else {
+        json.put("parentId", parentId);
+      }
       Object nodeId = bob.get(nodeIdProperty.getName());
       String nodeIdStr = null;
       if (nodeId instanceof String) {
@@ -176,7 +191,20 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       } else if (nodeId instanceof BaseOBObject) {
         nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
       }
-      json.put("nodeId", nodeIdStr);
+
+      Object parentNodeId = bob.get(linkToParentProperty.getName());
+      String parentNodeIdStr = null;
+      if (parentNodeId instanceof String) {
+        parentNodeIdStr = (String) parentNodeId;
+      } else if (nodeId instanceof BaseOBObject) {
+        parentNodeIdStr = ((BaseOBObject) parentNodeId).getId().toString();
+      }
+
+      if (isMultiParentTree) {
+        json.put("nodeId", parentNodeIdStr + ID_SEPARATOR + nodeIdStr);
+      } else {
+        json.put("nodeId", nodeIdStr);
+      }
       json.put("_hasChildren", (this.nodeHasChildren(tab, bob)) ? true : false);
       responseData.put(json);
 
@@ -304,7 +332,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       if (parent != null) {
         json.put("parentId", parent.getId().toString());
       } else {
-        json.put("parentId", (String) null);
+        json.put("parentId", (String) ROOT_NODE);
       }
       Object nodeId = bob.get(nodeIdProperty.getName());
       String nodeIdStr = null;
