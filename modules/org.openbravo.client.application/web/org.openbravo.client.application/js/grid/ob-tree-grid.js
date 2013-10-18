@@ -280,6 +280,14 @@ isc.OBTreeGrid.addProperties({
     }
     this.deselectAllRecords();
     this.selectRecord(recordNum);
+  },
+
+  getCellCSSText: function (record, rowNum, colNum) {
+    if (record.filterHit === true) {
+      return "font-weight:bold;";
+    } else {
+      return "";
+    }
   }
 
 });
