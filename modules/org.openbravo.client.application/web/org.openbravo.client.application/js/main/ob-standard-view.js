@@ -701,6 +701,9 @@ isc.OBStandardView.addProperties({
     if (this.viewGrid && readOnly) {
       this.viewGrid.setReadOnlyMode();
     }
+    if (this.treeGrid && readOnly) {
+      this.treeGrid.canReorderRecords = false;
+    }
   },
 
   setEditOrDeleteOnly: function (editOrDeleteOnly) {
