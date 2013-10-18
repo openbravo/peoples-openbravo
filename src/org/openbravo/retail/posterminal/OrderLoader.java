@@ -450,7 +450,7 @@ public class OrderLoader extends JSONProcessSimple {
         }
       }      
       if ((jsonorder.getString("totalamount") == null || jsonorder.getString("totalamount").equals("0"))
-              && (jsonorder.getJSONArray("lines")!=null && jsonorder.getJSONArray("lines").length()==0)) {
+              && (jsonorder.isNull("lines") || (jsonorder.getJSONArray("lines")!=null && jsonorder.getJSONArray("lines").length()==0))) {
     	log.error("Detected order without lines and total amount zero. Document number "
                   + jsonorder.getString("documentNo"));
         return true;
