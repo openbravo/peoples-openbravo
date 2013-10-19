@@ -30,6 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.common.hooks.OrderLineQtyChangedHookManager;
+import org.openbravo.common.hooks.OrderLineQtyChangedHookObject;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.PriceAdjustment;
 import org.openbravo.erpCommon.utility.Utility;
@@ -97,6 +100,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       String strTaxBaseAmt, String strGrossBaseUnitPrice) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+
     SLOrderAmtData[] data = SLOrderAmtData.select(this, strCOrderId);
     SLOrderStockData[] data1 = SLOrderStockData.select(this, strProduct);
     String strPrecision = "0", strPricePrecision = "0";
@@ -109,7 +113,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     boolean isTaxIncludedPriceList = OBDal.getInstance().get(PriceList.class, data[0].mPricelistId)
         .isPriceIncludesTax();
     boolean isGrossUnitPriceChanged = strChanged.equals("inpgrossUnitPrice");
-
+    boolean forceSetPriceStd = false;
     if (data1 != null && data1.length > 0) {
       strStockSecurity = data1[0].stock;
       strEnforceAttribute = data1[0].enforceAttribute;
@@ -139,11 +143,46 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         pricePrecision, BigDecimal.ROUND_HALF_UP);
     BigDecimal grossUnitPrice = (strGrossUnitPrice.equals("") ? ZERO : new BigDecimal(
         strGrossUnitPrice).setScale(pricePrecision, BigDecimal.ROUND_HALF_UP));
+
     BigDecimal grossPriceList = (strGrossPriceList.equals("") ? ZERO : new BigDecimal(
         strGrossPriceList).setScale(pricePrecision, BigDecimal.ROUND_HALF_UP));
     BigDecimal grossBaseUnitPrice = (strGrossBaseUnitPrice.equals("") ? ZERO : new BigDecimal(
         strGrossBaseUnitPrice).setScale(pricePrecision, BigDecimal.ROUND_HALF_UP));
 
+    // A hook has been created. This hook will be raised when the qty is changed having selected a
+    // product
+    if (!strProduct.equals("") && strChanged.equals("inpqtyordered")) {
+      try {
+        OrderLineQtyChangedHookObject hookObject = new OrderLineQtyChangedHookObject();
+        hookObject.setProductId(strProduct);
+        hookObject.setQty(qtyOrdered);
+        hookObject.setOrderId(strCOrderId);
+        hookObject.setPricePrecision(pricePrecision);
+        if (isTaxIncludedPriceList) {
+          hookObject.setPrice(grossPriceList);
+        } else {
+          hookObject.setPrice(netPriceList);
+        }
+
+        hookObject.setChanged(strChanged);
+        WeldUtils.getInstanceFromStaticBeanManager(OrderLineQtyChangedHookManager.class)
+            .executeHooks(hookObject);
+        if (isTaxIncludedPriceList) {
+          if (grossBaseUnitPrice.compareTo(hookObject.getPrice()) != 0) {
+            grossBaseUnitPrice = hookObject.getPrice();
+            isGrossUnitPriceChanged = true;
+          }
+        } else {
+          if (priceStd.compareTo(hookObject.getPrice()) != 0) {
+            priceStd = hookObject.getPrice();
+            forceSetPriceStd = true;
+          }
+        }
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Order_Amt';\n\n");
     resultado.append("var respuesta = new Array(");
@@ -173,7 +212,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       resultado.append("new Array(\"inppriceactual\", " + priceActual + "),");
     }
     // Calculating prices for offers...
-    if (strChanged.equals("inppriceactual") || strChanged.equals("inplinenetamt")) {
+    if (strChanged.equals("inppriceactual") || strChanged.equals("inplinenetamt")
+        || forceSetPriceStd) {
       log4j.debug("priceActual:" + priceActual.toString());
       if (!cancelPriceAd) {
         priceStd = PriceAdjustment.calculatePriceStd(order, product, qtyOrdered, priceActual);
@@ -238,7 +278,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     // calculating discount
     if (strChanged.equals("inppricelist") || strChanged.equals("inppriceactual")
         || strChanged.equals("inplinenetamt") || strChanged.equals("inpgrosspricelist")
-        || strChanged.equals("inpgrossUnitPrice")) {
+        || strChanged.equals("inpgrossUnitPrice") || strChanged.equals("inpqtyordered")) {
       BigDecimal priceList = BigDecimal.ZERO;
       BigDecimal unitPrice = BigDecimal.ZERO;
       BigDecimal discount;
@@ -392,4 +432,5 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
+
 }

@@ -90,6 +90,24 @@ isc.ResultSet.addProperties({
         }
       }
     }
+  },
+
+  _original_updateCacheData: isc.ResultSet.getPrototype().updateCacheData,
+  updateCacheData: function (updateData, dsRequest) {
+    var filteringOnClient = this.allRows !== null,
+        i, indexAllRows, indexLocalData, ds;
+    this._original_updateCacheData(updateData, dsRequest);
+    if (filteringOnClient) {
+      ds = this.getDataSource();
+      // remove any rows that were present in the cache
+      for (i = 0; i < updateData.length; i++) {
+        indexLocalData = ds.findByKeys(updateData[i], this.localData);
+        indexAllRows = ds.findByKeys(updateData[i], this.allRows);
+        if (indexLocalData !== -1 && indexAllRows !== -1) {
+          this.localData[indexLocalData] = this.allRows[indexAllRows];
+        }
+      }
+    }
   }
 });
 

@@ -234,6 +234,10 @@ public class DocInOut extends AcctServer {
           log4j.error("No Account Asset for product: " + product.getName()
               + " in accounting schema: " + schema.getName());
         }
+        if (!isConvertible(as, conn)) {
+          setMessageResult(conn, STATUS_NotConvertible, "error", null);
+          throw new IllegalStateException();
+        }
         if (CostingStatus.getInstance().isMigrated() && line.transaction != null
             && !line.transaction.isCostCalculated()) {
           Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
@@ -326,6 +330,10 @@ public class DocInOut extends AcctServer {
         }
         String costs = "0";
         String strCosts = "0";
+        if (!isConvertible(as, conn)) {
+          setMessageResult(conn, STATUS_NotConvertible, "error", null);
+          throw new IllegalStateException();
+        }
         if (product.isBookUsingPurchaseOrderPrice()) {
           // If the Product is checked as book using PO Price, the Price of the Purchase Order will
           // be used to create the FactAcct Line

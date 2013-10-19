@@ -117,6 +117,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     List<FIN_PaymentDetail> paymentDetails = FIN_Utility.getOrderedPaymentDetailList(payment);
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
     FIN_PaymentSchedule ps = null;
+    FIN_PaymentDetail pd = null;
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
@@ -129,12 +130,24 @@ public class DocFINFinAccTransaction extends AcctServer {
           continue;
         }
 
+        // If the Payment Detail has already been processed, skip it
+        if (paymentDetails.get(i).equals(pd)) {
+          continue;
+        }
+        pd = paymentDetails.get(i);
+
         data[i] = new FieldProviderFactory(null);
         FIN_PaymentSchedule psi = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getInvoicePaymentSchedule();
         FIN_PaymentSchedule pso = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getOrderPaymentSchedule();
-        BigDecimal amount = getPaymentDetailAmount(paymentDetails, ps, psi, pso, i);
+        // Related to Issue Issue 19567. Some Payment Detail's amount and writeoff amount are merged
+        // into one.
+        // https://issues.openbravo.com/view.php?id=19567
+        HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
+            paymentDetails, ps, psi, pso, i);
+        BigDecimal amount = amountAndWriteOff.get("amount");
+        BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
           data[i] = null;
           ps = psi;
@@ -165,8 +178,7 @@ public class DocFINFinAccTransaction extends AcctServer {
             .get(i));
         FieldProviderFactory.setField(data[i], "isPaymentDatePriorToInvoiceDate",
             isPaymentDatePriorToInvoiceDate && !paymentDetails.get(i).isPrepayment() ? "Y" : "N");
-        FieldProviderFactory.setField(data[i], "WriteOffAmt", paymentDetails.get(i)
-            .getWriteoffAmount().toString());
+        FieldProviderFactory.setField(data[i], "WriteOffAmt", writeOff.toString());
         FieldProviderFactory.setField(data[i], "cGlItemId",
             paymentDetails.get(i).getGLItem() != null ? paymentDetails.get(i).getGLItem().getId()
                 : "");
@@ -713,7 +725,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     // Total
     retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
     if (usedCredit.compareTo(ZERO) != 0 && generatedCredit.compareTo(ZERO) == 0)
-      retValue.add(usedCredit);
+      retValue = retValue.add(usedCredit);
     sb.append(retValue);
     FIN_Payment payment = OBDal.getInstance().get(FIN_FinaccTransaction.class, Record_ID)
         .getFinPayment();
@@ -732,12 +744,13 @@ public class DocFINFinAccTransaction extends AcctServer {
               ((DocLine_FINFinAccTransaction) p_lines[i]).PaymentAmount));
           retValue = retValue.subtract(lineBalance);
         } else {
-          BigDecimal lineBalance = BigDecimal.ZERO;
-          for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
-            lineBalance = lineBalance.add(payment.isReceipt() ? pd.getAmount().add(
-                pd.getWriteoffAmount()) : pd.getAmount().add(pd.getWriteoffAmount()).negate());
-          }
-          retValue = retValue.subtract(lineBalance);
+          BigDecimal lineBalance = payment.isReceipt() ? new BigDecimal(
+              ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()) : new BigDecimal(
+              ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()).negate();
+          BigDecimal lineWriteoff = payment.isReceipt() ? new BigDecimal(
+              ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()) : new BigDecimal(
+              ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()).negate();
+          retValue = retValue.subtract(lineBalance).subtract(lineWriteoff);
         }
       }
     } finally {

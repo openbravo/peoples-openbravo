@@ -44,52 +44,31 @@
   v_warehouse_id        VARCHAR2(32);
   v_product_id          VARCHAR2(32);
   v_uom_id              VARCHAR2(32);
-  v_res_stock_id        VARCHAR2(32);
-  v_storage_detail_id   VARCHAR2(32);
   v_dim_warehouse_id    VARCHAR2(32);
   v_dim_locator_id      VARCHAR2(32);
   v_dim_asi_id          VARCHAR2(32);
   v_res_status          M_RESERVATION.RES_STATUS%TYPE;
-  v_this_notreserved    NUMBER;
-  v_this_reservedqty    NUMBER;
-  v_this_releasedqty    NUMBER;
-  v_this_allocated      NUMBER;
-  v_this_noalloc        NUMBER;
-  v_this_sd_alloc       NUMBER;
-  v_this_sd_noalloc     NUMBER;
-  v_stock_onhand        NUMBER;
-  v_stock_res           NUMBER;
-  v_stock_alloc         NUMBER;
+  v_this_pendingqty     NUMBER;
+  v_this_sd_reserved    NUMBER;
   v_qtytorelease        NUMBER;
-  v_qtytounreserve      NUMBER;
-  v_qtytounreserve_aux  NUMBER;
-  v_qtytoreserve        NUMBER;
-  v_qtyfromother        NUMBER;
-  v_newreservedqty      NUMBER;
-  v_availablestock      NUMBER;
-  v_dummy               VARCHAR2(2000);
   v_attr_description    VARCHAR2(255);
   v_product_value       VARCHAR2(40);
   v_locator_value       VARCHAR2(40);
   v_uom_value           VARCHAR2(3);
 
   TYPE RECORD IS REF CURSOR;
-  cur_reserved_stock       RECORD;
-  cur_not_allocated_stock  RECORD;
+  cur_reserved_stock    RECORD;
 BEGIN
-  SELECT r.m_product_id, r.c_uom_id, COALESCE(r.reservedqty, 0), COALESCE(r.releasedqty, 0), r.quantity - COALESCE(r.reservedqty, 0),
-      COALESCE(SUM(alloc.quantity - COALESCE(alloc.releasedqty, 0)), 0),
+  SELECT r.m_product_id, r.c_uom_id, COALESCE(r.quantity, 0) - COALESCE(r.releasedqty, 0),
       r.m_warehouse_id, r.m_locator_id, r.m_attributesetinstance_id, r.res_status
-    INTO v_product_id, v_uom_id, v_this_reservedqty, v_this_releasedqty, v_this_notreserved,
-      v_this_allocated,
+    INTO v_product_id, v_uom_id, v_this_pendingqty, 
       v_dim_warehouse_id, v_dim_locator_id, v_dim_asi_id, v_res_status
   FROM m_reservation r
-      LEFT JOIN m_reservation_stock alloc ON r.m_reservation_id = alloc.m_reservation_id AND alloc.isallocated = 'Y'
+      LEFT JOIN m_reservation_stock noalloc ON r.m_reservation_id = noalloc.m_reservation_id AND noalloc.isallocated = 'N'
   WHERE r.m_reservation_id = p_reservation_id
   GROUP BY r.m_product_id, r.c_uom_id, r.reservedqty, COALESCE(r.releasedqty,0), r.quantity,
       r.m_warehouse_id, r.m_locator_id, r.m_attributesetinstance_id, r.res_status;
-  v_this_noalloc := v_this_reservedqty - v_this_allocated;
-
+  
   SELECT value
     INTO v_product_value
   FROM M_Product
@@ -108,8 +87,8 @@ BEGIN
   WHERE C_Uom_ID = v_uom_id;
 
   IF (p_locator_id IS NOT NULL) THEN
-    SELECT value
-      INTO v_locator_value
+    SELECT value, m_warehouse_id 
+      INTO v_locator_value, v_warehouse_id
     FROM M_Locator
     WHERE M_Locator_ID = p_locator_id;
   END IF;
@@ -118,28 +97,6 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeHoldReservation@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')||', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
   END IF;
 
-  SELECT sd.qtyonhand, sd.m_storage_detail_id, loc.m_warehouse_id
-    INTO v_stock_onhand, v_storage_detail_id, v_warehouse_id
-  FROM m_storage_detail sd
-    JOIN m_locator loc ON sd.m_locator_id = loc.m_locator_id
-  WHERE sd.m_product_id = v_product_id
-    AND sd.c_uom_id = v_uom_id
-    AND COALESCE(sd.m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0')
-    AND sd.m_locator_id = p_locator_id;
-    
-  SELECT COALESCE(SUM(rs.quantity - COALESCE(rs.releasedqty, 0)), 0),
-      COALESCE(SUM(CASE rs.isallocated WHEN 'Y' THEN rs.quantity - COALESCE(rs.releasedqty,0) ELSE 0 END), 0),
-      COALESCE(SUM(CASE WHEN r.m_reservation_id = p_reservation_id AND rs.isallocated = 'Y' THEN rs.quantity - COALESCE(rs.releasedqty,0) ELSE 0 END), 0),
-      COALESCE(SUM(CASE WHEN r.m_reservation_id = p_reservation_id AND rs.isallocated = 'N' THEN rs.quantity - COALESCE(rs.releasedqty,0) ELSE 0 END), 0)
-    INTO v_stock_res, v_stock_alloc, v_this_sd_alloc, v_this_sd_noalloc
-  FROM m_reservation_stock rs
-    JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
-  WHERE r.m_product_id = v_product_id
-    AND r.res_status NOT IN ('CL', 'DR')
-    AND r.c_uom_id = v_uom_id
-    AND rs.m_locator_id = p_locator_id
-    AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0');
-
   IF (COALESCE(v_dim_warehouse_id, v_warehouse_id) != v_warehouse_id
       OR COALESCE(v_dim_locator_id, p_locator_id) != p_locator_id
       OR COALESCE(v_dim_asi_id, p_attributesetinstance_id) != p_attributesetinstance_id) THEN
@@ -147,192 +104,28 @@ BEGIN
   END IF;
 
   v_pendingtorelease := p_qty;
-  IF (v_pendingtorelease > v_this_reservedqty - v_this_releasedqty) THEN
-    v_pendingtorelease := v_this_reservedqty - v_this_releasedqty;
+  IF (v_pendingtorelease >v_this_pendingqty) THEN
+    v_pendingtorelease := v_this_pendingqty;
     p_result := 2;
     p_message := '@MoreQuantityToReleaseThanPending@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')|| ', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-');
   END IF;
 
-  -- Check that quantity to release is lower than available quantity considering other reservations allocated stock.
-  IF (v_pendingtorelease > v_stock_onhand - (v_stock_alloc - v_this_sd_alloc)) THEN
-    RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeAllStock@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')|| ', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
-  END IF;
-
-  IF (v_pendingtorelease > v_this_sd_alloc + v_this_noalloc) THEN
-    -- The quantity to release is higher than the currently allocated stock with given dimensions and the no allocated
-    -- reserved stock.
-    RAISE_APPLICATION_ERROR(-20000, '@CannotModifyAllocatedReserve@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')|| ', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
-  END IF;
+  SELECT COALESCE(SUM(rs.quantity - COALESCE(rs.releasedqty,0)),0)
+    INTO v_this_sd_reserved
+  FROM m_reservation_stock rs
+  WHERE rs.m_locator_id = p_locator_id
+    AND rs.m_reservation_id = p_reservation_id
+    AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0');
   
-  IF (v_pendingtorelease <= v_this_sd_alloc + v_this_sd_noalloc) THEN
-    -- All stock can be released by reservations own reserved stock
-    v_qtytoreserve := 0;
-    v_qtyfromother := 0;
-  ELSE 
-    -- There is not reserved stock available.
-    v_qtytoreserve := LEAST(v_stock_onhand - v_stock_res, v_pendingtorelease - (v_this_sd_alloc + v_this_sd_noalloc));
-    v_qtyfromother := v_pendingtorelease - v_qtytoreserve - (v_this_sd_alloc + v_this_sd_noalloc);
-  END IF;
-  
-  -- If exists not reserved stock reserve in current reservation.
-  v_ResultStr := 'Reserve and release available stock';
-  IF (v_qtytoreserve > 0) THEN
-    -- Reserve available stock
-
-    v_qtytounreserve := LEAST(v_qtytoreserve, v_this_noalloc - v_this_sd_noalloc);
-    IF (v_qtytounreserve > 0) THEN
-      --If exists not allocated stock it has to be unreserved before reserving the new one.
-      FOR cur_reserved_stock IN (
-          SELECT m_reservation_stock_id, quantity - COALESCE(releasedqty, 0) AS reservedqty
-          FROM m_reservation_stock
-          WHERE m_reservation_id = p_reservation_id
-            AND isallocated = 'N'
-            AND quantity != COALESCE(releasedqty,0)
-            AND ((m_attributesetinstance_id != p_attributesetinstance_id OR m_attributesetinstance_id is null) OR m_locator_id != p_locator_id)
-          ORDER BY quantity - COALESCE(releasedqty,0)
-      ) LOOP
-        v_qtytounreserve_aux := LEAST(v_qtytounreserve, cur_reserved_stock.reservedqty);
-        UPDATE m_reservation_stock
-        SET quantity = quantity - v_qtytounreserve_aux
-        WHERE m_reservation_stock_id = cur_reserved_stock.m_reservation_stock_id;
-        v_qtytounreserve := v_qtytounreserve - v_qtytounreserve_aux;
-
-        IF (v_qtytounreserve = 0) THEN
-          EXIT;
-        END IF;
-      END LOOP;
-    END IF;
-
-    M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', v_storage_detail_id, v_qtytoreserve, p_user_id, 'N', v_res_stock_id);
-  END IF;
-  
-  IF (v_qtyfromother > 0) THEN
-    -- Finally take other reservation's not allocated stock.
-    v_ResultStr := 'Reserve other reservations stock';
-    FOR cur_not_allocated_stock IN (
-        SELECT r.m_reservation_id, rs.quantity, COALESCE(rs.releasedqty,0) as releasedqty, rs.m_reservation_stock_id, r.reservedqty, r.quantity as quantitytoreserve,
-               r.ad_client_id, r.ad_org_id, r.m_product_id, r.c_uom_id, r.m_attributesetinstance_id, r.m_locator_id, r.m_warehouse_id,
-               r.c_orderline_id
-        FROM m_reservation_stock rs
-            JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
-        WHERE r.m_reservation_id != p_reservation_id
-          AND r.m_product_id = v_product_id
-          AND r.c_uom_id = v_uom_id
-          AND rs.m_locator_id = p_locator_id
-          AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0')
-          AND rs.isallocated = 'N'
-          AND r.res_status NOT IN ('HO', 'CL', 'DR')
-          AND rs.quantity != COALESCE(rs.releasedqty,0)
-    ) LOOP
-      v_qtytorelease := LEAST(v_qtyfromother, cur_not_allocated_stock.quantity - cur_not_allocated_stock.releasedqty);
-      
-      IF (v_qtytorelease > COALESCE(v_this_notreserved, 0)) THEN
-        --The new reserved stock is higher than the pending quantity to reserve, other reserved stock must be unreserved.
-        v_qtytounreserve := v_qtytorelease - COALESCE(v_this_notreserved, 0);
-        FOR cur_reserved_stock IN (
-            SELECT m_reservation_stock_id, quantity - COALESCE(releasedqty, 0) AS reservedqty
-            FROM m_reservation_stock
-            WHERE m_reservation_id = p_reservation_id
-              AND isallocated = 'N'
-              AND ((m_attributesetinstance_id != p_attributesetinstance_id OR m_attributesetinstance_id is null) OR m_locator_id != p_locator_id)
-              AND quantity != COALESCE(releasedqty,0)
-        ) LOOP
-
-          v_qtytounreserve_aux := LEAST(v_qtytounreserve, cur_reserved_stock.reservedqty);
-          UPDATE m_reservation_stock
-          SET quantity = quantity - v_qtytounreserve_aux
-          WHERE m_reservation_stock_id = cur_reserved_stock.m_reservation_stock_id;
-          v_qtytounreserve := v_qtytounreserve - v_qtytounreserve_aux;
-
-          IF (v_qtytounreserve = 0) THEN
-            EXIT;
-          END IF;
-        END LOOP;
-      END IF;
-
-      UPDATE m_reservation_stock
-      SET quantity = quantity - v_qtytorelease
-      WHERE m_reservation_stock_id = cur_not_allocated_stock.m_reservation_stock_id;
-      DELETE FROM m_reservation_stock
-      WHERE quantity = 0
-        AND m_reservation_stock_id = cur_not_allocated_stock.m_reservation_stock_id;
-        
-      M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', v_storage_detail_id, v_qtytorelease, p_user_id, 'N', v_res_stock_id);
-  
-      -- Call get stock to check availability
-      DECLARE
-        v_pinstance_result      AD_PInstance.result%TYPE;
-        v_pinstance_msg         AD_PInstance.errormsg%TYPE;
-        v_warehouse_rule_id     VARCHAR2(32);
-        v_pinstance_id          VARCHAR2(32) := get_uuid();
-      BEGIN
-        INSERT INTO ad_pinstance (
-            ad_pinstance_id, ad_process_id, record_id, isactive, 
-            ad_user_id, ad_client_id, ad_org_id, created, createdby,
-            updated, updatedby
-        ) VALUES (
-            v_pinstance_id, 'FF80818132C964E30132C9747257002E', p_reservation_id, 'Y',
-            p_User_ID, cur_not_allocated_stock.ad_client_id, cur_not_allocated_stock.ad_Org_ID, now(), p_user_ID,
-            now(), p_user_ID
-        );
-    
-        AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '10', 'AD_Client_ID', cur_not_allocated_stock.ad_client_id, null, null, null, null, null);
-        AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '20', 'AD_Org_ID', cur_not_allocated_stock.ad_org_id, null, null, null, null, null);
-        AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '30', 'M_Product_ID', cur_not_allocated_stock.m_product_id, null, null, null, null, null);
-        AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '40', 'C_Uom_ID', cur_not_allocated_stock.c_uom_id, null, null, null, null, null);
-        --AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '50', 'M_Product_Uom_ID', v_Product_UOM_old, null, null, null, null, null);
-        AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '60', 'M_Warehouse_ID', cur_not_allocated_stock.m_warehouse_id, null, null, null, null, null);
-        AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '70', 'M_Locator_ID', cur_not_allocated_stock.m_locator_id, null, null, null, null, null);
-        AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '80', 'M_AttributesetInstance_ID', cur_not_allocated_stock.m_attributesetinstance_id, null, null, null, null, null);
-        AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '90', 'Quantity', null, null, cur_not_allocated_stock.quantitytoreserve, null, null, null);
-        /*
-        * ADD PROPER PROCESS ID!
-        */
-        AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '100', 'ProcessID', '---', null, null, null, null, null);
-    
-        IF (cur_not_allocated_stock.c_orderline_id IS NOT NULL) THEN
-          SELECT m_warehouse_rule_id INTO v_warehouse_rule_id
-          FROM c_orderline
-          WHERE c_orderline_id = cur_not_allocated_stock.c_orderline_id;
-          AD_PINSTANCE_PARA_INSERT(v_pinstance_id, '110', 'M_Warehouse_Rule_ID', v_warehouse_rule_id, null, null, null, null, null);
-        END IF;
-    
-        M_GET_STOCK(v_pinstance_ID, 'N');
-        -- Check result
-        SELECT result, errormsg
-          INTO v_pinstance_result, v_pinstance_msg
-        FROM ad_pinstance
-        WHERE ad_pinstance_id = v_pinstance_id;
-        IF (v_pinstance_result = 0) THEN
-          -- Error on m_get_stock
-          RAISE_APPLICATION_ERROR(-20000, v_pinstance_msg);
-        END IF;
-        SELECT sum(quantity) INTO v_availablestock
-        FROM m_stock_proposed
-        WHERE ad_pinstance_id = v_pinstance_id;
-      END; -- End Call M_GET_STOCK
-      
-      IF (v_availablestock >= v_qtytorelease) THEN
-        M_RESERVE_STOCK_AUTO(cur_not_allocated_stock.m_reservation_id, p_user_id, v_newreservedqty);
-      ELSE
-        --Not enough available stock has been able to reallocate using new stock, undo reallocation.
-        UPDATE m_reservation_stock
-        SET quantity = COALESCE(quantity,0) - v_qtytorelease,
-            updated = now(),
-            updatedby = p_user_id
-        WHERE m_reservation_stock_id = v_res_stock_id;
-  
-        UPDATE m_reservation_stock
-        SET quantity = quantity + v_qtytorelease
-        WHERE m_reservation_stock_id = cur_not_allocated_stock.m_reservation_stock_id;
-      END IF;
-    END LOOP;
+  IF (v_pendingtorelease > v_this_sd_reserved) THEN
+    -- The reservation does not have enough stock reserved on given locator and attributes, reallocation is needed.
+    M_RESERVATION_REALLOCATE(p_reservation_id, p_locator_id, p_attributesetinstance_id, p_qty, p_user_id, p_result, p_message);
   END IF;
   
   -- Release stock reserved in the reservation.
   v_ResultStr := 'Release reserved stock';
   FOR cur_reserved_stock IN (
-      SELECT quantity - COALESCE(releasedqty,0) AS reservedqty, m_reservation_stock_id, isallocated
+      SELECT quantity - COALESCE(releasedqty,0) AS reservedqty, m_reservation_stock_id
       FROM m_reservation_stock
       WHERE m_locator_id = p_locator_id
         AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0')
@@ -353,11 +146,6 @@ BEGIN
     END IF;
   END LOOP;
   
-  -- Delete records with quantity 0 that might be left.
-  DELETE FROM m_reservation_stock
-  WHERE m_reservation_id = p_reservation_id
-    AND quantity = 0;
-
   IF (v_pendingtorelease > 0) THEN
     RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeAllStock@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')||', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
   END IF;
