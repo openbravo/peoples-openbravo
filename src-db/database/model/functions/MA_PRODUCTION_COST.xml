@@ -59,7 +59,7 @@
   v_IC_Value                            NUMBER;
   v_Cost_UOM                            CHAR;
   v_NextNo                              VARCHAR2(32);
-  v_ProductionNo                        NUMBER;
+  v_ProductionNo                        M_Production.DocumentNo%TYPE;
   v_iscostmigrated                      CHAR;
   Cur_ProductionPlan RECORD;
   Cur_ProductionLine RECORD;

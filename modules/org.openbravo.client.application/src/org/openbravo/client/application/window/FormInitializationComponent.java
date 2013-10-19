@@ -408,7 +408,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           }
 
           jsonColumnValues.put(
-              field.getColumn().getDBColumnName(),
+              OBViewFieldHandler.getFieldColumnName(field, null),
               columnValues.get("inp"
                   + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())));
         }

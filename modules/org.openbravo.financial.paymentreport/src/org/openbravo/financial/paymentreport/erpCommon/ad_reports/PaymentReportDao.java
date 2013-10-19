@@ -440,7 +440,7 @@ public class PaymentReportDao {
         hsqlScript.append(FIN_Payment.PROPERTY_ACCOUNT);
         hsqlScript.append(".id = '");
         hsqlScript.append(strFinancialAccountId);
-        hsqlScript.append("' or ((inv.");
+        hsqlScript.append("' or ((pay is null and inv.");
         hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
         hsqlScript.append(" = 'Y'");
         hsqlScript.append(" and invbp.");
@@ -448,7 +448,7 @@ public class PaymentReportDao {
         hsqlScript.append(".id = '");
         hsqlScript.append(strFinancialAccountId);
         hsqlScript.append("')");
-        hsqlScript.append(" or (inv.");
+        hsqlScript.append(" or (pay is null and inv.");
         hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
         hsqlScript.append(" = 'N'");
         hsqlScript.append(" and invbp.");

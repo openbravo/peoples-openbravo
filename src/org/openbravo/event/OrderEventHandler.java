@@ -29,8 +29,11 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 
@@ -53,21 +56,41 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
     final Property orderDateProperty = orderEntity.getProperty(Order.PROPERTY_ORDERDATE);
     final Property scheduledDateProperty = orderEntity
         .getProperty(Order.PROPERTY_SCHEDULEDDELIVERYDATE);
+    String syncDateOrdered = null, syncDateDelivered = null;
     String orderId = (String) event.getTargetInstance().getId();
     Date newOrderDate = (Date) event.getCurrentState(orderDateProperty);
     Date oldOrderDate = (Date) event.getPreviousState(orderDateProperty);
     Date newScheduledDate = (Date) event.getCurrentState(scheduledDateProperty);
     Date oldScheduledDate = (Date) event.getPreviousState(scheduledDateProperty);
+
+    // Check whether the preference is set to sync with order header
+    try {
+      syncDateOrdered = Preferences.getPreferenceValue("DoNotSyncDateOrdered", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    } catch (PropertyException e) {
+      // if property not found, sync the ordered date
+      syncDateOrdered = "N";
+    }
+    try {
+      syncDateDelivered = Preferences.getPreferenceValue("DoNotSyncDateDelivered", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    } catch (PropertyException e) {
+      // if property not found, sync the delivered date
+      syncDateDelivered = "N";
+    }
     OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
     orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER,
         OBDal.getInstance().get(Order.class, orderId)));
     if (orderLineCriteria.count() > 0) {
-      if (newOrderDate != oldOrderDate) {
+      if (newOrderDate.compareTo(oldOrderDate) != 0 && !"Y".equals(syncDateOrdered)) {
         for (OrderLine lines : orderLineCriteria.list()) {
           lines.setOrderDate(newOrderDate);
         }
       }
-      if (newScheduledDate != oldScheduledDate) {
+      if (newScheduledDate != null && oldScheduledDate != null
+          && newScheduledDate.compareTo(oldScheduledDate) != 0 && !"Y".equals(syncDateDelivered)) {
         for (OrderLine lines : orderLineCriteria.list()) {
           lines.setScheduledDeliveryDate(newScheduledDate);
         }

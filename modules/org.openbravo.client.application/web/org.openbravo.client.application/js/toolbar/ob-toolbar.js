@@ -1234,6 +1234,8 @@ isc.OBToolbar.addProperties({
           }
           currentContext.viewForm.view.attachmentExists = attachmentExists;
           doRefresh(buttonsByContext[currentContext], currentContext.getCurrentValues() || {}, noneOrMultipleRecordsSelected, noneOrMultipleRecordsSelected, me);
+          //compute and apply tab display logic again after fetching auxilary inputs.
+          currentContext.updateSubtabVisibility();
         };
       };
 

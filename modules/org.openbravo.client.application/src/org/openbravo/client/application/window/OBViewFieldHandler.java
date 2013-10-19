@@ -445,6 +445,33 @@ public class OBViewFieldHandler {
     }
   }
 
+  /**
+   * Returns column name for a field, in case of property fields, a virtual name is generated to
+   * prevent multiple fields with same column name
+   * 
+   * @param f
+   *          Field to get name for
+   * @param p
+   *          Property for the column of the field; if {@code null}, it is obtained from @{code
+   *          field.getColumn}
+   * @return Column name to be used for the field
+   */
+  static String getFieldColumnName(Field f, Property p) {
+    String columnName;
+    if (p == null) {
+      columnName = f.getColumn().getDBColumnName();
+    } else {
+      columnName = p.getColumnName();
+    }
+
+    if (f != null && f.getProperty() != null) {
+      columnName = "_propertyField_" + Sqlc.TransformaNombreColumna(f.getName()).replace(" ", "")
+          + "_" + columnName;
+    }
+
+    return columnName;
+  }
+
   interface OBViewFieldDefinition {
     public int getGridSort();
 
@@ -1202,7 +1229,7 @@ public class OBViewFieldHandler {
     }
 
     public String getColumnName() {
-      return property.getColumnName();
+      return OBViewFieldHandler.getFieldColumnName(field, property);
     }
 
     public String getInpColumnName() {
