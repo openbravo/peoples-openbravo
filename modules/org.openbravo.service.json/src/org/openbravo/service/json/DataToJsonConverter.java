@@ -310,8 +310,8 @@ public class DataToJsonConverter {
     if (Date.class.isAssignableFrom(clz)) {
       if (property.getDomainType() instanceof TimestampDomainType) {
 
-        Timestamp localTime = (Timestamp) value;
-        Date UTCTime = convertToUTC(localTime);
+        // Timestamp localTime = (Timestamp) value;
+        Date UTCTime = (Timestamp) value; // convertToUTC(localTime);
 
         return xmlTimeFormatWithoutMTOffset.format(UTCTime.getTime());
       } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
