@@ -60,13 +60,21 @@ isc.OBCalendarTabSet.addProperties({
 isc.OBCalendar.addProperties({
   eventWindowStyle: 'OBEventWindow',
   baseStyle: 'OBCalendarGridCell',
-  headerBaseStyle: 'OBCalendarGridHeaderCell',
   workdayBaseStyle: 'OBCalendarGridCellWorkday',
   selectedCellStyle: 'OBCalendarGridCellSelected'
 });
 
 isc.OBCalendar.changeDefaults('dayViewDefaults', {
-  alternateRecordStyles: false
+  alternateRecordStyles: false,
+  headerBaseStyle: 'OBCalendarGridHeaderCell'
+});
+
+isc.OBCalendar.changeDefaults('weekViewDefaults', {
+  headerBaseStyle: 'OBCalendarGridHeaderCell'
+});
+
+isc.OBCalendar.changeDefaults('monthViewDefaults', {
+  headerBaseStyle: 'OBCalendarGridHeaderCell'
 });
 
 isc.OBCalendar.changeDefaults('datePickerButtonDefaults', {
