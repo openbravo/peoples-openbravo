@@ -22,10 +22,11 @@ package org.openbravo.advpaymentmngt.process;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -87,10 +88,11 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
 
       StringBuilder whereClause = new StringBuilder();
       whereClause.append(" as i");
-      whereClause.append("   left join i.fINPaymentScheduleList fps");
+      whereClause.append("   left join i.fINPaymentScheduleList fps ");
       whereClause.append(" where i.processed=true");
-      whereClause.append(" and (i.paymentComplete=false");
-      whereClause.append(" or i.outstandingAmount <> 0");
+      whereClause.append(" and (i.paymentComplete=false ");
+      whereClause.append("      or fps.updated >= i.lastCalculatedOnDate ");
+      whereClause.append("      or i.outstandingAmount <> 0");
       if (migration != null) {
         whereClause.append("  or (i.finalSettlementDate is null");
         whereClause.append(" and fps.id is not null");
@@ -107,7 +109,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
         obc.setFilterOnReadableClients(false);
         obc.setFilterOnReadableOrganization(false);
       }
-      final List<String> invoiceIds = new ArrayList<String>();
+      final Set<String> invoiceIds = new HashSet<String>();
       for (Invoice invoice : obc.list()) {
         invoiceIds.add(invoice.getId());
       }
@@ -179,6 +181,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
 
       OBDal.getInstance().save(invoice);
       OBDal.getInstance().flush();
+    } catch (Exception e) {
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -257,19 +260,23 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       }
 
       if (paymentSchedule.getPaidAmount().compareTo(paid) != 0) {
-        logger.log("ERROR Invoice " + invoice.getDocumentNo()
-            + ": wrong payment plan info, paid amount is "
-            + paymentSchedule.getPaidAmount().toPlainString() + " when it should be "
-            + paid.toPlainString());
+        if (logger != null) {
+          logger.log("ERROR Invoice " + invoice.getDocumentNo()
+              + ": wrong payment plan info, paid amount is "
+              + paymentSchedule.getPaidAmount().toPlainString() + " when it should be "
+              + paid.toPlainString());
+        }
         paymentSchedule.setPaidAmount(paid);
         OBDal.getInstance().save(paymentSchedule);
       }
       if (paymentSchedule.getOutstandingAmount().compareTo(
           paymentSchedule.getAmount().subtract(paid)) != 0) {
-        logger.log("ERROR Invoice " + invoice.getDocumentNo()
-            + ": wrong payment plan info, outstanding amount is "
-            + paymentSchedule.getOutstandingAmount().toPlainString() + " when it should be "
-            + paymentSchedule.getAmount().subtract(paid).toPlainString());
+        if (logger != null) {
+          logger.log("ERROR Invoice " + invoice.getDocumentNo()
+              + ": wrong payment plan info, outstanding amount is "
+              + paymentSchedule.getOutstandingAmount().toPlainString() + " when it should be "
+              + paymentSchedule.getAmount().subtract(paid).toPlainString());
+        }
         paymentSchedule.setOutstandingAmount(paymentSchedule.getAmount().subtract(paid));
         OBDal.getInstance().save(paymentSchedule);
       }
