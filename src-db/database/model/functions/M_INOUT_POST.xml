@@ -69,6 +69,7 @@
     --
     v_Result NUMBER:=1;
     v_AD_Org_ID VARCHAR2(32);
+    v_Warehouse_Org VARCHAR2(32);
     v_AD_Client_ID VARCHAR2(32);
     v_NextNo VARCHAR2(32);
     v_Qty NUMBER;
@@ -184,6 +185,15 @@
       AND AD_Org_ID = v_AD_Org_ID;
 
       IF v_count = 0 AND v_isSoTrx = 'Y' THEN
+        RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@');
+      END IF;
+
+      SELECT AD_Org_ID
+      INTO v_Warehouse_Org
+      FROM M_Warehouse
+      WHERE M_Warehouse_ID = v_M_Warehouse_ID;
+
+      IF(ad_org_isinnaturaltree(v_Warehouse_Org, v_AD_Org_ID, v_AD_Client_ID) = 'N' AND v_isSoTrx = 'N') THEN
         RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@');
       END IF;
 

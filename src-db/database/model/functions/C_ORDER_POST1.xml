@@ -42,6 +42,7 @@
   -- Record Info
   v_Client_ID VARCHAR2(32);
   v_Org_ID VARCHAR2(32);
+  v_Warehouse_Org VARCHAR2(32);
   v_Org_Name VARCHAR2(60);
   v_UpdatedBy VARCHAR2(32);
   v_DocAction VARCHAR(60) ;
@@ -206,6 +207,15 @@
 
     IF v_count = 0 AND v_IsSOTrx = 'Y' THEN
     RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@') ;
+    END IF;
+
+    SELECT AD_Org_ID
+    INTO v_Warehouse_Org
+    FROM M_Warehouse
+    WHERE M_Warehouse_ID = v_M_Warehouse_ID;
+
+    IF(ad_org_isinnaturaltree(v_Warehouse_Org, v_Org_ID, v_Client_ID) = 'N' AND v_isSoTrx = 'N') THEN
+      RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@');
     END IF;
 
     SELECT CASE WHEN (m.ISSOTRX='Y') THEN customer_blocking  ELSE vendor_blocking END ,  
