@@ -51,7 +51,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT COUNT(1) FROM AD_PREFERENCE WHERE ATTRIBUTE  = 'Discount to keyboard button module script executed'
+      SELECT COUNT(1) as counter FROM AD_PREFERENCE WHERE ATTRIBUTE  = 'Discount to keyboard button module script executed'
       ]]>
     </Sql>
   </SqlMethod>  
@@ -59,7 +59,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT COUNT(1) FROM OBPOS_APPLICATIONS
+      SELECT COUNT(1) as counter FROM OBPOS_APPLICATIONS
       ]]>
     </Sql>
   </SqlMethod>
