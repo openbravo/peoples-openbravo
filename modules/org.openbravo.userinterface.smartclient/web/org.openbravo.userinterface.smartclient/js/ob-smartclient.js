@@ -96,6 +96,14 @@ isc.ResultTree.addProperties({
         target.treeDataArrived();
       }
     }
+  },
+  _original_indexOf: isc.ResultTree.getPrototype().indexOf,
+  indexOf: function (node, a, b, c, d) {
+    if (!node) {
+      return -1;
+    } else {
+      return this._original_indexOf(node, a, b, c, d);
+    }
   }
 });
 

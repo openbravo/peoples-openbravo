@@ -1481,7 +1481,11 @@ isc.OBViewGrid.addProperties({
     // do not refresh if the parent is not selected and we have no data
     // anyway
     if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
-      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      if (this.view.parentView.isShowingTree) {
+        selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
+      } else {
+        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      }
       if (selectedValues && !this.isOpenDirectMode && selectedValues.length === 0) {
         if (callback) {
           callback();
@@ -1854,7 +1858,11 @@ isc.OBViewGrid.addProperties({
     this.resetEmptyMessage(criteria);
 
     if (this.view.parentProperty && !this.isOpenDirectMode) {
-      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      if (this.view.parentView.isShowingTree) {
+          selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
+      } else {
+          selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      }
       var parentPropertyFilterValue = -1;
       if (selectedValues) {
         if (selectedValues.length === 0) {
@@ -2070,7 +2078,11 @@ isc.OBViewGrid.addProperties({
     } else if (this.isGridFiltered(criteria)) {
       // there can be some initial filters, but still no parent selected
       if (this.view.parentView) {
-        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+        if (this.view.parentView.isShowingTree) {
+          selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
+        } else {
+          selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+        }
         parentIsNew = this.view.parentView.isShowingForm && this.view.parentView.viewForm.isNew;
         parentIsNew = parentIsNew || (selectedValues.length === 1 && selectedValues[0]._new);
         if (parentIsNew) {
@@ -2088,7 +2100,11 @@ isc.OBViewGrid.addProperties({
     } else if (this.view.isRootView) {
       this.emptyMessage = this.noDataEmptyMessage;
     } else {
-      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      if (this.view.parentView.isShowingTree) {
+        selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
+      } else {
+        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      }
       parentIsNew = this.view.parentView.isShowingForm && this.view.parentView.viewForm.isNew;
       parentIsNew = parentIsNew || (selectedValues.length === 1 && selectedValues[0]._new);
       if (parentIsNew) {

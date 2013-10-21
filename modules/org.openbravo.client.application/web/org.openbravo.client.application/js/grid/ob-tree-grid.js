@@ -282,6 +282,30 @@ isc.OBTreeGrid.addProperties({
     this.selectRecord(recordNum);
   },
 
+  selectionUpdated: function (record, recordList) {
+    var me = this,
+        callback = function () {
+        me.delayedSelectionUpdated();
+        };
+    // wait 2 times longer than the fire on pause delay default
+    this.fireOnPause('delayedSelectionUpdated_' + this.ID, callback, this.fireOnPauseDelay * 2);
+  },
+
+  delayedSelectionUpdated: function (record, recordList) {
+    var selectedRecordId = this.getSelectedRecord() ? this.getSelectedRecord().id : null,
+        length, tabViewPane, i;
+    // refresh the tabs
+    if (this.view.childTabSet) {
+      length = this.view.childTabSet.tabs.length;
+      for (i = 0; i < length; i++) {
+        tabViewPane = this.view.childTabSet.tabs[i].pane;
+        if (!selectedRecordId || selectedRecordId !== tabViewPane.parentRecordId) {
+          tabViewPane.doRefreshContents(true);
+        }
+      }
+    }
+  },
+
   getCellCSSText: function (record, rowNum, colNum) {
     if (record.filterHit === true) {
       return "font-weight:bold;";

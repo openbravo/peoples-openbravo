@@ -2046,7 +2046,7 @@ isc.OBStandardView.addProperties({
   //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
   getContextInfo: function (onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat) {
     var contextInfo = {},
-        addProperty, rowNum, properties, i, p;
+        addProperty, rowNum, properties, i, p, grid;
     // if classicmode is undefined then both classic and new props are used
     var classicModeUndefined = (typeof classicMode === 'undefined');
     var value, field, record, form, component, propertyObj, type, length;
@@ -2086,12 +2086,17 @@ isc.OBStandardView.addProperties({
       component = this.viewForm;
       form = component;
     } else {
-      record = this.viewGrid.getSelectedRecord();
-      rowNum = this.viewGrid.getRecordIndex(record);
-      if (rowNum || rowNum === 0) {
-        record = isc.addProperties({}, record, this.viewGrid.getEditValues(rowNum));
+      if (this.isShowingTree) {
+        grid = this.treeGrid;
+      } else {
+        grid = this.viewGrid;
       }
-      component = this.viewGrid;
+      record = grid.getSelectedRecord();
+      rowNum = grid.getRecordIndex(record);
+      if (rowNum || rowNum === 0) {
+        record = isc.addProperties({}, record, grid.getEditValues(rowNum));
+      }
+      component = grid;
     }
 
     properties = this.propertyToColumns;
@@ -2099,9 +2104,9 @@ isc.OBStandardView.addProperties({
     if (record) {
 
       // add the id of the record itself also if not set
-      if (!record[OB.Constants.ID] && this.viewGrid.getSelectedRecord()) {
+      if (!record[OB.Constants.ID] && grid.getSelectedRecord()) {
         // if in edit mode then the grid always has the current record selected
-        record[OB.Constants.ID] = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
+        record[OB.Constants.ID] = grid.getSelectedRecord()[OB.Constants.ID];
       }
 
       // New records in grid have a dummy id (see OBViewGrid.createNewRecordForEditing)
