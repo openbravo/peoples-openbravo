@@ -3201,8 +3201,7 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--B349DDAF7910422FA358ABF3F41EE395-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B349DDAF7910422FA358ABF3F41EE395-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B349DDAF7910422FA358ABF3F41EE395-->  <VALUE><![CDATA[OBPOS_LblCashupWithReconciliationDraft]]></VALUE>
-<!--B349DDAF7910422FA358ABF3F41EE395-->  <MSGTEXT><![CDATA[Before be able to perform Cash Up process, you need to ensure that all your Reconciliation are Completed. Please, check the financial account assigned to %0 payment method
-]]></MSGTEXT>
+<!--B349DDAF7910422FA358ABF3F41EE395-->  <MSGTEXT><![CDATA[Cash Up is not finished. Not completed reconciliation is detected. Please check terminal´s financial account for the %0 payment method.]]></MSGTEXT>
 <!--B349DDAF7910422FA358ABF3F41EE395-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--B349DDAF7910422FA358ABF3F41EE395-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--B349DDAF7910422FA358ABF3F41EE395-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
