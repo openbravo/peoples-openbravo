@@ -89,9 +89,12 @@ public class Category extends ProcessHQLQuery {
             + "               where p.discountType.active = true " //
             + "                 and p.active = true"//
             + "                 and p.discountType = pt"//
-            + "                 and (p.endingDate is null or p.endingDate >= '"
-            + format.format(now.getTime()) + "')" //
-            + "                 and p.startingDate <= '" + format.format(now.getTime()) + "')");
+            + "                 and (p.endingDate is null or p.endingDate >= TO_DATE('"
+            + format.format(now.getTime())
+            + "','yyyy/MM/dd'))" //
+            + "                 and p.startingDate <= TO_DATE('"
+            + format.format(now.getTime())
+            + "', 'yyyy/MM/dd'))");
 
     return hqlQueries;
   }

@@ -33,7 +33,7 @@
       <![CDATA[
       INSERT INTO AD_PREFERENCE 
       (AD_PREFERENCE_ID,AD_CLIENT_ID,AD_ORG_ID,ISACTIVE,CREATED,CREATEDBY,UPDATED,UPDATEDBY,AD_WINDOW_ID,AD_USER_ID,ATTRIBUTE,VALUE,PROPERTY,ISPROPERTYLIST,VISIBLEAT_CLIENT_ID,VISIBLEAT_ORG_ID,VISIBLEAT_ROLE_ID,SELECTED,AD_MODULE_ID) 
-      VALUES (get_uuid(),'0','0','Y',now(),'100',now(),'100',null,null,null,'N','OBPOS_retail.discountkeyboard','Y',null,null,null,'N',null);
+      VALUES (get_uuid(),'0','0','Y',now(),'100',now(),'100',null,null,null,'N','OBPOS_retail.discountkeyboard','Y',null,null,null,'N',null)
       ]]>
     </Sql>
   </SqlMethod>
@@ -43,7 +43,7 @@
       <![CDATA[
       INSERT INTO AD_PREFERENCE 
       (AD_PREFERENCE_ID,AD_CLIENT_ID,AD_ORG_ID,ISACTIVE,CREATED,CREATEDBY,UPDATED,UPDATEDBY,AD_WINDOW_ID,AD_USER_ID,ATTRIBUTE,VALUE,PROPERTY,ISPROPERTYLIST,VISIBLEAT_CLIENT_ID,VISIBLEAT_ORG_ID,VISIBLEAT_ROLE_ID,SELECTED,AD_MODULE_ID) 
-      VALUES (get_uuid(),'0','0','Y',now(),'100',now(),'100',null,null,'Discount to keyboard button module script executed','Y',null,'N',null,null,null,'N',null);
+      VALUES (get_uuid(),'0','0','Y',now(),'100',now(),'100',null,null,'Discount to keyboard button module script executed','Y',null,'N',null,null,null,'N',null)
       ]]>
     </Sql>
   </SqlMethod>
@@ -51,7 +51,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT COUNT(1) FROM AD_PREFERENCE WHERE ATTRIBUTE  = 'Discount to keyboard button module script executed' AND VALUE='Y'
+      SELECT COUNT(1) FROM AD_PREFERENCE WHERE ATTRIBUTE  = 'Discount to keyboard button module script executed'
       ]]>
     </Sql>
   </SqlMethod>  

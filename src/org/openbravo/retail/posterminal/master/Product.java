@@ -96,23 +96,21 @@ public class Product extends ProcessHQLQuery {
             + "   and p.discountType.active = true " //
             + "   and p.active = true"//
             + "   and p.$readableClientCriteria"//
-            + "   and (p.endingDate is null or p.endingDate >= '"
+            + "   and (p.endingDate is null or p.endingDate >= TO_DATE('"
             + format.format(now.getTime())
-            + "')" //
-            + "   and p.startingDate <= '"
+            + "', 'yyyy/MM/dd'))" //
+            + "   and p.startingDate <= TO_DATE('"
             + format.format(now.getTime())
-            + "'"
-            + "   and (p.$incrementalUpdateCriteria) "//
+            + "', 'yyyy/MM/dd')" + "   and (p.$incrementalUpdateCriteria) "//
         );
 
     // generic products
     products
-        .add("select distinct "
+        .add("select "
             + regularProductsHQLProperties.getHqlSelect()
-            + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli, PricingProductPrice ppp, OBRETCO_Prol_Product pli2 where  product = ppp.product and ppp.priceListVersion.id = '"
-            + priceListVersion.getId()
-            + "' and pli2.product.genericProduct=product and pli2.obretcoProductlist = '"
-            + productList.getId() + "'");
+            + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli, PricingProductPrice ppp where exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = '"
+            + priceListVersion.getId() + "' and pli2.obretcoProductlist.id = '"
+            + productList.getId() + "')");
 
     return products;
 
