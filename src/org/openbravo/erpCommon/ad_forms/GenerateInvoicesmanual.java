@@ -22,17 +22,26 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
-import org.openbravo.erpCommon.reference.ActionButtonData;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -42,10 +51,16 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class GenerateInvoicesmanual extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+
+  @Inject
+  @Any
+  private Instance<GenerateInvoicesHook> hooks;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -81,13 +96,33 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
           strIncludeTaxes, strInvDate);
     } else if (vars.commandIn("GENERATE")) {
+      Connection conn = null;
+      OBError myMessage = null;
+      try {
+        conn = getTransactionConnection();
+        conn.setAutoCommit(false);
+      } catch (NoConnectionAvailableException e1) {
+        log4j.error(e1.getMessage(), e1);
+
+        myMessage = handleException("NoDBConnection", vars);
+      } catch (SQLException e) {
+        log4j.error(e.getMessage(), e);
+
+        myMessage = handleException("NoDBConnection", vars);
+      }
+      if (myMessage != null) {
+        vars.setMessage("GenerateInvoicesmanual", myMessage);
+        response.sendRedirect(strDireccion + request.getServletPath());
+        return;
+      }
+
       String strCOrderId = vars.getInStringParameter("inpOrder", IsIDFilter.instance);
       String strInvDate = vars.getRequestGlobalVariable("inpInvDate",
           "GenerateInvoicesmanual|invDate");
       if (strCOrderId.equals(""))
         strCOrderId = "('0')";
-      GenerateInvoicesmanualData.initUpdate(this);
-      GenerateInvoicesmanualData.updateSelection(this, strCOrderId);
+      GenerateInvoicesmanualData.initUpdate(conn, this);
+      GenerateInvoicesmanualData.updateSelection(conn, this, strCOrderId);
       String pinstance = SequenceIdData.getUUID();
       PInstanceProcessData.insertPInstance(this, pinstance, "134", "0", "N", vars.getUser(),
           vars.getClient(), vars.getOrg());
@@ -97,17 +132,50 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
         PInstanceProcessData.insertPInstanceParamDate(this, pinstance, "2", "DateInvoiced",
             strInvDate, vars.getClient(), vars.getOrg(), vars.getUser());
       }
-      ActionButtonData.process134(this, pinstance);
-      PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
-      OBError myMessage = new OBError();
+
+      GenerateInvoicesmanualData.process134(conn, this, pinstance);
+
+      PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(conn, this, pinstance);
+      myMessage = new OBError();
       String message = "";
       myMessage.setTitle("");
       myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
       vars.setMessage("GenerateInvoicesmanual", myMessage);
-      GenerateInvoicesmanualData.resetSelection(this, strCOrderId);
+      GenerateInvoicesmanualData.resetSelection(conn, this, strCOrderId);
       if (log4j.isDebugEnabled())
         log4j.debug(message);
+
       response.sendRedirect(strDireccion + request.getServletPath());
+
+      List<Order> orders = getOrders(strCOrderId);
+      try {
+        for (GenerateInvoicesHook hook : hooks) {
+          myMessage = hook.executeHook(conn, orders, myMessage);
+          if (myMessage != null && "Error".equals(myMessage.getType())) {
+            vars.setMessage("GenerateInvoicesmanual", myMessage);
+            response.sendRedirect(strDireccion + request.getServletPath());
+            return;
+          }
+        }
+      } catch (Exception e) {
+        log4j.error(e.getMessage(), e);
+        myMessage = handleException(e, vars);
+        vars.setMessage("GenerateInvoicesmanual", myMessage);
+        try {
+          releaseRollbackConnection(conn);
+        } catch (SQLException e1) {
+          log4j.error(e.getMessage(), e);
+        }
+        return;
+      }
+
+      try {
+        releaseCommitConnection(conn);
+      } catch (SQLException e) {
+        myMessage = handleException(e, vars);
+        log4j.error(e.getMessage(), e);
+      }
+
     } else
       pageError(response);
   }
@@ -232,6 +300,34 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       }
     }
     return gData;
+  }
+
+  private List<Order> getOrders(String strOrderIds) {
+    OBCriteria<Order> orderCrit = OBDal.getInstance().createCriteria(Order.class);
+
+    ArrayList<String> orderIds = Utility.stringToArrayList(strOrderIds.replaceAll("\\(|\\)|'", ""));
+    orderCrit.add(Restrictions.in(Order.PROPERTY_ID, orderIds));
+
+    List<Order> orders = orderCrit.list();
+    return orders;
+  }
+
+  private OBError handleException(String msg, VariablesSecureApp vars) {
+    String title = Utility.messageBD(this, "Error", vars.getLanguage());
+    String message = Utility.messageBD(this, msg, vars.getLanguage());
+    if (message == null || message.isEmpty()) {
+      message = Utility.messageBD(this, "ErrorInExtensionPoint", vars.getLanguage());
+    }
+    OBError err = new OBError();
+
+    err.setTitle(title);
+    err.setMessage(message);
+    err.setType("ERROR");
+    return err;
+  }
+
+  private OBError handleException(Exception e, VariablesSecureApp vars) {
+    return handleException(e.getMessage(), vars);
   }
 
   public String getServletInfo() {
