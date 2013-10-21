@@ -204,7 +204,7 @@
     WHERE M_Warehouse_ID=v_M_Warehouse_ID
     AND AD_Org_ID = v_Org_ID;
 
-    IF v_count = 0 THEN
+    IF v_count = 0 AND v_IsSOTrx = 'Y' THEN
     RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@') ;
     END IF;
 

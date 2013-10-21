@@ -93,6 +93,7 @@
     Cur_MILines RECORD;
     FINISH_PROCESS BOOLEAN:=false;
     v_Aux NUMBER;
+    v_isSoTrx CHAR(1);
     v_ProductName M_Product.name%TYPE;
     v_reservation_id    VARCHAR2(32);
     v_M_Warehouse_ID    VARCHAR2(32);
@@ -149,8 +150,8 @@
   BEGIN --BODY
   	IF(NOT FINISH_PROCESS) THEN
   	  v_PUser:=v_User;
-      SELECT io.AD_Client_ID, io.AD_Org_ID, io.CreatedBy, io.C_DocType_ID, io.DateAcct, dt.isreturn, io.m_warehouse_id
-        INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct, v_isreturndoctype, v_M_Warehouse_ID
+      SELECT io.AD_Client_ID, io.AD_Org_ID, io.CreatedBy, io.C_DocType_ID, io.DateAcct, dt.isreturn, io.m_warehouse_id, io.issotrx
+        INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct, v_isreturndoctype, v_M_Warehouse_ID, v_isSoTrx
         FROM M_InOut io JOIN c_doctype dt ON io.c_doctype_id = dt.c_doctype_id
         WHERE io.M_InOut_ID=v_Record_ID;
         IF(v_PUser IS NOT NULL) THEN
@@ -182,7 +183,7 @@
       WHERE M_Warehouse_ID=v_M_Warehouse_ID
       AND AD_Org_ID = v_AD_Org_ID;
 
-      IF v_count = 0 THEN
+      IF v_count = 0 AND v_isSoTrx = 'Y' THEN
         RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@');
       END IF;
 
