@@ -174,6 +174,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
     JSONArray responseData = new JSONArray();
 
+    int nResults = query.count();
+    int count = 0;
     final ScrollableResults scrollableResults = query.scroll(ScrollMode.FORWARD_ONLY);
     while (scrollableResults.next()) {
       BaseOBObject bob = (BaseOBObject) scrollableResults.get()[0];
@@ -196,7 +198,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       String parentNodeIdStr = null;
       if (parentNodeId instanceof String) {
         parentNodeIdStr = (String) parentNodeId;
-      } else if (nodeId instanceof BaseOBObject) {
+      } else if (parentNodeId instanceof BaseOBObject) {
         parentNodeIdStr = ((BaseOBObject) parentNodeId).getId().toString();
       }
 
@@ -207,6 +209,11 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       }
       json.put("_hasChildren", (this.nodeHasChildren(tab, bob)) ? true : false);
       responseData.put(json);
+
+      count++;
+      if (count % 100 == 0) {
+        OBDal.getInstance().getSession().clear();
+      }
 
     }
     return responseData;
