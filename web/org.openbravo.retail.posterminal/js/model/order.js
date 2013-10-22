@@ -745,6 +745,20 @@
       } else {
         qty = qty || 1;
       }
+      if (!_.isUndefined(OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) && !OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) {
+        var negativeLines = _.filter(this.get('lines').models, function (line) {
+          return line.get('gross') < 0;
+        }).length;
+        if (this.get('lines').length > 0) {
+          if (qty > 0 && negativeLines > 0) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
+            return;
+          } else if (qty < 0 && negativeLines !== this.get('lines').length) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
+            return;
+          }
+        }
+      }
 
       if (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
@@ -962,8 +976,23 @@
       });
       this.adjustPayment();
     },
-    returnLine: function (line, options) {
+    returnLine: function (line, options, skipValidaton) {
       var me = this;
+      if (!_.isUndefined(OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) && !OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn') && !skipValidaton) {
+        //The value of qty need to be negate because we want to change it
+        var negativeLines = _.filter(this.get('lines').models, function (line) {
+          return line.get('gross') < 0;
+        }).length;
+        if (this.get('lines').length > 0) {
+          if (-line.get('qty') > 0 && negativeLines > 0) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
+            return;
+          } else if (-line.get('qty') < 0 && negativeLines !== this.get('lines').length) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
+            return;
+          }
+        }
+      }
       if (line.get('qty') > 0) {
         line.get('product').set('ignorePromotions', true);
       } else {
@@ -986,6 +1015,7 @@
         line.unset('promotions');
       }
       me.calculateGross();
+      this.save();
 
     },
 
@@ -1016,7 +1046,9 @@
         if (permission === 'OBPOS_receipt.return') {
           this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
           _.each(this.get('lines').models, function (line) {
-            me.returnLine(line);
+            if (line.get('qty') > 0) {
+              me.returnLine(line, null, true);
+            }
           }, this);
         } else {
           this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);

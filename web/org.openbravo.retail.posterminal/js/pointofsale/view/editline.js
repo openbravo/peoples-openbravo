@@ -233,6 +233,7 @@ enyo.kind({
           i18nContent: 'OBPOS_LblReturnLine',
           permission: 'OBPOS_ReturnLine',
           classes: 'btnlink-orange',
+          showing: false,
           tap: function () {
             this.owner.doReturnLine({
               line: this.owner.line
@@ -382,7 +383,7 @@ enyo.kind({
     }
     if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1) {
       this.$.returnLine.hide();
-    } else {
+    } else if (OB.POS.modelterminal.hasPermission(this.$.returnLine.permission)) {
       this.$.returnLine.show();
     }
     this.render();
