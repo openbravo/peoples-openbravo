@@ -283,12 +283,12 @@ public class OrderLoader extends JSONProcessSimple {
         // Shipment header
         shipment = OBProvider.getInstance().get(ShipmentInOut.class);
         createShipment(shipment, order, jsonorder);
+
+        // Shipment lines
+        createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
         if (shipment != null) {
           OBDal.getInstance().save(shipment);
         }
-        // Shipment lines
-        createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
-
       }
       long t115 = System.currentTimeMillis();
       if (createInvoice) {
@@ -448,12 +448,11 @@ public class OrderLoader extends JSONProcessSimple {
         if (order != null) {
           return true;
         }
-      }
-      if ((jsonorder.getString("totalamount") == null || jsonorder.getString("totalamount").equals(
-          "0"))
-          && (jsonorder.getJSONArray("lines") != null && jsonorder.getJSONArray("lines").length() == 0)) {
-        log.error("Detected order without lines and total amount zero. Document number "
-            + jsonorder.getString("documentNo"));
+      }      
+      if ((jsonorder.getString("totalamount") == null || jsonorder.getString("totalamount").equals("0"))
+              && (jsonorder.isNull("lines") || (jsonorder.getJSONArray("lines")!=null && jsonorder.getJSONArray("lines").length()==0))) {
+    	log.error("Detected order without lines and total amount zero. Document number "
+                  + jsonorder.getString("documentNo"));
         return true;
       }
     } finally {
@@ -830,8 +829,6 @@ public class OrderLoader extends JSONProcessSimple {
     line.setLineNo(lineNo);
     line.setShipmentReceipt(shipment);
     line.setSalesOrderLine(orderLine);
-    // orderLine.setGoodsShipmentLine(line);
-
     orderLine.getMaterialMgmtShipmentInOutLineList().add(line);
 
     line.setMovementQuantity(qty);

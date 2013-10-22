@@ -54,7 +54,7 @@ enyo.kind({
     this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
 
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
-      this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '), url(' + "/openbravo/web/org.openbravo.mobile.core/assets/img/box.png" + ')');
+      this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
       this.$.thumbnail.hide();
     } else {
       this.$.thumbnail.setImg(this.model.get('img'));
