@@ -2055,6 +2055,12 @@ isc.OBStandardView.addProperties({
       classicMode = true;
     }
 
+    if (this.isShowingTree) {
+      grid = this.treeGrid;
+    } else {
+      grid = this.viewGrid;
+    }
+
     // a special case, the editform has been build but it is not present yet in the
     // form, so isEditingGrid is true but the edit form is not there yet, in that 
     // case use the viewGrid as component and the selected record
@@ -2086,11 +2092,6 @@ isc.OBStandardView.addProperties({
       component = this.viewForm;
       form = component;
     } else {
-      if (this.isShowingTree) {
-        grid = this.treeGrid;
-      } else {
-        grid = this.viewGrid;
-      }
       record = grid.getSelectedRecord();
       rowNum = grid.getRecordIndex(record);
       if (rowNum || rowNum === 0) {

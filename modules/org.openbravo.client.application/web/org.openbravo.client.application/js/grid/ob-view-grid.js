@@ -1859,9 +1859,9 @@ isc.OBViewGrid.addProperties({
 
     if (this.view.parentProperty && !this.isOpenDirectMode) {
       if (this.view.parentView.isShowingTree) {
-          selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
+        selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
       } else {
-          selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       }
       var parentPropertyFilterValue = -1;
       if (selectedValues) {
@@ -1944,7 +1944,11 @@ isc.OBViewGrid.addProperties({
       // result in an empty criteria which is ignored not generating the
       // request. Forcing load
       // See issue #22645
-      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      if (this.view.parentView.isShowingTree) {
+        selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
+      } else {
+        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+      }
       if (selectedValues.length !== 1) {
         // if there is not a single record selected, always false criterion
         criteria.criteria.push({
