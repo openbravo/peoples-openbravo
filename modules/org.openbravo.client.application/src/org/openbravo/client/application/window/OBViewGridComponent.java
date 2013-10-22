@@ -251,7 +251,10 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     requiredGridProperties.add("id");
     requiredGridProperties.add("client");
     requiredGridProperties.add("organization");
-
+    requiredGridProperties.add("updatedBy");
+    requiredGridProperties.add("updated");
+    requiredGridProperties.add("creationDate");
+    requiredGridProperties.add("createdBy");
     for (Property identifierProperty : this.entity.getIdentifierProperties()) {
       requiredGridProperties.add(identifierProperty.getName());
     }
