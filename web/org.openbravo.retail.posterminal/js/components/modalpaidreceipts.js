@@ -344,6 +344,7 @@ enyo.kind({
     return true;
   },
   executeOnShow: function () {
+    this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.clearAction();
     if (this.params.isQuotation) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_Quotations'));
     } else if (this.params.isLayaway) {
