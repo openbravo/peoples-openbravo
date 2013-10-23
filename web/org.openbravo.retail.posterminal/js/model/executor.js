@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -104,6 +104,47 @@ OB.Model.Executor = Backbone.Model.extend({
 });
 
 OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
+  // parameters that will be used in the SQL to get promotions, in case this SQL is extended, 
+  // these parameters might be required to be extended too
+  criteriaParams: ['bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'productId', 'productId'],
+
+  // defines the property each of the parameters in criteriaParams is translated to, in case of
+  // different parameters than standard ones this should be extended
+  paramsTranslation: {
+    bpId: {
+      model: 'receipt',
+      property: 'bp'
+    },
+    productId: {
+      model: 'line',
+      property: 'product'
+    }
+  },
+
+  convertParams: function (evt, line, receipt, pTrl) {
+    var translatedParams = [];
+    _.forEach(this.criteriaParams, function (param) {
+      var paraTrl, model;
+
+      paraTrl = pTrl[param];
+      if (!paraTrl) {
+        window.console.error('Not found param to calculate discounts', param);
+        return;
+      }
+
+      if (paraTrl.model === 'receipt') {
+        model = receipt;
+      } else if (paraTrl.model === 'line') {
+        model = line;
+      } else {
+        model = evt.get(paraTrl.model);
+      }
+
+      translatedParams.push(model.get(paraTrl.property).id);
+    });
+    return translatedParams;
+  },
+
   createActions: function (evt) {
     var line = evt.get('line'),
         receipt = evt.get('receipt'),
@@ -122,7 +163,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
     criteria = {
       '_whereClause': whereClause,
-      params: [bpId, bpId, bpId, bpId, productId, productId, productId, productId]
+      params: this.convertParams(evt, line, receipt, this.paramsTranslation)
     };
 
     OB.Dal.find(OB.Model.Discount, criteria, function (d) {
