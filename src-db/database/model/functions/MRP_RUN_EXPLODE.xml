@@ -59,6 +59,7 @@
   Cur_Run_Lines RECORD;
   Cur_Dependants RECORD;
   Cur_Parents RECORD;
+  v_planneddate DATE;
 BEGIN
   BEGIN --BODY
 
@@ -97,7 +98,15 @@ BEGIN
       ) LOOP
         IF (Cur_Run_Lines.Qty < 0) THEN
           v_New := 'Y';
-          Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Run_Lines.M_Product_ID, -1*Cur_Run_Lines.Qty, -1*Cur_Run_Lines.Qty, Cur_Run_Lines.MRP_RUN_Line_ID, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN 'MP' ELSE 'WP' END), 'N', NULL, NULL, NULL, NULL, Cur_Run_Lines.MA_Processplan_ID, Cur_Run_Lines.planneddate - p_SecurityMargin, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN (Cur_Run_Lines.planneddate - p_SecurityMargin) ELSE Cur_Run_Lines.planneddate - p_SecurityMargin - (CASE Cur_Run_Lines.DELAYMIN > (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) WHEN true THEN Cur_Run_Lines.DELAYMIN ELSE (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) END) END), 'Y', (CASE WHEN Cur_Run_Lines.ispurchased = 'Y' THEN 'Y' ELSE 'N' END), NULL, v_Aux_ID);
+	  IF (Cur_Run_Lines.InOutTrxType = 'MS') THEN
+	    v_planneddate := cur_run_lines.planneddate;
+	  ELSE
+	    v_planneddate := cur_run_lines.planneddate - p_securitymargin;
+	    IF (v_planneddate < p_planningdate) THEN
+	      v_planneddate:= p_planningdate;
+	    END IF;
+	  END IF;
+	  Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Run_Lines.M_Product_ID, -1*Cur_Run_Lines.Qty, -1*Cur_Run_Lines.Qty, Cur_Run_Lines.MRP_RUN_Line_ID, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN 'MP' ELSE 'WP' END), 'N', NULL, NULL, NULL, NULL, Cur_Run_Lines.MA_Processplan_ID, v_planneddate, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN (v_planneddate) ELSE v_planneddate - (CASE Cur_Run_Lines.DELAYMIN > (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) WHEN true THEN Cur_Run_Lines.DELAYMIN ELSE (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) END) END), 'Y', (CASE WHEN Cur_Run_Lines.ispurchased = 'Y' THEN 'Y' ELSE 'N' END), NULL, v_Aux_ID);
         ELSE
           v_ResultStr := 'Explode dependant products';
           FOR Cur_Dependants IN (SELECT MA_PROCESSPLAN_TOT_AUX.DEPENDANTPRODUCT, DEPQTY/PROQTY AS qty,
