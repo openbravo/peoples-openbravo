@@ -166,7 +166,7 @@ public class JsonToDataConverter {
             strValue = xmlDateFormat.format(now.getTime()) + "T" + strValue;
             Date UTCTime = new Timestamp(jsTimeFormat.parse(strValue).getTime());
 
-            Date localTime = UTCTime; // convertToLocalTime(UTCTime);
+            Date localTime = convertToLocalTime(UTCTime);
 
             return new Timestamp(localTime.getTime());
           } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
