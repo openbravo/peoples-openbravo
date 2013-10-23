@@ -2974,7 +2974,7 @@ isc.OBViewGrid.addProperties({
       return;
     }
 
-    if (newRow && editCompletionEvent === 'tab' && !ficCallDone) {
+    if (this.getEditForm().isNew && editCompletionEvent === 'tab' && !ficCallDone) {
       this.setEditValue(rowNum, 'actionAfterFicReturn', {
         target: this,
         method: this.cellEditEnd,
