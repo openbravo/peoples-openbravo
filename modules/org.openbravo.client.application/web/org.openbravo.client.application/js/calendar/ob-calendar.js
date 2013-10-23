@@ -59,6 +59,7 @@ isc.ClassFactory.defineClass('OBCalendar', isc.Calendar);
 
 isc.OBCalendar.addProperties({
   autoFetchData: true,
+  mainViewConstructor: isc.OBCalendarTabSet,
   eventDialogConstructor: isc.OBCalendar_EventDialogBridge,
   initWidget: function () {
     var calendar = this,
@@ -588,9 +589,4 @@ isc.OBCalendar.addProperties({
     } catch (e) {}
   }
 
-});
-
-
-isc.OBCalendar.changeDefaults('mainViewDefaults', {
-  _constructor: isc.OBCalendarTabSet
 });
