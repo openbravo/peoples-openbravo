@@ -40,4 +40,42 @@
     <Parameter name="sequenceNumber"/>
   </SqlMethod>
 
+   <SqlMethod name="getAllSubtabs" type="preparedStatement" return="multiple">
+    <Sql><![CDATA[
+        select t.ad_tab_id
+        from ad_tab t
+        where ad_window_id = ?
+        and seqno > TO_NUMBER(?)
+        and seqno < (select coalesce(min(seqno), 999999) from ad_tab
+        where tablevel <= TO_NUMBER(?)
+        and seqno > TO_NUMBER(?)
+        and ad_window_id = ?)
+    ]]></Sql>
+    <Parameter name="windowId"/>
+    <Parameter name="sequenceNumber"/>
+    <Parameter name="tabLevel"/>
+    <Parameter name="sequenceNumber"/>
+    <Parameter name="windowId"/>
+  </SqlMethod>
+
+   <SqlMethod name="getFirstLevelSubtabs" type="preparedStatement" return="multiple">
+    <Sql><![CDATA[
+        select t.ad_tab_id
+        from ad_tab t
+        where ad_window_id = ?
+        and seqno > TO_NUMBER(?)
+        and tablevel = (TO_NUMBER(?)+1)
+        and seqno < (select coalesce(min(seqno), 999999) from ad_tab
+        where tablevel <= TO_NUMBER(?)
+        and seqno > TO_NUMBER(?)
+        and ad_window_id = ?)
+    ]]></Sql>
+    <Parameter name="windowId"/>
+    <Parameter name="sequenceNumber"/>
+    <Parameter name="tabLevel"/>
+    <Parameter name="tabLevel"/>
+    <Parameter name="sequenceNumber"/>
+    <Parameter name="windowId"/>
+  </SqlMethod>
+
 </SqlClass>

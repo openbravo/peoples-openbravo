@@ -65,6 +65,7 @@ public class DynamicExpressionParser {
   }
 
   private List<Field> fieldsInExpression = new ArrayList<Field>();
+  private List<String> otherTokensInExpression = new ArrayList<String>();
   private List<Parameter> parametersInExpression = new ArrayList<Parameter>();
   private List<AuxiliaryInput> auxInputsInExpression = new ArrayList<AuxiliaryInput>();
   private List<String> sessionAttributesInExpression = new ArrayList<String>();
@@ -209,6 +210,15 @@ public class DynamicExpressionParser {
   }
 
   /**
+   * Returns the list of tokens that are not fields of the tab It is only used when parsing the
+   * display logic of the tabs
+   * 
+   */
+  public List<String> getOtherTokensInExpression() {
+    return otherTokensInExpression;
+  }
+
+  /**
    * Returns the list of Parameters used in the dynamic expression
    * 
    */
@@ -334,6 +344,10 @@ public class DynamicExpressionParser {
           return new DisplayLogicElement(
               "OB.Utilities.getValue(currentValues,'" + fieldName + "')",
               uiDef instanceof YesNoUIDefinition);
+        } else if (tabLevelDisplayLogic) {
+          if (!otherTokensInExpression.contains(token)) {
+            otherTokensInExpression.add(token);
+          }
         }
       }
       for (AuxiliaryInput auxIn : auxIns) {

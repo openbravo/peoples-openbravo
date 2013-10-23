@@ -563,7 +563,6 @@ public class OBViewTab extends BaseTemplateComponent {
       final DynamicExpressionParser parser = new DynamicExpressionParser(tab.getDisplayLogic(),
           tab, inpColumnNames);
       jsExpression = parser.getJSExpression();
-
       // Retrieves the preference attributes used in the display logic of the tab
       setPreferenceAttributesFromParserResult(parser, this.getWindowId());
     }
@@ -602,6 +601,27 @@ public class OBViewTab extends BaseTemplateComponent {
       }
     }
     return preferenceAttributes;
+  }
+
+  // Return the list of fields of these tab that are part of the display logic of its subtabs
+  public List<String> getDisplayLogicFields() {
+    boolean getOnlyFirstLevelSubTabs = false;
+    List<Tab> subTabs = KernelUtils.getInstance().getTabSubtabs(tab, getOnlyFirstLevelSubTabs);
+    List<String> displayLogicFields = new ArrayList<String>();
+    for (Tab subTab : subTabs) {
+      if (subTab.getDisplayLogic() != null && !subTab.getDisplayLogic().isEmpty()) {
+        boolean inpColumnNames = true;
+        final DynamicExpressionParser parser = new DynamicExpressionParser(
+            subTab.getDisplayLogic(), tab, inpColumnNames);
+        List<String> tokens = parser.getOtherTokensInExpression();
+        for (String token : tokens) {
+          if (!displayLogicFields.contains(token) && fieldHandler.isField(token)) {
+            displayLogicFields.add(token);
+          }
+        }
+      }
+    }
+    return displayLogicFields;
   }
 
   public class ButtonField {
