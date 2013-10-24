@@ -249,13 +249,43 @@ enyo.kind({
 
     //finished
     this.model.on('change:finished', function () {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), OB.I18N.getLabel('OBPOS_FinishCloseDialog'), [{
+      
+      // this.model.messages ????
+      var content;
+      var i;
+      var messages = this.model.get('messages');
+      var next = this.model.get('next');
+      
+      // Build the content of the dialog.
+      if (messages && messages.length) {
+        content = [{
+            content: OB.I18N.getLabel('OBPOS_FinishCloseDialog')
+        }, {
+            allowHtml: true,
+            content: '&nbsp;'
+        }];
+        for (i = 0; i < messages.length; i++) {
+          content.push({
+            content: OB.UTIL.decodeXMLComponent(messages[i])
+          });
+        }
+      } else {
+        content = OB.I18N.getLabel('OBPOS_FinishCloseDialog');
+      }
+      
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         action: function () {
-          OB.POS.navigate('retail.pointofsale');
+          if ('logout' === next) {
+            OB.UTIL.showLoggingOut(true);
+            OB.MobileApp.model.logout();
+          } else {
+            OB.POS.navigate('retail.pointofsale');
+          }
           return true;
         }
       }]);
+      
     }, this);
     //finishedWrongly
     this.model.on('change:finishedWrongly', function (model) {

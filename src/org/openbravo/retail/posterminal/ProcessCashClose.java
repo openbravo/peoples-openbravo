@@ -15,13 +15,14 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.service.json.JsonConstants;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
+import org.openbravo.service.json.JsonConstants;
 
 public class ProcessCashClose extends JSONProcessSimple {
 
@@ -66,8 +67,15 @@ public class ProcessCashClose extends JSONProcessSimple {
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
             jsonsent.getString("terminalId"));
         JSONArray arrayCashCloseInfo = jsonsent.getJSONArray("cashCloseInfo");
-        new CashCloseProcessor().processCashClose(posTerminal, jsonsent.getString("cashUpId"),
+
+        CashCloseProcessor processor = WeldUtils
+            .getInstanceFromStaticBeanManager(CashCloseProcessor.class);
+        JSONObject result = processor.processCashClose(posTerminal, jsonsent.getString("cashUpId"),
             arrayCashCloseInfo);
+
+        // add the messages returned by processCashClose...
+        jsonData.put("messages", result.opt("messages"));
+        jsonData.put("next", result.opt("next"));
       }
       jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
       return jsonResponse;
