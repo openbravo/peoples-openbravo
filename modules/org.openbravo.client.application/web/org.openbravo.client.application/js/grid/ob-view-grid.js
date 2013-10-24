@@ -1484,7 +1484,7 @@ isc.OBViewGrid.addProperties({
   // mode is opened
   // - if there is only one record then select it directly
   dataArrived: function (startRow, endRow) {
-    var noSetSession, changeEvent, forceUpdate;
+    var noSetSession, changeEvent, forceUpdate, newValue = '&nbsp;';
     // do this now, to replace the loading message
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
     if (this.uiPattern === 'SR' || this.uiPattern === 'RO' || this.uiPattern === 'ED') {
@@ -1496,6 +1496,12 @@ isc.OBViewGrid.addProperties({
 
     var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
+
+    //The updateRowCountDisplay has a delay associated with it,
+    //so prevent returning incorrect row count if there a request while on delay.
+    //Refer issue https://issues.openbravo.com/view.php?id=24802
+    this.filterEditor.getEditForm().setValue(isc.OBViewGrid.EDIT_LINK_FIELD_NAME, newValue);
+
     if (this.getSelectedRecords() && this.getSelectedRecords().length > 0) {
       this.selectionUpdated();
     }
