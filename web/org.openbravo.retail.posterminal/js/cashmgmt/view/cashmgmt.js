@@ -134,7 +134,6 @@ enyo.kind({
 
     //finished
     this.model.on('change:finished', function () {
-
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblDone'), OB.I18N.getLabel('OBPOS_FinishCashMgmtDialog'), [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         action: function () {
