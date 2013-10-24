@@ -112,6 +112,9 @@
       var memo = 0;
       if (this.get('promotions') && this.get('promotions').length > 0) {
         return _.reduce(this.get('promotions'), function (memo, prom) {
+          if (OB.UTIL.isNullOrUndefined(prom.amt)) {
+            return memo;
+          }
           return memo + prom.amt;
         }, memo, this);
       } else {
