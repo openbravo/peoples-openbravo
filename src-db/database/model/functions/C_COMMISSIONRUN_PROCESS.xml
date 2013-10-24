@@ -34,7 +34,6 @@ TYPE RECORD IS REF CURSOR;
  v_C_Invoice_ID     varchar2(32);
  v_NextNo      VARCHAR2(32);
  v_DocumentNo     VARCHAR2(40);
- v_SalesRep_ID     varchar2(32);
  --
  v_C_BPartner_ID     varchar2(32);
  v_C_BPartner_Location_ID  varchar2(32);
@@ -106,7 +105,7 @@ BEGIN
       BEGIN
         FOR Cur_Data IN (SELECT com.Name, com.C_Currency_ID, com.C_BPartner_ID, pl.C_BPartner_Location_ID,
             PaymentRulePO, PO_PaymentTerm_ID, PO_PriceList_ID,
-            POReference, IsDiscountPrinted, p.SalesRep_ID, com.M_Product_ID, C_UOM_ID, p.name as bpartnername
+            POReference, IsDiscountPrinted, com.M_Product_ID, C_UOM_ID, p.name as bpartnername
             FROM  C_BPARTNER p, C_COMMISSION com LEFT JOIN C_BPARTNER_LOCATION pl ON com.C_BPartner_ID = pl.C_BPartner_ID
                                               LEFT JOIN M_Product prd ON com.M_Product_ID = prd.M_Product_ID
          WHERE com.C_Commission_ID = CUR_ComRun.C_Commission_ID
@@ -120,7 +119,6 @@ BEGIN
           v_M_PriceList_ID:=Cur_Data.PO_PriceList_ID;
           v_POReference:=Cur_Data.POReference;
           v_IsDiscountPrinted:=Cur_Data.IsDiscountPrinted;
-          v_SalesRep_ID:=Cur_Data.SalesRep_ID;
           v_Product_ID:=Cur_Data.M_Product_ID;
           v_UOM_ID:=Cur_Data.C_UOM_ID;
           v_partnername:=Cur_Data.bpartnername;
@@ -166,7 +164,6 @@ BEGIN
    AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
    IsSOTrx, DocumentNo, DocStatus, DocAction, Processing, Processed,
    C_DocType_ID, C_DocTypeTarget_ID, Description,
-   SalesRep_ID,
    DateInvoiced, DatePrinted, IsPrinted, DateAcct, TaxDate,
    C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID,
    POReference, DateOrdered, IsDiscountPrinted,
@@ -178,7 +175,6 @@ BEGIN
    CUR_ComRun.AD_Client_ID, CUR_ComRun.AD_Org_ID, 'Y', now(), '0', now(), '0',
    'N', v_DocumentNo, 'DR', 'CO', 'N', 'N',
    v_C_DocType_ID, v_C_DocType_ID, CUR_ComRun.Description,
-   NULL,
    CUR_ComRun.Updated, NULL, 'N', CUR_ComRun.Updated, CUR_ComRun.Updated, -- DateInvoiced=DateAcct
    v_C_PaymentTerm_ID, v_C_BPartner_ID, v_C_BPartner_Location_ID, NULL,
    v_POReference, CUR_ComRun.Updated, v_IsDiscountPrinted,
