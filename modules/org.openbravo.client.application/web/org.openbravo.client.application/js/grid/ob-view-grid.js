@@ -1500,7 +1500,9 @@ isc.OBViewGrid.addProperties({
     //The updateRowCountDisplay has a delay associated with it,
     //so prevent returning incorrect row count if there a request while on delay.
     //Refer issue https://issues.openbravo.com/view.php?id=24802
-    this.filterEditor.getEditForm().setValue(isc.OBViewGrid.EDIT_LINK_FIELD_NAME, newValue);
+    if (this.filterEditor && this.filterEditor.getEditForm()) {
+      this.filterEditor.getEditForm().setValue(isc.OBViewGrid.EDIT_LINK_FIELD_NAME, newValue);
+    }
 
     if (this.getSelectedRecords() && this.getSelectedRecords().length > 0) {
       this.selectionUpdated();
