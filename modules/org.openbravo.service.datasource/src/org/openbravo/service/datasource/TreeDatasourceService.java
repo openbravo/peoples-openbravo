@@ -2,6 +2,7 @@ package org.openbravo.service.datasource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +16,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -28,6 +31,9 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   final static Logger log = LoggerFactory.getLogger(TreeDatasourceService.class);
   final static String JSON_PREFIX = "<SCRIPT>//'\"]]>>isc_JSONResponseStart>>";
   final static String JSON_SUFFIX = "//isc_JSONResponseEnd";
+
+  @Inject
+  private DataSourceServiceProvider dataSourceServiceProvider;
 
   final String ROOT_NODE = "0";
 
@@ -75,24 +81,43 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     OBContext.setAdminMode(true);
     final JSONObject jsonResult = new JSONObject();
 
-    String parentId = parameters.get("parentId");
-    String tabId = parameters.get("tabId");
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    String hqlTreeWhereClause = null;
-
-    if (parentId.equals(ROOT_NODE)) {
-      if (tab.getHqlTreeWhereClause() != null) {
-        hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
-      }
-    }
-
     try {
+      String parentId = parameters.get("parentId");
+      String tabId = parameters.get("tabId");
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      String hqlTreeWhereClause = null;
+
+      if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
+        Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+        DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
+        return dataSource.fetch(parameters);
+      }
+
+      if (parentId.equals(ROOT_NODE)) {
+        // Now the HQL tree where clause is only beig applied to fetch the root nodes, to tell them
+        // from the non root nodes
+        // TODO
+        // The HQL where clause of the tab should be applied for all records
+        if (tab.getHqlTreeWhereClause() != null) {
+          hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
+        }
+      }
       JSONArray responseData = null;
       JSONArray selectedNodes = null;
       if (parameters.containsKey("selectedRecords")) {
         selectedNodes = new JSONArray(parameters.get("selectedRecords"));
       }
-      if (selectedNodes != null && selectedNodes.length() > 0) {
+
+      if (parameters.containsKey("criteria") && parentId.equals(ROOT_NODE)) {
+        List<String> filteredNodes = getFilteredNodes(tab, parameters);
+        if (!filteredNodes.isEmpty()) {
+          // Fetch only the filtered nodes and its parents (filtered tree)
+          responseData = fetchFilteredNodes(parameters, filteredNodes);
+        } else {
+          responseData = new JSONArray();
+        }
+      } else if (selectedNodes != null && selectedNodes.length() > 0) {
+        // Fetch only the selected nodes and its parents (full tree)
         try {
           responseData = fetchSelectedNodes(parameters, selectedNodes);
         } catch (MultipleParentsException e) {
@@ -101,9 +126,10 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           responseData = fetchNodeChildren(parameters, parentId, hqlTreeWhereClause);
         }
       } else {
-
+        // Fetch the node children of a given parent
         responseData = fetchNodeChildren(parameters, parentId, hqlTreeWhereClause);
       }
+
       final JSONObject jsonResponse = new JSONObject();
       jsonResponse.put(JsonConstants.RESPONSE_DATA, responseData);
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -118,6 +144,79 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       OBContext.restorePreviousMode();
     }
     return jsonResult.toString();
+  }
+
+  private List<String> getFilteredNodes(Tab tab, Map<String, String> parameters) {
+    List<String> filteredNodes = new ArrayList<String>();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+    DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
+    String dsResult = dataSource.fetch(parameters);
+    try {
+      JSONObject jsonDsResult = new JSONObject(dsResult);
+      JSONObject jsonResponse = jsonDsResult.getJSONObject(JsonConstants.RESPONSE_RESPONSE);
+      JSONArray dataArray = jsonResponse.getJSONArray(JsonConstants.RESPONSE_DATA);
+      int nRecords = dataArray.length();
+      for (int i = 0; i < nRecords; i++) {
+        JSONObject data = dataArray.getJSONObject(i);
+        String ref = data.getString("$ref");
+        String id = ref.substring(ref.lastIndexOf("/") + 1);
+        filteredNodes.add(id);
+      }
+    } catch (JSONException e) {
+      log.error("Error while getting the filtered nodes from the datasource", e);
+    }
+    return filteredNodes;
+  }
+
+  private JSONArray fetchFilteredNodes(Map<String, String> parameters, List<String> filteredNodes)
+      throws MultipleParentsException {
+    JSONArray responseData = new JSONArray();
+    String tabId = parameters.get("tabId");
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    try {
+      Map<String, JSONObject> addedNodesMap = new HashMap<String, JSONObject>();
+      for (String nodeId : filteredNodes) {
+        JSONObject node = getJSONObjectByRecordId(parameters, nodeId);
+
+        JSONObject savedNode = addedNodesMap.get(node.getString("id"));
+        if (savedNode == null) {
+          node.put("filterHit", true);
+          addedNodesMap.put(node.getString("id"), node);
+        } else {
+          savedNode.put("filterHit", true);
+        }
+
+        String hqlTreeWhereClause = null;
+        if (tab.getHqlTreeWhereClause() != null) {
+          hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
+        }
+
+        while (node.has("parentId") && !"0".equals(node.getString("parentId"))
+            && this.nodeConformsToWhereClause(tab, node.getString("parentId"), hqlTreeWhereClause)) {
+          nodeId = node.getString("parentId");
+          node = getJSONObjectByNodeId(parameters, nodeId);
+          savedNode = addedNodesMap.get(node.getString("id"));
+          if (savedNode == null) {
+            node.put("isOpen", true);
+            addedNodesMap.put(node.getString("id"), node);
+          } else {
+            savedNode.put("isOpen", true);
+          }
+        }
+        if (this.nodeConformsToWhereClause(tab, node.getString("parentId"), hqlTreeWhereClause)) {
+          node.put("parentId", ROOT_NODE);
+        }
+      }
+
+      // Add the values in the map to responsedata
+      for (String key : addedNodesMap.keySet()) {
+        responseData.put(addedNodesMap.get(key));
+      }
+
+    } catch (JSONException e) {
+      log.error("Error on tree datasource", e);
+    }
+    return responseData;
   }
 
   private JSONArray fetchSelectedNodes(Map<String, String> parameters, JSONArray selectedNodes)

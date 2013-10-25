@@ -37,6 +37,7 @@ isc.OBTreeGrid.addProperties({
   folderIcon: null,
   autoFetchData: false,
   closedIconSuffix: "",
+  showFilterEditor: true,
   selectionAppearance: "checkbox",
   showSelectedStyle: true,
   // the grid will be refreshed when:
@@ -55,6 +56,13 @@ isc.OBTreeGrid.addProperties({
   },
 
   initWidget: function () {
+    this.filterEditorProperties = this.view.viewGrid.filterEditorProperties;
+    this.checkShowFilterFunnelIcon = this.view.viewGrid.checkShowFilterFunnelIcon;
+    this.isGridFiltered = this.view.viewGrid.isGridFiltered;
+    this.isGridFilteredWithCriteria = this.view.viewGrid.isGridFilteredWithCriteria;
+    this.isValidFilterField = this.view.viewGrid.isValidFilterField;
+    this.convertCriteria = this.view.viewGrid.convertCriteria;
+
     this.Super('initWidget', arguments);
     if (this.orderedTree) {
       this.canSort = false;
@@ -252,17 +260,32 @@ isc.OBTreeGrid.addProperties({
   },
 
   show: function () {
-    this.setFields(this.getTreeGridFields(this.view.viewGrid.getFields()));
+    this.copyCriteriaFromViewGrid();
     this.view.toolBar.updateButtonState();
     this.Super('show', arguments);
   },
 
   hide: function () {
+    this.copyCriteriaToViewGrid();
     if (this.needsViewGridRefresh) {
       this.needsViewGridRefresh = false;
       this.view.viewGrid.refreshGrid();
     }
     this.Super('hide', arguments);
+  },
+
+  copyFieldsFromViewGrid: function () {
+    this.setFields(this.getTreeGridFields(this.view.viewGrid.getFields()));
+  },
+
+  copyCriteriaFromViewGrid: function () {
+    var viewGridCriteria = this.view.viewGrid.getCriteria();
+    this.setCriteria(viewGridCriteria);
+  },
+
+  copyCriteriaToViewGrid: function () {
+    var treeGridCriteria = this.getCriteria();
+    this.view.viewGrid.setCriteria(treeGridCriteria);
   },
 
   rowMouseDown: function (record, rowNum, colNum) {
@@ -312,6 +335,51 @@ isc.OBTreeGrid.addProperties({
     } else {
       return "";
     }
+  },
+
+  getFetchRequestParams: function (params) {
+    return this.view.viewGrid.getFetchRequestParams(params);
+  },
+
+  // show or hide the filter button
+  filterEditorSubmit: function (criteria) {
+    this.checkShowFilterFunnelIcon(criteria);
+  },
+
+  clearFilter: function (keepFilterClause, noPerformAction) {
+    var i = 0,
+        fld, length;
+    this.view.messageBar.hide();
+    if (!keepFilterClause) {
+      delete this.filterClause;
+      delete this.sqlFilterClause;
+    }
+    this.forceRefresh = true;
+    if (this.filterEditor) {
+      if (this.filterEditor.getEditForm()) {
+        this.filterEditor.getEditForm().clearValues();
+
+        // clear the date values in a different way
+        length = this.filterEditor.getEditForm().getFields().length;
+
+        for (i = 0; i < length; i++) {
+          fld = this.filterEditor.getEditForm().getFields()[i];
+          if (fld.clearFilterValues) {
+            fld.clearFilterValues();
+          }
+        }
+      } else {
+        this.filterEditor.setValuesAsCriteria(null);
+      }
+    }
+    if (!noPerformAction) {
+      this.filterEditor.performAction();
+    }
+  },
+
+  editorChanged: function (item) {
+    this.needsViewGridRefresh = true;
+    this.Super('editorChanged', arguments);
   }
 
 });
