@@ -1017,13 +1017,29 @@
       newAllLinesCalculated = _.after(this.get('lines').length, allLinesCalculated);
 
       this.get('lines').each(function (line) {
-        order.setPrice(line, line.get('product').get('id'));
+
+        //issues 24994 & 24993
+        //if the order is created from quotation just after save the quotation
+        //(without load the quotation from quotations window). The order has the fields added
+        //by adjust prices. We need to work without these values
+        //price not including taxes
+        line.unset('nondiscountedprice');
+        line.unset('nondiscountednet');
+        //price including taxes
+        line.unset('netFull');
+        line.unset('grossListPrice');
+        line.unset('grossUnitPrice');
+        line.unset('lineGrossAmount');
+
+
         var successCallbackPrices, criteria = {
           'id': line.get('product').get('id')
         };
         successCallbackPrices = function (dataPrices, line) {
           dataPrices.each(function (price) {
-            order.setPrice(line, price.get('standardPrice'));
+            order.setPrice(line, price.get('standardPrice', {
+              setUndo: false
+            }));
           });
           newAllLinesCalculated();
         };
