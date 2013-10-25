@@ -56,12 +56,7 @@ isc.OBTreeGrid.addProperties({
   },
 
   initWidget: function () {
-    this.filterEditorProperties = this.view.viewGrid.filterEditorProperties;
-    this.checkShowFilterFunnelIcon = this.view.viewGrid.checkShowFilterFunnelIcon;
-    this.isGridFiltered = this.view.viewGrid.isGridFiltered;
-    this.isGridFilteredWithCriteria = this.view.viewGrid.isGridFilteredWithCriteria;
-    this.isValidFilterField = this.view.viewGrid.isValidFilterField;
-    this.convertCriteria = this.view.viewGrid.convertCriteria;
+	this.copyFunctionsFromViewGrid();
 
     this.Super('initWidget', arguments);
     if (this.orderedTree) {
@@ -70,10 +65,22 @@ isc.OBTreeGrid.addProperties({
       this.canSort = true;
     }
   },
+  
+  // Some OBTreeGrid functionality is alreadyd implemented in OBViewGrid
+  // Instead of rewriting it, copy it
+  // Do not do this for functions that makes call to super() if it needs to use code from OBGrid. It would not use OBGrid as prototype, but ListGrid
+  copyFunctionsFromViewGrid: function() {
+	    this.filterEditorProperties = this.view.viewGrid.filterEditorProperties;
+	    this.checkShowFilterFunnelIcon = this.view.viewGrid.checkShowFilterFunnelIcon;
+	    this.isGridFiltered = this.view.viewGrid.isGridFiltered;
+	    this.isGridFilteredWithCriteria = this.view.viewGrid.isGridFilteredWithCriteria;
+	    this.isValidFilterField = this.view.viewGrid.isValidFilterField;
+	    this.convertCriteria = this.view.viewGrid.convertCriteria;
+  },
 
+  // Sets the fields of the datasource and extends the transformRequest and transformResponse functions
   setDataSource: function (ds, fields) {
     var me = this;
-
     ds.transformRequest = function (dsRequest) {
       dsRequest.params = dsRequest.params || {};
       dsRequest.params.referencedTableId = me.referencedTableId;
@@ -110,6 +117,8 @@ isc.OBTreeGrid.addProperties({
     return this.Super("setDataSource", [ds, fields]);
   },
 
+  // Used to copy the fields from the OBViewGrid to the OBTreeGrid.
+  // It does not copy the fields that start with underscore
   getTreeGridFields: function (fields) {
     var treeGridFields = isc.shallowClone(fields),
         i, nDeleted = 0;
@@ -122,6 +131,9 @@ isc.OBTreeGrid.addProperties({
     return treeGridFields;
   },
 
+  // Adds to the request the parameters related with the node ordering
+  // * prevNodeId: Id of the node placed right before the moved node. Null if there are none
+  // * prevNodeId: Id of the node placed right after the moved node. Null if there are none
   addOrderedTreeParameters: function (dsRequest) {
     var childrenOfNewParent, prevNode, nextNode;
     if (this.orderedTree) {
@@ -145,6 +157,7 @@ isc.OBTreeGrid.addProperties({
     return dsRequest;
   },
 
+  // Returns a string that represents a jsonarray containing the ids of all the nodes selected in the view grid 
   getSelectedRecordsString: function () {
     var selectedRecordsString = '[',
         first = true,
@@ -163,6 +176,7 @@ isc.OBTreeGrid.addProperties({
     return selectedRecordsString;
   },
 
+  // TODO: Remove?
   getParentTabRecordId: function () {
     var parentRecordId = null;
     if (!this.view.parentView) {
@@ -171,6 +185,7 @@ isc.OBTreeGrid.addProperties({
     return this.view.parentView.viewGrid.getSelectedRecord().id;
   },
 
+  // Returns a string that represents a jsonarray containing the names of all the TreeGrid fields 
   getSelectedPropertiesString: function () {
     var selectedProperties = '[',
         first = true,
@@ -221,6 +236,7 @@ isc.OBTreeGrid.addProperties({
     this.Super('transferNodes', arguments);
   },
 
+  // Checks if any node has been moved to another position of its current parent node
   movedToSameParent: function (nodes, newParent) {
     var i, len = nodes.length;
     for (i = 0; i < len; i++) {
@@ -231,6 +247,8 @@ isc.OBTreeGrid.addProperties({
     return true;
   },
 
+  // Returns a node from its id (the id property of the record, not the nodeId property)
+  // If no node exists with that id, it return null
   getNodeByID: function (nodeId) {
     var i, node, nodeList = this.data.getNodeList();
     for (i = 0; i < nodeList.length; i++) {
@@ -246,6 +264,7 @@ isc.OBTreeGrid.addProperties({
     this.view = view;
   },
 
+  // When a response is received from the datasource, it selects the nodes that were selected in the view grid
   treeDataArrived: function () {
     var i, selectedRecords, node;
     selectedRecords = this.view.viewGrid.getSelectedRecords();
@@ -255,6 +274,8 @@ isc.OBTreeGrid.addProperties({
     }
   },
 
+  // Opens the record in the edit form
+  // TODO: Check if the record is readonly?
   recordDoubleClick: function (viewer, record, recordNum, field, fieldNum, value, rawValue) {
     this.view.editRecordFromTreeGrid(record, false, (field ? field.name : null));
   },
@@ -265,6 +286,7 @@ isc.OBTreeGrid.addProperties({
     this.Super('show', arguments);
   },
 
+  // When hiding the tree grid to show the view grid, only refresh it if needed
   hide: function () {
     this.copyCriteriaToViewGrid();
     if (this.needsViewGridRefresh) {
@@ -329,6 +351,8 @@ isc.OBTreeGrid.addProperties({
     }
   },
 
+  // Show the record in bold if it is a filter hit (when the tree grid is filtered, some records 
+  // might be shown because they are parents of a filtered node, not because they are a filter hit themselves)
   getCellCSSText: function (record, rowNum, colNum) {
     if (record.filterHit === true) {
       return "font-weight:bold;";
@@ -377,6 +401,7 @@ isc.OBTreeGrid.addProperties({
     }
   },
 
+  // If any filter change, the view grid will have to te refreshed when the tree grid is hidden
   editorChanged: function (item) {
     this.needsViewGridRefresh = true;
     this.Super('editorChanged', arguments);
