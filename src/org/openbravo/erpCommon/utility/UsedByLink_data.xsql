@@ -182,28 +182,28 @@
     <Sql>
       <![CDATA[
         SELECT (AD_WINDOW.AD_WINDOW_ID) AS ID,
-        (AD_COLUMN_IDENTIFIER(TO_CHAR(?),TO_CHAR(AD_WINDOW.AD_WINDOW_ID),TO_CHAR(?))) AS NAME,
+        (AD_COLUMN_IDENTIFIER(?,TO_CHAR(AD_WINDOW.AD_WINDOW_ID),?)) AS NAME,
         tab1.AD_TAB_ID AS AD_TAB_ID,
         tab1.AD_WINDOW_ID AS AD_WINDOW_ID,
         table1.NAME AS TABLENAME,
         menu1.NAME AS AD_MENU_NAME,
         tab1.UIPATTERN
         FROM AD_WINDOW
-        LEFT OUTER JOIN AD_TAB   tab1 ON (tab1.AD_TAB_ID = TO_CHAR(?))
+        LEFT OUTER JOIN AD_TAB   tab1 ON (tab1.AD_TAB_ID = ?)
         LEFT OUTER JOIN AD_TABLE table1 ON (tab1.AD_TABLE_ID = table1.AD_TABLE_ID)
         LEFT OUTER JOIN AD_MENU  menu1 ON (menu1.AD_WINDOW_ID = tab1.AD_WINDOW_ID)
-        WHERE TO_CHAR(AD_WINDOW.AD_WINDOW_ID) = TO_CHAR(?) 
+        WHERE AD_WINDOW.AD_WINDOW_ID = ? 
         AND 1=1 
         ORDER BY 2
       ]]>
     </Sql>
     <Parameter name="fields" optional="true" type="replace" after="SELECT (" text="AD_WINDOW.AD_WINDOW_ID"/>
     <Parameter name="tablename"/>
-    <Parameter name="keyColumn" optional="true" type="replace" after="AD_COLUMN_IDENTIFIER(TO_CHAR(?),TO_CHAR(" text="AD_WINDOW.AD_WINDOW_ID"/>
+    <Parameter name="keyColumn" optional="true" type="replace" after="AD_COLUMN_IDENTIFIER(?,TO_CHAR(" text="AD_WINDOW.AD_WINDOW_ID"/>
     <Parameter name="adLanguage"/>
     <Parameter name="tablename" optional="true" type="replace" after="FROM " text="AD_WINDOW"/>
     <Parameter name="tabid" />     
-    <Parameter name="columnname" optional="true" type="replace" after="WHERE TO_CHAR(" text="AD_WINDOW.AD_WINDOW_ID"/>
+    <Parameter name="columnname" optional="true" type="replace" after="WHERE " text="AD_WINDOW.AD_WINDOW_ID"/>
     <Parameter name="keyId"/>
     <Parameter name="whereclause" optional="true" type="replace" after="AND 1=1 " text=""/>
   </SqlMethod>
