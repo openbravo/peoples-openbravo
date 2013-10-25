@@ -1455,7 +1455,15 @@
             curPayment = new PaymentLine();
             for (paymentProp in iter) {
               if (iter.hasOwnProperty(paymentProp)) {
-                curPayment.set(paymentProp, iter[paymentProp]);
+                if (paymentProp === "paymentDate") {
+                  if (!OB.UTIL.isNullOrUndefined(iter[paymentProp]) && moment(iter[paymentProp]).isValid()) {
+                    curPayment.set(paymentProp, new Date(iter[paymentProp]));
+                  } else {
+                    curPayment.set(paymentProp, null);
+                  }
+                } else {
+                  curPayment.set(paymentProp, iter[paymentProp]);
+                }
               }
             }
             payments.add(curPayment);
