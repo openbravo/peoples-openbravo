@@ -177,20 +177,6 @@
     </Sql>
     <Parameter name="adTabId"/>
   </SqlMethod>
-  <SqlMethod name="identifiers" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT C.COLUMNNAME AS NAME
-        FROM AD_FIELD F, AD_COLUMN C 
-        WHERE F.AD_TAB_ID = ? 
-        AND F.AD_COLUMN_ID = C.AD_COLUMN_ID 
-        AND C.ISIDENTIFIER = 'Y' 
-        AND C.ISACTIVE = 'Y'
-      ]]>
-    </Sql>
-    <Parameter name="adTabId"/>
-  </SqlMethod>
   <SqlMethod name="selectLinks" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -312,18 +298,6 @@
     </Sql>
     <Parameter name="adTableId"/>
     <Parameter name="tableName"/>
-  </SqlMethod>
-  
-  <SqlMethod name="selectTableName" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT TABLENAME as ID
-        FROM AD_TABLE
-        WHERE AD_TABLE_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="key"/>
   </SqlMethod>
   
   <SqlMethod name="selectKeyValue" type="preparedStatement" return="string">
