@@ -488,6 +488,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (!receipt.get('isEditable')) {
         return;
       }
+      //When we do not want to launch promotions process (Not apply or remove discounts)
+      if (receipt.get('skipApplyPromotions') || line.get('skipApplyPromotions')) {
+        return;
+      }
       OB.Model.Discounts.applyPromotions(receipt, line);
     }, this);
 

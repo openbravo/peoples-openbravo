@@ -734,7 +734,7 @@
       this.save();
       this.calculateGross();
     },
-
+    //Attrs is an object of attributes that will be set in order 
     _addProduct: function (p, qty, options, attrs) {
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
@@ -835,7 +835,7 @@
         }, this);
       }
     },
-
+    //Attrs is an object of attributes that will be set in order 
     addProduct: function (p, qty, options, attrs) {
       var me = this;
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_AddProductToOrder', {
@@ -946,7 +946,7 @@
         }, this);
       }
     },
-
+    //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
       var me = this;
       var newline = new OrderLine({
