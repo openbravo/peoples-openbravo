@@ -20,13 +20,14 @@ enyo.kind({
      * triggered in model parameter. This event has a boolean parameter 'approved'
      * that determines whether the approval was accepted or rejected.
      */
-    requestApproval: function (model, approvalType) {
+    requestApproval: function (model, approvalType, callback) {
       var dialog;
 
       dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
         kind: 'OB.UTIL.Approval',
         model: model,
-        approvalType: approvalType
+        approvalType: approvalType,
+        callback: callback
       });
 
       dialog.show();
@@ -177,7 +178,7 @@ enyo.kind({
     if (!u || !p) {
       alert(OB.I18N.getLabel('OBPOS_EmptyUserPassword'));
     } else {
-      this.model.checkApproval(this.approvalType, u, p);
+      this.model.checkApproval(this.approvalType, u, p, this.callback);
       this.waterfall('onHideThisPopup', {});
     }
   }

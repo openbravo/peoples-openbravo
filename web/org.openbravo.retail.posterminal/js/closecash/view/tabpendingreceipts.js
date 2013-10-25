@@ -93,6 +93,24 @@ enyo.kind({
             }]
           }]
         }, {
+          name: 'rowDeleteAll',
+          classes: 'row-fluid',
+          components: [{
+            style: 'span12; padding: 2px 5px 2px 5px; border-bottom: 1px solid #cccccc;',
+            components: [{
+              name: 'btnDeleteAll',
+              kind: 'OB.UI.SmallButton',
+              classes: 'btnlink-gray',
+              style: 'float: right; min-width: 70px; margin: 2px 5px 2px 5px;',
+              initComponents: function () {
+                this.setContent(OB.I18N.getLabel('OBPOS_DeleteAll'));
+              },
+              ontap: 'voidAllOrders'
+            }, {
+              style: 'clear: both;'
+            }]
+          }]        
+        }, {
           classes: 'row-fluid',
           components: [{
             style: 'span12',
@@ -111,15 +129,62 @@ enyo.kind({
       }]
     }]
   }],
+  init: function (model) {
+    this.model = model;
+  },
   collectionChanged: function (oldCol) {
     this.$.pendingReceiptList.setCollection(this.collection);
+    
+    if (oldCol) {
+      oldCol.off('remove add reset', this.receiptsChanged);
+    }
+    this.collection.on('remove add reset', this.receiptsChanged, this);
+  },
+  receiptsChanged: function () {
+    if (this.collection.length === 0) {
+      this.$.rowDeleteAll.hide();
+    } else {
+      this.$.rowDeleteAll.show();
+    }
   },
   voidOrder: function (inSender, inEvent) {
     var me = this,
         model = inEvent.originator.model;
 
-    OB.Dal.remove(inEvent.originator.model, function () {
-      me.collection.remove(model);
-    }, OB.UTIL.showError);
+    OB.UTIL.Approval.requestApproval(
+        this.model, 
+        'OBPOS_approval.cashup.removereceipts',
+        function (approved,supervisor, approvalType) {
+          if (approved) {
+            // approved so remove the entry
+            OB.Dal.remove(model, function () {
+              me.collection.remove(model);
+            }, OB.UTIL.showError);
+          }
+        }
+    );
+  },
+  voidAllOrders: function (inSender, inEvent) {
+    var me = this;
+
+    function removeOneModel(collection, model) {
+      OB.Dal.remove(model, function () {
+        collection.remove(model);
+      }, OB.UTIL.showError);        
+    }
+    
+    OB.UTIL.Approval.requestApproval(
+        this.model, 
+        'OBPOS_approval.cashup.removereceipts',
+        function (approved,supervisor, approvalType) {
+          if (approved) {
+            var models = me.collection.toArray();
+            var i;
+            for (i = 0; i < models.length; i++) {
+              removeOneModel(me.collection, models[i]);
+            }
+          }
+        }
+    );
   }
 });

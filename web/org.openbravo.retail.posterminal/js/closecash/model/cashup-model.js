@@ -27,7 +27,7 @@ OB.OBPOSCashUp.Model.CashCloseReport = Backbone.Model.extend({
 });
 
 //Window model
-OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
+OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   models: [OB.OBPOSCashUp.Model.CloseCashPaymentMethod, OB.OBPOSCashUp.Model.CashCloseReport, OB.Model.Order],
   defaults: {
     step: OB.DEC.Zero,
