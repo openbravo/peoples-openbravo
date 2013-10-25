@@ -1006,16 +1006,26 @@
       }
     },
 
-    updatePrices: function () {
-      var order = this;
+    updatePrices: function (callback) {
+      var order = this,
+          newAllLinesCalculated;
+
+      function allLinesCalculated() {
+        callback(order);
+      };
+
+      newAllLinesCalculated = _.after(this.get('lines').length, allLinesCalculated);
+
       this.get('lines').each(function (line) {
+        order.setPrice(line, line.get('product').get('id'));
         var successCallbackPrices, criteria = {
           'id': line.get('product').get('id')
         };
         successCallbackPrices = function (dataPrices, line) {
           dataPrices.each(function (price) {
-            order.setPrice(line, price.get('listPrice'));
+            order.setPrice(line, price.get('standardPrice'));
           });
+          newAllLinesCalculated();
         };
 
         OB.Dal.find(OB.Model.Product, criteria, successCallbackPrices, function () {
@@ -1050,11 +1060,15 @@
       this.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
       this.save();
       if (updatePrices) {
-        this.updatePrices();
-        OB.Model.Discounts.applyPromotions(this);
+        this.updatePrices(function (order) {
+          OB.Model.Discounts.applyPromotions(order);
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+          order.trigger('orderCreatedFromQuotation');
+        });
+      } else {
+        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+        this.trigger('orderCreatedFromQuotation');
       }
-      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-      this.trigger('orderCreatedFromQuotation');
     },
     reactivateQuotation: function () {
       this.set('hasbeenpaid', 'N');
