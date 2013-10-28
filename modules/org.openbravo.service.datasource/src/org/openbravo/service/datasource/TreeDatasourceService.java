@@ -210,6 +210,11 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
       // Add the values in the map to responsedata
       for (String key : addedNodesMap.keySet()) {
+        if (addedNodesMap.get(key).has("filterHit")) {
+          addedNodesMap.get(key).remove("filterHit");
+        } else {
+          addedNodesMap.get(key).put("notFilterHit", true);
+        }
         responseData.put(addedNodesMap.get(key));
       }
 

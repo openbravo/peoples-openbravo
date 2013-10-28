@@ -56,7 +56,7 @@ isc.OBTreeGrid.addProperties({
   },
 
   initWidget: function () {
-	this.copyFunctionsFromViewGrid();
+    this.copyFunctionsFromViewGrid();
 
     this.Super('initWidget', arguments);
     if (this.orderedTree) {
@@ -65,17 +65,19 @@ isc.OBTreeGrid.addProperties({
       this.canSort = true;
     }
   },
-  
+
   // Some OBTreeGrid functionality is alreadyd implemented in OBViewGrid
   // Instead of rewriting it, copy it
   // Do not do this for functions that makes call to super() if it needs to use code from OBGrid. It would not use OBGrid as prototype, but ListGrid
-  copyFunctionsFromViewGrid: function() {
-	    this.filterEditorProperties = this.view.viewGrid.filterEditorProperties;
-	    this.checkShowFilterFunnelIcon = this.view.viewGrid.checkShowFilterFunnelIcon;
-	    this.isGridFiltered = this.view.viewGrid.isGridFiltered;
-	    this.isGridFilteredWithCriteria = this.view.viewGrid.isGridFilteredWithCriteria;
-	    this.isValidFilterField = this.view.viewGrid.isValidFilterField;
-	    this.convertCriteria = this.view.viewGrid.convertCriteria;
+  copyFunctionsFromViewGrid: function () {
+    this.filterEditorProperties = this.view.viewGrid.filterEditorProperties;
+    this.checkShowFilterFunnelIcon = this.view.viewGrid.checkShowFilterFunnelIcon;
+    this.isGridFiltered = this.view.viewGrid.isGridFiltered;
+    this.isGridFilteredWithCriteria = this.view.viewGrid.isGridFilteredWithCriteria;
+    this.isValidFilterField = this.view.viewGrid.isValidFilterField;
+    this.convertCriteria = this.view.viewGrid.convertCriteria;
+    this.resetEmptyMessage = this.view.viewGrid.resetEmptyMessage;
+    this.filterData = this.view.viewGrid.filterData;
   },
 
   // Sets the fields of the datasource and extends the transformRequest and transformResponse functions
@@ -354,8 +356,8 @@ isc.OBTreeGrid.addProperties({
   // Show the record in bold if it is a filter hit (when the tree grid is filtered, some records 
   // might be shown because they are parents of a filtered node, not because they are a filter hit themselves)
   getCellCSSText: function (record, rowNum, colNum) {
-    if (record.filterHit === true) {
-      return "font-weight:bold;";
+    if (record.notFilterHit) {
+      return "color:#606060;";
     } else {
       return "";
     }
@@ -405,6 +407,15 @@ isc.OBTreeGrid.addProperties({
   editorChanged: function (item) {
     this.needsViewGridRefresh = true;
     this.Super('editorChanged', arguments);
+  },
+
+  getCriteria: function () {
+    var criteria = this.Super('getCriteria', arguments) || {};
+    if ((criteria === null || !criteria.criteria) && this.initialCriteria) {
+      criteria = isc.shallowClone(this.initialCriteria);
+    }
+    criteria = this.convertCriteria(criteria);
+    return criteria;
   }
 
 });

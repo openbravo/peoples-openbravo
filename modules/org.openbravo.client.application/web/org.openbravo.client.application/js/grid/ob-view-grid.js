@@ -2121,7 +2121,7 @@ isc.OBViewGrid.addProperties({
         this.emptyMessage = this.noDataEmptyMessage;
       }
     }
-    if (oldMessage !== this.emptyMessage) {
+    if (oldMessage !== this.emptyMessage && this.body) {
       this.body.markForRedraw();
     }
   },
