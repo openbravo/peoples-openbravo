@@ -581,6 +581,7 @@ enyo.kind({
     }, this);
   },
   displayStep: function (model) {
-    // this function is invoked when displayed.          
+    // this function is invoked when displayed.   
+    this.setSummary(model.getCountCashSummary());
   }  
 });
