@@ -361,6 +361,11 @@ isc.OBTabBarMain.addProperties({
 isc.ClassFactory.defineClass('OBTabBarButtonChild', isc.OBTabBarButton);
 
 isc.OBTabBarButtonChild.addProperties({
+  // Needed to replicate the "click" behavior in automated tests
+  virtualClick: function () {
+    this.getParentCanvas().getParentCanvas().doHandleClick();
+    this.focus();
+  },
   // when a tab is drawn the first time it steals the focus 
   // from the active view, prevent this
   focus: function () {
