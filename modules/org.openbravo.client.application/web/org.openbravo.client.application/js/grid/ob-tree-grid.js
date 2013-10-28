@@ -288,6 +288,7 @@ isc.OBTreeGrid.addProperties({
   show: function () {
     this.view.toolBar.updateButtonState();
     this.Super('show', arguments);
+    this.checkShowFilterFunnelIcon(this.getCriteria());
   },
 
   // When hiding the tree grid to show the view grid, only refresh it if needed
