@@ -20,5 +20,6 @@ package org.openbravo.materialmgmt;
 
 class CSResponse {
   String returnValue;
+  String returnValueMsg;
   String exito;
 }

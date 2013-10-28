@@ -178,19 +178,76 @@
       */
       DECLARE
         Cur_MoveLine RECORD;
-        NextNo varchar2(32);
+        cur_res_stock RECORD;
+        v_res_stock_id VARCHAR2(32);
+        v_reservedqty NUMBER;
+        v_qtytorelease NUMBER;
+        v_res_result NUMBER;
+        v_res_msg NVARCHAR2(2000);
+        v_storage_detail_id VARCHAR2(32);
       BEGIN --FOR COMMIT
         FOR Cur_MoveLine IN
           (SELECT *  FROM M_MovementLine  WHERE M_Movement_ID=v_Record_ID  ORDER BY Line)
         LOOP
           v_ResultStr:='Transaction for line' || Cur_MoveLine.Line;
-          -- FROM
-          AD_Sequence_Next('M_Transaction', v_Client_ID, NextNo);
 
           IF (Cur_MoveLine.MovementQty = 0) THEN
              RAISE_APPLICATION_ERROR(-20000,'@GoodsMovementsWithZeroQty@' || ' @Inline@ ' || Cur_MoveLine.line) ;
           END IF;
+          
+          IF (cur_moveline.m_reservation_id IS NOT NULL) THEN
+            SELECT COALESCE(SUM(quantity - COALESCE(releasedqty,0)), 0) INTO v_reservedqty
+            FROM m_reservation_stock
+            WHERE m_reservation_id = cur_moveline.m_reservation_id
+              AND m_locator_id = cur_moveline.m_locator_id
+              AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(cur_moveline.m_attributesetinstance_id, '0');
+            IF (v_reservedqty < cur_moveline.movementqty) THEN
+              -- There is not enough stock reserved in given storage bin and attributes
+              -- Try to reallocate no allocated reserved stock.
+              -- An error means that there is not available stock to assign to the given reservation because:
+              -- 1) there is not enough on hand stock
+              -- 2) there are other reservations using that stock and cannot be reallocated to use a different stock
+              -- 3) the given reservation has some allocated stock with different storage bin or attributes
+              M_RESERVATION_REALLOCATE(cur_moveline.m_reservation_id, cur_moveline.m_locator_id, cur_moveline.m_attributesetinstance_id, cur_moveline.movementqty, v_p_User, v_res_result, v_res_msg);
+              IF (v_res_result IN (0, 2)) THEN
+                RAISE_APPLICATION_ERROR(-20000, v_res_msg);
+              END IF;
+            END IF;
+            -- If there is enough stock reserved release the stock and reserve it in the destination storage bin
+            SELECT m_storage_detail_id INTO v_storage_detail_id
+            FROM m_storage_detail
+            WHERE m_product_id = cur_moveline.m_product_id
+              AND m_locator_id = cur_moveline.m_locatorto_id
+              AND m_attributesetinstance_id = COALESCE(cur_moveline.m_attributesetinstance_id, '0')
+              AND m_product_uom_id IS NULL;
+            v_reservedqty := cur_moveline.movementqty;
+            FOR cur_res_stock IN (
+                SELECT m_reservation_stock_id, quantity - COALESCE(releasedqty,0) AS reservedqty, isallocated
+                FROM m_reservation_stock
+                WHERE m_reservation_id = cur_moveline.m_reservation_id
+                  AND m_locator_id = cur_moveline.m_locator_id
+                  AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(cur_moveline.m_attributesetinstance_id, '0')
+                ORDER BY CASE isallocated WHEN 'Y' THEN 0 ELSE 1 END
+              ) LOOP
+              v_qtytorelease := LEAST(v_reservedqty, cur_res_stock.reservedqty);
 
+              UPDATE m_reservation_stock
+                SET quantity = quantity - v_qtytorelease
+              WHERE m_reservation_stock_id = cur_res_stock.m_reservation_stock_id;
+              M_RESERVE_STOCK_MANUAL(cur_moveline.m_reservation_id, 'SD', v_storage_detail_id, v_qtytorelease, v_p_user, cur_res_stock.isallocated, v_res_stock_id);
+
+              v_reservedqty := v_reservedqty - v_qtytorelease;
+              IF (v_reservedqty <= 0) THEN
+                EXIT;
+              END IF;
+            END LOOP;
+
+            DELETE FROM m_reservation_stock
+            WHERE quantity = 0
+              AND m_reservation_id = cur_moveline.m_reservation_id;
+          END IF;
+
+          -- FROM
           INSERT
           INTO M_Transaction
             (
@@ -202,7 +259,7 @@
             )
             VALUES
             (
-              NextNo, Cur_MoveLine.AD_Client_ID, Cur_MoveLine.AD_Org_ID, 'Y',
+              get_uuid(), Cur_MoveLine.AD_Client_ID, Cur_MoveLine.AD_Org_ID, 'Y',
               now(), v_p_User, now(), v_p_User,
               'M-', Cur_MoveLine.M_Locator_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstance_ID, '0'),
               v_MoveDate, (Cur_MoveLine.MovementQty * -1), Cur_MoveLine.M_MovementLine_ID, Cur_MoveLine.M_Product_UOM_ID,
@@ -210,7 +267,6 @@
             )
             ;
           -- TO
-          AD_Sequence_Next('M_Transaction', v_Client_ID, NextNo) ;
           INSERT
           INTO M_Transaction
             (
@@ -222,7 +278,7 @@
             )
             VALUES
             (
-              NextNo, Cur_MoveLine.AD_Client_ID, Cur_MoveLine.AD_Org_ID, 'Y',
+              get_uuid(), Cur_MoveLine.AD_Client_ID, Cur_MoveLine.AD_Org_ID, 'Y',
               now(), v_p_User, now(), v_p_User,
               'M+', Cur_MoveLine.M_LocatorTo_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstance_ID, '0'),
               v_MoveDate, Cur_MoveLine.MovementQty, Cur_MoveLine.M_MovementLine_ID, Cur_MoveLine.M_Product_UOM_ID,
@@ -238,7 +294,7 @@
       END; -- FOR COMMIT
     END IF;--END_PROCESS
     --M_Movement_Post - Finish_Process Extension Point
-    --Extension point at the end of the M_Inout_Post. It has 5 available parameters Record_ID, DocAction, User, Message and Result
+    --Extension point at the end of the M_Movement_Post. It has 4 available parameters Record_ID, User, Message and Result
     SELECT count(*) INTO v_count
     FROM DUAL
     where exists (select 1 from ad_ep_procedures where ad_extension_points_id = 'FB653E9B971343B3989222ECD5B73A72');
