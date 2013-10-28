@@ -286,7 +286,6 @@ isc.OBTreeGrid.addProperties({
   },
 
   show: function () {
-    this.copyCriteriaFromViewGrid();
     this.view.toolBar.updateButtonState();
     this.Super('show', arguments);
   },
