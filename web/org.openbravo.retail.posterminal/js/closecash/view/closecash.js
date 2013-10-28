@@ -38,6 +38,20 @@ enyo.kind({
     }
   }
 });
+
+enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.CancelButton',
+  kind: 'OB.UI.ToolbarButton',
+  i18nLabel: 'OBMOBC_LblCancel',
+  disabled: true,
+  events: {
+    onCancelCashup: ''
+  },
+  tap: function () {
+    this.doCancelCashup();
+  }
+});
+
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RightToolbarImpl',
   kind: 'OB.UI.MultiColumn.Toolbar',
@@ -71,11 +85,9 @@ enyo.kind({
       }
     }
   }, {
-    kind: 'OB.OBPOSCashUp.UI.Button',
+    kind: 'OB.OBPOSCashUp.UI.CancelButton',
     name: 'btnCancel',
     disabled: false,
-    i18nLabel: 'OBMOBC_LblCancel',
-    stepCount: 0,
     span: 4
   }, {
     kind: 'OB.OBPOSCashUp.UI.Button',
@@ -115,6 +127,7 @@ enyo.kind({
     onButtonOk: 'buttonOk',
     onTapRadio: 'tapRadio',
     onChangeStep: 'changeStep',
+    onCancelCashup: 'cancelCashup',
     onCountAllOK: 'countAllOK',
     onLineEditCount: 'lineEditCount',
     onPaymentMethodKept: 'paymentMethodKept',
@@ -342,24 +355,35 @@ enyo.kind({
     }
   },
   changeStep: function (inSender, inEvent) {
-    var nextStep, nextStepOfStep3;
-    if (this.model.get('step') === 4 && inEvent.originator.stepCount > 0) {
+    this.moveStep(inEvent.originator.stepCount);
+  },
+  cancelCashup: function (inSender, inEvent) {
+    OB.POS.navigate('retail.pointofsale');
+  }, 
+  moveStep: function (direction) { // direction can be -1 or +1 or 0 to cancel
+    
+    
+    var currentStep = this.model.get('step');
+    var nextStep = this.model.get('step') + direction;
+    
+    
+    
+    var nextStepOfStep3;
+    
+    
+    if (nextStep > 4) {
       //send cash up to the server
       this.model.processAndFinishCashUp();
     } else {
-      if (inEvent.originator.stepCount === 0) {
-        OB.POS.navigate('retail.pointofsale');
-        return true;
-      }
       if (this.model.get('step') !== 3) {
-        nextStep = this.model.get('step') + inEvent.originator.stepCount;
+        nextStep = this.model.get('step') + direction;
         if (nextStep === 3 && this.model.get('ignoreStep3')) {
-          this.model.set('step', this.model.get('step') + inEvent.originator.stepCount + inEvent.originator.stepCount);
+          this.model.set('step', this.model.get('step') + direction + direction);    // The gotoStep
           //To step 4 or to step 2
         } else {
           //if the new step is 3 we should set the substep number
           if (nextStep === 3) {
-            if (inEvent.originator.stepCount > 0) {
+            if (direction > 0) {
               //we come from step 2
               nextStepOfStep3 = 0;
               if (this.model.isStep3Needed(nextStepOfStep3) === false) {
@@ -369,7 +393,7 @@ enyo.kind({
                 this.model.set('stepOfStep3', nextStepOfStep3, {
                   silent: true
                 });
-                this.changeStep(this, inEvent);
+                this.moveStep(direction);
               } else {
                 //change the substep, not the step
                 this.model.set('step', nextStep);
@@ -387,7 +411,7 @@ enyo.kind({
                 this.model.set('stepOfStep3', nextStepOfStep3, {
                   silent: true
                 });
-                this.changeStep(this, inEvent);
+                this.moveStep(direction);
               } else {
                 //change the substep, not the step
                 this.model.set('step', nextStep);
@@ -401,25 +425,25 @@ enyo.kind({
           }
         }
       } else {
-        nextStep = this.model.get('stepOfStep3') + inEvent.originator.stepCount;
+        nextStep = this.model.get('stepOfStep3') + direction;
         //if the new step is 2 or 4 we should set the step number
         if (nextStep < 0 || nextStep > this.model.get('paymentList').length - 1) {
           //change the step and not change the substep
           this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setSummary(this.model.getCountCashSummary());
-          this.model.set('step', this.model.get('step') + inEvent.originator.stepCount);
+          this.model.set('step', this.model.get('step') + direction);
         } else {
           if (this.model.isStep3Needed(nextStep) === false) {
             this.model.set('stepOfStep3', nextStep, {
               silent: true
             });
-            this.changeStep(this, inEvent);
+            this.moveStep(direction);
           } else {
             //change the substep, not the step
             this.model.set('stepOfStep3', nextStep);
           }
         }
       }
-    }
+    }    
   },
   countAllOK: function (inSender, inEvent) {
     this.model.countAll();

@@ -135,7 +135,40 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     this.set('ignoreStep3', result);
   },
   isStep3Needed: function (stepOfStep3) {
-    return (this.get('paymentList').at(stepOfStep3).get('paymentMethod').automatemovementtoother === false) ? false : true;
+    
+    var payment = this.get('paymentList').at(stepOfStep3);
+    var paymentMethod = payment.get('paymentMethod');
+    var options = 0;
+    
+    if (paymentMethod.automatemovementtoother){
+
+      // Option 1
+      if (paymentMethod.allowmoveeverything) {
+        payment.set('qtyToKeep', 0);
+        options++;
+      }
+      
+      // Option 2
+      if (paymentMethod.allowdontmove) {
+        payment.set('qtyToKeep', payment.get('foreignCounted'));
+        options++;
+      }   
+      
+      // Option 3
+      if (paymentMethod.keepfixedamount) { 
+        if (payment.get('foreignCounted') && payment.get('foreignCounted') < paymentMethod.amount) {
+          payment.set('qtyToKeep', payment.get('foreignCounted'));
+        } else {
+          payment.set('qtyToKeep', paymentMethod.amount);
+        }
+        options++;
+      }      
+      
+      // if there is there is more than one option or allowvariableamount exists. then show the substep
+      return (options > 1 || paymentMethod.allowvariableamount); 
+    } else {
+      return false;
+    }
   },
   showPendingOrdersList: function () {
     return this.get('step') === 1;
