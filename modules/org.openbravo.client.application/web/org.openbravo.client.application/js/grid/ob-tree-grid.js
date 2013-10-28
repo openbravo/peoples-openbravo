@@ -55,10 +55,9 @@ isc.OBTreeGrid.addProperties({
     openProperty: "isOpen"
   },
 
-  initWidget: function () {
+  init: function () {
     this.copyFunctionsFromViewGrid();
-
-    this.Super('initWidget', arguments);
+    this.Super('init', arguments);
     if (this.orderedTree) {
       this.canSort = false;
     } else {
@@ -78,6 +77,10 @@ isc.OBTreeGrid.addProperties({
     this.convertCriteria = this.view.viewGrid.convertCriteria;
     this.resetEmptyMessage = this.view.viewGrid.resetEmptyMessage;
     this.filterData = this.view.viewGrid.filterData;
+    this.loadingDataMessage = this.view.viewGrid.loadingDataMessage;
+    this.emptyMessage = this.view.viewGrid.emptyMessage;
+    this.noDataEmptyMessage = this.view.viewGrid.noDataEmptyMessage;
+    this.filterNoRecordsEmptyMessage = this.view.viewGrid.filterNoRecordsEmptyMessage;
   },
 
   // Sets the fields of the datasource and extends the transformRequest and transformResponse functions
