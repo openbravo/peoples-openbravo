@@ -47,8 +47,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
     //steps
     this.set('step', 1);
-    //Because step 3 is divided in several steps.
-    this.set('stepOfStep3', 0);
+    this.set('substep', 0);
 
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('paymentList', this.getData('DataCloseCashPaymentMethod'));
@@ -134,9 +133,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, this);
     this.set('ignoreStep3', result);
   },
-  isStep3Needed: function (stepOfStep3) {
+  isStep3Needed: function (substep) {
     
-    var payment = this.get('paymentList').at(stepOfStep3);
+    var payment = this.get('paymentList').at(substep);
     var paymentMethod = payment.get('paymentMethod');
     var options = 0;
     
@@ -215,7 +214,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       message: ''
     };
     if (qty !== unfd && qty !== null && $.isNumeric(qty)) {
-      if (this.get('paymentList').at(this.get('stepOfStep3')).get('foreignCounted') >= qty) {
+      if (this.get('paymentList').at(this.get('substep')).get('foreignCounted') >= qty) {
         result.result = true;
         result.message = '';
       } else {
@@ -227,15 +226,15 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       result.message = 'Not valid number to keep';
     }
     if (!result.result) {
-      this.get('paymentList').at(this.get('stepOfStep3')).set('qtyToKeep', null);
+      this.get('paymentList').at(this.get('substep')).set('qtyToKeep', null);
     }
     return result;
   },
   isValidCashKeep: function () {
     var unfd;
-    if (this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== unfd && this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== null) {
-      if ($.isNumeric(this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep'))) {
-        if (this.get('paymentList').at(this.get('stepOfStep3')).get('foreignCounted') >= this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep')) {
+    if (this.get('paymentList').at(this.get('substep')).get('qtyToKeep') !== unfd && this.get('paymentList').at(this.get('substep')).get('qtyToKeep') !== null) {
+      if ($.isNumeric(this.get('paymentList').at(this.get('substep')).get('qtyToKeep'))) {
+        if (this.get('paymentList').at(this.get('substep')).get('foreignCounted') >= this.get('paymentList').at(this.get('substep')).get('qtyToKeep')) {
           return true;
         }
       }

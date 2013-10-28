@@ -234,20 +234,11 @@ enyo.kind({
       this.refresh();
     }, this);
 
-    this.model.on('change:step', function (model) {
-      this.refresh();
-    }, this);
-
     // Cash to keep - Step 3.
-    this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
+    this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('substep')));
 
-    this.model.on('change:stepOfStep3', function (model) {
-      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.disableSelection();
-      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
-      this.refresh();
-    }, this);
-    this.model.get('paymentList').at(this.model.get('stepOfStep3')).on('change:foreignCounted', function () {
-      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
+    this.model.get('paymentList').at(this.model.get('substep')).on('change:foreignCounted', function () {
+      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('substep')));
     }, this);
     // Cash Up Report - Step 4
     //this data doesn't changes
@@ -333,6 +324,18 @@ enyo.kind({
 
     this.refresh();
   },
+  gotoStep: function (step, substep) {
+    
+    this.model.set('step', step);
+    this.model.set('substep', substep || 0);
+
+    if (step === 3) {
+      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.disableSelection();
+      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(substep));
+    }
+        
+    this.refresh();
+  },
   refresh: function () {
     this.waterfall('onDisablePreviousButton', {
       disable: !this.model.allowPrevious()
@@ -347,7 +350,7 @@ enyo.kind({
     if (this.model.showPaymentMethodList()) {
       this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarcountcash');
     } else {
-      if (this.model.get('paymentList').at(this.model.get('stepOfStep3')).get('paymentMethod').allowvariableamount) {
+      if (this.model.get('paymentList').at(this.model.get('substep')).get('paymentMethod').allowvariableamount) {
         this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarother');
       } else {
         this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarempty');
@@ -368,78 +371,61 @@ enyo.kind({
     
     
     
-    var nextStepOfStep3;
+    var nextsubstep;
     
     
     if (nextStep > 4) {
       //send cash up to the server
       this.model.processAndFinishCashUp();
     } else {
-      if (this.model.get('step') !== 3) {
-        nextStep = this.model.get('step') + direction;
+      if (currentStep !== 3) {
         if (nextStep === 3 && this.model.get('ignoreStep3')) {
-          this.model.set('step', this.model.get('step') + direction + direction);    // The gotoStep
+          this.gotoStep(currentStep * direction + direction);
           //To step 4 or to step 2
         } else {
           //if the new step is 3 we should set the substep number
           if (nextStep === 3) {
             if (direction > 0) {
               //we come from step 2
-              nextStepOfStep3 = 0;
-              if (this.model.isStep3Needed(nextStepOfStep3) === false) {
-                this.model.set('step', nextStep, {
-                  silent: true
-                });
-                this.model.set('stepOfStep3', nextStepOfStep3, {
-                  silent: true
-                });
-                this.moveStep(direction);
+              nextsubstep = 0;
+              if (this.model.isStep3Needed(nextsubstep) === false) {
+                this.model.set('step', nextStep);
+                this.model.set('substep', nextsubstep);
+                this.moveStep(direction);                
               } else {
                 //change the substep, not the step
-                this.model.set('step', nextStep);
-                this.model.set('stepOfStep3', nextStepOfStep3);
-                //because the last stepOfStep3 was the same that im setting the event is not raised
-                this.model.trigger("change:stepOfStep3");
+                this.gotoStep(nextStep, nextsubstep);
               }
             } else {
               //we come from step 4
-              nextStepOfStep3 = this.model.get('paymentList').length - 1;
-              if (this.model.isStep3Needed(nextStepOfStep3) === false) {
-                this.model.set('step', nextStep, {
-                  silent: true
-                });
-                this.model.set('stepOfStep3', nextStepOfStep3, {
-                  silent: true
-                });
-                this.moveStep(direction);
+              nextsubstep = this.model.get('paymentList').length - 1;
+              if (this.model.isStep3Needed(nextsubstep) === false) {
+                this.model.set('step', nextStep);
+                this.model.set('substep', nextsubstep);
+                this.moveStep(direction);  
               } else {
                 //change the substep, not the step
-                this.model.set('step', nextStep);
-                this.model.set('stepOfStep3', nextStepOfStep3);
-                //because the last stepOfStep3 was the same that im setting the event is not raised
-                this.model.trigger("change:stepOfStep3");
+                this.gotoStep(nextStep, nextsubstep);
               }
             }
           } else {
-            this.model.set('step', nextStep);
+            this.gotoStep(nextStep);
           }
         }
       } else {
-        nextStep = this.model.get('stepOfStep3') + direction;
+        nextsubstep = this.model.get('substep') + direction;
         //if the new step is 2 or 4 we should set the step number
-        if (nextStep < 0 || nextStep > this.model.get('paymentList').length - 1) {
+        if (nextsubstep < 0 || nextsubstep > this.model.get('paymentList').length - 1) {
           //change the step and not change the substep
           this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setSummary(this.model.getCountCashSummary());
-          this.model.set('step', this.model.get('step') + direction);
+          this.gotoStep(nextStep);
         } else {
-          if (this.model.isStep3Needed(nextStep) === false) {
-            this.model.set('stepOfStep3', nextStep, {
-              silent: true
-            });
+          if (this.model.isStep3Needed(nextsubstep) === false) {
+            this.model.set('substep', nextsubstep);
             this.moveStep(direction);
           } else {
             //change the substep, not the step
-            this.model.set('stepOfStep3', nextStep);
+            this.gotoStep(currentStep, nextsubstep);
           }
         }
       }
@@ -458,7 +444,7 @@ enyo.kind({
   paymentMethodKept: function (inSender, inEvent) {
     var validationResult = this.model.validateCashKeep(inEvent.qtyToKeep);
     if (validationResult.result) {
-      this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', inEvent.qtyToKeep);
+      this.model.get('paymentList').at(this.model.get('substep')).set('qtyToKeep', inEvent.qtyToKeep);
     } else {
       OB.UTIL.showWarning(validationResult.message);
     }
@@ -466,7 +452,7 @@ enyo.kind({
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.setStatus(inEvent.name);
   },
   resetQtyToKeep: function (inSender, inEvent) {
-    this.model.get('paymentList').at(this.model.get('stepOfStep3')).set('qtyToKeep', null);
+    this.model.get('paymentList').at(this.model.get('substep')).set('qtyToKeep', null);
     this.refresh();
   },
   holdActiveCmd: function (inSender, inEvent) {
