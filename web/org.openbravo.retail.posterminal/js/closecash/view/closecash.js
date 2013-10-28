@@ -23,13 +23,6 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
-    if (this.model.get('cashUpSent')) {
-      return true;
-    }
-    if (this.model.get('step') === 4 && this.getName() === 'btnNext') {
-      this.setDisabled(true);
-      this.model.set('cashUpSent', true);
-    }
     this.doChangeStep();
   },
   initialize: function () {
@@ -107,11 +100,6 @@ enyo.kind({
     },
     disableNextButton: function (inSender, inEvent) {
       this.setDisabled(inEvent.disable);
-      this.setContent(OB.I18N.getLabel('OBPOS_LblNextStep'));
-      if (this.model.get('step') === 4) {
-        //in the last step the button shows another label
-        this.setContent(OB.I18N.getLabel('OBPOS_LblPostPrintClose'));
-      }
       if (this.hasClass('btn-over')) {
         this.removeClass('btn-over');
       }
@@ -214,11 +202,10 @@ enyo.kind({
       });
     }, this);
 
-
     // Pending Orders - Step 1
     this.$.cashupMultiColumn.$.leftPanel.$.listPendingReceipts.setCollection(this.model.get('orderlist'));
     this.model.get('orderlist').on('all', function () {
-      this.refresh();
+      this.refreshButtons();
     }, this);
 
     // Cash count - Step 2
@@ -231,7 +218,7 @@ enyo.kind({
       this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.waterfall('onAnyCounted');
-      this.refresh();
+      this.refreshButtons();
     }, this);
 
     // Cash to keep - Step 3.
@@ -322,40 +309,37 @@ enyo.kind({
       }
     }, this);
 
-    this.refresh();
+    this.refreshButtons();
   },
   gotoStep: function (step, substep) {
     
     this.model.set('step', step);
     this.model.set('substep', substep || 0);
 
-    if (step === 3) {
-      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.disableSelection();
-      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(substep));
-    }
-        
     this.refresh();
   },
-  refresh: function () {
+  
+  refreshButtons: function () {
+    // Disable/Enable buttons
     this.waterfall('onDisablePreviousButton', {
       disable: !this.model.allowPrevious()
     });
     this.waterfall('onDisableNextButton', {
       disable: !this.model.allowNext()
-    });
-    this.$.cashupMultiColumn.$.leftPanel.$.listPendingReceipts.setShowing(this.model.showPendingOrdersList());
-    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
-    this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setShowing(this.model.showCashToKeep());
-    this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setShowing(this.model.showPostPrintClose());
-    if (this.model.showPaymentMethodList()) {
-      this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarcountcash');
-    } else {
-      if (this.model.get('paymentList').at(this.model.get('substep')).get('paymentMethod').allowvariableamount) {
-        this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarother');
-      } else {
-        this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarempty');
-      }
-    }
+    });  
+    // Show step keyboard
+    this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar(this.model.getStepToolbar());    
+  },
+  
+  refresh: function () {
+    
+    // Show step panel
+    this.model.showStep(this.$.cashupMultiColumn.$.leftPanel.$);     
+    // Refresh buttons
+    this.refreshButtons();   
+    // Show button label.
+    var nextButtonI18NLabel = this.model.nextButtonI18NLabel();
+    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.getComponents()[2].$.theButton.$.btnNext.setContent(OB.I18N.getLabel(nextButtonI18NLabel));              
   },
   changeStep: function (inSender, inEvent) {
     this.moveStep(inEvent.originator.stepCount);
@@ -375,8 +359,15 @@ enyo.kind({
     
     
     if (nextStep > 4) {
-      //send cash up to the server
+      
+      //send cash up to the server if it has not been sent yet
+      if (this.model.get('cashUpSent')) {
+        return true;
+      }  
+      this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.getComponents()[2].$.theButton.$.btnNext.setDisabled(true);
+      this.model.set('cashUpSent', true);
       this.model.processAndFinishCashUp();
+      
     } else {
       if (currentStep !== 3) {
         if (nextStep === 3 && this.model.get('ignoreStep3')) {
@@ -433,7 +424,7 @@ enyo.kind({
   },
   countAllOK: function (inSender, inEvent) {
     this.model.countAll();
-    this.refresh();
+    this.refreshButtons();
   },
   lineEditCount: function (inSender, inEvent) {
     this.waterfall('onShowColumn', {
@@ -448,12 +439,12 @@ enyo.kind({
     } else {
       OB.UTIL.showWarning(validationResult.message);
     }
-    this.refresh();
+    this.refreshButtons();
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.setStatus(inEvent.name);
   },
   resetQtyToKeep: function (inSender, inEvent) {
     this.model.get('paymentList').at(this.model.get('substep')).set('qtyToKeep', null);
-    this.refresh();
+    this.refreshButtons();
   },
   holdActiveCmd: function (inSender, inEvent) {
     this.waterfall('onChangeOption', {

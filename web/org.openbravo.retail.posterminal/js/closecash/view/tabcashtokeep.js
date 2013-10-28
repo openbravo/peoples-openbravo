@@ -213,7 +213,9 @@ enyo.kind({
       }, this);
     }
   },
-  disableSelection: function () {
-    this.$.formkeep.disableControls();
+  displayStep: function (model) {
+    // this function is invoked when displayed.        
+   this.$.formkeep.disableControls();
+   this.setPaymentToKeep(model.get('paymentList').at(model.get('substep')));     
   }
 });

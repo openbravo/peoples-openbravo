@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, _, $ */
+/*global OB, enyo, Backbone, _, $ */
 
 OB.OBPOSCashUp = OB.OBPOSCashUp || {};
 OB.OBPOSCashUp.Model = OB.OBPOSCashUp.Model || {};
@@ -37,17 +37,32 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     totalDifference: OB.DEC.Zero,
     pendingOrdersToProcess: false,
     otherInput: OB.DEC.Zero
-  },
+  }, 
+  cashupstepsdefinition: [
+    'OB.CashUp.StepPendingOrders',     
+    'OB.CashUp.PaymentMethods',
+    'OB.CashUp.CashToKeep',
+    'OB.CashUp.PostPrintAndClose'                
+  ],  
   init: function () {
     //Check for orders wich are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
-    var undf;
+    var undf, newstep;
+    
     this.arePendingOrdersToBeProcess();
 
     //steps
     this.set('step', 1);
     this.set('substep', 0);
+    
+    // Create steps instances
+    this.cashupsteps = [];
+    _.each(this.cashupstepsdefinition, function (s) {
+      newstep = enyo.createFromKind(s);
+      newstep.model = this;
+      this.cashupsteps.push(newstep);
+    }, this);
 
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('paymentList', this.getData('DataCloseCashPaymentMethod'));
@@ -85,37 +100,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   },
   //Previous next
   allowNext: function () {
-    var step = this.get('step'),
-        unfd;
-
-    if (step === 1 && this.get('orderlist').length === 0 && !this.get('pendingOrdersToProcess')) {
-      return true;
-    }
-
-    if (step === 2 && this.isAllCounted()) {
-      //TODO: review logic
-      return true;
-    }
-
-    if (step === 3 && this.isValidCashKeep()) {
-      //TODO: review logic
-      return true;
-    }
-
-    if (step === 4) {
-      this.get('cashUpReport').at(0).set('time', new Date());
-      return true;
-    }
-
-    return false;
+    return this.cashupsteps[this.get('step') - 1].allowNext();
   },
   allowPrevious: function () {
-    var step = this.get('step');
-
-    if (step === 1) {
-      return false;
-    }
-    return true;
+    return this.get('step') > 1;
   },
   setIgnoreStep3: function () {
     var result = null;
@@ -155,7 +143,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       
       // Option 3
       if (paymentMethod.keepfixedamount) { 
-        if (payment.get('foreignCounted') && payment.get('foreignCounted') < paymentMethod.amount) {
+        if (_.isNumber(payment.get('foreignCounted')) && payment.get('foreignCounted') < paymentMethod.amount) {
           payment.set('qtyToKeep', payment.get('foreignCounted'));
         } else {
           payment.set('qtyToKeep', paymentMethod.amount);
@@ -169,18 +157,29 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       return false;
     }
   },
-  showPendingOrdersList: function () {
-    return this.get('step') === 1;
+  
+  showStep: function (leftpanel$) {    
+    var currentstep = this.get('step') - 1;
+    var i;
+    var stepcomponent;
+    
+    for (i = 0; i < this.cashupsteps.length; i++) {
+      stepcomponent = this.cashupsteps[i].getStepComponent(leftpanel$);
+      stepcomponent.setShowing(i === currentstep);
+      if (i === currentstep) {
+        stepcomponent.displayStep(this);
+      }
+    }
   },
-  showPaymentMethodList: function () {
-    return this.get('step') === 2;
+  getStepToolbar: function () {
+    var currentstep = this.get('step') - 1;
+    return this.cashupsteps[currentstep].getToolbarName();
   },
-  showCashToKeep: function () {
-    return this.get('step') === 3;
+  nextButtonI18NLabel: function () {
+    var currentstep = this.get('step') - 1;
+    return this.cashupsteps[currentstep].nextButtonI18NLabel();    
   },
-  showPostPrintClose: function () {
-    return this.get('step') === 4;
-  },
+
   //Step (pre) 1
   arePendingOrdersToBeProcess: function () {
     OB.Dal.find(OB.Model.Order, {
@@ -201,12 +200,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       model.set('counted', OB.DEC.add(0, model.get('expected')));
     });
   },
-  isAllCounted: function () {
-    var udfn;
-    return _.reduce(this.get('paymentList').models, function (allCounted, model) {
-      return allCounted && model.get('counted') !== null && model.get('counted') !== udfn;
-    }, true);
-  },
+
   //step 3
   validateCashKeep: function (qty) {
     var unfd, result = {
@@ -230,17 +224,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }
     return result;
   },
-  isValidCashKeep: function () {
-    var unfd;
-    if (this.get('paymentList').at(this.get('substep')).get('qtyToKeep') !== unfd && this.get('paymentList').at(this.get('substep')).get('qtyToKeep') !== null) {
-      if ($.isNumeric(this.get('paymentList').at(this.get('substep')).get('qtyToKeep'))) {
-        if (this.get('paymentList').at(this.get('substep')).get('foreignCounted') >= this.get('paymentList').at(this.get('substep')).get('qtyToKeep')) {
-          return true;
-        }
-      }
-    }
-    return false;
-  },
+  
   //Step 4
   getCountCashSummary: function () {
     var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, undf, model, value = OB.DEC.Zero,

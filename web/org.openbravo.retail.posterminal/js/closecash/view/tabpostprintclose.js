@@ -579,5 +579,8 @@ enyo.kind({
     this.model.on('change:time', function () {
       this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
     }, this);
-  }
+  },
+  displayStep: function (model) {
+    // this function is invoked when displayed.          
+  }  
 });

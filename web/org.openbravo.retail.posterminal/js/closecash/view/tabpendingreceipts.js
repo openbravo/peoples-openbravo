@@ -186,5 +186,8 @@ enyo.kind({
           }
         }
     );
-  }
+  },
+  displayStep: function (model) {
+    // this function is invoked when displayed.          
+  }  
 });

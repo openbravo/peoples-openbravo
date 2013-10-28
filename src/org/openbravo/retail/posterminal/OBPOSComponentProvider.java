@@ -195,7 +195,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "cashmgmt/components/cashmgmt-modals",
 
         // Cash Up window
-        "closecash/model/cashup-print", "closecash/model/cashup-model", "closecash/view/closecash",
+        "closecash/model/cashup-steps", "closecash/model/cashup-print",
+        "closecash/model/cashup-model", "closecash/view/closecash",
         "closecash/view/closekeyboard", "closecash/view/closeinfo",
         "closecash/view/tabpendingreceipts", "closecash/view/tabcountcash",
         "closecash/view/tabcashtokeep", "closecash/view/tabpostprintclose",
