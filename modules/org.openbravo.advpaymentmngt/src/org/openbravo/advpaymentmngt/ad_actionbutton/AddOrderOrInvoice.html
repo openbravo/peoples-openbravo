@@ -336,12 +336,25 @@ function loadGLItemList() {
         cellGLItemDim.className = 'DataGrid_Body_Cell';
         cellCount++;
       }
-      if(cellCount < 4 && acctDim === (glAcctDimsDesc.length-1)) {
-          var newElements = glAcctDimsDescnext.slice(0, (glAcctDimsDesc.length)-(cellCount-1));
-          for(var addElement = 0; addElement < newElements.length; addElement++) {
+      if(cellCount <= 4 && acctDim === (glAcctDimsDesc.length-1)) {
+        var newElements;
+        if (glAcctDimsDesc.length > 4) {
+          newElements = glAcctDimsDescnext.slice(0, 1);
+          if(newElements.length > 0) {
+            glAcctDimsDesc.push(newElements[0]);
+            if((glAcctDimsDescnext.length)-1 === 0) {
+                glAcctDimsDescnext = [];
+            } else {
+              glAcctDimsDescnext = glAcctDimsDescnext.slice((glAcctDimsDescnext.length)-1);
+            }
+          }
+        } else {
+          newElements = glAcctDimsDescnext.slice(0, (glAcctDimsDesc.length)-(cellCount-1));
+          for(addElement = 0; addElement < newElements.length; addElement++) {
               glAcctDimsDesc.push(newElements[addElement]);
           }
           glAcctDimsDescnext = glAcctDimsDescnext.slice(((glAcctDimsDescnext.length)-(cellCount-1)));
+        }
       }
     }
     
@@ -761,7 +774,7 @@ function autoDisplayLogicDimensions(isDisplayed) {
   }
   if(cellCount > 4) {
       rowCount++;
-      cellCount = 1;
+      cellCount = 0;
   }
 
   if(lastCell < 0) {
@@ -781,7 +794,7 @@ function autoDisplayLogicDimensions(isDisplayed) {
   }
   if(cellCount > 4) {
       rowCount++;
-      cellCount = 1;
+      cellCount = 0;
   }
 
   if(lastCell < 0) {
@@ -801,7 +814,7 @@ function autoDisplayLogicDimensions(isDisplayed) {
   }
   if(cellCount > 4) {
       rowCount++;
-      cellCount = 1;
+      cellCount = 0;
   }
 
   if(lastCell < 0) {
