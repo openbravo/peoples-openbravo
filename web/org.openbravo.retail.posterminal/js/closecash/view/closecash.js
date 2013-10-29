@@ -155,6 +155,11 @@ enyo.kind({
         name: 'listPendingReceipts'
       }, {
         classes: 'span12',
+        kind: 'OB.OBPOSCashUp.UI.CashPayments',
+        name: 'cashPayments',
+        showing: false          
+      }, {
+        classes: 'span12',
         kind: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
         name: 'listPaymentMethods',
         showing: false

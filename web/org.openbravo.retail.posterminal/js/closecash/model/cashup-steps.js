@@ -33,6 +33,31 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.CashUp.CashPayments',
+  kind: enyo.Object,
+  getStepComponent: function (leftpanel$) {
+    return leftpanel$.cashPayments;
+  },
+  getToolbarName: function () {
+    return 'toolbarcashpayments';    
+  },  
+  nextButtonI18NLabel: function () {
+    return 'OBPOS_LblNextStep';
+  },  
+  allowNext: function () {
+    return true;
+  },
+  getSubstepsLength: function (model) {
+    return model.get('paymentList').length;
+  },
+  isSubstepAvailable: function (model, substep) {
+    var payment = model.get('paymentList').at(substep);
+    var paymentMethod = payment.get('paymentMethod');
+    return paymentMethod.iscash;
+  }  
+});
+
+enyo.kind({
   name: 'OB.CashUp.PaymentMethods',
   kind: enyo.Object,
   getStepComponent: function (leftpanel$) {

@@ -78,6 +78,7 @@ enyo.kind({
       }
       this.$.buttonOk.hide();
     }
+    this.$.buttonEdit.setDisabled(this.model.get('paymentMethod').iscash);
   },
   lineEdit: function () {
     this.doLineEditCount();
@@ -229,6 +230,6 @@ enyo.kind({
     this.$.buttonAllOk.applyStyle('visibility', 'hidden'); //hiding in this way to keep the space
   },
   displayStep: function (model) {
-    // this function is invoked when displayed.          
+    // this function is invoked when displayed.  
   }
 });

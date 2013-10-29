@@ -39,7 +39,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     otherInput: OB.DEC.Zero
   }, 
   cashupstepsdefinition: [
-    'OB.CashUp.StepPendingOrders',     
+    'OB.CashUp.StepPendingOrders',    
+    'OB.CashUp.CashPayments',
     'OB.CashUp.PaymentMethods',
     'OB.CashUp.CashToKeep',
     'OB.CashUp.PostPrintAndClose'                
