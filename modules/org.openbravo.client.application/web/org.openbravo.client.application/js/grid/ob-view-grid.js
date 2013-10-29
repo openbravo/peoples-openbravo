@@ -1082,6 +1082,11 @@ isc.OBViewGrid.addProperties({
     }
 
     if (localState.noFilterClause) {
+      if (OB.Utilities.isNonEmptyString(this.filterClause)) {
+        if (this.data) {
+          this.data.forceRefresh = true;
+        }
+      }
       this.filterClause = null;
       if (this.view.messageBar) {
         this.view.messageBar.hide();
