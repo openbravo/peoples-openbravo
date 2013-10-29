@@ -153,7 +153,7 @@ enyo.kind({
 
     OB.UTIL.Approval.requestApproval(
         this.model, 
-        'OBPOS_approval.cashup.removereceipts',
+        'OBPOS_approval.removereceipts',
         function (approved,supervisor, approvalType) {
           if (approved) {
             // approved so remove the entry
@@ -175,7 +175,7 @@ enyo.kind({
     
     OB.UTIL.Approval.requestApproval(
         this.model, 
-        'OBPOS_approval.cashup.removereceipts',
+        'OBPOS_approval.removereceipts',
         function (approved,supervisor, approvalType) {
           if (approved) {
             var models = me.collection.toArray();
