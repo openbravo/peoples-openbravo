@@ -80,6 +80,7 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceiptLine.put("uOM", objpaidReceiptsLines[2]);
         paidReceiptLine.put("quantity", objpaidReceiptsLines[3]);
         paidReceiptLine.put("unitPrice", objpaidReceiptsLines[4]);
+        paidReceiptLine.put("lineId", objpaidReceiptsLines[6]);
         paidReceiptLine.put("netPrice", objpaidReceiptsLines[7]);
 
         // promotions per line
