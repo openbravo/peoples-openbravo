@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.utility;
 
 import javax.servlet.ServletException;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -30,10 +31,12 @@ public class CheckApproval extends JSONProcessSimple {
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
     OBContext.setAdminMode(false);
     try {
+      JSONArray approvalType = new JSONArray();
       String username = jsonsent.getString("u");
       String password = jsonsent.getString("p");
-      String type = jsonsent.getString("approvalType");
-
+      if (jsonsent.getString("approvalType") != null) {
+        approvalType = new JSONArray(jsonsent.getString("approvalType"));
+      }
       JSONObject result = new JSONObject();
 
       OBCriteria<User> qUser = OBDal.getInstance().createCriteria(User.class);
@@ -46,8 +49,13 @@ public class CheckApproval extends JSONProcessSimple {
         jsonError.put("message", OBMessageUtils.getI18NMessage("OBPOS_InvalidUserPassword", null));
         result.put("error", jsonError);
       } else {
+        String approvals = "'" + approvalType.getString(0) + "'";
+        for (int i = 1; i < approvalType.length(); i++) {
+          approvals = approvals + ",'" + approvalType.getString(i) + "'";
+        }
+
         String whereClause = "as p" + //
-            " where property = :type" + //
+            " where property in (" + approvals + ")" + //
             "   and active = true" + //
             "   and searchKey = 'Y'" + //
             "   and (userContact = :user" + //
@@ -57,12 +65,11 @@ public class CheckApproval extends JSONProcessSimple {
         OBQuery<Preference> qPreference = OBDal.getInstance().createQuery(Preference.class,
             whereClause);
         qPreference.setNamedParameter("user", qUser.list().get(0));
-        qPreference.setNamedParameter("type", type);
 
         result.put("status", 0);
         JSONObject jsonData = new JSONObject();
         jsonData.put("userId", qUser.list().get(0).getId());
-        jsonData.put("canApprove", qPreference.count() > 0);
+        jsonData.put("canApprove", qPreference.count() == approvalType.length());
         result.put("data", jsonData);
       }
       return result;
