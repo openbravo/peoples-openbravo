@@ -1429,7 +1429,10 @@ public class AdvancedQueryBuilder {
     if (joinedPropertyIndex == (props.size() - 1)) {
       return alias;
     }
-    return alias + DalUtil.DOT + props.get(props.size() - 1).getName();
+    Property prop = props.get(props.size() - 1);
+    String propName = prop.isComputedColumn() ? Entity.COMPUTED_COLUMNS_PROXY_PROPERTY
+        + DalUtil.DOT + prop.getName() : prop.getName();
+    return alias + DalUtil.DOT + propName;
   }
 
   private String getNewUniqueJoinAlias() {
