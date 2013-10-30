@@ -76,6 +76,18 @@
       <foreign-key foreignTable="AD_ORG" name="AD_REF_TABLE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_REF_TABLE_COL">
+        <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_REF_TREE_FIELD" name="AD_REF_TABLE_DSPFLD">
+        <reference local="DISPLAYFIELD_ID" foreign="AD_REF_TREE_FIELD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TABLE" name="AD_REF_TABLE_TABLE">
+        <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_REF_TREE_FIELD" name="AD_REF_TABLE_VALFLD">
+        <reference local="VALUEFIELD_ID" foreign="AD_REF_TREE_FIELD_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="AD_REF_TREE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

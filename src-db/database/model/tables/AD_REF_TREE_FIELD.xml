@@ -113,30 +113,30 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <foreign-key foreignTable="AD_MODULE" name="ADREFTREE_F_AD_MODULE">
+      <foreign-key foreignTable="AD_MODULE" name="AD_REFTREE_F_AD_MODULE">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="ADREFTREE_F_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="AD_REFTREE_F_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_COLUMN" name="ADREFTREE_F_COLUMN">
+      <foreign-key foreignTable="AD_COLUMN" name="AD_REFTREE_F_COLUMN">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADREFTREE_F_ORG">
+      <foreign-key foreignTable="AD_ORG" name="AD_REFTREE_F_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_REF_TREE" name="ADREFTREE_F_REFTREE" onDelete="cascade">
+      <foreign-key foreignTable="AD_REF_TREE" name="AD_REFTREE_F_REFTREE" onDelete="cascade">
         <reference local="AD_REF_TREE_ID" foreign="AD_REF_TREE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_REFERENCE" name="ADREFTREE_F_SELFIELD_REFERENCE">
+      <foreign-key foreignTable="AD_REFERENCE" name="AD_REFTREE_F_SELFIELD_REF">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
-      <check name="ADREFTREE_F_CM_CHECK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
-      <check name="ADREFTREE_F_FILTER_CHECK"><![CDATA[FILTER IN ('Y', 'N')]]></check>
-      <check name="ADREFTREE_F_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADREFTREE_F_SBOX_CHECK"><![CDATA[SEARCHINSUGGESTIONBOX IN ('Y', 'N')]]></check>
-      <check name="ADREFTREE_F_SHOWINGRID_CHECK"><![CDATA[SHOWINGRID IN ('Y', 'N')]]></check>
-      <check name="ADREFTREE_F_SHOWINPICKLIST_CHK"><![CDATA[SHOWINPICKLIST IN ('Y', 'N')]]></check>
-      <check name="ADREFTREE_F_SORT_CHECK"><![CDATA[SORT IN ('Y', 'N')]]></check>
+      <check name="AD_REFTREE_F_CM_CHECK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
+      <check name="AD_REFTREE_F_FILTER_CHECK"><![CDATA[FILTER IN ('Y', 'N')]]></check>
+      <check name="AD_REFTREE_F_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_REFTREE_F_SBOX_CHECK"><![CDATA[SEARCHINSUGGESTIONBOX IN ('Y', 'N')]]></check>
+      <check name="AD_REFTREE_F_SHOWINGRID_CHECK"><![CDATA[SHOWINGRID IN ('Y', 'N')]]></check>
+      <check name="AD_REFTREE_F_SHOWINPICK_CHK"><![CDATA[SHOWINPICKLIST IN ('Y', 'N')]]></check>
+      <check name="AD_REFTREE_F_SORT_CHECK"><![CDATA[SORT IN ('Y', 'N')]]></check>
     </table>
   </database>
