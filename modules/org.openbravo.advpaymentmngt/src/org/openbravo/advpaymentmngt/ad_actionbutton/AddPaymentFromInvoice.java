@@ -270,7 +270,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
                   refundAmount.negate(), exchangeRate);
               OBError auxMessage = FIN_AddPayment.processPayment(vars, this,
                   (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
-              if (newPayment) {
+              if (newPayment && !"Error".equalsIgnoreCase(auxMessage.getType())) {
                 final String strNewRefundPaymentMessage = Utility.parseTranslation(this, vars,
                     vars.getLanguage(),
                     "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())

@@ -51,6 +51,7 @@
     v_temp VARCHAR2(32);
     v_Costbased M_PriceList.Costbased%TYPE;
     v_validfromdate M_PriceList_Version.ValidFrom%TYPE;
+    v_isCostMigrated NUMBER;
     --
     -- Get PL Parameter
     Cur_DiscountLine RECORD;
@@ -85,6 +86,11 @@
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
       END IF;
     END LOOP; -- Get Parameter
+    -- Checks if instance is migrated to new cost engine
+    SELECT count(1) INTO v_isCostMigrated
+    FROM DUAL
+    WHERE EXISTS (SELECT 1 FROM ad_preference
+                  WHERE attribute = 'Cost_Eng_Ins_Migrated');
     SELECT M_PriceList_Version_Base_ID , Costbased, validfrom
     INTO v_PriceList_Version_Base_ID, v_Costbased, v_validfromdate
     FROM M_PriceList p,
@@ -366,15 +372,15 @@
             SELECT  get_uuid(), v_PriceList_Version_ID,
             mp.M_Product_ID, v_Client_ID, v_Org_ID, 'Y',
             now(), v_UpdatedBy, now(), v_UpdatedBy, 
-            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
-            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
-            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
-            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), mp.costtype, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0)
+            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), CASE v_isCostMigrated WHEN 0 THEN mp.costtype ELSE null END, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
+            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), CASE v_isCostMigrated WHEN 0 THEN mp.costtype ELSE null END, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
+            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), CASE v_isCostMigrated WHEN 0 THEN mp.costtype ELSE null END, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0), 
+            COALESCE(M_GET_COST (mp.M_Product_ID, add_hms(v_validfromdate, 23, 59, 59), CASE v_isCostMigrated WHEN 0 THEN mp.costtype ELSE null END, v_Org_ID, mp.ad_client_id, null, ac.c_currency_id, v_Currency_ID),0)
             from m_product mp, ad_client ac
             where mp.ad_client_id=ac.ad_client_id
             AND EXISTS
             (SELECT 1 FROM C_TEMP_Selection s WHERE mp.M_Product_ID=s.C_TEMP_Selection_ID)
-            AND mp.IsActive='Y';    
+            AND mp.IsActive='Y'; 
          ELSE
           -- Copy and Convert from other PriceList_Version
           v_ResultStr:=v_ResultStr || ',Copy_PL';

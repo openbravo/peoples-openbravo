@@ -165,6 +165,11 @@ isc.OBTimeItem.addProperties({
       this.timeGrid.updatePosition();
     }
     return this.Super('moved', arguments);
+  },
+  formSaved: function (request, response, data) {
+    if (this.getValue() !== data[this.name]) {
+      this.setValue(data[this.name]);
+    }
   }
 });
 

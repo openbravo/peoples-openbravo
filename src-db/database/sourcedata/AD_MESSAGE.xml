@@ -8141,7 +8141,7 @@
 <!--800086-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800086-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800086-->  <VALUE><![CDATA[P+AndP-InSamePlan]]></VALUE>
-<!--800086-->  <MSGTEXT><![CDATA[Product repeated in a Production Plan with same locator being P+ and P-]]></MSGTEXT>
+<!--800086-->  <MSGTEXT><![CDATA[Product defined as P+ and P- within the same operation]]></MSGTEXT>
 <!--800086-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--800086-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800086-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>

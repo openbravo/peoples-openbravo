@@ -94,7 +94,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
   </SqlMethod>
-  <SqlMethod name="initUpdate" type="preparedStatement" return="rowCount">
+  <SqlMethod name="initUpdate" type="preparedStatement" return="rowCount" connection="true">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
@@ -102,7 +102,7 @@
       WHERE IsSelected='Y'
       ]]></Sql>
   </SqlMethod>
-  <SqlMethod name="updateSelection" type="preparedStatement" return="rowCount">
+  <SqlMethod name="updateSelection" type="preparedStatement" return="rowCount" connection="true">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
@@ -111,7 +111,7 @@
       ]]></Sql>
     <Parameter name="parcOrdersId" optional="true" type="argument" after="WHERE 1=1" text="AND C_Order_ID IN"/>
   </SqlMethod>
-  <SqlMethod name="resetSelection" type="preparedStatement" return="rowCount">
+  <SqlMethod name="resetSelection" type="preparedStatement" return="rowCount" connection="true">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
@@ -135,5 +135,12 @@
         WHERE AD_CLIENT_ID = ?
     </Sql>
     <Parameter name="client"/>
+  </SqlMethod>  
+  <SqlMethod name="process134" type="callableStatement" return="object" object="GenerateInvoicesmanualData" connection="true">
+      <SqlMethodComment>procedure C_Invoice_Create0</SqlMethodComment>
+      <Sql><![CDATA[
+        CALL C_Invoice_Create0(?)
+      ]]></Sql>
+      <Parameter name="adPinstanceId"></Parameter>
   </SqlMethod>
 </SqlClass>

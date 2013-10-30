@@ -1047,6 +1047,11 @@ isc.OBViewGrid.addProperties({
     }
 
     if (localState.noFilterClause) {
+      if (OB.Utilities.isNonEmptyString(this.filterClause)) {
+        if (this.data) {
+          this.data.forceRefresh = true;
+        }
+      }
       this.filterClause = null;
       if (this.view.messageBar) {
         this.view.messageBar.hide();
@@ -1496,6 +1501,7 @@ isc.OBViewGrid.addProperties({
 
     var record, ret = this.Super('dataArrived', arguments);
     this.updateRowCountDisplay();
+
     if (this.getSelectedRecords() && this.getSelectedRecords().length > 0) {
       this.selectionUpdated();
     }
@@ -2950,7 +2956,7 @@ isc.OBViewGrid.addProperties({
       return;
     }
 
-    if (newRow && editCompletionEvent === 'tab' && !ficCallDone) {
+    if (newRow && this.getEditForm().isNew && editCompletionEvent === 'tab' && !ficCallDone) {
       this.setEditValue(rowNum, 'actionAfterFicReturn', {
         target: this,
         method: this.cellEditEnd,

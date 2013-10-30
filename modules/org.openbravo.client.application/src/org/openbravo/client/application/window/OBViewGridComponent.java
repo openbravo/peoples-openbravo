@@ -249,13 +249,21 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   public List<String> getRequiredGridProperties() {
     List<String> requiredGridProperties = new ArrayList<String>();
     requiredGridProperties.add("id");
+    // Needed to check if the record is readonly (check addWritableAttribute method of DefaultJsonDataService)
     requiredGridProperties.add("client");
     requiredGridProperties.add("organization");
+    // Audit fields are mandatory because the FIC does not returned them when called in EDIT mode
+    requiredGridProperties.add("updatedBy");
+    requiredGridProperties.add("updated");
+    requiredGridProperties.add("creationDate");
+    requiredGridProperties.add("createdBy");
 
+    // Always include all the properties that are part of the identifier of the entity
     for (Property identifierProperty : this.entity.getIdentifierProperties()) {
       requiredGridProperties.add(identifierProperty.getName());
     }
 
+    // Properties related to buttons that have label values
     List<ButtonField> buttonFields = getViewTab().getButtonFields();
     for (ButtonField buttonField : buttonFields) {
       if (!buttonField.getLabelValues().isEmpty()) {
@@ -263,13 +271,20 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       }
     }
 
+    // List of properties that are part of the display logic of the subtabs
+    List<String> tabDisplayLogicFields = getViewTab().getDisplayLogicFields();
+    for (String tabDisplayLogicField : tabDisplayLogicFields) {
+      requiredGridProperties.add(tabDisplayLogicField);
+    }
+
+    // List of properties that are part of the display logic of buttons
     List<String> propertiesInButtonFieldDisplayLogic = getViewTab().getFieldHandler()
         .getPropertiesInButtonFieldDisplayLogic();
-
     for (String propertyName : propertiesInButtonFieldDisplayLogic) {
       requiredGridProperties.add(propertyName);
     }
 
+    // Always include the propertyt that links to the parent tab
     String linkToParentPropertyName = this.getLinkToParentPropertyName();
     if (linkToParentPropertyName != null && !linkToParentPropertyName.isEmpty()) {
       requiredGridProperties.add(linkToParentPropertyName);

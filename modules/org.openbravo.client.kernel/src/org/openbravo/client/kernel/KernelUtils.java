@@ -408,6 +408,41 @@ public class KernelUtils {
   }
 
   /**
+   * Returns the list of subtabs of a given tab
+   *
+   * @param tab
+   *          The tab whose subtabs are to be retrieved
+   * @param onlyFirstLevel
+   *          Boolean used to determine whether all the descendent tabs should be returned or only the next level ones
+   * @return The list of subtabs of the given tab, an empty List if the tab has none
+   */
+  public List<Tab> getTabSubtabs(Tab tab, boolean onlyFirstLevel) {
+    ConnectionProvider connection = new DalConnectionProvider();
+    Long seqno = tab.getSequenceNumber();
+    Long tabLevel = tab.getTabLevel();
+    String windowId = tab.getWindow().getId();
+    KernelUtilsData[] tabIds = null;
+    try {
+      if (onlyFirstLevel) {
+        tabIds = KernelUtilsData.getFirstLevelSubtabs(connection, windowId, seqno.toString(),
+            tabLevel.toString());
+      } else {
+        tabIds = KernelUtilsData.getAllSubtabs(connection, windowId, seqno.toString(),
+            tabLevel.toString());
+      }
+    } catch (ServletException e) {
+      log.error(e.getMessage(), e);
+    }
+    List<Tab> subTabList = new ArrayList<Tab>();
+    for (int i = 0; i < tabIds.length; i++) {
+      String tabId = ((KernelUtilsData) tabIds[i]).adTabId;
+      Tab subTab = OBDal.getInstance().get(Tab.class, tabId);
+      subTabList.add(subTab);
+    }
+    return subTabList;
+  }
+
+  /**
    * Calls {@link #getProperty(Entity, Field)} using the entity of the tab of the field.
    */
   public static Property getProperty(org.openbravo.model.ad.ui.Field field) {

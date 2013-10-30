@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
@@ -33,7 +34,9 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
@@ -176,6 +179,40 @@ public class ReservationUtils {
       return res;
     }
     return ReservationUtils.createReserveFromSalesOrderLine(salesOrderLine, false);
+  }
+
+  /**
+   * Function to reallocate given reservation stock on given attributes and storage bin.
+   */
+
+  public static OBError reallocateStock(Reservation reservation, Locator storageBin,
+      AttributeSetInstance asi, BigDecimal quantity) throws OBException {
+
+    OBDal.getInstance().flush();
+    CSResponse cs = null;
+    try {
+      cs = ReservationUtilsData.reallocateStock(OBDal.getInstance().getConnection(false),
+          new DalConnectionProvider(false), reservation.getId(), storageBin.getId(), asi.getId(),
+          quantity.toPlainString(), (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+    } catch (ServletException e) {
+      throw new OBException(DbUtility.getUnderlyingSQLException(e));
+    }
+
+    OBError result = new OBError();
+    if (cs == null || StringUtils.isEmpty(cs.returnValue)) {
+      throw new OBException(OBMessageUtils.messageBD("Error"));
+    }
+    result.setType("Success");
+    result.setMessage(OBMessageUtils.messageBD("Success"));
+    if (cs.returnValue == "0") {
+      result.setType("Error");
+    } else if (cs.returnValue == "2") {
+      result.setType("Warning");
+    }
+    if (StringUtils.isNotEmpty(cs.returnValueMsg)) {
+      result.setMessage(OBMessageUtils.parseTranslation(cs.returnValueMsg));
+    }
+    return result;
   }
 
 }

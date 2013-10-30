@@ -1943,9 +1943,16 @@ OB.ViewFormProperties = {
   },
 
   redraw: function () {
+    var focusItemValue;
     this._isRedrawing = true;
+    //fetch the focus item value as it is lost sometimes during reflow. Refer issue https://issues.openbravo.com/view.php?id=24960
+    focusItemValue = this.getFocusItem() !== null ? this.getFocusItem().getValue() : null;
     this.Super('redraw', arguments);
     delete this._isRedrawing;
+    //reset focus item value if lost
+    if (focusItemValue !== null && this.getFocusItem() !== null && this.getFocusItem().getValue() !== focusItemValue) {
+      this.getFocusItem().setValue(focusItemValue);
+    }
     if (this.selectOnFocusStored) {
       this.selectOnFocus = this.previousSelectOnFocus;
       delete this.previousSelectOnFocus;

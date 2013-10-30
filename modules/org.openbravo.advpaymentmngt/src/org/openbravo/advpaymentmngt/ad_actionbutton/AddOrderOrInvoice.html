@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -328,13 +328,33 @@ function loadGLItemList() {
         cellGLItemDim.appendChild(textNode);
         cellGLItemDim.className = 'DataGrid_Body_Cell';
         cellCount++;
-      } else if (OB.APRM.APFT_GLItems[i][glAcctDimsDesc[acctDim].replace("Desc", "Displayed")]) {
+      } else if (OB.APRM.APFT_GLItems[i][glAcctDimsDesc[acctDim].replace("Desc", "Displayed")] === 'Y') {
         // The Acct. Dimen is displayed and the user has left it empty
         cellGLItemDim = row.insertCell(cellCount);
         textNode = document.createTextNode("");
         cellGLItemDim.appendChild(textNode);
         cellGLItemDim.className = 'DataGrid_Body_Cell';
         cellCount++;
+      }
+      if(cellCount <= 4 && acctDim === (glAcctDimsDesc.length-1)) {
+        var newElements;
+        if (glAcctDimsDesc.length > 4) {
+          newElements = glAcctDimsDescnext.slice(0, 1);
+          if(newElements.length > 0) {
+            glAcctDimsDesc.push(newElements[0]);
+            if((glAcctDimsDescnext.length)-1 === 0) {
+                glAcctDimsDescnext = [];
+            } else {
+              glAcctDimsDescnext = glAcctDimsDescnext.slice((glAcctDimsDescnext.length)-1);
+            }
+          }
+        } else {
+          newElements = glAcctDimsDescnext.slice(0, (glAcctDimsDesc.length)-(cellCount-1));
+          for(addElement = 0; addElement < newElements.length; addElement++) {
+              glAcctDimsDesc.push(newElements[addElement]);
+          }
+          glAcctDimsDescnext = glAcctDimsDescnext.slice(((glAcctDimsDescnext.length)-(cellCount-1)));
+        }
       }
     }
     
@@ -390,7 +410,7 @@ function loadGLItemList() {
             cellGLItemDim.appendChild(textNode);
             cellGLItemDim.className = 'DataGrid_Body_Cell';
             cellCount++;
-          } else if (OB.APRM.APFT_GLItems[i][glAcctDimsDescnext[acctDim].replace("Desc", "Displayed")]) {
+          } else if (OB.APRM.APFT_GLItems[i][glAcctDimsDescnext[acctDim].replace("Desc", "Displayed")] === 'Y') {
             // The Acct. Dimen is displayed and the user has left it empty
             cellGLItemDim = row.insertCell(cellCount);
             textNode = document.createTextNode("");
@@ -681,54 +701,135 @@ function autoDisplayLogicDimensions(isDisplayed) {
     displayLogicElement(dimension + '_th', isDisplayed)
   }
   var displayTitle = false;
+  var table = document.getElementById('sectionGLItemGridHeader');
+  var row = table.rows;
+  var rowLength = row.length;
+  var cellCount = 1, rowCount = 0, lastRow = rowLength-1, lastCell = (row[lastRow].cells.length)-1;
   if (document.frmMain.strElement_BP.value === 'Y' && isDisplayed) {
+    row[rowCount].cells[cellCount].innerHTML = 'Business Partner';
+    row[rowCount].cells[cellCount].id = 'c_bpartner_id_th';
+    cellCount++;
     displayLogicDimension('c_bpartner_id', true);
     displayTitle = true;
   } else {
+    row[lastRow].cells[lastCell].id = 'c_bpartner_id_th';
+    lastCell--;
     displayLogicDimension('c_bpartner_id', false);
   }  
   if (document.frmMain.strElement_AY.value === 'Y' && isDisplayed) {
+    row[rowCount].cells[cellCount].innerHTML = 'Activity';
+    row[rowCount].cells[cellCount].id = 'c_activity_id_th';
+    cellCount++;
     displayLogicDimension('c_activity_id', true);
     displayTitle = true;
   } else {
+    row[lastRow].cells[lastCell].id = 'c_activity_id_th';
+    lastCell--;
     displayLogicDimension('c_activity_id', false);
   }
   
   if (document.frmMain.strElement_PR.value === 'Y' && isDisplayed) {
+    row[rowCount].cells[cellCount].innerHTML = 'Product';
+    row[rowCount].cells[cellCount].id = 'm_product_id_th';
+    cellCount++;
     displayLogicDimension('m_product_id', true);
     displayTitle = true;
   } else {
+    row[lastRow].cells[lastCell].id = 'm_product_id_th';
+    lastCell--;
     displayLogicDimension('m_product_id', false);
   }
+
   if (document.frmMain.strElement_MC.value === 'Y' && isDisplayed) {
+    row[rowCount].cells[cellCount].innerHTML = 'Campaign';
+    row[rowCount].cells[cellCount].id = 'c_campaign_id_th';
+    cellCount++;
     displayLogicDimension('c_campaign_id', true);
     displayTitle = true;
   } else {
+    row[lastRow].cells[lastCell].id = 'c_campaign_id_th';
+    lastCell--;
     displayLogicDimension('c_campaign_id', false);
   }
   
+  if(cellCount > 4) {
+      rowCount++;
+      cellCount = 0;
+  }
+
+  if(lastCell < 0) {
+      lastRow --;
+      lastCell = (row[lastRow].cells.length)-4;
+  }
   if (document.frmMain.strElement_PJ.value === 'Y' && isDisplayed) {
+    row[rowCount].cells[cellCount].innerHTML = 'Project';
+    row[rowCount].cells[cellCount].id = 'c_project_id_th';
+    cellCount++;
     displayLogicDimension('c_project_id', true);
     displayTitle = true;
   } else {
+    row[lastRow].cells[lastCell].id = 'c_project_id_th';
+    lastCell--;
     displayLogicDimension('c_project_id', false);
   }
+  if(cellCount > 4) {
+      rowCount++;
+      cellCount = 0;
+  }
+
+  if(lastCell < 0) {
+      lastRow --;
+      lastCell = (row[lastRow].cells.length)-4;
+  }
   if (document.frmMain.strElement_CC.value === 'Y' && isDisplayed) {
+    row[rowCount].cells[cellCount].innerHTML = 'Cost Center';
+    row[rowCount].cells[cellCount].id = 'c_costcenter_id_th';
+    cellCount++;
     displayLogicDimension('c_costcenter_id', true);
     displayTitle = true;
   } else {
+    row[lastRow].cells[lastCell].id = 'c_costcenter_id_th';
+    lastCell--;
     displayLogicDimension('c_costcenter_id', false);
   }
+  if(cellCount > 4) {
+      rowCount++;
+      cellCount = 0;
+  }
+
+  if(lastCell < 0) {
+      lastRow --;
+      lastCell = (row[lastRow].cells.length)-4;
+  }
   if (document.frmMain.strElement_U1.value === 'Y' && isDisplayed) {
+    row[rowCount].cells[cellCount].innerHTML = '1st Dimension';
+    row[rowCount].cells[cellCount].id = 'user1_id_th';
+    cellCount++;
     displayLogicDimension('user1_id', true);
     displayTitle = true;
   } else {
+    row[lastRow].cells[lastCell].id = 'user1_id_th';
+    lastCell--;
     displayLogicDimension('user1_id', false);
   }
+  if(cellCount > 4) {
+      rowCount++;
+      cellCount = 0;
+  }
+
+  if(lastCell < 0) {
+      lastRow --;
+      lastCell = (row[lastRow].cells.length)-4;
+  }
   if (document.frmMain.strElement_U2.value === 'Y' && isDisplayed) {
+    row[rowCount].cells[cellCount].innerHTML = '2nd Dimension';
+    row[rowCount].cells[cellCount].id = 'user2_id_th';
+    cellCount++;
     displayLogicDimension('user2_id', true);
     displayTitle = true;
   } else {
+    row[lastRow].cells[lastCell].id = 'user2_id_th';
+    lastCell--;
     displayLogicDimension('user2_id', false);
   }
   
@@ -1632,22 +1733,22 @@ function closeProcessPayment() {
                     </tbody>
                   </table>
                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="gridGLItem">
-                    <thead>
+                    <thead  id="sectionGLItemGridHeader">
                       <tr class="DataGrid_Body_Row">
                         <th class="DataGrid_Header_Cell" width="300" rowspan="2">GL Item</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="c_bpartner_id_th">Business Partner</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="c_activity_id_th">Activity</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="m_product_id_th">Product</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="c_campaign_id_th">Campaign</th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" ></th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" ></th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" ></th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" ></th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" rowspan="2">Received In</th>
                         <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" rowspan="2">Paid Out</th>
                         <th class="DataGrid_Header_LineNoCell" width="20" rowspan="2"></th>
                       </tr>
                       <tr class="DataGrid_Body_Row">
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="c_project_id_th">Project</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="c_costcenter_id_th">Cost Center</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="user1_id_th">1st Dimension</th>
-                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" id="user2_id_th">2nd Dimension</th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" ></th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" ></th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" ></th>
+                        <th class="DataGrid_Header_Cell DataGrid_Header_Cell_Inverse" width="100" ></th>
                       </tr>
                     </thead>
                     <tbody id="sectionGLItemGrid">

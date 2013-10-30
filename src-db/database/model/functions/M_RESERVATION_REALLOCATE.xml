@@ -77,6 +77,9 @@
   cur_reserved_stock       RECORD;
   cur_not_allocated_stock  RECORD;
 BEGIN
+  IF (p_result IS NULL) THEN
+    p_result := 1;
+  END IF;
   SELECT r.m_product_id, r.c_uom_id, COALESCE(r.reservedqty, 0), COALESCE(r.releasedqty, 0), r.quantity - COALESCE(r.reservedqty, 0),
       COALESCE(SUM(alloc.quantity - COALESCE(alloc.releasedqty, 0)), 0),
       r.m_warehouse_id, r.m_locator_id, r.m_attributesetinstance_id, r.res_status

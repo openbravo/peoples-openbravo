@@ -472,6 +472,17 @@ public class OBViewFieldHandler {
     return columnName;
   }
 
+  public boolean isField(String columnName) {
+    final List<Field> adFields = new ArrayList<Field>(tab.getADFieldList());
+    for (Field field : adFields) {
+      if (field.getColumn() != null
+          && columnName.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   interface OBViewFieldDefinition {
     public int getGridSort();
 
