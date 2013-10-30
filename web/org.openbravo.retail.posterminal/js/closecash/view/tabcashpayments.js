@@ -139,6 +139,13 @@ enyo.kind({
               renderEmpty: 'OB.UI.RenderEmpty',
               listStyle: 'list'
             }, {
+              name: 'renderLoading',
+              style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+              showing: false,
+              initComponents: function () {
+                this.setContent(OB.I18N.getLabel('OBPOS_LblLoading')); 
+              }
+            }, {
               classes: 'row-fluid',
               components: [{
                 classes: 'span12',
@@ -187,9 +194,6 @@ enyo.kind({
       }]
     }]
   }],
-  initComponents: function() {
-    this.inherited(arguments);
-  },
   init: function(model) {
     this.inherited(arguments);
     
@@ -276,12 +280,16 @@ enyo.kind({
     this.$.total.printAmount(this.payment.get('foreignExpected'));
     
     if (!this.payment.get('coinsCollection')) {     
+      this.$.paymentsList.hide();
+      this.$.renderLoading.show();
+      
       // First empty collection before loading.
       this.$.paymentsList.setCollection(new Backbone.Collection());
       this.payment.set('foreignCounted', 0); 
       this.payment.set('counted', 0);
       this.payment.set('foreignDifference', OB.DEC.sub(0, this.payment.get('foreignExpected'))); 
-      this.printTotals();    
+      this.printTotals();   
+
 
       // Call to draw currencies.
       var currencyId = payment.get('paymentMethod').currency;
@@ -305,7 +313,10 @@ enyo.kind({
         me.payment.set('foreignCounted', 0);   
         me.payment.set('counted', 0);
         me.payment.set('foreignDifference', OB.DEC.sub(0, me.payment.get('foreignExpected'))); 
-        me.printTotals();             
+        me.printTotals();   
+        
+        me.$.renderLoading.hide();
+        me.$.paymentsList.show();      
       });  
     } else {
       this.$.paymentsList.setCollection(this.payment.get('coinsCollection'));
