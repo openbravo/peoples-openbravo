@@ -112,6 +112,9 @@
       var memo = 0;
       if (this.get('promotions') && this.get('promotions').length > 0) {
         return _.reduce(this.get('promotions'), function (memo, prom) {
+          if (OB.UTIL.isNullOrUndefined(prom.amt)) {
+            return memo;
+          }
           return memo + prom.amt;
         }, memo, this);
       } else {
@@ -1099,6 +1102,48 @@
       this.save();
 
     },
+    returnLine: function (line, options, skipValidaton) {
+      var me = this;
+      if (!_.isUndefined(OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) && !OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn') && !skipValidaton) {
+        //The value of qty need to be negate because we want to change it
+        var negativeLines = _.filter(this.get('lines').models, function (line) {
+          return line.get('gross') < 0;
+        }).length;
+        if (this.get('lines').length > 0) {
+          if (-line.get('qty') > 0 && negativeLines > 0) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
+            return;
+          } else if (-line.get('qty') < 0 && negativeLines !== this.get('lines').length) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
+            return;
+          }
+        }
+      }
+      if (line.get('qty') > 0) {
+        line.get('product').set('ignorePromotions', true);
+      } else {
+        line.get('product').set('ignorePromotions', false);
+      }
+      line.set('qty', -line.get('qty'));
+      line.calculateGross();
+
+      // set the undo action
+      this.set('undo', {
+        text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
+        line: line,
+        undo: function () {
+          line.set('qty', -line.get('qty'));
+          me.set('undo', null);
+        }
+      });
+      this.adjustPayment();
+      if (line.get('promotions')) {
+        line.unset('promotions');
+      }
+      me.calculateGross();
+      this.save();
+
+    },
 
     setBPandBPLoc: function (businessPartner, showNotif, saveChange) {
       var me = this,
@@ -1165,16 +1210,42 @@
       }
     },
 
-    updatePrices: function () {
-      var order = this;
+    updatePrices: function (callback) {
+      var order = this,
+          newAllLinesCalculated;
+
+      function allLinesCalculated() {
+        callback(order);
+      };
+
+      newAllLinesCalculated = _.after(this.get('lines').length, allLinesCalculated);
+
       this.get('lines').each(function (line) {
+
+        //issues 24994 & 24993
+        //if the order is created from quotation just after save the quotation
+        //(without load the quotation from quotations window). The order has the fields added
+        //by adjust prices. We need to work without these values
+        //price not including taxes
+        line.unset('nondiscountedprice');
+        line.unset('nondiscountednet');
+        //price including taxes
+        line.unset('netFull');
+        line.unset('grossListPrice');
+        line.unset('grossUnitPrice');
+        line.unset('lineGrossAmount');
+
+
         var successCallbackPrices, criteria = {
           'id': line.get('product').get('id')
         };
         successCallbackPrices = function (dataPrices, line) {
           dataPrices.each(function (price) {
-            order.setPrice(line, price.get('listPrice'));
+            order.setPrice(line, price.get('standardPrice', {
+              setUndo: false
+            }));
           });
+          newAllLinesCalculated();
         };
 
         OB.Dal.find(OB.Model.Product, criteria, successCallbackPrices, function () {
@@ -1209,11 +1280,15 @@
       this.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
       this.save();
       if (updatePrices) {
-        this.updatePrices();
-        OB.Model.Discounts.applyPromotions(this);
+        this.updatePrices(function (order) {
+          OB.Model.Discounts.applyPromotions(order);
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+          order.trigger('orderCreatedFromQuotation');
+        });
+      } else {
+        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+        this.trigger('orderCreatedFromQuotation');
       }
-      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-      this.trigger('orderCreatedFromQuotation');
     },
     reactivateQuotation: function () {
       this.set('hasbeenpaid', 'N');
@@ -1595,7 +1670,15 @@
             curPayment = new PaymentLine();
             for (paymentProp in iter) {
               if (iter.hasOwnProperty(paymentProp)) {
-                curPayment.set(paymentProp, iter[paymentProp]);
+                if (paymentProp === "paymentDate") {
+                  if (!OB.UTIL.isNullOrUndefined(iter[paymentProp]) && moment(iter[paymentProp]).isValid()) {
+                    curPayment.set(paymentProp, new Date(iter[paymentProp]));
+                  } else {
+                    curPayment.set(paymentProp, null);
+                  }
+                } else {
+                  curPayment.set(paymentProp, iter[paymentProp]);
+                }
               }
             }
             payments.add(curPayment);

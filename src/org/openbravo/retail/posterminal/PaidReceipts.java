@@ -23,7 +23,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -144,8 +143,7 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONObject paymentsIn = new JSONObject();
         paymentsIn.put("amount", objPaymentsIn[0]);
         paymentsIn.put("account", objPaymentsIn[1]);
-        String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-            .getProperty("dateFormat.java");
+        String dateFormat = "yyyy-MM-dd";
         SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
         paymentsIn.put("paymentDate", outputFormat.format(((Date) objPaymentsIn[2])));
         listPaymentsIn.put(paymentsIn);

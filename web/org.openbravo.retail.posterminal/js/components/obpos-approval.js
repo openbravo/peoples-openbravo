@@ -110,7 +110,7 @@ enyo.kind({
       this.approvalType = [this.approvalType];
     }
     _.each(this.approvalType, function (approval) {
-      msg = msg + ' ' + (OB.I18N.labels[this.approvalType] || OB.I18N.getLabel('OBPOS_ApprovalTextHeader'));
+      msg = msg + ' ' + (OB.I18N.labels[approval] || OB.I18N.getLabel('OBPOS_ApprovalTextHeader'));
     });
     this.$.bodyContent.$.explainApprovalTxt.setContent(msg);
 
@@ -169,7 +169,7 @@ enyo.kind({
     params.appName = OB.MobileApp.model.get('appName');
 
     params.command = 'userImages';
-    params.approvalType = JSON.stringify(this.approvalType);
+    params.approvalType = this.approvalType;
     new OB.OBPOSLogin.UI.LoginRequest({
       url: OB.MobileApp.model.get('loginUtilsUrl')
     }).response(this, 'setUserImages').go(params);
@@ -182,7 +182,7 @@ enyo.kind({
     if (!u || !p) {
       alert(OB.I18N.getLabel('OBPOS_EmptyUserPassword'));
     } else {
-      this.model.checkApproval(this.approvalType, u, p, this.callback);
+      this.model.checkApproval(this.approvalType, u, p);
       this.waterfall('onHideThisPopup', {});
     }
   }
