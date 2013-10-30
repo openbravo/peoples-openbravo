@@ -236,7 +236,20 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   canEditCriterion: function (criterion) {
-    return criterion && (criterion.fieldName === this.name || (this.criteriaField && (criterion.fieldName === this.criteriaField)));
+    var firstCriteria;
+    if (criterion.operator === 'and') {
+      // and operator does not include the fieldName as a root property
+      if (!criterion.criteria || criterion.criteria.length === 0) {
+        return true;
+      } else {
+        // all criteria of the criterion are associated with the same name, pick the first
+        firstCriteria = criterion.criteria[0];
+        return (firstCriteria.fieldName === this.name || (this.criteriaField && (firstCriteria.fieldName === this.criteriaField)));
+      }
+
+    } else {
+      return criterion && (criterion.fieldName === this.name || (this.criteriaField && (criterion.fieldName === this.criteriaField)));
+    }
   },
 
   getCriterion: function (textMatchStyle) {
