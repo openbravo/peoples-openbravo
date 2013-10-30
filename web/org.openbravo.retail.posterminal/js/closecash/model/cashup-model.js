@@ -122,7 +122,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, this);
     this.set('ignoreStep3', result);
   },
-
   showStep: function (leftpanel$) {    
     var currentstep = this.get('step') - 1;
     var i;
@@ -152,6 +151,15 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   },
   isSubstepAvailable: function (step, substep) {
     return this.cashupsteps[step - 1].isSubstepAvailable(this, substep); 
+  },
+  verifyStep: function (leftpanel$, callback) {
+    var currentstep = this.get('step') - 1;
+    var stepcomponent = this.cashupsteps[currentstep].getStepComponent(leftpanel$);
+    if (stepcomponent.verifyStep) {
+      return stepcomponent.verifyStep(this, callback);
+    } else {
+      callback();
+    }
   },
   
   //Step (pre) 1

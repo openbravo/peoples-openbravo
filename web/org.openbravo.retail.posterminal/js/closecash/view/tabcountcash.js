@@ -90,26 +90,6 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.RenderTotal',
-  tag: 'span',
-  published: {
-    total: OB.DEC.Zero
-  },
-  create: function () {
-    this.inherited(arguments);
-  },
-  totalChanged: function (oldValue) {
-    // console.log('totalC');
-    this.setContent(OB.I18N.formatCurrency(this.total));
-    if (OB.DEC.compare(this.total) < 0) {
-      this.applyStyle('color', 'red');
-    } else {
-      this.applyStyle('color', 'black');
-    }
-  }
-});
-
-enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
   handlers: {
     onAnyCounted: 'anyCounted'
@@ -203,17 +183,16 @@ enyo.kind({
                   style: 'padding: 10px 20px 10px 0px; float: left; width: 14%;',
                   components: [{
                     name: 'total',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal',
-                    style: 'font-weight: bold;'
+                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
+                    
                   }]
                 }, {
                   style: 'padding: 17px 10px 17px 10px; float: left; width: 126px'
                 }, {
                   style: 'padding: 10px 5px 10px 0px; float: left;',
                   components: [{
-                    name: 'diference',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal',
-                    style: 'font-weight: bold;'
+                    name: 'difference',
+                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                   }]
                 }]
               }]
@@ -231,5 +210,28 @@ enyo.kind({
   },
   displayStep: function (model) {
     // this function is invoked when displayed.  
+  },
+  verifyStep: function (model, callback) {
+    // this function is invoked when going next, invokes callback to continue
+    // do not invoke callback to cancel going next.
+    
+    var firstdiff = model.get('paymentList').find(function (payment) {
+      return payment.get('difference') !== 0;
+    });
+    
+    if (firstdiff) {
+      // there is at leat 1 payment with differences
+      OB.UTIL.Approval.requestApproval(
+          model, 
+          'OBPOS_approval.cashupdifferences',
+          function (approved,supervisor, approvalType) {
+            if (approved) {
+              callback();
+            }
+          }
+      );      
+    } else {
+      callback();
+    }
   }
 });

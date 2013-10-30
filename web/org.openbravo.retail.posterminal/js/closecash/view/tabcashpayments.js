@@ -49,9 +49,9 @@ enyo.kind({
     this.$.coin.setContent(this.model.get('coinValue'));
     var style = 'padding: 10px 20px 10px 10px; float: left; width: 15%; text-align: center;';
     if(this.model.get('bordercolor')){
-      style+='border:10px solid '+this.model.get('bordercolor')+";";
+      style += ' border:10px solid ' + this.model.get('bordercolor') + ';';
     }
-    style += ' background-color:'+this.model.get('backcolor')+";";
+    style += ' background-color:' + this.model.get('backcolor') + ';';
     this.$.coin.addStyles(style);
     this.$.numberOfCoins.setContent(this.model.get('numberOfCoins'));
     this.$.total.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('totalAmount'))));
@@ -70,37 +70,24 @@ enyo.kind({
   },
   addUnit: function() {
     this.doAddUnit();  
-  },
-  lineOK: function (inSender, inEvent) {
-    this.model.set('counted', this.model.get('expected'));
-    this.model.set('foreignCounted', this.model.get('foreignExpected'));
   }
 });
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderTotal',
   tag: 'span',
-  published: {
-    total: OB.DEC.Zero
-  },
-  create: function () {
-    this.inherited(arguments);
-  },
-  totalChanged: function (oldValue) {
-    this.setContent(OB.I18N.formatCurrency(this.total));
-    this.applyStyle('color', OB.DEC.compare(this.total) < 0 ? 'red' : 'black');
+  style: 'font-weight: bold;',
+  printAmount: function (value) {
+    this.setContent(OB.I18N.formatCurrency(value));
+    this.applyStyle('color', OB.DEC.compare(value) < 0 ? 'red' : 'black');
   }
 });
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashPayments',
   handlers: {
-    onAnyCounted: 'anyCounted',
     onAddUnit: 'addUnit',
     onLineEditCash: 'lineEditCash'
-  },
-  events: {
-    onCountAllOK: ''
   },
   components: [{
     classes: 'tab-pane',
@@ -166,8 +153,7 @@ enyo.kind({
                   style: 'padding: 10px 20px 10px 0px; float: left; width: 14%;',
                   components: [{
                     name: 'total',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal',
-                    style: 'font-weight: bold;'
+                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                   }]
                 },  {
                   name: 'countedLbl',
@@ -179,8 +165,7 @@ enyo.kind({
                   style: 'padding: 10px 5px 10px 0px; float: left;',
                   components: [{
                     name: 'counted',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal',
-                    style: 'font-weight: bold;'
+                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                   }]
                 }, {
                   name: 'differenceLbl',
@@ -191,9 +176,8 @@ enyo.kind({
                 },{
                   style: 'padding: 10px 5px 10px 0px; float: left;',
                   components: [{
-                    name: 'diference',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal',
-                    style: 'font-weight: bold;'
+                    name: 'difference',
+                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                   }]
                 }]
               }]
@@ -213,10 +197,13 @@ enyo.kind({
     this.model.on('action:addUnitToCollection', function (args) {
       this.addUnitToCollection(args.coin, args.amount);
     }, this); 
+    this.model.on('action:resetAllCoins', function (args) {
+      this.resetAllCoins();
+    }, this);     
   },
   printTotals: function () {
-    this.$.counted.setTotal(this.payment.get('foreignCounted'));
-    this.$.diference.setTotal(this.payment.get('foreignDifference'));
+    this.$.counted.printAmount(this.payment.get('foreignCounted'));
+    this.$.difference.printAmount(this.payment.get('foreignDifference'));
   },
   
   lineEditCash: function (inSender, inEvent) {
@@ -258,15 +245,35 @@ enyo.kind({
     this.payment.set('foreignDifference', OB.DEC.sub(totalCounted, this.payment.get('foreignExpected')));    
     this.printTotals();
   },
-  anyCounted: function () {
-    //this.$.buttonAllOk.applyStyle('visibility', 'hidden'); //hiding in this way to keep the space
+  
+  resetAllCoins: function() {
+    var collection = this.$.paymentsList.collection;
+    var newcollection = new Backbone.Collection();
+
+    collection.each(function(coin){
+      var coinModel = new Backbone.Model();
+      coinModel.set('numberOfCoins', 0);
+      coinModel.set('coinValue', coin.get('coinValue'));
+      coinModel.set('totalAmount', 0);
+      coinModel.set('backcolor', coin.get('backcolor'));
+      coinModel.set('bordercolor', coin.get('bordercolor'));
+      newcollection.add(coinModel);
+    });
+    
+    this.payment.set('coinsCollection', newcollection);
+    this.$.paymentsList.setCollection(newcollection);
+    this.payment.set('foreignCounted', 0);
+    this.payment.set('counted', 0);
+    this.payment.set('foreignDifference', OB.DEC.sub(0, this.payment.get('foreignExpected')));    
+    this.printTotals();
   },
+  
   initPaymentToCount: function (payment) {
     this.payment = payment;
     
     this.$.title.setContent(OB.I18N.getLabel('OBPOS_CashPaymentsTitle', [payment.get('name')]));
     
-    this.$.total.setTotal(this.payment.get('foreignExpected'));
+    this.$.total.printAmount(this.payment.get('foreignExpected'));
     
     if (!this.payment.get('coinsCollection')) {     
       // First empty collection before loading.
@@ -307,8 +314,7 @@ enyo.kind({
     
   },
   displayStep: function (model) {
-    // this function is invoked when displayed.   
-    
+    // this function is invoked when displayed.      
     this.initPaymentToCount(model.get('paymentList').at(model.get('substep')));
   }
 });

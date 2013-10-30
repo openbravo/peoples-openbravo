@@ -215,12 +215,12 @@ enyo.kind({
 
     // Cash count - Step 2
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.setCollection(this.model.get('paymentList'));
-    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.total.setTotal(this.model.get('totalExpected'));
-    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(0, this.model.get('totalExpected')));
+    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.total.printAmount(this.model.get('totalExpected'));
+    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(OB.DEC.sub(0, this.model.get('totalExpected')));
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.setPayments(this.model.getData('DataCloseCashPaymentMethod'));
 
     this.model.on('change:totalCounted', function () {
-      this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
+      this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.waterfall('onAnyCounted');
       this.refreshButtons();
@@ -340,7 +340,17 @@ enyo.kind({
     this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.getComponents()[2].$.theButton.$.btnNext.setContent(OB.I18N.getLabel(nextButtonI18NLabel));              
   },
   changeStep: function (inSender, inEvent) {
-    this.moveStep(inEvent.originator.stepCount);
+    var direction = inEvent.originator.stepCount;
+    var me = this;
+    
+    if (direction > 0) {
+      // Check with the step if can go next.
+      this.model.verifyStep(this.$.cashupMultiColumn.$.leftPanel.$, function () {
+        me.moveStep(direction);
+      });
+    } else {
+      this.moveStep(direction);
+    }    
   },
   cancelCashup: function (inSender, inEvent) {
     OB.POS.navigate('retail.pointofsale');

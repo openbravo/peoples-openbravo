@@ -38,10 +38,13 @@ enyo.kind({
         holdActive: true
       }]
     });
+    
+    // CashPayments step.
     this.addToolbar({
-      name: 'toolbarcashpayments',
+      name: 'toolbarcashpayments',     
       buttons: [{
         command: 'cashpayments',
+        i18nLabel: 'OBPOS_SetQuantity',
         definition: {
           action: function (keyboard, amt) {
             keyboard.model.trigger('action:addUnitToCollection', {
@@ -49,8 +52,17 @@ enyo.kind({
               amount: parseInt(amt, 10)
             });       
           }
-        },
-        label: OB.I18N.getLabel('OBPOS_SetQuantity')
+        }
+      }, {
+        command: 'resetallcoins',      
+        i18nLabel: 'OBPOS_ResetAllCoins',
+        stateless: true,      
+        definition: {
+          stateless: true,
+          action: function (keyboard, amt) {
+            keyboard.model.trigger('action:resetAllCoins');       
+          }
+        }        
       }]
     });
     this.model.on('action:SelectedCoin', function(coin) {
