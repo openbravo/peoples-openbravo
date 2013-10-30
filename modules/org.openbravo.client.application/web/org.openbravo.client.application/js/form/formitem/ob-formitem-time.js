@@ -152,7 +152,7 @@ isc.OBTimeItem.addProperties({
     if (this.getValue() && data[this.name] && this.getValue() !== data[this.name]) {
       this.setValue(data[this.name]);
     }
-  },
+  }
 });
 
 
