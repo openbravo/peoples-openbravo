@@ -891,7 +891,6 @@
       if (!newLine) {
         newLine = line.clone();
         newLine.set({
-          promotionCandidates: null,
           promotions: null,
           addedBySplit: true
         });
