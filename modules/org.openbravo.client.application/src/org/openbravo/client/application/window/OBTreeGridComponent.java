@@ -21,12 +21,22 @@ package org.openbravo.client.application.window;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.DomainType;
+import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
+import org.openbravo.base.util.Check;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.domain.ReferencedTree;
+import org.openbravo.model.ad.domain.ReferencedTreeField;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.ADTreeType;
 import org.openbravo.model.ad.utility.TableTree;
+import org.openbravo.service.json.JsonConstants;
 
 /**
  * The backing bean for generating the OBTreeGridPopup client-side representation.
@@ -113,6 +123,70 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
     } else {
       return null;
     }
+  }
+
+  public static String getAdditionalProperties(ReferencedTree referencedTree,
+      boolean onlyDisplayField) {
+    if (onlyDisplayField
+        && (referencedTree.getDisplayfield() == null || !referencedTree.getDisplayfield()
+            .isActive())) {
+      return "";
+    }
+    final StringBuilder extraProperties = new StringBuilder();
+    for (ReferencedTreeField treeField : referencedTree.getADReferencedTreeFieldList()) {
+      if (onlyDisplayField && treeField != referencedTree.getDisplayfield()) {
+        continue;
+      }
+      if (!treeField.isActive()) {
+        continue;
+      }
+      String fieldName = getPropertyOrDataSourceField(treeField);
+      final DomainType domainType = getDomainType(treeField);
+      if (domainType instanceof ForeignKeyDomainType) {
+        fieldName = fieldName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
+      }
+      if (extraProperties.length() > 0) {
+        extraProperties.append(",");
+      }
+      extraProperties.append(fieldName);
+    }
+    return extraProperties.toString();
+  }
+
+  private static String getPropertyOrDataSourceField(ReferencedTreeField treeField) {
+    String result = null;
+    if (treeField.getProperty() != null) {
+      result = treeField.getProperty();
+    }
+    // TODO
+    // else if (treeField.getDisplayColumnAlias() != null) {
+    // result = treeField.getDisplayColumnAlias();
+    // } else if (treeField.getObserdsDatasourceField() != null) {
+    // result = treeField.getObserdsDatasourceField().getName();
+    // } else {
+    // throw new IllegalStateException("Selectorfield " + treeField
+    // + " has a null datasource and a null property");
+    // }
+    return result.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
+  }
+
+  private static DomainType getDomainType(ReferencedTreeField treeField) {
+    if (treeField.getRefTree().getTable() != null && treeField.getProperty() != null) {
+      final String entityName = treeField.getRefTree().getTable().getName();
+      final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+      final Property property = DalUtil.getPropertyFromPath(entity, treeField.getProperty());
+      Check.isNotNull(property, "Property " + treeField.getProperty() + " not found in Entity "
+          + entity);
+      return property.getDomainType();
+    }
+    // TODO
+    // else if (treeField.getRefTree().getTable() != null && treeField.getRefTree().isCustomQuery()
+    // && treeField.getReference() != null) {
+    // return getDomainType(treeField.getReference().getId());
+    // } else if (treeField.getObserdsDatasourceField().getReference() != null) {
+    // return getDomainType(treeField.getObserdsDatasourceField().getReference().getId());
+    // }
+    return null;
   }
 
 }
