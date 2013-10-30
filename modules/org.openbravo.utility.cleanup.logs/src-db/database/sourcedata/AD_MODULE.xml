@@ -8,6 +8,8 @@
 <!--8A34B301DC524EA3A07513DF9F42CC90-->  <NAME><![CDATA[Log Clean Up Utility]]></NAME>
 <!--8A34B301DC524EA3A07513DF9F42CC90-->  <VERSION><![CDATA[1.0.0]]></VERSION>
 <!--8A34B301DC524EA3A07513DF9F42CC90-->  <DESCRIPTION><![CDATA[Log Clean Up Utility]]></DESCRIPTION>
+<!--8A34B301DC524EA3A07513DF9F42CC90-->  <HELP><![CDATA[Utility to periodically cleanup log tables]]></HELP>
+<!--8A34B301DC524EA3A07513DF9F42CC90-->  <URL><![CDATA[http://centralrepository.openbravo.com/heartbeat-server/org.openbravo.forge.ui/ForgeProjectDetail?projectId=7DC25E3B7ADE426CAD71E7804B95C1BF]]></URL>
 <!--8A34B301DC524EA3A07513DF9F42CC90-->  <TYPE><![CDATA[M]]></TYPE>
 <!--8A34B301DC524EA3A07513DF9F42CC90-->  <LICENSE><![CDATA[Licensed under the Openbravo Public License version 1.1.
 You may obtain a copy of the License at http://www.openbravo.com/legal/license.html or in the legal folder of the Openbravo ERP core distribution.]]></LICENSE>
