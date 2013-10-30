@@ -60,19 +60,6 @@
       <Parameter name="sql" type="replace" optional="true" after="FROM (" text="SELECT '' AS AD_CLIENT_ID, '' AS AD_ORG_ID, TO_DATE(NULL) AS CREATED, '' AS CREATEDBY,'' AS UPDATED,'' AS UPDATEDBY,'' AS RECORD_ID, '' AS REFERENCEKEY_ID, '' AS DESCRIPTION, '' AS ISACTIVE, '' AS AD_USER_ID, '' AS AD_ROLE_ID FROM DUAL"/>
    </SqlMethod>
    
-   <SqlMethod name="existsReference" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-          SELECT COUNT(*) AS EXISTING
-            FROM AD_ALERT
-           WHERE AD_ALERTRULE_ID = ?
-             AND REFERENCEKEY_ID = ?
-             AND COALESCE(STATUS, 'NEW') != 'SOLVED'
-      ]]></Sql>
-      <Parameter name="alertRule"/>
-      <Parameter name="ref"/>      
-   </SqlMethod>
-   
    <SqlMethod name="selectSQL" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
