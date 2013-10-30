@@ -3,7 +3,6 @@ package org.openbravo.utility.cleanup.log;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -29,7 +28,7 @@ public class CleanEntity {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(
         (String) DalUtil.getId(config.getTable()));
 
-    String hql = "select count(*) from " + entity.getName();
+    String hql = "delete from " + entity.getName();
 
     String where = "";
     if (config.getOlderThan() != 0L) {
@@ -61,8 +60,11 @@ public class CleanEntity {
     log.debug("  Query: {}", hql);
 
     Session s = OBDal.getInstance().getSession();
-    Query q = s.createQuery(hql);
-    log.debug("    -rows: {}", q.list().get(0));
+    int affectedRows = s.createQuery(hql).executeUpdate();
+    String logMsg = "Deleted " + affectedRows + " rows";
+
+    log.debug(logMsg);
+    bgLogger.log(logMsg + "\n");
   }
 
   protected String getClientOrgFilter(Client client, Organization org) {
