@@ -62,5 +62,6 @@
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <check name="OBULOG_CONFIG_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBULOG_CONFIG_STAT_CHECK"><![CDATA[((AD_TABLE_ID) <> ALL (('49F3C31FA3F340A080D0C7F45ADB0216', '566'))) OR (OLDER_THAN > 30)]]></check>
     </table>
   </database>
