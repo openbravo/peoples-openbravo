@@ -109,7 +109,7 @@ enyo.kind({
       this.approvalType = [this.approvalType];
     }
     _.each(this.approvalType, function (approval) {
-      msg = msg + ' ' + (OB.I18N.labels[this.approvalType] || OB.I18N.getLabel('OBPOS_ApprovalTextHeader'));
+      msg = msg + ' ' + (OB.I18N.labels[approval] || OB.I18N.getLabel('OBPOS_ApprovalTextHeader'));
     });
     this.$.bodyContent.$.explainApprovalTxt.setContent(msg);
 
