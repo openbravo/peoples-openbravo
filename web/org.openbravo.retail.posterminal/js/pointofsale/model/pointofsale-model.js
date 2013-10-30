@@ -540,12 +540,29 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   checkPaymentApproval: function () {
     var me = this;
     OB.MobileApp.model.hookManager.executeHooks('OBPOS_CheckPaymentApproval', {
-      approved: true,
+      approvals: [],
       context: this
     }, function (args) {
-      me.trigger('approvalChecked', {
-        approved: args.approved
-      });
+      var negativeLines = _.filter(me.get('order').get('lines').models, function (line) {
+        return line.get('gross') < 0;
+      }).length;
+      if (negativeLines > 0) {
+        args.approvals.push('OBPOS_approval.returns');
+      }
+      if (args.approvals.length > 0) {
+        OB.UTIL.Approval.requestApproval(
+        me, args.approvals, function (approved, supervisor, approvalType) {
+          if (approved) {
+            me.trigger('approvalChecked', {
+              approved: args.approved
+            });
+          }
+        });
+      } else {
+        me.trigger('approvalChecked', {
+          approved: true
+        });
+      }
     });
   },
 
