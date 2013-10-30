@@ -36,6 +36,16 @@ import org.openbravo.scheduling.ProcessLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Default implementation to clean up an entity.
+ * 
+ * In case specific actions are required for a concrete entity, this class can be extended using as
+ * {@code Qualifier} the name of the entity, in this way that class will be invoked instead of this
+ * default one.
+ * 
+ * @author alostale
+ * 
+ */
 @ApplicationScoped
 @Qualifier("Default")
 public class CleanEntity {

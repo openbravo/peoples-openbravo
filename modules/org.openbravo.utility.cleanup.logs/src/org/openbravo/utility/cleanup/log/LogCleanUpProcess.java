@@ -42,6 +42,12 @@ import org.openbravo.service.db.DalBaseProcess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This is the process that is invoked to perform the clean up of configured entities.
+ * 
+ * @author alostale
+ * 
+ */
 public class LogCleanUpProcess extends DalBaseProcess {
   private static final Logger log = LoggerFactory.getLogger(LogCleanUpConfig.class);
 
