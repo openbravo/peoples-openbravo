@@ -149,7 +149,7 @@ isc.OBTimeItem.addProperties({
     return this.Super('moved', arguments);
   },
   formSaved: function (request, response, data) {
-    if (this.getValue() && data[this.name] && this.getValue() !== data[this.name]) {
+    if (this.getValue() !== data[this.name]) {
       this.setValue(data[this.name]);
     }
   }
