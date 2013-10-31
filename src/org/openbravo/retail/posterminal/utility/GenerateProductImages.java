@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.client.kernel.RequestContext;
@@ -49,11 +50,18 @@ public class GenerateProductImages extends DalBaseProcess {
         imagesDir.mkdirs();
       }
 
-      for (OBRETCOProlProduct prolProduct : assortment.getOBRETCOProlProductList()) {
+      OBCriteria<OBRETCOProlProduct> prolProductCrit = OBDal.getInstance().createCriteria(
+          OBRETCOProlProduct.class);
+      prolProductCrit.add(Restrictions.eq(OBRETCOProlProduct.PROPERTY_OBRETCOPRODUCTLIST,
+          assortment));
+      ScrollableResults prolProductScroll = prolProductCrit.scroll();
+      while (prolProductScroll.next()) {
+        OBRETCOProlProduct prolProduct = (OBRETCOProlProduct) prolProductScroll.get(0);
         if (prolProduct.getProduct().getImage() != null) {
           generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct().getImage()
               .getId(), imagesDir);
         }
+        OBDal.getInstance().getSession().clear();
       }
 
       OBCriteria<PriceAdjustment> packs = OBDal.getInstance().createCriteria(PriceAdjustment.class);
