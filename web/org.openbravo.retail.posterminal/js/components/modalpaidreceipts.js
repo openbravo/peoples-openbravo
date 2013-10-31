@@ -227,9 +227,7 @@ enyo.kind({
     onClearAction: 'clearAction'
   },
   events: {
-    onChangePaidReceipt: '',
-    onShowPopup: '',
-    onAddProduct: ''
+    onChangePaidReceipt: ''
   },
   components: [{
     classes: 'span12',
@@ -293,24 +291,10 @@ enyo.kind({
             }
             me.model.get('leftColumnViewManager').setOrderMode();
           }
-          OB.MobileApp.model.hookManager.executeHooks('OBRETUR_ReturnFromOrig', {
-            order: data[0],
-            context: me
-          }, function (args) {
-            if (!args.returnReceipt) {
-              me.model.get('orderList').newPaidReceipt(data[0], function (order) {
-                me.doChangePaidReceipt({
-                  newPaidReceipt: order
-                });
-              });
-            } else {
-              _.each(data[0].receiptLines, function (line) {
-                OB.Dal.get(OB.Model.Product, line.id, function (prod) {
-                  me.model.get('order').addProduct(prod, -line.quantity, null);
-                  me.model.get('orderList').saveCurrent();
-                });
-              });
-            }
+          me.model.get('orderList').newPaidReceipt(data[0], function (order) {
+            me.doChangePaidReceipt({
+              newPaidReceipt: order
+            });
           });
         } else {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
