@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -67,11 +68,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   protected JSONObject getUserImages(HttpServletRequest request) throws JSONException {
     JSONObject result = new JSONObject();
     JSONArray data = new JSONArray();
-    JSONArray approvalType = new JSONArray();
     final String terminalName = request.getParameter("terminalName");
-    if (request.getParameter("approvalType") != null) {
-      approvalType = new JSONArray(request.getParameter("approvalType"));
-    }
+
+    final String approvalType = request.getParameter("approvalType");
 
     String hqlUser = "select distinct user.name, user.username, user.id "
         + "from ADUser user, ADUserRoles userRoles, ADRole role, "
@@ -89,20 +88,16 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         + "userRoles.role.id = formAccess.role.id and "
         + "formAccess.specialForm.id = :webPOSFormId ";
 
-    if (approvalType.length() != 0) {
+    if (!StringUtils.isEmpty(approvalType)) {
       // checking supervisor users for sent approval type
-      for (int i = 0; i < approvalType.length(); i++) {
-        String iter = approvalType.getString(i);
-        hqlUser += "and exists (from ADPreference as p" + //
-            " where property = '" + iter + //
-            "'   and active = true" + //
-            "   and searchKey = 'Y'" + //
-            "   and (userContact = user" + //
-            "        or exists (from ADUserRoles r" + //
-            "                  where r.role = p.visibleAtRole" + //
-            "                    and r.userContact = user))) ";
-      }
-
+      hqlUser += "and exists (from ADPreference as p" + //
+          " where property = :approvalType" + //
+          "   and active = true" + //
+          "   and searchKey = 'Y'" + //
+          "   and (userContact = user" + //
+          "        or exists (from ADUserRoles r" + //
+          "                  where r.role = p.visibleAtRole" + //
+          "                    and r.userContact = user)))";
     }
 
     hqlUser += "order by user.name";
@@ -110,6 +105,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
     qryUser.setParameter("theTerminalSearchKey", terminalName);
     qryUser.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
+
+    if (!StringUtils.isEmpty(approvalType)) {
+      qryUser.setParameter("approvalType", approvalType);
+    }
 
     for (Object qryUserObject : qryUser.list()) {
       final Object[] qryUserObjectItem = (Object[]) qryUserObject;

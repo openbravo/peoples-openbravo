@@ -478,11 +478,7 @@
       //total qty
       var qty = this.get('lines').reduce(function (memo, e) {
         var qtyLine = e.getQty();
-        if (qtyLine > 0) {
-          return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
-        } else {
-          return memo;
-        }
+        return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
       }, OB.DEC.Zero);
       this.set('qty', qty);
     },
@@ -508,30 +504,21 @@
     },
 
     getPending: function () {
-      return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
+      return OB.DEC.sub(this.getTotal(), this.getPayment());
     },
     printPending: function () {
       return OB.I18N.formatCurrency(this.getPending());
     },
 
     getPaymentStatus: function () {
-      var total = OB.DEC.abs(this.getTotal()),
-          pay = this.getPayment(),
-          isReturn = true;
-
-      _.each(this.get('lines').models, function (line) {
-        if (line.get('gross') > 0) {
-          isReturn = false;
-        }
-      }, this);
+      var total = this.getTotal();
+      var pay = this.getPayment();
       return {
         'done': (this.get('lines').length > 0 && OB.DEC.compare(total) >= 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0),
         'total': OB.I18N.formatCurrency(total),
         'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
-        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
-        'isReturn': isReturn,
-        'isNegative': this.get('gross') < 0 ? true : false
+        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null
       };
     },
 
@@ -648,25 +635,29 @@
 
       if (OB.DEC.isNumber(qty)) {
         var oldqty = line.get('qty');
-        if (line.get('product').get('groupProduct') === false) {
-          this.addProduct(line.get('product'));
-          return true;
+        if (OB.DEC.compare(qty) > 0) {
+          if (line.get('product').get('groupProduct') === false) {
+            this.addProduct(line.get('product'));
+            return true;
+          } else {
+            var me = this;
+            // sets the new quantity
+            line.set('qty', qty);
+            line.calculateGross();
+            // sets the undo action
+            this.set('undo', {
+              text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
+              oldqty: oldqty,
+              line: line,
+              undo: function () {
+                line.set('qty', oldqty);
+                line.calculateGross();
+                me.set('undo', null);
+              }
+            });
+          }
         } else {
-          var me = this;
-          // sets the new quantity
-          line.set('qty', qty);
-          line.calculateGross();
-          // sets the undo action
-          this.set('undo', {
-            text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
-            oldqty: oldqty,
-            line: line,
-            undo: function () {
-              line.set('qty', oldqty);
-              line.calculateGross();
-              me.set('undo', null);
-            }
-          });
+          this.deleteLine(line);
         }
         this.adjustPayment();
         this.save();
@@ -734,8 +725,8 @@
       this.save();
       this.calculateGross();
     },
-    //Attrs is an object of attributes that will be set in order 
-    _addProduct: function (p, qty, options, attrs) {
+
+    _addProduct: function (p, qty, options) {
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
@@ -743,26 +734,7 @@
         OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
         return;
       }
-      if (this.get('orderType') === 1) {
-        qty = qty ? -qty : -1;
-      } else {
-        qty = qty || 1;
-      }
-      if (!_.isUndefined(OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) && !OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) {
-        var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('gross') < 0;
-        }).length;
-        if (this.get('lines').length > 0) {
-          if (qty > 0 && negativeLines > 0) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
-            return;
-          } else if (qty < 0 && negativeLines !== this.get('lines').length) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
-            return;
-          }
-        }
-      }
-
+      qty = qty || 1;
       if (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
@@ -774,7 +746,7 @@
           } else if (data.result === 0) {
             alert(OB.I18N.getLabel('OBPOS_WeightZero'));
           } else {
-            this.createLine(p, data.result, options, attrs);
+            this.createLine(p, data.result, options);
           }
         });
       } else {
@@ -793,10 +765,10 @@
             this.addUnit(line, qty);
             line.trigger('selected', line);
           } else {
-            this.createLine(p, qty, options, attrs);
+            this.createLine(p, qty, options);
           }
         } else {
-          this.createLine(p, qty, options, attrs);
+          this.createLine(p, qty, options);
         }
       }
       this.save();
@@ -835,8 +807,8 @@
         }, this);
       }
     },
-    //Attrs is an object of attributes that will be set in order 
-    addProduct: function (p, qty, options, attrs) {
+
+    addProduct: function (p, qty, options) {
       var me = this;
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_AddProductToOrder', {
         receipt: this,
@@ -847,7 +819,7 @@
         if (args && args.useLines) {
           me._drawLinesDistribution(args);
         } else {
-          me._addProduct(p, qty, options, attrs);
+          me._addProduct(p, qty, options);
         }
       });
     },
@@ -946,8 +918,8 @@
         }, this);
       }
     },
-    //Attrs is an object of attributes that will be set in order line
-    createLine: function (p, units, options, attrs) {
+
+    createLine: function (p, units, options) {
       var me = this;
       var newline = new OrderLine({
         product: p,
@@ -957,12 +929,6 @@
         priceList: OB.DEC.number(p.get('standardPrice')),
         priceIncludesTax: this.get('priceIncludesTax')
       });
-      if (!_.isUndefined(attrs)) {
-        _.each(_.keys(attrs), function (key) {
-          newline.set(key, attrs[key]);
-        });
-      }
-
       newline.calculateGross();
 
       // add the created line
@@ -978,48 +944,6 @@
         }
       });
       this.adjustPayment();
-    },
-    returnLine: function (line, options, skipValidaton) {
-      var me = this;
-      if (!_.isUndefined(OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) && !OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn') && !skipValidaton) {
-        //The value of qty need to be negate because we want to change it
-        var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('gross') < 0;
-        }).length;
-        if (this.get('lines').length > 0) {
-          if (-line.get('qty') > 0 && negativeLines > 0) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
-            return;
-          } else if (-line.get('qty') < 0 && negativeLines !== this.get('lines').length) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
-            return;
-          }
-        }
-      }
-      if (line.get('qty') > 0) {
-        line.get('product').set('ignorePromotions', true);
-      } else {
-        line.get('product').set('ignorePromotions', false);
-      }
-      line.set('qty', -line.get('qty'));
-      line.calculateGross();
-
-      // set the undo action
-      this.set('undo', {
-        text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
-        line: line,
-        undo: function () {
-          line.set('qty', -line.get('qty'));
-          me.set('undo', null);
-        }
-      });
-      this.adjustPayment();
-      if (line.get('promotions')) {
-        line.unset('promotions');
-      }
-      me.calculateGross();
-      this.save();
-
     },
 
     setBPandBPLoc: function (businessPartner, showNotif, saveChange) {
@@ -1048,11 +972,6 @@
       if (OB.POS.modelterminal.hasPermission(permission)) {
         if (permission === 'OBPOS_receipt.return') {
           this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
-          _.each(this.get('lines').models, function (line) {
-            if (line.get('qty') > 0) {
-              me.returnLine(line, null, true);
-            }
-          }, this);
         } else {
           this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
         }
@@ -1189,7 +1108,7 @@
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
-      var total = OB.DEC.abs(this.getTotal());
+      var total = this.getTotal();
 
       var nocash = OB.DEC.Zero;
       var cash = OB.DEC.Zero;
@@ -1269,7 +1188,7 @@
       }
 
       payments = this.get('payments');
-      total = OB.DEC.abs(this.getTotal());
+      total = this.getTotal();
       if (!payment.get('paymentData')) {
         // search for an existing payment only if there is not paymentData info.
         // this avoids to merge for example card payments of different cards.
@@ -1324,10 +1243,29 @@
 
       // convert returns
       if (jsonorder.orderType === 1) {
+        jsonorder.gross = -jsonorder.gross;
+        jsonorder.change = -jsonorder.change;
+        jsonorder.payment = -jsonorder.payment;
+        jsonorder.net = -jsonorder.net;
+        _.forEach(jsonorder.lines, function (item) {
+          item.lineGrossAmount = -item.lineGrossAmount;
+          item.gross = -item.gross;
+          item.net = -item.net;
+          item.qty = -item.qty;
+          item.taxAmount = -item.taxAmount;
+          _.forEach(item.taxLines, function (itemtax) {
+            itemtax.amount = -itemtax.amount;
+            itemtax.net = -itemtax.net;
+          });
+        });
         _.forEach(jsonorder.payments, function (item) {
           item.amount = -item.amount;
           item.origAmount = -item.origAmount;
           item.paid = -item.paid;
+        });
+        _.forEach(jsonorder.taxes, function (item) {
+          item.amount = -item.amount;
+          item.net = -item.net;
         });
       }
 
@@ -1709,20 +1647,19 @@
       additionalInfo: null
     },
     getPaymentStatus: function () {
-      var total = OB.DEC.abs(this.getTotal());
+      var total = this.getTotal();
       var pay = this.getPayment();
       return {
-        'total': OB.I18N.formatCurrency(total),
+        'total': OB.I18N.formatCurrency(this.getTotal()),
         'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
-        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
-        'isReturn': this.get('gross') < 0 ? true : false
+        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null
       };
     },
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
-      var total = OB.DEC.abs(this.getTotal());
+      var total = this.getTotal();
 
       var nocash = OB.DEC.Zero;
       var cash = OB.DEC.Zero;
@@ -1801,7 +1738,7 @@
       }
 
       payments = this.get('payments');
-      total = OB.DEC.abs(this.getTotal());
+      total = this.getTotal();
       if (!payment.get('paymentData')) {
         // search for an existing payment only if there is not paymentData info.
         // this avoids to merge for example card payments of different cards.
@@ -1847,7 +1784,7 @@
       return this.get('payment');
     },
     getPending: function () {
-      return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
+      return OB.DEC.sub(this.getTotal(), this.getPayment());
     },
     toInvoice: function (status) {
       if (status === false) {

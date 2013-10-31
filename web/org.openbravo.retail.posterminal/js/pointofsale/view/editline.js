@@ -138,8 +138,7 @@ enyo.kind({
   },
   events: {
     onDeleteLine: '',
-    onEditLine: '',
-    onReturnLine: ''
+    onEditLine: ''
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior'
@@ -229,35 +228,6 @@ enyo.kind({
           }
         }, {
           kind: 'OB.UI.SmallButton',
-          name: 'returnLine',
-          i18nContent: 'OBPOS_LblReturnLine',
-          permission: 'OBPOS_ReturnLine',
-          classes: 'btnlink-orange',
-          showing: false,
-          tap: function () {
-            this.owner.doReturnLine({
-              line: this.owner.line
-            });
-          },
-          init: function (model) {
-            this.model = model;
-            if (OB.POS.modelterminal.hasPermission(this.permission)) {
-              this.setShowing(true);
-            }
-            this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
-              if (newValue) {
-                if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
-                  this.setShowing(false);
-                  return;
-                }
-              }
-              if (OB.POS.modelterminal.hasPermission(this.permission)) {
-                this.setShowing(true);
-              }
-            }, this);
-          }
-        }, {
-          kind: 'OB.UI.SmallButton',
           name: 'removeDiscountButton',
           i18nContent: 'OBPOS_LblRemoveDiscount',
           showing: false,
@@ -278,37 +248,6 @@ enyo.kind({
           showing: false
         }]
       }, {
-        kind: 'OB.UI.List',
-        name: 'returnreason',
-        classes: 'combo',
-        style: 'width: 100%; margin-bottom: 0px; height: 30px ',
-        events: {
-          onSetReason: ''
-        },
-        handlers: {
-          onchange: 'changeReason'
-        },
-        changeReason: function (inSender, inEvent) {
-          this.owner.line.set('returnReason', this.children[this.getSelected()].getValue());
-        },
-        renderHeader: enyo.kind({
-          kind: 'enyo.Option',
-          initComponents: function () {
-            this.inherited(arguments);
-            this.setValue('__all__');
-            this.setContent(OB.I18N.getLabel('OBPOS_ReturnReasons'));
-          }
-        }),
-        renderLine: enyo.kind({
-          kind: 'enyo.Option',
-          initComponents: function () {
-            this.inherited(arguments);
-            this.setValue(this.model.get('id'));
-            this.setContent(this.model.get('_identifier'));
-          }
-        }),
-        renderEmpty: 'enyo.Control'
-      }, {
         classes: 'span12',
         components: [{
           classes: 'span7',
@@ -317,7 +256,7 @@ enyo.kind({
           maxHeight: '134px',
           thumb: true,
           horizontal: 'hidden',
-          style: 'padding: 8px 0px 4px 25px; line-height: 120%;'
+          style: 'padding: 8px 0px 4px 25px; line-height: 140%;'
         }, {
           classes: 'span4',
           sytle: 'text-align: right',
@@ -337,8 +276,8 @@ enyo.kind({
               name: 'editlineimage',
               kind: 'OB.UI.Thumbnail',
               classes: 'image-wrap image-editline',
-              width: '105px',
-              height: '105px'
+              width: '128px',
+              height: '128px'
             }]
           }]
         }]
@@ -353,7 +292,6 @@ enyo.kind({
     }]
   }],
   selectedListener: function (line) {
-    this.$.returnreason.setSelected(0);
     if (this.line) {
       this.line.off('change', this.render);
     }
@@ -381,11 +319,6 @@ enyo.kind({
     } else {
       this.$.removeDiscountButton.hide();
     }
-    if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1) {
-      this.$.returnLine.hide();
-    } else if (OB.POS.modelterminal.hasPermission(this.$.returnLine.permission)) {
-      this.$.returnLine.show();
-    }
     this.render();
   },
   receiptChanged: function () {
@@ -397,8 +330,6 @@ enyo.kind({
   },
 
   render: function () {
-    var me = this,
-        selectedReason;
     this.inherited(arguments);
 
     if (this.line) {
@@ -410,17 +341,6 @@ enyo.kind({
       } else {
         this.$.editlineimage.setImg(this.line.get('product').get('img'));
         this.$.icon.parent.hide();
-      }
-      if (this.line.get('gross') < OB.DEC.Zero) {
-        if (!_.isUndefined(this.line.get('returnReason'))) {
-          selectedReason = _.filter(this.$.returnreason.children, function (reason) {
-            return reason.getValue() === me.line.get('returnReason');
-          })[0];
-          this.$.returnreason.setSelected(selectedReason.getNodeProperty('index'));
-        }
-        this.$.returnreason.show();
-      } else {
-        this.$.returnreason.hide();
       }
     } else {
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
@@ -451,24 +371,6 @@ enyo.kind({
     enyo.forEach(sortedPropertiesByPosition, function (compToCreate) {
       this.$.linePropertiesContainer.createComponent(compToCreate);
     }, this);
-  },
-  init: function (model) {
-    this.model = model;
-    this.reasons = new OB.Collection.ReturnReasonList();
-    this.$.returnreason.setCollection(this.reasons);
-
-    function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
-    }
-
-    function successCallbackReasons(dataReasons, me) {
-      if (dataReasons && dataReasons.length > 0) {
-        me.reasons.reset(dataReasons.models);
-      } else {
-        me.reasons.reset();
-      }
-    }
-    OB.Dal.find(OB.Model.ReturnReason, null, successCallbackReasons, errorCallback, this);
   }
 });
 

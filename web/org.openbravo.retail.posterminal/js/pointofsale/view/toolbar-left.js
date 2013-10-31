@@ -198,6 +198,10 @@ enyo.kind({
       }
       return;
     }
+    if (this.model.get('order').getTotal() < 0) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NegativeTotal'), OB.I18N.getLabel('OBPOS_NegativeTotalMessage'));
+      return true;
+    }
     if ((this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) || this.model.get('order').get('orderType') === 3) {
       return true;
     }

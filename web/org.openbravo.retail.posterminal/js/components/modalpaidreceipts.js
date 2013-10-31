@@ -229,8 +229,7 @@ enyo.kind({
   events: {
     onChangePaidReceipt: '',
     onShowPopup: '',
-    onAddProduct: '',
-    onHideThisPopup: ''
+    onAddProduct: ''
   },
   components: [{
     classes: 'span12',
@@ -268,10 +267,6 @@ enyo.kind({
             me.prsList.add(order);
           });
         });
-        if (me.prsList.length === 1) {
-          me.prsList.trigger('click', me.prsList.at(0));
-          me.doHideThisPopup();
-        }
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }
@@ -300,13 +295,19 @@ enyo.kind({
           }
           OB.MobileApp.model.hookManager.executeHooks('OBRETUR_ReturnFromOrig', {
             order: data[0],
-            context: me,
-            params: me.parent.parent.params
+            context: me
           }, function (args) {
-            if (!args.cancelOperation) {
+            if (!args.returnReceipt) {
               me.model.get('orderList').newPaidReceipt(data[0], function (order) {
                 me.doChangePaidReceipt({
                   newPaidReceipt: order
+                });
+              });
+            } else {
+              _.each(data[0].receiptLines, function (line) {
+                OB.Dal.get(OB.Model.Product, line.id, function (prod) {
+                  me.model.get('order').addProduct(prod, -line.quantity, null);
+                  me.model.get('orderList').saveCurrent();
                 });
               });
             }
@@ -344,7 +345,6 @@ enyo.kind({
     return true;
   },
   executeOnShow: function () {
-    this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.clearAction();
     if (this.params.isQuotation) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_Quotations'));
     } else if (this.params.isLayaway) {

@@ -39,7 +39,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterRole'
   },
-  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
@@ -294,16 +294,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
 
       function prepareToSendCallback(order) {
-        if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
-          var negativeLines = _.filter(order.get('lines').models, function (line) {
-            return line.get('gross') < 0;
-          }).length;
-          if (negativeLines === order.get('lines').models.length) {
-            order.setOrderType('OBPOS_receipt.return', OB.DEC.One);
-          } else {
-            receipt.setOrderType('', OB.DEC.Zero);
-          }
-        }
         me.get('multiOrders').trigger('closed', order);
         me.get('multiOrders').trigger('print', order); // to guaranty execution order
         SyncReadyToSendFunction();
@@ -397,16 +387,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         //Create the negative payment for change
         var oldChange = receipt.get('change');
         var clonedCollection = new Backbone.Collection();
-        if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
-          var negativeLines = _.filter(receipt.get('lines').models, function (line) {
-            return line.get('gross') < 0;
-          }).length;
-          if (negativeLines === receipt.get('lines').models.length) {
-            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One);
-          } else {
-            receipt.setOrderType('', OB.DEC.Zero);
-          }
-        }
         if (!_.isUndefined(receipt.selectedPayment) && receipt.getChange() > 0) {
           var payment = OB.POS.terminal.terminal.paymentnames[receipt.selectedPayment];
           receipt.get('payments').each(function (model) {
@@ -439,6 +419,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         } else {
           receipt.trigger('closed');
         }
+
         receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
       });
@@ -486,10 +467,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     // Listening events that cause a discount recalculation
     receipt.get('lines').on('add change:qty change:price', function (line) {
       if (!receipt.get('isEditable')) {
-        return;
-      }
-      //When we do not want to launch promotions process (Not apply or remove discounts)
-      if (receipt.get('skipApplyPromotions') || line.get('skipApplyPromotions')) {
         return;
       }
       OB.Model.Discounts.applyPromotions(receipt, line);
@@ -540,29 +517,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   checkPaymentApproval: function () {
     var me = this;
     OB.MobileApp.model.hookManager.executeHooks('OBPOS_CheckPaymentApproval', {
-      approvals: [],
+      approved: true,
       context: this
     }, function (args) {
-      var negativeLines = _.filter(me.get('order').get('lines').models, function (line) {
-        return line.get('gross') < 0;
-      }).length;
-      if (negativeLines > 0) {
-        args.approvals.push('OBPOS_approval.returns');
-      }
-      if (args.approvals.length > 0) {
-        OB.UTIL.Approval.requestApproval(
-        me, args.approvals, function (approved, supervisor, approvalType) {
-          if (approved) {
-            me.trigger('approvalChecked', {
-              approved: args.approved
-            });
-          }
-        });
-      } else {
-        me.trigger('approvalChecked', {
-          approved: true
-        });
-      }
+      me.trigger('approvalChecked', {
+        approved: args.approved
+      });
     });
   },
 

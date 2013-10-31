@@ -89,7 +89,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/changedbusinesspartners",
         "model/changedbplocation",
         "model/executor",
-        "model/returnreasons",
         "model/terminal-model",
         "components/modalcancel",
         "components/subwindow",
@@ -170,7 +169,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/subwindows/customers/customersadvancedsearch",
         "pointofsale/view/subwindows/customers/editcreatecustomerform",
         "pointofsale/view/subwindows/customers/customerdetailview",
-
+        
         "pointofsale/view/subwindows/customeraddress/components/sharedcomponents",
         "pointofsale/view/subwindows/customeraddress/editcreatecustomeraddress",
         "pointofsale/view/subwindows/customeraddress/customeraddrsearch",
