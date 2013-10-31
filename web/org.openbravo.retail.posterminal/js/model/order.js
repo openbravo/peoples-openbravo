@@ -1017,19 +1017,8 @@
 
       this.get('lines').each(function (line) {
 
-        //issues 24994 & 24993
-        //if the order is created from quotation just after save the quotation
-        //(without load the quotation from quotations window). The order has the fields added
-        //by adjust prices. We need to work without these values
-        //price not including taxes
-        line.unset('nondiscountedprice');
-        line.unset('nondiscountednet');
-        //price including taxes
-        line.unset('netFull');
-        line.unset('grossListPrice');
-        line.unset('grossUnitPrice');
-        line.unset('lineGrossAmount');
-
+        //remove promotions
+        line.unset('promotions');
 
         var successCallbackPrices, criteria = {
           'id': line.get('product').get('id')
@@ -1060,6 +1049,31 @@
 
     createOrderFromQuotation: function (updatePrices) {
       var documentseq, documentseqstr;
+
+      this.get('lines').each(function (line) {
+        //issue 25055 -> If we don't do the following prices and taxes are calculated 
+        //wrongly because the calculation starts with discountedNet instead of
+        //the real net.
+        //It only happens if the order is created from quotation just after save the quotation
+        //(without load the quotation from quotations window)
+        if (!this.get('priceIncludesTax')) {
+          line.set('net', line.get('nondiscountednet'));
+        }
+
+        //issues 24994 & 24993
+        //if the order is created from quotation just after save the quotation
+        //(without load the quotation from quotations window). The order has the fields added
+        //by adjust prices. We need to work without these values
+        //price not including taxes
+        line.unset('nondiscountedprice');
+        line.unset('nondiscountednet');
+        //price including taxes
+        line.unset('netFull');
+        line.unset('grossListPrice');
+        line.unset('grossUnitPrice');
+        line.unset('lineGrossAmount');
+      }, this);
+
       this.set('id', null);
       this.set('isQuotation', false);
       this.set('generateInvoice', OB.POS.modelterminal.get('terminal').terminalType.generateInvoice);
@@ -1082,6 +1096,7 @@
         });
       } else {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+        this.calculateGross();
         this.trigger('orderCreatedFromQuotation');
       }
     },
