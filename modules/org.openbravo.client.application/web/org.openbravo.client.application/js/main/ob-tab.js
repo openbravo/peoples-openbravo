@@ -365,6 +365,7 @@ isc.OBTabBarButtonChild.addProperties({
   virtualClick: function () {
     this.getParentCanvas().getParentCanvas().doHandleClick();
     this.focus();
+    this.getParentCanvas().getParentCanvas().selectTab(this);
   },
   // when a tab is drawn the first time it steals the focus 
   // from the active view, prevent this
