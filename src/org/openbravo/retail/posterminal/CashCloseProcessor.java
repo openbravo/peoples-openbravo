@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -37,8 +41,12 @@ import org.openbravo.service.json.JsonConstants;
 
 public class CashCloseProcessor {
 
+  @Inject
+  @Any
+  private Instance<CashupHook> cashupHooks;
+
   public JSONObject processCashClose(OBPOSApplications posTerminal, String cashUpId,
-      JSONArray cashCloseInfo) throws JSONException {
+      JSONArray cashCloseInfo) throws Exception {
 
     OBPOSAppCashup cashUp = createCashUp(posTerminal, cashUpId);
     OBDal.getInstance().save(cashUp);
@@ -99,13 +107,30 @@ public class CashCloseProcessor {
       associateTransactions(paymentType, reconciliation);
 
     }
+
+    // Hook for procesing cashups..
+    JSONArray messages = new JSONArray(); // all messages returned by hooks
+    String next = null; // the first next action of all hooks wins
+    for (CashupHook hook : cashupHooks) {
+      CashupHookResult result = hook.exec(posTerminal, cashUp);
+      if (result != null) {
+        if (result.getMessage() != null && !result.getMessage().equals("")) {
+          messages.put(result.getMessage());
+        }
+        if (next == null && result.getNextAction() != null && !result.getNextAction().equals("")) {
+          next = result.getNextAction();
+        }
+      }
+    }
+
     OBDal.getInstance().flush();
     OBDal.getInstance().commitAndClose();
 
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    result.put("messages", messages);
+    result.put("next", next);
     return result;
-
   }
 
   protected void associateTransactions(OBPOSAppPayment paymentType,

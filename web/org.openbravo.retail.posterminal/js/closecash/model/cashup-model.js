@@ -322,6 +322,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       } else {
         // console.log("cash up processed correctly. -> show modal");
         OB.UTIL.showLoading(false);
+        me.set('messages', data.messages);
+        me.set('next', data.next);
         me.set("finished", true);
         if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
           me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
