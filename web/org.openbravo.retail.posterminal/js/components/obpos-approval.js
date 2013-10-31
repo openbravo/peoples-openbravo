@@ -169,7 +169,7 @@ enyo.kind({
     params.appName = OB.MobileApp.model.get('appName');
 
     params.command = 'userImages';
-    params.approvalType = this.approvalType;
+    params.approvalType = JSON.stringify(this.approvalType);
     new OB.OBPOSLogin.UI.LoginRequest({
       url: OB.MobileApp.model.get('loginUtilsUrl')
     }).response(this, 'setUserImages').go(params);
@@ -182,7 +182,7 @@ enyo.kind({
     if (!u || !p) {
       alert(OB.I18N.getLabel('OBPOS_EmptyUserPassword'));
     } else {
-      this.model.checkApproval(this.approvalType, u, p);
+      this.model.checkApproval(this.approvalType, u, p, this.callback);
       this.waterfall('onHideThisPopup', {});
     }
   }
