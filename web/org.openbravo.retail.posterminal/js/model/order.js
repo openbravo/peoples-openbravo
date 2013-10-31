@@ -748,20 +748,6 @@
       } else {
         qty = qty || 1;
       }
-      if (!_.isUndefined(OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) && !OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) {
-        var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('gross') < 0;
-        }).length;
-        if (this.get('lines').length > 0) {
-          if (qty > 0 && negativeLines > 0) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
-            return;
-          } else if (qty < 0 && negativeLines !== this.get('lines').length) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
-            return;
-          }
-        }
-      }
 
       if (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
@@ -949,6 +935,20 @@
     //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
       var me = this;
+      if (OB.POS.modelterminal.get('permissions')['OBPOS_NotAllowSalesWithReturn']) {
+        var negativeLines = _.filter(this.get('lines').models, function (line) {
+          return line.get('gross') < 0;
+        }).length;
+        if (this.get('lines').length > 0) {
+          if (units > 0 && negativeLines > 0) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
+            return;
+          } else if (units < 0 && negativeLines !== this.get('lines').length) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
+            return;
+          }
+        }
+      }
       var newline = new OrderLine({
         product: p,
         uOM: p.get('uOM'),
@@ -981,7 +981,7 @@
     },
     returnLine: function (line, options, skipValidaton) {
       var me = this;
-      if (!_.isUndefined(OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) && !OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn') && !skipValidaton) {
+      if (OB.POS.modelterminal.get('permissions')['OBPOS_NotAllowSalesWithReturn'] && !skipValidaton) {
         //The value of qty need to be negate because we want to change it
         var negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('gross') < 0;
