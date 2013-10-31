@@ -128,19 +128,26 @@
               //We follow the same formula of function c_get_net_price_from_gross to compute the discounted net
               if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
                 if (taxamtdc && OB.DEC.toNumber(taxamtdc) !== 0) {
-                  discountedNet = OB.DEC.div(new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))), taxamtdc);
-                  pricenet = new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))).divide(taxamtdc, 20, BigDecimal.prototype.ROUND_HALF_UP).divide(new BigDecimal(String(element.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
+                  discountedNet = new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))).divide(new BigDecimal(String(taxamtdc)), 20, BigDecimal.prototype.ROUND_HALF_UP);
+                  discountedLinePriceNet = discountedNet.divide(new BigDecimal(String(element.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
+                  roundedDiscountedLinePriceNet = OB.DEC.toNumber(discountedLinePriceNet);
+                  calculatedDiscountedNet = OB.DEC.mul(roundedDiscountedLinePriceNet, new BigDecimal(String(element.get('qty'))));
+                  //In advance we will work with rounded prices
+                  pricenet = roundedDiscountedLinePriceNet; //discounted rounded NET unit price
+                  discountedNet = calculatedDiscountedNet; //discounted rounded NET line price
+                  //pricenet = new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))).divide(taxamtdc, 20, BigDecimal.prototype.ROUND_HALF_UP).divide(new BigDecimal(String(element.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
                 } else {
                   //taxamtdc === 0
-                  discountedNet = new BigDecimal("0");
-                  pricenet = new BigDecimal("0");
+                  discountedNet = 0;
+                  pricenet = 0;
                 }
               } else {
                 //net unit price (rounded)
                 pricenet = roundedLinePriceNet; // 2 decimals properly rounded.
               }
-              pricenet = OB.DEC.toNumber(pricenet);
+              //pricenet = OB.DEC.toNumber(pricenet);
               element.set('discountedNet', OB.DEC.mul(pricenet, new BigDecimal(String(element.get('qty')))));
+              discountedNet = element.get('discountedNet');
               pricenetcascade = pricenet;
               // second calculate tax lines.
               taxesline = {};
@@ -154,7 +161,7 @@
                   if (taxRate.get('cascade')) {
                     pricenet = pricenetcascade;
                   }
-                  net = OB.DEC.mul(pricenet, element.get('qty'));
+                  net = OB.DEC.mul(pricenet, element.get('qty')); //=== discountedNet
                   amount = OB.DEC.mul(net, rate);
                   pricenetcascade = OB.DEC.mul(pricenet, rate.add(BigDecimal.prototype.ONE));
 

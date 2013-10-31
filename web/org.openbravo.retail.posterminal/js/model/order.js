@@ -366,8 +366,7 @@
 
         if (this.get('priceIncludesTax')) {
           line.set({
-            net: OB.UTIL.getFirstValidValue([OB.DEC.toNumber(line.get('discountedNet')), line.get('net')]),
-            netfull: OB.UTIL.getFirstValidValue([line.get('discountedNetfull'), OB.DEC.div(gross, line.get('linerate'))]),
+            net: OB.UTIL.getFirstValidValue([OB.DEC.toNumber(line.get('discountedNet')), line.get('net'), OB.DEC.div(gross, line.get('linerate'))]),
             pricenet: line.get('discountedNet') ? OB.DEC.div(line.get('discountedNet'), line.get('qty')) : OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty')),
             grossListPrice: grossListPrice || price,
             grossUnitPrice: price,
@@ -397,10 +396,10 @@
 
       var totalnet = this.get('lines').reduce(function (memo, e) {
         var netLine = e.get('discountedNet');
-        if (e.get('netfull')) {
-          return memo.add(new BigDecimal(String(e.get('netfull'))));
-        } else {
+        if (e.get('net')) {
           return memo.add(new BigDecimal(String(e.get('net'))));
+        } else {
+          return memo.add(new BigDecimal('0'));
         }
       }, new BigDecimal(String(OB.DEC.Zero)));
       totalnet = OB.DEC.toNumber(totalnet);
