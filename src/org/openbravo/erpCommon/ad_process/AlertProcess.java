@@ -97,9 +97,11 @@ public class AlertProcess implements Process {
   }
 
   private static AlertProcessData[] selectAlert(ConnectionProvider connectionProvider,
-      String alertRule) throws ServletException {
+      String alertRule, String alertRuleId) throws ServletException {
     String alertRuleSQL = (alertRule == null || alertRule.equals("")) ? "" : alertRule;
-    String strSql = "SELECT * FROM (" + alertRuleSQL + ") AAA";
+    String strSql = "SELECT * FROM (" + alertRuleSQL + ") AAA where not exists ("
+        + "select 1 from ad_alert a where a.ad_alertrule_id = ? "
+        + "and a.referencekey_id = aaa.referencekey_id and coalesce(a.status, 'NEW') != 'SOLVED')";
 
     String dateTimeFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("dateTimeFormat.java");
@@ -110,6 +112,7 @@ public class AlertProcess implements Process {
 
     try {
       st = connectionProvider.getPreparedStatement(strSql);
+      st.setString(1, alertRuleId);
       result = st.executeQuery();
       while (result.next()) {
         AlertProcessData objectAlertProcessData = new AlertProcessData();
@@ -238,7 +241,7 @@ public class AlertProcess implements Process {
 
     if (!alertRule.sql.equals("")) {
       try {
-        alert = selectAlert(conn, alertRule.sql);
+        alert = selectAlert(conn, alertRule.sql, alertRule.adAlertruleId);
       } catch (Exception ex) {
         logger.log("Error processing: " + ex.getMessage() + "\n");
         return;
@@ -251,22 +254,18 @@ public class AlertProcess implements Process {
       ;
 
       for (int i = 0; i < alert.length; i++) {
-        if (AlertProcessData
-            .existsReference(conn, alertRule.adAlertruleId, alert[i].referencekeyId).equals("0")) {
+        String adAlertId = SequenceIdData.getUUID();
 
-          String adAlertId = SequenceIdData.getUUID();
+        logger.log("Inserting alert " + adAlertId + " org:" + alert[i].adOrgId + " client:"
+            + alert[i].adClientId + " reference key: " + alert[i].referencekeyId + " created"
+            + alert[i].created + "\n");
 
-          logger.log("Inserting alert " + adAlertId + " org:" + alert[i].adOrgId + " client:"
-              + alert[i].adClientId + " reference key: " + alert[i].referencekeyId + " created"
-              + alert[i].created + "\n");
+        insertAlert(conn, adAlertId, alert[i].adClientId, alert[i].adOrgId, alert[i].created,
+            alert[i].createdby, alertRule.adAlertruleId, alert[i].recordId,
+            alert[i].referencekeyId, alert[i].description, alert[i].adUserId, alert[i].adRoleId);
+        insertions++;
 
-          insertAlert(conn, adAlertId, alert[i].adClientId, alert[i].adOrgId, alert[i].created,
-              alert[i].createdby, alertRule.adAlertruleId, alert[i].recordId,
-              alert[i].referencekeyId, alert[i].description, alert[i].adUserId, alert[i].adRoleId);
-          insertions++;
-
-          msg.append("\n\nAlert: " + alert[i].description + "\nRecord: " + alert[i].recordId);
-        }
+        msg.append("\n\nAlert: " + alert[i].description + "\nRecord: " + alert[i].recordId);
       }
 
       if (insertions > 0) {
