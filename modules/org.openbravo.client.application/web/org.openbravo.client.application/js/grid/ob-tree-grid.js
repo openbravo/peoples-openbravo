@@ -92,6 +92,7 @@ isc.OBTreeGrid.addProperties({
       me.parentTabRecordId = me.getParentTabRecordId();
       dsRequest.params.parentRecordId = me.parentTabRecordId;
       dsRequest.params.tabId = me.view.tabId;
+      dsRequest.params.tableTreeId = me.tableTreeId;
       if (dsRequest.dropIndex || dsRequest.dropIndex === 0) {
         //Only send the index if the tree is ordered
         dsRequest = me.addOrderedTreeParameters(dsRequest);

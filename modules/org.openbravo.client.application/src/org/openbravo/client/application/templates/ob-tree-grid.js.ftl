@@ -25,5 +25,6 @@ isc.OBTreeGrid.create({
     orderedTree:  ${data.orderedTree?string},
     dataSourceId:  '${data.dataSourceId}',
     treeStructure:  '${data.treeStructure}',
+    tableTreeId: '${data.tableTreeId}',
     fields: this.gridFields
 })

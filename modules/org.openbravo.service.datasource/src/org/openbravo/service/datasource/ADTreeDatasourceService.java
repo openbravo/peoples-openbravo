@@ -24,7 +24,6 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.ADTreeType;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
@@ -383,7 +382,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return json;
   }
 
-  protected boolean nodeConformsToWhereClause(Tab tab, String nodeId, String hqlWhereClause) {
+  protected boolean nodeConformsToWhereClause(Table table, TableTree tableTree, String nodeId,
+      String hqlWhereClause) {
     // TODO: Implementar
     return true;
   }

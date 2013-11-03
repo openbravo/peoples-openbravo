@@ -21,7 +21,9 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.datasource.CheckTreeOperationManager.ActionResponse;
 import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
@@ -84,11 +86,24 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     try {
       String parentId = parameters.get("parentId");
       String tabId = parameters.get("tabId");
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      Tab tab = null;
+      Table table = null;
+      if (tabId != null) {
+        tab = OBDal.getInstance().get(Tab.class, tabId);
+        table = tab.getTable();
+      }
+
+      if (table == null) {
+        String tableId = parameters.get("tableId");
+        if (tableId != null) {
+          table = OBDal.getInstance().get(Table.class, tableId);
+        }
+      }
+
       String hqlTreeWhereClause = null;
 
       if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
-        Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+        Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
         DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
         return dataSource.fetch(parameters);
       }
@@ -98,7 +113,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         // from the non root nodes
         // TODO
         // The HQL where clause of the tab should be applied for all records
-        if (tab.getHqlTreeWhereClause() != null) {
+        if (tab != null && tab.getHqlTreeWhereClause() != null) {
           hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
         }
       }
@@ -109,7 +124,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       }
 
       if (parameters.containsKey("criteria") && parentId.equals(ROOT_NODE)) {
-        List<String> filteredNodes = getFilteredNodes(tab, parameters);
+        List<String> filteredNodes = getFilteredNodes(table, parameters);
         if (!filteredNodes.isEmpty()) {
           // Fetch only the filtered nodes and its parents (filtered tree)
           responseData = fetchFilteredNodes(parameters, filteredNodes);
@@ -146,9 +161,9 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return jsonResult.toString();
   }
 
-  private List<String> getFilteredNodes(Tab tab, Map<String, String> parameters) {
+  private List<String> getFilteredNodes(Table table, Map<String, String> parameters) {
     List<String> filteredNodes = new ArrayList<String>();
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
     String dsResult = dataSource.fetch(parameters);
     try {
@@ -172,7 +187,17 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       throws MultipleParentsException {
     JSONArray responseData = new JSONArray();
     String tabId = parameters.get("tabId");
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    String tableId = parameters.get("tableId");
+    String tableTreeId = parameters.get("tableTreeId");
+    Tab tab = null;
+    Table table = null;
+    TableTree tableTree = OBDal.getInstance().get(TableTree.class, tableTreeId);
+    if (tabId != null) {
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+      table = tab.getTable();
+    } else {
+      table = OBDal.getInstance().get(Table.class, tableId);
+    }
     try {
       Map<String, JSONObject> addedNodesMap = new HashMap<String, JSONObject>();
       for (String nodeId : filteredNodes) {
@@ -186,13 +211,16 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           savedNode.put("filterHit", true);
         }
 
+        // TODO: whereclause para selectores
         String hqlTreeWhereClause = null;
-        if (tab.getHqlTreeWhereClause() != null) {
+        if (tab != null && tab.getHqlTreeWhereClause() != null) {
           hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
         }
 
-        while (node.has("parentId") && !"0".equals(node.getString("parentId"))
-            && this.nodeConformsToWhereClause(tab, node.getString("parentId"), hqlTreeWhereClause)) {
+        while (node.has("parentId")
+            && !"0".equals(node.getString("parentId"))
+            && this.nodeConformsToWhereClause(table, tableTree, node.getString("parentId"),
+                hqlTreeWhereClause)) {
           nodeId = node.getString("parentId");
           node = getJSONObjectByNodeId(parameters, nodeId);
           savedNode = addedNodesMap.get(node.getString("id"));
@@ -203,7 +231,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
             savedNode.put("isOpen", true);
           }
         }
-        if (this.nodeConformsToWhereClause(tab, node.getString("parentId"), hqlTreeWhereClause)) {
+        if (this.nodeConformsToWhereClause(table, tableTree, node.getString("parentId"),
+            hqlTreeWhereClause)) {
           node.put("parentId", ROOT_NODE);
         }
       }
@@ -228,7 +257,17 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       throws MultipleParentsException {
     JSONArray responseData = new JSONArray();
     String tabId = parameters.get("tabId");
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    String tableId = parameters.get("tableId");
+    String tableTreeId = parameters.get("tableTreeId");
+    Tab tab = null;
+    Table table = null;
+    TableTree tableTree = OBDal.getInstance().get(TableTree.class, tableTreeId);
+    if (tabId != null) {
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+      table = tab.getTable();
+    } else {
+      table = OBDal.getInstance().get(Table.class, tableId);
+    }
     try {
       ArrayList<String> addedNodes = new ArrayList<String>();
       ArrayList<String> parentsToExpand = new ArrayList<String>();
@@ -243,12 +282,15 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         int level = 0;
 
         String hqlTreeWhereClause = null;
-        if (tab.getHqlTreeWhereClause() != null) {
+        // TODO: hql clause for selectors
+        if (tab != null && tab.getHqlTreeWhereClause() != null) {
           hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
         }
 
-        while (node.has("parentId") && !"0".equals(node.getString("parentId"))
-            && this.nodeConformsToWhereClause(tab, node.getString("parentId"), hqlTreeWhereClause)) {
+        while (node.has("parentId")
+            && !"0".equals(node.getString("parentId"))
+            && this.nodeConformsToWhereClause(table, tableTree, node.getString("parentId"),
+                hqlTreeWhereClause)) {
           nodeId = node.getString("parentId");
           node = getJSONObjectByNodeId(parameters, nodeId);
           node.put("isOpen", true);
@@ -261,7 +303,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           }
           level++;
         }
-        if (this.nodeConformsToWhereClause(tab, node.getString("parentId"), hqlTreeWhereClause)) {
+        if (this.nodeConformsToWhereClause(table, tableTree, node.getString("parentId"),
+            hqlTreeWhereClause)) {
           node.put("parentId", ROOT_NODE);
         }
         if (level > maxLevel) {
@@ -294,7 +337,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return responseData;
   }
 
-  protected abstract boolean nodeConformsToWhereClause(Tab tab, String nodeId, String hqlWhereClause);
+  protected abstract boolean nodeConformsToWhereClause(Table table, TableTree tableTree,
+      String nodeId, String hqlWhereClause);
 
   protected JSONArray fetchFirstLevelNodes(Map<String, String> parameters) throws JSONException {
     String tabId = parameters.get("tabId");
