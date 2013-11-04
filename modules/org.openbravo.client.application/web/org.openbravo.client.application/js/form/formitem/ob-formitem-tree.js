@@ -30,6 +30,7 @@ isc.ClassFactory.mixInInterface('OBTreeItem', 'OBLinkTitleItem');
 
 isc.OBTreeItem.addProperties({
   showPickerIcon: true,
+  pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   tree: null,
   init: function () {
     this.Super('init', arguments);
@@ -39,25 +40,44 @@ isc.OBTreeItem.addProperties({
     this.form.addChild(this.tree); // Added grid in the form to avoid position problems
   },
 
+  showPicker: function () {
+    this.toggleTreePicker();
+  },
+
+  toggleTreePicker: function () {
+    this.pickerClicked = true;
+    if (this.tree.isVisible()) {
+      this.tree.hide();
+    } else {
+      this.tree.show();
+    }
+  },
+
   moved: function () {
     this.tree.updatePosition();
     return this.Super('moved', arguments);
   },
 
-  click: function () {
-    this.tree.show();
-    return this.Super('click', arguments);
-  },
-  focus: function () {
-    this.tree.show();
-    return this.Super('focus', arguments);
-  },
   blur: function () {
     var me = this;
     setTimeout(function () {
       me.hideTreeIfNotFocused();
     }, 100);
     return this.Super('blur', arguments);
+  },
+
+  focus: function () {
+    this.tree.hide();
+    return this.Super('focus', arguments);
+  },
+
+  click: function () {
+    if (this.pickerClicked) {
+      delete this.pickerClicked;
+    } else {
+      this.tree.hide();
+    }
+    return this.Super('click', arguments);
   },
 
   hideTreeIfNotFocused: function () {
@@ -67,6 +87,9 @@ isc.OBTreeItem.addProperties({
   },
 
   changed: function (form, item, value) {
+    if (!this.tree.isVisible()) {
+      this.tree.show();
+    }
     this.fireOnPause('refreshTree', this.refreshTree, 500, this);
     return this.Super('changed', arguments);
   },
@@ -195,6 +218,4 @@ isc.OBTreeItemTree.addProperties({
       return "";
     }
   }
-
-
 });
