@@ -154,6 +154,9 @@ isc.OBTreeItemTree.addProperties({
   rowDoubleClick: function (record, recordNum, fieldNum) {
     var id = record[OB.Constants.ID],
         identifier = record[OB.Constants.IDENTIFIER];
+    if (!this.formItem.valueMap) {
+      this.formItem.valueMap = {};
+    }
     if (!this.formItem.valueMap[id]) {
       this.formItem.valueMap[id] = identifier;
     }
