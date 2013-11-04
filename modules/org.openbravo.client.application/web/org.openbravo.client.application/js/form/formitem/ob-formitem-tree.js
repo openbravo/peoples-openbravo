@@ -160,7 +160,9 @@ isc.OBTreeItemTree.addProperties({
     if (!this.formItem.valueMap[id]) {
       this.formItem.valueMap[id] = identifier;
     }
-    this.formItem.setValue(id);
+    this.formItem.setElementValue(identifier);
+    this.formItem.updateValue();
+    this.formItem.form.view.toolBar.updateButtonState(true);
     this.hide();
   },
 
