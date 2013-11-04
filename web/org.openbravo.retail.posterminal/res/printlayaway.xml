@@ -119,7 +119,7 @@
         for (var i = 0; i < payments.length; i++) {
           var paymentDate;
           if(_.isUndefined(payments.at(i).get('paymentDate')) || _.isNull(payments.at(i).get('paymentDate'))){
-              paymentDate = OB.I18N.formatDate(new Date());
+              paymentDate = new Date();
           }else{
               paymentDate = payments.at(i).get('paymentDate');
           }
