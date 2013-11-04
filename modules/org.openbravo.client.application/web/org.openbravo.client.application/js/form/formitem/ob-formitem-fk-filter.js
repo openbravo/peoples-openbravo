@@ -177,6 +177,12 @@ isc.OBFKFilterTextItem.addProperties({
 
   mapValueToDisplay: function (value) {
     var i, result = '';
+    if (isc.isAn.Array(value) && value.length === 1) {
+      // '_nativeElementBlur' calls 'refreshDisplayValue' and this one calls to this 'mapValueToDisplay' passing as argument "this.getValue()".
+      // EXCEPT in the 'or' case, in Smartclient 8.3d this value was a string containing the typed value but in Smartclient 9.1d this value
+      // is an array, being the typed value in the first element, so a conversion is needed to preserve the old logic.
+      value = value[0];
+    }
     if (!isc.isAn.Array(value)) {
       return this.Super('mapValueToDisplay', arguments);
     }
@@ -184,7 +190,7 @@ isc.OBFKFilterTextItem.addProperties({
       if (i > 0) {
         result += this.multipleValueSeparator;
       }
-      // encode or and and
+      // encode 'or' and 'and'
       result += OB.Utilities.encodeSearchOperator(this.Super('mapValueToDisplay', value[i]));
     }
     return result;
