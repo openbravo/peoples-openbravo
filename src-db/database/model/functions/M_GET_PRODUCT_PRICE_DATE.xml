@@ -43,6 +43,7 @@ BEGIN
     WHERE ISDEFAULT = 'Y'
       AND AD_CLIENT_ID = p_AD_Client_ID
       AND ISACTIVE = 'Y'
+      AND ISSOPRICELIST='N'
     )
     AND VALIDFROM =
     (SELECT max(VALIDFROM)
@@ -53,6 +54,7 @@ BEGIN
       WHERE ISDEFAULT = 'Y'
         AND AD_CLIENT_ID = p_AD_Client_ID
         AND ISACTIVE = 'Y'
+        AND ISSOPRICELIST='N'
       )
       AND TO_DATE(VALIDFROM) <= TO_DATE(COALESCE(p_Date, now()))
       AND EXISTS(SELECT 1
