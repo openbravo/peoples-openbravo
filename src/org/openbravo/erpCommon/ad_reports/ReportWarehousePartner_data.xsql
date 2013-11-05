@@ -55,9 +55,9 @@
     <Parameter name="parDate" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE < to_date(?)]]></Parameter>
     <Parameter name="mProduct" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="mProductCategory" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-    <Parameter name="locatorX" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_LOCATOR.X) LIKE '%'||UPPER(?)||'%']]></Parameter>
-    <Parameter name="locatorY" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_LOCATOR.Y) LIKE '%'||UPPER(?)||'%']]></Parameter>
-    <Parameter name="locatorZ" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_LOCATOR.Z) LIKE '%'||UPPER(?)||'%']]></Parameter>
+    <Parameter name="locatorX" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_LOCATOR.X) = UPPER(?)]]></Parameter>
+    <Parameter name="locatorY" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_LOCATOR.Y) = UPPER(?)]]></Parameter>
+    <Parameter name="locatorZ" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_LOCATOR.Z) = UPPER(?)]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
