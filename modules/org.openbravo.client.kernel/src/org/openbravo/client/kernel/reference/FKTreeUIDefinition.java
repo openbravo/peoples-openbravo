@@ -165,6 +165,7 @@ public class FKTreeUIDefinition extends ForeignKeyUIDefinition {
     parameters.put(SelectorConstants.PARAM_TARGET_PROPERTY_NAME, property.getName());
     treeReferenceComponent.setId(referencedTree.getId());
     treeReferenceComponent.setParameters(parameters);
+    treeReferenceComponent.setReferencedTree(referencedTree);
 
     // append the super fields
     final String treeFields = treeReferenceComponent.generate();

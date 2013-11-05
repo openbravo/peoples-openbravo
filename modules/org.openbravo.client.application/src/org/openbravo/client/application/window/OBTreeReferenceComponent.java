@@ -57,6 +57,8 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.domain.ReferencedTreeField;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.utility.ADTreeType;
+import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.DataSourceProperty.RefListEntry;
@@ -78,6 +80,12 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
   private static final String FIVECELLS = "FiveCells";
   private static final String TREE_REFERENCE_TEMPLATE = "9690A685A3D245899EA2A9C15D50D9FB";
 
+  private static final String TREENODE_DATASOURCE = "90034CAE96E847D78FBEF6D38CB1930D";
+  private static final String LINKTOPARENT_DATASOURCE = "610BEAE5E223447DBE6FF672B703F72F";
+
+  private static final String TREENODE_STRUCTURE = "ADTree";
+  private static final String LINKTOPARENT_STRUCTURE = "LinkToParent";
+
   private ReferencedTree referencedTree;
   private List<ReferencedTreeField> treeFields;
   private String transformedColumnName = null;
@@ -88,6 +96,14 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
   protected Template getComponentTemplate() {
     Template template = OBDal.getInstance().get(Template.class, TREE_REFERENCE_TEMPLATE);
     return template;
+  }
+
+  public void setReferencedTree(ReferencedTree referencedTree) {
+    this.referencedTree = referencedTree;
+  }
+
+  public ReferencedTree getreferencedTree() {
+    return referencedTree;
   }
 
   public static String getAdditionalProperties(ReferencedTree referencedTree,
@@ -719,5 +735,21 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
       return ModelProvider.getInstance().getEntity(entityName);
     }
     return null;
+  }
+
+  public String getDataSourceId() {
+    String dataSourceId = null;
+    TableTree tableTree = referencedTree.getTableTreeCategory();
+    if (tableTree != null) {
+      ADTreeType treeCategory = tableTree.getTreeCategory();
+      if (TREENODE_STRUCTURE.equals(treeCategory.getTreeStructure())) {
+        dataSourceId = TREENODE_DATASOURCE;
+      } else if (LINKTOPARENT_STRUCTURE.equals(treeCategory.getTreeStructure())) {
+        dataSourceId = LINKTOPARENT_DATASOURCE;
+      }
+      return dataSourceId;
+    } else {
+      return null;
+    }
   }
 }

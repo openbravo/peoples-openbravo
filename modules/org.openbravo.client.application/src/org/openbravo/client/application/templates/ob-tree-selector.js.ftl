@@ -20,6 +20,7 @@
 -->
 
     treeReferenceId: '${data.id}',
+    dataSourceId: '${data.dataSourceId}',
     //TODO?
     popupTextMatchStyle: 'substring',
     textMatchStyle: 'substring',

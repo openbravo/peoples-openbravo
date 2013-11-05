@@ -146,8 +146,7 @@ isc.OBTreeItemTree.addProperties({
 
 
   init: function () {
-    //TODO:
-    OB.Datasource.get('610BEAE5E223447DBE6FF672B703F72F', this, null, true);
+    OB.Datasource.get(this.treeItem.dataSourceId, this, null, true);
     this.Super('init', arguments);
   },
 
@@ -319,8 +318,7 @@ isc.OBTreeItemPopupWindow.addProperties({
       sortField: this.displayField,
 
       init: function () {
-        //TODO:
-        OB.Datasource.get('610BEAE5E223447DBE6FF672B703F72F', this, null, true);
+        OB.Datasource.get(this.treeItem.dataSourceId, this, null, true);
         this.Super('init', arguments);
       },
 
