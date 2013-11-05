@@ -23,4 +23,11 @@
 		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
 		<nature>org.openarchitectureware.base.oawNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>modules/org.openbravo.client.analytics/mondrian-3.5.0-src</name>
+			<type>2</type>
+			<location>/home/mtaal/mydownloads/reporting/mondrian/mondrian-3.5.0/mondrian-3.5.0-src</location>
+		</link>
+	</linkedResources>
 </projectDescription>
