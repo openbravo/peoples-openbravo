@@ -178,7 +178,6 @@ isc.OBTreeItemTree.addProperties({
     ds.transformRequest = function (dsRequest) {
       var target = window[dsRequest.componentId];
       dsRequest.params = dsRequest.params || {};
-      //TODO: Do not hardcode!
       dsRequest.params.treeReferenceId = target.treeItem.treeReferenceId;
       return this.Super('transformRequest', arguments);
     };
@@ -441,7 +440,6 @@ isc.OBTreeItemPopupWindow.addProperties({
         ds.transformRequest = function (dsRequest) {
           var target = window[dsRequest.componentId];
           dsRequest.params = dsRequest.params || {};
-          //TODO: Do not hardcode!
           dsRequest.params.treeReferenceId = target.treeItem.treeReferenceId;
           return this.Super('transformRequest', arguments);
         };
