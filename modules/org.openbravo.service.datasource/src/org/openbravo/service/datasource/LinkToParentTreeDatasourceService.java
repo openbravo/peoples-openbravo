@@ -262,9 +262,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     Entity referencedEntity = ModelProvider.getInstance().getEntityByTableId(table.getId());
 
     String tabId = parameters.get("tabId");
-    String tableTreeId = parameters.get("tableTreeId");
-    TableTree tableTree = OBDal.getInstance().get(TableTree.class, tableTreeId);
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    TableTree tableTree = tab.getTableTree();
     Property linkToParentProperty = getLinkToParentProperty(tableTree);
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property nodeIdProperty = getNodeIdProperty(tableTree);
@@ -368,7 +367,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     }
     Property linkToParentProperty = getLinkToParentProperty(tableTree);
     Property nodeIdProperty = getNodeIdProperty(tableTree);
-
 
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     JSONObject json = null;
