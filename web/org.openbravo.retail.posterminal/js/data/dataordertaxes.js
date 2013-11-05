@@ -309,7 +309,7 @@
 
 
                 var discAmt = null;
-                if (element.get('promotions')) {
+                if (element.get('promotions') && element.get('promotions').length > 0) {
                   discAmt = new BigDecimal(String(element.get('net')));
                   discAmt = element.get('promotions').reduce(function (memo, element) {
                     return memo.subtract(new BigDecimal(String(element.actualAmt || element.amt || 0)));
