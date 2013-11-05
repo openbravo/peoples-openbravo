@@ -180,7 +180,6 @@ isc.OBTreeItemTree.addProperties({
       dsRequest.params = dsRequest.params || {};
       //TODO: Do not hardcode!
       dsRequest.params.treeReferenceId = target.treeItem.treeReferenceId;
-      dsRequest.params.tableTreeId = '3C762D1768204132B2D607C069397B40';
       return this.Super('transformRequest', arguments);
     };
 
@@ -444,7 +443,6 @@ isc.OBTreeItemPopupWindow.addProperties({
           dsRequest.params = dsRequest.params || {};
           //TODO: Do not hardcode!
           dsRequest.params.treeReferenceId = target.treeItem.treeReferenceId;
-          dsRequest.params.tableTreeId = '3C762D1768204132B2D607C069397B40';
           return this.Super('transformRequest', arguments);
         };
 

@@ -114,13 +114,4 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
       return null;
     }
   }
-
-  public String getTableTreeId() {
-    TableTree tableTree = tab.getTableTree();
-    if (tableTree != null) {
-      return tableTree.getId();
-    } else {
-      return null;
-    }
-  }
 }
