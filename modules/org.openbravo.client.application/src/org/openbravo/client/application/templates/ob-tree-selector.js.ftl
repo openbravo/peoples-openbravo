@@ -19,7 +19,7 @@
 */
 -->
 
-    selectorDefinitionId: '${data.id}',
+    treeReferenceId: '${data.id}',
     //TODO?
     popupTextMatchStyle: 'substring',
     textMatchStyle: 'substring',

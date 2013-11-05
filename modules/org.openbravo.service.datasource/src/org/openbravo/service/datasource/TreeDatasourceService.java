@@ -22,6 +22,7 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.datasource.CheckTreeOperationManager.ActionResponse;
@@ -86,18 +87,18 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     try {
       String parentId = parameters.get("parentId");
       String tabId = parameters.get("tabId");
+      String treeReferenceId = parameters.get("treeReferenceId");
       Tab tab = null;
       Table table = null;
       if (tabId != null) {
         tab = OBDal.getInstance().get(Tab.class, tabId);
         table = tab.getTable();
-      }
-
-      if (table == null) {
-        String tableId = parameters.get("tableId");
-        if (tableId != null) {
-          table = OBDal.getInstance().get(Table.class, tableId);
-        }
+      } else if (treeReferenceId != null) {
+        ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class,
+            treeReferenceId);
+        table = treeReference.getTable();
+      } else {
+        // TODO: Throw proper exception
       }
 
       String hqlTreeWhereClause = null;
@@ -187,16 +188,20 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       throws MultipleParentsException {
     JSONArray responseData = new JSONArray();
     String tabId = parameters.get("tabId");
-    String tableId = parameters.get("tableId");
-    String tableTreeId = parameters.get("tableTreeId");
+    String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
     Table table = null;
-    TableTree tableTree = OBDal.getInstance().get(TableTree.class, tableTreeId);
+    TableTree tableTree = null;
     if (tabId != null) {
       tab = OBDal.getInstance().get(Tab.class, tabId);
       table = tab.getTable();
+      tableTree = tab.getTableTree();
+    } else if (treeReferenceId != null) {
+      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
+      table = treeReference.getTable();
+      tableTree = treeReference.getTableTreeCategory();
     } else {
-      table = OBDal.getInstance().get(Table.class, tableId);
+      // TODO: Throw proper exception
     }
     try {
       Map<String, JSONObject> addedNodesMap = new HashMap<String, JSONObject>();
@@ -257,16 +262,20 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       throws MultipleParentsException {
     JSONArray responseData = new JSONArray();
     String tabId = parameters.get("tabId");
-    String tableId = parameters.get("tableId");
-    String tableTreeId = parameters.get("tableTreeId");
+    String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
     Table table = null;
-    TableTree tableTree = OBDal.getInstance().get(TableTree.class, tableTreeId);
+    TableTree tableTree = null;
     if (tabId != null) {
       tab = OBDal.getInstance().get(Tab.class, tabId);
       table = tab.getTable();
+      tableTree = tab.getTableTree();
+    } else if (treeReferenceId != null) {
+      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
+      table = treeReference.getTable();
+      tableTree = treeReference.getTableTreeCategory();
     } else {
-      table = OBDal.getInstance().get(Table.class, tableId);
+      // TODO: Throw proper exception
     }
     try {
       ArrayList<String> addedNodes = new ArrayList<String>();

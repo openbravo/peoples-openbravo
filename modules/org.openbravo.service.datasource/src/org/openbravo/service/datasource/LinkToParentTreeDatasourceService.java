@@ -20,6 +20,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
@@ -123,9 +124,9 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return entity.getPropertyByColumnName(nodeIdColumn.getDBColumnName());
   }
 
-  private Property getNodeIdProperty(TableTree tableTree, Table table) {
+  private Property getNodeIdProperty(TableTree tableTree) {
     Column nodeIdColumn = tableTree.getNodeIdColumn();
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(tableTree.getTable().getId());
     return entity.getPropertyByColumnName(nodeIdColumn.getDBColumnName());
   }
 
@@ -135,31 +136,29 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
     boolean fetchRoot = ROOT_NODE.equals(parentId);
     String tabId = parameters.get("tabId");
-    String tableId = parameters.get("tableId");
-    String tableTreeId = parameters.get("tableTreeId");
+    String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
     Table table = null;
-    TableTree tableTree = OBDal.getInstance().get(TableTree.class, tableTreeId);
+    TableTree tableTree = null;
     if (tabId != null) {
       tab = OBDal.getInstance().get(Tab.class, tabId);
       table = tab.getTable();
+      tableTree = tab.getTableTree();
+    } else if (treeReferenceId != null) {
+      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
+      table = treeReference.getTable();
+      tableTree = treeReference.getTableTreeCategory();
     } else {
-      table = OBDal.getInstance().get(Table.class, tableId);
+      // TODO: Throw proper exception
+      logger.error("Either tab id or tree reference id must be provided");
     }
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-    Property linkToParentProperty = null;
-    Property nodeIdProperty = null;
-    if (tab != null) {
-      linkToParentProperty = getLinkToParentProperty(tableTree);
-      nodeIdProperty = getNodeIdProperty(tableTree, table);
-    } else {
-      linkToParentProperty = getLinkToParentProperty(table);
-      nodeIdProperty = getNodeIdProperty(table);
-    }
+    Property linkToParentProperty = getLinkToParentProperty(tableTree);
+    Property nodeIdProperty = getNodeIdProperty(tableTree);
+    boolean isMultiParentTree = tableTree.isHasMultiparentNodes();
+
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as e ");
-
-    boolean isMultiParentTree = tableTree.isHasMultiparentNodes();
 
     String actualParentId = new String(parentId);
     if (isMultiParentTree) {
@@ -268,7 +267,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
     Property linkToParentProperty = getLinkToParentProperty(tableTree);
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-    Property nodeIdProperty = getNodeIdProperty(tableTree, tab.getTable());
+    Property nodeIdProperty = getNodeIdProperty(tableTree);
 
     boolean isOrdered = tableTree.getTreeCategory().isOrdered();
 
@@ -299,7 +298,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId)
       throws MultipleParentsException {
     String tabId = parameters.get("tabId");
-    String tableId = parameters.get("tableId");
+    String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
     Table table = null;
     TableTree tableTree = null;
@@ -307,14 +306,17 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       tab = OBDal.getInstance().get(Tab.class, tabId);
       table = tab.getTable();
       tableTree = tab.getTableTree();
+    } else if (treeReferenceId != null) {
+      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
+      table = treeReference.getTable();
+      tableTree = treeReference.getTableTreeCategory();
     } else {
-      table = OBDal.getInstance().get(Table.class, tableId);
-      // Todo: Support multiple table tree
-      tableTree = table.getADTableTreeList().get(0);
+      // TODO: Throw proper exception
+      logger.error("Either tab id or tree reference id must be provided");
     }
     // Obtain the recordId based on the nodeId
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-    Property nodeIdProperty = getNodeIdProperty(tableTree, table);
+    Property nodeIdProperty = getNodeIdProperty(tableTree);
 
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" where " + nodeIdProperty.getName());
@@ -334,7 +336,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       return true;
     }
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-    Property nodeIdProperty = getNodeIdProperty(tableTree, table);
+    Property nodeIdProperty = getNodeIdProperty(tableTree);
 
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as e where e." + nodeIdProperty.getName());
@@ -348,23 +350,26 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   @Override
   protected JSONObject getJSONObjectByRecordId(Map<String, String> parameters, String bobId) {
     String tabId = parameters.get("tabId");
-    String tableId = parameters.get("tableId");
-    String tableTreeId = parameters.get("tableTreeId");
+    String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
     Table table = null;
-    Property linkToParentProperty = null;
-    Property nodeIdProperty = null;
-    TableTree tableTree = OBDal.getInstance().get(TableTree.class, tableTreeId);
+    TableTree tableTree = null;
     if (tabId != null) {
       tab = OBDal.getInstance().get(Tab.class, tabId);
       table = tab.getTable();
-      linkToParentProperty = getLinkToParentProperty(tableTree);
-      nodeIdProperty = getNodeIdProperty(tableTree, table);
+      tableTree = tab.getTableTree();
+    } else if (treeReferenceId != null) {
+      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
+      table = treeReference.getTable();
+      tableTree = treeReference.getTableTreeCategory();
     } else {
-      table = OBDal.getInstance().get(Table.class, tableId);
-      linkToParentProperty = getLinkToParentProperty(tableTree);
-      nodeIdProperty = getNodeIdProperty(table);
+      // TODO: Throw proper exception
+      logger.error("Either tab id or tree reference id must be provided");
     }
+    Property linkToParentProperty = getLinkToParentProperty(tableTree);
+    Property nodeIdProperty = getNodeIdProperty(tableTree);
+
+
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     JSONObject json = null;
 
