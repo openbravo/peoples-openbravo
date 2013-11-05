@@ -268,10 +268,6 @@ enyo.kind({
             me.prsList.add(order);
           });
         });
-        if (me.prsList.length === 1) {
-          me.prsList.trigger('click', me.prsList.at(0));
-          me.doHideThisPopup();
-        }
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }
