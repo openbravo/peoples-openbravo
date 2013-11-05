@@ -25,7 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openbravo.base.weld.WeldUtils;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
 import org.openbravo.model.ad.module.Module;
 
@@ -40,6 +43,10 @@ public abstract class BaseComponentProvider implements ComponentProvider {
 
   private static Map<String, List<String>> appDependencies = new HashMap<String, List<String>>();
 
+  @Inject
+  @Any
+  private Instance<Component> components;
+
   /**
    * Return a component of the correct implementation using Weld.
    * 
@@ -48,7 +55,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
    * @return an instance of clz
    */
   protected <U extends Component> U getComponent(Class<U> clz) {
-    return (U) WeldUtils.getInstanceFromStaticBeanManager(clz);
+    return (U) components.select(clz).get();
   }
 
   public Module getModule() {
