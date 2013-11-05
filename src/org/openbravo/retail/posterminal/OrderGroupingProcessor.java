@@ -61,7 +61,11 @@ public class OrderGroupingProcessor {
 
     String hqlWhereClause = "as line"
         + " where line.salesOrder.obposApplications = :terminal and line.deliveredQuantity=line.orderedQuantity and line.orderedQuantity <> 0"
-        + " and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
+        + " and line.salesOrder.documentType.id in ('"
+        + posTerminal.getObposTerminaltype().getDocumentType().getId()
+        + "', '"
+        + posTerminal.getObposTerminaltype().getDocumentTypeForReturns().getId()
+        + "') and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
         + " order by line.businessPartner.id";
 
     OBQuery<OrderLine> query = OBDal.getInstance().createQuery(OrderLine.class, hqlWhereClause);
