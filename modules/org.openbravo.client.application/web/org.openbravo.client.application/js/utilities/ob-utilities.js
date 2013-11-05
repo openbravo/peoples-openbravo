@@ -382,7 +382,7 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position, crite
       view.additionalCriteriaTabId = data.tabId;
       view.additionalCriteria = urlParams.criteria;
     }
-    
+
     if (urlParams.replaceDefaultFilter) {
       view.replaceDefaultFilter = urlParams.replaceDefaultFilter;
     }
