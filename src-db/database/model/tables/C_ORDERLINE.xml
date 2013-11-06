@@ -356,6 +356,9 @@
       <index name="C_ORDERLINE_C_RETURN_REASON" unique="false">
         <index-column name="C_RETURN_REASON_ID"/>
       </index>
+      <index name="C_ORDERLINE_INOUTLINE" unique="false">
+        <index-column name="M_INOUTLINE_ID"/>
+      </index>
       <index name="C_ORDERLINE_ORDER" unique="false">
         <index-column name="C_ORDER_ID"/>
       </index>
