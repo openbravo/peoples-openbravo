@@ -38,6 +38,7 @@ isc.OBTreeItem.addProperties({
       treeItem: this
     });
     this.form.addChild(this.tree); // Added grid in the form to avoid position problems
+    this.treeDisplayField = this.getTreeDisplayField();
     this.treeWindow = isc.OBTreeItemPopupWindow.create({
       // solves issue: https://issues.openbravo.com/view.php?id=17268
       title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
@@ -50,20 +51,35 @@ isc.OBTreeItem.addProperties({
 
   },
 
+  getTreeDisplayField: function () {
+    if (!this.displayField.contains(OB.Constants.FIELDSEPARATOR)) {
+      return this.displayField;
+    } else {
+      return this.displayField.substr(this.displayField.lastIndexOf(OB.Constants.FIELDSEPARATOR) + 1);
+    }
+  },
+
   icons: [{
     src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
     width: 21,
     height: 21,
     click: function (form, item, icon) {
-      item.openSelectorWindow();
+      item.openTreeWindow();
     }
   }],
 
-  openSelectorWindow: function () {
+  openTreeWindow: function () {
+    var selectedValue = this.getValue(),
+        criteria, innerCriteria;
+
     if (this.treeWindow.treeGrid) {
-      this.treeWindow.treeGrid.invalidateCache();
+      if (OB.Utilities.isUUID(selectedValue)) {
+
+        this.targetRecordId = selectedValue;
+        this.targetRecordIdentifier = this.getDisplayValue();
+      }
     }
-    this.treeWindow.open();
+    this.treeWindow.show(true);
   },
 
   showPicker: function () {
@@ -107,7 +123,7 @@ isc.OBTreeItem.addProperties({
   },
 
   hideTreeIfNotFocused: function () {
-    if (this.form.getFocusItem().ID !== this.ID) {
+    if (this.form && this.form.getFocusItem() && this.form.getFocusItem().ID !== this.ID) {
       this.tree.hide();
     }
   },
@@ -140,7 +156,7 @@ isc.OBTreeItem.addProperties({
         this.valueMap = {};
       }
 
-      this.valueMap[record[this.valueField]] = record[this.displayField].replace(/[\n\r]/g, '');
+      this.valueMap[record[this.valueField]] = record[this.treeDisplayField].replace(/[\n\r]/g, '');
       this.updateValueMap();
     }
 
@@ -152,6 +168,7 @@ isc.OBTreeItem.addProperties({
     }
     delete this._notUpdatingManually;
   }
+
 });
 
 isc.ClassFactory.defineClass("OBTreeItemTree", isc.TreeGrid);
@@ -178,6 +195,21 @@ isc.OBTreeItemTree.addProperties({
     OB.Datasource.get(this.treeItem.dataSourceId, this, null, true);
     this.Super('init', arguments);
   },
+
+  dataArrived: function () {
+    var selectedValue, record, rowNum;
+    this.Super('dataArrived', arguments);
+    selectedValue = this.treeItem.getValue();
+    record = this.data.find('id', selectedValue);
+    //If there is a record selected in the item, select it
+    if (record) {
+      rowNum = this.getRecordIndex(record);
+      this.selectSingleRecord(record);
+      // give grid time to draw
+      this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
+    }
+  },
+
 
   show: function () {
     var treeItemWidth;
@@ -320,6 +352,7 @@ isc.OBTreeItemPopupWindow.addProperties({
     this.treeGrid = isc.TreeGrid.create({
 
       treeItem: this.treeItem,
+      treeWindow: this,
       selectionAppearance: this.selectionAppearance,
       treePopup: this,
       showOpenIcons: false,
@@ -372,87 +405,53 @@ isc.OBTreeItemPopupWindow.addProperties({
         var record, rowNum, i, selectedRecords = [],
             ds, ids;
         this.Super('dataArrived', arguments);
-        if (this.targetRecordId) {
-          record = this.data.find(this.treeItem.valueField, this.targetRecordId);
+        if (this.treeItem.targetRecordId) {
+          record = this.data.find(OB.Constants.ID, this.treeItem.targetRecordId);
           rowNum = this.getRecordIndex(record);
           this.selectSingleRecord(record);
           // give grid time to draw
           this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
-          delete this.targetRecordId;
+          delete this.treeItem.targetRecordId;
         }
       },
       fields: this.treeGridFields,
       recordDoubleClick: function () {
-        treeWindow.setValueInField();
+        this.treeWindow.setValueInField();
       },
 
       handleFilterEditorSubmit: function (criteria, context) {
-        var ids = [],
-            crit = {},
-            len, i, c, found, fixedCriteria;
-        if (!treeWindow.multiselect) {
-          this.Super('handleFilterEditorSubmit', arguments);
-          return;
+        var innerCriteria;
+        if (this.treeItem.targetRecordId) {
+          innerCriteria = {};
+          innerCriteria.fieldName = OB.Constants.ID;
+          innerCriteria.operator = 'equals';
+          innerCriteria.value = this.treeItem.targetRecordId;
+          criteria = {
+            _constructor: 'AdvancedCriteria',
+            criteria: [innerCriteria],
+            operator: 'and'
+          };
         }
-
-        if (criteria && criteria.criteria) {
-          fixedCriteria = [];
-          // remove from criteria dummy one created to preserve selected items
-          for (i = 0; i < criteria.criteria.length; i++) {
-            if (!criteria.criteria[i].dummyCriteria && criteria.criteria[i].fieldName !== '_treeDefinitionId') {
-              fixedCriteria.push(criteria.criteria[i]);
-            }
-          }
-          criteria.criteria = fixedCriteria;
-        }
-
-        len = this.treeItem.treeWindow.selectedIds.length;
-        for (i = 0; i < len; i++) {
-          ids.push({
-            fieldName: 'id',
-            operator: 'equals',
-            value: this.treeItem.treeWindow.selectedIds[i]
-          });
-        }
-
-        if (len > 0) {
-          crit._constructor = 'AdvancedCriteria';
-          crit._OrExpression = true; // trick to get a really _or_ in the backend
-          crit.operator = 'or';
-          crit.criteria = ids;
-
-          c = (criteria && criteria.criteria) || [];
-          found = false;
-
-          for (i = 0; i < c.length; i++) {
-            if (c[i].fieldName && c[i].fieldName !== '_treeDefinitionId' && c[i].value !== '') {
-              found = true;
-              break;
-            }
-          }
-
-          if (!found) {
-            if (!criteria) {
-              criteria = {
-                _constructor: 'AdvancedCriteria',
-                operator: 'and',
-                criteria: []
-              };
-            }
-
-            // adding an *always true* sentence
-            criteria.criteria.push({
-              fieldName: 'id',
-              operator: 'notNull',
-              dummyCriteria: true
-            });
-          }
-          crit.criteria.push(criteria); // original filter
-        } else {
-          crit = criteria;
-        }
-        this.Super('handleFilterEditorSubmit', [crit, context]);
+        this.Super('handleFilterEditorSubmit', [criteria, context]);
       },
+
+      setFilterValues: function (criteria) {
+        var innerCriteria;
+        if (criteria && criteria.criteria && criteria.criteria[0] && criteria.criteria[0].fieldName === OB.Constants.ID) {
+          // Target record id criteria. Show the identifier of the row in the filter values
+          innerCriteria = {};
+          innerCriteria.fieldName = this.treeItem.treeDisplayField;
+          innerCriteria.operator = 'iContains';
+          innerCriteria.value = this.treeItem.getDisplayValue();
+          criteria = {
+            _constructor: 'AdvancedCriteria',
+            criteria: [innerCriteria],
+            operator: 'and'
+          };
+        }
+        this.Super('setFilterValues', criteria);
+      },
+
       selectionChanged: function (record, state) {
         if (this.treeItem.treeWindow.selectedIds) {
           if (state) {
@@ -480,6 +479,20 @@ isc.OBTreeItemPopupWindow.addProperties({
           id: 'id'
         };
         return this.Super("setDataSource", [ds, fields]);
+      },
+
+      setCriteria: function () {
+        //setCriteria!
+        return this.Super("setCriteria", arguments);
+      },
+
+      // Todo: duplicated code
+      getCellCSSText: function (record, rowNum, colNum) {
+        if (record.notFilterHit) {
+          return "color:#606060;";
+        } else {
+          return "";
+        }
       }
     });
 
@@ -530,43 +543,10 @@ isc.OBTreeItemPopupWindow.addProperties({
     return ret;
   },
 
-  open: function () {
-    var treeWindow = this,
-        callback, data;
-
-    data = {
-      '_treeDefinitionId': this.treeDefinitionId || this.treeItem.treeDefinitionId
-    };
-
-    // on purpose not passing the third boolean param
-    if (this.treeItem && this.treeItem.form && this.treeItem.form.view && this.treeItem.form.view.getContextInfo) {
-      isc.addProperties(data, this.treeItem.form.view.getContextInfo(false, true));
-    } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
-      isc.addProperties(data, this.view.sourceView.getContextInfo(false, true));
-    }
-
-    callback = function (resp, data, req) {
-      treeWindow.fetchDefaultsCallback(resp, data, req);
-    };
-    OB.RemoteCallManager.call('org.openbravo.userinterface.selector.SelectorDefaultFilterActionHandler', data, data, callback);
-  },
 
   setValueInField: function () {
     this.treeItem.setValueFromRecord(this.treeGrid.getSelectedRecord(), true);
     this.hide();
-  },
-
-  fetchDefaultsCallback: function (rpcResponse, data, rpcRequest) {
-    var defaultFilter = {};
-    if (data) {
-      defaultFilter = {}; // Reset filter
-      isc.addProperties(defaultFilter, data);
-    }
-
-    // adds the selector id to filter used to get filter information
-    defaultFilter._treeDefinitionId = this.treeItem.treeReferenceId;
-    this.defaultFilter = defaultFilter;
-    this.treeGrid.targetRecordId = this.treeItem.getValue();
-    this.show(true);
   }
+
 });
