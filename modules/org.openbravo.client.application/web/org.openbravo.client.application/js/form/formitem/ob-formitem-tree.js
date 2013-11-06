@@ -122,6 +122,39 @@ isc.OBTreeItem.addProperties({
 
   refreshTree: function () {
     this.tree.fetchData();
+  },
+
+  setValueFromRecord: function (record, fromPopup) {
+    var currentValue = this.getValue(),
+        identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
+        i;
+    if (!record) {
+      this.storeValue(null);
+      this.form.setValue(this.name + OB.Constants.FIELDSEPARATOR + this.displayField, null);
+      this.form.setValue(identifierFieldName, null);
+    } else {
+      this.storeValue(record[this.valueField]);
+      this.form.setValue(this.name + OB.Constants.FIELDSEPARATOR + this.displayField, record[this.displayField]);
+      this.form.setValue(identifierFieldName, record[OB.Constants.IDENTIFIER]);
+      if (!this.valueMap) {
+        this.valueMap = {};
+      }
+
+      this.valueMap[record[this.valueField]] = record[this.displayField].replace(/[\n\r]/g, '');
+      this.updateValueMap();
+    }
+
+    //    if (this.form && this.form.handleItemChange) {
+    //      this._hasChanged = true;
+    //      this.form.handleItemChange(this);
+    //    }
+    // only jump to the next field if the value has really been set
+    // do not jump to the next field if the event has been triggered by the Tab key,
+    // to prevent a field from being skipped (see https://issues.openbravo.com/view.php?id=21419)
+    if (currentValue && this.form.focusInNextItem && isc.EH.getKeyName() !== 'Tab') {
+      this.form.focusInNextItem(this.name);
+    }
+    delete this._notUpdatingManually;
   }
 });
 
@@ -520,6 +553,11 @@ isc.OBTreeItemPopupWindow.addProperties({
       treeWindow.fetchDefaultsCallback(resp, data, req);
     };
     OB.RemoteCallManager.call('org.openbravo.userinterface.selector.SelectorDefaultFilterActionHandler', data, data, callback);
+  },
+
+  setValueInField: function () {
+    this.treeItem.setValueFromRecord(this.treeGrid.getSelectedRecord(), true);
+    this.hide();
   },
 
   fetchDefaultsCallback: function (rpcResponse, data, rpcRequest) {
