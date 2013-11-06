@@ -292,10 +292,12 @@ isc.OBTreeItemPopupWindow.addProperties({
 
       treeItem: this.treeItem,
       selectionAppearance: this.selectionAppearance,
-
-      // drawAllMaxCells is set to 0 to prevent extra reads of data
-      // Smartclient will try to read until drawAllMaxCells has been reached
-      drawAllMaxCells: 0,
+      treePopup: this,
+      showOpenIcons: false,
+      showDropIcons: false,
+      autoFetchData: false,
+      nodeIcon: null,
+      folderIcon: null,
 
       dataProperties: {
         modelType: "parent",
@@ -308,11 +310,11 @@ isc.OBTreeItemPopupWindow.addProperties({
       //TODO:
       //      width: this.treeGridProperties.width,
       //      height: this.treeGridProperties.height,
-      width: 300,
-      height: 300,
+      width: '100%',
+      height: '100%',
+      showFilterEditor: true,
       alternateRecordStyles: true,
       dataSource: this.dataSource,
-      showFilterEditor: true,
       sortField: this.displayField,
 
       init: function () {
@@ -444,7 +446,7 @@ isc.OBTreeItemPopupWindow.addProperties({
           return this.Super('transformRequest', arguments);
         };
 
-        fields = this.treeItem.treeGridFields;
+        fields = this.treePopup.treeGridFields;
         ds.primaryKeys = {
           id: 'id'
         };

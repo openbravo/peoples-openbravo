@@ -438,8 +438,8 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
       LocalTreeField.setName(fieldName);
       LocalTreeField.setTitle(treeField.getName());
       // TODO
-      LocalTreeField.setSort(!pickList && true);
-      LocalTreeField.setFilter(!pickList && true);
+      LocalTreeField.setSort(treeField.isSort());
+      LocalTreeField.setFilter(treeField.isFilter());
       LocalTreeField.setDomainType(domainType);
       LocalTreeField.setUIDefinition(getUIDefinition(treeField));
       LocalTreeField.setReferencedTreeField(treeField);
