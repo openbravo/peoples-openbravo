@@ -101,10 +101,7 @@ enyo.kind({
             classes: 'span12',
             components: [{
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-              name: 'title',
-              initComponents: function () {
-                this.setContent(OB.I18N.getLabel('OBPOS_CashPaymentsTitle'));
-              }
+              name: 'title'
             }]
           }]
         }, {
@@ -274,8 +271,9 @@ enyo.kind({
   
   initPaymentToCount: function (payment) {
     this.payment = payment;
-    
-    this.$.title.setContent(OB.I18N.getLabel('OBPOS_CashPaymentsTitle', [payment.get('name')]));
+
+    var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;
+    this.$.title.setContent(OB.I18N.getLabel('OBPOS_CashPaymentsTitle', [payment.get('name')]) + ' (' + OB.Utilities.Date.JSToOB(new Date(currentbd), OB.Format.date) + ')');
     
     this.$.total.printAmount(this.payment.get('foreignExpected'));
     
