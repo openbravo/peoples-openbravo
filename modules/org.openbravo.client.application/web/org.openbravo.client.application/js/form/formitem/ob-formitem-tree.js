@@ -144,10 +144,6 @@ isc.OBTreeItem.addProperties({
       this.updateValueMap();
     }
 
-    //    if (this.form && this.form.handleItemChange) {
-    //      this._hasChanged = true;
-    //      this.form.handleItemChange(this);
-    //    }
     // only jump to the next field if the value has really been set
     // do not jump to the next field if the event has been triggered by the Tab key,
     // to prevent a field from being skipped (see https://issues.openbravo.com/view.php?id=21419)
@@ -162,7 +158,7 @@ isc.ClassFactory.defineClass("OBTreeItemTree", isc.TreeGrid);
 
 isc.OBTreeItemTree.addProperties({
   treeItem: null,
-  width: 150,
+  height: 200,
   showOpenIcons: false,
   showDropIcons: false,
   autoFetchData: false,
