@@ -353,6 +353,7 @@ isc.OBTreeItemPopupWindow.addProperties({
 
       treeItem: this.treeItem,
       treeWindow: this,
+      view: this.treeItem.form.view,
       selectionAppearance: this.selectionAppearance,
       treePopup: this,
       showOpenIcons: false,
@@ -360,6 +361,7 @@ isc.OBTreeItemPopupWindow.addProperties({
       autoFetchData: false,
       nodeIcon: null,
       folderIcon: null,
+      filterOnKeypress: true,
 
       dataProperties: {
         modelType: "parent",
@@ -381,7 +383,24 @@ isc.OBTreeItemPopupWindow.addProperties({
 
       init: function () {
         OB.Datasource.get(this.treeItem.dataSourceId, this, null, true);
+        this.copyFunctionsFromViewGrid();
         this.Super('init', arguments);
+      },
+
+      copyFunctionsFromViewGrid: function () {
+        var view = this.treeItem.form.view;
+        this.filterEditorProperties = view.viewGrid.filterEditorProperties;
+        this.checkShowFilterFunnelIconSuper = view.viewGrid.checkShowFilterFunnelIcon;
+        this.isGridFiltered = view.viewGrid.isGridFiltered;
+        this.isGridFilteredWithCriteria = view.viewGrid.isGridFilteredWithCriteria;
+        this.isValidFilterField = view.viewGrid.isValidFilterField;
+        this.convertCriteria = view.viewGrid.convertCriteria;
+        this.resetEmptyMessage = view.viewGrid.resetEmptyMessage;
+        this.filterData = view.viewGrid.filterData;
+        this.loadingDataMessage = view.viewGrid.loadingDataMessage;
+        this.emptyMessage = view.viewGrid.emptyMessage;
+        this.noDataEmptyMessage = view.viewGrid.noDataEmptyMessage;
+        this.filterNoRecordsEmptyMessage = view.viewGrid.filterNoRecordsEmptyMessage;
       },
 
       onFetchData: function (criteria, requestProperties) {
@@ -493,6 +512,54 @@ isc.OBTreeItemPopupWindow.addProperties({
         } else {
           return "";
         }
+      },
+
+      // show or hide the filter button
+      filterEditorSubmit: function (criteria) {
+        this.checkShowFilterFunnelIcon(criteria);
+      },
+
+      clearFilter: function (keepFilterClause, noPerformAction) {
+        var i = 0,
+            fld, length;
+        this.forceRefresh = true;
+        if (this.filterEditor) {
+          if (this.filterEditor.getEditForm()) {
+            this.filterEditor.getEditForm().clearValues();
+
+            // clear the date values in a different way
+            length = this.filterEditor.getEditForm().getFields().length;
+
+            for (i = 0; i < length; i++) {
+              fld = this.filterEditor.getEditForm().getFields()[i];
+              if (fld.clearFilterValues) {
+                fld.clearFilterValues();
+              }
+            }
+          } else {
+            this.filterEditor.setValuesAsCriteria(null);
+          }
+        }
+        if (!noPerformAction) {
+          this.filterEditor.performAction();
+        }
+      },
+
+      checkShowFilterFunnelIcon: function (criteria) {
+        var innerCriteria;
+        if (criteria && criteria.criteria && criteria.criteria[0] && criteria.criteria[0].fieldName === OB.Constants.ID) {
+          // Target record id criteria. Show the identifier of the row in the filter values
+          innerCriteria = {};
+          innerCriteria.fieldName = this.treeItem.treeDisplayField;
+          innerCriteria.operator = 'iContains';
+          innerCriteria.value = this.treeItem.getDisplayValue();
+          criteria = {
+            _constructor: 'AdvancedCriteria',
+            criteria: [innerCriteria],
+            operator: 'and'
+          };
+        }
+        this.checkShowFilterFunnelIconSuper(criteria);
       }
     });
 
@@ -539,6 +606,8 @@ isc.OBTreeItemPopupWindow.addProperties({
     } else {
       this.treeGrid.selectSingleRecord(null);
     }
+
+    this.treeGrid.checkShowFilterFunnelIcon(this.treeGrid.getCriteria());
 
     return ret;
   },
