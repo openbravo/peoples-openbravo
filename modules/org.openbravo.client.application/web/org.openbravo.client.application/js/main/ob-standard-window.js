@@ -475,6 +475,15 @@ isc.OBStandardWindow.addProperties({
     }
   },
 
+  checkIfDefaultSavedView: function () {
+    var persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);
+    if (persDefaultValue && persDefaultValue !== 'dummyId' && OB.Utilities.checkProfessionalLicense(null, true)) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
   setPersonalization: function (personalization) {
     var i, defaultView, persDefaultValue, views, length, me = this;
 
