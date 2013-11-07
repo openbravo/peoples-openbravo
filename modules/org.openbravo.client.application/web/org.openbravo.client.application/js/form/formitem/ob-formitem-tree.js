@@ -48,7 +48,30 @@ isc.OBTreeItem.addProperties({
       displayField: this.displayField,
       treeGridFields: isc.shallowClone(this.treeGridFields)
     });
+    this.enableShortcuts();
+  },
 
+  enableShortcuts: function () {
+    var ksAction_ShowPopup, ksAction_ShowTree, ksAction_MoveToTree;
+    ksAction_ShowPopup = function (caller) {
+      caller.openTreeWindow();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.Shortcuts.set('TreeItem_ShowPopup', 'OBTreeItem', ksAction_ShowPopup);
+
+    ksAction_ShowTree = function (caller) {
+      caller.tree.show();
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.Shortcuts.set('TreeItem_ShowTree', 'OBTreeItem', ksAction_ShowTree);
+
+    ksAction_MoveToTree = function (caller) {
+      if (caller.tree.isVisible()) {
+        caller.tree.focus();
+      }
+      return false; //To avoid keyboard shortcut propagation
+    };
+    OB.KeyboardManager.Shortcuts.set('TreeItem_MoveToTree', 'OBTreeItem', ksAction_MoveToTree);
   },
 
   getTreeDisplayField: function () {
@@ -57,6 +80,14 @@ isc.OBTreeItem.addProperties({
     } else {
       return this.displayField.substr(this.displayField.lastIndexOf(OB.Constants.FIELDSEPARATOR) + 1);
     }
+  },
+
+  keyPress: function (keyName, character, form, item, icon) {
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBTreeItem', this);
+    if (response !== false) {
+      response = this.Super('keyPress', arguments);
+    }
+    return response;
   },
 
   icons: [{
