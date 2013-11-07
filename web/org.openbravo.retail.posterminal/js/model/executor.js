@@ -261,5 +261,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
   postAction: function (evt) {
     evt.get('receipt').calculateGross();
+
+    // Forcing local db save. Rule implementations could (should!) do modifications
+    // without persisting them improving performance in this manner.
+    evt.get('receipt').save();
   }
 });

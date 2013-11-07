@@ -305,11 +305,13 @@
       this.set('undo', undoCopy);
     },
 
-    calculateTaxes: function (callback) {
+    calculateTaxes: function (callback, doNotSave) {
       if (callback) {
         callback();
       }
-      this.save();
+      if (!doNotSave){
+        this.save();
+      }
     },
 
     prepareToSend: function (callback) {
@@ -618,7 +620,7 @@
       this.setUnit(line, OB.DEC.add(line.get('qty'), qty, OB.I18N.qtyScale()), OB.I18N.getLabel('OBPOS_AddUnits', [OB.DEC.toNumber(new BigDecimal((String)(qty.toString()))), line.get('product').get('_identifier')]));
     },
 
-    setUnit: function (line, qty, text) {
+    setUnit: function (line, qty, text, doNotSave) {
 
       if (OB.DEC.isNumber(qty)) {
         var oldqty = line.get('qty');
@@ -644,10 +646,12 @@
             });
           }
         } else {
-          this.deleteLine(line);
+          this.deleteLine(line, doNotSave);
         }
         this.adjustPayment();
-        this.save();
+        if (!doNotSave) {
+          this.save();
+        }
       }
     },
 
@@ -687,7 +691,7 @@
       this.get('lines').at(index).set(property, value);
     },
 
-    deleteLine: function (line) {
+    deleteLine: function (line, doNotSave) {
       var me = this;
       var index = this.get('lines').indexOf(line);
       var pack = line.isAffectedByPack();
@@ -721,8 +725,10 @@
         }
       });
       this.adjustPayment();
-      this.save();
-      this.calculateGross();
+      if (!doNotSave) {
+        this.save();
+        this.calculateGross();
+      }
     },
 
     _addProduct: function (p, qty, options) {
@@ -828,7 +834,7 @@
      * the rest is moved to another line with the same product and no packs, or
      * to a new one if there's no other line.
      */
-    splitLine: function (line, qtyToKeep) {
+    splitLine: function (line, qtyToKeep, doNotSave) {
       var originalQty = line.get('qty'),
           newLine, p, qtyToMove;
 
@@ -838,7 +844,7 @@
 
       qtyToMove = originalQty - qtyToKeep;
 
-      this.setUnit(line, qtyToKeep);
+      this.setUnit(line, qtyToKeep, null, doNotSave);
 
       p = line.get('product');
 
@@ -853,9 +859,9 @@
           addedBySplit: true
         });
         this.get('lines').add(newLine);
-        this.setUnit(newLine, qtyToMove);
+        this.setUnit(newLine, qtyToMove, null, doNotSave);
       } else {
-        this.setUnit(newLine, newLine.get('qty') + qtyToMove);
+        this.setUnit(newLine, newLine.get('qty') + qtyToMove, null, doNotSave);
       }
     },
 
@@ -889,7 +895,7 @@
       }
     },
 
-    addPromotion: function (line, rule, discount) {
+    addPromotion: function (line, rule, discount, doNotSave) {
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false;
@@ -944,7 +950,9 @@
 
       line.set('promotions', promotions);
       line.trigger('change');
-      this.save();
+      if (!doNotSave) {
+        this.save();
+      }
     },
 
     removePromotion: function (line, rule) {
