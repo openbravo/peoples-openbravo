@@ -57,6 +57,10 @@ isc.OBTextItem.addProperties({
     if (!mask) {
       return null;
     }
+    //when ranges are already present, return the same
+    if (mask.indexOf('[') !== -1) {
+      return mask;
+    }
     split = mask.split('');
     for (i = 0; i < split.length; i++) {
       if (escaped) {
