@@ -834,7 +834,7 @@
      * the rest is moved to another line with the same product and no packs, or
      * to a new one if there's no other line.
      */
-    splitLine: function (line, qtyToKeep, doNotSave) {
+    splitLine: function (line, qtyToKeep) {
       var originalQty = line.get('qty'),
           newLine, p, qtyToMove;
 
@@ -844,7 +844,7 @@
 
       qtyToMove = originalQty - qtyToKeep;
 
-      this.setUnit(line, qtyToKeep, null, doNotSave);
+      this.setUnit(line, qtyToKeep, null, true);
 
       p = line.get('product');
 
@@ -859,9 +859,9 @@
           addedBySplit: true
         });
         this.get('lines').add(newLine);
-        this.setUnit(newLine, qtyToMove, null, doNotSave);
+        this.setUnit(newLine, qtyToMove, null, true);
       } else {
-        this.setUnit(newLine, newLine.get('qty') + qtyToMove, null, doNotSave);
+        this.setUnit(newLine, newLine.get('qty') + qtyToMove, null, true);
       }
     },
 
@@ -895,7 +895,7 @@
       }
     },
 
-    addPromotion: function (line, rule, discount, doNotSave) {
+    addPromotion: function (line, rule, discount) {
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false;
@@ -950,9 +950,6 @@
 
       line.set('promotions', promotions);
       line.trigger('change');
-      if (!doNotSave) {
-        this.save();
-      }
     },
 
     removePromotion: function (line, rule) {
