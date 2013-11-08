@@ -303,7 +303,7 @@
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
       OB.Dal.save(this, function () {}, function () {
-        window.console.error(arguments);
+        OB.error(arguments);
       });
       this.set('undo', undoCopy);
     },
@@ -780,7 +780,12 @@
             this.createLine(p, qty, options, attrs);
           }
         } else {
-          this.createLine(p, qty, options, attrs);
+          //remove line even it is a grouped line
+          if (options && options.line && qty === -1){
+            this.addUnit(options.line, qty);
+          } else {
+            this.createLine(p, qty, options, attrs);
+          }
         }
       }
       this.save();
@@ -1670,12 +1675,12 @@
       this.loadCurrent(true);
       // OB.Dal.save is done here because we want to force to save with the original od, only this time.
       OB.Dal.save(model, function () {}, function () {
-        window.console.error(arguments);
+        OB.error(arguments);
       }, model.get('isLayaway'));
     },
     addMultiReceipt: function (model) {
       OB.Dal.save(model, function () {}, function () {
-        window.console.error(arguments);
+        OB.error(arguments);
       }, model.get('isLayaway'));
     },
 

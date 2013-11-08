@@ -99,6 +99,11 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         origAmount: OB.DEC.mul(p.amount, p.rate),
         isocode: p.isocode
       });
+
+      if (p.iscash || p.allowopendrawer) {
+        OB.POS.hwserver.openDrawer();
+      }
+
       tmp.trigger('change');
     }, this);
 

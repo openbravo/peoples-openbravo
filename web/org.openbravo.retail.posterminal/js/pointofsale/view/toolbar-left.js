@@ -312,7 +312,9 @@ enyo.kind({
     this.menuEntries.push({
       kind: 'OB.UI.MenuQuotations'
     });
-
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuOpenDrawer'
+    });
     // TODO: what is this for?!!
     // this.menuEntries = this.menuEntries.concat(this.externalEntries);
     this.menuEntries.push({

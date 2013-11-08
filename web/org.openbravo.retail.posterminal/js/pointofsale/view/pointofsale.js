@@ -885,7 +885,7 @@ enyo.kind({
               //OB.POS.terminal.$.focusKeeper.focus();
             } else {
               //developers helps
-              //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
+              //OB.info("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
               restorePreviousState(this.model.get('subWindowManager'), changedModel);
             }
           }
@@ -894,7 +894,7 @@ enyo.kind({
         }
       } else {
         //developers helps
-        //console.log("The subwindow to navigate doesn't exists -> restore previous state");
+        //OB.info("The subwindow to navigate doesn't exists -> restore previous state");
         restorePreviousState(this.model.get('subWindowManager'), changedModel);
       }
     }, this);

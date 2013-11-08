@@ -12,7 +12,7 @@
 module('Offline');
 
 function errorCallback() {
-  console.error(arguments);
+  OB.error(arguments);
 }
 
 var clientId = '23C59575B9CF467C9620760EB255B389';
@@ -30,7 +30,7 @@ asyncTest('Load and cache products - WebSQL', function () {
 
   function findAll() {
     OB.Dal.find(OB.Model.Product, null, found, function () {
-      window.console.error(arguments);
+      OB.error(arguments);
     });
   }
 

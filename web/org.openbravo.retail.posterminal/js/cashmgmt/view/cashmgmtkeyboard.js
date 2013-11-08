@@ -16,7 +16,7 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
-  getPayment: function (id, key, name, identifier, type, rate, isocode) {
+  getPayment: function (id, key, iscash, allowopendrawer, name, identifier, type, rate, isocode) {
     var me = this;
     return {
       permission: key,
@@ -29,7 +29,9 @@ enyo.kind({
           destinationKey: key,
           type: type,
           rate: rate,
-          isocode: isocode
+          isocode: isocode,
+          iscash: iscash,
+          allowopendrawer: allowopendrawer
         };
 
         if (type === 'drop') {
@@ -45,18 +47,18 @@ enyo.kind({
     };
   },
 
-  init: function () {
+  init: function (model) {
     var buttons = [];
     this.inherited(arguments);
     _.bind(this.getPayment, this);
 
 
-    this.owner.owner.owner.model.getData('DataCashMgmtPaymentMethod').each(function (paymentMethod) {
+    model.getData('DataCashMgmtPaymentMethod').each(function (paymentMethod) {
       var payment = paymentMethod.get('payment');
       if (paymentMethod.get('allowdeposits')) {
         buttons.push({
           command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblDeposit'),
-          definition: this.getPayment(payment.id, payment.searchKey, payment._identifier, payment._identifier, 'deposit', paymentMethod.get('rate'), paymentMethod.get('isocode')),
+          definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.get('iscash'), paymentMethod.get('allowopendrawer'), payment._identifier, payment._identifier, 'deposit', paymentMethod.get('rate'), paymentMethod.get('isocode')),
           label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblDeposit')
         });
       }
@@ -64,7 +66,7 @@ enyo.kind({
       if (paymentMethod.get('allowdrops')) {
         buttons.push({
           command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblWithdrawal'),
-          definition: this.getPayment(payment.id, payment.searchKey, payment._identifier, payment._identifier, 'drop', paymentMethod.get('rate'), paymentMethod.get('isocode')),
+          definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.get('iscash'), paymentMethod.get('allowopendrawer'), payment._identifier, payment._identifier, 'drop', paymentMethod.get('rate'), paymentMethod.get('isocode')),
           label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblWithdrawal')
         });
       }

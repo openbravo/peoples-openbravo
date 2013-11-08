@@ -98,7 +98,7 @@ enyo.kind({
     this.inherited(arguments);
   },
   totalChanged: function (oldValue) {
-    // console.log('totalC');
+    // OB.info('totalC');
     this.setContent(OB.I18N.formatCurrency(this.total));
     if (OB.DEC.compare(this.total) < 0) {
       this.applyStyle('color', 'red');

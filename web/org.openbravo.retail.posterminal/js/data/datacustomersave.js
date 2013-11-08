@@ -47,7 +47,7 @@
         bpLocToSave.set('cityName', me.customer.get('cityName'));
         bpLocToSave.set('_identifier', me.customer.get('locName'));
         OB.Dal.save(bpLocToSave, function () {}, function () {
-          window.console.error(arguments);
+          OB.error(arguments);
         }, isNew);
 
         if (isNew) {

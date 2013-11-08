@@ -331,7 +331,7 @@ enyo.kind({
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
     this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setShowing(this.model.showCashToKeep());
     this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setShowing(this.model.showPostPrintClose());
-    if (this.model.showPaymentMethodList()) {
+    if (this.model.isPaymentMethodListVisible()) {
       this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarcountcash');
     } else {
       if (this.model.get('paymentList').at(this.model.get('stepOfStep3')).get('paymentMethod').allowvariableamount) {
