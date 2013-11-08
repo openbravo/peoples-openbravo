@@ -227,7 +227,10 @@ enyo.kind({
     onClearAction: 'clearAction'
   },
   events: {
-    onChangePaidReceipt: ''
+    onChangePaidReceipt: '',
+    onShowPopup: '',
+    onAddProduct: '',
+    onHideThisPopup: ''
   },
   components: [{
     classes: 'span12',
@@ -291,10 +294,18 @@ enyo.kind({
             }
             me.model.get('leftColumnViewManager').setOrderMode();
           }
-          me.model.get('orderList').newPaidReceipt(data[0], function (order) {
-            me.doChangePaidReceipt({
-              newPaidReceipt: order
-            });
+          OB.MobileApp.model.hookManager.executeHooks('OBRETUR_ReturnFromOrig', {
+            order: data[0],
+            context: me,
+            params: me.parent.parent.params
+          }, function (args) {
+            if (!args.cancelOperation) {
+              me.model.get('orderList').newPaidReceipt(data[0], function (order) {
+                me.doChangePaidReceipt({
+                  newPaidReceipt: order
+                });
+              });
+            }
           });
         } else {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
@@ -329,6 +340,7 @@ enyo.kind({
     return true;
   },
   executeOnShow: function () {
+    this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.clearAction();
     if (this.params.isQuotation) {
       this.$.header.setContent(OB.I18N.getLabel('OBPOS_Quotations'));
     } else if (this.params.isLayaway) {

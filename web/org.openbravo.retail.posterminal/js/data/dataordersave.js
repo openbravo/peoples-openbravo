@@ -34,7 +34,6 @@
         //The receipt has already been sent, it should not be sent again
         return;
       }
-
       this.receipt.set('hasbeenpaid', 'Y');
 
       OB.UTIL.updateDocumentSequenceInDB(docno);

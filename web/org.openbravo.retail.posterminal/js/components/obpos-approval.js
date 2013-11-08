@@ -101,7 +101,7 @@ enyo.kind({
   },
 
   initComponents: function () {
-    var msg;
+    var msg = '';
     this.inherited(arguments);
     this.$.bodyContent.$.username.attributes.placeholder = OB.I18N.getLabel('OBMOBC_LoginUserInput');
     this.$.bodyContent.$.password.attributes.placeholder = OB.I18N.getLabel('OBMOBC_LoginPasswordInput');
@@ -168,7 +168,7 @@ enyo.kind({
     params.appName = OB.MobileApp.model.get('appName');
 
     params.command = 'userImages';
-    params.approvalType = this.approvalType;
+    params.approvalType = JSON.stringify(this.approvalType);
     new OB.OBPOSLogin.UI.LoginRequest({
       url: OB.MobileApp.model.get('loginUtilsUrl')
     }).response(this, 'setUserImages').go(params);
