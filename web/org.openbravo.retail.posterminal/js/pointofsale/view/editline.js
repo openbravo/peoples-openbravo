@@ -228,6 +228,35 @@ enyo.kind({
           }
         }, {
           kind: 'OB.UI.SmallButton',
+          name: 'returnLine',
+          i18nContent: 'OBPOS_LblReturnLine',
+          permission: 'OBPOS_ReturnLine',
+          classes: 'btnlink-orange',
+          showing: false,
+          tap: function () {
+            this.owner.doReturnLine({
+              line: this.owner.line
+            });
+          },
+          init: function (model) {
+            this.model = model;
+            if (OB.POS.modelterminal.get('permissions')[this.permission]) {
+              this.setShowing(true);
+            }
+            this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
+              if (newValue) {
+                if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
+                  this.setShowing(false);
+                  return;
+                }
+              }
+              if (OB.POS.modelterminal.get('permissions')[this.permission]) {
+                this.setShowing(true);
+              }
+            }, this);
+          }
+        }, {
+          kind: 'OB.UI.SmallButton',
           name: 'removeDiscountButton',
           i18nContent: 'OBPOS_LblRemoveDiscount',
           showing: false,
@@ -318,6 +347,11 @@ enyo.kind({
       }
     } else {
       this.$.removeDiscountButton.hide();
+    }
+    if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1) {
+      this.$.returnLine.hide();
+    } else if (OB.POS.modelterminal.get('permissions')[this.$.returnLine.permission]) {
+      this.$.returnLine.show();
     }
     this.render();
   },

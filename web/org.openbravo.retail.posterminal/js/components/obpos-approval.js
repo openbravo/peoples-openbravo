@@ -105,8 +105,12 @@ enyo.kind({
     this.inherited(arguments);
     this.$.bodyContent.$.username.attributes.placeholder = OB.I18N.getLabel('OBMOBC_LoginUserInput');
     this.$.bodyContent.$.password.attributes.placeholder = OB.I18N.getLabel('OBMOBC_LoginPasswordInput');
-
-    msg = OB.I18N.labels[this.approvalType] || OB.I18N.getLabel('OBPOS_ApprovalTextHeader');
+    if (!Array.isArray(this.approvalType)) {
+      this.approvalType = [this.approvalType];
+    }
+    _.each(this.approvalType, function (approval) {
+      msg = msg + ' ' + (OB.I18N.labels[approval] || OB.I18N.getLabel('OBPOS_ApprovalTextHeader'));
+    });
     this.$.bodyContent.$.explainApprovalTxt.setContent(msg);
 
     this.postRenderActions();
