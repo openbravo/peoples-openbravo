@@ -840,7 +840,6 @@ public class OrderLoader extends JSONProcessSimple {
       line.setAttributeSetValue(attributeSetInstance);
     }
     shipment.getMaterialMgmtShipmentInOutLineList().add(line);
-    OBDal.getInstance().save(line);
   }
 
   protected void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder)
