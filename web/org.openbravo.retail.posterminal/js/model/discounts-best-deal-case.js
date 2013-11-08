@@ -170,14 +170,18 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
   function finalize() {
     var lines = receipt.get('lines');
     if (bestDiscount) {
+      // Best Deal found, applying it to the cloned receipt...
       console.log('found best deal case', bestDiscount);
       _.forEach(promotionCandidates, function (candidate) {
         lines.remove(candidate.line);
       });
-
       lines.add(bestDiscount.lines);
-      //OB.POS.terminal.$.containerWindow.children[0].model.get('order').get('lines').add(lines, {silent:true});//({lines:lines});
-      receipt.calculateGross();
+
+      // ...and reseting original receipt's lines with best case ones
+      originalReceipt.get('lines').reset();
+      originalReceipt.get('lines').add(lines.models);
+      originalReceipt.calculateGross();
+      originalReceipt.save();
     }
 
     OB.Model.Discounts.calculatingBestDealCase = false;
@@ -270,3 +274,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
   receipt = originalReceipt.clone();
   getCandidatesForProducts();
 }
+
+
+//OB.Model.Discounts.calculateBestDealCase(OB.POS.terminal.$.containerWindow.children[0].model.get('order'))
