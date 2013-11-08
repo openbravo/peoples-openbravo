@@ -407,6 +407,7 @@ isc.OBTreeItemPopupWindow.addProperties({
       //      height: this.treeGridProperties.height,
       width: '100%',
       height: '100%',
+      bodyStyleName: 'OBGridBody',
       showFilterEditor: true,
       alternateRecordStyles: true,
       dataSource: this.dataSource,
@@ -531,11 +532,6 @@ isc.OBTreeItemPopupWindow.addProperties({
         return this.Super("setDataSource", [ds, fields]);
       },
 
-      setCriteria: function () {
-        //setCriteria!
-        return this.Super("setCriteria", arguments);
-      },
-
       // Todo: duplicated code
       getCellCSSText: function (record, rowNum, colNum) {
         if (record.notFilterHit) {
@@ -594,15 +590,19 @@ isc.OBTreeItemPopupWindow.addProperties({
       }
     });
 
-    this.items = [this.treeGrid, isc.HLayout.create({
-      styleName: this.buttonBarStyleName,
-      height: this.buttonBarHeight,
-      defaultLayoutAlign: 'center',
-      members: [isc.LayoutSpacer.create({}), okButton, isc.LayoutSpacer.create({
-        width: this.buttonBarSpace
-      }), cancelButton, isc.LayoutSpacer.create({})]
+    this.items = [isc.VLayout.create({
+      height: this.height,
+      width: this.width,
+      members: [this.treeGrid, isc.HLayout.create({
+        styleName: this.buttonBarStyleName,
+        height: 40,
+        defaultLayoutAlign: 'center',
+        members: [isc.LayoutSpacer.create({}), okButton, isc.LayoutSpacer.create({
+          width: 20
+        }), cancelButton, isc.LayoutSpacer.create({})]
+      })]
     })];
-    this.Super('initWidget', arguments);
+    this.Super('initWidget', arguments);    
   },
 
   closeClick: function () {
@@ -641,6 +641,13 @@ isc.OBTreeItemPopupWindow.addProperties({
     this.treeGrid.checkShowFilterFunnelIcon(this.treeGrid.getCriteria());
 
     return ret;
+  },
+
+  resized: function () {
+    this.items[0].setWidth(this.width - 4);
+    this.items[0].setHeight(this.height - 40);
+    this.items[0].redraw();
+    return this.Super('resized', arguments);
   },
 
 

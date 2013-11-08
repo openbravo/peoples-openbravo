@@ -56,6 +56,11 @@ public class FKTreeUIDefinition extends ForeignKeyUIDefinition {
   }
 
   @Override
+  public String getFilterEditorType() {
+    return "OBTreeFilterItem";
+  }
+
+  @Override
   // get the current value for a selector item from the database
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     try {
