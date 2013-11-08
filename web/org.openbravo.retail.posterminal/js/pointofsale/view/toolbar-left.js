@@ -223,6 +223,7 @@ enyo.kind({
   },
 
   tap: function () {
+    var me = this;
     if (this.disabled === false) {
       this.model.on('approvalChecked', function (event) {
         this.model.off('approvalChecked');
@@ -230,7 +231,13 @@ enyo.kind({
           this.showPaymentTab();
         }
       }, this);
-      this.model.checkPaymentApproval();
+      if (OB.POS.modelterminal.get('bestDealCase')) {
+        OB.Model.Discounts.calculateBestDealCase(this.model.get('order'), function () {
+          me.model.checkPaymentApproval()
+        });
+      } else {
+        this.model.checkPaymentApproval();
+      }
     }
   },
 

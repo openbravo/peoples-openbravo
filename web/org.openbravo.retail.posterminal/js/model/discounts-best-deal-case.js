@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
+OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) {
   var promotionCandidates = [],
       evaluated = [],
       cases = 0,
@@ -200,6 +200,9 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
 
     console.timeEnd('calculateBestDealCase');
     OB.UTIL.showLoading(false);
+    if (callback) {
+      callback();
+    }
     console.profileEnd();
   }
 
