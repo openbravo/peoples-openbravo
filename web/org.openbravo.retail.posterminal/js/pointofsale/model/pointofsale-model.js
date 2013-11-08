@@ -458,7 +458,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
     }, this);
     receipt.on('openDrawer', function () {
-      receipt.trigger('popenDrawer');
+      OB.POS.hwserver.openDrawer();
     }, this);
 
     this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(this);

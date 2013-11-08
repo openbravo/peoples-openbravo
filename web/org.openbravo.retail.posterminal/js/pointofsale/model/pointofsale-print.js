@@ -20,13 +20,12 @@
       this.receipt.on('print', function (order, forcePrint) {
         this.print(null, forcePrint);
       }, this);
-      this.receipt.on('popenDrawer', this.openDrawer, this);
+
       this.receipt.on('displayTotal', this.displayTotal, this);
       this.multiOrders.on('displayTotal', function () {
         this.displayTotalMultiorders();
       }, this);
 
-      this.templateopendrawer = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.OpenDrawer);
       this.templatereceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplate);
       this.templateclosedreceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptClosedTemplate);
       this.templateinvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice);
@@ -104,16 +103,6 @@
 
   };
 
-  PrintReceipt.prototype.openDrawer = function () {
-    // Clone the receipt
-    var receipt = new OB.Model.Order();
-    receipt.clearWith(this.receipt);
-    this.template = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.OpenDrawerTemplate);
-    OB.POS.hwserver.print(this.template, {
-      order: receipt
-    });
-  };
-
   PrintReceipt.prototype.displayTotal = function () {
     // Clone the receipt
     var receipt = new OB.Model.Order();
@@ -175,7 +164,6 @@
   OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice = 'res/printreturninvoice.xml';
   OB.OBPOSPointOfSale.Print.ReceiptLine = PrintReceiptLine;
   OB.OBPOSPointOfSale.Print.ReceiptLineTemplate = 'res/printline.xml';
-  OB.OBPOSPointOfSale.Print.OpenDrawerTemplate = 'res/opendrawer.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway = 'res/printlayaway.xml';
   OB.OBPOSPointOfSale.Print.DisplayTotal = 'res/displaytotal.xml';
   OB.OBPOSPointOfSale.Print.CashUpTemplate = 'res/printcashup.xml';

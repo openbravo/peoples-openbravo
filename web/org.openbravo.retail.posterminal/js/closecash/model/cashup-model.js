@@ -141,6 +141,21 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     return this.get('step') === 1;
   },
   showPaymentMethodList: function () {
+    var openDrawerPayment;
+    if (this.get('step') === 2){
+      openDrawerPayment = _.find(this.get('paymentList').models, function (payment) {
+        if (payment && payment.get('paymentMethod') && (payment.get('paymentMethod').iscash || payment.get('paymentMethod').allowopendrawer)){
+          return true;
+        }
+      }, this);
+      if (!OB.UTIL.isNullOrUndefined(openDrawerPayment)){
+        OB.POS.hwserver.openDrawer();
+      }
+      return true;
+    }
+    return false;
+  },
+  isPaymentMethodListVisible: function () {
     return this.get('step') === 2;
   },
   showCashToKeep: function () {

@@ -271,6 +271,20 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuOpenDrawer',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.opendrawerfrommenu',
+  i18nLabel: 'OBPOS_LblOpenDrawer',
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    OB.POS.hwserver.openDrawer();
+    this.inherited(arguments);
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.MenuCustomers',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.customers',
