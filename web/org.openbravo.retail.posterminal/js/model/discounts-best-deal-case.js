@@ -11,7 +11,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
   var promotionCandidates = [],
       evaluated = [],
       cases = 0,
-      originalDeal, bestDiscount, receipt;
+      originalDeal, bestDiscount, receipt, originalWindowError;
 
   function getCandidatesForProducts() {
     var criteria, de = new OB.Model.DiscountsExecutor(),
@@ -189,9 +189,15 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
       console.log('Already in Best Deal, no change required');
     }
 
-    OB.Model.Discounts.calculatingBestDealCase = false;
+    console.log('Evaluated', evaluated.length, 'of', cases, 'cases--------------------------------------');
 
-    console.log('Evaluated', evaluated.length, 'of', cases, 'cases--------------------------------------')
+    endProcess();
+  }
+
+  function endProcess() {
+    OB.Model.Discounts.calculatingBestDealCase = false;
+    window.onerror = originalWindowError;
+
     console.timeEnd('calculateBestDealCase');
     OB.UTIL.showLoading(false);
     console.profileEnd();
@@ -277,6 +283,19 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
   console.profile('calculateBestDealCase');
   console.time('calculateBestDealCase');
   OB.UTIL.showLoading(true);
+
+  // we want this process to be "secure", in case of any unexpected exception
+  // we need to at least reset OB.Model.Discounts.calculatingBestDealCase; if
+  // not, adding lines would result in not computing discounts nor gross
+  originalWindowError = window.onerror;
+  window.onerror = function () {
+    if (originalWindowError) {
+      originalWindowError(arguments);
+    }
+    window.console.error('error calculating best deal case', arguments);
+    endProcess();
+  }
+
   OB.Model.Discounts.calculatingBestDealCase = true;
   receipt = originalReceipt.clone();
 
@@ -288,7 +307,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
       });
     }
   });
-
 
   getCandidatesForProducts();
 }
