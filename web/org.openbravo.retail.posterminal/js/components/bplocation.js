@@ -81,8 +81,8 @@ enyo.kind({
     var me = this;
 
     function errorCallback(tx, error) {
-      window.console.error(tx);
-      window.console.error(error);
+      OB.error(tx);
+      OB.error(error);
     }
 
     function successCallbackBPs(dataBps) {
@@ -326,8 +326,8 @@ enyo.kind({
       var me = this;
 
       function errorCallback(tx, error) {
-        window.console.error(tx);
-        window.console.error(error);
+        OB.error(tx);
+        OB.error(error);
       }
 
       function successCallbackBPs(dataBps) {

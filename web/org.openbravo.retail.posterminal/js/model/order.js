@@ -303,7 +303,7 @@
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
       OB.Dal.save(this, function () {}, function () {
-        window.console.error(arguments);
+        OB.error(arguments);
       });
       this.set('undo', undoCopy);
     },
@@ -1572,12 +1572,12 @@
       this.loadCurrent(true);
       // OB.Dal.save is done here because we want to force to save with the original od, only this time.
       OB.Dal.save(model, function () {}, function () {
-        window.console.error(arguments);
+        OB.error(arguments);
       }, model.get('isLayaway'));
     },
     addMultiReceipt: function (model) {
       OB.Dal.save(model, function () {}, function () {
-        window.console.error(arguments);
+        OB.error(arguments);
       }, model.get('isLayaway'));
     },
 

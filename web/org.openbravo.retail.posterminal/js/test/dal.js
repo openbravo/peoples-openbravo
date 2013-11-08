@@ -12,7 +12,7 @@
 module('Dal');
 
 function errorCallback() {
-  console.error(arguments);
+  OB.error(arguments);
 }
 
 
@@ -64,7 +64,7 @@ asyncTest('Query - Get all', function () {
   function success(collection) {
     ok(collection, 'Collection is present');
     ok(collection && collection.length > 0, 'Total rows: ' + collection.length);
-    console.log(arguments);
+    OB.info(arguments);
     start();
   }
 
@@ -77,7 +77,7 @@ asyncTest('Query - Get one', function () {
   function success(model) {
     ok(model, 'Model is present');
     ok(model && model.get, 'Model name: ' + model.get('name'));
-    console.log(model);
+    OB.info(model);
     start();
   }
 
@@ -90,7 +90,7 @@ asyncTest('Query - find one', function () {
   function success(collection) {
     ok(collection, 'Collection is present');
     ok(collection.length > 0, 'Collection at 0: ' + collection.at(0).get('name'));
-    console.log(arguments);
+    OB.info(arguments);
     start();
   }
 
@@ -106,7 +106,7 @@ asyncTest('Query - find one using contains', function () {
   function success(collection) {
     ok(collection, 'Collection is present');
     ok(collection.length > 0, 'Collection at 0: ' + collection.at(0).get('name'));
-    console.log(arguments);
+    OB.info(arguments);
     start();
   }
 
@@ -123,7 +123,7 @@ asyncTest('Query - save - update', function () {
   expect(1);
 
   function saveSuccess() {
-    console.log(arguments);
+    OB.info(arguments);
     start();
   }
 
@@ -148,7 +148,7 @@ asyncTest('Query - save - insert', function () {
     ok(coll, 'Collection is present');
     ok(coll.length > 0, 'Record found');
     ok(coll.at(0).get('rate') === randomRate, 'Random rate: ' + randomRate);
-    console.log(coll);
+    OB.info(coll);
     start();
   }
 

@@ -132,7 +132,7 @@ enyo.kind({
         }
         me.renderUserButtons(name, userName, image, connected);
       }, function () {
-        window.console.error(arguments);
+        OB.error(arguments);
       });
       return true;
     }

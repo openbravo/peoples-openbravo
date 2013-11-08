@@ -19,7 +19,7 @@
     if (typeof (e) === 'string') {
       errorInfo = e + '. Line number: ' + line + '. File uuid: ' + url + '.';
       OB.UTIL.showError(errorInfo);
-      console.error(errorInfo);
+      OB.error(errorInfo);
     }
   };
 

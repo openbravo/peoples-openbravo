@@ -174,7 +174,7 @@ enyo.kind({
                 businessPartner: me.customer
               });
             }, function error(tx) {
-              window.console.error(tx);
+              OB.error(tx);
             });
           }
         }

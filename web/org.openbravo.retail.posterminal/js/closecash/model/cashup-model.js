@@ -337,7 +337,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
         }
         me.set("finishedWrongly", true);
       } else {
-        // console.log("cash up processed correctly. -> show modal");
+        // OB.info("cash up processed correctly. -> show modal");
         OB.UTIL.showLoading(false);
         me.set('messages', data.messages);
         me.set('next', data.next);
