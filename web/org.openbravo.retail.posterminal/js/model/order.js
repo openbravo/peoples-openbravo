@@ -130,7 +130,7 @@
       var promotions = this.get('promotions'),
           i;
       if (promotions) {
-        if (OB.POS.modelterminal.get('bestDealCase') && promotions.length > 0) {
+        if (OB.POS.modelterminal.get('terminal').bestDealCase && promotions.length > 0) {
           // best deal case can only apply one promotion per line
           return true;
         }

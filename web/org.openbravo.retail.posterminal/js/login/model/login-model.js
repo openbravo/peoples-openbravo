@@ -39,8 +39,7 @@
           name: 'WEBPOS',
           displayName: 'Openbravo Web POS',
           version: '0.7'
-        },
-        bestDealCase: true
+        }
       });
 
       this.addPropertiesLoader({

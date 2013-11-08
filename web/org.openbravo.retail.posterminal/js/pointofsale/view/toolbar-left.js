@@ -231,7 +231,7 @@ enyo.kind({
           this.showPaymentTab();
         }
       }, this);
-      if (OB.POS.modelterminal.get('bestDealCase')) {
+      if (OB.POS.modelterminal.get('terminal').bestDealCase) {
         OB.Model.Discounts.calculateBestDealCase(this.model.get('order'), function () {
           me.model.checkPaymentApproval()
         });
