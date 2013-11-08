@@ -778,7 +778,6 @@ isc.DateItem.changeDefaults('textFieldDefaults', {
 // if not overridden then also errors handled by OB are shown in a popup
 // see https://issues.openbravo.com/view.php?id=17136
 isc.RPCManager.addClassProperties({
-  _handleError: isc.RPCManager.getPrototype().handleError,
   handleError: function (response, request) {
     if (!request.willHandleError) {
       isc.RPCManager.handleError(response, request);

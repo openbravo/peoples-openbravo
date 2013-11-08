@@ -88,6 +88,8 @@ isc.OBTreeGrid.addProperties({
     var me = this;
     ds.transformRequest = function (dsRequest) {
       dsRequest.params = dsRequest.params || {};
+      dsRequest.params._startRow = 0;
+      dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit;
       dsRequest.params.referencedTableId = me.referencedTableId;
       me.parentTabRecordId = me.getParentTabRecordId();
       dsRequest.params.parentRecordId = me.parentTabRecordId;
@@ -112,7 +114,16 @@ isc.OBTreeGrid.addProperties({
       if (jsonData.response.message) {
         me.view.messageBar.setMessage(jsonData.response.message.messageType, null, jsonData.response.message.message);
       }
+      if (jsonData.response.error) {
+        dsResponse.error = jsonData.response.error;
+      }
       return this.Super('transformResponse', arguments);
+    };
+
+    ds.handleError = function (response, request) {
+      if (response && response.error && response.error.type === 'tooManyNodes') {
+        me.view.messageBar.setMessage('error', null, OB.I18N.getLabel('OBUIAPP_TooManyNodes'));
+      }
     };
 
     fields = this.getTreeGridFields(me.fields);

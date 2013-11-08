@@ -114,7 +114,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   @Override
   protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId,
-      String hqlWhereClause) throws JSONException {
+      String hqlWhereClause) throws JSONException, TooManyTreeNodesException {
 
     String referencedTableId = parameters.get("referencedTableId");
     String parentRecordId = parameters.get("parentRecordId");

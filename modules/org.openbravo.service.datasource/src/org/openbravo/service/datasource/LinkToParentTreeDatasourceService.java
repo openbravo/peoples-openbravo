@@ -16,8 +16,10 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
@@ -132,7 +134,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
   @Override
   protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId,
-      String hqlWhereClause) throws JSONException {
+      String hqlWhereClause) throws JSONException, TooManyTreeNodesException {
 
     boolean fetchRoot = ROOT_NODE.equals(parentId);
     String tabId = parameters.get("tabId");
@@ -187,6 +189,18 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     JSONArray responseData = new JSONArray();
 
     int nResults = query.count();
+    OBContext context = OBContext.getOBContext();
+    int nMaxResults = -1;
+    try {
+      nMaxResults = Integer.parseInt(Preferences.getPreferenceValue("TreeDatasourceFetchLimit",
+          false, context.getCurrentClient(), context.getCurrentOrganization(), context.getUser(),
+          context.getRole(), null));
+    } catch (Exception e) {
+      nMaxResults = 1000;
+    }
+    if (nResults > nMaxResults) {
+      throw new TooManyTreeNodesException();
+    }
     int count = 0;
     final ScrollableResults scrollableResults = query.scroll(ScrollMode.FORWARD_ONLY);
     while (scrollableResults.next()) {

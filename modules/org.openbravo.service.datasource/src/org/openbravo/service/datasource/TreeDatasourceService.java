@@ -21,6 +21,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.ui.Tab;
@@ -124,13 +125,19 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         selectedNodes = new JSONArray(parameters.get("selectedRecords"));
       }
 
+      boolean tooManyNodes = false;
+
       if (parameters.containsKey("criteria") && parentId.equals(ROOT_NODE)) {
-        List<String> filteredNodes = getFilteredNodes(table, parameters);
-        if (!filteredNodes.isEmpty()) {
-          // Fetch only the filtered nodes and its parents (filtered tree)
-          responseData = fetchFilteredNodes(parameters, filteredNodes);
-        } else {
-          responseData = new JSONArray();
+        try {
+          List<String> filteredNodes = getFilteredNodes(table, parameters);
+          if (!filteredNodes.isEmpty()) {
+            // Fetch only the filtered nodes and its parents (filtered tree)
+            responseData = fetchFilteredNodes(parameters, filteredNodes);
+          } else {
+            responseData = new JSONArray();
+          }
+        } catch (TooManyTreeNodesException e) {
+          tooManyNodes = true;
         }
       } else if (selectedNodes != null && selectedNodes.length() > 0) {
         // Fetch only the selected nodes and its parents (full tree)
@@ -140,15 +147,30 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           // If a node has multiple parents, we can't select them
           log.warn("Node found with multiple parents. It can't be selected, displaying root nodes closed");
           responseData = fetchNodeChildren(parameters, parentId, hqlTreeWhereClause);
+        } catch (TooManyTreeNodesException e) {
+          tooManyNodes = true;
         }
       } else {
         // Fetch the node children of a given parent
-        responseData = fetchNodeChildren(parameters, parentId, hqlTreeWhereClause);
+        try {
+          responseData = fetchNodeChildren(parameters, parentId, hqlTreeWhereClause);
+        } catch (TooManyTreeNodesException e) {
+          tooManyNodes = true;
+        }
       }
 
       final JSONObject jsonResponse = new JSONObject();
+      if (tooManyNodes) {
+        responseData = new JSONArray();
+        jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+        final JSONObject error = new JSONObject();
+        error.put("type", "tooManyNodes");
+        jsonResponse.put(JsonConstants.RESPONSE_ERROR, error);
+        jsonResponse.put(JsonConstants.RESPONSE_ERRORS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+      } else {
+        jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+      }
       jsonResponse.put(JsonConstants.RESPONSE_DATA, responseData);
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, responseData.length());
       jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
       jsonResponse.put(JsonConstants.RESPONSE_ENDROW, responseData.length() - 1);
@@ -162,7 +184,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return jsonResult.toString();
   }
 
-  private List<String> getFilteredNodes(Table table, Map<String, String> parameters) {
+  private List<String> getFilteredNodes(Table table, Map<String, String> parameters)
+      throws TooManyTreeNodesException {
     List<String> filteredNodes = new ArrayList<String>();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
@@ -172,6 +195,20 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       JSONObject jsonResponse = jsonDsResult.getJSONObject(JsonConstants.RESPONSE_RESPONSE);
       JSONArray dataArray = jsonResponse.getJSONArray(JsonConstants.RESPONSE_DATA);
       int nRecords = dataArray.length();
+
+      OBContext context = OBContext.getOBContext();
+      int nMaxResults = -1;
+      try {
+        nMaxResults = Integer.parseInt(Preferences.getPreferenceValue("TreeDatasourceFetchLimit",
+            false, context.getCurrentClient(), context.getCurrentOrganization(), context.getUser(),
+            context.getRole(), null));
+      } catch (Exception e) {
+        nMaxResults = 1000;
+      }
+      if (nRecords >= nMaxResults) {
+        throw new TooManyTreeNodesException();
+      }
+
       for (int i = 0; i < nRecords; i++) {
         JSONObject data = dataArray.getJSONObject(i);
         String ref = data.getString("$ref");
@@ -259,7 +296,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   }
 
   private JSONArray fetchSelectedNodes(Map<String, String> parameters, JSONArray selectedNodes)
-      throws MultipleParentsException {
+      throws MultipleParentsException, TooManyTreeNodesException {
     JSONArray responseData = new JSONArray();
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
@@ -349,7 +386,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   protected abstract boolean nodeConformsToWhereClause(Table table, TableTree tableTree,
       String nodeId, String hqlWhereClause);
 
-  protected JSONArray fetchFirstLevelNodes(Map<String, String> parameters) throws JSONException {
+  protected JSONArray fetchFirstLevelNodes(Map<String, String> parameters) throws JSONException,
+      TooManyTreeNodesException {
     String tabId = parameters.get("tabId");
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
     String hqlTreeWhereClause = null;
@@ -382,7 +420,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       throws MultipleParentsException;
 
   protected abstract JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId,
-      String hqlWhereClause) throws JSONException;
+      String hqlWhereClause) throws JSONException, TooManyTreeNodesException;
 
   @Override
   public String update(Map<String, String> parameters, String content) {
@@ -485,6 +523,13 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       String newParentId, String prevNodeId, String nextNodeId) throws Exception;
 
   protected class MultipleParentsException extends Exception {
+    private static final long serialVersionUID = 1L;
 
   }
+
+  protected class TooManyTreeNodesException extends Exception {
+    private static final long serialVersionUID = 1L;
+
+  }
+
 }

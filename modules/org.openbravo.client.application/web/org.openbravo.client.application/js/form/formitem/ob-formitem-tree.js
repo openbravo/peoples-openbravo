@@ -270,8 +270,23 @@ isc.OBTreeItemTree.addProperties({
     ds.transformRequest = function (dsRequest) {
       var target = window[dsRequest.componentId];
       dsRequest.params = dsRequest.params || {};
+      dsRequest.params._startRow = 0;
+      dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit;
       dsRequest.params.treeReferenceId = target.treeItem.treeReferenceId;
       return this.Super('transformRequest', arguments);
+    };
+
+    ds.transformResponse = function (dsResponse, dsRequest, jsonData) {
+      if (jsonData.response.error) {
+        dsResponse.error = jsonData.response.error;
+      }
+      return this.Super('transformResponse', arguments);
+    };
+
+    ds.handleError = function (response, request) {
+      if (response && response.error && response.error.type === 'tooManyNodes') {
+        me.treeItem.form.view.messageBar.setMessage('error', null, OB.I18N.getLabel('OBUIAPP_TooManyNodes'));
+      }
     };
 
     fields = this.treeItem.pickListFields;
@@ -521,8 +536,23 @@ isc.OBTreeItemPopupWindow.addProperties({
         ds.transformRequest = function (dsRequest) {
           var target = window[dsRequest.componentId];
           dsRequest.params = dsRequest.params || {};
+          dsRequest.params._startRow = 0;
+          dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit;
           dsRequest.params.treeReferenceId = target.treeItem.treeReferenceId;
           return this.Super('transformRequest', arguments);
+        };
+
+        ds.transformResponse = function (dsResponse, dsRequest, jsonData) {
+          if (jsonData.response.error) {
+            dsResponse.error = jsonData.response.error;
+          }
+          return this.Super('transformResponse', arguments);
+        };
+
+        ds.handleError = function (response, request) {
+          if (response && response.error && response.error.type === 'tooManyNodes') {
+            isc.warn(OB.I18N.getLabel('OBUIAPP_TooManyNodes'));
+          }
         };
 
         fields = this.treePopup.treeGridFields;
@@ -602,7 +632,7 @@ isc.OBTreeItemPopupWindow.addProperties({
         }), cancelButton, isc.LayoutSpacer.create({})]
       })]
     })];
-    this.Super('initWidget', arguments);    
+    this.Super('initWidget', arguments);
   },
 
   closeClick: function () {
