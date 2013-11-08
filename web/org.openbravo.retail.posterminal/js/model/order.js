@@ -129,7 +129,11 @@
     stopApplyingPromotions: function () {
       var promotions = this.get('promotions'),
           i;
-      if (this.get('promotions')) {
+      if (promotions) {
+        if (OB.POS.modelterminal.get('bestDealCase') && promotions.length > 0) {
+          // best deal case can only apply one promotion per line
+          return true;
+        }
         for (i = 0; i < promotions.length; i++) {
           if (!promotions[i].applyNext) {
             return true;
@@ -309,7 +313,7 @@
       if (callback) {
         callback();
       }
-      if (!doNotSave){
+      if (!doNotSave) {
         this.save();
       }
     },
