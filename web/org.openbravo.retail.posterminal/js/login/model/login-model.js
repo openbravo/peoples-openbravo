@@ -27,6 +27,16 @@
         logoutUrlParams: {
           terminal: OB.UTIL.getParameterByName("terminal")
         },
+        logConfiguration: {
+          deviceIdentifier: OB.UTIL.getParameterByName("terminal"),
+          logPropertiesExtension: [
+
+          function () {
+            return {
+              online: OB.MobileApp.model.get('connectedToERP')
+            }
+          }]
+        },
         profileOptions: {
           showOrganization: false,
           showWarehouse: false,
