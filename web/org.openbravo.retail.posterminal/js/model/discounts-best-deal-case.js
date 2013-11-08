@@ -193,6 +193,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
 
     console.log('Evaluated', evaluated.length, 'of', cases, 'cases--------------------------------------')
     console.timeEnd('calculateBestDealCase');
+    OB.UTIL.showLoading(false);
     console.profileEnd();
   }
 
@@ -275,6 +276,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
 
   console.profile('calculateBestDealCase');
   console.time('calculateBestDealCase');
+  OB.UTIL.showLoading(true);
   OB.Model.Discounts.calculatingBestDealCase = true;
   receipt = originalReceipt.clone();
 
