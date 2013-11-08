@@ -168,7 +168,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/subwindows/customers/customersadvancedsearch",
         "pointofsale/view/subwindows/customers/editcreatecustomerform",
         "pointofsale/view/subwindows/customers/customerdetailview",
-        
+
         "pointofsale/view/subwindows/customeraddress/components/sharedcomponents",
         "pointofsale/view/subwindows/customeraddress/editcreatecustomeraddress",
         "pointofsale/view/subwindows/customeraddress/customeraddrsearch",
@@ -208,7 +208,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/mockpayments",
 
         // Discounts
-        "model/discounts",
+        "model/discounts", "model/discounts-best-deal-case"
 
     };
 
