@@ -11,7 +11,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
   var promotionCandidates = [],
       evaluated = [],
       cases = 0,
-      bestDiscount, receipt;
+      originalDeal, bestDiscount, receipt;
 
   function getCandidatesForProducts() {
     var criteria, de = new OB.Model.DiscountsExecutor(),
@@ -169,7 +169,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
 
   function finalize() {
     var lines = receipt.get('lines');
-    if (bestDiscount) {
+    if (bestDiscount && bestDiscount.totalDiscount > originalDeal) {
       // Best Deal found, applying it to the cloned receipt...
       console.log('found best deal case', bestDiscount);
       _.forEach(promotionCandidates, function (candidate) {
@@ -182,6 +182,8 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
       originalReceipt.get('lines').add(lines.models);
       originalReceipt.calculateGross();
       originalReceipt.save();
+    } else {
+      console.log('Already in Best Deal, no change required');
     }
 
     OB.Model.Discounts.calculatingBestDealCase = false;
@@ -272,6 +274,17 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt) {
   console.time('calculateBestDealCase');
   OB.Model.Discounts.calculatingBestDealCase = true;
   receipt = originalReceipt.clone();
+
+  originalDeal = 0;
+  receipt.get('lines').forEach(function (line) {
+    if (line.get('promotions')) {
+      _.forEach(line.get('promotions'), function (promo) {
+        originalDeal += promo.amt;
+      });
+    }
+  });
+
+
   getCandidatesForProducts();
 }
 
