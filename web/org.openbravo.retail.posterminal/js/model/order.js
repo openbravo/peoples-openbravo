@@ -767,7 +767,12 @@
             this.createLine(p, qty, options);
           }
         } else {
-          this.createLine(p, qty, options);
+          //remove line even it is a grouped line
+          if (options && options.line && qty === -1){
+            this.addUnit(options.line, qty);
+          } else {
+            this.createLine(p, qty, options);
+          }
         }
       }
       this.save();

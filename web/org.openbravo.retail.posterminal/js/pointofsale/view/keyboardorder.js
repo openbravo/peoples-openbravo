@@ -96,7 +96,7 @@ enyo.kind({
           return true;
         }
         if (keyboard.line) {
-          if (keyboard.line.get('product').get('groupProduct') === false) {
+          if ((_.isNaN(value) || value > 0) && keyboard.line.get('product').get('groupProduct') === false) {
             me.doShowPopup({
               popup: 'modalProductCannotBeGroup'
             });
@@ -104,7 +104,10 @@ enyo.kind({
           }
           me.doAddProduct({
             product: keyboard.line.get('product'),
-            qty: value
+            qty: value,
+            options: {
+              line: keyboard.line
+            }
           });
           keyboard.receipt.trigger('scan');
         }
