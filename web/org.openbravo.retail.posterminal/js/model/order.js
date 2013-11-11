@@ -1214,6 +1214,7 @@
       documentseqstr = OB.UTIL.padNumber(documentseq, 7);
       OB.POS.modelterminal.set('documentsequence', documentseq);
       this.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
+      this.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
       this.save();
       if (updatePrices) {
         this.updatePrices(function (order) {
