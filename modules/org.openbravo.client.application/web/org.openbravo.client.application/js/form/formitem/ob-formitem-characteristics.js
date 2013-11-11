@@ -51,6 +51,9 @@ isc.OBCharacteristicsItem.addProperties({
     //Remove all members the widget might have
     //this.canvas.removeMembers(this.canvas.getMembers());
     //
+    //clear existing values. Refer issue https://issues.openbravo.com/view.php?id=25113
+    this.canvas.clearValues();
+
     if (value.characteristics) {
       for (field in value.characteristics) {
         if (value.characteristics.hasOwnProperty(field)) {
