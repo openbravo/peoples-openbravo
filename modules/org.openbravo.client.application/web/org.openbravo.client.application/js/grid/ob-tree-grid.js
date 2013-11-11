@@ -98,11 +98,6 @@ isc.OBTreeGrid.addProperties({
         //Only send the index if the tree is ordered
         dsRequest = me.addOrderedTreeParameters(dsRequest);
       }
-      if (!me.view.isShowingTree) {
-        dsRequest.params.selectedRecords = me.getSelectedRecordsString();
-      } else {
-        delete dsRequest.params.selectedRecords;
-      }
       dsRequest.params._selectedProperties = me.getSelectedPropertiesString();
       // Includes the context, it could be used in the hqlwhereclause
       isc.addProperties(dsRequest.params, me.view.getContextInfo(true, false));
@@ -171,25 +166,6 @@ isc.OBTreeGrid.addProperties({
       }
     }
     return dsRequest;
-  },
-
-  // Returns a string that represents a jsonarray containing the ids of all the nodes selected in the view grid 
-  getSelectedRecordsString: function () {
-    var selectedRecordsString = '[',
-        first = true,
-        selectedRecords = this.view.viewGrid.getSelectedRecords(),
-        len = selectedRecords.length,
-        i;
-    for (i = 0; i < len; i++) {
-      if (first) {
-        first = false;
-        selectedRecordsString = selectedRecordsString + "'" + selectedRecords[i][OB.Constants.ID] + "'";
-      } else {
-        selectedRecordsString = selectedRecordsString + ',' + "'" + selectedRecords[i][OB.Constants.ID] + "'";
-      }
-    }
-    selectedRecordsString = selectedRecordsString + ']';
-    return selectedRecordsString;
   },
 
   // TODO: Remove?
@@ -278,16 +254,6 @@ isc.OBTreeGrid.addProperties({
 
   setView: function (view) {
     this.view = view;
-  },
-
-  // When a response is received from the datasource, it selects the nodes that were selected in the view grid
-  treeDataArrived: function () {
-    var i, selectedRecords, node;
-    selectedRecords = this.view.viewGrid.getSelectedRecords();
-    for (i = 0; i < selectedRecords.length; i++) {
-      node = this.getNodeByID(selectedRecords[i].id);
-      this.selectRecord(node);
-    }
   },
 
   // Opens the record in the edit form

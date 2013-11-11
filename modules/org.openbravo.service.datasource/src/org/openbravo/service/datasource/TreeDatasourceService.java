@@ -121,10 +121,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         // TODO hqlTreeWhereClauseRootNodes
       }
       JSONArray responseData = null;
-      JSONArray selectedNodes = null;
-      if (parameters.containsKey("selectedRecords")) {
-        selectedNodes = new JSONArray(parameters.get("selectedRecords"));
-      }
 
       boolean tooManyNodes = false;
 
@@ -137,18 +133,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           } else {
             responseData = new JSONArray();
           }
-        } catch (TooManyTreeNodesException e) {
-          tooManyNodes = true;
-        }
-      } else if (selectedNodes != null && selectedNodes.length() > 0) {
-        // Fetch only the selected nodes and its parents (full tree)
-        try {
-          responseData = fetchSelectedNodes(parameters, selectedNodes);
-        } catch (MultipleParentsException e) {
-          // If a node has multiple parents, we can't select them
-          log.warn("Node found with multiple parents. It can't be selected, displaying root nodes closed");
-          responseData = fetchNodeChildren(parameters, parentId, hqlTreeWhereClause,
-              hqlTreeWhereClauseRootNodes);
         } catch (TooManyTreeNodesException e) {
           tooManyNodes = true;
         }
@@ -299,109 +283,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return responseData;
   }
 
-  // TODO:Borrar
-  private JSONArray fetchSelectedNodes(Map<String, String> parameters, JSONArray selectedNodes)
-      throws MultipleParentsException, TooManyTreeNodesException {
-    JSONArray responseData = new JSONArray();
-    String tabId = parameters.get("tabId");
-    String treeReferenceId = parameters.get("treeReferenceId");
-    Tab tab = null;
-    Table table = null;
-    TableTree tableTree = null;
-    if (tabId != null) {
-      tab = OBDal.getInstance().get(Tab.class, tabId);
-      table = tab.getTable();
-      tableTree = tab.getTableTree();
-    } else if (treeReferenceId != null) {
-      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
-      table = treeReference.getTable();
-      tableTree = treeReference.getTableTreeCategory();
-    } else {
-      // TODO: Throw proper exception
-    }
-    try {
-      ArrayList<String> addedNodes = new ArrayList<String>();
-      ArrayList<String> parentsToExpand = new ArrayList<String>();
-      int maxLevel = -1;
-      for (int i = 0; i < selectedNodes.length(); i++) {
-        String nodeId = selectedNodes.getString(i);
-        JSONObject node = getJSONObjectByRecordId(parameters, nodeId);
-        if (!addedNodes.contains(node.getString("id"))) {
-          addedNodes.add(node.getString("id"));
-          responseData.put(node);
-        }
-        int level = 0;
-
-        String hqlTreeWhereClause = null;
-        // TODO: hql clause for selectors
-        // if (tab != null && tab.getHqlTreeWhereClause() != null) {
-        // hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
-        // }
-
-        while (node.has("parentId")
-            && !"0".equals(node.getString("parentId"))
-            && this.nodeConformsToWhereClause(table, tableTree, node.getString("parentId"),
-                hqlTreeWhereClause)) {
-          nodeId = node.getString("parentId");
-          node = getJSONObjectByNodeId(parameters, nodeId);
-          node.put("isOpen", true);
-          if (!parentsToExpand.contains(node.getString("id"))) {
-            parentsToExpand.add(node.getString("id"));
-          }
-          if (!addedNodes.contains(node.getString("id"))) {
-            addedNodes.add(node.getString("id"));
-            responseData.put(node);
-          }
-          level++;
-        }
-        if (this.nodeConformsToWhereClause(table, tableTree, node.getString("parentId"),
-            hqlTreeWhereClause)) {
-          node.put("parentId", ROOT_NODE);
-        }
-        if (level > maxLevel) {
-          maxLevel = level;
-        }
-      }
-      // Expand all the parents
-      for (String parentId : parentsToExpand) {
-        JSONArray nodeChildren = this.fetchNodeChildren(parameters, parentId, null, null);
-        for (int i = 0; i < nodeChildren.length(); i++) {
-          JSONObject node = nodeChildren.getJSONObject(i);
-          if (!addedNodes.contains(node.getString("id"))) {
-            addedNodes.add(node.getString("id"));
-            responseData.put(node);
-          }
-        }
-      }
-      // Include all the first level nodes
-      JSONArray firstLevelNodes = this.fetchFirstLevelNodes(parameters);
-      for (int i = 0; i < firstLevelNodes.length(); i++) {
-        JSONObject node = firstLevelNodes.getJSONObject(i);
-        if (!addedNodes.contains(node.getString("id"))) {
-          addedNodes.add(node.getString("id"));
-          responseData.put(node);
-        }
-      }
-    } catch (JSONException e) {
-      log.error("Error on tree datasource", e);
-    }
-    return responseData;
-  }
-
   protected abstract boolean nodeConformsToWhereClause(Table table, TableTree tableTree,
       String nodeId, String hqlWhereClause);
-
-  // TODO: Borrar
-  protected JSONArray fetchFirstLevelNodes(Map<String, String> parameters) throws JSONException,
-      TooManyTreeNodesException {
-    String tabId = parameters.get("tabId");
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    String hqlTreeWhereClause = null;
-    // if (tab.getHqlTreeWhereClause() != null) {
-    // hqlTreeWhereClause = this.substituteParameters(tab.getHqlTreeWhereClause(), parameters);
-    // }
-    return this.fetchNodeChildren(parameters, ROOT_NODE, hqlTreeWhereClause, null);
-  }
 
   private String substituteParameters(String hqlTreeWhereClause, Map<String, String> parameters) {
     Pattern pattern = Pattern.compile("@\\S*@");
