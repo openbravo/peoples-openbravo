@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -156,14 +156,34 @@ BEGIN
         INTO v_Count
         FROM C_VALIDCOMBINATION
         WHERE Account_ID=:new.C_ElementValue_ID;
-				if(v_Count>0) THEN
-			    UPDATE C_ValidCombination
-			      SET Updated=now(), isactive = 'Y' 		          
-			      WHERE Account_ID=:new.C_ElementValue_ID
-			        AND C_AcctSchema_ID in (SELECT C_AcctSchema_ID
-			                                FROM C_AcctSchema
-			                                WHERE isactive = 'Y');
-			  ELSE
+	if(v_Count>0) THEN
+	  IF :NEW.IsActive = 'Y' AND :OLD.IsActive = 'N' THEN
+	    UPDATE C_ValidCombination
+	    SET Updated=now(), isactive = 'Y'
+	    WHERE Account_ID=:new.C_ElementValue_ID
+	    AND C_AcctSchema_ID in (SELECT C_AcctSchema_ID
+	                          FROM C_AcctSchema
+			          WHERE isactive = 'Y')
+	    AND m_product_id IS NULL
+	    AND c_bpartner_id IS NULL
+	    AND ad_orgtrx_id IS NULL
+	    AND c_salesregion_id IS NULL
+	    AND c_project_id IS NULL
+	    AND c_campaign_id IS NULL
+	    AND c_activity_id IS NULL
+	    AND user1_id IS NULL
+	    AND user2_id IS NULL;
+	  ELSE
+	    IF :NEW.IsActive = 'N' AND :OLD.IsActive = 'Y' THEN
+	      UPDATE C_ValidCombination
+	      SET Updated=now(), isactive = 'N'
+	      WHERE Account_ID=:new.C_ElementValue_ID
+	      AND C_AcctSchema_ID in (SELECT C_AcctSchema_ID
+	                          FROM C_AcctSchema
+			          WHERE isactive = 'Y');
+	    END IF;
+	  END IF;
+	ELSE
 		  	    FOR cur_AcctSchema IN
 			        (SELECT C_AcctSchema_ID
 			        FROM C_AcctSchema_Element
