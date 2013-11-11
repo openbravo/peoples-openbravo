@@ -781,7 +781,7 @@
           }
         } else {
           //remove line even it is a grouped line
-          if (options && options.line && qty === -1){
+          if (options && options.line && qty === -1) {
             this.addUnit(options.line, qty);
           } else {
             this.createLine(p, qty, options, attrs);

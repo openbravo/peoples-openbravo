@@ -66,7 +66,7 @@ OB.DS.HWServer.prototype.openDrawerTemplate = 'res/opendrawer.xml';
 OB.DS.HWServer.prototype.openDrawer = function () {
   var template = new OB.DS.HWResource(this.openDrawerTemplate);
   this.print(template, null, function (args) {
-    if (args && args.exception && args.exception.message){
+    if (args && args.exception && args.exception.message) {
       OB.info('Error opening the drawer');
     }
   });

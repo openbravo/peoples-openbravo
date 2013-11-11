@@ -249,20 +249,20 @@ enyo.kind({
 
     //finished
     this.model.on('change:finished', function () {
-      
+
       // this.model.messages ????
       var content;
       var i;
       var messages = this.model.get('messages');
       var next = this.model.get('next');
-      
+
       // Build the content of the dialog.
       if (messages && messages.length) {
         content = [{
-            content: OB.I18N.getLabel('OBPOS_FinishCloseDialog')
+          content: OB.I18N.getLabel('OBPOS_FinishCloseDialog')
         }, {
-            allowHtml: true,
-            content: '&nbsp;'
+          allowHtml: true,
+          content: '&nbsp;'
         }];
         for (i = 0; i < messages.length; i++) {
           content.push({
@@ -272,7 +272,7 @@ enyo.kind({
       } else {
         content = OB.I18N.getLabel('OBPOS_FinishCloseDialog');
       }
-      
+
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         action: function () {
@@ -285,7 +285,7 @@ enyo.kind({
           return true;
         }
       }]);
-      
+
     }, this);
     //finishedWrongly
     this.model.on('change:finishedWrongly', function (model) {

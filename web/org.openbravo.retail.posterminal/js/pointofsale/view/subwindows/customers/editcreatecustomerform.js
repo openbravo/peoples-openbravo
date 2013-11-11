@@ -162,9 +162,10 @@ enyo.kind({
     //property of the retrieved model to get the text of the combo item
     //function to retrieve the data
     fetchDataFunction: function (args) {
-      var me = this, criteria;
+      var me = this,
+          criteria;
       criteria = {
-          _orderByClause: '_identifier asc'
+        _orderByClause: '_identifier asc'
       };
       OB.Dal.find(OB.Model.BPCategory, criteria, function (data, args) {
         //This function must be called when the data is ready
