@@ -69,8 +69,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EXTREE_EMPL_DEP_LINK_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_UOMCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="EXTREE_EMPL_DEP_LINK" name="C_UOMEMPLOYEE">
+        <reference local="EXTREE_EMPL_DEP_LINK_ID" foreign="EXTREE_EMPL_DEP_LINK_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_UOMORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
