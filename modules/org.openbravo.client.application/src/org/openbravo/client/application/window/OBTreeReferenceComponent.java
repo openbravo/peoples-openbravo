@@ -291,12 +291,6 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
     return Boolean.FALSE.toString();
   }
 
-  public String getWhereClause() {
-    return null;
-    // TODO?
-    // return getSafeValue(getReferencedTree().getHQLWhereClause());
-  }
-
   public String getTitle() {
     String description = getReferencedTree().getName();
     if (description == null) {
@@ -402,7 +396,6 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
 
       LocalTreeField.setName(fieldName);
       LocalTreeField.setTitle(treeField.getName());
-      // TODO
       LocalTreeField.setSort(treeField.isSort());
       LocalTreeField.setFilter(treeField.isFilter());
       LocalTreeField.setDomainType(domainType);
@@ -412,53 +405,6 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
     }
     return result;
   }
-
-  // TODO: Translation
-  // private List<SelectorFieldTrl> getTranslatedFields() {
-  // if (selectorFieldTrls != null) {
-  // return selectorFieldTrls;
-  // }
-  //
-  // final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-  //
-  // final String whereClause = " where " + SelectorFieldTrl.PROPERTY_OBUISELSELECTORFIELD + "."
-  // + SelectorField.PROPERTY_OBUISELSELECTOR + "=:selector and "
-  // + SelectorFieldTrl.PROPERTY_LANGUAGEID + ".id=:userLanguageId ";
-  //
-  // final OBQuery<SelectorFieldTrl> qry = OBDal.getInstance().createQuery(SelectorFieldTrl.class,
-  // whereClause);
-  // qry.setNamedParameter("selector", getReferencedTree());
-  // qry.setNamedParameter("userLanguageId", userLanguageId);
-  // selectorFieldTrls = qry.list();
-  //
-  // return selectorFieldTrls;
-  // }
-
-  // private String getTranslatedName(SelectorField selectorField) {
-  // final SelectorFieldTrl trl = getTranslation(selectorField);
-  // if (trl == null) {
-  // return selectorField.getName();
-  // }
-  // return trl.getName();
-  // }
-  //
-  // private SelectorFieldTrl getTranslation(SelectorField selectorField) {
-  //
-  // final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-  //
-  // for (SelectorFieldTrl selectorFieldTrl : getTranslatedFields()) {
-  // if (DalUtil.getId(selectorFieldTrl.getObuiselSelectorField()).equals(selectorField.getId())) {
-  // final String trlLanguageId = (String) DalUtil.getId(selectorFieldTrl.getLanguageID());
-  // if (trlLanguageId.equals(userLanguageId)) {
-  // return selectorFieldTrl;
-  // }
-  // }
-  // }
-  //
-  // return null;
-  // }
-
-  // Used for create a map Out field - Tab field
 
   // used to create picklist and grid fields
   public static class LocalTreeField {
@@ -532,7 +478,6 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
       if ((domainType instanceof PrimitiveDomainType)) {
         final PrimitiveDomainType primitiveDomainType = (PrimitiveDomainType) domainType;
         if (Date.class.isAssignableFrom(primitiveDomainType.getPrimitiveType())) {
-          // TODO: hardcoded width for date
           result.add(createLocalTreeFieldProperty("width", 100));
         }
       }
@@ -677,9 +622,7 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
 
     @Override
     public int compare(ReferencedTreeField field0, ReferencedTreeField field1) {
-      // TODO:
-      return 1;
-      // return (int) (field0.getSortno() - field1.getSortno());
+      return (int) (field0.getRecordSortNo() - field1.getRecordSortNo());
     }
 
   }
