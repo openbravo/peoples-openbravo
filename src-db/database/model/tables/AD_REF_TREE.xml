@@ -53,10 +53,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FILTER_EXPRESSION" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="VALUEFIELD_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>

@@ -73,10 +73,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_REFERENCE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="SHOWINPICKLIST" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
@@ -92,9 +88,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_REF_TREE" name="AD_REFTREE_F_REFTREE" onDelete="cascade">
         <reference local="AD_REF_TREE_ID" foreign="AD_REF_TREE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_REFERENCE" name="AD_REFTREE_F_SELFIELD_REF">
-        <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
       <check name="AD_REFTREE_F_CM_CHECK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
       <check name="AD_REFTREE_F_FILTER_CHECK"><![CDATA[FILTER IN ('Y', 'N')]]></check>
