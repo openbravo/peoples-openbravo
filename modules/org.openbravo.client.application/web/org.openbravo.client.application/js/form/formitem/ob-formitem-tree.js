@@ -37,7 +37,6 @@ isc.OBTreeItem.addProperties({
     this.tree = isc.OBTreeItemTree.create({
       treeItem: this
     });
-    this.form.addChild(this.tree); // Added grid in the form to avoid position problems
     this.treeDisplayField = this.getTreeDisplayField();
     this.treeWindow = isc.OBTreeItemPopupWindow.create({
       // solves issue: https://issues.openbravo.com/view.php?id=17268
