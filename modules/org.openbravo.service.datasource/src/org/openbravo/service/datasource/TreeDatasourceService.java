@@ -22,6 +22,7 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.ui.Tab;
@@ -240,34 +241,74 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           parameters);
     }
     try {
+
+      boolean allowNotApplyingWhereClauseToChildren = false;
+      try {
+        allowNotApplyingWhereClauseToChildren = "Y".equals(Preferences.getPreferenceValue(
+            "AllowNotApplyingWhereClauseToChildNodes", true, "0", "0", null, null, null));
+      } catch (PropertyException e) {
+      }
+
       Map<String, JSONObject> addedNodesMap = new HashMap<String, JSONObject>();
       for (String nodeId : filteredNodes) {
         JSONObject node = getJSONObjectByRecordId(parameters, nodeId);
 
         JSONObject savedNode = addedNodesMap.get(node.getString("id"));
-        if (savedNode == null) {
-          node.put("filterHit", true);
-          addedNodesMap.put(node.getString("id"), node);
-        } else {
-          savedNode.put("filterHit", true);
-        }
 
-        while (node.has("parentId")
-            && !isRoot(node, hqlTreeWhereClauseRootNodes, tableTree)
-            && this.nodeConformsToWhereClause(tableTree, node.getString("parentId"),
-                hqlTreeWhereClause)) {
-          nodeId = node.getString("parentId");
-          node = getJSONObjectByNodeId(parameters, nodeId);
-          savedNode = addedNodesMap.get(node.getString("id"));
+        if (hqlTreeWhereClauseRootNodes != null) {
+          Map<String, JSONObject> preAddedNodesMap = new HashMap<String, JSONObject>();
           if (savedNode == null) {
-            node.put("isOpen", true);
+            node.put("filterHit", true);
+            preAddedNodesMap.put(node.getString("id"), node);
+          } else {
+            savedNode.put("filterHit", true);
+          }
+          while (node.has("parentId")
+              && !isRoot(node, hqlTreeWhereClauseRootNodes, tableTree)
+              && (allowNotApplyingWhereClauseToChildren || this.nodeConformsToWhereClause(
+                  tableTree, node.getString("parentId"), hqlTreeWhereClause))) {
+            nodeId = node.getString("parentId");
+            node = getJSONObjectByNodeId(parameters, nodeId);
+            savedNode = addedNodesMap.get(node.getString("id"));
+            if (savedNode == null) {
+              node.put("isOpen", true);
+              preAddedNodesMap.put(node.getString("id"), node);
+            } else {
+              savedNode.put("isOpen", true);
+            }
+          }
+          // We have to make sure that the filtered node was not aboute the
+          // root nodes as defined by the hqlTreeWhereClauseRootNodes
+          if (this.nodeConformsToWhereClause(tableTree, node.getString("id"),
+              hqlTreeWhereClauseRootNodes)) {
+            addedNodesMap.putAll(preAddedNodesMap);
+          }
+        } else {
+          if (savedNode == null) {
+            node.put("filterHit", true);
             addedNodesMap.put(node.getString("id"), node);
           } else {
-            savedNode.put("isOpen", true);
+            savedNode.put("filterHit", true);
+          }
+          while (node.has("parentId")
+              && !ROOT_NODE.equals(node.get("parentId"))
+              && (allowNotApplyingWhereClauseToChildren || this.nodeConformsToWhereClause(
+                  tableTree, node.getString("parentId"), hqlTreeWhereClause))) {
+            nodeId = node.getString("parentId");
+            node = getJSONObjectByNodeId(parameters, nodeId);
+            savedNode = addedNodesMap.get(node.getString("id"));
+            if (savedNode == null) {
+              node.put("isOpen", true);
+              addedNodesMap.put(node.getString("id"), node);
+            } else {
+              savedNode.put("isOpen", true);
+            }
           }
         }
-        if (this.nodeConformsToWhereClause(tableTree, node.getString("parentId"),
-            hqlTreeWhereClause)) {
+
+        if (allowNotApplyingWhereClauseToChildren
+            || this.nodeConformsToWhereClause(tableTree, node.getString("parentId"),
+                hqlTreeWhereClause)) {
           node.put("parentId", ROOT_NODE);
         }
       }
@@ -294,10 +335,13 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       String parentId = null;
       nodeId = node.getString("id");
       parentId = node.getString("parentId");
+      if (ROOT_NODE.equals(parentId)) {
+        return true;
+      }
       if (hqlTreeWhereClauseRootNodes != null) {
         return nodeConformsToWhereClause(tableTree, nodeId, hqlTreeWhereClauseRootNodes);
       } else {
-        return ROOT_NODE.equals(parentId);
+        return false;
       }
     } catch (JSONException e) {
       return false;

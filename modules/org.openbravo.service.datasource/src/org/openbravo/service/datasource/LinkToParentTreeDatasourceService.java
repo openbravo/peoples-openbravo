@@ -20,6 +20,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
@@ -170,8 +171,13 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       }
     }
 
-    // TODO: Do not apply always the whereclause on the children, make it configurable
-    if (hqlWhereClause != null) {
+    boolean allowNotApplyingWhereClauseToChildren = false;
+    try {
+      allowNotApplyingWhereClauseToChildren = "Y".equals(Preferences.getPreferenceValue(
+          "AllowNotApplyingWhereClauseToChildNodes", true, "0", "0", null, null, null));
+    } catch (PropertyException e) {
+    }
+    if ((fetchRoot || !allowNotApplyingWhereClauseToChildren) && hqlWhereClause != null) {
       whereClause.append(hqlWhereClause + " and ");
     }
 
@@ -295,7 +301,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     boolean isOrdered = tableTree.getTreeCategory().isOrdered();
 
     BaseOBObject bob = OBDal.getInstance().get(referencedEntity.getName(), nodeId);
-    BaseOBObject parentBob = OBDal.getInstance().get(referencedEntity.getName(), newParentId);
+    BaseOBObject parentBob = null;
+    if (!ROOT_NODE.equals(newParentId)) {
+      OBDal.getInstance().get(referencedEntity.getName(), newParentId);
+    }
     bob.set(linkToParentProperty.getName(), parentBob);
 
     OBDal.getInstance().flush();
@@ -305,7 +314,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
     JSONObject updatedData = toJsonConverter.toJsonObject((BaseOBObject) bob,
         DataResolvingMode.FULL);
-    updatedData.put("parentId", parentBob.getId().toString());
+    updatedData.put("parentId", newParentId);
     updatedData.put("_hasChildren", (this.nodeHasChildren(entity, linkToParentProperty,
         nodeIdProperty, bob, hqlWhereClause)) ? true : false);
 
