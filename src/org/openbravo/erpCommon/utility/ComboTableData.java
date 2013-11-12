@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -863,9 +863,15 @@ public class ComboTableData {
           }
         }
       }
-      if (!name.toString().equals(""))
+      text.append(id);
+      if (!name.toString().equals("")) {
         name.append(") AS NAME");
-      text.append(id).append(", ").append(name.toString());
+      } else {
+        name.append("'>>No Record Identifier<<' AS NAME");
+        log4j.error("Foreign table referenced by '" + idName
+            + "' does not have 'Record Identifier' defined");
+      }
+      text.append(", ").append(name.toString());
       if (description != null && !description.equals(""))
         text.append(", ").append(description);
       else
