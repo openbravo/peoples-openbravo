@@ -353,11 +353,12 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return this.getJSONObjectByRecordId(parameters, bob.getId().toString());
   }
 
-  protected boolean nodeConformsToWhereClause(Table table, TableTree tableTree, String nodeId,
+  protected boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
       String hqlWhereClause) {
     if (hqlWhereClause == null || hqlWhereClause.isEmpty()) {
       return true;
     }
+    Table table = tableTree.getTable();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property nodeIdProperty = getNodeIdProperty(tableTree);
 

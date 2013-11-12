@@ -111,15 +111,17 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         hqlTreeWhereClause = this.substituteParameters(hqlTreeWhereClause, parameters);
       }
 
+      if (hqlTreeWhereClauseRootNodes != null) {
+        hqlTreeWhereClauseRootNodes = this.substituteParameters(hqlTreeWhereClauseRootNodes,
+            parameters);
+      }
+
       if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
         Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
         DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
         return dataSource.fetch(parameters);
       }
 
-      if (parentId.equals(ROOT_NODE)) {
-        // TODO hqlTreeWhereClauseRootNodes
-      }
       JSONArray responseData = null;
 
       boolean tooManyNodes = false;
@@ -214,24 +216,28 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
-    Table table = null;
     TableTree tableTree = null;
     String hqlTreeWhereClause = null;
+    String hqlTreeWhereClauseRootNodes = null;
     if (tabId != null) {
       tab = OBDal.getInstance().get(Tab.class, tabId);
-      table = tab.getTable();
       tableTree = tab.getTableTree();
       hqlTreeWhereClause = tab.getHqlwhereclause();
+      hqlTreeWhereClauseRootNodes = tab.getHQLWhereClauseForRootNodes();
     } else if (treeReferenceId != null) {
       ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
-      table = treeReference.getTable();
       tableTree = treeReference.getTableTreeCategory();
       hqlTreeWhereClause = treeReference.getHQLSQLWhereClause();
+      hqlTreeWhereClauseRootNodes = treeReference.getHQLWhereClauseForRootNodes();
     } else {
       // TODO: Throw proper exception
     }
     if (hqlTreeWhereClause != null) {
       hqlTreeWhereClause = this.substituteParameters(hqlTreeWhereClause, parameters);
+    }
+    if (hqlTreeWhereClauseRootNodes != null) {
+      hqlTreeWhereClauseRootNodes = this.substituteParameters(hqlTreeWhereClauseRootNodes,
+          parameters);
     }
     try {
       Map<String, JSONObject> addedNodesMap = new HashMap<String, JSONObject>();
@@ -246,10 +252,9 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           savedNode.put("filterHit", true);
         }
 
-        // TODO: Qué hacer cuando hay treeHQLWhereClause?
         while (node.has("parentId")
-            && !"0".equals(node.getString("parentId"))
-            && this.nodeConformsToWhereClause(table, tableTree, node.getString("parentId"),
+            && !isRoot(node, hqlTreeWhereClauseRootNodes, tableTree)
+            && this.nodeConformsToWhereClause(tableTree, node.getString("parentId"),
                 hqlTreeWhereClause)) {
           nodeId = node.getString("parentId");
           node = getJSONObjectByNodeId(parameters, nodeId);
@@ -261,7 +266,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
             savedNode.put("isOpen", true);
           }
         }
-        if (this.nodeConformsToWhereClause(table, tableTree, node.getString("parentId"),
+        if (this.nodeConformsToWhereClause(tableTree, node.getString("parentId"),
             hqlTreeWhereClause)) {
           node.put("parentId", ROOT_NODE);
         }
@@ -283,8 +288,24 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return responseData;
   }
 
-  protected abstract boolean nodeConformsToWhereClause(Table table, TableTree tableTree,
-      String nodeId, String hqlWhereClause);
+  private boolean isRoot(JSONObject node, String hqlTreeWhereClauseRootNodes, TableTree tableTree) {
+    try {
+      String nodeId = null;
+      String parentId = null;
+      nodeId = node.getString("id");
+      parentId = node.getString("parentId");
+      if (hqlTreeWhereClauseRootNodes != null) {
+        return nodeConformsToWhereClause(tableTree, nodeId, hqlTreeWhereClauseRootNodes);
+      } else {
+        return ROOT_NODE.equals(parentId);
+      }
+    } catch (JSONException e) {
+      return false;
+    }
+  }
+
+  protected abstract boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
+      String hqlWhereClause);
 
   private String substituteParameters(String hqlTreeWhereClause, Map<String, String> parameters) {
     Pattern pattern = Pattern.compile("@\\S*@");

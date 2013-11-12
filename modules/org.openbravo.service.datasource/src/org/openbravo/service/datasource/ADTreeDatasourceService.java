@@ -383,7 +383,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return json;
   }
 
-  protected boolean nodeConformsToWhereClause(Table table, TableTree tableTree, String nodeId,
+  protected boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
       String hqlWhereClause) {
     // TODO: Implementar
     return true;
