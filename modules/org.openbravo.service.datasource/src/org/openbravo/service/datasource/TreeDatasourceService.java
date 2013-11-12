@@ -106,7 +106,16 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         hqlTreeWhereClause = treeReference.getHQLSQLWhereClause();
         hqlTreeWhereClauseRootNodes = treeReference.getHQLWhereClauseForRootNodes();
       } else {
-        // TODO: Throw proper exception
+        log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+        final JSONObject jsonResponse = new JSONObject();
+        JSONArray responseData = new JSONArray();
+        jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+        jsonResponse.put(JsonConstants.RESPONSE_DATA, responseData);
+        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
+        jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
+        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, 0);
+        jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+        return jsonResult.toString();
       }
       if (hqlTreeWhereClause != null) {
         hqlTreeWhereClause = this.substituteParameters(hqlTreeWhereClause, parameters);
@@ -231,7 +240,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       hqlTreeWhereClause = treeReference.getHQLSQLWhereClause();
       hqlTreeWhereClauseRootNodes = treeReference.getHQLWhereClauseForRootNodes();
     } else {
-      // TODO: Throw proper exception
+      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      return responseData;
     }
     if (hqlTreeWhereClause != null) {
       hqlTreeWhereClause = this.substituteParameters(hqlTreeWhereClause, parameters);

@@ -153,8 +153,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       table = treeReference.getTable();
       tableTree = treeReference.getTableTreeCategory();
     } else {
-      // TODO: Throw proper exception
-      logger.error("Either tab id or tree reference id must be provided");
+      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      return new JSONArray();
     }
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property linkToParentProperty = getLinkToParentProperty(tableTree);
@@ -343,8 +343,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       table = treeReference.getTable();
       tableTree = treeReference.getTableTreeCategory();
     } else {
-      // TODO: Throw proper exception
-      logger.error("Either tab id or tree reference id must be provided");
+      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      return new JSONObject();
     }
     // Obtain the recordId based on the nodeId
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
@@ -399,8 +399,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       tableTree = treeReference.getTableTreeCategory();
       hqlWhereClause = treeReference.getHQLSQLWhereClause();
     } else {
-      // TODO: Throw proper exception
-      logger.error("Either tab id or tree reference id must be provided");
+      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      return new JSONObject();
     }
     Property linkToParentProperty = getLinkToParentProperty(tableTree);
     Property nodeIdProperty = getNodeIdProperty(tableTree);
