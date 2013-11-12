@@ -37,7 +37,6 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
@@ -72,12 +71,6 @@ import org.openbravo.userinterface.selector.SelectorConstants;
  */
 public class OBTreeReferenceComponent extends BaseTemplateComponent {
 
-  private static final String CSSSIZE = "CssSize";
-  private static final String ONECELL = "OneCell";
-  private static final String TWOCELLS = "TwoCells";
-  private static final String THREECELLS = "ThreeCells";
-  private static final String FOURCELLS = "FourCells";
-  private static final String FIVECELLS = "FiveCells";
   private static final String TREE_REFERENCE_TEMPLATE = "9690A685A3D245899EA2A9C15D50D9FB";
 
   private static final String TREENODE_DATASOURCE = "90034CAE96E847D78FBEF6D38CB1930D";
@@ -88,7 +81,6 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
 
   private ReferencedTree referencedTree;
   private List<ReferencedTreeField> treeFields;
-  private String transformedColumnName = null;
 
   private static Logger log = Logger.getLogger(OBTreeReferenceComponent.class);
 
@@ -152,12 +144,6 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
       return property.getDomainType();
     }
     return null;
-  }
-
-  private static DomainType getDomainType(String referenceId) {
-    final Reference reference = ModelProvider.getInstance().getReference(referenceId);
-    Check.isNotNull(reference, "No reference found for referenceid " + referenceId);
-    return reference.getDomainType();
   }
 
   @Inject
@@ -339,25 +325,6 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
     final Component component = componentProvider.getComponent(dataSourceId, dsParameters);
 
     return component.generate();
-  }
-
-  public String getNumCols() {
-    final String cssSize = getParameter(CSSSIZE);
-    if (cssSize == null) {
-      return "2";
-    }
-    if (cssSize.equals(ONECELL)) {
-      return "1";
-    } else if (cssSize.equals(TWOCELLS)) {
-      return "2";
-    } else if (cssSize.equals(THREECELLS)) {
-      return "3";
-    } else if (cssSize.equals(FOURCELLS)) {
-      return "4";
-    } else if (cssSize.equals(FIVECELLS)) {
-      return "5";
-    }
-    return "2";
   }
 
   public String getExtraSearchFields() {
