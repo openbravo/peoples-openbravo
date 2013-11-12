@@ -610,7 +610,7 @@ enyo.kind({
 
     var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     var me = this;
-    var paymentstatus = this.receipt.getPaymentStatus();
+    var paymentstatus = this.model.get('order').getPaymentStatus();
     if (!paymentstatus.isReturn && OB.POS.modelterminal.get('connectedToERP')) {
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
       process.exec({
