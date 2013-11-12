@@ -59,26 +59,14 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         this.treeGridFields[i].canFilter = true;
       }
     }
-    this.treeGrid = isc.TreeGrid.create({
+    this.treeGrid = isc.OBTreeGrid.create({
       view: this.view,
       treePopup: this,
-      showOpenIcons: false,
-      showDropIcons: false,
       autoFetchData: true,
-      nodeIcon: null,
-      folderIcon: null,
       filterOnKeypress: true,
       selectionAppearance: "checkbox",
       dataSourceId: this.dataSourceId,
       treeReferenceId: this.treeReferenceId,
-      dataProperties: {
-        modelType: "parent",
-        rootValue: "0",
-        idField: "nodeId",
-        parentIdField: "parentId",
-        openProperty: "isOpen"
-      },
-
       width: '100%',
       height: '100%',
       bodyStyleName: 'OBGridBody',
@@ -161,15 +149,6 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
           id: 'id'
         };
         return this.Super("setDataSource", [ds, fields]);
-      },
-
-      // Todo: duplicated code
-      getCellCSSText: function (record, rowNum, colNum) {
-        if (record.notFilterHit) {
-          return "color:#606060;";
-        } else {
-          return "";
-        }
       },
 
       // show or hide the filter button

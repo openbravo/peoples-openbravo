@@ -202,26 +202,13 @@ isc.OBTreeItem.addProperties({
 
 });
 
-isc.ClassFactory.defineClass("OBTreeItemTree", isc.TreeGrid);
+isc.ClassFactory.defineClass("OBTreeItemTree", isc.OBTreeGrid);
 
 isc.OBTreeItemTree.addProperties({
   treeItem: null,
   height: 200,
-  showOpenIcons: false,
-  showDropIcons: false,
   autoFetchData: false,
-  nodeIcon: null,
-  folderIcon: null,
   visibility: 'hidden',
-  dataProperties: {
-    modelType: "parent",
-    rootValue: "0",
-    idField: "nodeId",
-    parentIdField: "parentId",
-    openProperty: "isOpen"
-  },
-
-
   init: function () {
     OB.Datasource.get(this.treeItem.dataSourceId, this, null, true);
     this.Super('init', arguments);
@@ -240,7 +227,6 @@ isc.OBTreeItemTree.addProperties({
       this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
     }
   },
-
 
   show: function () {
     var treeItemWidth;
@@ -329,15 +315,6 @@ isc.OBTreeItemTree.addProperties({
     return {
       criteria: criteria
     };
-  },
-
-  // Todo: duplicated code
-  getCellCSSText: function (record, rowNum, colNum) {
-    if (record.notFilterHit) {
-      return "color:#606060;";
-    } else {
-      return "";
-    }
   }
 });
 
@@ -395,31 +372,15 @@ isc.OBTreeItemPopupWindow.addProperties({
       this.dataSource.fields = this.treeGridFields;
       this.dataSource.init();
     }
-    this.treeGrid = isc.TreeGrid.create({
+    this.treeGrid = isc.OBTreeGrid.create({
 
       treeItem: this.treeItem,
       treeWindow: this,
       view: this.treeItem.form.view,
       selectionAppearance: this.selectionAppearance,
       treePopup: this,
-      showOpenIcons: false,
-      showDropIcons: false,
       autoFetchData: false,
-      nodeIcon: null,
-      folderIcon: null,
       filterOnKeypress: true,
-
-      dataProperties: {
-        modelType: "parent",
-        rootValue: "0",
-        idField: "nodeId",
-        parentIdField: "parentId",
-        openProperty: "isOpen"
-      },
-
-      //TODO:
-      //      width: this.treeGridProperties.width,
-      //      height: this.treeGridProperties.height,
       width: '100%',
       height: '100%',
       bodyStyleName: 'OBGridBody',
@@ -560,15 +521,6 @@ isc.OBTreeItemPopupWindow.addProperties({
           id: 'id'
         };
         return this.Super("setDataSource", [ds, fields]);
-      },
-
-      // Todo: duplicated code
-      getCellCSSText: function (record, rowNum, colNum) {
-        if (record.notFilterHit) {
-          return "color:#606060;";
-        } else {
-          return "";
-        }
       },
 
       // show or hide the filter button

@@ -19,7 +19,7 @@
 */
 -->
 
-isc.OBTreeGrid.create({
+isc.OBTreeViewGrid.create({
     view: this,
     referencedTableId: '${data.referencedTableId}',
     orderedTree:  ${data.orderedTree?string},
