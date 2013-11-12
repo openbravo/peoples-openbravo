@@ -11,7 +11,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
   var promotionCandidates = [],
       evaluated = [],
       cases = 0,
-      originalDeal, bestDiscount, receipt, originalWindowError;
+      originalDeal, bestDiscount, receipt, originalWindowError, linesAfterSplit;
 
   function getCandidatesForProducts() {
     var criteria, de = new OB.Model.DiscountsExecutor(),
@@ -49,20 +49,28 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
 
     console.log('num of lines before split', lines.length)
     lines.forEach(function (line) {
-      var productId = line.get('product').id,
-          originalQty, l;
+      var originalQty, l, productId = line.get('product').id;
+
+      function shouldSplit() {
+        return true;
+      }
+
       i += 1;
       if (candidates[productId] && candidates[productId].length > 0 && line.get('qty') > 1) {
-        // there are candidates for the product, let's split the line
-        originalQty = line.get('qty');
+        // there are candidates for the product, let's split the line if needed
+        if (shouldSplit()) {
+          originalQty = line.get('qty');
 
-        console.log('split line', line.get('product').get('_identifier'));
-        line.set({
-          qty: 1,
-          gross: line.get('price')
-        });
-        for (l = 1; l < originalQty; l++) {
-          newLines.push(line.clone());
+          console.log('split line', line.get('product').get('_identifier'));
+          line.set({
+            qty: 1,
+            gross: line.get('price')
+          });
+          for (l = 1; l < originalQty; l++) {
+            newLines.push(line.clone());
+          }
+        } else {
+          lines.add(line);
         }
 
       } else {
@@ -72,7 +80,12 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
 
     lines.add(newLines);
 
+    linesAfterSplit = [];
     lines.forEach(function (line) {
+      linesAfterSplit.push(line.clone());
+    });
+
+    linesAfterSplit.forEach(function (line) {
       var productCases = candidates[line.get('product').id];
 
       if (!productCases || productCases.length === 0) {
@@ -84,6 +97,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
       promotionCandidates.push({
         line: line,
         candidates: candidates[line.get('product').id],
+        shouldSplit: line.get('qty') === 1,
         pointer: 0
       });
     });
@@ -98,27 +112,35 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
 
     console.timeStamp('evaluateBestDealCase')
     cases++;
-    console.log('=== case ===', cases)
+    console.log('=== case ===', cases )
     currentEval = {};
+
+    lines.reset();
+    _.forEach(linesAfterSplit, function (line) {
+      line.set('qty', 1)
+      lines.add(line);
+    });
+
+
     _.forEach(promotionCandidates, function (candidate) {
       var line = candidate.line,
           prodId = line.get('product').id,
           ruleId = candidate.candidates.at(candidate.pointer).id;
       currentEval[prodId] = currentEval[prodId] || {};
       currentEval[prodId][ruleId] = (currentEval[prodId][ruleId] || 0) + 1;
-      console.log(candidate.line.get('product').get('_identifier'), '->', candidate.candidates.at(candidate.pointer).get('_identifier'));
+
 
       line.set({
         promotions: null,
         promotionCandidates: [ruleId],
         discountedLinePrice: null,
-        qty: 1,
-        gross: line.get('price')
+        qty: 1
       }, {
         silent: true
       });
       lines.remove(line);
       lines.add(line);
+      console.log(candidate.line.get('product').get('_identifier'), '->', candidate.candidates.at(candidate.pointer).get('_identifier'), candidate.line.get('qty'));
     });
 
     if (alreadyEvaluated(evaluated, currentEval)) {
@@ -212,8 +234,14 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
   **/
 
   function evalCandidate(candidateNum) {
-    var candidate = promotionCandidates[candidateNum];
+    var candidate = promotionCandidates[candidateNum],
+        lines;
     if (candidateNum >= promotionCandidates.length) {
+      lines = receipt.get('lines');
+      lines.reset();
+      _.forEach(linesAfterSplit, function (line) {
+        lines.add(line);
+      });
       nextCase(true);
       return;
     }
