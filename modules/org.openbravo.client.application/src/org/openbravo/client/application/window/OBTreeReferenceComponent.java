@@ -151,9 +151,7 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
   private ComponentProvider componentProvider;
 
   public Module getModule() {
-    // TODO:
-    return OBDal.getInstance().get(Module.class, "0");
-    // return getReferencedTree().getModule();
+    return getReferencedTree().getModule();
   }
 
   /**
