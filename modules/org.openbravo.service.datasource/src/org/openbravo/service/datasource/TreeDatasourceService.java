@@ -263,6 +263,11 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       for (String nodeId : filteredNodes) {
         JSONObject node = getJSONObjectByRecordId(parameters, nodeId);
 
+        if (!allowNotApplyingWhereClauseToChildren
+            && !this.nodeConformsToWhereClause(tableTree, node.getString("id"), hqlTreeWhereClause)) {
+          continue;
+        }
+
         JSONObject savedNode = addedNodesMap.get(node.getString("id"));
 
         if (hqlTreeWhereClauseRootNodes != null) {
@@ -361,7 +366,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   protected abstract boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
       String hqlWhereClause);
 
-  private String substituteParameters(String hqlTreeWhereClause, Map<String, String> parameters) {
+  protected String substituteParameters(String hqlTreeWhereClause, Map<String, String> parameters) {
     Pattern pattern = Pattern.compile("@\\S*@");
     Matcher matcher = pattern.matcher(hqlTreeWhereClause);
     HashMap<String, String> replacements = new HashMap<String, String>();

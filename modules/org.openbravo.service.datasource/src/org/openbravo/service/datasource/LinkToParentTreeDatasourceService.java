@@ -293,6 +293,9 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     String tabId = parameters.get("tabId");
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
     String hqlWhereClause = tab.getHqlwhereclause();
+    if (hqlWhereClause != null) {
+      hqlWhereClause = this.substituteParameters(hqlWhereClause, parameters);
+    }
     TableTree tableTree = tab.getTableTree();
     Property linkToParentProperty = getLinkToParentProperty(tableTree);
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
@@ -401,6 +404,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     } else {
       log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return new JSONObject();
+    }
+
+    if (hqlWhereClause != null) {
+      hqlWhereClause = this.substituteParameters(hqlWhereClause, parameters);
     }
     Property linkToParentProperty = getLinkToParentProperty(tableTree);
     Property nodeIdProperty = getNodeIdProperty(tableTree);

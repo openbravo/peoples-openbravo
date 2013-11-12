@@ -23,7 +23,9 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.ADTreeType;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
@@ -134,6 +136,9 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     joinClause.append(" as tn ");
     joinClause.append(" , " + entity.getName() + " as e ");
     joinClause.append(" where tn.node = e.id ");
+    if (hqlWhereClause != null) {
+      joinClause.append(" and (" + hqlWhereClause + ")");
+    }
     joinClause.append(" and tn.tree.id = '" + tree.getId() + "' ");
     joinClause.append(" and tn.reportSet = '" + parentId + "' order by tn.sequenceNumber ");
 
@@ -163,7 +168,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
           value.put("parentId", node[PARENT_ID]);
         }
         value.put("seqno", node[SEQNO]);
-        value.put("_hasChildren", (this.nodeHasChildren((String) node[NODE_ID])) ? true : false);
+        value.put("_hasChildren",
+            (this.nodeHasChildren(entity, (String) node[NODE_ID], hqlWhereClause)) ? true : false);
         for (int i = 0; i < selectedProperties.length(); i++) {
           value.put(selectedProperties.getString(i), bob.get(selectedProperties.getString(i)));
         }
@@ -175,10 +181,18 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return responseData;
   }
 
-  private boolean nodeHasChildren(String treeNodeId) {
-    OBCriteria<TreeNode> nodeChildrenCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
-    nodeChildrenCriteria.add(Restrictions.eq(TreeNode.PROPERTY_REPORTSET, treeNodeId));
-    return nodeChildrenCriteria.count() > 0;
+  private boolean nodeHasChildren(Entity entity, String nodeId, String hqlWhereClause) {
+    StringBuilder joinClause = new StringBuilder();
+    joinClause.append(" as tn ");
+    joinClause.append(" , " + entity.getName() + " as e ");
+    joinClause.append(" where tn.node = e.id ");
+    if (hqlWhereClause != null) {
+      joinClause.append(" and (" + hqlWhereClause + ")");
+    }
+    joinClause.append(" and tn.reportSet = '" + nodeId + "' order by tn.sequenceNumber ");
+    OBQuery<BaseOBObject> obq = OBDal.getInstance()
+        .createQuery("ADTreeNode", joinClause.toString());
+    return obq.count() > 0;
   }
 
   private Long calculateSequenceNumberAndRecompute(Tree tree, String prevNodeId, String nextNodeId,
@@ -361,6 +375,25 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     String referencedTableId = parameters.get("referencedTableId");
     String parentRecordId = parameters.get("parentRecordId");
     Tree tree = this.getTree(referencedTableId, parentRecordId);
+
+    String tabId = parameters.get("tabId");
+    String treeReferenceId = parameters.get("treeReferenceId");
+    String hqlWhereClause = null;
+    if (tabId != null) {
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      hqlWhereClause = tab.getHqlwhereclause();
+    } else if (treeReferenceId != null) {
+      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
+      hqlWhereClause = treeReference.getHQLSQLWhereClause();
+    } else {
+      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      return new JSONObject();
+    }
+
+    if (hqlWhereClause != null) {
+      hqlWhereClause = this.substituteParameters(hqlWhereClause, parameters);
+    }
+
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tree.getTable().getId());
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
@@ -376,7 +409,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
       json.put("nodeId", bobId);
       json.put("parentId", treeNode.getReportSet());
-      json.put("_hasChildren", this.nodeHasChildren(treeNode.getNode()));
+      json.put("_hasChildren", this.nodeHasChildren(entity, treeNode.getNode(), hqlWhereClause));
     } catch (Exception e) {
       log.error("Error on tree datasource", e);
     }
@@ -385,8 +418,19 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   protected boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
       String hqlWhereClause) {
-    // TODO: Implementar
-    return true;
+
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(tableTree.getTable().getId());
+    StringBuilder joinClause = new StringBuilder();
+    joinClause.append(" as tn ");
+    joinClause.append(" , " + entity.getName() + " as e ");
+    joinClause.append(" where tn.node = e.id ");
+    if (hqlWhereClause != null) {
+      joinClause.append(" and (" + hqlWhereClause + ")");
+    }
+    joinClause.append(" and tn.node = '" + nodeId + "'");
+    OBQuery<BaseOBObject> obq = OBDal.getInstance()
+        .createQuery("ADTreeNode", joinClause.toString());
+    return obq.count() > 0;
   }
 
 }
