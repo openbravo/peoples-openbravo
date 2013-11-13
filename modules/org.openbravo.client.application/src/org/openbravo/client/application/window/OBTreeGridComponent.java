@@ -46,7 +46,6 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
 
   private Tab tab;
   private OBViewTab viewTab;
-  private String referencedTableId;
 
   protected Template getComponentTemplate() {
     final String windowType = tab.getWindow().getWindowType();
@@ -74,10 +73,6 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
 
   public String getReferencedTableId() {
     return tab.getTable().getId();
-  }
-
-  public void setReferencedTableId(String referencedTableId) {
-    this.referencedTableId = referencedTableId;
   }
 
   public boolean isOrderedTree() {
