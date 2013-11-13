@@ -1,3 +1,22 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2013 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
 package org.openbravo.service.datasource;
 
 import java.sql.PreparedStatement;
@@ -26,7 +45,6 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TableTree;
-import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.slf4j.Logger;
@@ -43,6 +61,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
   @Override
   protected void deleteNode(JSONObject bobProperties) {
+    // When a node is deleted, reparents its children so that the referencial integrity is not
+    // broken
     try {
       String entityName = bobProperties.getString("_entity");
       Entity entity = ModelProvider.getInstance().getEntity(entityName);
@@ -57,7 +77,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       if (bobProperties.has(nodeIdProperty.getName())) {
         bobNodeId = bobProperties.getString(nodeIdProperty.getName());
       }
-
       int nChildrenMoved = reparentChildrenOfDeletedNode(entity, bobParentNode, bobNodeId);
       logger.info(nChildrenMoved + " children have been moved to another parent");
     } catch (Exception e) {
@@ -66,6 +85,16 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     }
   }
 
+  /**
+   * Does the actual reparent
+   * 
+   * @param entity
+   * @param newParentId
+   *          new parent id to be used on the moved nodes
+   * @param oldParentId
+   *          parent id of the nodes to be moved
+   * @return the number of reparented nodes
+   */
   public int reparentChildrenOfDeletedNode(Entity entity, String newParentId, String oldParentId) {
     int nChildrenMoved = -1;
     Table table = OBDal.getInstance().get(Table.class, entity.getTableId());
@@ -97,12 +126,25 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return nChildrenMoved;
   }
 
+  /**
+   * Given a tableTree, returns the property that points to the parent node
+   * 
+   * @param tableTree
+   * @return the property that points to the parent node
+   */
   private Property getLinkToParentProperty(TableTree tableTree) {
     Column linkToParentColumn = tableTree.getLinkToParentColumn();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tableTree.getTable().getId());
     return entity.getPropertyByColumnName(linkToParentColumn.getDBColumnName());
   }
 
+  /**
+   * Given a table, returns the property that points to the parent node. It is used when the
+   * TableTree is not available. Uses the first TableTree defined for that table
+   * 
+   * @param table
+   * @return the property that points to the parent node
+   */
   private Property getLinkToParentProperty(Table table) {
     List<TableTree> tableTreeList = table.getADTableTreeList();
     if (tableTreeList.size() != 1) {
@@ -114,6 +156,25 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return entity.getPropertyByColumnName(linkToParentColumn.getDBColumnName());
   }
 
+  /**
+   * Given a tableTree, returns the property that represents the node id
+   * 
+   * @param tableTree
+   * @return the property that represents the node id
+   */
+  private Property getNodeIdProperty(TableTree tableTree) {
+    Column nodeIdColumn = tableTree.getNodeIdColumn();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(tableTree.getTable().getId());
+    return entity.getPropertyByColumnName(nodeIdColumn.getDBColumnName());
+  }
+
+  /**
+   * Given a table, returns the property that represents the node id. It is used when the TableTree
+   * is not available. Uses the first TableTree defined for the provided table
+   * 
+   * @param table
+   * @return the property that represents the node id
+   */
   private Property getNodeIdProperty(Table table) {
     List<TableTree> tableTreeList = table.getADTableTreeList();
     if (tableTreeList.size() != 1) {
@@ -125,12 +186,20 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return entity.getPropertyByColumnName(nodeIdColumn.getDBColumnName());
   }
 
-  private Property getNodeIdProperty(TableTree tableTree) {
-    Column nodeIdColumn = tableTree.getNodeIdColumn();
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(tableTree.getTable().getId());
-    return entity.getPropertyByColumnName(nodeIdColumn.getDBColumnName());
-  }
-
+  /**
+   * 
+   * @param parameters
+   * @param parentId
+   *          id of the node whose children are to be retrieved
+   * @param hqlWhereClause
+   *          hql where clase of the tab/selector
+   * @param hqlWhereClauseRootNodes
+   *          hql where clause that define what nodes are roots
+   * @return
+   * @throws JSONException
+   * @throws TooManyTreeNodesException
+   *           if the number of returned nodes were to be too high
+   */
   @Override
   protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId,
       String hqlWhereClause, String hqlWhereClauseRootNodes) throws JSONException,
@@ -161,9 +230,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as e where ");
-
     String actualParentId = new String(parentId);
     if (isMultiParentTree) {
+      // The ids of multi parent trees are formed by the concatenation of, beginning with its root
+      // node
       if (parentId.contains(ID_SEPARATOR)) {
         actualParentId = parentId.substring(parentId.lastIndexOf(ID_SEPARATOR) + 1);
       }
@@ -176,10 +246,12 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     } catch (PropertyException e) {
     }
     if ((fetchRoot || !allowNotApplyingWhereClauseToChildren) && hqlWhereClause != null) {
+      // Include the hql where clause for all root nodes and for child nodes only if it is required
       whereClause.append(hqlWhereClause + " and ");
     }
 
     if (hqlWhereClauseRootNodes != null && fetchRoot) {
+      // If we are fetching the root nodes and there is a defined hqlWhereClauseRootNodes, apply it
       whereClause.append(" " + hqlWhereClauseRootNodes + " ");
     } else {
       whereClause.append(" e." + linkToParentProperty.getName());
@@ -189,15 +261,14 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         whereClause.append(".id = '" + actualParentId + "' ");
       }
     }
-
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
-
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
 
     JSONArray responseData = new JSONArray();
 
+    // Check if the number of results to be returned is not higher than the defined limit
     int nResults = query.count();
     OBContext context = OBContext.getOBContext();
     int nMaxResults = -1;
@@ -246,7 +317,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       json.put("_hasChildren", (this.nodeHasChildren(entity, linkToParentProperty, nodeIdProperty,
           bob, hqlWhereClause)) ? true : false);
       responseData.put(json);
-
       count++;
       if (count % 100 == 0) {
         OBDal.getInstance().getSession().clear();
@@ -256,6 +326,20 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return responseData;
   }
 
+  /**
+   * Check if a node has children that should be shown in the target treegrid
+   * 
+   * @param entity
+   * @param linkToParentProperty
+   *          property that points to the parent node
+   * @param nodeIdProperty
+   *          property that represents the node id
+   * @param node
+   *          bob with the node properties
+   * @param hqlWhereClause
+   *          where clause to be applied to the children
+   * @return
+   */
   private boolean nodeHasChildren(Entity entity, Property linkToParentProperty,
       Property nodeIdProperty, BaseOBObject node, String hqlWhereClause) {
 
@@ -278,28 +362,28 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return query.count() > 0;
   }
 
-  private void recomputeSequenceNumbers(Tree tree, String newParentId, Long seqNo) {
-  }
-
+  /**
+   * Updates the parent of a given node a returns its definition in a JSONObject
+   */
   protected JSONObject moveNode(Map<String, String> parameters, String nodeId, String newParentId,
       String prevNodeId, String nextNodeId) throws Exception {
 
     String referencedTableId = parameters.get("referencedTableId");
+    String tabId = parameters.get("tabId");
+
     Table table = OBDal.getInstance().get(Table.class, referencedTableId);
     Entity referencedEntity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-
-    String tabId = parameters.get("tabId");
     Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+
     String hqlWhereClause = tab.getHqlwhereclause();
     if (hqlWhereClause != null) {
       hqlWhereClause = this.substituteParameters(hqlWhereClause, parameters);
     }
+
     TableTree tableTree = tab.getTableTree();
     Property linkToParentProperty = getLinkToParentProperty(tableTree);
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property nodeIdProperty = getNodeIdProperty(tableTree);
-
-    boolean isOrdered = tableTree.getTreeCategory().isOrdered();
 
     BaseOBObject bob = OBDal.getInstance().get(referencedEntity.getName(), nodeId);
     BaseOBObject parentBob = null;
@@ -307,12 +391,9 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       OBDal.getInstance().get(referencedEntity.getName(), newParentId);
     }
     bob.set(linkToParentProperty.getName(), parentBob);
-
     OBDal.getInstance().flush();
-
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
-
     JSONObject updatedData = toJsonConverter.toJsonObject((BaseOBObject) bob,
         DataResolvingMode.FULL);
     updatedData.put("parentId", newParentId);
@@ -322,11 +403,11 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return updatedData;
   }
 
-  private Long calculateSequenceNumberAndRecompute(Tree tree, String prevNodeId, String nextNodeId,
-      String newParentId) throws Exception {
-    return 0L;
-  }
-
+  /**
+   * @param parameters
+   * @param nodeId
+   * @return returns a json object with the definition of a node give its node id
+   */
   @Override
   protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId)
       throws MultipleParentsException {
@@ -357,12 +438,25 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
     if (query.count() != 1) {
+      // If the node has several parents, it is not possible to know which node should be returned
       throw new MultipleParentsException();
     }
     BaseOBObject bob = query.uniqueResult();
     return this.getJSONObjectByRecordId(parameters, bob.getId().toString());
   }
 
+  /**
+   * Method that checks if a node conforms to a hqlWhereClause
+   * 
+   * @param tableTree
+   *          tableTree that defines the tree category that defines the tree
+   * @param nodeId
+   *          id of the node to be checked
+   * @param hqlWhereClause
+   *          hql where clause to be applied
+   * @return
+   */
+  @Override
   protected boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
       String hqlWhereClause) {
     if (hqlWhereClause == null || hqlWhereClause.isEmpty()) {
@@ -381,6 +475,11 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return (query.count() == 1);
   }
 
+  /**
+   * @param parameters
+   * @param nodeId
+   * @return returns a json object with the definition of a node give its record id
+   */
   @Override
   protected JSONObject getJSONObjectByRecordId(Map<String, String> parameters, String bobId) {
     String tabId = parameters.get("tabId");

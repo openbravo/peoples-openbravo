@@ -1,3 +1,22 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2013 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
 package org.openbravo.service.datasource;
 
 import java.util.ArrayList;
@@ -42,13 +61,18 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   final String ROOT_NODE = "0";
 
+  // A CheckTreeOperationManager allows to check if an action on a node is valid before actually
+  // doing it
   @Inject
   @Any
   private Instance<CheckTreeOperationManager> checkTreeOperationManagers;
 
+  /**
+   * This method is called when a new record is created in a tree table. It calls the addNewNode
+   * abstract method, which is implemented in the classes that extend TreeDatasourceService
+   */
   @Override
   public String add(Map<String, String> parameters, String content) {
-
     try {
       // We can't get the bob from DAL, it has not been saved yet
       JSONObject bobProperties = new JSONObject(parameters.get("jsonBob"));
@@ -56,13 +80,20 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     } catch (Exception e) {
       log.error("Error while adding the tree node", e);
     }
-
     // This is called from TreeTablesEventHandler, no need to return anything
     return "";
   }
 
+  /**
+   * Classes that extend TreeDatasourceService this method must implement this method to handle the
+   * creation of a node in a tree table
+   */
   protected abstract void addNewNode(JSONObject bobProperties);
 
+  /**
+   * This method is called when a new record is deleted in a tree table. It calls the deleteNode
+   * abstract method, which is implemented in the classes that extend TreeDatasourceService
+   */
   @Override
   public String remove(Map<String, String> parameters) {
 
@@ -79,8 +110,28 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return "";
   }
 
+  /**
+   * Classes that extend TreeDatasourceService this method must implement this method to handle the
+   * deletion of a node in a tree table
+   */
   protected abstract void deleteNode(JSONObject bobProperties);
 
+  /**
+   * Fetches some tree nodes Two operation modes:
+   * 
+   * - If a criteria is included in the parameters, this method will return the nodes that conform
+   * to the criteria plus all its parent until reaching the root nodes
+   * 
+   * - Otherwise, the child nodes of a given node (its node id included in the parameters) are
+   * returned
+   * 
+   * Either the tabId (when it is called from a tree window) or the treeReferenceId (when called
+   * from a tree reference) must be included in the parameters
+   * 
+   * If the datasource were to return a number of nodes higher than the limit (defined in the
+   * TreeDatasourceFetchLimit preference), an empty data is returned and an error is shown to the
+   * user
+   */
   @Override
   public String fetch(Map<String, String> parameters) {
     OBContext.setAdminMode(true);
@@ -117,15 +168,17 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
         return jsonResult.toString();
       }
+
       if (hqlTreeWhereClause != null) {
         hqlTreeWhereClause = this.substituteParameters(hqlTreeWhereClause, parameters);
       }
-
       if (hqlTreeWhereClauseRootNodes != null) {
         hqlTreeWhereClauseRootNodes = this.substituteParameters(hqlTreeWhereClauseRootNodes,
             parameters);
       }
 
+      // If the distinct parameter is included in the parameters, delegate to the default standard
+      // datasource
       if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
         Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
         DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
@@ -133,11 +186,11 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       }
 
       JSONArray responseData = null;
-
       boolean tooManyNodes = false;
 
-      String criteria = parameters.get("criteria");
+      // Do not consider dummy criteria as valid criteria
       boolean validCriteria = false;
+      String criteria = parameters.get("criteria");
       if (criteria != null) {
         JSONObject jsonCriteria = new JSONObject(criteria);
         validCriteria = true;
@@ -148,9 +201,10 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
       if (validCriteria && parentId.equals(ROOT_NODE)) {
         try {
+          // Obtain the list of nodes that conforms to the criteria
           List<String> filteredNodes = getFilteredNodes(table, parameters);
           if (!filteredNodes.isEmpty()) {
-            // Fetch only the filtered nodes and its parents (filtered tree)
+            // Return the filtered nodes and its parents
             responseData = fetchFilteredNodes(parameters, filteredNodes);
           } else {
             responseData = new JSONArray();
@@ -159,7 +213,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           tooManyNodes = true;
         }
       } else {
-        // Fetch the node children of a given parent
+        // Fetch the children of a given node
         try {
           responseData = fetchNodeChildren(parameters, parentId, hqlTreeWhereClause,
               hqlTreeWhereClauseRootNodes);
@@ -184,7 +238,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
       jsonResponse.put(JsonConstants.RESPONSE_ENDROW, responseData.length() - 1);
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
-
     } catch (Throwable t) {
       log.error("Error on tree datasource", t);
     } finally {
@@ -193,18 +246,33 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return jsonResult.toString();
   }
 
+  /**
+   * Given a criteria, return the list of nodes that conforms to the criteria If the number of
+   * returned nodes is too high, throws the TooManyTreeNodesException exception
+   * 
+   * @param table
+   *          tree table being fetched
+   * @param parameters
+   * @return the list of filtered nodes
+   * @throws TooManyTreeNodesException
+   */
   private List<String> getFilteredNodes(Table table, Map<String, String> parameters)
       throws TooManyTreeNodesException {
     List<String> filteredNodes = new ArrayList<String>();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    // Delegate on the default standard datasource to fetch the filtered nodes
     DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
     String dsResult = dataSource.fetch(parameters);
     try {
       JSONObject jsonDsResult = new JSONObject(dsResult);
       JSONObject jsonResponse = jsonDsResult.getJSONObject(JsonConstants.RESPONSE_RESPONSE);
       JSONArray dataArray = jsonResponse.getJSONArray(JsonConstants.RESPONSE_DATA);
-      int nRecords = dataArray.length();
 
+      // Check if the number of filtered results has reached the limit
+      // An _endRow parameter is included in the parameters, being equal to the limit amount nodes.
+      // If the number of nodes returned by the default datasource is equals to this limit, throw
+      // the TooManyTreeNodesException exception
+      int nRecords = dataArray.length();
       OBContext context = OBContext.getOBContext();
       int nMaxResults = -1;
       try {
@@ -230,6 +298,16 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return filteredNodes;
   }
 
+  /**
+   * Explodes the list of filteredNodes to include in the response those nodes plus its parents
+   * 
+   * @param parameters
+   * @param filteredNodes
+   *          list of filtered nodes
+   * @return a JSON array containing the filtered nodes plus all its parents until the root node is
+   *         reached
+   * @throws MultipleParentsException
+   */
   private JSONArray fetchFilteredNodes(Map<String, String> parameters, List<String> filteredNodes)
       throws MultipleParentsException {
     JSONArray responseData = new JSONArray();
@@ -261,7 +339,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           parameters);
     }
     try {
-
+      // If this property is true, the whereclause of the tabs does not need to be apllied to the
+      // non root nodes
       boolean allowNotApplyingWhereClauseToChildren = false;
       try {
         allowNotApplyingWhereClauseToChildren = "Y".equals(Preferences.getPreferenceValue(
@@ -270,17 +349,44 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       }
 
       Map<String, JSONObject> addedNodesMap = new HashMap<String, JSONObject>();
+
       for (String nodeId : filteredNodes) {
         JSONObject node = getJSONObjectByRecordId(parameters, nodeId);
-
         if (!allowNotApplyingWhereClauseToChildren
             && !this.nodeConformsToWhereClause(tableTree, node.getString("id"), hqlTreeWhereClause)) {
+          // If the node does not conform the where clase, do not include it in the response
           continue;
         }
-
         JSONObject savedNode = addedNodesMap.get(node.getString("id"));
-
-        if (hqlTreeWhereClauseRootNodes != null) {
+        if (hqlTreeWhereClauseRootNodes == null) {
+          // If there is no hqlTreeWhereClauseRootNodes, include all the parents until reaching the
+          // node with parentId ROOT_NODE
+          if (savedNode == null) {
+            // The nodes that conform to the filter will be flagged as filterHit to display them
+            // using a diferent style
+            node.put("filterHit", true);
+            addedNodesMap.put(node.getString("id"), node);
+          } else {
+            savedNode.put("filterHit", true);
+          }
+          while (node.has("parentId")
+              && !ROOT_NODE.equals(node.get("parentId"))
+              && (allowNotApplyingWhereClauseToChildren || this.nodeConformsToWhereClause(
+                  tableTree, node.getString("parentId"), hqlTreeWhereClause))) {
+            nodeId = node.getString("parentId");
+            node = getJSONObjectByNodeId(parameters, nodeId);
+            savedNode = addedNodesMap.get(node.getString("id"));
+            if (savedNode == null) {
+              // All the parents will be shown open in the tree grid
+              node.put("isOpen", true);
+              addedNodesMap.put(node.getString("id"), node);
+            } else {
+              savedNode.put("isOpen", true);
+            }
+          }
+        } else {
+          // If a node has hqlTreeWhereClauseRootNodes, we have to make sure that the filtered node
+          // is either a root node or a descendant of it
           Map<String, JSONObject> preAddedNodesMap = new HashMap<String, JSONObject>();
           if (savedNode == null) {
             node.put("filterHit", true);
@@ -308,29 +414,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
               hqlTreeWhereClauseRootNodes)) {
             addedNodesMap.putAll(preAddedNodesMap);
           }
-        } else {
-          if (savedNode == null) {
-            node.put("filterHit", true);
-            addedNodesMap.put(node.getString("id"), node);
-          } else {
-            savedNode.put("filterHit", true);
-          }
-          while (node.has("parentId")
-              && !ROOT_NODE.equals(node.get("parentId"))
-              && (allowNotApplyingWhereClauseToChildren || this.nodeConformsToWhereClause(
-                  tableTree, node.getString("parentId"), hqlTreeWhereClause))) {
-            nodeId = node.getString("parentId");
-            node = getJSONObjectByNodeId(parameters, nodeId);
-            savedNode = addedNodesMap.get(node.getString("id"));
-            if (savedNode == null) {
-              node.put("isOpen", true);
-              addedNodesMap.put(node.getString("id"), node);
-            } else {
-              savedNode.put("isOpen", true);
-            }
-          }
         }
-
         if (allowNotApplyingWhereClauseToChildren
             || this.nodeConformsToWhereClause(tableTree, node.getString("parentId"),
                 hqlTreeWhereClause)) {
@@ -354,6 +438,17 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return responseData;
   }
 
+  /**
+   * Checks if a node is a root node
+   * 
+   * @param node
+   *          JSON objects that contains the properties of the node
+   * @param hqlTreeWhereClauseRootNodes
+   *          hqlWhereClause that defines the root nodes
+   * @param tableTree
+   *          tableTree that defines the tree category that defines the tree
+   * @return
+   */
   private boolean isRoot(JSONObject node, String hqlTreeWhereClauseRootNodes, TableTree tableTree) {
     try {
       String nodeId = null;
@@ -373,9 +468,28 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     }
   }
 
+  /**
+   * Method that checks if a node conforms to a hqlWhereClause
+   * 
+   * @param tableTree
+   *          tableTree that defines the tree category that defines the tree
+   * @param nodeId
+   *          id of the node to be checked
+   * @param hqlWhereClause
+   *          hql where clause to be applied
+   * @return
+   */
   protected abstract boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
       String hqlWhereClause);
 
+  /**
+   * If a where clause contains parameters, substitute the parameter with the actual value
+   * 
+   * @param hqlTreeWhereClause
+   *          the original where clause as defined in the tab/selector
+   * @param parameters
+   * @return the updated where clause, having replaced the parameters with their actual values
+   */
   protected String substituteParameters(String hqlTreeWhereClause, Map<String, String> parameters) {
     Pattern pattern = Pattern.compile("@\\S*@");
     Matcher matcher = pattern.matcher(hqlTreeWhereClause);
@@ -392,17 +506,46 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return hqlCopy;
   }
 
+  /**
+   * @param parameters
+   * @param nodeId
+   * @return returns a json object with the definition of a node give its record id
+   */
   protected abstract JSONObject getJSONObjectByRecordId(Map<String, String> parameters,
       String nodeId);
 
+  /**
+   * @param parameters
+   * @param nodeId
+   * @return returns a json object with the definition of a node give its node id
+   */
   protected abstract JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId)
       throws MultipleParentsException;
 
+  /**
+   * 
+   * @param parameters
+   * @param parentId
+   *          id of the node whose children are to be retrieved
+   * @param hqlWhereClause
+   *          hql where clase of the tab/selector
+   * @param hqlWhereClauseRootNodes
+   *          hql where clause that define what nodes are roots
+   * @return
+   * @throws JSONException
+   * @throws TooManyTreeNodesException
+   *           if the number of returned nodes were to be too high
+   */
   protected abstract JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId,
       String hqlWhereClause, String hqlWhereClauseRootNodes) throws JSONException,
       TooManyTreeNodesException;
 
   @Override
+  /** This method is called when a node is reparented
+   * @param parameters
+   * @param content json objects containing the definition of the updated node(s)
+   * @return a valid response that contains the definition of the updated node(s)
+   */
   public String update(Map<String, String> parameters, String content) {
 
     OBContext.setAdminMode(true);
@@ -412,14 +555,16 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       if (content == null) {
         return "";
       }
+      // These two parameters define the position where the node should be placed among its peer
+      // nodes
       String prevNodeId = parameters.get("prevNodeId");
       String nextNodeId = parameters.get("nextNodeId");
-
       if (jsonObject.has("data")) {
         JSONObject data = jsonObject.getJSONObject("data");
         JSONObject oldValues = jsonObject.getJSONObject("oldValues");
         response = processNodeMovement(parameters, data, oldValues, prevNodeId, nextNodeId);
       } else if (jsonObject.has("transaction")) {
+        // If more than one nodes are moved at the same time, we need to handle a transaction
         JSONArray jsonResultArray = new JSONArray();
         JSONObject transaction = jsonObject.getJSONObject("transaction");
         JSONArray operations = transaction.getJSONArray("operations");
@@ -432,7 +577,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         }
         response = JSON_PREFIX + jsonResultArray.toString() + JSON_SUFFIX;
       }
-
     } catch (Exception e) {
       log.error("Error while moving tree node", e);
     } finally {
@@ -441,6 +585,19 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return response;
   }
 
+  /**
+   * 
+   * @param parameters
+   * @param data
+   *          updated values of the node, including its new parent
+   * @param oldValues
+   *          previous values of the node, including its previous parent
+   * @param prevNodeId
+   * @param nextNodeId
+   *          new position of the node amont its peers
+   * @return
+   * @throws Exception
+   */
   private String processNodeMovement(Map<String, String> parameters, JSONObject data,
       JSONObject oldValues, String prevNodeId, String nextNodeId) throws Exception {
     String nodeId = data.getString("id");
@@ -450,20 +607,32 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     JSONObject jsonResponse = new JSONObject();
     JSONArray dataResponse = new JSONArray();
 
-    String treeType = "EmployeeTree";
-
+    String tabId = parameters.get("tabId");
+    String treeReferenceId = parameters.get("treeReferenceId");
+    Tab tab = null;
+    TableTree tableTree = null;
+    if (tabId != null) {
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+      tableTree = tab.getTableTree();
+    } else if (treeReferenceId != null) {
+      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
+      tableTree = treeReference.getTableTreeCategory();
+    } else {
+      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      return null;
+    }
+    String treeTypeName = tableTree.getTreeCategory().getName();
     CheckTreeOperationManager ctom = null;
-
     try {
-      ctom = checkTreeOperationManagers.select(new ComponentProvider.Selector(treeType)).get();
+      ctom = checkTreeOperationManagers.select(new ComponentProvider.Selector(treeTypeName)).get();
     } catch (UnsatisfiedResolutionException e) {
       // Controlled exception, there aren't any CheckTreeOperationManager
     }
-
     boolean success = true;
     String messageType = null;
     String message = null;
     if (ctom != null) {
+      // Check if the node movement is allowed
       ActionResponse actionResponse = ctom.checkNodeMovement(parameters, nodeId, newParentId,
           prevNodeId, nextNodeId);
       success = actionResponse.isSuccess();
@@ -471,6 +640,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       message = actionResponse.getMessage();
     }
 
+    // Move it
     if (success) {
       JSONObject updatedData = moveNode(parameters, nodeId, newParentId, prevNodeId, nextNodeId);
       if (updatedData != null) {
@@ -490,7 +660,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       jsonMessage.put("message", message);
       jsonResponse.put("message", jsonMessage);
     }
-
     jsonResponse.put(JsonConstants.RESPONSE_DATA, dataResponse);
     jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
     jsonResponse.put(JsonConstants.RESPONSE_ENDROW, 0);
@@ -502,11 +671,18 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   protected abstract JSONObject moveNode(Map<String, String> parameters, String nodeId,
       String newParentId, String prevNodeId, String nextNodeId) throws Exception;
 
+  /**
+   * Exception thrown when an operation can not be done upon a node that has several parents
+   */
   protected class MultipleParentsException extends Exception {
     private static final long serialVersionUID = 1L;
 
   }
 
+  /**
+   * Exception thrown when the number of records returned by the datasource is higher than the
+   * defined limit
+   */
   protected class TooManyTreeNodesException extends Exception {
     private static final long serialVersionUID = 1L;
 
