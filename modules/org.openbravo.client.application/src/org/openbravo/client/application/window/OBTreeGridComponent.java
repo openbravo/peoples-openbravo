@@ -98,6 +98,8 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
         dataSourceId = TREENODE_DATASOURCE;
       } else if (LINKTOPARENT_STRUCTURE.equals(treeCategory.getTreeStructure())) {
         dataSourceId = LINKTOPARENT_DATASOURCE;
+      } else {
+        return treeCategory.getDatasource().getId();
       }
       return dataSourceId;
     } else {
