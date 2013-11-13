@@ -193,7 +193,8 @@ isc.OBListItem.addProperties({
         this.valueMap = {};
         this.valueMap[value] = '';
         return '';
-      } else if (!this.valueMap[value] && OB.Utilities.isUUID(value)) {
+      } //there may be cases if the value is an number within 10 digits, it is identified as an UUID. In that case check is done to confirm whether it is indeed UUID by checking if it is available in the valueMap.
+      else if (!this.valueMap[value] && OB.Utilities.isUUID(value) && this.valueMap.hasOwnProperty(value)) {
         return '';
       }
     }
