@@ -204,7 +204,12 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       joinClause.append(" and (" + hqlWhereClause + ")");
     }
     joinClause.append(" and tn.tree.id = '" + tree.getId() + "' ");
-    joinClause.append(" and tn.reportSet = '" + parentId + "' order by tn.sequenceNumber ");
+    if (hqlWhereClauseRootNodes != null) {
+      joinClause.append(" and (" + hqlWhereClauseRootNodes + ") ");
+    } else {
+      joinClause.append(" and tn.reportSet = '" + parentId + "' ");
+    }
+    joinClause.append(" order by tn.sequenceNumber ");
 
     // Selects the relevant properties from ADTreeNode and all the properties from the referenced
     // table
