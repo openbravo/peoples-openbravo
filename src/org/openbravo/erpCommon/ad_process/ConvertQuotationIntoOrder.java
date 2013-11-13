@@ -20,7 +20,6 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,13 +34,11 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBErrorBuilder;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -54,7 +51,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
-import org.openbravo.model.project.Project;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalBaseProcess;
@@ -65,9 +61,6 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
   @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
 
-    String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("dateFormat.java");
-    SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
     HttpServletRequest request = RequestContext.get().getRequest();
     VariablesSecureApp vars = new VariablesSecureApp(request);
     boolean recalculatePrices = "N".equals(vars.getStringParameter("inprecalculateprices", false,
@@ -137,13 +130,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
 
         // Copy line to the new Sales Order
         OrderLine objCloneOrdLine = (OrderLine) DalUtil.copy(ordLine, false);
-        Project project = objOrder.getProject();
-        String strProjectID = project == null ? "" : project.getId();
-        // Recalculate Taxes
-        String strCTaxID = Tax.get(new DalConnectionProvider(false), ordLine.getProduct().getId(),
-            dateFormat.format(new Date()), ordLine.getOrganization().getId(), ordLine
-                .getWarehouse().getId(), ordLine.getSalesOrder().getInvoiceAddress().getId(),
-            ordLine.getSalesOrder().getPartnerAddress().getId(), strProjectID, true);
+
+        String strCTaxID = objCloneOrdLine.getTax().getId();
         TaxRate lineTax = OBDal.getInstance().get(TaxRate.class, strCTaxID);
 
         if (lineTax == null) {
@@ -152,7 +140,6 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
           }
           strMessage = strMessage.append(lineNo);
         }
-        objCloneOrdLine.setTax(lineTax);
 
         // Update the HashMap of the Taxes. HashMap<TaxId, TotalAmount>
         BigDecimal price = BigDecimal.ZERO;
