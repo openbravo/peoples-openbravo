@@ -28,6 +28,7 @@ isc.OBTreeViewGrid.addProperties({
   canPickFields: false,
   canDropOnLeaves: true,
   canHover: false,
+  // It will be set to false if the tree is ordered
   canReorderRecords: true,
   canAcceptDroppedRecords: true,
   dropIconSuffix: "into",
@@ -105,7 +106,6 @@ isc.OBTreeViewGrid.addProperties({
         me.view.messageBar.setMessage('error', null, OB.I18N.getLabel('OBUIAPP_TooManyNodes'));
       }
     };
-
     fields = this.getTreeGridFields(me.fields);
     ds.primaryKeys = {
       id: 'id'
@@ -153,7 +153,8 @@ isc.OBTreeViewGrid.addProperties({
     return dsRequest;
   },
 
-  // TODO: Remove?
+  
+  // Returns the id of the parent tab, if any
   getParentTabRecordId: function () {
     var parentRecordId = null;
     if (!this.view.parentView) {
@@ -263,15 +264,13 @@ isc.OBTreeViewGrid.addProperties({
     this.Super('hide', arguments);
   },
 
-  copyFieldsFromViewGrid: function () {
-    this.setFields(this.getTreeGridFields(this.view.viewGrid.getFields()));
-  },
-
+  // Takes the criteria from the view grid and applies it to the tree grid
   copyCriteriaFromViewGrid: function () {
     var viewGridCriteria = this.view.viewGrid.getCriteria();
     this.setCriteria(viewGridCriteria);
   },
 
+  // Takes the criteria from the tree grid and applies it to the view grid
   copyCriteriaToViewGrid: function () {
     var treeGridCriteria = this.getCriteria();
     this.view.viewGrid.setCriteria(treeGridCriteria);
@@ -325,37 +324,6 @@ isc.OBTreeViewGrid.addProperties({
   // show or hide the filter button
   filterEditorSubmit: function (criteria) {
     this.checkShowFilterFunnelIcon(criteria);
-  },
-
-  clearFilter: function (keepFilterClause, noPerformAction) {
-    var i = 0,
-        fld, length;
-    this.view.messageBar.hide();
-    if (!keepFilterClause) {
-      delete this.filterClause;
-      delete this.sqlFilterClause;
-    }
-    this.forceRefresh = true;
-    if (this.filterEditor) {
-      if (this.filterEditor.getEditForm()) {
-        this.filterEditor.getEditForm().clearValues();
-
-        // clear the date values in a different way
-        length = this.filterEditor.getEditForm().getFields().length;
-
-        for (i = 0; i < length; i++) {
-          fld = this.filterEditor.getEditForm().getFields()[i];
-          if (fld.clearFilterValues) {
-            fld.clearFilterValues();
-          }
-        }
-      } else {
-        this.filterEditor.setValuesAsCriteria(null);
-      }
-    }
-    if (!noPerformAction) {
-      this.filterEditor.performAction();
-    }
   },
 
   // If any filter change, the view grid will have to te refreshed when the tree grid is hidden

@@ -101,10 +101,9 @@ isc.OBTreeItem.addProperties({
   openTreeWindow: function () {
     var selectedValue = this.getValue(),
         criteria, innerCriteria;
-
     if (this.treeWindow.treeGrid) {
+      //If there is a record selected in the item, use it to filter the tree
       if (OB.Utilities.isUUID(selectedValue)) {
-
         this.targetRecordId = selectedValue;
         this.targetRecordIdentifier = this.getDisplayValue();
       }
@@ -117,6 +116,7 @@ isc.OBTreeItem.addProperties({
   },
 
   toggleTreePicker: function () {
+    // Used to avoid closing the tree when the picker is clicked
     this.pickerClicked = true;
     if (this.tree.isVisible()) {
       this.tree.hide();
@@ -138,6 +138,12 @@ isc.OBTreeItem.addProperties({
     return this.Super('blur', arguments);
   },
 
+  hideTreeIfNotFocused: function () {
+    if (this.form && this.form.getFocusItem() && this.form.getFocusItem().ID !== this.ID) {
+      this.tree.hide();
+    }
+  },
+
   focus: function () {
     this.tree.hide();
     return this.Super('focus', arguments);
@@ -150,12 +156,6 @@ isc.OBTreeItem.addProperties({
       this.tree.hide();
     }
     return this.Super('click', arguments);
-  },
-
-  hideTreeIfNotFocused: function () {
-    if (this.form && this.form.getFocusItem() && this.form.getFocusItem().ID !== this.ID) {
-      this.tree.hide();
-    }
   },
 
   changed: function (form, item, value) {
@@ -185,11 +185,9 @@ isc.OBTreeItem.addProperties({
       if (!this.valueMap) {
         this.valueMap = {};
       }
-
       this.valueMap[record[this.valueField]] = record[this.treeDisplayField].replace(/[\n\r]/g, '');
       this.updateValueMap();
     }
-
     // only jump to the next field if the value has really been set
     // do not jump to the next field if the event has been triggered by the Tab key,
     // to prevent a field from being skipped (see https://issues.openbravo.com/view.php?id=21419)
@@ -201,6 +199,7 @@ isc.OBTreeItem.addProperties({
 
 });
 
+// Tree that is displayed under the tree form item
 isc.ClassFactory.defineClass("OBTreeItemTree", isc.OBTreeGrid);
 
 isc.OBTreeItemTree.addProperties({
@@ -228,13 +227,6 @@ isc.OBTreeItemTree.addProperties({
   },
 
   show: function () {
-    var treeItemWidth;
-    if (this.treeItem) {
-      treeItemWidth = this.treeItem.getVisibleWidth();
-      if (treeItemWidth && treeItemWidth - 2 > this.getWidth()) {
-        this.setWidth(treeItemWidth - 2);
-      }
-    }
     this.updatePosition();
     if (this.isEmpty()) {
       this.fetchData();
@@ -244,8 +236,12 @@ isc.OBTreeItemTree.addProperties({
 
   updatePosition: function () {
     var me = this,
-        interval;
+        interval, treeItemWidth;
     if (this.treeItem) {
+      treeItemWidth = this.treeItem.getVisibleWidth();
+      if (treeItemWidth && treeItemWidth - 2 > this.getWidth()) {
+        this.setWidth(treeItemWidth - 2);
+      }
       this.placeNear(this.treeItem.getPageLeft() + 2, this.treeItem.getPageTop() + 26);
     }
   },
@@ -280,6 +276,8 @@ isc.OBTreeItemTree.addProperties({
     };
     return this.Super("setDataSource", [ds, fields]);
   },
+  
+  //Select the record
   rowDoubleClick: function (record, recordNum, fieldNum) {
     var id = record[OB.Constants.ID],
         identifier = record[OB.Constants.IDENTIFIER];
@@ -317,6 +315,7 @@ isc.OBTreeItemTree.addProperties({
   }
 });
 
+//
 isc.ClassFactory.defineClass('OBTreeItemPopupWindow', isc.OBPopup);
 
 isc.OBTreeItemPopupWindow.addProperties({
@@ -333,11 +332,7 @@ isc.OBTreeItemPopupWindow.addProperties({
 
   initWidget: function () {
     var treeWindow = this,
-        okButton, cancelButton, operator, i;
-
-
-    //TODO:
-    //    this.setFilterEditorProperties(this.treeGridFields);
+        okButton, cancelButton, i;
     okButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
       click: function () {
@@ -353,12 +348,6 @@ isc.OBTreeItemPopupWindow.addProperties({
 
     OB.Utilities.applyDefaultValues(this.treeGridFields, this.defaultTreeGridField);
 
-    if (this.treeItem.popupTextMatchStyle === 'substring') {
-      operator = 'iContains';
-    } else {
-      operator = 'iStartsWith';
-    }
-
     for (i = 0; i < this.treeGridFields.length; i++) {
       this.treeGridFields[i].canSort = (this.treeGridFields[i].canSort === false ? false : true);
       if (this.treeGridFields[i].disableFilter) {
@@ -372,7 +361,6 @@ isc.OBTreeItemPopupWindow.addProperties({
       this.dataSource.init();
     }
     this.treeGrid = isc.OBTreeGrid.create({
-
       treeItem: this.treeItem,
       treeWindow: this,
       view: this.treeItem.form.view,
@@ -387,7 +375,6 @@ isc.OBTreeItemPopupWindow.addProperties({
       alternateRecordStyles: true,
       dataSource: this.dataSource,
       sortField: this.displayField,
-
       init: function () {
         OB.Datasource.get(this.treeItem.dataSourceId, this, null, true);
         this.copyFunctionsFromViewGrid();
@@ -417,10 +404,6 @@ isc.OBTreeItemPopupWindow.addProperties({
 
       getFetchRequestParams: function (params) {
         params = params || {};
-        //        if (this.treeItem) {
-        //          isc.OBSelectorItem.prepareDSRequest(params, this.selector);
-        //        }
-        //        params._requestType = 'Window';
         if (this.getSelectedRecord()) {
           params._targetRecordId = this.targetRecordId;
         }
@@ -478,19 +461,6 @@ isc.OBTreeItemPopupWindow.addProperties({
         this.Super('setFilterValues', criteria);
       },
 
-      selectionChanged: function (record, state) {
-        if (this.treeItem.treeWindow.selectedIds) {
-          if (state) {
-            this.treeItem.treeWindow.selectId(record[OB.Constants.ID]);
-          } else {
-            this.treeItem.treeWindow.selectedIds.remove(record[OB.Constants.ID]);
-          }
-          this.markForRedraw('Selection changed');
-        }
-
-        this.Super('selectionChanged', arguments);
-      },
-
       setDataSource: function (ds, fields) {
         var me = this;
         ds.transformRequest = function (dsRequest) {
@@ -525,32 +495,6 @@ isc.OBTreeItemPopupWindow.addProperties({
       // show or hide the filter button
       filterEditorSubmit: function (criteria) {
         this.checkShowFilterFunnelIcon(criteria);
-      },
-
-      clearFilter: function (keepFilterClause, noPerformAction) {
-        var i = 0,
-            fld, length;
-        this.forceRefresh = true;
-        if (this.filterEditor) {
-          if (this.filterEditor.getEditForm()) {
-            this.filterEditor.getEditForm().clearValues();
-
-            // clear the date values in a different way
-            length = this.filterEditor.getEditForm().getFields().length;
-
-            for (i = 0; i < length; i++) {
-              fld = this.filterEditor.getEditForm().getFields()[i];
-              if (fld.clearFilterValues) {
-                fld.clearFilterValues();
-              }
-            }
-          } else {
-            this.filterEditor.setValuesAsCriteria(null);
-          }
-        }
-        if (!noPerformAction) {
-          this.filterEditor.performAction();
-        }
       },
 
       checkShowFilterFunnelIcon: function (criteria) {
@@ -631,10 +575,8 @@ isc.OBTreeItemPopupWindow.addProperties({
     return this.Super('resized', arguments);
   },
 
-
   setValueInField: function () {
     this.treeItem.setValueFromRecord(this.treeGrid.getSelectedRecord(), true);
     this.hide();
   }
-
 });

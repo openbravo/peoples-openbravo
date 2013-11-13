@@ -16,6 +16,9 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
+// Base OBTreeGrid class
+// This class is extended by the tree used in the Tree Windows and in the Tree References
 isc.ClassFactory.defineClass('OBTreeGrid', isc.TreeGrid);
 
 isc.OBTreeGrid.addProperties({
@@ -32,11 +35,44 @@ isc.OBTreeGrid.addProperties({
     openProperty: "isOpen"
   },
 
+  /**
+   * When the grid is filtered, show the records that did not comply with the filter (but were ancestors of nodes that did) in grey
+   */
   getCellCSSText: function (record, rowNum, colNum) {
     if (record.notFilterHit) {
       return "color:#606060;";
     } else {
       return "";
+    }
+  },
+
+  clearFilter: function (keepFilterClause, noPerformAction) {
+    var i = 0,
+        fld, length;
+    this.view.messageBar.hide();
+    if (!keepFilterClause) {
+      delete this.filterClause;
+      delete this.sqlFilterClause;
+    }
+    this.forceRefresh = true;
+    if (this.filterEditor) {
+      if (this.filterEditor.getEditForm()) {
+        this.filterEditor.getEditForm().clearValues();
+        // clear the date values in a different way
+        length = this.filterEditor.getEditForm().getFields().length;
+
+        for (i = 0; i < length; i++) {
+          fld = this.filterEditor.getEditForm().getFields()[i];
+          if (fld.clearFilterValues) {
+            fld.clearFilterValues();
+          }
+        }
+      } else {
+        this.filterEditor.setValuesAsCriteria(null);
+      }
+    }
+    if (!noPerformAction) {
+      this.filterEditor.performAction();
     }
   }
 });

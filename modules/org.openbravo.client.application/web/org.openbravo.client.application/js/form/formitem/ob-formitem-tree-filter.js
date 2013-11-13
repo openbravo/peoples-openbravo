@@ -154,32 +154,6 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
       // show or hide the filter button
       filterEditorSubmit: function (criteria) {
         this.checkShowFilterFunnelIcon(criteria);
-      },
-
-      clearFilter: function (keepFilterClause, noPerformAction) {
-        var i = 0,
-            fld, length;
-        this.forceRefresh = true;
-        if (this.filterEditor) {
-          if (this.filterEditor.getEditForm()) {
-            this.filterEditor.getEditForm().clearValues();
-
-            // clear the date values in a different way
-            length = this.filterEditor.getEditForm().getFields().length;
-
-            for (i = 0; i < length; i++) {
-              fld = this.filterEditor.getEditForm().getFields()[i];
-              if (fld.clearFilterValues) {
-                fld.clearFilterValues();
-              }
-            }
-          } else {
-            this.filterEditor.setValuesAsCriteria(null);
-          }
-        }
-        if (!noPerformAction) {
-          this.filterEditor.performAction();
-        }
       }
     });
 
@@ -250,7 +224,7 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
       }];
     } else {
       criteria._constructor = 'AdvancedCriteria';
-      criteria._OrExpression = true; // trick to get a really _or_ in the backend
+      criteria._OrExpression = true;
       criteria.operator = 'or';
       criteria.fieldName = fieldName;
       criteria.criteria = [];
@@ -275,7 +249,7 @@ isc.OBTreeFilterItem.addProperties({
   lastValueFromPopup: null,
   pickerIconDefaults: {
     name: 'showDateRange',
-    src: '../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/form/productCharacteristicsFilter_ico.png',
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/productCharacteristicsFilter_ico.png',
     width: 21,
     height: 21,
     showOver: false,
