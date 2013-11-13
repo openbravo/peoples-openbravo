@@ -104,7 +104,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   }
 
   private Property getLinkToParentProperty(Table table) {
-    // TODO: Terminar. Soportar tablas con varios árboles asociados
     List<TableTree> tableTreeList = table.getADTableTreeList();
     if (tableTreeList.size() != 1) {
       return null;
@@ -116,7 +115,6 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   }
 
   private Property getNodeIdProperty(Table table) {
-    // TODO: Terminar. Soportar tablas con varios árboles asociados
     List<TableTree> tableTreeList = table.getADTableTreeList();
     if (tableTreeList.size() != 1) {
       return null;

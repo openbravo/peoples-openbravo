@@ -24,6 +24,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
+import org.openbravo.model.ad.domain.ReferencedTreeField;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.ADTreeType;
@@ -119,15 +120,31 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       String hqlWhereClause, String hqlWhereClauseRootNodes) throws JSONException,
       TooManyTreeNodesException {
 
+    String tableId = null;
     String referencedTableId = parameters.get("referencedTableId");
     String parentRecordId = parameters.get("parentRecordId");
-    Tree tree = this.getTree(referencedTableId, parentRecordId);
+    String treeReferenceId = parameters.get("treeReferenceId");
+    JSONArray selectedProperties = null;
+    if (referencedTableId != null) {
+      tableId = referencedTableId;
+      String selectedPropertiesStr = parameters.get("_selectedProperties");
+      selectedProperties = new JSONArray(selectedPropertiesStr);
+    } else if (treeReferenceId != null) {
+      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
+      treeReference.getADReferencedTreeFieldList();
+      tableId = treeReference.getTable().getId();
+      selectedProperties = new JSONArray();
+      for (ReferencedTreeField treeField : treeReference.getADReferencedTreeFieldList()) {
+        selectedProperties.put(treeField.getProperty());
+      }
+    } else {
+      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      return new JSONArray();
+    }
+    Tree tree = this.getTree(tableId, parentRecordId);
 
     JSONArray responseData = new JSONArray();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tree.getTable().getId());
-
-    String selectedPropertiesStr = parameters.get("_selectedProperties");
-    JSONArray selectedProperties = new JSONArray(selectedPropertiesStr);
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
@@ -276,7 +293,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     List<Column> parentColumns = getParentColumns(table);
     // If it is a subtab, the tree must be associated to the id of its parent tab
     if (parentColumns != null && !parentColumns.isEmpty()) {
-      // TODO: Support tables with multple parent columns
       String referencedColumnValue = getReferencedColumnValue(bobProperties, parentColumns);
       if (referencedColumnValue != null && !referencedColumnValue.isEmpty()) {
         adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_PARENTRECORDID, referencedColumnValue));
@@ -318,7 +334,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     adTree.setClient(client);
     adTree.setOrganization(org);
     adTree.setAllNodes(true);
-    // TODO: Change this
     adTree.setTypeArea("NEW");
     adTree.setTable(table);
     String name = table.getName();
@@ -338,9 +353,28 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   protected JSONObject moveNode(Map<String, String> parameters, String nodeId, String newParentId,
       String prevNodeId, String nextNodeId) throws Exception {
 
+    String tableId = null;
     String referencedTableId = parameters.get("referencedTableId");
     String parentRecordId = parameters.get("parentRecordId");
-    Tree tree = this.getTree(referencedTableId, parentRecordId);
+    String treeReferenceId = parameters.get("treeReferenceId");
+    JSONArray selectedProperties = null;
+    if (referencedTableId != null) {
+      tableId = referencedTableId;
+      String selectedPropertiesStr = parameters.get("_selectedProperties");
+      selectedProperties = new JSONArray(selectedPropertiesStr);
+    } else if (treeReferenceId != null) {
+      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
+      treeReference.getADReferencedTreeFieldList();
+      tableId = treeReference.getTable().getId();
+      selectedProperties = new JSONArray();
+      for (ReferencedTreeField treeField : treeReference.getADReferencedTreeFieldList()) {
+        selectedProperties.put(treeField.getProperty());
+      }
+    } else {
+      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      return new JSONObject();
+    }
+    Tree tree = this.getTree(tableId, parentRecordId);
 
     boolean isOrdered = this.isOrdered(tree);
 
@@ -372,23 +406,25 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   @Override
   protected JSONObject getJSONObjectByRecordId(Map<String, String> parameters, String bobId) {
-    String referencedTableId = parameters.get("referencedTableId");
     String parentRecordId = parameters.get("parentRecordId");
-    Tree tree = this.getTree(referencedTableId, parentRecordId);
 
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
     String hqlWhereClause = null;
+    String tableId = null;
     if (tabId != null) {
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       hqlWhereClause = tab.getHqlwhereclause();
+      tableId = tab.getTable().getId();
     } else if (treeReferenceId != null) {
       ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
       hqlWhereClause = treeReference.getHQLSQLWhereClause();
+      tableId = treeReference.getTable().getId();
     } else {
       log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return new JSONObject();
     }
+    Tree tree = this.getTree(tableId, parentRecordId);
 
     if (hqlWhereClause != null) {
       hqlWhereClause = this.substituteParameters(hqlWhereClause, parameters);

@@ -136,7 +136,17 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
       boolean tooManyNodes = false;
 
-      if (parameters.containsKey("criteria") && parentId.equals(ROOT_NODE)) {
+      String criteria = parameters.get("criteria");
+      boolean validCriteria = false;
+      if (criteria != null) {
+        JSONObject jsonCriteria = new JSONObject(criteria);
+        validCriteria = true;
+        if ("_dummy".equals(jsonCriteria.get("fieldName"))) {
+          validCriteria = false;
+        }
+      }
+
+      if (validCriteria && parentId.equals(ROOT_NODE)) {
         try {
           List<String> filteredNodes = getFilteredNodes(table, parameters);
           if (!filteredNodes.isEmpty()) {
