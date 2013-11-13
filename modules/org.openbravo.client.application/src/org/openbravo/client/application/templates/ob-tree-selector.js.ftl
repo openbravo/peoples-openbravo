@@ -21,7 +21,7 @@
 
     treeReferenceId: '${data.id}',
     dataSourceId: '${data.dataSourceId}',
-    //TODO?
+    parentSelectionAllowed:  ${data.parentSelectionAllowed?string},
     popupTextMatchStyle: 'substring',
     textMatchStyle: 'substring',
     defaultPopupFilterField : '${data.defaultPopupFilterField}',

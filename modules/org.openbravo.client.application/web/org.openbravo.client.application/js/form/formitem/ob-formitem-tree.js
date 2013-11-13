@@ -276,11 +276,14 @@ isc.OBTreeItemTree.addProperties({
     };
     return this.Super("setDataSource", [ds, fields]);
   },
-  
+
   //Select the record
   rowDoubleClick: function (record, recordNum, fieldNum) {
     var id = record[OB.Constants.ID],
         identifier = record[OB.Constants.IDENTIFIER];
+    if (!this.treeItem.parentSelectionAllowed && this.data.hasChildren(record)) {
+      return;
+    }
     if (!this.treeItem.valueMap) {
       this.treeItem.valueMap = {};
     }
@@ -576,7 +579,11 @@ isc.OBTreeItemPopupWindow.addProperties({
   },
 
   setValueInField: function () {
-    this.treeItem.setValueFromRecord(this.treeGrid.getSelectedRecord(), true);
+    var record = this.treeGrid.getSelectedRecord();
+    if (!this.treeItem.parentSelectionAllowed && this.treeGrid.data.hasChildren(record)) {
+      return;
+    }
+    this.treeItem.setValueFromRecord(record, true);
     this.hide();
   }
 });

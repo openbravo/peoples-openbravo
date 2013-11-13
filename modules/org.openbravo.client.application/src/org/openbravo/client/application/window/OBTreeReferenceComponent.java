@@ -126,6 +126,10 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
     return extraProperties.toString();
   }
 
+  public boolean isParentSelectionAllowed() {
+    return getReferencedTree().getTableTreeCategory().getTreeCategory().isParentSelectionAllowed();
+  }
+
   private static String getPropertyOrDataSourceField(ReferencedTreeField treeField) {
     String result = null;
     if (treeField.getProperty() != null) {
