@@ -108,47 +108,53 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
   }
 
   function evaluateBestDealCase() {
-    var currentEval, lines = receipt.get('lines');
+    var currentEval, lines = receipt.get('lines'),
+        foundCaseToEval = false;
 
-    console.timeStamp('evaluateBestDealCase')
-    cases++;
-    console.log('=== case ===', cases )
-    currentEval = {};
+    console.timeStamp('evaluateBestDealCase');
 
-    lines.reset();
-    _.forEach(linesAfterSplit, function (line) {
-      line.set('qty', 1)
-      lines.add(line);
-    });
+    do {
+      cases++;
 
+      currentEval = {};
 
-    _.forEach(promotionCandidates, function (candidate) {
-      var line = candidate.line,
-          prodId = line.get('product').id,
-          ruleId = candidate.candidates.at(candidate.pointer).id;
-      currentEval[prodId] = currentEval[prodId] || {};
-      currentEval[prodId][ruleId] = (currentEval[prodId][ruleId] || 0) + 1;
-
-
-      line.set({
-        promotions: null,
-        promotionCandidates: [ruleId],
-        discountedLinePrice: null,
-        qty: 1
-      }, {
-        silent: true
+      lines.reset();
+      _.forEach(linesAfterSplit, function (line) {
+        line.set('qty', 1)
+        lines.add(line);
       });
-      lines.remove(line);
-      lines.add(line);
-      console.log(candidate.line.get('product').get('_identifier'), '->', candidate.candidates.at(candidate.pointer).get('_identifier'), candidate.line.get('qty'));
-    });
 
-    if (alreadyEvaluated(evaluated, currentEval)) {
-      console.log('----Already evaluated');
-      nextCase(false);
-      return;
-    }
 
+      _.forEach(promotionCandidates, function (candidate) {
+        var line = candidate.line,
+            prodId = line.get('product').id,
+            ruleId = candidate.candidates.at(candidate.pointer).id;
+        currentEval[prodId] = currentEval[prodId] || {};
+        currentEval[prodId][ruleId] = (currentEval[prodId][ruleId] || 0) + 1;
+
+
+        line.set({
+          promotions: null,
+          promotionCandidates: [ruleId],
+          discountedLinePrice: null,
+          qty: 1
+        }, {
+          silent: true
+        });
+        lines.remove(line);
+        lines.add(line);
+      });
+
+      foundCaseToEval = !alreadyEvaluated(evaluated, currentEval);
+      if (!foundCaseToEval) {
+        if (!movePointer()) {
+          finalize();
+          return;
+        }
+      }
+    } while (!foundCaseToEval);
+
+    console.log('=== case ===', cases)
     console.log('num of lines', receipt.get('lines').length)
 
     evaluated.push(currentEval);
@@ -262,7 +268,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     }
 
     rule.implementation(disc, receipt, line, ruleListener);
-
     if (!rule.async) {
       // done, move to next action
       evalCandidate(candidateNum + 1);
