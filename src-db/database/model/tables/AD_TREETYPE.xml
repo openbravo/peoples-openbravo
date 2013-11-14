@@ -46,7 +46,7 @@
         <onCreateDefault/>
       </column>
       <column name="ISORDERED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="TREESTRUCTURE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
