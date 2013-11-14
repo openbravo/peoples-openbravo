@@ -221,14 +221,11 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
 
     function calculate(grp) {
       var res, i, result = [];
-
       for (i = 0; i < grp.length; i++) {
         res = [];
         picked = pick(grp, [], 0, 0, res, i);
         result.push(picked);
       }
-
-      console.log('r,', result)
       return combine(result);
     }
 
@@ -359,7 +356,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
       lines.add(line);
     });
 
-    console.log('lines for case', lines)
+    //console.log('lines for case', lines)
     evalCase(currentCase, 0);
   }
 
@@ -385,7 +382,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
       ruleListener = new Backbone.Model();
       ruleListener.on('completed', function (obj) {
         ruleListener.off();
-        console.log('ueoe')
         evalCase(currentCase, pos + 1);
       }, this);
     }
@@ -419,6 +415,9 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
       // ...and reseting original receipt's lines with best case ones
       originalReceipt.get('lines').reset();
       originalReceipt.get('lines').add(lines.models);
+      
+      originalReceipt.mergeLinesWithSamePromotions();
+      
       originalReceipt.calculateGross();
 
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BDC.Found', [originalDeal, totalDiscount]));
