@@ -40,6 +40,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
@@ -217,6 +218,21 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
     obq.setSelectClause(selectClause);
+
+    int nResults = obq.count();
+
+    OBContext context = OBContext.getOBContext();
+    int nMaxResults = -1;
+    try {
+      nMaxResults = Integer.parseInt(Preferences.getPreferenceValue("TreeDatasourceFetchLimit",
+          false, context.getCurrentClient(), context.getCurrentOrganization(), context.getUser(),
+          context.getRole(), null));
+    } catch (Exception e) {
+      nMaxResults = 1000;
+    }
+    if (nResults > nMaxResults) {
+      throw new TooManyTreeNodesException();
+    }
 
     boolean fetchRoot = ROOT_NODE.equals(parentId);
 
