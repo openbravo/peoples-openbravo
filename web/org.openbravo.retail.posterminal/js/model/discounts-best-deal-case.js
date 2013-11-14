@@ -9,8 +9,6 @@
 
 OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) {
   var allCombinations = [],
-      promotionCandidates = [],
-      evaluated = [],
       cases = 0,
       originalDeal, bestDiscount, totalBestDiscount = [],
       receipt, originalWindowError, linesAfterSplit;
@@ -21,7 +19,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
         lines, candidates = {},
         i = 0;
 
-    lines = receipt.get('lines'); // TODO: only different products
+    lines = receipt.get('lines');
     if (lines.length === 0) {
       finalize();
     }
@@ -145,28 +143,20 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     lines.forEach(function (line) {
       var originalQty, l, productId = line.get('product').id;
 
-      function shouldSplit() {
-        return true;
-      }
 
       i += 1;
       if (candidates[productId] && candidates[productId].length > 0 && line.get('qty') > 1) {
         // there are candidates for the product, let's split the line if needed
-        if (shouldSplit()) {
-          originalQty = line.get('qty');
+        originalQty = line.get('qty');
 
-          console.log('split line', line.get('product').get('_identifier'));
-          line.set({
-            qty: 1,
-            gross: line.get('price')
-          });
-          for (l = 1; l < originalQty; l++) {
-            newLines.push(line.clone());
-          }
-        } else {
-          lines.add(line);
+        console.log('split line', line.get('product').get('_identifier'));
+        line.set({
+          qty: 1,
+          gross: line.get('price')
+        });
+        for (l = 1; l < originalQty; l++) {
+          newLines.push(line.clone());
         }
-
       } else {
         console.log('not split line', line.get('product').get('_identifier'));
       }
@@ -179,58 +169,23 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
       linesAfterSplit.push(line.clone());
     });
 
-    linesAfterSplit.forEach(function (line) {
-      var productCases = candidates[line.get('product').id];
-
-      if (!productCases || productCases.length === 0) {
-        return; // continue
-      }
-
-      numberOfCases = numberOfCases * productCases.length;
-
-      promotionCandidates.push({
-        line: line,
-        candidates: candidates[line.get('product').id],
-        shouldSplit: line.get('qty') === 1,
-        pointer: 0
-      });
-    });
-    console.log('Evalutaing', numberOfCases, 'cases');
-
-
-    var promotionCandidates2 = [];
     _.forEach(groups, function (group) {
-      var promoGroup, linesInGrp = [];
       linesAfterSplit.forEach(function (line) {
         var prodId = line.get('product').id,
             productCases = candidates[prodId];
         if (!productCases || productCases.length === 0 || group.products.indexOf(prodId) === -1) {
           return; //continue
         }
-        linesInGrp.push({
-          line: line,
-          candidates: candidates[line.get('product').id],
-          shouldSplit: line.get('qty') === 1,
-          pointer: 0
-        });
-
         group.productsInSubGrps[prodId].lines.push({
           line: line,
           candidates: candidates[line.get('product').id],
-          shouldSplit: line.get('qty') === 1,
           pointer: 0
         });
       });
-      promoGroup = {
-        grp: group,
-        lines: linesInGrp
-      }
-      promotionCandidates2.push(promoGroup);
+
     });
 
     console.log('num of lines after split', lines.length, receipt.get('lines').length)
-    console.log('candiates', promotionCandidates);
-    console.log('candiates2', promotionCandidates2);
     console.log('groups', groups);
 
     calculateCombinations(groups);
@@ -375,7 +330,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     }
   }
 
-
   function evaluateSubBestDealCase() {
     var lines = receipt.get('lines'),
         currentCase;
@@ -454,8 +408,8 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     if (totalDiscount > originalDeal) {
       // Best Deal found, applying it to the cloned receipt...
       console.log('found best deal case', totalBestDiscount);
-      _.forEach(promotionCandidates, function (candidate) {
-        lines.remove(candidate.line);
+      _.forEach(linesAfterSplit, function (line) {
+        lines.remove(line);
       });
 
       _.forEach(totalBestDiscount, function (bestSubCase) {
@@ -473,9 +427,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_BDC.NotFound'));
       console.log('Already in Best Deal, no change required');
     }
-
-    console.log('Evaluated', evaluated.length, 'of', cases, 'cases--------------------------------------');
-
     endProcess();
   }
 
