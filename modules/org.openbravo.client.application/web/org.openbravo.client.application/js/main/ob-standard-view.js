@@ -1630,7 +1630,11 @@ isc.OBStandardView.addProperties({
       }
     }
     if (!this.isShowingForm) {
-      this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);
+      if (this.isShowingTree) {
+        this.treeGrid.refreshGrid(refreshCallback);
+      } else {
+        this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);
+      }
     } else {
       if (this.viewForm.hasChanged) {
         callback = function (ok) {

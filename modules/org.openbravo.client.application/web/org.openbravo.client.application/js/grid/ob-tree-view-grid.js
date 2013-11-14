@@ -153,7 +153,7 @@ isc.OBTreeViewGrid.addProperties({
     return dsRequest;
   },
 
-  
+
   // Returns the id of the parent tab, if any
   getParentTabRecordId: function () {
     var parentRecordId = null;
@@ -339,6 +339,18 @@ isc.OBTreeViewGrid.addProperties({
     }
     criteria = this.convertCriteria(criteria);
     return criteria;
+  },
+
+  refreshGrid: function (callback) {
+    this.actionAfterDataArrived = callback;
+    this.fetchData(this.getCriteria());
+  },
+
+  dataArrived: function (startRow, endRow) {
+    if (this.actionAfterDataArrived) {
+      this.actionAfterDataArrived();
+      this.actionAfterDataArrived = null;
+    }
   }
 
 });
