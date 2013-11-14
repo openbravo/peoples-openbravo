@@ -318,7 +318,9 @@ isc.OBTreeViewGrid.addProperties({
   },
 
   getFetchRequestParams: function (params) {
-    return this.view.viewGrid.getFetchRequestParams(params);
+    params = this.view.viewGrid.getFetchRequestParams(params);
+    params._tabId = this.view.tabId;
+    return params;
   },
 
   // show or hide the filter button

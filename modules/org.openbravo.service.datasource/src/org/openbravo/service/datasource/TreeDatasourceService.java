@@ -137,6 +137,16 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     OBContext.setAdminMode(true);
     final JSONObject jsonResult = new JSONObject();
 
+    // If the distinct parameter is included in the parameters, delegate to the default standard
+    // datasource
+    if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
+      String tabId = parameters.get("_tabId");
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+      DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
+      return dataSource.fetch(parameters);
+    }
+
     try {
       String parentId = parameters.get("parentId");
       String tabId = parameters.get("tabId");
@@ -175,14 +185,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       if (hqlTreeWhereClauseRootNodes != null) {
         hqlTreeWhereClauseRootNodes = this.substituteParameters(hqlTreeWhereClauseRootNodes,
             parameters);
-      }
-
-      // If the distinct parameter is included in the parameters, delegate to the default standard
-      // datasource
-      if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
-        Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-        DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
-        return dataSource.fetch(parameters);
       }
 
       JSONArray responseData = null;
