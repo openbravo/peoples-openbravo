@@ -234,8 +234,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     console.log('groups', groups);
 
     calculateCombinations(groups);
-    //evaluateBestDealCase();
-    //finalize();
   }
 
   function calculateCombinations(groups) {
@@ -311,8 +309,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
       return false;
     }
 
-
-
     //----
     var totalNumOfCombinations = 0;
     _.forEach(groups, function (group) {
@@ -346,9 +342,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
           currentDiscount += promo.amt;
         });
       }
-
     });
-
 
     console.log('====================================================== case', cases, 'discounts', currentDiscount);
 
@@ -449,94 +443,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     }
   }
 
-  function _evaluateBestDealCase() {
-    var currentEval, lines = receipt.get('lines'),
-        foundCaseToEval = false;
-
-    console.timeStamp('evaluateBestDealCase');
-
-    do {
-      cases++;
-
-      currentEval = {};
-
-      lines.reset();
-      _.forEach(linesAfterSplit, function (line) {
-        line.set('qty', 1)
-        lines.add(line);
-      });
-
-
-      _.forEach(promotionCandidates, function (candidate) {
-        var line = candidate.line,
-            prodId = line.get('product').id,
-            ruleId = candidate.candidates.at(candidate.pointer).id;
-        currentEval[prodId] = currentEval[prodId] || {};
-        currentEval[prodId][ruleId] = (currentEval[prodId][ruleId] || 0) + 1;
-
-
-        line.set({
-          promotions: null,
-          promotionCandidates: [ruleId],
-          discountedLinePrice: null,
-          qty: 1
-        }, {
-          silent: true
-        });
-        lines.remove(line);
-        lines.add(line);
-      });
-
-      foundCaseToEval = !alreadyEvaluated(evaluated, currentEval);
-      if (!foundCaseToEval) {
-        if (!movePointer()) {
-          finalize();
-          return;
-        }
-      }
-    } while (!foundCaseToEval);
-
-    console.log('=== case ===', cases)
-    console.log('num of lines', receipt.get('lines').length)
-
-    evaluated.push(currentEval);
-
-    evalCandidate(0);
-  }
-
-  function _nextCase(currentEvaluated) {
-    var currentDiscount, bestLines, lines = receipt.get('lines');
-    if (currentEvaluated) {
-      currentDiscount = 0;
-      lines.forEach(function (line) {
-        if (line.get('promotions')) {
-          _.forEach(line.get('promotions'), function (promo) {
-            currentDiscount += promo.amt;
-          });
-        }
-      });
-      console.log('====================================================== case', cases, 'discounts', currentDiscount);
-
-      if (!bestDiscount || bestDiscount.totalDiscount < currentDiscount) {
-        bestLines = [];
-        lines.forEach(function (line) {
-          bestLines.push(line.clone());
-        })
-
-        bestDiscount = {
-          totalDiscount: currentDiscount,
-          lines: bestLines
-        };
-      }
-    }
-
-    if (movePointer()) {
-      evaluateBestDealCase();
-    } else {
-      finalize();
-    }
-  }
-
   function finalize() {
     var lines = receipt.get('lines'),
         totalDiscount = 0;
@@ -585,88 +491,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     console.profileEnd();
   }
 
-/**
-    Evaluates a promotionCandidate with current pointers. This is, 
-    a line with a promo
-  **/
-
-  function evalCandidate(candidateNum) {
-    var candidate = promotionCandidates[candidateNum],
-        lines;
-    if (candidateNum >= promotionCandidates.length) {
-      lines = receipt.get('lines');
-      lines.reset();
-      _.forEach(linesAfterSplit, function (line) {
-        lines.add(line);
-      });
-      nextCase(true);
-      return;
-    }
-
-    var disc = candidate.candidates.at(candidate.pointer),
-        rule = rule = OB.Model.Discounts.discountRules[disc.get('discountType')],
-        line = candidate.line,
-        ruleListener;
-    if (rule.async) {
-
-      // waiting listener to trigger completed to move to next action
-      ruleListener = new Backbone.Model();
-      ruleListener.on('completed', function (obj) {
-        ruleListener.off();
-        console.log('ueoe')
-        evalCandidate(candidateNum + 1);
-      }, this);
-    }
-
-    rule.implementation(disc, receipt, line, ruleListener);
-    if (!rule.async) {
-      // done, move to next action
-      evalCandidate(candidateNum + 1);
-    }
-  }
-
-  function alreadyEvaluated(evaluated, currentEval) {
-    var c, i;
-    for (i = 0; i < evaluated.length; i++) {
-      alreadyEval = true;
-      for (c in currentEval) {
-        if (currentEval.hasOwnProperty(c)) {
-          for (p in currentEval[c]) {
-            if (currentEval[c].hasOwnProperty(p)) {
-              alreadyEval = alreadyEval && ((evaluated[i][c] && evaluated[i][c][p] === currentEval[c][p]));
-              if (!alreadyEval) {
-                continue;
-              }
-            }
-          }
-          if (!alreadyEval) {
-            continue;
-          }
-        }
-      }
-      if (alreadyEval) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  function movePointer() {
-    var i = 0,
-        moved = false;
-    for (i = promotionCandidates.length - 1; i >= 0; i--) {
-      if (promotionCandidates[i].pointer < promotionCandidates[i].candidates.length - 1) {
-        moved = true;
-        promotionCandidates[i].pointer += 1;
-        for (j = i + 1; j < promotionCandidates.length; j++) {
-          promotionCandidates[j].pointer = 0;
-        }
-        break;
-      }
-    }
-    return moved;
-  }
-
   console.profile('calculateBestDealCase');
   console.time('calculateBestDealCase');
   OB.UTIL.showLoading(true);
@@ -697,6 +521,3 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
 
   getCandidatesForProducts();
 }
-
-
-//OB.Model.Discounts.calculateBestDealCase(OB.POS.terminal.$.containerWindow.children[0].model.get('order'))
