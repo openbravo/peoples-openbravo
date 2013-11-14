@@ -226,8 +226,8 @@ public class OBViewTab extends BaseTemplateComponent {
       iconButtons.add(auditBtn);
     }
 
-    // Tree button
-    if (tab.isTreeIncluded()) {
+    // Old Tree button
+    if (tab.isTreeIncluded() && tab.getTableTree() == null) {
       IconButton treeBtn = new IconButton();
       treeBtn.type = "tree";
       treeBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Tree", OBContext
