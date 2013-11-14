@@ -231,15 +231,98 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     console.log('candiates2', promotionCandidates2);
     console.log('groups', groups);
 
-    splitGroups(promotionCandidates2);
+    calculateCombinations(groups);
     //evaluateBestDealCase();
     //finalize();
   }
 
-  function splitGroups(promotionCandidates2) {
-    _.forEach(promotionCandidates2, function (group) {
+  function calculateCombinations(groups) {
 
+    function pick(grp, got, pos, lnum, result, tnum) {
+      var l = [],
+          z, i;
+      if (got.length === grp[tnum].lines.length) {
+        for (z = 0; z < got.length; z++) {
+          l.push({
+            l: got[z].l,
+            d: got[z].d
+          })
+        }
+
+        result.push(l);
+        return result;
+      }
+
+      for (i = pos; i < grp[tnum].ruleIds.length; i++) {
+        got.push({
+          l: grp[tnum].lines[lnum],
+          d: grp[tnum].ruleIds[i]
+        });
+        pick(grp, got, i, lnum + 1, result, tnum)
+        got.pop();
+      }
+      return result;
+    }
+
+    function calculate(grp) {
+      var res, i, result = [];
+
+      for (i = 0; i < grp.length; i++) {
+        res = [];
+        picked = pick(grp, [], 0, 0, res, i);
+        result.push(picked);
+      }
+
+      console.log('r,', result)
+      return combine(result);
+    }
+
+    function combine(c, n) {
+      var r = [],
+          pointers = [],
+          l, i;
+      for (i = 0; i < c.length; i++) {
+        pointers.push(0);
+      }
+
+      do {
+        l = [];
+        for (i = 0; i < pointers.length; i++) {
+          l = l.concat(c[i][pointers[i]]);
+        }
+        r.push(l);
+      } while (movePointer(pointers, c));
+      return r;
+    }
+
+    function movePointer(p, c) {
+      var i, k;
+      for (i = c.length - 1; i >= 0; i--) {
+        if (p[i] < c[i].length - 1) {
+          p[i]++;
+          for (k = i + 1; k < c.length; k++) {
+            p[k] = 0;
+          }
+          return true;
+        }
+      }
+      return false;
+    }
+
+
+
+    //----
+    var allCombinations = [],
+        totalNumOfCombinations = 0;
+    _.forEach(groups, function (group) {
+      var grpCombinations = calculate(group.subGrps);
+
+      console.log(grpCombinations.length, 'combinations for grp', group); //, combinations);
+      totalNumOfCombinations += grpCombinations.length;
+      allCombinations.push(grpCombinations);
     });
+
+    console.log(totalNumOfCombinations, 'allCombinations', allCombinations)
 
     //evaluateBestDealCase();
     finalize();
