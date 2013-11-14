@@ -310,9 +310,7 @@ isc.OBTreeViewGrid.addProperties({
       length = this.view.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
         tabViewPane = this.view.childTabSet.tabs[i].pane;
-        if (!selectedRecordId || selectedRecordId !== tabViewPane.parentRecordId) {
-          tabViewPane.doRefreshContents(true);
-        }
+        tabViewPane.doRefreshContents(true);
       }
     }
   },
