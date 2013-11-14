@@ -2754,6 +2754,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--3474CB99ADB14F1DA1362B256C32B192-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3474CB99ADB14F1DA1362B256C32B192-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3474CB99ADB14F1DA1362B256C32B192-->  <NAME><![CDATA[Tree Category]]></NAME>
+<!--3474CB99ADB14F1DA1362B256C32B192-->  <DESCRIPTION><![CDATA[Create tree categories that can be associated to tables whose content can be represented hierarchically]]></DESCRIPTION>
+<!--3474CB99ADB14F1DA1362B256C32B192-->  <HELP><![CDATA[A tree category stores some basic information about a tree structure. ]]></HELP>
 <!--3474CB99ADB14F1DA1362B256C32B192-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--3474CB99ADB14F1DA1362B256C32B192-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--3474CB99ADB14F1DA1362B256C32B192-->  <PROCESSING><![CDATA[N]]></PROCESSING>

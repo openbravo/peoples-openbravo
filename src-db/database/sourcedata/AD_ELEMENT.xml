@@ -21270,6 +21270,8 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--271064362EBE4E0AA76CE3A26D1253E2-->  <COLUMNNAME><![CDATA[Nodeidcolumn]]></COLUMNNAME>
 <!--271064362EBE4E0AA76CE3A26D1253E2-->  <NAME><![CDATA[Node ID Column]]></NAME>
 <!--271064362EBE4E0AA76CE3A26D1253E2-->  <PRINTNAME><![CDATA[Node ID Column]]></PRINTNAME>
+<!--271064362EBE4E0AA76CE3A26D1253E2-->  <DESCRIPTION><![CDATA[For Link to Parent tables: column that represents the id of the node]]></DESCRIPTION>
+<!--271064362EBE4E0AA76CE3A26D1253E2-->  <HELP><![CDATA[For Link to Parent tables: column that represents the id of the node. Usually the id column should be used.]]></HELP>
 <!--271064362EBE4E0AA76CE3A26D1253E2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--271064362EBE4E0AA76CE3A26D1253E2-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--271064362EBE4E0AA76CE3A26D1253E2--></AD_ELEMENT>
@@ -21294,6 +21296,8 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--28CA19C5616E4919AA3D681EDE08A2B1-->  <COLUMNNAME><![CDATA[Showingrid]]></COLUMNNAME>
 <!--28CA19C5616E4919AA3D681EDE08A2B1-->  <NAME><![CDATA[Show In Grid]]></NAME>
 <!--28CA19C5616E4919AA3D681EDE08A2B1-->  <PRINTNAME><![CDATA[Show In Grid]]></PRINTNAME>
+<!--28CA19C5616E4919AA3D681EDE08A2B1-->  <DESCRIPTION><![CDATA[Defines if this field should be shown in the popup]]></DESCRIPTION>
+<!--28CA19C5616E4919AA3D681EDE08A2B1-->  <HELP><![CDATA[Defines if this field should be shown in the popup]]></HELP>
 <!--28CA19C5616E4919AA3D681EDE08A2B1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--28CA19C5616E4919AA3D681EDE08A2B1-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--28CA19C5616E4919AA3D681EDE08A2B1--></AD_ELEMENT>
@@ -21412,6 +21416,8 @@ When Never the Balance is always used, when Positive the balance is considered Z
 <!--2EFB8D83C9CC4E2AB8E6FB9AC558ADE4-->  <COLUMNNAME><![CDATA[Isparentselectionallowed]]></COLUMNNAME>
 <!--2EFB8D83C9CC4E2AB8E6FB9AC558ADE4-->  <NAME><![CDATA[Is Parent Selection Allowed]]></NAME>
 <!--2EFB8D83C9CC4E2AB8E6FB9AC558ADE4-->  <PRINTNAME><![CDATA[IsParentSelectionAllowed]]></PRINTNAME>
+<!--2EFB8D83C9CC4E2AB8E6FB9AC558ADE4-->  <DESCRIPTION><![CDATA[Defines if parent nodes can be selected when using a tree reference]]></DESCRIPTION>
+<!--2EFB8D83C9CC4E2AB8E6FB9AC558ADE4-->  <HELP><![CDATA[This property is used to define if non-leaf nodes are allowed to be selected in a tree reference.]]></HELP>
 <!--2EFB8D83C9CC4E2AB8E6FB9AC558ADE4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2EFB8D83C9CC4E2AB8E6FB9AC558ADE4-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--2EFB8D83C9CC4E2AB8E6FB9AC558ADE4--></AD_ELEMENT>
@@ -22292,6 +22298,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--50B0CE0E44254F62AEB62C7C3945C6A4-->  <COLUMNNAME><![CDATA[Displayfield_ID]]></COLUMNNAME>
 <!--50B0CE0E44254F62AEB62C7C3945C6A4-->  <NAME><![CDATA[Display Field]]></NAME>
 <!--50B0CE0E44254F62AEB62C7C3945C6A4-->  <PRINTNAME><![CDATA[Display Field]]></PRINTNAME>
+<!--50B0CE0E44254F62AEB62C7C3945C6A4-->  <DESCRIPTION><![CDATA[The value of this field will be displayed in the tree reference text input box.]]></DESCRIPTION>
+<!--50B0CE0E44254F62AEB62C7C3945C6A4-->  <HELP><![CDATA[The value of this field will be displayed in the tree reference text input box.]]></HELP>
 <!--50B0CE0E44254F62AEB62C7C3945C6A4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--50B0CE0E44254F62AEB62C7C3945C6A4-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--50B0CE0E44254F62AEB62C7C3945C6A4--></AD_ELEMENT>
@@ -23022,6 +23030,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--55D679B1E25D4DDAAE1FE0216272170E-->  <COLUMNNAME><![CDATA[Applywhereclausetochildnodes]]></COLUMNNAME>
 <!--55D679B1E25D4DDAAE1FE0216272170E-->  <NAME><![CDATA[Apply HQL Where Clause To Child Nodes]]></NAME>
 <!--55D679B1E25D4DDAAE1FE0216272170E-->  <PRINTNAME><![CDATA[Apply HQL Where Clause To Child Nodes]]></PRINTNAME>
+<!--55D679B1E25D4DDAAE1FE0216272170E-->  <DESCRIPTION><![CDATA[Defines if the tab where clause should be applied to non root nodes]]></DESCRIPTION>
+<!--55D679B1E25D4DDAAE1FE0216272170E-->  <HELP><![CDATA[By default, the HQL where clause of the tab is applied to all nodes. If this checkbox is unset, then this where clause will be applied only to root nodes.]]></HELP>
 <!--55D679B1E25D4DDAAE1FE0216272170E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--55D679B1E25D4DDAAE1FE0216272170E-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--55D679B1E25D4DDAAE1FE0216272170E--></AD_ELEMENT>
@@ -24320,6 +24330,18 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--59212C15A705F425E040007F01003D5C-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--59212C15A705F425E040007F01003D5C--></AD_ELEMENT>
 
+<!--5972B306A0334C4E9FE58D2CE789F2AE--><AD_ELEMENT>
+<!--5972B306A0334C4E9FE58D2CE789F2AE-->  <AD_ELEMENT_ID><![CDATA[5972B306A0334C4E9FE58D2CE789F2AE]]></AD_ELEMENT_ID>
+<!--5972B306A0334C4E9FE58D2CE789F2AE-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--5972B306A0334C4E9FE58D2CE789F2AE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--5972B306A0334C4E9FE58D2CE789F2AE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--5972B306A0334C4E9FE58D2CE789F2AE-->  <COLUMNNAME><![CDATA[Extree_Empl_Dep_Link_ID]]></COLUMNNAME>
+<!--5972B306A0334C4E9FE58D2CE789F2AE-->  <NAME><![CDATA[Employee]]></NAME>
+<!--5972B306A0334C4E9FE58D2CE789F2AE-->  <PRINTNAME><![CDATA[Employee]]></PRINTNAME>
+<!--5972B306A0334C4E9FE58D2CE789F2AE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--5972B306A0334C4E9FE58D2CE789F2AE-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--5972B306A0334C4E9FE58D2CE789F2AE--></AD_ELEMENT>
+
 <!--59C4D0498A3771B8E040007F010133FD--><AD_ELEMENT>
 <!--59C4D0498A3771B8E040007F010133FD-->  <AD_ELEMENT_ID><![CDATA[59C4D0498A3771B8E040007F010133FD]]></AD_ELEMENT_ID>
 <!--59C4D0498A3771B8E040007F010133FD-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -24650,6 +24672,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--5CDCDD2C59EF46FBB4B789203E68D3B4-->  <COLUMNNAME><![CDATA[Searchinsuggestionbox]]></COLUMNNAME>
 <!--5CDCDD2C59EF46FBB4B789203E68D3B4-->  <NAME><![CDATA[Search In Suggestion Box]]></NAME>
 <!--5CDCDD2C59EF46FBB4B789203E68D3B4-->  <PRINTNAME><![CDATA[Search In Suggestion Box]]></PRINTNAME>
+<!--5CDCDD2C59EF46FBB4B789203E68D3B4-->  <DESCRIPTION><![CDATA[Defines if this field should be searched when text is entered in the suggestion box]]></DESCRIPTION>
+<!--5CDCDD2C59EF46FBB4B789203E68D3B4-->  <HELP><![CDATA[Defines if this field should be searched when text is entered in the suggestion box]]></HELP>
 <!--5CDCDD2C59EF46FBB4B789203E68D3B4-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5CDCDD2C59EF46FBB4B789203E68D3B4-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--5CDCDD2C59EF46FBB4B789203E68D3B4--></AD_ELEMENT>
@@ -24662,6 +24686,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--5D272070F3EE4507BE9C0F3549E043D6-->  <COLUMNNAME><![CDATA[Valuefield_ID]]></COLUMNNAME>
 <!--5D272070F3EE4507BE9C0F3549E043D6-->  <NAME><![CDATA[Value Field]]></NAME>
 <!--5D272070F3EE4507BE9C0F3549E043D6-->  <PRINTNAME><![CDATA[Value Field]]></PRINTNAME>
+<!--5D272070F3EE4507BE9C0F3549E043D6-->  <DESCRIPTION><![CDATA[The value of this field will be set in the foreign key column. ]]></DESCRIPTION>
+<!--5D272070F3EE4507BE9C0F3549E043D6-->  <HELP><![CDATA[The value of this field will be set in the foreign key column. ]]></HELP>
 <!--5D272070F3EE4507BE9C0F3549E043D6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5D272070F3EE4507BE9C0F3549E043D6-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--5D272070F3EE4507BE9C0F3549E043D6--></AD_ELEMENT>
@@ -24927,6 +24953,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--64108E30EB9C4C80ACA6CD9DF8EE27AF-->  <COLUMNNAME><![CDATA[Isordered]]></COLUMNNAME>
 <!--64108E30EB9C4C80ACA6CD9DF8EE27AF-->  <NAME><![CDATA[Is Ordered]]></NAME>
 <!--64108E30EB9C4C80ACA6CD9DF8EE27AF-->  <PRINTNAME><![CDATA[IsOrdered]]></PRINTNAME>
+<!--64108E30EB9C4C80ACA6CD9DF8EE27AF-->  <DESCRIPTION><![CDATA[Defines if the tree is ordered]]></DESCRIPTION>
+<!--64108E30EB9C4C80ACA6CD9DF8EE27AF-->  <HELP><![CDATA[The trees that use the ADTreeNode structure can be defined as ordered. In that case, the position of a node among its brothers is defined by a sequence number. ]]></HELP>
 <!--64108E30EB9C4C80ACA6CD9DF8EE27AF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--64108E30EB9C4C80ACA6CD9DF8EE27AF-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--64108E30EB9C4C80ACA6CD9DF8EE27AF--></AD_ELEMENT>
@@ -25274,6 +25302,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--6D51FCB6DB974459A2B427D591656499-->  <COLUMNNAME><![CDATA[Istree]]></COLUMNNAME>
 <!--6D51FCB6DB974459A2B427D591656499-->  <NAME><![CDATA[Is Tree]]></NAME>
 <!--6D51FCB6DB974459A2B427D591656499-->  <PRINTNAME><![CDATA[Istree]]></PRINTNAME>
+<!--6D51FCB6DB974459A2B427D591656499-->  <DESCRIPTION><![CDATA[Defines if the data of this table wants to be displayed hierarchically]]></DESCRIPTION>
+<!--6D51FCB6DB974459A2B427D591656499-->  <HELP><![CDATA[If a table is defined as a tree, then the Table Tree Category tab is shown in this window. In that tab, tree categories can be assigned to this table. Once a tree table has defined a table tree category, it can be used in tree referenced and the tree view will be available when the table is displayed in a tab.]]></HELP>
 <!--6D51FCB6DB974459A2B427D591656499-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6D51FCB6DB974459A2B427D591656499-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--6D51FCB6DB974459A2B427D591656499--></AD_ELEMENT>
@@ -28823,6 +28853,8 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--A2363659C8E8459993B7A4E5F574E092-->  <COLUMNNAME><![CDATA[Showinpicklist]]></COLUMNNAME>
 <!--A2363659C8E8459993B7A4E5F574E092-->  <NAME><![CDATA[Show In Picklist]]></NAME>
 <!--A2363659C8E8459993B7A4E5F574E092-->  <PRINTNAME><![CDATA[Show In Picklist]]></PRINTNAME>
+<!--A2363659C8E8459993B7A4E5F574E092-->  <DESCRIPTION><![CDATA[Defines if this field should be shown in the picklist]]></DESCRIPTION>
+<!--A2363659C8E8459993B7A4E5F574E092-->  <HELP><![CDATA[Defines if this field should be shown in the pick list]]></HELP>
 <!--A2363659C8E8459993B7A4E5F574E092-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A2363659C8E8459993B7A4E5F574E092-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--A2363659C8E8459993B7A4E5F574E092--></AD_ELEMENT>
@@ -29453,6 +29485,8 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--B309CE97F1774C62AE6043A57DD9BAF5-->  <COLUMNNAME><![CDATA[AD_Table_Tree_ID]]></COLUMNNAME>
 <!--B309CE97F1774C62AE6043A57DD9BAF5-->  <NAME><![CDATA[Table Tree Category]]></NAME>
 <!--B309CE97F1774C62AE6043A57DD9BAF5-->  <PRINTNAME><![CDATA[Table Tree Category]]></PRINTNAME>
+<!--B309CE97F1774C62AE6043A57DD9BAF5-->  <DESCRIPTION><![CDATA[Table tree structure to be used in this tab]]></DESCRIPTION>
+<!--B309CE97F1774C62AE6043A57DD9BAF5-->  <HELP><![CDATA[Tree tables can define several tree structures. If a table tree structure is set in this field, the tab will include a tree view that will allow to browse the data hierarchically.]]></HELP>
 <!--B309CE97F1774C62AE6043A57DD9BAF5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B309CE97F1774C62AE6043A57DD9BAF5-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--B309CE97F1774C62AE6043A57DD9BAF5--></AD_ELEMENT>
@@ -30037,6 +30071,8 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--BE747DECB4D54C88BEC4140F33EB428A-->  <COLUMNNAME><![CDATA[AD_Treetype_ID]]></COLUMNNAME>
 <!--BE747DECB4D54C88BEC4140F33EB428A-->  <NAME><![CDATA[Tree Category]]></NAME>
 <!--BE747DECB4D54C88BEC4140F33EB428A-->  <PRINTNAME><![CDATA[AD_Treetype_ID]]></PRINTNAME>
+<!--BE747DECB4D54C88BEC4140F33EB428A-->  <DESCRIPTION><![CDATA[Tree Category that defines how the data of this table can be structured hierarchically]]></DESCRIPTION>
+<!--BE747DECB4D54C88BEC4140F33EB428A-->  <HELP><![CDATA[Tree Category that defines how the data of this table can be structured hierarchically. ]]></HELP>
 <!--BE747DECB4D54C88BEC4140F33EB428A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--BE747DECB4D54C88BEC4140F33EB428A-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--BE747DECB4D54C88BEC4140F33EB428A--></AD_ELEMENT>
@@ -30636,6 +30672,8 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--CDDA84B457CF4BF1927A2FE789021B4C-->  <COLUMNNAME><![CDATA[Hqltreewhereclause]]></COLUMNNAME>
 <!--CDDA84B457CF4BF1927A2FE789021B4C-->  <NAME><![CDATA[HQL Where Clause for Root Nodes]]></NAME>
 <!--CDDA84B457CF4BF1927A2FE789021B4C-->  <PRINTNAME><![CDATA[HQL Where Clause for Root Nodes]]></PRINTNAME>
+<!--CDDA84B457CF4BF1927A2FE789021B4C-->  <DESCRIPTION><![CDATA[Where clause that define what are the root nodes for this table]]></DESCRIPTION>
+<!--CDDA84B457CF4BF1927A2FE789021B4C-->  <HELP><![CDATA[By default the root nodes of the tree are those whose parent is null or 0. When the default case does not apply, a HQL where clause can be set to define which are the root nodes for this tab.]]></HELP>
 <!--CDDA84B457CF4BF1927A2FE789021B4C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--CDDA84B457CF4BF1927A2FE789021B4C-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--CDDA84B457CF4BF1927A2FE789021B4C--></AD_ELEMENT>
@@ -30890,6 +30928,8 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--D21DE818DD4E499D851ADE875D6FD711-->  <COLUMNNAME><![CDATA[Sort]]></COLUMNNAME>
 <!--D21DE818DD4E499D851ADE875D6FD711-->  <NAME><![CDATA[Sort]]></NAME>
 <!--D21DE818DD4E499D851ADE875D6FD711-->  <PRINTNAME><![CDATA[Sort]]></PRINTNAME>
+<!--D21DE818DD4E499D851ADE875D6FD711-->  <DESCRIPTION><![CDATA[Defines if this field can be sorted in the popup]]></DESCRIPTION>
+<!--D21DE818DD4E499D851ADE875D6FD711-->  <HELP><![CDATA[Defines if this field can be sorted in the popup]]></HELP>
 <!--D21DE818DD4E499D851ADE875D6FD711-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D21DE818DD4E499D851ADE875D6FD711-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--D21DE818DD4E499D851ADE875D6FD711--></AD_ELEMENT>
@@ -30956,6 +30996,8 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--D4D7E2ED15CA403C88268790EB09C018-->  <COLUMNNAME><![CDATA[LinkToParentColumn]]></COLUMNNAME>
 <!--D4D7E2ED15CA403C88268790EB09C018-->  <NAME><![CDATA[Link to Parent Column]]></NAME>
 <!--D4D7E2ED15CA403C88268790EB09C018-->  <PRINTNAME><![CDATA[Link to Parent Column]]></PRINTNAME>
+<!--D4D7E2ED15CA403C88268790EB09C018-->  <DESCRIPTION><![CDATA[For Link to Parent tables: column that points to the node id of the parent node]]></DESCRIPTION>
+<!--D4D7E2ED15CA403C88268790EB09C018-->  <HELP><![CDATA[This field is only used in Link To Parent tables. This field represents the column that points to the node id of the row that represents the parent of a node]]></HELP>
 <!--D4D7E2ED15CA403C88268790EB09C018-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D4D7E2ED15CA403C88268790EB09C018-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--D4D7E2ED15CA403C88268790EB09C018--></AD_ELEMENT>
@@ -31282,6 +31324,8 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--D950A83FC2304589A2326560E1106E54-->  <COLUMNNAME><![CDATA[Filter]]></COLUMNNAME>
 <!--D950A83FC2304589A2326560E1106E54-->  <NAME><![CDATA[Filter]]></NAME>
 <!--D950A83FC2304589A2326560E1106E54-->  <PRINTNAME><![CDATA[Filter]]></PRINTNAME>
+<!--D950A83FC2304589A2326560E1106E54-->  <DESCRIPTION><![CDATA[Defines if this field can be filtered in the popup]]></DESCRIPTION>
+<!--D950A83FC2304589A2326560E1106E54-->  <HELP><![CDATA[Defines if this field can be filtered in the popup]]></HELP>
 <!--D950A83FC2304589A2326560E1106E54-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D950A83FC2304589A2326560E1106E54-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--D950A83FC2304589A2326560E1106E54--></AD_ELEMENT>
@@ -31373,18 +31417,6 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--DBB02A64470D4093A2534F0DFC8BF855-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DBB02A64470D4093A2534F0DFC8BF855-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--DBB02A64470D4093A2534F0DFC8BF855--></AD_ELEMENT>
-
-<!--DD1CAEC50F54425CB4EF470DBB9FDA2C--><AD_ELEMENT>
-<!--DD1CAEC50F54425CB4EF470DBB9FDA2C-->  <AD_ELEMENT_ID><![CDATA[DD1CAEC50F54425CB4EF470DBB9FDA2C]]></AD_ELEMENT_ID>
-<!--DD1CAEC50F54425CB4EF470DBB9FDA2C-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--DD1CAEC50F54425CB4EF470DBB9FDA2C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--DD1CAEC50F54425CB4EF470DBB9FDA2C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--DD1CAEC50F54425CB4EF470DBB9FDA2C-->  <COLUMNNAME><![CDATA[TreeSequenceColumn]]></COLUMNNAME>
-<!--DD1CAEC50F54425CB4EF470DBB9FDA2C-->  <NAME><![CDATA[Tree Sequence Column]]></NAME>
-<!--DD1CAEC50F54425CB4EF470DBB9FDA2C-->  <PRINTNAME><![CDATA[Tree Sequence Column]]></PRINTNAME>
-<!--DD1CAEC50F54425CB4EF470DBB9FDA2C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--DD1CAEC50F54425CB4EF470DBB9FDA2C-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--DD1CAEC50F54425CB4EF470DBB9FDA2C--></AD_ELEMENT>
 
 <!--DD64C1EFFA364FE7E040007F01002A49--><AD_ELEMENT>
 <!--DD64C1EFFA364FE7E040007F01002A49-->  <AD_ELEMENT_ID><![CDATA[DD64C1EFFA364FE7E040007F01002A49]]></AD_ELEMENT_ID>
@@ -31756,6 +31788,8 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--E8DDE75253E4D184E040007F0100406D-->  <COLUMNNAME><![CDATA[Hasmultiparentnodes]]></COLUMNNAME>
 <!--E8DDE75253E4D184E040007F0100406D-->  <NAME><![CDATA[Has Multiparent Nodes]]></NAME>
 <!--E8DDE75253E4D184E040007F0100406D-->  <PRINTNAME><![CDATA[Has Multiparent Nodes]]></PRINTNAME>
+<!--E8DDE75253E4D184E040007F0100406D-->  <DESCRIPTION><![CDATA[Allows to define if a node can have several parents]]></DESCRIPTION>
+<!--E8DDE75253E4D184E040007F0100406D-->  <HELP><![CDATA[If the data of the table cannot be strictly represented as a tree because each node can have several parents, this checkbox must be flagged.]]></HELP>
 <!--E8DDE75253E4D184E040007F0100406D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E8DDE75253E4D184E040007F0100406D-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--E8DDE75253E4D184E040007F0100406D--></AD_ELEMENT>
@@ -31782,6 +31816,8 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--EBE913C1DDD84066A1D88C9903717DB9-->  <COLUMNNAME><![CDATA[Whereclauserootnodes]]></COLUMNNAME>
 <!--EBE913C1DDD84066A1D88C9903717DB9-->  <NAME><![CDATA[HQL Where Clause for Root Nodes]]></NAME>
 <!--EBE913C1DDD84066A1D88C9903717DB9-->  <PRINTNAME><![CDATA[HQL Where Clause for Root Nodes]]></PRINTNAME>
+<!--EBE913C1DDD84066A1D88C9903717DB9-->  <DESCRIPTION><![CDATA[Where clause that define what are the root nodes for this tree reference]]></DESCRIPTION>
+<!--EBE913C1DDD84066A1D88C9903717DB9-->  <HELP><![CDATA[By default the root nodes of the tree are those whose parent is null or 0. When the default case does not apply, a HQL where clause can be set to define which are the root nodes for this tree reference.]]></HELP>
 <!--EBE913C1DDD84066A1D88C9903717DB9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--EBE913C1DDD84066A1D88C9903717DB9-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--EBE913C1DDD84066A1D88C9903717DB9--></AD_ELEMENT>
@@ -32087,6 +32123,11 @@ This field is populated in case the used price list includes taxes.]]></HELP>
 <!--FC6AA883E5FE4A338C509A0A5A05B873-->  <COLUMNNAME><![CDATA[Treestructure]]></COLUMNNAME>
 <!--FC6AA883E5FE4A338C509A0A5A05B873-->  <NAME><![CDATA[Tree Structure]]></NAME>
 <!--FC6AA883E5FE4A338C509A0A5A05B873-->  <PRINTNAME><![CDATA[TreeStructure]]></PRINTNAME>
+<!--FC6AA883E5FE4A338C509A0A5A05B873-->  <DESCRIPTION><![CDATA[Inner structure of the tree]]></DESCRIPTION>
+<!--FC6AA883E5FE4A338C509A0A5A05B873-->  <HELP><![CDATA[Three different tree structures are available:
+- AD Tree Node: The information regarding the hierarchy of the data is stored in the ADTree and ADTreeNode tables.
+- Link to Parent in Table: This structure can be used when the informartion regarding the hierarchy of the data can be fetched from the own table. In this case, there has to be a column in the table that points to the row that represents the parent node of the record.
+- Custom: For other tree tables, a manual datasource can be defined]]></HELP>
 <!--FC6AA883E5FE4A338C509A0A5A05B873-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FC6AA883E5FE4A338C509A0A5A05B873-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--FC6AA883E5FE4A338C509A0A5A05B873--></AD_ELEMENT>
