@@ -156,7 +156,6 @@ isc.OBTreeViewGrid.addProperties({
 
   // Returns the id of the parent tab, if any
   getParentTabRecordId: function () {
-    var parentRecordId = null;
     if (!this.view.parentView) {
       return null;
     }
