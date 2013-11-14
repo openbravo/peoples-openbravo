@@ -374,6 +374,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
+            + "/org.openbravo.client.application/ob-tree-grid-styles.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-toolbar-styles.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
