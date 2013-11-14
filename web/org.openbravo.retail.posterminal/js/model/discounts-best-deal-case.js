@@ -8,10 +8,12 @@
  */
 
 OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) {
-  var promotionCandidates = [],
+  var allCombinations = [],
+      promotionCandidates = [],
       evaluated = [],
       cases = 0,
-      originalDeal, bestDiscount, receipt, originalWindowError, linesAfterSplit;
+      originalDeal, bestDiscount, totalBestDiscount = [],
+      receipt, originalWindowError, linesAfterSplit;
 
   function getCandidatesForProducts() {
     var criteria, de = new OB.Model.DiscountsExecutor(),
@@ -312,8 +314,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
 
 
     //----
-    var allCombinations = [],
-        totalNumOfCombinations = 0;
+    var totalNumOfCombinations = 0;
     _.forEach(groups, function (group) {
       var grpCombinations = calculate(group.subGrps);
 
@@ -324,11 +325,131 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
 
     console.log(totalNumOfCombinations, 'allCombinations', allCombinations)
 
-    //evaluateBestDealCase();
-    finalize();
+    evaluateBestDealCase(allCombinations);
+
   }
 
   function evaluateBestDealCase() {
+    // TODO: iterate all independent groups, assuming one group now
+    evaluateSubBestDealCase(allCombinations[0]);
+  }
+
+  function nextCase(evaluatedCase) {
+    // TODO: iterate all independent groups, assuming one group now
+    var currentDiscount, bestLines, lines = receipt.get('lines');
+    currentDiscount = 0;
+
+    _.forEach(evaluatedCase, function (evaluatedCaseLine) {
+      var line = evaluatedCaseLine.line.line;
+      if (line.get('promotions')) {
+        _.forEach(line.get('promotions'), function (promo) {
+          currentDiscount += promo.amt;
+        });
+      }
+
+    });
+
+
+    console.log('====================================================== case', cases, 'discounts', currentDiscount);
+
+    if (!bestDiscount || bestDiscount.totalDiscount < currentDiscount) {
+      bestLines = [];
+      _.forEach(evaluatedCase, function (evaluatedCaseLine) {
+        var line = evaluatedCaseLine.line.line;
+        bestLines.push(line.clone());
+      })
+
+      bestDiscount = {
+        totalDiscount: currentDiscount,
+        lines: bestLines
+      };
+    }
+
+    if (allCombinations[allCombinations.length - 1].length === 0) {
+      allCombinations.pop(); //evaluated top case, go for next one
+      totalBestDiscount.push({
+        totalDiscount: bestDiscount.totalDiscount,
+        lines: bestDiscount.lines
+      });
+      bestDiscount = null;
+    }
+
+    if (allCombinations.length && allCombinations[allCombinations.length - 1].length > 0) {
+      evaluateSubBestDealCase();
+    } else {
+      finalize();
+    }
+  }
+
+
+  function evaluateSubBestDealCase() {
+    var lines = receipt.get('lines'),
+        currentCase;
+
+    currentCase = allCombinations[allCombinations.length - 1].pop();
+
+    lines.reset();
+
+    // TODO: can i add lines just in this case?
+    lines.reset();
+    _.forEach(linesAfterSplit, function (line) {
+      line.set('qty', 1)
+      lines.add(line);
+    });
+
+    _.forEach(currentCase, function (currentCaseLine) {
+      var line = currentCaseLine.line.line;
+      line.set({
+        promotions: null,
+        promotionCandidates: [currentCaseLine.rule.id],
+        discountedLinePrice: null,
+        qty: 1
+      }, {
+        silent: true
+      });
+      lines.remove(line);
+      lines.add(line);
+    });
+
+    console.log('lines for case', lines)
+    evalCase(currentCase, 0);
+  }
+
+  function evalCase(currentCase, pos) {
+    var currentCaseLine, rule, ruleListener;
+
+    if (pos === currentCase.length) {
+      //already evaluated all lines in current case
+      lines = receipt.get('lines');
+      lines.reset();
+      _.forEach(linesAfterSplit, function (line) {
+        lines.add(line);
+      });
+      nextCase(currentCase);
+      return;
+    }
+
+    currentCaseLine = currentCase[pos];
+    rule = OB.Model.Discounts.discountRules[currentCaseLine.rule.get('discountType')];
+
+    if (rule.async) {
+      // waiting listener to trigger completed to move to next line
+      ruleListener = new Backbone.Model();
+      ruleListener.on('completed', function (obj) {
+        ruleListener.off();
+        console.log('ueoe')
+        evalCase(currentCase, pos + 1);
+      }, this);
+    }
+
+    rule.implementation(currentCaseLine.rule, receipt, currentCaseLine.line.line, ruleListener);
+    if (!rule.async) {
+      // done, move to next line
+      evalCase(currentCase, pos + 1);
+    }
+  }
+
+  function _evaluateBestDealCase() {
     var currentEval, lines = receipt.get('lines'),
         foundCaseToEval = false;
 
@@ -383,7 +504,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     evalCandidate(0);
   }
 
-  function nextCase(currentEvaluated) {
+  function _nextCase(currentEvaluated) {
     var currentDiscount, bestLines, lines = receipt.get('lines');
     if (currentEvaluated) {
       currentDiscount = 0;
@@ -417,21 +538,30 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
   }
 
   function finalize() {
-    var lines = receipt.get('lines');
-    if (bestDiscount && bestDiscount.totalDiscount > originalDeal) {
+    var lines = receipt.get('lines'),
+        totalDiscount = 0;
+
+    _.forEach(totalBestDiscount, function (bestSubCase) {
+      totalDiscount += bestSubCase.totalDiscount;
+    });
+
+    if (totalDiscount > originalDeal) {
       // Best Deal found, applying it to the cloned receipt...
-      console.log('found best deal case', bestDiscount);
+      console.log('found best deal case', totalBestDiscount);
       _.forEach(promotionCandidates, function (candidate) {
         lines.remove(candidate.line);
       });
-      lines.add(bestDiscount.lines);
+
+      _.forEach(totalBestDiscount, function (bestSubCase) {
+        lines.add(bestSubCase.lines);
+      });
 
       // ...and reseting original receipt's lines with best case ones
       originalReceipt.get('lines').reset();
       originalReceipt.get('lines').add(lines.models);
       originalReceipt.calculateGross();
 
-      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BDC.Found', [originalDeal, bestDiscount.totalDiscount]));
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BDC.Found', [originalDeal, totalDiscount]));
       originalReceipt.save();
     } else {
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_BDC.NotFound'));
