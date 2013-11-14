@@ -36,6 +36,6 @@ enyo.kind({
   style: 'min-width: 115px;',
   i18nContent: 'OBPOS_LblDone',
   tap: function () {
-    this.owner.owner.model.depsdropstosend.trigger('makeDeposits');
+    this.owner.owner.model.depsdropstosave.trigger('makeDeposits');
   }
 });

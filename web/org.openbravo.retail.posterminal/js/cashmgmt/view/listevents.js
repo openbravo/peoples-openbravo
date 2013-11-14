@@ -16,10 +16,6 @@ enyo.kind({
   topPosition: '125px',
   body: {
     kind: 'OB.OBPOSCashMgmt.UI.ListEvents'
-  },
-
-  init: function () {
-    this.$.body.$.listEvents.init();
   }
 });
 
@@ -41,8 +37,9 @@ enyo.kind({
     }]
   }],
 
-  init: function () {
-    this.$.eventList.setCollection(this.owner.owner.owner.model.getData(this.owner.owner.type));
+  init: function (model) {
+    this.model = model;
+    this.$.eventList.setCollection(this.model.get(this.owner.owner.type));
   }
 });
 

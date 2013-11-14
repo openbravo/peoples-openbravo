@@ -39,7 +39,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterRole'
   },
-  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.PaymentMethodCashUp],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
@@ -151,6 +151,34 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         OB.UTIL.processCustomerAddr(customerAddrChangedNotProcessed, successCallback, errorCallback);
       });
     }
+  },
+  processCashUp: function () {
+    var me = this;
+    var orderlist = this.get('orderList'),
+        criteria = {
+        'isbeingprocessed': 'N'
+        };
+    OB.Dal.find(OB.Model.CashUp, criteria, function (cashUp) { //OB.Dal.find success
+      var uuid;
+      if (cashUp.length === 0) {
+        uuid = OB.Dal.get_uuid();
+        OB.Dal.save(new OB.Model.CashUp({
+          id: uuid,
+          isbeingprocessed: 'N'
+        }), function () {
+          _.each(OB.POS.modelterminal.get('payments'), function (payment) {
+            OB.Dal.save(new OB.Model.PaymentMethodCashUp({
+              id: payment.payment.id,
+              payName: payment.payment._identifier,
+              startingCash: '0',
+              totalTendered: '0',
+              rate: payment.rate,
+              cashup_id: uuid
+            }), null, null, true);
+          }, this);
+        }, null, true);
+      }
+    });
   },
   isValidMultiOrderState: function () {
     if (this.get('leftColumnViewManager') && this.get('multiOrders')) {
@@ -389,6 +417,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     taxes = new OB.DATA.OrderTaxes(receipt);
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
+    this.processCashUp();
     this.processChangedCustomers();
     this.processChangedCustomerAddress();
 

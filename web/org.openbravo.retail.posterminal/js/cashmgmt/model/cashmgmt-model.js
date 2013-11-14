@@ -13,52 +13,43 @@ OB.OBPOSCashMgmt = OB.OBPOSCashMgmt || {};
 OB.OBPOSCashMgmt.Model = OB.OBPOSCashMgmt.Model || {};
 OB.OBPOSCashMgmt.UI = OB.OBPOSCashMgmt.UI || {};
 
-// Data models
-OB.OBPOSCashMgmt.Model.DepositsDrops = Backbone.Model.extend({
-  source: 'org.openbravo.retail.posterminal.term.CashMgmtDepositsDrops',
-  modelName: 'DataDepositsDrops',
-  online: true
-});
-
-OB.OBPOSCashMgmt.Model.CashMgmtPaymentMethod = Backbone.Model.extend({
-  source: 'org.openbravo.retail.posterminal.term.CashMgmtPayments',
-  modelName: 'DataCashMgmtPaymentMethod',
-  online: true
-});
-
-OB.OBPOSCashMgmt.Model.DropEvents = Backbone.Model.extend({
-  source: 'org.openbravo.retail.posterminal.term.CashMgmtDropEvents',
-  modelName: 'DataDropEvents',
-  online: true
-});
-
-OB.OBPOSCashMgmt.Model.DepositEvents = Backbone.Model.extend({
-  source: 'org.openbravo.retail.posterminal.term.CashMgmtDepositEvents',
-  modelName: 'DataDepositEvents',
-  online: true
-});
-
-
 // Window model
 OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
-  models: [OB.OBPOSCashMgmt.Model.DepositsDrops, OB.OBPOSCashMgmt.Model.CashMgmtPaymentMethod, OB.OBPOSCashMgmt.Model.DropEvents, OB.OBPOSCashMgmt.Model.DepositEvents],
+  models: [OB.Model.CashManagement],
   init: function () {
+    var payments = new Backbone.Collection(),
+        me = this,
+        paymentMth, criteria, runSyncProcessCM, error, addedCashMgmt, selectedPayment;
+    this.set('payments', new Backbone.Collection());
+    this.set('cashMgmtDropEvents', new Backbone.Collection(OB.POS.modelterminal.get('cashMgmtDropEvents')));
+    this.set('cashMgmtDepositEvents', new Backbone.Collection(OB.POS.modelterminal.get('cashMgmtDepositEvents')));
+    OB.Dal.find(OB.Model.PaymentMethodCashUp, null, function (pays) {
+      payments = pays;
+      payments.each(function (pay) {
+        criteria = {
+          'paymentMethodId': pay.get('id')
+        }
+        paymentMth = OB.POS.modelterminal.get('payments').filter(function (payment) {
+          return payment.payment.id === pay.get('id');
+        })[0].paymentMethod;
 
-    var depList = this.getData('DataDepositsDrops'),
-        me = this;
+        if (paymentMth.allowdeposits || paymentMth.allowdrops) {
+          OB.Dal.find(OB.Model.CashManagement, criteria, function (cashmgmt, pay) {
+            if (cashmgmt.length > 0) {
+              pay.set('listdepositsdrops', cashmgmt.models);
+            }
+            me.get('payments').add(pay);
+          }, null, pay);
+        }
+      });
+    });
 
-    this.depsdropstosend = new Backbone.Collection();
-
-    this.depsdropstosend.on('paymentDone', function (model, p) {
-      // Payment done locally, saving it in local list
-      var deposits, error = false,
-          tmp;
-
-      depList.each(function (dep) {
-        if (p.destinationKey === dep.get('paySearchKey')) {
-          error = (p.type === 'drop' && OB.DEC.sub(dep.get('total'), OB.DEC.mul(p.amount, p.rate)) < 0);
-          deposits = dep.get('listdepositsdrops');
-          tmp = dep;
+    this.depsdropstosave = new Backbone.Collection();
+    this.depsdropstosave.on('paymentDone', function (model, p) {
+      error = false;
+      payments.each(function (pay) {
+        if (p.id === pay.get('id')) {
+          error = (p.type === 'drop' && OB.DEC.sub(pay.get('total'), OB.DEC.mul(p.amount, p.rate)) < 0);
         }
       });
 
@@ -66,77 +57,79 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanAvailable'));
         return;
       }
-
-      p.amount = OB.DEC.add(p.amount, 0);
-
-      var payment = {
+      addedCashMgmt = new OB.Model.CashManagement({
+        id: OB.Dal.get_uuid(),
         description: p.identifier + ' - ' + model.get('name'),
-        name: p.destinationKey,
-        user: OB.POS.modelterminal.get('context').user._identifier,
-        time: new Date(),
-        origAmount: OB.DEC.mul(p.amount, p.rate),
-        isocode: p.isocode
-      };
-
-      if (p.type === 'drop') {
-        payment.deposit = 0;
-        payment.drop = p.amount;
-      } else {
-        payment.deposit = p.amount;
-        payment.drop = 0;
-      }
-
-      deposits.push(payment);
-
-      this.depsdropstosend.add({
         amount: p.amount,
-        description: p.identifier + ' - ' + model.get('name'),
-        paymentMethodId: p.id,
+        origAmount: OB.DEC.mul(p.amount, p.rate),
         type: p.type,
         reasonId: model.get('id'),
+        paymentMethodId: p.id,
         user: OB.POS.modelterminal.get('context').user._identifier,
         time: new Date().toString().substring(16, 21),
-        origAmount: OB.DEC.mul(p.amount, p.rate),
-        isocode: p.isocode
+        isocode: p.isocode,
+        isbeingprocessed: 'N'
       });
+
+      this.depsdropstosave.add(addedCashMgmt);
+
+      selectedPayment = payments.filter(function (payment) {
+        return payment.get('id') === p.id;
+      })[0];
+      if (selectedPayment.get('listdepositsdrops')) {
+        selectedPayment.get('listdepositsdrops').push(addedCashMgmt);
+        selectedPayment.trigger('change');
+      } else {
+        selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
+      }
 
       if (p.iscash || p.allowopendrawer) {
         OB.POS.hwserver.openDrawer();
       }
-
-      tmp.trigger('change');
     }, this);
 
-    this.depsdropstosend.on('makeDeposits', function () {
+    this.depsdropstosave.on('makeDeposits', function () {
       // Done button has been clicked
-      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmt'),
-          me = this;
-
+      me = this;
       OB.UTIL.showLoading(true);
 
-      if (this.depsdropstosend.length === 0) {
+      if (this.depsdropstosave.length === 0) {
         // Nothing to do go to main window
         OB.POS.navigate('retail.pointofsale');
         return true;
       }
 
-      // Sending drops/deposits to backend
-      process.exec({
-        depsdropstosend: this.depsdropstosend.toJSON()
-      }, function (data, message) {
-        if (data && data.exception) {
-          OB.UTIL.showLoading(false);
-          me.set("finishedWrongly", true);
+      this.printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
+
+      function runSync() {
+        if (OB.MobileApp.model.get('connectedToERP')) {
+          OB.MobileApp.model.runSyncProcess(null, function () {
+            OB.UTIL.showLoading(false);
+            me.set("finished", true);
+            if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashmanagement')) {
+              me.printCashMgmt.print(me.depsdropstosave.toJSON());
+            }
+          });
         } else {
           OB.UTIL.showLoading(false);
           me.set("finished", true);
           if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashmanagement')) {
-            me.printCashMgmt.print(me.depsdropstosend.toJSON());
+            me.printCashMgmt.print(me.depsdropstosave.toJSON());
           }
         }
-      });
-    }, this);
 
-    this.printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
+      };
+      runSyncProcessCM = _.after(this.depsdropstosave.models.length, runSync);
+      // Sending drops/deposits to backend
+      _.each(this.depsdropstosave.models, function (depdrop, index) {
+        OB.Dal.save(depdrop, function () {
+          runSyncProcessCM();
+        }, function (error) {
+          OB.UTIL.showLoading(false);
+          me.set("finishedWrongly", true);
+          return;
+        }, true);
+      }, this);
+    }, this);
   }
 });

@@ -31,9 +31,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
   @Override
   public JSONObject exec(JSONObject jsonarray) throws JSONException, ServletException {
 
-    JSONArray respArray = new JSONArray();
     OBContext.setAdminMode(false);
-    final JSONObject jsonData = new JSONObject();
     try {
       JSONArray array = jsonarray.getJSONArray("depsdropstosend");
       for (int i = 0; i < array.length(); i++) {
@@ -88,7 +86,7 @@ public class ProcessCashMgmt extends JSONProcessSimple {
 
         FIN_FinaccTransaction secondTransaction = OBProvider.getInstance().get(
             FIN_FinaccTransaction.class);
-        secondTransaction.setCurrency(terminalPaymentMethod.getCurrency());
+        secondTransaction.setCurrency(secondAccount.getCurrency());
         secondTransaction.setAccount(secondAccount);
         secondTransaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(event
             .getFinancialAccount()) + 10);
@@ -109,25 +107,14 @@ public class ProcessCashMgmt extends JSONProcessSimple {
         secondTransaction.setTransactionDate(new Date());
         secondTransaction.setStatus("RDNC");
         OBDal.getInstance().save(secondTransaction);
-
-        if (type.equals("drop")) {
-          jsonData.put("drop", amount);
-          jsonData.put("deposit", 0);
-        } else {
-          jsonData.put("drop", 0);
-          jsonData.put("deposit", amount);
-        }
-        jsonData.put("name", paymentMethod.getCommercialName());
-        jsonData.put("description", description);
-        respArray.put(jsonData);
       }
+      // FIXME: Throw exception adding to Error while processing...window
     } finally {
       OBDal.getInstance().flush();
       OBContext.restorePreviousMode();
     }
 
     JSONObject result = new JSONObject();
-    result.put(JsonConstants.RESPONSE_DATA, respArray);
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return result;
 

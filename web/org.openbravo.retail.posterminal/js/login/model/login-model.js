@@ -139,6 +139,34 @@
       });
 
       this.addPropertiesLoader({
+        properties: ['cashMgmtDepositEvents'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.CashMgmtDepositEvents').exec(null, function (data) {
+            if (data) {
+              terminalModel.set(me.properties[0], data);
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
+        properties: ['cashMgmtDropEvents'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.CashMgmtDropEvents').exec(null, function (data) {
+            if (data) {
+              terminalModel.set(me.properties[0], data);
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
         properties: ['businesspartner'],
         loadFunction: function (terminalModel) {
           OB.info('loading... ' + this.properties);
@@ -268,17 +296,18 @@
       });
     },
 
-    runSyncProcess: function (model, orderSuccessCallback) {
+    runSyncProcess: function (model, defaultSuccessCallback) {
       model = model || null;
+      OB.UTIL.processCashMgmt(defaultSuccessCallback);
       OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (customersChangedNotProcessed) { //OB.Dal.find success
         var successCallback, errorCallback;
         if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
-          OB.UTIL.processPaidOrders(model, orderSuccessCallback);
+          OB.UTIL.processPaidOrders(model, defaultSuccessCallback);
           return;
         }
         successCallback = function () {
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomersProcessed'));
-          OB.UTIL.processPaidOrders(model, orderSuccessCallback);
+          OB.UTIL.processPaidOrders(model, defaultSuccessCallback);
         };
         errorCallback = function () {
           //nothing to show
