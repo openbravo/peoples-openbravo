@@ -211,11 +211,12 @@ isc.OBTreeItemTree.addProperties({
   },
 
   clickOutsideTree: function () {
-    var target = isc.EH.lastEvent.target,
-        eventInfo = this.treeItem.form.getEventItemInfo();
+    var target, event, eventInfo;
     if (!this.isVisible()) {
       return;
     }
+    target = isc.EH.lastEvent.target;
+    eventInfo = this.treeItem.form.getEventItemInfo();
     // Do not hide if the picker of the formitem was clicked
     // Do picker itself will hide the tree
     if (eventInfo.icon === 'picker' && eventInfo.item.ID === this.treeItem.ID) {
