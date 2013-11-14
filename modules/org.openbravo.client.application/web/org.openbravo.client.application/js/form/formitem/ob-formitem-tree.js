@@ -145,7 +145,7 @@ isc.OBTreeItem.addProperties({
     this.tree.fetchData();
   },
 
-  setValueFromRecord: function (record, fromPopup) {
+  setValueFromRecord: function (record) {
     var currentValue = this.getValue(),
         identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
         i;
@@ -576,7 +576,7 @@ isc.OBTreeItemPopupWindow.addProperties({
     if (!this.treeItem.parentSelectionAllowed && this.treeGrid.data.hasChildren(record)) {
       return;
     }
-    this.treeItem.setValueFromRecord(record, true);
+    this.treeItem.setValueFromRecord(record);
     this.hide();
   }
 });
