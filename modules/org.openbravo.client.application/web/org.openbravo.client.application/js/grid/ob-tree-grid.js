@@ -26,7 +26,7 @@ isc.OBTreeGrid.addProperties({
   showDropIcons: false,
   nodeIcon: null,
   folderIcon: null,
-
+  showSortArrow: false,
   dataProperties: {
     modelType: "parent",
     rootValue: "0",
