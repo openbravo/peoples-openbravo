@@ -79,11 +79,20 @@
       <foreign-key foreignTable="AD_ORG" name="AD_REF_TREE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_REF_TREE_COL" onDelete="cascade">
+        <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_REF_TREE_FIELD" name="AD_REF_TREE_DSPFLD">
         <reference local="DISPLAYFIELD_ID" foreign="AD_REF_TREE_FIELD_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="AD_REF_TREE_MODULE" onDelete="cascade">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="AD_REF_TREE_TABLE">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TABLE_TREE" name="AD_REF_TREE_TABTREE" onDelete="cascade">
+        <reference local="AD_TABLE_TREE_ID" foreign="AD_TABLE_TREE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_REF_TREE_FIELD" name="AD_REF_TREE_VALFLD">
         <reference local="VALUEFIELD_ID" foreign="AD_REF_TREE_FIELD_ID"/>

@@ -67,6 +67,9 @@
       <foreign-key foreignTable="AD_COLUMN" name="AD_TABLETREE_AD_COLPAR">
         <reference local="LINKTOPARENTCOLUMN" foreign="AD_COLUMN_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_TABLETREE_AD_IDCOL">
+        <reference local="NODEIDCOLUMN" foreign="AD_COLUMN_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_TABLETREE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
