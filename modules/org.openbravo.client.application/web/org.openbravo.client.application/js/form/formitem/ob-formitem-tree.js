@@ -116,8 +116,6 @@ isc.OBTreeItem.addProperties({
   },
 
   toggleTreePicker: function () {
-    // Used to avoid closing the tree when the picker is clicked
-    this.pickerClicked = true;
     if (this.tree.isVisible()) {
       this.tree.hide();
     } else {
@@ -130,32 +128,9 @@ isc.OBTreeItem.addProperties({
     return this.Super('moved', arguments);
   },
 
-  blur: function () {
-    var me = this;
-    setTimeout(function () {
-      me.hideTreeIfNotFocused();
-    }, 100);
-    return this.Super('blur', arguments);
-  },
-
-  hideTreeIfNotFocused: function () {
-    if (this.form && this.form.getFocusItem() && this.form.getFocusItem().ID !== this.ID) {
-      this.tree.hide();
-    }
-  },
-
   focus: function () {
     this.tree.hide();
     return this.Super('focus', arguments);
-  },
-
-  click: function () {
-    if (this.pickerClicked) {
-      delete this.pickerClicked;
-    } else {
-      this.tree.hide();
-    }
-    return this.Super('click', arguments);
   },
 
   changed: function (form, item, value) {
@@ -231,7 +206,24 @@ isc.OBTreeItemTree.addProperties({
     if (this.isEmpty()) {
       this.fetchData();
     }
+    this._pageClickID = this.ns.Page.setEvent("mouseDown", this, null, "clickOutsideTree");
     return this.Super('show', arguments);
+  },
+
+  clickOutsideTree: function () {
+    var target = isc.EH.lastEvent.target,
+        eventInfo = this.treeItem.form.getEventItemInfo();
+    if (!this.isVisible()) {
+      return;
+    }
+    // Do not hide if the picker of the formitem was clicked
+    // Do picker itself will hide the tree
+    if (eventInfo.icon === 'picker' && eventInfo.item.ID === this.treeItem.ID) {
+      return;
+    }
+    if (!this.contains(target, true)) {
+      this.hide();
+    }
   },
 
   updatePosition: function () {
