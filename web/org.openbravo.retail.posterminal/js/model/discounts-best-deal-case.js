@@ -244,8 +244,8 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
       if (got.length === grp[tnum].lines.length) {
         for (z = 0; z < got.length; z++) {
           l.push({
-            l: got[z].l,
-            d: got[z].d
+            line: got[z].line,
+            rule: got[z].rule
           })
         }
 
@@ -253,10 +253,10 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
         return result;
       }
 
-      for (i = pos; i < grp[tnum].ruleIds.length; i++) {
+      for (i = pos; i < grp[tnum].rules.length; i++) {
         got.push({
-          l: grp[tnum].lines[lnum],
-          d: grp[tnum].ruleIds[i]
+          line: grp[tnum].lines[lnum],
+          rule: grp[tnum].rules.at(i)
         });
         pick(grp, got, i, lnum + 1, result, tnum)
         got.pop();
@@ -317,7 +317,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     _.forEach(groups, function (group) {
       var grpCombinations = calculate(group.subGrps);
 
-      console.log(grpCombinations.length, 'combinations for grp', group); //, combinations);
+      console.log(grpCombinations.length, 'combinations for grp', group, grpCombinations);
       totalNumOfCombinations += grpCombinations.length;
       allCombinations.push(grpCombinations);
     });
