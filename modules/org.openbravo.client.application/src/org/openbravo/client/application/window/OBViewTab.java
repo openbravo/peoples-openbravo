@@ -239,7 +239,8 @@ public class OBViewTab extends BaseTemplateComponent {
     if (tab.getTableTree() != null) {
       IconButton treeBtn = new IconButton();
       treeBtn.type = "treeGrid";
-      treeBtn.label = "Toggle Tree Grid Visibility";
+      treeBtn.label = Utility.messageBD(new DalConnectionProvider(false),
+          "OBUIAPP_TOGGLE_TREE_BUTTON", OBContext.getOBContext().getLanguage().getLanguage());
       treeBtn.action = "OB.ToolbarUtils.toggleTreeGridVisibility(this.view);";
       iconButtons.add(treeBtn);
     }
