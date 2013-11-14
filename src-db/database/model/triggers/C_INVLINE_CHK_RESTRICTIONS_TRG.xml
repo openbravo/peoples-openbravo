@@ -88,9 +88,9 @@ BEGIN
       IF(:NEW.C_OrderLine_ID IS NOT NULL) THEN
 	RAISE_APPLICATION_ERROR(-20000, '@ProductDefinedByOrder@') ;
       ELSE IF(:NEW.M_InOutLine_ID IS NOT NULL AND v_Issotrx = 'N') THEN
-	RAISE_APPLICATION_ERROR(-20000, '@20206@') ;
+	RAISE_APPLICATION_ERROR(-20000, '@ProductDefinedByReceipt@') ;
       ELSE IF(:NEW.M_InOutLine_ID IS NOT NULL AND v_Issotrx = 'Y') THEN
-        RAISE_APPLICATION_ERROR(-20000, '@20207@') ;
+        RAISE_APPLICATION_ERROR(-20000, '@ProductDefinedByShipment@') ;
       END IF;
       END IF;
       END IF;
