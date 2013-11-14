@@ -219,11 +219,11 @@
       <index name="AD_TAB_TABLE" unique="false">
         <index-column name="AD_TABLE_ID"/>
       </index>
+      <index name="AD_TAB_TABLETREE_FK" unique="false">
+        <index-column name="AD_TABLE_TREE_ID"/>
+      </index>
       <index name="AD_TAB_WINDOW" unique="false">
         <index-column name="AD_WINDOW_ID"/>
-      </index>
-      <index name="FKI_AD_TAB_TABLETREE_FK" unique="false">
-        <index-column name="AD_TABLE_TREE_ID"/>
       </index>
       <unique name="AD_TAB_WINDOW_NAME_UNIQUE">
         <unique-column name="AD_WINDOW_ID"/>

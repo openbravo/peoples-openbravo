@@ -79,6 +79,9 @@
       <foreign-key foreignTable="AD_MODULE" name="AD_TABLTREE_AD_MODULE">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
+      <index name="AD_TABLETREE_TABLE_IDX" unique="false">
+        <index-column name="AD_TABLE_ID"/>
+      </index>
       <check name="AD_TABLETREE_APPLYHQL_CHK"><![CDATA[APPLYWHERECLAUSETOCHILDNODES IN ('Y', 'N')]]></check>
       <check name="AD_TABLETREE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_TABLETREE_MULTPAR_CHK"><![CDATA[HASMULTIPARENTNODES IN ('Y', 'N')]]></check>

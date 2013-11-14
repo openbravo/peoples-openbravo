@@ -89,6 +89,9 @@
       <foreign-key foreignTable="AD_REF_TREE" name="AD_REFTREE_F_REFTREE" onDelete="cascade">
         <reference local="AD_REF_TREE_ID" foreign="AD_REF_TREE_ID"/>
       </foreign-key>
+      <index name="AD_REFTREEF_TREEREF_IDX" unique="false">
+        <index-column name="AD_REF_TREE_ID"/>
+      </index>
       <check name="AD_REFTREE_F_CM_CHECK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
       <check name="AD_REFTREE_F_FILTER_CHECK"><![CDATA[FILTER IN ('Y', 'N')]]></check>
       <check name="AD_REFTREE_F_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
