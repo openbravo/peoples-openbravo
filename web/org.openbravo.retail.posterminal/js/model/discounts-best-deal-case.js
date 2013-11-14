@@ -35,13 +35,105 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
         i += 1;
         if (i === lines.length) {
           // we're done with all the lines, continue with next step
-          splitLines(candidates);
+          //splitLines(candidates);
+          doGroups(candidates);
         }
       });
     });
   }
 
-  function splitLines(candidates) {
+  function doGroups(candidates) {
+    var groups = [],
+        productId, g;
+    for (productId in candidates) {
+      if (candidates.hasOwnProperty(productId)) {
+        foundGroup = false;
+        if (candidates[productId].length === 0) {
+          continue;
+        }
+        candidates[productId].forEach(function (rule) {
+          var rules, ruleIDs;
+          if (foundGroup) {
+            return;
+          }
+          for (g = 0; g < groups.length; g++) {
+            if (groups[g].ruleIDs.indexOf(rule.id) !== -1) {
+              foundGroup = true;
+              groups[g].products.push(productId);
+              candidates[productId].forEach(function (rule) {
+                if (groups[g].ruleIDs.indexOf(rule.id) === -1) {
+                  groups[g].rules.push(rule);
+                  groups[g].ruleIDs.push(rule.id);
+                  // TODO: merge groups
+                }
+              });
+            }
+          }
+        }); // loop of rules within candidate
+        if (!foundGroup) {
+          rules = [], ruleIDs = [];
+          candidates[productId].forEach(function (rule) {
+            rules.push(rule);
+            ruleIDs.push(rule.id);
+          });
+          groups.push({
+            rules: rules,
+            ruleIDs: ruleIDs,
+            products: [productId],
+            productsInSubGrps: {}
+          });
+        }
+      }
+    } // loop of candidates
+    // now we have groups of products with conflicts between them,
+    // lets split these groups in subgroups each of them with the 
+    // same rules candidates
+    _.forEach(groups, function (group) {
+      var subGrps = [];
+
+      _.forEach(group.products, function (productId) {
+        var prodCandidates = candidates[productId];
+        foundGroup = false;
+        for (i = 0; i < subGrps.length; i++) {
+          if (subGrps[i].ruleIds.length === prodCandidates.length) {
+            prodCandidates.forEach(function (candidate) {
+              if (subGrps[i].ruleIds.indexOf(candidate.id) !== -1) {
+                foundGroup = true;
+              }
+            });
+            if (foundGroup) {
+              subGrps[i].products.push(productId);
+              group.productsInSubGrps[productId] = subGrps[i];
+              break;
+            }
+          }
+        }
+
+        if (!foundGroup) {
+          var candidateIds = [],
+              sub;
+          candidates[productId].forEach(function (candidate) {
+            candidateIds.push(candidate.id);
+          });
+          sub = {
+            rules: candidates[productId],
+            ruleIds: candidateIds,
+            products: [productId],
+            lines: []
+          };
+
+          subGrps.push(sub);
+
+          group.productsInSubGrps[productId] = sub;
+        }
+      });
+      group.subGrps = subGrps;
+    });
+    console.log('groups', groups);
+    splitLines(candidates, groups);
+  }
+
+  function splitLines(candidates, groups) {
     var i = 0,
         lines = receipt.get('lines'),
         newLines = [],
@@ -102,9 +194,55 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
       });
     });
     console.log('Evalutaing', numberOfCases, 'cases');
+
+
+    var promotionCandidates2 = [];
+    _.forEach(groups, function (group) {
+      var promoGroup, linesInGrp = [];
+      linesAfterSplit.forEach(function (line) {
+        var prodId = line.get('product').id,
+            productCases = candidates[prodId];
+        if (!productCases || productCases.length === 0 || group.products.indexOf(prodId) === -1) {
+          return; //continue
+        }
+        linesInGrp.push({
+          line: line,
+          candidates: candidates[line.get('product').id],
+          shouldSplit: line.get('qty') === 1,
+          pointer: 0
+        });
+
+        group.productsInSubGrps[prodId].lines.push({
+          line: line,
+          candidates: candidates[line.get('product').id],
+          shouldSplit: line.get('qty') === 1,
+          pointer: 0
+        });
+      });
+      promoGroup = {
+        grp: group,
+        lines: linesInGrp
+      }
+      promotionCandidates2.push(promoGroup);
+    });
+
     console.log('num of lines after split', lines.length, receipt.get('lines').length)
     console.log('candiates', promotionCandidates);
-    evaluateBestDealCase();
+    console.log('candiates2', promotionCandidates2);
+    console.log('groups', groups);
+
+    splitGroups(promotionCandidates2);
+    //evaluateBestDealCase();
+    //finalize();
+  }
+
+  function splitGroups(promotionCandidates2) {
+    _.forEach(promotionCandidates2, function (group) {
+
+    });
+
+    //evaluateBestDealCase();
+    finalize();
   }
 
   function evaluateBestDealCase() {
