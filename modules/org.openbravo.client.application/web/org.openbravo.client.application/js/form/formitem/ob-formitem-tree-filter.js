@@ -64,7 +64,7 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
       treePopup: this,
       autoFetchData: true,
       filterOnKeypress: true,
-      selectionAppearance: "checkbox",
+      selectionAppearance: 'checkbox',
       dataSourceId: this.dataSourceId,
       treeReferenceId: this.treeReferenceId,
       width: '100%',
@@ -148,7 +148,7 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         ds.primaryKeys = {
           id: 'id'
         };
-        return this.Super("setDataSource", [ds, fields]);
+        return this.Super('setDataSource', [ds, fields]);
       },
 
       // show or hide the filter button

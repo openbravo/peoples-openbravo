@@ -24,18 +24,18 @@ isc.OBTreeViewGrid.addProperties({
   view: null,
   orderedTree: false,
 
-  arrowKeyAction: "select",
+  arrowKeyAction: 'select',
   canPickFields: false,
   canDropOnLeaves: true,
   canHover: false,
   // It will be set to false if the tree is ordered
   canReorderRecords: true,
   canAcceptDroppedRecords: true,
-  dropIconSuffix: "into",
+  dropIconSuffix: 'into',
   autoFetchData: false,
-  closedIconSuffix: "",
+  closedIconSuffix: '',
   showFilterEditor: true,
-  selectionAppearance: "checkbox",
+  selectionAppearance: 'checkbox',
   showSelectedStyle: true,
   // the grid will be refreshed when:
   // - The tree category is LinkToParent and
@@ -110,7 +110,7 @@ isc.OBTreeViewGrid.addProperties({
     ds.primaryKeys = {
       id: 'id'
     };
-    return this.Super("setDataSource", [ds, fields]);
+    return this.Super('setDataSource', [ds, fields]);
   },
 
   // Used to copy the fields from the OBViewGrid to the OBTreeViewGrid.

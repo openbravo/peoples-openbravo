@@ -175,7 +175,7 @@ isc.OBTreeItem.addProperties({
 });
 
 // Tree that is displayed under the tree form item
-isc.ClassFactory.defineClass("OBTreeItemTree", isc.OBTreeGrid);
+isc.ClassFactory.defineClass('OBTreeItemTree', isc.OBTreeGrid);
 
 isc.OBTreeItemTree.addProperties({
   treeItem: null,
@@ -206,7 +206,7 @@ isc.OBTreeItemTree.addProperties({
     if (this.isEmpty()) {
       this.fetchData();
     }
-    this._pageClickID = this.ns.Page.setEvent("mouseDown", this, null, "clickOutsideTree");
+    this._pageClickID = this.ns.Page.setEvent('mouseDown', this, null, 'clickOutsideTree');
     return this.Super('show', arguments);
   },
 
@@ -267,7 +267,7 @@ isc.OBTreeItemTree.addProperties({
     ds.primaryKeys = {
       id: 'id'
     };
-    return this.Super("setDataSource", [ds, fields]);
+    return this.Super('setDataSource', [ds, fields]);
   },
 
   //Select the record
@@ -290,7 +290,7 @@ isc.OBTreeItemTree.addProperties({
   },
 
   fetchData: function (criteria, callback, requestProperties) {
-    return this.Super("fetchData", [this.getCriteriaFromTreeItem(), callback, requestProperties]);
+    return this.Super('fetchData', [this.getCriteriaFromTreeItem(), callback, requestProperties]);
   },
 
   getCriteriaFromTreeItem: function () {
@@ -485,7 +485,7 @@ isc.OBTreeItemPopupWindow.addProperties({
         ds.primaryKeys = {
           id: 'id'
         };
-        return this.Super("setDataSource", [ds, fields]);
+        return this.Super('setDataSource', [ds, fields]);
       },
 
       // show or hide the filter button

@@ -28,11 +28,11 @@ isc.OBTreeGrid.addProperties({
   folderIcon: null,
   showSortArrow: false,
   dataProperties: {
-    modelType: "parent",
-    rootValue: "0",
-    idField: "nodeId",
-    parentIdField: "parentId",
-    openProperty: "isOpen"
+    modelType: 'parent',
+    rootValue: '0',
+    idField: 'nodeId',
+    parentIdField: 'parentId',
+    openProperty: 'isOpen'
   },
 
   /**
@@ -40,9 +40,9 @@ isc.OBTreeGrid.addProperties({
    */
   getCellCSSText: function (record, rowNum, colNum) {
     if (record.notFilterHit) {
-      return "color:#606060;";
+      return 'color:#606060;';
     } else {
-      return "";
+      return '';
     }
   },
 
