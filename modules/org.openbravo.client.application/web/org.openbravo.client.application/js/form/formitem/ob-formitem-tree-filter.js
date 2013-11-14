@@ -277,7 +277,7 @@ isc.OBTreeFilterItem.addProperties({
     this.addAutoChild('filterDialog', {
       title: this.title,
       filterItem: this,
-      treeGridFields: field.editorProperties.selectorGridFields,
+      treeGridFields: field.editorProperties.treeGridFields,
       treeReferenceId: field.editorProperties.treeReferenceId,
       dataSourceId: field.editorProperties.dataSourceId,
       fieldName: field.name,

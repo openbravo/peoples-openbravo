@@ -50,19 +50,6 @@
 </@compress>
     </#list>
     ],
-    //TODO
-    selectorGridFields: [
-    <#list data.treeGridFields as treeGridField>
-<@compress single_line=true>
-        {
-        <#list treeGridField.properties as property>
-        ${property.name}: ${property.value}<#if property_has_next>,</#if>
-         </#list>         
-         ${treeGridField.filterEditorProperties}         
-        }<#if treeGridField_has_next>,</#if>
-</@compress>
-    </#list>
-    ],
     extraSearchFields: [${data.extraSearchFields}],
 <#--
     // create the datasource in the init method, this

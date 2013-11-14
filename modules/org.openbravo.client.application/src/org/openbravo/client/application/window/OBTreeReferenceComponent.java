@@ -62,7 +62,6 @@ import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.DataSourceProperty.RefListEntry;
 import org.openbravo.service.json.JsonConstants;
-import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
  * The backing bean for generating the OBTreeReference client-side representation.
@@ -209,36 +208,6 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
     return treeFields;
   }
 
-  public String getColumnName() {
-    Check.isTrue(hasParameter(SelectorConstants.PARAM_COLUMN_NAME), "The "
-        + SelectorConstants.PARAM_COLUMN_NAME + " parameter must be set");
-    return getParameter(SelectorConstants.PARAM_COLUMN_NAME);
-  }
-
-  public String getComboReload() {
-    if (!hasParameter(SelectorConstants.PARAM_COMBO_RELOAD)) {
-      return "null";
-    }
-    Check.isTrue(hasParameter(SelectorConstants.PARAM_TAB_ID), "The "
-        + SelectorConstants.PARAM_TAB_ID + " parameter must be set");
-    final String tabId = getParameter(SelectorConstants.PARAM_TAB_ID);
-    return "function(name){reloadComboReloads" + tabId + "(name);}";
-  }
-
-  public String getDisabled() {
-    if (hasParameter(SelectorConstants.PARAM_DISABLED)) {
-      return getParameter(SelectorConstants.PARAM_DISABLED);
-    }
-    return Boolean.FALSE.toString();
-  }
-
-  public String getTargetPropertyName() {
-    if (hasParameter(SelectorConstants.PARAM_TARGET_PROPERTY_NAME)) {
-      return getParameter(SelectorConstants.PARAM_TARGET_PROPERTY_NAME);
-    }
-    return "";
-  }
-
   public String getValueField() {
     if (getReferencedTree().getValuefield() != null) {
       final String valueField = getPropertyOrDataSourceField(getReferencedTree().getValuefield());
@@ -267,20 +236,6 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
           || Boolean.class == primitiveDomainType.getPrimitiveType();
     }
     return false;
-  }
-
-  public String getRequired() {
-    if (hasParameter(SelectorConstants.PARAM_REQUIRED)) {
-      return getParameter(SelectorConstants.PARAM_REQUIRED);
-    }
-    return Boolean.FALSE.toString();
-  }
-
-  public String getCallOut() {
-    if (hasParameter(SelectorConstants.PARAM_CALLOUT)) {
-      return getParameter(SelectorConstants.PARAM_CALLOUT);
-    }
-    return "null";
   }
 
   /**
