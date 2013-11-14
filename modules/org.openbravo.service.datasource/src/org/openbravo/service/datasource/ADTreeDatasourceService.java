@@ -27,6 +27,8 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -240,9 +242,10 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     int SEQNO = 2;
     int NODE_ID = 3;
     int ENTITY = 4;
-
-    for (Object rawNode : obq.createQuery().list()) {
-      Object[] node = (Object[]) rawNode;
+    int cont = 0;
+    ScrollableResults scrollNodes = obq.createQuery().scroll(ScrollMode.FORWARD_ONLY);
+    while (scrollNodes.next()) {
+      Object[] node = (Object[]) scrollNodes.get();
       JSONObject value = null;
       BaseOBObject bob = (BaseOBObject) node[ENTITY];
       try {
@@ -263,6 +266,11 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         logger.error("Error while constructing JSON reponse", e);
       }
       responseData.put(value);
+      if ((cont % 100) == 0) {
+        OBDal.getInstance().flush();
+        OBDal.getInstance().getSession().clear();
+      }
+      cont++;
     }
     return responseData;
   }
