@@ -251,7 +251,7 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
   }
 
   public String getTitle() {
-    String description = getReferencedTree().getName();
+    String description = getReferencedTree().getReference().getName();
     if (description == null) {
       return "";
     }
