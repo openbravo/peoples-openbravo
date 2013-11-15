@@ -450,8 +450,9 @@ public class OrderGroupingProcessor {
     invoice.setDaysSalesOutstanding(new Long(0));
     invoice.setOutstandingAmount(BigDecimal.ZERO);
 
-    paymentSchedule.setPaidAmount(paymentSchedule.getAmount());
-    origPaymentSchedule.setAmount(paymentSchedule.getAmount());
+    paymentSchedule.setAmount(grossamount);
+    paymentSchedule.setPaidAmount(grossamount);
+    origPaymentSchedule.setAmount(grossamount);
 
     // Update customer credit
 
