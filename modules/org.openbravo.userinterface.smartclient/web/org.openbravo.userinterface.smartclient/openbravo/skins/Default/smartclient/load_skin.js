@@ -176,7 +176,7 @@ with (theWindow) {
         if (isc.Menu) {
             isc.Menu.addProperties({
                 bodyBackgroundColor:null,
-                bodyStyleName:"gridBody",
+                bodyStyleName:"menuBody",
                 cellHeight:22,
                 checkmarkDisabledImage:{src:"[SKIN]check_disabled.png", width:7, height:6},
                 checkmarkImage:{src:"[SKIN]check.png", width:9, height:8},
@@ -1327,7 +1327,7 @@ with (theWindow) {
             submenuDisabledImage:{src:"[SKIN]submenu_disabled.png", height:7, width:4},
 	        checkmarkImage:{src:"[SKIN]check.png", width:9, height:8},
 	        checkmarkDisabledImage:{src:"[SKIN]check_disabled.png", width:7, height:6},
-            bodyStyleName:"gridBody",
+            bodyStyleName:"menuBody",
 			iconBodyStyleName:"menuMain",
             bodyBackgroundColor:null
         });
