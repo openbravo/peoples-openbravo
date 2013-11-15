@@ -297,7 +297,7 @@ isc.OBStandardView.addProperties({
     //   -Grid is not rendered twice (one for the standard confing and another
     //    one for the saved config)
     if (this.standardWindow && this.standardWindow.viewState && this.standardWindow.viewState[this.tabId]) {
-      this.viewGrid.setViewState(this.standardWindow.viewState[this.tabId]);
+      this.viewGrid.setViewState(this.standardWindow.viewState[this.tabId], true);
       // lastViewApplied is set because there are modifications in grid, so not
       // marking "Standard View" in view's menu
       this.standardWindow.lastViewApplied = true;

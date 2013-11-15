@@ -99,7 +99,8 @@
 // Apply a selected view definition to a window
 OB.Personalization.applyViewDefinition = function (persId, viewDefinition, standardWindow) {
   var i, view, viewTabDefinition, length = standardWindow.views.length,
-      windowDefinition = viewDefinition.window;
+      windowDefinition = viewDefinition.window,
+      fetchCallback;
 
   // delete the current form personalization 
   // as these will be overwritten by the new settings
@@ -144,6 +145,14 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
     }
   }
 
+  fetchCallback = function () {
+    if (view.viewGrid.requiredReapplyViewState && standardWindow.viewState[view.tabId]) {
+      // personalization requires to be reapplied for this view in data fetch callback
+      view.viewGrid.setViewState(standardWindow.viewState[view.tabId]);
+      delete view.viewGrid.requiredReapplyViewState;
+    }
+  };
+
   // the viewdefinition contains both the global info (form, canDelete, personalizationid)  
   // set the view state for each tab
   for (i = 0; i < length; i++) {
@@ -164,7 +173,7 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
         //clear grouping, will be applied later
         view.viewGrid.clearGroupBy();
         view.viewGrid.setViewState(viewTabDefinition.grid);
-        view.viewGrid.refreshContents();
+        view.viewGrid.refreshContents(fetchCallback);
       }
       if (viewTabDefinition.form) {
         OB.Personalization.personalizeForm(viewTabDefinition, view.viewForm);
