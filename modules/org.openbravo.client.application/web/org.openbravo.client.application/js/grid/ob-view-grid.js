@@ -1078,8 +1078,18 @@ isc.OBViewGrid.addProperties({
         // confings as field group are done in local with data, so not applying them 
         // till fetch callback. Marking now grid to reaply state afterwards
         // see issue #25119
-        this.requiredReapplyViewState = true;
-        localState.group.groupByFields = '';
+        if (this.view && this.view.standardWindow) {
+          this.view.standardWindow.requiredReapplyViewState = true;
+          this.view.standardWindow.gridsToReapply = this.view.standardWindow.gridsToReapply || [];
+          // push only what is pending to be reapplied
+          this.view.standardWindow.gridsToReapply.push({
+            view: this,
+            state: {
+              group: isc.shallowClone(localState.group)
+            }
+          });
+          localState.group.groupByFields = '';
+        }
       }
 
       this.Super('setViewState', ['(' + isc.Comm.serialize(localState, false) + ')']);
@@ -1791,6 +1801,10 @@ isc.OBViewGrid.addProperties({
     requestProperties.showPrompt = false;
 
     newCallBack = function () {
+      if (theView.standardWindow && theView.standardWindow.requiredReapplyViewState) {
+        theView.standardWindow.reapplyViewStates();
+      }
+
       theView.recordSelected();
       if (callback) {
         callback();

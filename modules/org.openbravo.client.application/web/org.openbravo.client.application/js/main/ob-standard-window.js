@@ -560,6 +560,21 @@ isc.OBStandardWindow.addProperties({
     this.setFocusInView();
   },
 
+  // reapplies partial states that couldn't be initially applied because
+  // data in client was required
+  reapplyViewStates: function () {
+    var i, reapp;
+    if (!this.requiredReapplyViewState || !this.gridsToReapply) {
+      return;
+    }
+    for (i = 0; i < this.gridsToReapply.length; i++) {
+      reapp = this.gridsToReapply[i];
+      reapp.view.setViewState(reapp.state);
+    }
+    delete this.requiredReapplyViewState;
+    delete this.gridsToReapply;
+  },
+
   clearLastViewPersonalization: function () {
     var p, length, personalization = this.getClass().personalization;
     delete this.lastViewApplied;
