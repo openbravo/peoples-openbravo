@@ -232,7 +232,7 @@ public class POSUtils {
               "from PricingPriceListVersion AS plv "
                   + "where plv.priceList.id ='"
                   + priceListId
-                  + "' and plv.validFromDate = (select max(pplv.validFromDate) "
+                  + "' and plv.active=true and plv.validFromDate = (select max(pplv.validFromDate) "
                   + "from PricingPriceListVersion as pplv where pplv.active=true and pplv.priceList.id = '"
                   + priceListId + "' and to_char(pplv.validFromDate,'yyyy-mm-dd') <= '"
                   + format.format(terminalDate) + "' )");
