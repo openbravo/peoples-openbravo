@@ -1026,7 +1026,7 @@ isc.OBViewGrid.addProperties({
     return '(' + isc.Comm.serialize(state, false) + ')';
   },
 
-  setViewState: function (state) {
+  setViewState: function (state, settingDefault) {
     var localState, i, fld, hasSummaryFunction;
 
     localState = this.evalViewState(state, 'viewState');
@@ -1072,6 +1072,15 @@ isc.OBViewGrid.addProperties({
       }
 
       this.deleteSelectedParentRecordFilter(localState);
+
+      if (settingDefault && localState.group && localState.group.groupByFields) {
+        // Setting default view, at this point fetch data is not already performed,
+        // confings as field group are done in local with data, so not applying them 
+        // till fetch callback. Marking now grid to reaply state afterwards
+        // see issue #25119
+        this.requiredReapplyViewState = true;
+        localState.group.groupByFields = '';
+      }
 
       this.Super('setViewState', ['(' + isc.Comm.serialize(localState, false) + ')']);
 
