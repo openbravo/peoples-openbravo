@@ -630,4 +630,14 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return obq.count() > 0;
   }
 
+  @Override
+  protected JSONArray fetchFilteredNodesForTreesWithMultiParentNodes(
+      Map<String, String> parameters, TableTree tableTree, List<String> filteredNodes,
+      String hqlTreeWhereClause, String hqlTreeWhereClauseRootNodes,
+      boolean allowNotApplyingWhereClauseToChildren) throws MultipleParentsException,
+      TooManyTreeNodesException {
+    // Not applicable
+    return new JSONArray();
+  }
+
 }

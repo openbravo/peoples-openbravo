@@ -38,11 +38,11 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
@@ -51,6 +51,7 @@ import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.datasource.CheckTreeOperationManager.ActionResponse;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,17 +141,17 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     OBContext.setAdminMode(true);
     final JSONObject jsonResult = new JSONObject();
 
-    // If the distinct parameter is included in the parameters, delegate to the default standard
-    // datasource
-    if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
-      String tabId = parameters.get("_tabId");
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
-      DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
-      return dataSource.fetch(parameters);
-    }
-
     try {
+      // If the distinct parameter is included in the parameters, delegate to the default standard
+      // datasource
+      if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
+        String tabId = parameters.get("_tabId");
+        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+        Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+        DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
+        return dataSource.fetch(parameters);
+      }
+
       String parentId = parameters.get("parentId");
       String tabId = parameters.get("tabId");
       String treeReferenceId = parameters.get("treeReferenceId");
@@ -214,19 +215,19 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
       JSONArray responseData = null;
       boolean tooManyNodes = false;
-
       // Do not consider dummy criteria as valid criteria
       boolean validCriteria = false;
-      String criteria = parameters.get("criteria");
-      if (criteria != null) {
-        JSONObject jsonCriteria = new JSONObject(criteria);
-        validCriteria = true;
-        if ("_dummy".equals(jsonCriteria.get("fieldName"))) {
-          validCriteria = false;
+      JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+      for (int i = 0; i < criterias.length(); i++) {
+        JSONObject criteria = criterias.getJSONObject(i);
+        if (!isDummyCriteria(criteria) && !isSubtabCriteria(entity, criteria)) {
+          validCriteria = true;
+          break;
         }
       }
 
       if (validCriteria && parentId.equals(ROOT_NODE)) {
+
         try {
           // Obtain the list of nodes that conforms to the criteria
           List<String> filteredNodes = getFilteredNodes(table, parameters);
@@ -273,18 +274,47 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return jsonResult.toString();
   }
 
+  private boolean isSubtabCriteria(Entity entity, JSONObject jsonCriteria) {
+    try {
+      if (jsonCriteria.has("fieldName")) {
+        String fieldName = jsonCriteria.getString("fieldName");
+        if (entity.hasProperty(fieldName)) {
+          Property property = entity.getProperty(fieldName);
+          if (property.isParent()) {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } catch (JSONException e) {
+      return false;
+    }
+  }
+
+  private boolean isDummyCriteria(JSONObject jsonCriteria) {
+    try {
+      if ("_dummy".equals(jsonCriteria.get("fieldName"))) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (JSONException e) {
+      return false;
+    }
+  }
+
   private boolean hasAccess(Entity entity, boolean fromTreeView) {
     boolean hasAccessToTable = true;
-    if (fromTreeView) {
-      try {
-        OBContext.getOBContext().getEntityAccessChecker().checkReadable(entity);
-      } catch (OBSecurityException e) {
-        hasAccessToTable = false;
-      }
-    } else {
-      // Accessing from the reference, the entity must be derivedReadable
-      hasAccessToTable = OBContext.getOBContext().getEntityAccessChecker()
-          .isDerivedReadable(entity);
+    // TODO: If it is a reference, check if it is derived readable
+    try {
+      OBContext.getOBContext().getEntityAccessChecker().checkReadable(entity);
+    } catch (OBSecurityException e) {
+      hasAccessToTable = false;
     }
     return hasAccessToTable;
   }
@@ -350,10 +380,10 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    * @return a JSON array containing the filtered nodes plus all its parents until the root node is
    *         reached
    * @throws MultipleParentsException
+   * @throws TooManyTreeNodesException
    */
   private JSONArray fetchFilteredNodes(Map<String, String> parameters, List<String> filteredNodes)
-      throws MultipleParentsException {
-    JSONArray responseData = new JSONArray();
+      throws MultipleParentsException, TooManyTreeNodesException {
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
@@ -372,7 +402,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       hqlTreeWhereClauseRootNodes = treeReference.getHQLWhereClauseForRootNodes();
     } else {
       log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
-      return responseData;
+      return new JSONArray();
     }
     if (hqlTreeWhereClause != null) {
       hqlTreeWhereClause = this.substituteParameters(hqlTreeWhereClause, parameters);
@@ -381,18 +411,29 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       hqlTreeWhereClauseRootNodes = this.substituteParameters(hqlTreeWhereClauseRootNodes,
           parameters);
     }
+    // If this property is true, the whereclause of the tabs does not need to be apllied to the
+    // non root nodes
+    boolean allowNotApplyingWhereClauseToChildren = !tableTree.isApplyWhereClauseToChildNodes();
+
+    if (tableTree.isHasMultiparentNodes()) {
+      return fetchFilteredNodesForTreesWithMultiParentNodes(parameters, tableTree, filteredNodes,
+          hqlTreeWhereClause, hqlTreeWhereClauseRootNodes, allowNotApplyingWhereClauseToChildren);
+    } else {
+      return fetchFilteredNodesForTrueTrees(parameters, tableTree, filteredNodes,
+          hqlTreeWhereClause, hqlTreeWhereClauseRootNodes, allowNotApplyingWhereClauseToChildren);
+    }
+
+  }
+
+  private JSONArray fetchFilteredNodesForTrueTrees(Map<String, String> parameters,
+      TableTree tableTree, List<String> filteredNodes, String hqlTreeWhereClause,
+      String hqlTreeWhereClauseRootNodes, boolean allowNotApplyingWhereClauseToChildren)
+      throws MultipleParentsException {
+
+    JSONArray responseData = new JSONArray();
+    Map<String, JSONObject> addedNodesMap = new HashMap<String, JSONObject>();
+
     try {
-      // If this property is true, the whereclause of the tabs does not need to be apllied to the
-      // non root nodes
-      boolean allowNotApplyingWhereClauseToChildren = false;
-      try {
-        allowNotApplyingWhereClauseToChildren = "Y".equals(Preferences.getPreferenceValue(
-            "AllowNotApplyingWhereClauseToChildNodes", true, "0", "0", null, null, null));
-      } catch (PropertyException e) {
-      }
-
-      Map<String, JSONObject> addedNodesMap = new HashMap<String, JSONObject>();
-
       for (String nodeId : filteredNodes) {
         JSONObject node = getJSONObjectByRecordId(parameters, nodeId);
         if (!allowNotApplyingWhereClauseToChildren
@@ -474,12 +515,18 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         }
         responseData.put(addedNodesMap.get(key));
       }
-
     } catch (JSONException e) {
-      log.error("Error on tree datasource", e);
+      log.error("Error while processing the filtered nodes from the datasource", e);
     }
+
     return responseData;
   }
+
+  protected abstract JSONArray fetchFilteredNodesForTreesWithMultiParentNodes(
+      Map<String, String> parameters, TableTree tableTree, List<String> filteredNodes,
+      String hqlTreeWhereClause, String hqlTreeWhereClauseRootNodes,
+      boolean allowNotApplyingWhereClauseToChildren) throws MultipleParentsException,
+      TooManyTreeNodesException;
 
   /**
    * Checks if a node is a root node

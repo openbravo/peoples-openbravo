@@ -84,6 +84,11 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
     }
   }
 
+  public boolean isApplyWhereClauseToChildren() {
+    TableTree tableTree = tab.getTableTree();
+    return tableTree.isApplyWhereClauseToChildNodes();
+  }
+
   public String getDataSourceId() {
     String dataSourceId = null;
     TableTree tableTree = tab.getTableTree();

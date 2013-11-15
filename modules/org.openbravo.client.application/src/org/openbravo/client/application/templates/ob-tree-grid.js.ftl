@@ -23,6 +23,7 @@ isc.OBTreeViewGrid.create({
     view: this,
     referencedTableId: '${data.referencedTableId}',
     orderedTree:  ${data.orderedTree?string},
+    applyWhereClauseToChildren:  ${data.applyWhereClauseToChildren?string},
     dataSourceId:  '${data.dataSourceId}',
     treeStructure:  '${data.treeStructure}',
     fields: this.gridFields

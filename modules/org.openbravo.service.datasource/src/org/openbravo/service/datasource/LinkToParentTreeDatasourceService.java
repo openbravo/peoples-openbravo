@@ -21,6 +21,8 @@ package org.openbravo.service.datasource;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +41,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
@@ -239,12 +240,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       }
     }
 
-    boolean allowNotApplyingWhereClauseToChildren = false;
-    try {
-      allowNotApplyingWhereClauseToChildren = "Y".equals(Preferences.getPreferenceValue(
-          "AllowNotApplyingWhereClauseToChildNodes", true, "0", "0", null, null, null));
-    } catch (PropertyException e) {
-    }
+    boolean allowNotApplyingWhereClauseToChildren = !tableTree.isApplyWhereClauseToChildNodes();
     if ((fetchRoot || !allowNotApplyingWhereClauseToChildren) && hqlWhereClause != null) {
       // Include the hql where clause for all root nodes and for child nodes only if it is required
       whereClause.append(hqlWhereClause + " and ");
@@ -310,7 +306,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       }
 
       if (isMultiParentTree) {
-        json.put("nodeId", parentNodeIdStr + ID_SEPARATOR + nodeIdStr);
+        json.put("nodeId", parentId + ID_SEPARATOR + nodeIdStr);
       } else {
         json.put("nodeId", nodeIdStr);
       }
@@ -475,13 +471,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return (query.count() == 1);
   }
 
-  /**
-   * @param parameters
-   * @param nodeId
-   * @return returns a json object with the definition of a node give its record id
-   */
-  @Override
-  protected JSONObject getJSONObjectByRecordId(Map<String, String> parameters, String bobId) {
+  protected JSONObject getJSONObjectByRecordId(Map<String, String> parameters, String bobId,
+      boolean fillNodeIdAndParentId) {
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
@@ -518,20 +509,23 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     try {
       BaseOBObject bob = OBDal.getInstance().get(entity.getName(), bobId);
       json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
-      BaseOBObject parent = (BaseOBObject) bob.get(linkToParentProperty.getName());
-      if (parent != null) {
-        json.put("parentId", parent.getId().toString());
-      } else {
-        json.put("parentId", (String) ROOT_NODE);
+      if (fillNodeIdAndParentId) {
+        BaseOBObject parent = (BaseOBObject) bob.get(linkToParentProperty.getName());
+        if (parent != null) {
+          json.put("parentId", parent.getId().toString());
+        } else {
+          json.put("parentId", (String) ROOT_NODE);
+        }
+        Object nodeId = bob.get(nodeIdProperty.getName());
+        String nodeIdStr = null;
+        if (nodeId instanceof String) {
+          nodeIdStr = (String) nodeId;
+        } else if (nodeId instanceof BaseOBObject) {
+          nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
+        }
+        json.put("nodeId", nodeIdStr);
       }
-      Object nodeId = bob.get(nodeIdProperty.getName());
-      String nodeIdStr = null;
-      if (nodeId instanceof String) {
-        nodeIdStr = (String) nodeId;
-      } else if (nodeId instanceof BaseOBObject) {
-        nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
-      }
-      json.put("nodeId", nodeIdStr);
+
       json.put("_hasChildren", (this.nodeHasChildren(entity, linkToParentProperty, nodeIdProperty,
           bob, hqlWhereClause)) ? true : false);
     } catch (JSONException e) {
@@ -539,4 +533,268 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     }
     return json;
   }
+
+  /**
+   * @param parameters
+   * @param nodeId
+   * @return returns a json object with the definition of a node give its record id
+   */
+  @Override
+  protected JSONObject getJSONObjectByRecordId(Map<String, String> parameters, String bobId) {
+    boolean fillNodeIdAndParentId = true;
+    return getJSONObjectByRecordId(parameters, bobId, fillNodeIdAndParentId);
+  }
+
+  @Override
+  protected JSONArray fetchFilteredNodesForTreesWithMultiParentNodes(
+      Map<String, String> parameters, TableTree tableTree, List<String> filteredNodes,
+      String hqlTreeWhereClause, String hqlTreeWhereClauseRootNodes,
+      boolean allowNotApplyingWhereClauseToChildren) throws MultipleParentsException,
+      TooManyTreeNodesException {
+
+    Property linkToParentProperty = getLinkToParentProperty(tableTree);
+    Property nodeIdProperty = getNodeIdProperty(tableTree);
+    JSONArray responseData = new JSONArray();
+    Map<String, JSONObject> addedNodesMap = new HashMap<String, JSONObject>();
+
+    try {
+
+      for (String nodeRecordId : filteredNodes) {
+        JSONObject node = getJSONObjectByRecordId(parameters, nodeRecordId);
+        BasicTreeInfo treeInfo = new BasicTreeInfo(nodeRecordId, node.getString(nodeIdProperty
+            .getName()), node.getString(linkToParentProperty.getName()));
+        List<JSONArray> pathsToRootNodes = buildPathToRootNodes(parameters, treeInfo, tableTree,
+            hqlTreeWhereClause, hqlTreeWhereClauseRootNodes);
+        for (JSONArray pathToRootNode : pathsToRootNodes) {
+          for (int i = 0; i < pathToRootNode.length(); i++) {
+            JSONObject pathNode = pathToRootNode.getJSONObject(i);
+            addedNodesMap.put(pathNode.getString("nodeId"), pathNode);
+          }
+        }
+      }
+
+      // Add the values in the map to responsedata
+      for (String key : addedNodesMap.keySet()) {
+        if (addedNodesMap.get(key).has("filterHit")) {
+          addedNodesMap.get(key).remove("filterHit");
+        } else {
+          addedNodesMap.get(key).put("notFilterHit", true);
+        }
+        responseData.put(addedNodesMap.get(key));
+      }
+    } catch (JSONException e) {
+      log.error("Error while processing the filtered nodes from the datasource", e);
+    }
+
+    return responseData;
+  }
+
+  private List<JSONArray> buildPathToRootNodes(Map<String, String> parameters,
+      BasicTreeInfo recordInfo, TableTree tableTree, String hqlTreeWhereClause,
+      String hqlTreeWhereClauseRootNodes) throws TooManyTreeNodesException {
+    List<JSONArray> pathsToRootNodes = new ArrayList<JSONArray>();
+    try {
+      String recordId = recordInfo.getRecordId();
+      Property linkToParentProperty = getLinkToParentProperty(tableTree);
+      Property nodeIdProperty = getNodeIdProperty(tableTree);
+      if (isInvalidRoot(recordInfo, tableTree, hqlTreeWhereClause, hqlTreeWhereClauseRootNodes)) {
+        return pathsToRootNodes;
+      }
+      if (isValidRoot(recordInfo, tableTree, hqlTreeWhereClause, hqlTreeWhereClauseRootNodes)) {
+        boolean fillNodeIdAndParentId = false;
+        JSONObject node = getJSONObjectByRecordId(parameters, recordId, fillNodeIdAndParentId);
+        String nodeId = node.getString(nodeIdProperty.getName());
+        node.put("parentId", ROOT_NODE);
+        node.put("nodeId", nodeId);
+        node.put("filterHit", true);
+        JSONArray pathToRootNode = new JSONArray();
+        pathToRootNode.put(node);
+        pathsToRootNodes.add(pathToRootNode);
+        return pathsToRootNodes;
+      }
+      boolean fillNodeIdAndParentId = false;
+      JSONObject node = getJSONObjectByRecordId(parameters, recordId, fillNodeIdAndParentId);
+      String nodeId = node.getString(nodeIdProperty.getName());
+      List<BasicTreeInfo> parentInfoList = getRecordInfoOfParents(parameters, recordInfo,
+          hqlTreeWhereClause, hqlTreeWhereClauseRootNodes);
+      for (BasicTreeInfo parentInfo : parentInfoList) {
+        List<JSONArray> pathsToRootNodesAux = buildPathToRootNodes(parameters, parentInfo,
+            tableTree, hqlTreeWhereClause, hqlTreeWhereClauseRootNodes);
+        for (JSONArray pathToRootNode : pathsToRootNodesAux) {
+          if (pathToRootNode != null && pathToRootNode.length() > 0) {
+            JSONObject lastNode = pathToRootNode.getJSONObject(pathToRootNode.length() - 1);
+            lastNode.put("isOpen", true);
+            String lastNodeId = lastNode.getString("nodeId");
+            JSONObject auxNode = new JSONObject(node.toString());
+            auxNode.put("parentId", lastNodeId);
+            auxNode.put("nodeId", lastNodeId + ID_SEPARATOR + nodeId);
+            auxNode.put("filterHit", true);
+            pathToRootNode.put(auxNode);
+            pathsToRootNodes.add(pathToRootNode);
+          }
+        }
+      }
+    } catch (JSONException e) {
+      log.error("Error while processing the filtered nodes from the datasource", e);
+    }
+
+    return pathsToRootNodes;
+  }
+
+  private boolean isValidRoot(BasicTreeInfo recordInfo, TableTree tableTree,
+      String hqlTreeWhereClause, String hqlTreeWhereClauseRootNodes) {
+    String nodeId = recordInfo.getNodeId();
+    String parentId = recordInfo.getParentId();
+    if (hqlTreeWhereClauseRootNodes == null) {
+      return ROOT_NODE.equals(parentId);
+    } else {
+      return nodeConformsToWhereClause(tableTree, nodeId, hqlTreeWhereClauseRootNodes);
+    }
+  }
+
+  private boolean isInvalidRoot(BasicTreeInfo recordInfo, TableTree tableTree,
+      String hqlTreeWhereClause, String hqlTreeWhereClauseRootNodes) {
+    String nodeId = recordInfo.getNodeId();
+    String parentId = recordInfo.getParentId();
+    if (hqlTreeWhereClauseRootNodes == null) {
+      return false;
+    } else if (ROOT_NODE.equals(parentId)
+        && !nodeConformsToWhereClause(tableTree, nodeId, hqlTreeWhereClauseRootNodes)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private List<BasicTreeInfo> getRecordInfoOfParents(Map<String, String> parameters,
+      BasicTreeInfo treeInfo, String hqlWhereClause, String hqlWhereClauseRootNodes)
+      throws TooManyTreeNodesException {
+    List<BasicTreeInfo> treeInfoList = new ArrayList<BasicTreeInfo>();
+    try {
+      List<JSONObject> parentNodes = fetchParentsOfNode(parameters, treeInfo.getParentId(),
+          hqlWhereClause, hqlWhereClauseRootNodes);
+      for (JSONObject parentNode : parentNodes) {
+        treeInfoList.add(new BasicTreeInfo(parentNode.getString("id"), parentNode
+            .getString("nodeId"), parentNode.getString("parentId")));
+      }
+    } catch (JSONException e) {
+      logger.error("Error on tree datasource", e);
+    }
+    return treeInfoList;
+  }
+
+  protected List<JSONObject> fetchParentsOfNode(Map<String, String> parameters, String parentId,
+      String hqlWhereClause, String hqlWhereClauseRootNodes) throws TooManyTreeNodesException {
+    List<JSONObject> parentList = new ArrayList<JSONObject>();
+    String tabId = parameters.get("tabId");
+    String treeReferenceId = parameters.get("treeReferenceId");
+    Tab tab = null;
+    Table table = null;
+    TableTree tableTree = null;
+    if (tabId != null) {
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+      table = tab.getTable();
+      tableTree = tab.getTableTree();
+    } else if (treeReferenceId != null) {
+      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
+      table = treeReference.getTable();
+      tableTree = treeReference.getTableTreeCategory();
+    } else {
+      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      return new ArrayList<JSONObject>();
+    }
+
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    Property linkToParentProperty = getLinkToParentProperty(tableTree);
+    Property nodeIdProperty = getNodeIdProperty(tableTree);
+
+    StringBuilder whereClause = new StringBuilder();
+    whereClause.append(" as e where ");
+    whereClause.append(" e." + nodeIdProperty.getName());
+    whereClause.append(".id = '" + parentId + "' ");
+
+    final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
+        whereClause.toString());
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
+        DataToJsonConverter.class);
+
+    JSONArray responseData = new JSONArray();
+
+    // Check if the number of results to be returned is not higher than the defined limit
+    int nResults = query.count();
+    OBContext context = OBContext.getOBContext();
+    int nMaxResults = -1;
+    try {
+      nMaxResults = Integer.parseInt(Preferences.getPreferenceValue("TreeDatasourceFetchLimit",
+          false, context.getCurrentClient(), context.getCurrentOrganization(), context.getUser(),
+          context.getRole(), null));
+    } catch (Exception e) {
+      nMaxResults = 100;
+    }
+    if (nResults > nMaxResults) {
+      throw new TooManyTreeNodesException();
+    }
+    int count = 0;
+    final ScrollableResults scrollableResults = query.scroll(ScrollMode.FORWARD_ONLY);
+    while (scrollableResults.next()) {
+      BaseOBObject bob = (BaseOBObject) scrollableResults.get()[0];
+      final JSONObject json = toJsonConverter.toJsonObject((BaseOBObject) bob,
+          DataResolvingMode.FULL);
+
+      Object nodeId = bob.get(nodeIdProperty.getName());
+      String nodeIdStr = null;
+      if (nodeId instanceof String) {
+        nodeIdStr = (String) nodeId;
+      } else if (nodeId instanceof BaseOBObject) {
+        nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
+      }
+
+      Object parentNodeId = bob.get(linkToParentProperty.getName());
+      String parentNodeIdStr = null;
+      if (parentNodeId instanceof String) {
+        parentNodeIdStr = (String) parentNodeId;
+      } else if (parentNodeId instanceof BaseOBObject) {
+        parentNodeIdStr = ((BaseOBObject) parentNodeId).getId().toString();
+      }
+      try {
+        json.put("nodeId", nodeIdStr);
+        json.put("parentId", parentNodeIdStr);
+      } catch (JSONException e) {
+        logger.error("Error on tree datasource", e);
+      }
+
+      parentList.add(json);
+      count++;
+      if (count % 100 == 0) {
+        OBDal.getInstance().getSession().clear();
+      }
+
+    }
+    return parentList;
+  }
+
+  private class BasicTreeInfo {
+    private String recordId;
+    private String nodeId;
+    private String parentId;
+
+    public BasicTreeInfo(String recordId, String nodeId, String parentId) {
+      this.recordId = recordId;
+      this.nodeId = nodeId;
+      this.parentId = parentId;
+    }
+
+    public String getRecordId() {
+      return this.recordId;
+    }
+
+    public String getNodeId() {
+      return this.nodeId;
+    }
+
+    public String getParentId() {
+      return this.parentId;
+    }
+  }
+
 }

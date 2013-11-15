@@ -1810,7 +1810,8 @@ isc.OBViewGrid.addProperties({
 
   convertCriteria: function (criteria) {
     var selectedValues, prop, fld, value, i, j, k, criterion, fldName, length, today = new Date(),
-        currentTimeZoneOffsetInMinutes = -today.getTimezoneOffset();
+        currentTimeZoneOffsetInMinutes = -today.getTimezoneOffset(),
+        applyParentTabCriteria = true;
 
     if (!criteria) {
       criteria = {};
@@ -1857,7 +1858,10 @@ isc.OBViewGrid.addProperties({
     // note pass in criteria otherwise infinite looping!
     this.resetEmptyMessage(criteria);
 
-    if (this.view.parentProperty && !this.isOpenDirectMode) {
+    if (this.applyWhereClauseToChildren === false && criteria.criteria.length > 0) {
+      applyParentTabCriteria = false;
+    }
+    if (this.view.parentProperty && !this.isOpenDirectMode && applyParentTabCriteria) {
       if (this.view.parentView.isShowingTree) {
         selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
       } else {
