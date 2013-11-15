@@ -35,6 +35,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider;
@@ -42,11 +43,13 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.datasource.CheckTreeOperationManager.ActionResponse;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,17 +158,20 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       Table table = null;
       String hqlTreeWhereClause = null;
       String hqlTreeWhereClauseRootNodes = null;
+      boolean fromTreeView = true;
       if (tabId != null) {
         tab = OBDal.getInstance().get(Tab.class, tabId);
         table = tab.getTable();
         hqlTreeWhereClause = tab.getHqlwhereclause();
         hqlTreeWhereClauseRootNodes = tab.getHQLWhereClauseForRootNodes();
+
       } else if (treeReferenceId != null) {
         ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class,
             treeReferenceId);
         table = treeReference.getTable();
         hqlTreeWhereClause = treeReference.getHQLSQLWhereClause();
         hqlTreeWhereClauseRootNodes = treeReference.getHQLWhereClauseForRootNodes();
+        fromTreeView = false;
       } else {
         log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
         final JSONObject jsonResponse = new JSONObject();
@@ -175,6 +181,25 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
         jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
         jsonResponse.put(JsonConstants.RESPONSE_ENDROW, 0);
+        jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+        return jsonResult.toString();
+      }
+
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+      if (!hasAccess(entity, fromTreeView)) {
+        JSONObject jsonResponse = new JSONObject();
+        JSONObject jsonMessage = new JSONObject();
+        jsonMessage.put("messageType", "error");
+        jsonMessage.put(
+            "message",
+            Utility.messageBD(new DalConnectionProvider(false), "AccessTableNoView", OBContext
+                .getOBContext().getLanguage().getLanguage()));
+        jsonResponse.put("message", jsonMessage);
+        jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+        jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray());
+        jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
+        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, 0);
+        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
         return jsonResult.toString();
       }
@@ -246,6 +271,22 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       OBContext.restorePreviousMode();
     }
     return jsonResult.toString();
+  }
+
+  private boolean hasAccess(Entity entity, boolean fromTreeView) {
+    boolean hasAccessToTable = true;
+    if (fromTreeView) {
+      try {
+        OBContext.getOBContext().getEntityAccessChecker().checkReadable(entity);
+      } catch (OBSecurityException e) {
+        hasAccessToTable = false;
+      }
+    } else {
+      // Accessing from the reference, the entity must be derivedReadable
+      hasAccessToTable = OBContext.getOBContext().getEntityAccessChecker()
+          .isDerivedReadable(entity);
+    }
+    return hasAccessToTable;
   }
 
   /**
