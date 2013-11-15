@@ -579,13 +579,25 @@ isc.OBGrid.addProperties({
 
   clearFilter: function (keepFilterClause, noPerformAction) {
     var i = 0,
-        fld, length;
+        fld, length, groupState, forceRefresh;
     if (!keepFilterClause) {
       // forcing fetch from server in case default filters are removed, in other
       // cases adaptive filtering can be used if possible
       if (this.data) {
-        this.data.forceRefresh = this.filterClause || this.sqlFilterClause;
-        delete this.data.context.params._where;
+        forceRefresh = this.filterClause || this.sqlFilterClause;
+
+        groupState = this.getGroupState();
+        if (forceRefresh && groupState && groupState.groupByFields) {
+          // in case of field grouping and filter clause, remove filter grouping
+          // because when filter clause is removed data could be bigger than the
+          // amount allowed by grouping
+          this.setGroupState(null);
+        }
+
+        this.data.forceRefresh = forceRefresh;
+        if (this.data.context && this.data.context.params) {
+          delete this.data.context.params._where;
+        }
       }
 
       delete this.filterClause;
