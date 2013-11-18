@@ -49,6 +49,7 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.obposTerminaltype.allowpayoncredit", "allowpayoncredit"));
     list.add(new HQLProperty("pos.defaultwebpostab", "defaultwebpostab"));
     list.add(new HQLProperty("postype", "terminalType"));
+    list.add(new HQLProperty("pos.organization.oBPOSBestDealCase", "bestDealCase"));
     return list;
   }
 
