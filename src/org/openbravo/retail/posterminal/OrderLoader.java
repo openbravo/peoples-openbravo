@@ -167,23 +167,34 @@ public class OrderLoader extends JSONProcessSimple {
           }
           log.info("Total order time: " + (System.currentTimeMillis() - t1));
         } catch (Exception e) {
-          log.error("An error happened when processing an order: ", e);
-          // Creation of the order failed. We will now store the order in the import errors table
           OBDal.getInstance().rollbackAndClose();
           if (TriggerHandler.getInstance().isDisabled()) {
             TriggerHandler.getInstance().enable();
           }
-          OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
-          errorEntry.setError(getErrorMessage(e));
-          errorEntry.setOrderstatus("N");
-          errorEntry.setJsoninfo(jsonorder.toString());
-          errorEntry.setTypeofdata("order");
-          errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
-              posTerminalId));
-          OBDal.getInstance().save(errorEntry);
-          OBDal.getInstance().flush();
 
-          log.error("Error while loading order", e);
+          // check if there is a SO with the same id. It means that it is a duplicated order. Then,
+          // this error will not be stored
+          List<Object> parameters = new ArrayList<Object>();
+          parameters.add(jsonorder.getString("id"));
+          OBQuery<Order> orders = OBDal.getInstance().createQuery(Order.class, "id=?");
+          orders.setParameters(parameters);
+          if (orders.count() > 0) {
+            log.warn("Order duplicated with id: " + jsonorder.getString("id")
+                + "  Not error saved.");
+          } else {
+            // Creation of the order failed. We will now store the order in the import errors table
+            log.error("An error happened when processing an order: ", e);
+            OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
+            errorEntry.setError(getErrorMessage(e));
+            errorEntry.setOrderstatus("N");
+            errorEntry.setJsoninfo(jsonorder.toString());
+            errorEntry.setTypeofdata("order");
+            errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
+                posTerminalId));
+            OBDal.getInstance().save(errorEntry);
+            OBDal.getInstance().flush();
+            log.error("Error while loading order", e);
+          }
           try {
             OBDal.getInstance().getConnection().commit();
           } catch (SQLException e1) {
@@ -283,12 +294,12 @@ public class OrderLoader extends JSONProcessSimple {
         // Shipment header
         shipment = OBProvider.getInstance().get(ShipmentInOut.class);
         createShipment(shipment, order, jsonorder);
-
-        // Shipment lines
-        createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
         if (shipment != null) {
           OBDal.getInstance().save(shipment);
         }
+        // Shipment lines
+        createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
+
       }
       long t115 = System.currentTimeMillis();
       if (createInvoice) {
@@ -448,6 +459,13 @@ public class OrderLoader extends JSONProcessSimple {
         if (order != null) {
           return true;
         }
+      }
+      if ((!jsonorder.has("gross") || jsonorder.getString("gross").equals("0"))
+          && (jsonorder.isNull("lines") || (jsonorder.getJSONArray("lines") != null && jsonorder
+              .getJSONArray("lines").length() == 0))) {
+        log.error("Detected order without lines and total amount zero. Document number "
+            + jsonorder.getString("documentNo"));
+        return true;
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -823,6 +841,7 @@ public class OrderLoader extends JSONProcessSimple {
     line.setLineNo(lineNo);
     line.setShipmentReceipt(shipment);
     line.setSalesOrderLine(orderLine);
+
     orderLine.getMaterialMgmtShipmentInOutLineList().add(line);
 
     line.setMovementQuantity(qty);
@@ -831,6 +850,7 @@ public class OrderLoader extends JSONProcessSimple {
       line.setAttributeSetValue(attributeSetInstance);
     }
     shipment.getMaterialMgmtShipmentInOutLineList().add(line);
+    OBDal.getInstance().save(line);
   }
 
   protected void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder)

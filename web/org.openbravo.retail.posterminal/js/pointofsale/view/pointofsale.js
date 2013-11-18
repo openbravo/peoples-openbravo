@@ -34,6 +34,7 @@ enyo.kind({
     onTabChange: 'tabChange',
     onDeleteLine: 'deleteLine',
     onEditLine: 'editLine',
+    onReturnLine: 'returnLine',
     onExactPayment: 'exactPayment',
     onRemovePayment: 'removePayment',
     onChangeCurrentOrder: 'changeCurrentOrder',
@@ -257,25 +258,23 @@ enyo.kind({
       if (this.model.get('leftColumnViewManager').isOrder()) {
         var receipt = this.model.get('order');
         if (receipt.get("isPaid")) {
-          receipt.trigger('print');
+          receipt.trigger('print', null, true);
           return;
         }
         receipt.calculateTaxes(function () {
-          receipt.trigger('print');
+          receipt.trigger('print', null, true);
         });
         return;
       }
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
         _.each(this.model.get('multiOrders').get('multiOrdersList').models, function (order) {
-          this.model.get('multiOrders').trigger('print', order);
+          this.model.get('multiOrders').trigger('print', order, true);
         }, this);
       }
     }
   },
   paidReceipts: function (inSender, inEvent) {
-    this.$.modalPaidReceipts.setParams({
-      isQuotation: false
-    });
+    this.$.modalPaidReceipts.setParams(inEvent);
     this.$.modalPaidReceipts.waterfall('onClearAction');
     this.doShowPopup({
       popup: 'modalPaidReceipts'
@@ -625,6 +624,15 @@ enyo.kind({
       popup: 'receiptLinesPropertiesDialog'
     });
   },
+  returnLine: function (inSender, inEvent) {
+    if (this.model.get('order').get('isEditable') === false) {
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
+      return true;
+    }
+    this.model.get('order').returnLine(inEvent.line);
+  },
   exactPayment: function (inSender, inEvent) {
     this.$.multiColumn.$.rightPanel.$.keyboard.execStatelessCommand('cashexact');
   },
@@ -877,7 +885,7 @@ enyo.kind({
               //OB.POS.terminal.$.focusKeeper.focus();
             } else {
               //developers helps
-              //console.log("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
+              //OB.info("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
               restorePreviousState(this.model.get('subWindowManager'), changedModel);
             }
           }
@@ -886,7 +894,7 @@ enyo.kind({
         }
       } else {
         //developers helps
-        //console.log("The subwindow to navigate doesn't exists -> restore previous state");
+        //OB.info("The subwindow to navigate doesn't exists -> restore previous state");
         restorePreviousState(this.model.get('subWindowManager'), changedModel);
       }
     }, this);

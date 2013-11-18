@@ -39,7 +39,7 @@
         // Update Default Address
 
         function errorCallback(tx, error) {
-          window.console.error(tx);
+          OB.error(tx);
         }
 
         function successCallbackBPs(dataBps) {
@@ -48,10 +48,10 @@
               dataBps.set('locId', me.customerAddr.get('id'));
               dataBps.set('locName', me.customerAddr.get('name'));
               OB.Dal.save(dataBps, function () {}, function (tx) {
-                window.console.error(tx);
+                OB.error(tx);
               });
             }, function error(tx) {
-              window.console.error(tx);
+              OB.error(tx);
             });
           }
         }
@@ -88,7 +88,7 @@
         });
       }, function () {
         //error saving BP Location with new values in c_bpartner_location
-        window.console.error(arguments);
+        OB.error(arguments);
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrLocally', [me.customerAddr.get('_identifier')]));
       });
     }, this);

@@ -50,7 +50,7 @@ OB.Model.Executor = Backbone.Model.extend({
     }
 
     event.on('finish', function () {
-      window.console.log('event execution time', (new Date().getTime()) - event.get('start'));
+      OB.info('event execution time', (new Date().getTime()) - event.get('start'));
     });
 
     evtQueue.add(event);
@@ -175,7 +175,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       });
       evt.trigger('actionsCreated');
     }, function () {
-      console.error('Error getting promotions', arguments);
+      OB.error('Error getting promotions', arguments);
     });
   },
 
@@ -210,7 +210,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         this.nextAction(evt);
       }
     } else {
-      window.console.warn('No POS implementation for discount ' + disc.get('discountType'));
+      OB.warn('No POS implementation for discount ' + disc.get('discountType'));
       this.nextAction(evt);
     }
   },

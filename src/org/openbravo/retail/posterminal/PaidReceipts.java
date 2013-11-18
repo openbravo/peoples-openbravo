@@ -23,7 +23,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -68,7 +67,7 @@ public class PaidReceipts extends JSONProcessSimple {
       // TODO: make this extensible
       String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
           + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.unitPrice as netPrice , ordLine.salesOrder.currency.pricePrecision as pricePrecision "
-    	  + "from OrderLine as ordLine where ordLine.salesOrder.id=?";
+          + "from OrderLine as ordLine where ordLine.salesOrder.id=?";
       Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
           .createQuery(hqlPaidReceiptsLines);
       paidReceiptsLinesQuery.setString(0, orderid);
@@ -81,6 +80,7 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceiptLine.put("uOM", objpaidReceiptsLines[2]);
         paidReceiptLine.put("quantity", objpaidReceiptsLines[3]);
         paidReceiptLine.put("unitPrice", objpaidReceiptsLines[4]);
+        paidReceiptLine.put("lineId", objpaidReceiptsLines[6]);
         paidReceiptLine.put("netPrice", objpaidReceiptsLines[7]);
 
         // promotions per line
@@ -108,8 +108,11 @@ public class PaidReceipts extends JSONProcessSimple {
           promotions.put(jsonPromo);
           hasPromotions = true;
           if (!paidReceipt.getBoolean("priceIncludesTax")) {
-            paidReceiptLine.put("netPrice", ((BigDecimal) objpaidReceiptsLines[7])
-                .add(displayedAmount.divide((BigDecimal) objpaidReceiptsLines[3], new Integer(String.valueOf(objpaidReceiptsLines[8])).intValue(), BigDecimal.ROUND_HALF_UP)));
+            paidReceiptLine
+                .put("netPrice", ((BigDecimal) objpaidReceiptsLines[7]).add(displayedAmount.divide(
+                    (BigDecimal) objpaidReceiptsLines[3],
+                    new Integer(String.valueOf(objpaidReceiptsLines[8])).intValue(),
+                    BigDecimal.ROUND_HALF_UP)));
           }
         }
 
@@ -140,8 +143,7 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONObject paymentsIn = new JSONObject();
         paymentsIn.put("amount", objPaymentsIn[0]);
         paymentsIn.put("account", objPaymentsIn[1]);
-        String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-            .getProperty("dateFormat.java");
+        String dateFormat = "yyyy-MM-dd";
         SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
         paymentsIn.put("paymentDate", outputFormat.format(((Date) objPaymentsIn[2])));
         listPaymentsIn.put(paymentsIn);

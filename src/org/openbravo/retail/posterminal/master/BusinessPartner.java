@@ -50,8 +50,8 @@ public class BusinessPartner extends ProcessHQLQuery {
                 + "(bpl.$incrementalUpdateCriteria or bpl.businessPartner.$incrementalUpdateCriteria or bpl.locationAddress.$incrementalUpdateCriteria or ulist.$incrementalUpdateCriteria) AND bpl.businessPartner.active=true"
                 + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.$readableClientCriteria AND "
                 + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-                + " and ulist.id is null "
-                + " GROUP BY bpl.businessPartner.id, bpl.businessPartner.organization.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.priceList.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, ulist.email, ulist.phone,bpl.locationAddress.cityName, bpl.locationAddress.postalCode, bpl.businessPartner.businessPartnerCategory.id, bpl.businessPartner.businessPartnerCategory.name, bpl.businessPartner.creditLimit, bpl.businessPartner.creditUsed, bpl.id , ulist.id  "
+                + " and ulist.id is null " + " GROUP BY "
+                + regularBusinessPartnerHQLProperties.getHqlGroupBy()
                 + " ORDER BY bpl.businessPartner.name",
             "SELECT"
                 + regularBusinessPartnerHQLProperties.getHqlSelect() //
@@ -66,7 +66,7 @@ public class BusinessPartner extends ProcessHQLQuery {
                 + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.$readableClientCriteria AND "
                 + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
                 + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner))"
-                + " GROUP BY bpl.businessPartner.id, bpl.businessPartner.organization.id, bpl.businessPartner.name, bpl.businessPartner.name, bpl.businessPartner.searchKey, bpl.businessPartner.description, bpl.businessPartner.taxID, bpl.businessPartner.sOBPTaxCategory.id, bpl.businessPartner.priceList.id, bpl.businessPartner.paymentMethod.id, bpl.businessPartner.paymentTerms.id, bpl.businessPartner.invoiceTerms, ulist.email, ulist.phone,bpl.locationAddress.cityName, bpl.locationAddress.postalCode, bpl.businessPartner.businessPartnerCategory.id, bpl.businessPartner.businessPartnerCategory.name, bpl.businessPartner.creditLimit, bpl.businessPartner.creditUsed, bpl.id , ulist.id  "
+                + " GROUP BY " + regularBusinessPartnerHQLProperties.getHqlGroupBy()
                 + " ORDER BY bpl.businessPartner.name" });
   }
 

@@ -14,7 +14,7 @@ OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};
 OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 
 //Window model
-OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
+OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [{
     generatedModel: true,
     modelName: 'TaxRate'
@@ -39,7 +39,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterRole'
   },
-  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
@@ -294,6 +294,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       }
 
       function prepareToSendCallback(order) {
+        if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
+          var negativeLines = _.filter(order.get('lines').models, function (line) {
+            return line.get('gross') < 0;
+          }).length;
+          if (negativeLines === order.get('lines').models.length) {
+            order.setOrderType('OBPOS_receipt.return', OB.DEC.One);
+          } else {
+            receipt.setOrderType('', OB.DEC.Zero);
+          }
+        }
         me.get('multiOrders').trigger('closed', order);
         me.get('multiOrders').trigger('print', order); // to guaranty execution order
         SyncReadyToSendFunction();
@@ -387,6 +397,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         //Create the negative payment for change
         var oldChange = receipt.get('change');
         var clonedCollection = new Backbone.Collection();
+        if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
+          var negativeLines = _.filter(receipt.get('lines').models, function (line) {
+            return line.get('gross') < 0;
+          }).length;
+          if (negativeLines === receipt.get('lines').models.length) {
+            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One);
+          } else {
+            receipt.setOrderType('', OB.DEC.Zero);
+          }
+        }
         if (!_.isUndefined(receipt.selectedPayment) && receipt.getChange() > 0) {
           var payment = OB.POS.terminal.terminal.paymentnames[receipt.selectedPayment];
           receipt.get('payments').each(function (model) {
@@ -419,7 +439,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
         } else {
           receipt.trigger('closed');
         }
-
         receipt.trigger('print'); // to guaranty execution order
         orderList.deleteCurrent();
       });
@@ -458,7 +477,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
       }
     }, this);
     receipt.on('openDrawer', function () {
-      receipt.trigger('popenDrawer');
+      OB.POS.hwserver.openDrawer();
     }, this);
 
     this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(this);
@@ -467,6 +486,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     // Listening events that cause a discount recalculation
     receipt.get('lines').on('add change:qty change:price', function (line) {
       if (!receipt.get('isEditable')) {
+        return;
+      }
+      //When we do not want to launch promotions process (Not apply or remove discounts)
+      if (receipt.get('skipApplyPromotions') || line.get('skipApplyPromotions')) {
         return;
       }
       OB.Model.Discounts.applyPromotions(receipt, line);
@@ -517,107 +540,30 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
   checkPaymentApproval: function () {
     var me = this;
     OB.MobileApp.model.hookManager.executeHooks('OBPOS_CheckPaymentApproval', {
-      approved: true,
+      approvals: [],
       context: this
     }, function (args) {
-      me.trigger('approvalChecked', {
-        approved: args.approved
-      });
+      var negativeLines = _.filter(me.get('order').get('lines').models, function (line) {
+        return line.get('gross') < 0;
+      }).length;
+      if (negativeLines > 0 && OB.POS.modelterminal.get('permissions')['OBPOS_approval.returns']) {
+        args.approvals.push('OBPOS_approval.returns');
+      }
+      if (args.approvals.length > 0) {
+        OB.UTIL.Approval.requestApproval(
+        me, args.approvals, function (approved, supervisor, approvalType) {
+          if (approved) {
+            me.trigger('approvalChecked', {
+              approved: args.approved
+            });
+          }
+        });
+      } else {
+        me.trigger('approvalChecked', {
+          approved: true
+        });
+      }
     });
-  },
-
-  /**
-   * Generic approval checker. It validates user/password can approve the approvalType.
-   * It can work online in case that user has done at least once the same approvalType
-   * in this same browser. Data regarding privileged users is stored in supervisor table
-   */
-  checkApproval: function (approvalType, username, password) {
-    OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
-    if (OB.MobileApp.model.get('connectedToERP')) {
-      new OB.DS.Process('org.openbravo.retail.posterminal.utility.CheckApproval').exec({
-        u: username,
-        p: password,
-        approvalType: approvalType
-      }, enyo.bind(this, function (response, message) {
-        var approved = false;
-        if (response.exception) {
-          OB.UTIL.showError(response.exception.message);
-          this.approvedTicket(false);
-        } else {
-          approved = response.canApprove;
-          if (!approved) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
-          }
-
-          // saving supervisor in local so next time it is possible to approve offline
-          OB.Dal.find(OB.Model.Supervisor, {
-            'id': response.userId
-          }, enyo.bind(this, function (users) {
-            var supervisor, date, permissions = [];
-            if (users.models.length === 0) {
-              // new user
-              if (response.canApprove) {
-                // insert in local db only in case it is supervisor for current type
-                date = new Date().toString();
-                supervisor = new OB.Model.Supervisor();
-
-                supervisor.set('id', response.userId);
-                supervisor.set('name', username);
-                supervisor.set('password', OB.MobileApp.model.generate_sha1(password + date));
-                supervisor.set('created', date);
-                supervisor.set('permissions', JSON.stringify([approvalType]));
-                OB.Dal.save(supervisor, null, null, true);
-              }
-            } else {
-              // update existent user granting or revoking permission
-              supervisor = users.models[0];
-
-              supervisor.set('password', OB.MobileApp.model.generate_sha1(password + supervisor.get('created')));
-              if (supervisor.get('permissions')) {
-                permissions = JSON.parse(supervisor.get('permissions'));
-              }
-
-              if (response.canApprove) {
-                // grant permission if it does not exist
-                if (!_.contains(permissions, approvalType)) {
-                  permissions.push(approvalType);
-                }
-              } else {
-                // revoke permission if it exists
-                if (_.contains(permissions, approvalType)) {
-                  permissions = _.without(permissions, approvalType);
-                }
-              }
-              supervisor.set('permissions', JSON.stringify(permissions));
-
-              OB.Dal.save(supervisor);
-            }
-            this.approvedTicket(approved, supervisor, approvalType);
-          }));
-        }
-      }));
-    } else { // offline
-      OB.Dal.find(OB.Model.Supervisor, {
-        'name': username
-      }, enyo.bind(this, function (users) {
-        var supervisor, approved = false;
-        if (users.models.length === 0) {
-          alert(OB.I18N.getLabel('OBPOS_OfflineSupervisorNotRegistered'));
-        } else {
-          supervisor = users.models[0];
-          if (supervisor.get('password') === OB.MobileApp.model.generate_sha1(password + supervisor.get('created'))) {
-            if (_.contains(JSON.parse(supervisor.get('permissions')), approvalType)) {
-              approved = true;
-            } else {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
-            }
-          } else {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_InvalidUserPassword'));
-          }
-        }
-        this.approvedTicket(approved, supervisor, approvalType);
-      }), function () {});
-    }
   },
 
   /**
@@ -626,7 +572,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
    * case of granted approval, the approval is added to the order so it can be saved
    * in backend for audit purposes.
    */
-  approvedTicket: function (approved, supervisor, approvalType) {
+  approvedRequest: function (approved, supervisor, approvalType) {
     var order = this.get('order'),
         newApprovals = [],
         approvals, approval, i, date;
@@ -644,12 +590,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.WindowModel.extend({
     if (approved) {
       date = new Date();
       date = date.getTime();
-      approval = {
-        approvalType: approvalType,
-        userContact: supervisor.get('id'),
-        created: (new Date()).getTime()
-      };
-      newApprovals.push(approval);
+      for (i = 0; i < approvalType.length; i++) {
+        approval = {
+          approvalType: approvalType[i],
+          userContact: supervisor.get('id'),
+          created: (new Date()).getTime()
+        };
+        newApprovals.push(approval);
+      }
       order.set('approvals', newApprovals);
     }
 

@@ -53,7 +53,7 @@
     addManualPromotion: function (receipt, lines, promotion) {
       var rule = OB.Model.Discounts.discountRules[promotion.rule.get ? promotion.rule.get('discountType') : promotion.rule.discountType];
       if (!rule || !rule.addManual) {
-        window.console.warn('No manual implemetation for rule ' + promotion.discountType);
+        OB.warn('No manual implemetation for rule ' + promotion.discountType);
         return;
       }
 

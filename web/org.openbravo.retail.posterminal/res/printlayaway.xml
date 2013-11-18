@@ -119,7 +119,7 @@
         for (var i = 0; i < payments.length; i++) {
           var paymentDate;
           if(_.isUndefined(payments.at(i).get('paymentDate')) || _.isNull(payments.at(i).get('paymentDate'))){
-              paymentDate = OB.I18N.formatDate(new Date());
+              paymentDate = new Date();
           }else{
               paymentDate = payments.at(i).get('paymentDate');
           }
@@ -127,7 +127,7 @@
       %>
         <line>
           <text align="left" length="10"><%= payments.at(i).get('name') %></text>
-          <text align="left" length="10"><%= paymentDate %></text>
+          <text align="left" length="10"><%= OB.I18N.formatDate(paymentDate) %></text>
           <text align="right" length="12"><%= '('+OB.I18N.formatCurrency(payments.at(i).get('amount'))+' '+payments.at(i).get('isocode')+')' %></text>
           <text align="right" length="10"><%= OB.I18N.formatCurrency(payments.at(i).get('origAmount')) %></text>
         </line>
@@ -136,7 +136,7 @@
      %>
         <line>
           <text align="left" length="15"><%= payments.at(i).get('name') %></text>
-          <text align="left" length="10"><%= paymentDate %></text>
+          <text align="left" length="10"><%= OB.I18N.formatDate(paymentDate) %></text>
           <text align="right" length="15"><%= OB.I18N.formatCurrency(payments.at(i).get('amount')) %></text>
         </line>
       <%

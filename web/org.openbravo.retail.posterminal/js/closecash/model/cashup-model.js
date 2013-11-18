@@ -141,6 +141,21 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     return this.get('step') === 1;
   },
   showPaymentMethodList: function () {
+    var openDrawerPayment;
+    if (this.get('step') === 2) {
+      openDrawerPayment = _.find(this.get('paymentList').models, function (payment) {
+        if (payment && payment.get('paymentMethod') && (payment.get('paymentMethod').iscash || payment.get('paymentMethod').allowopendrawer)) {
+          return true;
+        }
+      }, this);
+      if (!OB.UTIL.isNullOrUndefined(openDrawerPayment)) {
+        OB.POS.hwserver.openDrawer();
+      }
+      return true;
+    }
+    return false;
+  },
+  isPaymentMethodListVisible: function () {
     return this.get('step') === 2;
   },
   showCashToKeep: function () {
@@ -315,10 +330,17 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     server.exec(objToSend, function (data) {
       if (data.error || data.exception) {
         OB.UTIL.showLoading(false);
+        if (data.errorMessage) {
+          me.set("errorMessage", data.errorMessage);
+          me.set("errorDetail", data.errorDetail);
+          me.set("errorNoNavigateToInitialScreen", data.errorNoNavigateToInitialScreen);
+        }
         me.set("finishedWrongly", true);
       } else {
-        // console.log("cash up processed correctly. -> show modal");
+        // OB.info("cash up processed correctly. -> show modal");
         OB.UTIL.showLoading(false);
+        me.set('messages', data.messages);
+        me.set('next', data.next);
         me.set("finished", true);
         if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
           me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());

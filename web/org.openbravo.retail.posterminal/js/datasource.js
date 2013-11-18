@@ -62,6 +62,16 @@ OB.DS.HWServer.prototype.getWeight = function (callback) {
   }
 };
 
+OB.DS.HWServer.prototype.openDrawerTemplate = 'res/opendrawer.xml';
+OB.DS.HWServer.prototype.openDrawer = function () {
+  var template = new OB.DS.HWResource(this.openDrawerTemplate);
+  this.print(template, null, function (args) {
+    if (args && args.exception && args.exception.message) {
+      OB.info('Error opening the drawer');
+    }
+  });
+};
+
 OB.DS.HWServer.prototype.print = function (template, params, callback) {
   if (template && template.getData) {
     var me = this;

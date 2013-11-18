@@ -12,10 +12,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.mobile.core.model.HQLPropertyList;
+import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.retail.posterminal.InitialValidations;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
@@ -23,6 +31,12 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 import org.openbravo.service.json.JsonConstants;
 
 public class Terminal extends ProcessHQLQuery {
+  public static final String terminalPropertyExtension = "OBPOS_TerminalExtension";
+
+  @Inject
+  @Any
+  @Qualifier(terminalPropertyExtension)
+  private Instance<ModelExtension> extensions;
 
   @Override
   protected boolean isAdminMode() {
@@ -54,44 +68,30 @@ public class Terminal extends ProcessHQLQuery {
     final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
         .getPriceListByTerminal(pOSTerminal.getSearchKey());
 
+    HQLPropertyList regularTerminalHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions);
+
     return Arrays
-        .asList(new String[] { "select pos.id as id, pos.organization.obretcoCBpartner.id as businessPartner, pos.name as _identifier, pos.searchKey as searchKey, pos.organization.obretcoCBpLocation.id as partnerAddress, "
-            + " pos.organization.id as organization, pos.organization.name as "
-            + getIdentifierAlias("organization")
-            + ", pos.client.id as client, pos.client.name as "
-            + getIdentifierAlias("client")
-            + ", pos.hardwareurl as hardwareurl, pos.scaleurl as scaleurl, "
+        .asList(new String[] { "select "
             + "'"
             + pricesList.getId()
-            + "' as priceList, '"
+            + "' as priceList, "
+            + "'"
             + pricesList.getCurrency().getId()
             + "' as currency, "
             + "'"
             + pricesList.getCurrency().getIdentifier()
             + "' as "
             + getIdentifierAlias("currency")
-            + ", pos.organization.obretcoDbpIrulesid as defaultbp_invoiceterm "
-            + ", pos.organization.obretcoDbpPtermid.id as defaultbp_paymentterm "
-            + ", pos.organization.obretcoDbpPmethodid.id as defaultbp_paymentmethod "
-            + ", pos.organization.obretcoDbpBpcatid.id as defaultbp_bpcategory "
-            + ", pos.organization.obretcoDbpBpcatid.id as defaultbp_bpcategory_name "
-            + ", pos.organization.obretcoDbpCountryid.id as defaultbp_bpcountry "
-            + ", pos.organization.obretcoDbpOrgid.id as defaultbp_bporg "
-            + ", pos.organization.obretcoShowtaxid as bp_showtaxid "
-            + ", pos.organization.obretcoShowbpcategory as bp_showcategoryselector "
-            + ", pos.organization.oBPOSBestDealCase as bestDealCase "
-            + ", '"
-            + warehouseId
-            + "' as warehouse "
-            + ", pos.orderdocnoPrefix as docNoPrefix "
-            + ", pos.quotationdocnoPrefix as quotationDocNoPrefix "
-            + ", pos.obposTerminaltype.allowpayoncredit as allowpayoncredit "
-            + ", pos.defaultwebpostab as defaultwebpostab "
             + ", "
+            + "'"
+            + warehouseId
+            + "' as warehouse, "
             + lastDocumentNumber
             + " as lastDocumentNumber, "
             + lastQuotationDocumentNumber
-            + " as lastQuotationDocumentNumber, postype as terminalType"
+            + " as lastQuotationDocumentNumber, "
+            + regularTerminalHQLProperties.getHqlSelect()
             + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype where pos.$readableCriteria and pos.searchKey = '"
             + pOSTerminal.getSearchKey() + "'" });
   }

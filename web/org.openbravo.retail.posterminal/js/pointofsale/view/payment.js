@@ -209,7 +209,8 @@ enyo.kind({
     } else {
       this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getPending(), rate), symbol, symbolAtRight));
       this.$.totalpending.show();
-      if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
+      //      if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
+      if (paymentstatus.isNegative || this.receipt.get('orderType') === 3) {
         this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_ReturnRemaining'));
       } else {
         this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
@@ -257,7 +258,8 @@ enyo.kind({
         this.$.donezerolbl.show();
       } else {
         this.$.donezerolbl.hide();
-        if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
+        //        if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
+        if (paymentstatus.isNegative || this.receipt.get('orderType') === 3) {
           this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_ReturnExact'));
         } else {
           this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
@@ -608,7 +610,8 @@ enyo.kind({
 
     var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     var me = this;
-    if (this.model.get('order').get('orderType') !== 1 && OB.POS.modelterminal.get('connectedToERP')) {
+    var paymentstatus = this.model.get('order').getPaymentStatus();
+    if (!paymentstatus.isReturn && OB.POS.modelterminal.get('connectedToERP')) {
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
       process.exec({
         businessPartnerId: this.model.get('order').get('bp').get('id'),
@@ -640,7 +643,8 @@ enyo.kind({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
         }
       });
-    } else if (this.model.get('order').get('orderType') === 1) {
+      //    } else if (this.model.get('order').get('orderType') === 1) {
+    } else if (paymentstatus.isReturn) {
       var actualCredit;
       var creditLimit = this.model.get('order').get('bp').get('creditLimit');
       var creditUsed = this.model.get('order').get('bp').get('creditUsed');

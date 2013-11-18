@@ -28,7 +28,7 @@ OB.UTIL.isDisableDiscount = function (receipt) {
 };
 
 OB.UTIL.getImageURL = function (id) {
-  var imageUrl = '/openbravo/web/org.openbravo.retail.posterminal/productImages/';
+  var imageUrl = 'productImages/';
   var i;
   for (i = 0; i < id.length; i += 3) {
     if (i != 0) {

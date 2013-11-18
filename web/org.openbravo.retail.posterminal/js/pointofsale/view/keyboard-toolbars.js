@@ -176,7 +176,10 @@ enyo.kind({
             options.percentaje = true;
           }
           var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
-          amount = _.isNaN(amount) ? 100 : amount;
+          if (_.isNaN(amount)){
+        	  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
+        	  return;
+          }
           me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
         }
       });

@@ -84,7 +84,14 @@ enyo.kind({
     stepCount: 1,
     span: 4,
     handlers: {
-      onDisableNextButton: 'disableNextButton'
+      onDisableNextButton: 'disableNextButton',
+      onEnableNextButton: 'enableNextButton'
+    },
+    enableNextButton: function () {
+      this.setDisabled(false);
+      if (this.hasClass('btn-over')) {
+        this.removeClass('btn-over');
+      }
     },
     disableNextButton: function (inSender, inEvent) {
       this.setDisabled(inEvent.disable);
@@ -121,7 +128,8 @@ enyo.kind({
     onShowPopup: '',
     onChangeOption: '',
     onDisablePreviousButton: '',
-    onDisableNextButton: ''
+    onDisableNextButton: '',
+    onEnableNextButton: ''
   },
   components: [{
     kind: 'OB.UI.MultiColumn',
@@ -180,6 +188,7 @@ enyo.kind({
     name: 'modalPendingToProcess'
   }],
   init: function () {
+    var me = this;
     this.inherited(arguments);
 
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.setModel(this.model);
@@ -240,23 +249,73 @@ enyo.kind({
 
     //finished
     this.model.on('change:finished', function () {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), OB.I18N.getLabel('OBPOS_FinishCloseDialog'), [{
+
+      // this.model.messages ????
+      var content;
+      var i;
+      var messages = this.model.get('messages');
+      var next = this.model.get('next');
+
+      // Build the content of the dialog.
+      if (messages && messages.length) {
+        content = [{
+          content: OB.I18N.getLabel('OBPOS_FinishCloseDialog')
+        }, {
+          allowHtml: true,
+          content: '&nbsp;'
+        }];
+        for (i = 0; i < messages.length; i++) {
+          content.push({
+            content: OB.UTIL.decodeXMLComponent(messages[i])
+          });
+        }
+      } else {
+        content = OB.I18N.getLabel('OBPOS_FinishCloseDialog');
+      }
+
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         action: function () {
-          OB.POS.navigate('retail.pointofsale');
+          if ('logout' === next) {
+            OB.UTIL.showLoggingOut(true);
+            OB.MobileApp.model.logout();
+          } else {
+            OB.POS.navigate('retail.pointofsale');
+          }
           return true;
         }
       }]);
+
     }, this);
     //finishedWrongly
-    this.model.on('change:finishedWrongly', function () {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), OB.I18N.getLabel('OBPOS_CashUpWrongly'), [{
-        label: OB.I18N.getLabel('OBMOBC_LblOk'),
-        action: function () {
-          OB.POS.navigate('retail.pointofsale');
-          return true;
-        }
-      }]);
+    this.model.on('change:finishedWrongly', function (model) {
+      var message = "";
+      if (model.get('errorMessage')) {
+        message = OB.I18N.getLabel(model.get('errorMessage'), [model.get('errorDetail')]);
+      } else {
+        message = OB.I18N.getLabel('OBPOS_CashUpWrongly');
+      }
+
+      var errorNoNavigateToInitialScreen = model.get('errorNoNavigateToInitialScreen');
+      if (errorNoNavigateToInitialScreen && errorNoNavigateToInitialScreen === 'true') {
+        model.set('cashUpSent', false);
+        model.set("finishedWrongly", false);
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message, [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          action: function () {
+            me.waterfall('onEnableNextButton');
+            return true;
+          }
+        }]);
+      } else {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message, [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          action: function () {
+            OB.POS.navigate('retail.pointofsale');
+            return true;
+          }
+        }]);
+      }
     }, this);
 
     this.refresh();
@@ -272,7 +331,7 @@ enyo.kind({
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
     this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setShowing(this.model.showCashToKeep());
     this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setShowing(this.model.showPostPrintClose());
-    if (this.model.showPaymentMethodList()) {
+    if (this.model.isPaymentMethodListVisible()) {
       this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarcountcash');
     } else {
       if (this.model.get('paymentList').at(this.model.get('stepOfStep3')).get('paymentMethod').allowvariableamount) {

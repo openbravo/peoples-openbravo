@@ -60,15 +60,12 @@ public class OrderGroupingProcessor {
     // reconciled. This query must be kept in sync with the one in CashCloseReport
 
     String hqlWhereClause = "as line"
-        + " where (exists (select 1 "
-        + "                 from FIN_Payment_ScheduleDetail d"
-        + "              where d.orderPaymentSchedule.order = line.salesOrder"
-        + "                 and exists (select 1 "
-        + "                               from FIN_Finacc_Transaction t"
-        + "                              where t.reconciliation is null"
-        + "                                and t.finPayment = d.paymentDetails.finPayment)))"
-        + " and line.salesOrder.obposApplications = :terminal and line.deliveredQuantity=line.orderedQuantity"
-        + " and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
+        + " where line.salesOrder.obposApplications = :terminal and line.deliveredQuantity=line.orderedQuantity and line.orderedQuantity <> 0"
+        + " and line.salesOrder.documentType.id in ('"
+        + posTerminal.getObposTerminaltype().getDocumentType().getId()
+        + "', '"
+        + posTerminal.getObposTerminaltype().getDocumentTypeForReturns().getId()
+        + "') and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
         + " order by line.businessPartner.id";
 
     OBQuery<OrderLine> query = OBDal.getInstance().createQuery(OrderLine.class, hqlWhereClause);
@@ -453,8 +450,9 @@ public class OrderGroupingProcessor {
     invoice.setDaysSalesOutstanding(new Long(0));
     invoice.setOutstandingAmount(BigDecimal.ZERO);
 
-    paymentSchedule.setPaidAmount(paymentSchedule.getAmount());
-    origPaymentSchedule.setAmount(paymentSchedule.getAmount());
+    paymentSchedule.setAmount(grossamount);
+    paymentSchedule.setPaidAmount(grossamount);
+    origPaymentSchedule.setAmount(grossamount);
 
     // Update customer credit
 

@@ -100,6 +100,11 @@ enyo.kind({
       }, this);
 
     }
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_RenderOrderLine', {
+      orderline: this
+    }, function (args) {
+      //All should be done in module side
+    });
   },
   changeEditMode: function (inSender, inEvent) {
     this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);
@@ -219,10 +224,10 @@ enyo.kind({
     var paymentDate;
     this.inherited(arguments);
     this.$.name.setContent(OB.POS.modelterminal.getPaymentName(this.model.get('kind')) || this.model.get('name'));
-    if (_.isUndefined(this.model.get('paymentDate')) || _.isNull(this.model.get('paymentDate'))) {
+    if (OB.UTIL.isNullOrUndefined(this.model.get('paymentDate'))) {
       paymentDate = OB.I18N.formatDate(new Date());
     } else {
-      paymentDate = this.model.get('paymentDate');
+      paymentDate = OB.I18N.formatDate(this.model.get('paymentDate'));
     }
     this.$.date.setContent(paymentDate);
     if (this.model.get('rate') && this.model.get('rate') !== '1') {

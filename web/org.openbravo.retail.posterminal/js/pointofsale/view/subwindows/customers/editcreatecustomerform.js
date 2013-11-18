@@ -152,7 +152,9 @@ enyo.kind({
     modelPropertyText: 'businessPartnerCategory_name',
     //optional: When saving, the property which will store the selected text
     collectionName: 'BPCategoryList',
-    // defaultValue: OB.POS.modelterminal.get('terminal').defaultbp_bpcategory,
+    defaultValue: function () {
+      return OB.MobileApp.model.get('terminal').defaultbp_bpcategory;
+    },
     //Default value for new lines
     retrievedPropertyForValue: 'id',
     //property of the retrieved model to get the value of the combo item
@@ -160,8 +162,12 @@ enyo.kind({
     //property of the retrieved model to get the text of the combo item
     //function to retrieve the data
     fetchDataFunction: function (args) {
-      var me = this;
-      OB.Dal.find(OB.Model.BPCategory, null, function (data, args) {
+      var me = this,
+          criteria;
+      criteria = {
+        _orderByClause: '_identifier asc'
+      };
+      OB.Dal.find(OB.Model.BPCategory, criteria, function (data, args) {
         //This function must be called when the data is ready
         me.dataReadyFunction(data, args);
       }, function (error) {

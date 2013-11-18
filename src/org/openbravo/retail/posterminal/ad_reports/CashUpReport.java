@@ -382,6 +382,7 @@ public class CashUpReport extends HttpSecureAppServlet {
         cashToDepositQuery.setString(0, ((OBPOSAppCashReconcil) cashup
             .getOBPOSAppCashReconcilList().get(i)).getReconciliation().getId());
         List<BigDecimal> lstCashToDeposit = cashToDepositQuery.list();
+        cashToDeposit = BigDecimal.ZERO;
         if (!lstCashToDeposit.isEmpty()) {
           if (lstCashToDeposit.size() > 1) {
             log.warn("Configuration error: It seems to be more than one events configured with the same GL Item. "
