@@ -173,6 +173,15 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
     this.Super('initWidget', arguments);
   },
 
+  destroy: function () {
+    var i;
+    for (i = 0; i < this.items.length; i++) {
+      this.items[i].destroy();
+    }
+    return this.Super('destroy', arguments);
+  },
+
+
   show: function (refreshGrid) {
     if (refreshGrid) {
       this.treeGrid.invalidateCache();
@@ -285,6 +294,14 @@ isc.OBTreeFilterItem.addProperties({
       changeCriteriacallback: this.getID() + '.filterDialogCallback(value)'
     }, 'isc.OBTreeItemPopupFilterWindow');
   },
+
+  destroy: function () {
+    if (this.filterDialog) {
+      this.filterDialog.destroy();
+    }
+    return this.Super('destroy', arguments);
+  },
+
 
   showDialog: function () {
     var hasChanged = false;

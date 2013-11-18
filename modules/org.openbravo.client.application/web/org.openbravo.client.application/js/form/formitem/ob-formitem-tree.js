@@ -50,6 +50,16 @@ isc.OBTreeItem.addProperties({
     this.enableShortcuts();
   },
 
+  destroy: function () {
+    if (this.tree) {
+      this.tree.destroy();
+    }
+    if (this.treeWindow) {
+      this.treeWindow.destroy();
+    }
+    return this.Super('destroy', arguments);
+  },
+
   enableShortcuts: function () {
     var ksAction_ShowPopup, ksAction_ShowTree, ksAction_MoveToTree;
     ksAction_ShowPopup = function (caller) {
@@ -524,6 +534,14 @@ isc.OBTreeItemPopupWindow.addProperties({
       })]
     })];
     this.Super('initWidget', arguments);
+  },
+
+  destroy: function () {
+    var i;
+    for (i = 0; i < this.items.length; i++) {
+      this.items[i].destroy();
+    }
+    return this.Super('destroy', arguments);
   },
 
   closeClick: function () {
