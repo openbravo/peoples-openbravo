@@ -241,7 +241,7 @@ enyo.kind({
           },
           init: function (model) {
             this.model = model;
-            if (OB.POS.modelterminal.hasPermission(this.permission)) {
+            if (OB.POS.modelterminal.get('permissions')[this.permission]) {
               this.setShowing(true);
             }
             this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
@@ -251,7 +251,7 @@ enyo.kind({
                   return;
                 }
               }
-              if (OB.POS.modelterminal.hasPermission(this.permission)) {
+              if (OB.POS.modelterminal.get('permissions')[this.permission]) {
                 this.setShowing(true);
               }
             }, this);
@@ -383,7 +383,7 @@ enyo.kind({
     }
     if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1) {
       this.$.returnLine.hide();
-    } else if (OB.POS.modelterminal.hasPermission(this.$.returnLine.permission)) {
+    } else if (OB.POS.modelterminal.get('permissions')[this.$.returnLine.permission]) {
       this.$.returnLine.show();
     }
     this.render();

@@ -546,7 +546,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var negativeLines = _.filter(me.get('order').get('lines').models, function (line) {
         return line.get('gross') < 0;
       }).length;
-      if (negativeLines > 0) {
+      if (negativeLines > 0 && OB.POS.modelterminal.get('permissions')['OBPOS_approval.returns']) {
         args.approvals.push('OBPOS_approval.returns');
       }
       if (args.approvals.length > 0) {
@@ -590,12 +590,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     if (approved) {
       date = new Date();
       date = date.getTime();
-      approval = {
-        approvalType: approvalType,
-        userContact: supervisor.get('id'),
-        created: (new Date()).getTime()
-      };
-      newApprovals.push(approval);
+      for (i = 0; i < approvalType.length; i++) {
+        approval = {
+          approvalType: approvalType[i],
+          userContact: supervisor.get('id'),
+          created: (new Date()).getTime()
+        };
+        newApprovals.push(approval);
+      }
       order.set('approvals', newApprovals);
     }
 
