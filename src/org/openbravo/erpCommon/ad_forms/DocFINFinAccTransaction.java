@@ -713,7 +713,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     // Total
     retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
     if (usedCredit.compareTo(ZERO) != 0 && generatedCredit.compareTo(ZERO) == 0)
-      retValue.add(usedCredit);
+      retValue = retValue.add(usedCredit);
     sb.append(retValue);
     FIN_Payment payment = OBDal.getInstance().get(FIN_FinaccTransaction.class, Record_ID)
         .getFinPayment();
@@ -732,12 +732,13 @@ public class DocFINFinAccTransaction extends AcctServer {
               ((DocLine_FINFinAccTransaction) p_lines[i]).PaymentAmount));
           retValue = retValue.subtract(lineBalance);
         } else {
-          BigDecimal lineBalance = BigDecimal.ZERO;
-          for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
-            lineBalance = lineBalance.add(payment.isReceipt() ? pd.getAmount().add(
-                pd.getWriteoffAmount()) : pd.getAmount().add(pd.getWriteoffAmount()).negate());
-          }
-          retValue = retValue.subtract(lineBalance);
+          BigDecimal lineBalance = payment.isReceipt() ? new BigDecimal(
+              ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()) : new BigDecimal(
+              ((DocLine_FINFinAccTransaction) p_lines[i]).getAmount()).negate();
+          BigDecimal lineWriteoff = payment.isReceipt() ? new BigDecimal(
+              ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()) : new BigDecimal(
+              ((DocLine_FINFinAccTransaction) p_lines[i]).getWriteOffAmt()).negate();
+          retValue = retValue.subtract(lineBalance).subtract(lineWriteoff);
         }
       }
     } finally {

@@ -2671,7 +2671,8 @@ isc.OBViewGrid.addProperties({
 
   editFailed: function (rowNum, colNum, newValues, oldValues, editCompletionEvent, dsResponse, dsRequest) {
     var record = this.getRecord(rowNum),
-        editRow, editSession, view = this.view;
+        editRow, editSession, view = this.view,
+        form, isNewRecord;
 
     // set the default error message,
     // is possibly overridden in the next call
@@ -2699,6 +2700,12 @@ isc.OBViewGrid.addProperties({
     // if nothing else got selected, select ourselves then
     if (record && !this.getSelectedRecord()) {
       this.selectRecord(record);
+    }
+
+    form = this.getEditForm();
+    isNewRecord = (form === null) ? false : form.isNew;
+    if (isNewRecord) {
+      delete this.view._savingNewRecord;
     }
   },
 
@@ -2944,6 +2951,15 @@ isc.OBViewGrid.addProperties({
         parameters: [editCompletionEvent, newValue, ficCallDone, true]
       };
       this.view.standardWindow.doActionAfterAutoSave(actionObject, true);
+      return;
+    }
+
+    if (newRow && editCompletionEvent === 'tab' && !ficCallDone) {
+      this.setEditValue(rowNum, 'actionAfterFicReturn', {
+        target: this,
+        method: this.cellEditEnd,
+        parameters: [editCompletionEvent, newValue, true, autoSaveDone]
+      }, true, true);
       return;
     }
 

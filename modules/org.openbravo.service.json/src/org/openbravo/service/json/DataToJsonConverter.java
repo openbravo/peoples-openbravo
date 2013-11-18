@@ -243,6 +243,7 @@ public class DataToJsonConverter {
 
   private void addBaseOBObject(JSONObject jsonObject, Property referencingProperty,
       String propertyName, Property referencedProperty, BaseOBObject obObject) throws JSONException {
+    String identifier = null;
     // jsonObject.put(propertyName, toJsonObject(obObject, DataResolvingMode.SHORT));
     if (referencedProperty != null) {
       try {
@@ -265,7 +266,9 @@ public class DataToJsonConverter {
       Property displayColumnProperty = DalUtil.getPropertyFromPath(referencedProperty.getEntity(),
           referencingProperty.getDisplayPropertyName());
       if (referencingProperty.hasDisplayColumn()) {
-        String identifier = obObject.get(referencingProperty.getDisplayPropertyName()).toString();
+        Object referenceObject = obObject.get(referencingProperty.getDisplayPropertyName(),
+            OBContext.getOBContext().getLanguage(), (String) obObject.getId());
+        identifier = referenceObject != null ? referenceObject.toString() : "";
         if (referencingProperty.isDisplayValue()) {
           if (obObject.getEntity().hasProperty("searchKey")) {
             String value = (String) obObject.get("searchKey");
@@ -285,9 +288,11 @@ public class DataToJsonConverter {
             + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, ((BaseOBObject) obObject
             .get(referencingProperty.getDisplayPropertyName())).getIdentifier());
       } else {
+        Object referenceObject = obObject.get(referencingProperty.getDisplayPropertyName(),
+            OBContext.getOBContext().getLanguage(), (String) obObject.getId());
+        identifier = referenceObject != null ? referenceObject.toString() : "";
         jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
-            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER,
-            obObject.get(referencingProperty.getDisplayPropertyName()));
+            + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER, identifier);
       }
     } else {
       jsonObject.put(propertyName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)

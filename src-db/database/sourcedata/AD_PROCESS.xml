@@ -5641,6 +5641,11 @@ Once the Purchase Order is created, it is marked as Completed and its Document N
 <!--3C386BC12832466790E50F2F8C5EBD85-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3C386BC12832466790E50F2F8C5EBD85-->  <VALUE><![CDATA[CreateVariants]]></VALUE>
 <!--3C386BC12832466790E50F2F8C5EBD85-->  <NAME><![CDATA[Create Variants]]></NAME>
+<!--3C386BC12832466790E50F2F8C5EBD85-->  <HELP><![CDATA[Process that creates all the Variants Products of the Generic Product based on the combination of its Variant Characteristics' Values. Only values that are active in the Characteristic Configuration tab are considered.
+
+In case there is any characteristic configured with the Defines Price or Defines Image flag checked this process also sets the Price or an Image to the created Product Variants.
+
+If the Generic Product already has any Variant created the process returns an error message and no new Variant is created.]]></HELP>
 <!--3C386BC12832466790E50F2F8C5EBD85-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--3C386BC12832466790E50F2F8C5EBD85-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--3C386BC12832466790E50F2F8C5EBD85-->  <ISREPORT><![CDATA[N]]></ISREPORT>

@@ -44,6 +44,11 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
   }
 
   @Override
+  public String getGridEditorType() {
+    return "OBCharacteristicsGridItem";
+  }
+
+  @Override
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     String result = super.getFieldProperties(field, getValueFromSession);
     OBContext.setAdminMode(true);
