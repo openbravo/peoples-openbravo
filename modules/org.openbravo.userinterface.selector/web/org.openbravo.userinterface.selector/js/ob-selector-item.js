@@ -828,7 +828,9 @@ isc.OBSelectorItem.addProperties({
   mapValueToDisplay: function (value) {
     var ret = this.Super('mapValueToDisplay', arguments);
     if (ret === value && this.isDisabled()) {
-      return '';
+      if (!this.valueMap || (this.valueMap && !this.valueMap[value])) {
+        return '';
+      }
     }
     // if value is null then don't set it in the valueMap, this results 
     // in null being displayed in the combobox
