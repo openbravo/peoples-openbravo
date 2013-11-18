@@ -258,6 +258,10 @@ public class OrderLoader extends JSONProcessSimple {
           || (!isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway) && (jsonorder
               .has("generateInvoice") && jsonorder.getBoolean("generateInvoice")));
       boolean createShipment = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway);
+      if (jsonorder.has("generateShipment")) {
+        createShipment &= jsonorder.getBoolean("generateShipment");
+        createInvoice &= jsonorder.getBoolean("generateShipment");
+      }
       sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
       // Order header
       long t111 = System.currentTimeMillis();
