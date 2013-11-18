@@ -922,13 +922,11 @@
       var p = line.get('product'),
           lines = this.get('lines'),
           merged = false;
-      line.set('promotions', null)
+      line.set('promotions', null);
       lines.forEach(function (l) {
         var promos = l.get('promotions');
         if (l === line) {
           return;
-        }
-        if (!promos || promos.length == 0) { //TODO?
         }
 
         if (!l.get('addedBySplit') && l.get('product').id === p.id) {
@@ -952,7 +950,12 @@
     mergeLinesWithSamePromotions: function () {
       var lines = this.get('lines'),
           l, line, i, j, k, p, otherLine, toRemove = [],
-          matches, otherPromos, found;
+          matches, otherPromos, found, compareRule;
+
+      compareRule = function (p) {
+        return p.ruleId === line.get('promotions')[k].ruleId;
+      };
+
       for (i = 0; i < lines.length; i++) {
         line = lines.at(i);
         for (j = i + 1; j < lines.length; j++) {
@@ -965,13 +968,11 @@
             line.set('qty', line.get('qty') + otherLine.get('qty'));
             line.calculateGross();
             toRemove.push(otherLine);
-          } else if (line.get('promotions') && otherLine.get('promotions') && line.get('promotions').length === line.get('promotions').length) {
+          } else if (line.get('promotions') && otherLine.get('promotions') && line.get('promotions').length === otherLine.get('promotions').length) {
             matches = true;
             otherPromos = otherLine.get('promotions');
             for (k = 0; k < line.get('promotions').length; k++) {
-              found = _.find(otherPromos, function (p) {
-                return p.ruleId === line.get('promotions')[k].ruleId;
-              });
+              found = _.find(otherPromos, compareRule);
               if (!found) {
                 matches = false;
                 break;
@@ -980,9 +981,7 @@
             if (matches) {
               line.set('qty', line.get('qty') + otherLine.get('qty'));
               for (k = 0; k < line.get('promotions').length; k++) {
-                found = _.find(otherPromos, function (p) {
-                  return p.ruleId === line.get('promotions')[k].ruleId;
-                });
+                found = _.find(otherPromos, compareRule);
                 line.get('promotions')[k].amt += found.amt;
               }
               toRemove.push(otherLine);
