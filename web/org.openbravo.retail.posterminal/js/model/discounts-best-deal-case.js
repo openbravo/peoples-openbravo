@@ -308,10 +308,20 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     _.forEach(groups, function (group) {
       linesAfterSplit.forEach(function (line) {
         var prodId = line.get('product').id,
-            productCases = candidates[prodId];
+            productCases = candidates[prodId],
+            appliedPromosToLine;
         if (!productCases || productCases.length === 0 || group.products.indexOf(prodId) === -1) {
           return; //continue
         }
+        appliedPromosToLine = line.get('promotions');
+        if (appliedPromosToLine && appliedPromosToLine.length > 0) {
+          // assuming just one promo per line
+          if (OB.Model.Discounts.getManualPromotions(true).indexOf(appliedPromosToLine[0].discountType) !== -1) {
+            console.log('line has manual promo', line);
+            return; //continue
+          }
+        }
+
         group.productsInSubGrps[prodId].lines.push({
           line: line,
           candidates: candidates[line.get('product').id],
