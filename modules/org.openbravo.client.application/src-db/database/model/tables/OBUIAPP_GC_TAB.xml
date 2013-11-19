@@ -58,7 +58,7 @@
         <onCreateDefault/>
       </column>
       <column name="FILTERONCHANGE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
+        <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_GC_TAB_CLIENT">
