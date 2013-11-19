@@ -556,11 +556,11 @@ public abstract class UIDefinition {
       } else if ("IE".equals(operator)) {
         operator = "iEquals";
       } else if ("C".equals(operator)) {
-        operator = "Contains";
+        operator = "contains";
       } else if ("S".equals(operator)) {
-        operator = "StartsWith";
+        operator = "startsWith";
       } else if ("E".equals(operator)) {
-        operator = "Equals";
+        operator = "equals";
       }
     }
 
