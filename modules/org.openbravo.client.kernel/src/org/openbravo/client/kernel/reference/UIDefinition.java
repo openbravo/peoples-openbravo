@@ -467,6 +467,7 @@ public abstract class UIDefinition {
   protected JSONObject obtainGridConfigurationSettings(Field field) {
     Boolean canSort = null;
     Boolean canFilter = null;
+    Boolean filterOnChange = null;
     String operator = null;
     JSONObject result = new JSONObject();
 
@@ -474,7 +475,7 @@ public abstract class UIDefinition {
       return result;
     }
 
-    if (canSort == null || canFilter == null || operator == null) {
+    if (canSort == null || canFilter == null || operator == null  || filterOnChange == null) {
       String fieldConfsHql = " as p where p.field.id = '" + field.getId() + "' ";
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
       List<GCField> fieldConfs = OBDal.getInstance().createQuery(GCField.class, fieldConfsHql)
@@ -500,10 +501,17 @@ public abstract class UIDefinition {
             operator = fieldConfs.get(0).getTextFilterBehavior();
           }
         }
+        if (filterOnChange == null) {
+          if ("Y".equals(fieldConfs.get(0).getFilterOnChange())) {
+            filterOnChange = true;
+          } else if ("N".equals(fieldConfs.get(0).getFilterOnChange())) {
+            filterOnChange = false;
+          }
+        }
       }
     }
 
-    if (canSort == null || canFilter == null || operator == null) {
+    if (canSort == null || canFilter == null || operator == null  || filterOnChange == null) {
       Tab tab = field.getTab();
       String tabConfsHql = " as p where p.tab.id = '" + tab.getId() + "' ";
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
@@ -529,10 +537,17 @@ public abstract class UIDefinition {
             operator = tabConfs.get(0).getTextFilterBehavior();
           }
         }
+        if (filterOnChange == null) {
+          if ("Y".equals(tabConfs.get(0).getFilterOnChange())) {
+            filterOnChange = true;
+          } else if ("N".equals(tabConfs.get(0).getFilterOnChange())) {
+            filterOnChange = false;
+          }
+        }
       }
     }
 
-    if (canSort == null || canFilter == null || operator == null) {
+    if (canSort == null || canFilter == null || operator == null  || filterOnChange == null) {
       // Trying to get parameters from "Grid Configuration (System)" window
       List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
       if (!sysConfs.isEmpty()) {
@@ -544,6 +559,9 @@ public abstract class UIDefinition {
         }
         if (operator == null) {
           operator = sysConfs.get(0).getTextFilterBehavior();
+        }
+        if (filterOnChange == null) {
+          filterOnChange = sysConfs.get(0).isFilterOnChange();
         }
       }
     }
@@ -573,6 +591,9 @@ public abstract class UIDefinition {
       }
       if (operator != null) {
         result.put("operator", operator);
+      }
+      if (filterOnChange != null) {
+        result.put("filterOnChange", filterOnChange);
       }
     } catch (JSONException e) {
       log.error("Couldn't get field property value");
