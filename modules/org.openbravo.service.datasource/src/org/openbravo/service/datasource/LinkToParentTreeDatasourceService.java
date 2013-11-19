@@ -202,9 +202,9 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
    *           if the number of returned nodes were to be too high
    */
   @Override
-  protected JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId,
-      String hqlWhereClause, String hqlWhereClauseRootNodes) throws JSONException,
-      TooManyTreeNodesException {
+  protected JSONArray fetchNodeChildren(Map<String, String> parameters,
+      Map<String, Object> datasourceParameters, String parentId, String hqlWhereClause,
+      String hqlWhereClauseRootNodes) throws JSONException, TooManyTreeNodesException {
 
     boolean fetchRoot = ROOT_NODE.equals(parentId);
     String tabId = parameters.get("tabId");
@@ -405,8 +405,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
    * @return returns a json object with the definition of a node give its node id
    */
   @Override
-  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId)
-      throws MultipleParentsException {
+  protected JSONObject getJSONObjectByNodeId(Map<String, String> parameters,
+      Map<String, Object> datasourceParameters, String nodeId) throws MultipleParentsException {
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
@@ -438,7 +438,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       throw new MultipleParentsException();
     }
     BaseOBObject bob = query.uniqueResult();
-    return this.getJSONObjectByRecordId(parameters, bob.getId().toString());
+    return this.getJSONObjectByRecordId(parameters, datasourceParameters, bob.getId().toString());
   }
 
   /**
@@ -540,17 +540,18 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
    * @return returns a json object with the definition of a node give its record id
    */
   @Override
-  protected JSONObject getJSONObjectByRecordId(Map<String, String> parameters, String bobId) {
+  protected JSONObject getJSONObjectByRecordId(Map<String, String> parameters,
+      Map<String, Object> datasourceParameters, String bobId) {
     boolean fillNodeIdAndParentId = true;
     return getJSONObjectByRecordId(parameters, bobId, fillNodeIdAndParentId);
   }
 
   @Override
   protected JSONArray fetchFilteredNodesForTreesWithMultiParentNodes(
-      Map<String, String> parameters, TableTree tableTree, List<String> filteredNodes,
-      String hqlTreeWhereClause, String hqlTreeWhereClauseRootNodes,
-      boolean allowNotApplyingWhereClauseToChildren) throws MultipleParentsException,
-      TooManyTreeNodesException {
+      Map<String, String> parameters, Map<String, Object> datasourceParameters,
+      TableTree tableTree, List<String> filteredNodes, String hqlTreeWhereClause,
+      String hqlTreeWhereClauseRootNodes, boolean allowNotApplyingWhereClauseToChildren)
+      throws MultipleParentsException, TooManyTreeNodesException {
 
     Property linkToParentProperty = getLinkToParentProperty(tableTree);
     Property nodeIdProperty = getNodeIdProperty(tableTree);
@@ -560,7 +561,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     try {
 
       for (String nodeRecordId : filteredNodes) {
-        JSONObject node = getJSONObjectByRecordId(parameters, nodeRecordId);
+        JSONObject node = getJSONObjectByRecordId(parameters, datasourceParameters, nodeRecordId);
         BasicTreeInfo treeInfo = new BasicTreeInfo(nodeRecordId, node.getString(nodeIdProperty
             .getName()), node.getString(linkToParentProperty.getName()));
         List<JSONArray> pathsToRootNodes = buildPathToRootNodes(parameters, treeInfo, tableTree,
@@ -795,6 +796,11 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     public String getParentId() {
       return this.parentId;
     }
+  }
+
+  @Override
+  protected Map<String, Object> getDatasourceSpecificParams(Map<String, String> parameters) {
+    return new HashMap<String, Object>();
   }
 
 }

@@ -226,6 +226,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         }
       }
 
+      Map<String, Object> datasourceSpecificParams = this.getDatasourceSpecificParams(parameters);
+
       if (validCriteria && parentId.equals(ROOT_NODE)) {
 
         try {
@@ -233,7 +235,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           List<String> filteredNodes = getFilteredNodes(table, parameters);
           if (!filteredNodes.isEmpty()) {
             // Return the filtered nodes and its parents
-            responseData = fetchFilteredNodes(parameters, filteredNodes);
+            responseData = fetchFilteredNodes(parameters, datasourceSpecificParams, filteredNodes);
           } else {
             responseData = new JSONArray();
           }
@@ -243,8 +245,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       } else {
         // Fetch the children of a given node
         try {
-          responseData = fetchNodeChildren(parameters, parentId, hqlTreeWhereClause,
-              hqlTreeWhereClauseRootNodes);
+          responseData = fetchNodeChildren(parameters, datasourceSpecificParams, parentId,
+              hqlTreeWhereClause, hqlTreeWhereClauseRootNodes);
         } catch (TooManyTreeNodesException e) {
           tooManyNodes = true;
         }
@@ -273,6 +275,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     }
     return jsonResult.toString();
   }
+
+  protected abstract Map<String, Object> getDatasourceSpecificParams(Map<String, String> parameters);
 
   private boolean isSubtabCriteria(Entity entity, JSONObject jsonCriteria) {
     try {
@@ -382,7 +386,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    * @throws MultipleParentsException
    * @throws TooManyTreeNodesException
    */
-  private JSONArray fetchFilteredNodes(Map<String, String> parameters, List<String> filteredNodes)
+  private JSONArray fetchFilteredNodes(Map<String, String> parameters,
+      Map<String, Object> datasourceParameters, List<String> filteredNodes)
       throws MultipleParentsException, TooManyTreeNodesException {
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
@@ -416,26 +421,28 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     boolean allowNotApplyingWhereClauseToChildren = !tableTree.isApplyWhereClauseToChildNodes();
 
     if (tableTree.isHasMultiparentNodes()) {
-      return fetchFilteredNodesForTreesWithMultiParentNodes(parameters, tableTree, filteredNodes,
-          hqlTreeWhereClause, hqlTreeWhereClauseRootNodes, allowNotApplyingWhereClauseToChildren);
+      return fetchFilteredNodesForTreesWithMultiParentNodes(parameters, datasourceParameters,
+          tableTree, filteredNodes, hqlTreeWhereClause, hqlTreeWhereClauseRootNodes,
+          allowNotApplyingWhereClauseToChildren);
     } else {
-      return fetchFilteredNodesForTrueTrees(parameters, tableTree, filteredNodes,
-          hqlTreeWhereClause, hqlTreeWhereClauseRootNodes, allowNotApplyingWhereClauseToChildren);
+      return fetchFilteredNodesForTrueTrees(parameters, datasourceParameters, tableTree,
+          filteredNodes, hqlTreeWhereClause, hqlTreeWhereClauseRootNodes,
+          allowNotApplyingWhereClauseToChildren);
     }
 
   }
 
   private JSONArray fetchFilteredNodesForTrueTrees(Map<String, String> parameters,
-      TableTree tableTree, List<String> filteredNodes, String hqlTreeWhereClause,
-      String hqlTreeWhereClauseRootNodes, boolean allowNotApplyingWhereClauseToChildren)
-      throws MultipleParentsException {
+      Map<String, Object> datasourceParameters, TableTree tableTree, List<String> filteredNodes,
+      String hqlTreeWhereClause, String hqlTreeWhereClauseRootNodes,
+      boolean allowNotApplyingWhereClauseToChildren) throws MultipleParentsException {
 
     JSONArray responseData = new JSONArray();
     Map<String, JSONObject> addedNodesMap = new HashMap<String, JSONObject>();
 
     try {
       for (String nodeId : filteredNodes) {
-        JSONObject node = getJSONObjectByRecordId(parameters, nodeId);
+        JSONObject node = getJSONObjectByRecordId(parameters, datasourceParameters, nodeId);
         if (!allowNotApplyingWhereClauseToChildren
             && !this.nodeConformsToWhereClause(tableTree, node.getString("id"), hqlTreeWhereClause)) {
           // If the node does not conform the where clase, do not include it in the response
@@ -458,7 +465,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
               && (allowNotApplyingWhereClauseToChildren || this.nodeConformsToWhereClause(
                   tableTree, node.getString("parentId"), hqlTreeWhereClause))) {
             nodeId = node.getString("parentId");
-            node = getJSONObjectByNodeId(parameters, nodeId);
+            node = getJSONObjectByNodeId(parameters, datasourceParameters, nodeId);
             savedNode = addedNodesMap.get(node.getString("id"));
             if (savedNode == null) {
               // All the parents will be shown open in the tree grid
@@ -483,7 +490,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
               && (allowNotApplyingWhereClauseToChildren || this.nodeConformsToWhereClause(
                   tableTree, node.getString("parentId"), hqlTreeWhereClause))) {
             nodeId = node.getString("parentId");
-            node = getJSONObjectByNodeId(parameters, nodeId);
+            node = getJSONObjectByNodeId(parameters, datasourceParameters, nodeId);
             savedNode = addedNodesMap.get(node.getString("id"));
             if (savedNode == null) {
               node.put("isOpen", true);
@@ -523,10 +530,10 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   }
 
   protected abstract JSONArray fetchFilteredNodesForTreesWithMultiParentNodes(
-      Map<String, String> parameters, TableTree tableTree, List<String> filteredNodes,
-      String hqlTreeWhereClause, String hqlTreeWhereClauseRootNodes,
-      boolean allowNotApplyingWhereClauseToChildren) throws MultipleParentsException,
-      TooManyTreeNodesException;
+      Map<String, String> parameters, Map<String, Object> datasourceParameters,
+      TableTree tableTree, List<String> filteredNodes, String hqlTreeWhereClause,
+      String hqlTreeWhereClauseRootNodes, boolean allowNotApplyingWhereClauseToChildren)
+      throws MultipleParentsException, TooManyTreeNodesException;
 
   /**
    * Checks if a node is a root node
@@ -602,15 +609,15 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    * @return returns a json object with the definition of a node give its record id
    */
   protected abstract JSONObject getJSONObjectByRecordId(Map<String, String> parameters,
-      String nodeId);
+      Map<String, Object> datasourceParameters, String nodeId);
 
   /**
    * @param parameters
    * @param nodeId
    * @return returns a json object with the definition of a node give its node id
    */
-  protected abstract JSONObject getJSONObjectByNodeId(Map<String, String> parameters, String nodeId)
-      throws MultipleParentsException;
+  protected abstract JSONObject getJSONObjectByNodeId(Map<String, String> parameters,
+      Map<String, Object> datasourceParameters, String nodeId) throws MultipleParentsException;
 
   /**
    * 
@@ -626,9 +633,9 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    * @throws TooManyTreeNodesException
    *           if the number of returned nodes were to be too high
    */
-  protected abstract JSONArray fetchNodeChildren(Map<String, String> parameters, String parentId,
-      String hqlWhereClause, String hqlWhereClauseRootNodes) throws JSONException,
-      TooManyTreeNodesException;
+  protected abstract JSONArray fetchNodeChildren(Map<String, String> parameters,
+      Map<String, Object> datasourceParameters, String parentId, String hqlWhereClause,
+      String hqlWhereClauseRootNodes) throws JSONException, TooManyTreeNodesException;
 
   @Override
   /** This method is called when a node is reparented
