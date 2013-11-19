@@ -1415,9 +1415,9 @@ Document Types determine document sequence and processing rules.]]></HELP>
 <!--5534576697EF4203A779EE4D32FDE3E0-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--5534576697EF4203A779EE4D32FDE3E0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--5534576697EF4203A779EE4D32FDE3E0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--5534576697EF4203A779EE4D32FDE3E0-->  <NAME><![CDATA[Usebarcodescanner]]></NAME>
+<!--5534576697EF4203A779EE4D32FDE3E0-->  <NAME><![CDATA[Use External Input]]></NAME>
 <!--5534576697EF4203A779EE4D32FDE3E0-->  <DESCRIPTION><![CDATA[Check this property when an external barcode scanner will be used with this terminal type]]></DESCRIPTION>
-<!--5534576697EF4203A779EE4D32FDE3E0-->  <HELP><![CDATA[If this property is checked, the Web POS will take into account that an external barcode scanner is going to be used in this POS terminal type. Checking this option and then not connecting an external barcode will cause the virtual keyboard to be shown continuously in some devices (specifically, in iOS devices (iPads, iPhones)).
+<!--5534576697EF4203A779EE4D32FDE3E0-->  <HELP><![CDATA[If this property is checked, the Web POS will take into account that an external input (keyboard or barcode scanner) is going to be used in this POS terminal type. Checking this option and then not connecting an external inout will cause the virtual keyboard to be shown continuously in some devices (specifically, in iOS devices (iPads, iPhones)).
 
 If this option is not checked, then the barcode scanners will not be detected in the application even if they are correctly connected to the system.]]></HELP>
 <!--5534576697EF4203A779EE4D32FDE3E0-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
