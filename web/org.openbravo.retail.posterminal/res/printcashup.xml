@@ -69,6 +69,22 @@
     <line>
     </line>
     <%
+    _.each(cashup.report.get('startings'), function(starting){
+    %>
+    <line>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(starting.description) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(OB.DEC.mul(starting.amount, starting.rate)) %></text>
+    </line>
+    <%
+    });
+    %>
+     <line>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalStarting')) %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.report.get('totalStartings')) %></text>
+    </line>
+    <line>
+    </line>
+    <%
     _.each(cashup.report.get('drops'), function(drop){
     if(drop.rate!=='1'){
     %>
