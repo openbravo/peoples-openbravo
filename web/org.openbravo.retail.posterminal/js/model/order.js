@@ -721,13 +721,18 @@
     deleteLine: function (line, doNotSave) {
       var me = this;
       var index = this.get('lines').indexOf(line);
-      var pack = line.isAffectedByPack();
+      var pack = line.isAffectedByPack(),
+          productId = line.get('product').id;
 
       if (pack) {
-        // When deleting a line, check other lines that might be affected by
+        // When deleting a line, check lines with other product that are affected by
         // same pack than deleted one and merge splitted lines created for those
         this.get('lines').forEach(function (l) {
-          var affected = l.isAffectedByPack();
+          var affected;
+          if (productId !== l.get('product').id) {
+            return; //continue
+          }
+          affected = l.isAffectedByPack();
           if (affected && affected.ruleId === pack.ruleId) {
             this.mergeLines(l);
           }
