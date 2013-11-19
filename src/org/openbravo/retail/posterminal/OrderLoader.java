@@ -253,8 +253,13 @@ public class OrderLoader extends JSONProcessSimple {
       // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
       // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
       // flag
-      boolean createInvoice = (!isLayaway && !partialpayLayaway && !fullpayLayaway && !isQuotation && jsonorder
-          .getDouble("payment") < jsonorder.getDouble("gross"))
+      boolean wasPaidOnCredit = !isLayaway
+          && !partialpayLayaway
+          && !fullpayLayaway
+          && !isQuotation
+          && Math.abs(jsonorder.getDouble("payment")) < Math.abs(new Double(jsonorder
+              .getDouble("gross")));
+      boolean createInvoice = wasPaidOnCredit
           || (!isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway) && (jsonorder
               .has("generateInvoice") && jsonorder.getBoolean("generateInvoice")));
       boolean createShipment = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway);
