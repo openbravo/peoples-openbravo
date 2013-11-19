@@ -340,7 +340,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
 
   function doGroups(candidates) {
     var groups = [],
-        myProdId, productId, g, foundGroup, rules, ruleIDs, addToGroup, findGroup, pushRule, findGrpByCandidate, subGrps;
+        myProdId, productId, i, g, foundGroup, rules, ruleIDs, addToGroup, findGroup, pushRule, findGrpByCandidate, subGrps;
 
     addToGroup = function (rule) {
       if (groups[g].ruleIDs.indexOf(rule.id) === -1) {
@@ -370,7 +370,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     };
 
     findGrpByCandidate = function (candidate) {
-      var i;
       if (subGrps[i].ruleIds.indexOf(candidate.id) !== -1) {
         foundGroup = true;
       }
@@ -403,8 +402,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
     _.forEach(groups, function (group) {
       subGrps = [];
       _.forEach(group.products, function (productId) {
-        var prodCandidates = candidates[productId],
-            i;
+        var prodCandidates = candidates[productId];
         foundGroup = false;
         for (i = 0; i < subGrps.length; i++) {
           if (subGrps[i].ruleIds.length === prodCandidates.length) {
