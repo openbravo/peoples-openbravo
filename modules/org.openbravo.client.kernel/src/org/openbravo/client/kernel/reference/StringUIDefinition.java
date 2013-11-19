@@ -45,6 +45,18 @@ public class StringUIDefinition extends UIDefinition {
   }
 
   @Override
+  public String getFilterEditorPropertiesProperty(Field field) {
+    String operator = (String) this.readGridConfigurationSetting("operator");
+    String append = "";
+
+    if (operator != null) {
+      append = ", operator: '" + operator + "'";
+    }
+
+    return super.getFilterEditorPropertiesProperty(field) + append;
+  }
+
+  @Override
   public String getGridFieldProperties(Field field) {
     Long length = field.getColumn().getLength();
 

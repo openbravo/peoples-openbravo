@@ -69,6 +69,7 @@ public abstract class UIDefinition {
 
   private Reference reference;
   private DomainType domainType;
+  private JSONObject gridConfigurationSettings;
   protected static final Logger log = Logger.getLogger(UIDefinition.class);
 
   /**
@@ -134,6 +135,9 @@ public abstract class UIDefinition {
    * @return a JSONObject string which is used to initialize the formitem.
    */
   public String getFieldProperties(Field field) {
+    // First obtain the gridConfigurationSettings which will be used in other places
+    this.gridConfigurationSettings = this.obtainGridConfigurationSettings(field);
+
     if (field != null && field.isDisplayed() != null && !field.isDisplayed()) {
       return ""; // Not displayed fields use HiddenItem
     }
@@ -338,7 +342,13 @@ public abstract class UIDefinition {
     if (getFilterEditorType() == null) {
       return ",canFilter: false";
     }
-    return getFilterEditorPropertiesProperty(field);
+    String filterEditorProperties = getFilterEditorPropertiesProperty(field);
+    if (!"".equals(filterEditorProperties)) {
+      filterEditorProperties = filterEditorProperties.replaceAll("(^)( *?)(,)", "");
+      return ", filterEditorProperties: {" + filterEditorProperties + "}";
+    } else {
+      return "";
+    }
   }
 
   /**
@@ -371,7 +381,15 @@ public abstract class UIDefinition {
         && !this.getGridEditorType().equals(this.getFormEditorType())) {
       result.append(", editorType: '" + this.getGridEditorType() + "'");
     }
-    result.append(getGridConfigurationSettings(field));
+    Boolean canSort = (Boolean) readGridConfigurationSetting("canSort");
+    Boolean canFilter = (Boolean) readGridConfigurationSetting("canFilter");
+
+    if (canSort != null) {
+      result.append(", canSort: " + canSort.toString());
+    }
+    if (canFilter != null) {
+      result.append(", canFilter: " + canFilter.toString());
+    }
     return result.toString();
   }
 
@@ -436,12 +454,27 @@ public abstract class UIDefinition {
 
   }
 
-  protected String getGridConfigurationSettings(Field field) {
+  protected Object readGridConfigurationSetting(String setting) {
+    Object result = null;
+    try {
+      result = this.gridConfigurationSettings.get(setting);
+    } catch (JSONException e) {
+    } catch (Exception e) {
+    }
+    return result;
+  }
+
+  protected JSONObject obtainGridConfigurationSettings(Field field) {
     Boolean canSort = null;
     Boolean canFilter = null;
-    StringBuffer result = new StringBuffer();
+    String operator = null;
+    JSONObject result = new JSONObject();
 
-    if (canSort == null || canFilter == null) {
+    if (field == null || field.getId() == null) {
+      return result;
+    }
+
+    if (canSort == null || canFilter == null || operator == null) {
       String fieldConfsHql = " as p where p.field.id = '" + field.getId() + "' ";
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
       List<GCField> fieldConfs = OBDal.getInstance().createQuery(GCField.class, fieldConfsHql)
@@ -461,10 +494,16 @@ public abstract class UIDefinition {
             canFilter = false;
           }
         }
+        if (operator == null) {
+          if (fieldConfs.get(0).getTextFilterBehavior() != null
+              && !"D".equals(fieldConfs.get(0).getTextFilterBehavior())) {
+            operator = fieldConfs.get(0).getTextFilterBehavior();
+          }
+        }
       }
     }
 
-    if (canSort == null || canFilter == null) {
+    if (canSort == null || canFilter == null || operator == null) {
       Tab tab = field.getTab();
       String tabConfsHql = " as p where p.tab.id = '" + tab.getId() + "' ";
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
@@ -484,10 +523,16 @@ public abstract class UIDefinition {
             canFilter = false;
           }
         }
+        if (operator == null) {
+          if (tabConfs.get(0).getTextFilterBehavior() != null
+              && !"D".equals(tabConfs.get(0).getTextFilterBehavior())) {
+            operator = tabConfs.get(0).getTextFilterBehavior();
+          }
+        }
       }
     }
 
-    if (canSort == null || canFilter == null) {
+    if (canSort == null || canFilter == null || operator == null) {
       // Trying to get parameters from "Grid Configuration (System)" window
       List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
       if (!sysConfs.isEmpty()) {
@@ -497,16 +542,42 @@ public abstract class UIDefinition {
         if (canFilter == null) {
           canFilter = sysConfs.get(0).isFilterable();
         }
+        if (operator == null) {
+          operator = sysConfs.get(0).getTextFilterBehavior();
+        }
       }
     }
 
-    if (canSort != null) {
-      result.append(", canSort: " + canSort.toString());
+    if (operator != null) {
+      if ("IC".equals(operator)) {
+        operator = "iContains";
+      } else if ("IS".equals(operator)) {
+        operator = "iStartsWith";
+      } else if ("IE".equals(operator)) {
+        operator = "iEquals";
+      } else if ("C".equals(operator)) {
+        operator = "Contains";
+      } else if ("S".equals(operator)) {
+        operator = "StartsWith";
+      } else if ("E".equals(operator)) {
+        operator = "Equals";
+      }
     }
-    if (canFilter != null) {
-      result.append(", canFilter: " + canFilter.toString());
+
+    try {
+      if (canSort != null) {
+        result.put("canSort", canSort);
+      }
+      if (canFilter != null) {
+        result.put("canFilter", canFilter);
+      }
+      if (operator != null) {
+        result.put("operator", operator);
+      }
+    } catch (JSONException e) {
+      log.error("Couldn't get field property value");
     }
-    return result.toString();
+    return result;
   }
 
   // note can make sense to also enable hover of values for enums

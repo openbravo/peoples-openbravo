@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -269,15 +269,39 @@ isc.OBFKFilterTextItem.addProperties({
     fieldName = this.getCriteriaFieldName();
 
     crit = this.parseValueExpressions(value, fieldName, operator);
-    if (crit !== null) {
-      return crit;
+
+    if (crit === null) {
+      crit = {
+        fieldName: fieldName,
+        operator: operator,
+        value: value
+      };
     }
 
-    return {
-      fieldName: fieldName,
-      operator: operator,
-      value: value
-    };
+    if (this.operator && this.operator !== 'iContains') {
+      // In this case we need to overwrite the operator assigned by the parseValueExpressions/parseOBValueExpressions logic
+      crit = this.replaceCriterionOperator(crit, value, this.operator);
+    }
+
+    return crit;
+  },
+
+  replaceCriterionOperator: function (criterion, value, newOperator) {
+    var newCriterion = criterion,
+        i;
+    if (newCriterion.criteria && newCriterion.criteria.length > 0) {
+      // If there is a sub-criteria, go inside to process the childs
+      for (i = 0; i < newCriterion.criteria.length; i++) {
+        newCriterion.criteria[i] = this.replaceCriterionOperator(newCriterion.criteria[i], value, newOperator);
+      }
+    } else if ((criterion.operator === 'iContains' || criterion.operator === 'contains') && value.indexOf('~') !== 0 && value.indexOf('!~') !== 0) {
+      // In case the criteria is 'iContains'/'contains', replace it by the desired one,
+      // but only in the case there are no explicit 'iContains'/'contains' prefixes
+      newCriterion.operator = newOperator;
+    }
+    // TODO: If there is a complex criteria with a 'iContains'/'contains' prefix, like "Cust or ~mplo", it won't work ok, since it will be
+    //       translated to "^Cust or ^mplo" or "==Cust or ==mplo" (depending of the newOperator) instead of "^Cust or ~mplo" or "==Cust or ~mplo"
+    return newCriterion;
   },
 
   setCriterion: function (criterion) {
