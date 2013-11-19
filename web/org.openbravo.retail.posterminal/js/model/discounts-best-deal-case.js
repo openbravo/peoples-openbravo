@@ -350,6 +350,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
 
   function doGroups(candidates) {
     var groups = [],
+        newGroups = [],
         myProdId, productId, i, g, foundGroup, rules, ruleIDs, addToGroup, findGroup, pushRule, findGrpByCandidate, subGrps;
 
     addToGroup = function (rule) {
@@ -406,6 +407,15 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
         }
       }
     } // loop of candidates
+    // remove groups having just one rule, they don't need to be calculated
+    // because they are already in best deal case
+    _.forEach(groups, function (group) {
+      if (group.ruleIDs.length > 1) {
+        newGroups.push(group);
+      }
+    });
+    groups = newGroups;
+
     // now we have groups of products with conflicts between them,
     // lets split these groups in subgroups each of them with the 
     // same rules candidates
