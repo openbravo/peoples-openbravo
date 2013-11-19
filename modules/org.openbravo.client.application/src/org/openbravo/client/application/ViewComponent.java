@@ -18,6 +18,9 @@
  */
 package org.openbravo.client.application;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
@@ -195,6 +198,33 @@ public class ViewComponent extends BaseComponent {
     return etag + "_" + getViewVersionHash();
   }
 
+  private String getLastGridConfigurationChange(Window window) {
+    Date lastModification = new Date(0);
+
+    List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
+    if (!sysConfs.isEmpty()) {
+      if (lastModification.compareTo(sysConfs.get(0).getUpdated()) < 0) {
+        lastModification = sysConfs.get(0).getUpdated();
+      }
+    }
+
+    String tabHql = " as p where p.tab.window.id = '" + window.getId() + "' ";
+    List<GCTab> tabConfs = OBDal.getInstance().createQuery(GCTab.class, tabHql).list();
+    for (GCTab gcTab : tabConfs) {
+      if (lastModification.compareTo(gcTab.getUpdated()) < 0) {
+        lastModification = gcTab.getUpdated();
+      }
+      List<GCField> fieldConfs = gcTab.getOBUIAPPGCFieldList();
+      for (GCField gcField : fieldConfs) {
+        if (lastModification.compareTo(gcField.getUpdated()) < 0) {
+          lastModification = gcField.getUpdated();
+        }
+      }
+    }
+
+    return lastModification.toString();
+  }
+
   private synchronized String getViewVersionHash() {
     String viewVersionHash = "";
     String viewVersions = "";
@@ -208,6 +238,7 @@ public class ViewComponent extends BaseComponent {
       for (Tab t : window.getADTabList()) {
         viewVersions += t.getTable().isFullyAudited() + "|";
       }
+      viewVersions += getLastGridConfigurationChange(window) + "|";
       viewVersionHash = DigestUtils.md5Hex(viewVersions);
     } finally {
       OBContext.restorePreviousMode();
