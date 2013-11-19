@@ -40,6 +40,9 @@ import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.GCField;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.KernelUtils;
@@ -52,6 +55,7 @@ import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
@@ -362,11 +366,13 @@ public abstract class UIDefinition {
    * @return a JSONObject string which is used to initialize the formitem.
    */
   public String getGridFieldProperties(Field field) {
+    StringBuffer result = new StringBuffer();
     if (this.getGridEditorType() != null
         && !this.getGridEditorType().equals(this.getFormEditorType())) {
-      return ", editorType: '" + this.getGridEditorType() + "'";
+      result.append(", editorType: '" + this.getGridEditorType() + "'");
     }
-    return "";
+    result.append(getGridConfigurationSettings(field));
+    return result.toString();
   }
 
   public String getParameterProperties(Parameter parameter) {
@@ -417,6 +423,90 @@ public abstract class UIDefinition {
       domainType = ModelProvider.getInstance().getReference(reference.getId()).getDomainType();
     }
     return domainType;
+  }
+
+  protected String removeAttributeFromString(String inpString, String attr) {
+    String result = inpString;
+    if (result.indexOf(attr) != -1) {
+      // If there is a previous 'canSort' set, remove it to avoid collision when the new one is set
+      // later
+      result = result.replaceAll("(,)( *?)(canSort)( *?)(:)( *?)(false|true)( *?)", "");
+    }
+    return result;
+
+  }
+
+  protected String getGridConfigurationSettings(Field field) {
+    Boolean canSort = null;
+    Boolean canFilter = null;
+    StringBuffer result = new StringBuffer();
+
+    if (canSort == null || canFilter == null) {
+      String fieldConfsHql = " as p where p.field.id = '" + field.getId() + "' ";
+      // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
+      List<GCField> fieldConfs = OBDal.getInstance().createQuery(GCField.class, fieldConfsHql)
+          .list();
+      if (!fieldConfs.isEmpty()) {
+        if (canSort == null) {
+          if ("Y".equals(fieldConfs.get(0).getSortable())) {
+            canSort = true;
+          } else if ("N".equals(fieldConfs.get(0).getSortable())) {
+            canSort = false;
+          }
+        }
+        if (canFilter == null) {
+          if ("Y".equals(fieldConfs.get(0).getFilterable())) {
+            canFilter = true;
+          } else if ("N".equals(fieldConfs.get(0).getFilterable())) {
+            canFilter = false;
+          }
+        }
+      }
+    }
+
+    if (canSort == null || canFilter == null) {
+      Tab tab = field.getTab();
+      String tabConfsHql = " as p where p.tab.id = '" + tab.getId() + "' ";
+      // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
+      List<GCTab> tabConfs = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql).list();
+      if (!tabConfs.isEmpty()) {
+        if (canSort == null) {
+          if ("Y".equals(tabConfs.get(0).getSortable())) {
+            canSort = true;
+          } else if ("N".equals(tabConfs.get(0).getSortable())) {
+            canSort = false;
+          }
+        }
+        if (canFilter == null) {
+          if ("Y".equals(tabConfs.get(0).getFilterable())) {
+            canFilter = true;
+          } else if ("N".equals(tabConfs.get(0).getFilterable())) {
+            canFilter = false;
+          }
+        }
+      }
+    }
+
+    if (canSort == null || canFilter == null) {
+      // Trying to get parameters from "Grid Configuration (System)" window
+      List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
+      if (!sysConfs.isEmpty()) {
+        if (canSort == null) {
+          canSort = sysConfs.get(0).isSortable();
+        }
+        if (canFilter == null) {
+          canFilter = sysConfs.get(0).isFilterable();
+        }
+      }
+    }
+
+    if (canSort != null) {
+      result.append(", canSort: " + canSort.toString());
+    }
+    if (canFilter != null) {
+      result.append(", canFilter: " + canFilter.toString());
+    }
+    return result.toString();
   }
 
   // note can make sense to also enable hover of values for enums

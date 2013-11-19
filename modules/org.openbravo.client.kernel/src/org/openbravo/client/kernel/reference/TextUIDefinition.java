@@ -35,10 +35,18 @@ public class TextUIDefinition extends StringUIDefinition {
   @Override
   public String getGridFieldProperties(Field field) {
     final Property property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
+    Boolean canFilter = true;
+    String superFieldProps = super.getGridFieldProperties(field);
+    // If there is a previous 'canSort' or 'canFilter' set, remove it to avoid collision when the
+    // new one is set later
+    superFieldProps = removeAttributeFromString(superFieldProps, "canSort");
+    if (property.getFieldLength() > 4000) {
+      // anything above 4000 is probably a clob
+      canFilter = false;
+      superFieldProps = removeAttributeFromString(superFieldProps, "canFilter");
+    }
 
-    // anything above 2000 is probably a clob
-    return super.getGridFieldProperties(field) + ", canSort: false"
-        + (property.getFieldLength() > 4000 ? ", canFilter: false" : "");
+    return superFieldProps + ", canSort: false" + (canFilter ? "" : ", canFilter: false");
   }
 
   @Override
