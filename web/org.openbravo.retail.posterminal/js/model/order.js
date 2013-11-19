@@ -929,7 +929,7 @@
           return;
         }
 
-        if (!l.get('addedBySplit') && l.get('product').id === p.id) {
+        if (l.get('product').id === p.id) {
           line.set({
             qty: line.get('qty') + l.get('qty'),
             promotions: null
