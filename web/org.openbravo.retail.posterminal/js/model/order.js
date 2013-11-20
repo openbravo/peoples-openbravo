@@ -934,7 +934,7 @@
           return;
         }
 
-        if (l.get('product').id === p.id) {
+        if (l.get('product').id === p.id && l.get('price') === line.get('price')) {
           line.set({
             qty: line.get('qty') + l.get('qty'),
             promotions: null
@@ -973,7 +973,7 @@
             line.set('qty', line.get('qty') + otherLine.get('qty'));
             line.calculateGross();
             toRemove.push(otherLine);
-          } else if (line.get('promotions') && otherLine.get('promotions') && line.get('promotions').length === otherLine.get('promotions').length) {
+          } else if (line.get('promotions') && otherLine.get('promotions') && line.get('promotions').length === otherLine.get('promotions').length && line.get('price') === otherLine.get('price')) {
             matches = true;
             otherPromos = otherLine.get('promotions');
             for (k = 0; k < line.get('promotions').length; k++) {
