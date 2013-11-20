@@ -111,6 +111,14 @@ public abstract class UIDefinition {
   }
 
   /**
+   * @return the form item type used for filtering in grids. As a default will return
+   *         {@link #getFormEditorType()}
+   */
+  public String getFilterEditorType(Field field) {
+    return getFilterEditorType();
+  }
+
+  /**
    * Computes the properties used to define the type, this includes all the Smartclient SimpleType
    * properties.
    * 
