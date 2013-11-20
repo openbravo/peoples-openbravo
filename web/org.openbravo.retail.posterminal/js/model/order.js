@@ -729,7 +729,7 @@
         // same pack than deleted one and merge splitted lines created for those
         this.get('lines').forEach(function (l) {
           var affected;
-          if (productId !== l.get('product').id) {
+          if (productId === l.get('product').id) {
             return; //continue
           }
           affected = l.isAffectedByPack();
