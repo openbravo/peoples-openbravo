@@ -17,7 +17,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -282,6 +282,8 @@ function updateConvertedAmounts(recalcExchangeRate) {
   var exchangeRate = frm.inpExchangeRate;
   var precision = frm.inpFinancialAccountCurrencyPrecision ? frm.inpFinancialAccountCurrencyPrecision.value : 2;
   var roundedMask = applyPrecisionToMask(precision);
+  var exchangeRateRoundedMask = OB.Format.formats.generalQtyEdition;
+  exchangeRateRoundedMask = returnMaskChange(exchangeRateRoundedMask, '.', ',', globalDecSeparator, globalGroupSeparator);
   var expectedConverted = frm.inpExpectedConverted;
   var actualConverted = frm.inpActualConverted;
   var expectedPayment = frm.inpExpectedPayment;
@@ -291,7 +293,7 @@ function updateConvertedAmounts(recalcExchangeRate) {
     if (recalcExchangeRate) {
       if (actualConverted.value && actualPayment.value) {
         if (compare(actualPayment.value, '!=', 0)) {
-          exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+          exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, exchangeRateRoundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
         }
       } else {
         exchangeRate.value = '';
