@@ -57,7 +57,6 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BDC.Found', [OB.DEC.add(totalDiscount, 0), originalDeal]));
       originalReceipt.save();
     } else {
-      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_BDC.NotFound'));
       console.log('Already in Best Deal, no change required');
     }
     endProcess();
