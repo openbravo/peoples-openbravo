@@ -2441,6 +2441,10 @@ isc.OBStandardView.addProperties({
         fld.editorType = type.editorType;
       }
 
+      if (!fld.filterEditorType && fld.filterEditorProperties && fld.filterEditorProperties.filterEditorType) {
+        fld.filterEditorType = fld.filterEditorProperties.filterEditorType;
+      }
+
       if (type.filterEditorType && !fld.filterEditorType) {
         fld.filterEditorType = type.filterEditorType;
       }

@@ -53,6 +53,11 @@ public class StringUIDefinition extends UIDefinition {
       append = ", operator: '" + operator + "'";
     }
 
+    Boolean filterOnChange = (Boolean) readGridConfigurationSetting("filterOnChange");
+    if (filterOnChange != null) {
+      append = append + ", filterOnChange: " + filterOnChange.toString();
+    }
+
     return super.getFilterEditorPropertiesProperty(field) + append;
   }
 

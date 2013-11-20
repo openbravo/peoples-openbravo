@@ -45,17 +45,18 @@ public class ForeignKeyUIDefinition extends UIDefinition {
   }
 
   @Override
-  public String getFilterEditorType(Field field) {
-    return "OBFKFilterTextItem";
-  }
-
-  @Override
   public String getFilterEditorPropertiesProperty(Field field) {
     String operator = (String) this.readGridConfigurationSetting("operator");
     String append = "";
 
     if (operator != null) {
       append = ", operator: '" + operator + "'";
+    }
+
+    Boolean filterOnChange = (Boolean) readGridConfigurationSetting("filterOnChange");
+    if (!filterOnChange) {
+      append = append + ", filterOnChange: " + filterOnChange.toString();
+      append = append + ", filterEditorType: 'OBTextFilterItem', textFilterOnFKField: true";
     }
 
     return super.getFilterEditorPropertiesProperty(field) + append;

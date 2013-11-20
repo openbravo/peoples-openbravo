@@ -120,14 +120,34 @@ isc.OBTextFilterItem.addProperties({
 
   init: function () {
     var field = this.grid.getField(this.name);
-    if (field && field.gridProps && field.gridProps.filterOnChange === false) {
+    if (this.filterOnChange === false) {
       this.actOnKeypress = false;
+      if (this.textFilterOnFKField) {
+        this.removeIsOneOfValidator();
+        this.criteriaField = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+      }
     }
     this.Super('init', arguments);
   },
 
+  removeIsOneOfValidator: function () {
+    var i, len, validator;
+    if (this.validators) {
+      len = this.validators.length;
+    } else {
+      len = 0;
+    }
+    for (i = 0; i < len; i++) {
+      validator = this.validators[i];
+      if (validator.type === 'isOneOf') {
+        this.validators.splice(i, 1);
+        return;
+      }
+    }
+  },
+
   blur: function () {
-    if (this.actOnKeypress === false) {
+    if (this.filterOnChange === false) {
       this.form.grid.performAction();
     }
     return this.Super('blur', arguments);

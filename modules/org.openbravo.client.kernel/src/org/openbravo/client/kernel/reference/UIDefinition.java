@@ -111,14 +111,6 @@ public abstract class UIDefinition {
   }
 
   /**
-   * @return the form item type used for filtering in grids. As a default will return
-   *         {@link #getFormEditorType()}
-   */
-  public String getFilterEditorType(Field field) {
-    return getFilterEditorType();
-  }
-
-  /**
    * Computes the properties used to define the type, this includes all the Smartclient SimpleType
    * properties.
    * 
@@ -483,7 +475,7 @@ public abstract class UIDefinition {
       return result;
     }
 
-    if (canSort == null || canFilter == null || operator == null  || filterOnChange == null) {
+    if (canSort == null || canFilter == null || operator == null || filterOnChange == null) {
       String fieldConfsHql = " as p where p.field.id = '" + field.getId() + "' ";
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
       List<GCField> fieldConfs = OBDal.getInstance().createQuery(GCField.class, fieldConfsHql)
@@ -519,7 +511,7 @@ public abstract class UIDefinition {
       }
     }
 
-    if (canSort == null || canFilter == null || operator == null  || filterOnChange == null) {
+    if (canSort == null || canFilter == null || operator == null || filterOnChange == null) {
       Tab tab = field.getTab();
       String tabConfsHql = " as p where p.tab.id = '" + tab.getId() + "' ";
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
@@ -555,7 +547,7 @@ public abstract class UIDefinition {
       }
     }
 
-    if (canSort == null || canFilter == null || operator == null  || filterOnChange == null) {
+    if (canSort == null || canFilter == null || operator == null || filterOnChange == null) {
       // Trying to get parameters from "Grid Configuration (System)" window
       List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
       if (!sysConfs.isEmpty()) {
