@@ -54,8 +54,13 @@ public class StringUIDefinition extends UIDefinition {
     }
 
     Boolean filterOnChange = (Boolean) readGridConfigurationSetting("filterOnChange");
-    if (filterOnChange != null) {
+    if (Boolean.FALSE.equals(filterOnChange)) {
       append = append + ", filterOnChange: " + filterOnChange.toString();
+    } else {
+      Long thresholdToFilter = (Long) readGridConfigurationSetting("thresholdToFilter");
+      if (thresholdToFilter != null) {
+        append = append + ", thresholdToFilter: " + thresholdToFilter.toString();
+      }
     }
 
     return super.getFilterEditorPropertiesProperty(field) + append;

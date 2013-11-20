@@ -790,12 +790,19 @@ isc.RPCManager.addClassProperties({
   }
 });
 
-// uncomment this code and put a breakpoint to get a better control
-// on from where async operations are started
-//isc.Class._fireOnPause = isc.Class.fireOnPause;
-//isc.Class.fireOnPause = function(id, callback, delay, target, instanceID) {
-//  isc.Class._fireOnPause(id, callback, delay, target, instanceID);
-//};
+isc.Class.addClassProperties({
+  _originalFireOnPause: isc.Class.fireOnPause,
+  fireOnPause: function (id, callback, delay, target, instanceID) {
+    if (id === 'performFilter') {
+      if (target.currentThresholdToFilter) {
+        delay = target.currentThresholdToFilter;
+      }
+    }
+    this._originalFireOnPause(id, callback, delay, target, instanceID);
+  }
+});
+
+
 // Allow searchs (with full dataset in memory/the datasource) not distinguish
 // between accent or non-accent words
 isc.DataSource.addProperties({

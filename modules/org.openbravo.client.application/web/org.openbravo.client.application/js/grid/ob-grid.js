@@ -412,6 +412,13 @@ isc.OBGrid.addProperties({
           }
         }
       }
+
+      if (item.thresholdToFilter && item.thresholdToFilter > 500) {
+        this.currentThresholdToFilter = item.thresholdToFilter;
+      } else {
+        delete this.currentThresholdToFilter;
+      }
+
       return this.Super('editorChanged', arguments);
     },
 

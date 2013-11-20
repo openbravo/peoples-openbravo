@@ -469,13 +469,15 @@ public abstract class UIDefinition {
     Boolean canFilter = null;
     Boolean filterOnChange = null;
     String operator = null;
+    Long thresholdToFilter = null;
     JSONObject result = new JSONObject();
 
     if (field == null || field.getId() == null) {
       return result;
     }
 
-    if (canSort == null || canFilter == null || operator == null || filterOnChange == null) {
+    if (canSort == null || canFilter == null || operator == null || filterOnChange == null
+        || thresholdToFilter == null) {
       String fieldConfsHql = " as p where p.field.id = '" + field.getId() + "' ";
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
       List<GCField> fieldConfs = OBDal.getInstance().createQuery(GCField.class, fieldConfsHql)
@@ -508,10 +510,14 @@ public abstract class UIDefinition {
             filterOnChange = false;
           }
         }
+        if (thresholdToFilter == null) {
+          thresholdToFilter = fieldConfs.get(0).getThresholdToFilter();
+        }
       }
     }
 
-    if (canSort == null || canFilter == null || operator == null || filterOnChange == null) {
+    if (canSort == null || canFilter == null || operator == null || filterOnChange == null
+        || thresholdToFilter == null) {
       Tab tab = field.getTab();
       String tabConfsHql = " as p where p.tab.id = '" + tab.getId() + "' ";
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
@@ -544,10 +550,14 @@ public abstract class UIDefinition {
             filterOnChange = false;
           }
         }
+        if (thresholdToFilter == null) {
+          thresholdToFilter = tabConfs.get(0).getThresholdToFilter();
+        }
       }
     }
 
-    if (canSort == null || canFilter == null || operator == null || filterOnChange == null) {
+    if (canSort == null || canFilter == null || operator == null || filterOnChange == null
+        || thresholdToFilter == null) {
       // Trying to get parameters from "Grid Configuration (System)" window
       List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
       if (!sysConfs.isEmpty()) {
@@ -562,6 +572,9 @@ public abstract class UIDefinition {
         }
         if (filterOnChange == null) {
           filterOnChange = sysConfs.get(0).isFilterOnChange();
+        }
+        if (thresholdToFilter == null) {
+          thresholdToFilter = sysConfs.get(0).getThresholdToFilter();
         }
       }
     }
@@ -594,6 +607,9 @@ public abstract class UIDefinition {
       }
       if (filterOnChange != null) {
         result.put("filterOnChange", filterOnChange);
+      }
+      if (thresholdToFilter != null) {
+        result.put("thresholdToFilter", thresholdToFilter);
       }
     } catch (JSONException e) {
       log.error("Couldn't get field property value");
