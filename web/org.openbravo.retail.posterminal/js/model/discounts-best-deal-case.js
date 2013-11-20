@@ -518,7 +518,7 @@ OB.Model.Discounts.calculateBestDealCase = function (originalReceipt, callback) 
   receipt.get('lines').forEach(function (line) {
     if (line.get('promotions')) {
       _.forEach(line.get('promotions'), function (promo) {
-        originalDeal += promo.amt;
+        originalDeal += promo.amt || 0;
       });
     }
   });
