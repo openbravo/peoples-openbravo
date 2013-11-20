@@ -645,6 +645,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
 
         payment.setDescription("");
 
+        // if all line are deleted then update amount to zero
+        if (strAction.equals("R")) {
+          payment.setAmount(BigDecimal.ZERO);
+        }
+
         payment.setStatus("RPAP");
         payment.setAPRMProcessPayment("P");
         OBDal.getInstance().save(payment);
