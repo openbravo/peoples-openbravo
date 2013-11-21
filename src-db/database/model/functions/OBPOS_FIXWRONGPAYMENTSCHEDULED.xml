@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="FUNCTION OBPOS_FIXWRONGPAYMENTSCHEDULED">
     <function name="OBPOS_FIXWRONGPAYMENTSCHEDULED" type="NULL">
-      <body><![CDATA[cur_wrongorders RECORD;
+      <body><![CDATA[TYPE RECORD IS REF CURSOR;
+      cur_wrongorders RECORD;
   Cur_RolesAlert RECORD;
   varInvoiceId varchar(32);
   v_needToExecute NUMBER;
@@ -99,7 +100,7 @@ BEGIN
         SELECT AD_ALERTRULE_ID INTO varAlertRuleId from AD_ALERTRULE WHERE NAME =varALERT_RULE;
 
 			  INSERT INTO AD_Alert (AD_Alert_ID, AD_Client_ID, AD_Org_ID, IsActive,Created, CreatedBy, Updated, UpdatedBy,Description, AD_AlertRule_ID, Record_Id, Referencekey_ID) 
-        VALUES (get_uuid(), cur_wrongorders.ad_client_id, cur_wrongorders.ad_org_id, 'Y',NOW(), '0', NOW(), '0', varALERT_RULE || '. For more detail: http://wiki.openbravo.com/wiki/Retail:Known_Issues#Problem_in_cash_up_of_receipts_with_more_than_one_payment_type', varAlertRuleId, 
+        VALUES (get_uuid(), cur_wrongorders.ad_client_id, cur_wrongorders.ad_org_id, 'Y',now(), '0', now(), '0', varALERT_RULE || '. For more detail: http://wiki.openbravo.com/wiki/Retail:Known_Issues#Problem_in_cash_up_of_receipts_with_more_than_one_payment_type', varAlertRuleId, 
 				ad_column_identifier('C_Order', cur_wrongorders.c_order_id, 'en_US'), cur_wrongorders.c_order_id);   
 			else 
 
@@ -112,7 +113,7 @@ BEGIN
 				paidamt = (select sum(amount+writeoffamt) from fin_payment_scheduledetail  sd where sd.fin_payment_schedule_invoice = s.fin_payment_schedule_id  and iscanceled='N') 
 				where s.c_invoice_id =varInvoiceId ;   
 	
-				UPDATE C_ORDER SET description = coalesce(description, '') || '-updated by mod.script' WHERE C_ORDER_ID=cur_wrongorders.C_ORDER_ID;
+				UPDATE C_ORDER SET description = coalesce(to_char(description), '') || '-updated by mod.script' WHERE C_ORDER_ID=cur_wrongorders.C_ORDER_ID;
 
 				if (varIsPosted='Y') THEN
    				delete from fact_acct fa
