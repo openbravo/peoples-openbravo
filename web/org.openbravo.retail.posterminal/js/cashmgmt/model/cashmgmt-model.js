@@ -23,32 +23,41 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
     this.set('payments', new Backbone.Collection());
     this.set('cashMgmtDropEvents', new Backbone.Collection(OB.POS.modelterminal.get('cashMgmtDropEvents')));
     this.set('cashMgmtDepositEvents', new Backbone.Collection(OB.POS.modelterminal.get('cashMgmtDepositEvents')));
-    OB.Dal.find(OB.Model.PaymentMethodCashUp, null, function (pays) {
-      payments = pays;
-      payments.each(function (pay) {
-        criteria = {
-          'paymentMethodId': pay.get('id')
-        }
-        paymentMth = OB.POS.modelterminal.get('payments').filter(function (payment) {
-          return payment.payment.id === pay.get('id');
-        })[0].paymentMethod;
 
-        if (paymentMth.allowdeposits || paymentMth.allowdrops) {
-          OB.Dal.find(OB.Model.CashManagement, criteria, function (cashmgmt, pay) {
-            if (cashmgmt.length > 0) {
-              pay.set('listdepositsdrops', cashmgmt.models);
-            }
-            me.get('payments').add(pay);
-          }, null, pay);
-        }
+    OB.Dal.find(OB.Model.CashUp, {
+      'isbeingprocessed': 'N'
+    }, function (cashUp) {
+      debugger;
+      OB.Dal.find(OB.Model.PaymentMethodCashUp, {
+        'cashup_id': cashUp.at(0).get('id')
+      }, function (pays) {
+        payments = pays;
+        payments.each(function (pay) {
+          criteria = {
+            'paymentMethodId': pay.get('paymentmethod_id'),
+            'cashup_id': cashUp.at(0).get('id')
+          }
+          paymentMth = OB.POS.modelterminal.get('payments').filter(function (payment) {
+            return payment.payment.id === pay.get('paymentmethod_id');
+          })[0].paymentMethod;
+
+          if (paymentMth.allowdeposits || paymentMth.allowdrops) {
+            OB.Dal.find(OB.Model.CashManagement, criteria, function (cashmgmt, pay) {
+              if (cashmgmt.length > 0) {
+                pay.set('listdepositsdrops', cashmgmt.models);
+              }
+              me.get('payments').add(pay);
+            }, null, pay);
+          }
+        });
       });
-    });
+    }, null, this);
 
     this.depsdropstosave = new Backbone.Collection();
     this.depsdropstosave.on('paymentDone', function (model, p) {
       error = false;
       payments.each(function (pay) {
-        if (p.id === pay.get('id')) {
+        if (p.id === pay.get('paymentmethod_id')) {
           error = (p.type === 'drop' && OB.DEC.sub(pay.get('total'), OB.DEC.mul(p.amount, p.rate)) < 0);
         }
       });
@@ -78,7 +87,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         me.depsdropstosave.add(addedCashMgmt);
 
         selectedPayment = payments.filter(function (payment) {
-          return payment.get('id') === p.id;
+          return payment.get('paymentmethod_id') === p.id;
         })[0];
         if (selectedPayment.get('listdepositsdrops')) {
           selectedPayment.get('listdepositsdrops').push(addedCashMgmt);
@@ -108,7 +117,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
 
       function runSync() {
         if (OB.MobileApp.model.get('connectedToERP')) {
-          OB.MobileApp.model.runSyncProcess(null, function () {
+          OB.MobileApp.model.runSyncProcess(null, null, function () {
             OB.UTIL.showLoading(false);
             me.set("finished", true);
             if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashmanagement')) {

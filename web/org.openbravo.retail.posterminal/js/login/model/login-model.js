@@ -296,18 +296,42 @@
       });
     },
 
-    runSyncProcess: function (model, defaultSuccessCallback) {
+    runSyncProcess: function (model, orderSuccessCallback, cashMgmtSuccessCallback, cashUpSuccessCallback) {
       model = model || null;
-      OB.UTIL.processCashMgmt(defaultSuccessCallback);
+
       OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (customersChangedNotProcessed) { //OB.Dal.find success
         var successCallback, errorCallback;
         if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
-          OB.UTIL.processPaidOrders(model, defaultSuccessCallback);
+          OB.UTIL.processPaidOrders(model, function () {
+            if (orderSuccessCallback) {
+              orderSuccessCallback(model);
+            }
+            OB.UTIL.processCashMgmt(function () {
+              if (cashMgmtSuccessCallback) {
+                cashMgmtSuccessCallback();
+              }
+              if (cashUpSuccessCallback) {
+                OB.UTIL.processCashUp(cashUpSuccessCallback);
+              }
+            });
+          });
           return;
         }
         successCallback = function () {
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomersProcessed'));
-          OB.UTIL.processPaidOrders(model, defaultSuccessCallback);
+          OB.UTIL.processPaidOrders(model, function () {
+            if (orderSuccessCallback) {
+              orderSuccessCallback(model);
+            }
+            OB.UTIL.processCashMgmt(function () {
+              if (cashMgmtSuccessCallback) {
+                cashMgmtSuccessCallback();
+              }
+              if (cashUpSuccessCallback) {
+                OB.UTIL.processCashUp(cashUpSuccessCallback);
+              }
+            });
+          });
         };
         errorCallback = function () {
           //nothing to show

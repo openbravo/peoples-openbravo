@@ -111,6 +111,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/customerAddrSyncUtils",
         "utils/cashMgmtSyncUtils",
         "utils/cashUpReportUtils",
+        "utils/cashUpSyncUtils",
         "components/keypadcoins",
         "data/dataordersave",
         "data/dataordertaxes",

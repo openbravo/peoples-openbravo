@@ -17,9 +17,10 @@
     entityName: '',
     source: '',
     local: true,
-    properties: ['id', 'searchKey', 'name', 'startingCash', 'totalSales', 'totalReturns', 'rate', 'cashup_id'],
+    properties: ['id', 'paymentmethod_id', 'searchKey', 'name', 'startingCash', 'totalSales', 'totalReturns', 'rate', 'cashup_id'],
     propertyMap: {
       'id': 'paymentmethodcashup_id',
+      'paymentmethod_id': 'paymentmethod_id',
       'searchKey': 'searchKey',
       'name': 'name',
       'startingCash': 'startingCash',
@@ -28,9 +29,9 @@
       'rate': 'rate',
       'cashup_id': 'cashup_id'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS paymentmethodcashup (paymentmethodcashup_id TEXT PRIMARY KEY, searchKey TEXT, name TEXT, startingCash TEXT, totalSales TEXT, totalReturns TEXT, rate TEXT, cashup_id TEXT)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS paymentmethodcashup (paymentmethodcashup_id TEXT PRIMARY KEY, paymentmethod_id TEXT, searchKey TEXT, name TEXT, startingCash TEXT, totalSales TEXT, totalReturns TEXT, rate TEXT, cashup_id TEXT)',
     dropStatement: 'DROP TABLE IF EXISTS paymentmethodcashup',
-    insertStatement: 'INSERT INTO paymentmethodcashup(paymentmethodcashup_id, searchKey, name, startingCash, totalSales, totalReturns, rate, cashup_id) VALUES (?,?,?,?,?,?,?,?)',
+    insertStatement: 'INSERT INTO paymentmethodcashup(paymentmethodcashup_id, paymentmethod_id, searchKey, name, startingCash, totalSales, totalReturns, rate, cashup_id) VALUES (?,?,?,?,?,?,?,?,?)',
   });
 
   window.OB.Model.PaymentMethodCashUp = PaymentMethodCashUp;

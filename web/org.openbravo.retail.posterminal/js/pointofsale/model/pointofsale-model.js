@@ -152,41 +152,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       });
     }
   },
-  processCashUp: function () {
-    var me = this;
-    var orderlist = this.get('orderList'),
-        criteria = {
-        'isbeingprocessed': 'N'
-        };
-    OB.Dal.find(OB.Model.CashUp, criteria, function (cashUp) { //OB.Dal.find success
-      var uuid;
-      if (cashUp.length === 0) {
-        uuid = OB.Dal.get_uuid();
-        OB.Dal.save(new OB.Model.CashUp({
-          id: uuid,
-          netSales: '0',
-          grossSales: '0',
-          netReturns: '0',
-          grossReturns: '0',
-          totalRetailTransactions: '0',
-          isbeingprocessed: 'N'
-        }), function () {
-          _.each(OB.POS.modelterminal.get('payments'), function (payment) {
-            OB.Dal.save(new OB.Model.PaymentMethodCashUp({
-              id: payment.payment.id,
-              searchKey: payment.payment.searchKey,
-              name: payment.payment._identifier,
-              startingCash: '0',
-              totalSales: '0',
-              totalReturns: '0',
-              rate: payment.rate,
-              cashup_id: uuid
-            }), null, null, true);
-          }, this);
-        }, null, true);
-      }
-    });
-  },
   isValidMultiOrderState: function () {
     if (this.get('leftColumnViewManager') && this.get('multiOrders')) {
       return this.get('leftColumnViewManager').isMultiOrder() && this.get('multiOrders').hasDataInList();
@@ -424,7 +389,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     taxes = new OB.DATA.OrderTaxes(receipt);
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
-    this.processCashUp();
+    OB.UTIL.initCashUp();
     this.processChangedCustomers();
     this.processChangedCustomerAddress();
 

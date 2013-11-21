@@ -73,4 +73,60 @@
     });
   };
 
+  OB.UTIL.initCashUp = function (callback) {
+    var criteria = {
+      'isbeingprocessed': 'N'
+    },
+        lastCashUpPayments;
+    OB.Dal.find(OB.Model.CashUp, criteria, function (cashUp) { //OB.Dal.find success
+      var uuid;
+      if (cashUp.length === 0) {
+        criteria = {
+          'isbeingprocessed': 'Y',
+          '_orderByClause': 'createdDate desc'
+        };
+        OB.Dal.find(OB.Model.CashUp, criteria, function (lastCashUp) {
+          if (lastCashUp.length !== 0) {
+            lastCashUpPayments = JSON.parse(lastCashUp.at(0).get('objToSend')).cashCloseInfo;
+          }
+          uuid = OB.Dal.get_uuid();
+          OB.Dal.save(new OB.Model.CashUp({
+            id: uuid,
+            netSales: '0',
+            grossSales: '0',
+            netReturns: '0',
+            grossReturns: '0',
+            totalRetailTransactions: '0',
+            createdDate: new Date(),
+            objToSend: null,
+            isbeingprocessed: 'N'
+          }), function () {
+            _.each(OB.POS.modelterminal.get('payments'), function (payment) {
+              var startingCash = '0';
+              if (lastCashUpPayments) {
+                startingCash = lastCashUpPayments.filter(function (payMthd) {
+                  return payMthd.paymentTypeId === payment.payment.id;
+                })[0].paymentMethod.amountToKeep;
+              }
+              OB.Dal.save(new OB.Model.PaymentMethodCashUp({
+                id: OB.Dal.get_uuid(),
+                paymentmethod_id: payment.payment.id,
+                searchKey: payment.payment.searchKey,
+                name: payment.payment._identifier,
+                startingCash: startingCash,
+                totalSales: '0',
+                totalReturns: '0',
+                rate: payment.rate,
+                cashup_id: uuid
+              }), null, null, true);
+            }, this);
+            if (callback) {
+              callback();
+            }
+          }, null, true);
+        }, null, this);
+      }
+    });
+  };
+
 }());
