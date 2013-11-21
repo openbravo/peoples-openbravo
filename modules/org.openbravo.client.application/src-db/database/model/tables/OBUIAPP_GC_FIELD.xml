@@ -53,10 +53,6 @@
         <default><![CDATA[D]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ISLAZYFILTERING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="FILTERONCHANGE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[D]]></default>
         <onCreateDefault/>
@@ -80,6 +76,5 @@
       <unique name="OBUIAPP_GC_FIELD_UNIQUE_FIELD">
         <unique-column name="AD_FIELD_ID"/>
       </unique>
-      <check name="OBUIAPP_GC_SYS_ISLAZY_CHK"><![CDATA[ISLAZYFILTERING IN ('Y', 'N')]]></check>
     </table>
   </database>
