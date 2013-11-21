@@ -568,15 +568,18 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         } finally {
           OBContext.restorePreviousMode();
         }
+
+        payment.setReversedPayment(reversedPayment);
+        OBDal.getInstance().save(payment);
+        OBDal.getInstance().flush();
+
         HashMap<String, Object> parameterMap = new HashMap<String, Object>();
         parameterMap.put("Fin_Payment_ID", reversedPayment.getId());
         parameterMap.put("action", "P");
         parameterMap.put("isReversedPayment", "Y");
         bundle.setParams(parameterMap);
         execute(bundle);
-        payment.setReversedPayment(reversedPayment);
-        OBDal.getInstance().save(payment);
-        OBDal.getInstance().flush();
+
         return;
 
         // ***********************
