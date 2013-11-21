@@ -50,7 +50,7 @@
         <onCreateDefault/>
       </column>
       <column name="THRESHOLD_TO_FILTER" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[200]]></default>
+        <default><![CDATA[500]]></default>
         <onCreateDefault/>
       </column>
       <column name="ISLAZYFILTERING" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">

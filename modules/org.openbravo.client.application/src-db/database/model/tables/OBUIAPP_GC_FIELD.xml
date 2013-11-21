@@ -58,7 +58,7 @@
         <onCreateDefault/>
       </column>
       <column name="THRESHOLD_TO_FILTER" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[200]]></default>
+        <default><![CDATA[500]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_GC_FIELD_CLIENT">
