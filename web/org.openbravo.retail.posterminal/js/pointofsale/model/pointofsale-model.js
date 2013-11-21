@@ -510,26 +510,33 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       OB.Model.Discounts.applyPromotions(receipt);
     }, this);
     receipt.on('voidLayaway', function () {
-      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
-      process.exec({
-        order: receipt
-      }, function (data, message) {
-        if (data && data.exception) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
-        } else {
-          OB.Dal.remove(receipt, null, function (tx, err) {
-            OB.UTIL.showError(err);
-          });
-          receipt.trigger('print');
-          if (receipt.get('layawayGross')) {
-            receipt.set('layawayGross', null);
-          }
-          orderList.deleteCurrent();
-          receipt.trigger('change:gross', receipt);
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
-        }
-      });
+      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway'),
+          auxReceipt = new OB.Model.Order();
+      if (OB.MobileApp.model.get('connectedToERP')) {
+        auxReceipt.clearWith(receipt);
+        OB.UTIL.cashUpReport(auxReceipt);
+        process.exec({
+          order: receipt
+        }, function (data, message) {
+          if (data && data.exception) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
+          } else {
+            OB.Dal.remove(receipt, null, function (tx, err) {
+              OB.UTIL.showError(err);
+            });
+            receipt.trigger('print');
+            if (receipt.get('layawayGross')) {
+              receipt.set('layawayGross', null);
+            }
+            orderList.deleteCurrent();
+            receipt.trigger('change:gross', receipt);
 
+            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
+          }
+        });
+      } else {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+      }
     }, this);
   },
 

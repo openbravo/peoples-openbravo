@@ -15,37 +15,47 @@
   OB.UTILS = window.OB.UTILS || {};
 
   OB.UTIL.cashUpReport = function (receipt, sucessCallback) {
-    var auxPay, orderType, taxAmount;
+    var auxPay, orderType, taxOrderType, taxAmount;
     OB.Dal.find(OB.Model.CashUp, {
       'isbeingprocessed': 'N'
     }, function (cashUp) {
       orderType = receipt.get('orderType');
       if (cashUp.length !== 0) {
-        if (orderType !== 1) {
+        if (orderType === 0 || orderType === 2) {
           cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), receipt.get('net')));
           cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), receipt.get('gross')));
-        } else {
+        } else if (orderType === 1) {
           cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), -receipt.get('net')));
           cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), -receipt.get('gross')));
+        } else if (orderType === 3) {
+          cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), -receipt.get('net')));
+          cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), -receipt.get('gross')));
         }
         cashUp.at(0).set('totalRetailTransactions', OB.DEC.sub(cashUp.at(0).get('grossSales'), cashUp.at(0).get('grossReturns')));
         OB.Dal.save(cashUp.at(0), null, null);
         for (var i in receipt.get('taxes')) {
-          if (orderType !== 1) {
+          if (orderType === 3) {
+            taxOrderType = 0;
+          } else if (orderType === 2) {
+            taxOrderType = 0;
+          } else {
+            taxOrderType = orderType;
+          }
+          if (orderType !== 1 && orderType !== 3) {
             taxAmount = receipt.get('taxes')[i].amount;
           } else {
             taxAmount = -receipt.get('taxes')[i].amount;
           }
           OB.Dal.find(OB.Model.TaxCashUp, {
             'tax_id': i,
-            'orderType': orderType.toString()
+            'orderType': taxOrderType.toString()
           }, function (tax) {
             if (tax.length === 0) {
               OB.Dal.save(new OB.Model.TaxCashUp({
                 tax_id: i,
                 name: receipt.get('taxes')[i].name,
                 amount: taxAmount,
-                orderType: orderType.toString(),
+                orderType: taxOrderType.toString(),
                 cashup_id: cashUp.at(0).get('id')
               }), null, null);
             } else {
@@ -61,10 +71,12 @@
             auxPay = payMthds.filter(function (payMthd) {
               return payMthd.get('searchKey') === payment.get('kind');
             })[0];
-            if (orderType !== 1) {
-              auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('origAmount')));
-            } else {
-              auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), payment.get('origAmount')));
+            if (orderType === 0 || orderType === 2) {
+              auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
+            } else if (orderType === 1) {
+              auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), payment.get('amount')));
+            } else if (orderType === 3) {
+              auxPay.set('totalSales', OB.DEC.sub(auxPay.get('totalSales'), payment.get('amount')));
             }
             OB.Dal.save(auxPay, null, null);
           }, this);
