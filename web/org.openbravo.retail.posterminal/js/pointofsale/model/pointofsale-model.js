@@ -39,7 +39,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterRole'
   },
-  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.PaymentMethodCashUp],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.PaymentMethodCashUp, OB.Model.TaxCashUp],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
@@ -164,14 +164,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         uuid = OB.Dal.get_uuid();
         OB.Dal.save(new OB.Model.CashUp({
           id: uuid,
+          netSales: '0',
+          grossSales: '0',
+          netReturns: '0',
+          grossReturns: '0',
+          totalRetailTransactions: '0',
           isbeingprocessed: 'N'
         }), function () {
           _.each(OB.POS.modelterminal.get('payments'), function (payment) {
             OB.Dal.save(new OB.Model.PaymentMethodCashUp({
               id: payment.payment.id,
-              payName: payment.payment._identifier,
+              searchKey: payment.payment.searchKey,
+              name: payment.payment._identifier,
               startingCash: '0',
-              totalTendered: '0',
+              totalSales: '0',
+              totalReturns: '0',
               rate: payment.rate,
               cashup_id: uuid
             }), null, null, true);

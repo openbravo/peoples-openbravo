@@ -71,7 +71,7 @@ enyo.kind({
     } else {
       this.$.totalLbl.setContent(this.label);
     }
-    this.$.totalQty.setContent(OB.I18N.formatCurrency(this.value));
+    this.$.totalQty.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.value)));
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -133,15 +133,15 @@ enyo.kind({
     } else {
       this.$.itemLbl.setContent(this.label);
     }
-    this.$.itemQty.setContent(OB.I18N.formatCurrency(this.value));
+    this.$.itemQty.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.value)));
 
     if (this.second && this.second !== this.value && this.convertedValues.indexOf(this.type) !== -1) {
       this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.second) + ' ' + this.isocode + ')');
-    } else if (this.rate && this.rate !== '1' && this.valuestoConvert.indexOf(this.type) !== -1) {
+    } else if (this.origAmount && this.value !== this.origAmount && this.valuestoConvert.indexOf(this.type) !== -1) {
       if (this.value) {
         this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.value) + ' ' + this.isocode + ')');
       }
-      this.$.itemQty.setContent(OB.I18N.formatCurrency(OB.DEC.mul(this.value, this.rate)));
+      this.$.itemQty.setContent(OB.I18N.formatCurrency(this.origAmount));
     } else {
       this.$.foreignItemQty.setContent('');
     }
@@ -149,12 +149,13 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     if (this.model) {
-      this.label = this.model[this.lblProperty];
-      this.value = this.model[this.qtyProperty];
+      this.label = this.model.get(this.lblProperty);
+      this.value = this.model.get(this.qtyProperty);
       this.type = this.owner.typeProperty;
-      this.second = this.model.second;
-      this.rate = this.model.rate;
-      this.isocode = this.model.isocode;
+      this.second = this.model.get('second'); //FIXME: Foreign amount
+      this.rate = this.model.get('rate');
+      this.origAmount = this.model.get('origAmount');
+      this.isocode = this.model.get('isocode');
     }
   }
 });
@@ -183,8 +184,8 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'salestaxes',
-    lblProperty: 'taxName',
-    qtyProperty: 'taxAmount'
+    lblProperty: 'name',
+    qtyProperty: 'amount'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totalsales',
@@ -208,8 +209,8 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'retunrnstaxes',
-    lblProperty: 'taxName',
-    qtyProperty: 'taxAmount'
+    lblProperty: 'name',
+    qtyProperty: 'amount'
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
     name: 'totalreturns',
@@ -538,7 +539,32 @@ enyo.kind({
     this.$.user.setContent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier);
     this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + new Date().toString().substring(3, 24));
   },
-  init: function () {},
+  init: function (model) {
+    this.model = model;
+    this.model.get('cashUpReport').on('add', function (cashUpReport) {
+      this.$.sales.setCollection(cashUpReport.get('salesTaxes'));
+      this.$.sales.setValue('netsales', cashUpReport.get('netSales'));
+      this.$.sales.setValue('totalsales', cashUpReport.get('grossSales'));
+      this.$.returns.setCollection(cashUpReport.get('returnsTaxes'));
+      this.$.returns.setValue('netreturns', cashUpReport.get('netReturns'));
+      this.$.returns.setValue('totalreturns', cashUpReport.get('grossReturns'));
+
+      this.$.totaltransactions.setValue('totaltransactionsline', cashUpReport.get('totalRetailTransactions'));
+
+      this.$.startingsTable.setCollection(cashUpReport.get('startings'));
+      this.$.startingsTable.setValue('totalstartings', cashUpReport.get('totalStartings'));
+
+      this.$.dropsTable.setCollection(cashUpReport.get('drops'));
+      this.$.dropsTable.setValue('totaldrops', cashUpReport.get('totalDrops'));
+
+      this.$.depositsTable.setCollection(cashUpReport.get('deposits'));
+      this.$.depositsTable.setValue('totaldeposits', cashUpReport.get('totalDeposits'));
+    }, this);
+
+    this.model.on('change:time', function () {
+      this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
+    }, this);
+  },
   summaryChanged: function () {
     this.$.expectedTable.setCollection(this.summary.expectedSummary);
     this.$.expectedTable.setValue('totalexpected', this.summary.totalExpected);
@@ -554,30 +580,5 @@ enyo.kind({
 
     this.$.qtyToDepoTable.setCollection(this.summary.qtyToDepoSummary);
     this.$.qtyToDepoTable.setValue('totalqtyToDepo', this.summary.totalQtyToDepo);
-  },
-  modelChanged: function () {
-
-    this.$.sales.setCollection(this.model.get('salesTaxes'));
-    this.$.sales.setValue('netsales', this.model.get('netSales'));
-    this.$.sales.setValue('totalsales', this.model.get('grossSales'));
-
-    this.$.returns.setCollection(this.model.get('returnsTaxes'));
-    this.$.returns.setValue('netreturns', this.model.get('netReturns'));
-    this.$.returns.setValue('totalreturns', this.model.get('grossReturns'));
-
-    this.$.totaltransactions.setValue('totaltransactionsline', this.model.get('totalRetailTransactions'));
-
-    this.$.startingsTable.setCollection(this.model.get('startings'));
-    this.$.startingsTable.setValue('totalstartings', this.model.get('totalStartings'));
-
-    this.$.dropsTable.setCollection(this.model.get('drops'));
-    this.$.dropsTable.setValue('totaldrops', this.model.get('totalDrops'));
-
-    this.$.depositsTable.setCollection(this.model.get('deposits'));
-    this.$.depositsTable.setValue('totaldeposits', this.model.get('totalDeposits'));
-
-    this.model.on('change:time', function () {
-      this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
-    }, this);
   }
 });

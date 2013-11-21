@@ -52,9 +52,13 @@
         receipt: model.get('order')
       }, function (args) {
         var receipt = args.context.receipt,
+            auxReceipt = new OB.Model.Order(),
             currentDocNo = receipt.get('documentNo') || docno;
 
         receipt.set('json', JSON.stringify(receipt.toJSON()));
+
+        auxReceipt.clearWith(receipt);
+        OB.UTIL.cashUpReport(auxReceipt);
 
         OB.Dal.save(receipt, function () {
           var successCallback = function (model) {

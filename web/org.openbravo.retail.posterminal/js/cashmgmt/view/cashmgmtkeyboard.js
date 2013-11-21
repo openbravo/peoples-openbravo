@@ -74,5 +74,6 @@ enyo.kind({
       name: 'cashmgmt',
       buttons: buttons
     });
+    this.showToolbar('cashmgmt');
   }
 });

@@ -212,8 +212,6 @@ enyo.kind({
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.setCollection(this.model.get('paymentList'));
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.total.setTotal(this.model.get('totalExpected'));
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(0, this.model.get('totalExpected')));
-    this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.setPayments(this.model.getData('DataCloseCashPaymentMethod'));
-
     this.model.on('change:totalCounted', function () {
       this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.diference.setTotal(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
@@ -226,16 +224,18 @@ enyo.kind({
     }, this);
 
     // Cash to keep - Step 3.
-    this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
-
     this.model.on('change:stepOfStep3', function (model) {
       this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.disableSelection();
       this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
       this.refresh();
     }, this);
-    this.model.get('paymentList').at(this.model.get('stepOfStep3')).on('change:foreignCounted', function () {
+    //FIXME:It is triggered only once, but it is not the best way to do it
+    this.model.get('paymentList').on('reset', function () {
+      this.model.get('paymentList').at(this.model.get('stepOfStep3')).on('change:foreignCounted', function () {
       this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
+      }, this);
     }, this);
+
     // Cash Up Report - Step 4
     //this data doesn't changes
     this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
@@ -334,7 +334,7 @@ enyo.kind({
     if (this.model.isPaymentMethodListVisible()) {
       this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarcountcash');
     } else {
-      if (this.model.get('paymentList').at(this.model.get('stepOfStep3')).get('paymentMethod').allowvariableamount) {
+      if (this.model.get('paymentList').length !== 0 && this.model.get('paymentList').at(this.model.get('stepOfStep3')).get('paymentMethod').allowvariableamount) {
         this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarother');
       } else {
         this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar('toolbarempty');

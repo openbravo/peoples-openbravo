@@ -57,35 +57,40 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanAvailable'));
         return;
       }
-      addedCashMgmt = new OB.Model.CashManagement({
-        id: OB.Dal.get_uuid(),
-        description: p.identifier + ' - ' + model.get('name'),
-        amount: p.amount,
-        origAmount: OB.DEC.mul(p.amount, p.rate),
-        type: p.type,
-        reasonId: model.get('id'),
-        paymentMethodId: p.id,
-        user: OB.POS.modelterminal.get('context').user._identifier,
-        time: new Date().toString().substring(16, 21),
-        isocode: p.isocode,
-        isbeingprocessed: 'N'
-      });
 
-      this.depsdropstosave.add(addedCashMgmt);
+      OB.Dal.find(OB.Model.CashUp, {
+        'isbeingprocessed': 'N'
+      }, function (cashUp) {
+        addedCashMgmt = new OB.Model.CashManagement({
+          id: OB.Dal.get_uuid(),
+          description: p.identifier + ' - ' + model.get('name'),
+          amount: p.amount,
+          origAmount: OB.DEC.mul(p.amount, p.rate),
+          type: p.type,
+          reasonId: model.get('id'),
+          paymentMethodId: p.id,
+          user: OB.POS.modelterminal.get('context').user._identifier,
+          time: new Date().toString().substring(16, 21),
+          isocode: p.isocode,
+          cashup_id: cashUp.at(0).get('id'),
+          isbeingprocessed: 'N'
+        });
+        me.depsdropstosave.add(addedCashMgmt);
 
-      selectedPayment = payments.filter(function (payment) {
-        return payment.get('id') === p.id;
-      })[0];
-      if (selectedPayment.get('listdepositsdrops')) {
-        selectedPayment.get('listdepositsdrops').push(addedCashMgmt);
-        selectedPayment.trigger('change');
-      } else {
-        selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
-      }
+        selectedPayment = payments.filter(function (payment) {
+          return payment.get('id') === p.id;
+        })[0];
+        if (selectedPayment.get('listdepositsdrops')) {
+          selectedPayment.get('listdepositsdrops').push(addedCashMgmt);
+          selectedPayment.trigger('change');
+        } else {
+          selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
+        }
 
-      if (p.iscash || p.allowopendrawer) {
-        OB.POS.hwserver.openDrawer();
-      }
+        if (p.iscash || p.allowopendrawer) {
+          OB.POS.hwserver.openDrawer();
+        }
+      }, null, this);
     }, this);
 
     this.depsdropstosave.on('makeDeposits', function () {

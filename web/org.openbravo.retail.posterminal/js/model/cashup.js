@@ -17,14 +17,19 @@
     entityName: '',
     source: '',
     local: true,
-    properties: ['id', 'isbeingprocessed'],
+    properties: ['id', 'netSales', 'grossSales', 'netReturns', 'grossReturns', 'totalRetailTransactions', 'isbeingprocessed'],
     propertyMap: {
       'id': 'cashup_id',
+      'netSales': 'netSales',
+      'grossSales': 'grossSales',
+      'netReturns': 'netReturns',
+      'grossReturns': 'grossReturns',
+      'totalRetailTransactions': 'totalRetailTransactions',
       'isbeingprocessed': 'isbeingprocessed'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS cashup (cashup_id TEXT PRIMARY KEY, isbeingprocessed TEXT)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS cashup (cashup_id TEXT PRIMARY KEY, netSales TEXT, grossSales TEXT, netReturns TEXT, grossReturns TEXT, totalRetailTransactions TEXT, isbeingprocessed TEXT)',
     dropStatement: 'DROP TABLE IF EXISTS cashup',
-    insertStatement: 'INSERT INTO cashup(cashup_id, isbeingprocessed) VALUES (?,?)',
+    insertStatement: 'INSERT INTO cashup(cashup_id, netSales, grossSales, netReturns, grossReturns, totalRetailTransactions, isbeingprocessed) VALUES (?,?,?,?,?,?,?)',
   });
 
   window.OB.Model.CashUp = CashUp;

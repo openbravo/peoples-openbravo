@@ -42,7 +42,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     //Check for orders wich are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
-    var undf;
+    var undf, me = this,
+        expected = 0,
+        totalStartings = 0,
+        startings = [],
+        cashUpReport, tempList = new Backbone.Collection();
     this.arePendingOrdersToBeProcess();
 
     //steps
@@ -51,15 +55,139 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     this.set('stepOfStep3', 0);
 
     this.set('orderlist', new OB.Collection.OrderList());
-    this.set('paymentList', this.getData('DataCloseCashPaymentMethod'));
+    this.set('paymentList', new Backbone.Collection());
+    OB.Dal.find(OB.Model.CashUp, {
+      'isbeingprocessed': 'N'
+    }, function (cashUp) {
+      OB.Dal.find(OB.Model.PaymentMethodCashUp, {
+        'cashup_id': cashUp.at(0).get('id')
+      }, function (payMthds) { //OB.Dal.find success
+        _.each(OB.POS.modelterminal.get('payments'), function (payment, index) {
+          expected = 0;
+          var auxPay = payMthds.filter(function (payMthd) {
+            return payMthd.get('id') === payment.payment.id;
+          })[0];
+          auxPay.set('_id', payment.payment.searchKey);
+          auxPay.set('isocode', payment.isocode);
+          auxPay.set('paymentMethod', payment.paymentMethod);
+          auxPay.set('id', payment.payment.id);
+          OB.Dal.find(OB.Model.CashManagement, {
+            'cashup_id': cashUp.at(0).get('id'),
+            'paymentMethodId': payment.payment.id
+          }, function (cashMgmts, args) {
+            expected = OB.DEC.add(OB.DEC.add(OB.DEC.mul(auxPay.get('startingCash'), auxPay.get('rate')), OB.DEC.sub(auxPay.get('totalSales'), auxPay.get('totalReturns'))), _.reduce(cashMgmts.models, function (accum, trx) {
+              if (trx.get('origAmount') !== trx.get('amount')) {
+                if (trx.get('type') === 'deposit') {
+                  return OB.DEC.add(accum, trx.get('origAmount'));
+                } else {
+                  return OB.DEC.sub(accum, trx.get('origAmount'));
+                }
+              } else {
+                if (trx.get('type') === 'deposit') {
+                  return OB.DEC.add(accum, trx.get('amount'));
+                } else {
+                  return OB.DEC.sub(accum, trx.get('amount'));
+                }
+              }
+            }, 0));
+            auxPay.set('expected', expected);
+            auxPay.set('foreignExpected', OB.DEC.div(expected, auxPay.get('rate')));
+            tempList.add(auxPay);
+            if (args.index === OB.POS.modelterminal.get('payments').length - 1) {
+              me.get('paymentList').reset(tempList.models);
+              me.set('totalExpected', _.reduce(me.get('paymentList').models, function (total, model) {
+                return OB.DEC.add(total, model.get('expected'));
+              }, 0));
+              me.set('totalDifference', OB.DEC.sub(me.get('totalDifference'), me.get('totalExpected')));
+            }
+          }, null, {
+            me: me,
+            index: index
+          });
+        }, this);
+      });
+    }, this);
+
     this.convertExpected();
     this.setIgnoreStep3();
-    this.set('cashUpReport', this.getData('DataCashCloseReport'));
 
-    this.set('totalExpected', _.reduce(this.get('paymentList').models, function (total, model) {
-      return OB.DEC.add(total, model.get('expected'));
-    }, 0));
-    this.set('totalDifference', OB.DEC.sub(this.get('totalDifference'), this.get('totalExpected')));
+    this.set('cashUpReport', new Backbone.Collection());
+    OB.Dal.find(OB.Model.CashUp, {
+      'isbeingprocessed': 'N'
+    }, function (cashUp) {
+      cashUpReport = cashUp.at(0);
+      OB.Dal.find(OB.Model.CashManagement, {
+        'cashup_id': cashUpReport.get('id'),
+        'type': 'deposit'
+      }, function (cashMgmts) {
+        cashUpReport.set('deposits', cashMgmts.models);
+        cashUpReport.set('totalDeposits', _.reduce(cashMgmts.models, function (accum, trx) {
+          return OB.DEC.add(accum, trx.get('origAmount'));
+        }, 0));
+      }, this);
+      OB.Dal.find(OB.Model.CashManagement, {
+        'cashup_id': cashUpReport.get('id'),
+        'type': 'drop'
+      }, function (cashMgmts) {
+        cashUpReport.set('drops', cashMgmts.models);
+        cashUpReport.set('totalDrops', _.reduce(cashMgmts.models, function (accum, trx) {
+          return OB.DEC.add(accum, trx.get('origAmount'));
+        }, 0));
+      }, this);
+      OB.Dal.find(OB.Model.TaxCashUp, {
+        'cashup_id': cashUpReport.get('id'),
+        'orderType': {
+          operator: '!=',
+          value: '1'
+        }
+      }, function (taxcashups) {
+        cashUpReport.set('salesTaxes', taxcashups.models);
+      }, this);
+      OB.Dal.find(OB.Model.TaxCashUp, {
+        'cashup_id': cashUpReport.get('id'),
+        'orderType': '1'
+      }, function (taxcashups) {
+        cashUpReport.set('returnsTaxes', taxcashups.models);
+      }, this);
+      OB.Dal.find(OB.Model.PaymentMethodCashUp, {
+        'cashup_id': cashUpReport.get('id')
+      }, function (payMthds) { //OB.Dal.find success
+        cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
+          return OB.DEC.add(accum, trx.get('startingCash'));
+        }, 0));
+        _.each(payMthds.models, function (p, index) {
+          var auxPay = OB.POS.modelterminal.get('payments').filter(function (pay) {
+            return pay.payment.id === p.get('id');
+          })[0];
+          cashUpReport.get('deposits').push(new Backbone.Model({
+            origAmount: OB.DEC.add(0, p.get('totalSales')),
+            amount: OB.DEC.div(p.get('totalSales'), p.get('rate')),
+            description: OB.I18N.getLabel('OBPOS_Sales', [p.get('name')]),
+            isocode: auxPay.isocode,
+            rate: p.get('rate')
+          }));
+          cashUpReport.set('totalDeposits', OB.DEC.add(cashUpReport.get('totalDeposits'), p.get('totalSales')));
+          cashUpReport.get('drops').push(new Backbone.Model({
+            origAmount: OB.DEC.add(0, p.get('totalReturns')),
+            amount: OB.DEC.div(p.get('totalReturns'), p.get('rate')),
+            description: OB.I18N.getLabel('OBPOS_Returns', [p.get('name')]),
+            isocode: auxPay.isocode,
+            rate: p.get('rate')
+          }));
+          cashUpReport.set('totalDrops', OB.DEC.add(cashUpReport.get('totalDrops'), p.get('totalReturns')));
+          startings.push(new Backbone.Model({
+            amount: p.get('startingCash'),
+            description: 'Starting ' + p.get('name'),
+            isocode: auxPay.isocode,
+            rate: p.get('rate')
+          }));
+        }, this);
+        cashUpReport.set('startings', startings);
+        //FIXME: We are not sure if other finds are done.
+        me.get('cashUpReport').add(cashUpReport);
+      }, this);
+
+    }, this);
 
     this.get('paymentList').on('change:counted', function (mod) {
       mod.set('difference', OB.DEC.sub(mod.get('counted'), mod.get('expected')));
@@ -259,12 +387,12 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       for (i = 0; i < this.get('paymentList').models.length; i++) {
         model = this.get('paymentList').models[i];
         if (!model.get(enumConcepts[counter])) {
-          countCashSummary[enumSummarys[counter]].push({
+          countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
             name: model.get('name'),
             value: 0,
             second: 0,
             isocode: ''
-          });
+          }));
         } else {
           switch (enumSummarys[counter]) {
           case 'qtyToKeepSummary':
@@ -286,12 +414,12 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
             value = model.get(enumConcepts[counter]);
             second = model.get(enumSecondConcepts[counter]);
           }
-          countCashSummary[enumSummarys[counter]].push({
+          countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
             name: model.get('name'),
             value: value,
             second: second,
             isocode: model.get('isocode')
-          });
+          }));
         }
       }
     }

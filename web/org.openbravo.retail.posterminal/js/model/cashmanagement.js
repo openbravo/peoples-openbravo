@@ -17,7 +17,7 @@
     entityName: '',
     source: '',
     local: true,
-    properties: ['id', 'description', 'amount', 'origAmount', 'type', 'reasonId', 'paymentMethodId', 'user', 'time', 'isocode', 'isbeingprocessed'],
+    properties: ['id', 'description', 'amount', 'origAmount', 'type', 'reasonId', 'paymentMethodId', 'user', 'time', 'isocode', 'cashup_id', 'isbeingprocessed'],
     propertyMap: {
       'id': 'cashmanagement_id',
       'description': 'description',
@@ -29,11 +29,12 @@
       'user': 'user',
       'time': 'time',
       'isocode': 'isocode',
+      'cashup_id': 'cashup_id',
       'isbeingprocessed': 'isbeingprocessed'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS cashmanagement (cashmanagement_id TEXT PRIMARY KEY, description TEXT, amount TEXT, origAmount TEXT, type TEXT, reasonId TEXT, paymentMethodId TEXT, user TEXT, time TEXT, isocode TEXT, isbeingprocessed TEXT)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS cashmanagement (cashmanagement_id TEXT PRIMARY KEY, description TEXT, amount TEXT, origAmount TEXT, type TEXT, reasonId TEXT, paymentMethodId TEXT, user TEXT, time TEXT, isocode TEXT, cashup_id TEXT, isbeingprocessed TEXT)',
     dropStatement: 'DROP TABLE IF EXISTS cashmanagement',
-    insertStatement: 'INSERT INTO cashmanagement(cashmanagement_id, description, amount, origAmount, type, reasonId, paymentMethodId, user, time, isocode, isbeingprocessed) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
+    insertStatement: 'INSERT INTO cashmanagement(cashmanagement_id, description, amount, origAmount, type, reasonId, paymentMethodId, user, time, isocode, cashup_id, isbeingprocessed) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
   });
 
   window.OB.Model.CashManagement = CashManagement;
