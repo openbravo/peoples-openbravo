@@ -1201,6 +1201,8 @@ public class OBViewFieldHandler {
     }
 
     public String getFieldProperties() {
+      // First obtain the gridConfigurationSettings which will be used in other places
+      getUIDefinition().establishGridConfigurationSettings(field);
 
       if (getClientClass().length() > 0) {
         return "editorType: 'OBClientClassCanvasItem', filterEditorType: 'TextItem', ";

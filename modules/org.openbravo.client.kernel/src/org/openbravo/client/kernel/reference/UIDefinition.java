@@ -135,9 +135,6 @@ public abstract class UIDefinition {
    * @return a JSONObject string which is used to initialize the formitem.
    */
   public String getFieldProperties(Field field) {
-    // First obtain the gridConfigurationSettings which will be used in other places
-    this.gridConfigurationSettings = this.obtainGridConfigurationSettings(field);
-
     if (field != null && field.isDisplayed() != null && !field.isDisplayed()) {
       return ""; // Not displayed fields use HiddenItem
     }
@@ -464,7 +461,7 @@ public abstract class UIDefinition {
     return result;
   }
 
-  protected JSONObject obtainGridConfigurationSettings(Field field) {
+  public void establishGridConfigurationSettings(Field field) {
     Boolean canSort = null;
     Boolean canFilter = null;
     Boolean filterOnChange = null;
@@ -474,7 +471,7 @@ public abstract class UIDefinition {
     JSONObject result = new JSONObject();
 
     if (field == null || field.getId() == null) {
-      return result;
+      this.gridConfigurationSettings = result;
     }
 
     if (canSort == null || canFilter == null || operator == null || filterOnChange == null
@@ -629,7 +626,7 @@ public abstract class UIDefinition {
     } catch (JSONException e) {
       log.error("Couldn't get field property value");
     }
-    return result;
+    this.gridConfigurationSettings = result;
   }
 
   // note can make sense to also enable hover of values for enums
