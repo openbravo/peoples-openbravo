@@ -40,7 +40,10 @@ enyo.kind({
       paymentType: this.args.name,
       paymentAmount: this.args.amount,
       key: this.args.key,
-      receipt: this.args.receipt
+      receipt: this.args.receipt,
+      allowOpenDrawer: this.args.paymentMethod.allowopendrawer,
+      isCash: this.args.paymentMethod.iscash,
+      openDrawer: this.args.paymentMethod.openDrawer
     }).render();
   },
   initComponents: function () {

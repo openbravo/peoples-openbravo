@@ -57,7 +57,10 @@ enyo.kind({
     this.owner.receipt.addPayment(new OB.Model.PaymentLine({
       'kind': this.owner.key,
       'name': this.owner.paymentType,
-      'amount': this.owner.paymentAmount
+      'amount': this.owner.paymentAmount,
+      'allowOpenDrawer': this.owner.allowOpenDrawer,
+      'isCash': this.owner.isCash,
+      'openDrawer': this.owner.openDrawer
     }));
 
     this.doHideThisPopup();

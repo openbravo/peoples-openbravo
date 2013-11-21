@@ -5273,14 +5273,14 @@ Usually, company's internal identifiers for various records (products, customers
 <!--E3E28160BEDC40048B4FFBC8B0315B19-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E3E28160BEDC40048B4FFBC8B0315B19-->  <NAME><![CDATA[Usebarcodescanner]]></NAME>
 <!--E3E28160BEDC40048B4FFBC8B0315B19-->  <DESCRIPTION><![CDATA[Check this property when an external barcode scanner will be used with this terminal type]]></DESCRIPTION>
-<!--E3E28160BEDC40048B4FFBC8B0315B19-->  <HELP><![CDATA[If this property is checked, the Web POS will take into account that an external barcode scanner is going to be used in this POS terminal type. Checking this option and then not connecting an external barcode will cause the virtual keyboard to be shown continuously in some devices (specifically, in iOS devices (iPads, iPhones)).
+<!--E3E28160BEDC40048B4FFBC8B0315B19-->  <HELP><![CDATA[If this property is checked, the Web POS will take into account that an external input (keyboard or barcode scanner) is going to be used in this POS terminal type. Checking this option and then not connecting an external inout will cause the virtual keyboard to be shown continuously in some devices (specifically, in iOS devices (iPads, iPhones)).
 
 If this option is not checked, then the barcode scanners will not be detected in the application even if they are correctly connected to the system.]]></HELP>
 <!--E3E28160BEDC40048B4FFBC8B0315B19-->  <COLUMNNAME><![CDATA[Usebarcodescanner]]></COLUMNNAME>
 <!--E3E28160BEDC40048B4FFBC8B0315B19-->  <AD_TABLE_ID><![CDATA[1ECA0B99F44F4FD1854B7DDA9292A75F]]></AD_TABLE_ID>
 <!--E3E28160BEDC40048B4FFBC8B0315B19-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
 <!--E3E28160BEDC40048B4FFBC8B0315B19-->  <FIELDLENGTH><![CDATA[1]]></FIELDLENGTH>
-<!--E3E28160BEDC40048B4FFBC8B0315B19-->  <DEFAULTVALUE><![CDATA[N]]></DEFAULTVALUE>
+<!--E3E28160BEDC40048B4FFBC8B0315B19-->  <DEFAULTVALUE><![CDATA[Y]]></DEFAULTVALUE>
 <!--E3E28160BEDC40048B4FFBC8B0315B19-->  <ISKEY><![CDATA[N]]></ISKEY>
 <!--E3E28160BEDC40048B4FFBC8B0315B19-->  <ISPARENT><![CDATA[N]]></ISPARENT>
 <!--E3E28160BEDC40048B4FFBC8B0315B19-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
