@@ -63,27 +63,7 @@ public class BPLocation extends ProcessHQLQuery {
             + " (bpl.$incrementalUpdateCriteria or bpl.businessPartner.$incrementalUpdateCriteria or bpl.locationAddress.$incrementalUpdateCriteria or ulist.$incrementalUpdateCriteria) AND bpl.businessPartner.active=true"
             + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.$readableClientCriteria AND "
             + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-            + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner))"
             + ") ORDER BY bploc.locationAddress.addressLine1");
-
-    hqlQueries
-        .add("select"
-            + regularBPLocationHQLProperties.getHqlSelect()
-            + "from BusinessPartnerLocation bploc "
-            + "where bploc.businessPartner.id in ("
-            + "SELECT "
-            + " bpl.businessPartner.id "
-            + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
-            + "WHERE "
-            + "bpl.invoiceToAddress = true AND "
-            + "bpl.businessPartner.customer = true AND "
-            + "bpl.businessPartner.priceList IS NOT NULL AND "
-            + "bpl.$readableClientCriteria AND "
-            + "bpl.$naturalOrgCriteria AND"
-            + "(bpl.$incrementalUpdateCriteria or bpl.businessPartner.$incrementalUpdateCriteria or bpl.locationAddress.$incrementalUpdateCriteria or ulist.$incrementalUpdateCriteria) AND bpl.businessPartner.active=true"
-            + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.$readableClientCriteria AND "
-            + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-            + " and ulist.id is null " + ") ORDER BY bploc.locationAddress.addressLine1");
 
     return hqlQueries;
   }
