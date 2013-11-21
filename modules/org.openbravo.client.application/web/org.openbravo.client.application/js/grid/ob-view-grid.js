@@ -435,7 +435,9 @@ isc.OBViewGrid.addProperties({
     if (this.showSortArrow === 'field') {
       // solves https://issues.openbravo.com/view.php?id=17362
       this.showSortArrow = isc.ListGrid.BOTH;
-      this.sorterDefaults = {};
+      if (!this.lazyFiltering) {
+        this.sorterDefaults = {};
+      }
     }
 
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
@@ -493,7 +495,9 @@ isc.OBViewGrid.addProperties({
   clearFilter: function () {
     // hide the messagebar
     this.view.messageBar.hide();
+    this._cleaningFilter = true;
     this.Super('clearFilter', arguments);
+    delete this._cleaningFilter;
   },
 
   // select the first field after the frozen fields

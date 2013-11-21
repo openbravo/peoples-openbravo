@@ -468,6 +468,7 @@ public abstract class UIDefinition {
     Boolean canSort = null;
     Boolean canFilter = null;
     Boolean filterOnChange = null;
+    Boolean lazyFiltering = null;
     String operator = null;
     Long thresholdToFilter = null;
     JSONObject result = new JSONObject();
@@ -550,6 +551,13 @@ public abstract class UIDefinition {
             filterOnChange = false;
           }
         }
+        if (lazyFiltering == null) {
+          if ("Y".equals(tabConfs.get(0).getIsLazyFiltering())) {
+            lazyFiltering = true;
+          } else if ("N".equals(tabConfs.get(0).getIsLazyFiltering())) {
+            lazyFiltering = false;
+          }
+        }
         if (thresholdToFilter == null) {
           thresholdToFilter = tabConfs.get(0).getThresholdToFilter();
         }
@@ -572,6 +580,9 @@ public abstract class UIDefinition {
         }
         if (filterOnChange == null) {
           filterOnChange = sysConfs.get(0).isFilterOnChange();
+        }
+        if (lazyFiltering == null) {
+          lazyFiltering = sysConfs.get(0).isLazyFiltering();
         }
         if (thresholdToFilter == null) {
           thresholdToFilter = sysConfs.get(0).getThresholdToFilter();
@@ -604,6 +615,10 @@ public abstract class UIDefinition {
       }
       if (operator != null) {
         result.put("operator", operator);
+      }
+      // If the tab uses lazy filtering, the fields should not filter on change
+      if (Boolean.TRUE.equals(lazyFiltering)) {
+        filterOnChange = false;
       }
       if (filterOnChange != null) {
         result.put("filterOnChange", filterOnChange);

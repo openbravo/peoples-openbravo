@@ -831,6 +831,19 @@ isc.DataSource.addProperties({
   }
 });
 
+isc.RecordEditor.addProperties({
+  _originalPerformFilter: isc.RecordEditor.getPrototype().performFilter,
+  performFilter: function (suppressPrompt, forceFilter) {
+    var grid = this.parentElement;
+    if (!grid.lazyFiltering || forceFilter || grid._cleaningFilter) {
+      if (grid && grid.sorter) {
+        grid.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-disabled.png');
+      }
+      this._originalPerformFilter(suppressPrompt);
+    }
+  }
+});
+
 // When filtering strings in backend, spaces are replaced by % in the resultant
 // ilike expression. For example if filter is "jo sm" the query will be 
 // "ilike '%jo%sm%'", so "John Smith" would be found. When filtering in client

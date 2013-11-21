@@ -376,7 +376,8 @@ isc.OBGrid.addProperties({
     // https://issues.openbravo.com/view.php?id=18509
     editorChanged: function (item) {
       var prop, same, opDefs, val = item.getElementValue(),
-          actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress;
+          actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress,
+          grid = this.parentElement;
 
       if (this.sourceWidget.allowFilterExpressions && val && actOnKeypress) {
 
@@ -419,8 +420,12 @@ isc.OBGrid.addProperties({
         delete this.currentThresholdToFilter;
       }
 
+      if (grid && grid.lazyFiltering) {
+        grid.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-enabled.png');
+      }
       return this.Super('editorChanged', arguments);
     },
+
 
     // function called to clear any pending performFilter calls
     // earlier type actions can already have pending filter actions
@@ -579,6 +584,21 @@ isc.OBGrid.addProperties({
           field.formatCellValue = formatCellValueFunction;
         }
       }
+    }
+
+    if (this.lazyFiltering) {
+      this.showSortArrow = isc.ListGrid.BOTH;
+      this.sorterDefaults = {
+        click: function () {
+          var grid = this.parentElement;
+          if (grid && grid.filterEditor) {
+            grid.filterEditor.performFilter(true, true);
+          }
+        },
+        align: "center",
+        prompt: OB.I18N.getLabel('OBUIAPP_ApplyFilters'),
+        icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-disabled.png'
+      };
     }
 
     this.Super('initWidget', arguments);

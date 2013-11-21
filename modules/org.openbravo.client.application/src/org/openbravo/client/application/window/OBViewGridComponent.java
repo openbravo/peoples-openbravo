@@ -26,6 +26,8 @@ import java.util.Map;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.window.OBViewFieldHandler.OBViewField;
 import org.openbravo.client.application.window.OBViewFieldHandler.OBViewFieldDefinition;
 import org.openbravo.client.application.window.OBViewTab.ButtonField;
@@ -311,5 +313,34 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       }
     }
     return null;
+  }
+
+  public boolean getLazyFiltering() {
+    Boolean lazyFiltering = null;
+
+    String tabConfsHql = " as p where p.tab.id = '" + tab.getId() + "' ";
+    // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
+    List<GCTab> tabConfs = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql).list();
+    if (!tabConfs.isEmpty()) {
+      if ("Y".equals(tabConfs.get(0).getIsLazyFiltering())) {
+        lazyFiltering = true;
+      } else if ("N".equals(tabConfs.get(0).getSortable())) {
+        lazyFiltering = false;
+      }
+    }
+    if (lazyFiltering == null) {
+      // Trying to get parameters from "Grid Configuration (System)" window
+      List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
+      if (!sysConfs.isEmpty()) {
+        if (lazyFiltering == null) {
+          lazyFiltering = sysConfs.get(0).isLazyFiltering();
+        }
+      }
+    }
+    if (lazyFiltering != null) {
+      return lazyFiltering;
+    } else {
+      return false;
+    }
   }
 }
