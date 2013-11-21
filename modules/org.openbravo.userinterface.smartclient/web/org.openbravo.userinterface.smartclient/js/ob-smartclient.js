@@ -836,9 +836,6 @@ isc.RecordEditor.addProperties({
   performFilter: function (suppressPrompt, forceFilter) {
     var grid = this.parentElement;
     if (!grid.lazyFiltering || forceFilter || grid._cleaningFilter) {
-      if (grid && grid.sorter) {
-        grid.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-disabled.png');
-      }
       this._originalPerformFilter(suppressPrompt);
     }
   }

@@ -591,8 +591,15 @@ isc.OBGrid.addProperties({
       this.sorterDefaults = {
         click: function () {
           var grid = this.parentElement;
-          if (grid && grid.filterEditor) {
+          if (grid.sortingHasChanged) {
+            delete grid.sortingHasChanged;
+            // Triggering the sort will also apply the filters
+            grid.setSort(grid.savedSortSpecifiers, true);
+          } else if (grid && grid.filterEditor) {
             grid.filterEditor.performFilter(true, true);
+          }
+          if (grid && grid.sorter) {
+            grid.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-disabled.png');
           }
         },
         align: "center",
@@ -900,6 +907,103 @@ isc.OBGrid.addProperties({
       }
     }
     return errorRows;
+  },
+
+
+  // Does not apply if the grid is filtering lazily
+  setSort: function (sortSpecifiers, forceSort) {
+    if (!forceSort && this.lazyFiltering) {
+      this.sortingHasChanged = true;
+      if (this.sorter) {
+        this.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-enabled.png');
+      }
+      this.savedSortSpecifiers = sortSpecifiers;
+      // Refresh the header button titles
+      this.refreshHeaderButtons();
+    } else {
+      this.Super('setSort', arguments);
+    }
+  },
+
+  getSortFieldCount: function () {
+    if (this.lazyFiltering) {
+      if (this.savedSortSpecifiers) {
+        return this.savedSortSpecifiers.length;
+      } else {
+        return 0;
+      }
+    } else {
+      return this.Super('getSortFieldCount', arguments);
+    }
+  },
+
+  refreshHeaderButtons: function () {
+    var i, headerButton;
+    for (i = 0; i < this.fields.length; i++) {
+      headerButton = this.getFieldHeaderButton(i);
+      if (headerButton) {
+        headerButton.setTitle(headerButton.getTitle());
+      }
+    }
+  },
+
+  toggleSort: function (fieldName, direction) {
+    var fullIdentifierName = fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+    if (this.lazyFiltering) {
+      // If the user clicks on a column that is already ordered, reverse the sort direction
+      if (this.savedSortSpecifiers && this.savedSortSpecifiers.length > 0) {
+        if (this.savedSortSpecifiers[0].property === fieldName || this.savedSortSpecifiers[0].property === fullIdentifierName) {
+          if (this.savedSortSpecifiers[0].direction === 'ascending') {
+            this.savedSortSpecifiers[0].direction = 'descending';
+          } else {
+            this.savedSortSpecifiers[0].direction = 'ascending';
+          }
+        }
+        if (this.sorter) {
+          this.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-enabled.png');
+        }
+        this.sortingHasChanged = true;
+        this.refreshHeaderButtons();
+      }
+    } else {
+      this.Super('setSort', arguments);
+    }
+  },
+
+  // If the grid is lazy filtering, a field will be considered ordered if it is saved in savedSortSpecifiers
+  isSortField: function (fieldName) {
+    var i, len, fullIdentifierName = fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+    if (this.lazyFiltering) {
+      if (!this.savedSortSpecifiers) {
+        return false;
+      } else {
+        //Search for the fieldName in the savedSortSpecifiers
+        len = this.savedSortSpecifiers.length;
+        for (i = 0; i < len; i++) {
+          if (this.savedSortSpecifiers[i].property === fieldName || this.savedSortSpecifiers[0].property === fullIdentifierName) {
+            return true;
+          }
+        }
+        return false;
+      }
+    } else {
+      return this.Super('isSortField', arguments);
+    }
+  },
+
+  getSortArrowImage: function (fieldNum) {
+    var sortDirection, field = this.getField(fieldNum),
+        fullIdentifierName = field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+    if (this.savedSortSpecifiers && this.savedSortSpecifiers.length > 0) {
+      if (this.savedSortSpecifiers[0].property === field.name || this.savedSortSpecifiers[0].property === fullIdentifierName) {
+        sortDirection = this.savedSortSpecifiers[0].direction;
+      }
+    }
+    if (sortDirection) {
+      return this.imgHTML(Array.shouldSortAscending(sortDirection) ? this.sortAscendingImage : this.sortDescendingImage, null, null, null, null, this.widgetImgDir);
+    } else {
+      return isc.Canvas.spacerHTML(1, 1);
+    }
   }
 });
 
