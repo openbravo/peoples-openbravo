@@ -140,14 +140,16 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   showPendingOrdersList: function () {
     return this.get('step') === 1;
   },
-  showPaymentMethodList: function () {
+  showPaymentMethodList: function (options) {
     var openDrawerPayment;
     if (this.get('step') === 2) {
-      openDrawerPayment = _.find(this.get('paymentList').models, function (payment) {
-        if (payment && payment.get('paymentMethod') && (payment.get('paymentMethod').iscash || payment.get('paymentMethod').allowopendrawer)) {
-          return true;
-        }
-      }, this);
+      if (options && options.stepChanged) {
+        openDrawerPayment = _.find(this.get('paymentList').models, function (payment) {
+          if (payment && payment.get('paymentMethod') && (payment.get('paymentMethod').iscash || payment.get('paymentMethod').allowopendrawer)) {
+            return true;
+          }
+        }, this);
+      }
       if (!OB.UTIL.isNullOrUndefined(openDrawerPayment)) {
         OB.POS.hwserver.openDrawer();
       }
@@ -255,11 +257,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     //First we fix the qty to keep for non-automated payment methods
     for (i = 0; i < this.get('paymentList').models.length; i++) {
       model = this.get('paymentList').models[i];
-      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))){
+      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
         model.set('qtyToKeep', model.get('counted'));
       }
     }
-    
+
     enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary', 'qtyToKeepSummary', 'qtyToDepoSummary'];
     enumConcepts = ['expected', 'counted', 'difference', 'qtyToKeep', 'foreignCounted'];
     enumSecondConcepts = ['foreignExpected', 'foreignCounted', 'foreignDifference', 'qtyToKeep', 'qtyToKeep'];

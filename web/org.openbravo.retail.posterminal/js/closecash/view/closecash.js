@@ -222,7 +222,7 @@ enyo.kind({
     }, this);
 
     this.model.on('change:step', function (model) {
-      this.refresh();
+      this.refresh({stepChanged: true});
     }, this);
 
     // Cash to keep - Step 3.
@@ -320,7 +320,7 @@ enyo.kind({
 
     this.refresh();
   },
-  refresh: function () {
+  refresh: function (options) {
     this.waterfall('onDisablePreviousButton', {
       disable: !this.model.allowPrevious()
     });
@@ -328,7 +328,7 @@ enyo.kind({
       disable: !this.model.allowNext()
     });
     this.$.cashupMultiColumn.$.leftPanel.$.listPendingReceipts.setShowing(this.model.showPendingOrdersList());
-    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList());
+    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.setShowing(this.model.showPaymentMethodList(options));
     this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setShowing(this.model.showCashToKeep());
     this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setShowing(this.model.showPostPrintClose());
     if (this.model.isPaymentMethodListVisible()) {
