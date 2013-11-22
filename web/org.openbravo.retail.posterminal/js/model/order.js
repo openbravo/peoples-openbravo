@@ -1515,8 +1515,8 @@
           documentseq, documentseqstr, receiptProperties, i, p;
 
       // reset in new order properties defined in Receipt Properties dialog
-      if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.$.pointOfSale && OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.receiptPropertiesDialog) {
-        receiptProperties = OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.receiptPropertiesDialog.newAttributes;
+      if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.getRoot() && OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog) {
+        receiptProperties = OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog.newAttributes;
         for (i = 0; i < receiptProperties.length; i++) {
           if (receiptProperties[i].modelProperty) {
             order.set(receiptProperties[i].modelProperty, '');
