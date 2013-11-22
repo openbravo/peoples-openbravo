@@ -476,10 +476,12 @@ public abstract class UIDefinition {
 
     if (canSort == null || canFilter == null || operator == null || filterOnChange == null
         || thresholdToFilter == null) {
-      String fieldConfsHql = " as p where p.field.id = '" + field.getId() + "' ";
+      List<Object> fieldParams = new ArrayList<Object>();
+      String fieldConfsHql = " as p where p.field.id = ? ";
+      fieldParams.add(field.getId());
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
-      List<GCField> fieldConfs = OBDal.getInstance().createQuery(GCField.class, fieldConfsHql)
-          .list();
+      List<GCField> fieldConfs = OBDal.getInstance()
+          .createQuery(GCField.class, fieldConfsHql, fieldParams).list();
       if (!fieldConfs.isEmpty()) {
         if (canSort == null) {
           if ("Y".equals(fieldConfs.get(0).getSortable())) {
@@ -517,9 +519,12 @@ public abstract class UIDefinition {
     if (canSort == null || canFilter == null || operator == null || filterOnChange == null
         || thresholdToFilter == null) {
       Tab tab = field.getTab();
-      String tabConfsHql = " as p where p.tab.id = '" + tab.getId() + "' ";
+      List<Object> tabParams = new ArrayList<Object>();
+      String tabConfsHql = " as p where p.tab.id = ? ";
+      tabParams.add(tab.getId());
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-      List<GCTab> tabConfs = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql).list();
+      List<GCTab> tabConfs = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql, tabParams)
+          .list();
       if (!tabConfs.isEmpty()) {
         if (canSort == null) {
           if ("Y".equals(tabConfs.get(0).getSortable())) {
