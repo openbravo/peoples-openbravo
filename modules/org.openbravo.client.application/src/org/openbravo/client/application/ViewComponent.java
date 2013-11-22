@@ -199,6 +199,17 @@ public class ViewComponent extends BaseComponent {
     return etag + "_" + getViewVersionHash();
   }
 
+  /**
+   * This function returns the last grid configuration change made into a window at any level (at
+   * whole system level or just a for particuar tab or field).
+   * 
+   * This value is needed for the eTag calculation, so, if there has been any grid configuration
+   * change, the eTag should change in order to load again the view definition.
+   * 
+   * @param window
+   *          the window to obtain its last grid configuration change
+   * @return a String with the last grid configuration change
+   */
   private String getLastGridConfigurationChange(Window window) {
     Date lastModification = new Date(0);
 

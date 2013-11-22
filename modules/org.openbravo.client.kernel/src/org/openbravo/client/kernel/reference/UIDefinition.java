@@ -461,6 +461,17 @@ public abstract class UIDefinition {
     return result;
   }
 
+  /**
+   * Obtains the grid configuration values for the given field and sets them into the
+   * 'gridConfigurationSettings' variable.
+   * 
+   * The aim of having all these values in a single variable at once is to make a single call to the
+   * database and then be able to use the values stored into 'gridConfigurationSettings' wherever it
+   * be needed (without more calls to the database).
+   * 
+   * @param field
+   *          the field for which the information should be computed.
+   */
   public void establishGridConfigurationSettings(Field field) {
     Boolean canSort = null;
     Boolean canFilter = null;
