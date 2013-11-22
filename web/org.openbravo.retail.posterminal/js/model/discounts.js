@@ -19,11 +19,11 @@
   OB.Model.Discounts = {
     discountRules: alreadyDefinedRules,
     executor: new OB.Model.DiscountsExecutor(),
-    calculatingBestDealCase: false,
+    preventApplyPromotions: false,
     applyPromotions: function (receipt, line) {
       var lines;
 
-      if (this.calculatingBestDealCase) {
+      if (this.preventApplyPromotions) {
         return;
       }
 

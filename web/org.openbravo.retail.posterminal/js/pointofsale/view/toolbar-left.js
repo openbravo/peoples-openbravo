@@ -219,7 +219,6 @@ enyo.kind({
   },
 
   tap: function () {
-    var me = this;
     if (this.disabled === false) {
       this.model.on('approvalChecked', function (event) {
         this.model.off('approvalChecked');
