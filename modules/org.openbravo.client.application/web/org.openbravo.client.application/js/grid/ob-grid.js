@@ -413,7 +413,7 @@ isc.OBGrid.addProperties({
         }
       }
 
-      if (item.thresholdToFilter && item.thresholdToFilter > 500) {
+      if (item.thresholdToFilter && item.thresholdToFilter > grid.fetchDelay) {
         this.currentThresholdToFilter = item.thresholdToFilter;
       } else {
         delete this.currentThresholdToFilter;
