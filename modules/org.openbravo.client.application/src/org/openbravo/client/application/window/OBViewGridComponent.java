@@ -324,7 +324,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     if (!tabConfs.isEmpty()) {
       if ("Y".equals(tabConfs.get(0).getIsLazyFiltering())) {
         lazyFiltering = true;
-      } else if ("N".equals(tabConfs.get(0).getSortable())) {
+      } else if ("N".equals(tabConfs.get(0).getIsLazyFiltering())) {
         lazyFiltering = false;
       }
     }
