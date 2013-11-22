@@ -38,6 +38,7 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
@@ -320,10 +321,15 @@ public class OBViewGridComponent extends BaseTemplateComponent {
    */
   public boolean getLazyFiltering() {
     Boolean lazyFiltering = null;
+    List<Object> parameterList = new ArrayList<Object>();
 
-    String tabConfsHql = " as p where p.tab.id = '" + tab.getId() + "' ";
+    String tabConfsHql = " as p where p.tab.id = ? ";
+    parameterList.add(tab.getId());
+
     // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-    List<GCTab> tabConfs = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql).list();
+    OBQuery<GCTab> query = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql);
+    query.setParameters(parameterList);
+    List<GCTab> tabConfs = query.list();
     if (!tabConfs.isEmpty()) {
       if ("Y".equals(tabConfs.get(0).getIsLazyFiltering())) {
         lazyFiltering = true;
