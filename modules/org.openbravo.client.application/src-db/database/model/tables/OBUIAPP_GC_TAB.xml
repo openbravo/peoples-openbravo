@@ -49,8 +49,8 @@
         <default><![CDATA[D]]></default>
         <onCreateDefault/>
       </column>
-      <column name="THRESHOLD_TO_FILTER" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[500]]></default>
+      <column name="THRESHOLD_TO_FILTER" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <column name="ISLAZYFILTERING" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
