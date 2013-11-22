@@ -431,7 +431,7 @@ isc.OBGrid.addProperties({
     // earlier type actions can already have pending filter actions
     // this deletes them
     preventPerformFilterFiring: function () {
-      this.fireOnPause("performFilter", {}, this.fetchDelay);
+      this.fireOnPause('performFilter', {}, this.fetchDelay);
     },
 
     // If the criteria contains an 'or' operator due to the changes made for solving
@@ -611,7 +611,7 @@ isc.OBGrid.addProperties({
             grid.sorter.disable();
           }
         },
-        align: "center",
+        align: 'center',
         prompt: OB.I18N.getLabel('OBUIAPP_ApplyFilters'),
         icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/applyPendingChanges.png'
       };

@@ -1335,7 +1335,7 @@ isc.OBViewGrid.addProperties({
       }
     };
     OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveUpWhileEditing', 'OBViewGrid.body', ksAction_MoveUpWhileEditing, null, {
-      "key": "Arrow_Up"
+      'key': 'Arrow_Up'
     });
 
     // This is JUST for the case of an editing row with the whole row in "read only mode"
@@ -1352,7 +1352,7 @@ isc.OBViewGrid.addProperties({
       }
     };
     OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveDownWhileEditing', 'OBViewGrid.body', ksAction_MoveDownWhileEditing, null, {
-      "key": "Arrow_Down"
+      'key': 'Arrow_Down'
     });
 
     ksAction_CancelEditing = function () {
@@ -1831,7 +1831,7 @@ isc.OBViewGrid.addProperties({
       criteria.operator = 'and';
     }
     if (!criteria._constructor) {
-      criteria._constructor = "AdvancedCriteria";
+      criteria._constructor = 'AdvancedCriteria';
     }
 
     if (!criteria.criteria) {
@@ -1842,7 +1842,7 @@ isc.OBViewGrid.addProperties({
       // do not filter on anything with a targetrecord
       criteria = {
         operator: 'and',
-        _constructor: "AdvancedCriteria",
+        _constructor: 'AdvancedCriteria',
         criteria: []
       };
 
@@ -1916,7 +1916,7 @@ isc.OBViewGrid.addProperties({
           }
 
           for (j = 0; j < this.fields.length; j++) {
-            if (this.fields[j].name === fieldName && isc.SimpleType.getType(this.fields[j].type).inheritsFrom === "datetime") {
+            if (this.fields[j].name === fieldName && isc.SimpleType.getType(this.fields[j].type).inheritsFrom === 'datetime') {
               if (criteria.criteria[i].criteria) {
                 for (k = 0; k < criteria.criteria[i].criteria.length; k++) {
                   criteria.criteria[i].criteria[k].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
@@ -2005,7 +2005,7 @@ isc.OBViewGrid.addProperties({
 
     if (this.filterClause) {
       if (this.whereClause) {
-        params[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ")) ";
+        params[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ')) ';
       } else {
         params[OB.Constants.WHERE_PARAMETER] = this.filterClause;
       }
@@ -3056,7 +3056,7 @@ isc.OBViewGrid.addProperties({
 
   //used in Edit or Delete only UI pattern
   setListEndEditAction: function () {
-    this.listEndEditAction = "done";
+    this.listEndEditAction = 'done';
   },
 
   // overridden to take into account disabled at item level
@@ -3101,7 +3101,7 @@ isc.OBViewGrid.addProperties({
     // nothing changed just fire the calback and bail
     if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged && !this.getEditForm().isNew) {
       if (originalCallback) {
-        this.fireCallback(originalCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
+        this.fireCallback(originalCallback, 'rowNum,colNum,editCompletionEvent,success', [rowNum, colNum, editCompletionEvent]);
       }
       return true;
     }
@@ -3124,7 +3124,7 @@ isc.OBViewGrid.addProperties({
             this.view.newRecordsAfterRefresh.push(this.getSelectedRecord()[OB.Constants.ID]);
           }
         }
-        this.fireCallback(originalCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
+        this.fireCallback(originalCallback, 'rowNum,colNum,editCompletionEvent,success', [rowNum, colNum, editCompletionEvent]);
       }
     };
 
