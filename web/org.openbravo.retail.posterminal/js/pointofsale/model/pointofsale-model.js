@@ -533,6 +533,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   },
 
   /**
+   * This method is invoked before paying a ticket, it is intended to do global
+   * modifications in the ticket with OBPOS_PrePaymentHook hook, after this hook
+   * execution checkPaymentApproval is invoked
+   */
+  completePayment: function () {
+    var me = this;
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_PrePaymentHook', {
+      context: this
+    }, function () {
+      me.checkPaymentApproval();
+    });
+  },
+
+  /**
    * Hooks for OBPOS_CheckPaymentApproval can modify args.approved to check if
    * payment is approved. In case value is true the process will continue, if not
    * it is aborted
