@@ -25,7 +25,6 @@ isc.OBGrid.addProperties({
 
   reverseRTLAlign: true,
   dragTrackerMode: 'none',
-
   // recycle gives better performance but also results
   // in strange results that not all record components are
   // drawn when scrolling very fast
@@ -422,7 +421,7 @@ isc.OBGrid.addProperties({
 
       if (grid && grid.lazyFiltering) {
         grid.filterHasChanged = true;
-        grid.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-enabled.png');
+        grid.sorter.enable();
       }
       return this.Super('editorChanged', arguments);
     },
@@ -599,17 +598,22 @@ isc.OBGrid.addProperties({
             delete grid.filterHasChanged;
             delete grid.sortingHasChanged;
             delete grid._filteringAndSortingManually;
+          } else if (!isc.isA.ResultSet(grid.data)) {
+            // The initial data has not been loaded yet, refreshGrid
+            // refreshGrid applies also the current sorting
+            grid.refreshGrid();
+            delete grid.sortingHasChanged;
           } else if (grid.sortingHasChanged) {
             grid.setSort(grid.savedSortSpecifiers, true);
             delete grid.sortingHasChanged;
           }
           if (grid && grid.sorter) {
-            grid.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-disabled.png');
+            grid.sorter.disable();
           }
         },
         align: "center",
         prompt: OB.I18N.getLabel('OBUIAPP_ApplyFilters'),
-        icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-disabled.png'
+        icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/applyPendingChanges.png'
       };
     }
 
@@ -920,13 +924,23 @@ isc.OBGrid.addProperties({
     if (!forceSort && this.lazyFiltering) {
       this.sortingHasChanged = true;
       if (this.sorter) {
-        this.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-enabled.png');
+        this.sorter.enable();
       }
       this.savedSortSpecifiers = sortSpecifiers;
       // Refresh the header button titles
       this.refreshHeaderButtons();
     } else {
       this.Super('setSort', arguments);
+    }
+  },
+
+  refreshHeaderButtons: function () {
+    var i, headerButton;
+    for (i = 0; i < this.fields.length; i++) {
+      headerButton = this.getFieldHeaderButton(i);
+      if (headerButton) {
+        headerButton.setTitle(headerButton.getTitle());
+      }
     }
   },
 
@@ -939,16 +953,6 @@ isc.OBGrid.addProperties({
       }
     } else {
       return this.Super('getSortFieldCount', arguments);
-    }
-  },
-
-  refreshHeaderButtons: function () {
-    var i, headerButton;
-    for (i = 0; i < this.fields.length; i++) {
-      headerButton = this.getFieldHeaderButton(i);
-      if (headerButton) {
-        headerButton.setTitle(headerButton.getTitle());
-      }
     }
   },
 
@@ -966,12 +970,20 @@ isc.OBGrid.addProperties({
           }
         }
         if (this.sorter) {
-          this.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-enabled.png');
+          this.sorter.enable();
         }
         this.refreshHeaderButtons();
       }
     } else {
       this.Super('setSort', arguments);
+    }
+  },
+
+  getSort: function () {
+    if (this.lazyFiltering) {
+      return this.savedSortSpecifiers;
+    } else {
+      return this.Super('getSort', arguments);
     }
   },
 
