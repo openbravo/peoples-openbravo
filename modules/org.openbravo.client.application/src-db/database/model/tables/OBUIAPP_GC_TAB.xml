@@ -70,6 +70,9 @@
       <foreign-key foreignTable="AD_TAB" name="OBUIAPP_GC_TAB_TAB">
         <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
       </foreign-key>
+      <index name="OBUIAPP_GC_TAB_TAB_IDX" unique="false">
+        <index-column name="AD_TAB_ID"/>
+      </index>
       <unique name="OBUIAPP_GC_TAB_UNIQUE_TAB">
         <unique-column name="AD_TAB_ID"/>
       </unique>

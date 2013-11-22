@@ -73,6 +73,12 @@
       <foreign-key foreignTable="OBUIAPP_GC_TAB" name="OBUIAPP_GC_FIELD_TAB">
         <reference local="OBUIAPP_GC_TAB_ID" foreign="OBUIAPP_GC_TAB_ID"/>
       </foreign-key>
+      <index name="OBUIAPP_GC_FIELD_FIELD_IDX" unique="false">
+        <index-column name="AD_FIELD_ID"/>
+      </index>
+      <index name="OBUIAPP_GC_FIELD_TAB_IDX" unique="false">
+        <index-column name="OBUIAPP_GC_TAB_ID"/>
+      </index>
       <unique name="OBUIAPP_GC_FIELD_UNIQUE_FIELD">
         <unique-column name="AD_FIELD_ID"/>
       </unique>
