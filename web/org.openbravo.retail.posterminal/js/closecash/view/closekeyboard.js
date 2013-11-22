@@ -20,6 +20,8 @@ enyo.kind({
     this.model = model;
     var me = this;
     this.inherited(arguments);
+    
+    this.opendrawerTemplate = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.OpenDrawerTemplate);
 
     this.addToolbar({
       name: 'toolbarempty',
@@ -61,6 +63,16 @@ enyo.kind({
           stateless: true,
           action: function (keyboard, amt) {
             keyboard.model.trigger('action:resetAllCoins');       
+          }
+        }    
+      }, {
+        command: 'opendrawer',      
+        i18nLabel: 'OBPOS_OpenDrawer',
+        stateless: true,      
+        definition: {
+          stateless: true,
+          action: function (keyboard, amt) {
+            OB.POS.hwserver.print(keyboard.opendrawerTemplate);        
           }
         }        
       }]
