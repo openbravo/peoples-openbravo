@@ -442,7 +442,7 @@ enyo.kind({
       }
     }
     enyo.forEach(this.$.linePropertiesContainer.getComponents(), function (compToRender) {
-      if (compToRender.kindName.indexOf("enyo.") != 0) {
+      if (compToRender.kindName.indexOf("enyo.") !== 0) {
         compToRender.render(this.line);
       }
     }, this);
