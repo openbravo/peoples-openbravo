@@ -421,6 +421,7 @@ isc.OBGrid.addProperties({
       }
 
       if (grid && grid.lazyFiltering) {
+        grid.filterHasChanged = true;
         grid.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-enabled.png');
       }
       return this.Super('editorChanged', arguments);
@@ -591,12 +592,16 @@ isc.OBGrid.addProperties({
       this.sorterDefaults = {
         click: function () {
           var grid = this.parentElement;
-          if (grid.sortingHasChanged) {
-            delete grid.sortingHasChanged;
-            // Triggering the sort will also apply the filters
-            grid.setSort(grid.savedSortSpecifiers, true);
-          } else if (grid && grid.filterEditor) {
+          if (grid.filterHasChanged) {
+            // Do not change the sorting after receiving the data from the datasource
+            grid._filteringAndSortingManually = true;
             grid.filterEditor.performFilter(true, true);
+            delete grid.filterHasChanged;
+            delete grid.sortingHasChanged;
+            delete grid._filteringAndSortingManually;
+          } else if (grid.sortingHasChanged) {
+            grid.setSort(grid.savedSortSpecifiers, true);
+            delete grid.sortingHasChanged;
           }
           if (grid && grid.sorter) {
             grid.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-disabled.png');
@@ -950,6 +955,7 @@ isc.OBGrid.addProperties({
   toggleSort: function (fieldName, direction) {
     var fullIdentifierName = fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
     if (this.lazyFiltering) {
+      this.sortingHasChanged = true;
       // If the user clicks on a column that is already ordered, reverse the sort direction
       if (this.savedSortSpecifiers && this.savedSortSpecifiers.length > 0) {
         if (this.savedSortSpecifiers[0].property === fieldName || this.savedSortSpecifiers[0].property === fullIdentifierName) {
@@ -962,7 +968,6 @@ isc.OBGrid.addProperties({
         if (this.sorter) {
           this.sorter.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/iconCheck-enabled.png');
         }
-        this.sortingHasChanged = true;
         this.refreshHeaderButtons();
       }
     } else {

@@ -108,6 +108,15 @@ isc.ResultSet.addProperties({
         }
       }
     }
+  },
+
+  _original_shouldUseClientSorting: isc.ResultSet.getPrototype().shouldUseClientSorting,
+  shouldUseClientSorting: function () {
+    if (this.grid && this.grid._filteringAndSortingManually) {
+      return false;
+    } else {
+      this._original_shouldUseClientSorting();
+    }
   }
 });
 

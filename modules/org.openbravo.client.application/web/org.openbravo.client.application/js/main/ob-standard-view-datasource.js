@@ -112,6 +112,19 @@ isc.OBViewDataSource.addProperties({
       requestProperties.clientContext.editRow = this.view.viewGrid.getEditRow();
     }
 
+    if (operationType === 'fetch' && this.view.viewGrid.lazyFiltering) {
+      // Use the stored sort properties
+      if (this.view.viewGrid.savedSortSpecifiers && this.view.viewGrid.savedSortSpecifiers.length > 0) {
+        if (this.view.viewGrid.savedSortSpecifiers[0].direction === 'ascending') {
+          requestProperties.sortBy = this.view.viewGrid.savedSortSpecifiers[0].property;
+        } else {
+          requestProperties.sortBy = '-' + this.view.viewGrid.savedSortSpecifiers[0].property;
+        }
+      } else {
+        delete requestProperties.sortBy;
+      }
+    }
+
     var newRequestProperties = this.getTabInfoRequestProperties(this.view, requestProperties);
     // standard update is not sent with operationType
     var additionalPara = {
