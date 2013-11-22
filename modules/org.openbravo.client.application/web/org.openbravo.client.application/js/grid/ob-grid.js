@@ -998,7 +998,11 @@ isc.OBGrid.addProperties({
 
   getSortArrowImage: function (fieldNum) {
     var sortDirection, field = this.getField(fieldNum),
-        fullIdentifierName = field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+        fullIdentifierName;
+    if (!field) {
+      return isc.Canvas.spacerHTML(1, 1);
+    }
+    fullIdentifierName = field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
     if (this.savedSortSpecifiers && this.savedSortSpecifiers.length > 0) {
       if (this.savedSortSpecifiers[0].property === field.name || this.savedSortSpecifiers[0].property === fullIdentifierName) {
         sortDirection = this.savedSortSpecifiers[0].direction;
