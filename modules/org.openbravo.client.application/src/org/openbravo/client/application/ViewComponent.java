@@ -25,6 +25,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
@@ -208,18 +209,20 @@ public class ViewComponent extends BaseComponent {
       }
     }
 
-    String tabHql = " as p where p.tab.window.id = '" + window.getId() + "' ";
-    List<GCTab> tabConfs = OBDal.getInstance().createQuery(GCTab.class, tabHql).list();
-    for (GCTab gcTab : tabConfs) {
-      if (lastModification.compareTo(gcTab.getUpdated()) < 0) {
-        lastModification = gcTab.getUpdated();
-      }
-      List<GCField> fieldConfs = gcTab.getOBUIAPPGCFieldList();
-      for (GCField gcField : fieldConfs) {
-        if (lastModification.compareTo(gcField.getUpdated()) < 0) {
-          lastModification = gcField.getUpdated();
-        }
-      }
+    String tabHql = "select max(updated) from OBUIAPP_GC_Tab where tab.window.id = :windowId";
+    Query qryTabData = OBDal.getInstance().getSession().createQuery(tabHql);
+    qryTabData.setParameter("windowId", window.getId());
+    Date tabUpdated = (Date) qryTabData.uniqueResult();
+    if (tabUpdated != null && lastModification.compareTo(tabUpdated) < 0) {
+      lastModification = tabUpdated;
+    }
+
+    String fieldHql = "select max(updated) from OBUIAPP_GC_Field where obuiappGcTab.tab.window.id = :windowId";
+    Query qryFieldData = OBDal.getInstance().getSession().createQuery(fieldHql);
+    qryFieldData.setParameter("windowId", window.getId());
+    Date fieldUpdated = (Date) qryFieldData.uniqueResult();
+    if (fieldUpdated != null && lastModification.compareTo(fieldUpdated) < 0) {
+      lastModification = fieldUpdated;
     }
 
     return lastModification.toString();
