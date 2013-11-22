@@ -240,18 +240,16 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   /**
    * Returns the string representation of an array that contains all the properties that must always
-   * be returned from the datasource when the grid asks for data: 
-   * - id 
-   * - client and organization
-   * - all the properties that compose the identifier of the entity 
-   * - all button fields with label values
-   * - the link to parent properties
-   * - all the properties that are part of the display logic of the tab buttons
+   * be returned from the datasource when the grid asks for data: - id - client and organization -
+   * all the properties that compose the identifier of the entity - all button fields with label
+   * values - the link to parent properties - all the properties that are part of the display logic
+   * of the tab buttons
    */
   public List<String> getRequiredGridProperties() {
     List<String> requiredGridProperties = new ArrayList<String>();
     requiredGridProperties.add("id");
-    // Needed to check if the record is readonly (check addWritableAttribute method of DefaultJsonDataService)
+    // Needed to check if the record is readonly (check addWritableAttribute method of
+    // DefaultJsonDataService)
     requiredGridProperties.add("client");
     requiredGridProperties.add("organization");
     // Audit fields are mandatory because the FIC does not returned them when called in EDIT mode
@@ -315,6 +313,11 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     return null;
   }
 
+  /**
+   * Returns true if the grid should filter and sort lazily. In that case, the changes done by the
+   * user to filter editor and to the grid sorting will not by applied until the user clicks on an
+   * 'Apply changes' button
+   */
   public boolean getLazyFiltering() {
     Boolean lazyFiltering = null;
 
