@@ -462,8 +462,6 @@ public class OrderGroupingProcessor {
       // We need to convert the total taking into account the currency difference
       total = OrderLoader.convertCurrencyInvoice(invoice);
     }
-    invoice.getBusinessPartner().setCreditUsed(
-        invoice.getBusinessPartner().getCreditUsed().add(total));
 
     OBDal.getInstance().flush();
     log.debug("Finishing invoice: " + (System.currentTimeMillis() - tf));

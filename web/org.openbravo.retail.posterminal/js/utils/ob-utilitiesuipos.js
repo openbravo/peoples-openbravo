@@ -31,7 +31,7 @@ OB.UTIL.getImageURL = function (id) {
   var imageUrl = 'productImages/';
   var i;
   for (i = 0; i < id.length; i += 3) {
-    if (i != 0) {
+    if (i !== 0) {
       imageUrl += "/";
     }
     imageUrl += id.substring(i, ((i + 3) < id.length) ? (i + 3) : id.length);

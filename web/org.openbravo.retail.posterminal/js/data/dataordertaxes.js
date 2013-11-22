@@ -33,7 +33,8 @@
           totalnet = OB.DEC.Zero,
           queue = {},
           triggerNext = false,
-          discountedNet, gross = OB.DEC.Zero;
+          discountedNet, gross = OB.DEC.Zero,
+          discountedLinePriceNet, roundedDiscountedLinePriceNet, calculatedDiscountedNet;
       if (len === 0) {
         me.set('taxes', {});
         if (callback) {
