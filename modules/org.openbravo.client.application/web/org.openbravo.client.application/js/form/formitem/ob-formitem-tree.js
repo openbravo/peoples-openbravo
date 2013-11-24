@@ -394,13 +394,16 @@ isc.OBTreeItemPopupWindow.addProperties({
         this.isGridFiltered = view.viewGrid.isGridFiltered;
         this.isGridFilteredWithCriteria = view.viewGrid.isGridFilteredWithCriteria;
         this.isValidFilterField = view.viewGrid.isValidFilterField;
-        this.convertCriteria = view.viewGrid.convertCriteria;
         this.resetEmptyMessage = view.viewGrid.resetEmptyMessage;
         this.filterData = view.viewGrid.filterData;
         this.loadingDataMessage = view.viewGrid.loadingDataMessage;
         this.emptyMessage = view.viewGrid.emptyMessage;
         this.noDataEmptyMessage = view.viewGrid.noDataEmptyMessage;
         this.filterNoRecordsEmptyMessage = view.viewGrid.filterNoRecordsEmptyMessage;
+      },
+
+      convertCriteria: function (criteria) {
+        return criteria;
       },
 
       onFetchData: function (criteria, requestProperties) {
