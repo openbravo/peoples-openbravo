@@ -1857,11 +1857,7 @@ isc.OBViewGrid.addProperties({
 
     // note pass in criteria otherwise infinite looping!
     this.resetEmptyMessage(criteria);
-
-    if (this.applyWhereClauseToChildren === false && criteria.criteria.length > 0) {
-      applyParentTabCriteria = false;
-    }
-    if (this.view.parentProperty && !this.isOpenDirectMode && applyParentTabCriteria) {
+    if (this.view.parentProperty && !this.isOpenDirectMode) {
       if (this.view.parentView.isShowingTree) {
         selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
       } else {
@@ -1966,6 +1962,15 @@ isc.OBViewGrid.addProperties({
       }
     }
 
+    if (this.view.parentView && this.applyWhereClauseToChildren === false && criteria.criteria.length > 1) {
+      for (i = 0; i < criteria.criteria.length; i++) {
+        criterion = criteria.criteria[i];
+        if (criterion.fieldName === this.view.parentProperty) {
+          criteria.criteria.splice(i, 1);
+        }
+      }
+    }
+
     this.checkShowFilterFunnelIcon(criteria);
 
     return criteria;
@@ -2030,7 +2035,7 @@ isc.OBViewGrid.addProperties({
   makeVisible: function () {
     if (this.view.isShowingForm) {
       this.view.switchFormGridVisibility();
-    } else {
+    } else if (!this.view.isShowingTree) {
       this.show();
     }
   },

@@ -346,6 +346,8 @@ isc.OBTreeViewGrid.addProperties({
   },
 
   dataArrived: function (startRow, endRow) {
+    this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
+    this.resetEmptyMessage();
     if (this.actionAfterDataArrived) {
       this.actionAfterDataArrived();
       this.actionAfterDataArrived = null;
