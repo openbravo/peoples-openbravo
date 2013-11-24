@@ -213,9 +213,7 @@ isc.OBTreeItemTree.addProperties({
 
   show: function () {
     this.updatePosition();
-    if (this.isEmpty()) {
-      this.fetchData();
-    }
+    this.fetchData();
     this._pageClickID = this.ns.Page.setEvent('mouseDown', this, null, 'clickOutsideTree');
     return this.Super('show', arguments);
   },
