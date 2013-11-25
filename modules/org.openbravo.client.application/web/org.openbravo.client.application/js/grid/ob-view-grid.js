@@ -2116,7 +2116,11 @@ isc.OBViewGrid.addProperties({
           this.emptyMessage = this.filterNoRecordsEmptyMessage;
         }
       } else {
-        this.emptyMessage = this.filterNoRecordsEmptyMessage;
+        if (this.lazyFiltering && !isc.isA.ResultSet(this.data)) {
+          this.emptyMessage = this.noDataEmptyMessage;
+        } else {
+          this.emptyMessage = this.filterNoRecordsEmptyMessage;
+        }
       }
     } else if (this.view.isRootView) {
       this.emptyMessage = this.noDataEmptyMessage;
