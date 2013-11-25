@@ -625,6 +625,13 @@ isc.OBGrid.addProperties({
   clearFilter: function (keepFilterClause, noPerformAction) {
     var i = 0,
         fld, length, groupState, forceRefresh;
+    if (this.lazyFiltering) {
+      noPerformAction = true;
+      if (this.sorter) {
+        this.filterHasChanged = true;
+        this.sorter.enable();
+      }
+    }
     if (!keepFilterClause) {
       // forcing fetch from server in case default filters are removed, in other
       // cases adaptive filtering can be used if possible
