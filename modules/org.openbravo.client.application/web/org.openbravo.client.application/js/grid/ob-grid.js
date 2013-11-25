@@ -935,7 +935,7 @@ isc.OBGrid.addProperties({
       if (this.sorter) {
         this.sorter.enable();
       }
-      this.savedSortSpecifiers = sortSpecifiers;
+      this.savedSortSpecifiers = isc.shallowClone(sortSpecifiers);
       // Refresh the header button titles
       this.refreshHeaderButtons();
     } else {
