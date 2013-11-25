@@ -613,8 +613,8 @@ isc.OBGrid.addProperties({
         },
         align: 'center',
         prompt: OB.I18N.getLabel('OBUIAPP_ApplyFilters'),
-        iconWidth:10,
-        iconHeight:10,
+        iconWidth: 10,
+        iconHeight: 10,
         icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/applyPendingChanges.png'
       };
     }
@@ -977,7 +977,7 @@ isc.OBGrid.addProperties({
         this.refreshHeaderButtons();
       }
     } else {
-      this.Super('setSort', arguments);
+      this.Super('toggleSort', arguments);
     }
   },
 
@@ -1013,20 +1013,26 @@ isc.OBGrid.addProperties({
   getSortArrowImage: function (fieldNum) {
     var sortDirection, field = this.getField(fieldNum),
         fullIdentifierName;
-    if (!field) {
-      return isc.Canvas.spacerHTML(1, 1);
-    }
-    fullIdentifierName = field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
-    if (this.savedSortSpecifiers && this.savedSortSpecifiers.length > 0) {
-      if (this.savedSortSpecifiers[0].property === field.name || this.savedSortSpecifiers[0].property === fullIdentifierName) {
-        sortDirection = this.savedSortSpecifiers[0].direction;
+
+    if (this.lazyFiltering) {
+      if (!field) {
+        return isc.Canvas.spacerHTML(1, 1);
       }
-    }
-    if (sortDirection) {
-      return this.imgHTML(Array.shouldSortAscending(sortDirection) ? this.sortAscendingImage : this.sortDescendingImage, null, null, null, null, this.widgetImgDir);
+      fullIdentifierName = field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+      if (this.savedSortSpecifiers && this.savedSortSpecifiers.length > 0) {
+        if (this.savedSortSpecifiers[0].property === field.name || this.savedSortSpecifiers[0].property === fullIdentifierName) {
+          sortDirection = this.savedSortSpecifiers[0].direction;
+        }
+      }
+      if (sortDirection) {
+        return this.imgHTML(Array.shouldSortAscending(sortDirection) ? this.sortAscendingImage : this.sortDescendingImage, null, null, null, null, this.widgetImgDir);
+      } else {
+        return isc.Canvas.spacerHTML(1, 1);
+      }
     } else {
-      return isc.Canvas.spacerHTML(1, 1);
+      return this.Super('getSortArrowImage', arguments);
     }
+
   }
 });
 
