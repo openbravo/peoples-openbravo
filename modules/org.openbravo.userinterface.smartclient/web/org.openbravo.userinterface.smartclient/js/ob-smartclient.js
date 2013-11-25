@@ -115,7 +115,7 @@ isc.ResultSet.addProperties({
     if (this.grid && this.grid._filteringAndSortingManually) {
       return false;
     } else {
-      this._original_shouldUseClientSorting();
+      return this._original_shouldUseClientSorting();
     }
   }
 });
