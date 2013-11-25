@@ -616,6 +616,18 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           OBDal.getInstance().rollbackAndClose();
           return;
         }
+
+        // Do not reactive the payment if it is tax payment
+        if (payment.getFinancialMgmtTaxPaymentList().size() != 0) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+              "@APRM_TaxPaymentReactivation@"));
+          bundle.setResult(msg);
+          OBDal.getInstance().rollbackAndClose();
+          return;
+        }
+
         // Transaction exists
         if (hasTransaction(payment)) {
           msg.setType("Error");
