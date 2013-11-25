@@ -451,6 +451,12 @@ public abstract class UIDefinition {
 
   }
 
+  /**
+   * Reads a particular value from the grid configuration settings
+   * 
+   * @param setting
+   *          the setting whose value is to be returned.
+   */
   protected Object readGridConfigurationSetting(String setting) {
     Object result = null;
     try {
