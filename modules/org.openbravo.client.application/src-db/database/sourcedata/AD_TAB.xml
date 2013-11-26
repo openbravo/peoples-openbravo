@@ -6,6 +6,8 @@
 <!--13FE911F7F684A47801DF55525BAD4A1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--13FE911F7F684A47801DF55525BAD4A1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--13FE911F7F684A47801DF55525BAD4A1-->  <NAME><![CDATA[Grid Configuration at System Level]]></NAME>
+<!--13FE911F7F684A47801DF55525BAD4A1-->  <DESCRIPTION><![CDATA[Define the Grid Configuration at System Level]]></DESCRIPTION>
+<!--13FE911F7F684A47801DF55525BAD4A1-->  <HELP><![CDATA[In this tab the user can set some properties that will be used to define how the grid filtering should work at system level. The values set here will be used in all grids, unless its properties are overriden at tab or field level.]]></HELP>
 <!--13FE911F7F684A47801DF55525BAD4A1-->  <AD_TABLE_ID><![CDATA[5D50320222DD4865ADFD50364C84291D]]></AD_TABLE_ID>
 <!--13FE911F7F684A47801DF55525BAD4A1-->  <AD_WINDOW_ID><![CDATA[FD487747E8A2425B8BAE570FCA569D66]]></AD_WINDOW_ID>
 <!--13FE911F7F684A47801DF55525BAD4A1-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -59,6 +61,8 @@
 <!--49B33DC2EDFD45A48EECE139AD5E9AC9-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--49B33DC2EDFD45A48EECE139AD5E9AC9-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--49B33DC2EDFD45A48EECE139AD5E9AC9-->  <NAME><![CDATA[Tab]]></NAME>
+<!--49B33DC2EDFD45A48EECE139AD5E9AC9-->  <DESCRIPTION><![CDATA[Grid Configuration at Tab level]]></DESCRIPTION>
+<!--49B33DC2EDFD45A48EECE139AD5E9AC9-->  <HELP><![CDATA[In this tab the user can set some properties that will be used to define how the grid filtering should work in the selected tab. The values set here will be used in all its fields, unless its properties are overriden at field level. If a property is not set, its value will be taking from the system level.]]></HELP>
 <!--49B33DC2EDFD45A48EECE139AD5E9AC9-->  <AD_TABLE_ID><![CDATA[8A16662B37184121A1EDAA89890E160C]]></AD_TABLE_ID>
 <!--49B33DC2EDFD45A48EECE139AD5E9AC9-->  <AD_WINDOW_ID><![CDATA[7E72F3A16C704449BC50FCE1512C3805]]></AD_WINDOW_ID>
 <!--49B33DC2EDFD45A48EECE139AD5E9AC9-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -169,6 +173,8 @@
 <!--D26230D6D21546C6970E79FF1C51165E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D26230D6D21546C6970E79FF1C51165E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D26230D6D21546C6970E79FF1C51165E-->  <NAME><![CDATA[Field]]></NAME>
+<!--D26230D6D21546C6970E79FF1C51165E-->  <DESCRIPTION><![CDATA[Grid Configuration at Field Level]]></DESCRIPTION>
+<!--D26230D6D21546C6970E79FF1C51165E-->  <HELP><![CDATA[In this tab the user can set some properties that will be used to define how the grid filtering should work in the selected field. If a property is not set, its value will be taking from the tab level. If it is not defined in the tab level, its value will be taken from the system level.]]></HELP>
 <!--D26230D6D21546C6970E79FF1C51165E-->  <AD_TABLE_ID><![CDATA[F167EB822B8A4284AC37D5B40B785D51]]></AD_TABLE_ID>
 <!--D26230D6D21546C6970E79FF1C51165E-->  <AD_WINDOW_ID><![CDATA[7E72F3A16C704449BC50FCE1512C3805]]></AD_WINDOW_ID>
 <!--D26230D6D21546C6970E79FF1C51165E-->  <SEQNO><![CDATA[20]]></SEQNO>
