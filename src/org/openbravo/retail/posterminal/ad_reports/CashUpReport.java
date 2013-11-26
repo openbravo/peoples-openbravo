@@ -509,33 +509,32 @@ public class CashUpReport extends HttpSecureAppServlet {
       dataSource = new ListOfArrayDataSource(returnsTaxList, new String[] { "LABEL", "VALUE" });
       parameters.put("RETURNS_TAXES", dataSource);
 
+      parameters.put("USER", OBMessageUtils.getI18NMessage("OBPOS_LblUser", new String[] {}) + ": "
+          + cashup.getUserContact().getName());
+      parameters.put("TERMINAL_ORGANIZATION", cashup.getPOSTerminal().getOrganization().getId());
+      parameters.put("TIME", OBMessageUtils.getI18NMessage("OBPOS_LblTime", new String[] {}) + ": "
+          + cashup.getCashUpDate());
+      parameters.put("NET_SALES_LABEL",
+          OBMessageUtils.getI18NMessage("OBPOS_LblNetSales", new String[] {}));
+      parameters.put("NET_SALES_VALUE", totalNetSalesAmount.toString());
+      parameters.put("GROSS_SALES_LABEL",
+          OBMessageUtils.getI18NMessage("OBPOS_LblGrossSales", new String[] {}));
+      parameters.put("GROSS_SALES_VALUE", totalGrossSalesAmount.toString());
+      parameters.put("NET_RETURNS_LABEL",
+          OBMessageUtils.getI18NMessage("OBPOS_LblNetReturns", new String[] {}));
+      parameters.put("NET_RETURNS_VALUE", totalNetReturnsAmount.toString());
+      parameters.put("GROSS_RETURNS_LABEL",
+          OBMessageUtils.getI18NMessage("OBPOS_LblGrossReturns", new String[] {}));
+      parameters.put("GROSS_RETURNS_VALUE", totalGrossReturnsAmount.toString());
+      parameters.put("TOTAL_RETAIL_TRANS_LABEL",
+          OBMessageUtils.getI18NMessage("OBPOS_LblTotalRetailTrans", new String[] {}));
+      parameters.put("TOTAL_RETAIL_TRANS_VALUE", totalRetailTransactions.toString());
+      parameters.put("TOTAL_DROPS", totalDrops.toString());
+      parameters.put("TOTAL_DEPOSITS", totalDeposits.toString());
+
     } finally {
       OBContext.restorePreviousMode();
     }
-
-    parameters.put("USER", OBMessageUtils.getI18NMessage("OBPOS_LblUser", new String[] {}) + ": "
-        + cashup.getUserContact().getName());
-    parameters.put("TERMINAL_ORGANIZATION", cashup.getPOSTerminal().getOrganization().getId());
-    parameters.put("TIME", OBMessageUtils.getI18NMessage("OBPOS_LblTime", new String[] {}) + ": "
-        + cashup.getCashUpDate());
-    parameters.put("NET_SALES_LABEL",
-        OBMessageUtils.getI18NMessage("OBPOS_LblNetSales", new String[] {}));
-    parameters.put("NET_SALES_VALUE", totalNetSalesAmount.toString());
-    parameters.put("GROSS_SALES_LABEL",
-        OBMessageUtils.getI18NMessage("OBPOS_LblGrossSales", new String[] {}));
-    parameters.put("GROSS_SALES_VALUE", totalGrossSalesAmount.toString());
-    parameters.put("NET_RETURNS_LABEL",
-        OBMessageUtils.getI18NMessage("OBPOS_LblNetReturns", new String[] {}));
-    parameters.put("NET_RETURNS_VALUE", totalNetReturnsAmount.toString());
-    parameters.put("GROSS_RETURNS_LABEL",
-        OBMessageUtils.getI18NMessage("OBPOS_LblGrossReturns", new String[] {}));
-    parameters.put("GROSS_RETURNS_VALUE", totalGrossReturnsAmount.toString());
-    parameters.put("TOTAL_RETAIL_TRANS_LABEL",
-        OBMessageUtils.getI18NMessage("OBPOS_LblTotalRetailTrans", new String[] {}));
-    parameters.put("TOTAL_RETAIL_TRANS_VALUE", totalRetailTransactions.toString());
-    parameters.put("TOTAL_DROPS", totalDrops.toString());
-    parameters.put("TOTAL_DEPOSITS", totalDeposits.toString());
-
     String strReportName = "@basedesign@/org/openbravo/retail/posterminal/ad_reports/CashUpReport.jrxml";
     response.setContentType("text/html; charset=UTF-8");
     hashMapList.addAll(hashMapStartingsList);
