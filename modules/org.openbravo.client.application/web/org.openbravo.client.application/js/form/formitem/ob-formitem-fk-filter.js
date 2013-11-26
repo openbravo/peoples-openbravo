@@ -194,8 +194,14 @@ isc.OBFKFilterTextItem.addProperties({
   // filter values
   getPickListFilterCriteria: function () {
     var pickListCriteria = this.getCriterion(),
-        gridCriteria = this.form.grid.sourceWidget.getCriteria(),
-        i, criteriaFieldName = this.getCriteriaFieldName();
+        gridCriteria, i, criteriaFieldName = this.getCriteriaFieldName();
+
+    if (this.form.grid.sourceWidget.lazyFiltering) {
+      // Fetch the criteria from the current values of the filter editor
+      gridCriteria = this.form.grid.getValues();
+    } else {
+      gridCriteria = this.form.grid.sourceWidget.getCriteria();
+    }
 
     gridCriteria = gridCriteria || {
       _constructor: 'AdvandedCriteria',

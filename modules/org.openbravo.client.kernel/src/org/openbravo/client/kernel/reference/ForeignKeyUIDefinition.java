@@ -56,7 +56,6 @@ public class ForeignKeyUIDefinition extends UIDefinition {
     Boolean filterOnChange = (Boolean) readGridConfigurationSetting("filterOnChange");
     if (Boolean.FALSE.equals(filterOnChange)) {
       append = append + ", filterOnChange: " + filterOnChange.toString();
-      append = append + ", filterEditorType: 'OBTextFilterItem', textFilterOnFKField: true";
     } else {
       Long thresholdToFilter = (Long) readGridConfigurationSetting("thresholdToFilter");
       if (thresholdToFilter != null) {
