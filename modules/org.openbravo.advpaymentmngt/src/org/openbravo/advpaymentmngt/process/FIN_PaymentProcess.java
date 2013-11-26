@@ -50,6 +50,8 @@ import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentPropDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
@@ -878,8 +880,21 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           payment.setGeneratedCredit(BigDecimal.ZERO);
           if (strAction.equals("R")) {
             payment.setUsedCredit(BigDecimal.ZERO);
+            for (FIN_PaymentScheduleDetail psd : removedPDS) {
+              List<FIN_PaymentPropDetail> ppds = psd.getFINPaymentPropDetailList();
+              if (ppds.size() > 0) {
+                for (FIN_PaymentPropDetail ppd : ppds) {
+                  FIN_PaymentProposal paymentProposal = OBDal.getInstance().get(
+                      FIN_PaymentProposal.class, ppd.getFinPaymentProposal().getId());
+                  paymentProposal.setProcessed(false);
+                  OBDal.getInstance().save(paymentProposal);
+                  OBDal.getInstance().remove(ppd);
+                  OBDal.getInstance().flush();
+                  paymentProposal.setProcessed(true);
+                }
+              }
+            }
           }
-
         } finally {
           OBDal.getInstance().flush();
           OBContext.restorePreviousMode();
