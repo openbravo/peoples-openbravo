@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo */
+/*global enyo, _ */
 
 enyo.kind({
   name: 'OB.UTIL.Approval',
@@ -23,14 +23,18 @@ enyo.kind({
     requestApproval: function (model, approvalType, callback) {
       var dialog;
 
-      dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
-        kind: 'OB.UTIL.Approval',
-        model: model,
-        approvalType: approvalType,
-        callback: callback
-      });
+      if (OB.POS.modelterminal.hasPermission('OBPOS_approval.cashupdifferences', true)) {
+        model.approvedRequest(true, null, approvalType, callback); // I'am a supervisor
+      } else {
+        dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
+          kind: 'OB.UTIL.Approval',
+          model: model,
+          approvalType: approvalType,
+          callback: callback
+        });
 
-      dialog.show();
+        dialog.show();
+      }
     }
   },
   handlers: {
