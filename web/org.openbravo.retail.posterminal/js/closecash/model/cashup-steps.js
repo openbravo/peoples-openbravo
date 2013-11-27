@@ -16,7 +16,7 @@ enyo.kind({
     return leftpanel$.listPendingReceipts;
   },
   getToolbarName: function () {
-    return 'toolbarempty';    
+    return 'toolbarempty';
   },
   nextButtonI18NLabel: function () {
     return 'OBPOS_LblNextStep';
@@ -39,11 +39,11 @@ enyo.kind({
     return leftpanel$.cashPayments;
   },
   getToolbarName: function () {
-    return 'toolbarcashpayments';    
-  },  
+    return 'toolbarcashpayments';
+  },
   nextButtonI18NLabel: function () {
     return 'OBPOS_LblNextStep';
-  },  
+  },
   allowNext: function () {
     return true;
   },
@@ -54,7 +54,7 @@ enyo.kind({
     var payment = model.get('paymentList').at(substep);
     var paymentMethod = payment.get('paymentMethod');
     return paymentMethod.iscash;
-  }  
+  }
 });
 
 enyo.kind({
@@ -64,11 +64,11 @@ enyo.kind({
     return leftpanel$.listPaymentMethods;
   },
   getToolbarName: function () {
-    return 'toolbarcountcash';    
-  },  
+    return 'toolbarcountcash';
+  },
   nextButtonI18NLabel: function () {
     return 'OBPOS_LblNextStep';
-  },  
+  },
   allowNext: function () {
     return _.reduce(this.model.get('paymentList').models, function (allCounted, model) {
       return allCounted && model.get('counted') !== null && model.get('counted') !== undefined;
@@ -93,11 +93,11 @@ enyo.kind({
       return 'toolbarother';
     } else {
       return 'toolbarempty';
-    } 
-  },   
+    }
+  },
   nextButtonI18NLabel: function () {
     return 'OBPOS_LblNextStep';
-  },  
+  },
   allowNext: function () {
     var qtyToKeep = this.model.get('paymentList').at(this.model.get('substep')).get('qtyToKeep');
     var foreignCounted = this.model.get('paymentList').at(this.model.get('substep')).get('foreignCounted');
@@ -110,33 +110,33 @@ enyo.kind({
     var payment = model.get('paymentList').at(substep);
     var paymentMethod = payment.get('paymentMethod');
     var options = 0;
-    
-    if (paymentMethod.automatemovementtoother){
+
+    if (paymentMethod.automatemovementtoother) {
 
       // Option 1
       if (paymentMethod.allowmoveeverything) {
         payment.set('qtyToKeep', 0);
         options++;
       }
-      
+
       // Option 2
       if (paymentMethod.allowdontmove) {
         payment.set('qtyToKeep', payment.get('foreignCounted'));
         options++;
-      }   
-      
+      }
+
       // Option 3
-      if (paymentMethod.keepfixedamount) { 
+      if (paymentMethod.keepfixedamount) {
         if (_.isNumber(payment.get('foreignCounted')) && payment.get('foreignCounted') < paymentMethod.amount) {
           payment.set('qtyToKeep', payment.get('foreignCounted'));
         } else {
           payment.set('qtyToKeep', paymentMethod.amount);
         }
         options++;
-      }      
-      
+      }
+
       // if there is there is more than one option or allowvariableamount exists. then show the substep
-      return (options > 1 || paymentMethod.allowvariableamount); 
+      return (options > 1 || paymentMethod.allowvariableamount);
     } else {
       return false;
     }
@@ -150,11 +150,11 @@ enyo.kind({
     return leftpanel$.postPrintClose;
   },
   getToolbarName: function () {
-    return 'toolbarempty';    
-  },   
+    return 'toolbarempty';
+  },
   nextButtonI18NLabel: function () {
     return 'OBPOS_LblPostPrintClose';
-  },  
+  },
   allowNext: function () {
     this.model.get('cashUpReport').at(0).set('time', new Date());
     return true;
@@ -166,4 +166,3 @@ enyo.kind({
     return true;
   }
 });
-  

@@ -48,7 +48,7 @@ enyo.kind({
     this.inherited(arguments);
     this.$.coin.setContent(this.model.get('coinValue'));
     var style = 'float: left; width: 15%; text-align: center;';
-    if(this.model.get('bordercolor')){
+    if (this.model.get('bordercolor')) {
       style += ' border:10px solid ' + this.model.get('bordercolor') + ';';
     }
     style += ' background-color:' + this.model.get('backcolor') + ';';
@@ -68,8 +68,8 @@ enyo.kind({
   lineEdit: function () {
     this.doLineEditCash();
   },
-  addUnit: function() {
-    this.doAddUnit();  
+  addUnit: function () {
+    this.doAddUnit();
   }
 });
 
@@ -140,7 +140,7 @@ enyo.kind({
               style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
               showing: false,
               initComponents: function () {
-                this.setContent(OB.I18N.getLabel('OBPOS_LblLoading')); 
+                this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
               }
             }, {
               classes: 'row-fluid',
@@ -159,13 +159,13 @@ enyo.kind({
                     name: 'total',
                     kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                   }]
-                },  {
+                }, {
                   name: 'countedLbl',
                   style: 'padding: 10px 20px 10px 10px; float: left; width: 15%;',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_Counted'));
                   }
-                },{
+                }, {
                   style: 'padding: 10px 5px 10px 0px; float: left;',
                   components: [{
                     name: 'counted',
@@ -177,7 +177,7 @@ enyo.kind({
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_Remaining'));
                   }
-                },{
+                }, {
                   style: 'padding: 10px 5px 10px 0px; float: left;',
                   components: [{
                     name: 'difference',
@@ -191,44 +191,44 @@ enyo.kind({
       }]
     }]
   }],
-  init: function(model) {
+  init: function (model) {
     this.inherited(arguments);
-    
-    this.model = model;     
+
+    this.model = model;
     this.model.on('action:addUnitToCollection', function (args) {
       this.addUnitToCollection(args.coin, args.amount);
-    }, this); 
+    }, this);
     this.model.on('action:resetAllCoins', function (args) {
       this.resetAllCoins();
-    }, this);     
+    }, this);
   },
   printTotals: function () {
     this.$.counted.printAmount(this.payment.get('foreignCounted'));
     this.$.difference.printAmount(this.payment.get('foreignDifference'));
   },
-  
+
   lineEditCash: function (inSender, inEvent) {
     this.model.trigger('action:SelectedCoin', inEvent.originator.model.get('coinValue'));
   },
-  
+
   addUnit: function (inSender, inEvent) {
     this.addUnitToCollection(inEvent.originator.model.get('coinValue'));
   },
-  addUnitToCollection: function(coinValue, amount) {
+  addUnitToCollection: function (coinValue, amount) {
     var collection = this.$.paymentsList.collection;
-    var lAmount = amount || amount === 0 ? amount: 1;
+    var lAmount = amount || amount === 0 ? amount : 1;
     var resetAmt = amount || amount === 0 ? true : false;
     var newcollection = new Backbone.Collection();
     var totalCounted = 0;
-    collection.each(function(coin){
+    collection.each(function (coin) {
       var coinModel = new Backbone.Model();
-      if(coin.get('coinValue')===coinValue){
-        if(resetAmt){
+      if (coin.get('coinValue') === coinValue) {
+        if (resetAmt) {
           coinModel.set('numberOfCoins', lAmount);
-        }else{
+        } else {
           coinModel.set('numberOfCoins', coin.get('numberOfCoins') + lAmount);
         }
-      }else{
+      } else {
         coinModel.set('numberOfCoins', coin.get('numberOfCoins'));
       }
       coinModel.set('coinValue', coin.get('coinValue'));
@@ -238,20 +238,20 @@ enyo.kind({
       coinModel.set('bordercolor', coin.get('bordercolor'));
       newcollection.add(coinModel);
     });
-    
+
     this.payment.set('coinsCollection', newcollection);
     this.$.paymentsList.setCollection(newcollection);
     this.payment.set('foreignCounted', totalCounted);
     this.payment.set('counted', OB.DEC.mul(totalCounted, this.payment.get('rate')));
-    this.payment.set('foreignDifference', OB.DEC.sub(totalCounted, this.payment.get('foreignExpected')));    
+    this.payment.set('foreignDifference', OB.DEC.sub(totalCounted, this.payment.get('foreignExpected')));
     this.printTotals();
   },
-  
-  resetAllCoins: function() {
+
+  resetAllCoins: function () {
     var collection = this.$.paymentsList.collection;
     var newcollection = new Backbone.Collection();
 
-    collection.each(function(coin){
+    collection.each(function (coin) {
       var coinModel = new Backbone.Model();
       coinModel.set('numberOfCoins', 0);
       coinModel.set('coinValue', coin.get('coinValue'));
@@ -260,67 +260,67 @@ enyo.kind({
       coinModel.set('bordercolor', coin.get('bordercolor'));
       newcollection.add(coinModel);
     });
-    
+
     this.payment.set('coinsCollection', newcollection);
     this.$.paymentsList.setCollection(newcollection);
     this.payment.set('foreignCounted', 0);
     this.payment.set('counted', 0);
-    this.payment.set('foreignDifference', OB.DEC.sub(0, this.payment.get('foreignExpected')));    
+    this.payment.set('foreignDifference', OB.DEC.sub(0, this.payment.get('foreignExpected')));
     this.printTotals();
   },
-  
+
   initPaymentToCount: function (payment) {
     this.payment = payment;
 
     var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;
     this.$.title.setContent(OB.I18N.getLabel('OBPOS_CashPaymentsTitle', [payment.get('name')]) + ' (' + OB.Utilities.Date.JSToOB(new Date(currentbd), OB.Format.date) + ')');
-    
+
     this.$.total.printAmount(this.payment.get('foreignExpected'));
-    
-    if (!this.payment.get('coinsCollection')) {     
+
+    if (!this.payment.get('coinsCollection')) {
       this.$.paymentsList.hide();
       this.$.renderLoading.show();
-      
+
       // First empty collection before loading.
       this.$.paymentsList.setCollection(new Backbone.Collection());
-      this.payment.set('foreignCounted', 0); 
+      this.payment.set('foreignCounted', 0);
       this.payment.set('counted', 0);
-      this.payment.set('foreignDifference', OB.DEC.sub(0, this.payment.get('foreignExpected'))); 
-      this.printTotals();   
+      this.payment.set('foreignDifference', OB.DEC.sub(0, this.payment.get('foreignExpected')));
+      this.printTotals();
 
 
       // Call to draw currencies.
       var currencyId = payment.get('paymentMethod').currency;
       var me = this;
       OB.Dal.find(OB.Model.CurrencyPanel, {
-          currency: currencyId
-        }, function(coins){
+        currency: currencyId
+      }, function (coins) {
         var coinCol = new Backbone.Collection();
-        coins.each(function(coin){
+        coins.each(function (coin) {
           var coinModel = new Backbone.Model();
           coinModel.set('numberOfCoins', 0);
-          coinModel.set('totalAmount' ,0);
+          coinModel.set('totalAmount', 0);
           coinModel.set('coinValue', coin.get('amount'));
           coinModel.set('backcolor', coin.get('backcolor'));
           coinModel.set('bordercolor', coin.get('bordercolor'));
           coinCol.add(coinModel);
         });
-        
+
         me.payment.set('coinsCollection', coinCol);
         me.$.paymentsList.setCollection(coinCol);
-        me.payment.set('foreignCounted', 0);   
+        me.payment.set('foreignCounted', 0);
         me.payment.set('counted', 0);
-        me.payment.set('foreignDifference', OB.DEC.sub(0, me.payment.get('foreignExpected'))); 
-        me.printTotals();   
-        
+        me.payment.set('foreignDifference', OB.DEC.sub(0, me.payment.get('foreignExpected')));
+        me.printTotals();
+
         me.$.renderLoading.hide();
-        me.$.paymentsList.show();      
-      });  
+        me.$.paymentsList.show();
+      });
     } else {
       this.$.paymentsList.setCollection(this.payment.get('coinsCollection'));
       this.printTotals();
     }
-    
+
   },
   displayStep: function (model) {
     // this function is invoked when displayed.      

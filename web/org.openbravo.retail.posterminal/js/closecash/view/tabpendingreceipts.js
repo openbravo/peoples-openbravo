@@ -88,7 +88,7 @@ enyo.kind({
             components: [{
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
               initComponents: function () {
-                var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;                
+                var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;
                 this.setContent(OB.I18N.getLabel('OBPOS_LblStep1of4') + ' (' + OB.Utilities.Date.JSToOB(new Date(currentbd), OB.Format.date) + ')');
               }
             }]
@@ -110,7 +110,7 @@ enyo.kind({
             }, {
               style: 'clear: both;'
             }]
-          }]        
+          }]
         }, {
           classes: 'row-fluid',
           components: [{
@@ -135,7 +135,7 @@ enyo.kind({
   },
   collectionChanged: function (oldCol) {
     this.$.pendingReceiptList.setCollection(this.collection);
-    
+
     if (oldCol) {
       oldCol.off('remove add reset', this.receiptsChanged);
     }
@@ -153,17 +153,14 @@ enyo.kind({
         model = inEvent.originator.model;
 
     OB.UTIL.Approval.requestApproval(
-        this.model, 
-        'OBPOS_approval.removereceipts',
-        function (approved,supervisor, approvalType) {
-          if (approved) {
-            // approved so remove the entry
-            OB.Dal.remove(model, function () {
-              me.collection.remove(model);
-            }, OB.UTIL.showError);
-          }
-        }
-    );
+    this.model, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+      if (approved) {
+        // approved so remove the entry
+        OB.Dal.remove(model, function () {
+          me.collection.remove(model);
+        }, OB.UTIL.showError);
+      }
+    });
   },
   voidAllOrders: function (inSender, inEvent) {
     var me = this;
@@ -171,24 +168,21 @@ enyo.kind({
     function removeOneModel(collection, model) {
       OB.Dal.remove(model, function () {
         collection.remove(model);
-      }, OB.UTIL.showError);        
+      }, OB.UTIL.showError);
     }
-    
+
     OB.UTIL.Approval.requestApproval(
-        this.model, 
-        'OBPOS_approval.removereceipts',
-        function (approved,supervisor, approvalType) {
-          if (approved) {
-            var models = me.collection.toArray();
-            var i;
-            for (i = 0; i < models.length; i++) {
-              removeOneModel(me.collection, models[i]);
-            }
-          }
+    this.model, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+      if (approved) {
+        var models = me.collection.toArray();
+        var i;
+        for (i = 0; i < models.length; i++) {
+          removeOneModel(me.collection, models[i]);
         }
-    );
+      }
+    });
   },
   displayStep: function (model) {
     // this function is invoked when displayed.          
-  }  
+  }
 });

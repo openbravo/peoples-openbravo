@@ -110,7 +110,7 @@ enyo.kind({
             components: [{
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
               initComponents: function () {
-                var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;             
+                var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;
                 this.setContent(OB.I18N.getLabel('OBPOS_LblStep2of4') + ' (' + OB.Utilities.Date.JSToOB(new Date(currentbd), OB.Format.date) + ')');
               }
             }]
@@ -185,7 +185,7 @@ enyo.kind({
                   components: [{
                     name: 'total',
                     kind: 'OB.OBPOSCashUp.UI.RenderTotal'
-                    
+
                   }]
                 }, {
                   style: 'padding: 17px 10px 17px 10px; float: left; width: 126px'
@@ -215,22 +215,18 @@ enyo.kind({
   verifyStep: function (model, callback) {
     // this function is invoked when going next, invokes callback to continue
     // do not invoke callback to cancel going next.
-    
     var firstdiff = model.get('paymentList').find(function (payment) {
       return payment.get('difference') !== 0;
     });
-    
+
     if (firstdiff) {
       // there is at leat 1 payment with differences
       OB.UTIL.Approval.requestApproval(
-          model, 
-          'OBPOS_approval.cashupdifferences',
-          function (approved,supervisor, approvalType) {
-            if (approved) {
-              callback();
-            }
-          }
-      );      
+      model, 'OBPOS_approval.cashupdifferences', function (approved, supervisor, approvalType) {
+        if (approved) {
+          callback();
+        }
+      });
     } else {
       callback();
     }

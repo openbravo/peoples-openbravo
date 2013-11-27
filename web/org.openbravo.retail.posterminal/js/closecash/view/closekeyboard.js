@@ -20,7 +20,7 @@ enyo.kind({
     this.model = model;
     var me = this;
     this.inherited(arguments);
-    
+
     this.opendrawerTemplate = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.OpenDrawerTemplate);
 
     this.addToolbar({
@@ -40,10 +40,10 @@ enyo.kind({
         holdActive: true
       }]
     });
-    
+
     // CashPayments step.
     this.addToolbar({
-      name: 'toolbarcashpayments',     
+      name: 'toolbarcashpayments',
       buttons: [{
         command: 'cashpayments',
         i18nLabel: 'OBPOS_SetQuantity',
@@ -52,37 +52,37 @@ enyo.kind({
             keyboard.model.trigger('action:addUnitToCollection', {
               coin: keyboard.selectedCoin,
               amount: parseInt(amt, 10)
-            });       
+            });
           }
         }
       }, {
-        command: 'resetallcoins',      
+        command: 'resetallcoins',
         i18nLabel: 'OBPOS_ResetAllCoins',
-        stateless: true,      
+        stateless: true,
         definition: {
           stateless: true,
           action: function (keyboard, amt) {
-            keyboard.model.trigger('action:resetAllCoins');       
+            keyboard.model.trigger('action:resetAllCoins');
           }
-        }    
+        }
       }, {
-        command: 'opendrawer',      
+        command: 'opendrawer',
         i18nLabel: 'OBPOS_OpenDrawer',
-        stateless: true,      
+        stateless: true,
         definition: {
           stateless: true,
           action: function (keyboard, amt) {
-            OB.POS.hwserver.print(keyboard.opendrawerTemplate);        
+            OB.POS.hwserver.print(keyboard.opendrawerTemplate);
           }
-        }        
+        }
       }]
     });
-    this.model.on('action:SelectedCoin', function(coin) {
+    this.model.on('action:SelectedCoin', function (coin) {
       this.setStatus('cashpayments');
       this.selectedCoin = coin;
     }, this);
 
-    
+
     this.showToolbar('toolbarempty');
   },
 

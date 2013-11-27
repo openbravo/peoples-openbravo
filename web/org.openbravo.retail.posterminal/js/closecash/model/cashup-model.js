@@ -37,26 +37,20 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     totalDifference: OB.DEC.Zero,
     pendingOrdersToProcess: false,
     otherInput: OB.DEC.Zero
-  }, 
-  cashupstepsdefinition: [
-    'OB.CashUp.StepPendingOrders',    
-    'OB.CashUp.CashPayments',
-    'OB.CashUp.PaymentMethods',
-    'OB.CashUp.CashToKeep',
-    'OB.CashUp.PostPrintAndClose'                
-  ],  
+  },
+  cashupstepsdefinition: ['OB.CashUp.StepPendingOrders', 'OB.CashUp.CashPayments', 'OB.CashUp.PaymentMethods', 'OB.CashUp.CashToKeep', 'OB.CashUp.PostPrintAndClose'],
   init: function () {
     //Check for orders wich are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
     var undf, newstep;
-    
+
     this.arePendingOrdersToBeProcess();
 
     //steps
     this.set('step', 1);
     this.set('substep', 0);
-    
+
     // Create steps instances
     this.cashupsteps = [];
     _.each(this.cashupstepsdefinition, function (s) {
@@ -122,11 +116,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, this);
     this.set('ignoreStep3', result);
   },
-  showStep: function (leftpanel$) {    
+  showStep: function (leftpanel$) {
     var currentstep = this.get('step') - 1;
     var i;
     var stepcomponent;
-    
+
     for (i = 0; i < this.cashupsteps.length; i++) {
       stepcomponent = this.cashupsteps[i].getStepComponent(leftpanel$);
       stepcomponent.setShowing(i === currentstep);
@@ -141,16 +135,16 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   },
   nextButtonI18NLabel: function () {
     var currentstep = this.get('step') - 1;
-    return this.cashupsteps[currentstep].nextButtonI18NLabel();    
+    return this.cashupsteps[currentstep].nextButtonI18NLabel();
   },
-  isFinishedWizard: function(step) {
+  isFinishedWizard: function (step) {
     return step > this.cashupsteps.length;
   },
   getSubstepsLength: function (step) {
-    return this.cashupsteps[step - 1].getSubstepsLength(this); 
+    return this.cashupsteps[step - 1].getSubstepsLength(this);
   },
   isSubstepAvailable: function (step, substep) {
-    return this.cashupsteps[step - 1].isSubstepAvailable(this, substep); 
+    return this.cashupsteps[step - 1].isSubstepAvailable(this, substep);
   },
   verifyStep: function (leftpanel$, callback) {
     var currentstep = this.get('step') - 1;
@@ -161,7 +155,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       callback();
     }
   },
-  
+
   //Step (pre) 1
   arePendingOrdersToBeProcess: function () {
     OB.Dal.find(OB.Model.Order, {
@@ -206,7 +200,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }
     return result;
   },
-  
+
   //Step 4
   getCountCashSummary: function () {
     var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, undf, model, value = OB.DEC.Zero,

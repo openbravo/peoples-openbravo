@@ -157,7 +157,7 @@ enyo.kind({
         classes: 'span12',
         kind: 'OB.OBPOSCashUp.UI.CashPayments',
         name: 'cashPayments',
-        showing: false          
+        showing: false
       }, {
         classes: 'span12',
         kind: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
@@ -245,20 +245,20 @@ enyo.kind({
 
     //finished
     this.model.on('change:finished', function () {
-      
+
       // this.model.messages ????
       var content;
       var i;
       var messages = this.model.get('messages');
       var next = this.model.get('next');
-      
+
       // Build the content of the dialog.
       if (messages && messages.length) {
         content = [{
-            content: OB.I18N.getLabel('OBPOS_FinishCloseDialog')
+          content: OB.I18N.getLabel('OBPOS_FinishCloseDialog')
         }, {
-            allowHtml: true,
-            content: '&nbsp;'
+          allowHtml: true,
+          content: '&nbsp;'
         }];
         for (i = 0; i < messages.length; i++) {
           content.push({
@@ -268,7 +268,7 @@ enyo.kind({
       } else {
         content = OB.I18N.getLabel('OBPOS_FinishCloseDialog');
       }
-      
+
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         action: function () {
@@ -281,7 +281,7 @@ enyo.kind({
           return true;
         }
       }]);
-      
+
     }, this);
     //finishedWrongly
     this.model.on('change:finishedWrongly', function (model) {
@@ -324,25 +324,25 @@ enyo.kind({
     });
     this.waterfall('onDisableNextButton', {
       disable: !this.model.allowNext()
-    });  
+    });
     // Show step keyboard
-    this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar(this.model.getStepToolbar());    
+    this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar(this.model.getStepToolbar());
   },
-  
+
   refresh: function () {
-    
+
     // Show step panel
-    this.model.showStep(this.$.cashupMultiColumn.$.leftPanel.$);     
+    this.model.showStep(this.$.cashupMultiColumn.$.leftPanel.$);
     // Refresh buttons
-    this.refreshButtons();   
+    this.refreshButtons();
     // Show button label.
     var nextButtonI18NLabel = this.model.nextButtonI18NLabel();
-    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.getComponents()[2].$.theButton.$.btnNext.setContent(OB.I18N.getLabel(nextButtonI18NLabel));              
+    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.getComponents()[2].$.theButton.$.btnNext.setContent(OB.I18N.getLabel(nextButtonI18NLabel));
   },
   changeStep: function (inSender, inEvent) {
     var direction = inEvent.originator.stepCount;
     var me = this;
-    
+
     if (direction > 0) {
       // Check with the step if can go next.
       this.model.verifyStep(this.$.cashupMultiColumn.$.leftPanel.$, function () {
@@ -350,19 +350,18 @@ enyo.kind({
       });
     } else {
       this.moveStep(direction);
-    }    
+    }
   },
   cancelCashup: function (inSender, inEvent) {
     OB.POS.navigate('retail.pointofsale');
-  }, 
+  },
   moveStep: function (direction) { // direction can be -1 or +1
-
     // allways moving substep by substep
     var nextstep = this.model.get('step');
     var nextsubstep = this.model.get('substep') + direction;
-    
+
     if (nextstep <= 0) {
-        // error. go to the begining   
+      // error. go to the begining   
       this.model.set('step', 1);
       this.model.set('substep', -1);
       this.moveStep(1);
@@ -370,7 +369,7 @@ enyo.kind({
       //send cash up to the server if it has not been sent yet
       if (this.model.get('cashUpSent')) {
         return true;
-      }  
+      }
       this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.getComponents()[2].$.theButton.$.btnNext.setDisabled(true);
       this.model.set('cashUpSent', true);
       this.model.processAndFinishCashUp();
@@ -378,13 +377,13 @@ enyo.kind({
       // jump to previous step
       this.model.set('step', nextstep - 1);
       this.model.set('substep', this.model.getSubstepsLength(nextstep - 1));
-      this.moveStep(-1); 
+      this.moveStep(-1);
     } else if (nextsubstep >= this.model.getSubstepsLength(nextstep)) {
       // jump to next step
       this.model.set('step', nextstep + 1);
       this.model.set('substep', -1);
       this.moveStep(1);
-    } else if (this.model.isSubstepAvailable(nextstep, nextsubstep)) { 
+    } else if (this.model.isSubstepAvailable(nextstep, nextsubstep)) {
       // go to step
       this.model.set('step', nextstep);
       this.model.set('substep', nextsubstep);
@@ -394,7 +393,7 @@ enyo.kind({
       this.model.set('step', nextstep);
       this.model.set('substep', nextsubstep);
       this.moveStep(direction);
-    }  
+    }
   },
   countAllOK: function (inSender, inEvent) {
     this.model.countAll();
