@@ -86,6 +86,12 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     OB.Dal.find(OB.Model.Order, {
       hasbeenpaid: 'N'
     }, function (pendingOrderList, me) {
+
+      // Recalculate total properly for all  pendingorders.
+      pendingOrderList.each(function (pendingorder) {
+        pendingorder.calculateGross();
+      });
+
       me.get('orderlist').reset(pendingOrderList.models);
     }, function (tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
