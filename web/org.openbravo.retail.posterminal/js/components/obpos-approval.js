@@ -23,7 +23,7 @@ enyo.kind({
     requestApproval: function (model, approvalType, callback) {
       var dialog;
 
-      if (OB.POS.modelterminal.hasPermission('OBPOS_approval.cashupdifferences', true)) {
+      if (OB.POS.modelterminal.hasPermission(approvalType, true)) {
         model.approvedRequest(true, new Backbone.Model(OB.POS.modelterminal.get('context').user), approvalType, callback); // I'am a supervisor
       } else {
         dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
