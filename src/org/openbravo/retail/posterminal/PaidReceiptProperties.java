@@ -53,7 +53,7 @@ public class PaidReceiptProperties extends ModelExtension {
             "isQuotation"));
         add(new HQLProperty("ord.summedLineAmount", "totalNetAmount"));
         add(new HQLProperty(
-            "(case when (select sum(deliveredQuantity) from ord.orderLineList)=0 then true else false end)",
+            "(case when (select sum(abs(deliveredQuantity)) from ord.orderLineList)=0 then true else false end)",
             "isLayaway")); // TODO: computed column, it should be refactored
         add(new HQLProperty("ord.priceList.priceIncludesTax", "priceIncludesTax"));
       }
