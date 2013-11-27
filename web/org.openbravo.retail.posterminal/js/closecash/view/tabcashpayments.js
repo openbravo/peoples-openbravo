@@ -92,7 +92,7 @@ enyo.kind({
   components: [{
     classes: 'tab-pane',
     components: [{
-      style: 'overflow:auto; height: 650px; margin: 5px',
+      style: 'overflow:auto; height: 610px; margin: 5px',
       components: [{
         style: 'background-color: #ffffff; color: black; padding: 5px;',
         components: [{
