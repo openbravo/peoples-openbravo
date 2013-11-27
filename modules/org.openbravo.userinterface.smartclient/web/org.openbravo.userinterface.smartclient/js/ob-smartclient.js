@@ -843,7 +843,13 @@ isc.DataSource.addProperties({
 isc.RecordEditor.addProperties({
   _originalPerformFilter: isc.RecordEditor.getPrototype().performFilter,
   performFilter: function (suppressPrompt, forceFilter) {
-    var grid = this.parentElement;
+    var grid = this.parentElement,
+        key = isc.EventHandler.getKey();
+    if (grid.lazyFiltering && !forceFilter && key === 'Enter') {
+      // Pressing the enter key in the filter editor triggers the 'Apply Filter' actions
+      grid.sorter.click();
+      return;
+    }
     if (!grid.lazyFiltering || forceFilter || grid._cleaningFilter) {
       this._originalPerformFilter(suppressPrompt);
     }
