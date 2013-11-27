@@ -23,7 +23,7 @@ enyo.kind({
         style: 'border-bottom: 1px solid #cccccc;',
         components: [{
           name: 'coin',
-          kind: 'OB.UI.SmallButton',
+          kind: 'OB.UI.MediumButton',
           classes: 'btnlink-gray btnlink-cashup-edit',
           ontap: 'addUnit'
         }, {
@@ -47,7 +47,7 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.coin.setContent(this.model.get('coinValue'));
-    var style = 'padding: 10px 20px 10px 10px; float: left; width: 15%; text-align: center;';
+    var style = 'float: left; width: 15%; text-align: center;';
     if(this.model.get('bordercolor')){
       style += ' border:10px solid ' + this.model.get('bordercolor') + ';';
     }
