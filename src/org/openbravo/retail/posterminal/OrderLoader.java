@@ -740,6 +740,7 @@ public class OrderLoader extends JSONProcessSimple {
 
       OrderLine orderLine = lineReferences.get(i);
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
+      boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
       AttributeSetInstance oldAttributeSetValues = null;
       if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
@@ -794,7 +795,7 @@ public class OrderLoader extends JSONProcessSimple {
               pendingQty = BigDecimal.ZERO;
             }
             lineNo += 10;
-            if (jsonorder.getLong("orderType") == 1) {
+            if (negativeLine) {
               qty = qty.negate();
             }
             addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
