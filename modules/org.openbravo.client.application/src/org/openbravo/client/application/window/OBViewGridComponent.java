@@ -290,6 +290,13 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       requiredGridProperties.add(linkToParentPropertyName);
     }
 
+    // Include the Stored in Session properties
+    List<String> storedInSessionProperties = getViewTab().getFieldHandler()
+        .getStoredInSessionProperties();
+    for (String storedInSessionProperty : storedInSessionProperties) {
+      requiredGridProperties.add(storedInSessionProperty);
+    }
+
     return requiredGridProperties;
   }
 
