@@ -300,15 +300,18 @@
 
     save: function () {
       var undoCopy;
+
       if (this.attributes.json) {
         delete this.attributes.json; // Needed to avoid recursive inclusions of itself !!!
       }
       undoCopy = this.get('undo');
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
-      OB.Dal.save(this, function () {}, function () {
-        OB.error(arguments);
-      });
+      if (!OB.POS.modelterminal.get('preventOrderSave')) {
+        OB.Dal.save(this, function () {}, function () {
+          OB.error(arguments);
+        });
+      }
       this.set('undo', undoCopy);
     },
 
