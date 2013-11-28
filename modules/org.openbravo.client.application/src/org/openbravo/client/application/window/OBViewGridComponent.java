@@ -264,11 +264,9 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     }
 
     // Properties related to buttons that have label values
-    List<ButtonField> buttonFields = getViewTab().getButtonFields();
+    List<ButtonField> buttonFields = getViewTab().getAllButtonFields();
     for (ButtonField buttonField : buttonFields) {
-      if (!buttonField.getLabelValues().isEmpty()) {
-        requiredGridProperties.add(buttonField.getPropertyName());
-      }
+      requiredGridProperties.add(buttonField.getPropertyName());
     }
 
     // List of properties that are part of the display logic of the subtabs

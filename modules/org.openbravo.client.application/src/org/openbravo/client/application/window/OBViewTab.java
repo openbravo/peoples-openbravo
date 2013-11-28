@@ -87,6 +87,8 @@ public class OBViewTab extends BaseTemplateComponent {
   private OBViewTab parentTabComponent;
   private String parentProperty = null;
   private List<ButtonField> buttonFields = null;
+  // Includes also the non displayed buttons
+  private List<ButtonField> allButtonFields = null;
   private List<IconButton> iconButtons = null;
   private boolean buttonSessionLogic;
   private boolean isRootTab;
@@ -202,6 +204,25 @@ public class OBViewTab extends BaseTemplateComponent {
       }
     }
     return buttonFields;
+  }
+
+  public List<ButtonField> getAllButtonFields() {
+    if (allButtonFields != null) {
+      return allButtonFields;
+    }
+    allButtonFields = new ArrayList<ButtonField>();
+    final List<Field> adFields = new ArrayList<Field>(tab.getADFieldList());
+    Collections.sort(adFields, new FormFieldComparator());
+    for (Field fld : adFields) {
+      if (fld.isActive()) {
+        if (!(ApplicationUtils.isUIButton(fld))) {
+          continue;
+        }
+        ButtonField btn = new ButtonField(fld);
+        allButtonFields.add(btn);
+      }
+    }
+    return allButtonFields;
   }
 
   public List<IconButton> getIconButtons() {
