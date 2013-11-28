@@ -1357,7 +1357,7 @@
       });
 
       // convert returns
-      if (jsonorder.orderType === 1) {
+      if (jsonorder.gross < 0) {
         _.forEach(jsonorder.payments, function (item) {
           item.amount = -item.amount;
           item.origAmount = -item.origAmount;
