@@ -591,6 +591,9 @@ isc.OBGrid.addProperties({
       this.sorterDefaults = {
         click: function () {
           var grid = this.parentElement;
+          if (!this._iconEnabled) {
+            return;
+          }
           if (grid.filterHasChanged) {
             // Do not change the sorting after receiving the data from the datasource
             grid._filteringAndSortingManually = true;
@@ -611,11 +614,20 @@ isc.OBGrid.addProperties({
             grid.sorter.disable();
           }
         },
+        disable: function () {
+          this.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/applyPendingChanges_Disabled.png');
+          this._iconEnabled = false;
+        },
+        enable: function () {
+          this.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/applyPendingChanges.png');
+          this._iconEnabled = true;
+        },
         align: 'center',
         prompt: OB.I18N.getLabel('OBUIAPP_ApplyFilters'),
         iconWidth: 10,
         iconHeight: 10,
-        icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/applyPendingChanges.png'
+        icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/applyPendingChanges.png',
+        _iconEnabled: true
       };
     }
 
