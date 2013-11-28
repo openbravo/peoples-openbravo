@@ -5344,7 +5344,7 @@ a.calMonthEventLink:active {
 /* ----event window---- */
 .eventWindow {
   background-color: #f0f8ff;
-  border: 1px solid #d0dff6;
+  border: 1px solid #a0afe6;
   font-family: Arial, Verdana, sans-serif;
   font-size: 9px;
 }
@@ -5354,6 +5354,8 @@ a.calMonthEventLink:active {
   color: #4d4d4d;
   font-family: Arial, Verdana, sans-serif;
   font-size: 9px;
+  margin:1px;
+  padding:0px 3px 2px 3px;
 }
 
 .eventWindowBody {
