@@ -40,6 +40,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -348,6 +349,7 @@ public class DocFINFinAccTransaction extends AcctServer {
                   .getInvoice()
                   : null);
           docLine.setDoubtFulDebtAmount(new BigDecimal(data[i].getField("DoubtFulDebtAmount")));
+          docLine.setInvoiceTaxCashVAT_V(paymentDetail_ID);
         }
         docLine.setIsPrepayment(data[i].getField("isprepayment"));
         docLine.setCGlItemId(data[i].getField("cGlItemId"));
@@ -513,6 +515,10 @@ public class DocFINFinAccTransaction extends AcctServer {
             bpAmountConverted = convertAmount(bpAmountConverted, !isReceipt, DateAcct,
                 TABLEID_Invoice, invoice.getId(), paymentCurrency.getId(), as.m_C_Currency_ID,
                 line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
+
+            // Cash VAT
+            SeqNo = CashVATUtil.createFactCashVAT(as, conn, fact, Fact_Acct_Group_ID, line,
+                invoice, DocumentType, C_Currency_ID, SeqNo);
           }
           if (isPrepayment) {
             // To force opposite posting isReceipt is opposite as well. this is required when

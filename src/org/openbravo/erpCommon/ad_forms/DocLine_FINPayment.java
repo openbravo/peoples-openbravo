@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 
-public class DocLine_FINPayment extends DocLine {
+public class DocLine_FINPayment extends DocLineCashVATReady_PaymentTransactionReconciliation {
   private static final Logger log4j = Logger.getLogger(DocLine_FINPayment.class);
 
   String Line_ID = "";

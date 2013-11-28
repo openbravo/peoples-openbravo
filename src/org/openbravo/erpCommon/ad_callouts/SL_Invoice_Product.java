@@ -176,7 +176,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
     if (data != null && data.length > 0) {
       String strCTaxID = Tax.get(this, strMProductID, data[0].dateinvoiced, strADOrgID,
           strWharehouse, data[0].cBpartnerLocationId, data[0].cBpartnerLocationId,
-          data[0].cProjectId, strIsSOTrx.equals("Y"));
+          data[0].cProjectId, strIsSOTrx.equals("Y"), "Y".equals(data[0].iscashvat));
 
       resultado.append(", new Array(\"inpcTaxId\", \"" + strCTaxID + "\")");
     }

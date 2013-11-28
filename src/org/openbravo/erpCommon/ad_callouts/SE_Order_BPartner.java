@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,10 +22,14 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
+import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
@@ -33,6 +37,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 
 public class SE_Order_BPartner extends SimpleCallout {
   private static final long serialVersionUID = 1L;
+  private static final RequestFilter filterYesNo = new ValueListFilter("Y", "N");
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
@@ -346,5 +351,14 @@ public class SE_Order_BPartner extends SimpleCallout {
     }
 
     info.addResult("MESSAGE", message.toString());
+
+    // Cash VAT
+    // Purchase flow only (from Business Partner)
+    if (StringUtils.equals("N", strIsSOTrx)) {
+      final String calculatedIsCashVat = CashVATUtil.getBusinessPartnerIsCashVAT(strBPartner);
+      if (calculatedIsCashVat != null && filterYesNo.accept(calculatedIsCashVat)) {
+        info.addResult("inpiscashvat", calculatedIsCashVat);
+      }
+    }
   }
 }

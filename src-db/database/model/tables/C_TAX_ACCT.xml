@@ -61,6 +61,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="T_DUE_TRANS_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="T_CREDIT_TRANS_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_TAX_ACCT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -76,8 +84,14 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_TAX_ACCT_T_CREDIT_ACCT">
         <reference local="T_CREDIT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_TAX_ACCT_T_CREDIT_T_ACCT">
+        <reference local="T_CREDIT_TRANS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_TAX_ACCT_T_DUE_ACCT">
         <reference local="T_DUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_TAX_ACCT_T_DUE_T_ACCT">
+        <reference local="T_DUE_TRANS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_TAX_ACCT_T_EXPENSE_ACCT">
         <reference local="T_EXPENSE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>

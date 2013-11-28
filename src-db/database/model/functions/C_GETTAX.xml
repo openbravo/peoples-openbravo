@@ -28,6 +28,9 @@
       <parameter name="p_glitem_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
+      <parameter name="p_forcedcashvat" type="CHAR" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -40,7 +43,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -56,6 +59,7 @@
   v_shipTo        VARCHAR2(32) ;
   v_aux           VARCHAR2(32) ;
   v_BPTaxCategory VARCHAR2(32);
+  v_IsCashVAT     AD_ORGINFO.ISCASHVAT%TYPE;
   TYPE RECORD IS REF CURSOR;
     BILLTO RECORD;
   BEGIN
@@ -92,7 +96,7 @@
       (SELECT il.C_Location_ID AS billToC_Location_ID,
         b.SO_BP_TaxCategory_ID,
         b.PO_BP_TaxCategory_ID,
-        b.IsTaxExempt
+        b.IsTaxExempt, coalesce(p_forcedcashvat, b.IsCashVat) as IsCashVat
       FROM C_BPartner_Location il,
            C_BPartner b
       WHERE il.C_BPartner_ID = b.C_BPartner_ID
@@ -101,9 +105,18 @@
       IF p_IsSOTrx = 'Y' THEN
         v_isTaxExempt := COALESCE(BILLTO.IsTaxExempt, 'N') ;
         v_BPTaxCategory := BILLTO.SO_BP_TaxCategory_ID;
+        IF p_forcedcashvat IS NULL THEN
+          select coalesce(oi.isCashVAT, 'N')
+          into v_IsCashVAT
+          from ad_orginfo oi
+          where oi.ad_org_id = ad_get_org_le_bu(p_org_id, 'LE');
+        ELSE
+          v_IsCashVAT := p_forcedcashvat;
+        END IF;
       ELSE
         v_isTaxExempt := 'N';
         v_BPTaxCategory := BILLTO.PO_BP_TaxCategory_ID;
+        v_IsCashVAT := BILLTO.isCashVAT;
       END IF;
       EXIT;
     END LOOP;
@@ -174,13 +187,15 @@
           (SELECT t.C_Tax_ID, '' AS billToC_Location_ID, '' AS IsTaxExempt
           FROM  (SELECT C_Tax_ID, C_Country_ID, C_Region_ID, To_Country_Id,
                    To_Region_ID, ValidFrom, C_TaxCategory_ID,
-                   Parent_Tax_ID, C_BP_TaxCategory_ID, SoPoType, c_Tax.ad_org_id,c_Tax.ad_client_id,IsDefault
+                   Parent_Tax_ID, C_BP_TaxCategory_ID, SoPoType, c_Tax.ad_org_id,c_Tax.ad_client_id,IsDefault,
+                   isCashVAT
                  FROM c_Tax
                 WHERE c_Tax.isActive = 'Y'
                  UNION
                  SELECT tz.C_Tax_ID, tz.From_Country_ID, tz.From_Region_ID, tz.To_Country_ID,
                    tz.To_Region_ID, ValidFrom, C_TaxCategory_ID,
-                   Parent_Tax_Id, C_BP_TaxCategory_ID, ct.SoPoType, ct.ad_org_id,ct.ad_client_id,ct.IsDefault
+                   Parent_Tax_Id, C_BP_TaxCategory_ID, ct.SoPoType, ct.ad_org_id,ct.ad_client_id,ct.IsDefault,
+                   isCashVAT
                  FROM c_Tax_Zone tz,
                       c_Tax ct
                  WHERE tz.C_Tax_ID = ct.C_Tax_ID
@@ -201,6 +216,7 @@
          --   AND ((t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (v_BPTaxCategory IS NULL))
             AND ((t.C_BP_TaxCategory_ID IS NOT NULL AND t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (t.C_BP_TaxCategory_ID IS NULL))
             AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
+            AND t.isCashVAT = v_IsCashVAT
           ORDER BY ad_isorgincluded(p_org_id, t.ad_org_id,t.ad_client_id),t.C_BP_TaxCategory_ID, t.IsDefault DESC,t.C_Country_ID, t.To_Country_ID, t.C_Region_ID, t.To_Region_ID, t.ValidFrom DESC
           )
         LOOP
@@ -213,13 +229,15 @@
             FROM
               (SELECT C_Tax_ID, C_Country_ID, C_Region_ID, To_Country_Id,
                 To_Region_ID, ValidFrom, C_TaxCategory_ID,
-                Parent_Tax_ID, C_BP_TaxCategory_ID, SoPoType, c_Tax.ad_org_id,c_Tax.ad_client_id,IsDefault
+                Parent_Tax_ID, C_BP_TaxCategory_ID, SoPoType, c_Tax.ad_org_id,c_Tax.ad_client_id,IsDefault,
+                isCashVAT
               FROM c_Tax
               WHERE c_Tax.isActive = 'Y'
               UNION
               SELECT tz.C_Tax_ID, tz.From_Country_ID, tz.From_Region_ID, tz.To_Country_ID,
                 tz.To_Region_ID, ValidFrom, C_TaxCategory_ID,
-                Parent_Tax_Id, C_BP_TaxCategory_ID, SoPoType, ct.ad_org_id, ct.ad_client_id,ct.IsDefault
+                Parent_Tax_Id, C_BP_TaxCategory_ID, SoPoType, ct.ad_org_id, ct.ad_client_id,ct.IsDefault,
+                isCashVAT
               FROM c_Tax_Zone tz,
                 c_Tax ct
               WHERE tz.C_Tax_ID = ct.C_Tax_ID
@@ -241,6 +259,7 @@
               --AND ((t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (v_BPTaxCategory IS NULL))
               AND ((t.C_BP_TaxCategory_ID IS NOT NULL AND t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (t.C_BP_TaxCategory_ID IS NULL))
               AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
+              AND t.isCashVAT = v_IsCashVAT
             ORDER BY ad_isorgincluded(p_org_id, t.ad_org_id,t.ad_client_id),t.C_BP_TaxCategory_ID,t.IsDefault DESC,t.C_Country_ID, t.C_Region_ID, t.ValidFrom DESC
             )
           LOOP
@@ -262,6 +281,7 @@
               AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
               AND t.isActive = 'Y'
               AND ad_isorgincluded(p_org_id, t.ad_org_id,t.ad_client_id) <> -1
+              AND t.isCashVAT = v_IsCashVAT
             ORDER BY ad_isorgincluded(p_org_id, t.ad_org_id,t.ad_client_id),t.C_BP_TaxCategory_ID, t.ValidFrom DESC
             )
           LOOP

@@ -73,6 +73,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISCASHVAT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_AD_ORGINFO" onDelete="cascade">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -95,6 +99,7 @@
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
       <check name="AD_ORGINFO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_ORGINFO_ISCASHVAT_CH"><![CDATA[((ISCASHVAT = 'Y') AND (ISTAXUNDEDUCTABLE = 'N')) OR (ISCASHVAT = 'N')]]></check>
       <check name="AD_ORGINFO_ISTAXUNDEDUCTABLE"><![CDATA[ISTAXUNDEDUCTABLE IN ('Y', 'N')]]></check>
     </table>
   </database>

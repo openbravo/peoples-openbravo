@@ -50,6 +50,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -1099,7 +1100,7 @@ public class FIN_AddPayment {
 
   /**
    * Update Payment Schedule amounts with the amount of the Payment Schedule Detail or Payment
-   * Detail
+   * Detail. Useful when paying orders
    * 
    * @param paymentSchedule
    *          Payment Schedule to be updated
@@ -1110,6 +1111,25 @@ public class FIN_AddPayment {
    */
   public static void updatePaymentScheduleAmounts(FIN_PaymentSchedule paymentSchedule,
       BigDecimal amount, BigDecimal writeOffAmount) {
+    updatePaymentScheduleAmounts(null, paymentSchedule, amount, writeOffAmount);
+  }
+
+  /**
+   * Update Payment Schedule amounts with the amount of the Payment Schedule Detail or Payment
+   * Detail. Useful when paying invoices. It supports Invoices with Cash VAT, creating the records
+   * into the Cash VAT management table (InvoiceTaxCashVAT)
+   * 
+   * @param paymentDetail
+   *          payment
+   * @param paymentSchedule
+   *          Payment Schedule to be updated
+   * @param amount
+   *          Amount of the Payment Schedule Detail or Payment Detail
+   * @param writeOffAmount
+   *          Write off amount, null or 0 if not applicable.
+   */
+  public static void updatePaymentScheduleAmounts(FIN_PaymentDetail paymentDetail,
+      FIN_PaymentSchedule paymentSchedule, BigDecimal amount, BigDecimal writeOffAmount) {
     paymentSchedule.setPaidAmount(paymentSchedule.getPaidAmount().add(amount));
     paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(amount));
     if (writeOffAmount != null && writeOffAmount.compareTo(BigDecimal.ZERO) != 0) {
@@ -1118,6 +1138,7 @@ public class FIN_AddPayment {
           writeOffAmount));
     }
     OBDal.getInstance().save(paymentSchedule);
+    CashVATUtil.createInvoiceTaxCashVAT(paymentDetail, paymentSchedule, amount.add(writeOffAmount));
     if (paymentSchedule.getInvoice() != null) {
       updateInvoicePaymentMonitor(paymentSchedule, amount, writeOffAmount);
     }

@@ -81,6 +81,7 @@ v_description_first BOOLEAN := TRUE;
 v_finacct_currency VARCHAR2(32);
 v_rate NUMBER;
 v_PricePr NUMBER;
+v_IsCashVAT C_Invoice.IsCashVAT%TYPE;
 
 TYPE RECORD IS REF CURSOR;
 Cur_Params RECORD;
@@ -117,12 +118,14 @@ BEGIN
       grandtotal, C_PaymentTerm_ID, PaymentRule, C_Currency_ID,
       C_BPartner_ID, DateInvoiced, totallines, fin_paymentmethod_id,
       fin_payment_priority_id, documentNo, poreference,
-      c_project_id, c_campaign_id, c_activity_id, user1_id, user2_id, c_costcenter_id
+      c_project_id, c_campaign_id, c_activity_id, user1_id, user2_id, c_costcenter_id,
+      IsCashVAT
   INTO v_Client_ID, v_Org_ID, v_DocTypeTarget_ID, v_IsSOTrx,
       v_GrandTotal, v_PaymentTerm, v_PaymentRule, v_Currency_ID,
       v_BPartner_ID, v_DateInvoiced, v_totallines, v_PaymentMethod,
       v_PaymentPriority, v_documentno, v_poreference,
-      v_project_id, v_campaign_id, v_activity_id, v_user1, v_user2, v_costcenter
+      v_project_id, v_campaign_id, v_activity_id, v_user1, v_user2, v_costcenter,
+      v_IsCashVAT
   FROM c_invoice
   WHERE c_invoice_id=p_record_id;
   
@@ -192,6 +195,8 @@ BEGIN
       v_paymentCount NUMBER:= 0;
       v_negativePS NUMBER:= 1;
       v_psdbreakbypartialpayment BOOLEAN:=TRUE;
+      cur_cinvoicetax RECORD;
+      v_PercentageCashVAT NUMBER;
 
       CURSOR cur_order_schdet (invoice_id VARCHAR) IS
       SELECT DISTINCT c_orderline.c_order_id AS order_id, fin_payment_scheduledetail.amount + COALESCE(fin_payment_scheduledetail.writeoffamt,0) AS amount,
@@ -482,6 +487,25 @@ BEGIN
 
               v_scheduledamount := v_scheduledamount - v_scheduledetailamount;
 
+	      -- Create C_InvoiceTax_CashVAT records
+	      IF (v_IsCashVAT = 'Y' AND order_schdet.fin_payment_detail_id IS NOT NULL) THEN
+                v_PercentageCashVAT := abs(c_currency_round(v_scheduledetailamount * 100 / v_GrandTotal, v_Currency_ID, null));
+		FOR cur_cinvoicetax IN (
+		  SELECT it.C_InvoiceTax_ID, it.taxamt, it.taxbaseamt
+                  FROM C_InvoiceTax it
+		  WHERE it.c_invoice_id = p_record_id
+                )
+                LOOP
+	          INSERT INTO c_invoicetax_cashvat(
+                  c_invoicetax_cashvat_id, ad_client_id, ad_org_id, isactive, created,
+                  createdby, updated, updatedby, c_invoicetax_id, percentage, taxamt,
+                  taxbaseamt, fin_payment_detail_id)
+                  VALUES (get_uuid(), v_Client_ID, v_Org_ID, 'Y', now(),
+                  p_user, now(), p_user, cur_cinvoicetax.C_InvoiceTax_ID, v_PercentageCashVAT, c_currency_round(v_PercentageCashVAT * cur_cinvoicetax.taxamt / 100, v_Currency_ID, null),
+                  c_currency_round(v_PercentageCashVAT * cur_cinvoicetax.taxbaseamt / 100, v_Currency_ID, null), order_schdet.fin_payment_detail_id);
+                END LOOP;
+	      END IF;
+
               IF (v_scheduledamount * v_negativeps <= 0 AND v_paymentcount > 0) THEN
                 -- actual invoice's payment schedule processed.
                 v_oldorder := order_schdet.order_id;
@@ -723,6 +747,26 @@ BEGIN
                 SET FIN_PAYMENT_DETAIL_ID = v_FIN_PAYMENT_DETAIL_ID
                 WHERE FIN_PAYMENT_SCHEDULEDETAIL_ID = cur_linktopayment_scheddetails.FIN_PAYMENT_SCHEDULEDETAIL_ID
                   AND FIN_PAYMENT_DETAIL_ID IS NULL;
+                  
+                -- Create C_InvoiceTax_CashVAT records
+	      IF (v_IsCashVAT = 'Y') THEN
+                v_PercentageCashVAT := abs(c_currency_round(cur_linktopayment_scheddetails.AMOUNT * 100 / v_GrandTotal, v_Currency_ID, null));
+                FOR cur_cinvoicetax IN (
+                  SELECT it.C_InvoiceTax_ID, it.taxamt, it.taxbaseamt
+                              FROM C_InvoiceTax it
+                  WHERE it.c_invoice_id = p_record_id
+                )
+                LOOP
+                  INSERT INTO c_invoicetax_cashvat(
+                        c_invoicetax_cashvat_id, ad_client_id, ad_org_id, isactive, created,
+                        createdby, updated, updatedby, c_invoicetax_id, percentage, taxamt,
+                        taxbaseamt, fin_payment_detail_id)
+                        VALUES (get_uuid(), v_Client_ID, v_Org_ID, 'Y', now(),
+                        p_user, now(), p_user, cur_cinvoicetax.C_InvoiceTax_ID, v_PercentageCashVAT, c_currency_round(v_PercentageCashVAT * cur_cinvoicetax.taxamt / 100, v_Currency_ID, null),
+                        c_currency_round(v_PercentageCashVAT * cur_cinvoicetax.taxbaseamt / 100, v_Currency_ID, null), v_FIN_PAYMENT_DETAIL_ID);
+                END LOOP;
+	      END IF;
+        
               END LOOP;
 
               --Fixes 14403 defect 
