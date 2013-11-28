@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT C_Invoice.C_BPartner_Location_ID, C_Invoice.DateInvoiced, C_Invoice.C_Project_ID
+      SELECT C_Invoice.C_BPartner_Location_ID, C_Invoice.DateInvoiced, C_Invoice.C_Project_ID,
+      C_Invoice.IsCashVat
       FROM C_Invoice
       WHERE C_Invoice_ID = ?
       ]]>

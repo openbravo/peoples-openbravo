@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,12 +66,32 @@ public class Tax {
 
   public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,
       String AD_Org_ID, String M_Warehouse_ID, String billC_BPartner_Location_ID,
+      String shipC_BPartner_Location_ID, String C_Project_ID, boolean IsSOTrx, boolean forcedCashVAT)
+      throws IOException, ServletException {
+    log4jTax.debug("Tax.get (forcedCashVAT without account_id)");
+    return Tax.get(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
+        billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID, IsSOTrx, "",
+        forcedCashVAT);
+  }
+
+  public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,
+      String AD_Org_ID, String M_Warehouse_ID, String billC_BPartner_Location_ID,
       String shipC_BPartner_Location_ID, String C_Project_ID, boolean IsSOTrx, String account_id)
       throws IOException, ServletException {
     log4jTax.debug("Tax.get");
     return TaxData.taxGet(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
         billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID,
         (IsSOTrx ? "Y" : "N"), account_id);
+  }
+
+  public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,
+      String AD_Org_ID, String M_Warehouse_ID, String billC_BPartner_Location_ID,
+      String shipC_BPartner_Location_ID, String C_Project_ID, boolean IsSOTrx, String account_id,
+      boolean forcedCashVAT) throws IOException, ServletException {
+    log4jTax.debug("Tax.get (forcedCashVAT with account_id)");
+    return TaxData.taxGet(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID,
+        billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID,
+        (IsSOTrx ? "Y" : "N"), account_id, (forcedCashVAT ? "Y" : "N"));
   }
 
   public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,

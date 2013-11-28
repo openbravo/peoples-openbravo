@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -62,6 +62,10 @@ public class DocTax {
   public static final int ACCTTYPE_TaxReceivables = 3;
   /** Tax Expense */
   public static final int ACCTTYPE_TaxExpense = 4;
+  /** Tax Due Transitory Acct */
+  public static final int ACCTTYPE_TaxDue_Trans = 5;
+  /** Tax Credit Transitory */
+  public static final int ACCTTYPE_TaxCredit_Trans = 6;
 
   /**
    * Get Account
@@ -73,7 +77,7 @@ public class DocTax {
    * @return Account
    */
   public Account getAccount(int AcctType, AcctSchema as, ConnectionProvider conn) {
-    if (AcctType < 0 || AcctType > 4)
+    if (AcctType < 0 || AcctType > 6)
       return null;
     String validCombination_ID = "";
     DocTaxData[] data = null;
@@ -96,6 +100,12 @@ public class DocTax {
           break;
         case 4:
           validCombination_ID = data[0].tExpenseAcct;
+          break;
+        case 5:
+          validCombination_ID = data[0].tDueTransAcct;
+          break;
+        case 6:
+          validCombination_ID = data[0].tCreditTransAcct;
           break;
         }
       }
