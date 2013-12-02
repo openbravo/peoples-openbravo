@@ -244,9 +244,9 @@ enyo.kind({
             if (OB.POS.modelterminal.get('permissions')[this.permission]) {
               this.setShowing(true);
             }
-            this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
+            this.model.get('order').on('change:isPaid change:isLayaway change:isQuotation', function (newValue) {
               if (newValue) {
-                if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
+                if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true || newValue.get('isQuotation') === true) {
                   this.setShowing(false);
                   return;
                 }
@@ -387,12 +387,7 @@ enyo.kind({
     }
     if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1) {
       this.$.returnLine.hide();
-    } else if (OB.POS.modelterminal.get('permissions')[this.$.returnLine.permission]) {
-      this.$.returnLine.show();
-    }
-    if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1) {
-      this.$.returnLine.hide();
-    } else if (OB.POS.modelterminal.hasPermission(this.$.returnLine.permission)) {
+    } else if (OB.POS.modelterminal.get('permissions')[this.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
       this.$.returnLine.show();
     }
     this.render();
