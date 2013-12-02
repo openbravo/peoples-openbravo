@@ -279,9 +279,8 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getParentProperty() {
-    if (parentTabComponent == null
-        || Boolean.parseBoolean(getTab().get("disableParentKeyProperty") != null ? getTab().get(
-            "disableParentKeyProperty").toString() : "false")) {
+    Boolean disableParentKeyProperty = getTab().isDisableParentKeyProperty();
+    if (parentTabComponent == null || disableParentKeyProperty) {
       return "";
     }
     if (parentProperty != null) {
