@@ -11,13 +11,15 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.personalization;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
@@ -31,6 +33,8 @@ import org.openbravo.client.application.window.OBViewFormComponent;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.ui.Tab;
 
 /**
@@ -90,6 +94,25 @@ public class PersonalizationActionHandler extends BaseActionHandler {
           // is null if already removed
           OBDal.getInstance().remove(uiPersonalization);
         }
+
+        // Delete also all the preferences that has this uiPersonalization as the 'Default View'
+        List<Object> params = new ArrayList<Object>();
+        StringBuilder hql = new StringBuilder();
+        hql.append(" as p where ");
+        hql.append(" p.searchKey = ? ");
+        params.add(uiPersonalization);
+        hql.append(" and p.property = ?");
+        params.add("OBUIAPP_DefaultSavedView");
+
+        OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class,
+            hql.toString());
+        qPref.setParameters(params);
+        List<Preference> preferences = qPref.list();
+
+        for (Preference preference : preferences) {
+          OBDal.getInstance().remove(preference);
+        }
+
         return new JSONObject().put("result", "success");
       } else if (action.equals(ACTION_STORE)) {
 

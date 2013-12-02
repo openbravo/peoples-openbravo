@@ -50,6 +50,8 @@ import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentPropDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
@@ -568,15 +570,18 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         } finally {
           OBContext.restorePreviousMode();
         }
+
+        payment.setReversedPayment(reversedPayment);
+        OBDal.getInstance().save(payment);
+        OBDal.getInstance().flush();
+
         HashMap<String, Object> parameterMap = new HashMap<String, Object>();
         parameterMap.put("Fin_Payment_ID", reversedPayment.getId());
         parameterMap.put("action", "P");
         parameterMap.put("isReversedPayment", "Y");
         bundle.setParams(parameterMap);
         execute(bundle);
-        payment.setReversedPayment(reversedPayment);
-        OBDal.getInstance().save(payment);
-        OBDal.getInstance().flush();
+
         return;
 
         // ***********************
@@ -613,6 +618,18 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           OBDal.getInstance().rollbackAndClose();
           return;
         }
+
+        // Do not reactive the payment if it is tax payment
+        if (payment.getFinancialMgmtTaxPaymentList().size() != 0) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+              "@APRM_TaxPaymentReactivation@"));
+          bundle.setResult(msg);
+          OBDal.getInstance().rollbackAndClose();
+          return;
+        }
+
         // Transaction exists
         if (hasTransaction(payment)) {
           msg.setType("Error");
@@ -644,6 +661,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         payment.setWriteoffAmount(BigDecimal.ZERO);
 
         payment.setDescription("");
+
+        // if all line are deleted then update amount to zero
+        if (strAction.equals("R")) {
+          payment.setAmount(BigDecimal.ZERO);
+        }
 
         payment.setStatus("RPAP");
         payment.setAPRMProcessPayment("P");
@@ -858,8 +880,21 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           payment.setGeneratedCredit(BigDecimal.ZERO);
           if (strAction.equals("R")) {
             payment.setUsedCredit(BigDecimal.ZERO);
+            for (FIN_PaymentScheduleDetail psd : removedPDS) {
+              List<FIN_PaymentPropDetail> ppds = psd.getFINPaymentPropDetailList();
+              if (ppds.size() > 0) {
+                for (FIN_PaymentPropDetail ppd : ppds) {
+                  FIN_PaymentProposal paymentProposal = OBDal.getInstance().get(
+                      FIN_PaymentProposal.class, ppd.getFinPaymentProposal().getId());
+                  paymentProposal.setProcessed(false);
+                  OBDal.getInstance().save(paymentProposal);
+                  OBDal.getInstance().remove(ppd);
+                  OBDal.getInstance().flush();
+                  paymentProposal.setProcessed(true);
+                }
+              }
+            }
           }
-
         } finally {
           OBDal.getInstance().flush();
           OBContext.restorePreviousMode();

@@ -527,43 +527,34 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-      select d.*
-      FROM ( SELECT '0' AS RN1, c.* 
-      FROM (                       
-          select min(id) as id, min(da) as da 
-          from (
-            select a.C_INVOICE_ID as id, a.dateacct as da, a.ad_client_id, a.ad_org_id
-            from   c_invoice a
-            where  a.ad_client_id = ?
-            and a.ad_org_id in ('1')
-            and a.posted = 'N'
-            and a.processed = 'Y'
-            and (a.processing = 'N' or a.processing is null)) b
-        where exists (select 1
-              from c_periodcontrol, c_period
-              where c_periodcontrol.c_period_id = c_period.c_period_id
-              and c_periodcontrol.docbasetype = ?
-              and c_periodcontrol.periodstatus = 'O'
-              and ad_org_getperiodcontrolallow(b.ad_org_id) = c_periodcontrol.ad_org_id
-              and b.da >= c_period.StartDate
-              and b.da < c_period.EndDate + 1)
-        and 1=1
-       )c ) d 
-        where 2=2
+        select 1 as id from dual where exists ( select 1 from (
+         SELECT a.dateacct as dateacct
+         from   c_invoice a, c_periodcontrol, c_period
+         WHERE a.ad_client_id = ?
+           AND a.ad_org_id in ('1')
+           AND a.posted = 'N'
+           AND a.processed = 'Y'
+           AND (a.processing = 'N' OR a.processing IS NULL)
+           and c_periodcontrol.c_period_id = c_period.c_period_id
+           AND c_periodcontrol.docbasetype = ?
+           AND c_periodcontrol.periodstatus = 'O'
+           AND ad_org_getperiodcontrolallow(a.ad_org_id) = c_periodcontrol.ad_org_id
+           AND  a.dateacct >= c_period.StartDate
+           AND   a.dateacct < c_period.EndDate + 1
+           ) b
+         where 1=1
+         )
       ]]>
       </Sql>
-      <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
-      <Parameter name="tableName" type="replace" optional="true" after="select a." text="C_INVOICE"/>
-      <Parameter name="dateColumn" type="replace" optional="true" after="as id, a." text="dateacct"/>
+      <Parameter name="columnName" type="replace" optional="true" after="SELECT a." text="dateacct"/>
       <Parameter name="tableName" type="replace" optional="true" after="from   " text="c_invoice"/>
       <Parameter name="adClientId" />
       <Parameter name="StrOrg" type="replace" optional="true" after="a.ad_org_id in (" text="'1'"/>
       <Parameter name="docbasetype"/>
-      <Parameter name="dateFrom" optional="true" after="and 1=1"><![CDATA[ AND b.da >= TO_DATE(?)]]></Parameter>
-      <Parameter name="dateTo" optional="true" after="and 1=1"><![CDATA[ AND b.da <= TO_DATE(?)]]></Parameter>
-      <Parameter name="pgLimit" type="argument" optional="true" after="and 1=1"><![CDATA[LIMIT ]]></Parameter>
-      <Parameter name="oraLimit1" type="argument" optional="true" after=")c "><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
-      <Parameter name="oraLimit2" type="argument" optional="true" after="where 2=2"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
+      <Parameter name="columnName" type="replace" optional="true" after="AND  a." text="dateacct"/>
+      <Parameter name="columnName" type="replace" optional="true" after="AND   a." text="dateacct"/>
+      <Parameter name="dateFrom" optional="true" after="where 1=1"><![CDATA[ AND b.dateacct >= TO_DATE(?)]]></Parameter>
+      <Parameter name="dateTo" optional="true" after="where 1=1"><![CDATA[ AND b.dateacct <= TO_DATE(?)]]></Parameter>
    </SqlMethod>
    <SqlMethod name="filterDatesSelectDocuments" type="preparedStatement" return="single">
       <SqlMethodComment></SqlMethodComment>

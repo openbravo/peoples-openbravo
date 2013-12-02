@@ -198,8 +198,8 @@ BEGIN
                           AND ppl.PRODUCTIONTYPE = '-'
                           AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
                           AND c.ISPRODUCTION='Y'
-                          AND c.COSTTYPE = 'AVA'
-                          AND v_iscostmigrated = 'Y') LOOP
+                          AND ((c.COSTTYPE = 'AVA' AND v_iscostmigrated = 'Y')
+				OR (c.COSTTYPE = 'AV' AND v_iscostmigrated = 'N'))) LOOP
           v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_WIP.cost,0);
           UPDATE M_PRODUCTIONLINE
           SET calccost = COALESCE(Cur_WIP.cost, 0)
@@ -217,8 +217,8 @@ BEGIN
                                   AND ppl.PRODUCTIONTYPE = '-'
                                   AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
                                   AND c.ISPRODUCTION='N'
-				                           AND c.COSTTYPE = 'AVA'
-				                           AND v_iscostmigrated = 'Y'
+				                           AND ((c.COSTTYPE = 'AVA' AND v_iscostmigrated = 'Y')
+								OR (c.COSTTYPE = 'AV' AND v_iscostmigrated = 'N'))
                                   AND NOT EXISTS (SELECT 1
                                                   FROM M_COSTING, M_PRODUCTIONLINE
                                                   WHERE M_COSTING.M_PRODUCT_ID = M_PRODUCTIONLINE.M_PRODUCT_ID
@@ -227,8 +227,8 @@ BEGIN
                                                     AND M_PRODUCTIONLINE.PRODUCTIONTYPE = '-'
                                                     AND M_PRODUCTIONLINE.M_PRODUCT_ID = c.M_Product_ID
                                                     AND M_COSTING.ISPRODUCTION='Y'
-						                                         AND c.COSTTYPE = 'AVA'
-						                                         AND v_iscostmigrated = 'Y')) LOOP
+						    AND ((M_COSTING.COSTTYPE = 'AVA' AND v_iscostmigrated = 'Y')
+							OR (M_COSTING.COSTTYPE = 'AV' AND v_iscostmigrated = 'N')))) LOOP
           v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_RawMaterial.cost,0);
           UPDATE M_PRODUCTIONLINE
           SET calccost = COALESCE(Cur_RawMaterial.cost, 0)

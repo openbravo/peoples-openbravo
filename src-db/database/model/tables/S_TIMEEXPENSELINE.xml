@@ -163,7 +163,7 @@
       <foreign-key foreignTable="C_CURRENCY" name="S_TIMEEXPENSELINE_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICELINE" name="S_TIMEEXPENSELINE_C_INVOICELIN">
+      <foreign-key foreignTable="C_INVOICELINE" name="S_TIMEEXPENSELINE_C_INVOICELIN" onDelete="setnull">
         <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ORDERLINE" name="S_TIMEEXPENSELINE_C_ORDERLINE">

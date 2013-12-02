@@ -38,6 +38,7 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -331,6 +332,7 @@ public class FIN_Utility {
       if (seq == null && tableName != null) {
         OBCriteria<Sequence> obcSeq = OBDal.getInstance().createCriteria(Sequence.class);
         obcSeq.add(Restrictions.eq(Sequence.PROPERTY_NAME, tableName));
+        obcSeq.setLockMode(LockMode.PESSIMISTIC_WRITE);
         if (obcSeq != null && obcSeq.list().size() > 0) {
           seq = obcSeq.list().get(0);
         }

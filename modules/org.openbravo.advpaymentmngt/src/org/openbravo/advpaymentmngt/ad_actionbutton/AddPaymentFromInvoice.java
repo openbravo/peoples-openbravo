@@ -189,6 +189,7 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
         refundAmount = new BigDecimal(strDifference);
         strDifferenceAction = vars.getStringParameter("inpDifferenceAction", "");
       }
+      String strInvoiceId = vars.getRequestGlobalVariable("inpcInvoiceId", "");
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strReferenceNo = vars.getStringParameter("inpReferenceNo", "");
       String paymentCurrencyId = vars.getRequiredStringParameter("inpCurrencyId");
@@ -231,8 +232,11 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
           String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
               parameters, null);
           String strDocBaseType = parameters.get(2).toString();
+          boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(Invoice.TABLE_NAME,
+              strInvoiceId, Invoice.TABLE_NAME + "_ID", "LE");
 
-          if (!FIN_Utility.isPeriodOpen(vars.getClient(), strDocBaseType, strOrgId, strPaymentDate)) {
+          if (!FIN_Utility.isPeriodOpen(vars.getClient(), strDocBaseType, strOrgId, strPaymentDate)
+              && orgLegalWithAccounting) {
             final OBError myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                 Utility.messageBD(this, "PeriodNotAvailable", vars.getLanguage()));
             vars.setMessage(strTabId, myMessage);

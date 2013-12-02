@@ -475,6 +475,15 @@ isc.OBStandardWindow.addProperties({
     }
   },
 
+  checkIfDefaultSavedView: function () {
+    var persDefaultValue = OB.PropertyStore.get('OBUIAPP_DefaultSavedView', this.windowId);
+    if (persDefaultValue && persDefaultValue !== 'dummyId' && OB.Utilities.checkProfessionalLicense(null, true)) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
   setPersonalization: function (personalization) {
     var i, defaultView, persDefaultValue, views, length, me = this;
 
@@ -558,6 +567,21 @@ isc.OBStandardWindow.addProperties({
     // restore focus as the focusitem may have been hidden now
     // https://issues.openbravo.com/view.php?id=21249
     this.setFocusInView();
+  },
+
+  // reapplies partial states that couldn't be initially applied because
+  // data in client was required
+  reapplyViewStates: function () {
+    var i, reapp;
+    if (!this.requiredReapplyViewState || !this.gridsToReapply) {
+      return;
+    }
+    for (i = 0; i < this.gridsToReapply.length; i++) {
+      reapp = this.gridsToReapply[i];
+      reapp.view.setViewState(reapp.state);
+    }
+    delete this.requiredReapplyViewState;
+    delete this.gridsToReapply;
   },
 
   clearLastViewPersonalization: function () {

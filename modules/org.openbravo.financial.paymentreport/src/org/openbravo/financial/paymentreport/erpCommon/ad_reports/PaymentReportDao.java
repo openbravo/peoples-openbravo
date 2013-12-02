@@ -436,9 +436,11 @@ public class PaymentReportDao {
 
       // financial account
       if (!strFinancialAccountId.isEmpty()) {
-        hsqlScript.append(" and (pay is not null and pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_ACCOUNT);
-        hsqlScript.append(".id = '");
+        hsqlScript.append(" and  (pay is not null and ");
+        hsqlScript
+            .append("(select case when trans is not null then trans.account.id else payment.account.id end from FIN_Finacc_Transaction trans right outer join trans.finPayment payment where payment=pay)");
+
+        hsqlScript.append(" = '");
         hsqlScript.append(strFinancialAccountId);
         hsqlScript.append("' or ((pay is null and inv.");
         hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);

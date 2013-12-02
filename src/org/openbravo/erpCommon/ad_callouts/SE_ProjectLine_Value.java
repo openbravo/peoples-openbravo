@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -106,7 +106,7 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
                 + (plannedprice.equals("") ? "\"\"" : plannedprice) + "),\n");
           } else {
             resultado.append("new Array(\"inppriceactual\", "
-                + (plannedprice.equals("") ? "\"\"" : plannedprice) + ")\n");
+                + (plannedprice.equals("") ? "\"\"" : plannedprice) + "),\n");
           }
         } else
           strMessage = "PriceNotFound";
@@ -115,7 +115,7 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
         // Warning message: is not going to add in the pricelist.
         strMessage = OBMessageUtils.messageBD("PriceListNotUpdated");
       }
-      resultado.append("new Array(\"inpplannedprice\", " + strPriceStd + " ),\n");
+      resultado.append("new Array(\"inpplannedprice\", " + strPriceStd + " )\n");
       if (!strProjCat.equals("S")) {
         if (strCBPartnerLocationID != null && !strCBPartnerLocationID.equals("")
             && strMWarehouseID != null && !strMWarehouseID.equals("")) {
@@ -123,7 +123,7 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
           String strCTaxID = Tax.get(this, strmProductId, strDate, strADOrgID, strMWarehouseID,
               strCBPartnerLocationID, strCBPartnerLocationID, strProjectId, strIsSOTrx.equals("Y"));
           if (strCTaxID != null && !strCTaxID.equals("")) {
-            resultado.append("new Array(\"inpcTaxId\", \""
+            resultado.append(", new Array(\"inpcTaxId\", \""
                 + (strCTaxID.equals("") ? "\"\"" : strCTaxID) + "\"),\n");
           } else
             strMessage = "TaxNotFound";

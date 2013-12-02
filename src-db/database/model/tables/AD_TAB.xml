@@ -169,6 +169,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="DISABLE_PARENT_KEY_PROPERTY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_AD_TAB">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
@@ -223,6 +227,7 @@
       <check name="AD_TAB_ISSINGLEROW_CHK"><![CDATA[ISSINGLEROW IN ('Y', 'N')]]></check>
       <check name="AD_TAB_ISTRANSLATIONTAB_CHK"><![CDATA[ISTRANSLATIONTAB IN ('Y', 'N')]]></check>
       <check name="AD_TAB_NAME_CHK"><![CDATA[INSTR(NAME, TO_CHAR('_')) = 0]]></check>
+      <check name="AD_TAB_PARENTKEYPROPERTY_CHK"><![CDATA[DISABLE_PARENT_KEY_PROPERTY IN ('Y', 'N')]]></check>
       <check name="AD_TAB_SHOWPARENTBUTTONS_CHK"><![CDATA[SHOWPARENTBUTTONS IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -232,7 +232,7 @@ public class InventoryCountProcess implements Process {
     where.append("   join p." + Product.PROPERTY_ATTRIBUTESET + " as aset");
     where.append(" where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory");
     where.append("   and aset." + AttributeSet.PROPERTY_REQUIREATLEASTONEVALUE + " = true");
-    where.append("   and coalesce(p." + Product.PROPERTY_ATTRIBUTESETVALUE + ", '-') <> 'F'");
+    where.append("   and coalesce(p." + Product.PROPERTY_USEATTRIBUTESETVALUEAS + ", '-') <> 'F'");
     where.append("   and coalesce(icl." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
         + ", '0') = '0'");
     where.append("  order by icl." + InventoryCountLine.PROPERTY_LINENO);

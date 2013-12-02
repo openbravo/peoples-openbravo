@@ -2102,25 +2102,14 @@ public abstract class AcctServer {
         .getOrganizationStructureProvider(AD_Client_ID).getChildTree(AD_Org_ID, true);
     String strorgs = Utility.getInStrSet(orgSet);
 
-    String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-    if (connectionProvider.getRDBMS().equalsIgnoreCase("ORACLE")) {
-      oraLimit1 = "2";
-      oraLimit2 = "1 AND 2";
-      rownum = "ROWNUM";
-    } else {
-      pgLimit = "2";
-    }
-
     for (int i = 0; i < docTypes.length; i++) {
-      AcctServerData data = AcctServerData.selectDocumentsDates(connectionProvider, rownum,
-          tableName, strDateColumn, AD_Client_ID, strorgs, docTypes[i].name, dateFrom, dateTo,
-          pgLimit, oraLimit1, oraLimit2);
+      long init = System.currentTimeMillis();
+      AcctServerData data = AcctServerData.selectDocumentsDates(connectionProvider, strDateColumn,
+          tableName, AD_Client_ID, strorgs, docTypes[i].name, dateFrom, dateTo);
+      log4j.debug("AcctServerData.selectDocumentsDates for: " + docTypes[i].name + " took: "
+          + (System.currentTimeMillis() - init));
       if (data != null) {
         if (data.id != null && !data.id.equals("")) {
-          if (log4j.isDebugEnabled()) {
-            log4j.debug("AcctServer - not posted - " + docTypes[i].name + " document id: "
-                + data.id);
-          }
           return true;
         }
       }
@@ -2128,29 +2117,12 @@ public abstract class AcctServer {
     return false;
   } // end of checkDocuments() method
 
+  @Deprecated
+  /*
+   * Use checkDocuments method instead
+   */
   public boolean filterDatesCheckDocuments(String dateFrom, String dateTo) throws ServletException {
-    if (m_as.length == 0)
-      return false;
-    AcctServerData[] docTypes = AcctServerData.selectDocTypes(connectionProvider, AD_Table_ID,
-        AD_Client_ID);
-    // if (log4j.isDebugEnabled())
-    // log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
-
-    for (int i = 0; i < docTypes.length; i++) {
-      AcctServerData data = AcctServerData.filterDatesSelectDocuments(connectionProvider,
-          tableName, AD_Client_ID, AD_Org_ID, docTypes[i].name, strDateColumn, dateFrom, dateTo);
-
-      if (data != null) {
-        if (data.id != null && !data.id.equals("")) {
-          if (log4j.isDebugEnabled()) {
-            log4j.debug("AcctServer - not posted - " + docTypes[i].name + " document id: "
-                + data.id);
-          }
-          return true;
-        }
-      }
-    }
-    return false;
+    return checkDocuments(dateFrom, dateTo);
   } // end of filterDatesCheckDocuments() method
 
   public void setMessageResult(OBError error) {

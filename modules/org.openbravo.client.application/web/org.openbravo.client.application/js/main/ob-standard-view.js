@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -297,7 +297,7 @@ isc.OBStandardView.addProperties({
     //   -Grid is not rendered twice (one for the standard confing and another
     //    one for the saved config)
     if (this.standardWindow && this.standardWindow.viewState && this.standardWindow.viewState[this.tabId]) {
-      this.viewGrid.setViewState(this.standardWindow.viewState[this.tabId]);
+      this.viewGrid.setViewState(this.standardWindow.viewState[this.tabId], true);
       // lastViewApplied is set because there are modifications in grid, so not
       // marking "Standard View" in view's menu
       this.standardWindow.lastViewApplied = true;
@@ -307,7 +307,9 @@ isc.OBStandardView.addProperties({
     // a specific tab with a record, the direct link logic will already take care
     // of fetching data
     if (this.isRootView && !this.standardWindow.directTabInfo) {
-      this.viewGrid.fetchData(this.viewGrid.getCriteria());
+      if (!this.standardWindow.checkIfDefaultSavedView()) {
+        this.viewGrid.fetchData(this.viewGrid.getCriteria());
+      }
       this.refreshContents = false;
     }
 
