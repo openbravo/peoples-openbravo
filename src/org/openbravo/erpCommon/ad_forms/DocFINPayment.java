@@ -631,7 +631,7 @@ public class DocFINPayment extends AcctServer {
     if (paymentInfo.length > 0) {
       FieldProviderFactory.setField(data[0], "User1_ID", paymentInfo[0].user1Id);
       FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].user2Id);
-      FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].cCostcenterId);
+      FieldProviderFactory.setField(data[0], "C_Costcenter_ID", paymentInfo[0].cCostcenterId);
     }
 
     setObjectFieldProvider(data);
