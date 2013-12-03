@@ -54,7 +54,7 @@
         var receipt = args.context.receipt,
             auxReceipt = new OB.Model.Order(),
             currentDocNo = receipt.get('documentNo') || docno;
-
+        receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         receipt.set('json', JSON.stringify(receipt.toJSON()));
 
         auxReceipt.clearWith(receipt);

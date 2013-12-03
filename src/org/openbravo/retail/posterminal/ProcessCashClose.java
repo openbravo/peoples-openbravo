@@ -31,69 +31,76 @@ public class ProcessCashClose extends JSONProcessSimple {
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
     OBContext.setAdminMode(false);
+    JSONArray jsonCashups = jsonsent.getJSONArray("cashups");
     JSONObject jsonResponse = new JSONObject();
-    JSONObject jsonData = new JSONObject();
-    try {
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      jsonResponse.put("result", "0");
-      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-          jsonsent.getString("terminalId"));
-      OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class,
-          jsonsent.getString("cashUpId"));
-      
-      // check if there is a reconciliation in draft status
-      for (OBPOSAppPayment payment: posTerminal.getOBPOSAppPaymentList()){    	  
-    	  final OBCriteria<FIN_Reconciliation> recconciliations = OBDal.getInstance().createCriteria(
-    			  FIN_Reconciliation.class);
-    	  recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_DOCUMENTSTATUS, "DR"));
-    	  recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT , payment.getFinancialAccount()));
-    	  for (final FIN_Reconciliation r : recconciliations.list()) {
-    	      log.error("Error processing cash close: the reconciliation "+ r.getDocumentNo() +" ("+ r.getAccount().getName()+") is in draft status");
-    	      jsonData.put("error", "1");
-    	      jsonData.put("errorMessage", "OBPOS_LblCashupWithReconciliationDraft");
-    	      jsonData.put("errorDetail",  payment.getCommercialName());
-    	      jsonData.put("errorNoNavigateToInitialScreen", "true");
-    	      jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
-    	      return jsonResponse;
-    	  }
-      }   
-      
-      if (cashUp == null
-          && RequestContext.get().getSessionAttribute(
-              "cashupTerminalId|" + jsonsent.getString("terminalId")) == null) {
-        RequestContext.get().setSessionAttribute(
-            "cashupTerminalId|" + jsonsent.getString("terminalId"), true);
-        new OrderGroupingProcessor().groupOrders(posTerminal);
-        posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-            jsonsent.getString("terminalId"));
-        JSONArray arrayCashCloseInfo = jsonsent.getJSONArray("cashCloseInfo");
+    for (int i = 0; i < jsonCashups.length(); i++) {
+      JSONObject jsonCashup = jsonCashups.getJSONObject(i);
+      JSONObject jsonData = new JSONObject();
+      String cashUpId = jsonCashup.getString("cashUpId");
+      try {
+        jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+        jsonResponse.put("result", "0");
+        OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+            jsonCashup.getString("terminalId"));
+        OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
 
-        CashCloseProcessor processor = WeldUtils
-            .getInstanceFromStaticBeanManager(CashCloseProcessor.class);
-        JSONObject result = processor.processCashClose(posTerminal, jsonsent.getString("cashUpId"),
-            arrayCashCloseInfo);
+        // check if there is a reconciliation in draft status
+        for (OBPOSAppPayment payment : posTerminal.getOBPOSAppPaymentList()) {
+          final OBCriteria<FIN_Reconciliation> recconciliations = OBDal.getInstance()
+              .createCriteria(FIN_Reconciliation.class);
+          recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_DOCUMENTSTATUS, "DR"));
+          recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT,
+              payment.getFinancialAccount()));
+          for (final FIN_Reconciliation r : recconciliations.list()) {
+            log.error("Error processing cash close: the reconciliation " + r.getDocumentNo() + " ("
+                + r.getAccount().getName() + ") is in draft status");
+            jsonData.put("error", "1");
+            jsonData.put("errorMessage", "OBPOS_LblCashupWithReconciliationDraft");
+            jsonData.put("errorDetail", payment.getCommercialName());
+            jsonData.put("errorNoNavigateToInitialScreen", "true");
+            jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
+            break;
+          }
+        }
 
-        // add the messages returned by processCashClose...
-        jsonData.put("messages", result.opt("messages"));
-        jsonData.put("next", result.opt("next"));
-      }
-      jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
-      return jsonResponse;
-    } catch (Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      log.error("Error processing cash close", e);
-      jsonData.put("error", "1");
-      jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
-      return jsonResponse;
-    } finally {
-      RequestContext.get().removeSessionAttribute(
-          "cashupTerminalId|" + jsonsent.getString("terminalId"));
-      OBDal.getInstance().rollbackAndClose();
-      OBContext.restorePreviousMode();
-      if (TriggerHandler.getInstance().isDisabled()) {
-        TriggerHandler.getInstance().enable();
+        if (cashUp == null
+            && RequestContext.get().getSessionAttribute(
+                "cashupTerminalId|" + jsonCashup.getString("terminalId")) == null) {
+          RequestContext.get().setSessionAttribute(
+              "cashupTerminalId|" + jsonCashup.getString("terminalId"), true);
+          new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId);
+          posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+              jsonCashup.getString("terminalId"));
+          JSONArray arrayCashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
+
+          CashCloseProcessor processor = WeldUtils
+              .getInstanceFromStaticBeanManager(CashCloseProcessor.class);
+          JSONObject result = processor.processCashClose(posTerminal,
+              jsonCashup.getString("cashUpId"), arrayCashCloseInfo);
+
+          // add the messages returned by processCashClose...
+          jsonData.put("messages", result.opt("messages"));
+          jsonData.put("next", result.opt("next"));
+        }
+        jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
+      } catch (Exception e) {
+        OBDal.getInstance().rollbackAndClose();
+        log.error("Error processing cash close", e);
+        jsonData.put("error", "1");
+        jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
+        break;
+      } finally {
+        RequestContext.get().removeSessionAttribute(
+            "cashupTerminalId|" + jsonCashup.getString("terminalId"));
+        OBDal.getInstance().rollbackAndClose();
+        OBContext.restorePreviousMode();
+        if (TriggerHandler.getInstance().isDisabled()) {
+          TriggerHandler.getInstance().enable();
+        }
       }
     }
+
+    return jsonResponse;
   }
 
   @Override

@@ -102,6 +102,7 @@
             lastCashUpPayments = JSON.parse(lastCashUp.at(0).get('objToSend')).cashCloseInfo;
           }
           uuid = OB.Dal.get_uuid();
+          OB.MobileApp.model.get('terminal').cashUpId = uuid;
           OB.Dal.save(new OB.Model.CashUp({
             id: uuid,
             netSales: '0',
@@ -137,6 +138,11 @@
             }
           }, null, true);
         }, null, this);
+      } else {
+        OB.MobileApp.model.get('terminal').cashUpId = cashUp.at(0).get('id');
+        if (callback) {
+          callback();
+        }
       }
     });
   };

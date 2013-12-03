@@ -55,12 +55,13 @@ public class OrderGroupingProcessor {
 
   private static final Logger log = Logger.getLogger(OrderGroupingProcessor.class);
 
-  public JSONObject groupOrders(OBPOSApplications posTerminal) throws JSONException, SQLException {
+  public JSONObject groupOrders(OBPOSApplications posTerminal, String cashUpId)
+      throws JSONException, SQLException {
     // Obtaining order lines that have been created in current terminal and have not already been
     // reconciled. This query must be kept in sync with the one in CashCloseReport
 
     String hqlWhereClause = "as line"
-        + " where line.salesOrder.obposApplications = :terminal and line.deliveredQuantity=line.orderedQuantity and line.orderedQuantity <> 0"
+        + " where line.salesOrder.obposApplications = :terminal and line.salesOrder.obposAppCashup=:cashUpId and line.deliveredQuantity=line.orderedQuantity and line.orderedQuantity <> 0"
         + " and line.salesOrder.documentType.id in ('"
         + posTerminal.getObposTerminaltype().getDocumentType().getId()
         + "', '"
@@ -70,6 +71,7 @@ public class OrderGroupingProcessor {
 
     OBQuery<OrderLine> query = OBDal.getInstance().createQuery(OrderLine.class, hqlWhereClause);
     query.setNamedParameter("terminal", posTerminal);
+    query.setNamedParameter("cashUpId", cashUpId);
 
     long t1 = System.currentTimeMillis();
     ScrollableResults orderLines = query.scroll(ScrollMode.FORWARD_ONLY);
