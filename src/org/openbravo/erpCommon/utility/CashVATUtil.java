@@ -132,6 +132,7 @@ public class CashVATUtil {
         } else {
           final boolean calculateAmountsBasedOnPercentage;
           BigDecimal percentage = null; /* Calculate it later on */
+          BigDecimal actualPercentage = null;
           final BigDecimal outstandingAmt = invoice.getOutstandingAmount();
           if (outstandingAmt.compareTo(amount) == 0) {
             // We are fully paying the invoice. We need to subtract amounts instead of calculating
@@ -142,8 +143,9 @@ public class CashVATUtil {
             calculateAmountsBasedOnPercentage = true;
             final BigDecimal grandTotalAmt = invoice.getGrandTotalAmount();
             final int currencyPrecission = invoice.getCurrency().getStandardPrecision().intValue();
-            percentage = amount.multiply(_100)
-                .divide(grandTotalAmt, currencyPrecission, RoundingMode.HALF_UP).abs();
+            actualPercentage = amount.multiply(_100).divide(grandTotalAmt, currencyPrecission,
+                RoundingMode.HALF_UP);
+            percentage = actualPercentage.abs();
           }
 
           for (final InvoiceTax invoiceTax : invoice.getInvoiceTaxList()) {
@@ -155,10 +157,10 @@ public class CashVATUtil {
             final BigDecimal taxAmount;
             final BigDecimal taxableAmount;
             if (calculateAmountsBasedOnPercentage) {
-              taxAmount = calculatePercentageAmount(percentage, invoiceTax.getTaxAmount(),
+              taxAmount = calculatePercentageAmount(actualPercentage, invoiceTax.getTaxAmount(),
                   invoice.getCurrency());
-              taxableAmount = calculatePercentageAmount(percentage, invoiceTax.getTaxableAmount(),
-                  invoice.getCurrency());
+              taxableAmount = calculatePercentageAmount(actualPercentage,
+                  invoiceTax.getTaxableAmount(), invoice.getCurrency());
             } else {
               final Map<String, BigDecimal> outstandingAmounts = getTotalOutstandingCashVATAmount(invoiceTax
                   .getId());
