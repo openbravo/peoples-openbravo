@@ -105,6 +105,12 @@
       var cmbOrg = document.frmMain.inpOrderOrg;
       var cmbWarehouse = document.frmMain.inpWarehouse;
       changeComboData(cmbWarehouse, arrWarehouse, cmbOrg.options[cmbOrg.selectedIndex].value, false);
+      for (var i = 0; i < cmbWarehouse.options.length; i++) {
+          if (cmbWarehouse.options[i].value === document.getElementById("paramLoginWarehouseId").value) {
+        	  cmbWarehouse.selectedIndex = i;
+        	  break;
+          }
+      }
       return true;
     }
   </script>
@@ -137,6 +143,7 @@
     <input type="hidden" name="IsPopUpCall" value="1"></input>
     <input type="hidden" name="inpLastFieldChanged"></input>
     <input type="hidden" name="inpSelected" id="paramSelected" value=""></input>
+    <input type="hidden" name="inpLoginWarehouseId" id="paramLoginWarehouseId" value=""></input>
     <div class="Popup_ContentPane_CircleLogo">
       <div class="Popup_WindowLogo">
         <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>

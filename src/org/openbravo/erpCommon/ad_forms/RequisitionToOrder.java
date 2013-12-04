@@ -380,6 +380,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("help", Replace.replace(strDescription, "\\n", "\n"));
+    xmlDocument.setParameter("paramLoginWarehouseId", vars.getSessionValue("#M_WAREHOUSE_ID"));
     {
       OBError myMessage = vars.getMessage("RequisitionToOrderCreate");
       vars.removeMessage("RequisitionToOrderCreate");
