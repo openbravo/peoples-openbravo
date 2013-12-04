@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -46,6 +46,25 @@ BEGIN
                      FROM OBUIAPP_Process_Access
                     WHERE OBUIAPP_Process_ID = P.OBUIAPP_Process_ID
                       AND AD_ROLE_ID = R.AD_ROLE_ID);
+
+    --update view access
+  INSERT INTO OBUIAPP_View_Role_Access
+    (
+      OBUIAPP_View_Role_Access_ID, OBUIAPP_View_Impl_ID, AD_Role_ID, AD_Client_ID,
+      AD_Org_ID, IsActive, Created,
+      CreatedBy, Updated, UpdatedBy
+    )
+  SELECT get_uuid(), V.OBUIAPP_View_Impl_ID, R.AD_ROLE_ID, R.AD_CLIENT_ID,
+    R.AD_ORG_ID, 'Y', now(),
+    '0', now(), '0'
+  FROM OBUIAPP_View_Impl V, AD_Role R
+  WHERE R.isManual = 'N'
+  AND V.isActive = 'Y'
+    AND NOT EXISTS (SELECT 1
+                     FROM OBUIAPP_View_Role_Access
+                    WHERE OBUIAPP_View_Impl_ID = V.OBUIAPP_View_Impl_ID
+                      AND AD_ROLE_ID = R.AD_ROLE_ID
+                      AND (R.ISADVANCED = 'Y' OR V.ISADVANCEDFEATURE = 'N'));
 END OBUIAPP_UPDATE_ACCESS
 ]]></body>
     </function>
