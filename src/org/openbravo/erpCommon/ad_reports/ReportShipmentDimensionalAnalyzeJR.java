@@ -594,9 +594,10 @@ public class ReportShipmentDimensionalAnalyzeJR extends HttpSecureAppServlet {
       strHaving = " HAVING (SUM(CONVAMOUNT) > " + strMayor + ")";
     } else if (strMayor.equals("") && !strMenor.equals("")) {
       strHaving = " HAVING (SUM(CONVAMOUNT) < " + strMenor + ")";
-    } else {
+    } 
+    /*else {
       strHaving = " HAVING (SUM(CONVAMOUNT) <> 0 OR SUM(CONVAMOUNTREF) <> 0)";
-    }
+    }*/
     strOrderby = strHaving + strOrderby;
 
     int limit = 0;
