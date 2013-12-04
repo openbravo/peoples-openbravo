@@ -72,7 +72,7 @@
                 window.applicationCache.swapCache();
                 window.location.reload();
               } else {
-                OB.POS.terminal.$.containerWindow.$.LoginWindow.$.DatabaseDialog.show();
+                OB.POS.terminal.$.containerWindow.getRoot().$.DatabaseDialog.show();
               }
             }, function () {
               window.console.error(arguments);

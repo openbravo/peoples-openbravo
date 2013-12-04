@@ -450,10 +450,10 @@
         this.calculateTaxes(function () {
           //If the price doesn't include tax, the discounted gross has already been calculated
           var gross = me.get('lines').reduce(function (memo, e) {
-            if (_.isUndefined(e.get('fulldiscountedGross'))) {
+            if (_.isUndefined(e.get('discountedGross'))) {
               return memo;
             }
-            var grossLine = OB.DEC.toNumber(e.get('fulldiscountedGross'));
+            var grossLine = e.get('discountedGross');
             if (grossLine) {
               return OB.DEC.add(memo, grossLine);
             } else {
@@ -714,6 +714,18 @@
     deleteLine: function (line) {
       var me = this;
       var index = this.get('lines').indexOf(line);
+      var pack = line.isAffectedByPack();
+
+      if (pack) {
+        // When deleting a line, check other lines that might be affected by
+        // same pack than deleted one and merge splitted lines created for those
+        this.get('lines').forEach(function (l) {
+          var affected = l.isAffectedByPack();
+          if (affected && affected.ruleId === pack.ruleId) {
+            this.mergeLines(l);
+          }
+        }, this);
+      }
 
       // trigger
       line.trigger('removed', line);
@@ -857,6 +869,73 @@
       });
     },
 
+
+    /**
+     * Splits a line from the ticket keeping in the line the qtyToKeep quantity,
+     * the rest is moved to another line with the same product and no packs, or
+     * to a new one if there's no other line.
+     */
+    splitLine: function (line, qtyToKeep) {
+      var originalQty = line.get('qty'),
+          newLine, p, qtyToMove;
+
+      if (originalQty === qtyToKeep) {
+        return;
+      }
+
+      qtyToMove = originalQty - qtyToKeep;
+
+      this.setUnit(line, qtyToKeep);
+
+      p = line.get('product');
+
+      newLine = this.get('lines').find(function (l) {
+        return l !== line && l.get('product').id === p.id && !l.isAffectedByPack();
+      });
+
+      if (!newLine) {
+        newLine = line.clone();
+        newLine.set({
+          promotions: null,
+          addedBySplit: true
+        });
+        this.get('lines').add(newLine);
+        this.setUnit(newLine, qtyToMove);
+      } else {
+        this.setUnit(newLine, newLine.get('qty') + qtyToMove);
+      }
+    },
+
+    /**
+     * Checks other lines with the same product to be merged in a single one
+     */
+    mergeLines: function (line) {
+      var p = line.get('product'),
+          lines = this.get('lines'),
+          merged = false;
+      line.set('promotions', null)
+      lines.forEach(function (l) {
+        var promos = l.get('promotions');
+        if (l === line) {
+          return;
+        }
+        if (!promos || promos.length == 0) { //TODO?
+        }
+
+        if (!l.get('addedBySplit') && l.get('product').id === p.id) {
+          line.set({
+            qty: line.get('qty') + l.get('qty'),
+            promotions: null
+          });
+          lines.remove(l);
+          merged = true;
+        }
+      }, this);
+      if (merged) {
+        line.calculateGross();
+      }
+    },
+
     addPromotion: function (line, rule, discount) {
       var promotions = line.get('promotions') || [],
           disc = {},
@@ -997,6 +1076,49 @@
         }
       });
       this.adjustPayment();
+      return newline;
+    },
+    returnLine: function (line, options, skipValidaton) {
+      var me = this;
+      if (!_.isUndefined(OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) && !OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn') && !skipValidaton) {
+        //The value of qty need to be negate because we want to change it
+        var negativeLines = _.filter(this.get('lines').models, function (line) {
+          return line.get('gross') < 0;
+        }).length;
+        if (this.get('lines').length > 0) {
+          if (-line.get('qty') > 0 && negativeLines > 0) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
+            return;
+          } else if (-line.get('qty') < 0 && negativeLines !== this.get('lines').length) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
+            return;
+          }
+        }
+      }
+      if (line.get('qty') > 0) {
+        line.get('product').set('ignorePromotions', true);
+      } else {
+        line.get('product').set('ignorePromotions', false);
+      }
+      line.set('qty', -line.get('qty'));
+      line.calculateGross();
+
+      // set the undo action
+      this.set('undo', {
+        text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
+        line: line,
+        undo: function () {
+          line.set('qty', -line.get('qty'));
+          me.set('undo', null);
+        }
+      });
+      this.adjustPayment();
+      if (line.get('promotions')) {
+        line.unset('promotions');
+      }
+      me.calculateGross();
+      this.save();
+
     },
     returnLine: function (line, options, skipValidaton) {
       var me = this;
@@ -1427,8 +1549,8 @@
           documentseq, documentseqstr, receiptProperties, i, p;
 
       // reset in new order properties defined in Receipt Properties dialog
-      if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.$.pointOfSale && OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.receiptPropertiesDialog) {
-        receiptProperties = OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.receiptPropertiesDialog.newAttributes;
+      if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.getRoot() && OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog) {
+        receiptProperties = OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog.newAttributes;
         for (i = 0; i < receiptProperties.length; i++) {
           if (receiptProperties[i].modelProperty) {
             order.set(receiptProperties[i].modelProperty, '');

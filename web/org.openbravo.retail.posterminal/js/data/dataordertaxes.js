@@ -363,7 +363,6 @@
                 element.set('gross', OB.DEC.toNumber(linegross));
                 element.set('fullgross', linegross);
                 element.set('discountedGross', OB.DEC.toNumber(discountedGross));
-                element.set('fulldiscountedGross', discountedGross);
                 element.set('discountedNet', discountedNet);
                 element.set('taxAmount', OB.DEC.sub(element.get('discountedGross'), element.get('discountedNet')));
                 element.set('discountedNetPrice', discountedprice);
