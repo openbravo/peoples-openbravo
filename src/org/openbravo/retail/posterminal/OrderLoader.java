@@ -740,6 +740,7 @@ public class OrderLoader extends JSONProcessSimple {
 
       OrderLine orderLine = lineReferences.get(i);
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
+      boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
       AttributeSetInstance oldAttributeSetValues = null;
       if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
@@ -794,7 +795,7 @@ public class OrderLoader extends JSONProcessSimple {
               pendingQty = BigDecimal.ZERO;
             }
             lineNo += 10;
-            if (jsonorder.getLong("orderType") == 1) {
+            if (negativeLine) {
               qty = qty.negate();
             }
             addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
@@ -1239,6 +1240,7 @@ public class OrderLoader extends JSONProcessSimple {
     long t1 = System.currentTimeMillis();
     OBContext.setAdminMode(true);
     try {
+      boolean totalIsNegative = jsonorder.getDouble("gross") < 0;
       int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
           stdPrecision, RoundingMode.HALF_UP);
@@ -1255,8 +1257,8 @@ public class OrderLoader extends JSONProcessSimple {
       if (amount.signum() == 0) {
         return;
       }
-      if ((writeoffAmt.signum() == 1 && (jsonorder.getLong("orderType") == 0 || isLayaway))
-          || (writeoffAmt.signum() == -1 && jsonorder.getLong("orderType") == 1)) {
+      if ((writeoffAmt.signum() == 1 && (!totalIsNegative || isLayaway))
+          || (writeoffAmt.signum() == -1 && totalIsNegative)) {
         // there was an overpayment, we need to take into account the writeoffamt
         amount = amount.subtract(writeoffAmt).setScale(stdPrecision, RoundingMode.HALF_UP);
       }
@@ -1321,8 +1323,8 @@ public class OrderLoader extends JSONProcessSimple {
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), calculatedDate, order.getOrganization(), null, detail, paymentAmount,
           false, false, order.getCurrency(), mulrate, origAmount);
-      if ((writeoffAmt.signum() == 1 && (jsonorder.getLong("orderType") == 0 || isLayaway))
-          || (writeoffAmt.signum() == -1 && jsonorder.getLong("orderType") == 1)) {
+      if ((writeoffAmt.signum() == 1 && (!totalIsNegative || isLayaway))
+          || (writeoffAmt.signum() == -1 && totalIsNegative)) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
             .getGlitemWriteoff());
         // Update Payment In amount after adding GLItem

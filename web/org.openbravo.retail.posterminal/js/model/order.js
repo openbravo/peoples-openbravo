@@ -342,7 +342,7 @@
             grossListPrice, grossUnitPrice, discountPercentage, base;
 
         // Calculate inline discount: discount applied before promotions
-        if (line.get('priceList') !== price) {
+        if (line.get('priceList') !== price || (_.isNumber(line.get('discountedLinePrice')) &&  line.get('discountedLinePrice') !== line.get('priceList'))) {
           grossListPrice = line.get('priceList');
           grossUnitPrice = new BigDecimal(price.toString());
           if (OB.DEC.compare(grossListPrice) === 0) {
@@ -387,6 +387,7 @@
           line.set({
             nondiscountedprice: line.get('price'),
             nondiscountednet: line.get('net'),
+            standardPrice: line.get('price'),
             net: line.get('discountedNet'),
             pricenet: OB.DEC.toNumber(line.get('discountedNetPrice')),
             listPrice: line.get('priceList'),
@@ -1505,7 +1506,7 @@
       });
 
       // convert returns
-      if (jsonorder.orderType === 1) {
+      if (jsonorder.gross < 0) {
         _.forEach(jsonorder.payments, function (item) {
           item.amount = -item.amount;
           item.origAmount = -item.origAmount;

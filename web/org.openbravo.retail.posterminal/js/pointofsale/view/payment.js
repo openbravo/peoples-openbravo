@@ -222,7 +222,7 @@ enyo.kind({
         this.$.doneButton.drawerOpened = false;
       }
       if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if ((this.receipt.get('bp').get('creditUsed') + this.receipt.getGross() <= this.receipt.get('bp').get('creditLimit') || this.receipt.getGross() < 0) && !this.$.layawayaction.showing) {
+        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) && !this.$.layawayaction.showing) {
           this.$.creditsalesaction.show();
         } else {
           this.$.creditsalesaction.hide();
@@ -245,7 +245,7 @@ enyo.kind({
         this.$.layawayaction.hide();
       }
       if (OB.POS.modelterminal.get('terminal').allowpayoncredit && this.receipt.get('bp')) {
-        if ((this.receipt.get('bp').get('creditUsed') + this.receipt.getGross() <= this.receipt.get('bp').get('creditLimit') || this.receipt.getGross() < 0) && !this.$.layawayaction.showing) {
+        if ((this.receipt.get('bp').get('creditLimit') > 0 || this.receipt.get('bp').get('creditUsed') < 0 || this.receipt.getGross() < 0) && !this.$.layawayaction.showing) {
           this.$.creditsalesaction.show();
         } else {
           this.$.creditsalesaction.hide();
