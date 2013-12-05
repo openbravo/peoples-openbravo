@@ -12,13 +12,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.retail.posterminal.OBPOSApplications;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.json.JsonConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Qualifier(Terminal.terminalPropertyExtension)
 public class TerminalProperties extends ModelExtension {
+
+  private static Logger log = LoggerFactory.getLogger(TerminalProperties.class);
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
@@ -50,10 +60,37 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.defaultwebpostab", "defaultwebpostab"));
     list.add(new HQLProperty("postype", "terminalType"));
 
-    list.add(new HQLProperty(getTemplateHQLForProperty("pos.organization.obposTicketTemplate"),
-        "printTicketTemplate"));
-    list.add(new HQLProperty(getTemplateHQLForProperty("pos.organization.obposCashupTemplate"),
-        "printCashUpTemplate"));
+    String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
+    OBPOSApplications pOSTerminal = POSUtils.getTerminalById(posId);
+    try {
+      OBContext.setAdminMode();
+
+      final List<String> orgList = POSUtils.getOrgList(pOSTerminal.getSearchKey());
+      boolean foundCashUpTemplate = false;
+      boolean foundTicketTemplate = false;
+
+      for (String orgId : orgList) {
+        final Organization org = OBDal.getInstance().get(Organization.class, orgId);
+        if (!foundCashUpTemplate && org.getObposCashupTemplate() != null) {
+          list.add(new HQLProperty("'" + org.getObposCashupTemplate().getTemplatePath() + "'",
+              "printCashUpTemplate"));
+          foundCashUpTemplate = true;
+        }
+
+        if (!foundTicketTemplate && org.getObposTicketTemplate() != null) {
+          list.add(new HQLProperty("'" + org.getObposTicketTemplate().getTemplatePath() + "'",
+              "printTicketTemplate"));
+        }
+
+        if (foundCashUpTemplate && foundTicketTemplate) {
+          break;
+        }
+      }
+    } catch (Exception e) {
+      log.error("Error getting templates for terminal " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     return list;
   }
 
