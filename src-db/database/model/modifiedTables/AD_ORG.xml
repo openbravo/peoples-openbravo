@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE AD_ORG">
+    <table name="AD_ORG" primaryKey="AD_ORG_KEY">
+      <column name="EM_OBPOS_TICKET_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_CASHUP_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_CASHUPTEMP">
+        <reference local="EM_OBPOS_CASHUP_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_TICKETTEMP">
+        <reference local="EM_OBPOS_TICKET_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
+      </foreign-key>
+    </table>
+  </database>
