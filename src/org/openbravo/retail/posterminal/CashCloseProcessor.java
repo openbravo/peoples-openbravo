@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
@@ -29,6 +30,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.gl.GLItem;
@@ -104,7 +106,7 @@ public class CashCloseProcessor {
 
       }
 
-      associateTransactions(paymentType, reconciliation);
+      associateTransactions(paymentType, reconciliation, cashUpId);
 
     }
 
@@ -134,12 +136,17 @@ public class CashCloseProcessor {
   }
 
   protected void associateTransactions(OBPOSAppPayment paymentType,
-      FIN_Reconciliation reconciliation) {
-    OBCriteria<FIN_FinaccTransaction> openTransactionsForAccount = OBDal.getInstance()
-        .createCriteria(FIN_FinaccTransaction.class);
-    openTransactionsForAccount.add(Restrictions.eq("account", paymentType.getFinancialAccount()));
-    openTransactionsForAccount.add(Restrictions.isNull("reconciliation"));
-    ScrollableResults transactions = openTransactionsForAccount.scroll();
+      FIN_Reconciliation reconciliation, String cashUpId) {
+    String orderTransactionsQueryHQL = " as fintrans, FIN_Payment_ScheduleDetail as schedDetail"
+        + " where schedDetail.paymentDetails.finPayment = fintrans.finPayment"
+        + " and fintrans.account=:account and fintrans.reconciliation is null"
+        + " and schedDetail.orderPaymentSchedule.order.obposAppCashup=:cashUpId";
+
+    OBQuery<FIN_FinaccTransaction> orderTransactionsQuery = OBDal.getInstance().createQuery(
+        FIN_FinaccTransaction.class, orderTransactionsQueryHQL);
+    orderTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount());
+    orderTransactionsQuery.setNamedParameter("cashUpId", cashUpId);
+    ScrollableResults transactions = orderTransactionsQuery.scroll(ScrollMode.FORWARD_ONLY);
     try {
       while (transactions.next()) {
         FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) transactions.get(0);
@@ -155,6 +162,8 @@ public class CashCloseProcessor {
     } finally {
       transactions.close();
     }
+    // TODO The transactions which come from cash management movements still need to be associated
+    // to the reconciliation
   }
 
   protected FIN_Reconciliation createReconciliation(JSONObject cashCloseObj,
