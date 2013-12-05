@@ -17,15 +17,20 @@
     /** 
      * Abstract function that concrete classes must overwrite to perform actions
      * after a supervisor approves an action
+     * or if not overwritten, provide a callback in OB.UTIL.Approval.requestApproval invocation
      */
-    approvedRequest: function (approved, supervisor, approvalType) {},
+    approvedRequest: function (approved, supervisor, approvalType, callback) {
+      if (enyo.isFunction(callback)) {
+        callback(approved, supervisor, approvalType);
+      }
+    },
 
     /**
      * Generic approval checker. It validates user/password can approve the approvalType.
      * It can work online in case that user has done at least once the same approvalType
      * in this same browser. Data regarding privileged users is stored in supervisor table
      */
-    checkApproval: function (approvalType, username, password) {
+    checkApproval: function (approvalType, username, password, callback) {
       OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
       if (OB.MobileApp.model.get('connectedToERP')) {
         new OB.DS.Process('org.openbravo.retail.posterminal.utility.CheckApproval').exec({
@@ -36,7 +41,7 @@
           var approved = false;
           if (response.exception) {
             OB.UTIL.showError(response.exception.message);
-            this.approvedRequest(false);
+            this.approvedRequest(false, null, null, callback);
           } else {
             approved = response.canApprove;
             if (!approved) {
@@ -91,7 +96,7 @@
 
                 OB.Dal.save(supervisor);
               }
-              this.approvedRequest(approved, supervisor, approvalType);
+              this.approvedRequest(approved, supervisor, approvalType, callback);
             }));
           }
         }));
@@ -120,7 +125,7 @@
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_InvalidUserPassword'));
             }
           }
-          this.approvedRequest(approved, supervisor, approvalType);
+          this.approvedRequest(approved, supervisor, approvalType, callback);
         }), function () {});
       }
     }

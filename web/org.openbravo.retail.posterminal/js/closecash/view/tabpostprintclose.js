@@ -431,7 +431,8 @@ enyo.kind({
           components: [{
             style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
             initComponents: function () {
-              this.setContent(OB.I18N.getLabel('OBPOS_LblStep4of4'));
+              var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;
+              this.setContent(OB.I18N.getLabel('OBPOS_LblStep4of4') + ' (' + OB.Utilities.Date.JSToOB(new Date(currentbd), OB.Format.date) + ')');
             }
           }]
         }]
@@ -579,5 +580,9 @@ enyo.kind({
     this.model.on('change:time', function () {
       this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
     }, this);
+  },
+  displayStep: function (model) {
+    // this function is invoked when displayed.   
+    this.setSummary(model.getCountCashSummary());
   }
 });

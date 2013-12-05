@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, _, $ */
+/*global OB, enyo, Backbone, _, $ */
 
 OB.OBPOSCashUp = OB.OBPOSCashUp || {};
 OB.OBPOSCashUp.Model = OB.OBPOSCashUp.Model || {};
@@ -27,7 +27,7 @@ OB.OBPOSCashUp.Model.CashCloseReport = Backbone.Model.extend({
 });
 
 //Window model
-OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
+OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   models: [OB.OBPOSCashUp.Model.CloseCashPaymentMethod, OB.OBPOSCashUp.Model.CashCloseReport, OB.Model.Order],
   defaults: {
     step: OB.DEC.Zero,
@@ -38,17 +38,26 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     pendingOrdersToProcess: false,
     otherInput: OB.DEC.Zero
   },
+  cashupstepsdefinition: ['OB.CashUp.StepPendingOrders', 'OB.CashUp.CashPayments', 'OB.CashUp.PaymentMethods', 'OB.CashUp.CashToKeep', 'OB.CashUp.PostPrintAndClose'],
   init: function () {
     //Check for orders wich are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
-    var undf;
+    var undf, newstep;
+
     this.arePendingOrdersToBeProcess();
 
     //steps
     this.set('step', 1);
-    //Because step 3 is divided in several steps.
-    this.set('stepOfStep3', 0);
+    this.set('substep', 0);
+
+    // Create steps instances
+    this.cashupsteps = [];
+    _.each(this.cashupstepsdefinition, function (s) {
+      newstep = enyo.createFromKind(s);
+      newstep.model = this;
+      this.cashupsteps.push(newstep);
+    }, this);
 
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('paymentList', this.getData('DataCloseCashPaymentMethod'));
@@ -77,6 +86,12 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     OB.Dal.find(OB.Model.Order, {
       hasbeenpaid: 'N'
     }, function (pendingOrderList, me) {
+
+      // Recalculate total properly for all  pendingorders.
+      pendingOrderList.each(function (pendingorder) {
+        pendingorder.calculateGross();
+      });
+
       me.get('orderlist').reset(pendingOrderList.models);
     }, function (tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
@@ -86,37 +101,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   },
   //Previous next
   allowNext: function () {
-    var step = this.get('step'),
-        unfd;
-
-    if (step === 1 && this.get('orderlist').length === 0 && !this.get('pendingOrdersToProcess')) {
-      return true;
-    }
-
-    if (step === 2 && this.isAllCounted()) {
-      //TODO: review logic
-      return true;
-    }
-
-    if (step === 3 && this.isValidCashKeep()) {
-      //TODO: review logic
-      return true;
-    }
-
-    if (step === 4) {
-      this.get('cashUpReport').at(0).set('time', new Date());
-      return true;
-    }
-
-    return false;
+    return this.cashupsteps[this.get('step') - 1].allowNext();
   },
   allowPrevious: function () {
-    var step = this.get('step');
-
-    if (step === 1) {
-      return false;
-    }
-    return true;
+    return this.get('step') > 1;
   },
   setIgnoreStep3: function () {
     var result = null;
@@ -134,38 +122,46 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     }, this);
     this.set('ignoreStep3', result);
   },
-  isStep3Needed: function (stepOfStep3) {
-    return (this.get('paymentList').at(stepOfStep3).get('paymentMethod').automatemovementtoother === false) ? false : true;
-  },
-  showPendingOrdersList: function () {
-    return this.get('step') === 1;
-  },
-  showPaymentMethodList: function (options) {
-    var openDrawerPayment;
-    if (this.get('step') === 2) {
-      if (options && options.stepChanged) {
-        openDrawerPayment = _.find(this.get('paymentList').models, function (payment) {
-          if (payment && payment.get('paymentMethod') && (payment.get('paymentMethod').iscash || payment.get('paymentMethod').allowopendrawer)) {
-            return true;
-          }
-        }, this);
+  showStep: function (leftpanel$) {
+    var currentstep = this.get('step') - 1;
+    var i;
+    var stepcomponent;
+
+    for (i = 0; i < this.cashupsteps.length; i++) {
+      stepcomponent = this.cashupsteps[i].getStepComponent(leftpanel$);
+      stepcomponent.setShowing(i === currentstep);
+      if (i === currentstep) {
+        stepcomponent.displayStep(this);
       }
-      if (!OB.UTIL.isNullOrUndefined(openDrawerPayment)) {
-        OB.POS.hwserver.openDrawer();
-      }
-      return true;
     }
-    return false;
   },
-  isPaymentMethodListVisible: function () {
-    return this.get('step') === 2;
+  getStepToolbar: function () {
+    var currentstep = this.get('step') - 1;
+    return this.cashupsteps[currentstep].getToolbarName();
   },
-  showCashToKeep: function () {
-    return this.get('step') === 3;
+  nextButtonI18NLabel: function () {
+    var currentstep = this.get('step') - 1;
+    return this.cashupsteps[currentstep].nextButtonI18NLabel();
   },
-  showPostPrintClose: function () {
-    return this.get('step') === 4;
+  isFinishedWizard: function (step) {
+    return step > this.cashupsteps.length;
   },
+  getSubstepsLength: function (step) {
+    return this.cashupsteps[step - 1].getSubstepsLength(this);
+  },
+  isSubstepAvailable: function (step, substep) {
+    return this.cashupsteps[step - 1].isSubstepAvailable(this, substep);
+  },
+  verifyStep: function (leftpanel$, callback) {
+    var currentstep = this.get('step') - 1;
+    var stepcomponent = this.cashupsteps[currentstep].getStepComponent(leftpanel$);
+    if (stepcomponent.verifyStep) {
+      return stepcomponent.verifyStep(this, callback);
+    } else {
+      callback();
+    }
+  },
+
   //Step (pre) 1
   arePendingOrdersToBeProcess: function () {
     OB.Dal.find(OB.Model.Order, {
@@ -186,12 +182,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       model.set('counted', OB.DEC.add(0, model.get('expected')));
     });
   },
-  isAllCounted: function () {
-    var udfn;
-    return _.reduce(this.get('paymentList').models, function (allCounted, model) {
-      return allCounted && model.get('counted') !== null && model.get('counted') !== udfn;
-    }, true);
-  },
+
   //step 3
   validateCashKeep: function (qty) {
     var unfd, result = {
@@ -199,7 +190,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       message: ''
     };
     if (qty !== unfd && qty !== null && $.isNumeric(qty)) {
-      if (this.get('paymentList').at(this.get('stepOfStep3')).get('foreignCounted') >= qty) {
+      if (this.get('paymentList').at(this.get('substep')).get('foreignCounted') >= qty) {
         result.result = true;
         result.message = '';
       } else {
@@ -211,21 +202,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
       result.message = 'Not valid number to keep';
     }
     if (!result.result) {
-      this.get('paymentList').at(this.get('stepOfStep3')).set('qtyToKeep', null);
+      this.get('paymentList').at(this.get('substep')).set('qtyToKeep', null);
     }
     return result;
   },
-  isValidCashKeep: function () {
-    var unfd;
-    if (this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== unfd && this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep') !== null) {
-      if ($.isNumeric(this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep'))) {
-        if (this.get('paymentList').at(this.get('stepOfStep3')).get('foreignCounted') >= this.get('paymentList').at(this.get('stepOfStep3')).get('qtyToKeep')) {
-          return true;
-        }
-      }
-    }
-    return false;
-  },
+
   //Step 4
   getCountCashSummary: function () {
     var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, undf, model, value = OB.DEC.Zero,
@@ -257,11 +238,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
     //First we fix the qty to keep for non-automated payment methods
     for (i = 0; i < this.get('paymentList').models.length; i++) {
       model = this.get('paymentList').models[i];
-      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
+      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))){
         model.set('qtyToKeep', model.get('counted'));
       }
     }
-
+    
     enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary', 'qtyToKeepSummary', 'qtyToDepoSummary'];
     enumConcepts = ['expected', 'counted', 'difference', 'qtyToKeep', 'foreignCounted'];
     enumSecondConcepts = ['foreignExpected', 'foreignCounted', 'foreignDifference', 'qtyToKeep', 'qtyToKeep'];

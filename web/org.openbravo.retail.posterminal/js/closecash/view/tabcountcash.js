@@ -78,6 +78,7 @@ enyo.kind({
       }
       this.$.buttonOk.hide();
     }
+    this.$.buttonEdit.setDisabled(this.model.get('paymentMethod').iscash);
   },
   lineEdit: function () {
     this.doLineEditCount();
@@ -85,26 +86,6 @@ enyo.kind({
   lineOK: function (inSender, inEvent) {
     this.model.set('counted', this.model.get('expected'));
     this.model.set('foreignCounted', this.model.get('foreignExpected'));
-  }
-});
-
-enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.RenderTotal',
-  tag: 'span',
-  published: {
-    total: OB.DEC.Zero
-  },
-  create: function () {
-    this.inherited(arguments);
-  },
-  totalChanged: function (oldValue) {
-    // OB.info('totalC');
-    this.setContent(OB.I18N.formatCurrency(this.total));
-    if (OB.DEC.compare(this.total) < 0) {
-      this.applyStyle('color', 'red');
-    } else {
-      this.applyStyle('color', 'black');
-    }
   }
 });
 
@@ -129,7 +110,8 @@ enyo.kind({
             components: [{
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
               initComponents: function () {
-                this.setContent(OB.I18N.getLabel('OBPOS_LblStep2of4'));
+                var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStep2of4') + ' (' + OB.Utilities.Date.JSToOB(new Date(currentbd), OB.Format.date) + ')');
               }
             }]
           }]
@@ -202,17 +184,16 @@ enyo.kind({
                   style: 'padding: 10px 20px 10px 0px; float: left; width: 14%;',
                   components: [{
                     name: 'total',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal',
-                    style: 'font-weight: bold;'
+                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
+
                   }]
                 }, {
                   style: 'padding: 17px 10px 17px 10px; float: left; width: 126px'
                 }, {
                   style: 'padding: 10px 5px 10px 0px; float: left;',
                   components: [{
-                    name: 'diference',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal',
-                    style: 'font-weight: bold;'
+                    name: 'difference',
+                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                   }]
                 }]
               }]
@@ -227,6 +208,27 @@ enyo.kind({
   },
   anyCounted: function () {
     this.$.buttonAllOk.applyStyle('visibility', 'hidden'); //hiding in this way to keep the space
-  }
+  },
+  displayStep: function (model) {
+    // this function is invoked when displayed.  
+  },
+  verifyStep: function (model, callback) {
+    // this function is invoked when going next, invokes callback to continue
+    // do not invoke callback to cancel going next.
+    var firstdiff = model.get('paymentList').find(function (payment) {
+      return payment.get('difference') !== 0;
+    });
 
+    if (firstdiff) {
+      // there is at leat 1 payment with differences
+      OB.UTIL.Approval.requestApproval(
+      model, 'OBPOS_approval.cashupdifferences', function (approved, supervisor, approvalType) {
+        if (approved) {
+          callback();
+        }
+      });
+    } else {
+      callback();
+    }
+  }
 });
