@@ -213,7 +213,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/mockpayments",
 
         // Discounts
-        "model/discounts",
+        "model/discounts"
 
     };
 

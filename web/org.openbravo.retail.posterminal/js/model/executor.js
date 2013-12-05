@@ -35,7 +35,7 @@ OB.Model.Executor = Backbone.Model.extend({
 
   addEvent: function (event, replaceExistent) {
     var evtQueue = this.get('eventQueue'),
-        currentEvt, actionQueue;
+        currentEvt, actionQueue, currentExecutionQueue;
     if (replaceExistent && evtQueue) {
       currentEvt = this.get('currentEvent');
       evtQueue.where({
@@ -46,12 +46,21 @@ OB.Model.Executor = Backbone.Model.extend({
           actionQueue.remove(actionQueue.models);
         }
         evtQueue.remove(evt);
+        currentExecutionQueue = (this.get('exec') || 0) - 1;
+        this.set('exec', currentExecutionQueue);
       }, this);
     }
 
+    this.set('exec', (this.get('exec') || 0) + 1);
+
     event.on('finish', function () {
-      OB.info('event execution time', (new Date().getTime()) - event.get('start'));
-    });
+      var currentExecutionQueue = (this.get('exec') || 0) - 1;
+      this.set('exec', currentExecutionQueue);
+      OB.info('event execution time', (new Date().getTime()) - event.get('start'), currentExecutionQueue);
+      if (currentExecutionQueue === 0 && event.get('receipt')) {
+        event.get('receipt').trigger('eventExecutionDone');
+      }
+    }, this);
 
     evtQueue.add(event);
   },
@@ -197,6 +206,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
           if (obj && obj.alerts) {
             OB.UTIL.showAlert.display(obj.alerts);
           }
+          ruleListener.off('completed');
           this.nextAction(evt);
         }, this);
       }
@@ -261,5 +271,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
   postAction: function (evt) {
     evt.get('receipt').calculateGross();
+
+    // Forcing local db save. Rule implementations could (should!) do modifications
+    // without persisting them improving performance in this manner.
+    evt.get('receipt').save();
   }
 });

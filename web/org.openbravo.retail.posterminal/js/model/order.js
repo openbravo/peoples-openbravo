@@ -132,7 +132,11 @@
     stopApplyingPromotions: function () {
       var promotions = this.get('promotions'),
           i;
-      if (this.get('promotions')) {
+      if (promotions) {
+        if (OB.POS.modelterminal.get('terminal').bestDealCase && promotions.length > 0) {
+          // best deal case can only apply one promotion per line
+          return true;
+        }
         for (i = 0; i < promotions.length; i++) {
           if (!promotions[i].applyNext) {
             return true;
@@ -296,23 +300,28 @@
 
     save: function () {
       var undoCopy;
+
       if (this.attributes.json) {
         delete this.attributes.json; // Needed to avoid recursive inclusions of itself !!!
       }
       undoCopy = this.get('undo');
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
-      OB.Dal.save(this, function () {}, function () {
-        OB.error(arguments);
-      });
+      if (!OB.POS.modelterminal.get('preventOrderSave')) {
+        OB.Dal.save(this, function () {}, function () {
+          OB.error(arguments);
+        });
+      }
       this.set('undo', undoCopy);
     },
 
-    calculateTaxes: function (callback) {
+    calculateTaxes: function (callback, doNotSave) {
       if (callback) {
         callback();
       }
-      this.save();
+      if (!doNotSave) {
+        this.save();
+      }
     },
 
     prepareToSend: function (callback) {
@@ -644,7 +653,7 @@
       this.setUnit(line, OB.DEC.add(line.get('qty'), qty, OB.I18N.qtyScale()), OB.I18N.getLabel('OBPOS_AddUnits', [OB.DEC.toNumber(new BigDecimal((String)(qty.toString()))), line.get('product').get('_identifier')]));
     },
 
-    setUnit: function (line, qty, text) {
+    setUnit: function (line, qty, text, doNotSave) {
 
       if (OB.DEC.isNumber(qty) && qty !== 0) {
         var oldqty = line.get('qty');
@@ -669,7 +678,9 @@
           });
         }
         this.adjustPayment();
-        this.save();
+        if (!doNotSave) {
+          this.save();
+        }
       } else {
         this.deleteLine(line);
       }
@@ -711,7 +722,7 @@
       this.get('lines').at(index).set(property, value);
     },
 
-    deleteLine: function (line) {
+    deleteLine: function (line, doNotSave) {
       var me = this;
       var index = this.get('lines').indexOf(line);
       var pack = line.isAffectedByPack();
@@ -745,8 +756,10 @@
         }
       });
       this.adjustPayment();
-      this.save();
-      this.calculateGross();
+      if (!doNotSave) {
+        this.save();
+        this.calculateGross();
+      }
     },
     //Attrs is an object of attributes that will be set in order 
     _addProduct: function (p, qty, options, attrs) {
@@ -991,7 +1004,6 @@
 
       line.set('promotions', promotions);
       line.trigger('change');
-      this.save();
     },
 
     removePromotion: function (line, rule) {
@@ -1323,6 +1335,7 @@
         this.trigger('orderCreatedFromQuotation');
       }
     },
+
     reactivateQuotation: function () {
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);

@@ -226,7 +226,7 @@ enyo.kind({
           this.showPaymentTab();
         }
       }, this);
-      this.model.checkPaymentApproval();
+      this.model.completePayment();
     }
   },
 
