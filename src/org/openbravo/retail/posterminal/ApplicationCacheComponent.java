@@ -27,6 +27,8 @@ import javax.enterprise.context.RequestScoped;
 
 import org.apache.commons.io.FileUtils;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.MobileCoreApplicationCacheComponent;
 
 /**
@@ -67,6 +69,7 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources
         .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory");
 
+    // default print templates
     resources.add("../../web/org.openbravo.retail.posterminal/res/opendrawer.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printclosedreceipt.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printinvoice.xml");
@@ -76,6 +79,15 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources.add("../../web/org.openbravo.retail.posterminal/res/printreturn.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printreturninvoice.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/welcome.xml");
+
+    OBContext.setAdminMode(true);
+    try {
+      for (PrintTemplate template : OBDal.getInstance().createCriteria(PrintTemplate.class).list()) {
+        resources.add("../../web/org.openbravo.retail.posterminal/" + template.getTemplatePath());
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
 
     resources
         .add("../../org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS");
