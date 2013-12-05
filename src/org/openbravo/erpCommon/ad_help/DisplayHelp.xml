@@ -61,5 +61,16 @@
     <SECTION id="sectionCabeceraFields" field="tabid"/>
     <SECTION id="sectionFieldsDescription"/>
   </structure>
+  <PARAMETER id="systemGridConfigProperties" name="systemGridConfigProperties"/>
+  <structure name="structure4">
+    <FIELD id="tabName">tabName</FIELD>
+    <FIELD id="tabName" attribute="name" replace="xx">tabId</FIELD>
+    <FIELD id="tabName" attribute="id">tabName</FIELD>
+    <FIELD id="tabGridProperties">tabGridProperties</FIELD>
+    <FIELD id="tabFieldName">tabFieldName</FIELD>
+    <FIELD id="fieldGridProperties">fieldGridProperties</FIELD>
+    <SECTION id="tabGridConfig" field="tabId"/>
+    <SECTION id="fieldGridConfig"/>
+  </structure>
   <DISCARD id="discard"/>
 </REPORT>
