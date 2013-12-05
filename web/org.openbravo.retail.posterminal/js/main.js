@@ -33,6 +33,19 @@
     // Set Arithmetic properties:
     OB.DEC.setContext(OB.POS.modelterminal.get('currency').obposPosprecision || OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_UP);
 
+    // Set disable promotion discount property
+    OB.Dal.find(OB.Model.Discount, {
+      _whereClause: "where m_offer_type_id in (" + OB.Model.Discounts.getManualPromotions() + ")"
+    }, function (promos) {
+      if (promos.length === 0) {
+        OB.POS.modelterminal.set('isDisableDiscount', true);
+      } else {
+        OB.POS.modelterminal.set('isDisableDiscount', false);
+      }
+    }, function () {
+      return true;
+    });
+
 
     // TODO: check permissions: this has been removed because windows are not already loaded
     // at this point

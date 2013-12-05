@@ -45,7 +45,7 @@
           }
         },
         localDB: {
-          size: 50 * 1024 * 1024,
+          size: 4 * 1024 * 1024,
           name: 'WEBPOS',
           displayName: 'Openbravo Web POS',
           version: '0.7'
