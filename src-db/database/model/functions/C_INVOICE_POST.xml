@@ -172,6 +172,7 @@
   v_productname m_product.name%TYPE;
 
   v_iscashvat C_Invoice.IsCashVat%TYPE;
+  v_invoiceline_qtysum NUMBER;
     
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -955,17 +956,20 @@ IF (NOT FINISH_PROCESS) THEN
           )
         LOOP
           IF (Cur_ReactivateInvoiceLine.C_OrderLine_ID IS NOT NULL) THEN
-            SELECT MAX(C_INVOICE.DateInvoiced) INTO v_REDateInvoiced
-            FROM C_INVOICE, C_INVOICELINE
-            WHERE C_INVOICE.C_Invoice_ID=C_INVOICELINE.C_INVOICE_ID
-              AND C_INVOICELINE.C_ORDERLINE_ID=Cur_ReactivateInvoiceLine.C_ORDERLINE_ID
-              AND C_INVOICELINE.C_InvoiceLine_ID<>Cur_ReactivateInvoiceLine.C_InvoiceLine_ID;
-            UPDATE C_ORDERLINE
-            SET QtyInvoiced=QtyInvoiced - Cur_ReactivateInvoiceLine.QtyInvoiced,
-                DateInvoiced=v_REDateInvoiced,
-                Updated=now(),
-                UpdatedBy=v_UpdatedBy
-            WHERE C_ORDERLINE.C_OrderLine_ID=Cur_ReactivateInvoiceLine.C_OrderLine_ID;
+            SELECT MAX(C_INVOICE.DateInvoiced), COALESCE(sum(QtyInvoiced),0) 
+	    INTO v_REDateInvoiced, v_invoiceline_qtysum
+	    FROM C_INVOICE, C_INVOICELINE
+	    WHERE C_INVOICE.C_Invoice_ID=C_INVOICELINE.C_INVOICE_ID
+	    AND C_INVOICELINE.C_ORDERLINE_ID=Cur_ReactivateInvoiceLine.C_ORDERLINE_ID
+	    and C_INVOICE.docstatus='CO'
+	    AND C_INVOICE.C_INVOICE_ID <> v_Record_ID;
+	    
+	    UPDATE C_ORDERLINE
+	    SET QtyInvoiced=v_invoiceline_qtysum, 
+		DateInvoiced=v_REDateInvoiced,
+		Updated=now(),
+		UpdatedBy=v_UpdatedBy
+	    WHERE C_ORDERLINE.C_OrderLine_ID=Cur_ReactivateInvoiceLine.C_OrderLine_ID;
           END IF;
           IF (Cur_ReactivateInvoiceLine.M_InOutLine_ID IS NOT NULL) THEN
             SELECT m.DOCSTATUS INTO v_REInOutStatus
