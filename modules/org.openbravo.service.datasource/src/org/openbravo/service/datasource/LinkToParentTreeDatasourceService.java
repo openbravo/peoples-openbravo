@@ -384,7 +384,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     BaseOBObject bob = OBDal.getInstance().get(referencedEntity.getName(), nodeId);
     BaseOBObject parentBob = null;
     if (!ROOT_NODE.equals(newParentId)) {
-      OBDal.getInstance().get(referencedEntity.getName(), newParentId);
+      parentBob = OBDal.getInstance().get(referencedEntity.getName(), newParentId);
     }
     bob.set(linkToParentProperty.getName(), parentBob);
     OBDal.getInstance().flush();
