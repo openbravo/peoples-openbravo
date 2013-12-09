@@ -252,7 +252,7 @@ OB.Utilities.Date.getTimeFields = function (allFields) {
   for (i = 0; i < length; i++) {
     field = allFields[i];
     if (field.type === '_id_24') {
-      timeFields.push(field.name);
+      timeFields.push(field);
     }
   }
   return timeFields;
@@ -275,12 +275,17 @@ OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
       convertedDataLength = convertedData.length;
   for (i = 0; i < timeFieldsLength; i++) {
     for (j = 0; j < convertedDataLength; j++) {
-      textField = convertedData[j][timeFields[i]];
-      if (textField && textField.length > 0) {
-        fieldToDate = isc.Time.parseInput(textField);
-        fieldToDate.setTime(fieldToDate.getTime() + UTCOffsetInMiliseconds);
-        convertedData[j][timeFields[i]] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
+      textField = convertedData[j][timeFields[i].name];
+      if (!textField) {
+        continue;
       }
+      if (isc.isA.String(textField)) {
+        fieldToDate = isc.Time.parseInput(textField);
+      } else if (isc.isA.Date(textField)) {
+        fieldToDate = textField;
+      }
+      fieldToDate.setTime(fieldToDate.getTime() + UTCOffsetInMiliseconds);
+      convertedData[j][timeFields[i].name] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
     }
   }
   return convertedData;

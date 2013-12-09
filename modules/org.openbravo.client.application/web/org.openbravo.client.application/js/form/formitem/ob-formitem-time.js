@@ -149,7 +149,13 @@ isc.OBTimeItem.addProperties({
     return this.Super('moved', arguments);
   },
   formSaved: function (request, response, data) {
+    var UTCOffsetInMiliseconds;
     if (this.getValue() !== data[this.name]) {
+      // it has not been converted to the local time yet, do it now
+      if (data[this.name].getFullYear() === 1970) {
+        UTCOffsetInMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds();
+        data[this.name].setTime(data[this.name].getTime() + UTCOffsetInMiliseconds);
+      }
       this.setValue(data[this.name]);
     }
   }
