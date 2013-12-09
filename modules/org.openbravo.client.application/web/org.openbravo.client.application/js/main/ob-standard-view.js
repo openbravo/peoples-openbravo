@@ -1078,8 +1078,8 @@ isc.OBStandardView.addProperties({
   switchFormGridVisibility: function () {
     if (!this.isShowingForm) {
       if (this.treeGrid) {
-        this.treeGrid.hide();
         if (this.isShowingTree) {
+          this.treeGrid.hide();
           this.changePreviousNextRecordsButtonVisibility(false);
         } else {
           this.changePreviousNextRecordsButtonVisibility(true);
