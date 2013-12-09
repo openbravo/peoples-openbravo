@@ -84,6 +84,7 @@ public class HelpWindow {
   public static String generateWindow(ConnectionProvider conn, XmlEngine xmlEngine,
       VariablesSecureApp vars, boolean discardEdit, String strKeyId) throws IOException,
       ServletException {
+    OBContext.setAdminMode();
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Help Window");
     Boolean window = true;
@@ -303,7 +304,7 @@ public class HelpWindow {
         formatGridConfiguration(systemGridProperties));
     xmlDocument.setData("structure4",
         tabGridConfigParams.toArray(new TabGridConfigParameter[tabGridConfigParams.size()]));
-
+    OBContext.restorePreviousMode();
     return (xmlDocument.print());
   }
 
