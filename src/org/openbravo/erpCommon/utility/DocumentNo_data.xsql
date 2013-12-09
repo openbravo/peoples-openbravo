@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="DocumentNoData" package="org.openbravo.erpCommon.utility">
+<SqlClass name="DocumentNoData" package="org.openbravo.erpCommon.utility" accessModifier="public">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
      <Sql>
