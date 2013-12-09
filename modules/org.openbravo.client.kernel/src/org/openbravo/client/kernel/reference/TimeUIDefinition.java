@@ -62,11 +62,7 @@ public class TimeUIDefinition extends UIDefinition {
     if (value instanceof String) {
       return (String) value;
     }
-
-    String timestamp = value.toString();
-    timestamp = timestamp.substring(timestamp.indexOf(" ") + 1);
-    StringBuffer convertedValue = convertUtcToLocalTime(timestamp);
-    return convertedValue.toString();
+    return value.toString();
   }
 
   private SimpleDateFormat getClassicFormat() {
