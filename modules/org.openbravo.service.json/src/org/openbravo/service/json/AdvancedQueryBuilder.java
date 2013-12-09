@@ -1341,6 +1341,28 @@ public class AdvancedQueryBuilder {
     return query;
   }
 
+  /*
+   * To handle cases where if the select part contains a summary function, the query builder fails
+   * as the join values are not properly replaced. Refer
+   * https://issues.openbravo.com/view.php?id=25008
+   */
+  private String replaceJoinsWithValue(String value) {
+    String query = value, joinValue = null;
+    if (value.contains("join")) {
+      joinValue = value.substring(0, value.indexOf("."));
+      for (JoinDefinition joinDefinition : joinDefinitions) {
+        if (joinDefinition.joinAlias.equals(joinValue)) {
+          String string = joinDefinition.property.toString();
+          string = string.substring(string.indexOf(".") + 1, string.length());
+          query = getMainAlias() + DalUtil.DOT + string + DalUtil.DOT
+              + value.substring(value.indexOf(".") + 1, value.length());
+          break;
+        }
+      }
+    }
+    return query;
+  }
+
   /**
    * @return true if one of the filter parameters is the {@link JsonConstants#ORG_PARAMETER}.
    */
@@ -1577,6 +1599,9 @@ public class AdvancedQueryBuilder {
         localField = sb.toString();
       }
     }
+    // for select clause with functions replace the joins before so that the join values are not
+    // lost later. Refer issue https://issues.openbravo.com/view.php?id=25008
+    localField = replaceJoinsWithValue(localField);
     selectClauseParts.add(function + "(" + localField + ")");
   }
 

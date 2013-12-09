@@ -2837,6 +2837,12 @@ isc.OBViewGrid.addProperties({
       this.view.messageBar.hide();
     }
     this.view.refreshParentRecord();
+
+    /*update the focus cell value if different from edit form values.
+    To avoid the case where sometimes data updated through trigger is not showing up without refreshing.
+    Refer issue https://issues.openbravo.com/view.php?id=25028*/
+    this.setEditValue(this.getEditRow(), this.getField(colNum).name, record[this.getField(colNum).name], true, true);
+
     if (this.getEditRow() === rowNum) {
       this.getEditForm().markForRedraw();
     } else {
@@ -2968,7 +2974,9 @@ isc.OBViewGrid.addProperties({
         colNum = this.getEditCol();
     var editForm = this.getEditForm(),
         editField = this.getEditField(colNum),
-        focusItem = (editForm ? editForm.getFocusItem() : null);
+        focusItem = (editForm ? editForm.getFocusItem() : null),
+        isDynamicCol = false,
+        i, len;
     // sometimes rowNum and colnum are not set, then don't compute the next cell
     var nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
     var newRow = nextEditCell && nextEditCell[0] !== rowNum;
@@ -2992,7 +3000,17 @@ isc.OBViewGrid.addProperties({
       return;
     }
 
-    if (newRow && this.getEditForm().isNew && editCompletionEvent === 'tab' && !ficCallDone) {
+
+    if (this.getEditForm().dynamicCols) {
+      for (i = 0; i < this.getEditForm().dynamicCols.length; i++) {
+        if (this.getEditForm().dynamicCols[i] === focusItem.inpColumnName) {
+          isDynamicCol = true;
+          break;
+        }
+      }
+    }
+
+    if (newRow && this.getEditForm().isNew && isDynamicCol && editCompletionEvent === 'tab' && !ficCallDone) {
       this.setEditValue(rowNum, 'actionAfterFicReturn', {
         target: this,
         method: this.cellEditEnd,

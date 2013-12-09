@@ -108,7 +108,6 @@ BEGIN
       p_result := cur_params.p_number;
     END IF;
   END LOOP;
-  
   -- Default user's language
   SELECT COALESCE(default_ad_language, 'en_US') INTO v_lang FROM ad_user where ad_user_id = p_user;
 
@@ -133,27 +132,6 @@ BEGIN
 
   -- complete invoice
   IF (p_docaction = 'CO') THEN
-    -- Do not add payment for the reversal invoice if the voided invoice is not paid
-    SELECT COUNT(*)
-    INTO v_Count
-    FROM C_Invoice_Reverse
-    WHERE C_Invoice_ID = p_record_id;
-
-    IF(v_Count <> 0) THEN
-	SELECT COALESCE(ispaid, 'Y')
-	INTO v_InvoicePaid
-	FROM C_Invoice
-	WHERE C_Invoice_ID IN (
-		SELECT Reversed_C_Invoice_ID
-		FROM C_Invoice_Reverse
-		WHERE C_Invoice_Id = p_record_id
-	);
-
-	IF (v_InvoicePaid = 'N') THEN
-		RETURN;
-	END IF;
-    END IF;
-    	
     -- Checking Payment Method ID is available
     IF(v_PaymentMethod IS NULL) THEN
       RAISE_APPLICATION_ERROR(-20000, '@APRM_PAYMENTMETHOD_MISSING@');
@@ -627,6 +605,27 @@ BEGIN
           LOOP
             -- Automatic creation of payment
             IF(cur_finaccpaymentmethod.CreatePayment = 'Y') THEN
+
+              -- Do not add payment for the reversal invoice if the actual invoice is not paid
+	      SELECT COUNT(*)
+	      INTO v_Count
+	      FROM C_Invoice_Reverse
+	      WHERE C_Invoice_ID = p_record_id;
+
+	      IF(v_Count <> 0) THEN
+		SELECT COALESCE(ispaid, 'Y')
+		INTO v_InvoicePaid
+		FROM C_Invoice
+		WHERE C_Invoice_ID IN (
+			SELECT Reversed_C_Invoice_ID
+			FROM C_Invoice_Reverse
+			WHERE C_Invoice_Id = p_record_id
+		);
+		IF (v_InvoicePaid = 'N') THEN
+		  RETURN;
+		END IF;
+	      END IF;
+
               v_ResultStr:='Generating FIN_PAYMENT';
               v_FIN_PAYMENT_ID := GET_UUID();
               v_PaymentDocType_ID := AD_GET_DOCTYPE(v_client_id, cur_paymentschedule.AD_ORG_ID, CASE WHEN v_IsSOTrx='Y' THEN 'ARR' ELSE 'APP' END);
