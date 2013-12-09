@@ -1079,6 +1079,11 @@ isc.OBStandardView.addProperties({
     if (!this.isShowingForm) {
       if (this.treeGrid) {
         this.treeGrid.hide();
+        if (this.isShowingTree) {
+          this.changePreviousNextRecordsButtonVisibility(false);
+        } else {
+          this.changePreviousNextRecordsButtonVisibility(true);
+        }
       }
       this.viewGrid.hide();
       this.statusBarFormLayout.show();
@@ -1109,6 +1114,16 @@ isc.OBStandardView.addProperties({
       this.viewGrid.setHeight('100%');
     }
     this.updateTabTitle();
+  },
+
+  changePreviousNextRecordsButtonVisibility: function (show) {
+    if (show) {
+      this.statusBar.previousButton.show();
+      this.statusBar.nextButton.show();
+    } else {
+      this.statusBar.previousButton.hide();
+      this.statusBar.nextButton.hide();
+    }
   },
 
   doHandleClick: function () {
