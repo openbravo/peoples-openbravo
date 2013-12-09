@@ -158,6 +158,12 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
       // if there is no record selected etc.
       if (view.isShowingForm) {
         view.switchFormGridVisibility();
+      } else if (view.isShowingTree) {
+        if (view.viewGrid && view.treeGrid) {
+          view.viewGrid.show();
+          view.treeGrid.hide();
+        }
+        view.isShowingTree = false;
       }
 
       if (viewTabDefinition.grid) {
@@ -190,6 +196,10 @@ OB.Personalization.getViewDefinition = function (standardWindow, name, isDefault
     formData = OB.Personalization.getPersonalizationDataFromForm(view.viewForm);
     persDataByTab.form = formData.form;
 
+    if (view.isShowingTree) {
+      // Copy the criteria from the tree grid to the view grid
+      view.treeGrid.copyCriteriaToViewGrid();
+    }
     // ahd the grid state
     persDataByTab.grid = view.viewGrid.getViewState(false, true);
 
