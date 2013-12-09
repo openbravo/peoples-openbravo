@@ -89,7 +89,6 @@ public class CashVATUtil {
    * 
    * @param strBPId
    *          Vendor (c_bpartner_id)
-   * @return
    */
   public static String getBusinessPartnerIsCashVAT(final String strBPId) {
     try {
@@ -186,7 +185,6 @@ public class CashVATUtil {
    * Gets the InvoiceTaxCashVAT records linked to the payment detail
    * 
    * @param paymentDetail
-   * @return
    */
   public static List<InvoiceTaxCashVAT> getInvoiceTaxCashVAT(final FIN_PaymentDetail paymentDetail) {
     try {
@@ -207,7 +205,6 @@ public class CashVATUtil {
    * calculations based on the percentage of the invoice that has been paid/collected
    * 
    * @param cInvoiceTaxID
-   * @return
    */
   public static Map<String, BigDecimal> getTotalOutstandingCashVATAmount(final String cInvoiceTaxID) {
     try {
@@ -249,7 +246,6 @@ public class CashVATUtil {
    * 
    * @param cTaxID
    * @param cInvoiceId
-   * @return
    */
   public static BigDecimal calculatePrepaidPercentageForCashVATTax(final String cTaxID,
       final String cInvoiceId) {
@@ -315,7 +311,6 @@ public class CashVATUtil {
    * @param currency
    *          currency
    * @return percentage * totalAmt / 100, rounded to the currency's standard precision
-   * @return
    */
   public static BigDecimal calculatePercentageAmount(final BigDecimal percentage,
       final BigDecimal totalAmt, final Currency currency) {
@@ -345,7 +340,6 @@ public class CashVATUtil {
    * @param documentType
    * @param cCurrencyID
    * @param SeqNo
-   * @return
    */
   public static String createFactCashVAT(AcctSchema as, ConnectionProvider conn, Fact fact,
       String Fact_Acct_Group_ID, DocLineCashVATReady_PaymentTransactionReconciliation line,
