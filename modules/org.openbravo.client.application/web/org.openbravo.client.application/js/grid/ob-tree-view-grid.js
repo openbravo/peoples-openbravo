@@ -180,9 +180,34 @@ isc.OBTreeViewGrid.addProperties({
     return selectedProperties;
   },
 
+  transferNodes: function (nodes, folder, index, sourceWidget, callback) {
+    var me = this,
+        i, len = nodes.length,
+        nodesIdentifier = "",
+        parentIdentifier, message;
+    for (i = 0; i < len; i++) {
+      nodesIdentifier = nodesIdentifier + nodes[i][OB.Constants.IDENTIFIER];
+      if ((i + 1) < len) {
+        nodesIdentifier = nodesIdentifier + ", ";
+      }
+    }
+    if (folder.nodeId === this.dataProperties.rootValue) {
+      parentIdentifier = OB.I18N.getLabel('OBUIAPP_RootNode');
+    } else {
+      parentIdentifier = folder[OB.Constants.IDENTIFIER];
+    }
+
+    message = OB.I18N.getLabel('OBUIAPP_MoveTreeNode', [nodesIdentifier, parentIdentifier]);
+    isc.confirm(message, function (value) {
+      if (value) {
+        me.doTransferNodes(nodes, folder, index, sourceWidget, callback);
+      }
+    });
+  },
+
   // smartclients transferNodes does not update the tree it a node is moved within its same parent
   // do it here
-  transferNodes: function (nodes, folder, index, sourceWidget, callback) {
+  doTransferNodes: function (nodes, folder, index, sourceWidget, callback) {
     var node, dataSource, oldValues, dragTree, dropNeighbor, dataSourceProperties, i;
     if (this.movedToSameParent(nodes, folder)) {
       dragTree = sourceWidget.getData();
