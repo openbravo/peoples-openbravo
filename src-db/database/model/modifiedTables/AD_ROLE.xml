@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE AD_ROLE">
+    <table name="AD_ROLE" primaryKey="AD_ROLE_KEY">
+      <column name="EM_OBPOS_DEFAULT_POS_LANGUAGE" primaryKey="false" required="false" type="VARCHAR" size="6" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_LANGUAGE" name="EM_OBPOS_POSLANG_LANGUAGE">
+        <reference local="EM_OBPOS_DEFAULT_POS_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
+    </table>
+  </database>
