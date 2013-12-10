@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,6 @@ import org.openbravo.model.common.invoice.InvoiceTaxCashVAT_V;
 /**
  * Use for DocLine that must support Cash VAT regime
  * 
- * @author openbravo
  * 
  */
 public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLine {
@@ -56,7 +55,7 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
       this.invoiceTaxCashVAT_V = new ArrayList<InvoiceTaxCashVAT_V>();
     } else {
       try {
-        OBContext.setAdminMode();
+        OBContext.setAdminMode(true);
         final StringBuffer hql = new StringBuffer();
         hql.append(" as itcv ");
         hql.append(" where itcv." + InvoiceTaxCashVAT_V.PROPERTY_PAYMENTDETAILS

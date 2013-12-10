@@ -66,7 +66,7 @@ public class CashVATUtil {
    */
   public static String getOrganizationIsCashVAT(final String strOrgId) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       final Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
       final Organization legalEntity = OBContext.getOBContext()
           .getOrganizationStructureProvider(org.getClient().getId()).getLegalEntity(org);
@@ -75,8 +75,7 @@ public class CashVATUtil {
         return legalEntity.getOrganizationInformationList().get(0).isCashVAT() ? "Y" : "N";
       }
     } catch (final Exception e) {
-      log4j.error("Error getting organization'" + strOrgId + "' cash vat. Returning null");
-      log4j.error(e.getMessage(), e);
+      log4j.error("Error getting organization'" + strOrgId + "' cash vat. Returning null", e);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -89,17 +88,17 @@ public class CashVATUtil {
    * 
    * @param strBPId
    *          Vendor (c_bpartner_id)
+   * @return "Y", "N" or null if not found
    */
   public static String getBusinessPartnerIsCashVAT(final String strBPId) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       final BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, strBPId);
       if (bp != null) {
         return bp.isCashVAT() ? "Y" : "N";
       }
     } catch (final Exception e) {
-      log4j.error("Error getting business partner'" + strBPId + "' cash vat. Returning null");
-      log4j.error(e.getMessage(), e);
+      log4j.error("Error getting business partner'" + strBPId + "' cash vat. Returning null", e);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -111,14 +110,11 @@ public class CashVATUtil {
    * Creates the records into the Cash VAT management table (InvoiceTaxCashVAT), calculating the
    * percentage paid/collected tax amount and taxable amount
    * 
-   * @param paymentDetail
-   * @param paymentSchedule
-   * @param amount
    */
   public static void createInvoiceTaxCashVAT(final FIN_PaymentDetail paymentDetail,
       final FIN_PaymentSchedule paymentSchedule, final BigDecimal amount) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       final Invoice invoice = paymentSchedule.getInvoice();
       if (invoice != null && invoice.isCashVAT()) {
         // A previous cash vat line with this payment detail means we are reactivating the payment.
@@ -173,6 +169,7 @@ public class CashVATUtil {
             OBDal.getInstance().save(iTCashVAT);
           }
         }
+        OBDal.getInstance().flush();
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -181,12 +178,10 @@ public class CashVATUtil {
 
   /**
    * Gets the InvoiceTaxCashVAT records linked to the payment detail
-   * 
-   * @param paymentDetail
    */
   public static List<InvoiceTaxCashVAT> getInvoiceTaxCashVAT(final FIN_PaymentDetail paymentDetail) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       return OBDao.getFilteredCriteria(InvoiceTaxCashVAT.class,
           Restrictions.eq(InvoiceTaxCashVAT.PROPERTY_FINPAYMENTDETAIL, paymentDetail)).list();
     } finally {
@@ -202,11 +197,10 @@ public class CashVATUtil {
    * Use this method when the invoice is fully paid to avoid rounding issues with on the fly
    * calculations based on the percentage of the invoice that has been paid/collected
    * 
-   * @param cInvoiceTaxID
    */
   public static Map<String, BigDecimal> getTotalOutstandingCashVATAmount(final String cInvoiceTaxID) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       final StringBuffer hql = new StringBuffer();
       hql.append(" select 100 - sum(coalesce(itcv." + InvoiceTaxCashVAT_V.PROPERTY_PERCENTAGE
           + ", 0)) as percentage, ");
@@ -241,14 +235,11 @@ public class CashVATUtil {
    * prepayment, i.e. from an (partially or totally) paid/collected order. This percentage must be
    * directly registered into the final tax account instead of the transitory tax account as usual,
    * because this part of the invoice has been paid from the order
-   * 
-   * @param cTaxID
-   * @param cInvoiceId
    */
   public static BigDecimal calculatePrepaidPercentageForCashVATTax(final String cTaxID,
       final String cInvoiceId) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       final StringBuffer hql = new StringBuffer();
       hql.append(" select coalesce(sum(" + InvoiceTaxCashVAT_V.PROPERTY_PERCENTAGE + "), 0) ");
       hql.append(" from " + InvoiceTaxCashVAT_V.ENTITY_NAME);
@@ -290,7 +281,7 @@ public class CashVATUtil {
   public static BigDecimal calculatePercentageAmount(final BigDecimal percentage,
       final BigDecimal totalAmt, final String cCurrencyId) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       final Currency currency = OBDal.getInstance().get(Currency.class, cCurrencyId);
       return calculatePercentageAmount(percentage, totalAmt, currency);
     } finally {
@@ -313,7 +304,7 @@ public class CashVATUtil {
   public static BigDecimal calculatePercentageAmount(final BigDecimal percentage,
       final BigDecimal totalAmt, final Currency currency) {
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       if (currency != null) {
         int precission = currency.getStandardPrecision().intValue();
         return percentage.multiply(totalAmt).divide(_100, precission, RoundingMode.HALF_UP);
@@ -329,15 +320,6 @@ public class CashVATUtil {
    * Create the accounting fact lines related to Cash VAT for payments, transactions and
    * reconciliations that come from a cash VAT invoice
    * 
-   * @param as
-   * @param conn
-   * @param fact
-   * @param Fact_Acct_Group_ID
-   * @param line
-   * @param invoice
-   * @param documentType
-   * @param cCurrencyID
-   * @param SeqNo
    */
   public static String createFactCashVAT(AcctSchema as, ConnectionProvider conn, Fact fact,
       String Fact_Acct_Group_ID, DocLineCashVATReady_PaymentTransactionReconciliation line,
