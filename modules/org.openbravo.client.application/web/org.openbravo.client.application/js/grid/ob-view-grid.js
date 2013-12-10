@@ -17,7 +17,7 @@
  ************************************************************************
  */
 isc.ClassFactory.defineClass('OBViewGrid', isc.OBGrid);
-
+//Dummy change
 isc.OBViewGrid.addClassProperties({
   EDIT_LINK_FIELD_NAME: '_editLink',
   //prevent the count operation on the server
