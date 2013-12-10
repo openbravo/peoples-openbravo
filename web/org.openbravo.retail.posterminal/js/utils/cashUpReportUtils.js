@@ -85,6 +85,31 @@
     });
   };
 
+  OB.UTIL.deleteCashUps = function (cashUpModels) {
+    var deleteCallback = function (models) {
+        models.each(function (model) {
+          OB.Dal.remove(model, null, function (tx, err) {
+            OB.UTIL.showError(err);
+          });
+        });
+        };
+    _.each(cashUpModels, function (cashup) {
+      var cashUpId = cashup.get('id');
+      OB.Dal.find(OB.Model.TaxCashUp, {
+        cashup_id: cashUpId
+      }, deleteCallback, null);
+      OB.Dal.find(OB.Model.CashManagement, {
+        cashup_id: cashUpId
+      }, deleteCallback, null);
+      OB.Dal.find(OB.Model.PaymentMethodCashUp, {
+        cashup_id: cashUpId
+      }, deleteCallback, null);
+      OB.Dal.remove(cashup, null, function (tx, err) {
+        OB.UTIL.showError(err);
+      });
+    });
+  };
+
   OB.UTIL.initCashUp = function (callback) {
     var criteria = {
       'isbeingprocessed': 'N'

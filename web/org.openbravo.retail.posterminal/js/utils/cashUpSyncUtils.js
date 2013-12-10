@@ -21,7 +21,9 @@
         cashupsToSend = [];
     this.proc = new OB.DS.Process(OB.UTIL.processCashUpClass);
     if (OB.MobileApp.model.get('connectedToERP')) {
-      OB.Dal.find(OB.Model.CashUp, null, function (cashups) {
+      OB.Dal.find(OB.Model.CashUp, {
+        isbeingprocessed: 'Y'
+      }, function (cashups) {
         if (cashups.length > 0) {
           _.each(cashups.models, function (cashup) {
             cashupsToSend.push(JSON.parse(cashup.get('objToSend')));
@@ -35,6 +37,7 @@
                 errorCallback();
               }
             } else {
+              OB.UTIL.deleteCashUps(cashups.models);
               if (successCallback) {
                 successCallback();
               }

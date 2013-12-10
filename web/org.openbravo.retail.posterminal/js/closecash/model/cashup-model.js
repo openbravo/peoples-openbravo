@@ -441,6 +441,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
           objToSend.get('cashMgmtIds').push(cashMgmt.get('id'));
         });
         cashUp.at(0).set('objToSend', JSON.stringify(objToSend.toJSON()));
+        cashUp.at(0).set('isbeingprocessed', 'Y');
         OB.Dal.save(cashUp.at(0), null, null);
         if (OB.MobileApp.model.get('connectedToERP')) {
           OB.MobileApp.model.runSyncProcess(null, null, null, function () {
@@ -457,7 +458,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
 
           });
         } else {
-          cashUp.at(0).set('isbeingprocessed', 'Y');
           OB.Dal.save(cashUp.at(0), null, null);
           OB.UTIL.showLoading(false);
           //        	 FIXME: Should we delete these two lines?

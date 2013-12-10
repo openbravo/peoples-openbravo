@@ -156,12 +156,14 @@ public class CashCloseProcessor {
         // Won't happen
       }
     }
-    OBQuery<FIN_FinaccTransaction> cashMgmtTransactionsQuery = OBDal.getInstance().createQuery(
-        FIN_FinaccTransaction.class, "where id in (:transIds) and account=:account");
-    cashMgmtTransactionsQuery.setNamedParameter("transIds", cashMgmtIdsList);
-    cashMgmtTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount());
-    associateTransactionsFromQuery(cashMgmtTransactionsQuery, reconciliation);
-
+    if (cashMgmtIdsList.size() > 0) {
+      OBQuery<FIN_FinaccTransaction> cashMgmtTransactionsQuery = OBDal.getInstance().createQuery(
+          FIN_FinaccTransaction.class, "where id in (:transIds) and account.id=:account");
+      cashMgmtTransactionsQuery.setNamedParameter("transIds", cashMgmtIdsList);
+      cashMgmtTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount()
+          .getId());
+      associateTransactionsFromQuery(cashMgmtTransactionsQuery, reconciliation);
+    }
   }
 
   protected void associateTransactionsFromQuery(OBQuery<FIN_FinaccTransaction> transactionQuery,
