@@ -190,6 +190,8 @@ public abstract class AcctServer {
   public static final String STATUS_TableDisabled = "T";
   /** Document Status */
   public static final String STATUS_BackgroundDisabled = "d";
+  /** Document Status */
+  public static final String STATUS_NoAccountingDate = "AD";
 
   /** Table IDs for document level conversion rates */
   public static final String TABLEID_Invoice = "318";
@@ -2219,6 +2221,8 @@ public abstract class AcctServer {
       strTitle = "@TableDisabled@";
       parameters.put("Table", tableName);
       messageResult.setType("Warning");
+    } else if (strStatus.equals(STATUS_NoAccountingDate)) {
+      strTitle = "@NoAccountingDate@";
     }
     messageResult.setMessage(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
         Utility.parseTranslation(conn, vars, vars.getLanguage(), strTitle)));
