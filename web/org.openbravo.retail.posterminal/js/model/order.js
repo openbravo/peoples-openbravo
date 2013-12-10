@@ -791,16 +791,21 @@
         });
       } else {
         if (p.get('groupProduct') || (options && options.packId)) {
-          var affectedByPack, line = this.get('lines').find(function (l) {
-            if (l.get('product').id === p.id) {
-              affectedByPack = l.isAffectedByPack();
-              if (!affectedByPack) {
-                return true;
-              } else if ((options && options.packId === affectedByPack.ruleId) || !(options && options.packId)) {
-                return true;
+          var affectedByPack, line;
+          if (options && options.line) {
+            line = options.line;
+          } else {
+            line = this.get('lines').find(function (l) {
+              if (l.get('product').id === p.id && l.get('qty') > 0) {
+                affectedByPack = l.isAffectedByPack();
+                if (!affectedByPack) {
+                  return true;
+                } else if ((options && options.packId === affectedByPack.ruleId) || !(options && options.packId)) {
+                  return true;
+                }
               }
-            }
-          });
+            });
+          }
           OB.MobileApp.model.hookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
             receipt: this,
             line: line,
@@ -815,6 +820,8 @@
             if (args.line) {
               args.receipt.addUnit(args.line, args.qty);
               args.line.trigger('selected', args.line);
+            } else if (args.receipt.get('orderType') === 1) {
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_AddProductReturn'));
             } else {
               args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
             }
