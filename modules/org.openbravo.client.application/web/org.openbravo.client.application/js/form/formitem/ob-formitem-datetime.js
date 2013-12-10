@@ -165,14 +165,27 @@ isc.OBDateTimeItem.addProperties({
     }
   },
 
+  showPicker: function () {
+    // keep previously selected date
+    this.previousValue = this.getValue();
+    this.Super('showPicker', arguments);
+  },
+
   pickerDataChanged: function (picker) {
-    var date, now = new Date();
+    var date, time;
     this.Super('pickerDataChanged', arguments);
 
     // SC sets time to local 0:00 to date in pickerDataChanged method
-    // setting now current time
+    // setting now time if there was one previously selected, or current time if not 
     date = this.getValue();
-    date.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+    if (this.previousValue) {
+      time = this.previousValue;
+      delete this.previousValue;
+    } else {
+      time = new Date();
+    }
+    date.setHours(time.getHours(), time.getMinutes(), time.getSeconds());
+
     this.setValue(date);
   },
 
