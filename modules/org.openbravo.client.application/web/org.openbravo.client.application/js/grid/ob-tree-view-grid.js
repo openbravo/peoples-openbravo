@@ -49,6 +49,7 @@ isc.OBTreeViewGrid.addProperties({
     } else {
       this.canSort = true;
     }
+    this.confirmNodeReparent = OB.PropertyStore.get("OBUIAPP_ConfirmNodeReparent", this.view.windowId);
   },
 
   // Some OBTreeViewGrid functionality is alreadyd implemented in OBViewGrid
@@ -185,24 +186,28 @@ isc.OBTreeViewGrid.addProperties({
         i, len = nodes.length,
         nodesIdentifier = "",
         parentIdentifier, message;
-    for (i = 0; i < len; i++) {
-      nodesIdentifier = nodesIdentifier + nodes[i][OB.Constants.IDENTIFIER];
-      if ((i + 1) < len) {
-        nodesIdentifier = nodesIdentifier + ", ";
+    if (this.confirmNodeReparent) {
+      for (i = 0; i < len; i++) {
+        nodesIdentifier = nodesIdentifier + nodes[i][OB.Constants.IDENTIFIER];
+        if ((i + 1) < len) {
+          nodesIdentifier = nodesIdentifier + ", ";
+        }
       }
-    }
-    if (folder.nodeId === this.dataProperties.rootValue) {
-      parentIdentifier = OB.I18N.getLabel('OBUIAPP_RootNode');
-    } else {
-      parentIdentifier = folder[OB.Constants.IDENTIFIER];
-    }
+      if (folder.nodeId === this.dataProperties.rootValue) {
+        parentIdentifier = OB.I18N.getLabel('OBUIAPP_RootNode');
+      } else {
+        parentIdentifier = folder[OB.Constants.IDENTIFIER];
+      }
 
-    message = OB.I18N.getLabel('OBUIAPP_MoveTreeNode', [nodesIdentifier, parentIdentifier]);
-    isc.confirm(message, function (value) {
-      if (value) {
-        me.doTransferNodes(nodes, folder, index, sourceWidget, callback);
-      }
-    });
+      message = OB.I18N.getLabel('OBUIAPP_MoveTreeNode', [nodesIdentifier, parentIdentifier]);
+      isc.confirm(message, function (value) {
+        if (value) {
+          me.doTransferNodes(nodes, folder, index, sourceWidget, callback);
+        }
+      });
+    } else {
+      this.doTransferNodes(nodes, folder, index, sourceWidget, callback);
+    }
   },
 
   // smartclients transferNodes does not update the tree it a node is moved within its same parent
