@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -15,6 +15,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -25,7 +26,10 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.login.MobileCoreLoginHandler;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.Session;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.common.enterprise.Warehouse;
 
 public class POSLoginHandler extends MobileCoreLoginHandler {
@@ -112,5 +116,21 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
   @Override
   protected String getSessionType() {
     return WEB_POS_SESSION;
+  }
+
+  @Override
+  protected Language getDefaultLanguage(User user, RoleDefaults defaults) {
+    if (user.getDefaultLanguage() != null) {
+      return user.getDefaultLanguage();
+    }
+
+    if (!StringUtils.isEmpty(defaults.role)) {
+      Role role = OBDal.getInstance().get(Role.class, defaults.role);
+      if (role.getOBPOSDefaultPosLanguage() != null) {
+        return role.getOBPOSDefaultPosLanguage();
+      }
+    }
+    return (Language) OBDal.getInstance().createCriteria(Language.class)
+        .add(Restrictions.eq(Language.PROPERTY_LANGUAGE, "en_US")).list().get(0);
   }
 }
