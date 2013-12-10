@@ -138,6 +138,7 @@ isc.OBAttachmentsSubmitPopup.addProperties({
       width: '100%',
       height: this.height,
       layoutTopMargin: this.hlayoutTopMargin,
+      layoutBottomMargin: 5,
       align: this.align,
       members: [
       this.addForm, this.submitButton]
@@ -285,6 +286,11 @@ isc.OBAttachmentsLayout.addProperties({
               name: 'inpwindowId',
               type: 'hidden',
               value: this.canvas.windowId
+            }, {
+              name: 'inpDescription',
+              title: OB.I18N.getLabel('APRM_FATS_DESCRIPTION'),
+              type: 'text',
+              value: this.canvas.description
             }],
             encoding: 'multipart',
             action: './businessUtility/TabAttachments_FS.html',
@@ -463,6 +469,104 @@ isc.OBAttachmentsLayout.addProperties({
       });
     };
 
+    var editDescActions;
+    editDescActions = function (fileName) {
+      canvas = this.canvas;
+      var form = isc.DynamicForm.create({
+        autoFocus: true,
+        fields: [{
+          name: 'inpname',
+          type: 'hidden',
+          value: this.attachmentName
+        }, {
+          name: 'Command',
+          type: 'hidden',
+          value: 'EDIT_DESC_OB3'
+        }, {
+          name: 'buttonId',
+          type: 'hidden',
+          value: this.canvas.ID
+        }, {
+          name: 'inpKey',
+          type: 'hidden',
+          value: this.canvas.recordId
+        }, {
+          name: 'inpTabId',
+          type: 'hidden',
+          value: this.canvas.tabId
+        }, {
+          name: 'inpwindowId',
+          type: 'hidden',
+          value: this.canvas.windowId
+        }, {
+          name: 'inpDescription',
+          type: 'text',
+          title: OB.I18N.getLabel('APRM_FATS_DESCRIPTION'),
+          value: this.hLayout.description
+        }, {
+          name: 'inpAttachId',
+          type: 'hidden',
+          value: this.attachmentId
+        }],
+        encoding: 'multipart',
+        action: './businessUtility/TabAttachments_FS.html',
+        target: "background_target",
+        numCols: 4,
+        align: 'center',
+        height: '30px',
+        redraw: function () {},
+        theCanvas: this.canvas
+      });
+      var submitbutton = isc.OBFormButton.create({
+        title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
+        theForm: form,
+        canvas: me,
+        click: function () {
+          var fileName, form = this.theForm,
+              addFunction;
+          addFunction = function (clickedOK) {
+            if (clickedOK) {
+              var hTempLayout = isc.HLayout.create();
+              form.theCanvas.addMember(hTempLayout, form.theCanvas.getMembers().size());
+              var uploadingFile = isc.Label.create({
+                contents: fileName
+              });
+              var uploading = isc.Label.create({
+                className: 'OBLinkButtonItemFocused',
+                contents: '    ' + OB.I18N.getLabel('OBUIAPP_AttachmentUploading')
+              });
+              hTempLayout.addMember(uploadingFile);
+              hTempLayout.addMember(uploading);
+              var button = form.theCanvas.getForm().view.toolBar.getLeftMember(isc.OBToolbar.TYPE_ATTACHMENTS);
+              if (!button) {
+                button = form.theCanvas.getForm().view.toolBar.getLeftMember("attachExists");
+              }
+              button.customState = 'Progress';
+              button.resetBaseStyle();
+              if (OB.Utilities.currentUploader !== null) {
+                var origButton = window[OB.Utilities.currentUploader];
+                if (origButton && origButton.resetToolbar) {
+                  origButton.resetToolbar();
+                }
+              }
+              OB.Utilities.currentUploader = form.theCanvas.ID;
+              form.submitForm();
+              form.popup.hide();
+            }
+          };
+          var value = this.theForm.getItem('inpname').getElement().value;
+          addFunction(true);
+        }
+      });
+      var popup = isc.OBAttachmentsSubmitPopup.create({
+        submitButton: submitbutton,
+        addForm: form,
+        title: OB.I18N.getLabel('OBUIAPP_AttachmentEditDesc')
+      });
+      form.popup = popup;
+      popup.show();
+    };
+
     length = attachments.length;
     for (i = 0; i < attachments.length; i++) {
       var attachment = attachments[i];
@@ -497,12 +601,43 @@ isc.OBAttachmentsLayout.addProperties({
         canvas: this,
         action: removeActions
       });
+
+
+      var editDescription = isc.OBLinkButtonItem.create({
+        title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentEditDesc') + ' ]',
+        width: '30px',
+        attachmentName: attachment.name,
+        attachmentId: attachment.id,
+        canvas: this,
+        action: editDescActions,
+        hLayout: buttonLayout
+      });
+      var description = isc.DynamicForm.create({
+        title: 'Description',
+        numCols: 1,
+        width: '100%',
+        canvas: this,
+        fields: [{
+          name: 'descriptionOBTextAreaItem',
+          type: 'OBTextAreaItem',
+          showTitle: false,
+          layout: this,
+          width: '*',
+          length: 2000,
+          value: attachment.description,
+          disabled: true
+        }]
+      });
+
+      buttonLayout.description = description.fields[0].value;
       buttonLayout.addMember(attachmentLabel);
       buttonLayout.addMember(attachmentBy);
       buttonLayout.addMember(downloadAttachment);
       if (!this.getForm().view.viewForm.readOnly) {
         buttonLayout.addMember(removeAttachment);
       }
+      buttonLayout.addMember(editDescription);
+      buttonLayout.addMember(description);
       this.addMember(buttonLayout);
     }
   },

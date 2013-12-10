@@ -356,13 +356,13 @@ public class FormInitializationComponent extends BaseActionHandler {
     List<JSONObject> attachmentList = new ArrayList<JSONObject>();
     Query q;
     if (multipleRowIds == null) {
-      String hql = "select n.name, n.id, n.updated, n.updatedBy.name from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record=:recordId";
+      String hql = "select n.name, n.id, n.updated, n.updatedBy.name, n.text from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record=:recordId";
       q = OBDal.getInstance().getSession().createQuery(hql);
       q.setParameter("tableId", tableId);
       q.setParameter("recordId", rowId);
     } else {
 
-      String hql = "select n.name, n.id, n.updated, n.updatedBy.name from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record in :recordId";
+      String hql = "select n.name, n.id, n.updated, n.updatedBy.name, n.text from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record in :recordId";
       q = OBDal.getInstance().getSession().createQuery(hql);
       q.setParameter("tableId", tableId);
       q.setParameterList("recordId", multipleRowIds);
@@ -375,6 +375,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         obj.put("id", (String) array[1]);
         obj.put("age", (new Date().getTime() - ((Date) array[2]).getTime()));
         obj.put("updatedby", (String) array[3]);
+        obj.put("description", (String) array[4]);
       } catch (JSONException e) {
         log.error("Error while reading attachments", e);
       }
