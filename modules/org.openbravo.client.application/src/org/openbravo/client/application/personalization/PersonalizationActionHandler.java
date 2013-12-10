@@ -86,7 +86,8 @@ public class PersonalizationActionHandler extends BaseActionHandler {
       final String tabId = (String) parameters.get(TABID);
       final String windowId = (String) parameters.get(WINDOWID);
       final String applyLevelInformation = (String) parameters.get(APPLYLEVELINFORMATION);
-      final String personalizationID = (String) parameters.get(PERSONALIZATIONID);
+      Boolean saveAsNewPreference = false;
+      String personalizationID = (String) parameters.get(PERSONALIZATIONID);
       if (action.equals(ACTION_DELETE)) {
         final UIPersonalization uiPersonalization = OBDal.getInstance().get(
             UIPersonalization.class, personalizationID);
@@ -126,15 +127,24 @@ public class PersonalizationActionHandler extends BaseActionHandler {
           // updated, use the original level information
           final UIPersonalization uiPersonalization = OBDal.getInstance().get(
               UIPersonalization.class, personalizationID);
-          clientID = uiPersonalization.getVisibleAtClient().getId();
-          orgID = uiPersonalization.getVisibleAtOrganization().getId();
-          roleID = uiPersonalization.getVisibleAtRole().getId();
-          userID = uiPersonalization.getUser().getId();
+          clientID = uiPersonalization.getVisibleAtClient() != null ? uiPersonalization
+              .getVisibleAtClient().getId() : null;
+          orgID = uiPersonalization.getVisibleAtOrganization() != null ? uiPersonalization
+              .getVisibleAtOrganization().getId() : null;
+          roleID = uiPersonalization.getVisibleAtRole() != null ? uiPersonalization
+              .getVisibleAtRole().getId() : null;
+          userID = uiPersonalization.getUser() != null ? uiPersonalization.getUser().getId() : null;
+        }
+
+        if (clientID == null || orgID == null || roleID == null || userID == null) {
+          // the personalization is a global personalization. do not update it. create a new
+          // personalization for the user
+          saveAsNewPreference = true;
         }
 
         final UIPersonalization uiPersonalization = personalizationHandler.storePersonalization(
             personalizationID, clientID, orgID, roleID, userID, tabId, windowId,
-            (String) parameters.get(TARGET), data);
+            (String) parameters.get(TARGET), data, saveAsNewPreference);
         final JSONObject result = new JSONObject();
         result.put("personalizationId", uiPersonalization.getId());
         return result;

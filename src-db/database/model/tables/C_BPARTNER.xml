@@ -365,6 +365,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="ISCASHVAT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
@@ -452,6 +456,7 @@
       <check name="C_BPARTNER_CUSBLOCKING_CHK"><![CDATA[(CUSTOMER_BLOCKING = 'N') OR ((((SO_ORDER_BLOCKING = 'Y') OR (SO_GOODS_BLOCKING = 'Y')) OR (SO_INVOICE_BLOCKING = 'Y')) OR (SO_PAYMENT_BLOCKING = 'Y'))]]></check>
       <check name="C_BPARTNER_INVOICERULE_CHK"><![CDATA[((INVOICERULE) <> 'S') OR (C_INVOICESCHEDULE_ID IS NOT NULL)]]></check>
       <check name="C_BPARTNER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_ISCASHVAT_CH"><![CDATA[ISCASHVAT IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_ISCUSTOMER_CHK"><![CDATA[ISCUSTOMER IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_ISDISCOUNTPRINT_CHK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_ISEMPLOYEE_CHK"><![CDATA[ISEMPLOYEE IN ('Y', 'N')]]></check>

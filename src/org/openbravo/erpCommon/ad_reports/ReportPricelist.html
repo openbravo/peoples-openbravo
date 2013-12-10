@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,6 +83,13 @@ function onloadFunctions() {
 
 	function onResizeDo(){
 		resizeArea();
+	}
+
+	function openRecordInTab(tabId, recordId){
+	    var myframe = getFrame('LayoutMDI') || top.opener;
+	    if (myframe) {
+	        myframe.OB.Utilities.openDirectTab(tabId, recordId,'DEFAULT');
+	    }
 	}
 	</script>
 </head>
@@ -422,7 +429,7 @@ function onloadFunctions() {
                 <div id="sectionPricelistVersion">
                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                     <tr class="DataGrid_Body_Row"> 
-                      <th colspan="4" class="DataGrid_Header_Cell">Price list<span>:&nbsp;&nbsp;</span><a href="#" c="" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmPricelistVersionId, xx, false, document.frmMain, '../PriceList/PriceListVersion_Relation.html', '_self', false, true);return false;" onmouseover="window.status='Price list version';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldVersionId"> 
+                      <th colspan="4" class="DataGrid_Header_Cell">Price list<span>:&nbsp;&nbsp;</span><a href="#" onclick="openRecordInTab('238','xx');return false;" onmouseover="window.status='Price list version';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldVersionId"> 
                         <span id="fieldVersionName">xxPriceList 01/01/2000</span></a></th>
                     </tr>
                   </table>
@@ -440,7 +447,7 @@ function onloadFunctions() {
                       </tr>
                       <div id="sectionDetail"> 
                         <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
-                          <td width="60%" class="DataGrid_Body_Cell"><a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpmProductId, yy, false, document.frmMain, '../Product/Product_Relation.html', '_self', false, true);return false;" onmouseover="window.status='Expense lines';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldProductName">XXBOLLOS 
+                          <td width="60%" class="DataGrid_Body_Cell"><a href="#" onclick="openRecordInTab('180','yy');return false;" onmouseover="window.status='Expense lines';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldProductName">XXBOLLOS 
                               PANADERIA 4KG</a></td>
                           <td width="13%" class="DataGrid_Body_Cell" id="fieldPricelist">xx12,34</td>
                           <td width="15%" class="DataGrid_Body_Cell" id="fieldPricestd">XX34,34</td>

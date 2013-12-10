@@ -343,14 +343,14 @@ OB.Utilities.useClassicMode = function (windowId) {
 // Open a view using a tab id and record id. The tab can be a child tab. If the record id
 // is not set then the tab is opened in grid mode. If command is not set then default is
 // used.
-OB.Utilities.openDirectTab = function (tabId, recordId, command, position, criteria) {
+OB.Utilities.openDirectTab = function (tabId, recordId, command, position, criteria, direct) {
 
   tabId = OB.Utilities.removeFragment(tabId);
   recordId = OB.Utilities.removeFragment(recordId);
   command = OB.Utilities.removeFragment(command);
 
   var urlParams = OB.Utilities.getUrlParameters(),
-      callback;
+      callback, isDirect = direct;
 
   //added to have the additional filter clause and tabid. Mallikarjun M
   callback = function (response, data, request) {
@@ -360,6 +360,7 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position, crite
       tabTitle: data.tabTitle,
       windowId: data.windowId,
       tabId: data.tabId,
+      id: data.tabId,
       command: command,
       tabPosition: position
     };
@@ -370,6 +371,9 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position, crite
 
     if (recordId) {
       view.targetRecordId = recordId;
+      if (direct !== false) {
+        isDirect = true;
+      }
     }
 
     //// Begins-added to have the additional filter clause and tabid..Mallikarjun M
@@ -392,7 +396,7 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position, crite
       view.additionalCriteria = criteria;
     }
     ////Ends..
-    OB.Layout.ViewManager.openView(view.viewId, view);
+    OB.Layout.ViewManager.openView(view.viewId, view, null, isDirect);
   };
 
   OB.RemoteCallManager.call('org.openbravo.client.application.ComputeWindowActionHandler', {}, {
@@ -418,9 +422,17 @@ OB.Utilities.removeFragment = function (str) {
 // Open a view taking into account if a specific window should be opened in classic mode or not.
 // Returns the object used to open the window.
 OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct, editOrDeleteOnly) {
-  var isClassicEnvironment = OB.Utilities.useClassicMode(windowId);
-
-  var openObject;
+  var isClassicEnvironment = OB.Utilities.useClassicMode(windowId),
+      openObject, isDirect = direct,
+      isSingleRecord;
+  if (recordId) {
+    if (direct !== false) {
+      isDirect = true;
+    }
+    if (singleRecord !== false) {
+      isSingleRecord = true;
+    }
+  }
   if (isClassicEnvironment) {
     if (recordId) {
       OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);
@@ -444,7 +456,7 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       tabTitle: tabTitle,
       windowId: windowId,
       readOnly: readOnly,
-      singleRecord: singleRecord,
+      singleRecord: isSingleRecord,
       editOrDeleteOnly: editOrDeleteOnly
     };
   } else {
@@ -456,14 +468,14 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       windowId: windowId,
       icon: icon,
       readOnly: readOnly,
-      singleRecord: singleRecord,
+      singleRecord: isSingleRecord,
       editOrDeleteOnly: editOrDeleteOnly
     };
   }
   if (command) {
     openObject.command = command;
   }
-  OB.Layout.ViewManager.openView(openObject.viewId, openObject, null, direct);
+  OB.Layout.ViewManager.openView(openObject.viewId, openObject, null, isDirect);
   return openObject;
 };
 

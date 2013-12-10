@@ -369,17 +369,55 @@ public class PersonalizationHandler {
    */
   public UIPersonalization storePersonalization(String persId, String clientId, String orgId,
       String roleId, String userId, String tabId, String windowId, String target, String value) {
+    return storePersonalization(persId, clientId, orgId, roleId, userId, tabId, windowId, target,
+        value, false);
+  }
+
+  /**
+   * Stores the personalization json object for a certain level, if there is no current record then
+   * a new one is created and persisted. If the pers
+   * 
+   * @param persId
+   *          if a specific personalization id is set then the system updates that record and
+   *          ignores the other parameters.
+   * @param clientId
+   *          the client, maybe null
+   * @param orgId
+   *          the organization id, maybe null
+   * @param roleId
+   *          the role id, maybe null
+   * @param userId
+   *          the user id, maybe null
+   * @param tabId
+   *          the tab id, may not be null
+   * @param target
+   *          the personalization target, is either form or grid
+   * @param value
+   *          the value, a json string
+   * @param saveAsNewPersonalization
+   *          to save the personalization as a new personalization
+   * @return the persisted record
+   */
+  public UIPersonalization storePersonalization(String persId, String clientId, String orgId,
+      String roleId, String userId, String tabId, String windowId, String target, String value,
+      Boolean saveAsNewPersonalization) {
     OBContext.setAdminMode(false);
     try {
-      UIPersonalization uiPersonalization;
-      if (persId != null) {
-        uiPersonalization = OBDal.getInstance().get(UIPersonalization.class, persId);
-        if (uiPersonalization == null) {
-          throw new IllegalArgumentException("UI Personalization with id " + persId + " not found");
+      UIPersonalization uiPersonalization = null;
+      // if saveAsNewPersonalization is true ignore the persId and create a new personalization row.
+      // Happens in the case where a global personalization is modified by a particular user. Refer
+      // https://issues.openbravo.com/view.php?id=25181
+      if (!saveAsNewPersonalization) {
+        if (persId != null) {
+          uiPersonalization = OBDal.getInstance().get(UIPersonalization.class, persId);
+          if (uiPersonalization == null) {
+            throw new IllegalArgumentException("UI Personalization with id " + persId
+                + " not found");
+          }
+        } else {
+          uiPersonalization = getPersonalization(clientId, orgId, roleId, userId, tabId, windowId,
+              true);
         }
-      } else {
-        uiPersonalization = getPersonalization(clientId, orgId, roleId, userId, tabId, windowId,
-            true);
       }
 
       if (uiPersonalization == null) {

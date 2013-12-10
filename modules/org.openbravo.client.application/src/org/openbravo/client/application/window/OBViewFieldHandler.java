@@ -74,6 +74,7 @@ public class OBViewFieldHandler {
   private List<String> windowEntities = null;
   private List<OBViewFieldDefinition> fields;
   private List<String> propertiesInButtonFieldDisplayLogic = new ArrayList<String>();
+  private List<String> storedInSessionProperties = new ArrayList<String>();
 
   private List<Field> ignoredFields = new ArrayList<Field>();
 
@@ -332,6 +333,20 @@ public class OBViewFieldHandler {
       }
     }
 
+    // Stores the stored in session properties, even if they are not shown in the grid or form view
+    for (Field field : adFields) {
+      if (field.getColumn() == null || !field.isActive() || !field.getColumn().isActive()) {
+        continue;
+      }
+      if (field.getColumn().isStoredInSession()) {
+        Property prop = entity.getPropertyByColumnName(field.getColumn().getDBColumnName()
+            .toLowerCase(), false);
+        if (prop != null) {
+          storedInSessionProperties.add(prop.getName());
+        }
+      }
+    }
+
     // Add audit info
     if (!auditFields.isEmpty()) {
       final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
@@ -386,6 +401,10 @@ public class OBViewFieldHandler {
     }
 
     return fields;
+  }
+
+  public List<String> getStoredInSessionProperties() {
+    return storedInSessionProperties;
   }
 
   public boolean getHasStatusBarFields() {

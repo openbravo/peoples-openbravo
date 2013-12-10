@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -39,6 +39,8 @@
  v_CinvoiceTaxID varchar2(32);
  v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
  v_count NUMBER;
+ v_IsCashVAT_Tax C_Tax.IsCashVAT%TYPE;
+ v_IsCashVAT_Invoice C_Invoice.IsCashVAT%TYPE;
     
 BEGIN
     
@@ -99,6 +101,30 @@ IF (UPDATING) THEN
    END IF;
   END IF;
  END IF;
+
+
+ -- Update C_Invoice.IsCashVAT flag from the line tax rate.
+ -- We do it this way to force any invoicing process to properly set the C_Invoice.IsCashVAT
+ -- If a user manually changes the tax rate when entering a line, the invoice's header IsCash VAT may change
+ IF ((INSERTING OR UPDATING) AND :NEW.C_TAX_ID IS NOT NULL) THEN
+   SELECT COALESCE(IsCashVAT, 'N')
+   INTO v_IsCashVAT_Tax
+   FROM C_Tax
+   WHERE C_Tax_ID=:NEW.C_Tax_ID;
+
+   SELECT COALESCE(IsCashVAT, 'N')
+   INTO v_IsCashVAT_Invoice
+   FROM C_Invoice
+   WHERE C_Invoice_ID=:NEW.C_Invoice_ID;
+
+   IF (v_IsCashVAT_Tax <> v_IsCashVAT_Invoice) THEN
+     UPDATE C_Invoice
+     SET IsCashVAT = v_IsCashVAT_Tax
+     WHERE C_Invoice_ID=:NEW.C_Invoice_ID;
+   END IF;
+ END IF;
+
+
 END C_INVOICELINE_TRG
 ]]></body>
     </trigger>

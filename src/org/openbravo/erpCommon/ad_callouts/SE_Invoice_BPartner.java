@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,8 +27,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -36,6 +39,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
+import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
@@ -48,6 +52,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class SE_Invoice_BPartner extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private static final RequestFilter filterYesNo = new ValueListFilter("Y", "N");
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -329,6 +334,19 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       }
 
       resultado.append(", new Array('MESSAGE', \"" + message + "\")");
+
+      // Cash VAT
+      // Purchase flow only (from Business Partner)
+      if (StringUtils.equals("N", strIsSOTrx)) {
+        final String calculatedIsCashVat = CashVATUtil.getBusinessPartnerIsCashVAT(strBPartner);
+        if (calculatedIsCashVat != null && filterYesNo.accept(calculatedIsCashVat)) {
+          resultado.append(", \nnew Array(\"");
+          resultado.append("inpiscashvat");
+          resultado.append("\", \"");
+          resultado.append(FormatUtilities.replaceJS(calculatedIsCashVat));
+          resultado.append("\")");
+        }
+      }
 
       resultado.append(");");
     }

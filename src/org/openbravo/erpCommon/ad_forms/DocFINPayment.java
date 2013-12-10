@@ -38,6 +38,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -260,6 +261,7 @@ public class DocFINPayment extends AcctServer {
                 && detail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null ? detail
                 .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
                 : null);
+        docLine.setInvoiceTaxCashVAT_V(Line_ID);
         list.add(docLine);
       } finally {
         OBContext.restorePreviousMode();
@@ -401,6 +403,10 @@ public class DocFINPayment extends AcctServer {
                   assignedAmount = assignedAmount.add(lineAmount);
                 }
               }
+
+              // Cash VAT
+              SeqNo = CashVATUtil.createFactCashVAT(as, conn, fact, Fact_Acct_Group_ID, line,
+                  invoice, DocumentType, C_Currency_ID, SeqNo);
             }
           }
           fact.createLine(line, getAccountBPartner(bpartnerId, as, isReceipt, isPrepayment, conn),
@@ -625,7 +631,7 @@ public class DocFINPayment extends AcctServer {
     if (paymentInfo.length > 0) {
       FieldProviderFactory.setField(data[0], "User1_ID", paymentInfo[0].user1Id);
       FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].user2Id);
-      FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].cCostcenterId);
+      FieldProviderFactory.setField(data[0], "C_Costcenter_ID", paymentInfo[0].cCostcenterId);
     }
 
     setObjectFieldProvider(data);

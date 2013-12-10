@@ -42,7 +42,6 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.service.db.DbUtility;
 
 public class ReservationUtils {
   String returnValue;
@@ -84,7 +83,8 @@ public class ReservationUtils {
           new DalConnectionProvider(false), reservation.getId(),
           (String) DalUtil.getId(OBContext.getOBContext().getUser()));
     } catch (ServletException e) {
-      throw new OBException(DbUtility.getUnderlyingSQLException(e));
+      String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
+      throw new OBException(message, e);
     }
 
     String message = "";
@@ -126,7 +126,8 @@ public class ReservationUtils {
               .toString(), quantity.toString(), (String) DalUtil.getId(OBContext.getOBContext()
               .getUser()), allocated);
     } catch (ServletException e) {
-      throw new OBException(DbUtility.getUnderlyingSQLException(e));
+      String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
+      throw new OBException(message, e);
     }
 
     if (cs != null && cs.returnValue != null) {
@@ -195,7 +196,8 @@ public class ReservationUtils {
           new DalConnectionProvider(false), reservation.getId(), storageBin.getId(), asi.getId(),
           quantity.toPlainString(), (String) DalUtil.getId(OBContext.getOBContext().getUser()));
     } catch (ServletException e) {
-      throw new OBException(DbUtility.getUnderlyingSQLException(e));
+      String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
+      throw new OBException(message, e);
     }
 
     OBError result = new OBError();

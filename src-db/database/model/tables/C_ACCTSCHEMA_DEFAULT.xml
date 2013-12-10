@@ -169,7 +169,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="T_DUE_TRANS_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="T_CREDIT_ACCT" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="T_CREDIT_TRANS_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -492,7 +500,13 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_DEFAULT_T_CREDIT_">
         <reference local="T_CREDIT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_DEFAULT_T_CREDITT">
+        <reference local="T_CREDIT_TRANS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_DEFAULT_T_DUE_ACC">
+        <reference local="T_DUE_TRANS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_DEFAULT_T_DUETACC">
         <reference local="T_DUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHEMA_DEFAULT_T_EXPENSE">

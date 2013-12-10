@@ -250,7 +250,7 @@ function updateAmounts(transactionId, isChecked) {
 
 function updateEndingBalance() {
   var frm = document.frmMain;
-  frm.inpCalcEndingBalance.value = frm.inpEndBalance.value;
+  frm.inpCalcEndingBalance.value = applyFormat(frm.inpEndBalance.value);
   document.getElementById('paramTxtEndingBalance').innerHTML = frm.inpCalcEndingBalance.value;
   
   frm.inpCalcDifferenceToClear.value = subtract(frm.inpCalcEndingBalance.value, frm.inpCalcBeginnigBalance.value);
