@@ -59,6 +59,8 @@ public class ProcessCashMgmt extends JSONProcessSimple {
 
         FIN_FinaccTransaction transaction = OBProvider.getInstance().get(
             FIN_FinaccTransaction.class);
+        transaction.setNewOBObject(true);
+        transaction.setId(jsonsent.getString("id"));
         transaction.setCurrency(account.getCurrency());
         transaction.setAccount(account);
         transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);

@@ -432,35 +432,43 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
         cashCloseInfo.paymentMethod = curModel.get('paymentMethod');
         objToSend.get('cashCloseInfo').push(cashCloseInfo);
       }, this);
-      cashUp.at(0).set('objToSend', JSON.stringify(objToSend.toJSON()));
-      OB.Dal.save(cashUp.at(0), null, null);
-      if (OB.MobileApp.model.get('connectedToERP')) {
-        OB.MobileApp.model.runSyncProcess(null, null, null, function () {
-          OB.UTIL.initCashUp(function () {
-            OB.UTIL.showLoading(false);
-            //            	 FIXME: Should we delete these two lines?
-            //               me.set('messages', data.messages);
-            //               me.set('next', data.next);
-            me.set("finished", true);
-            if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
-              me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
-            }
-          });
 
+      objToSend.set('cashMgmtIds', []);
+      OB.Dal.find(OB.Model.CashManagement, {
+        'cashup_id': cashUp.at(0).get('id')
+      }, function (cashMgmts) {
+        _.each(cashMgmts.models, function (cashMgmt) {
+          objToSend.get('cashMgmtIds').push(cashMgmt.get('id'));
         });
-      } else {
-        cashUp.at(0).set('isbeingprocessed', 'Y');
+        cashUp.at(0).set('objToSend', JSON.stringify(objToSend.toJSON()));
         OB.Dal.save(cashUp.at(0), null, null);
-        OB.UTIL.showLoading(false);
-        //        	 FIXME: Should we delete these two lines?
-        //           me.set('messages', data.messages);
-        //           me.set('next', data.next);
-        me.set("finished", true);
-        if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
-          me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
-        }
-      }
+        if (OB.MobileApp.model.get('connectedToERP')) {
+          OB.MobileApp.model.runSyncProcess(null, null, null, function () {
+            OB.UTIL.initCashUp(function () {
+              OB.UTIL.showLoading(false);
+              //            	 FIXME: Should we delete these two lines?
+              //               me.set('messages', data.messages);
+              //               me.set('next', data.next);
+              me.set("finished", true);
+              if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
+                me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
+              }
+            });
 
+          });
+        } else {
+          cashUp.at(0).set('isbeingprocessed', 'Y');
+          OB.Dal.save(cashUp.at(0), null, null);
+          OB.UTIL.showLoading(false);
+          //        	 FIXME: Should we delete these two lines?
+          //           me.set('messages', data.messages);
+          //           me.set('next', data.next);
+          me.set("finished", true);
+          if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
+            me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
+          }
+        }
+      }, null, null);
     }, null, this);
   },
   convertExpected: function () {

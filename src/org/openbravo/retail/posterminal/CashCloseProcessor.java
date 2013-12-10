@@ -48,7 +48,7 @@ public class CashCloseProcessor {
   private Instance<CashupHook> cashupHooks;
 
   public JSONObject processCashClose(OBPOSApplications posTerminal, String cashUpId,
-      JSONArray cashCloseInfo) throws Exception {
+      JSONArray cashCloseInfo, JSONArray cashMgmtIds) throws Exception {
 
     OBPOSAppCashup cashUp = createCashUp(posTerminal, cashUpId);
     OBDal.getInstance().save(cashUp);
@@ -106,7 +106,7 @@ public class CashCloseProcessor {
 
       }
 
-      associateTransactions(paymentType, reconciliation, cashUpId);
+      associateTransactions(paymentType, reconciliation, cashUpId, cashMgmtIds);
 
     }
 
@@ -136,7 +136,7 @@ public class CashCloseProcessor {
   }
 
   protected void associateTransactions(OBPOSAppPayment paymentType,
-      FIN_Reconciliation reconciliation, String cashUpId) {
+      FIN_Reconciliation reconciliation, String cashUpId, JSONArray cashMgmtIds) {
     String orderTransactionsQueryHQL = " as fintrans, FIN_Payment_ScheduleDetail as schedDetail"
         + " where schedDetail.paymentDetails.finPayment = fintrans.finPayment"
         + " and fintrans.account=:account and fintrans.reconciliation is null"
@@ -146,7 +146,27 @@ public class CashCloseProcessor {
         FIN_FinaccTransaction.class, orderTransactionsQueryHQL);
     orderTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount());
     orderTransactionsQuery.setNamedParameter("cashUpId", cashUpId);
-    ScrollableResults transactions = orderTransactionsQuery.scroll(ScrollMode.FORWARD_ONLY);
+    associateTransactionsFromQuery(orderTransactionsQuery, reconciliation);
+
+    List<String> cashMgmtIdsList = new ArrayList<String>();
+    for (int i = 0; i < cashMgmtIds.length(); i++) {
+      try {
+        cashMgmtIdsList.add(cashMgmtIds.getString(i));
+      } catch (JSONException e) {
+        // Won't happen
+      }
+    }
+    OBQuery<FIN_FinaccTransaction> cashMgmtTransactionsQuery = OBDal.getInstance().createQuery(
+        FIN_FinaccTransaction.class, "where id in (:transIds) and account=:account");
+    cashMgmtTransactionsQuery.setNamedParameter("transIds", cashMgmtIdsList);
+    cashMgmtTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount());
+    associateTransactionsFromQuery(cashMgmtTransactionsQuery, reconciliation);
+
+  }
+
+  protected void associateTransactionsFromQuery(OBQuery<FIN_FinaccTransaction> transactionQuery,
+      FIN_Reconciliation reconciliation) {
+    ScrollableResults transactions = transactionQuery.scroll(ScrollMode.FORWARD_ONLY);
     try {
       while (transactions.next()) {
         FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) transactions.get(0);
@@ -162,8 +182,6 @@ public class CashCloseProcessor {
     } finally {
       transactions.close();
     }
-    // TODO The transactions which come from cash management movements still need to be associated
-    // to the reconciliation
   }
 
   protected FIN_Reconciliation createReconciliation(JSONObject cashCloseObj,

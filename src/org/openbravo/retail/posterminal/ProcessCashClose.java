@@ -75,8 +75,9 @@ public class ProcessCashClose extends JSONProcessSimple {
 
           CashCloseProcessor processor = WeldUtils
               .getInstanceFromStaticBeanManager(CashCloseProcessor.class);
+          JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
           JSONObject result = processor.processCashClose(posTerminal,
-              jsonCashup.getString("cashUpId"), arrayCashCloseInfo);
+              jsonCashup.getString("cashUpId"), arrayCashCloseInfo, cashMgmtIds);
 
           // add the messages returned by processCashClose...
           jsonData.put("messages", result.opt("messages"));
