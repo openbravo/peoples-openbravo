@@ -17,7 +17,6 @@
  ************************************************************************
  */
 isc.ClassFactory.defineClass('OBViewGrid', isc.OBGrid);
-
 isc.OBViewGrid.addClassProperties({
   EDIT_LINK_FIELD_NAME: '_editLink',
   //prevent the count operation on the server
@@ -435,7 +434,9 @@ isc.OBViewGrid.addProperties({
     if (this.showSortArrow === 'field') {
       // solves https://issues.openbravo.com/view.php?id=17362
       this.showSortArrow = isc.ListGrid.BOTH;
-      this.sorterDefaults = {};
+      if (!this.lazyFiltering) {
+        this.sorterDefaults = {};
+      }
     }
 
     // TODO: add dynamic part of readonly (via setWindowSettings: see issue 17441)
@@ -484,7 +485,11 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage') + '</span>'; // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
+    if (this.lazyFiltering) {
+      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_LazyFilteringNoFetch') + '</span>';
+    } else {
+      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage') + '</span>'; // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
+    }
     this.filterNoRecordsEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
 
     return ret;
@@ -493,7 +498,9 @@ isc.OBViewGrid.addProperties({
   clearFilter: function () {
     // hide the messagebar
     this.view.messageBar.hide();
+    this._cleaningFilter = true;
     this.Super('clearFilter', arguments);
+    delete this._cleaningFilter;
   },
 
   // select the first field after the frozen fields
@@ -1327,7 +1334,7 @@ isc.OBViewGrid.addProperties({
       }
     };
     OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveUpWhileEditing', 'OBViewGrid.body', ksAction_MoveUpWhileEditing, null, {
-      "key": "Arrow_Up"
+      'key': 'Arrow_Up'
     });
 
     // This is JUST for the case of an editing row with the whole row in "read only mode"
@@ -1344,7 +1351,7 @@ isc.OBViewGrid.addProperties({
       }
     };
     OB.KeyboardManager.Shortcuts.set('ViewGrid_MoveDownWhileEditing', 'OBViewGrid.body', ksAction_MoveDownWhileEditing, null, {
-      "key": "Arrow_Down"
+      'key': 'Arrow_Down'
     });
 
     ksAction_CancelEditing = function () {
@@ -1823,7 +1830,7 @@ isc.OBViewGrid.addProperties({
       criteria.operator = 'and';
     }
     if (!criteria._constructor) {
-      criteria._constructor = "AdvancedCriteria";
+      criteria._constructor = 'AdvancedCriteria';
     }
 
     if (!criteria.criteria) {
@@ -1834,7 +1841,7 @@ isc.OBViewGrid.addProperties({
       // do not filter on anything with a targetrecord
       criteria = {
         operator: 'and',
-        _constructor: "AdvancedCriteria",
+        _constructor: 'AdvancedCriteria',
         criteria: []
       };
 
@@ -1908,7 +1915,7 @@ isc.OBViewGrid.addProperties({
           }
 
           for (j = 0; j < this.fields.length; j++) {
-            if (this.fields[j].name === fieldName && isc.SimpleType.getType(this.fields[j].type).inheritsFrom === "datetime") {
+            if (this.fields[j].name === fieldName && isc.SimpleType.getType(this.fields[j].type).inheritsFrom === 'datetime') {
               if (criteria.criteria[i].criteria) {
                 for (k = 0; k < criteria.criteria[i].criteria.length; k++) {
                   criteria.criteria[i].criteria[k].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
@@ -1997,7 +2004,7 @@ isc.OBViewGrid.addProperties({
 
     if (this.filterClause) {
       if (this.whereClause) {
-        params[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ")) ";
+        params[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ')) ';
       } else {
         params[OB.Constants.WHERE_PARAMETER] = this.filterClause;
       }
@@ -2108,7 +2115,11 @@ isc.OBViewGrid.addProperties({
           this.emptyMessage = this.filterNoRecordsEmptyMessage;
         }
       } else {
-        this.emptyMessage = this.filterNoRecordsEmptyMessage;
+        if (this.lazyFiltering && !isc.isA.ResultSet(this.data)) {
+          this.emptyMessage = this.noDataEmptyMessage;
+        } else {
+          this.emptyMessage = this.filterNoRecordsEmptyMessage;
+        }
       }
     } else if (this.view.isRootView) {
       this.emptyMessage = this.noDataEmptyMessage;
@@ -3066,7 +3077,7 @@ isc.OBViewGrid.addProperties({
 
   //used in Edit or Delete only UI pattern
   setListEndEditAction: function () {
-    this.listEndEditAction = "done";
+    this.listEndEditAction = 'done';
   },
 
   // overridden to take into account disabled at item level
@@ -3111,7 +3122,7 @@ isc.OBViewGrid.addProperties({
     // nothing changed just fire the calback and bail
     if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged && !this.getEditForm().isNew) {
       if (originalCallback) {
-        this.fireCallback(originalCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
+        this.fireCallback(originalCallback, 'rowNum,colNum,editCompletionEvent,success', [rowNum, colNum, editCompletionEvent]);
       }
       return true;
     }
@@ -3134,7 +3145,7 @@ isc.OBViewGrid.addProperties({
             this.view.newRecordsAfterRefresh.push(this.getSelectedRecord()[OB.Constants.ID]);
           }
         }
-        this.fireCallback(originalCallback, "rowNum,colNum,editCompletionEvent,success", [rowNum, colNum, editCompletionEvent]);
+        this.fireCallback(originalCallback, 'rowNum,colNum,editCompletionEvent,success', [rowNum, colNum, editCompletionEvent]);
       }
     };
 

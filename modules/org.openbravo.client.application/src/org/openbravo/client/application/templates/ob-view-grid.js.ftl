@@ -38,6 +38,9 @@ isc.OBViewGrid.create({
     <#if data.filterName != "">
         filterName: '${data.filterName?js_string}',
     </#if>
+    <#if data.lazyFiltering>
+        lazyFiltering: ${data.lazyFiltering?string},
+    </#if>    
     //List of properties  that must be always included in this grid
     requiredGridProperties: [
     <#list data.requiredGridProperties as property>
