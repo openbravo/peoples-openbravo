@@ -188,8 +188,13 @@ enyo.kind({
           return true;
         }
         if (keyboard.line) {
-          keyboard.receipt.setPrice(keyboard.line, OB.I18N.parseNumber(txt));
-          keyboard.receipt.trigger('scan');
+          OB.UTIL.Approval.requestApproval(
+          me.model, 'OBPOS_approval.setPrice', function (approved, supervisor, approvalType) {
+            if (approved) {
+              keyboard.receipt.setPrice(keyboard.line, OB.I18N.parseNumber(txt));
+              keyboard.receipt.trigger('scan');
+            }
+          });
         }
       }
     });
@@ -272,7 +277,8 @@ enyo.kind({
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarDiscounts);
   },
 
-  init: function () {
+  init: function (model) {
+    this.model = model;
     // Add the keypads for each payment method
     this.initCurrencyKeypads();
 
