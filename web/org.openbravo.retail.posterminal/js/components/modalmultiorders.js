@@ -88,7 +88,7 @@ enyo.kind({
         components: [{
           tag: 'h4',
           initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblDateFormat'));
+            this.setContent(OB.I18N.getDateFormatLabel());
           },
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
         }]
@@ -104,7 +104,7 @@ enyo.kind({
         components: [{
           tag: 'h4',
           initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblDateFormat'));
+            this.setContent(OB.I18N.getDateFormatLabel());
           },
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
         }]

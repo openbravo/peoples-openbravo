@@ -87,7 +87,7 @@ enyo.kind({
         components: [{
           tag: 'h4',
           initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblDateFormat'));
+            this.setContent(OB.I18N.getDateFormatLabel());
           },
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
         }]
@@ -103,7 +103,7 @@ enyo.kind({
         components: [{
           tag: 'h4',
           initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblDateFormat'));
+            this.setContent(OB.I18N.getDateFormatLabel());
           },
           style: 'width: 100px; color:gray;  margin: 0px 0px 8px 5px;'
         }]
@@ -134,33 +134,39 @@ enyo.kind({
   searchAction: function () {
     var params = this.parent.parent.parent.parent.parent.parent.parent.parent.params;
     var startDate, endDate, startDateValidated = true,
-        endDateValidated = true;
+        endDateValidated = true,
+        formattedStartDate = '',
+        formattedEndDate = '';
     startDate = this.$.startDate.getValue();
     endDate = this.$.endDate.getValue();
 
     if (startDate !== '') {
-      startDateValidated = false;
-      startDateValidated = moment(startDate, "YYYY-MM-DD").isValid();
-    }
-
-    if (endDate !== '') {
-      endDateValidated = false;
-      endDateValidated = moment(endDate, "YYYY-MM-DD").isValid();
-    }
-
-    if (startDate !== '' && startDateValidated && endDate !== '' && endDateValidated) {
-      if (moment(endDate, "YYYY-MM-DD").diff(moment(startDate, "YYYY-MM-DD")) < 0) {
-        endDateValidated = false;
-        startDateValidated = false;
+      startDateValidated = OB.Utilities.Date.OBToJS(startDate, OB.Format.date);
+      if (startDateValidated) {
+        formattedStartDate = OB.Utilities.Date.JSToOB(startDateValidated, 'yyyy-MM-dd');
       }
     }
 
-    if (startDateValidated === false || endDateValidated === false) {
-      this.showValidationErrors(startDateValidated, endDateValidated);
+    if (endDate !== '') {
+      endDateValidated = OB.Utilities.Date.OBToJS(endDate, OB.Format.date);
+      if (endDateValidated) {
+        formattedEndDate = OB.Utilities.Date.JSToOB(endDateValidated, 'yyyy-MM-dd');
+      }
+    }
+
+    if (startDate !== '' && startDateValidated && endDate !== '' && endDateValidated) {
+      if (moment(endDateValidated).diff(moment(startDateValidated)) < 0) {
+        endDateValidated = null;
+        startDateValidated = null;
+      }
+    }
+
+    if (startDateValidated === null || endDateValidated === null) {
+      this.showValidationErrors(startDateValidated !== null, endDateValidated !== null);
       return true;
     } else {
-      this.$.startDate.removeClass("error");
-      this.$.endDate.removeClass("error");
+      this.$.startDate.removeClass('error');
+      this.$.endDate.removeClass('error');
     }
     this.filters = {
       documentType: params.isQuotation ? ([OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations]) : ([OB.POS.modelterminal.get('terminal').terminalType.documentType, OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns]),
@@ -168,8 +174,8 @@ enyo.kind({
       isQuotation: params.isQuotation ? true : false,
       isLayaway: params.isLayaway ? true : false,
       filterText: this.$.filterText.getValue(),
-      startDate: this.$.startDate.getValue(),
-      endDate: this.$.endDate.getValue(),
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
       pos: OB.POS.modelterminal.get('terminal').id,
       client: OB.POS.modelterminal.get('terminal').client,
       organization: OB.POS.modelterminal.get('terminal').organization
@@ -260,7 +266,8 @@ enyo.kind({
     this.clearAction();
     process.exec({
       filters: inEvent.filters,
-      _limit: OB.Model.Order.prototype.dataLimit
+      _limit: OB.Model.Order.prototype.dataLimit,
+      _dateFormat: OB.Format.date
     }, function (data) {
       if (data) {
         _.each(data, function (iter) {
