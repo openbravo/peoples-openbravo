@@ -60,7 +60,7 @@ public class SaveCashUpActionHandler extends BaseActionHandler {
           }
           OBPOSErrors error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
           error.setError(OrderLoader.getErrorMessage(e1));
-          error.setTypeofdata("CM");
+          error.setTypeofdata("CU");
           error.setObposApplications(OBDal.getInstance()
               .get(OBPOSApplications.class, posTerminalId));
           OBDal.getInstance().flush();

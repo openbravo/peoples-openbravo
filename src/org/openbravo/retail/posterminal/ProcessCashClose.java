@@ -57,6 +57,14 @@ public class ProcessCashClose extends JSONProcessSimple {
       }
     }
 
+    OBCriteria<OBPOSErrors> errorsQuery = OBDal.getInstance().createCriteria(OBPOSErrors.class);
+    errorsQuery.add(Restrictions.ne(OBPOSErrors.PROPERTY_TYPEOFDATA, "CU"));
+    errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
+    if (errorsQuery.count() > 0) {
+      throw new OBException(
+          "There are errors related to non-created customers, orders, or cash management movements pending to be processed. Process them before processing the cash ups");
+    }
+
     if (cashUp == null
         && RequestContext.get().getSessionAttribute(
             "cashupTerminalId|" + jsonCashup.getString("terminalId")) == null) {
