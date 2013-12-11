@@ -24,6 +24,7 @@
         supportsOffline: true,
         loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
         loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
+        applicationFormatUrl: '../../org.openbravo.client.kernel/OBPOS_Main/ApplicationFormats',
         logoutUrlParams: {
           terminal: OB.UTIL.getParameterByName("terminal")
         },
