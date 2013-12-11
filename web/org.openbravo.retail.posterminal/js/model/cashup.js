@@ -17,7 +17,7 @@
     entityName: '',
     source: '',
     local: true,
-    properties: ['id', 'netSales', 'grossSales', 'netReturns', 'grossReturns', 'totalRetailTransactions', 'createdDate', 'objToSend', 'isbeingprocessed'],
+    properties: ['id', 'netSales', 'grossSales', 'netReturns', 'grossReturns', 'totalRetailTransactions', 'createdDate', 'userId', 'objToSend', 'isbeingprocessed'],
     propertyMap: {
       'id': 'cashup_id',
       'netSales': 'netSales',
@@ -26,12 +26,13 @@
       'grossReturns': 'grossReturns',
       'totalRetailTransactions': 'totalRetailTransactions',
       'createdDate': 'createdDate',
+      'userId': 'userId',
       'objToSend': 'objToSend',
       'isbeingprocessed': 'isbeingprocessed'
     },
-    createStatement: 'CREATE TABLE IF NOT EXISTS cashup (cashup_id TEXT PRIMARY KEY, netSales TEXT, grossSales TEXT, netReturns TEXT, grossReturns TEXT, totalRetailTransactions TEXT, createdDate TEXT, objToSend TEXT, isbeingprocessed TEXT)',
+    createStatement: 'CREATE TABLE IF NOT EXISTS cashup (cashup_id TEXT PRIMARY KEY, netSales TEXT, grossSales TEXT, netReturns TEXT, grossReturns TEXT, totalRetailTransactions TEXT, createdDate TEXT, userId TEXT, objToSend TEXT, isbeingprocessed TEXT)',
     dropStatement: 'DROP TABLE IF EXISTS cashup',
-    insertStatement: 'INSERT INTO cashup(cashup_id, netSales, grossSales, netReturns, grossReturns, totalRetailTransactions, createdDate, objToSend, isbeingprocessed) VALUES (?,?,?,?,?,?,?,?,?)',
+    insertStatement: 'INSERT INTO cashup(cashup_id, netSales, grossSales, netReturns, grossReturns, totalRetailTransactions, createdDate, objToSend, userId, isbeingprocessed) VALUES (?,?,?,?,?,?,?,?,?,?)',
   });
 
   window.OB.Model.CashUp = CashUp;

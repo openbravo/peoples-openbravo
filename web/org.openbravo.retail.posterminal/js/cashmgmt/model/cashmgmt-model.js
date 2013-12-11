@@ -78,6 +78,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           reasonId: model.get('id'),
           paymentMethodId: p.id,
           user: OB.POS.modelterminal.get('context').user._identifier,
+          userId: OB.POS.modelterminal.get('context').user.id,
           time: new Date().toString().substring(16, 21),
           isocode: p.isocode,
           cashup_id: cashUp.at(0).get('id'),

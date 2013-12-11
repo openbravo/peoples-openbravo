@@ -440,6 +440,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
         _.each(cashMgmts.models, function (cashMgmt) {
           objToSend.get('cashMgmtIds').push(cashMgmt.get('id'));
         });
+        cashUp.at(0).set('userId', OB.POS.modelterminal.get('context').user.id);
+        objToSend.set('userId', OB.POS.modelterminal.get('context').user.id);
         cashUp.at(0).set('objToSend', JSON.stringify(objToSend.toJSON()));
         cashUp.at(0).set('isbeingprocessed', 'Y');
         OB.Dal.save(cashUp.at(0), null, null);

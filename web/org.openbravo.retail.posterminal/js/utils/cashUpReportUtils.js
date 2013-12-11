@@ -136,6 +136,7 @@
             grossReturns: '0',
             totalRetailTransactions: '0',
             createdDate: new Date(),
+            userId: null,
             objToSend: null,
             isbeingprocessed: 'N'
           }), function () {
