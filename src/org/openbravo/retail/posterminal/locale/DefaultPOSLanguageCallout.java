@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-package org.openbravo.retail.posterminal.language;
+package org.openbravo.retail.posterminal.locale;
 
 import javax.servlet.ServletException;
 
