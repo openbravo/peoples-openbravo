@@ -341,12 +341,14 @@ public class POSUtils {
     for (OBPOSErrors error : errors) {
       try {
         JSONObject jsonError = new JSONObject(error.getJsoninfo());
-        String documentNo = jsonError.getString("documentNo");
-        if (documentNo.indexOf("/") != 0) {
-          String number = documentNo.substring(documentNo.indexOf("/") + 1);
-          int errorNumber = new Long(number).intValue();
-          if (errorNumber > maxDocNo) {
-            maxDocNo = errorNumber;
+        if (jsonError.has("documentNo")) {
+          String documentNo = jsonError.getString("documentNo");
+          if (documentNo.indexOf("/") != 0) {
+            String number = documentNo.substring(documentNo.indexOf("/") + 1);
+            int errorNumber = new Long(number).intValue();
+            if (errorNumber > maxDocNo) {
+              maxDocNo = errorNumber;
+            }
           }
         }
       } catch (Exception e) {
