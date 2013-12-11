@@ -1052,7 +1052,7 @@
     //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
       var me = this;
-      if (OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn) {
+      if (!OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn) {
         var negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('gross') < 0;
         }).length;
@@ -1141,7 +1141,7 @@
     },
     returnLine: function (line, options, skipValidaton) {
       var me = this;
-      if (OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
+      if (!OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
         //The value of qty need to be negate because we want to change it
         var negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('gross') < 0;

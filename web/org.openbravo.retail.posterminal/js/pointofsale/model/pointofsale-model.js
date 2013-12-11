@@ -560,7 +560,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var negativeLines = _.filter(me.get('order').get('lines').models, function (line) {
         return line.get('gross') < 0;
       }).length;
-      if (negativeLines > 0 && OB.POS.modelterminal.get('permissions')['OBPOS_approval.returns']) {
+      if (negativeLines > 0 && !OB.POS.modelterminal.get('permissions')['OBPOS_approval.returns']) {
         args.approvals.push('OBPOS_approval.returns');
       }
       if (args.approvals.length > 0) {
@@ -586,7 +586,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
    * case of granted approval, the approval is added to the order so it can be saved
    * in backend for audit purposes.
    */
-  approvedRequest: function (approved, supervisor, approvalType) {
+  approvedRequest: function (approved, supervisor, approvalType, callback) {
     var order = this.get('order'),
         newApprovals = [],
         approvals, approval, i, date;
@@ -619,5 +619,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.trigger('approvalChecked', {
       approved: approved
     });
+    if (enyo.isFunction(callback)) {
+      callback(approved, supervisor, approvalType);
+    }
   }
 });

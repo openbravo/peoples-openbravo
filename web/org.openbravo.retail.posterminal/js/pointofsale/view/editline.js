@@ -190,8 +190,14 @@ enyo.kind({
           i18nContent: 'OBPOS_ButtonDelete',
           classes: 'btnlink-orange',
           tap: function () {
-            this.owner.doDeleteLine({
-              line: this.owner.line
+            var me = this;
+            OB.UTIL.Approval.requestApproval(
+            me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+              if (approved) {
+                me.owner.doDeleteLine({
+                  line: me.owner.line
+                });
+              }
             });
           },
           init: function (model) {
@@ -289,9 +295,9 @@ enyo.kind({
           onchange: 'changeReason'
         },
         changeReason: function (inSender, inEvent) {
-          if(this.children[this.getSelected()].getValue()==='') {
+          if (this.children[this.getSelected()].getValue() === '') {
             this.owner.line.unset('returnReason');
-          }else{
+          } else {
             this.owner.line.set('returnReason', this.children[this.getSelected()].getValue());
           }
         },
