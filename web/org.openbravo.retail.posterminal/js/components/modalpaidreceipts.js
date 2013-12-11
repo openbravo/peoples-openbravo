@@ -131,8 +131,8 @@ enyo.kind({
     this.$.endDate.setValue('');
     this.doClearAction();
   },
-  searchAction: function () {
-    var params = this.parent.parent.parent.parent.parent.parent.parent.parent.params;
+
+  getDateFilters: function () {
     var startDate, endDate, startDateValidated = true,
         endDateValidated = true,
         formattedStartDate = '',
@@ -163,11 +163,23 @@ enyo.kind({
 
     if (startDateValidated === null || endDateValidated === null) {
       this.showValidationErrors(startDateValidated !== null, endDateValidated !== null);
-      return true;
+      return false;
     } else {
       this.$.startDate.removeClass('error');
       this.$.endDate.removeClass('error');
     }
+
+    this.filters = _.extend(this.filters, {
+      startDate: formattedStartDate,
+      endDate: formattedEndDate
+    });
+
+    return true;
+  },
+
+  searchAction: function () {
+    var params = this.parent.parent.parent.parent.parent.parent.parent.parent.params;
+
     this.filters = {
       documentType: params.isQuotation ? ([OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations]) : ([OB.POS.modelterminal.get('terminal').terminalType.documentType, OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns]),
       docstatus: params.isQuotation ? 'UE' : null,
@@ -175,12 +187,15 @@ enyo.kind({
       isLayaway: params.isLayaway ? true : false,
       isReturn: params.isReturn ? true : false,
       filterText: this.$.filterText.getValue(),
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
       pos: OB.POS.modelterminal.get('terminal').id,
       client: OB.POS.modelterminal.get('terminal').client,
       organization: OB.POS.modelterminal.get('terminal').organization
     };
+
+    if (!this.getDateFilters()) {
+      return true;
+    }
+
     this.doSearchAction({
       filters: this.filters
     });

@@ -108,7 +108,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalreceiptlineproperties",
         "components/modalnoteditableorder",
         "components/modalnoteditableline",
-        "components/modalmultiorders",
         "components/obpos-approval",
         "main",
         // Web POS window
@@ -139,6 +138,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/menu",
         // Old Tickets
         "components/modalpaidreceipts",
+        "components/modalmultiorders",
         // Quotations
         "components/modalcreateorderfromquotation",
         "components/modalreactivatequotation",
