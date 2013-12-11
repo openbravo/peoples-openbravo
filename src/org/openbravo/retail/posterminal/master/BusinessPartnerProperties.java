@@ -33,6 +33,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("ulist.id", "contactId"));
         add(new HQLProperty("ulist.phone", "phone"));
         add(new HQLProperty("bpl.locationAddress.cityName", "cityName"));
+        add(new HQLProperty("bpl.locationAddress.country.name", "countryName"));
         add(new HQLProperty("bpl.locationAddress.postalCode", "postalCode"));
         add(new HQLProperty("bpl.businessPartner.businessPartnerCategory.id",
             "businessPartnerCategory"));

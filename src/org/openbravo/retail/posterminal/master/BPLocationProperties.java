@@ -20,6 +20,7 @@ public class BPLocationProperties extends ModelExtension {
         add(new HQLProperty("bploc.locationAddress.addressLine1", "name"));
         add(new HQLProperty("bploc.locationAddress.postalCode", "postalCode"));
         add(new HQLProperty("bploc.locationAddress.cityName", "cityName"));
+        add(new HQLProperty("bploc.locationAddress.country.name", "countryName"));
         add(new HQLProperty("bploc.locationAddress.addressLine1", "_identifier"));
       }
     };

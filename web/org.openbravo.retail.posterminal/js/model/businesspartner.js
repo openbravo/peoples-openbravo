@@ -92,6 +92,7 @@
         this.set('invoiceTerms', OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm);
         this.set('priceList', OB.POS.modelterminal.get('pricelist').id);
         this.set('country', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry);
+        this.set('countryName', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry_name);
         this.set('client', OB.POS.modelterminal.get('terminal').client);
         this.set('organization', OB.POS.modelterminal.get('terminal').defaultbp_bporg);
         this.set('locId', null);
@@ -207,6 +208,10 @@
   }, {
     name: 'cityName',
     column: 'cityName',
+    type: 'TEXT'
+  }, {
+    name: 'countryName',
+    column: 'countryName',
     type: 'TEXT'
   }, {
     name: 'contactId',
