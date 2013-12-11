@@ -725,13 +725,18 @@
     deleteLine: function (line, doNotSave) {
       var me = this;
       var index = this.get('lines').indexOf(line);
-      var pack = line.isAffectedByPack();
+      var pack = line.isAffectedByPack(),
+          productId = line.get('product').id;
 
       if (pack) {
-        // When deleting a line, check other lines that might be affected by
+        // When deleting a line, check lines with other product that are affected by
         // same pack than deleted one and merge splitted lines created for those
         this.get('lines').forEach(function (l) {
-          var affected = l.isAffectedByPack();
+          var affected;
+          if (productId === l.get('product').id) {
+            return; //continue
+          }
+          affected = l.isAffectedByPack();
           if (affected && affected.ruleId === pack.ruleId) {
             this.mergeLines(l);
           }
@@ -791,16 +796,21 @@
         });
       } else {
         if (p.get('groupProduct') || (options && options.packId)) {
-          var affectedByPack, line = this.get('lines').find(function (l) {
-            if (l.get('product').id === p.id) {
-              affectedByPack = l.isAffectedByPack();
-              if (!affectedByPack) {
-                return true;
-              } else if ((options && options.packId === affectedByPack.ruleId) || !(options && options.packId)) {
-                return true;
+          var affectedByPack, line;
+          if (options && options.line) {
+            line = options.line;
+          } else {
+            line = this.get('lines').find(function (l) {
+              if (l.get('product').id === p.id && l.get('qty') > 0) {
+                affectedByPack = l.isAffectedByPack();
+                if (!affectedByPack) {
+                  return true;
+                } else if ((options && options.packId === affectedByPack.ruleId) || !(options && options.packId)) {
+                  return true;
+                }
               }
-            }
-          });
+            });
+          }
           OB.MobileApp.model.hookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
             receipt: this,
             line: line,
@@ -815,6 +825,8 @@
             if (args.line) {
               args.receipt.addUnit(args.line, args.qty);
               args.line.trigger('selected', args.line);
+            } else if (args.receipt.get('orderType') === 1) {
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_AddProductReturn'));
             } else {
               args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
             }
@@ -898,7 +910,7 @@
 
       qtyToMove = originalQty - qtyToKeep;
 
-      this.setUnit(line, qtyToKeep);
+      this.setUnit(line, qtyToKeep, null, true);
 
       p = line.get('product');
 
@@ -913,9 +925,9 @@
           addedBySplit: true
         });
         this.get('lines').add(newLine);
-        this.setUnit(newLine, qtyToMove);
+        this.setUnit(newLine, qtyToMove, null, true);
       } else {
-        this.setUnit(newLine, newLine.get('qty') + qtyToMove);
+        this.setUnit(newLine, newLine.get('qty') + qtyToMove, null, true);
       }
     },
 
@@ -926,16 +938,14 @@
       var p = line.get('product'),
           lines = this.get('lines'),
           merged = false;
-      line.set('promotions', null)
+      line.set('promotions', null);
       lines.forEach(function (l) {
         var promos = l.get('promotions');
         if (l === line) {
           return;
         }
-        if (!promos || promos.length == 0) { //TODO?
-        }
 
-        if (!l.get('addedBySplit') && l.get('product').id === p.id) {
+        if (l.get('product').id === p.id && l.get('price') === line.get('price')) {
           line.set({
             qty: line.get('qty') + l.get('qty'),
             promotions: null
@@ -947,6 +957,59 @@
       if (merged) {
         line.calculateGross();
       }
+    },
+
+    /**
+     *  It looks for different lines for same product with exactly the same promotions
+     *  to merge them in a single line
+     */
+    mergeLinesWithSamePromotions: function () {
+      var lines = this.get('lines'),
+          l, line, i, j, k, p, otherLine, toRemove = [],
+          matches, otherPromos, found, compareRule;
+
+      compareRule = function (p) {
+        return p.ruleId === line.get('promotions')[k].ruleId;
+      };
+
+      for (i = 0; i < lines.length; i++) {
+        line = lines.at(i);
+        for (j = i + 1; j < lines.length; j++) {
+          otherLine = lines.at(j);
+          if (otherLine.get('product').id !== line.get('product').id) {
+            continue;
+          }
+
+          if (!line.get('promotions') && !otherLine.get('promotions')) {
+            line.set('qty', line.get('qty') + otherLine.get('qty'));
+            line.calculateGross();
+            toRemove.push(otherLine);
+          } else if (line.get('promotions') && otherLine.get('promotions') && line.get('promotions').length === otherLine.get('promotions').length && line.get('price') === otherLine.get('price')) {
+            matches = true;
+            otherPromos = otherLine.get('promotions');
+            for (k = 0; k < line.get('promotions').length; k++) {
+              found = _.find(otherPromos, compareRule);
+              if (!found) {
+                matches = false;
+                break;
+              }
+            }
+            if (matches) {
+              line.set('qty', line.get('qty') + otherLine.get('qty'));
+              for (k = 0; k < line.get('promotions').length; k++) {
+                found = _.find(otherPromos, compareRule);
+                line.get('promotions')[k].amt += found.amt;
+              }
+              toRemove.push(otherLine);
+              line.calculateGross();
+            }
+          }
+        }
+      }
+
+      _.forEach(toRemove, function (l) {
+        lines.remove(l);
+      });
     },
 
     addPromotion: function (line, rule, discount) {

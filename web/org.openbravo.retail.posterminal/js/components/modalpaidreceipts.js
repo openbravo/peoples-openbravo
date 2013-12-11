@@ -173,6 +173,7 @@ enyo.kind({
       docstatus: params.isQuotation ? 'UE' : null,
       isQuotation: params.isQuotation ? true : false,
       isLayaway: params.isLayaway ? true : false,
+      isReturn: params.isReturn ? true : false,
       filterText: this.$.filterText.getValue(),
       startDate: formattedStartDate,
       endDate: formattedEndDate,
