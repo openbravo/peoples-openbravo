@@ -63,6 +63,7 @@ BEGIN
   v_taxcategory_id := COALESCE(v_taxcategory_id, v_prodtaxcategory_id);
 
   RETURN v_taxcategory_id;
-END C_GET_PRODUCT_TAXCATEGORY]]></body>
+END C_GET_PRODUCT_TAXCATEGORY
+]]></body>
     </function>
   </database>
