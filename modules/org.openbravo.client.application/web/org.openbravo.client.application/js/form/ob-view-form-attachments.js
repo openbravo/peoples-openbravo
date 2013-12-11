@@ -471,8 +471,8 @@ isc.OBAttachmentsLayout.addProperties({
 
     var editDescActions;
     editDescActions = function (fileName) {
-      canvas = this.canvas;
-      var form = isc.DynamicForm.create({
+      var form, submitbutton, popup, canvas = this.canvas;
+      form = isc.DynamicForm.create({
         autoFocus: true,
         fields: [{
           name: 'inpname',
@@ -517,7 +517,7 @@ isc.OBAttachmentsLayout.addProperties({
         redraw: function () {},
         theCanvas: this.canvas
       });
-      var submitbutton = isc.OBFormButton.create({
+      submitbutton = isc.OBFormButton.create({
         title: OB.I18N.getLabel('OBUIAPP_AttachmentSubmit'),
         theForm: form,
         canvas: me,
@@ -558,7 +558,7 @@ isc.OBAttachmentsLayout.addProperties({
           addFunction(true);
         }
       });
-      var popup = isc.OBAttachmentsSubmitPopup.create({
+      popup = isc.OBAttachmentsSubmitPopup.create({
         submitButton: submitbutton,
         addForm: form,
         title: OB.I18N.getLabel('OBUIAPP_AttachmentEditDesc')
