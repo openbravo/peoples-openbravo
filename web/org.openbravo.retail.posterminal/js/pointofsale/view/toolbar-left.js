@@ -79,6 +79,10 @@ enyo.kind({
       }
       this.model.get('multiOrders').resetValues();
       this.model.get('leftColumnViewManager').setOrderMode();
+    } else {
+      if (OB.POS.modelterminal.get('permissions')['OBPOS_print.suspended']) {
+        this.model.get('order').trigger('print');
+      }
     }
     this.doAddNewOrder();
     return true;
