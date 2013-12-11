@@ -11,32 +11,69 @@
 
 (function () {
 
-  var CashManagement = Backbone.Model.extend({
+  var CashManagement = OB.Data.ExtensibleModel.extend({
     modelName: 'CashManagement',
     tableName: 'cashmanagement',
-    entityName: '',
+    entityName: 'CashManagement',
     source: '',
-    local: true,
-    properties: ['id', 'description', 'amount', 'origAmount', 'type', 'reasonId', 'paymentMethodId', 'user', 'userId', 'time', 'isocode', 'cashup_id', 'isbeingprocessed'],
-    propertyMap: {
-      'id': 'cashmanagement_id',
-      'description': 'description',
-      'amount': 'amount',
-      'origAmount': 'origAmount',
-      'type': 'type',
-      'reasonId': 'reasonId',
-      'paymentMethodId': 'paymentMethodId',
-      'user': 'user',
-      'userId': 'userId',
-      'time': 'time',
-      'isocode': 'isocode',
-      'cashup_id': 'cashup_id',
-      'isbeingprocessed': 'isbeingprocessed'
-    },
-    createStatement: 'CREATE TABLE IF NOT EXISTS cashmanagement (cashmanagement_id TEXT PRIMARY KEY, description TEXT, amount TEXT, origAmount TEXT, type TEXT, reasonId TEXT, paymentMethodId TEXT, user TEXT, userId TEXT, time TEXT, isocode TEXT, cashup_id TEXT, isbeingprocessed TEXT)',
-    dropStatement: 'DROP TABLE IF EXISTS cashmanagement',
-    insertStatement: 'INSERT INTO cashmanagement(cashmanagement_id, description, amount, origAmount, type, reasonId, paymentMethodId, user, userId, time, isocode, cashup_id, isbeingprocessed) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
+    local: true
   });
 
-  window.OB.Model.CashManagement = CashManagement;
+
+  CashManagement.addProperties([{
+    name: 'id',
+    column: 'cashmanagement_id',
+    primaryKey: true,
+    type: 'TEXT'
+  }, {
+    name: 'description',
+    column: 'description',
+    type: 'TEXT'
+  }, {
+    name: 'amount',
+    column: 'amount',
+    type: 'TEXT'
+  }, {
+    name: 'origAmount',
+    column: 'origAmount',
+    type: 'TEXT'
+  }, {
+    name: 'type',
+    column: 'type',
+    type: 'TEXT'
+  }, {
+    name: 'reasonId',
+    column: 'reasonId',
+    type: 'TEXT'
+  }, {
+    name: 'paymentMethodId',
+    column: 'paymentMethodId',
+    type: 'TEXT'
+  }, {
+    name: 'user',
+    column: 'user',
+    type: 'TEXT'
+  }, {
+    name: 'userId',
+    column: 'userId',
+    type: 'TEXT'
+  }, {
+    name: 'time',
+    column: 'time',
+    type: 'TEXT'
+  }, {
+    name: 'isocode',
+    column: 'isocode',
+    type: 'TEXT'
+  }, {
+    name: 'cashup_id',
+    column: 'cashup_id',
+    type: 'TEXT'
+  }, {
+    name: 'isbeingprocessed',
+    column: 'isbeingprocessed',
+    type: 'TEXT'
+  }]);
+
+  OB.Data.Registry.registerModel(CashManagement);
 }());

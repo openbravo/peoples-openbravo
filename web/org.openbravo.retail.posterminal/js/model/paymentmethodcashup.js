@@ -11,28 +11,53 @@
 
 (function () {
 
-  var PaymentMethodCashUp = Backbone.Model.extend({
+  var PaymentMethodCashUp = OB.Data.ExtensibleModel.extend({
     modelName: 'PaymentMethodCashUp',
     tableName: 'paymentmethodcashup',
     entityName: '',
     source: '',
-    local: true,
-    properties: ['id', 'paymentmethod_id', 'searchKey', 'name', 'startingCash', 'totalSales', 'totalReturns', 'rate', 'cashup_id'],
-    propertyMap: {
-      'id': 'paymentmethodcashup_id',
-      'paymentmethod_id': 'paymentmethod_id',
-      'searchKey': 'searchKey',
-      'name': 'name',
-      'startingCash': 'startingCash',
-      'totalSales': 'totalSales',
-      'totalReturns': 'totalReturns',
-      'rate': 'rate',
-      'cashup_id': 'cashup_id'
-    },
-    createStatement: 'CREATE TABLE IF NOT EXISTS paymentmethodcashup (paymentmethodcashup_id TEXT PRIMARY KEY, paymentmethod_id TEXT, searchKey TEXT, name TEXT, startingCash TEXT, totalSales TEXT, totalReturns TEXT, rate TEXT, cashup_id TEXT)',
-    dropStatement: 'DROP TABLE IF EXISTS paymentmethodcashup',
-    insertStatement: 'INSERT INTO paymentmethodcashup(paymentmethodcashup_id, paymentmethod_id, searchKey, name, startingCash, totalSales, totalReturns, rate, cashup_id) VALUES (?,?,?,?,?,?,?,?,?)',
+    local: true
   });
 
-  window.OB.Model.PaymentMethodCashUp = PaymentMethodCashUp;
+  PaymentMethodCashUp.addProperties([{
+    name: 'id',
+    column: 'paymentmethodcashup_id',
+    primaryKey: true,
+    type: 'TEXT'
+  }, {
+    name: 'paymentmethod_id',
+    column: 'paymentmethod_id',
+    type: 'TEXT'
+  }, {
+    name: 'searchKey',
+    column: 'searchKey',
+    type: 'TEXT'
+  }, {
+    name: 'name',
+    column: 'name',
+    type: 'TEXT'
+  }, {
+    name: 'startingCash',
+    column: 'startingCash',
+    type: 'TEXT'
+  }, {
+    name: 'totalSales',
+    column: 'totalSales',
+    type: 'TEXT'
+  }, {
+    name: 'totalReturns',
+    column: 'totalReturns',
+    type: 'TEXT'
+  }, {
+    name: 'rate',
+    column: 'rate',
+    type: 'TEXT'
+  }, {
+    name: 'cashup_id',
+    column: 'cashup_id',
+    type: 'TEXT'
+  }]);
+
+
+  OB.Data.Registry.registerModel(PaymentMethodCashUp);
 }());

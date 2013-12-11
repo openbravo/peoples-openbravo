@@ -11,29 +11,58 @@
 
 (function () {
 
-  var CashUp = Backbone.Model.extend({
+  var CashUp = OB.Data.ExtensibleModel.extend({
     modelName: 'CashUp',
     tableName: 'cashup',
-    entityName: '',
+    entityName: 'CashUp',
     source: '',
-    local: true,
-    properties: ['id', 'netSales', 'grossSales', 'netReturns', 'grossReturns', 'totalRetailTransactions', 'createdDate', 'userId', 'objToSend', 'isbeingprocessed'],
-    propertyMap: {
-      'id': 'cashup_id',
-      'netSales': 'netSales',
-      'grossSales': 'grossSales',
-      'netReturns': 'netReturns',
-      'grossReturns': 'grossReturns',
-      'totalRetailTransactions': 'totalRetailTransactions',
-      'createdDate': 'createdDate',
-      'userId': 'userId',
-      'objToSend': 'objToSend',
-      'isbeingprocessed': 'isbeingprocessed'
-    },
-    createStatement: 'CREATE TABLE IF NOT EXISTS cashup (cashup_id TEXT PRIMARY KEY, netSales TEXT, grossSales TEXT, netReturns TEXT, grossReturns TEXT, totalRetailTransactions TEXT, createdDate TEXT, userId TEXT, objToSend TEXT, isbeingprocessed TEXT)',
-    dropStatement: 'DROP TABLE IF EXISTS cashup',
-    insertStatement: 'INSERT INTO cashup(cashup_id, netSales, grossSales, netReturns, grossReturns, totalRetailTransactions, createdDate, objToSend, userId, isbeingprocessed) VALUES (?,?,?,?,?,?,?,?,?,?)',
+    local: true
   });
 
-  window.OB.Model.CashUp = CashUp;
+  CashUp.addProperties([{
+    name: 'id',
+    column: 'cashup_id',
+    primaryKey: true,
+    type: 'TEXT'
+  }, {
+    name: 'netSales',
+    column: 'netSales',
+    type: 'TEXT'
+  }, {
+    name: 'grossSales',
+    column: 'grossSales',
+    type: 'TEXT'
+  }, {
+    name: 'netReturns',
+    column: 'netReturns',
+    type: 'TEXT'
+  }, {
+    name: 'grossReturns',
+    column: 'grossReturns',
+    type: 'TEXT'
+  }, {
+    name: 'totalRetailTransactions',
+    column: 'totalRetailTransactions',
+    type: 'TEXT'
+  }, {
+    name: 'createdDate',
+    column: 'createdDate',
+    type: 'TEXT'
+  }, {
+    name: 'userId',
+    column: 'userId',
+    type: 'TEXT'
+  }, {
+    name: 'objToSend',
+    column: 'objToSend',
+    type: 'TEXT'
+  }, {
+    name: 'isbeingprocessed',
+    column: 'isbeingprocessed',
+    type: 'TEXT'
+  }]);
+
+
+  OB.Data.Registry.registerModel(CashUp);
+
 }());

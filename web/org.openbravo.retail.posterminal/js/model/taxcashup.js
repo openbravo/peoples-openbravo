@@ -11,25 +11,40 @@
 
 (function () {
 
-  var TaxCashUp = Backbone.Model.extend({
+  var TaxCashUp = OB.Data.ExtensibleModel.extend({
     modelName: 'TaxCashUp',
     tableName: 'taxcashup',
     entityName: '',
     source: '',
-    local: true,
-    properties: ['id', 'tax_id', 'name', 'amount', 'orderType', 'cashup_id'],
-    propertyMap: {
-      'id': 'taxcashup_id',
-      'tax_id': 'tax_id',
-      'name': 'name',
-      'amount': 'amount',
-      'orderType': 'orderType',
-      'cashup_id': 'cashup_id'
-    },
-    createStatement: 'CREATE TABLE IF NOT EXISTS taxcashup (taxcashup_id TEXT PRIMARY KEY, tax_id TEXT, name TEXT, amount TEXT, orderType TEXT, cashup_id TEXT)',
-    dropStatement: 'DROP TABLE IF EXISTS taxcashup',
-    insertStatement: 'INSERT INTO taxcashup(taxcashup_id, tax_id, name, amount, orderType, cashup_id) VALUES (?,?,?,?,?,?)',
+    local: true
   });
 
-  window.OB.Model.TaxCashUp = TaxCashUp;
+  TaxCashUp.addProperties([{
+    name: 'id',
+    column: 'taxcashup_id',
+    primaryKey: true,
+    type: 'TEXT'
+  }, {
+    name: 'tax_id',
+    column: 'tax_id',
+    type: 'TEXT'
+  }, {
+    name: 'name',
+    column: 'name',
+    type: 'TEXT'
+  }, {
+    name: 'amount',
+    column: 'amount',
+    type: 'TEXT'
+  }, {
+    name: 'orderType',
+    column: 'orderType',
+    type: 'TEXT'
+  }, {
+    name: 'cashup_id',
+    column: 'cashup_id',
+    type: 'TEXT'
+  }]);
+
+  OB.Data.Registry.registerModel(TaxCashUp);
 }());
