@@ -1353,14 +1353,16 @@ isc.OBStandardView.addProperties({
   },
 
   updateSubtabVisibility: function () {
-    var i, length, tabViewPane, activeTab, activeTabNum, activeTabPane, indexFirstNotHiddenTab;
+    var i, length, tabViewPane, activeTab, activeTabNum, activeTabPane, indexFirstNotHiddenTab, contextInfo;
     if (this.childTabSet) {
       length = this.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
         // Calling getContextInfo with (false, true, true) in order to obtain also the value of the
         // session attributes of the form
-        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(this.getContextInfo(false, true, true)))) {
+        contextInfo = this.getContextInfo(false, true, true);
+        isc.addProperties(contextInfo, tabViewPane.sessionAttributes);
+        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(contextInfo))) {
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
         } else {
