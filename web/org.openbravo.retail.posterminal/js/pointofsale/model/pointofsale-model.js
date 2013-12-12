@@ -336,7 +336,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 'isocode': paymentMethod.isocode,
                 'allowOpenDrawer': payment.get('allowopendrawer'),
                 'isCash': payment.get('iscash'),
-                'openDrawer': payment.get('openDrawer')
+                'openDrawer': payment.get('openDrawer'),
+                'printtwice': paymentMethod.printtwice
               }));
               if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
                 iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), payment.get('origAmount')));
@@ -364,7 +365,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 'isocode': paymentMethod.isocode,
                 'allowOpenDrawer': payment.get('allowopendrawer'),
                 'isCash': payment.get('iscash'),
-                'openDrawer': payment.get('openDrawer')
+                'openDrawer': payment.get('openDrawer'),
+                'printtwice': paymentMethod.printtwice
               }));
               if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
                 iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
@@ -425,7 +427,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               'isocode': payment.isocode,
               'allowOpenDrawer': payment.paymentMethod.allowopendrawer,
               'isCash': payment.paymentMethod.iscash,
-              'openDrawer': payment.paymentMethod.openDrawer
+              'openDrawer': payment.paymentMethod.openDrawer,
+              'printtwice': payment.paymentMethod.printtwice
             }));
           }
           receipt.set('change', oldChange);

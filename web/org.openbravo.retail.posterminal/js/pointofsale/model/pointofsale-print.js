@@ -94,7 +94,12 @@
           }]);
         }
       });
-      if (receipt.get('orderType') === 1 && !OB.POS.modelterminal.hasPermission('OBPOS_print.once')) {
+      //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
+      if ((receipt.get('orderType') === 1 && !OB.POS.modelterminal.hasPermission('OBPOS_print.once')) || _.filter(receipt.get('payments').models, function (iter) {
+        if (iter.get('printtwice')) {
+          return iter;
+        }
+      }).length > 0) {
         OB.POS.hwserver.print(template, {
           order: receipt
         }, function (result) {

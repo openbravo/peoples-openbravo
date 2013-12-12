@@ -117,7 +117,8 @@ enyo.kind({
           'isocode': isocode,
           'allowOpenDrawer': paymentMethod.allowopendrawer,
           'isCash': paymentMethod.iscash,
-          'openDrawer': paymentMethod.openDrawer
+          'openDrawer': paymentMethod.openDrawer,
+          'printtwice': paymentMethod.printtwice
         }));
       }
     }

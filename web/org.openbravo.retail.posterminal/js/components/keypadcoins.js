@@ -184,7 +184,8 @@ enyo.kind({
           multiOrders = myWindowModel.get('multiOrders'),
           openDrawer = false,
           isCash = false,
-          allowOpenDrawer = false;
+          allowOpenDrawer = false,
+          printtwice = false;
       for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
         p = OB.POS.modelterminal.get('payments')[i];
         if (p.payment.searchKey === me.paymenttype) {
@@ -196,6 +197,9 @@ enyo.kind({
           }
           if (p.paymentMethod.allowopendrawer) {
             allowOpenDrawer = p.paymentMethod.allowopendrawer;
+          }
+          if (p.paymentMethod.printtwice) {
+            printtwice = p.paymentMethod.printtwice;
           }
           break;
         }
@@ -209,7 +213,8 @@ enyo.kind({
         isocode: p.isocode,
         isCash: isCash,
         allowOpenDrawer: allowOpenDrawer,
-        openDrawer: openDrawer
+        openDrawer: openDrawer,
+        printtwice: printtwice
       }));
     }
   }
