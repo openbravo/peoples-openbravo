@@ -84,7 +84,7 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
-    if (_.isString(this.model.get('name')) && this.model.get('name').length > 0 ){
+    if (_.isString(this.model.get('name')) && this.model.get('name').length > 0) {
       this.$.identifier.setContent(this.model.get('name') + ' - ' + this.model.get('countryName'));
     } else {
       this.$.identifier.setContent(OB.I18N.getLabel('OBPOS_EmptyLocation') + ' - ' + this.model.get('countryName'));
@@ -226,7 +226,7 @@ enyo.kind({
         me.bpsLocList.add(dataBps.models);
       }
     }
-    if (filter && _.isString(filter) && filter.length > 0){
+    if (filter && _.isString(filter) && filter.length > 0) {
       criteria.name = {
         operator: OB.Dal.CONTAINS,
         value: filter

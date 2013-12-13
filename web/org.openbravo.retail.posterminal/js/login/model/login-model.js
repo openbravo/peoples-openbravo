@@ -49,7 +49,7 @@
           name: 'WEBPOS',
           displayName: 'Openbravo Web POS',
           version: '0.7'
-        }, 
+        },
         logDBTrxThreshold: 300,
         logDBStmtThreshold: 1000
       });

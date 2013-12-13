@@ -66,7 +66,7 @@ enyo.kind({
       }
     } else {
       this.setValue('');
-      if (this.modelProperty === 'countryName'){
+      if (this.modelProperty === 'countryName') {
         this.setValue(OB.POS.modelterminal.get('terminal').defaultbp_bpcountry_name);
       }
     }
