@@ -127,8 +127,7 @@ enyo.kind({
               name: 'cashtokeepheader',
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
               renderHeader: function (value) {
-                var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;
-                this.setContent(OB.I18N.getLabel('OBPOS_LblStep3of4', [value]) + ' (' + OB.Utilities.Date.JSToOB(new Date(currentbd), OB.Format.date) + ')');
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStep3of4', [value]) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
               }
             }]
           }]

@@ -238,11 +238,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     //First we fix the qty to keep for non-automated payment methods
     for (i = 0; i < this.get('paymentList').models.length; i++) {
       model = this.get('paymentList').models[i];
-      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))){
+      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
         model.set('qtyToKeep', model.get('counted'));
       }
     }
-    
+
     enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary', 'qtyToKeepSummary', 'qtyToDepoSummary'];
     enumConcepts = ['expected', 'counted', 'difference', 'qtyToKeep', 'foreignCounted'];
     enumSecondConcepts = ['foreignExpected', 'foreignCounted', 'foreignDifference', 'qtyToKeep', 'qtyToKeep'];

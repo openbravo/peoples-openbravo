@@ -272,8 +272,7 @@ enyo.kind({
   initPaymentToCount: function (payment) {
     this.payment = payment;
 
-    var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;
-    this.$.title.setContent(OB.I18N.getLabel('OBPOS_CashPaymentsTitle', [payment.get('name')]) + ' (' + OB.Utilities.Date.JSToOB(new Date(currentbd), OB.Format.date) + ')');
+    this.$.title.setContent(OB.I18N.getLabel('OBPOS_CashPaymentsTitle', [payment.get('name')]) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
 
     this.$.total.printAmount(this.payment.get('foreignExpected'));
 

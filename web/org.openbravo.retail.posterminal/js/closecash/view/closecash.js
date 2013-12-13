@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, $*/
+/*global OB, enyo, _, $*/
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.Button',
@@ -110,6 +110,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUp',
   kind: 'OB.UI.WindowView',
+  statics: {
+    TitleExtensions: [],
+    getTitleExtensions: function () {
+      return _.reduce(this.TitleExtensions, function (memo, item) {
+        return memo + ' ' + item();
+      }, '');
+    }
+  },
   windowmodel: OB.OBPOSCashUp.Model.CashUp,
   handlers: {
     onButtonOk: 'buttonOk',
