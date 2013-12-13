@@ -28,11 +28,11 @@
       }, this);
 
       this.templatereceipt = new OB.DS.HWResource(terminal.printTicketTemplate || OB.OBPOSPointOfSale.Print.ReceiptTemplate);
-      this.templateclosedreceipt = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptClosedTemplate);
-      this.templateinvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice);
-      this.templatereturn = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn);
-      this.templatereturninvoice = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice);
-      this.templatelayaway = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway);
+      this.templateclosedreceipt = new OB.DS.HWResource(terminal.printClosedReceiptTemplate || OB.OBPOSPointOfSale.Print.ReceiptClosedTemplate);
+      this.templateinvoice = new OB.DS.HWResource(terminal.printInvoiceTemplate || OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice);
+      this.templatereturn = new OB.DS.HWResource(terminal.printReturnTemplate || OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn);
+      this.templatereturninvoice = new OB.DS.HWResource(terminal.printReturnInvoiceTemplate || OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice);
+      this.templatelayaway = new OB.DS.HWResource(terminal.printLayawayTemplate || OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway);
       this.templatecashup = new OB.DS.HWResource(terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate);
       };
 

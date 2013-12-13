@@ -12,15 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
+import org.openbravo.retail.posterminal.PrintTemplate;
 import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,37 +58,16 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.defaultwebpostab", "defaultwebpostab"));
     list.add(new HQLProperty("postype", "terminalType"));
 
-    String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
-    OBPOSApplications pOSTerminal = POSUtils.getTerminalById(posId);
-    try {
-      OBContext.setAdminMode();
+    addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSTICKETTEMPLATE, "printTicketTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSRETURNTEMPLATE, "printReturnTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSINVOICETEMPLATE, "printInvoiceTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSRETINVTEMPLATE, "printReturnInvoiceTemplate",
+        list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSLAYAWAYTEMPLATE, "printLayawayTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSCLOSEDRECEIPTTEMP, "printClosedReceiptTemplate",
+        list);
 
-      final List<String> orgList = POSUtils.getOrgList(pOSTerminal.getSearchKey());
-      boolean foundCashUpTemplate = false;
-      boolean foundTicketTemplate = false;
-
-      for (String orgId : orgList) {
-        final Organization org = OBDal.getInstance().get(Organization.class, orgId);
-        if (!foundCashUpTemplate && org.getObposCashupTemplate() != null) {
-          list.add(new HQLProperty("'" + org.getObposCashupTemplate().getTemplatePath() + "'",
-              "printCashUpTemplate"));
-          foundCashUpTemplate = true;
-        }
-
-        if (!foundTicketTemplate && org.getObposTicketTemplate() != null) {
-          list.add(new HQLProperty("'" + org.getObposTicketTemplate().getTemplatePath() + "'",
-              "printTicketTemplate"));
-        }
-
-        if (foundCashUpTemplate && foundTicketTemplate) {
-          break;
-        }
-      }
-    } catch (Exception e) {
-      log.error("Error getting templates for terminal " + e.getMessage(), e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
     return list;
   }
 
@@ -103,5 +80,20 @@ public class TerminalProperties extends ModelExtension {
 
   private String getIdentifierAlias(String propertyName) {
     return propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
+  }
+
+  protected void addTemplateProperty(String propertyName, String alias, List<HQLProperty> list) {
+    try {
+      OBContext.setAdminMode();
+      PrintTemplate value = (PrintTemplate) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
+          .getCurrentOrganization(), propertyName);
+      if (value != null) {
+        list.add(new HQLProperty("'" + value.getTemplatePath() + "'", alias));
+      }
+    } catch (Exception e) {
+      log.error("Error getting property " + propertyName, e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }
