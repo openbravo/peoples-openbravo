@@ -11,6 +11,49 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderCashPaymentsLine',
+  statics: {
+    getLegacyCoins: function () {
+      return new Backbone.Collection([{
+        amount: 0.01,
+        backcolor: '#f3bc9e'
+      }, {
+        amount: 0.02,
+        backcolor: '#f3bc9e'
+      }, {
+        amount: 0.05,
+        backcolor: '#f3bc9e'
+      }, {
+        amount: 0.10,
+        backcolor: '#f9e487'
+      }, {
+        amount: 0.20,
+        backcolor: '#f9e487'
+      }, {
+        amount: 0.50,
+        backcolor: '#f9e487'
+      }, {
+        amount: 1,
+        backcolor: '#e4e0e3',
+        bordercolor: '#f9e487'
+      }, {
+        amount: 2,
+        backcolor: '#f9e487',
+        bordercolor: '#e4e0e3'
+      }, {
+        amount: 5,
+        backcolor: '#bccdc5'
+      }, {
+        amount: 10,
+        backcolor: '#e9b7c3'
+      }, {
+        amount: 20,
+        backcolor: '#bac3de'
+      }, {
+        amount: 50,
+        backcolor: '#f9bb92'
+      }]);
+    }
+  },
   events: {
     onLineEditCash: '',
     onAddUnit: ''
@@ -295,6 +338,11 @@ enyo.kind({
         currency: currencyId
       }, function (coins) {
         var coinCol = new Backbone.Collection();
+
+        if (coins.length === 0 && payment.get('paymentMethod').currency === '102') {
+          coins = OB.OBPOSCashUp.UI.RenderCashPaymentsLine.getLegacyCoins();
+        }
+
         coins.each(function (coin) {
           var coinModel = new Backbone.Model();
           coinModel.set('numberOfCoins', 0);
