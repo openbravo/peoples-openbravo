@@ -5371,6 +5371,22 @@ a.calMonthEventLink:active {
   border-top: 1px solid white;
 }
 
+.zoneCanvas {
+  background-color: rgba(150,150,150,0.5);
+}
+
+.zoneCanvasHeader {
+  display: inline-block;
+  color: white;
+  background-color: grey;
+  left: 0; 
+  bottom: 0;
+}
+
+.indicatorCanvas {
+  background-color: red;
+}
+
 /*============================================================
 	PropertySheet
 	internal, used by Visual SmartClient tools
