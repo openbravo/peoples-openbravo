@@ -100,6 +100,9 @@ OB.DateItemProperties = {
       // This is needed for the unit tests to be able to enter the dates using the setValue method
       this.dateTextField.setValue = function (newValue) {
         var oldValue = this.getValue();
+        if (newValue && !this.parentItem.hasSeparator(newValue)) {
+          newValue = oldValue;
+        }
         this.Super('setValue', newValue);
         // only flag the date as changed if it had a value, and it
         // has been actually changed
@@ -219,6 +222,20 @@ OB.DateItemProperties = {
 
   isSeparator: function (str, position) {
     return str.charAt(position) === '-' || str.charAt(position) === '\\' || str.charAt(position) === '/';
+  },
+
+  hasSeparator: function (str) {
+    var result = false,
+        i;
+    if (typeof str === 'string') {
+      for (i = 0; i < str.length; i++) {
+        if (this.isSeparator(str, i)) {
+          result = true;
+          break;
+        }
+      }
+    }
+    return result;
   },
 
   pickerDataChanged: function (picker) {
