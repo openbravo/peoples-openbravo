@@ -883,6 +883,7 @@ public class OrderLoader extends JSONProcessSimple {
     shipment.setProcessNow(false);
     shipment.setProcessed(true);
     shipment.setSalesOrder(order);
+    shipment.setProcessGoodsJava("--");
 
   }
 
