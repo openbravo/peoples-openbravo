@@ -1156,9 +1156,6 @@ public class OBViewFieldHandler {
         return true;
       }
       final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-      if (prop.isParent() && getWindowEntities().contains(prop.getTargetEntity().getName())) {
-        return false;
-      }
       if (prop.isId()) {
         return false;
       }
