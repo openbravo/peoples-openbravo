@@ -153,8 +153,8 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
     if (idList.size() > 0) {
       for (String id : idList) {
         ShipmentInOutLine iol = OBDal.getInstance().get(ShipmentInOutLine.class, id);
-        inOut.getMaterialMgmtShipmentInOutLineList().remove(iol);
         OBDal.getInstance().remove(iol);
+        inOut.getMaterialMgmtShipmentInOutLineList().remove(iol);
       }
       OBDal.getInstance().save(inOut);
       OBDal.getInstance().flush();
