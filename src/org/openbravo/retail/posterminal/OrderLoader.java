@@ -106,6 +106,7 @@ public class OrderLoader extends JSONProcessSimple {
   boolean isLayaway = false;
   boolean partialpayLayaway = false;
   boolean fullpayLayaway = false;
+  Locator binForRetuns = null;
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
@@ -406,6 +407,15 @@ public class OrderLoader extends JSONProcessSimple {
     }
     quotation.setDocumentStatus("CA");
 
+  }
+
+  protected Locator getBinForReturns(String posTerminalId) {
+    if (binForRetuns == null) {
+      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+          posTerminalId);
+      binForRetuns = POSUtils.getBinForReturns(posTerminal);
+    }
+    return binForRetuns;
   }
 
   protected JSONObject successMessage(JSONObject jsonorder) throws Exception {
@@ -745,97 +755,111 @@ public class OrderLoader extends JSONProcessSimple {
       boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
       AttributeSetInstance oldAttributeSetValues = null;
-      if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
-        // The M_GetStock function is used
-        Process process = (Process) OBDal.getInstance().get(Process.class,
-            "FF80818132C964E30132C9747257002E");
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("AD_Client_ID", OBContext.getOBContext().getCurrentClient().getId());
-        parameters.put("AD_Org_ID", OBContext.getOBContext().getCurrentOrganization().getId());
-        parameters.put("M_Product_ID",
-            orderLine.getProduct() == null ? null : (String) DalUtil.getId(orderLine.getProduct()));
-        parameters.put("C_Uom_ID",
-            orderLine.getUOM() == null ? null : (String) DalUtil.getId(orderLine.getUOM()));
-        parameters.put("M_Product_Uom_ID", orderLine.getOrderUOM() == null ? null
-            : (String) DalUtil.getId(orderLine.getOrderUOM()));
-        parameters.put("M_AttributesetInstance_ID", orderLine.getAttributeSetValue() == null ? null
-            : (String) DalUtil.getId(orderLine.getAttributeSetValue()));
-        parameters.put("Quantity", pendingQty);
-        parameters.put("ProcessID", "118");
-        if (orderLine.getEntity().hasProperty("warehouseRule")
-            && orderLine.get("warehouseRule") != null) {
-          parameters.put("M_Warehouse_Rule_ID",
-              (String) DalUtil.getId(orderLine.get("warehouseRule")));
-        }
-
-        ProcessInstance pInstance = CallProcess.getInstance()
-            .callProcess(process, null, parameters);
-
-        OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
-            StockProposed.class);
-        stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, pInstance));
-        stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
-
-        ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
-        boolean foundStockProposed = false;
-        try {
-          while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
-            foundStockProposed = true;
-            // TODO: Can we safely clear session here?
-            StockProposed stock = (StockProposed) bins.get(0);
-            BigDecimal qty;
-
-            Object stockQty = stock.get("quantity");
-            if (stockQty instanceof Long) {
-              stockQty = new BigDecimal((Long) stockQty);
-            }
-            if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
-              qty = (BigDecimal) stockQty;
-              pendingQty = pendingQty.subtract(qty);
-            } else {
-              qty = pendingQty;
-              pendingQty = BigDecimal.ZERO;
-            }
-            lineNo += 10;
-            if (negativeLine) {
-              qty = qty.negate();
-            }
-            addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
-                    .getStorageDetail().getAttributeSetValue());
-          }
-        } finally {
-          bins.close();
-        }
-        if (!foundStockProposed && orderLine.getProduct().getAttributeSet() != null) {
-          // M_GetStock couldn't find any valid stock, and the product has an attribute set. We will
-          // attempt to find an old transaction for this product, and get the attribute values from
-          // there
-          OBCriteria<ShipmentInOutLine> oldLines = OBDal.getInstance().createCriteria(
-              ShipmentInOutLine.class);
-          oldLines.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_PRODUCT, orderLine.getProduct()));
-          oldLines.setMaxResults(1);
-          oldLines.addOrderBy(ShipmentInOutLine.PROPERTY_CREATIONDATE, false);
-          List<ShipmentInOutLine> oldLine = oldLines.list();
-          if (oldLine.size() > 0) {
-            oldAttributeSetValues = oldLine.get(0).getAttributeSetValue();
-          }
-
-        }
-      }
-
-      if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
-        // still qty to ship or return: let's use the bin with highest prio
-        hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
-        OBQuery<Locator> queryLoc = OBDal.getInstance().createQuery(Locator.class, hqlWhereClause);
-        queryLoc.setNamedParameter("warehouse", order.getWarehouse());
-        queryLoc.setMaxResult(1);
-        lineNo += 10;
-        if (jsonorder.getLong("orderType") == 1) {
-          pendingQty = pendingQty.negate();
-        }
+      if (negativeLine) {
         addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
-            lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues);
+            lineNo, pendingQty.negate(), getBinForReturns(jsonorder.getString("posTerminal")), null);
+      } else {
+        if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
+          // The M_GetStock function is used
+          Process process = (Process) OBDal.getInstance().get(Process.class,
+              "FF80818132C964E30132C9747257002E");
+          Map<String, Object> parameters = new HashMap<String, Object>();
+          parameters.put("AD_Client_ID", OBContext.getOBContext().getCurrentClient().getId());
+          parameters.put("AD_Org_ID", OBContext.getOBContext().getCurrentOrganization().getId());
+          parameters.put(
+              "M_Product_ID",
+              orderLine.getProduct() == null ? null
+                  : (String) DalUtil.getId(orderLine.getProduct()));
+          parameters.put("C_Uom_ID",
+              orderLine.getUOM() == null ? null : (String) DalUtil.getId(orderLine.getUOM()));
+          parameters.put("M_Product_Uom_ID", orderLine.getOrderUOM() == null ? null
+              : (String) DalUtil.getId(orderLine.getOrderUOM()));
+          parameters.put(
+              "M_AttributesetInstance_ID",
+              orderLine.getAttributeSetValue() == null ? null : (String) DalUtil.getId(orderLine
+                  .getAttributeSetValue()));
+          parameters.put("Quantity", pendingQty);
+          parameters.put("ProcessID", "118");
+          if (orderLine.getEntity().hasProperty("warehouseRule")
+              && orderLine.get("warehouseRule") != null) {
+            parameters.put("M_Warehouse_Rule_ID",
+                (String) DalUtil.getId(orderLine.get("warehouseRule")));
+          }
+
+          ProcessInstance pInstance = CallProcess.getInstance().callProcess(process, null,
+              parameters);
+
+          OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
+              StockProposed.class);
+          stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, pInstance));
+          stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
+
+          ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
+
+          boolean foundStockProposed = false;
+          try {
+            while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
+              foundStockProposed = true;
+              // TODO: Can we safely clear session here?
+              StockProposed stock = (StockProposed) bins.get(0);
+              BigDecimal qty;
+
+              Object stockQty = stock.get("quantity");
+              if (stockQty instanceof Long) {
+                stockQty = new BigDecimal((Long) stockQty);
+              }
+              if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
+                qty = (BigDecimal) stockQty;
+                pendingQty = pendingQty.subtract(qty);
+              } else {
+                qty = pendingQty;
+                pendingQty = BigDecimal.ZERO;
+              }
+              lineNo += 10;
+              if (negativeLine) {
+                qty = qty.negate();
+              }
+              addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+                  jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
+                      .getStorageDetail().getAttributeSetValue());
+            }
+          } finally {
+            bins.close();
+          }
+          if (!foundStockProposed && orderLine.getProduct().getAttributeSet() != null) {
+            // M_GetStock couldn't find any valid stock, and the product has an attribute set. We
+            // will
+            // attempt to find an old transaction for this product, and get the attribute values
+            // from
+            // there
+            OBCriteria<ShipmentInOutLine> oldLines = OBDal.getInstance().createCriteria(
+                ShipmentInOutLine.class);
+            oldLines
+                .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_PRODUCT, orderLine.getProduct()));
+            oldLines.setMaxResults(1);
+            oldLines.addOrderBy(ShipmentInOutLine.PROPERTY_CREATIONDATE, false);
+            List<ShipmentInOutLine> oldLine = oldLines.list();
+            if (oldLine.size() > 0) {
+              oldAttributeSetValues = oldLine.get(0).getAttributeSetValue();
+            }
+
+          }
+        }
+
+        if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
+          // still qty to ship or return: let's use the bin with highest prio
+          hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
+          OBQuery<Locator> queryLoc = OBDal.getInstance()
+              .createQuery(Locator.class, hqlWhereClause);
+          queryLoc.setNamedParameter("warehouse", order.getWarehouse());
+          queryLoc.setMaxResult(1);
+          lineNo += 10;
+          if (jsonorder.getLong("orderType") == 1) {
+            pendingQty = pendingQty.negate();
+          }
+          addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+              jsonorder, lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues);
+        }
       }
     }
   }
