@@ -349,7 +349,8 @@ public class OrderGroupingProcessor {
     Entity sourceEntity = sourceObj.getEntity();
     Entity targetEntity = targetObj.getEntity();
     for (Property p : sourceEntity.getProperties()) {
-      if (targetEntity.hasProperty(p.getName()) && !p.isOneToMany() && !p.isId()) {
+      if (targetEntity.hasProperty(p.getName()) && !p.isOneToMany() && !p.isId()
+          && !p.getName().equals(Entity.COMPUTED_COLUMNS_PROXY_PROPERTY) && !p.isComputedColumn()) {
         targetObj.set(p.getName(), sourceObj.get(p.getName()));
       }
     }
