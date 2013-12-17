@@ -16,7 +16,9 @@ import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -220,7 +222,7 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONObject jsonorder) throws Exception {
     executeHooks(orderPreProcesses, jsonorder, null, null, null);
-
+    boolean wasPaidOnCredit = false;
     boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
     if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
         && verifyOrderExistance(jsonorder)
@@ -253,7 +255,7 @@ public class OrderLoader extends JSONProcessSimple {
       // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
       // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
       // flag
-      boolean wasPaidOnCredit = !isLayaway
+      wasPaidOnCredit = !isLayaway
           && !partialpayLayaway
           && !fullpayLayaway
           && !isQuotation
@@ -351,7 +353,7 @@ public class OrderLoader extends JSONProcessSimple {
 
     if (!isQuotation) {
       // Payment
-      JSONObject paymentResponse = handlePayments(jsonorder, order, invoice);
+      JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit);
       if (paymentResponse != null) {
         return paymentResponse;
       }
@@ -1102,8 +1104,45 @@ public class OrderLoader extends JSONProcessSimple {
     }
   }
 
-  protected JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice)
-      throws Exception {
+  protected Date getCalculatedDueDateBasedOnPaymentTerms(Date startingDate, PaymentTerm paymentTerms) {
+    // TODO Take into account the flag "Next business date"
+    // TODO Take into account the flag "Fixed due date"
+    long daysToAdd = paymentTerms.getOverduePaymentDaysRule();
+    long MonthOffset = paymentTerms.getOffsetMonthDue();
+    String dayToPay = paymentTerms.getOverduePaymentDayRule();
+    Calendar calculatedDueDate = new GregorianCalendar();
+    calculatedDueDate.setTime(startingDate);
+    if (MonthOffset > 0) {
+      calculatedDueDate.add(Calendar.MONTH, (int) MonthOffset);
+    }
+    if (daysToAdd > 0) {
+      calculatedDueDate.add(Calendar.DATE, (int) daysToAdd);
+    }
+    if (dayToPay != null && !dayToPay.equals("")) {
+      // for us: 1 -> Monday
+      // for Calendar: 1 -> Sunday
+      int dayOfTheWeekToPay = Integer.parseInt(dayToPay);
+      dayOfTheWeekToPay += 1;
+      if (dayOfTheWeekToPay == 8) {
+        dayOfTheWeekToPay = 1;
+      }
+      if (calculatedDueDate.get(Calendar.DAY_OF_WEEK) == dayOfTheWeekToPay) {
+        return calculatedDueDate.getTime();
+      } else {
+        Boolean dayFound = false;
+        while (dayFound == false) {
+          calculatedDueDate.add(Calendar.DATE, 1);
+          if (calculatedDueDate.get(Calendar.DAY_OF_WEEK) == dayOfTheWeekToPay) {
+            dayFound = true;
+          }
+        }
+      }
+    }
+    return calculatedDueDate.getTime();
+  }
+
+  protected JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
+      Boolean wasPaidOnCredit) throws Exception {
     String posTerminalId = jsonorder.getString("posTerminal");
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
     if (posTerminal == null) {
@@ -1157,8 +1196,17 @@ public class OrderLoader extends JSONProcessSimple {
             stdPrecision, RoundingMode.HALF_UP));
         paymentScheduleInvoice.setOutstandingAmount(BigDecimal
             .valueOf(jsonorder.getDouble("gross")).setScale(stdPrecision, RoundingMode.HALF_UP));
-        paymentScheduleInvoice.setDueDate(order.getOrderDate());
-        paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
+        // TODO: If the payment terms is configured to work with fractionated payments, we should
+        // generate several payment schedules
+        if (wasPaidOnCredit) {
+          paymentScheduleInvoice.setDueDate(getCalculatedDueDateBasedOnPaymentTerms(
+              order.getOrderDate(), order.getPaymentTerms()));
+          paymentScheduleInvoice.setExpectedDate(paymentScheduleInvoice.getDueDate());
+        } else {
+          paymentScheduleInvoice.setDueDate(order.getOrderDate());
+          paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
+        }
+
         if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
             .hasProperty("origDueDate")) {
           // This property is checked and set this way to force compatibility with both MP13, MP14
