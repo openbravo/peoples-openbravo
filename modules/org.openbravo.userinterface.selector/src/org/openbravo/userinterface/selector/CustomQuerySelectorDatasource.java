@@ -21,6 +21,7 @@ package org.openbravo.userinterface.selector;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,12 +56,13 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
+import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 
 public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
-  private static Logger log = Logger.getLogger(SelectorDataSourceFilter.class);
+  private static Logger log = Logger.getLogger(CustomQuerySelectorDatasource.class);
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
   private static final String NEW_FILTER_CLAUSE = "\n AND ";
   private static final String NEW_OR_FILTER_CLAUSE = "\n OR ";
@@ -223,8 +225,9 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       }
       String operator = null;
       String value = null;
+      String[] operatorvalue = null;
       if (criteria != null) {
-        String[] operatorvalue = criteria.get(field.getDisplayColumnAlias());
+        operatorvalue = criteria.get(field.getDisplayColumnAlias());
         if (operatorvalue != null) {
           operator = operatorvalue[0];
           value = operatorvalue[1];
@@ -247,14 +250,14 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
           if (StringUtils.isNotEmpty(defaultValue)) {
             defaultExpressionsFilter.append(NEW_FILTER_CLAUSE);
             defaultExpressionsFilter.append(getWhereClause(operator, defaultValue, field,
-                xmlDateFormat));
+                xmlDateFormat, operatorvalue));
           }
         } catch (Exception e) {
           log.error("Error evaluating filter expression: " + e.getMessage(), e);
         }
       }
       if (field.isFilterable() && StringUtils.isNotEmpty(value)) {
-        String whereClause = getWhereClause(operator, value, field, xmlDateFormat);
+        String whereClause = getWhereClause(operator, value, field, xmlDateFormat, operatorvalue);
         if (!hasFilter) {
           additionalFilter.append(NEW_FILTER_CLAUSE);
           additionalFilter.append(" (");
@@ -336,11 +339,22 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    *          The SelectorField that is filtered.
    * @param xmlDateFormat
    *          SimpleDateFormat to parse the value in case the field is a Date field.
+   * @param operatorvalue
    * @return a String with the HQL where clause to filter the field by the given value.
    */
   private String getWhereClause(String operator, String value, SelectorField field,
-      SimpleDateFormat xmlDateFormat) {
+      SimpleDateFormat xmlDateFormat, String[] operatorvalue) {
     String whereClause = "";
+
+    if (operator.equals(AdvancedQueryBuilder.EXISTS_QUERY_KEY)) {
+      String val = "";
+      for (int i = 1; i < operatorvalue.length; i++) {
+        val += i > 1 ? " and " : "";
+        val += operatorvalue[i];
+      }
+      return val;
+    }
+
     DomainType domainType = ModelProvider.getInstance().getReference(field.getReference().getId())
         .getDomainType();
     if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
@@ -540,24 +554,70 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     return 0;
   }
 
-  private HashMap<String, String[]> getCriteria(Map<String, String> parameters) {
-    if (!"AdvancedCriteria".equals(parameters.get("_constructor"))) {
-      return null;
-    }
+  private HashMap<String, String[]> getCriteria(JSONArray criterias) {
     HashMap<String, String[]> criteriaValues = new HashMap<String, String[]>();
     try {
-      JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+
       for (int i = 0; i < criterias.length(); i++) {
-        final JSONObject criteria = criterias.getJSONObject(i);
-        criteriaValues.put(criteria.getString("fieldName"),
-            new String[] { criteria.getString("operator"), criteria.getString("value") });
+        JSONObject criteria = criterias.getJSONObject(i);
+        if (criteria.has("_constructor")) {
+          // nested criteria, eval it recursively
+          JSONArray cs = criteria.getJSONArray("criteria");
+          HashMap<String, String[]> c = getCriteria(cs);
+          for (String k : c.keySet()) {
+            criteriaValues.put(k, c.get(k));
+          }
+          continue;
+        }
+        final String operator = criteria.getString("operator");
+        final String fieldName = criteria.getString("fieldName");
+        String[] criterion;
+        if (operator.equals(AdvancedQueryBuilder.OPERATOR_EXISTS)
+            && criteria.has(AdvancedQueryBuilder.EXISTS_QUERY_KEY)) {
+          String value = "";
+          JSONArray values = criteria.getJSONArray("value");
+          for (int v = 0; v < values.length(); v++) {
+            value += value.length() > 0 ? ", " : "";
+            value += "'" + values.getString(v) + "'";
+          }
+          String qry = criteria.getString(AdvancedQueryBuilder.EXISTS_QUERY_KEY).replace(
+              AdvancedQueryBuilder.EXISTS_VALUE_HOLDER, value);
+
+          if (criteriaValues.containsKey(fieldName)) {
+            // assuming it is possible to have more than one query for exists in same field, storing
+            // them as array
+            String[] originalCriteria = criteriaValues.get(fieldName);
+            List<String> newCriteria = new ArrayList<String>(Arrays.asList(originalCriteria));
+            newCriteria.add(qry);
+            criteriaValues.put(fieldName, newCriteria.toArray(new String[newCriteria.size()]));
+          } else {
+            criteriaValues.put(fieldName,
+                new String[] { AdvancedQueryBuilder.EXISTS_QUERY_KEY, qry });
+          }
+        } else {
+          criterion = new String[] { operator, criteria.getString("value") };
+          criteriaValues.put(fieldName, criterion);
+        }
       }
     } catch (JSONException e) {
-      // Ignore exception.
+      log.error("Error getting criteria for custom query selector", e);
     }
     if (criteriaValues.isEmpty()) {
       return null;
     }
     return criteriaValues;
+
+  }
+
+  private HashMap<String, String[]> getCriteria(Map<String, String> parameters) {
+    if (!"AdvancedCriteria".equals(parameters.get("_constructor"))) {
+      return null;
+    }
+    try {
+      JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+      return getCriteria(criterias);
+    } catch (JSONException e) {
+      return null;
+    }
   }
 }

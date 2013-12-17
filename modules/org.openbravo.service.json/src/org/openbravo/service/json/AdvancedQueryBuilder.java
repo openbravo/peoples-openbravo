@@ -66,12 +66,12 @@ public class AdvancedQueryBuilder {
   private static final String CRITERIA_KEY = "criteria";
   private static final String VALUE_KEY = "value";
   private static final String FIELD_NAME_KEY = "fieldName";
-  private static final String EXISTS_QUERY_KEY = "existsQuery";
+  public static final String EXISTS_QUERY_KEY = "existsQuery";
   private static final String OPERATOR_KEY = "operator";
   private static final String ALIAS_PREFIX = "alias_";
   private static final String JOIN_ALIAS_PREFIX = "join_";
   private static final char ESCAPE_CHAR = '|';
-  private static final String EXISTS_VALUE_HOLDER = "$value";
+  public static final String EXISTS_VALUE_HOLDER = "$value";
 
   private static final String OPERATOR_AND = "and";
   static final String OPERATOR_OR = "or";
@@ -120,7 +120,7 @@ public class AdvancedQueryBuilder {
   private static final String OPERATOR_BETWEENINCLUSIVE = "betweenInclusive";
   private static final String OPERATOR_IBETWEEN = "iBetween";
   private static final String OPERATOR_IBETWEENINCLUSIVE = "iBetweenInclusive";
-  private static final String OPERATOR_EXISTS = "exists";
+  public static final String OPERATOR_EXISTS = "exists";
 
   private JSONObject criteria = null;
 

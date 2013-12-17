@@ -652,14 +652,14 @@ where @additional_filters@]]></HQL>
 <!--EB3C41F0973A4EDA91E475833792A6D4-->  <DISPLAYFIELD_ID><![CDATA[797E2E6C7A6D4A349491B85A1C1ACB7D]]></DISPLAYFIELD_ID>
 <!--EB3C41F0973A4EDA91E475833792A6D4-->  <SUGGESTIONTEXTMATCHSTYLE><![CDATA[substring]]></SUGGESTIONTEXTMATCHSTYLE>
 <!--EB3C41F0973A4EDA91E475833792A6D4-->  <POPUPTEXTMATCHSTYLE><![CDATA[startsWith]]></POPUPTEXTMATCHSTYLE>
-<!--EB3C41F0973A4EDA91E475833792A6D4-->  <HQL><![CDATA[select p.searchKey as searchKey, p.id as id, plv as priceListVersion, plv.name as priceListVersionName, c.id as currency, pp.priceLimit as priceLimit, p.name as productName,p.uOM as uOM, pp.standardPrice as standardPrice, pp.listPrice as netListPrice, pl.salesPriceList as salesPriceList, p.characteristicDescription as chDescription, gp.name as genericProduct
+<!--EB3C41F0973A4EDA91E475833792A6D4-->  <HQL><![CDATA[select e.searchKey as searchKey, e.id as id, plv as priceListVersion, plv.name as priceListVersionName, c.id as currency, pp.priceLimit as priceLimit, e.name as productName, e.uOM as uOM, pp.standardPrice as standardPrice, pp.listPrice as netListPrice, pl.salesPriceList as salesPriceList, e.characteristicDescription as chDescription, gp.name as genericProduct
 from PricingProductPrice pp
-join pp.product p
+join pp.product e
 join pp.priceListVersion plv
 join plv.priceList pl
 left join pl.currency c
-left join p.genericProduct gp
-where p.isGeneric = 'N'
+left join e.genericProduct gp
+where e.isGeneric = 'N'
 and plv.active = 'Y'
   and @additional_filters@]]></HQL>
 <!--EB3C41F0973A4EDA91E475833792A6D4-->  <ENTITY_ALIAS><![CDATA[pp]]></ENTITY_ALIAS>
