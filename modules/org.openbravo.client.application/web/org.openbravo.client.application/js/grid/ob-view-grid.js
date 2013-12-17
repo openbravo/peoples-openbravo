@@ -2837,9 +2837,9 @@ isc.OBViewGrid.addProperties({
     }
     this.view.refreshParentRecord();
 
-/*update the focus cell value if different from edit form values.
-    To avoid the case where sometimes data updated through trigger is not showing up without refreshing.
-    Refer issue https://issues.openbravo.com/view.php?id=25028*/
+    // Update the focus cell value if different from edit form values.
+    // To avoid the case where sometimes data updated through trigger is not showing up without refreshing.
+    // Refer issue https://issues.openbravo.com/view.php?id=25028
     this.setEditValue(this.getEditRow(), this.getField(colNum).name, record[this.getField(colNum).name], true, true);
 
     if (this.getEditRow() === rowNum) {
