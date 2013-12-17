@@ -1022,6 +1022,7 @@
       disc.actualAmt = discount.actualAmt;
       disc.pack = discount.pack;
       disc.discountType = rule.get('discountType');
+      disc.priority = rule.get('priority');
       disc.manual = discount.manual;
       disc.userAmt = discount.userAmt;
       disc.lastApplied = discount.lastApplied;
