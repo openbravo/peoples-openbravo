@@ -49,7 +49,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
@@ -576,16 +575,12 @@ public class AdvancedQueryBuilder {
     // property is not part of the identifier. Also hyphen is accepted if
     // the property is the unique property of the identifier
     if (property.isIdentifier()) {
-      // column associated with the property
-      final Column relatedColumn = OBDal.getInstance().get(Column.class, property.getColumnId());
-      final Table relatedTable = relatedColumn.getTable();
-
       // TODO: this can be improved the left clause computation
       // correctly uses a || concatenation, so the value clause
       // can also be made more advanced.
       // Also filtering by date and number values can be a problem
       // maybe use a pragmatic approach there
-      if (isTableWithMultipleIdentifierColumns(relatedTable)) {
+      if (property.getEntity().getIdentifierProperties().size() > 1) {
         // if the value consists of multiple parts then filtering won't work
         // only search on the first part then, is pragmatic but very workable
         if (localValue != null && localValue.toString().contains(IdentifierProvider.SEPARATOR)) {
@@ -631,22 +626,6 @@ public class AdvancedQueryBuilder {
     }
     typedParameters.add(localValue);
     return clause;
-  }
-
-  /* Return true if the identifier of the table is composed of more than one column */
-  private Boolean isTableWithMultipleIdentifierColumns(Table relatedTable) {
-    int identifierCounter = 0;
-    for (Column curColumn : relatedTable.getADColumnList()) {
-      if (curColumn.isIdentifier()) {
-        identifierCounter += 1;
-        if (identifierCounter > 1) {
-          // if there are more than one identifier return true
-          return true;
-        }
-      }
-    }
-    // only one identifier. Is not multiple
-    return false;
   }
 
   private Object getTypeSafeValue(String operator, Property property, Object value)
