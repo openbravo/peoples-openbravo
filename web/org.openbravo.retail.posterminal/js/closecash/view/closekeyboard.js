@@ -87,7 +87,7 @@ enyo.kind({
   paymentsChanged: function () {
     var buttons = [];
     this.payments.each(function (payment) {
-      if (!payment.get('paymentMethod').iscash) {
+      if (!payment.get('paymentMethod').iscash || !payment.get('paymentMethod').countcash) {
         buttons.push({
           command: payment.get('_id'),
           definition: {
