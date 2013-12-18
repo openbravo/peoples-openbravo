@@ -21,8 +21,6 @@ enyo.kind({
     var me = this;
     this.inherited(arguments);
 
-    this.opendrawerTemplate = new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.OpenDrawerTemplate);
-
     this.addToolbar({
       name: 'toolbarempty',
       buttons: []
@@ -72,7 +70,7 @@ enyo.kind({
         definition: {
           stateless: true,
           action: function (keyboard, amt) {
-            OB.POS.hwserver.print(keyboard.opendrawerTemplate);
+            OB.POS.hwserver.openDrawer();
           }
         }
       }]
