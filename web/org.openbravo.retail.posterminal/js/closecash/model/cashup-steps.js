@@ -53,7 +53,7 @@ enyo.kind({
   isSubstepAvailable: function (model, substep) {
     var payment = model.get('paymentList').at(substep);
     var paymentMethod = payment.get('paymentMethod');
-    return paymentMethod.iscash;
+    return paymentMethod.iscash && paymentMethod.countcash;
   }
 });
 

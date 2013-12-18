@@ -78,7 +78,7 @@ enyo.kind({
       }
       this.$.buttonOk.hide();
     }
-    this.$.buttonEdit.setDisabled(this.model.get('paymentMethod').iscash);
+    this.$.buttonEdit.setDisabled(this.model.get('paymentMethod').iscash && this.model.get('paymentMethod').countcash);
   },
   lineEdit: function () {
     this.doLineEditCount();
