@@ -27,7 +27,7 @@ public class POSApplicationFormatComponent extends ApplicationComponent {
     String decimalSymbol = (String) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
         .getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATDECIMAL);
     if (StringUtils.isEmpty(decimalSymbol)) {
-      return super.getDateFormat();
+      return super.getDefaultDecimalSymbol();
     } else {
       return decimalSymbol;
     }
@@ -38,7 +38,7 @@ public class POSApplicationFormatComponent extends ApplicationComponent {
     String groupSymbol = (String) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
         .getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATGROUP);
     if (StringUtils.isEmpty(groupSymbol)) {
-      return super.getDateFormat();
+      return super.getDefaultGroupingSymbol();
     } else {
       return groupSymbol;
     }
