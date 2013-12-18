@@ -426,6 +426,9 @@ enyo.kind({
   // Overwrite this component to customize the BarcodeActionHandler
   name: 'OB.UI.BarcodeActionHandler',
   kind: 'OB.UI.AbstractBarcodeActionHandler',
+  addWhereFilter: function (txt) {
+    return "where product.upc = '" + txt + "'";
+  },
   findProductByBarcode: function (txt, callback) {
     var criteria;
 
@@ -441,11 +444,7 @@ enyo.kind({
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [txt]));
       }
     }
-
-    criteria = {
-      'uPCEAN': txt
-    };
-    OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);
+    OB.Dal.query(OB.Model.Product, 'select * from m_product as product ' + this.addWhereFilter(txt), null, successCallbackProducts, errorCallback, this);
   },
 
   addProductToReceipt: function (keyboard, product) {
