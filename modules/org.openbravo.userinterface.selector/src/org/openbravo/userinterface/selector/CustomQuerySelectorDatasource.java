@@ -560,7 +560,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
       for (int i = 0; i < criterias.length(); i++) {
         JSONObject criteria = criterias.getJSONObject(i);
-        if (criteria.has("_constructor")) {
+        if (!criteria.has("fieldName") && criteria.has("criteria") && criteria.has("_constructor")) {
           // nested criteria, eval it recursively
           JSONArray cs = criteria.getJSONArray("criteria");
           HashMap<String, String[]> c = getCriteria(cs);
