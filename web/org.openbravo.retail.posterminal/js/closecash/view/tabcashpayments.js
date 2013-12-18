@@ -370,7 +370,14 @@ enyo.kind({
 
   },
   displayStep: function (model) {
+    var payment = model.get('paymentList').at(model.get('substep'));
+
     // this function is invoked when displayed.      
-    this.initPaymentToCount(model.get('paymentList').at(model.get('substep')));
+    this.initPaymentToCount(payment);
+
+    // Open drawer if allow open drawer. Already a cash method.
+    if (payment.get('paymentMethod').allowopendrawer) {
+      OB.POS.hwserver.openDrawer();
+    }
   }
 });

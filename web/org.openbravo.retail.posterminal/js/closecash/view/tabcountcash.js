@@ -210,6 +210,14 @@ enyo.kind({
   },
   displayStep: function (model) {
     // this function is invoked when displayed.  
+    var opendrawer = model.get('paymentList').any(function (payment) {
+      var paymentmethod = payment.get('paymentMethod');
+      return paymentmethod.iscash && !paymentmethod.countcash && paymentmethod.allowopendrawer;
+    });
+
+    if (opendrawer) {
+      OB.POS.hwserver.openDrawer();
+    }
   },
   verifyStep: function (model, callback) {
     // this function is invoked when going next, invokes callback to continue
