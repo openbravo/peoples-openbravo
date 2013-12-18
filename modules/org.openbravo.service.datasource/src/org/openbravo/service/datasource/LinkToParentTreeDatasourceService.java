@@ -254,7 +254,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       if (fetchRoot) {
         whereClause.append(" is null ");
       } else {
-        whereClause.append(".id = '" + actualParentId + "' ");
+        if (!linkToParentProperty.isPrimitive()) {
+          whereClause.append(".id");
+        }
+        whereClause.append(" = '" + actualParentId + "' ");
       }
     }
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
@@ -348,7 +351,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     }
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as e where e." + linkToParentProperty.getName());
-    whereClause.append(".id = '" + nodeIdStr + "' ");
+    if (!linkToParentProperty.isPrimitive()) {
+      whereClause.append(".id");
+    }
+    whereClause.append(" = '" + nodeIdStr + "' ");
     if (hqlWhereClause != null) {
       whereClause.append(" and " + hqlWhereClause);
     }
@@ -430,7 +436,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" where " + nodeIdProperty.getName());
-    whereClause.append(".id = '" + nodeId + "' ");
+    if (!nodeIdProperty.isPrimitive()) {
+      whereClause.append(".id");
+    }
+    whereClause.append(" = '" + nodeId + "' ");
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
     if (query.count() != 1) {
@@ -464,7 +473,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
 
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as e where e." + nodeIdProperty.getName());
-    whereClause.append(".id = '" + nodeId + "' ");
+    if (!nodeIdProperty.isPrimitive()) {
+      whereClause.append(".id");
+    }
+    whereClause.append(" = '" + nodeId + "' ");
     whereClause.append(" and " + hqlWhereClause);
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
@@ -510,9 +522,17 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       BaseOBObject bob = OBDal.getInstance().get(entity.getName(), bobId);
       json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
       if (fillNodeIdAndParentId) {
-        BaseOBObject parent = (BaseOBObject) bob.get(linkToParentProperty.getName());
-        if (parent != null) {
-          json.put("parentId", parent.getId().toString());
+        String parentId = null;
+        if (linkToParentProperty.isPrimitive()) {
+          parentId = (String) bob.get(linkToParentProperty.getName());
+        } else {
+          BaseOBObject parent = (BaseOBObject) bob.get(linkToParentProperty.getName());
+          if (parent != null) {
+            parentId = parent.getId().toString();
+          }
+        }
+        if (parentId != null) {
+          json.put("parentId", parentId);
         } else {
           json.put("parentId", (String) ROOT_NODE);
         }
@@ -712,7 +732,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as e where ");
     whereClause.append(" e." + nodeIdProperty.getName());
-    whereClause.append(".id = '" + parentId + "' ");
+    if (!nodeIdProperty.isPrimitive()) {
+      whereClause.append(".id");
+    }
+    whereClause.append(" = '" + parentId + "' ");
 
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
