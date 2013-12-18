@@ -346,7 +346,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       SimpleDateFormat xmlDateFormat, String[] operatorvalue) {
     String whereClause = "";
 
-    if (operator.equals(AdvancedQueryBuilder.EXISTS_QUERY_KEY)) {
+    if (operator != null && operator.equals(AdvancedQueryBuilder.EXISTS_QUERY_KEY)) {
       String val = "";
       for (int i = 1; i < operatorvalue.length; i++) {
         val += i > 1 ? " and " : "";
