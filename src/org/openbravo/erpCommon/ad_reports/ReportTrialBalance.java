@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -358,14 +358,15 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     }
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTrialBalance", false, "", "",
-        "imprimir();return false;", false, "ad_reports", strReplaceWith, false, true);
+        "if (validate()) { imprimir(); } return false;", false, "ad_reports", strReplaceWith,
+        false, true);
     toolbar.setEmail(false);
     toolbar.prepareSimpleToolBarTemplate();
     toolbar
         .prepareRelationBarTemplate(
             false,
             false,
-            "validate(); submitCommandForm('XLS', false, frmMain, 'ReportTrialBalanceExcel.xls', 'EXCEL');return false;");
+            "if (validate()) { submitCommandForm('XLS', false, frmMain, 'ReportTrialBalanceExcel.xls', 'EXCEL'); } return false;");
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
