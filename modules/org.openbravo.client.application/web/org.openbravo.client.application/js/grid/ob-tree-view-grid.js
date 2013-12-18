@@ -186,27 +186,29 @@ isc.OBTreeViewGrid.addProperties({
         i, len = nodes.length,
         nodesIdentifier = "",
         parentIdentifier, message;
-    if (this.confirmNodeReparent) {
-      for (i = 0; i < len; i++) {
-        nodesIdentifier = nodesIdentifier + nodes[i][OB.Constants.IDENTIFIER];
-        if ((i + 1) < len) {
-          nodesIdentifier = nodesIdentifier + ", ";
+    if (this.canReorderRecords) {
+      if (this.confirmNodeReparent && this.canReorderRecords) {
+        for (i = 0; i < len; i++) {
+          nodesIdentifier = nodesIdentifier + nodes[i][OB.Constants.IDENTIFIER];
+          if ((i + 1) < len) {
+            nodesIdentifier = nodesIdentifier + ", ";
+          }
         }
-      }
-      if (folder.nodeId === this.dataProperties.rootValue) {
-        parentIdentifier = OB.I18N.getLabel('OBUIAPP_RootNode');
-      } else {
-        parentIdentifier = folder[OB.Constants.IDENTIFIER];
-      }
+        if (folder.nodeId === this.dataProperties.rootValue) {
+          parentIdentifier = OB.I18N.getLabel('OBUIAPP_RootNode');
+        } else {
+          parentIdentifier = folder[OB.Constants.IDENTIFIER];
+        }
 
-      message = OB.I18N.getLabel('OBUIAPP_MoveTreeNode', [nodesIdentifier, parentIdentifier]);
-      isc.confirm(message, function (value) {
-        if (value) {
-          me.doTransferNodes(nodes, folder, index, sourceWidget, callback);
-        }
-      });
-    } else {
-      this.doTransferNodes(nodes, folder, index, sourceWidget, callback);
+        message = OB.I18N.getLabel('OBUIAPP_MoveTreeNode', [nodesIdentifier, parentIdentifier]);
+        isc.confirm(message, function (value) {
+          if (value) {
+            me.doTransferNodes(nodes, folder, index, sourceWidget, callback);
+          }
+        });
+      } else {
+        this.doTransferNodes(nodes, folder, index, sourceWidget, callback);
+      }
     }
   },
 
