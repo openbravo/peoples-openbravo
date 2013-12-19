@@ -436,7 +436,7 @@ enyo.kind({
       }
     }
     criteria = {
-      '_whereClause' : 'WHERE upper(upc) = "' + txt + '" or upc = "' + txt + '"'
+      '_whereClause' : 'WHERE upper(upc) = "' + txt + '"
     };
     OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);
   },
