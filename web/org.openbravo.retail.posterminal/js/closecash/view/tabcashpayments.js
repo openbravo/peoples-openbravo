@@ -192,19 +192,19 @@ enyo.kind({
                 style: 'border-bottom: 1px solid #cccccc;',
                 components: [{
                   name: 'totalLbl',
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 15%;',
+                  style: 'padding: 10px 20px 10px 10px; float: left;',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
                   }
                 }, {
-                  style: 'padding: 10px 20px 10px 0px; float: left; width: 14%;',
+                  style: 'padding: 10px 20px 10px 0px; float: left;',
                   components: [{
                     name: 'total',
                     kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                   }]
                 }, {
                   name: 'countedLbl',
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 15%;',
+                  style: 'padding: 10px 20px 10px 10px; float: left;',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_Counted'));
                   }
@@ -216,7 +216,7 @@ enyo.kind({
                   }]
                 }, {
                   name: 'differenceLbl',
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 15%;',
+                  style: 'padding: 10px 20px 10px 10px; float: left;',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_Remaining'));
                   }
