@@ -398,7 +398,7 @@ isc.OBPickAndExecuteGrid.addProperties({
         }
       }
     }
-    return null;
+    return OB.User.organizationId;
   },
 
   onFetchData: function (criteria, requestProperties) {
