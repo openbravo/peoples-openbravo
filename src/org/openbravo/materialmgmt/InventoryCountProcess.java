@@ -159,6 +159,7 @@ public class InventoryCountProcess implements Process {
     insert.append(", " + MaterialTransaction.PROPERTY_UPDATED);
     insert.append(", " + MaterialTransaction.PROPERTY_UPDATEDBY);
     insert.append(", " + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
+    insert.append(", " + MaterialTransaction.PROPERTY_CHECKRESERVEDQUANTITY);
     insert.append(", " + MaterialTransaction.PROPERTY_MOVEMENTDATE);
     insert.append(", " + MaterialTransaction.PROPERTY_STORAGEBIN);
     insert.append(", " + MaterialTransaction.PROPERTY_PRODUCT);
@@ -179,6 +180,9 @@ public class InventoryCountProcess implements Process {
     insert.append(", now()");
     insert.append(", u");
     insert.append(", 'I+'");
+    // We have to set check reservation quantity flag equal to false
+    insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
+        + InventoryCount.PROPERTY_PROCESSED);
     insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
         + InventoryCount.PROPERTY_MOVEMENTDATE);
     insert.append(", e." + InventoryCountLine.PROPERTY_STORAGEBIN);
