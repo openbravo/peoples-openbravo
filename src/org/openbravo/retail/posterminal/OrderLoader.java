@@ -16,7 +16,9 @@ import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -104,6 +106,7 @@ public class OrderLoader extends JSONProcessSimple {
   boolean isLayaway = false;
   boolean partialpayLayaway = false;
   boolean fullpayLayaway = false;
+  Locator binForRetuns = null;
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
@@ -167,23 +170,34 @@ public class OrderLoader extends JSONProcessSimple {
           }
           log.info("Total order time: " + (System.currentTimeMillis() - t1));
         } catch (Exception e) {
-          log.error("An error happened when processing an order: ", e);
-          // Creation of the order failed. We will now store the order in the import errors table
           OBDal.getInstance().rollbackAndClose();
           if (TriggerHandler.getInstance().isDisabled()) {
             TriggerHandler.getInstance().enable();
           }
-          OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
-          errorEntry.setError(getErrorMessage(e));
-          errorEntry.setOrderstatus("N");
-          errorEntry.setJsoninfo(jsonorder.toString());
-          errorEntry.setTypeofdata("order");
-          errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
-              posTerminalId));
-          OBDal.getInstance().save(errorEntry);
-          OBDal.getInstance().flush();
 
-          log.error("Error while loading order", e);
+          // check if there is a SO with the same id. It means that it is a duplicated order. Then,
+          // this error will not be stored
+          List<Object> parameters = new ArrayList<Object>();
+          parameters.add(jsonorder.getString("id"));
+          OBQuery<Order> orders = OBDal.getInstance().createQuery(Order.class, "id=?");
+          orders.setParameters(parameters);
+          if (orders.count() > 0) {
+            log.warn("Order duplicated with id: " + jsonorder.getString("id")
+                + "  Not error saved.");
+          } else {
+            // Creation of the order failed. We will now store the order in the import errors table
+            log.error("An error happened when processing an order: ", e);
+            OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
+            errorEntry.setError(getErrorMessage(e));
+            errorEntry.setOrderstatus("N");
+            errorEntry.setJsoninfo(jsonorder.toString());
+            errorEntry.setTypeofdata("order");
+            errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
+                posTerminalId));
+            OBDal.getInstance().save(errorEntry);
+            OBDal.getInstance().flush();
+            log.error("Error while loading order", e);
+          }
           try {
             OBDal.getInstance().getConnection().commit();
           } catch (SQLException e1) {
@@ -209,7 +223,7 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONObject jsonorder) throws Exception {
     executeHooks(orderPreProcesses, jsonorder, null, null, null);
-
+    boolean wasPaidOnCredit = false;
     boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
     if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
         && verifyOrderExistance(jsonorder)
@@ -242,11 +256,20 @@ public class OrderLoader extends JSONProcessSimple {
       // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
       // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
       // flag
-      boolean createInvoice = (!isLayaway && !partialpayLayaway && !fullpayLayaway && !isQuotation && jsonorder
-          .getDouble("payment") < jsonorder.getDouble("gross"))
+      wasPaidOnCredit = !isLayaway
+          && !partialpayLayaway
+          && !fullpayLayaway
+          && !isQuotation
+          && Math.abs(jsonorder.getDouble("payment")) < Math.abs(new Double(jsonorder
+              .getDouble("gross")));
+      boolean createInvoice = wasPaidOnCredit
           || (!isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway) && (jsonorder
               .has("generateInvoice") && jsonorder.getBoolean("generateInvoice")));
       boolean createShipment = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway);
+      if (jsonorder.has("generateShipment")) {
+        createShipment &= jsonorder.getBoolean("generateShipment");
+        createInvoice &= jsonorder.getBoolean("generateShipment");
+      }
       sendEmail = (jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail"));
       // Order header
       long t111 = System.currentTimeMillis();
@@ -331,7 +354,7 @@ public class OrderLoader extends JSONProcessSimple {
 
     if (!isQuotation) {
       // Payment
-      JSONObject paymentResponse = handlePayments(jsonorder, order, invoice);
+      JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit);
       if (paymentResponse != null) {
         return paymentResponse;
       }
@@ -384,6 +407,15 @@ public class OrderLoader extends JSONProcessSimple {
     }
     quotation.setDocumentStatus("CA");
 
+  }
+
+  protected Locator getBinForReturns(String posTerminalId) {
+    if (binForRetuns == null) {
+      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+          posTerminalId);
+      binForRetuns = POSUtils.getBinForReturns(posTerminal);
+    }
+    return binForRetuns;
   }
 
   protected JSONObject successMessage(JSONObject jsonorder) throws Exception {
@@ -720,99 +752,114 @@ public class OrderLoader extends JSONProcessSimple {
 
       OrderLine orderLine = lineReferences.get(i);
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
+      boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
       AttributeSetInstance oldAttributeSetValues = null;
-      if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
-        // The M_GetStock function is used
-        Process process = (Process) OBDal.getInstance().get(Process.class,
-            "FF80818132C964E30132C9747257002E");
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("AD_Client_ID", OBContext.getOBContext().getCurrentClient().getId());
-        parameters.put("AD_Org_ID", OBContext.getOBContext().getCurrentOrganization().getId());
-        parameters.put("M_Product_ID",
-            orderLine.getProduct() == null ? null : (String) DalUtil.getId(orderLine.getProduct()));
-        parameters.put("C_Uom_ID",
-            orderLine.getUOM() == null ? null : (String) DalUtil.getId(orderLine.getUOM()));
-        parameters.put("M_Product_Uom_ID", orderLine.getOrderUOM() == null ? null
-            : (String) DalUtil.getId(orderLine.getOrderUOM()));
-        parameters.put("M_AttributesetInstance_ID", orderLine.getAttributeSetValue() == null ? null
-            : (String) DalUtil.getId(orderLine.getAttributeSetValue()));
-        parameters.put("Quantity", pendingQty);
-        parameters.put("ProcessID", "118");
-        if (orderLine.getEntity().hasProperty("warehouseRule")
-            && orderLine.get("warehouseRule") != null) {
-          parameters.put("M_Warehouse_Rule_ID",
-              (String) DalUtil.getId(orderLine.get("warehouseRule")));
-        }
-
-        ProcessInstance pInstance = CallProcess.getInstance()
-            .callProcess(process, null, parameters);
-
-        OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
-            StockProposed.class);
-        stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, pInstance));
-        stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
-
-        ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
-        boolean foundStockProposed = false;
-        try {
-          while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
-            foundStockProposed = true;
-            // TODO: Can we safely clear session here?
-            StockProposed stock = (StockProposed) bins.get(0);
-            BigDecimal qty;
-
-            Object stockQty = stock.get("quantity");
-            if (stockQty instanceof Long) {
-              stockQty = new BigDecimal((Long) stockQty);
-            }
-            if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
-              qty = (BigDecimal) stockQty;
-              pendingQty = pendingQty.subtract(qty);
-            } else {
-              qty = pendingQty;
-              pendingQty = BigDecimal.ZERO;
-            }
-            lineNo += 10;
-            if (jsonorder.getLong("orderType") == 1) {
-              qty = qty.negate();
-            }
-            addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
-                    .getStorageDetail().getAttributeSetValue());
-          }
-        } finally {
-          bins.close();
-        }
-        if (!foundStockProposed && orderLine.getProduct().getAttributeSet() != null) {
-          // M_GetStock couldn't find any valid stock, and the product has an attribute set. We will
-          // attempt to find an old transaction for this product, and get the attribute values from
-          // there
-          OBCriteria<ShipmentInOutLine> oldLines = OBDal.getInstance().createCriteria(
-              ShipmentInOutLine.class);
-          oldLines.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_PRODUCT, orderLine.getProduct()));
-          oldLines.setMaxResults(1);
-          oldLines.addOrderBy(ShipmentInOutLine.PROPERTY_CREATIONDATE, false);
-          List<ShipmentInOutLine> oldLine = oldLines.list();
-          if (oldLine.size() > 0) {
-            oldAttributeSetValues = oldLine.get(0).getAttributeSetValue();
-          }
-
-        }
-      }
-
-      if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
-        // still qty to ship or return: let's use the bin with highest prio
-        hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
-        OBQuery<Locator> queryLoc = OBDal.getInstance().createQuery(Locator.class, hqlWhereClause);
-        queryLoc.setNamedParameter("warehouse", order.getWarehouse());
-        queryLoc.setMaxResult(1);
-        lineNo += 10;
-        if (jsonorder.getLong("orderType") == 1) {
-          pendingQty = pendingQty.negate();
-        }
+      if (negativeLine) {
         addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
-            lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues);
+            lineNo, pendingQty.negate(), getBinForReturns(jsonorder.getString("posTerminal")), null);
+      } else {
+        if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
+          // The M_GetStock function is used
+          Process process = (Process) OBDal.getInstance().get(Process.class,
+              "FF80818132C964E30132C9747257002E");
+          Map<String, Object> parameters = new HashMap<String, Object>();
+          parameters.put("AD_Client_ID", OBContext.getOBContext().getCurrentClient().getId());
+          parameters.put("AD_Org_ID", OBContext.getOBContext().getCurrentOrganization().getId());
+          parameters.put(
+              "M_Product_ID",
+              orderLine.getProduct() == null ? null
+                  : (String) DalUtil.getId(orderLine.getProduct()));
+          parameters.put("C_Uom_ID",
+              orderLine.getUOM() == null ? null : (String) DalUtil.getId(orderLine.getUOM()));
+          parameters.put("M_Product_Uom_ID", orderLine.getOrderUOM() == null ? null
+              : (String) DalUtil.getId(orderLine.getOrderUOM()));
+          parameters.put(
+              "M_AttributesetInstance_ID",
+              orderLine.getAttributeSetValue() == null ? null : (String) DalUtil.getId(orderLine
+                  .getAttributeSetValue()));
+          parameters.put("Quantity", pendingQty);
+          parameters.put("ProcessID", "118");
+          if (orderLine.getEntity().hasProperty("warehouseRule")
+              && orderLine.get("warehouseRule") != null) {
+            parameters.put("M_Warehouse_Rule_ID",
+                (String) DalUtil.getId(orderLine.get("warehouseRule")));
+          }
+
+          ProcessInstance pInstance = CallProcess.getInstance().callProcess(process, null,
+              parameters);
+
+          OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
+              StockProposed.class);
+          stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, pInstance));
+          stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
+
+          ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
+
+          boolean foundStockProposed = false;
+          try {
+            while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
+              foundStockProposed = true;
+              // TODO: Can we safely clear session here?
+              StockProposed stock = (StockProposed) bins.get(0);
+              BigDecimal qty;
+
+              Object stockQty = stock.get("quantity");
+              if (stockQty instanceof Long) {
+                stockQty = new BigDecimal((Long) stockQty);
+              }
+              if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
+                qty = (BigDecimal) stockQty;
+                pendingQty = pendingQty.subtract(qty);
+              } else {
+                qty = pendingQty;
+                pendingQty = BigDecimal.ZERO;
+              }
+              lineNo += 10;
+              if (negativeLine) {
+                qty = qty.negate();
+              }
+              addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+                  jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
+                      .getStorageDetail().getAttributeSetValue());
+            }
+          } finally {
+            bins.close();
+          }
+          if (!foundStockProposed && orderLine.getProduct().getAttributeSet() != null) {
+            // M_GetStock couldn't find any valid stock, and the product has an attribute set. We
+            // will
+            // attempt to find an old transaction for this product, and get the attribute values
+            // from
+            // there
+            OBCriteria<ShipmentInOutLine> oldLines = OBDal.getInstance().createCriteria(
+                ShipmentInOutLine.class);
+            oldLines
+                .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_PRODUCT, orderLine.getProduct()));
+            oldLines.setMaxResults(1);
+            oldLines.addOrderBy(ShipmentInOutLine.PROPERTY_CREATIONDATE, false);
+            List<ShipmentInOutLine> oldLine = oldLines.list();
+            if (oldLine.size() > 0) {
+              oldAttributeSetValues = oldLine.get(0).getAttributeSetValue();
+            }
+
+          }
+        }
+
+        if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
+          // still qty to ship or return: let's use the bin with highest prio
+          hqlWhereClause = " l where l.warehouse = :warehouse order by l.relativePriority, l.id";
+          OBQuery<Locator> queryLoc = OBDal.getInstance()
+              .createQuery(Locator.class, hqlWhereClause);
+          queryLoc.setNamedParameter("warehouse", order.getWarehouse());
+          queryLoc.setMaxResult(1);
+          lineNo += 10;
+          if (jsonorder.getLong("orderType") == 1) {
+            pendingQty = pendingQty.negate();
+          }
+          addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+              jsonorder, lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues);
+        }
       }
     }
   }
@@ -862,6 +909,7 @@ public class OrderLoader extends JSONProcessSimple {
     shipment.setProcessNow(false);
     shipment.setProcessed(true);
     shipment.setSalesOrder(order);
+    shipment.setProcessGoodsJava("--");
 
   }
 
@@ -1080,8 +1128,45 @@ public class OrderLoader extends JSONProcessSimple {
     }
   }
 
-  protected JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice)
-      throws Exception {
+  protected Date getCalculatedDueDateBasedOnPaymentTerms(Date startingDate, PaymentTerm paymentTerms) {
+    // TODO Take into account the flag "Next business date"
+    // TODO Take into account the flag "Fixed due date"
+    long daysToAdd = paymentTerms.getOverduePaymentDaysRule();
+    long MonthOffset = paymentTerms.getOffsetMonthDue();
+    String dayToPay = paymentTerms.getOverduePaymentDayRule();
+    Calendar calculatedDueDate = new GregorianCalendar();
+    calculatedDueDate.setTime(startingDate);
+    if (MonthOffset > 0) {
+      calculatedDueDate.add(Calendar.MONTH, (int) MonthOffset);
+    }
+    if (daysToAdd > 0) {
+      calculatedDueDate.add(Calendar.DATE, (int) daysToAdd);
+    }
+    if (dayToPay != null && !dayToPay.equals("")) {
+      // for us: 1 -> Monday
+      // for Calendar: 1 -> Sunday
+      int dayOfTheWeekToPay = Integer.parseInt(dayToPay);
+      dayOfTheWeekToPay += 1;
+      if (dayOfTheWeekToPay == 8) {
+        dayOfTheWeekToPay = 1;
+      }
+      if (calculatedDueDate.get(Calendar.DAY_OF_WEEK) == dayOfTheWeekToPay) {
+        return calculatedDueDate.getTime();
+      } else {
+        Boolean dayFound = false;
+        while (dayFound == false) {
+          calculatedDueDate.add(Calendar.DATE, 1);
+          if (calculatedDueDate.get(Calendar.DAY_OF_WEEK) == dayOfTheWeekToPay) {
+            dayFound = true;
+          }
+        }
+      }
+    }
+    return calculatedDueDate.getTime();
+  }
+
+  protected JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
+      Boolean wasPaidOnCredit) throws Exception {
     String posTerminalId = jsonorder.getString("posTerminal");
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
     if (posTerminal == null) {
@@ -1135,8 +1220,17 @@ public class OrderLoader extends JSONProcessSimple {
             stdPrecision, RoundingMode.HALF_UP));
         paymentScheduleInvoice.setOutstandingAmount(BigDecimal
             .valueOf(jsonorder.getDouble("gross")).setScale(stdPrecision, RoundingMode.HALF_UP));
-        paymentScheduleInvoice.setDueDate(order.getOrderDate());
-        paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
+        // TODO: If the payment terms is configured to work with fractionated payments, we should
+        // generate several payment schedules
+        if (wasPaidOnCredit) {
+          paymentScheduleInvoice.setDueDate(getCalculatedDueDateBasedOnPaymentTerms(
+              order.getOrderDate(), order.getPaymentTerms()));
+          paymentScheduleInvoice.setExpectedDate(paymentScheduleInvoice.getDueDate());
+        } else {
+          paymentScheduleInvoice.setDueDate(order.getOrderDate());
+          paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
+        }
+
         if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
             .hasProperty("origDueDate")) {
           // This property is checked and set this way to force compatibility with both MP13, MP14
@@ -1219,6 +1313,7 @@ public class OrderLoader extends JSONProcessSimple {
     long t1 = System.currentTimeMillis();
     OBContext.setAdminMode(true);
     try {
+      boolean totalIsNegative = jsonorder.getDouble("gross") < 0;
       int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
           stdPrecision, RoundingMode.HALF_UP);
@@ -1235,8 +1330,8 @@ public class OrderLoader extends JSONProcessSimple {
       if (amount.signum() == 0) {
         return;
       }
-      if ((writeoffAmt.signum() == 1 && (jsonorder.getLong("orderType") == 0 || isLayaway))
-          || (writeoffAmt.signum() == -1 && jsonorder.getLong("orderType") == 1)) {
+      if ((writeoffAmt.signum() == 1 && (!totalIsNegative || isLayaway))
+          || (writeoffAmt.signum() == -1 && totalIsNegative)) {
         // there was an overpayment, we need to take into account the writeoffamt
         amount = amount.subtract(writeoffAmt).setScale(stdPrecision, RoundingMode.HALF_UP);
       }
@@ -1301,8 +1396,8 @@ public class OrderLoader extends JSONProcessSimple {
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), calculatedDate, order.getOrganization(), null, detail, paymentAmount,
           false, false, order.getCurrency(), mulrate, origAmount);
-      if ((writeoffAmt.signum() == 1 && (jsonorder.getLong("orderType") == 0 || isLayaway))
-          || (writeoffAmt.signum() == -1 && jsonorder.getLong("orderType") == 1)) {
+      if ((writeoffAmt.signum() == 1 && (!totalIsNegative || isLayaway))
+          || (writeoffAmt.signum() == -1 && totalIsNegative)) {
         FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
             .getGlitemWriteoff());
         // Update Payment In amount after adding GLItem

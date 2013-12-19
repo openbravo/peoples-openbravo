@@ -132,7 +132,11 @@
     stopApplyingPromotions: function () {
       var promotions = this.get('promotions'),
           i;
-      if (this.get('promotions')) {
+      if (promotions) {
+        if (OB.POS.modelterminal.get('terminal').bestDealCase && promotions.length > 0) {
+          // best deal case can only apply one promotion per line
+          return true;
+        }
         for (i = 0; i < promotions.length; i++) {
           if (!promotions[i].applyNext) {
             return true;
@@ -296,23 +300,28 @@
 
     save: function () {
       var undoCopy;
+
       if (this.attributes.json) {
         delete this.attributes.json; // Needed to avoid recursive inclusions of itself !!!
       }
       undoCopy = this.get('undo');
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
-      OB.Dal.save(this, function () {}, function () {
-        OB.error(arguments);
-      });
+      if (!OB.POS.modelterminal.get('preventOrderSave')) {
+        OB.Dal.save(this, function () {}, function () {
+          OB.error(arguments);
+        });
+      }
       this.set('undo', undoCopy);
     },
 
-    calculateTaxes: function (callback) {
+    calculateTaxes: function (callback, doNotSave) {
       if (callback) {
         callback();
       }
-      this.save();
+      if (!doNotSave) {
+        this.save();
+      }
     },
 
     prepareToSend: function (callback) {
@@ -333,7 +342,7 @@
             grossListPrice, grossUnitPrice, discountPercentage, base;
 
         // Calculate inline discount: discount applied before promotions
-        if (line.get('priceList') !== price) {
+        if (line.get('priceList') !== price || (_.isNumber(line.get('discountedLinePrice')) && line.get('discountedLinePrice') !== line.get('priceList'))) {
           grossListPrice = line.get('priceList');
           grossUnitPrice = new BigDecimal(price.toString());
           if (OB.DEC.compare(grossListPrice) === 0) {
@@ -378,6 +387,7 @@
           line.set({
             nondiscountedprice: line.get('price'),
             nondiscountednet: line.get('net'),
+            standardPrice: line.get('price'),
             net: line.get('discountedNet'),
             pricenet: OB.DEC.toNumber(line.get('discountedNetPrice')),
             listPrice: line.get('priceList'),
@@ -449,10 +459,10 @@
         this.calculateTaxes(function () {
           //If the price doesn't include tax, the discounted gross has already been calculated
           var gross = me.get('lines').reduce(function (memo, e) {
-            if (_.isUndefined(e.get('fulldiscountedGross'))) {
+            if (_.isUndefined(e.get('discountedGross'))) {
               return memo;
             }
-            var grossLine = OB.DEC.toNumber(e.get('fulldiscountedGross'));
+            var grossLine = e.get('discountedGross');
             if (grossLine) {
               return OB.DEC.add(memo, grossLine);
             } else {
@@ -643,9 +653,9 @@
       this.setUnit(line, OB.DEC.add(line.get('qty'), qty, OB.I18N.qtyScale()), OB.I18N.getLabel('OBPOS_AddUnits', [OB.DEC.toNumber(new BigDecimal((String)(qty.toString()))), line.get('product').get('_identifier')]));
     },
 
-    setUnit: function (line, qty, text) {
+    setUnit: function (line, qty, text, doNotSave) {
 
-      if (OB.DEC.isNumber(qty)) {
+      if (OB.DEC.isNumber(qty) && qty !== 0) {
         var oldqty = line.get('qty');
         if (line.get('product').get('groupProduct') === false) {
           this.addProduct(line.get('product'));
@@ -668,7 +678,11 @@
           });
         }
         this.adjustPayment();
-        this.save();
+        if (!doNotSave) {
+          this.save();
+        }
+      } else {
+        this.deleteLine(line);
       }
     },
 
@@ -708,9 +722,26 @@
       this.get('lines').at(index).set(property, value);
     },
 
-    deleteLine: function (line) {
+    deleteLine: function (line, doNotSave) {
       var me = this;
       var index = this.get('lines').indexOf(line);
+      var pack = line.isAffectedByPack(),
+          productId = line.get('product').id;
+
+      if (pack) {
+        // When deleting a line, check lines with other product that are affected by
+        // same pack than deleted one and merge splitted lines created for those
+        this.get('lines').forEach(function (l) {
+          var affected;
+          if (productId === l.get('product').id) {
+            return; //continue
+          }
+          affected = l.isAffectedByPack();
+          if (affected && affected.ruleId === pack.ruleId) {
+            this.mergeLines(l);
+          }
+        }, this);
+      }
 
       // trigger
       line.trigger('removed', line);
@@ -730,8 +761,10 @@
         }
       });
       this.adjustPayment();
-      this.save();
-      this.calculateGross();
+      if (!doNotSave) {
+        this.save();
+        this.calculateGross();
+      }
     },
     //Attrs is an object of attributes that will be set in order 
     _addProduct: function (p, qty, options, attrs) {
@@ -763,22 +796,42 @@
         });
       } else {
         if (p.get('groupProduct') || (options && options.packId)) {
-          var affectedByPack, line = this.get('lines').find(function (l) {
-            if (l.get('product').id === p.id) {
-              affectedByPack = l.isAffectedByPack();
-              if (!affectedByPack) {
-                return true;
-              } else if ((options && options.packId === affectedByPack.ruleId) || !(options && options.packId)) {
-                return true;
+          var affectedByPack, line;
+          if (options && options.line) {
+            line = options.line;
+          } else {
+            line = this.get('lines').find(function (l) {
+              if (l.get('product').id === p.id && l.get('qty') > 0) {
+                affectedByPack = l.isAffectedByPack();
+                if (!affectedByPack) {
+                  return true;
+                } else if ((options && options.packId === affectedByPack.ruleId) || !(options && options.packId)) {
+                  return true;
+                }
               }
+            });
+          }
+          OB.MobileApp.model.hookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
+            receipt: this,
+            line: line,
+            p: p,
+            qty: qty,
+            options: options,
+            attrs: attrs
+          }, function (args) {
+            if (args && args.cancelOperation) {
+              return;
+            }
+            if (args.line) {
+              args.receipt.addUnit(args.line, args.qty);
+              args.line.trigger('selected', args.line);
+            } else if (args.receipt.get('orderType') === 1) {
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_AddProductReturn'));
+            } else {
+              args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
             }
           });
-          if (line) {
-            this.addUnit(line, qty);
-            line.trigger('selected', line);
-          } else {
-            this.createLine(p, qty, options, attrs);
-          }
+
         } else {
           //remove line even it is a grouped line
           if (options && options.line && qty === -1) {
@@ -841,6 +894,124 @@
       });
     },
 
+
+    /**
+     * Splits a line from the ticket keeping in the line the qtyToKeep quantity,
+     * the rest is moved to another line with the same product and no packs, or
+     * to a new one if there's no other line.
+     */
+    splitLine: function (line, qtyToKeep) {
+      var originalQty = line.get('qty'),
+          newLine, p, qtyToMove;
+
+      if (originalQty === qtyToKeep) {
+        return;
+      }
+
+      qtyToMove = originalQty - qtyToKeep;
+
+      this.setUnit(line, qtyToKeep, null, true);
+
+      p = line.get('product');
+
+      newLine = this.get('lines').find(function (l) {
+        return l !== line && l.get('product').id === p.id && !l.isAffectedByPack();
+      });
+
+      if (!newLine) {
+        newLine = line.clone();
+        newLine.set({
+          promotions: null,
+          addedBySplit: true
+        });
+        this.get('lines').add(newLine);
+        this.setUnit(newLine, qtyToMove, null, true);
+      } else {
+        this.setUnit(newLine, newLine.get('qty') + qtyToMove, null, true);
+      }
+    },
+
+    /**
+     * Checks other lines with the same product to be merged in a single one
+     */
+    mergeLines: function (line) {
+      var p = line.get('product'),
+          lines = this.get('lines'),
+          merged = false;
+      line.set('promotions', null);
+      lines.forEach(function (l) {
+        var promos = l.get('promotions');
+        if (l === line) {
+          return;
+        }
+
+        if (l.get('product').id === p.id && l.get('price') === line.get('price')) {
+          line.set({
+            qty: line.get('qty') + l.get('qty'),
+            promotions: null
+          });
+          lines.remove(l);
+          merged = true;
+        }
+      }, this);
+      if (merged) {
+        line.calculateGross();
+      }
+    },
+
+    /**
+     *  It looks for different lines for same product with exactly the same promotions
+     *  to merge them in a single line
+     */
+    mergeLinesWithSamePromotions: function () {
+      var lines = this.get('lines'),
+          l, line, i, j, k, p, otherLine, toRemove = [],
+          matches, otherPromos, found, compareRule;
+
+      compareRule = function (p) {
+        return p.ruleId === line.get('promotions')[k].ruleId;
+      };
+
+      for (i = 0; i < lines.length; i++) {
+        line = lines.at(i);
+        for (j = i + 1; j < lines.length; j++) {
+          otherLine = lines.at(j);
+          if (otherLine.get('product').id !== line.get('product').id) {
+            continue;
+          }
+
+          if (!line.get('promotions') && !otherLine.get('promotions')) {
+            line.set('qty', line.get('qty') + otherLine.get('qty'));
+            line.calculateGross();
+            toRemove.push(otherLine);
+          } else if (line.get('promotions') && otherLine.get('promotions') && line.get('promotions').length === otherLine.get('promotions').length && line.get('price') === otherLine.get('price')) {
+            matches = true;
+            otherPromos = otherLine.get('promotions');
+            for (k = 0; k < line.get('promotions').length; k++) {
+              found = _.find(otherPromos, compareRule);
+              if (!found) {
+                matches = false;
+                break;
+              }
+            }
+            if (matches) {
+              line.set('qty', line.get('qty') + otherLine.get('qty'));
+              for (k = 0; k < line.get('promotions').length; k++) {
+                found = _.find(otherPromos, compareRule);
+                line.get('promotions')[k].amt += found.amt;
+              }
+              toRemove.push(otherLine);
+              line.calculateGross();
+            }
+          }
+        }
+      }
+
+      _.forEach(toRemove, function (l) {
+        lines.remove(l);
+      });
+    },
+
     addPromotion: function (line, rule, discount) {
       var promotions = line.get('promotions') || [],
           disc = {},
@@ -851,6 +1022,7 @@
       disc.actualAmt = discount.actualAmt;
       disc.pack = discount.pack;
       disc.discountType = rule.get('discountType');
+      disc.priority = rule.get('priority');
       disc.manual = discount.manual;
       disc.userAmt = discount.userAmt;
       disc.lastApplied = discount.lastApplied;
@@ -896,7 +1068,6 @@
 
       line.set('promotions', promotions);
       line.trigger('change');
-      this.save();
     },
 
     removePromotion: function (line, rule) {
@@ -938,7 +1109,7 @@
     //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
       var me = this;
-      if (OB.POS.modelterminal.get('permissions')['OBPOS_NotAllowSalesWithReturn']) {
+      if (OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn) {
         var negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('gross') < 0;
         }).length;
@@ -981,48 +1152,7 @@
         }
       });
       this.adjustPayment();
-    },
-    returnLine: function (line, options, skipValidaton) {
-      var me = this;
-      if (OB.POS.modelterminal.get('permissions')['OBPOS_NotAllowSalesWithReturn'] && !skipValidaton) {
-        //The value of qty need to be negate because we want to change it
-        var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('gross') < 0;
-        }).length;
-        if (this.get('lines').length > 0) {
-          if (-line.get('qty') > 0 && negativeLines > 0) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
-            return;
-          } else if (-line.get('qty') < 0 && negativeLines !== this.get('lines').length) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
-            return;
-          }
-        }
-      }
-      if (line.get('qty') > 0) {
-        line.get('product').set('ignorePromotions', true);
-      } else {
-        line.get('product').set('ignorePromotions', false);
-      }
-      line.set('qty', -line.get('qty'));
-      line.calculateGross();
-
-      // set the undo action
-      this.set('undo', {
-        text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
-        line: line,
-        undo: function () {
-          line.set('qty', -line.get('qty'));
-          me.set('undo', null);
-        }
-      });
-      this.adjustPayment();
-      if (line.get('promotions')) {
-        line.unset('promotions');
-      }
-      me.calculateGross();
-      this.save();
-
+      return newline;
     },
     returnLine: function (line, options, skipValidaton) {
       var me = this;
@@ -1066,7 +1196,48 @@
       this.save();
 
     },
+    returnLine: function (line, options, skipValidaton) {
+      var me = this;
+      if (OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
+        //The value of qty need to be negate because we want to change it
+        var negativeLines = _.filter(this.get('lines').models, function (line) {
+          return line.get('gross') < 0;
+        }).length;
+        if (this.get('lines').length > 0) {
+          if (-line.get('qty') > 0 && negativeLines > 0) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
+            return;
+          } else if (-line.get('qty') < 0 && negativeLines !== this.get('lines').length) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
+            return;
+          }
+        }
+      }
+      if (line.get('qty') > 0) {
+        line.get('product').set('ignorePromotions', true);
+      } else {
+        line.get('product').set('ignorePromotions', false);
+      }
+      line.set('qty', -line.get('qty'));
+      line.calculateGross();
 
+      // set the undo action
+      this.set('undo', {
+        text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
+        line: line,
+        undo: function () {
+          line.set('qty', -line.get('qty'));
+          me.set('undo', null);
+        }
+      });
+      this.adjustPayment();
+      if (line.get('promotions')) {
+        line.unset('promotions');
+      }
+      me.calculateGross();
+      this.save();
+
+    },
     setBPandBPLoc: function (businessPartner, showNotif, saveChange) {
       var me = this,
           undef;
@@ -1138,7 +1309,7 @@
 
       function allLinesCalculated() {
         callback(order);
-      };
+      }
 
       newAllLinesCalculated = _.after(this.get('lines').length, allLinesCalculated);
 
@@ -1228,6 +1399,7 @@
         this.trigger('orderCreatedFromQuotation');
       }
     },
+
     reactivateQuotation: function () {
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
@@ -1384,7 +1556,7 @@
       });
 
       // convert returns
-      if (jsonorder.orderType === 1) {
+      if (jsonorder.gross < 0) {
         _.forEach(jsonorder.payments, function (item) {
           item.amount = -item.amount;
           item.origAmount = -item.origAmount;
@@ -1454,8 +1626,8 @@
           documentseq, documentseqstr, receiptProperties, i, p;
 
       // reset in new order properties defined in Receipt Properties dialog
-      if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.$.pointOfSale && OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.receiptPropertiesDialog) {
-        receiptProperties = OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.receiptPropertiesDialog.newAttributes;
+      if (OB.MobileApp.view.$.containerWindow && OB.MobileApp.view.$.containerWindow.getRoot() && OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog) {
+        receiptProperties = OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog.newAttributes;
         for (i = 0; i < receiptProperties.length; i++) {
           if (receiptProperties[i].modelProperty) {
             order.set(receiptProperties[i].modelProperty, '');

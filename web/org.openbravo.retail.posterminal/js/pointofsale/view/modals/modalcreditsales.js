@@ -53,13 +53,26 @@ enyo.kind({
     this.doHideThisPopup();
     this.model.get('order').set('paidOnCredit', true);
     this.model.get('order').trigger('paymentDone');
-    this.model.get('order').trigger('openDrawer');
+    //    this.model.get('order').trigger('openDrawer');
+    this.allowOpenDrawer = false;
+    var payments = this.model.get('order').get('payments');
+    var me = this;
+
+    payments.each(function (payment) {
+      if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
+        me.allowOpenDrawer = true;
+      }
+    });
+
+    if (this.allowOpenDrawer) {
+      this.model.get('order').trigger('openDrawer');
+    }
     if (!OB.POS.modelterminal.get('connectedToERP')) {
       var bp = this.model.get('order').get('bp');
       var bpCreditUsed = this.model.get('order').get('bp').get('creditUsed');
       var totalPending = this.model.get('order').getPending();
 
-      if (this.parent.parent.parent.parent.args.order.get('orderType') === 1) {
+      if (this.parent.parent.parent.parent.args.order.get('gross') < 0) {
         bp.set('creditUsed', bpCreditUsed - totalPending);
       } else {
         bp.set('creditUsed', bpCreditUsed + totalPending);

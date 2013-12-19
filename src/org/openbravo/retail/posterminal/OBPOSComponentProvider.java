@@ -95,6 +95,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/cashup",
         "model/paymentmethodcashup",
         "model/taxcashup",
+        "model/returnreasons",
         "components/modalcancel",
         "components/subwindow",
         "components/leftsubwindow",
@@ -202,9 +203,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "cashmgmt/components/cashmgmt-modals",
 
         // Cash Up window
-        "closecash/model/cashup-print", "closecash/model/cashup-model", "closecash/view/closecash",
-        "closecash/view/closekeyboard", "closecash/view/closeinfo",
-        "closecash/view/tabpendingreceipts", "closecash/view/tabcountcash",
+        "closecash/model/cashup-steps", "closecash/model/cashup-print",
+        "closecash/model/cashup-model", "closecash/view/closecash", "closecash/view/closekeyboard",
+        "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
+        "closecash/view/tabcashpayments", "closecash/view/tabcountcash",
         "closecash/view/tabcashtokeep", "closecash/view/tabpostprintclose",
         "closecash/components/cashup-modals",
 
@@ -217,7 +219,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/mockpayments",
 
         // Discounts
-        "model/discounts",
+        "model/discounts"
 
     };
 

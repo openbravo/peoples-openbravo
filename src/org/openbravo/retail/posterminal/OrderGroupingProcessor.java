@@ -351,7 +351,8 @@ public class OrderGroupingProcessor {
     Entity sourceEntity = sourceObj.getEntity();
     Entity targetEntity = targetObj.getEntity();
     for (Property p : sourceEntity.getProperties()) {
-      if (targetEntity.hasProperty(p.getName()) && !p.isOneToMany() && !p.isId()) {
+      if (targetEntity.hasProperty(p.getName()) && !p.isOneToMany() && !p.isId()
+          && !p.getName().equals(Entity.COMPUTED_COLUMNS_PROXY_PROPERTY) && !p.isComputedColumn()) {
         targetObj.set(p.getName(), sourceObj.get(p.getName()));
       }
     }
@@ -452,8 +453,9 @@ public class OrderGroupingProcessor {
     invoice.setDaysSalesOutstanding(new Long(0));
     invoice.setOutstandingAmount(BigDecimal.ZERO);
 
-    paymentSchedule.setPaidAmount(paymentSchedule.getAmount());
-    origPaymentSchedule.setAmount(paymentSchedule.getAmount());
+    paymentSchedule.setAmount(grossamount);
+    paymentSchedule.setPaidAmount(grossamount);
+    origPaymentSchedule.setAmount(grossamount);
 
     // Update customer credit
 
@@ -463,8 +465,6 @@ public class OrderGroupingProcessor {
       // We need to convert the total taking into account the currency difference
       total = OrderLoader.convertCurrencyInvoice(invoice);
     }
-    invoice.getBusinessPartner().setCreditUsed(
-        invoice.getBusinessPartner().getCreditUsed().add(total));
 
     OBDal.getInstance().flush();
     log.debug("Finishing invoice: " + (System.currentTimeMillis() - tf));

@@ -50,8 +50,8 @@ public class BusinessPartner extends ProcessHQLQuery {
                 + "(bpl.$incrementalUpdateCriteria or bpl.businessPartner.$incrementalUpdateCriteria or bpl.locationAddress.$incrementalUpdateCriteria or ulist.$incrementalUpdateCriteria) AND bpl.businessPartner.active=true"
                 + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.$readableClientCriteria AND "
                 + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-                + " and ulist.id is null " + " GROUP BY "
-                + regularBusinessPartnerHQLProperties.getHqlGroupBy()
+                + " and (not exists (select 1 from ADUser usr where usr.businessPartner = bpl.businessPartner)) "
+                + " GROUP BY " + regularBusinessPartnerHQLProperties.getHqlGroupBy()
                 + " ORDER BY bpl.businessPartner.name",
             "SELECT"
                 + regularBusinessPartnerHQLProperties.getHqlSelect() //

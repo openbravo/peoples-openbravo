@@ -22,6 +22,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
+import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
@@ -232,7 +233,7 @@ public class POSUtils {
               "from PricingPriceListVersion AS plv "
                   + "where plv.priceList.id ='"
                   + priceListId
-                  + "' and plv.validFromDate = (select max(pplv.validFromDate) "
+                  + "' and plv.active=true and plv.validFromDate = (select max(pplv.validFromDate) "
                   + "from PricingPriceListVersion as pplv where pplv.active=true and pplv.priceList.id = '"
                   + priceListId + "' and to_char(pplv.validFromDate,'yyyy-mm-dd') <= '"
                   + format.format(terminalDate) + "' )");
@@ -395,7 +396,54 @@ public class POSUtils {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
 
+  public static List<Warehouse> getWarehousesForTerminal(OBPOSApplications pOSTerminal) {
+    ArrayList<Warehouse> lstWarehouses = new ArrayList<Warehouse>();
+    OBContext.setAdminMode(false);
+    try {
+      Organization org = pOSTerminal.getOrganization();
+      OBCriteria<OrgWarehouse> warehouses = OBDal.getInstance().createCriteria(OrgWarehouse.class);
+      warehouses.setFilterOnReadableClients(false);
+      warehouses.setFilterOnReadableOrganization(false);
+      warehouses.add(Restrictions.eq(OrgWarehouse.PROPERTY_ORGANIZATION, org));
+      warehouses.addOrderBy(OrgWarehouse.PROPERTY_PRIORITY, true);
+      warehouses.addOrderBy(OrgWarehouse.PROPERTY_ID, true);
+      List<OrgWarehouse> warehouseList = warehouses.list();
+      if (warehouseList.size() == 0) {
+        return null;
+      }
+      for (OrgWarehouse orgWarehouse : warehouseList) {
+        lstWarehouses.add(orgWarehouse.getWarehouse());
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return lstWarehouses;
+  }
+
+  public static Locator getBinForReturns(OBPOSApplications pOSTerminal) {
+    List<Warehouse> lstWarehouses = getWarehousesForTerminal(pOSTerminal);
+    if (lstWarehouses.size() > 0) {
+      for (Warehouse warehouse : lstWarehouses) {
+        if (warehouse.getReturnlocator() != null) {
+          return warehouse.getReturnlocator();
+        }
+      }
+      // We haven't found a warehouse with a return bin
+      // We are going to select the bin with greater priority
+      // of the warehouse of greater priority
+
+      List<Locator> lstLocators = lstWarehouses.get(0).getLocatorList();
+      if (lstLocators.size() > 0) {
+        return lstLocators.get(0);
+      } else {
+        throw new OBException("Warehouse" + lstWarehouses.get(0) + " doesn't have bins");
+      }
+    } else {
+      throw new OBException("Warehouse are not correctly configured for "
+          + pOSTerminal.getIdentifier() + " terminal");
+    }
   }
 
   /**

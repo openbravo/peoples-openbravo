@@ -19,8 +19,14 @@
   OB.Model.Discounts = {
     discountRules: alreadyDefinedRules,
     executor: new OB.Model.DiscountsExecutor(),
+    preventApplyPromotions: false,
     applyPromotions: function (receipt, line) {
       var lines;
+
+      if (this.preventApplyPromotions) {
+        return;
+      }
+
       if (receipt && !receipt.get('isEditable')) {
         return;
       }

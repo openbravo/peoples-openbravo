@@ -127,7 +127,7 @@ enyo.kind({
               name: 'cashtokeepheader',
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
               renderHeader: function (value) {
-                this.setContent(OB.I18N.getLabel('OBPOS_LblStep3of4', [value]));
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStep3of4', [value]) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
               }
             }]
           }]
@@ -213,7 +213,9 @@ enyo.kind({
       }, this);
     }
   },
-  disableSelection: function () {
+  displayStep: function (model) {
+    // this function is invoked when displayed.        
     this.$.formkeep.disableControls();
+    this.setPaymentToKeep(model.get('paymentList').at(model.get('substep')));
   }
 });

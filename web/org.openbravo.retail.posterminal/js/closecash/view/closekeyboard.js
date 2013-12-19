@@ -39,22 +39,66 @@ enyo.kind({
       }]
     });
 
+    // CashPayments step.
+    this.addToolbar({
+      name: 'toolbarcashpayments',
+      buttons: [{
+        command: 'cashpayments',
+        i18nLabel: 'OBPOS_SetQuantity',
+        definition: {
+          action: function (keyboard, amt) {
+            keyboard.model.trigger('action:addUnitToCollection', {
+              coin: keyboard.selectedCoin,
+              amount: parseInt(amt, 10)
+            });
+          }
+        }
+      }, {
+        command: 'resetallcoins',
+        i18nLabel: 'OBPOS_ResetAllCoins',
+        stateless: true,
+        definition: {
+          stateless: true,
+          action: function (keyboard, amt) {
+            keyboard.model.trigger('action:resetAllCoins');
+          }
+        }
+      }, {
+        command: 'opendrawer',
+        i18nLabel: 'OBPOS_OpenDrawer',
+        stateless: true,
+        definition: {
+          stateless: true,
+          action: function (keyboard, amt) {
+            OB.POS.hwserver.openDrawer();
+          }
+        }
+      }]
+    });
+    this.model.on('action:SelectedCoin', function (coin) {
+      this.setStatus('cashpayments');
+      this.selectedCoin = coin;
+    }, this);
+
+
     this.showToolbar('toolbarempty');
 
     this.model.get('paymentList').on('reset', function () {
       var buttons = [];
       this.model.get('paymentList').each(function (payment) {
-        buttons.push({
-          command: payment.get('_id'),
-          definition: {
-            action: function (keyboard, amt) {
-              var convAmt = OB.I18N.parseNumber(amt);
-              payment.set('foreignCounted', OB.DEC.add(0, convAmt));
-              payment.set('counted', OB.DEC.mul(convAmt, payment.get('rate')));
-            }
-          },
-          label: payment.get('name')
-        });
+        if (!payment.get('paymentMethod').iscash || !payment.get('paymentMethod').countcash) {
+          buttons.push({
+            command: payment.get('_id'),
+            definition: {
+              action: function (keyboard, amt) {
+                var convAmt = OB.I18N.parseNumber(amt);
+                payment.set('foreignCounted', OB.DEC.add(0, convAmt));
+                payment.set('counted', OB.DEC.mul(convAmt, payment.get('rate')));
+              }
+            },
+            label: payment.get('name')
+          });
+        }
       }, this);
       if (this.model.get('paymentList').length !== 0) {
         this.addToolbar({

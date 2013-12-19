@@ -15,11 +15,17 @@
     </line>
     <line></line>
     <line>
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblUser')+': '+ OB.POS.modelterminal.get('context').user._identifier) %></text>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.POS.modelterminal.get('terminal').organization$_identifier) %></text>
     </line>
     <line>
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTime')+': '+ OB.I18N.formatDate(cashup.report.get('time')) + ' - ' + OB.I18N.formatHour(cashup.report.get('time')))  %></text>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.POS.modelterminal.get('terminal')._identifier) %></text>
     </line>
+        <line>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier) %></text>
+    </line>
+    <line>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(cashup.report.get('time')) + ' - ' + OB.I18N.formatHour(cashup.report.get('time'))) %></text>
+    </line>   
     <line>
     </line>
     <line>
@@ -65,6 +71,22 @@
      <line>
       <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalRetailTrans')) %></text>
       <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.report.get('totalRetailTransactions')) %></text>
+    </line>
+    <line>
+    </line>
+    <%
+    _.each(cashup.report.get('startings'), function(starting){
+    %>
+    <line>
+      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(starting.description) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(OB.DEC.mul(starting.amount, starting.rate)) %></text>
+    </line>
+    <%
+    });
+    %>
+     <line>
+      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalStarting')) %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.report.get('totalStartings')) %></text>
     </line>
     <line>
     </line>

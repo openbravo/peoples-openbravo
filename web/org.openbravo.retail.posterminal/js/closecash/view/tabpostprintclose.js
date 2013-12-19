@@ -432,7 +432,7 @@ enyo.kind({
           components: [{
             style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
             initComponents: function () {
-              this.setContent(OB.I18N.getLabel('OBPOS_LblStep4of4'));
+              this.setContent(OB.I18N.getLabel('OBPOS_LblStep4of4') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
             }
           }]
         }]
@@ -580,5 +580,34 @@ enyo.kind({
 
     this.$.qtyToDepoTable.setCollection(this.summary.qtyToDepoSummary);
     this.$.qtyToDepoTable.setValue('totalqtyToDepo', this.summary.totalQtyToDepo);
+  },
+  modelChanged: function () {
+
+    this.$.sales.setCollection(this.model.get('salesTaxes'));
+    this.$.sales.setValue('netsales', this.model.get('netSales'));
+    this.$.sales.setValue('totalsales', this.model.get('grossSales'));
+
+    this.$.returns.setCollection(this.model.get('returnsTaxes'));
+    this.$.returns.setValue('netreturns', this.model.get('netReturns'));
+    this.$.returns.setValue('totalreturns', this.model.get('grossReturns'));
+
+    this.$.totaltransactions.setValue('totaltransactionsline', this.model.get('totalRetailTransactions'));
+
+    this.$.startingsTable.setCollection(this.model.get('startings'));
+    this.$.startingsTable.setValue('totalstartings', this.model.get('totalStartings'));
+
+    this.$.dropsTable.setCollection(this.model.get('drops'));
+    this.$.dropsTable.setValue('totaldrops', this.model.get('totalDrops'));
+
+    this.$.depositsTable.setCollection(this.model.get('deposits'));
+    this.$.depositsTable.setValue('totaldeposits', this.model.get('totalDeposits'));
+
+    this.model.on('change:time', function () {
+      this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(this.model.get('time')) + ' - ' + OB.I18N.formatHour(this.model.get('time')));
+    }, this);
+  },
+  displayStep: function (model) {
+    // this function is invoked when displayed.   
+    this.setSummary(model.getCountCashSummary());
   }
 });

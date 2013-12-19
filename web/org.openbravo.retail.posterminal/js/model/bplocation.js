@@ -22,19 +22,6 @@
     local: false,
     saveCustomerAddr: function (silent) {
       var nameLength, newSk;
-      if (!this.get("name")) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
-        return false;
-      }
-
-      if (!this.get("postalCode")) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PostalReqForBPAddress'));
-        return false;
-      }
-      if (!this.get("cityName")) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CityReqForBPAddress'));
-        return false;
-      }
 
       this.set('_identifier', this.get('name'));
       this.trigger('customerAddrSaved');
@@ -76,6 +63,7 @@
         this.set('postalCode', null);
         this.set('cityName', null);
         this.set('country', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry);
+        this.set('countryName', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry_name);
         this.set('client', OB.POS.modelterminal.get('terminal').client);
         this.set('organization', OB.POS.modelterminal.get('terminal').defaultbp_bporg);
         this.set('_identifier', null);
@@ -136,6 +124,10 @@
   }, {
     name: 'cityName',
     column: 'cityName',
+    type: 'TEXT'
+  }, {
+    name: 'countryName',
+    column: 'countryName',
     type: 'TEXT'
   }, {
     name: '_identifier',

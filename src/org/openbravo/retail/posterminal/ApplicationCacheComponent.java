@@ -24,6 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.openbravo.client.kernel.RequestContext;
@@ -38,6 +41,10 @@ import org.openbravo.mobile.core.MobileCoreApplicationCacheComponent;
 public class ApplicationCacheComponent extends MobileCoreApplicationCacheComponent {
 
   private static final String PATH_PREFIX = "web" + File.separatorChar;
+
+  @Inject
+  @Any
+  private Instance<POSAppCacheResourceProvider> resourceProviders;
 
   @Override
   public List<String> getAppList() {
@@ -79,6 +86,11 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
 
     resources
         .add("../../org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS");
+
+    // include all resources defined by other modules
+    for (POSAppCacheResourceProvider resourceProvider : resourceProviders) {
+      resources.addAll(resourceProvider.getResources());
+    }
 
     return resources;
   }

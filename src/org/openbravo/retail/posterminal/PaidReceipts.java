@@ -82,6 +82,7 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceiptLine.put("unitPrice", objpaidReceiptsLines[4]);
         paidReceiptLine.put("lineId", objpaidReceiptsLines[6]);
         paidReceiptLine.put("netPrice", objpaidReceiptsLines[7]);
+        paidReceiptLine.put("priceIncludesTax", paidReceipt.getBoolean("priceIncludesTax"));
 
         // promotions per line
         OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(
