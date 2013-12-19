@@ -1204,6 +1204,11 @@ public class DocFINReconciliation extends AcctServer {
       }
       // Exists line in closed period
       for (FIN_FinaccTransaction line : transactionsToBePosted) {
+        if (line.getDateAcct() == null) {
+          setStatus(STATUS_Error);
+          setMessageResult(conn, STATUS_NoAccountingDate, "error", null);
+          return false;
+        }
         String linePeriod = getOpenPeriod(OBDateUtils.formatDate(line.getDateAcct()),
             reconciliation.getOrganization().getId(), reconciliation.getClient().getId(),
             DOCTYPE_Reconciliation);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,5 +38,12 @@ public enum DataResolvingMode {
   /**
    * Defines that all information of a business object/data is returned.
    */
-  FULL
+  FULL,
+
+  /**
+   * Defines that all information of a business object/data is returned. In case any of the
+   * properties of the object is translatable, it will look for its value translated to the
+   * context's language
+   */
+  FULL_TRANSLATABLE
 }

@@ -108,6 +108,15 @@ isc.ResultSet.addProperties({
         }
       }
     }
+  },
+
+  _original_shouldUseClientSorting: isc.ResultSet.getPrototype().shouldUseClientSorting,
+  shouldUseClientSorting: function () {
+    if (this.grid && this.grid._filteringAndSortingManually) {
+      return false;
+    } else {
+      return this._original_shouldUseClientSorting();
+    }
   }
 });
 
@@ -790,12 +799,19 @@ isc.RPCManager.addClassProperties({
   }
 });
 
-// uncomment this code and put a breakpoint to get a better control
-// on from where async operations are started
-//isc.Class._fireOnPause = isc.Class.fireOnPause;
-//isc.Class.fireOnPause = function(id, callback, delay, target, instanceID) {
-//  isc.Class._fireOnPause(id, callback, delay, target, instanceID);
-//};
+isc.Class.addClassProperties({
+  _originalFireOnPause: isc.Class.fireOnPause,
+  fireOnPause: function (id, callback, delay, target, instanceID) {
+    if (id === 'performFilter') {
+      if (target.currentThresholdToFilter) {
+        delay = target.currentThresholdToFilter;
+      }
+    }
+    this._originalFireOnPause(id, callback, delay, target, instanceID);
+  }
+});
+
+
 // Allow searchs (with full dataset in memory/the datasource) not distinguish
 // between accent or non-accent words
 isc.DataSource.addProperties({
@@ -821,6 +837,22 @@ isc.DataSource.addProperties({
       filterValue = filterValue.replace(/ñ/g, 'n').replace(/Ñ/g, 'N');
     }
     return this._fieldMatchesFilter(fieldValue, filterValue, requestProperties);
+  }
+});
+
+isc.RecordEditor.addProperties({
+  _originalPerformFilter: isc.RecordEditor.getPrototype().performFilter,
+  performFilter: function (suppressPrompt, forceFilter) {
+    var grid = this.parentElement,
+        key = isc.EventHandler.getKey();
+    if (grid.lazyFiltering && !forceFilter && key === 'Enter') {
+      // Pressing the enter key in the filter editor triggers the 'Apply Filter' actions
+      grid.sorter.click();
+      return;
+    }
+    if (!grid.lazyFiltering || forceFilter || grid._cleaningFilter) {
+      this._originalPerformFilter(suppressPrompt);
+    }
   }
 });
 

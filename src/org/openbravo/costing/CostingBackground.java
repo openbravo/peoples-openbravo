@@ -67,12 +67,14 @@ public class CostingBackground extends DalBaseProcess {
           + ".id, " + CostingRule.PROPERTY_CLIENT + ".id) <> -1 ");
       where.append("      and cr." + CostingRule.PROPERTY_VALIDATED + " is true");
       where.append(" )");
+      where.append("    and ad_isorgincluded(o.id, '" + bundle.getContext().getOrganization()
+          + "', '" + bundle.getContext().getClient() + "') <> -1 ");
       OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
           where.toString());
       List<Organization> orgs = orgQry.list();
       List<String> orgsWithRule = new ArrayList<String>();
       if (orgs.size() == 0) {
-        log4j.debug("No organizations with Cosrting Rule defiend");
+        log4j.debug("No organizations with Costing Rule defined");
         logger.logln(OBMessageUtils.messageBD("Success"));
         bundle.setResult(result);
         return;

@@ -18,10 +18,14 @@
  */
 package org.openbravo.client.application;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
@@ -195,6 +199,46 @@ public class ViewComponent extends BaseComponent {
     return etag + "_" + getViewVersionHash();
   }
 
+  /**
+   * This function returns the last grid configuration change made into a window at any level (at
+   * whole system level or just a for particuar tab or field).
+   * 
+   * This value is needed for the eTag calculation, so, if there has been any grid configuration
+   * change, the eTag should change in order to load again the view definition.
+   * 
+   * @param window
+   *          the window to obtain its last grid configuration change
+   * @return a String with the last grid configuration change
+   */
+  private String getLastGridConfigurationChange(Window window) {
+    Date lastModification = new Date(0);
+
+    List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
+    if (!sysConfs.isEmpty()) {
+      if (lastModification.compareTo(sysConfs.get(0).getUpdated()) < 0) {
+        lastModification = sysConfs.get(0).getUpdated();
+      }
+    }
+
+    String tabHql = "select max(updated) from OBUIAPP_GC_Tab where tab.window.id = :windowId";
+    Query qryTabData = OBDal.getInstance().getSession().createQuery(tabHql);
+    qryTabData.setParameter("windowId", window.getId());
+    Date tabUpdated = (Date) qryTabData.uniqueResult();
+    if (tabUpdated != null && lastModification.compareTo(tabUpdated) < 0) {
+      lastModification = tabUpdated;
+    }
+
+    String fieldHql = "select max(updated) from OBUIAPP_GC_Field where obuiappGcTab.tab.window.id = :windowId";
+    Query qryFieldData = OBDal.getInstance().getSession().createQuery(fieldHql);
+    qryFieldData.setParameter("windowId", window.getId());
+    Date fieldUpdated = (Date) qryFieldData.uniqueResult();
+    if (fieldUpdated != null && lastModification.compareTo(fieldUpdated) < 0) {
+      lastModification = fieldUpdated;
+    }
+
+    return lastModification.toString();
+  }
+
   private synchronized String getViewVersionHash() {
     String viewVersionHash = "";
     String viewVersions = "";
@@ -208,6 +252,7 @@ public class ViewComponent extends BaseComponent {
       for (Tab t : window.getADTabList()) {
         viewVersions += t.getTable().isFullyAudited() + "|";
       }
+      viewVersions += getLastGridConfigurationChange(window) + "|";
       viewVersionHash = DigestUtils.md5Hex(viewVersions);
     } finally {
       OBContext.restorePreviousMode();

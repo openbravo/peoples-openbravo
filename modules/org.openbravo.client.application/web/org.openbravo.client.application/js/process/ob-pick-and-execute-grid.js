@@ -106,6 +106,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     // required to show the funnel icon and to work
     this.filterClause = this.gridProperties.filterClause;
     this.sqlFilterClause = this.gridProperties.sqlFilterClause;
+    this.lazyFiltering = this.gridProperties.lazyFiltering;
     if ((this.filterClause || this.sqlFilterClause) && this.gridProperties.filterName) {
       this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.gridProperties.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
       this.view.messageBar.hasFilterMessage = true;

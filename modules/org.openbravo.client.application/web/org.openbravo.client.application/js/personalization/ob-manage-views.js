@@ -164,7 +164,9 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
         //clear grouping, will be applied later
         view.viewGrid.clearGroupBy();
         view.viewGrid.setViewState(viewTabDefinition.grid);
-        view.viewGrid.refreshContents();
+        if (!view.viewGrid.lazyFiltering) {
+          view.viewGrid.refreshContents();
+        }
       }
       if (viewTabDefinition.form) {
         OB.Personalization.personalizeForm(viewTabDefinition, view.viewForm);

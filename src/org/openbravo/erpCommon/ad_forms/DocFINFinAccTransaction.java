@@ -730,11 +730,17 @@ public class DocFINFinAccTransaction extends AcctServer {
     StringBuffer sb = new StringBuffer(" [");
     // Total
     retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
+
+    FIN_Payment payment = OBDal.getInstance().get(FIN_FinaccTransaction.class, Record_ID).getFinPayment();
+    // if payment IN/OUT is in Multi-Currency then get Multi-Currency amount field because FIN_Payment line amount is in that currency.
+    if (payment != null) {
+      if (!payment.getAccount().getCurrency().getId().equalsIgnoreCase(payment.getCurrency().getId())) {
+        retValue = payment.getAmount();
+      }
+    }
     if (usedCredit.compareTo(ZERO) != 0 && generatedCredit.compareTo(ZERO) == 0)
       retValue = retValue.add(usedCredit);
     sb.append(retValue);
-    FIN_Payment payment = OBDal.getInstance().get(FIN_FinaccTransaction.class, Record_ID)
-        .getFinPayment();
     if (payment != null) {
       retValue = retValue.add(payment.isReceipt() ? payment.getWriteoffAmount() : payment
           .getWriteoffAmount().negate());

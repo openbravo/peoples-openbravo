@@ -118,6 +118,21 @@ isc.OBTextFilterItem.addProperties({
   allowExpressions: true,
   validateAgainstMask: false,
 
+  init: function () {
+    var field = this.grid.getField(this.name);
+    if (field && field.gridProps && field.gridProps.filterOnChange === false) {
+      this.actOnKeypress = false;
+    }
+    this.Super('init', arguments);
+  },
+
+  blur: function () {
+    if (this.actOnKeypress === false) {
+      this.form.grid.performAction();
+    }
+    return this.Super('blur', arguments);
+  },
+
   // solve a small bug in the value expressions
   buildValueExpressions: function () {
     var ret = this.Super('buildValueExpressions', arguments);

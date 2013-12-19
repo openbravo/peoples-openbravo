@@ -1156,9 +1156,6 @@ public class OBViewFieldHandler {
         return true;
       }
       final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-      if (prop.isParent() && getWindowEntities().contains(prop.getTargetEntity().getName())) {
-        return false;
-      }
       if (prop.isId()) {
         return false;
       }
@@ -1220,6 +1217,8 @@ public class OBViewFieldHandler {
     }
 
     public String getFieldProperties() {
+      // First obtain the gridConfigurationSettings which will be used in other places
+      getUIDefinition().establishGridConfigurationSettings(field);
 
       if (getClientClass().length() > 0) {
         return "editorType: 'OBClientClassCanvasItem', filterEditorType: 'TextItem', ";

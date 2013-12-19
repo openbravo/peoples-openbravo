@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,12 @@ public class BinaryUIDefinition extends UIDefinition {
   // in a grid
   @Override
   public String getGridFieldProperties(Field field) {
-    return super.getGridFieldProperties(field) + ", canSort: false, canEdit: false";
+    String superFieldProps = super.getGridFieldProperties(field);
+    // If there is a previous 'canSort' set, remove it to avoid collision when the new one is set
+    // later
+    superFieldProps = removeAttributeFromString(superFieldProps, "canSort");
+
+    return superFieldProps + ", canSort: false, canEdit: false";
   }
 
   @Override

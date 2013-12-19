@@ -45,6 +45,9 @@
   <#if data.filterName != "">
   filterName: '${data.filterName?js_string}',
   </#if>
+  <#if data.lazyFiltering>
+  lazyFiltering: ${data.lazyFiltering?string},
+  </#if>    
   dummy: true
 </@compress>
 }

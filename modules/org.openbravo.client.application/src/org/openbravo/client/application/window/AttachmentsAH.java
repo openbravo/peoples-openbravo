@@ -115,6 +115,7 @@ public class AttachmentsAH extends BaseActionHandler {
         attachmentobj.put("name", attachment.getName());
         attachmentobj.put("age", (new Date().getTime() - attachment.getUpdated().getTime()));
         attachmentobj.put("updatedby", attachment.getUpdatedBy().getName());
+        attachmentobj.put("description", attachment.getText());
       } catch (Exception e) {
         throw new OBException("Error while reading attachments:", e);
       }

@@ -49,7 +49,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
@@ -66,12 +65,12 @@ public class AdvancedQueryBuilder {
   private static final String CRITERIA_KEY = "criteria";
   private static final String VALUE_KEY = "value";
   private static final String FIELD_NAME_KEY = "fieldName";
-  private static final String EXISTS_QUERY_KEY = "existsQuery";
+  public static final String EXISTS_QUERY_KEY = "existsQuery";
   private static final String OPERATOR_KEY = "operator";
   private static final String ALIAS_PREFIX = "alias_";
   private static final String JOIN_ALIAS_PREFIX = "join_";
   private static final char ESCAPE_CHAR = '|';
-  private static final String EXISTS_VALUE_HOLDER = "$value";
+  public static final String EXISTS_VALUE_HOLDER = "$value";
 
   private static final String OPERATOR_AND = "and";
   static final String OPERATOR_OR = "or";
@@ -120,7 +119,7 @@ public class AdvancedQueryBuilder {
   private static final String OPERATOR_BETWEENINCLUSIVE = "betweenInclusive";
   private static final String OPERATOR_IBETWEEN = "iBetween";
   private static final String OPERATOR_IBETWEENINCLUSIVE = "iBetweenInclusive";
-  private static final String OPERATOR_EXISTS = "exists";
+  public static final String OPERATOR_EXISTS = "exists";
 
   private JSONObject criteria = null;
 
@@ -576,16 +575,12 @@ public class AdvancedQueryBuilder {
     // property is not part of the identifier. Also hyphen is accepted if
     // the property is the unique property of the identifier
     if (property.isIdentifier()) {
-      // column associated with the property
-      final Column relatedColumn = OBDal.getInstance().get(Column.class, property.getColumnId());
-      final Table relatedTable = relatedColumn.getTable();
-
       // TODO: this can be improved the left clause computation
       // correctly uses a || concatenation, so the value clause
       // can also be made more advanced.
       // Also filtering by date and number values can be a problem
       // maybe use a pragmatic approach there
-      if (isTableWithMultipleIdentifierColumns(relatedTable)) {
+      if (property.getEntity().getIdentifierProperties().size() > 1) {
         // if the value consists of multiple parts then filtering won't work
         // only search on the first part then, is pragmatic but very workable
         if (localValue != null && localValue.toString().contains(IdentifierProvider.SEPARATOR)) {
@@ -633,22 +628,6 @@ public class AdvancedQueryBuilder {
     return clause;
   }
 
-  /* Return true if the identifier of the table is composed of more than one column */
-  private Boolean isTableWithMultipleIdentifierColumns(Table relatedTable) {
-    int identifierCounter = 0;
-    for (Column curColumn : relatedTable.getADColumnList()) {
-      if (curColumn.isIdentifier()) {
-        identifierCounter += 1;
-        if (identifierCounter > 1) {
-          // if there are more than one identifier return true
-          return true;
-        }
-      }
-    }
-    // only one identifier. Is not multiple
-    return false;
-  }
-
   private Object getTypeSafeValue(String operator, Property property, Object value)
       throws JSONException {
     if (value == null) {
@@ -656,14 +635,16 @@ public class AdvancedQueryBuilder {
     }
 
     if (isLike(operator)) {
-      if (operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_NOTCONTAINS)
-          || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_ICONTAINS)
+      if (operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_ICONTAINS)
           || operator.equals(OPERATOR_CONTAINSFIELD)) {
         return "%" + escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
-      } else if (operator.equals(OPERATOR_NOTSTARTSWITH)
-          || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)
-          || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_STARTSWITHFIELD)) {
+      } else if (operator.equals(OPERATOR_NOTCONTAINS) || operator.equals(OPERATOR_CONTAINS)) {
+        return "%" + escapeLike(value.toString()).replaceAll(" ", "%") + "%";
+      } else if (operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
+          || operator.equals(OPERATOR_STARTSWITHFIELD)) {
         return escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
+      } else if (operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)) {
+        return escapeLike(value.toString()).replaceAll(" ", "%") + "%";
       } else {
         return "%" + escapeLike(value.toString());
       }
@@ -888,17 +869,35 @@ public class AdvancedQueryBuilder {
     throw new IllegalArgumentException("Operator not supported " + operator);
   }
 
+  private boolean ignoreCase(List<Property> properties, String operator) {
+    boolean operatorCase = operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
+        || operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ENDSWITH)
+        || operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ICONTAINS)
+        || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_INOTENDSWITH)
+        || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_NOTCONTAINS)
+        || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
+        || operator.equals(OPERATOR_IENDSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
+        || operator.equals(OPERATOR_IBETWEEN) || operator.equals(OPERATOR_IGREATEROREQUAL)
+        || operator.equals(OPERATOR_ILESSOREQUAL) || operator.equals(OPERATOR_IGREATERTHAN)
+        || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_IBETWEENINCLUSIVE);
+
+    for (Property property : properties) {
+      if (!property.isPrimitive()
+          || (!property.isNumericType() && !property.isDate() && !property.isDatetime())) {
+        return operatorCase;
+      }
+    }
+    return false;
+  }
+
   private boolean ignoreCase(Property property, String operator) {
     if (property.isPrimitive()
         && (property.isNumericType() || property.isDate() || property.isDatetime())) {
       return false;
     }
     return operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
-        || operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ENDSWITH)
-        || operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ICONTAINS)
-        || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_INOTENDSWITH)
-        || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_NOTCONTAINS)
-        || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
+        || operator.equals(OPERATOR_ICONTAINS) || operator.equals(OPERATOR_INOTSTARTSWITH)
+        || operator.equals(OPERATOR_INOTENDSWITH) || operator.equals(OPERATOR_INOTCONTAINS)
         || operator.equals(OPERATOR_IENDSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
         || operator.equals(OPERATOR_IBETWEEN) || operator.equals(OPERATOR_IGREATEROREQUAL)
         || operator.equals(OPERATOR_ILESSOREQUAL) || operator.equals(OPERATOR_IGREATERTHAN)

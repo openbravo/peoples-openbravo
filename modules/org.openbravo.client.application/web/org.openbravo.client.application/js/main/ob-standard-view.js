@@ -283,7 +283,7 @@ isc.OBStandardView.addProperties({
   },
 
   buildStructure: function () {
-    var length, i, fld;
+    var length, i, fld, lazyFiltering;
     this.createMainParts();
     this.createViewStructure();
     if (this.childTabSet && this.childTabSet.tabs.length === 0) {
@@ -303,10 +303,14 @@ isc.OBStandardView.addProperties({
       this.standardWindow.lastViewApplied = true;
     }
 
+    if (this.viewGrid) {
+      lazyFiltering = this.viewGrid.lazyFiltering;
+    }
+
     // directTabInfo is set when we are in direct link mode, i.e. directly opening
     // a specific tab with a record, the direct link logic will already take care
     // of fetching data
-    if (this.isRootView && !this.standardWindow.directTabInfo) {
+    if (this.isRootView && !this.standardWindow.directTabInfo && !lazyFiltering) {
       if (!this.standardWindow.checkIfDefaultSavedView()) {
         this.viewGrid.fetchData(this.viewGrid.getCriteria());
       }
