@@ -310,9 +310,7 @@
               if (cashMgmtSuccessCallback) {
                 cashMgmtSuccessCallback();
               }
-              if (cashUpSuccessCallback) {
-                OB.UTIL.processCashUp(cashUpSuccessCallback);
-              }
+              OB.UTIL.processCashUp(cashUpSuccessCallback);
             });
           });
           return;
@@ -327,9 +325,7 @@
               if (cashMgmtSuccessCallback) {
                 cashMgmtSuccessCallback();
               }
-              if (cashUpSuccessCallback) {
-                OB.UTIL.processCashUp(cashUpSuccessCallback);
-              }
+              OB.UTIL.processCashUp(cashUpSuccessCallback);
             });
           });
         };

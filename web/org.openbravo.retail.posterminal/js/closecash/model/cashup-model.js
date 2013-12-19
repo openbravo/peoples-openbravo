@@ -34,7 +34,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
         totalStartings = 0,
         startings = [],
         cashUpReport, tempList = new Backbone.Collection();
-    this.arePendingOrdersToBeProcess();
 
     //steps
     this.set('step', 1);
@@ -270,19 +269,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.WindowModel.extend({
   },
   showPostPrintClose: function () {
     return this.get('step') === 4;
-  },
-  //Step (pre) 1
-  arePendingOrdersToBeProcess: function () {
-    OB.Dal.find(OB.Model.Order, {
-      hasbeenpaid: 'Y'
-    }, function (fetchedOrderList, me) { //OB.Dal.find success
-      var currentOrder = {};
-      if (fetchedOrderList && fetchedOrderList.length !== 0) {
-        me.set('pendingOrdersToProcess', true);
-      }
-    }, function (tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
-    }, this);
   },
   // Step 2: logic, expected vs counted 
   countAll: function () {

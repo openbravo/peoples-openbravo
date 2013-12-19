@@ -455,7 +455,7 @@ enyo.kind({
 OB.POS.registerWindow({
   windowClass: OB.OBPOSCashUp.UI.CashUp,
   route: 'retail.cashup',
-  online: true,
+  online: false,
   menuPosition: 20,
   menuI18NLabel: 'OBPOS_LblCloseCash',
   permission: 'OBPOS_retail.cashup'
