@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -76,25 +76,37 @@ public class Category extends ProcessHQLQuery {
         + "(ppp.$incrementalUpdateCriteria) AND (pplv.$incrementalUpdateCriteria))"
         + "AND pCat.active = true order by pCat.name");
 
+    String promoNameTrl;
+    if (OBContext.hasTranslationInstalled()) {
+      promoNameTrl = "coalesce ((select t.commercialName from PromotionTypeTrl t where t.discountPromotionType=pt and t.language='"
+          + OBContext.getOBContext().getLanguage().getLanguage() + "'), pt.commercialName)";
+    } else {
+      promoNameTrl = "pt.commercialName";
+    }
+
     // Discounts marked as category
-    hqlQueries
-        .add("select pt.id as id, pt.commercialName as searchKey, pt.commercialName as name, img.bindaryData as img, pt.commercialName as _identifier"
-            + " from PromotionType as pt left outer join pt.obposImage img " //
-            + "where pt.obposIsCategory = true "//
-            + "  and pt.active = true "//
-            + "  and pt.$readableClientCriteria" //
-            + "  and (pt.$incrementalUpdateCriteria)"//
-            + "  and exists (select 1"//
-            + "                from PricingAdjustment p " //
-            + "               where p.discountType.active = true " //
-            + "                 and p.active = true"//
-            + "                 and p.discountType = pt"//
-            + "                 and (p.endingDate is null or p.endingDate >= TO_DATE('"
-            + format.format(now.getTime())
-            + "','yyyy/MM/dd'))" //
-            + "                 and p.startingDate <= TO_DATE('"
-            + format.format(now.getTime())
-            + "', 'yyyy/MM/dd'))");
+    hqlQueries.add("select pt.id as id, "
+        + promoNameTrl
+        + " as searchKey, "
+        + promoNameTrl
+        + " as name, img.bindaryData as img, "
+        + promoNameTrl
+        + " as _identifier"
+        + " from PromotionType as pt left outer join pt.obposImage img " //
+        + "where pt.obposIsCategory = true "//
+        + "  and pt.active = true "//
+        + "  and pt.$readableClientCriteria" //
+        + "  and (pt.$incrementalUpdateCriteria)"//
+        + "  and exists (select 1"//
+        + "                from PricingAdjustment p " //
+        + "               where p.discountType.active = true " //
+        + "                 and p.active = true"//
+        + "                 and p.discountType = pt"//
+        + "                 and (p.endingDate is null or p.endingDate >= TO_DATE('"
+        + format.format(now.getTime())
+        + "','yyyy/MM/dd'))" //
+        + "                 and p.startingDate <= TO_DATE('" + format.format(now.getTime())
+        + "', 'yyyy/MM/dd'))");
 
     return hqlQueries;
   }

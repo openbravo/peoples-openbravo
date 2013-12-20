@@ -1,3 +1,12 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2013 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
@@ -21,9 +30,18 @@ public class ProductProperties extends ModelExtension {
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {
+        String trlName;
+        if (OBContext.hasTranslationInstalled()) {
+          trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
+              + OBContext.getOBContext().getLanguage().getLanguage()
+              + "'  and pt.product=product), product.name)";
+        } else {
+          trlName = "product.name";
+        }
+
         add(new HQLProperty("product.id", "id"));
         add(new HQLProperty("product.searchKey", "searchkey"));
-        add(new HQLProperty("product.name", "_identifier"));
+        add(new HQLProperty(trlName, "_identifier"));
         add(new HQLProperty("product.taxCategory.id", "taxCategory"));
         add(new HQLProperty("product.productCategory.id", "productCategory"));
         add(new HQLProperty("product.obposScale", "obposScale"));

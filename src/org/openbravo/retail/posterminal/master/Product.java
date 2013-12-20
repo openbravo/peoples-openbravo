@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -89,8 +89,19 @@ public class Product extends ProcessHQLQuery {
             + "((pli.$incrementalUpdateCriteria) or (pli.product.$incrementalUpdateCriteria) or (ppp.$incrementalUpdateCriteria) ) order by pli.product.name");
 
     // discounts which type is defined as category
+    String discountNameTrl;
+    if (OBContext.hasTranslationInstalled()) {
+      discountNameTrl = "coalesce ((select pt.name from PricingAdjustmentTrl pt where pt.promotionDiscount=p and pt.language='"
+          + OBContext.getOBContext().getLanguage().getLanguage() + "'), p.name) ";
+    } else {
+      discountNameTrl = "p.name";
+    }
     products
-        .add("select p.id as id, p.name as searchkey, p.name as _identifier, p.discountType.id as productCategory, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, '[[null]]' as generic_product_id, 'false' as showchdesc, 'true' as ispack, 'false' as isGeneric , 'false' as stocked"//
+        .add("select p.id as id, "
+            + discountNameTrl
+            + " as searchkey, "
+            + discountNameTrl
+            + " as _identifier, p.discountType.id as productCategory, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, '[[null]]' as generic_product_id, 'false' as showchdesc, 'true' as ispack, 'false' as isGeneric , 'false' as stocked"//
             + "  from PricingAdjustment as p left outer join p.obdiscImage img" //
             + " where p.discountType.obposIsCategory = true "//
             + "   and p.discountType.active = true " //
@@ -99,8 +110,7 @@ public class Product extends ProcessHQLQuery {
             + "   and (p.endingDate is null or p.endingDate >= TO_DATE('"
             + format.format(now.getTime())
             + "', 'yyyy/MM/dd'))" //
-            + "   and p.startingDate <= TO_DATE('"
-            + format.format(now.getTime())
+            + "   and p.startingDate <= TO_DATE('" + format.format(now.getTime())
             + "', 'yyyy/MM/dd')" + "   and (p.$incrementalUpdateCriteria) "//
         );
 

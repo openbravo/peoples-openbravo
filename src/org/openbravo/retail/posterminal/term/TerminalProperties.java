@@ -13,12 +13,20 @@ import java.util.List;
 
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.retail.posterminal.POSUtils;
+import org.openbravo.retail.posterminal.PrintTemplate;
 import org.openbravo.service.json.JsonConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Qualifier(Terminal.terminalPropertyExtension)
 public class TerminalProperties extends ModelExtension {
+
+  private static Logger log = LoggerFactory.getLogger(TerminalProperties.class);
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
@@ -51,10 +59,43 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.obposTerminaltype.allowpayoncredit", "allowpayoncredit"));
     list.add(new HQLProperty("pos.defaultwebpostab", "defaultwebpostab"));
     list.add(new HQLProperty("postype", "terminalType"));
+
+    addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSTICKETTEMPLATE, "printTicketTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSRETURNTEMPLATE, "printReturnTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSINVOICETEMPLATE, "printInvoiceTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSRETINVTEMPLATE, "printReturnInvoiceTemplate",
+        list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSLAYAWAYTEMPLATE, "printLayawayTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSCLOSEDRECEIPTTEMP, "printClosedReceiptTemplate",
+        list);
+
     return list;
+  }
+
+  protected String getTemplateHQLForProperty(String property) {
+    // cannot query directly for template path: it is a compound hql path that results in a SQL
+    // inner join not returning null values
+    return "(select case when t is not null then t.templatePath else null end from OBPOS_Print_Template t where t = "
+        + property + ")";
   }
 
   private String getIdentifierAlias(String propertyName) {
     return propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
+  }
+
+  protected void addTemplateProperty(String propertyName, String alias, List<HQLProperty> list) {
+    try {
+      OBContext.setAdminMode();
+      PrintTemplate value = (PrintTemplate) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
+          .getCurrentOrganization(), propertyName);
+      if (value != null) {
+        list.add(new HQLProperty("'" + value.getTemplatePath() + "'", alias));
+      }
+    } catch (Exception e) {
+      log.error("Error getting property " + propertyName, e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }

@@ -25,11 +25,13 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.openbravo.client.kernel.BaseComponent;
 import org.openbravo.client.kernel.BaseComponentProvider;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.mobile.core.MobileCoreConstants;
+import org.openbravo.retail.posterminal.locale.POSApplicationFormatComponent;
 
 /**
  * @author iperdomo
@@ -46,14 +48,21 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
   }
 
   public static final String QUALIFIER = "OBPOS_Main";
+  public static final String APP_FORMAT = "ApplicationFormats";
 
   @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
+    final BaseComponent component = createComponent(componentId, parameters);
+    component.setId(componentId);
+    component.setParameters(parameters);
+    return component;
+  }
+
+  public BaseComponent createComponent(String componentId, Map<String, Object> parameters) {
     if (componentId.equals(MobileCoreConstants.APP_CACHE_COMPONENT)) {
-      final ApplicationCacheComponent component = getComponent(ApplicationCacheComponent.class);
-      component.setId(componentId);
-      component.setParameters(parameters);
-      return component;
+      return getComponent(ApplicationCacheComponent.class);
+    } else if (componentId.equals(APP_FORMAT)) {
+      return getComponent(POSApplicationFormatComponent.class);
     }
     throw new IllegalArgumentException("Component id " + componentId + " not supported.");
   }
@@ -103,7 +112,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalreceiptlineproperties",
         "components/modalnoteditableorder",
         "components/modalnoteditableline",
-        "components/modalmultiorders",
         "components/obpos-approval",
         "main",
         // Web POS window
@@ -137,6 +145,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/menu",
         // Old Tickets
         "components/modalpaidreceipts",
+        "components/modalmultiorders",
         // Quotations
         "components/modalcreateorderfromquotation",
         "components/modalreactivatequotation",

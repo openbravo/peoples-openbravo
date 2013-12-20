@@ -461,4 +461,19 @@ public class POSUtils {
     Date currentDate = cal.getTime();
     return currentDate;
   }
+
+  /**
+   * Gets the value of a given property in Organization entity looking the the org tree and getting
+   * the first not null value
+   */
+  public static Object getPropertyInOrgTree(Organization org, String propertyName) {
+    for (String orgId : OBContext.getOBContext().getOrganizationStructureProvider()
+        .getParentList(org.getId(), true)) {
+      Organization orgInTree = OBDal.getInstance().get(Organization.class, orgId);
+      if (orgInTree.get(propertyName) != null) {
+        return orgInTree.get(propertyName);
+      }
+    }
+    return null;
+  }
 }
