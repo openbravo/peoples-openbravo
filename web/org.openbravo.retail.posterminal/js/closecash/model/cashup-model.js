@@ -30,8 +30,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     //Check for orders wich are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
-    var undf, me = this, newstep,
-        expected = 0,
+    var undf, me = this,
+        newstep, expected = 0,
         totalStartings = 0,
         startings = [],
         cashUpReport, tempList = new Backbone.Collection();
@@ -428,25 +428,17 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         cashUp.at(0).set('isbeingprocessed', 'Y');
         OB.Dal.save(cashUp.at(0), null, null);
         if (OB.MobileApp.model.get('connectedToERP')) {
-          OB.MobileApp.model.runSyncProcess(null, null, null, function () {
-            OB.UTIL.initCashUp(function () {
-              OB.UTIL.showLoading(false);
-              //            	 FIXME: Should we delete these two lines?
-              //               me.set('messages', data.messages);
-              //               me.set('next', data.next);
-              me.set("finished", true);
-              if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
-                me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
-              }
-            });
-
+          OB.UTIL.initCashUp(function () {
+            OB.MobileApp.model.runSyncProcess(null, null, null, null);
+            OB.UTIL.showLoading(false);
+            me.set("finished", true);
+            if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
+              me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
+            }
           });
         } else {
           OB.Dal.save(cashUp.at(0), null, null);
           OB.UTIL.showLoading(false);
-          //        	 FIXME: Should we delete these two lines?
-          //           me.set('messages', data.messages);
-          //           me.set('next', data.next);
           me.set("finished", true);
           if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
             me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
