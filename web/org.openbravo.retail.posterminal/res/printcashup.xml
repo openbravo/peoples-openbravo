@@ -220,5 +220,57 @@
     </line>
     <line>
     </line>
+    <%
+    _.each(cashup.summary.qtyToKeepSummary, function(payment) {
+   if (payment.second && payment.second !== payment.value) {
+    %>
+    <line>
+      <text align ="left" length="18"><%= OB.UTIL.encodeXMLComponent(payment.name) %></text>
+      <text align ="right" length="11"><%= '(' + OB.I18N.formatCurrency(payment.second) + ' ' + payment.isocode + ')' %></text>
+      <text align ="right" length="10"><%= OB.I18N.formatCurrency(payment.value) %></text>
+    </line>
+    <%
+    }else{
+     %>
+    <line>
+      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(payment.name) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.value) %></text>
+    </line>
+    <%
+    }
+    });
+    %>
+    <line>
+      <text align ="left" length="25" bold="true"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalQtyToKeep')) %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.summary.totalQtyToKeep) %></text>
+    </line>
+    <line>
+    </line>
+    <%
+    _.each(cashup.summary.qtyToDepoSummary, function(payment) {
+   if (payment.second && payment.second !== payment.value) {
+    %>
+    <line>
+      <text align ="left" length="18"><%= OB.UTIL.encodeXMLComponent(payment.name) %></text>
+      <text align ="right" length="11"><%= '(' + OB.I18N.formatCurrency(payment.second) + ' ' + payment.isocode + ')' %></text>
+      <text align ="right" length="10"><%= OB.I18N.formatCurrency(payment.value) %></text>
+    </line>
+    <%
+    }else{
+     %>
+    <line>
+      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(payment.name) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.value) %></text>
+    </line>
+    <%
+    }
+    });
+    %>
+    <line>
+      <text align ="left" length="25" bold="true"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalQtyToDepo')) %></text>
+      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.summary.totalQtyToDepo) %></text>
+    </line>
+    <line>
+    </line>
   </ticket>
 </output>
