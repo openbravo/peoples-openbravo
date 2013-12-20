@@ -392,7 +392,7 @@ public class KernelUtils {
       return null;
     }
 
-    ConnectionProvider connection = new DalConnectionProvider();
+    ConnectionProvider connection = new DalConnectionProvider(false);
     Tab targetTab = null;
     String tabId = null;
     try {
@@ -418,7 +418,7 @@ public class KernelUtils {
    * @return The list of subtabs of the given tab, an empty List if the tab has none
    */
   public List<Tab> getTabSubtabs(Tab tab, boolean onlyFirstLevel) {
-    ConnectionProvider connection = new DalConnectionProvider();
+    ConnectionProvider connection = new DalConnectionProvider(false);
     Long seqno = tab.getSequenceNumber();
     Long tabLevel = tab.getTabLevel();
     String windowId = tab.getWindow().getId();
