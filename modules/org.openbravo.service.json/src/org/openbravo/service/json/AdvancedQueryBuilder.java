@@ -1196,7 +1196,7 @@ public class AdvancedQueryBuilder {
     if (isIdentifier) {
       Entity searchEntity = getEntity();
       // a path to an entity, find the last entity
-      final String prefix;
+      String prefix;
       if (!localOrderBy.equals(JsonConstants.IDENTIFIER)) {
         // be lazy get the last property, it belongs to the last entity
         final Property prop = DalUtil.getPropertyFromPath(searchEntity, localOrderBy);
@@ -1204,6 +1204,13 @@ public class AdvancedQueryBuilder {
             + searchEntity);
         searchEntity = prop.getEntity();
         prefix = localOrderBy.substring(0, localOrderBy.lastIndexOf(DalUtil.DOT) + 1);
+
+        String originalPropName = localOrderBy.replace(DalUtil.DOT + JsonConstants.IDENTIFIER, "");
+        Property originalProp = DalUtil.getPropertyFromPath(getEntity(), originalPropName);
+        if (originalProp.isComputedColumn()) {
+          prefix += Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + prefix;
+        }
+
       } else {
         prefix = "";
       }
@@ -1226,13 +1233,6 @@ public class AdvancedQueryBuilder {
         }
       }
     } else {
-      Entity searchEntity = getEntity();
-      Property property = searchEntity.getProperty(localOrderBy, false);
-      if (property != null && property.isComputedColumn()) {
-        // Computed columns are accessed through proxy
-        localOrderBy = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + localOrderBy;
-      }
-
       paths.add(localOrderBy);
     }
 
@@ -1430,8 +1430,16 @@ public class AdvancedQueryBuilder {
       return alias;
     }
     Property prop = props.get(props.size() - 1);
-    String propName = prop.isComputedColumn() ? Entity.COMPUTED_COLUMNS_PROXY_PROPERTY
-        + DalUtil.DOT + prop.getName() : prop.getName();
+    String propName = null;
+    if (props.get(0).isComputedColumn()) {
+      propName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY;
+      for (Property p : props) {
+        propName += DalUtil.DOT + p.getName();
+      }
+    } else {
+      propName = prop.getName();
+    }
+
     return alias + DalUtil.DOT + propName;
   }
 
@@ -1461,14 +1469,18 @@ public class AdvancedQueryBuilder {
     }
 
     public String getJoinStatement() {
+      String propName;
+      if (property.isComputedColumn()) {
+        propName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + property.getName();
+      } else {
+        propName = property.getName();
+      }
       if (orNesting > 0) {
         return " left outer join " + (fetchJoin ? "fetch " : "")
-            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + property.getName() + " as "
-            + joinAlias;
+            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + propName + " as " + joinAlias;
       } else {
         return " left join " + (fetchJoin ? "fetch " : "")
-            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + property.getName() + " as "
-            + joinAlias;
+            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + propName + " as " + joinAlias;
       }
     }
 
