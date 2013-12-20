@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -267,6 +267,9 @@ isc.OBImageItem.addProperties({
   refreshImage: function (imageId) {
     //If creating/replacing an image, the form is marked as modified
     //and the image id is set as the value of the item
+    if (typeof imageId === 'undefined') {
+      imageId = '';
+    }
     this.setValue(imageId);
     this.form.itemChangeActions();
   }
