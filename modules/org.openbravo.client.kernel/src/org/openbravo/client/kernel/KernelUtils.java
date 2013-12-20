@@ -392,7 +392,7 @@ public class KernelUtils {
       return null;
     }
 
-    ConnectionProvider connection = new DalConnectionProvider();
+    ConnectionProvider connection = new DalConnectionProvider(false);
     Tab targetTab = null;
     String tabId = null;
     try {
