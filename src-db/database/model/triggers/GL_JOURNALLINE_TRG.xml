@@ -33,9 +33,29 @@ BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
-    
+
+  --Check if it is necessary to substract old amount and add new amount when you are updating but not the currency (issue 24755)  
+  IF(UPDATING) THEN
+    IF (:old.c_currency_id=:new.c_currency_id) THEN
+      IF(:old.IsActive='Y') THEN
+        UPDATE GL_Journal
+          SET TotalDr=TotalDr - :old.AmtSourceDr,
+	  TotalCr=TotalCr - :old.AmtSourceCr
+        WHERE GL_Journal_ID=:old.GL_Journal_ID;
+      END IF;
+      IF((:new.AmtSourceDr=0) and (:new.AmtSourceCr=0))THEN
+        RAISE_APPLICATION_ERROR(-20000, '@APRM_JSAMOUNTDIFFTOZERO@') ;
+      END IF;
+      IF(:new.IsActive='Y') THEN
+        UPDATE GL_Journal
+  	  SET TotalDr=TotalDr + :new.AmtSourceDr,
+	  TotalCr=TotalCr + :new.AmtSourceCr
+        WHERE GL_Journal_ID=:new.GL_Journal_ID;
+      END IF;
+    END IF;  
+  END IF;  
   -- Subtract Old Amount
-  IF(UPDATING OR DELETING) THEN
+  IF(DELETING) THEN
     IF(:old.IsActive='Y') THEN
       UPDATE GL_Journal
         SET TotalDr=TotalDr - :old.AmtSourceDr,
@@ -44,7 +64,7 @@ BEGIN
     END IF;
   END IF;
   -- Add new Amount
-  IF(INSERTING OR UPDATING) THEN
+  IF(INSERTING) THEN
     IF((:new.AmtSourceDr=0) and (:new.AmtSourceCr=0))THEN
      RAISE_APPLICATION_ERROR(-20000, '@APRM_JSAMOUNTDIFFTOZERO@') ;
     END IF;
