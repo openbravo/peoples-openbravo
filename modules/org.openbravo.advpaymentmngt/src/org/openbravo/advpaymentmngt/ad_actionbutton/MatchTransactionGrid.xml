@@ -30,7 +30,7 @@
     <!--FIELD id="fieldBLId" attribute="name" replace="xx">finBankLineId</FIELD-->
     <FIELD id="fieldBLTransactionDate">bankLineTransactionDate</FIELD>
     <FIELD id="fieldBLBusinessPartner">bankLineBusinessPartner</FIELD>
-    <FIELD id="fieldBLBusinessPartner" attribute="title">bankLineDescription</FIELD>
+    <FIELD id="fieldBLBusinessPartnerCeld" attribute="title">bankLineDescription</FIELD>
     <FIELD id="fieldBLBusinessPartner" attribute="style" replace="xx">textcolor</FIELD>
     <FIELD id="fieldBLReferenceNo">bankLineReferenceNo</FIELD>
     <FIELD id="inpBSAmount_xx" attribute="value" format="euroEdition">bankLineAmount</FIELD>
