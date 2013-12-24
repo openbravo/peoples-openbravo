@@ -39,6 +39,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.UniqueConstraint;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
@@ -48,6 +49,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.SecurityChecker;
+import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -69,12 +71,23 @@ public class OBDal implements OBSingleton {
 
   private static OBDal instance;
 
+  private static ExternalConnectionPool externalConnectionPool;
+
   /**
    * @return the singleton instance of the OBDal service
    */
   public static OBDal getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(OBDal.class);
+      String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("bbdd.externalPoolClassName");
+      if (poolClassName != null) {
+        try {
+          externalConnectionPool = ExternalConnectionPool.getInstance(poolClassName);
+        } catch (Exception e) {
+          externalConnectionPool = null;
+        }
+      }
     }
     return instance;
   }
@@ -144,6 +157,15 @@ public class OBDal implements OBSingleton {
       // before returning a connection flush all other hibernate actions
       // to the database.
       flush();
+    }
+
+    if (externalConnectionPool != null) {
+      Connection connection = SessionHandler.getInstance().getConnection();
+      if (connection == null) {
+        connection = externalConnectionPool.getConnection();
+        SessionHandler.getInstance().setConnection(connection);
+      }
+      return connection;
     }
 
     // NOTE: workaround for this issue:

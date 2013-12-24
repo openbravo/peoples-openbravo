@@ -40,6 +40,8 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   String rdbms = "";
   String contextName = "openbravo";
 
+  private static ExternalConnectionPool externalConnectionPool;
+
   public ConnectionProviderImpl(Properties properties) throws PoolNotFoundException {
     create(properties, false, "openbravo");
   }
@@ -76,6 +78,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       contextName = _context;
 
     String poolName = null;
+    String externalPoolClassName;
     String dbDriver = null;
     String dbServer = null;
     String dbLogin = null;
@@ -87,6 +90,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     String rdbms = null;
 
     poolName = properties.getProperty("bbdd.poolName", "myPool");
+    externalPoolClassName = properties.getProperty("bbdd.externalPoolClassName");
     dbDriver = properties.getProperty("bbdd.driver");
     dbServer = properties.getProperty("bbdd.url");
     dbLogin = properties.getProperty("bbdd.user");
@@ -101,6 +105,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
 
     if (log4j.isDebugEnabled()) {
       log4j.debug("poolName: " + poolName);
+      log4j.debug("externalPoolClassName: " + externalPoolClassName);
       log4j.debug("dbDriver: " + dbDriver);
       log4j.debug("dbServer: " + dbServer);
       log4j.debug("dbLogin: " + dbLogin);
@@ -110,6 +115,16 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       log4j.debug("maxConnTime: " + Double.toString(maxConnTime));
       log4j.debug("dbSessionConfig: " + dbSessionConfig);
       log4j.debug("rdbms: " + rdbms);
+    }
+
+    if (externalPoolClassName != null) {
+      try {
+        System.out.println("Try!");
+        externalConnectionPool = ExternalConnectionPool.getInstance(externalPoolClassName);
+      } catch (Exception e) {
+        System.out.println("Catch!");
+        externalConnectionPool = null;
+      }
     }
 
     try {
@@ -208,7 +223,11 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     Connection conn = SessionInfo.getSessionConnection();
     if (conn == null) {
       // No connection in the session, take a new one and attach it to the session
-      conn = getNewConnection(poolName);
+      if (externalConnectionPool != null) {
+        conn = externalConnectionPool.getConnection();
+      } else {
+        conn = getNewConnection(poolName);
+      }
       SessionInfo.setSessionConnection(conn);
     } else {
       // Update session info if needed

@@ -20,6 +20,8 @@
 package org.openbravo.dal.core;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
@@ -93,6 +95,7 @@ public class SessionHandler implements OBNotSingleton {
 
   private Session session;
   private Transaction tx;
+  private Connection connection;
 
   // Sets the session handler at rollback so that the controller can rollback
   // at the end
@@ -105,6 +108,14 @@ public class SessionHandler implements OBNotSingleton {
 
   protected void setSession(Session thisSession) {
     session = thisSession;
+  }
+
+  public void setConnection(Connection connection) {
+    this.connection = connection;
+  }
+
+  public Connection getConnection() {
+    return this.connection;
   }
 
   protected Session createSession() {
@@ -213,6 +224,11 @@ public class SessionHandler implements OBNotSingleton {
       tx.commit();
       tx = null;
       err = false;
+      if (connection != null && !connection.isClosed()) {
+        connection.close();
+      }
+    } catch (SQLException e) {
+      log.error("Error while closing the connection", e);
     } finally {
       if (err) {
         try {
@@ -267,6 +283,12 @@ public class SessionHandler implements OBNotSingleton {
       checkInvariant();
       tx.rollback();
       tx = null;
+
+      if (connection != null && !connection.isClosed()) {
+        connection.close();
+      }
+    } catch (SQLException e) {
+      log.error("Error while closing the connection", e);
     } finally {
       deleteSessionHandler();
       try {
