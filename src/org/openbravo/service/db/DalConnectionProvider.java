@@ -84,7 +84,6 @@ public class DalConnectionProvider implements ConnectionProvider {
     if (flush) {
       OBDal.getInstance().flush();
     }
-    // System.out.println("using dal conn:" + connection);
     return connection;
   }
 
@@ -133,7 +132,6 @@ public class DalConnectionProvider implements ConnectionProvider {
       throws SQLException {
     PreparedStatement ps = conn.prepareStatement(SQLPreparedStatement,
         ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-    // System.out.println("getPreparedStatement:" + conn + " ps.conn:" + ps.getConnection());
     return ps;
   }
 
@@ -184,10 +182,6 @@ public class DalConnectionProvider implements ConnectionProvider {
       return;
     }
     preparedStatement.close();
-    if (preparedStatement.getConnection() != null && !preparedStatement.getConnection().isClosed()) {
-      // System.out.println("dal close con:" + preparedStatement.getConnection());
-      // preparedStatement.getConnection().close();
-    }
   }
 
   public void releaseCallableStatement(CallableStatement callableStatement) throws SQLException {
