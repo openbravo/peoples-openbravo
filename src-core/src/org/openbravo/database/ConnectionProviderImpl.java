@@ -119,10 +119,8 @@ public class ConnectionProviderImpl implements ConnectionProvider {
 
     if (externalPoolClassName != null) {
       try {
-        System.out.println("Try!");
         externalConnectionPool = ExternalConnectionPool.getInstance(externalPoolClassName);
       } catch (Exception e) {
-        System.out.println("Catch!");
         externalConnectionPool = null;
       }
     }
