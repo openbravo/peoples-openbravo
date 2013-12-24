@@ -1,14 +1,16 @@
 package org.openbravo.externalconnectionpool;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
+import java.util.Properties;
 
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
-import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ExternalConnectionPool;
@@ -22,7 +24,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
   private static JdbcExternalConnectionPool instance;
 
-  private final static String CONFIG_FILE_NAME = "connectionPool.properties";
+  private final static String PATH_FROM_OB_ROOT = "modules/org.openbravo.externalconnectionpool/config/connectionPool.properties";
 
   private DataSource dataSource = null;
 
@@ -82,55 +84,71 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     String password = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .get("bbdd.password");
 
-    String classPathLocation = OBConfigFileProvider.getInstance().getClassPathLocation();
-
-    File propertiesURL = new File(classPathLocation, CONFIG_FILE_NAME);
     PoolProperties poolProperties = new PoolProperties();
     poolProperties.setUrl(obUrl + "/" + sid);
     poolProperties.setDriverClassName(driver);
     poolProperties.setUsername(username);
     poolProperties.setPassword(password);
 
-    // Properties poolPropertiesConfig = new Properties();
-    // try {
-    // FileInputStream fis = new FileInputStream(propertiesURL);
-    // poolPropertiesConfig.load(fis);
-    // } catch (IOException e) {
-    // log.error("Error while loading connection pool properties", e);
-    // }
+    File propertiesURL = getPropertiesFile();
+    Properties poolPropertiesConfig = new Properties();
+    try {
+      FileInputStream fis = new FileInputStream(propertiesURL);
+      poolPropertiesConfig.load(fis);
+      poolProperties.setInitialSize(getIntProperty(poolPropertiesConfig, "initialSize", "5"));
+      poolProperties.setMaxActive(getIntProperty(poolPropertiesConfig, "maxActive", "30"));
+      poolProperties.setMaxIdle(getIntProperty(poolPropertiesConfig, "maxIdle", "30"));
+      poolProperties.setMinIdle(getIntProperty(poolPropertiesConfig, "minIdle", "5"));
+      poolProperties.setMaxWait(getIntProperty(poolPropertiesConfig, "maxWait", "30"));
+      poolProperties.setTimeBetweenEvictionRunsMillis(getIntProperty(poolPropertiesConfig,
+          "timeBetweenEvictionRunsMillis", "30000"));
+      poolProperties.setMinEvictableIdleTimeMillis(getIntProperty(poolPropertiesConfig,
+          "minEvictableIdleTimeMillis", "30000"));
+      poolProperties.setRemoveAbandoned(getBooleanProperty(poolPropertiesConfig, "removeAbandoned",
+          "true"));
+      poolProperties.setRemoveAbandonedTimeout(getIntProperty(poolPropertiesConfig,
+          "removeAbandonedTimeout", "60"));
+      poolProperties.setLogAbandoned(getBooleanProperty(poolPropertiesConfig, "logAbandoned",
+          "false"));
+      poolProperties.setJmxEnabled(getBooleanProperty(poolPropertiesConfig, "jmxEnabled", "true"));
+      poolProperties.setTestWhileIdle(getBooleanProperty(poolPropertiesConfig, "testWhileIdle",
+          "false"));
+      poolProperties.setTestOnBorrow(getBooleanProperty(poolPropertiesConfig, "testOnBorrow",
+          "true"));
+      poolProperties.setTestOnReturn(getBooleanProperty(poolPropertiesConfig, "testOnReturn",
+          "false"));
+      poolProperties.setValidationInterval(getIntProperty(poolPropertiesConfig,
+          "validationInterval", "30000"));
+      poolProperties.setValidationQuery(poolPropertiesConfig.getProperty("validationQuery",
+          "SELECT 1 FROM DUAL"));
 
-    poolProperties.setJmxEnabled(true);
-    poolProperties.setTestWhileIdle(false);
-    poolProperties.setTestOnBorrow(true);
-    poolProperties.setValidationQuery("SELECT 1");
-    poolProperties.setTestOnReturn(false);
-    poolProperties.setValidationInterval(30000);
-    poolProperties.setTimeBetweenEvictionRunsMillis(30000);
-    poolProperties.setInitialSize(5);
-    poolProperties.setMaxActive(30);
-    poolProperties.setMaxIdle(30);
-    poolProperties.setMaxWait(10000);
-    poolProperties.setMinEvictableIdleTimeMillis(30000);
-    poolProperties.setMinIdle(10);
-    poolProperties.setLogAbandoned(false);
-    poolProperties.setRemoveAbandoned(true);
-    poolProperties.setRemoveAbandonedTimeout(60);
+    } catch (IOException e) {
+      log.error("Error while loading connection pool properties", e);
+    }
     poolProperties.setJdbcInterceptors("org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;"
         + "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;"
         + "org.openbravo.externalconnectionpool.TestInterceptor;");
     return poolProperties;
   }
 
-  private File getFileFromDevelopmentPath(String fileName) {
+  private boolean getBooleanProperty(Properties properties, String propertyName, String defaultValue) {
+    return ("true".equals(properties.getProperty(propertyName, defaultValue)));
+  }
+
+  private int getIntProperty(Properties properties, String propertyName, String defaultValue) {
+    return Integer.parseInt(properties.getProperty(propertyName, defaultValue));
+  }
+
+  private File getPropertiesFile() {
     // get the location of the current class file
-    final URL url = this.getClass().getResource(getClass().getSimpleName() + ".java");
+    final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
     File f = new File(url.getPath());
     File propertiesFile = null;
     while (f.getParentFile() != null && f.getParentFile().exists()) {
       f = f.getParentFile();
       final File configDirectory = new File(f, "config");
       if (configDirectory.exists()) {
-        propertiesFile = new File(configDirectory, fileName);
+        propertiesFile = new File(f, PATH_FROM_OB_ROOT);
         if (propertiesFile.exists()) {
           // found it and break
           break;
