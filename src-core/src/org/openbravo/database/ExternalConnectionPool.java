@@ -14,14 +14,8 @@ public abstract class ExternalConnectionPool {
       String externalConnectionPoolClassName) throws InstantiationException,
       IllegalAccessException, ClassNotFoundException {
     if (instance == null) {
-      Class<ExternalConnectionPool> cpClass = null;
-      try {
-        System.out.println("Inside - Try!");
-        cpClass = (Class<ExternalConnectionPool>) Class.forName(externalConnectionPoolClassName);
-      } catch (Exception e) {
-        System.out.println("Inside - Catch!");
-      }
-      instance = (ExternalConnectionPool) cpClass.newInstance();
+      instance = (ExternalConnectionPool) Class.forName(externalConnectionPoolClassName)
+          .newInstance();
     }
     return instance;
   }
