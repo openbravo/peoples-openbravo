@@ -37,7 +37,7 @@ public class SL_Costing_Currency extends SimpleCallout {
     final String strClientId = info.getStringParameter("inpadClientId", IsIDFilter.instance);
     String strCurrencyId = null;
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
       Organization org = OBDal.getInstance().get(Organization.class, strAdOrgId);
       if (org.getCurrency() != null)
         strCurrencyId = org.getCurrency().getId();
@@ -46,13 +46,11 @@ public class SL_Costing_Currency extends SimpleCallout {
             .getLegalEntity(org);
         if (legalOrg != null)
           strCurrencyId = legalOrg.getCurrency() != null ? legalOrg.getCurrency().getId() : null;
-        if (strCurrencyId == null || org.getId().equals("0")) {
+        if (strCurrencyId == null) {
           Client client = OBDal.getInstance().get(Client.class, strClientId);
           strCurrencyId = client.getCurrency() != null ? client.getCurrency().getId() : null;
         }
       }
-    } catch (Exception e) {
-      e.printStackTrace();
     } finally {
       OBContext.restorePreviousMode();
     }
