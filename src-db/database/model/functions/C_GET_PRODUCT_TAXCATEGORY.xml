@@ -53,7 +53,10 @@ BEGIN
     RETURN v_prodtaxcategory_id;
   END IF;
   BEGIN
-    v_Sql := 'SELECT ' || v_dbprefix || '_get_product_taxcategory' || '(''' || coalesce(p_product_id, '') || ''', ''' || coalesce(p_org_id, '') || ''', ''' || coalesce(p_date, '') || ''', ''' || coalesce(p_shipfrom, '') || ''', ''' || coalesce(p_shipto, '') || ''') FROM DUAL';
+    v_Sql := 'SELECT ' || v_dbprefix || '_get_product_taxcategory' || '(''' || coalesce(p_product_id, '') || ''', ''' || coalesce(p_org_id, '') || ''', ';
+    v_sql := v_sql || CASE WHEN p_date IS NULL THEN 'NULL' ELSE  '''' || p_date || '''' END || ', ';
+    v_sql := v_sql || CASE WHEN p_shipfrom IS NULL THEN 'NULL' ELSE '''' || p_shipfrom || '''' END || ', ';
+    v_sql := v_sql || CASE WHEN p_shipto IS NULL THEN 'NULL' ELSE '''' || p_shipto || '''' END || ') FROM DUAL';
 
     EXECUTE IMMEDIATE v_Sql INTO v_taxcategory_id;
   EXCEPTION WHEN OTHERS THEN
