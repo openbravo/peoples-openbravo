@@ -69,6 +69,10 @@
     name: 'cashup_id',
     column: 'cashup_id',
     type: 'TEXT'
+  },{
+    name: 'glItem',
+    column: 'glItem',
+    type: 'TEXT'
   }, {
     name: 'isbeingprocessed',
     column: 'isbeingprocessed',

@@ -389,7 +389,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     taxes = new OB.DATA.OrderTaxes(receipt);
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
-    OB.UTIL.initCashUp();
     this.processChangedCustomers();
     this.processChangedCustomerAddress();
 

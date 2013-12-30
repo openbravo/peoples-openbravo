@@ -54,6 +54,9 @@ public class ProcessCashMgmt extends JSONProcessSimple {
       glItemMain = terminalPaymentMethod.getGLItemForDeposits();
       glItemSecondary = terminalPaymentMethod.getGLItemForDrops();
     }
+    if (jsonsent.has("glItem")) {
+      glItemMain = OBDal.getInstance().get(GLItem.class, jsonsent.getString("glItem"));
+    }
     FIN_FinancialAccount account = paymentMethod.getFinancialAccount();
 
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
@@ -82,31 +85,33 @@ public class ProcessCashMgmt extends JSONProcessSimple {
     CashManagementEvents event = OBDal.getInstance().get(CashManagementEvents.class,
         cashManagementReasonId);
 
-    FIN_FinancialAccount secondAccount = event.getFinancialAccount();
+    if (event != null) {
+      FIN_FinancialAccount secondAccount = event.getFinancialAccount();
 
-    FIN_FinaccTransaction secondTransaction = OBProvider.getInstance().get(
-        FIN_FinaccTransaction.class);
-    secondTransaction.setCurrency(secondAccount.getCurrency());
-    secondTransaction.setAccount(secondAccount);
-    secondTransaction
-        .setLineNo(TransactionsDao.getTransactionMaxLineNo(event.getFinancialAccount()) + 10);
-    secondTransaction.setGLItem(glItemSecondary);
-    // The second transaction describes the opposite movement of the first transaction.
-    // If the first is a deposit, the second is a drop
-    if (type.equals("deposit")) {
-      secondTransaction.setPaymentAmount(origAmount);
-      secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().subtract(origAmount));
-    } else {
-      secondTransaction.setDepositAmount(origAmount);
-      secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().add(origAmount));
+      FIN_FinaccTransaction secondTransaction = OBProvider.getInstance().get(
+          FIN_FinaccTransaction.class);
+      secondTransaction.setCurrency(secondAccount.getCurrency());
+      secondTransaction.setAccount(secondAccount);
+      secondTransaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(event
+          .getFinancialAccount()) + 10);
+      secondTransaction.setGLItem(glItemSecondary);
+      // The second transaction describes the opposite movement of the first transaction.
+      // If the first is a deposit, the second is a drop
+      if (type.equals("deposit")) {
+        secondTransaction.setPaymentAmount(origAmount);
+        secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().subtract(origAmount));
+      } else {
+        secondTransaction.setDepositAmount(origAmount);
+        secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().add(origAmount));
+      }
+      secondTransaction.setProcessed(true);
+      secondTransaction.setTransactionType("BPW");
+      secondTransaction.setDescription(description);
+      secondTransaction.setDateAcct(new Date());
+      secondTransaction.setTransactionDate(new Date());
+      secondTransaction.setStatus("RDNC");
+      OBDal.getInstance().save(secondTransaction);
     }
-    secondTransaction.setProcessed(true);
-    secondTransaction.setTransactionType("BPW");
-    secondTransaction.setDescription(description);
-    secondTransaction.setDateAcct(new Date());
-    secondTransaction.setTransactionDate(new Date());
-    secondTransaction.setStatus("RDNC");
-    OBDal.getInstance().save(secondTransaction);
   }
 
   @Override
