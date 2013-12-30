@@ -154,7 +154,7 @@ public class UserLock {
    */
   public void addFail() {
     numberOfFails++;
-    boolean lockUser = (lockAfterTrials != 0) && (numberOfFails > lockAfterTrials);
+    boolean lockUser = (lockAfterTrials != 0) && (numberOfFails >= lockAfterTrials);
     log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:"
         + numberOfFails + " - user:" + user);
     if (lockUser) {
