@@ -131,6 +131,18 @@
    <Parameter name="sql" type="replace" optional="true" after="(SELECT 1 FROM (" text="SELECT '' AS AD_REFERENCEKEY_ID FROM DUAL"/>
    </SqlMethod>
    
+   <SqlMethod name="setAlertSolved" type="preparedStatement" return="rowcount"> 
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        UPDATE AD_ALERT
+           SET STATUS    = 'SOLVED',
+               UPDATED   = NOW(),
+               UPDATEDBY = 0
+         WHERE AD_ALERT_ID = ?
+    ]]></Sql>
+   <Parameter name="alertId"/>
+   </SqlMethod>
+   
    <SqlMethod name="prepareMails" type="preparedStatement" return="multiple">
      <Sql><![CDATA[
         select c.smtphost, c.requestuser, c.requestuserpw, c.requestemail as mailfrom, 
