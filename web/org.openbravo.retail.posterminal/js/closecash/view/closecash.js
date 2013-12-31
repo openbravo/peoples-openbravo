@@ -201,6 +201,9 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
     name: 'modalPendingToProcess'
   }],
+  finalAction: function () {
+    OB.POS.navigate('retail.pointofsale');
+  },
   init: function () {
     var me = this;
     this.inherited(arguments);
@@ -242,7 +245,7 @@ enyo.kind({
     //FIXME:It is triggered only once, but it is not the best way to do it
     this.model.get('paymentList').on('reset', function () {
       this.model.get('paymentList').at(this.model.get('substep')).on('change:foreignCounted', function () {
-      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('substep')));
+        this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('substep')));
       }, this);
     }, this);
 
@@ -266,7 +269,8 @@ enyo.kind({
       var content;
       var i;
       var messages = this.model.get('messages');
-      var next = this.model.get('next');
+      var next = this.model.get('next'),
+          me = this;
 
       // Build the content of the dialog.
       if (messages && messages.length) {
@@ -288,12 +292,7 @@ enyo.kind({
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         action: function () {
-          if ('logout' === next) {
-            OB.UTIL.showLoggingOut(true);
-            OB.MobileApp.model.logout();
-          } else {
-            OB.POS.navigate('retail.pointofsale');
-          }
+          me.finalAction();
           return true;
         }
       }]);
