@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -34,7 +34,7 @@
 BEGIN
 
   IF (p_table_id = '4D8C3B3C31D1410DA046140C9F024D17') THEN --'APRM_Finacc_Transaction_v'
-    RETURN 'FF8080812F213146012F2135BC25000E'; --Transactions
+    RETURN '23691259D1BD4496BCC5F32645BCA4B9'; --Transactions
   ELSE
     -- General Ledger Journal - Link to Tabs Extension Point
 
