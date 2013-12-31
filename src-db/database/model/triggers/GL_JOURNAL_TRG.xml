@@ -34,6 +34,12 @@ BEGIN
 
     -- Subtract Old Amount
     IF(UPDATING) THEN
+      IF (:old.c_currency_id <> :new.c_currency_id) THEN
+        UPDATE gl_journalline SET c_currency_id = :new.c_currency_id where gl_journal_id = :old.gl_journal_id;
+      END IF;
+      IF (:old.currencyrate <> :new.currencyrate) THEN
+        UPDATE gl_journalline SET currencyrate = :new.currencyrate where gl_journal_id = :old.gl_journal_id;
+      END IF;
       IF(:old.TotalDr <> :NEW.TotalDr OR :OLD.TotalCr <> :NEW.TotalCr) THEN  
       IF(:old.GL_JournalBatch_ID IS NOT NULL AND :old.IsActive='Y') THEN
 	  UPDATE GL_JournalBatch

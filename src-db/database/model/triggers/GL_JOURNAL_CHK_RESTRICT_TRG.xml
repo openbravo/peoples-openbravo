@@ -58,11 +58,7 @@ BEGIN
         OR(COALESCE(:OLD.M_Product_ID, '0') <> COALESCE(:NEW.M_Product_ID, '0'))
         )) 
         THEN RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
-      END IF;
-    
-      IF (:old.c_currency_id <> :new.c_currency_id) THEN
-        UPDATE gl_journalline SET c_currency_id = :new.c_currency_id where gl_journal_id = :old.gl_journal_id;
-      END IF;
+      END IF;    
     END IF;
     IF(DELETING) THEN
       IF(:old.Processed='Y') THEN

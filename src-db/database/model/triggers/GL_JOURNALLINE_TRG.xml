@@ -36,7 +36,7 @@ BEGIN
 
   --Check if it is necessary to substract old amount and add new amount when you are updating but not the currency (issue 24755)  
   IF(UPDATING) THEN
-    IF (:old.c_currency_id=:new.c_currency_id) THEN
+    IF (:old.c_currency_id=:new.c_currency_id and :old.currencyrate=:new.currencyrate) THEN
       IF(:old.IsActive='Y') THEN
         UPDATE GL_Journal
           SET TotalDr=TotalDr - :old.AmtSourceDr,
