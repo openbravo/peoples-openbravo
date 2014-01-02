@@ -499,6 +499,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (!receipt.get('isEditable')) {
         return;
       }
+      if (_.isNull(receipt.get('lines')) || receipt.get('lines').length === 0) {
+        OB.Dal.remove(receipt, function () {
+          OB.info('Order without lines removed from Local DB');
+        }, function () {
+          OB.warn('Error removing an order without lines from Local DB');
+        });
+      }
       OB.Model.Discounts.applyPromotions(receipt);
     });
 
