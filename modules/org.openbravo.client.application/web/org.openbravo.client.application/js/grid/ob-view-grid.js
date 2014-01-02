@@ -3615,7 +3615,9 @@ isc.OBViewGrid.addProperties({
       return;
     }
     newValue = {};
-    newValue[field.property] = columnValue.value;
+    if (field) {
+      newValue[field.property] = columnValue.value;
+    }
     this.setEditValue(rowNum, field.property, columnValue.value);
   },
 
@@ -3635,7 +3637,7 @@ isc.OBViewGrid.addProperties({
         field = this.getFieldFromColumnName(prop);
         // This call to the FIC was done to retrieve the missing values
         // Do not try to overwrite the existing values
-        if (!this.getRecord(rowNum)[field.property]) {
+        if (field && !this.getRecord(rowNum)[field.property]) {
           grid.processColumnValue(rowNum, prop, columnValues[prop]);
         }
       }
