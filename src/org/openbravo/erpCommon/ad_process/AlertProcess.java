@@ -44,7 +44,6 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
-import org.openbravo.model.ad.alert.Alert;
 import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
 import org.openbravo.model.ad.system.Client;
@@ -242,7 +241,6 @@ public class AlertProcess implements Process {
 
     if (!alertRule.sql.equals("")) {
       try {
-        checkAlertExists(conn, alertRule.sql, alertRule.adAlertruleId);
         alert = selectAlert(conn, alertRule.sql, alertRule.adAlertruleId);
       } catch (Exception ex) {
         logger.log("Error processing: " + ex.getMessage() + "\n");
@@ -497,59 +495,6 @@ public class AlertProcess implements Process {
 
       } catch (Exception ex) {
         logger.log("Error updating: " + ex.toString() + "\n");
-      }
-    }
-  }
-
-  // This method is going to check if the alert is in the database and if it exists is going to
-  // update some columns to new values
-  private void checkAlertExists(ConnectionProvider connectionProvider, String alertRule,
-      String alertRuleId) throws ServletException {
-    String alertRuleSQL = (alertRule == null || alertRule.equals("")) ? "" : alertRule;
-    String strSql = "SELECT * FROM (" + alertRuleSQL + ") AAA where exists ("
-        + "select 1 from ad_alert a where a.ad_alertrule_id = ? "
-        + "and a.referencekey_id = aaa.referencekey_id and coalesce(a.status, 'NEW') != 'SOLVED')";
-
-    ResultSet result;
-    PreparedStatement st = null;
-
-    try {
-      OBContext.setAdminMode(false);
-      st = connectionProvider.getPreparedStatement(strSql);
-      st.setString(1, alertRuleId);
-      result = st.executeQuery();
-      while (result.next()) {
-        OBCriteria<Alert> alertCriteria = OBDal.getInstance().createCriteria(Alert.class);
-        alertCriteria.add(Restrictions.eq(Alert.PROPERTY_ALERTRULE,
-            OBDal.getInstance().get(AlertRule.class, alertRuleId)));
-
-        alertCriteria.add(Restrictions.eq(Alert.PROPERTY_REFERENCESEARCHKEY,
-            UtilSql.getValue(result, "referencekey_id")));
-        alertCriteria.add(Restrictions.ne(Alert.PROPERTY_ALERTSTATUS, "SOLVED"));
-
-        List<Alert> alertList = alertCriteria.list();
-
-        for (Alert alert : alertList) {
-          if (!alert.getDescription().equals(UtilSql.getValue(result, "description"))) {
-            AlertProcessData.setAlertSolved(connectionProvider, alert.getId());
-          }
-        }
-
-      }
-      result.close();
-    } catch (SQLException e) {
-      log4j.error("SQL error in query: " + strSql + "Exception:" + e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
-    } catch (Exception ex) {
-      log4j.error("Exception in query: " + strSql + "Exception:" + ex);
-      throw new ServletException("@CODE=@" + ex.getMessage());
-    } finally {
-      try {
-        OBContext.restorePreviousMode();
-        connectionProvider.releasePreparedStatement(st);
-      } catch (Exception ignore) {
-        ignore.printStackTrace();
       }
     }
   }
