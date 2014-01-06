@@ -37,10 +37,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="M_STORAGE_DETAIL_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="C_ORDERLINE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -83,14 +79,8 @@
       <foreign-key foreignTable="M_RESERVATION" name="M_RESERVATION_STOCK_RESERV">
         <reference local="M_RESERVATION_ID" foreign="M_RESERVATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_STORAGE_DETAIL" name="M_RESERVATION_STOCK_ST_DET">
-        <reference local="M_STORAGE_DETAIL_ID" foreign="M_STORAGE_DETAIL_ID"/>
-      </foreign-key>
       <index name="M_RESERVATION_STOCK_RES" unique="false">
         <index-column name="M_RESERVATION_ID"/>
-      </index>
-      <index name="M_RESERVATION_STOCK_SD" unique="false">
-        <index-column name="M_STORAGE_DETAIL_ID"/>
       </index>
       <index name="M_RESERVSTOCK_ORDERLINE_IDX" unique="false">
         <index-column name="C_ORDERLINE_ID"/>
