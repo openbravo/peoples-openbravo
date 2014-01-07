@@ -1812,6 +1812,11 @@ with (theWindow) {
     //----------------------------------------
     // 6) TabSets
     //----------------------------------------
+    if (isc.TabBar) {
+        isc.TabBar.changeDefaults("tabDefaults", {
+            showFocusOutline: !isc.Browser.isSafari
+        });
+    }
     if (isc.TabSet && useSpriting) {
         isc.TabSet.addMethods({
             getScrollerBackImgName : function skin_TabSet_getScrollerBackImgName() {
