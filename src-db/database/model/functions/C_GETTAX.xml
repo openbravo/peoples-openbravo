@@ -43,7 +43,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2013 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -60,6 +60,7 @@
   v_aux           VARCHAR2(32) ;
   v_BPTaxCategory VARCHAR2(32);
   v_IsCashVAT     AD_ORGINFO.ISCASHVAT%TYPE;
+  v_IsDoubleCash  AD_ORGINFO.ISDOUBLECASH%TYPE;
   TYPE RECORD IS REF CURSOR;
     BILLTO RECORD;
   BEGIN
@@ -116,7 +117,22 @@
       ELSE
         v_isTaxExempt := 'N';
         v_BPTaxCategory := BILLTO.PO_BP_TaxCategory_ID;
-        v_IsCashVAT := BILLTO.isCashVAT;
+        IF p_forcedcashvat IS NULL THEN
+          IF BILLTO.isCashVAT = 'Y' THEN
+            v_IsCashVAT := 'Y';
+          ELSE
+            -- double cash
+            select coalesce(oi.isCashVAT, 'N'), coalesce(oi.isDoubleCash, 'N')
+            into v_IsCashVAT, v_IsDoubleCash
+            from ad_orginfo oi
+            where oi.ad_org_id = ad_get_org_le_bu(p_org_id, 'LE');
+            IF v_IsCashVAT = 'N' OR v_IsDoubleCash = 'N' THEN
+              v_IsCashVAT:='N';
+            END IF;
+          END IF;
+        ELSE
+          v_IsCashVAT := p_forcedcashvat;
+        END IF;
       END IF;
       EXIT;
     END LOOP;
