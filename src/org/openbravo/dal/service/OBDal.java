@@ -84,7 +84,7 @@ public class OBDal implements OBSingleton {
       if (poolClassName != null) {
         try {
           externalConnectionPool = ExternalConnectionPool.getInstance(poolClassName);
-        } catch (Exception e) {
+        } catch (Throwable e) {
           externalConnectionPool = null;
         }
       }
