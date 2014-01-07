@@ -16,7 +16,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************/
@@ -35,10 +35,36 @@
   Cur_Parameter RECORD;
   Cur_Sequences RECORD;
 
+  v_Count NUMBER:=0;
 
 
 BEGIN
 BEGIN --BODY
+		v_Count:=0;
+		v_Message:='-';
+			FOR Cur_Sequences IN
+			(
+			SELECT pp.name||'-'||ppv.documentno AS ProcessPlan
+			FROM MA_SEQUENCEPRODUCT sp, MA_SEQUENCE s
+			LEFT JOIN MA_ProcessPlan_Version ppv ON ppv.MA_ProcessPlan_Version_ID = s.MA_ProcessPlan_Version_ID
+			LEFT JOIN MA_ProcessPlan pp ON pp.MA_ProcessPlan_ID = ppv.MA_ProcessPlan_ID
+			WHERE sp.PRODUCTIONTYPE='+'
+			AND sp.MA_SEQUENCE_ID = s.MA_SEQUENCE_ID
+			AND EXISTS
+			(SELECT 1
+			FROM MA_SEQUENCEPRODUCT
+			WHERE MA_SEQUENCE_ID=sp.MA_SEQUENCE_ID
+			AND M_PRODUCT_ID=sp.M_PRODUCT_ID
+			AND PRODUCTIONTYPE='-')
+			)
+			LOOP
+			v_Count:=v_Count+1;
+			v_Message:=v_Message||Cur_Sequences.ProcessPlan||';';
+			END LOOP;
+			IF(v_count<>0) THEN
+				RAISE_APPLICATION_ERROR(-20000,'@P+AndP-InSamePlan@'||' Check Process Plan'||v_Message);
+			END IF;
+
   FOR Cur_Parameter IN (SELECT i.ad_client_id, i.Record_ID, i.AD_User_ID, p.ParameterName, 
                                p.P_String, p.P_Number, p.P_Date, i.UpdatedBy, ad_client.c_currency_id
                         FROM AD_PINSTANCE i LEFT JOIN AD_PINSTANCE_PARA p ON i.AD_PInstance_ID=p.AD_PInstance_ID,

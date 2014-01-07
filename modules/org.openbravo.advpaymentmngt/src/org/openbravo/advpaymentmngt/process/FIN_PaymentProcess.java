@@ -389,7 +389,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   } else {
                     increaseCustomerCredit(businessPartner, amount);
                   }
-                  FIN_AddPayment.updatePaymentScheduleAmounts(
+                  FIN_AddPayment.updatePaymentScheduleAmounts(paymentDetail,
                       paymentScheduleDetail.getInvoicePaymentSchedule(),
                       paymentScheduleDetail.getAmount(), paymentScheduleDetail.getWriteoffAmount());
                 }
@@ -766,7 +766,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   }
                 }
                 if (restorePaidAmounts) {
-                  FIN_AddPayment.updatePaymentScheduleAmounts(
+                  FIN_AddPayment.updatePaymentScheduleAmounts(paymentDetail,
                       paymentScheduleDetail.getInvoicePaymentSchedule(), psdAmount.negate(),
                       psdWriteoffAmount.negate());
                   // BP SO_CreditUsed

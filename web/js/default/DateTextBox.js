@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2007 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -202,6 +202,23 @@ getDateTime = function(/*String*/str_date, /*String*/str_dateFormat, /*String*/s
     return false;
   }
 
+  var checkProperDate = function(year, month, day) {
+    var tentativeDate;
+    year = parseFloat(year, 10);
+    month = parseFloat(month, 10);
+    day = parseFloat(day, 10);
+    if (day < 1 || day > 31) return false;
+    if (month < 1 || month > 12) return false;
+    if (year < 1 || year > 9999) return false;
+    tentativeDate = new Date(year, month - 1, day);
+    if (day !== tentativeDate.getDate()) {
+      // To avoid non-existing dates like 30-02-2013 or 32-08-2013
+      // Fixes issue: https://issues.openbravo.com/view.php?id=25244
+      return false;
+    }
+    return true;
+  }
+
   switch (str_dateFormat) { 
     case "MM-DD-YYYY": 
     case "YY-MM-DDDD": 
@@ -216,9 +233,9 @@ getDateTime = function(/*String*/str_date, /*String*/str_dateFormat, /*String*/s
     case "MM-DD-YY": 
     case "%m-%d-%Y": 
     case "%m-%d-%y": 
-      if (dateBlock[2] < 1 || dateBlock[2] > 31) return false; 
-      if (dateBlock[1] < 1 || dateBlock[1] > 12) return false; 
-      if (dateBlock[3] < 1 || dateBlock[3] > 9999) return false; 
+      if (!checkProperDate(dateBlock[3], dateBlock[1], dateBlock[2])) {
+        return false;
+      }
       inputDate=new Date(parseFloat(dateBlock[3]), parseFloat(dateBlock[1])-1, parseFloat(dateBlock[2]), timeBlock[1], timeBlock[2], timeBlock[3]);
       if (fullYear) { inputDate.setFullYear(dateBlock[3]); }
       return inputDate; 
@@ -226,9 +243,9 @@ getDateTime = function(/*String*/str_date, /*String*/str_dateFormat, /*String*/s
     case "YY-MM-DD": 
     case "%Y-%m-%d": 
     case "%y-%m-%d": 
-      if (dateBlock[3] < 1 || dateBlock[3] > 31) return false; 
-      if (dateBlock[2] < 1 || dateBlock[2] > 12) return false; 
-      if (dateBlock[1] < 1 || dateBlock[1] > 9999) return false; 
+      if (!checkProperDate(dateBlock[1], dateBlock[2], dateBlock[3])) {
+        return false;
+      }
       inputDate=new Date(parseFloat(dateBlock[1]), parseFloat(dateBlock[2])-1, parseFloat(dateBlock[3]), timeBlock[1], timeBlock[2], timeBlock[3]);
       if (fullYear) { inputDate.setFullYear(dateBlock[1]); }
       return inputDate; 
@@ -237,9 +254,9 @@ getDateTime = function(/*String*/str_date, /*String*/str_dateFormat, /*String*/s
     case "%d-%m-%Y": 
     case "%d-%m-%y": 
     default: 
-      if (dateBlock[1] < 1 || dateBlock[1] > 31) return false; 
-      if (dateBlock[2] < 1 || dateBlock[2] > 12) return false; 
-      if (dateBlock[3] < 1 || dateBlock[3] > 9999) return false; 
+      if (!checkProperDate(dateBlock[3], dateBlock[2], dateBlock[1])) {
+        return false;
+      }
       inputDate=new Date(parseFloat(dateBlock[3]), parseFloat(dateBlock[2])-1, parseFloat(dateBlock[1]), timeBlock[1], timeBlock[2], timeBlock[3]);
       if (fullYear) { inputDate.setFullYear(dateBlock[3]); }
       return inputDate; 

@@ -102,7 +102,7 @@ public class UserLock {
     this.userName = userName;
     setUser();
 
-    if (delayInc == 0) {
+    if (delayInc == 0 && lockAfterTrials == 0) {
       // No need to check number of fails as login security is not enabled
       delay = 0;
       numberOfFails = 0;
@@ -154,7 +154,7 @@ public class UserLock {
    */
   public void addFail() {
     numberOfFails++;
-    boolean lockUser = (lockAfterTrials != 0) && (numberOfFails > lockAfterTrials);
+    boolean lockUser = (lockAfterTrials != 0) && (numberOfFails >= lockAfterTrials);
     log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:"
         + numberOfFails + " - user:" + user);
     if (lockUser) {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -39,6 +39,7 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
+import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 
 /**
  * @author gorkaion
@@ -123,6 +124,17 @@ public class CostingServer {
       if (!"N".equals(inout.getPosted()) || !"Y".equals(inout.getPosted())) {
         inout.setPosted("N");
         OBDal.getInstance().save(inout);
+        // Set for the Match Invoices associated
+        List<ReceiptInvoiceMatch> invoiceMatchList = transaction.getGoodsShipmentLine()
+            .getProcurementReceiptInvoiceMatchList();
+        if (invoiceMatchList != null && !invoiceMatchList.isEmpty()) {
+          for (ReceiptInvoiceMatch invoiceMatch : invoiceMatchList) {
+            if (!"N".equals(invoiceMatch.getPosted()) || !"Y".equals(invoiceMatch.getPosted())) {
+              invoiceMatch.setPosted("N");
+              OBDal.getInstance().save(invoiceMatch);
+            }
+          }
+        }
       }
       break;
     }

@@ -112,6 +112,9 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
             data[i].mProductId,
             orderData[0].mPricelistId.equals("") ? CopyFromPOOrderData.defaultPriceList(this)
                 : orderData[0].mPricelistId);
+        strPriceActual = "0";
+        strPriceList = "0";
+        strPriceLimit = "0";
         for (int j = 0; data3 != null && j < data3.length; j++) {
           if (data3[j].validfrom == null
               || data3[j].validfrom.equals("")

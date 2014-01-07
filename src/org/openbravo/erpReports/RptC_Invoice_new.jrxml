@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="275"/>
+	<property name="ireport.y" value="136"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -71,7 +71,7 @@ COALESCE(TO_CHAR(ADDRESS1), '') || CASE WHEN ADDRESS1 IS null THEN '' ELSE CHR(1
 COALESCE(TO_CHAR(C_LOCATION.CITY), '') || CASE WHEN C_LOCATION.CITY IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(C_COUNTRY.NAME), '') || CASE WHEN C_COUNTRY.NAME IS null THEN '' ELSE CHR(13) END ||
 COALESCE(TO_CHAR(C_BPARTNER_LOCATION.PHONE), '') || CASE WHEN C_BPARTNER_LOCATION.PHONE IS null THEN '' ELSE CHR(13) END || COALESCE(TO_CHAR(C_BPARTNER_LOCATION.FAX), '') ||
 CASE WHEN C_BPARTNER_LOCATION.FAX IS null THEN '' ELSE CHR(13) END) AS BP_DATA, SHOWLOGO, SHOWCOMPANYDATA, HEADERMARGIN, ISSOTRX,
-M_PRICELIST.ISTAXINCLUDED
+M_PRICELIST.ISTAXINCLUDED, C_INVOICE.ISCASHVAT
 FROM C_INVOICE LEFT JOIN C_BPARTNER ON C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
 	 LEFT JOIN AD_USER ON C_INVOICE.AD_USER_ID = AD_USER.AD_USER_ID
 	 LEFT JOIN C_BPARTNER_LOCATION ON C_INVOICE.C_BPARTNER_LOCATION_ID = C_BPARTNER_LOCATION.C_BPARTNER_LOCATION_ID
@@ -121,6 +121,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 	<field name="HEADERMARGIN" class="java.lang.String"/>
 	<field name="ISSOTRX" class="java.lang.String"/>
 	<field name="ISTAXINCLUDED" class="java.lang.String"/>
+	<field name="ISCASHVAT" class="java.lang.String"/>
 	<variable name="TOTAL_LINENETAMT" class="java.math.BigDecimal" resetType="Group" resetGroup="C_INVOICE_ID"/>
 	<variable name="TOTAL_TAXAMT" class="java.math.BigDecimal" resetType="Group" resetGroup="C_INVOICE_ID"/>
 	<variable name="SHOWLOGO" class="java.lang.String"/>
@@ -468,6 +469,15 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
+			<staticText>
+				<reportElement x="1" y="31" width="307" height="19">
+					<printWhenExpression><![CDATA["Y".equals($F{ISCASHVAT})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Cash VAT Invoice]]></text>
+			</staticText>
 		</band>
 	</pageFooter>
 	<summary>

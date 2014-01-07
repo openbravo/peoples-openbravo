@@ -28,6 +28,7 @@
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="processHelp" name="help" replaceCharacters="htmlHelp" default=""/>
   <PARAMETER id="paramSelected" name="paramSelected" attribute="value"/>
+  <PARAMETER id="paramLoginWarehouseId" name="paramLoginWarehouseId" attribute="value"></PARAMETER>
   <PARAMETER id="paramOrderVendorId" name="paramOrderVendorId" attribute="value"/>
   <PARAMETER id="paramOrderVendorDescription" name="paramOrderVendorDescription" attribute="value"/>
   <PARAMETER id="paramOrderDate" name="orderDate" attribute="value"/>

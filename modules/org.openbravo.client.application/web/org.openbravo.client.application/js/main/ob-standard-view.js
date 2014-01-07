@@ -283,7 +283,7 @@ isc.OBStandardView.addProperties({
   },
 
   buildStructure: function () {
-    var length, i, fld;
+    var length, i, fld, lazyFiltering;
     this.createMainParts();
     this.createViewStructure();
     if (this.childTabSet && this.childTabSet.tabs.length === 0) {
@@ -303,10 +303,14 @@ isc.OBStandardView.addProperties({
       this.standardWindow.lastViewApplied = true;
     }
 
+    if (this.viewGrid) {
+      lazyFiltering = this.viewGrid.lazyFiltering;
+    }
+
     // directTabInfo is set when we are in direct link mode, i.e. directly opening
     // a specific tab with a record, the direct link logic will already take care
     // of fetching data
-    if (this.isRootView && !this.standardWindow.directTabInfo) {
+    if (this.isRootView && !this.standardWindow.directTabInfo && !lazyFiltering) {
       if (!this.standardWindow.checkIfDefaultSavedView()) {
         this.viewGrid.fetchData(this.viewGrid.getCriteria());
       }
@@ -1353,14 +1357,16 @@ isc.OBStandardView.addProperties({
   },
 
   updateSubtabVisibility: function () {
-    var i, length, tabViewPane, activeTab, activeTabNum, activeTabPane, indexFirstNotHiddenTab;
+    var i, length, tabViewPane, activeTab, activeTabNum, activeTabPane, indexFirstNotHiddenTab, contextInfo;
     if (this.childTabSet) {
       length = this.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
         // Calling getContextInfo with (false, true, true) in order to obtain also the value of the
         // session attributes of the form
-        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(this.getContextInfo(false, true, true)))) {
+        contextInfo = this.getContextInfo(false, true, true);
+        isc.addProperties(contextInfo, tabViewPane.sessionAttributes);
+        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(contextInfo))) {
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
         } else {

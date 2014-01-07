@@ -80,6 +80,9 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_MATCHINV_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <index name="M_MATCHINV_INOUT" unique="false">
+        <index-column name="M_INOUTLINE_ID"/>
+      </index>
       <index name="M_MATCHINV_SHIP" unique="false">
         <index-column name="C_INVOICELINE_ID"/>
         <index-column name="M_INOUTLINE_ID"/>

@@ -12597,67 +12597,67 @@ return true;
 }else{
 return false;
 }
-},getDate:function(_b1f,_b20){
-var _b21=new Date(0,0,0);
-if(_b1f.length==0){
-return _b21;
-}
-var _b22=/^(\d+)[\-|\/|/|:|.|\.](\d+)[\-|\/|/|:|.|\.](\d+)$/;
-if(!_b22.exec(_b1f)){
-return false;
-}
-if(!_b20){
-_b20=defaultDateFormat;
-}
-switch(_b20){
-case "%m-%d-%Y":
-case "%m/%d/%Y":
-case "%m.%d.%Y":
-case "%m:%d:%Y":
-if(RegExp.$2<1||RegExp.$2>31){
-return false;
-}
-if(RegExp.$1<1||RegExp.$1>12){
-return false;
-}
-if(RegExp.$3<1||RegExp.$3>9999){
-return false;
-}
-_b21=new Date(parseFloat(RegExp.$3),parseFloat(RegExp.$1)-1,parseFloat(RegExp.$2));
-return _b21;
-case "%Y-%m-%d":
-case "%Y/%m/%d":
-case "%Y.%m.%d":
-case "%Y:%m:%d":
-if(RegExp.$3<1||RegExp.$3>31){
-return false;
-}
-if(RegExp.$2<1||RegExp.$2>12){
-return false;
-}
-if(RegExp.$1<1||RegExp.$1>9999){
-return false;
-}
-_b21=new Date(parseFloat(RegExp.$1),parseFloat(RegExp.$2)-1,parseFloat(RegExp.$3));
-return _b21;
-case "%d-%m-%Y":
-case "%d/%m/%Y":
-case "%d.%m.%Y":
-case "%d:%m:%Y":
-default:
-if(RegExp.$1<1||RegExp.$1>31){
-return false;
-}
-if(RegExp.$2<1||RegExp.$2>12){
-return false;
-}
-if(RegExp.$3<1||RegExp.$3>9999){
-return false;
-}
-_b21=new Date(parseFloat(RegExp.$3),parseFloat(RegExp.$2)-1,parseFloat(RegExp.$1));
-return _b21;
-}
-return false;
+},getDate: function (str_date, str_dateFormat) {
+  var inputDate = new Date(0, 0, 0);
+  if (str_date.length == 0) {
+    return inputDate;
+  }
+  var datePattern = /^(\d+)[\-|\/|/|:|.|\.](\d+)[\-|\/|/|:|.|\.](\d+)$/;
+  if (!datePattern.exec(str_date)) {
+    return false;
+  }
+  if (!str_dateFormat) {
+    str_dateFormat = defaultDateFormat;
+  }
+
+  var checkProperDate = function(year, month, day) {
+    var tentativeDate;
+    year = parseFloat(year, 10);
+    month = parseFloat(month, 10);
+    day = parseFloat(day, 10);
+    if (day < 1 || day > 31) return false;
+    if (month < 1 || month > 12) return false;
+    if (year < 1 || year > 9999) return false;
+    tentativeDate = new Date(year, month - 1, day);
+    if (day !== tentativeDate.getDate()) {
+      // To avoid non-existing dates like 30-02-2013 or 32-08-2013
+      // Fixes issue: https://issues.openbravo.com/view.php?id=25244
+      return false;
+    }
+    return true;
+  }
+
+  switch (str_dateFormat) {
+  case "%m-%d-%Y":
+  case "%m/%d/%Y":
+  case "%m.%d.%Y":
+  case "%m:%d:%Y":
+    if (!checkProperDate(RegExp.$3, RegExp.$1, RegExp.$2)) {
+      return false;
+    }
+    inputDate = new Date(parseFloat(RegExp.$3), parseFloat(RegExp.$1) - 1, parseFloat(RegExp.$2));
+    return inputDate;
+  case "%Y-%m-%d":
+  case "%Y/%m/%d":
+  case "%Y.%m.%d":
+  case "%Y:%m:%d":
+    if (!checkProperDate(RegExp.$1, RegExp.$2, RegExp.$3)) {
+      return false;
+    }
+    inputDate = new Date(parseFloat(RegExp.$1), parseFloat(RegExp.$2) - 1, parseFloat(RegExp.$3));
+    return inputDate;
+  case "%d-%m-%Y":
+  case "%d/%m/%Y":
+  case "%d.%m.%Y":
+  case "%d:%m:%Y":
+  default:
+    if (!checkProperDate(RegExp.$3, RegExp.$2, RegExp.$1)) {
+      return false;
+    }
+    inputDate = new Date(parseFloat(RegExp.$3), parseFloat(RegExp.$2) - 1, parseFloat(RegExp.$1));
+    return inputDate;
+  }
+  return false;
 },isInRange:function(){
 if((this.greaterThan==""||this.greaterThan==null)&&(this.lowerThan==""||this.lowerThan==null)){
 return true;

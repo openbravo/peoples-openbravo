@@ -170,6 +170,9 @@
   v_invoiceBlocking VARCHAR2(1):='N';
   v_bpartner_name c_bpartner.name%TYPE;
   v_productname m_product.name%TYPE;
+
+  v_iscashvat C_Invoice.IsCashVat%TYPE;
+  v_invoiceline_qtysum NUMBER;
     
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -253,7 +256,7 @@ BEGIN --BODY
       i.C_Order_ID, i.IsSOTrx, i.C_BPartner_ID, i.AD_User_ID,
       i.C_Currency_ID, i.POReference, i.Posted,
       i.c_Project_Id, i.C_WithHolding_ID, dt.isreturn,
-      pl.istaxincluded
+      pl.istaxincluded, i.IsCashVat
   INTO v_Processing, v_Processed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID,
       v_PaymentRule, v_PaymentTerm, v_DateAcct, v_DateInvoiced,
@@ -261,7 +264,7 @@ BEGIN --BODY
       v_Order_ID, v_IsSOTrx, v_BPartner_ID, v_BPartner_User_ID,
       v_Currency_ID, v_POReference, v_Posted,
       v_C_Project_Id, cWithHoldID, v_isreturndoctype,
-      v_istaxincluded
+      v_istaxincluded, v_iscashvat
   FROM C_INVOICE i
         JOIN c_doctype dt ON i.c_doctypetarget_id = dt.c_doctype_id
         JOIN m_pricelist pl ON i.m_pricelist_id = pl.m_pricelist_id
@@ -307,6 +310,17 @@ BEGIN --BODY
       WHERE p.isgeneric = 'Y'
         AND il.c_invoice_id = v_record_id;
       RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
+    END IF;
+
+    -- Check the cash vat flag for all the taxes matches the invoice one
+    select count(1)
+    into v_count
+    from c_invoicetax it inner join c_tax t on (it.c_tax_id = t.c_tax_id)
+    where it.c_invoice_id = v_Record_ID
+    and t.IsCashVat <> v_iscashvat;
+
+    IF (v_count > 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CashVATNotMatch@');
     END IF;
 
     /*
@@ -942,17 +956,20 @@ IF (NOT FINISH_PROCESS) THEN
           )
         LOOP
           IF (Cur_ReactivateInvoiceLine.C_OrderLine_ID IS NOT NULL) THEN
-            SELECT MAX(C_INVOICE.DateInvoiced) INTO v_REDateInvoiced
-            FROM C_INVOICE, C_INVOICELINE
-            WHERE C_INVOICE.C_Invoice_ID=C_INVOICELINE.C_INVOICE_ID
-              AND C_INVOICELINE.C_ORDERLINE_ID=Cur_ReactivateInvoiceLine.C_ORDERLINE_ID
-              AND C_INVOICELINE.C_InvoiceLine_ID<>Cur_ReactivateInvoiceLine.C_InvoiceLine_ID;
-            UPDATE C_ORDERLINE
-            SET QtyInvoiced=QtyInvoiced - Cur_ReactivateInvoiceLine.QtyInvoiced,
-                DateInvoiced=v_REDateInvoiced,
-                Updated=now(),
-                UpdatedBy=v_UpdatedBy
-            WHERE C_ORDERLINE.C_OrderLine_ID=Cur_ReactivateInvoiceLine.C_OrderLine_ID;
+            SELECT MAX(C_INVOICE.DateInvoiced), COALESCE(sum(QtyInvoiced),0) 
+	    INTO v_REDateInvoiced, v_invoiceline_qtysum
+	    FROM C_INVOICE, C_INVOICELINE
+	    WHERE C_INVOICE.C_Invoice_ID=C_INVOICELINE.C_INVOICE_ID
+	    AND C_INVOICELINE.C_ORDERLINE_ID=Cur_ReactivateInvoiceLine.C_ORDERLINE_ID
+	    and C_INVOICE.docstatus='CO'
+	    AND C_INVOICE.C_INVOICE_ID <> v_Record_ID;
+	    
+	    UPDATE C_ORDERLINE
+	    SET QtyInvoiced=v_invoiceline_qtysum, 
+		DateInvoiced=v_REDateInvoiced,
+		Updated=now(),
+		UpdatedBy=v_UpdatedBy
+	    WHERE C_ORDERLINE.C_OrderLine_ID=Cur_ReactivateInvoiceLine.C_OrderLine_ID;
           END IF;
           IF (Cur_ReactivateInvoiceLine.M_InOutLine_ID IS NOT NULL) THEN
             SELECT m.DOCSTATUS INTO v_REInOutStatus

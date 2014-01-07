@@ -120,6 +120,8 @@
   v_bpartner_name c_bpartner.name%TYPE;
   v_productname m_product.name%TYPE;
 
+  v_iscashvat C_Order.IsCashVat%TYPE;
+
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -180,12 +182,14 @@
       C_DocType_ID, C_DocTypeTarget_ID, c_order.AD_Client_ID,
       c_order.AD_Org_ID, c_order.UpdatedBy, M_Warehouse_ID, TRUNC(DateOrdered),
       Issotrx, c_Bpartner_Id, c_order.c_currency_id, C_PROJECT_ID,
-      C_BPartner_ID, c_order.M_PriceList_ID, invoicerule, m_pricelist.istaxincluded
+      C_BPartner_ID, c_order.M_PriceList_ID, invoicerule, m_pricelist.istaxincluded,
+      c_order.IsCashVat
     INTO v_IsProcessing, v_IsProcessed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID, v_Client_ID,
       v_Org_ID, v_UpdatedBy, v_M_Warehouse_ID, v_Date,
       v_isSoTrx, v_c_Bpartner_Id, v_c_currency_id, v_C_PROJECT_ID,
-      v_CBPartner_ID, v_PriceList_ID, v_invoicerule, v_istaxincluded
+      v_CBPartner_ID, v_PriceList_ID, v_invoicerule, v_istaxincluded,
+      v_iscashvat
     FROM C_ORDER JOIN m_pricelist ON c_order.m_pricelist_id = m_pricelist.m_pricelist_id
     WHERE C_Order_ID=v_Record_ID  FOR UPDATE;
     -- Get current DocSubTypeSO
@@ -298,6 +302,19 @@
        IF v_Aux=0 THEN
          RAISE_APPLICATION_ERROR(-20000, '@OrderWithoutLines@');
        END IF;
+    END IF;
+
+    -- Check the cash vat flag for all the taxes matches the order one
+    IF (v_DocAction IN ('CO', 'PR')) THEN
+      select count(1)
+      into v_Aux
+      from c_ordertax ot inner join c_tax t on (ot.c_tax_id = t.c_tax_id)
+      where ot.c_order_id = v_Record_ID
+      and t.IsCashVat <> v_iscashvat;
+
+      IF (v_Aux > 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@CashVATNotMatch@');
+      END IF;
     END IF;
 
     /**

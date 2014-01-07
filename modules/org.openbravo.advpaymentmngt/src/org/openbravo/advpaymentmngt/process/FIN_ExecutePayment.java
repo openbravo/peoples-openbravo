@@ -252,7 +252,7 @@ public class FIN_ExecutePayment {
           creditUsed = creditUsed.subtract(amountWithSign);
           bPartner.setCreditUsed(creditUsed);
           OBDal.getInstance().save(bPartner);
-          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getInvoicePaymentSchedule(),
+          FIN_AddPayment.updatePaymentScheduleAmounts(pDetail, psd.getInvoicePaymentSchedule(),
               psd.getAmount(), psd.getWriteoffAmount());
         }
         if (psd.getOrderPaymentSchedule() != null) {

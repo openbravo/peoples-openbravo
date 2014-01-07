@@ -23,7 +23,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
-import org.openbravo.test.dal.ADCachedMultiThreadTest;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
@@ -50,6 +49,7 @@ import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.IndexesTest;
 import org.openbravo.test.model.OneToManyTest;
 import org.openbravo.test.model.RuntimeModelTest;
+import org.openbravo.test.model.TrlColumnsOraTypeTest;
 import org.openbravo.test.model.UniqueConstraintTest;
 import org.openbravo.test.modularity.DBPrefixTest;
 import org.openbravo.test.modularity.DatasetServiceTest;
@@ -118,6 +118,7 @@ public class AllAntTaskTests {
     suite.addTestSuite(UniqueConstraintTest.class);
     suite.addTestSuite(ClassLoaderTest.class);
     suite.addTestSuite(IndexesTest.class);
+    suite.addTestSuite(TrlColumnsOraTypeTest.class);
 
     // modularity
     suite.addTestSuite(DatasetServiceTest.class);

@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2013 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -98,7 +98,8 @@ BEGIN
           AD_Org_ID, IsActive, Created,
           CreatedBy, Updated, UpdatedBy,
           T_Due_Acct, T_Liability_Acct, T_Credit_Acct,
-          T_Receivables_Acct, T_Expense_Acct
+          T_Receivables_Acct, T_Expense_Acct, 
+	  T_Due_Trans_Acct, T_Credit_Trans_Acct
         )
         VALUES
         (
@@ -106,7 +107,8 @@ BEGIN
           :new.AD_ORG_ID,  'Y', now(),
           :new.CreatedBy, now(), :new.UpdatedBy,
           Cur_Defaults.T_Due_Acct, Cur_Defaults.T_Liability_Acct, Cur_Defaults.T_Credit_Acct,
-          Cur_Defaults.T_Receivables_Acct, Cur_Defaults.T_Expense_Acct
+          Cur_Defaults.T_Receivables_Acct, Cur_Defaults.T_Expense_Acct,
+	  Cur_Defaults.T_Due_Trans_Acct, Cur_Defaults.T_Credit_Trans_Acct
         )
         ;
     END IF;

@@ -26,6 +26,8 @@ import java.util.Map;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.window.OBViewFieldHandler.OBViewField;
 import org.openbravo.client.application.window.OBViewFieldHandler.OBViewFieldDefinition;
 import org.openbravo.client.application.window.OBViewTab.ButtonField;
@@ -36,6 +38,7 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
@@ -238,18 +241,16 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   /**
    * Returns the string representation of an array that contains all the properties that must always
-   * be returned from the datasource when the grid asks for data: 
-   * - id 
-   * - client and organization
-   * - all the properties that compose the identifier of the entity 
-   * - all button fields with label values
-   * - the link to parent properties
-   * - all the properties that are part of the display logic of the tab buttons
+   * be returned from the datasource when the grid asks for data: - id - client and organization -
+   * all the properties that compose the identifier of the entity - all button fields with label
+   * values - the link to parent properties - all the properties that are part of the display logic
+   * of the tab buttons
    */
   public List<String> getRequiredGridProperties() {
     List<String> requiredGridProperties = new ArrayList<String>();
     requiredGridProperties.add("id");
-    // Needed to check if the record is readonly (check addWritableAttribute method of DefaultJsonDataService)
+    // Needed to check if the record is readonly (check addWritableAttribute method of
+    // DefaultJsonDataService)
     requiredGridProperties.add("client");
     requiredGridProperties.add("organization");
     // Audit fields are mandatory because the FIC does not returned them when called in EDIT mode
@@ -316,5 +317,44 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       }
     }
     return null;
+  }
+
+  /**
+   * Returns true if the grid should filter and sort lazily. In that case, the changes done by the
+   * user to filter editor and to the grid sorting will not by applied until the user clicks on an
+   * 'Apply changes' button
+   */
+  public boolean getLazyFiltering() {
+    Boolean lazyFiltering = null;
+    List<Object> parameterList = new ArrayList<Object>();
+
+    String tabConfsHql = " as p where p.tab.id = ? ";
+    parameterList.add(tab.getId());
+
+    // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
+    OBQuery<GCTab> query = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql);
+    query.setParameters(parameterList);
+    List<GCTab> tabConfs = query.list();
+    if (!tabConfs.isEmpty()) {
+      if ("Y".equals(tabConfs.get(0).getIsLazyFiltering())) {
+        lazyFiltering = true;
+      } else if ("N".equals(tabConfs.get(0).getIsLazyFiltering())) {
+        lazyFiltering = false;
+      }
+    }
+    if (lazyFiltering == null) {
+      // Trying to get parameters from "Grid Configuration (System)" window
+      List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
+      if (!sysConfs.isEmpty()) {
+        if (lazyFiltering == null) {
+          lazyFiltering = sysConfs.get(0).isLazyFiltering();
+        }
+      }
+    }
+    if (lazyFiltering != null) {
+      return lazyFiltering;
+    } else {
+      return false;
+    }
   }
 }

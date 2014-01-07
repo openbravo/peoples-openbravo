@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -33,6 +34,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.AccDefUtility;
+import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.currency.ConversionRateDoc;
@@ -53,6 +55,8 @@ public class DocInvoice extends AcctServer {
   }
 
   DocLine[] p_lines_taxes = null;
+
+  boolean isCashVAT = false;
 
   String SeqNo = "0";
 
@@ -92,6 +96,7 @@ public class DocInvoice extends AcctServer {
     m_taxes = loadTaxes();
     m_payments = loadPayments();
     m_debt_payments = loadDebtPayments();
+    isCashVAT = StringUtils.equals("Y", data[0].getField("iscashvat"));
     return true;
 
   }
@@ -368,14 +373,40 @@ public class DocInvoice extends AcctServer {
         // New docLine created to assign C_Tax_ID value to the entry
         DocLine docLine = new DocLine(DocumentType, Record_ID, "");
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
-        if (IsReversal.equals("Y"))
+
+        BigDecimal percentageFinalAccount = CashVATUtil._100;
+        final BigDecimal taxesAmountTotal = new BigDecimal(
+            StringUtils.isBlank(m_taxes[i].m_amount) ? "0" : m_taxes[i].m_amount);
+        BigDecimal taxToTransAccount = BigDecimal.ZERO;
+        if (IsReversal.equals("Y")) {
+          if (isCashVAT) {
+            percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
+                m_taxes[i].m_C_Tax_ID, Record_ID);
+            taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+                CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal, C_Currency_ID);
+            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue_Trans, as, conn),
+                C_Currency_ID, taxToTransAccount.toString(), "", Fact_Acct_Group_ID,
+                nextSeqNo(SeqNo), DocumentType, conn);
+          }
+          final BigDecimal taxToFinalAccount = taxesAmountTotal.subtract(taxToTransAccount);
           fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
-              C_Currency_ID, m_taxes[i].m_amount, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
-        else
+              C_Currency_ID, taxToFinalAccount.toString(), "", Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+        } else {
+          if (isCashVAT) {
+            percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
+                m_taxes[i].m_C_Tax_ID, Record_ID);
+            taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+                CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal, C_Currency_ID);
+            fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue_Trans, as, conn),
+                C_Currency_ID, "", taxToTransAccount.toString(), Fact_Acct_Group_ID,
+                nextSeqNo(SeqNo), DocumentType, conn);
+          }
+          final BigDecimal taxToFinalAccount = taxesAmountTotal.subtract(taxToTransAccount);
           fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
-              C_Currency_ID, "", m_taxes[i].m_amount, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+              C_Currency_ID, "", taxToFinalAccount.toString(), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+        }
       }
       // Revenue CR
       if (p_lines != null && p_lines.length > 0) {
@@ -511,9 +542,24 @@ public class DocInvoice extends AcctServer {
         // New docLine created to assign C_Tax_ID value to the entry
         DocLine docLine = new DocLine(DocumentType, Record_ID, "");
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
+
+        BigDecimal percentageFinalAccount = CashVATUtil._100;
+        final BigDecimal taxesAmountTotal = new BigDecimal(StringUtils.isBlank(m_taxes[i]
+            .getAmount()) ? "0" : m_taxes[i].getAmount());
+        BigDecimal taxToTransAccount = BigDecimal.ZERO;
+        if (isCashVAT) {
+          percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
+              m_taxes[i].m_C_Tax_ID, Record_ID);
+          taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+              CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal, C_Currency_ID);
+          fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue_Trans, as, conn),
+              this.C_Currency_ID, taxToTransAccount.toString(), "", Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+        }
+        final BigDecimal taxToFinalAccount = taxesAmountTotal.subtract(taxToTransAccount);
         fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
-            this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
+            this.C_Currency_ID, taxToFinalAccount.toString(), "", Fact_Acct_Group_ID,
+            nextSeqNo(SeqNo), DocumentType, conn);
       }
       // Revenue CR
       for (int i = 0; p_lines != null && i < p_lines.length; i++) {
@@ -629,14 +675,41 @@ public class DocInvoice extends AcctServer {
         docLine.m_C_Tax_ID = m_taxes[i].m_C_Tax_ID;
 
         if (!m_taxes[i].m_isTaxUndeductable) {
+          BigDecimal percentageFinalAccount = CashVATUtil._100;
+          final BigDecimal taxesAmountTotal = new BigDecimal(StringUtils.isBlank(m_taxes[i]
+              .getAmount()) ? "0" : m_taxes[i].getAmount());
+          BigDecimal taxToTransAccount = BigDecimal.ZERO;
           if (IsReversal.equals("Y")) {
+            if (isCashVAT) {
+              percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
+                  m_taxes[i].m_C_Tax_ID, Record_ID);
+              taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+                  CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
+                  C_Currency_ID);
+              fact.createLine(docLine,
+                  m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit_Trans, as, conn),
+                  this.C_Currency_ID, "", taxToTransAccount.toString(), Fact_Acct_Group_ID,
+                  nextSeqNo(SeqNo), DocumentType, conn);
+            }
+            final BigDecimal taxToFinalAccount = taxesAmountTotal.subtract(taxToTransAccount);
             fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
-                this.C_Currency_ID, "", m_taxes[i].getAmount(), Fact_Acct_Group_ID,
+                this.C_Currency_ID, "", taxToFinalAccount.toString(), Fact_Acct_Group_ID,
                 nextSeqNo(SeqNo), DocumentType, conn);
-
           } else {
+            if (isCashVAT) {
+              percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
+                  m_taxes[i].m_C_Tax_ID, Record_ID);
+              taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+                  CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal,
+                  C_Currency_ID);
+              fact.createLine(docLine,
+                  m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit_Trans, as, conn),
+                  this.C_Currency_ID, taxToTransAccount.toString(), "", Fact_Acct_Group_ID,
+                  nextSeqNo(SeqNo), DocumentType, conn);
+            }
+            final BigDecimal taxToFinalAccount = taxesAmountTotal.subtract(taxToTransAccount);
             fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
-                this.C_Currency_ID, m_taxes[i].getAmount(), "", Fact_Acct_Group_ID,
+                this.C_Currency_ID, taxToFinalAccount.toString(), "", Fact_Acct_Group_ID,
                 nextSeqNo(SeqNo), DocumentType, conn);
           }
         }
@@ -844,9 +917,24 @@ public class DocInvoice extends AcctServer {
               m_taxes[i].m_C_Tax_ID, m_taxes[i].getAmount());
 
         } else {
+          BigDecimal percentageFinalAccount = CashVATUtil._100;
+          final BigDecimal taxesAmountTotal = new BigDecimal(StringUtils.isBlank(m_taxes[i]
+              .getAmount()) ? "0" : m_taxes[i].getAmount());
+          BigDecimal taxToTransAccount = BigDecimal.ZERO;
+          if (isCashVAT) {
+            percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
+                m_taxes[i].m_C_Tax_ID, Record_ID);
+            taxToTransAccount = CashVATUtil.calculatePercentageAmount(
+                CashVATUtil._100.subtract(percentageFinalAccount), taxesAmountTotal, C_Currency_ID);
+            fact.createLine(docLine,
+                m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit_Trans, as, conn),
+                this.C_Currency_ID, "", taxToTransAccount.toString(), Fact_Acct_Group_ID,
+                nextSeqNo(SeqNo), DocumentType, conn);
+          }
+          final BigDecimal taxToFinalAccount = taxesAmountTotal.subtract(taxToTransAccount);
           fact.createLine(docLine, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),
-              this.C_Currency_ID, "", m_taxes[i].getAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-              DocumentType, conn);
+              this.C_Currency_ID, "", taxToFinalAccount.toString(), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
         }
       }
       // Expense CR

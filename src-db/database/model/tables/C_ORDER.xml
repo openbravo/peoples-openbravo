@@ -333,6 +333,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISCASHVAT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_CORDER">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
@@ -451,6 +455,7 @@
         <index-column name="UPDATED"/>
       </index>
       <check name="C_ORDER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISCASHVAT_CH"><![CDATA[ISCASHVAT IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISDELIVERED_CHECK"><![CDATA[ISDELIVERED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISDISCOUNTPRINTED_CHK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISINVOICED_CHECK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
