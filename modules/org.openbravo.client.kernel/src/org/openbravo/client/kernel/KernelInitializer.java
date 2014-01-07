@@ -19,14 +19,20 @@
 
 package org.openbravo.client.kernel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.client.kernel.event.PersistenceEventOBInterceptor;
 import org.openbravo.dal.core.OBInterceptor;
+import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.database.PoolInterceptorProvider;
 
 /**
  * Class responsible for initializing the kernel layer. Can be used in a servlet as well as a
@@ -44,6 +50,10 @@ public class KernelInitializer {
   @Any
   private Instance<ApplicationInitializer> applicationInitializers;
 
+  @Inject
+  @Any
+  private Instance<PoolInterceptorProvider> poolInterceptors;
+
   public void initialize() {
     setInterceptor();
 
@@ -51,6 +61,19 @@ public class KernelInitializer {
       initializer.initialize();
     }
 
+    String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("bbdd.externalPoolClassName");
+    if (poolClassName != null) {
+      try {
+        ExternalConnectionPool pool = ExternalConnectionPool.getInstance(poolClassName);
+        List<PoolInterceptorProvider> poolInterceptorList = new ArrayList<PoolInterceptorProvider>();
+        for (PoolInterceptorProvider poolInterceptor : poolInterceptors) {
+          poolInterceptorList.add(poolInterceptor);
+        }
+        pool.loadInterceptors(poolInterceptorList);
+      } catch (Exception e) {
+      }
+    }
   }
 
   public synchronized void setInterceptor() {

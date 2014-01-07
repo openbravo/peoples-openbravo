@@ -1,6 +1,7 @@
 package org.openbravo.database;
 
 import java.sql.Connection;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -18,6 +19,9 @@ public abstract class ExternalConnectionPool {
           .newInstance();
     }
     return instance;
+  }
+
+  public void loadInterceptors(List<PoolInterceptorProvider> interceptors) {
   }
 
   public abstract Connection getConnection();
