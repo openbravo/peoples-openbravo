@@ -106,7 +106,8 @@ IF (UPDATING) THEN
  -- Update C_Invoice.IsCashVAT flag from the line tax rate.
  -- We do it this way to force any invoicing process to properly set the C_Invoice.IsCashVAT
  -- If a user manually changes the tax rate when entering a line, the invoice's header IsCash VAT may change
- IF ((INSERTING OR UPDATING) AND :NEW.C_TAX_ID IS NOT NULL) THEN
+ IF (INSERTING OR UPDATING) THEN
+  IF (:NEW.C_TAX_ID IS NOT NULL) THEN
    SELECT COALESCE(IsCashVAT, 'N')
    INTO v_IsCashVAT_Tax
    FROM C_Tax
@@ -122,6 +123,7 @@ IF (UPDATING) THEN
      SET IsCashVAT = v_IsCashVAT_Tax
      WHERE C_Invoice_ID=:NEW.C_Invoice_ID;
    END IF;
+  END IF;
  END IF;
 
 

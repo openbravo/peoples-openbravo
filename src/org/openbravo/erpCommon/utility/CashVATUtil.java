@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -76,6 +76,33 @@ public class CashVATUtil {
       }
     } catch (final Exception e) {
       log4j.error("Error getting organization'" + strOrgId + "' cash vat. Returning null", e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return null;
+  }
+
+  /**
+   * Returns the associated legal entity Double Cash Criteria configuration. Useful for purchase
+   * flows
+   * 
+   * @param strOrgId
+   *          organization id
+   * @return "Y", "N" or null if not found
+   */
+  public static String getOrganizationIsDoubleCash(final String strOrgId) {
+    try {
+      OBContext.setAdminMode(true);
+      final Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
+      final Organization legalEntity = OBContext.getOBContext()
+          .getOrganizationStructureProvider(org.getClient().getId()).getLegalEntity(org);
+      if (legalEntity != null && legalEntity.getOrganizationInformationList() != null
+          && !legalEntity.getOrganizationInformationList().isEmpty()) {
+        return legalEntity.getOrganizationInformationList().get(0).isDoubleCash() ? "Y" : "N";
+      }
+    } catch (final Exception e) {
+      log4j.error("Error getting organization'" + strOrgId + "' double cash. Returning null", e);
     } finally {
       OBContext.restorePreviousMode();
     }
