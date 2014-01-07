@@ -22,8 +22,17 @@ enyo.kind({
      */
     requestApproval: function (model, approvalType, callback) {
       var dialog;
+      var haspermission;
 
-      if (OB.POS.modelterminal.hasPermission(approvalType, true)) {
+      if (_.isArray(approvalType)) {
+        haspermission = _.every(approvalType, function (a) {
+          return OB.POS.modelterminal.hasPermission(a, true);
+        });
+      } else {
+        haspermission = OB.POS.modelterminal.hasPermission(approvalType, true);
+      }
+
+      if (haspermission) {
         model.approvedRequest(true, new Backbone.Model(OB.POS.modelterminal.get('context').user), approvalType, callback); // I'am a supervisor
       } else {
         dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({

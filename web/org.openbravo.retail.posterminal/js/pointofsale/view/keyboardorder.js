@@ -435,9 +435,8 @@ enyo.kind({
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [txt]));
       }
     }
-
     criteria = {
-      'uPCEAN': txt
+      '_whereClause' : 'WHERE upper(upc) = "' + txt + '"'
     };
     OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);
   },

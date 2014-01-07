@@ -289,9 +289,9 @@ enyo.kind({
           onchange: 'changeReason'
         },
         changeReason: function (inSender, inEvent) {
-          if(this.children[this.getSelected()].getValue()==='') {
+          if (this.children[this.getSelected()].getValue() === '') {
             this.owner.line.unset('returnReason');
-          }else{
+          } else {
             this.owner.line.set('returnReason', this.children[this.getSelected()].getValue());
           }
         },

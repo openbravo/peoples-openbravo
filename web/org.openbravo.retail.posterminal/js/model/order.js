@@ -342,7 +342,7 @@
             grossListPrice, grossUnitPrice, discountPercentage, base;
 
         // Calculate inline discount: discount applied before promotions
-        if (line.get('priceList') !== price || (_.isNumber(line.get('discountedLinePrice')) &&  line.get('discountedLinePrice') !== line.get('priceList'))) {
+        if (line.get('priceList') !== price || (_.isNumber(line.get('discountedLinePrice')) && line.get('discountedLinePrice') !== line.get('priceList'))) {
           grossListPrice = line.get('priceList');
           grossUnitPrice = new BigDecimal(price.toString());
           if (OB.DEC.compare(grossListPrice) === 0) {
@@ -1022,6 +1022,7 @@
       disc.actualAmt = discount.actualAmt;
       disc.pack = discount.pack;
       disc.discountType = rule.get('discountType');
+      disc.priority = rule.get('priority');
       disc.manual = discount.manual;
       disc.userAmt = discount.userAmt;
       disc.lastApplied = discount.lastApplied;

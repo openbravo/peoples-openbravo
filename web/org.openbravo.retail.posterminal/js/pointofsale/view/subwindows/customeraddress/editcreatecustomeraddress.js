@@ -173,5 +173,11 @@ enyo.kind({
     modelProperty: 'cityName',
     i18nLabel: 'OBPOS_LblCity',
     maxlength: 60
+  }, {
+    kind: 'OB.UI.CustomerAddrTextProperty',
+    name: 'customerAddrCountry',
+    modelProperty: 'countryName',
+    i18nLabel: 'OBPOS_LblCountry',
+    readOnly: true
   }]
 });

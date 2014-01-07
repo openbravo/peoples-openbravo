@@ -84,7 +84,11 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
-    this.$.identifier.setContent(this.model.get('name'));
+    if (_.isString(this.model.get('name')) && this.model.get('name').length > 0) {
+      this.$.identifier.setContent(this.model.get('name') + ' - ' + this.model.get('countryName'));
+    } else {
+      this.$.identifier.setContent(OB.I18N.getLabel('OBPOS_EmptyLocation') + ' - ' + this.model.get('countryName'));
+    }
   }
 });
 
@@ -222,10 +226,12 @@ enyo.kind({
         me.bpsLocList.add(dataBps.models);
       }
     }
-    criteria.name = {
-      operator: OB.Dal.CONTAINS,
-      value: filter
-    };
+    if (filter && _.isString(filter) && filter.length > 0) {
+      criteria.name = {
+        operator: OB.Dal.CONTAINS,
+        value: filter
+      };
+    }
     criteria.bpartner = this.bPartnerId;
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
     return true;

@@ -11,6 +11,49 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderCashPaymentsLine',
+  statics: {
+    getLegacyCoins: function () {
+      return new Backbone.Collection([{
+        amount: 0.01,
+        backcolor: '#f3bc9e'
+      }, {
+        amount: 0.02,
+        backcolor: '#f3bc9e'
+      }, {
+        amount: 0.05,
+        backcolor: '#f3bc9e'
+      }, {
+        amount: 0.10,
+        backcolor: '#f9e487'
+      }, {
+        amount: 0.20,
+        backcolor: '#f9e487'
+      }, {
+        amount: 0.50,
+        backcolor: '#f9e487'
+      }, {
+        amount: 1,
+        backcolor: '#e4e0e3',
+        bordercolor: '#f9e487'
+      }, {
+        amount: 2,
+        backcolor: '#f9e487',
+        bordercolor: '#e4e0e3'
+      }, {
+        amount: 5,
+        backcolor: '#bccdc5'
+      }, {
+        amount: 10,
+        backcolor: '#e9b7c3'
+      }, {
+        amount: 20,
+        backcolor: '#bac3de'
+      }, {
+        amount: 50,
+        backcolor: '#f9bb92'
+      }]);
+    }
+  },
   events: {
     onLineEditCash: '',
     onAddUnit: ''
@@ -149,19 +192,19 @@ enyo.kind({
                 style: 'border-bottom: 1px solid #cccccc;',
                 components: [{
                   name: 'totalLbl',
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 15%;',
+                  style: 'padding: 10px 20px 10px 10px; float: left;',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
                   }
                 }, {
-                  style: 'padding: 10px 20px 10px 0px; float: left; width: 14%;',
+                  style: 'padding: 10px 20px 10px 0px; float: left;',
                   components: [{
                     name: 'total',
                     kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                   }]
                 }, {
                   name: 'countedLbl',
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 15%;',
+                  style: 'padding: 10px 20px 10px 10px; float: left;',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_Counted'));
                   }
@@ -173,7 +216,7 @@ enyo.kind({
                   }]
                 }, {
                   name: 'differenceLbl',
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 15%;',
+                  style: 'padding: 10px 20px 10px 10px; float: left;',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_Remaining'));
                   }
@@ -272,8 +315,7 @@ enyo.kind({
   initPaymentToCount: function (payment) {
     this.payment = payment;
 
-    var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;
-    this.$.title.setContent(OB.I18N.getLabel('OBPOS_CashPaymentsTitle', [payment.get('name')]) + ' (' + OB.Utilities.Date.JSToOB(new Date(currentbd), OB.Format.date) + ')');
+    this.$.title.setContent(OB.I18N.getLabel('OBPOS_CashPaymentsTitle', [payment.get('name')]) + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
 
     this.$.total.printAmount(this.payment.get('foreignExpected'));
 
@@ -296,6 +338,11 @@ enyo.kind({
         currency: currencyId
       }, function (coins) {
         var coinCol = new Backbone.Collection();
+
+        if (coins.length === 0 && payment.get('paymentMethod').currency === '102') {
+          coins = OB.OBPOSCashUp.UI.RenderCashPaymentsLine.getLegacyCoins();
+        }
+
         coins.each(function (coin) {
           var coinModel = new Backbone.Model();
           coinModel.set('numberOfCoins', 0);
@@ -323,7 +370,14 @@ enyo.kind({
 
   },
   displayStep: function (model) {
+    var payment = model.get('paymentList').at(model.get('substep'));
+
     // this function is invoked when displayed.      
-    this.initPaymentToCount(model.get('paymentList').at(model.get('substep')));
+    this.initPaymentToCount(payment);
+
+    // Open drawer if allow open drawer. Already a cash method.
+    if (payment.get('paymentMethod').allowopendrawer) {
+      OB.POS.hwserver.openDrawer();
+    }
   }
 });

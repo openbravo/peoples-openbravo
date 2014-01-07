@@ -304,7 +304,7 @@ public class CashUpReport extends HttpSecureAppServlet {
 
         }
         /******************************* EXPECTED, COUNTED, DIFFERENCE ***************************************************************/
-        String hqlDifferenceDeposit = "select trans.paymentAmount  "
+        String hqlDifferenceDeposit = "select trans.paymentAmount, trans.depositAmount  "
             + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
             + "where trans.gLItem=payment.paymentMethod.cashDifferences and trans.reconciliation=? "
             + "and trans.account=payment.financialAccount";
@@ -312,9 +312,19 @@ public class CashUpReport extends HttpSecureAppServlet {
             .createQuery(hqlDifferenceDeposit);
         differenceDepositQuery.setString(0, ((OBPOSAppCashReconcil) cashup
             .getOBPOSAppCashReconcilList().get(i)).getReconciliation().getId());
-        BigDecimal differenceDeposit = (BigDecimal) differenceDepositQuery.uniqueResult();
-        if (differenceDeposit == null)
-          differenceDeposit = BigDecimal.ZERO;
+        Object[] differenceObj = (Object[]) differenceDepositQuery.uniqueResult();
+        BigDecimal differenceDeposit = BigDecimal.ZERO;
+        if (differenceObj != null) {
+          differenceDeposit = (BigDecimal) differenceObj[0];
+          if (differenceDeposit == null || differenceDeposit.equals(BigDecimal.ZERO)) {
+            differenceDeposit = (BigDecimal) differenceObj[1];
+            if (differenceDeposit == null) {
+              differenceDeposit = BigDecimal.ZERO;
+            }
+          } else {
+            differenceDeposit = differenceDeposit.negate();
+          }
+        }
 
         psData = new HashMap<String, String>();
         psData.put("GROUPFIELD", "COUNTED");
@@ -322,10 +332,12 @@ public class CashUpReport extends HttpSecureAppServlet {
             + " "
             + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
                 .getCommercialName());
-        psData.put("VALUE", (expected.subtract(differenceDeposit)).multiply(conversionRate)
-            .setScale(2, BigDecimal.ROUND_UP).toString());
+        psData.put(
+            "VALUE",
+            (expected.add(differenceDeposit)).multiply(conversionRate)
+                .setScale(2, BigDecimal.ROUND_UP).toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
-          psData.put("FOREIGN_VALUE", expected.subtract(differenceDeposit).toString());
+          psData.put("FOREIGN_VALUE", expected.add(differenceDeposit).toString());
           psData.put("ISOCODE", isoCode);
         } else {
           psData.put("FOREIGN_VALUE", null);
@@ -403,10 +415,11 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData.put("GROUPFIELD", "TOKEEP");
         psData.put("LABEL", ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
             .getPaymentType().getCommercialName());
-        psData.put("VALUE", (expected.subtract(differenceDeposit).subtract(cashToDeposit))
-            .multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP).toString());
+        psData.put("VALUE",
+            (expected.add(differenceDeposit).subtract(cashToDeposit)).multiply(conversionRate)
+                .setScale(2, BigDecimal.ROUND_UP).toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
-          psData.put("FOREIGN_VALUE", expected.subtract(differenceDeposit).subtract(cashToDeposit)
+          psData.put("FOREIGN_VALUE", expected.add(differenceDeposit).subtract(cashToDeposit)
               .toString());
           psData.put("ISOCODE", isoCode);
         } else {

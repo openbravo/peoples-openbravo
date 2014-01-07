@@ -78,7 +78,7 @@ enyo.kind({
       }
       this.$.buttonOk.hide();
     }
-    this.$.buttonEdit.setDisabled(this.model.get('paymentMethod').iscash);
+    this.$.buttonEdit.setDisabled(this.model.get('paymentMethod').iscash && this.model.get('paymentMethod').countcash);
   },
   lineEdit: function () {
     this.doLineEditCount();
@@ -110,8 +110,7 @@ enyo.kind({
             components: [{
               style: 'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
               initComponents: function () {
-                var currentbd = OB.POS.modelterminal.get('terminal').poss_businessdate;
-                this.setContent(OB.I18N.getLabel('OBPOS_LblStep2of4') + ' (' + OB.Utilities.Date.JSToOB(new Date(currentbd), OB.Format.date) + ')');
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStep2of4') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
               }
             }]
           }]
@@ -211,6 +210,14 @@ enyo.kind({
   },
   displayStep: function (model) {
     // this function is invoked when displayed.  
+    var opendrawer = model.get('paymentList').any(function (payment) {
+      var paymentmethod = payment.get('paymentMethod');
+      return paymentmethod.iscash && !paymentmethod.countcash && paymentmethod.allowopendrawer;
+    });
+
+    if (opendrawer) {
+      OB.POS.hwserver.openDrawer();
+    }
   },
   verifyStep: function (model, callback) {
     // this function is invoked when going next, invokes callback to continue
