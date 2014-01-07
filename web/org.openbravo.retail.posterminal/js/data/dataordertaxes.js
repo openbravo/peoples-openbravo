@@ -48,11 +48,11 @@
           var product = element.get('product'),
               criteria = {
               taxCategory: product.get('taxCategory'),
-              businessPartnerTaxCategory: bpTaxCategory
+              businessPartnerTaxCategory: bpTaxCategory,
+              _orderByClause: 'validfrom desc'
               };
           OB.MobileApp.model.hookManager.executeHooks('OBPOS_FindTaxRate', {
             context: me,
-            bpTaxCategory: bpTaxCategory,
             criteria: criteria
           }, function (args) {
             // OB.Dal.find(model, criteria, success, error);
@@ -281,7 +281,8 @@
           var product = element.get('product'),
               criteria = {
               taxCategory: product.get('taxCategory'),
-              businessPartnerTaxCategory: bpTaxCategory
+              businessPartnerTaxCategory: bpTaxCategory,
+              _orderByClause: 'validfrom desc'
               };
           if (element.get('ignoreTaxes') === true || product.get('ignoreTaxes') === true) {
             var taxLine = {};
@@ -305,7 +306,6 @@
             // OB.Dal.find(model, criteria, success, error);
             OB.MobileApp.model.hookManager.executeHooks('OBPOS_FindTaxRate', {
               context: me,
-              bpTaxCategory: bpTaxCategory,
               criteria: criteria
             }, function (args) {
               OB.Dal.find(OB.Model.TaxRate, args.criteria, function (coll, args) { // success

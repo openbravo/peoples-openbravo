@@ -607,6 +607,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     if (approved) {
       date = new Date();
       date = date.getTime();
+      if (!Array.isArray(approvalType)) {
+        approvalType = [approvalType];
+      }
       for (i = 0; i < approvalType.length; i++) {
         approval = {
           approvalType: approvalType[i],
