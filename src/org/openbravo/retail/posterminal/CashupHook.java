@@ -9,10 +9,11 @@
 
 package org.openbravo.retail.posterminal;
 
-
+import org.codehaus.jettison.json.JSONObject;
 
 public interface CashupHook {
-  public CashupHookResult exec(OBPOSApplications terminal, OBPOSAppCashup cashup) throws Exception;
+  public CashupHookResult exec(OBPOSApplications terminal, OBPOSAppCashup cashup,
+      JSONObject cashUpJsonObj) throws Exception;
 }
 
 // Example of a hook:

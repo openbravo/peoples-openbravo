@@ -47,9 +47,11 @@ public class CashCloseProcessor {
   @Any
   private Instance<CashupHook> cashupHooks;
 
-  public JSONObject processCashClose(OBPOSApplications posTerminal, String cashUpId,
-      JSONArray cashCloseInfo, JSONArray cashMgmtIds) throws Exception {
+  public JSONObject processCashClose(OBPOSApplications posTerminal, JSONObject jsonCashup,
+      JSONArray cashMgmtIds) throws Exception {
 
+    String cashUpId = jsonCashup.getString("cashUpId");
+    JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
     OBPOSAppCashup cashUp = createCashUp(posTerminal, cashUpId);
     OBDal.getInstance().save(cashUp);
 
@@ -114,7 +116,7 @@ public class CashCloseProcessor {
     JSONArray messages = new JSONArray(); // all messages returned by hooks
     String next = null; // the first next action of all hooks wins
     for (CashupHook hook : cashupHooks) {
-      CashupHookResult result = hook.exec(posTerminal, cashUp);
+      CashupHookResult result = hook.exec(posTerminal, cashUp, jsonCashup);
       if (result != null) {
         if (result.getMessage() != null && !result.getMessage().equals("")) {
           messages.put(result.getMessage());

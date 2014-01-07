@@ -386,9 +386,12 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }
     return countCashSummary;
   },
+  additionalProperties: [],
+  propertyFunctions: [],
   processAndFinishCashUp: function () {
     var objToSend, server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
-        me = this;
+        me = this,
+        i;
     OB.UTIL.showLoading(true);
     OB.Dal.find(OB.Model.CashUp, {
       'isbeingprocessed': 'N'
@@ -398,6 +401,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         cashUpId: cashUp.at(0).get('id'),
         cashCloseInfo: []
       });
+      for (i = 0; i < me.additionalProperties.length; i++) {
+        objToSend.set(me.additionalProperties[i], me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0)));
+      }
       _.each(me.get('paymentList').models, function (curModel) {
         var cashCloseInfo = {
           expected: 0,
