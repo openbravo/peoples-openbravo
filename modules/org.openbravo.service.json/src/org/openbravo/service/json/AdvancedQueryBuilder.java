@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -150,6 +150,11 @@ public class AdvancedQueryBuilder {
   private boolean joinAssociatedEntities = false;
 
   private List<String> additionalProperties = new ArrayList<String>();
+  private Entity subEntity;
+  private Property distinctProperty;
+  private DataEntityQueryService subDataEntityQueryService;
+
+  private int aliasOffset = 0;
 
   public Entity getEntity() {
     return entity;
@@ -200,7 +205,45 @@ public class AdvancedQueryBuilder {
 
     whereClause += " ";
 
+    if (subEntity != null) {
+      // if there's subentity, process it as a subquery with "exists"
+      String subEntityClientOrg = " and e.organization.id "
+          + createInClause(OBContext.getOBContext().getReadableOrganizations());
+      subEntityClientOrg += " and e.client.id "
+          + createInClause(OBContext.getOBContext().getReadableClients());
+
+      AdvancedQueryBuilder subEntityQueryBuilder = subDataEntityQueryService.getQueryBuilder();
+      subEntityQueryBuilder.aliasOffset = typedParameters.size();
+
+      String subentityWhere = subEntityQueryBuilder.getWhereClause();
+      if (StringUtils.isEmpty(subentityWhere.trim())) {
+        subentityWhere += " where ";
+      } else {
+        subentityWhere += " and ";
+      }
+
+      whereClause += StringUtils.isEmpty(whereClause.trim()) ? "where" : "and";
+      whereClause += " exists (select 1 from " + subEntity.getName() + " "
+          + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e."
+          + distinctProperty.getName() + " = " + mainAlias + subEntityClientOrg + ") ";
+      typedParameters.addAll(subEntityQueryBuilder.typedParameters);
+    }
+
     return whereClause;
+  }
+
+  private String createInClause(String[] values) {
+    if (values.length == 0) {
+      return " in ('') ";
+    }
+    final StringBuilder sb = new StringBuilder();
+    for (final String v : values) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append("'" + v + "'");
+    }
+    return " in (" + sb.toString() + ")";
   }
 
   private String addWhereOrgParameters(String where) {
@@ -1056,7 +1099,7 @@ public class AdvancedQueryBuilder {
   }
 
   private String getTypedParameterAlias() {
-    return ":" + ALIAS_PREFIX + typedParameters.size();
+    return ":" + ALIAS_PREFIX + (typedParameters.size() + aliasOffset);
   }
 
   /**
@@ -1478,17 +1521,6 @@ public class AdvancedQueryBuilder {
       return checkAlias.equals(ownerAlias) && checkProperty == property;
     }
 
-    public String getPropertyPath() {
-      if (ownerAlias != null) {
-        for (JoinDefinition jd : AdvancedQueryBuilder.this.joinDefinitions) {
-          if (jd.getJoinAlias().equals(ownerAlias)) {
-            return jd.getPropertyPath() + DalUtil.DOT + property.getName();
-          }
-        }
-      }
-      return property.getName();
-    }
-
     public String getJoinStatement() {
       String propName;
       if (property.isComputedColumn()) {
@@ -1517,16 +1549,8 @@ public class AdvancedQueryBuilder {
       this.ownerAlias = ownerAlias;
     }
 
-    public boolean isFetchJoin() {
-      return fetchJoin;
-    }
-
     public void setFetchJoin(boolean fetchJoin) {
       this.fetchJoin = fetchJoin;
-    }
-
-    public Property getProperty() {
-      return property;
     }
   }
 
@@ -1638,5 +1662,19 @@ public class AdvancedQueryBuilder {
 
   public void setAdditionalProperties(List<String> additionalProperties) {
     this.additionalProperties = additionalProperties;
+  }
+
+  public void setSubEntityName(String subEntityName) {
+    this.subEntity = ModelProvider.getInstance().getEntity(subEntityName);
+  }
+
+  public void setSubDataEntityQueryService(DataEntityQueryService dataEntityQueryService) {
+    this.subDataEntityQueryService = dataEntityQueryService;
+
+  }
+
+  public void setDistinctProperty(Property distinctProperty) {
+    this.distinctProperty = distinctProperty;
+
   }
 }

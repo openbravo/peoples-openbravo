@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.service.json;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -132,26 +133,6 @@ public class DataEntityQueryService {
 
     if (getSummarySettings() != null) {
       obq.setSelectClause(queryBuilder.getSelectClause());
-    } else if (getDistinct() != null) {
-      final String localDistinct = getDistinct();
-      queryBuilder.addSelectClausePart(localDistinct + ".id");
-
-      final List<Property> properties = getDistinctDisplayProperties();
-
-      for (Property identifierProp : properties) {
-        if (identifierProp.getTargetEntity() != null) {
-          // go one level deeper
-          final List<Property> nextIdentifierProps = JsonUtils.getIdentifierSet(identifierProp);
-          for (Property nextIdentifierProp : nextIdentifierProps) {
-            queryBuilder.addSelectClausePart(localDistinct + DalUtil.DOT + identifierProp.getName()
-                + "." + nextIdentifierProp);
-          }
-        } else {
-          queryBuilder.addSelectClausePart(localDistinct + DalUtil.DOT + identifierProp.getName());
-        }
-      }
-
-      obq.setSelectClause("distinct " + queryBuilder.getSelectClause());
     }
 
     if (getFirstResult() != null) {
@@ -168,9 +149,21 @@ public class DataEntityQueryService {
     }
     obq.setFilterOnActive(isFilterOnActive());
 
+    if (log.isDebugEnabled()) {
+      String params = "";
+      Map<String, Object> namedParams = queryBuilder.getNamedParameters();
+      for (String paramName : namedParams.keySet()) {
+        params += "  -" + paramName + ": " + namedParams.get(paramName) + "\n";
+      }
+      log.debug("Setting params:\n" + params);
+    }
     obq.setNamedParameters(queryBuilder.getNamedParameters());
 
     return obq;
+  }
+
+  AdvancedQueryBuilder getQueryBuilder() {
+    return queryBuilder;
   }
 
   // package private on purpose
@@ -205,9 +198,6 @@ public class DataEntityQueryService {
         + queryBuilder.getOrderByClause();
 
     log.debug("Querying for " + entityName + " " + whereOrderBy);
-
-    // System.err.println("Querying for " + entityName + " " + whereOrderBy);
-
     final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName, whereOrderBy);
     obq.setFilterOnReadableClients(isFilterOnReadableClients());
     obq.setFilterOnReadableOrganization(isFilterOnReadableOrganizations());
@@ -363,6 +353,23 @@ public class DataEntityQueryService {
 
   public void setFilterOnReadableClients(boolean filterOnReadableClients) {
     this.filterOnReadableClients = filterOnReadableClients;
+  }
+
+  /**
+   * In case of performing query for FK drop down list (ie. Organization link in Product window),
+   * there are 2 entities to query:
+   * <ul>
+   * <li>main entity: in the example would be Organization which is the one we want to get records
+   * from
+   * <li>sub entity: in this case Product, it will be filtered in the same way it is in the grid so
+   * only organizations with that criteria will be shown
+   * </ul>
+   */
+  public void setSubEntity(String subEntityName, DataEntityQueryService dataEntityQueryService,
+      Property distinctProperty) {
+    queryBuilder.setSubEntityName(subEntityName);
+    queryBuilder.setSubDataEntityQueryService(dataEntityQueryService);
+    queryBuilder.setDistinctProperty(distinctProperty);
   }
 
 }
