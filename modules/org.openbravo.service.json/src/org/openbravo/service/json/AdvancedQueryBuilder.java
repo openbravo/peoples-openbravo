@@ -222,10 +222,14 @@ public class AdvancedQueryBuilder {
         subentityWhere += " and ";
       }
 
+      String distinctPropName = distinctProperty.getName();
+      if (distinctProperty.isComputedColumn()) {
+        distinctPropName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + distinctPropName;
+      }
       whereClause += StringUtils.isEmpty(whereClause.trim()) ? "where" : "and";
       whereClause += " exists (select 1 from " + subEntity.getName() + " "
-          + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e."
-          + distinctProperty.getName() + " = " + mainAlias + subEntityClientOrg + ") ";
+          + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e." + distinctPropName
+          + " = " + mainAlias + subEntityClientOrg + ") ";
       typedParameters.addAll(subEntityQueryBuilder.typedParameters);
     }
 
