@@ -29,6 +29,13 @@
   <#if param.type != "OBSectionItem">
     paramId: '${param.id}',
     width: '${param.width?js_string}',
+    <#if param.valueMapPresent>
+    valueMap: {
+    <#list param.valueMap as valueMapValue>
+      '${valueMapValue.key?js_string}': '${valueMapValue.value?js_string}'<#if valueMapValue_has_next>,</#if>
+    </#list>
+    },
+    </#if>
     <#if param.redrawOnChange>
       redrawOnChange: true,
     </#if>
