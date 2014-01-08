@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2013 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -66,6 +66,7 @@
     Cur_InOut RECORD;
     Cur_InOutLine RECORD;
     Cur_Order RECORD;
+    Cur_OrderLine RECORD;
     --
     v_Result NUMBER:=1;
     v_AD_Org_ID VARCHAR2(32);
@@ -176,6 +177,38 @@
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerInout@') ;
         END IF;
       END IF;
+
+      if(v_isreturndoctype = 'N' AND v_isSoTrx = 'Y') then
+        v_message := null;
+        for Cur_OrderLine in (
+          select c_orderline_id, line
+          from m_inoutline
+          where m_inout_id = v_Record_ID
+          order by line
+        ) loop
+          select COALESCE(sum(movementqty), 0)
+          into v_qty
+          from m_inoutline
+          where m_inout_id = v_Record_ID
+          and c_orderline_id = Cur_OrderLine.c_orderline_id;
+
+          select qtyordered, (coalesce(qtydelivered, 0) + v_qty)
+          into v_QuantityOrder, v_qty
+          from c_orderline
+          where c_orderline_id = Cur_OrderLine.c_orderline_id;
+
+          if(v_QuantityOrder < v_qty) then
+            if v_message is null THEN
+              v_message := Cur_OrderLine.line;
+            ELSE
+              v_message := v_message || ', ' || Cur_OrderLine.line;
+            END IF;
+          end if;
+        end loop;
+        if v_message is not null then
+          RAISE_APPLICATION_ERROR(-20000, '@MovementQtyCheck@'||' '||'@Inlines@'||' '||v_message);
+        end if;
+      end if;
 
       --Check whether warehouse belongs to the organization.
       SELECT count(AD_ORG_ID)
