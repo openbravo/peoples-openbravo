@@ -288,7 +288,7 @@ isc.OBParameterWindowView.addProperties({
     });
   },
 
-  handleResponse: function (refresh, message, responseActions, retryExecution) {
+  handleResponse: function (refresh, message, responseActions, retryExecution, data) {
     var window = this.parentWindow,
         tab = OB.MainView.TabSet.getTab(this.viewTabId),
         i;
@@ -296,6 +296,19 @@ isc.OBParameterWindowView.addProperties({
     // change title to done
     if (tab) {
       tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Done', [this.tabTitle]));
+    }
+
+    if (data.showResultsInProcessView) {
+      if (!this.resultLayout) {
+        this.resultLayout = isc.HLayout.create({
+          width: '100%',
+          height: '*'
+        });
+        this.addMember(this.resultLayout);
+      } else {
+        // clear the resultLayout
+        this.resultLayout.setMembers([]);
+      }
     }
 
     this.showProcessing(false);
@@ -338,6 +351,7 @@ isc.OBParameterWindowView.addProperties({
     }
 
     if (responseActions) {
+      responseActions._processView = this;
       OB.Utilities.Action.executeJSON(responseActions, null, null, this);
     }
 
@@ -417,9 +431,11 @@ isc.OBParameterWindowView.addProperties({
       if (this.grid) {
         this.grid.show();
       }
+
       this.loading.hide();
     }
   },
+
   doProcess: function (btnValue) {
     var i, tmp, view = this,
         grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
@@ -465,7 +481,7 @@ isc.OBParameterWindowView.addProperties({
       processId: this.processId,
       windowId: this.windowId
     }, function (rpcResponse, data, rpcRequest) {
-      view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution));
+      view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
     });
   },
 
