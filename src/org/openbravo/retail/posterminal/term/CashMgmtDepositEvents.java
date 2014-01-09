@@ -25,7 +25,7 @@ public class CashMgmtDepositEvents extends ProcessHQLQuery {
   }
 
   @Override
-  protected String getProperty() {
-    return "OBPOS_retail.cashmanagement";
+  protected boolean bypassPreferenceCheck() {
+    return true;
   }
 }
