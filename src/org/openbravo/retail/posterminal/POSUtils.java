@@ -338,6 +338,7 @@ public class POSUtils {
     // This number will be compared against the maximum number of the failed orders
     OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "order"));
     List<OBPOSErrors> errors = errorCrit.list();
     for (OBPOSErrors error : errors) {
       try {
