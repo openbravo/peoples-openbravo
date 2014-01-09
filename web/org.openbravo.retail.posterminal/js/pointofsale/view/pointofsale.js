@@ -258,7 +258,16 @@ enyo.kind({
       if (this.model.get('leftColumnViewManager').isOrder()) {
         var receipt = this.model.get('order');
         if (receipt.get("isPaid")) {
-          receipt.trigger('print', null, true);
+          OB.MobileApp.model.hookManager.executeHooks('OBPOS_PrePrintPaidReceipt', {
+            context: this,
+            receipt: this.model.get('order')
+          }, function (args) {
+            if (args && args.cancelOperation && args.cancelOperation === true) {
+              return;
+            }
+            receipt.trigger('print', null, true);
+          });
+
           return;
         }
         receipt.calculateTaxes(function () {
