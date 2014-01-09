@@ -67,7 +67,7 @@ public class TerminalProperties extends ModelExtension {
     addTemplateProperty(Organization.PROPERTY_OBPOSRETINVTEMPLATE, "printReturnInvoiceTemplate",
         list);
     addTemplateProperty(Organization.PROPERTY_OBPOSLAYAWAYTEMPLATE, "printLayawayTemplate", list);
-    addTemplateProperty(Organization.PROPERTY_OBPOSCLOSEDRECEIPTTEMP, "printClosedReceiptTemplate",
+    addTemplateProperty(Organization.PROPERTY_CLOSEDRECEIPTTEMPLATE, "printClosedReceiptTemplate",
         list);
 
     return list;
