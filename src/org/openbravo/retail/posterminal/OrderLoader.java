@@ -143,6 +143,7 @@ public class OrderLoader extends JSONProcessSimple {
 
   public JSONObject saveOrder(JSONArray jsonarray) throws JSONException {
     boolean error = false;
+    List<String> errorIds = new ArrayList<String>();
     String currentOrg = (String) RequestContext.get().getSession().getAttribute("#AD_ORG_ID");
     String currentUser = (String) RequestContext.get().getSession().getAttribute("#AD_USER_ID");
     String currentRole = (String) RequestContext.get().getSession().getAttribute("#AD_ROLE_ID");
@@ -163,6 +164,7 @@ public class OrderLoader extends JSONProcessSimple {
               JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
             log.error("There was an error importing order: " + jsonorder.toString());
             error = true;
+            errorIds.add(jsonorder.getString("id"));
           }
           if (i % 1 == 0) {
             OBDal.getInstance().getConnection(false).commit();
@@ -201,12 +203,16 @@ public class OrderLoader extends JSONProcessSimple {
           try {
             OBDal.getInstance().getConnection().commit();
           } catch (SQLException e1) {
-            // this won't happen
+            error = true;
+            errorIds.add(jsonorder.getString("id"));
+            log.error(
+                "Critical Error: The process to save the order"
+                    + jsonorder.getString("id")
+                    + " has failed and the order cannot be saved as an error. To avoid lose data, please don't remove the browser cache. \n Order: "
+                    + jsonorder.toString() + " \n", e1);
           }
-
         }
       }
-
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -217,6 +223,14 @@ public class OrderLoader extends JSONProcessSimple {
     } else {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
       jsonResponse.put("result", "0");
+      JSONObject errors = new JSONObject();
+      if (errorIds.size() > 0) {
+        jsonResponse.put("errorids", errorIds);
+        errors.put("message", "Orders [" + errorIds.toString() + "] cannot be saved");
+      } else {
+        errors.put("message", "Some orders cannot be saved");
+      }
+      jsonResponse.put("error", errors);
     }
     return jsonResponse;
   }
