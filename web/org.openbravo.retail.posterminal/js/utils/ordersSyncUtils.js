@@ -29,7 +29,7 @@
         ordersPaidNotProcessed.each(function (order) {
           order.set('isbeingretriggered', 'Y');
         });
-        pendingOrdersMessage = OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBPOS_Info'));
+        pendingOrdersMessage = OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_ProcessPendingOrders'), OB.I18N.getLabel('OBPOS_Info'), null, true);
         successCallback = function () {
           pendingOrdersMessage.hide();
           if (orderSucessCallback) {
@@ -60,17 +60,56 @@
       }, function (data, message) {
         if (data && data.exception) {
           // Orders have not been processed
-          orders.each(function (order) {
-            order.set('isbeingprocessed', 'N');
-            OB.Dal.save(order, null, function (tx, err) {
-              OB.UTIL.showError(err);
+          // 2 options:
+          // a-> timeout -> Don't remove from local DB. We are not sure if the information was or not processed. If yes we will send again the orders and the mechanism to detect duplicates will act.
+          // b-> At least one error -> Remove the orders which was saved in the backend (correctly or as an error). Don't remove those which failed.
+          if (data.exception && data.exception.status && data.exception.status.timeout) {
+            //FLOW A
+            orders.each(function (order) {
+              order.set('isbeingprocessed', 'N');
+              OB.Dal.save(order, null, function (tx, err) {
+                OB.UTIL.showError(err);
+              });
             });
-          });
+          } else {
+            // FLOW B
+            if (data.exception && data.exception.status && data.exception.status.errorids && data.exception.status.errorids.length > 0) {
+              var notProcessedOrders = data.exception.status.errorids;
+              orders.each(function (order) {
+                var isErrorId = _.find(notProcessedOrders, function (errId) {
+                  if (order.get('id') === errId) {
+                    return true
+                  }
+                });
+                if (isErrorId) {
+                  order.set('isbeingprocessed', 'N');
+                  OB.Dal.save(order, null, function (tx, err) {
+                    OB.UTIL.showError(err);
+                  });
+                } else {
+                  if (model) {
+                    model.get('orderList').remove(order);
+                  }
+                  OB.Dal.remove(order, null, function (tx, err) {
+                    OB.UTIL.showError(err);
+                  });
+                }
+              });
+            } else {
+              //Others, Again flow A. Don't remove from local DB.
+              orders.each(function (order) {
+                order.set('isbeingprocessed', 'N');
+                OB.Dal.save(order, null, function (tx, err) {
+                  OB.UTIL.showError(err);
+                });
+              });
+            }
+          }
           if (errorCallback) {
             errorCallback();
           }
         } else {
-          // Orders have been processed, delete them
+          // NORMAL FLOW: Orders have been processed, delete them
           orders.each(function (order) {
             if (model) {
               model.get('orderList').remove(order);
@@ -83,7 +122,7 @@
             successCallback();
           }
         }
-      }, null, null, 4000);
+      }, null, null, 7000);
     }
   };
 }());

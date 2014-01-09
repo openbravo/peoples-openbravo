@@ -621,7 +621,8 @@ enyo.kind({
       return true;
     }
     this.doShowPopup({
-      popup: 'receiptLinesPropertiesDialog'
+      popup: 'receiptLinesPropertiesDialog',
+      args: inEvent ? inEvent.args : null
     });
   },
   returnLine: function (inSender, inEvent) {

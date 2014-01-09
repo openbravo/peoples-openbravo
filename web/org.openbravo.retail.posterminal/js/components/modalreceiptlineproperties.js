@@ -15,6 +15,22 @@ enyo.kind({
   handlers: {
     onApplyChanges: 'applyChanges'
   },
+  executeOnShow: function () {
+    this.autoDismiss = true;
+    if (this && this.args && this.args.autoDismiss === false) {
+      this.autoDismiss = false;
+    }
+  },
+  executeOnHide: function () {
+    if (this.args && this.args.requiredFiedls && this.args.requiredFieldNotPresentFunction) {
+      var smthgPending = _.find(this.args.requiredFiedls, function (fieldName) {
+        return OB.UTIL.isNullOrUndefined(this.currentLine.get(fieldName));
+      }, this);
+      if (smthgPending) {
+        this.args.requiredFieldNotPresentFunction(this.currentLine, smthgPending);
+      }
+    }
+  },
   i18nHeader: 'OBPOS_ReceiptLinePropertiesDialogTitle',
   bodyContent: {
     kind: 'Scroller',
