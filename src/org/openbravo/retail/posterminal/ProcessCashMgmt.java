@@ -160,6 +160,6 @@ public class ProcessCashMgmt extends JSONProcessSimple {
 
   @Override
   protected String getProperty() {
-    return "OBPOS_retail.cashmanagement";
+    return "";
   }
 }
