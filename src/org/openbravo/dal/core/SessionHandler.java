@@ -31,11 +31,13 @@ import org.hibernate.Transaction;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.Identifiable;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ExternalConnectionPool;
 
 /**
  * Keeps the Hibernate Session and Transaction in a ThreadLocal so that it is available throughout
@@ -48,6 +50,20 @@ import org.openbravo.dal.service.OBDal;
 // framework
 public class SessionHandler implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(SessionHandler.class);
+
+  private static ExternalConnectionPool externalConnectionPool;
+
+  {
+    String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("bbdd.externalPoolClassName");
+    if (poolClassName != null) {
+      try {
+        externalConnectionPool = ExternalConnectionPool.getInstance(poolClassName);
+      } catch (Throwable e) {
+        externalConnectionPool = null;
+      }
+    }
+  }
 
   // The threadlocal which handles the session
   private static ThreadLocal<SessionHandler> sessionHandler = new ThreadLocal<SessionHandler>();
@@ -119,7 +135,11 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   protected Session createSession() {
-    return SessionFactoryController.getInstance().getSessionFactory().openSession();
+    if (externalConnectionPool != null && this.getConnection() == null) {
+      Connection externalConnection = externalConnectionPool.getConnection();
+      this.setConnection(externalConnection);
+    }
+    return SessionFactoryController.getInstance().getSessionFactory().openSession(this.connection);
   }
 
   protected void closeSession() {
