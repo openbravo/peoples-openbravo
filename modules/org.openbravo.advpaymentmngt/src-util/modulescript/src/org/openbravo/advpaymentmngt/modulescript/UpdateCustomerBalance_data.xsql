@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  ************************************************************************************
- * Copyright (C) 2011 Openbravo S.L.U.
+ * Copyright (C) 2011-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -24,6 +24,7 @@
         SELECT count(*) as existpreference
         FROM ad_preference
         WHERE attribute = 'IsCustomerBalanceRestored'
+        AND isactive = 'Y'
       ]]>
     </Sql>
   </SqlMethod>
@@ -65,5 +66,23 @@
     </Sql>
     <Parameter name="cumstomeCredit"/>
     <Parameter name="businessPartnerId"/>
+  </SqlMethod>
+  <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        INSERT INTO
+        ad_preference (
+          ad_preference_id, ad_client_id, ad_org_id, isactive,
+          createdby, created, updatedby, updated,
+          attribute, value, ad_module_id
+        )
+        VALUES (
+          get_uuid(), '0', '0', 'Y',
+          '0', NOW(), '0', NOW(),
+          'IsCustomerBalanceRestored', 'Y', NULL
+        )
+      ]]>
+    </Sql>
   </SqlMethod>
 </SqlClass>
