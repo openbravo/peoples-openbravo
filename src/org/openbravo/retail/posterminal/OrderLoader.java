@@ -106,6 +106,7 @@ public class OrderLoader extends JSONProcessSimple {
   boolean isLayaway = false;
   boolean partialpayLayaway = false;
   boolean fullpayLayaway = false;
+  boolean createShipment = true;
   Locator binForRetuns = null;
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
@@ -279,7 +280,7 @@ public class OrderLoader extends JSONProcessSimple {
       boolean createInvoice = wasPaidOnCredit
           || (!isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway) && (jsonorder
               .has("generateInvoice") && jsonorder.getBoolean("generateInvoice")));
-      boolean createShipment = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway);
+      createShipment = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway);
       if (jsonorder.has("generateShipment")) {
         createShipment &= jsonorder.getBoolean("generateShipment");
         createInvoice &= jsonorder.getBoolean("generateShipment");
@@ -348,7 +349,7 @@ public class OrderLoader extends JSONProcessSimple {
       t3 = System.currentTimeMillis();
 
       if (!isQuotation) {
-        if (!isLayaway && !partialpayLayaway) {
+        if (!isLayaway && !partialpayLayaway && createShipment) {
           // Stock manipulation
           handleStock(shipment);
           // Send email
@@ -948,7 +949,7 @@ public class OrderLoader extends JSONProcessSimple {
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           stdPrecision, RoundingMode.HALF_UP));
 
-      if (!isLayaway && !partialpayLayaway) {
+      if (!isLayaway && !partialpayLayaway && createShipment) {
         // shipment is created, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
       }
