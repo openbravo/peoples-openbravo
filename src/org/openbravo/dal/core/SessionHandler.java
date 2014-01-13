@@ -241,7 +241,9 @@ public class SessionHandler implements OBNotSingleton {
     try {
       checkInvariant();
       flushRemainingChanges();
-      tx.commit();
+      if (connection == null || (connection != null && !connection.isClosed())) {
+        tx.commit();
+      }
       tx = null;
       err = false;
       if (connection != null && !connection.isClosed()) {
@@ -301,12 +303,13 @@ public class SessionHandler implements OBNotSingleton {
     log.debug("Rolling back transaction");
     try {
       checkInvariant();
-      tx.rollback();
-      tx = null;
-
+      if (connection == null || (connection != null && !connection.isClosed())) {
+        tx.rollback();
+      }
       if (connection != null && !connection.isClosed()) {
         connection.close();
       }
+      tx = null;
     } catch (SQLException e) {
       log.error("Error while closing the connection", e);
     } finally {
