@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -35,8 +35,6 @@ public class UpdateCustomerBalance extends ModuleScript {
       // If the preference does not exist in the database yet the modulescript must be executed.
       boolean isCustomerBalanceFixed = UpdateCustomerBalanceData.isCustomerBalanceFixed(cp);
       if (!isCustomerBalanceFixed) {
-        // Create Preference
-        UpdateCustomerBalanceData.createPreference(cp);
         // Reset the customer balance to 0
         UpdateCustomerBalanceData.resetCustomerCredit(cp);
         // Obtain the correct customer balance
