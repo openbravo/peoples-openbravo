@@ -51,6 +51,7 @@ import org.openbravo.service.json.JsonConstants;
 public class OBViewGridComponent extends BaseTemplateComponent {
 
   private static final String DEFAULT_TEMPLATE_ID = "91DD63545B674BE8801E1FA4F48FF4C6";
+  private static final String PROCESS_NOW_PROPERTY = "processNow";
   protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
 
   static {
@@ -293,6 +294,12 @@ public class OBViewGridComponent extends BaseTemplateComponent {
         .getStoredInSessionProperties();
     for (String storedInSessionProperty : storedInSessionProperties) {
       requiredGridProperties.add(storedInSessionProperty);
+    }
+
+    // Include the Processing property, required by doc action buttons (see
+    // https://issues.openbravo.com/view.php?id=25460)
+    if (getViewTab().getFieldHandler().hasProcessNowProperty()) {
+      requiredGridProperties.add(PROCESS_NOW_PROPERTY);
     }
 
     return requiredGridProperties;
