@@ -47,10 +47,24 @@
         _.each(lines.models, function (element, index, list) {
           var product = element.get('product');
 
-          // OB.Dal.find(model, criteria, success, error);
+          var whereClause = " left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id " + "join c_bpartner_location bpl on bpl.c_bpartner_location_id = '" + me.get('bp').get('locId') + "' " + " where c_tax.sopotype in ('B', 'S') " + " and c_tax.c_taxCategory_id = '" + product.get('taxCategory') + "'";
+          if (bpTaxCategory) {
+            whereClause = whereClause + " and c_tax.c_bp_taxcategory_id = '" + bpTaxCategory + "'";
+          } else {
+            whereClause = whereClause + " and c_tax.c_bp_taxcategory_id is null";
+          }
+          whereClause = whereClause + " and c_tax.validFrom <= date()";
+          whereClause = whereClause + " and ((c_tax.to_country_id = bpl.countryId or c_tax.to_country_id is null) or (tz.to_country_id = bpl.countryId))";
+          whereClause = whereClause + " and ((c_tax.to_region_id = bpl.regionId or c_tax.to_region_id is null) or (tz.to_region_id = bpl.regionId))";
+
+          var orderByClause = " coalesce(c_tax.to_country_id, tz.to_country_id) desc, coalesce(c_tax.to_region_id, tz.to_region_id) desc, c_tax.validFrom desc, c_tax.isdefault desc";
+
+          // the query is ordered by countryId desc and regionId desc 
+          // (so, the first record will be the tax with the same country or region that the customer, 
+          // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)          
           OB.Dal.find(OB.Model.TaxRate, {
-            taxCategory: product.get('taxCategory'),
-            businessPartnerTaxCategory: bpTaxCategory
+            _whereClause: whereClause,
+            _orderByClause: orderByClause
           }, function (coll, args) { // success
             var rate, taxAmt, net, gross, pricenet, pricenetcascade, amount, taxId;
             if (coll && coll.length > 0) {
@@ -68,13 +82,22 @@
               var linerate = BigDecimal.prototype.ONE;
               var linetaxid = coll.at(0).get('id');
               var validFromDate = coll.at(0).get('validFromDate');
+              var toCountryId = coll.at(0).get('destinationCountry');
+              var toRegionId = coll.at(0).get('destinationRegion');
               var taxamt = new BigDecimal(String(orggross));
               var taxamtdc;
               if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
                 taxamtdc = new BigDecimal(String(discountedGross));
               }
               coll = _.filter(coll.models, function (taxRate) {
-                return taxRate.get('validFromDate') === validFromDate;
+                var isSimilar = true;
+                if (!_.isNull(toCountryId)) {
+                  isSimilar = isSimilar && !_.isNull(taxRate.get('destinationCountry'));
+                }
+                if (!_.isNull(toRegionId)) {
+                  isSimilar = isSimilar && !_.isNull(taxRate.get('destinationRegion'));
+                }
+                return isSimilar && ((taxRate.get('validFromDate') === validFromDate));
               });
               _.each(coll, function (taxRate, taxIndex) {
 
@@ -292,10 +315,24 @@
             };
             element.set('taxLines', taxLine);
           } else {
-            // OB.Dal.find(model, criteria, success, error);
+            var whereClause = " left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id " + "join c_bpartner_location bpl on bpl.c_bpartner_location_id = '" + me.get('bp').get('locId') + "' " + " where c_tax.sopotype in ('B', 'S') " + " and c_tax.c_taxCategory_id = '" + product.get('taxCategory') + "'";
+            if (bpTaxCategory) {
+              whereClause = whereClause + " and c_tax.c_bp_taxcategory_id = '" + bpTaxCategory + "'";
+            } else {
+              whereClause = whereClause + " and c_tax.c_bp_taxcategory_id is null";
+            }
+            whereClause = whereClause + " and c_tax.validFrom <= date()";
+            whereClause = whereClause + " and ((c_tax.to_country_id = bpl.countryId or c_tax.to_country_id is null) or (tz.to_country_id = bpl.countryId))";
+            whereClause = whereClause + " and ((c_tax.to_region_id = bpl.regionId or c_tax.to_region_id is null) or (tz.to_region_id = bpl.regionId))";
+
+            var orderByClause = " coalesce(c_tax.to_country_id, tz.to_country_id) desc, coalesce(c_tax.to_region_id, tz.to_region_id) desc, c_tax.validFrom desc, c_tax.isdefault desc";
+
+            // the query is ordered by countryId desc and regionId desc 
+            // (so, the first record will be the tax with the same country or region that the customer, 
+            // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)          
             OB.Dal.find(OB.Model.TaxRate, {
-              taxCategory: product.get('taxCategory'),
-              businessPartnerTaxCategory: bpTaxCategory
+              _whereClause: whereClause,
+              _orderByClause: orderByClause
             }, function (coll, args) { // success
               var rate, taxAmt, net, pricenet, pricenetcascade, amount, taxId, roundingLoses;
               if (coll && coll.length > 0) {
@@ -303,8 +340,17 @@
                 var linerate = BigDecimal.prototype.ONE;
                 var linetaxid = coll.at(0).get('id');
                 var validFromDate = coll.at(0).get('validFromDate');
+                var toCountryId = coll.at(0).get('destinationCountry');
+                var toRegionId = coll.at(0).get('destinationRegion');
                 coll = _.filter(coll.models, function (taxRate) {
-                  return taxRate.get('validFromDate') === validFromDate;
+                  var isSimilar = true;
+                  if (!_.isNull(toCountryId)) {
+                    isSimilar = isSimilar && !_.isNull(taxRate.get('destinationCountry'));
+                  }
+                  if (!_.isNull(toRegionId)) {
+                    isSimilar = isSimilar && !_.isNull(taxRate.get('destinationRegion'));
+                  }
+                  return isSimilar && ((taxRate.get('validFromDate') === validFromDate));
                 });
 
 
