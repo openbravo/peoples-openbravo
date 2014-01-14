@@ -32,7 +32,7 @@ enyo.kind({
         content: ''
       }, {
         name: 'amt',
-        style: 'text-align:right; padding: 6px 20px 6px 10px; float: right; width: 10%'
+        style: 'text-align:right; padding: 6px 20px 6px 10px; float: right; width: 20%'
       }]
     }]
   }],
