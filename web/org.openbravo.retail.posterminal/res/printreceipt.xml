@@ -13,6 +13,9 @@
     <line>
         <image>ticket-image.png</image>
     </line>
+    <line>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ReceiptRpt_Title')) %></text>
+    </line>
     <line></line>
     <line>
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckheader_line1'))%></text>
