@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 
@@ -54,14 +55,16 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
     }
     final Entity orderEntity = ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
     final Property orderDateProperty = orderEntity.getProperty(Order.PROPERTY_ORDERDATE);
-    final Property scheduledDateProperty = orderEntity
-        .getProperty(Order.PROPERTY_SCHEDULEDDELIVERYDATE);
-    String syncDateOrdered = null, syncDateDelivered = null;
+    final Property scheduledDateProperty = orderEntity.getProperty(Order.PROPERTY_SCHEDULEDDELIVERYDATE);
+    final Property warehouseProperty = orderEntity.getProperty(Order.PROPERTY_WAREHOUSE);
+    String syncDateOrdered = null, syncDateDelivered = null , syncWarehouse = null;
     String orderId = (String) event.getTargetInstance().getId();
     Date newOrderDate = (Date) event.getCurrentState(orderDateProperty);
     Date oldOrderDate = (Date) event.getPreviousState(orderDateProperty);
     Date newScheduledDate = (Date) event.getCurrentState(scheduledDateProperty);
     Date oldScheduledDate = (Date) event.getPreviousState(scheduledDateProperty);
+    Warehouse newWarehouseId = (Warehouse) event.getCurrentState(warehouseProperty);
+    Warehouse oldWarehouseId = (Warehouse) event.getPreviousState(warehouseProperty);
 
     // Check whether the preference is set to sync with order header
     try {
@@ -94,6 +97,22 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
         for (OrderLine lines : orderLineCriteria.list()) {
           lines.setScheduledDeliveryDate(newScheduledDate);
         }
+      }
+      // check preferences is set to sync warehouse in header and lines
+      if (newWarehouseId != null && oldWarehouseId != null && !newWarehouseId.getId().equals(oldWarehouseId.getId())) {
+        try {
+          syncWarehouse = Preferences.getPreferenceValue("DoNotSyncWarehouse", true, OBContext
+              .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+              OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+        } catch (PropertyException e) {
+          // if property not found, sync the warehouse
+          syncWarehouse = "N";
+        }
+        if (!"Y".equals(syncWarehouse) ) {
+              for (OrderLine lines : orderLineCriteria.list()) {
+              lines.setWarehouse(newWarehouseId);
+          }
+        } 
       }
     }
   }
