@@ -153,7 +153,7 @@ enyo.kind({
   components: [{
     classes: 'tab-pane',
     components: [{
-      style: 'margin: 5px',
+      style: 'overflow:auto; height: 610px; margin: 5px',
       components: [{
         style: 'background-color: #ffffff; color: black; padding: 5px;',
         components: [{
@@ -191,26 +191,23 @@ enyo.kind({
                 }]
               }]
             }, {
-              style: 'overflow:auto; height: 485px;',
-              components: [{
-                name: 'paymentsList',
-                kind: 'OB.UI.Table',
-                renderLine: 'OB.OBPOSCashUp.UI.RenderCashPaymentsLine',
-                renderEmpty: 'OB.UI.RenderEmpty',
-                listStyle: 'list'
-              }, {
-                name: 'renderLoading',
-                style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-                showing: false,
-                initComponents: function () {
-                  this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-                }
-              }]
+              name: 'paymentsList',
+              kind: 'OB.UI.Table',
+              renderLine: 'OB.OBPOSCashUp.UI.RenderCashPaymentsLine',
+              renderEmpty: 'OB.UI.RenderEmpty',
+              listStyle: 'list'
+            }, {
+              name: 'renderLoading',
+              style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+              showing: false,
+              initComponents: function () {
+                this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+              }
             }, {
               classes: 'row-fluid',
               components: [{
                 classes: 'span12',
-                style: 'border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc;',
+                style: 'border-bottom: 1px solid #cccccc;',
                 components: [{
                   name: 'totalLbl',
                   style: 'padding: 10px 20px 10px 10px; float: left;',
