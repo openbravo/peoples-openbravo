@@ -13,6 +13,9 @@
     <line>
         <image>ticket-image.png</image>
     </line>
+    <line>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_CashUpRpt_Title')) %></text>
+    </line>
     <line></line>
     <line>
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.POS.modelterminal.get('terminal').organization$_identifier) %></text>
