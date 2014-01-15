@@ -15,7 +15,6 @@ enyo.kind({
     payments: null
   },
   kind: 'OB.UI.Keyboard',
-
   init: function (model) {
     this.model = model;
     var me = this;
@@ -43,17 +42,6 @@ enyo.kind({
     this.addToolbar({
       name: 'toolbarcashpayments',
       buttons: [{
-        command: 'cashpayments',
-        i18nLabel: 'OBPOS_SetQuantity',
-        definition: {
-          action: function (keyboard, amt) {
-            keyboard.model.trigger('action:addUnitToCollection', {
-              coin: keyboard.selectedCoin,
-              amount: parseInt(amt, 10)
-            });
-          }
-        }
-      }, {
         command: 'resetallcoins',
         i18nLabel: 'OBPOS_ResetAllCoins',
         stateless: true,
@@ -75,11 +63,21 @@ enyo.kind({
         }
       }]
     });
-    this.model.on('action:SelectedCoin', function (coin) {
-      this.setStatus('cashpayments');
-      this.selectedCoin = coin;
-    }, this);
 
+    this.addCommand('coin', {
+      action: function (keyboard, txt) {
+        keyboard.model.trigger('action:SelectCoin', {
+          keyboard: keyboard,
+          txt: txt
+        });
+      }
+    });
+    this.model.on('action:SetStatusCoin', function () {
+      this.setStatus('coin');
+    }, this);
+    this.model.on('action:ResetStatusCoin', function () {
+      this.setStatus('');
+    }, this);
 
     this.showToolbar('toolbarempty');
   },

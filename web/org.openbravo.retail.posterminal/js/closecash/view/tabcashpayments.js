@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone, enyo */
+/*global Backbone, enyo, _ */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderCashPaymentsLine',
@@ -56,7 +56,8 @@ enyo.kind({
   },
   events: {
     onLineEditCash: '',
-    onAddUnit: ''
+    onAddUnit: '',
+    onSubUnit: ''
   },
   components: [{
     components: [{
@@ -70,19 +71,32 @@ enyo.kind({
           classes: 'btnlink-gray btnlink-cashup-edit',
           ontap: 'addUnit'
         }, {
-          name: 'numberOfCoins',
-          style: 'padding: 10px 10px 10px 0px; float: left; width: 15%; text-align: center;'
+          style: 'display:inline-block; width: 10%'
         }, {
-          style: 'float: left;',
-          components: [{
-            name: 'buttonEdit',
-            kind: 'OB.UI.SmallButton',
-            classes: 'btnlink-orange btnlink-cashup-edit btn-icon-small btn-icon-edit',
-            ontap: 'lineEdit'
-          }]
+          name: 'qtyminus',
+          kind: 'OB.UI.SmallButton',
+          style: 'width: 40px;',
+          classes: 'btnlink-gray btnlink-cashup-edit',
+          content: '-',
+          ontap: 'subUnit'
+        }, {
+          name: 'numberOfCoins',
+          kind: 'OB.UI.MediumButton',
+          classes: 'btnlink-gray btnlink-cashup-edit',
+          style: 'background-color: white; border: 1px solid lightgray; border-radius: 3px;',
+          ontap: 'lineEdit'
+        }, {
+          name: 'qtyplus',
+          kind: 'OB.UI.SmallButton',
+          style: 'width: 40px;',
+          classes: 'btnlink-gray btnlink-cashup-edit',
+          content: '+',
+          ontap: 'addUnit'
+        }, {
+          style: 'display:inline-block; width: 10%'
         }, {
           name: 'total',
-          style: 'float: left; padding: 10px 0px 10px 0px; width: 15%; text-align: center;'
+          style: 'display:inline-block;padding: 10px 0px 10px 0px; width: 15%; text-align: center;'
         }]
       }]
     }]
@@ -113,6 +127,9 @@ enyo.kind({
   },
   addUnit: function () {
     this.doAddUnit();
+  },
+  subUnit: function () {
+    this.doSubUnit();
   }
 });
 
@@ -130,6 +147,7 @@ enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashPayments',
   handlers: {
     onAddUnit: 'addUnit',
+    onSubUnit: 'subUnit',
     onLineEditCash: 'lineEditCash'
   },
   components: [{
@@ -156,17 +174,17 @@ enyo.kind({
                 classes: 'span12',
                 style: 'border-bottom: 1px solid #cccccc;',
                 components: [{
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 20%',
+                  style: 'padding: 10px 20px 10px 10px; float: left; width: 30%',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_CoinType'));
                   }
                 }, {
-                  style: 'padding: 10px 20px 10px 0px; float: left; width: 20%',
+                  style: 'padding: 10px 20px 10px 0px; float: left; width: 30%',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_NumberOfItems'));
                   }
                 }, {
-                  style: 'padding: 10px 0px 10px 0px;  float: left; width:20%',
+                  style: 'padding: 10px 0px 10px 0px;  float: left; width: 25%',
                   initComponents: function () {
                     this.setContent(OB.I18N.getLabel('OBPOS_AmountOfCash'));
                   }
@@ -238,11 +256,13 @@ enyo.kind({
     this.inherited(arguments);
 
     this.model = model;
-    this.model.on('action:addUnitToCollection', function (args) {
-      this.addUnitToCollection(args.coin, args.amount);
-    }, this);
+
     this.model.on('action:resetAllCoins', function (args) {
       this.resetAllCoins();
+    }, this);
+
+    this.model.on('action:SelectCoin', function (args) {
+      this.selectCoin(args);
     }, this);
   },
   printTotals: function () {
@@ -251,25 +271,68 @@ enyo.kind({
   },
 
   lineEditCash: function (inSender, inEvent) {
-    this.model.trigger('action:SelectedCoin', inEvent.originator.model.get('coinValue'));
+    this.setCoinsStatus(inEvent.originator);
   },
 
+  setCoinsStatus: function (originator) {
+
+    // reset previous status  
+    if (this.originator && this.originator.$.numberOfCoins) {
+      this.originator.$.numberOfCoins.applyStyle('background-color', 'white');
+    }
+
+    // set new status
+    if (originator && originator !== this.originator) {
+      this.originator = originator;
+      this.originator.$.numberOfCoins.applyStyle('background-color', '#6CB33F');
+      this.model.trigger('action:SetStatusCoin');
+    } else {
+      this.originator = null;
+      this.model.trigger('action:ResetStatusCoin');
+    }
+  },
+  selectCoin: function (args) {
+    // args -> {keyboard: keyboard, txt: txt});
+    if (this.originator) {
+      // This function also resets the status
+      this.addUnitToCollection(this.originator.model.get('coinValue'), parseInt(args.txt, 10));
+    }
+  },
   addUnit: function (inSender, inEvent) {
-    this.addUnitToCollection(inEvent.originator.model.get('coinValue'));
+    this.addUnitToCollection(inEvent.originator.model.get('coinValue'), 'add');
+  },
+  subUnit: function (inSender, inEvent) {
+    this.addUnitToCollection(inEvent.originator.model.get('coinValue'), 'sub');
   },
   addUnitToCollection: function (coinValue, amount) {
     var collection = this.$.paymentsList.collection;
-    var lAmount = amount || amount === 0 ? amount : 1;
-    var resetAmt = amount || amount === 0 ? true : false;
+    var lAmount, resetAmt, newAmount;
+
+    if (amount === 'add') {
+      lAmount = 1;
+      resetAmt = false;
+    } else if (amount === 'sub') {
+      lAmount = -1;
+      resetAmt = false;
+    } else {
+      lAmount = amount;
+      resetAmt = true;
+    }
+
     var newcollection = new Backbone.Collection();
     var totalCounted = 0;
     collection.each(function (coin) {
       var coinModel = new Backbone.Model();
       if (coin.get('coinValue') === coinValue) {
         if (resetAmt) {
-          coinModel.set('numberOfCoins', lAmount);
+          newAmount = lAmount;
         } else {
-          coinModel.set('numberOfCoins', coin.get('numberOfCoins') + lAmount);
+          newAmount = coin.get('numberOfCoins') + lAmount;
+        }
+        if (newAmount >= 0) {
+          coinModel.set('numberOfCoins', newAmount);
+        } else {
+          coinModel.set('numberOfCoins', coin.get('numberOfCoins'));
         }
       } else {
         coinModel.set('numberOfCoins', coin.get('numberOfCoins'));
@@ -288,6 +351,8 @@ enyo.kind({
     this.payment.set('counted', OB.DEC.mul(totalCounted, this.payment.get('rate')));
     this.payment.set('foreignDifference', OB.DEC.sub(totalCounted, this.payment.get('foreignExpected')));
     this.printTotals();
+
+    this.setCoinsStatus(null);
   },
 
   resetAllCoins: function () {
@@ -310,6 +375,8 @@ enyo.kind({
     this.payment.set('counted', 0);
     this.payment.set('foreignDifference', OB.DEC.sub(0, this.payment.get('foreignExpected')));
     this.printTotals();
+
+    this.setCoinsStatus(null);
   },
 
   initPaymentToCount: function (payment) {
@@ -330,6 +397,7 @@ enyo.kind({
       this.payment.set('foreignDifference', OB.DEC.sub(0, this.payment.get('foreignExpected')));
       this.printTotals();
 
+      this.setCoinsStatus(null);
 
       // Call to draw currencies.
       var currencyId = payment.get('paymentMethod').currency;
@@ -360,12 +428,16 @@ enyo.kind({
         me.payment.set('foreignDifference', OB.DEC.sub(0, me.payment.get('foreignExpected')));
         me.printTotals();
 
+        me.setCoinsStatus(null);
+
         me.$.renderLoading.hide();
         me.$.paymentsList.show();
       });
     } else {
       this.$.paymentsList.setCollection(this.payment.get('coinsCollection'));
       this.printTotals();
+
+      this.setCoinsStatus(null);
     }
 
   },
