@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -872,7 +872,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                       newDesc.append("\n");
                   }
                 }
-                creditPayment.setDescription(newDesc.toString());
+                // Truncate Description to keep length as 255
+                creditPayment.setDescription(newDesc.toString().length() > 255 ? newDesc.toString()
+                    .substring(0, 255) : newDesc.toString());
               }
             }
           }
@@ -1196,7 +1198,9 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 newDesc.append("\n");
             }
           }
-          payment.setDescription(newDesc.toString());
+          // Truncate Description to keep length as 255
+          payment.setDescription(newDesc.toString().length() > 255 ? newDesc.toString().substring(
+              0, 255) : newDesc.toString());
         }
       }
     }
