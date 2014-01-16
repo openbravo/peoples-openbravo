@@ -62,7 +62,9 @@ public class TimeUIDefinition extends UIDefinition {
     if (value instanceof String) {
       return (String) value;
     }
-    return value.toString();
+    String timestamp = value.toString();
+    timestamp = timestamp.substring(timestamp.indexOf(" ") + 1);
+    return timestamp;
   }
 
   private SimpleDateFormat getClassicFormat() {
