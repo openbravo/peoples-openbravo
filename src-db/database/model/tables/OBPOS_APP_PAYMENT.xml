@@ -88,6 +88,11 @@
       <unique name="OBPOS_APPPAY_ACCOUNT_UNIQUE">
         <unique-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
       </unique>
+      <unique name="OBPOS_APP_PAYMENT_VALUE">
+        <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="OBPOS_APPLICATIONS_ID"/>
+        <unique-column name="VALUE"/>
+      </unique>
       <check name="OBPOS_APPPAY_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
