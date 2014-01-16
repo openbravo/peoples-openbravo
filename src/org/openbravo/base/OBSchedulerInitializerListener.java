@@ -129,9 +129,9 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
             if (s != null && !s.isClosed()) {
               s.close();
             }
+            OBDal.getInstance().flush();
+            OBDal.getInstance().commitAndClose();
           }
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getConnection().commit();
         } else {
           System.out.println("Connection Failed!");
         }
