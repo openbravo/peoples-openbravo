@@ -120,9 +120,9 @@ public class SE_Order_BPartner extends SimpleCallout {
     FieldProvider[] td = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "18", "M_Warehouse_ID",
-          "197", "", Utility.getReferenceableOrg(info.vars,
-              info.vars.getStringParameter("inpadOrgId")), Utility.getContext(this, info.vars,
-              "#User_Client", info.getWindowId()), 0);
+          "197", strIsSOTrx.equals("Y") ? "C4053C0CD3DC420A9924F24FC1F860A0" : "",
+          Utility.getReferenceableOrg(info.vars, info.vars.getStringParameter("inpadOrgId")),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       td = comboTableData.select(false);
       comboTableData = null;
@@ -132,7 +132,8 @@ public class SE_Order_BPartner extends SimpleCallout {
 
     if (td != null && td.length > 0) {
       info.addSelect("inpmWarehouseId");
-      String strMwarehouse = SEOrderBPartnerData.mWarehouse(this, strBPartner);
+      String strMwarehouse = strIsSOTrx.equals("N") ? SEOrderBPartnerData.mWarehouse(this,
+          strBPartner) : SEOrderBPartnerData.mWarehouseOnhand(this, strOrgId);
 
       if (strMwarehouse.equals("")) {
         strMwarehouse = info.vars.getWarehouse();

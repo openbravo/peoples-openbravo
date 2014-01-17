@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,9 +21,11 @@ package org.openbravo.service.json;
 import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -59,8 +61,6 @@ import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
  */
 public class DefaultJsonDataService implements JsonDataService {
   private static final Logger log = Logger.getLogger(DefaultJsonDataService.class);
-
-  private static final long serialVersionUID = 1L;
 
   private static final String ADD_FLAG = "_doingAdd";
 
@@ -105,7 +105,10 @@ public class DefaultJsonDataService implements JsonDataService {
         boolean preventCountOperation = !parameters.containsKey(JsonConstants.NOCOUNT_PARAMETER)
             || "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
 
-        DataEntityQueryService queryService = createSetQueryService(parameters, true);
+        @SuppressWarnings("unchecked")
+        Map<String, String> paramsCount = (Map<String, String>) ((HashMap<String, String>) parameters)
+            .clone();
+        DataEntityQueryService queryService = createSetQueryService(paramsCount, true);
         queryService.setEntityName(entityName);
 
         // only do the count if a paging request is done and it has not been prevented
@@ -140,9 +143,7 @@ public class DefaultJsonDataService implements JsonDataService {
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, count);
           return jsonResponse.toString();
         }
-
         queryService = createSetQueryService(parameters, false);
-        queryService.setEntityName(entityName);
 
         if (parameters.containsKey(JsonConstants.SUMMARY_PARAMETER)) {
           final JSONObject singleResult = new JSONObject();
@@ -168,90 +169,10 @@ public class DefaultJsonDataService implements JsonDataService {
           jsonResponse.put(JsonConstants.RESPONSE_ENDROW, 1);
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 1);
           return jsonResult.toString();
-        } else if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
-          // TODO: BaseOBObjects created by this query are not valid, see issue #23705, when this is
-          // fixed, IdentifierProvider should be revisited to remove code handling this
-          // incorrectness
-
-          // when distinct an array of values is returned
-          // the first value is the BaseObObject the other values
-          // are part of the order by and such and can be ignored
-          final String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
-          final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
-              .getEntity(entityName), distinct);
-          final Entity distinctEntity = distinctProperty.getTargetEntity();
-
-          final List<Property> properties = new ArrayList<Property>();
-          properties.addAll(distinctEntity.getIdProperties());
-          properties.addAll(queryService.getDistinctDisplayProperties());
-
-          // filter the json serialization later on
-          final StringBuilder selectedSb = new StringBuilder();
-          for (Property prop : properties) {
-            if (selectedSb.length() > 0) {
-              selectedSb.append(",");
-            }
-            if (prop.getTargetEntity() != null) {
-              // go one level deeper
-              final List<Property> nextIdentifierProps = JsonUtils.getIdentifierSet(prop);
-              for (Property nextIdentifierProp : nextIdentifierProps) {
-                selectedSb.append(prop.getName() + "." + nextIdentifierProp);
-              }
-            } else {
-              selectedSb.append(prop.getName());
-            }
-          }
-          if (selectedProperties == null) {
-            selectedProperties = selectedSb.toString();
-          } else {
-            selectedProperties += "," + selectedSb.toString();
-          }
-
-          bobs = new ArrayList<BaseOBObject>();
-
-          List<List<Property>> cache = new ArrayList<List<Property>>();
-          for (Object o : queryService.buildOBQuery().createQuery().list()) {
-            final Object[] os = (Object[]) o;
-            if (os[0] == null) {
-              // the null value is also returned, ignore those
-              continue;
-            }
-
-            if (cache.size() == 0) {
-              for (int i = 0; i < os.length; i++) {
-                cache.add(null);
-              }
-            }
-
-            // create a BaseOBObject and fill the id/identifier properties
-            final BaseOBObject bob = (BaseOBObject) OBProvider.getInstance().get(
-                distinctEntity.getName());
-            int i = 0;
-            for (Property property : properties) {
-              // the query contains the identifier and other properties for
-              // one level deeper!
-              if (property.getTargetEntity() != null) {
-                final BaseOBObject refBob = (BaseOBObject) OBProvider.getInstance().get(
-                    property.getTargetEntity().getName());
-                final List<Property> nextIdentifierProps;
-                if (cache.get(i) != null) {
-                  nextIdentifierProps = cache.get(i);
-                } else {
-                  nextIdentifierProps = JsonUtils.getIdentifierSet(property);
-                  cache.set(i, nextIdentifierProps);
-                }
-                for (Property nextIdentifierProp : nextIdentifierProps) {
-                  refBob.setValue(nextIdentifierProp.getName(), os[i++]);
-                }
-                bob.setValue(property.getName(), refBob);
-              } else {
-                bob.setValue(property.getName(), os[i++]);
-              }
-            }
-            bobs.add(bob);
-          }
         } else {
+          long t = System.currentTimeMillis();
           bobs = queryService.list();
+          log.debug("query time:" + (System.currentTimeMillis() - t));
         }
 
         bobs = bobFetchTransformation(bobs, parameters);
@@ -343,17 +264,92 @@ public class DefaultJsonDataService implements JsonDataService {
 
   protected DataEntityQueryService createSetQueryService(Map<String, String> parameters,
       boolean forCountOperation) {
-    final String entityName = parameters.get(JsonConstants.ENTITYNAME);
+    return createSetQueryService(parameters, forCountOperation, false);
+  }
+
+  private DataEntityQueryService createSetQueryService(Map<String, String> parameters,
+      boolean forCountOperation, boolean forSubEntity) {
+    boolean hasSubentity = false;
+    String entityName = parameters.get(JsonConstants.ENTITYNAME);
+    final DataEntityQueryService queryService = OBProvider.getInstance().get(
+        DataEntityQueryService.class);
+
+    if (!forSubEntity && parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
+      // this is the main entity of a 'contains' (used in FK drop down lists), it will create also
+      // info for subentity
+
+      final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
+          .getEntity(entityName), parameters.get(JsonConstants.DISTINCT_PARAMETER));
+      final Entity distinctEntity = distinctProperty.getTargetEntity();
+
+      // criteria needs to be split in two parts:
+      // -One for main entity (the one directly queried for)
+      // -Another one for subentity
+      String baseCriteria = "";
+      String subCriteria = "";
+      hasSubentity = true;
+      if (!StringUtils.isEmpty(parameters.get("criteria"))) {
+        String criteria = parameters.get("criteria");
+        for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
+          try {
+            JSONObject jsonCriterion = new JSONObject(criterion);
+            if (jsonCriterion.getString("fieldName").equals(
+                distinctProperty.getName() + "$" + JsonConstants.IDENTIFIER)) {
+              jsonCriterion.put("fieldName", JsonConstants.IDENTIFIER);
+              baseCriteria = jsonCriterion.toString();
+            } else {
+              subCriteria += subCriteria.length() > 0 ? JsonConstants.IN_PARAMETER_SEPARATOR : "";
+              subCriteria += criterion;
+            }
+          } catch (JSONException e) {
+            log.error("Error obtaining 'distint' criterion for " + criterion, e);
+          }
+        }
+      }
+
+      // params for subentity are based on main entity ones
+      @SuppressWarnings("unchecked")
+      Map<String, String> paramSubCriteria = (Map<String, String>) ((HashMap<String, String>) parameters)
+          .clone();
+
+      // set proper criteria for each case
+      if (StringUtils.isEmpty(subCriteria)) {
+        paramSubCriteria.remove("criteria");
+      } else {
+        paramSubCriteria.put("criteria", subCriteria);
+      }
+      if (StringUtils.isEmpty(baseCriteria)) {
+        parameters.remove("criteria");
+      } else {
+        parameters.put("criteria", baseCriteria);
+      }
+
+      // where parameter is only applied in subentity, remove it from main entity
+      if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
+        parameters.remove(JsonConstants.WHERE_PARAMETER);
+      }
+
+      // main entity ("me") settings
+      queryService.getQueryBuilder().setMainAlias("me");
+      queryService.setEntityName(distinctEntity.getName());
+
+      queryService.setFilterOnReadableClients(false);
+      queryService.setFilterOnReadableOrganizations(false);
+      queryService.setFilterOnActive(false);
+
+      // create now subentity
+      queryService.setSubEntity(entityName,
+          createSetQueryService(paramSubCriteria, forCountOperation, true), distinctProperty);
+    } else {
+      queryService.setEntityName(entityName);
+      if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
+        queryService.setUseAlias();
+      }
+    }
+
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
     final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
 
-    final DataEntityQueryService queryService = OBProvider.getInstance().get(
-        DataEntityQueryService.class);
-    queryService.setEntityName(entityName);
-
-    if (parameters.containsKey(JsonConstants.USE_ALIAS)) {
-      queryService.setUseAlias();
-    }
     boolean directNavigation = parameters.containsKey("_directNavigation")
         && "true".equals(parameters.get("_directNavigation"))
         && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER);
@@ -400,25 +396,24 @@ public class DefaultJsonDataService implements JsonDataService {
       queryService.setMaxResults(computedMaxResults);
     }
 
-    final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
     String orderBy = "";
-    if (sortBy != null) {
-      orderBy = sortBy;
-    } else if (parameters.get(JsonConstants.ORDERBY_PARAMETER) != null) {
-      orderBy = parameters.get(JsonConstants.ORDERBY_PARAMETER);
-    }
+    if (!hasSubentity) {
+      final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
+      if (sortBy != null) {
+        orderBy = sortBy;
+      } else if (parameters.get(JsonConstants.ORDERBY_PARAMETER) != null) {
+        orderBy = parameters.get(JsonConstants.ORDERBY_PARAMETER);
+      }
 
-    if (parameters.get(JsonConstants.SUMMARY_PARAMETER) != null
-        && parameters.get(JsonConstants.SUMMARY_PARAMETER).trim().length() > 0) {
-      queryService.setSummarySettings(parameters.get(JsonConstants.SUMMARY_PARAMETER));
-    } else if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null
-        && parameters.get(JsonConstants.DISTINCT_PARAMETER).trim().length() > 0) {
-      queryService.setDistinct(parameters.get(JsonConstants.DISTINCT_PARAMETER).trim());
-      // sortby the distinct's identifier
-      orderBy = getOrderByForDistinct(entityName, queryService);
+      if (parameters.get(JsonConstants.SUMMARY_PARAMETER) != null
+          && parameters.get(JsonConstants.SUMMARY_PARAMETER).trim().length() > 0) {
+        queryService.setSummarySettings(parameters.get(JsonConstants.SUMMARY_PARAMETER));
+      } else {
+        // Always append id to the orderby to make a predictable sorting
+        orderBy += (orderBy.isEmpty() ? "" : ",") + "id";
+      }
     } else {
-      // Always append id to the orderby to make a predictable sorting
-      orderBy += (orderBy.isEmpty() ? "" : ",") + "id";
+      orderBy = JsonConstants.IDENTIFIER;
     }
 
     queryService.setOrderBy(orderBy);
@@ -449,26 +444,6 @@ public class DefaultJsonDataService implements JsonDataService {
       // queryService.setJoinAssociatedEntities(true);
     }
     return queryService;
-  }
-
-  private String getOrderByForDistinct(String entityName, DataEntityQueryService queryService) {
-    final String localDistinct = queryService.getDistinct();
-    final List<Property> properties = queryService.getDistinctDisplayProperties();
-    final StringBuilder sb = new StringBuilder();
-    for (Property identifierProp : properties) {
-      if (identifierProp.getTargetEntity() != null) {
-        // go one level deeper
-        final List<Property> nextIdentifierProps = JsonUtils.getIdentifierSet(identifierProp);
-        for (Property nextIdentifierProp : nextIdentifierProps) {
-          sb.append(localDistinct + DalUtil.DOT + identifierProp.getName() + "."
-              + nextIdentifierProp + ",");
-        }
-      } else {
-        sb.append(localDistinct + DalUtil.DOT + identifierProp.getName() + ",");
-      }
-    }
-    sb.append(localDistinct + DalUtil.DOT + JsonConstants.ID);
-    return sb.toString();
   }
 
   private void addWritableAttribute(List<JSONObject> jsonObjects) throws JSONException {

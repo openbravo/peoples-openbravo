@@ -106,7 +106,6 @@
         FROM AD_REFERENCE 
         WHERE UPPER(NAME) = UPPER(?) 
         AND PARENTREFERENCE_ID = ?
-        AND AD_MODULE_ID = '0'
       </Sql>
       <Parameter name="value"/>
       <Parameter name="validationtype"/>

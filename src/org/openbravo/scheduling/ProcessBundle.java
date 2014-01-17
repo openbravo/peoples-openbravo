@@ -378,7 +378,7 @@ public class ProcessBundle {
       bundle.setParams(new HashMap<String, Object>());
     } else {
       final XStream xstream = new XStream(new JettisonMappedXmlDriver());
-      bundle.setParams((HashMap<String, Object>) xstream.fromXML(paramString));
+      bundle.setParams((Map<String, Object>) xstream.fromXML(paramString));
     }
 
     return bundle;

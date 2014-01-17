@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -92,6 +92,16 @@
     </#if>
 
     gridProperties: ${tabComponent.viewGrid},
+
+    handleReadOnlyLogic: function(currentValues, context, form){
+     <#list tabComponent.fieldHandler.fields as field>
+      <#if field.readOnlyIf != "">
+      if (form.getField('${field.name}') && form.getField('${field.name}').setDisabled) {
+        form.getField('${field.name}').setDisabled(${field.readOnlyIf});
+      }
+      </#if>
+    </#list>
+    },
 
     dataSource: ${tabComponent.dataSourceJavaScript}
 </#macro>
