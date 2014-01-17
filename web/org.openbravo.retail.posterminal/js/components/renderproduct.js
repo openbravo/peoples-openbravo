@@ -29,7 +29,7 @@ enyo.kind({
       name: 'thumbnail'
     }]
   }, {
-    style: 'float: left; width: 45%; ',
+    style: 'float: left; width: 38%; ',
     components: [{
       name: 'topLine'
     }, {
@@ -38,7 +38,7 @@ enyo.kind({
     }]
   }, {
     name: 'price',
-    style: 'float: right; width: 20%; text-align: right; font-weight:bold;'
+    style: 'float: right; width: 27%; text-align: right; font-weight:bold;'
   }, {
     style: 'clear:both;'
   }, {
