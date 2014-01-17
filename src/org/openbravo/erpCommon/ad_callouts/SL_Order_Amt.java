@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -243,6 +243,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpgrosspricestd\", " + grossBaseUnitPrice.toString() + "),");
 
       resultado.append("new Array(\"inppriceactual\"," + priceActual.toString() + "),");
+      resultado.append("new Array(\"inppricelist\"," + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricestd\"," + netUnitPrice.toString() + "),");
     }
@@ -271,6 +272,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpgrosspricestd\", " + grossBaseUnitPrice.toString() + "),");
 
       resultado.append("new Array(\"inppriceactual\"," + priceActual.toString() + "),");
+      resultado.append("new Array(\"inppricelist\"," + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricelimit\", " + netUnitPrice.toString() + "),");
       resultado.append("new Array(\"inppricestd\"," + priceStd.toString() + "),");
     }
