@@ -2121,4 +2121,10 @@ public class OBViewFieldHandler {
     return (entity == null) ? false : entity.hasProperty("processNow");
   }
 
+  public boolean hasProcessedProperty() {
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+        getTab().getTable().getId());
+    return (entity == null) ? false : entity.hasProperty("processed");
+  }
+
 }
