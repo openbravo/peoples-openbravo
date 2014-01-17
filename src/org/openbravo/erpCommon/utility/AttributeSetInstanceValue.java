@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.utils.Replace;
 
@@ -122,15 +124,19 @@ public class AttributeSetInstanceValue {
    *          String with the productId.
    * @param attributeValues
    *          Map with the attribute values.
+   * @param Organization
+   *          Organization for the attribute set instance.
    * @return OBError with the result.
    * @throws ServletException
    */
   public OBError setAttributeInstance(ConnectionProvider conProv, VariablesSecureApp vars,
       String strAttributeSet, String strInstance, String strWindow, String strIsSOTrx,
-      String strProduct, Map<String, String> attributeValues) throws ServletException {
+      String strProduct, Map<String, String> attributeValues, Organization organization)
+      throws ServletException {
 
+    Client client = OBDal.getInstance().get(AttributeSet.class, strAttributeSet).getClient();
+    Organization org = null;
     String strNewInstance = "";
-    AttributeSet attset = OBDal.getInstance().get(AttributeSet.class, strAttributeSet);
 
     OBError myMessage = null;
     myMessage = new OBError();
@@ -147,6 +153,13 @@ public class AttributeSetInstanceValue {
 
     boolean isinstance = !AttributeSetInstanceValueData.isInstanceAttribute(conProv,
         strAttributeSet).equals("0");
+
+    if (isinstance) {
+      org = organization;
+    } else {
+      org = OBDal.getInstance().get(AttributeSet.class, strAttributeSet).getOrganization();
+    }
+
     String strDescription = getDescription(conProv, vars, data, strIsSOTrx, strWindow,
         attributeValues);
     Connection conn = null;
@@ -190,17 +203,17 @@ public class AttributeSetInstanceValue {
         if (AttributeSetInstanceValueData.updateHeader(conn, conProv, vars.getUser(),
             data[0].mAttributesetId, serno, lot, guaranteedate, "", locked, lockDescription,
             strInstance) == 0) {
-          AttributeSetInstanceValueData.insertHeader(conn, conProv, strInstance, attset.getClient()
-              .getId(), attset.getOrganization().getId(), vars.getUser(), data[0].mAttributesetId,
-              serno, lot, guaranteedate, "", locked, lockDescription);
+          AttributeSetInstanceValueData.insertHeader(conn, conProv, strInstance, client.getId(),
+              org.getId(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, "",
+              locked, lockDescription);
         }
       } else if ((isinstance) || (strNewInstance.equals(""))) { // New or
         // editable,if it's requestable or doesn't exist the same one, then it inserts a new one
         hasToUpdate = true;
         strNewInstance = SequenceIdData.getUUID();
-        AttributeSetInstanceValueData.insertHeader(conn, conProv, strNewInstance, attset
-            .getClient().getId(), attset.getOrganization().getId(), vars.getUser(),
-            data[0].mAttributesetId, serno, lot, guaranteedate, "", locked, lockDescription);
+        AttributeSetInstanceValueData.insertHeader(conn, conProv, strNewInstance, client.getId(),
+            org.getId(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, "",
+            locked, lockDescription);
       }
       if (hasToUpdate) {
         if (!data[0].elementname.equals("")) {
@@ -221,9 +234,8 @@ public class AttributeSetInstanceValue {
                   data[i].mAttributeId) == 0) {
                 String strNewAttrInstance = SequenceIdData.getUUID();
                 AttributeSetInstanceValueData.insert(conn, conProv, strNewAttrInstance,
-                    strNewInstance, data[i].mAttributeId, attset.getClient().getId(), attset
-                        .getOrganization().getId(), vars.getUser(),
-                    (data[i].islist.equals("Y") ? strValue : ""), strDescValue);
+                    strNewInstance, data[i].mAttributeId, client.getId(), org.getId(),
+                    vars.getUser(), (data[i].islist.equals("Y") ? strValue : ""), strDescValue);
               }
             } else {
               if (AttributeSetInstanceValueData.update(conn, conProv, vars.getUser(),
@@ -231,8 +243,7 @@ public class AttributeSetInstanceValue {
                   data[i].mAttributeId) == 0) {
                 String strNewAttrInstance = SequenceIdData.getUUID();
                 AttributeSetInstanceValueData.insert(conn, conProv, strNewAttrInstance,
-                    strInstance, data[i].mAttributeId, attset.getClient().getId(), attset
-                        .getOrganization().getId(), vars.getUser(),
+                    strInstance, data[i].mAttributeId, client.getId(), org.getId(), vars.getUser(),
                     (data[i].islist.equals("Y") ? strValue : ""), strDescValue);
               }
             }
@@ -256,6 +267,38 @@ public class AttributeSetInstanceValue {
     }
 
     return myMessage;
+  }
+
+  /**
+   * Checks if the record has attachments associated.
+   * 
+   * @param conProv
+   *          Handler for the database connection.
+   * @param vars
+   *          Handler for the session info.
+   * @param strAttributeSet
+   *          String with the record attributeSetId.
+   * @param strInstance
+   *          String with the instanceId.
+   * @param strWindow
+   *          String with the windowId.
+   * @param strIsSOTrx
+   *          String with the isSotrx.
+   * @param strProduct
+   *          String with the productId.
+   * @param attributeValues
+   *          Map with the attribute values.
+   * @return OBError with the result.
+   * @throws ServletException
+   */
+  public OBError setAttributeInstance(ConnectionProvider conProv, VariablesSecureApp vars,
+      String strAttributeSet, String strInstance, String strWindow, String strIsSOTrx,
+      String strProduct, Map<String, String> attributeValues) throws ServletException {
+
+    AttributeSet attset = OBDal.getInstance().get(AttributeSet.class, strAttributeSet);
+
+    return setAttributeInstance(conProv, vars, strAttributeSet, strInstance, strWindow, strIsSOTrx,
+        strProduct, attributeValues, attset.getOrganization());
   }
 
   private String replace(String strIni) {

@@ -55,11 +55,6 @@ public class BaseWebServiceServlet extends HttpServlet {
   @Override
   protected final void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    // already logged in?
-    if (OBContext.getOBContext() != null) {
-      doService(request, response);
-      return;
-    }
 
     // do the login action
     AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);

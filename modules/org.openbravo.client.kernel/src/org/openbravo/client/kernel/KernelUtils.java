@@ -357,17 +357,16 @@ public class KernelUtils {
    * @return The BaseOBObject of the parent record
    */
   public BaseOBObject getParentRecord(BaseOBObject object, Tab tab) {
-    List<Tab> tabsOfWindow = tab.getWindow().getADTabList();
-    ArrayList<Entity> entities = new ArrayList<Entity>();
-    for (Tab aTab : tabsOfWindow) {
-      Entity entity = ModelProvider.getInstance().getEntityByTableName(
-          aTab.getTable().getDBTableName());
-      entities.add(entity);
+    Entity parentEntity = null;
+    Tab parentTab = getParentTab(tab);
+    if (parentTab != null) {
+      parentEntity = parentTab.getEntity();
     }
     Property fkProp = null;
     for (Property property : object.getEntity().getProperties()) {
       if (property.isParent()) {
-        if (property.getTargetEntity() != null && entities.contains(property.getTargetEntity())) {
+        if (property.getTargetEntity() != null && parentEntity != null
+            && parentEntity == property.getTargetEntity()) {
           fkProp = property;
         }
       }
