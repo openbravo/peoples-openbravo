@@ -68,20 +68,25 @@ public class ProcessCashClose extends JSONProcessSimple {
     if (cashUp == null
         && RequestContext.get().getSessionAttribute(
             "cashupTerminalId|" + jsonCashup.getString("terminalId")) == null) {
-      RequestContext.get().setSessionAttribute(
-          "cashupTerminalId|" + jsonCashup.getString("terminalId"), true);
-      new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId);
-      posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-          jsonCashup.getString("terminalId"));
+      try {
+        RequestContext.get().setSessionAttribute(
+            "cashupTerminalId|" + jsonCashup.getString("terminalId"), true);
+        new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId);
+        posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+            jsonCashup.getString("terminalId"));
 
-      CashCloseProcessor processor = WeldUtils
-          .getInstanceFromStaticBeanManager(CashCloseProcessor.class);
-      JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
-      JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds);
+        CashCloseProcessor processor = WeldUtils
+            .getInstanceFromStaticBeanManager(CashCloseProcessor.class);
+        JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
+        JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds);
 
-      // add the messages returned by processCashClose...
-      jsonData.put("messages", result.opt("messages"));
-      jsonData.put("next", result.opt("next"));
+        // add the messages returned by processCashClose...
+        jsonData.put("messages", result.opt("messages"));
+        jsonData.put("next", result.opt("next"));
+      } finally {
+        RequestContext.get().removeSessionAttribute(
+            "cashupTerminalId|" + jsonCashup.getString("terminalId"));
+      }
     }
     return jsonData;
   }
@@ -126,9 +131,6 @@ public class ProcessCashClose extends JSONProcessSimple {
         } catch (SQLException e1) {
           // this won't happen
         }
-      } finally {
-        RequestContext.get().removeSessionAttribute(
-            "cashupTerminalId|" + jsonCashup.getString("terminalId"));
       }
     }
 
