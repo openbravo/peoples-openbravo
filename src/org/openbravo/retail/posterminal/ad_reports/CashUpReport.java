@@ -224,7 +224,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               psData.put("ISOCODE", null);
             }
             psData.put("TOTAL_LABEL",
-                OBMessageUtils.getI18NMessage("OBPOS_LblTotalWithdrawals", new String[] {}));
+                OBMessageUtils.getI18NMessage("OBPOS_LblTotalDeposits", new String[] {}));
             hashMapSalesList.add(psData);
             expected = expected.add(deposit);
             totalDeposits = totalDeposits.add(deposit.multiply(conversionRate).setScale(2,
