@@ -1955,7 +1955,7 @@ OB.ViewFormProperties = {
     }
 
     // Restore the focus item if it has been deleted because it was a number and was mistaken as an UUID
-    if (this.getFocusItem().targetEntity !== null && (/^\d+$/).test(focusItemValue) && !this.getFocusItem().getElementValue() && (!this.getFocusItem().valueMap || !this.getFocusItem().valueMap[focusItemValue])) {
+    if (this.getFocusItem() && this.getFocusItem().targetEntity !== null && (/^\d+$/).test(focusItemValue) && !this.getFocusItem().getElementValue() && (!this.getFocusItem().valueMap || !this.getFocusItem().valueMap[focusItemValue])) {
       this.getFocusItem().setElementValue(focusItemValue);
     }
 
