@@ -63,8 +63,6 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources
         .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate");
     resources
-        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxZone&modelName=TaxZone&source=org.openbravo.retail.posterminal.master.TaxZone");
-    resources
         .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice");
 
     resources
