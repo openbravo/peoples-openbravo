@@ -81,6 +81,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           userId: OB.POS.modelterminal.get('context').user.id,
           time: new Date().toString().substring(16, 21),
           isocode: p.isocode,
+          glItem: p.glItem,
           cashup_id: cashUp.at(0).get('id'),
           isbeingprocessed: 'N'
         });

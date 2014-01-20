@@ -16,7 +16,7 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
-  getPayment: function (id, key, iscash, allowopendrawer, name, identifier, type, rate, isocode) {
+  getPayment: function (id, key, iscash, allowopendrawer, name, identifier, type, rate, isocode, glItem) {
     var me = this;
     return {
       permission: key,
@@ -31,7 +31,8 @@ enyo.kind({
           rate: rate,
           isocode: isocode,
           iscash: iscash,
-          allowopendrawer: allowopendrawer
+          allowopendrawer: allowopendrawer,
+          glItem: glItem
         };
 
         if (type === 'drop') {
@@ -56,7 +57,7 @@ enyo.kind({
       if (paymentMethod.paymentMethod.allowdeposits) {
         buttons.push({
           command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblDeposit'),
-          definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.paymentMethod.iscash, paymentMethod.paymentMethod.allowopendrawer, payment._identifier, payment._identifier, 'deposit', paymentMethod.rate, paymentMethod.isocode),
+          definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.paymentMethod.iscash, paymentMethod.paymentMethod.allowopendrawer, payment._identifier, payment._identifier, 'deposit', paymentMethod.rate, paymentMethod.isocode, paymentMethod.paymentMethod.gLItemForDeposits),
           label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblDeposit')
         });
       }
@@ -64,7 +65,7 @@ enyo.kind({
       if (paymentMethod.paymentMethod.allowdrops) {
         buttons.push({
           command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblWithdrawal'),
-          definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.paymentMethod.iscash, paymentMethod.paymentMethod.allowopendrawer, payment._identifier, payment._identifier, 'drop', paymentMethod.rate, paymentMethod.isocode),
+          definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.paymentMethod.iscash, paymentMethod.paymentMethod.allowopendrawer, payment._identifier, payment._identifier, 'drop', paymentMethod.rate, paymentMethod.isocode, paymentMethod.paymentMethod.gLItemForDrops),
           label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblWithdrawal')
         });
       }
