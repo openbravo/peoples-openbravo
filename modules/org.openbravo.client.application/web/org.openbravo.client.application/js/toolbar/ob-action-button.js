@@ -82,9 +82,7 @@ isc.OBToolbarActionButton.addProperties({
     }
 
     allProperties.inpProcessId = this.processId;
-    if (typeof allProperties._UTCOffsetMiliseconds === "undefined") {
-      allProperties._UTCOffsetMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds();
-    }
+    allProperties._UTCOffsetMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds();
 
     // obuiapp_process definition
     if (this.newDefinition) {
