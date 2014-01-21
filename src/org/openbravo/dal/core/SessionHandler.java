@@ -254,13 +254,17 @@ public class SessionHandler implements OBNotSingleton {
         try {
           tx.rollback();
           tx = null;
-          if (connection != null && !connection.isClosed()) {
-            connection.close();
-            SessionInfo.setSessionConnection(null);
-          }
         } catch (Throwable t) {
           // ignore these exception not to hide others
         }
+      }
+      try {
+        if (connection != null && !connection.isClosed()) {
+          connection.close();
+          SessionInfo.setSessionConnection(null);
+        }
+      } catch (SQLException e) {
+        // ignore these exception not to hide others
       }
       deleteSessionHandler();
       closeSession();
