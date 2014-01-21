@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -310,9 +310,11 @@ isc.OBStandardView.addProperties({
     // directTabInfo is set when we are in direct link mode, i.e. directly opening
     // a specific tab with a record, the direct link logic will already take care
     // of fetching data
-    if (this.isRootView && !this.standardWindow.directTabInfo && !lazyFiltering) {
-      if (!this.standardWindow.checkIfDefaultSavedView()) {
-        this.viewGrid.fetchData(this.viewGrid.getCriteria());
+    if (this.isRootView && !this.standardWindow.directTabInfo) {
+      if (!lazyFiltering) {
+        if (!this.standardWindow.checkIfDefaultSavedView()) {
+          this.viewGrid.fetchData(this.viewGrid.getCriteria());
+        }
       }
       this.refreshContents = false;
     }
