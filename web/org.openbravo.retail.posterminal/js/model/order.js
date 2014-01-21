@@ -1158,48 +1158,6 @@
     },
     returnLine: function (line, options, skipValidaton) {
       var me = this;
-      if (!_.isUndefined(OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) && !OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn') && !skipValidaton) {
-        //The value of qty need to be negate because we want to change it
-        var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('gross') < 0;
-        }).length;
-        if (this.get('lines').length > 0) {
-          if (-line.get('qty') > 0 && negativeLines > 0) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
-            return;
-          } else if (-line.get('qty') < 0 && negativeLines !== this.get('lines').length) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
-            return;
-          }
-        }
-      }
-      if (line.get('qty') > 0) {
-        line.get('product').set('ignorePromotions', true);
-      } else {
-        line.get('product').set('ignorePromotions', false);
-      }
-      line.set('qty', -line.get('qty'));
-      line.calculateGross();
-
-      // set the undo action
-      this.set('undo', {
-        text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
-        line: line,
-        undo: function () {
-          line.set('qty', -line.get('qty'));
-          me.set('undo', null);
-        }
-      });
-      this.adjustPayment();
-      if (line.get('promotions')) {
-        line.unset('promotions');
-      }
-      me.calculateGross();
-      this.save();
-
-    },
-    returnLine: function (line, options, skipValidaton) {
-      var me = this;
       if (OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
         //The value of qty need to be negate because we want to change it
         var negativeLines = _.filter(this.get('lines').models, function (line) {
