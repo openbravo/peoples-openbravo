@@ -47,9 +47,12 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.organization.obretcoDbpPtermid.id", "defaultbp_paymentterm"));
     list.add(new HQLProperty("pos.organization.obretcoDbpPmethodid.id", "defaultbp_paymentmethod"));
     list.add(new HQLProperty("pos.organization.obretcoDbpBpcatid.id", "defaultbp_bpcategory"));
-    list.add(new HQLProperty("pos.organization.obretcoDbpBpcatid.name", "defaultbp_bpcategory_name"));
+    list.add(new HQLProperty(
+        "(select pos2.organization.obretcoDbpBpcatid.name from OBPOS_Applications pos2 where pos2 = pos)",
+        "defaultbp_bpcategory_name"));
     list.add(new HQLProperty("pos.organization.obretcoDbpCountryid.id", "defaultbp_bpcountry"));
-    list.add(new HQLProperty("pos.organization.obretcoDbpCountryid.name",
+    list.add(new HQLProperty(
+        "(select pos2.organization.obretcoDbpCountryid.name from OBPOS_Applications pos2 where pos2 = pos)",
         "defaultbp_bpcountry_name"));
     list.add(new HQLProperty("pos.organization.obretcoDbpOrgid.id", "defaultbp_bporg"));
     list.add(new HQLProperty("pos.organization.obretcoShowtaxid", "bp_showtaxid"));
