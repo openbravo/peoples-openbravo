@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -360,7 +360,7 @@ public class KernelUtils {
     Entity parentEntity = null;
     Tab parentTab = getParentTab(tab);
     if (parentTab != null) {
-      parentEntity = parentTab.getEntity();
+      parentEntity = ModelProvider.getInstance().getEntityByTableId(parentTab.getTable().getId());
     }
     Property fkProp = null;
     for (Property property : object.getEntity().getProperties()) {
@@ -469,5 +469,37 @@ public class KernelUtils {
       super(message);
     }
 
+  }
+
+  /**
+   * Returns the name of the parent column of the tab
+   * 
+   * @param tab
+   *          The tab the object belongs to
+   * @return The parent column of the table in the given tab, <code>null</code> in case there is no
+   *         parent tab
+   * 
+   */
+  public String getParentColumnName(Tab tab) {
+    String targetColumnName = null;
+    Entity parentEntity = null;
+    Entity currentEntity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+    Tab parentTab = getParentTab(tab);
+    if (parentTab != null) {
+      parentEntity = ModelProvider.getInstance().getEntityByTableId(parentTab.getTable().getId());
+    }
+    Property fkProp = null;
+    for (Property property : currentEntity.getProperties()) {
+      if (property.isParent()) {
+        if (property.getTargetEntity() != null && parentEntity != null
+            && parentEntity == property.getTargetEntity()) {
+          fkProp = property;
+        }
+      }
+    }
+    if (fkProp != null) {
+      targetColumnName = fkProp.getColumnName();
+    }
+    return targetColumnName;
   }
 }
