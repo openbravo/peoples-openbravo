@@ -274,7 +274,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
     // Forcing local db save. Rule implementations could (should!) do modifications
     // without persisting them improving performance in this manner.
-    if (evt.get('receipt') && evt.get('receipt').get('lines') && evt.get('receipt').get('lines').length > 0){
+    if (evt.get('receipt') && evt.get('receipt').get('lines') && evt.get('receipt').get('lines').length > 0) {
       evt.get('receipt').save();
     }
   }
