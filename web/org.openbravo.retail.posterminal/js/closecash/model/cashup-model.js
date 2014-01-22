@@ -165,14 +165,18 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             amount: p.get('startingCash'),
             description: 'Starting ' + p.get('name'),
             isocode: auxPay.isocode,
-            rate: p.get('rate')
+            rate: p.get('rate'),
+            paymentId: p.get('paymentmethod_id')
           }));
         }, this);
         cashUpReport.set('startings', startings);
         //FIXME: We are not sure if other finds are done.
-        me.get('cashUpReport').add(cashUpReport);
+        OB.MobileApp.model.hookManager.executeHooks('OBPOS_EditCashupReport', {
+          cashUpReport: cashUpReport
+        }, function (args) {
+          me.get('cashUpReport').add(args.cashUpReport);
+        });
       }, this);
-
     }, this);
 
     this.get('paymentList').on('change:counted', function (mod) {

@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +41,7 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -50,6 +54,9 @@ import org.openbravo.retail.posterminal.OBPOSAppCashReconcil;
 import org.openbravo.retail.posterminal.OBPOSAppCashup;
 
 public class CashUpReport extends HttpSecureAppServlet {
+  @Inject
+  @Any
+  private Instance<CashupReportHook> cashupReportHooks;
 
   private static final long serialVersionUID = 1L;
   HashMap<String, Object> parameters;
@@ -157,6 +164,10 @@ public class CashUpReport extends HttpSecureAppServlet {
 
         psData = new HashMap<String, String>();
         psData.put("GROUPFIELD", "STARTING");
+        psData.put("SEARCHKEY", "STARTING_"
+            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
+                .getSearchKey());
+
         psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_LblStarting", new String[] {})
             + " "
             + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
@@ -194,6 +205,9 @@ public class CashUpReport extends HttpSecureAppServlet {
           if (drop.compareTo(deposit) > 0) {
             psData = new HashMap<String, String>();
             psData.put("GROUPFIELD", "WITHDRAWAL");
+            psData.put("SEARCHKEY", "WITHDRAWAL_"
+                + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
+                    .getPaymentType().getSearchKey());
             psData.put("LABEL", objdropdeposit[0].toString());
             psData.put("VALUE", drop.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
                 .toString());
@@ -213,6 +227,9 @@ public class CashUpReport extends HttpSecureAppServlet {
           } else {
             psData = new HashMap<String, String>();
             psData.put("GROUPFIELD", "SALE");
+            psData.put("SEARCHKEY", "SALE_"
+                + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
+                    .getPaymentType().getSearchKey());
             psData.put("LABEL", objdropdeposit[0].toString());
             psData.put("VALUE", deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
                 .toString());
@@ -328,6 +345,9 @@ public class CashUpReport extends HttpSecureAppServlet {
 
         psData = new HashMap<String, String>();
         psData.put("GROUPFIELD", "COUNTED");
+        psData.put("SEARCHKEY", "COUNTED_"
+            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
+                .getSearchKey());
         psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_LblCounted", new String[] {})
             + " "
             + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
@@ -349,6 +369,9 @@ public class CashUpReport extends HttpSecureAppServlet {
 
         psData = new HashMap<String, String>();
         psData.put("GROUPFIELD", "DIFFERENCE");
+        psData.put("SEARCHKEY", "DIFFERENCE_"
+            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
+                .getSearchKey());
         psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_LblDifference", new String[] {})
             + " "
             + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
@@ -368,6 +391,9 @@ public class CashUpReport extends HttpSecureAppServlet {
 
         psData = new HashMap<String, String>();
         psData.put("GROUPFIELD", "EXPECTED");
+        psData.put("SEARCHKEY", "EXPECTED_"
+            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
+                .getSearchKey());
         psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_LblExpected", new String[] {})
             + " "
             + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
@@ -413,6 +439,9 @@ public class CashUpReport extends HttpSecureAppServlet {
 
         psData = new HashMap<String, String>();
         psData.put("GROUPFIELD", "TOKEEP");
+        psData.put("SEARCHKEY", "TOKEEP_"
+            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
+                .getSearchKey());
         psData.put("LABEL", ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
             .getPaymentType().getCommercialName());
         psData.put("VALUE",
@@ -431,6 +460,9 @@ public class CashUpReport extends HttpSecureAppServlet {
         hashMapCashToKeepList.add(psData);
 
         psData = new HashMap<String, String>();
+        psData.put("SEARCHKEY", "TODEPOSIT_"
+            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
+                .getSearchKey());
         psData.put("GROUPFIELD", "TODEPOSIT");
         psData.put("LABEL", ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
             .getPaymentType().getCommercialName());
@@ -549,6 +581,7 @@ public class CashUpReport extends HttpSecureAppServlet {
     } finally {
       OBContext.restorePreviousMode();
     }
+
     String strReportName = "@basedesign@/org/openbravo/retail/posterminal/ad_reports/CashUpReport.jrxml";
     response.setContentType("text/html; charset=UTF-8");
     hashMapList.addAll(hashMapStartingsList);
@@ -559,6 +592,29 @@ public class CashUpReport extends HttpSecureAppServlet {
     hashMapList.addAll(hashMapDifferenceList);
     hashMapList.addAll(hashMapCashToKeepList);
     hashMapList.addAll(hashMapCashToDepositList);
+
+    // Hook for procesing cashups..
+    JSONArray messages = new JSONArray(); // all messages returned by hooks
+    String next = null; // the first next action of all hooks wins
+    for (CashupReportHook hook : cashupReportHooks) {
+      CashupReportHookResult result;
+      try {
+        result = hook.exec(cashup, hashMapList);
+
+        if (result != null) {
+          if (result.getMessage() != null && !result.getMessage().equals("")) {
+            messages.put(result.getMessage());
+          }
+          if (next == null && result.getNextAction() != null && !result.getNextAction().equals("")) {
+            next = result.getNextAction();
+          }
+        }
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+
     data = FieldProviderFactory.getFieldProviderArray(hashMapList);
     renderJR(vars, response, strReportName, "pdf", parameters, data, null);
 
