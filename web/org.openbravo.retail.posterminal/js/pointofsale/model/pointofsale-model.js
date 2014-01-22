@@ -18,8 +18,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [{
     generatedModel: true,
     modelName: 'TaxRate'
-  },
-  {
+  }, {
     generatedModel: true,
     modelName: 'TaxZone'
   },
