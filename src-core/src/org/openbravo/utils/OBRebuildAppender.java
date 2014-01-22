@@ -112,8 +112,10 @@ public class OBRebuildAppender extends AppenderSkeleton {
   @Override
   public void close() {
     try {
-      if (connection != null)
+      if (connection != null) {
         connection.close();
+        connection = null;
+      }
     } catch (Exception e) {
     }
 
