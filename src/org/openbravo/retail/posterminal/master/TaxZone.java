@@ -22,7 +22,7 @@ import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class TaxRate extends ProcessHQLQuery {
+public class TaxZone extends ProcessHQLQuery {
 
   @Override
   protected boolean isAdminMode() {
@@ -49,14 +49,14 @@ public class TaxRate extends ProcessHQLQuery {
     final Country fromCountry = storeInfo.getLocationAddress().getCountry();
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
-    String hql = "from FinancialMgmtTaxRate as financialMgmtTaxRate where "
+    String hqlTax = "select id from FinancialMgmtTaxRate as financialMgmtTaxRate where "
         + "financialMgmtTaxRate.$readableClientCriteria AND "
         + "financialMgmtTaxRate.$naturalOrgCriteria AND "
-        + "(financialMgmtTaxRate.$incrementalUpdateCriteria) AND financialMgmtTaxRate.active = true "
-        + "and financialMgmtTaxRate.salesPurchaseType in ('S', 'B') ";
+        + "(financialMgmtTaxRate.$incrementalUpdateCriteria) AND active = true "
+        + "and salesPurchaseType in ('S', 'B') ";
 
     if (fromCountry != null) {
-      hql = hql
+      hqlTax = hqlTax
           + "and (financialMgmtTaxRate.country.id = '"
           + fromCountry.getId()
           + "' or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
@@ -65,10 +65,10 @@ public class TaxRate extends ProcessHQLQuery {
           + "')"
           + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry is null)))";
     } else {
-      hql = hql + "and financialMgmtTaxRate.country is null ";
+      hqlTax = hqlTax + "and financialMgmtTaxRate.country is null ";
     }
     if (fromRegion != null) {
-      hql = hql
+      hqlTax = hqlTax
           + "and (financialMgmtTaxRate.region.id = '"
           + fromRegion.getId()
           + "' or (financialMgmtTaxRate.region is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
@@ -78,9 +78,27 @@ public class TaxRate extends ProcessHQLQuery {
           + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null))))";
 
     } else {
-      hql = hql + "and financialMgmtTaxRate.region is null ";
+      hqlTax = hqlTax + "and financialMgmtTaxRate.region is null ";
     }
-    hql = hql + "and $readableCriteria order by validFromDate desc ";
+    hqlTax = hqlTax + "and $readableCriteria";
+
+    String hql = "from FinancialMgmtTaxZone as financialMgmtTaxZone where "
+        + "financialMgmtTaxZone.$readableClientCriteria AND "
+        + "financialMgmtTaxZone.$naturalOrgCriteria AND "
+        + "(financialMgmtTaxZone.$incrementalUpdateCriteria) AND active = true " + "and tax in ("
+        + hqlTax + ")";
+
+    if (fromCountry != null) {
+      hql = hql + "and (fromCountry.id = '" + fromCountry.getId() + "' or fromCountry is null) ";
+    } else {
+      hql = hql + "and fromCountry is null ";
+    }
+    if (fromRegion != null) {
+      hql = hql + "and (fromRegion.id = '" + fromRegion.getId() + "' or fromRegion is null) ";
+    } else {
+      hql = hql + "and fromRegion is null ";
+    }
+    hql = hql + "and $readableCriteria";
 
     return Arrays.asList(new String[] { hql });
   }

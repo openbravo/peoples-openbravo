@@ -154,6 +154,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/businesspartner",
         "model/document-sequence",
         "model/taxRate",
+        "model/taxZone",
         "model/promotions",
 
         "model/obpos-supervisor-model",

@@ -130,6 +130,18 @@
     column: 'countryName',
     type: 'TEXT'
   }, {
+    name: 'countryId',
+    column: 'countryId',
+    type: 'TEXT'
+  }, {
+    name: 'regionName',
+    column: 'regionName',
+    type: 'TEXT'
+  }, {
+    name: 'regionId',
+    column: 'regionId',
+    type: 'TEXT'
+  }, {
     name: '_identifier',
     column: '_identifier',
     type: 'TEXT'
