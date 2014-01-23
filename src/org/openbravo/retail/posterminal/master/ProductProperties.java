@@ -34,7 +34,9 @@ public class ProductProperties extends ModelExtension {
     String localPosPrecision = "";
     try {
       if (params != null) {
-        localPosPrecision = ((HashMap<String, String>) params).get("posPrecision");
+        @SuppressWarnings("unchecked")
+        HashMap<String, Object> localParams = (HashMap<String, Object>) params;
+        localPosPrecision = (String) localParams.get("posPrecision");
       }
     } catch (Exception e) {
       log.error("Error getting posPrecision: " + e.getMessage(), e);
