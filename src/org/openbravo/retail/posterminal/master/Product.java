@@ -77,7 +77,7 @@ public class Product extends ProcessHQLQuery {
       OBContext.restorePreviousMode();
     }
 
-    Map args = new HashMap<String, String>();
+    Map<String, Object> args = new HashMap<String, Object>();
     args.put("posPrecision", posPrecision);
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
