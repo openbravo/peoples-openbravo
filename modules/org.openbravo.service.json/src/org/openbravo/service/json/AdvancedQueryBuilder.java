@@ -606,7 +606,7 @@ public class AdvancedQueryBuilder {
       clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause);
     }
 
-    if (ignoreCase(useProperty, operator)) {
+    if (ignoreCase(properties, operator)) {
       clause = "upper(" + clause + ")";
     }
     return clause;
