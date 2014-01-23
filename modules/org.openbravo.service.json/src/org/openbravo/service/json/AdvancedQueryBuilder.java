@@ -606,7 +606,7 @@ public class AdvancedQueryBuilder {
       clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause);
     }
 
-    if (ignoreCase(useProperty, operator)) {
+    if (ignoreCase(properties, operator)) {
       clause = "upper(" + clause + ")";
     }
     return clause;
@@ -914,6 +914,27 @@ public class AdvancedQueryBuilder {
       }
     }
     throw new IllegalArgumentException("Operator not supported " + operator);
+  }
+
+  private boolean ignoreCase(List<Property> properties, String operator) {
+    boolean operatorCase = operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
+        || operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ENDSWITH)
+        || operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ICONTAINS)
+        || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_INOTENDSWITH)
+        || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_NOTCONTAINS)
+        || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
+        || operator.equals(OPERATOR_IENDSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
+        || operator.equals(OPERATOR_IBETWEEN) || operator.equals(OPERATOR_IGREATEROREQUAL)
+        || operator.equals(OPERATOR_ILESSOREQUAL) || operator.equals(OPERATOR_IGREATERTHAN)
+        || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_IBETWEENINCLUSIVE);
+
+    for (Property property : properties) {
+      if (!property.isPrimitive()
+          || (!property.isNumericType() && !property.isDate() && !property.isDatetime())) {
+        return operatorCase;
+      }
+    }
+    return false;
   }
 
   private boolean ignoreCase(List<Property> properties, String operator) {
