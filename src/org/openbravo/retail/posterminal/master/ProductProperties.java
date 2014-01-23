@@ -27,6 +27,7 @@ public class ProductProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
+    final String posPrecision = params.toString();
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {
@@ -70,8 +71,8 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
         add(new HQLProperty("pli.bestseller", "bestseller"));
         add(new HQLProperty("'false'", "ispack"));
-        add(new HQLProperty("ppp.listPrice", "listPrice"));
-        add(new HQLProperty("ppp.standardPrice", "standardPrice"));
+        add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));
+        add(new HQLProperty("round(ppp.standardPrice, " + posPrecision + ")", "standardPrice"));
         add(new HQLProperty("ppp.priceLimit", "priceLimit"));
         add(new HQLProperty("ppp.cost", "cost"));
         Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
