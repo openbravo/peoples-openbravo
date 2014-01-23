@@ -10,8 +10,10 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -25,9 +27,20 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
 @Qualifier(Product.productPropertyExtension)
 public class ProductProperties extends ModelExtension {
 
+  public static final Logger log = Logger.getLogger(ProductProperties.class);
+
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
-    final String posPrecision = params.toString();
+    String localPosPrecision = "";
+    try {
+      if (params != null) {
+        localPosPrecision = ((HashMap<String, String>) params).get("posPrecision");
+      }
+    } catch (Exception e) {
+      log.error("Error getting posPrecision: " + e.getMessage(), e);
+    }
+    final String posPrecision = localPosPrecision;
+
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {
@@ -71,8 +84,15 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
         add(new HQLProperty("pli.bestseller", "bestseller"));
         add(new HQLProperty("'false'", "ispack"));
-        add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));
-        add(new HQLProperty("round(ppp.standardPrice, " + posPrecision + ")", "standardPrice"));
+        if (posPrecision != null && !"".equals(posPrecision))
+          add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));
+        else
+          add(new HQLProperty("ppp.listPrice", "listPrice"));
+        if (posPrecision != null && !"".equals(posPrecision))
+          add(new HQLProperty("round(ppp.standardPrice, " + posPrecision + ")", "standardPrice"));
+        else
+          add(new HQLProperty("ppp.standardPrice", "standardPrice"));
+
         add(new HQLProperty("ppp.priceLimit", "priceLimit"));
         add(new HQLProperty("ppp.cost", "cost"));
         Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);

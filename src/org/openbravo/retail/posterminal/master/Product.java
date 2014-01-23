@@ -12,7 +12,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -75,8 +77,11 @@ public class Product extends ProcessHQLQuery {
       OBContext.restorePreviousMode();
     }
 
+    Map args = new HashMap<String, String>();
+    args.put("posPrecision", posPrecision);
+
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
-        extensions, posPrecision);
+        extensions, args);
 
     // regular products
     products
@@ -114,7 +119,11 @@ public class Product extends ProcessHQLQuery {
             + discountNameTrl
             + " as searchkey, "
             + discountNameTrl
-            + " as _identifier, p.discountType.id as productCategory, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, '[[null]]' as generic_product_id, 'false' as showchdesc, 'true' as ispack, 'false' as isGeneric , 'false' as stocked"//
+            + " as _identifier, p.discountType.id as productCategory, round(p.obdiscPrice, "
+            + posPrecision
+            + ") as listPrice, round(p.obdiscPrice, "
+            + posPrecision
+            + ") as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, '[[null]]' as generic_product_id, 'false' as showchdesc, 'true' as ispack, 'false' as isGeneric , 'false' as stocked"//
             + "  from PricingAdjustment as p left outer join p.obdiscImage img" //
             + " where p.discountType.obposIsCategory = true "//
             + "   and p.discountType.active = true " //
