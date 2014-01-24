@@ -782,7 +782,11 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       }
       try {
         json.put("nodeId", nodeIdStr);
-        json.put("parentId", parentNodeIdStr);
+        if (parentNodeIdStr == null) {
+                    json.put("parentId", ROOT_NODE);
+                  } else {
+                    json.put("parentId", parentNodeIdStr); 
+                  }
       } catch (JSONException e) {
         logger.error("Error on tree datasource", e);
       }
