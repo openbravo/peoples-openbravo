@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -120,10 +120,16 @@ public class AverageAlgorithm extends CostingAlgorithm {
   private void insertCost(Costing currentCosting, BigDecimal newCost, BigDecimal currentStock,
       BigDecimal trxCost) {
     Date dateTo = getLastDate();
+    Date startingDate = null;
     if (currentCosting != null) {
       dateTo = currentCosting.getEndingDate();
       currentCosting.setEndingDate(transaction.getTransactionProcessDate());
       OBDal.getInstance().save(currentCosting);
+    } else {
+      startingDate = getStartingDate();
+      if (startingDate != null) {
+        dateTo = startingDate;
+      }
     }
     Costing cost = OBProvider.getInstance().get(Costing.class);
     cost.setCost(newCost);
@@ -152,6 +158,50 @@ public class AverageAlgorithm extends CostingAlgorithm {
     cost.setProduction(trxType == TrxType.ManufacturingProduced);
     cost.setWarehouse((Warehouse) costDimensions.get(CostDimension.Warehouse));
     OBDal.getInstance().save(cost);
+  }
+
+  private Date getStartingDate() {
+    Product product = transaction.getProduct();
+    Date date = transaction.getTransactionProcessDate();
+    StringBuffer where = new StringBuffer();
+    where.append(Costing.PROPERTY_PRODUCT + ".id = :product");
+    where.append("  and " + Costing.PROPERTY_STARTINGDATE + " > :startingDate");
+    where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
+    where.append("  and " + Costing.PROPERTY_COST + " is not null");
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      where.append("  and " + Costing.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    }
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (product.isProduction()) {
+      where.append("  and " + Costing.PROPERTY_CLIENT + ".id = :client");
+    } else {
+      where.append("  and " + Costing.PROPERTY_ORGANIZATION + ".id = :org");
+    }
+    OBQuery<Costing> costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
+    costQry.setFilterOnReadableOrganization(false);
+    costQry.setNamedParameter("product", product.getId());
+    costQry.setNamedParameter("startingDate", date);
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      costQry.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    }
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (product.isProduction()) {
+      costQry.setNamedParameter("client", costOrg.getClient());
+    } else {
+      costQry.setNamedParameter("org", costOrg);
+    }
+
+    List<Costing> costList = costQry.list();
+    // If no average cost is found return null.
+    if (costList.size() == 0) {
+      return null;
+    }
+    if (costList.size() > 1) {
+      log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
+          + " for product: " + product.getName() + " (" + product.getId() + ")");
+    }
+    return costList.get(0).getStartingDate();
+
   }
 
   private Costing getProductCost() {
