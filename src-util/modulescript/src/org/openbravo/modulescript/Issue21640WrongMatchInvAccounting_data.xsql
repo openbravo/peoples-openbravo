@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -131,7 +131,7 @@
       ) VALUES (
         get_uuid(), ?, '0', 'Y',
         now(), '100', now(), '100',
-        ?, ?, '', 'D',
+        ?, ?, '', 'E',
         ?
       )
     ]]></Sql>
@@ -139,6 +139,17 @@
     <Parameter name="name"/>
     <Parameter name="tabId"/>
     <Parameter name="sql"/>
+  </SqlMethod>
+  <SqlMethod name="updateAlertRule" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE AD_AlertRule 
+        SET SQL='', TYPE='E' WHERE AD_Client_ID = ? AND NAME = ?
+      ]]>
+    </Sql>
+    <Parameter name="clientId"/>
+    <Parameter name="name"/>
   </SqlMethod>
   <SqlMethod name="insertAlert" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>

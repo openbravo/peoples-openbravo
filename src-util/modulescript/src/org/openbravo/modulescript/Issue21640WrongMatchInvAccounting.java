@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,10 +41,14 @@ public class Issue21640WrongMatchInvAccounting extends ModuleScript {
         if (!Issue21640WrongMatchInvAccountingData.existsAlertRule(cp, ALERT_RULE1,
             client.adClientId)) {
           createAlert1(cp, client.adClientId);
+        } else {
+          Issue21640WrongMatchInvAccountingData.updateAlertRule(cp, client.adClientId, ALERT_RULE1);
         }
         if (!Issue21640WrongMatchInvAccountingData.existsAlertRule(cp, ALERT_RULE2,
             client.adClientId)) {
           createAlert2(cp, client.adClientId);
+        } else {
+          Issue21640WrongMatchInvAccountingData.updateAlertRule(cp, client.adClientId, ALERT_RULE2);
         }
       }
     } catch (Exception e) {
@@ -54,7 +58,7 @@ public class Issue21640WrongMatchInvAccounting extends ModuleScript {
 
   private void createAlert1(ConnectionProvider cp, String clientId) throws ServletException {
     Issue21640WrongMatchInvAccountingData.insertAlertRule(cp, clientId, ALERT_RULE1, MATCHINV_TAB,
-        ALERT_RULE_SQL1);
+        "");
     final String alertRuleId = Issue21640WrongMatchInvAccountingData.getAlertRuleId(cp,
         ALERT_RULE1, clientId);
     Issue21640WrongMatchInvAccountingData[] roles = Issue21640WrongMatchInvAccountingData
@@ -74,7 +78,7 @@ public class Issue21640WrongMatchInvAccounting extends ModuleScript {
 
   private void createAlert2(ConnectionProvider cp, String clientId) throws ServletException {
     Issue21640WrongMatchInvAccountingData.insertAlertRule(cp, clientId, ALERT_RULE2, MATCHINV_TAB,
-        ALERT_RULE_SQL2);
+        "");
     final String alertRuleId = Issue21640WrongMatchInvAccountingData.getAlertRuleId(cp,
         ALERT_RULE2, clientId);
     Issue21640WrongMatchInvAccountingData[] roles = Issue21640WrongMatchInvAccountingData
