@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2010-2012 Openbravo SL 
+ * All portions are Copyright (C) 2010-2014 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -117,12 +117,16 @@ public class UserLock {
     hql.append("   and s.username = :name");
     hql.append("   and s.creationDate > (select coalesce(max(s1.creationDate), s.creationDate-1)");
     hql.append("                           from ADSession s1");
-    hql.append("                          where s1.username = s.username");
+    hql.append("                          where s1.username = :name");
     hql.append("                            and s1.loginStatus!='F')");
     Query q = OBDal.getInstance().getSession().createQuery(hql.toString());
     q.setParameter("name", userName);
 
+    long t = System.currentTimeMillis();
     numberOfFails = ((Long) q.list().get(0)).intValue();
+    log4j.debug("Time taken to check user lock " + (System.currentTimeMillis() - t)
+        + "ms. Number of failed login attempts: " + numberOfFails);
+
     if (numberOfFails == 0) {
       delay = 0;
       return;
