@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -174,6 +174,9 @@ public class DocInventory extends AcctServer {
     FactLine dr = null;
     FactLine cr = null;
     log4jDocInventory.debug("CreateFact - before loop");
+    if (p_lines.length == 0) {
+      setStatus(STATUS_DocumentDisabled);
+    }
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
 
