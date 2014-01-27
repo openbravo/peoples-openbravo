@@ -140,7 +140,12 @@ public class SessionHandler implements OBNotSingleton {
       Connection externalConnection = externalConnectionPool.getConnection();
       this.setConnection(externalConnection);
     }
-    return SessionFactoryController.getInstance().getSessionFactory().openSession(this.connection);
+    if (this.connection != null) {
+      return SessionFactoryController.getInstance().getSessionFactory()
+          .openSession(this.connection);
+    } else {
+      return SessionFactoryController.getInstance().getSessionFactory().openSession();
+    }
   }
 
   protected void closeSession() {
