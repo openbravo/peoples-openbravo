@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2013 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,7 @@
     <Sql>
     <![CDATA[
       SELECT SCHEMA_ID, SCHEMA_NAME, IDENTIFIER, DATEACCT, AA.VALUE, AA.NAME, ID, AD_TABLE_ID, DOCBASETYPE,AR.NAME as DOCNAME, SEQNO, '' AS TOTAL, DESCRIPTION,
-      (CASE FACTACCTTYPE WHEN 'O' THEN 1 WHEN 'N' THEN 2 WHEN 'R' THEN 3 ELSE 4 END) AS FACTACCTTYPE2,
+      (CASE FACTACCTTYPE WHEN 'O' THEN 1 WHEN 'N' THEN 2 WHEN 'R' THEN 3 WHEN 'D' THEN 4 ELSE 5 END) AS FACTACCTTYPE2,
       (CASE AMTACCTDR WHEN 0 THEN NULL ELSE AMTACCTDR END) AS AMTACCTDR, (CASE AMTACCTCR WHEN 0 THEN NULL ELSE AMTACCTCR END) AS AMTACCTCR, 
       '' AS GROUPEDLINES, '' AS TAXID, AD_GETTAB_FROM_TABLE(AA.AD_TABLE_ID, AA.DOCBASETYPE, AA.AD_CLIENT_ID) AS TAB_ID  , '' as newStyle
       FROM 
@@ -41,7 +41,7 @@
       AND F.AD_ORG_ID IN('1')
       AND 1=1
       AND f.AD_ORG_ID IN('2')
-      AND F.FactAcctType IN ('C','N','O','R')
+      AND F.FactAcctType IN ('C','N','O','R','D')
       AND f.C_ACCTSCHEMA_ID = SC.C_ACCTSCHEMA_ID
       GROUP BY f.C_ACCTSCHEMA_ID, SC.NAME, F.AD_TABLE_ID, F.DATEACCT, F.ACCTDESCRIPTION, CASE WHEN 'Y' = 'Y' THEN TO_CHAR(F.DESCRIPTION) ELSE TO_CHAR('') END, F.ACCTVALUE, F.DOCBASETYPE, F.RECORD_ID, 
       F.FACT_ACCT_GROUP_ID, F.ACCOUNT_ID,F.FACTACCTTYPE,
@@ -59,7 +59,7 @@
     <Parameter name="docbasetype" optional="true" after="AND 1=1"><![CDATA[ AND f.DOCBASETYPE = ?]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND f.AD_ORG_ID IN(" text="'2'"/>
-    <Parameter name="checks" type="replace" optional="true" after="AND F.FactAcctType IN (" text="'C','N','O','R'"/>
+    <Parameter name="checks" type="replace" optional="true" after="AND F.FactAcctType IN (" text="'C','N','O','R','D'"/>
     <Parameter name="descriptionGrouping" type="replace" optional="true" after="F.ACCTDESCRIPTION, CASE WHEN " text="'Y'"/>
     <!--Parameter name="closing" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'C'"/>
     <Parameter name="regularization" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'R'"/>
@@ -84,7 +84,7 @@
         AND F.AD_ORG_ID IN('1')
         AND 1=1
         AND f.AD_ORG_ID IN('2')
-        AND F.FactAcctType IN ('C','N','O','R')
+        AND F.FactAcctType IN ('C','N','O','R','D')
         AND f.C_ACCTSCHEMA_ID = SC.C_ACCTSCHEMA_ID
         GROUP BY f.C_ACCTSCHEMA_ID, SC.NAME, F.AD_TABLE_ID, F.DATEACCT, F.ACCTDESCRIPTION, F.ACCTVALUE, F.DOCBASETYPE, F.RECORD_ID, 
         F.FACT_ACCT_GROUP_ID, F.ACCOUNT_ID,
@@ -102,7 +102,7 @@
     <Parameter name="docbasetype" optional="true" after="AND 1=1"><![CDATA[ AND f.DOCBASETYPE = ?]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND f.AD_ORG_ID IN(" text="'2'"/>
-    <Parameter name="checks" type="replace" optional="true" after="AND F.FactAcctType IN (" text="'C','N','O','R'"/>
+    <Parameter name="checks" type="replace" optional="true" after="AND F.FactAcctType IN (" text="'C','N','O','R','D'"/>
     <!--Parameter name="closing" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'C'"/>
     <Parameter name="regularization" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'R'"/>
     <Parameter name="opening" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'O'"/-->
@@ -123,7 +123,7 @@
         AND F.AD_ORG_ID IN('1')
         AND 1=1
         AND f.AD_ORG_ID IN('2')     
-	      AND F.FactAcctType IN ('C','N','O','R')
+	      AND F.FactAcctType IN ('C','N','O','R','D')
         AND (CASE (SELECT MAX(ISSOTRX) FROM C_DOCTYPE D 
                     WHERE D.DOCBASETYPE = F.DOCBASETYPE) WHEN 'N' THEN COALESCE(T.PO_WINDOW_ID, T.AD_WINDOW_ID) ELSE T.AD_WINDOW_ID END) = (CASE TO_CHAR(F.DOCBASETYPE) 
                     WHEN 'FAT' THEN '94EAA455D2644E04AB25D93BE5157B6D' ELSE W.AD_WINDOW_ID END)
@@ -137,7 +137,7 @@
     <Parameter name="docbasetype" optional="true" after="AND 1=1"><![CDATA[ AND f.DOCBASETYPE = ?]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND f.AD_ORG_ID IN(" text="'2'"/>
-    <Parameter name="checks" type="replace" optional="true" after="AND F.FactAcctType IN (" text="'C','N','O','R'"/>
+    <Parameter name="checks" type="replace" optional="true" after="AND F.FactAcctType IN (" text="'C','N','O','R','D'"/>
     <Parameter name="dateAcct"/>
     <Parameter name="dateAcct"/>
     <Parameter name="factAcctGroupId"/>
@@ -155,7 +155,7 @@
     <Sql>
     <![CDATA[
       SELECT SCHEMA_ID, SCHEMA_NAME, IDENTIFIER, DATEACCT, AA.VALUE, AA.NAME, ID, AD_TABLE_ID, DOCBASETYPE,AR.NAME as DOCNAME, SEQNO, '' AS TOTAL, 
-      (CASE FACTACCTTYPE WHEN 'O' THEN 1 WHEN 'N' THEN 2 WHEN 'R' THEN 3 ELSE 4 END) AS FACTACCTTYPE2,
+      (CASE FACTACCTTYPE WHEN 'O' THEN 1 WHEN 'N' THEN 2 WHEN 'R' THEN 3 WHEN 'D' THEN 4 ELSE 5 END) AS FACTACCTTYPE2,
       (CASE AMTACCTDR WHEN 0 THEN NULL ELSE AMTACCTDR END) AS AMTACCTDR, (CASE AMTACCTCR WHEN 0 THEN NULL ELSE AMTACCTCR END) AS AMTACCTCR,
       AD_GETTAB_FROM_TABLE(AA.AD_TABLE_ID, AA.DOCBASETYPE, AA.AD_CLIENT_ID) AS TAB_ID  , '' as newStyle
       FROM 
@@ -219,7 +219,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT SCHEMA_ID, SCHEMA_NAME, IDENTIFIER, DATEACCT, AA.VALUE, AA.NAME, ID, AD_TABLE_ID, DOCBASETYPE,AR.NAME as DOCNAME, SEQNO, '' AS TOTAL,  (CASE FACTACCTTYPE WHEN 'O' THEN 1 WHEN 'N' THEN 2 WHEN 'R' THEN 3 ELSE 4 END) AS FACTACCTTYPE2,
+      SELECT SCHEMA_ID, SCHEMA_NAME, IDENTIFIER, DATEACCT, AA.VALUE, AA.NAME, ID, AD_TABLE_ID, DOCBASETYPE,AR.NAME as DOCNAME, SEQNO, '' AS TOTAL,  (CASE FACTACCTTYPE WHEN 'O' THEN 1 WHEN 'N' THEN 2 WHEN 'R' THEN 3 WHEN 'D' THEN 4 ELSE 5 END) AS FACTACCTTYPE2,
       (CASE AMTACCTDR WHEN 0 THEN NULL ELSE AMTACCTDR END) AS AMTACCTDR, (CASE AMTACCTCR WHEN 0 THEN NULL ELSE AMTACCTCR END) AS AMTACCTCR,
       AD_GETTAB_FROM_TABLE(AA.AD_TABLE_ID, AA.DOCBASETYPE, AA.AD_CLIENT_ID) AS TAB_ID  , '' as newStyle
       FROM 
