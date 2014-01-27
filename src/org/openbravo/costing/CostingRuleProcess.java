@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -367,6 +367,8 @@ public class CostingRuleProcess implements Process {
     if (date != null) {
       select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
     }
+    select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".productType = 'I'");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".stocked = true");
     select.append(" group by trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id");
     select.append(", trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id");
     select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
