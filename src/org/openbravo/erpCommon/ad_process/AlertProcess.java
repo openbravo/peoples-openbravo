@@ -111,6 +111,7 @@ public class AlertProcess implements Process {
     PreparedStatement st = null;
 
     try {
+      connectionProvider.getConnection().setReadOnly(true);
       st = connectionProvider.getPreparedStatement(strSql);
       st.setString(1, alertRuleId);
       result = st.executeQuery();
@@ -141,6 +142,7 @@ public class AlertProcess implements Process {
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
+        connectionProvider.getConnection().setReadOnly(false);
         connectionProvider.releasePreparedStatement(st);
       } catch (Exception ignore) {
         ignore.printStackTrace();

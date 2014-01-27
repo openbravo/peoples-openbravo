@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -82,6 +83,7 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
       ResultSet result = null;
       PreparedStatement st = null;
       try {
+        this.getConnection().setReadOnly(true);
         st = this.getPreparedStatement(strSQL);
         result = st.executeQuery();
         ResultSetMetaData rmeta = result.getMetaData();
@@ -115,10 +117,13 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
         msg = "error in query: " + FormatUtilities.replaceJS(ex.toString());
       } finally {
         try {
+          this.getConnection().setReadOnly(false);
           if (result != null) {
             result.close();
           }
         } catch (SQLException e) {
+          e.printStackTrace();
+        } catch (NoConnectionAvailableException e) {
           e.printStackTrace();
         }
         try {
