@@ -25,10 +25,6 @@
     primaryKey: true,
     type: 'TEXT'
   }, {
-    name: 'tax_id',
-    column: 'tax_id',
-    type: 'TEXT'
-  }, {
     name: 'name',
     column: 'name',
     type: 'TEXT'
