@@ -183,7 +183,8 @@ class TranslationUtils {
       TextInterfacesData[] textData = TextInterfacesData.selectText(conn, fileName, language);
       for (int i = 0; i < textData.length; i++) {
         // trim values, in some occasions there is a character 160 representing blank spaces
-        textmap.put(textData[i].text.replace((char) 160, ' ').trim(), textData[i].trltext);
+        if (!textmap.containsKey(textData[i].text.replace((char) 160, ' ').trim()))
+          textmap.put(textData[i].text.replace((char) 160, ' ').trim(), textData[i].trltext);
       }
       return textmap;
     } catch (ServletException e) {
@@ -191,5 +192,4 @@ class TranslationUtils {
     }
     return textmap;
   }
-
 }
