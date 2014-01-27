@@ -36,8 +36,8 @@
     _.each(cashup.report.get('salesTaxes'),function(tax){
     %>
     <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(tax.taxName+' * '+ OB.I18N.formatCurrency(cashup.report.get('netSales'))) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(tax.taxAmount) %></text>
+      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(tax.get('name') + ' * ' + OB.I18N.formatCurrency(cashup.report.get('netSales'))) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(tax.get('amount')) %></text>
     </line>
     <%
     });
@@ -56,8 +56,8 @@
     _.each(cashup.report.get('returnsTaxes'), function(tax){
     %>
     <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(tax.taxName+' * '+ OB.I18N.formatCurrency(cashup.report.get('netReturns'))) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(tax.taxAmount) %></text>
+      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(tax.get('name') + ' * ' + OB.I18N.formatCurrency(cashup.report.get('netReturns'))) %></text>
+      <text align ="right" length="14"><%= OB.I18N.formatCurrency(tax.get('amount')) %></text>
     </line>
     <%
     });
@@ -92,7 +92,7 @@
     </line>
     <%
     _.each(cashup.report.get('drops'), function(drop){
-    if(drop.rate!=='1'){
+    if(drop.get('rate') !== '1'){
     %>
     <line>
       <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(drop.get('description')) %></text>
@@ -118,7 +118,7 @@
     </line>
     <%
     _.each(cashup.report.get('deposits'), function(deposit){
-    if(deposit.rate!=='1'){
+    if(deposit.get('rate') !== '1'){
     %>
     <line>
       <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(deposit.get('description')) %></text>
