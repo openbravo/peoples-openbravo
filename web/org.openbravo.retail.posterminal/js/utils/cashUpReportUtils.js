@@ -14,6 +14,26 @@
   OB = window.OB || {};
   OB.UTILS = window.OB.UTILS || {};
 
+  function findAndSave(taxName, taxAmount, taxOrderType, cashupID) {
+
+    OB.Dal.find(OB.Model.TaxCashUp, {
+      'name': taxName,
+      'orderType': taxOrderType
+    }, function (tax) {
+      if (tax.length === 0) {
+        OB.Dal.save(new OB.Model.TaxCashUp({
+          name: taxName,
+          amount: taxAmount,
+          orderType: taxOrderType,
+          cashup_id: cashupID
+        }), null, null);
+      } else {
+        tax.at(0).set('amount', OB.DEC.add(tax.at(0).get('amount'), taxAmount));
+        OB.Dal.save(tax.at(0), null, null);
+      }
+    });
+  }
+
   OB.UTIL.cashUpReport = function (receipt, sucessCallback) {
     var auxPay, orderType, taxOrderType, taxAmount;
     OB.Dal.find(OB.Model.CashUp, {
@@ -46,22 +66,8 @@
           } else {
             taxAmount = -receipt.get('taxes')[i].amount;
           }
-          OB.Dal.find(OB.Model.TaxCashUp, {
-            'name': receipt.get('taxes')[i].name,
-            'orderType': taxOrderType.toString()
-          }, function (tax) {
-            if (tax.length === 0) {
-              OB.Dal.save(new OB.Model.TaxCashUp({
-                name: receipt.get('taxes')[i].name,
-                amount: taxAmount,
-                orderType: taxOrderType.toString(),
-                cashup_id: cashUp.at(0).get('id')
-              }), null, null);
-            } else {
-              tax.at(0).set('amount', OB.DEC.add(tax.at(0).get('amount'), taxAmount));
-              OB.Dal.save(tax.at(0), null, null);
-            }
-          });
+
+          findAndSave(receipt.get('taxes')[i].name, taxAmount, taxOrderType.toString(), cashUp.at(0).get('id'));
         }
         OB.Dal.find(OB.Model.PaymentMethodCashUp, {
           'cashup_id': cashUp.at(0).get('id')
