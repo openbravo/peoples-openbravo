@@ -46,7 +46,7 @@ public class CashCloseReport extends JSONProcessSimple {
 
     // Total sales computation
 
-    String hqlTaxes = "select olt.tax.id, olt.tax.name, sum(olt.taxAmount)"   		
+    String hqlTaxes = "select olt.tax.name, sum(olt.taxAmount)"
         + " from OrderLineTax as olt"
         + " where exists (select 1 "
         + "               from FIN_Payment_ScheduleDetail d"
@@ -56,7 +56,7 @@ public class CashCloseReport extends JSONProcessSimple {
         + "                           where t.reconciliation is null"
         + "                           and t.finPayment = d.paymentDetails.finPayment))"
         + " and olt.salesOrderLine.salesOrder.documentType.id=?  and olt.salesOrderLine.salesOrder.obposApplications.id=? "
-        + " group by olt.tax.id, olt.tax.name";
+        + " group by olt.tax.name";
     Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
     salesTaxesQuery.setString(0,
         (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentType()));
@@ -66,11 +66,10 @@ public class CashCloseReport extends JSONProcessSimple {
     for (Object obj : salesTaxesQuery.list()) {
       Object[] sales = (Object[]) obj;
       JSONObject salesTax = new JSONObject();
-      salesTax.put("taxId", sales[0]);
-      salesTax.put("taxName", sales[1]);
-      salesTax.put("taxAmount", sales[2]);
+      salesTax.put("taxName", sales[0]);
+      salesTax.put("taxAmount", sales[1]);
       salesTaxes.put(salesTax);
-      totalSalesTax = totalSalesTax.add((BigDecimal) sales[2]);
+      totalSalesTax = totalSalesTax.add((BigDecimal) sales[1]);
     }
 
     String hqlSales = "select sum(ord.summedLineAmount) from Order as ord"

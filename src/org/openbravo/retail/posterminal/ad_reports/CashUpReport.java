@@ -505,8 +505,7 @@ public class CashUpReport extends HttpSecureAppServlet {
           + reconIds
           + ") "
           + "                                and t.finPayment = d.paymentDetails.finPayment)) "
-          + "and ordertax.salesOrder.documentType.id=? "
-          + "group by ordertax.tax.id, ordertax.tax.name";
+          + "and ordertax.salesOrder.documentType.id=? " + "group by ordertax.tax.name";
 
       Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
       salesTaxesQuery.setString(0, cashup.getPOSTerminal().getObposTerminaltype().getDocumentType()
