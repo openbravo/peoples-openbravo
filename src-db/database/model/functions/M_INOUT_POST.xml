@@ -57,7 +57,7 @@
   v_is_ready AD_Org.IsReady%TYPE;
   v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
   v_DateAcct DATE;
-  v_DateDelivered TIMestamp without time zone;
+  v_DateDelivered C_OrderLine.DateDelivered%TYPE;
   v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
   v_org_bule_id AD_Org.AD_Org_ID%TYPE;
   -- Parameter
