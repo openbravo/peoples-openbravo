@@ -771,8 +771,10 @@ public class OrderLoader extends JSONProcessSimple {
 
       AttributeSetInstance oldAttributeSetValues = null;
       if (negativeLine) {
+        lineNo += 10;
         addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty.negate(), getBinForReturns(jsonorder.getString("posTerminal")), null);
+
       } else {
         if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           // The M_GetStock function is used
