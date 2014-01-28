@@ -47,12 +47,11 @@
             taxAmount = -receipt.get('taxes')[i].amount;
           }
           OB.Dal.find(OB.Model.TaxCashUp, {
-            'tax_id': i,
+            'name': receipt.get('taxes')[i].name,
             'orderType': taxOrderType.toString()
           }, function (tax) {
             if (tax.length === 0) {
               OB.Dal.save(new OB.Model.TaxCashUp({
-                tax_id: i,
                 name: receipt.get('taxes')[i].name,
                 amount: taxAmount,
                 orderType: taxOrderType.toString(),
