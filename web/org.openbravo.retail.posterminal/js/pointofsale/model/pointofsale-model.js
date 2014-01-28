@@ -302,9 +302,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             return line.get('gross') < 0;
           }).length;
           if (negativeLines === order.get('lines').models.length) {
-            order.setOrderType('OBPOS_receipt.return', OB.DEC.One);
+            order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {applyPromotions: false, saveOrder: false});
           } else {
-            receipt.setOrderType('', OB.DEC.Zero);
+            order.setOrderType('', OB.DEC.Zero, {applyPromotions: false, saveOrder: false});
           }
         }
         me.get('multiOrders').trigger('closed', order);

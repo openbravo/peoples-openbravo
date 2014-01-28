@@ -1219,7 +1219,7 @@
       }
     },
 
-    setOrderType: function (permission, orderType) {
+    setOrderType: function (permission, orderType, options) {
       var me = this;
       if (OB.POS.modelterminal.hasPermission(permission)) {
         if (permission === 'OBPOS_receipt.return') {
@@ -1234,7 +1234,9 @@
         }
         this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
         if (orderType !== 3) { //Void this Layaway, do not need to save
-          this.save();
+          if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)){
+            this.save();
+          }
         } else {
           this.set('layawayGross', this.getGross());
           this.set('gross', this.get('payment'));
@@ -1242,7 +1244,9 @@
           this.get('payments').reset();
         }
         // remove promotions
-        OB.Model.Discounts.applyPromotions(this);
+        if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)){
+          OB.Model.Discounts.applyPromotions(this);
+        }
       }
     },
 
