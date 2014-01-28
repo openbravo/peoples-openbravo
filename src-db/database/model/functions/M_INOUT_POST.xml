@@ -57,6 +57,7 @@
   v_is_ready AD_Org.IsReady%TYPE;
   v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
   v_DateAcct DATE;
+  v_DateDelivered TIMestamp without time zone;
   v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
   v_org_bule_id AD_Org.AD_Org_ID%TYPE;
   -- Parameter
@@ -645,6 +646,24 @@
             END IF;
             v_ResultStr:='UpdateOrderLine';
             IF(Cur_InOutLine.C_OrderLine_ID IS NOT NULL) THEN
+              if(Cur_InOut.ISSOTRX='Y') THEN
+                -- Sets DateDelivered with the recent shipment date
+                -- of the shipment/s done for the orderline.
+                SELECT MAX(M.MOVEMENTDATE) INTO v_DateDelivered
+                FROM M_INOUTLINE ML, M_INOUT M
+                WHERE ML.C_OrderLine_ID = Cur_InOutLine.C_OrderLine_ID
+                AND ML.M_INOUT_ID = M.M_INOUT_ID
+                AND M.DOCSTATUS='CO';
+              ELSE
+                v_DateDelivered := null;
+              END IF;
+
+              IF(v_QtySO > 0) THEN
+                IF(v_DateDelivered IS NULL OR v_DateDelivered < Cur_InOut.MovementDate ) THEN
+                  v_DateDelivered:=Cur_InOut.MovementDate;
+                END IF;
+              END IF;
+              
               -- stocked product
               IF(Cur_InOutLine.M_Product_ID IS NOT NULL AND v_IsStocked=1) THEN
                 -- Update OrderLine (if C-, Qty is negative)
@@ -656,12 +675,14 @@
                 IF (v_DocStatus = 'DR') THEN
                   UPDATE C_ORDERLINE
                     SET QtyDelivered=QtyDelivered + v_QtySO,
+                    DATEDELIVERED=(CASE WHEN (QtyDelivered + v_QtySO) > 0 THEN v_DateDelivered ELSE NULL END),
                     Updated=now(),
                     UpdatedBy=v_User
                   WHERE C_OrderLine_ID=Cur_InOutLine.C_OrderLine_ID;
                 ELSE 
                   UPDATE C_ORDERLINE
                     SET QtyReserved=QtyReserved - v_QtyPO - v_QtySO,
+                    DATEDELIVERED=(CASE WHEN (QtyReserved - v_QtyPO - v_QtySO) > 0 THEN v_DateDelivered ELSE NULL END),
                     QtyDelivered=QtyDelivered + v_QtySO,
                     Updated=now(),
                     UpdatedBy=v_User
@@ -672,6 +693,7 @@
                 -- Update OrderLine (if C-, Qty is negative)
                 UPDATE C_ORDERLINE
                   SET QtyDelivered=QtyDelivered + v_QtySO,
+                  DATEDELIVERED=(CASE WHEN (QtyDelivered + v_QtySO) > 0 THEN v_DateDelivered ELSE NULL END),
                   Updated=now(),
                   UpdatedBy=v_User
                 WHERE C_OrderLine_ID=Cur_InOutLine.C_OrderLine_ID;
