@@ -38,7 +38,6 @@ import org.openbravo.base.structure.Identifiable;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
-import org.openbravo.database.SessionInfo;
 
 /**
  * Keeps the Hibernate Session and Transaction in a ThreadLocal so that it is available throughout
@@ -266,7 +265,6 @@ public class SessionHandler implements OBNotSingleton {
       try {
         if (connection != null && !connection.isClosed()) {
           connection.close();
-          SessionInfo.setSessionConnection(null);
         }
       } catch (SQLException e) {
         // ignore these exception not to hide others
@@ -325,7 +323,6 @@ public class SessionHandler implements OBNotSingleton {
       try {
         if (connection != null && !connection.isClosed()) {
           connection.close();
-          SessionInfo.setSessionConnection(null);
         }
         log.debug("Closing session");
         closeSession();
