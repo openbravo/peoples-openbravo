@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -256,15 +256,50 @@ public class DocFINFinAccTransaction extends AcctServer {
         FieldProviderFactory.setField(data[i], "lineno", transaction.getLineNo().toString());
 
         FieldProviderFactory.setField(data[i], "user1Id", paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getStDimension() != null ? paymentDetails
-            .get(i).getFINPaymentScheduleDetailList().get(0).getStDimension().getId() : "");
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getInvoicePaymentSchedule().getInvoice().getStDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+            .getInvoice().getStDimension().getId() : (paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getOrderPaymentSchedule().getOrder().getStDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getStDimension().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList()
+            .get(0).getStDimension() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getStDimension().getId() : "")));
         FieldProviderFactory.setField(data[i], "user2Id", paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getNdDimension() != null ? paymentDetails
-            .get(i).getFINPaymentScheduleDetailList().get(0).getNdDimension().getId() : "");
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getInvoicePaymentSchedule().getInvoice().getNdDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+            .getInvoice().getNdDimension().getId() : (paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getOrderPaymentSchedule().getOrder().getNdDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getNdDimension().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList()
+            .get(0).getNdDimension() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getNdDimension().getId() : "")));
         FieldProviderFactory
-            .setField(data[i], "cCostcenterId", paymentDetails.get(i)
-                .getFINPaymentScheduleDetailList().get(0).getCostCenter() != null ? paymentDetails
-                .get(i).getFINPaymentScheduleDetailList().get(0).getCostCenter().getId() : "");
+            .setField(
+                data[i],
+                "cCostcenterId",
+                paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                    .getInvoicePaymentSchedule() != null
+                    && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                        .getInvoicePaymentSchedule().getInvoice().getCostcenter() != null ? paymentDetails
+                    .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                    .getInvoice().getCostcenter().getId()
+                    : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                        .getOrderPaymentSchedule() != null
+                        && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                            .getOrderPaymentSchedule().getOrder().getCostcenter() != null ? paymentDetails
+                        .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
+                        .getOrder().getCostcenter().getId()
+                        : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                            .getCostCenter() != null ? paymentDetails.get(i)
+                            .getFINPaymentScheduleDetailList().get(0).getCostCenter().getId() : "")));
 
       }
     } finally {
@@ -731,10 +766,13 @@ public class DocFINFinAccTransaction extends AcctServer {
     // Total
     retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
 
-    FIN_Payment payment = OBDal.getInstance().get(FIN_FinaccTransaction.class, Record_ID).getFinPayment();
-    // if payment IN/OUT is in Multi-Currency then get Multi-Currency amount field because FIN_Payment line amount is in that currency.
+    FIN_Payment payment = OBDal.getInstance().get(FIN_FinaccTransaction.class, Record_ID)
+        .getFinPayment();
+    // if payment IN/OUT is in Multi-Currency then get Multi-Currency amount field because
+    // FIN_Payment line amount is in that currency.
     if (payment != null) {
-      if (!payment.getAccount().getCurrency().getId().equalsIgnoreCase(payment.getCurrency().getId())) {
+      if (!payment.getAccount().getCurrency().getId()
+          .equalsIgnoreCase(payment.getCurrency().getId())) {
         retValue = payment.getAmount();
       }
     }

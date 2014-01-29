@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -101,7 +101,8 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
             productChar.put("selectedValue", selectedValue.getCharacteristicValue().getId());
             productChar.put("existingProdChValue", selectedValue.getId());
           }
-          productChar.put("name", characteristic.getCharacteristic().getName());
+          productChar.put("title", characteristic.getCharacteristic().getName());
+          productChar.put("name", characteristic.getCharacteristic().getName().replace("/", "__"));
 
           // Retrieves all the possible values for the characteristic
           List<CharacteristicValue> values = characteristic.getCharacteristic()

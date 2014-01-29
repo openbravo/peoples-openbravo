@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -441,6 +441,10 @@ isc.OBParameterWindowView.addProperties({
         grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
         selection, len, allRows, params, tab;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
+    if (this.resultLayout && this.resultLayout.destroy) {
+      this.resultLayout.destroy();
+      delete this.resultLayout;
+    }
     this.showProcessing(true);
 
     // change tab title to show executing...

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -100,6 +100,10 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       return;
     }
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
+    if (!prCh.isVariant() && prCh.getProduct().isGeneric()
+        && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
+      throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
+    }
     if (prCh.isVariant() && prCh.getProduct().isGeneric()) {
       final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
           ProductCharacteristic.ENTITY_NAME);
@@ -140,6 +144,16 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       Set<String[]> valuesToAdd = getValuesToAdd(prCh);
       for (String[] strNewValue : valuesToAdd) {
         if (existingValues.remove(strNewValue[0])) {
+          OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance().createCriteria(
+              ProductCharacteristicConf.class);
+          prChConfCrit.add(Restrictions.eq(
+              ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
+          prChConfCrit.add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
+              OBDal.getInstance().get(CharacteristicValue.class, strNewValue[0])));
+          ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
+              .uniqueResult();
+          prChConf.setCode(strNewValue[1]);
+          OBDal.getInstance().save(prChConf);
           continue;
         }
         prChConfs.add(getCharacteristicConf(prCh, strNewValue[0], strNewValue[1]));

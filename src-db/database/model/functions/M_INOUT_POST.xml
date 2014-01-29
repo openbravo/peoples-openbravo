@@ -57,6 +57,7 @@
   v_is_ready AD_Org.IsReady%TYPE;
   v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
   v_DateAcct DATE;
+  v_DateDelivered C_OrderLine.DateDelivered%TYPE;
   v_isacctle AD_OrgType.IsAcctLegalEntity%TYPE;
   v_org_bule_id AD_Org.AD_Org_ID%TYPE;
   -- Parameter
@@ -105,6 +106,7 @@
     v_goods_blocked VARCHAR2(1):='N';
     v_bpartner_name c_bpartner.name%TYPE;
     v_DocAction VARCHAR2(60);
+    v_voiddoccount NUMBER:=0;
 
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -152,8 +154,8 @@
   BEGIN --BODY
   	IF(NOT FINISH_PROCESS) THEN
   	  v_PUser:=v_User;
-      SELECT io.AD_Client_ID, io.AD_Org_ID, io.CreatedBy, io.C_DocType_ID, io.DateAcct, dt.isreturn, io.m_warehouse_id, io.issotrx
-        INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct, v_isreturndoctype, v_M_Warehouse_ID, v_isSoTrx
+      SELECT io.AD_Client_ID, io.AD_Org_ID, io.CreatedBy, io.C_DocType_ID, io.DateAcct, dt.isreturn, io.m_warehouse_id, io.issotrx,docaction
+        INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct, v_isreturndoctype, v_M_Warehouse_ID, v_isSoTrx,v_DocAction
         FROM M_InOut io JOIN c_doctype dt ON io.c_doctype_id = dt.c_doctype_id
         WHERE io.M_InOut_ID=v_Record_ID;
         IF(v_PUser IS NOT NULL) THEN
@@ -178,7 +180,7 @@
         END IF;
       END IF;
 
-      if(v_isreturndoctype = 'N' AND v_isSoTrx = 'Y') then
+      if(v_isreturndoctype = 'N' AND v_isSoTrx = 'Y' and v_DocAction<>'RC') then
         v_message := null;
         for Cur_OrderLine in (
           select c_orderline_id, line
@@ -644,6 +646,24 @@
             END IF;
             v_ResultStr:='UpdateOrderLine';
             IF(Cur_InOutLine.C_OrderLine_ID IS NOT NULL) THEN
+              if(Cur_InOut.ISSOTRX='Y') THEN
+                -- Sets DateDelivered with the recent shipment date
+                -- of the shipment/s done for the orderline.
+                SELECT MAX(M.MOVEMENTDATE) INTO v_DateDelivered
+                FROM M_INOUTLINE ML, M_INOUT M
+                WHERE ML.C_OrderLine_ID = Cur_InOutLine.C_OrderLine_ID
+                AND ML.M_INOUT_ID = M.M_INOUT_ID
+                AND M.DOCSTATUS='CO';
+              ELSE
+                v_DateDelivered := null;
+              END IF;
+
+              IF(v_QtySO > 0) THEN
+                IF(v_DateDelivered IS NULL OR v_DateDelivered < Cur_InOut.MovementDate ) THEN
+                  v_DateDelivered:=Cur_InOut.MovementDate;
+                END IF;
+              END IF;
+              
               -- stocked product
               IF(Cur_InOutLine.M_Product_ID IS NOT NULL AND v_IsStocked=1) THEN
                 -- Update OrderLine (if C-, Qty is negative)
@@ -655,12 +675,14 @@
                 IF (v_DocStatus = 'DR') THEN
                   UPDATE C_ORDERLINE
                     SET QtyDelivered=QtyDelivered + v_QtySO,
+                    DATEDELIVERED=(CASE WHEN (QtyDelivered + v_QtySO) > 0 THEN v_DateDelivered ELSE NULL END),
                     Updated=now(),
                     UpdatedBy=v_User
                   WHERE C_OrderLine_ID=Cur_InOutLine.C_OrderLine_ID;
                 ELSE 
                   UPDATE C_ORDERLINE
                     SET QtyReserved=QtyReserved - v_QtyPO - v_QtySO,
+                    DATEDELIVERED=(CASE WHEN (QtyReserved - v_QtyPO - v_QtySO) > 0 THEN v_DateDelivered ELSE NULL END),
                     QtyDelivered=QtyDelivered + v_QtySO,
                     Updated=now(),
                     UpdatedBy=v_User
@@ -671,6 +693,7 @@
                 -- Update OrderLine (if C-, Qty is negative)
                 UPDATE C_ORDERLINE
                   SET QtyDelivered=QtyDelivered + v_QtySO,
+                  DATEDELIVERED=(CASE WHEN (QtyDelivered + v_QtySO) > 0 THEN v_DateDelivered ELSE NULL END),
                   Updated=now(),
                   UpdatedBy=v_User
                 WHERE C_OrderLine_ID=Cur_InOutLine.C_OrderLine_ID;
@@ -784,39 +807,47 @@
               END LOOP;
             END;
           ELSE
-            v_ResultStr:='Check delivery rule for sales orders';
-            v_Message_aux:='';
-            v_orderid_old:='0';
-            FOR Cur_Order IN 
-              (SELECT c_order.deliveryrule, m_inoutline.line, c_order.c_order_id,
-                      c_order.documentno, c_orderline.line as orderline
-               FROM M_InOutLine, C_Orderline, C_Order
-               WHERE M_Inoutline.c_orderline_id = c_orderline.c_orderline_id
-                 AND c_orderline.c_order_id = c_order.c_order_id
-                 AND m_inoutline.m_inout_id = cur_inout.m_inout_id
-                 AND ((c_order.deliveryrule = 'O'
-                      AND EXISTS (SELECT 1 FROM C_OrderLine ol
-                                  WHERE ol.C_Order_ID = C_order.c_order_id
-                                    and ol.qtyordered > ol.qtydelivered ))
-                      OR (c_order.deliveryrule = 'L' 
-                          AND c_orderline.qtyordered > c_orderline.qtydelivered))
-               ORDER BY c_order.c_order_id, c_orderline.line) LOOP
-              --Order lines not completely delivered with delivery rule O or L
-              IF (v_orderid_old <> cur_order.c_order_id OR cur_order.deliveryrule <> 'O' ) THEN
-                v_Message_aux := COALESCE(v_Message_aux,'') || '@Shipment@' || ' ' || cur_inout.documentno;
-                v_Message_aux := v_Message_aux || ' ' || '@line@' || ' ' || cur_order.line || ': ';
-                v_Message_aux := v_Message_aux || '@SalesOrderDocumentno@' || cur_order.documentno;
-                IF (cur_order.deliveryrule = 'O') THEN
-                  v_Message_aux := v_Message_aux || ' ' || '@notCompleteDeliveryRuleOrder@' || '<br>';
-                ELSE
-                  v_Message_aux := v_Message_aux || ' ' || '@line@' || ' ' || cur_order.orderline;
-                  v_Message_aux := v_Message_aux || ' ' || '@notCompleteDeliveryRuleLine@' || '<br>';
+            --Void document is created automatically from main document . 
+            --during completion of void document , we have to skip delivery rule for void document .
+            select COALESCE(instr(M_INOUT.Description,'*R*:'),0) 
+            into v_voiddoccount 
+            from M_INOUT
+            where M_INOUT.M_INOUT_id =v_Record_ID;
+            if v_voiddoccount = 0 then
+              v_ResultStr:='Check delivery rule for sales orders';
+              v_Message_aux:='';
+              v_orderid_old:='0';
+              FOR Cur_Order IN 
+                (SELECT c_order.deliveryrule, m_inoutline.line, c_order.c_order_id,
+                        c_order.documentno, c_orderline.line as orderline
+                 FROM M_InOutLine, C_Orderline, C_Order
+                 WHERE M_Inoutline.c_orderline_id = c_orderline.c_orderline_id
+                   AND c_orderline.c_order_id = c_order.c_order_id
+                   AND m_inoutline.m_inout_id = cur_inout.m_inout_id
+                   AND ((c_order.deliveryrule = 'O'
+                        AND EXISTS (SELECT 1 FROM C_OrderLine ol
+                                    WHERE ol.C_Order_ID = C_order.c_order_id
+                                      and ol.qtyordered > ol.qtydelivered ))
+                        OR (c_order.deliveryrule = 'L' 
+                            AND c_orderline.qtyordered > c_orderline.qtydelivered))
+                 ORDER BY c_order.c_order_id, c_orderline.line) LOOP
+                --Order lines not completely delivered with delivery rule O or L
+                IF (v_orderid_old <> cur_order.c_order_id OR cur_order.deliveryrule <> 'O' ) THEN
+                  v_Message_aux := COALESCE(v_Message_aux,'') || '@Shipment@' || ' ' || cur_inout.documentno;
+                  v_Message_aux := v_Message_aux || ' ' || '@line@' || ' ' || cur_order.line || ': ';
+                  v_Message_aux := v_Message_aux || '@SalesOrderDocumentno@' || cur_order.documentno;
+                  IF (cur_order.deliveryrule = 'O') THEN
+                    v_Message_aux := v_Message_aux || ' ' || '@notCompleteDeliveryRuleOrder@' || '<br>';
+                  ELSE
+                    v_Message_aux := v_Message_aux || ' ' || '@line@' || ' ' || cur_order.orderline;
+                    v_Message_aux := v_Message_aux || ' ' || '@notCompleteDeliveryRuleLine@' || '<br>';
+                  END IF;
                 END IF;
+                v_orderid_old := cur_order.c_order_id;
+              END LOOP;
+              IF (v_Message_aux IS NOT NULL AND v_Message_aux <> '') THEN
+                RAISE_APPLICATION_ERROR(-20000, v_Message_aux);
               END IF;
-              v_orderid_old := cur_order.c_order_id;
-            END LOOP;
-            IF (v_Message_aux IS NOT NULL AND v_Message_aux <> '') THEN
-              RAISE_APPLICATION_ERROR(-20000, v_Message_aux);
             END IF;
           END IF;
           -- Close Shipment

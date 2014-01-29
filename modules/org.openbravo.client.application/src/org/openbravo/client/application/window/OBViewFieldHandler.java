@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,6 +74,7 @@ public class OBViewFieldHandler {
   private List<String> windowEntities = null;
   private List<OBViewFieldDefinition> fields;
   private List<String> propertiesInButtonFieldDisplayLogic = new ArrayList<String>();
+  private List<String> hiddenPropertiesInDisplayLogic = new ArrayList<String>();
   private List<String> storedInSessionProperties = new ArrayList<String>();
 
   private List<Field> ignoredFields = new ArrayList<Field>();
@@ -139,6 +140,14 @@ public class OBViewFieldHandler {
               .getDBColumnName());
           if (!propertiesInButtonFieldDisplayLogic.contains(property.getName())) {
             propertiesInButtonFieldDisplayLogic.add(property.getName());
+          }
+        } else {
+          if (!fieldExpression.isDisplayed()) {
+            Property property = entity.getPropertyByColumnName(fieldExpression.getColumn()
+                .getDBColumnName());
+            if (!hiddenPropertiesInDisplayLogic.contains(property.getName())) {
+              hiddenPropertiesInDisplayLogic.add(property.getName());
+            }
           }
         }
       }
@@ -2113,6 +2122,10 @@ public class OBViewFieldHandler {
 
   public List<String> getPropertiesInButtonFieldDisplayLogic() {
     return propertiesInButtonFieldDisplayLogic;
+  }
+
+  public List<String> getHiddenPropertiesInDisplayLogic() {
+    return hiddenPropertiesInDisplayLogic;
   }
 
   public boolean hasProcessNowProperty() {

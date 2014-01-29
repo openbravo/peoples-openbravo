@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -282,6 +282,14 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     List<String> propertiesInButtonFieldDisplayLogic = getViewTab().getFieldHandler()
         .getPropertiesInButtonFieldDisplayLogic();
     for (String propertyName : propertiesInButtonFieldDisplayLogic) {
+      requiredGridProperties.add(propertyName);
+    }
+
+    // List of hidden properties that are part of display logic (see
+    // https://issues.openbravo.com/view.php?id=25586)
+    List<String> hiddenPropertiesInDisplayLogic = getViewTab().getFieldHandler()
+        .getHiddenPropertiesInDisplayLogic();
+    for (String propertyName : hiddenPropertiesInDisplayLogic) {
       requiredGridProperties.add(propertyName);
     }
 

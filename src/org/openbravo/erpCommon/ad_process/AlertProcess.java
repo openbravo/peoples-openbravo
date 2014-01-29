@@ -111,6 +111,7 @@ public class AlertProcess implements Process {
     PreparedStatement st = null;
 
     try {
+      connectionProvider.getConnection().setReadOnly(true);
       st = connectionProvider.getPreparedStatement(strSql);
       st.setString(1, alertRuleId);
       result = st.executeQuery();
@@ -141,6 +142,7 @@ public class AlertProcess implements Process {
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
+        connectionProvider.getConnection().setReadOnly(false);
         connectionProvider.releasePreparedStatement(st);
       } catch (Exception ignore) {
         ignore.printStackTrace();
@@ -239,7 +241,7 @@ public class AlertProcess implements Process {
 
     AlertProcessData[] alert = null;
 
-    if (!alertRule.sql.equals("")) {
+    if (!alertRule.sql.equals("") && (alertRule.sql.toUpperCase().trim().startsWith("SELECT "))) {
       try {
         alert = selectAlert(conn, alertRule.sql, alertRule.adAlertruleId);
       } catch (Exception ex) {
@@ -488,7 +490,7 @@ public class AlertProcess implements Process {
     }
 
     // Update
-    if (!alertRule.sql.equals("")) {
+    if (!alertRule.sql.equals("") && (alertRule.sql.toUpperCase().trim().startsWith("SELECT "))) {
       try {
         Integer count = AlertProcessData.updateAlert(conn, alertRule.adAlertruleId, alertRule.sql);
         logger.log("updated alerts: " + count + "\n");

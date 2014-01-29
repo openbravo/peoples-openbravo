@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,15 +26,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Restrictions;
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.datamodel.Column;
-import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -79,18 +78,19 @@ public class SL_IsDefault extends HttpSecureAppServlet {
     result.append("var respuesta = new Array(");
 
     if (strValue.equals("Y")) {
+
       String strTableId = vars.getStringParameter("inpTableId");
-      String parentColumn = "";
-      Table currentTable = OBDal.getInstance().get(Table.class, strTableId);
-      OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
-      columnCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, currentTable));
-      columnCriteria.add(Restrictions.eq(Column.PROPERTY_LINKTOPARENTCOLUMN, true));
-      for (Column column : columnCriteria.list()) {
-        parentColumn = column.getDBColumnName();
-      }
       String strOrg = vars.getStringParameter("inpadOrgId");
+      String parentColumn = vars.getStringParameter("inpParentKeyColumn");
+      String tabId = vars.getStringParameter("TAB_ID");
+      // if parentColumn is not null, compute parentColumn using tab information
+      if ((parentColumn == null || parentColumn.isEmpty()) && StringUtils.isNotEmpty(tabId)) {
+        Tab currentTab = OBDal.getInstance().get(Tab.class, tabId);
+        parentColumn = KernelUtils.getInstance().getParentColumnName(currentTab);
+      }
       String parentValue = vars.getStringParameter("inp"
           + Sqlc.TransformaNombreColumna(parentColumn));
+
       String currentColumnKey = vars.getStringParameter("inpkeyColumnId");
       String currentKeyValue = vars.getStringParameter(vars.getStringParameter("inpKeyName"));
 
