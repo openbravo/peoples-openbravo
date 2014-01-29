@@ -144,6 +144,16 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       Set<String[]> valuesToAdd = getValuesToAdd(prCh);
       for (String[] strNewValue : valuesToAdd) {
         if (existingValues.remove(strNewValue[0])) {
+          OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance().createCriteria(
+              ProductCharacteristicConf.class);
+          prChConfCrit.add(Restrictions.eq(
+              ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
+          prChConfCrit.add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
+              OBDal.getInstance().get(CharacteristicValue.class, strNewValue[0])));
+          ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
+              .uniqueResult();
+          prChConf.setCode(strNewValue[1]);
+          OBDal.getInstance().save(prChConf);
           continue;
         }
         prChConfs.add(getCharacteristicConf(prCh, strNewValue[0], strNewValue[1]));

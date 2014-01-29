@@ -39,6 +39,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.VariantChDescUpdateProcess;
 import org.openbravo.model.common.plm.CharacteristicValue;
+import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
@@ -67,19 +68,30 @@ public class CharacteristicValueEventHandler extends EntityPersistenceEventObser
     final CharacteristicValue chv = (CharacteristicValue) event.getTargetInstance();
     chvalueUpdated.set(chv.getId());
     // Update all product characteristics configurations with updated code of the characteristic.
+    // Only when product characteristics is not linked with subset.
     final Entity prodchValue = ModelProvider.getInstance().getEntity(
         CharacteristicValue.ENTITY_NAME);
     final Property codeProperty = prodchValue.getProperty(CharacteristicValue.PROPERTY_CODE);
     if (event.getCurrentState(codeProperty) != event.getPreviousState(codeProperty)) {
-      OBCriteria<ProductCharacteristicConf> productCharateristicsConf = OBDal.getInstance()
-          .createCriteria(ProductCharacteristicConf.class);
-      productCharateristicsConf.add(Restrictions.eq(
-          ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE, chv));
-      if (productCharateristicsConf.count() > 0) {
-        for (ProductCharacteristicConf conf : productCharateristicsConf.list()) {
-          if (chv.getCode() != conf.getCode()) {
-            conf.setCode(chv.getCode());
-            OBDal.getInstance().save(conf);
+      OBCriteria<ProductCharacteristic> productCharateristic = OBDal.getInstance().createCriteria(
+          ProductCharacteristic.class);
+      productCharateristic.add(Restrictions
+          .isNull(ProductCharacteristic.PROPERTY_CHARACTERISTICSUBSET));
+      if (productCharateristic.count() > 0) {
+        for (ProductCharacteristic productch : productCharateristic.list()) {
+          OBCriteria<ProductCharacteristicConf> productCharateristicsConf = OBDal.getInstance()
+              .createCriteria(ProductCharacteristicConf.class);
+          productCharateristicsConf.add(Restrictions.eq(
+              ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, productch));
+          productCharateristicsConf.add(Restrictions.eq(
+              ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE, chv));
+          if (productCharateristicsConf.count() > 0) {
+            for (ProductCharacteristicConf conf : productCharateristicsConf.list()) {
+              if (chv.getCode() != conf.getCode()) {
+                conf.setCode(chv.getCode());
+                OBDal.getInstance().save(conf);
+              }
+            }
           }
         }
       }
