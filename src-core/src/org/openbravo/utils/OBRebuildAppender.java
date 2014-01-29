@@ -15,6 +15,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
@@ -105,6 +106,13 @@ public class OBRebuildAppender extends AppenderSkeleton {
         // - Second, if the instance which is being rebuild doesn't yet have the log table, or the
         // table is being recreated, the insertion will fail, and this is ok.
         // We don't need to have log lines in the database in that case
+      } finally {
+        try {
+          if (connection != null && !connection.isClosed()) {
+            connection.commit();
+          }
+        } catch (SQLException e) {
+        }
       }
 
   }
