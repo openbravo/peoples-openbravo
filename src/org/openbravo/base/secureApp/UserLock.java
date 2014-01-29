@@ -22,6 +22,7 @@ package org.openbravo.base.secureApp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -109,22 +110,40 @@ public class UserLock {
       return;
     }
 
-    // Count how many times this user has failed without success
+    // Count how many times this user has attempted to login without success
+    long t = System.currentTimeMillis();
+
+    // to improve performance this query is not done as subquery of the main one, see issue #25466
     StringBuilder hql = new StringBuilder();
+    hql.append("select max(s1.creationDate)");
+    hql.append("  from ADSession s1");
+    hql.append(" where s1.username = :name");
+    hql.append("   and s1.loginStatus!='F')");
+    Query q1 = OBDal.getInstance().getSession().createQuery(hql.toString());
+    q1.setParameter("name", userName);
+    Date lastFailedAttempt = (Date) q1.list().get(0);
+    log4j.debug("Time taken to check user lock 1st query " + (System.currentTimeMillis() - t));
+
+    long t1 = System.currentTimeMillis();
+    hql = new StringBuilder();
     hql.append("select count(*)");
     hql.append("  from ADSession s ");
     hql.append(" where s.loginStatus='F'");
     hql.append("   and s.username = :name");
-    hql.append("   and s.creationDate > (select coalesce(max(s1.creationDate), s.creationDate-1)");
-    hql.append("                           from ADSession s1");
-    hql.append("                          where s1.username = :name");
-    hql.append("                            and s1.loginStatus!='F')");
+    if (lastFailedAttempt != null) {
+      hql.append(" and s.creationDate > :lastFail");
+    } else {
+      hql.append(" and s.creationDate > s.creationDate-1");
+    }
     Query q = OBDal.getInstance().getSession().createQuery(hql.toString());
     q.setParameter("name", userName);
+    if (lastFailedAttempt != null) {
+      q.setParameter("lastFail", lastFailedAttempt);
+    }
 
-    long t = System.currentTimeMillis();
     numberOfFails = ((Long) q.list().get(0)).intValue();
     log4j.debug("Time taken to check user lock " + (System.currentTimeMillis() - t)
+        + "ms. Time of 2nd query " + ((System.currentTimeMillis() - t1))
         + "ms. Number of failed login attempts: " + numberOfFails);
 
     if (numberOfFails == 0) {
