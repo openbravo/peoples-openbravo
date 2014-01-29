@@ -284,6 +284,14 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       requiredGridProperties.add(propertyName);
     }
 
+    // List of hidden properties that are part of display logic (see
+    // https://issues.openbravo.com/view.php?id=25586)
+    List<String> hiddenPropertiesInDisplayLogic = getViewTab().getFieldHandler()
+        .getHiddenPropertiesInDisplayLogic();
+    for (String propertyName : hiddenPropertiesInDisplayLogic) {
+      requiredGridProperties.add(propertyName);
+    }
+
     // Always include the propertyt that links to the parent tab
     String linkToParentPropertyName = this.getLinkToParentPropertyName();
     if (linkToParentPropertyName != null && !linkToParentPropertyName.isEmpty()) {
