@@ -29,6 +29,7 @@ isc.OBTreeGrid.addProperties({
   showSortArrow: false,
   showRecordComponentsByCell: true,
   showRecordComponents: true,
+  autoFetchTextMatchStyle: 'substring',
   dataProperties: {
     modelType: 'parent',
     rootValue: '0',
