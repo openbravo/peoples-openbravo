@@ -27,6 +27,8 @@ isc.OBTreeGrid.addProperties({
   nodeIcon: null,
   folderIcon: null,
   showSortArrow: false,
+  showRecordComponentsByCell: true,
+  showRecordComponents: true,
   dataProperties: {
     modelType: 'parent',
     rootValue: '0',
@@ -74,5 +76,43 @@ isc.OBTreeGrid.addProperties({
     if (!noPerformAction) {
       this.filterEditor.performAction();
     }
+  },
+
+  createRecordComponent: function (record, colNum) {
+    var field = this.getField(colNum),
+        rowNum = this.getRecordIndex(record),
+        isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]),
+        isEditRecord = rowNum === this.getEditRow(),
+        canvas, clientClassArray, clientClass, clientClassProps, clientClassIsShownInGridEdit;
+
+    if (isSummary) {
+      return null;
+    }
+
+    if (field.clientClass) {
+      clientClassArray = OB.Utilities.clientClassSplitProps(field.clientClass);
+      clientClass = clientClassArray[0];
+      clientClassProps = clientClassArray[1];
+
+      clientClassIsShownInGridEdit = new Function('return ' + clientClass + '.getInstanceProperty("isShownInGridEdit")')();
+
+      if (!isEditRecord || clientClassIsShownInGridEdit) {
+        canvas = isc.ClassFactory.newInstance(clientClass, {
+          grid: this,
+          align: this.getCellAlign(record, rowNum, colNum),
+          field: field,
+          record: record,
+          rowNum: rowNum,
+          colNum: colNum
+        }, clientClassProps);
+        if (canvas) {
+          if (canvas.setRecord) {
+            canvas.setRecord(record);
+          }
+          return canvas;
+        }
+      }
+    }
+    return null;
   }
 });
