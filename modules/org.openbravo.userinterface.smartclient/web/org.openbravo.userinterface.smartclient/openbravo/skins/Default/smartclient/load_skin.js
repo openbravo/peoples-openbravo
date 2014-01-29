@@ -1859,15 +1859,21 @@ with (theWindow) {
     //----------------------------------------
     // 12) ListGrids
     //----------------------------------------
-    if (isc.ListGrid && useSpriting) {
+    if (isc.ListGrid) {
         isc.ListGrid.addProperties({
-            booleanBaseStyle: "checkbox",
-            booleanTrueImage: "blank",
-            booleanFalseImage: "blank",
-            booleanPartialImage: "blank",
-            booleanImageWidth: 13,
-            booleanImageHeight: 13
+            expansionFieldImageShowRTL: true
         });
+
+        if (useSpriting) {
+            isc.ListGrid.addProperties({
+                booleanBaseStyle: "checkbox",
+                booleanTrueImage: "blank",
+                booleanFalseImage: "blank",
+                booleanPartialImage: "blank",
+                booleanImageWidth: 13,
+                booleanImageHeight: 13
+            });
+        }
     }
 
     //----------------------------------------
