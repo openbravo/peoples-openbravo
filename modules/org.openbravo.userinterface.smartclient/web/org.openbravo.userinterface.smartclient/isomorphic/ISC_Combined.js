@@ -10882,10 +10882,10 @@ if(_23!=null)break;_13=0;_15.$18c=true}}
 if(_23==null){_22=_12;_23=0;_15.$18c=true}
 _13=_23;if(_16=="*")_16=_4-_13;if(!isc.isA.Number(_17))_17=1;for(var r=_12;r<_12+_17;r++){if(!_11[r])_11[r]=[];for(var c=_13;c<_13+_16;c++){_11[r][c]=_14}}
 _15.$18d=[_23,_22,_23+_16,_22+_17];_13+=_16;if(_21)_13=_4;if(_10){this.logDebug("item: "+(_15.name||_15.Class)+" placed at: "+["row"+_22,"col"+_23]+(_15.$18c?", marked startRow ":"")+", rowTable: "+this.echoAll(_11),"tablePlacement")}}
-var _28=0;for(var r=0;r<_11.length;r++){var _29=_11[r];if(_29==null)break;var _30=0,_31=null;for(var c=0;c<_29.length;c++){if(_29[c]==null){_30++;continue}
-if(r>0&&_11[r-1]!=null&&_29[c]==_11[r-1][c])continue;var _14=_29[c],_15=_1[_14];if(_15==_31||_15==null)continue;_15.$18e=_28;_15.$18f=_30;if(_10&&(_30>0||_28>0)){this.logDebug("itemNum:"+_14+" ("+(_15.name||_15.Class)+") at: "+["row"+_22,"col"+_23]+" preceded by "+(_30>0?_30+" empty cells":"")+(_28>0?" "+_28+" empty rows":""),"tablePlacement")}
-_30=_28=0;_31=_15}
-if(_31==null){_28++;_30=0}}}
+var _28=[];for(var r=0;r<_11.length;r++){var _29=_11[r];if(_29==null)break;var _30=0,_31=null;for(var c=0;c<_29.length;c++){if(_29[c]==null){_30++;continue}
+if(r>0&&_11[r-1]!=null&&_29[c]==_11[r-1][c])continue;var _14=_29[c],_15=_1[_14];if(_15==_31||_15==null)continue;_15.$18e=_28;_15.$18f=_30;if(_10&&(_30>0||_28.length>0)){this.logDebug("itemNum:"+_14+" ("+(_15.name||_15.Class)+") at: "+["row"+_22,"col"+_23]+" preceded by "+(_30>0?_30+" empty cells":"")+(_28.length>0?" "+_28.length+" empty rows":""),"tablePlacement")}
+_30=0;_28=[];_31=_15}
+if(_31==null){_28.add(_30+(_4-_29.length));_30=0}}}
 if(!_5||!isc.isAn.Array(_5)){if(!isc.isAn.Array(_5)){this.logWarn(" 'colWidths' not an array - Ignoring.","tableResizePolicy")}
 _5=[]}
 _5=_5.duplicate();for(var c=0;c<_5.length;c++){var _32=_5[c];if(isc.isA.String(_32)){if(_32=="*")_5[c]=[0,10000,0,1];else if(_32.contains("*"))_5[c]=[0,10000,0,parseInt(_32)];else if(_32.contains("%"))_5[c]=[0,10000,parseInt(_32),0];else{var _33=parseInt(_32);if(_33==_32){_5[c]=_33}else{this.logWarn("Failed to understand specified colWidth:"+_32);_5[c]=[0,10000,0,1]}}}}
@@ -11354,7 +11354,8 @@ if(this.isPrinting){_1.append("<tr>")}else{_1.append(this.$19t)}
 var _23=isc.DynamicForm.$21l();for(var _21=0;_21<_13.length;_21++){if(!isc.isA.Number(_13[_21])){_1.append(_23.join(isc.emptyString),this.$19u)}else{var _18=_13[_21];_18-=(this.cellSpacing!=null?(2*this.cellSpacing):0);if(isc.Browser.isIE8Strict){_18-=this.cellPadding!=null?(2*this.cellPadding):0}
 _23[3]=(isc.FormItem?isc.FormItem.getPrototype().baseStyle:null);var _24=isc.Browser.isIE?1:0,_25=_23.join(isc.emptyString);_1.append(_25,this.fixedColWidths?isc.Canvas.spacerHTML(_18,_24):null,this.$19u)}}
 _1.append(this.$13i);if(this.autoSendTarget&&this.target)_1.append(this.$21m());var _26=[];for(var _5=0,_27=_3.length;_5<_27;_5++){var _6=_3[_5];if(!_6)continue;var _7=_6.visible;_6.$202();if(this.logIsDebugEnabled())this.logDebug("Drawing FormItem: "+_6);if(!_6.alwaysTakeSpace&&!_7)continue;if((_6.rowSpan==0||_6.colSpan==0)&&_5<_27-1){_26.add(_6);continue}
-var _28=_6.getFieldName(),_29=_6.getErrors(),_8=_6.getValue(),_30=this.getTitleOrientation(_6);if(isc.is.emptyString(_29))_29=null;if(_6.$18c||_5==0){if(_5!=0)_1.append(this.$13i);if(_6.$18e>0){for(var i=0;i<_6.$18e;i++)_1.append(this.$13h,this.$13i)}
+var _28=_6.getFieldName(),_29=_6.getErrors(),_8=_6.getValue(),_30=this.getTitleOrientation(_6);if(isc.is.emptyString(_29))_29=null;if(_6.$18c||_5==0){
+if(_5!=0){_1.append(this.$13i);}if (_6.$18e&&_6.$18e.length>0){for(var i=0;i<_6.$18e.length;i++){_1.append(this.$13h);for(var ii=0;ii<_6.$18e[i];ii++){_1.append(this.$13j,"&nbsp;",this.$13l);}_1.append(this.$13i)}}
 _1.append(this.$13h);if(_6.$18f>0){for(var i=0;i<_6.$18f;i++)_1.append(this.$13j,this.$13l)}}
 if(_30==isc.Canvas.LEFT){_1.append(this.getTitleCellHTML(_6,_29))}
 _1.append(this.getCellStartHTML(_6,_29));if(_7&&_30==isc.Canvas.TOP){_1.append(this.getTitleSpanHTML(_6,_29),this.$19v)}
