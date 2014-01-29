@@ -241,7 +241,7 @@ public class AlertProcess implements Process {
 
     AlertProcessData[] alert = null;
 
-    if (!alertRule.sql.equals("")) {
+    if (!alertRule.sql.equals("") && (alertRule.sql.toUpperCase().trim().startsWith("SELECT "))) {
       try {
         alert = selectAlert(conn, alertRule.sql, alertRule.adAlertruleId);
       } catch (Exception ex) {
@@ -490,7 +490,7 @@ public class AlertProcess implements Process {
     }
 
     // Update
-    if (!alertRule.sql.equals("")) {
+    if (!alertRule.sql.equals("") && (alertRule.sql.toUpperCase().trim().startsWith("SELECT "))) {
       try {
         Integer count = AlertProcessData.updateAlert(conn, alertRule.adAlertruleId, alertRule.sql);
         logger.log("updated alerts: " + count + "\n");
