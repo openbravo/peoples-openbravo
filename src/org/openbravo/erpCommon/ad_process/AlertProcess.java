@@ -63,6 +63,7 @@ public class AlertProcess implements Process {
   private ConnectionProvider connection;
   private ProcessLogger logger;
   private static final String SYSTEM_CLIENT_ID = "0";
+  private static String LANGUAGE = null;
 
   public void execute(ProcessBundle bundle) throws Exception {
 
@@ -74,6 +75,7 @@ public class AlertProcess implements Process {
     try {
       AlertProcessData[] alertRule = null;
       final String adClientId = bundle.getContext().getClient();
+      LANGUAGE = bundle.getContext().getLanguage();
 
       if (adClientId.equals(SYSTEM_CLIENT_ID)) {
         // Process all clients
@@ -240,10 +242,13 @@ public class AlertProcess implements Process {
     logger.log("Processing rule " + alertRule.name + "\n");
 
     AlertProcessData[] alert = null;
-
-    if (!alertRule.sql.equals("") && (alertRule.sql.toUpperCase().trim().startsWith("SELECT "))) {
+    if (!alertRule.sql.equals("")) {
       try {
-        alert = selectAlert(conn, alertRule.sql, alertRule.adAlertruleId);
+        if (!alertRule.sql.toUpperCase().trim().startsWith("SELECT ")) {
+          logger.log(Utility.messageBD(conn, "AlertSelectConstraint", LANGUAGE) + " \n");
+        } else {
+          alert = selectAlert(conn, alertRule.sql, alertRule.adAlertruleId);
+        }
       } catch (Exception ex) {
         logger.log("Error processing: " + ex.getMessage() + "\n");
         return;
