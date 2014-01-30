@@ -131,6 +131,9 @@ function getBrowserInfo(param) {
   if (navUserAgent.indexOf("MSIE") >= 0) {
     browserName = "Microsoft Internet Explorer";
     i=navUserAgent.indexOf("MSIE")+5;
+  } else if (navUserAgent.indexOf("TRIDENT") >= 0 && navUserAgent.indexOf("RV:") >= 0) {
+    browserName = "Microsoft Internet Explorer";
+    i=navUserAgent.indexOf("RV:")+3;
   } else if (navUserAgent.indexOf("FIREFOX") >= 0) {
     browserName = "Mozilla Firefox";
     i=navUserAgent.indexOf("FIREFOX")+8;
@@ -162,7 +165,7 @@ function getBrowserInfo(param) {
     i=navUserAgent.indexOf("KONQUEROR")+10;
   }
   if (i!=0) {
-    while (navUserAgent.substring(i, i+1) != " " && navUserAgent.substring(i, i+1) != ";" && i < navUserAgent.length) {
+    while (navUserAgent.substring(i, i+1) != " " && navUserAgent.substring(i, i+1) != ";" && navUserAgent.substring(i, i+1) != ")" && i < navUserAgent.length) {
       browserVersion += navUserAgent.substring(i, i+1);
       i++;
     }
