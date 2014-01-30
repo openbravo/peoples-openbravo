@@ -288,6 +288,9 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     // Reservations
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/materialmgmt/ob-reservation.js", false));
+    // Good Movement of reserved stock
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/materialmgmt/ob-reservedGoodMovement.js", false));
 
     // Styling
     globalResources.add(createStyleSheetResource(
