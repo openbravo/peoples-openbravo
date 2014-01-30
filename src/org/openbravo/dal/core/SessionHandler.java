@@ -247,6 +247,9 @@ public class SessionHandler implements OBNotSingleton {
       checkInvariant();
       flushRemainingChanges();
       if (connection == null || (connection != null && !connection.isClosed())) {
+        if (connection != null) {
+          connection.setAutoCommit(false);
+        }
         tx.commit();
       }
       tx = null;
