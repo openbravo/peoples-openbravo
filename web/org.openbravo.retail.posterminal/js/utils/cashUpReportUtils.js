@@ -161,7 +161,7 @@
             isbeingprocessed: 'N'
           }), function () {
             _.each(OB.POS.modelterminal.get('payments'), function (payment) {
-              var startingCash = payment.currentBalance;
+              var startingCash = '0';
               if (lastCashUpPayments) {
                 startingCash = lastCashUpPayments.filter(function (payMthd) {
                   return payMthd.paymentTypeId === payment.payment.id;

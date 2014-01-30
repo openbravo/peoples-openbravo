@@ -447,12 +447,16 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             }
           });
         } else {
-          OB.Dal.save(cashUp.at(0), null, null);
-          OB.UTIL.showLoading(false);
-          me.set("finished", true);
-          if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
-            me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
-          }
+          OB.Dal.save(cashUp.at(0), function () {
+            OB.UTIL.initCashUp(function () {
+              OB.UTIL.showLoading(false);
+              me.set("finished", true);
+              if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
+                me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
+              }
+            });
+          }, null);
+
         }
       }, null, null);
     }, null, this);
