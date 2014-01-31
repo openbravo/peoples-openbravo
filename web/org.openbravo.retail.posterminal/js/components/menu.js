@@ -283,11 +283,22 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.opendrawerfrommenu',
   i18nLabel: 'OBPOS_LblOpenDrawer',
+  init: function (model) {
+    this.model = model;
+  },
   tap: function () {
+    var me = this;
     if (this.disabled) {
       return true;
     }
-    OB.POS.hwserver.openDrawer();
+    if (OB.POS.modelterminal.hasPermission('OBPOS_approval.opendrawer')) {
+      OB.UTIL.Approval.requestApproval(
+      me.model, 'OBPOS_approval.opendrawer', function (approved, supervisor, approvalType) {
+        if (approved) {
+          OB.POS.hwserver.openDrawer();
+        }
+      });
+    }
     this.inherited(arguments);
   }
 });

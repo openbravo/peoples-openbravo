@@ -600,7 +600,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
    * case of granted approval, the approval is added to the order so it can be saved
    * in backend for audit purposes.
    */
-  approvedRequest: function (approved, supervisor, approvalType) {
+  approvedRequest: function (approved, supervisor, approvalType, callback) {
     var order = this.get('order'),
         newApprovals = [],
         approvals, approval, i, date;
@@ -633,5 +633,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.trigger('approvalChecked', {
       approved: approved
     });
+    if (enyo.isFunction(callback)) {
+      callback(approved, supervisor, approvalType);
+    }
   }
 });
