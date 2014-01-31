@@ -67,6 +67,7 @@
 	<parameter name="DATEFORMAT" class="java.text.DateFormat">
 		<defaultValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat("", $P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
 	</parameter>
+	<parameter name="reportType" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT trunc(f.dateacct) as dateacct,
         CASE WHEN f.c_doctype_id IS NOT NULL THEN (SELECT MIN(name)
@@ -86,13 +87,20 @@
     loc.city || ', ' || ad_column_identifier('C_Region', loc.c_region_id, 'en_US') || ' ' || loc.postal
     || ' ' || ad_column_identifier('C_Country', loc.c_country_id, 'en_US') AS org_postal,
     (SELECT MAX(email) FROM ad_user WHERE ad_user_id=oinfo.ad_user_id) as email,
-    (SELECT MAX(phone) FROM ad_user WHERE ad_user_id=oinfo.ad_user_id) as phone
+    (SELECT MAX(phone) FROM ad_user WHERE ad_user_id=oinfo.ad_user_id) as phone,
+    issotrx.issotrx
 FROM fact_acct f
     LEFT JOIN c_acctschema acct ON (f.c_acctschema_id=acct.c_acctschema_id)
-    LEFT JOIN c_bpartner bp ON (f.c_bpartner_id=bp.c_bpartner_id), ad_org o
+    LEFT JOIN c_bpartner bp ON (f.c_bpartner_id=bp.c_bpartner_id)
+    JOIN (SELECT ad_org_id
+          FROM ad_org
+          WHERE ad_isorgincluded(ad_org_id, $P{AD_Org_ID}, ad_client_id) <> -1) org ON (f.ad_org_id=org.ad_org_id), ad_org o
     LEFT JOIN ad_orginfo oinfo ON (o.ad_org_id=oinfo.ad_org_id)
-    LEFT JOIN c_location loc ON (oinfo.c_location_id=loc.c_location_id)
+    LEFT JOIN c_location loc ON (oinfo.c_location_id=loc.c_location_id), (SELECT CASE WHEN value=1 THEN 'Y' ELSE 'N' END AS issotrx
+                                                                          FROM ad_integer
+                                                                          WHERE value < 3) issotrx
 WHERE o.ad_org_id=$P{AD_Org_ID}
+    AND (($P{reportType} IN ('cus','both')
     AND account_id IN
         (SELECT account_id
          FROM c_validcombination
@@ -107,6 +115,23 @@ WHERE o.ad_org_id=$P{AD_Org_ID}
                  FROM c_bp_customer_acct
                  WHERE c_bpartner_id = $P{C_BPartner_ID}
                  AND c_acctschema_id = $P{C_AcctSchema_ID})))
+    AND issotrx.issotrx='Y')
+   OR ($P{reportType} IN ('ven','both')
+   AND account_id IN
+        (SELECT account_id
+         FROM c_validcombination
+         WHERE c_acctschema_id = $P{C_AcctSchema_ID}
+             AND (c_validcombination_id IN
+                (SELECT v_liability_acct
+                 FROM c_bp_vendor_acct
+                 WHERE c_bpartner_id = $P{C_BPartner_ID}
+                 AND c_acctschema_id = $P{C_AcctSchema_ID})
+             OR c_validcombination_id IN
+                (SELECT v_prepayment_acct
+                 FROM c_bp_vendor_acct
+                 WHERE c_bpartner_id = $P{C_BPartner_ID}
+                 AND c_acctschema_id = $P{C_AcctSchema_ID})))
+    AND issotrx.issotrx='N'))
     AND f.c_bpartner_id =  $P{C_BPartner_ID}
     AND f.c_acctschema_id = $P{C_AcctSchema_ID}
     AND trunc(f.dateacct) >= (CASE WHEN ($P{DateFrom} IS NULL OR $P{DateFrom}='') THEN TO_DATE('01-01-0001')
@@ -128,7 +153,8 @@ ORDER BY f.dateacct, f.created]]>
 	<field name="debit" class="java.math.BigDecimal"/>
 	<field name="credit" class="java.math.BigDecimal"/>
 	<field name="net" class="java.math.BigDecimal"/>
-	<variable name="SUM" class="java.math.BigDecimal" calculation="Sum">
+	<field name="issotrx" class="java.lang.String"/>
+	<variable name="SUM" class="java.math.BigDecimal" resetType="Group" resetGroup="Customer" calculation="Sum">
 		<variableExpression><![CDATA[$F{net}]]></variableExpression>
 	</variable>
 	<variable name="DateFrom" class="java.util.Date" calculation="Lowest">
@@ -137,17 +163,167 @@ ORDER BY f.dateacct, f.created]]>
 	<variable name="DateTo" class="java.util.Date" calculation="Highest">
 		<variableExpression><![CDATA[$F{dateacct}]]></variableExpression>
 	</variable>
-	<variable name="initialBalance" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[ReportsUtility.getBeginningBalance($P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_BPartner_ID}, $P{DateFrom})]]></variableExpression>
+	<variable name="customerInitialBalance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[ReportsUtility.getBeginningBalance($P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_BPartner_ID}, $P{DateFrom}, true)]]></variableExpression>
 	</variable>
-	<variable name="balance" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[$V{initialBalance}.add($V{SUM})]]></variableExpression>
+	<variable name="customerBalance" class="java.math.BigDecimal" resetType="Group" resetGroup="Customer">
+		<variableExpression><![CDATA[$V{customerInitialBalance}.add($V{SUM})]]></variableExpression>
+	</variable>
+	<variable name="vendorInitialBalance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[ReportsUtility.getBeginningBalance($P{AD_Org_ID}, $P{C_AcctSchema_ID}, $P{C_BPartner_ID}, $P{DateFrom}, false)]]></variableExpression>
+	</variable>
+	<variable name="vendorBalance" class="java.math.BigDecimal" resetType="Group" resetGroup="Customer">
+		<variableExpression><![CDATA[$V{vendorInitialBalance}.add($V{SUM})]]></variableExpression>
+	</variable>
+	<variable name="TOTALSUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{net}]]></variableExpression>
+	</variable>
+	<variable name="totalBalance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{TOTALSUM}.add($V{customerInitialBalance}).add($V{vendorInitialBalance})]]></variableExpression>
+	</variable>
+	<variable name="totalInitialBalance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{vendorInitialBalance}.add($V{customerInitialBalance})]]></variableExpression>
 	</variable>
 	<group name="PrintLarge" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[]]></groupExpression>
 	</group>
 	<group name="PrintMedium" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="Customer" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{issotrx}]]></groupExpression>
+		<groupHeader>
+			<band height="78">
+				<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="" isBlankWhenNull="true">
+					<reportElement style="Detail_Line" stretchType="RelativeToTallestObject" mode="Transparent" x="446" y="56" width="110" height="14" forecolor="#000000" backcolor="#FFFFFF">
+						<printWhenExpression><![CDATA[($P{reportType}.equals("cus")) || ($P{reportType}.equals("both") && $F{issotrx}.equals("Y"))]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{customerInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{customerInitialBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{customerInitialBalance})]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="331" y="56" width="115" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Initial Balance :]]></text>
+				</staticText>
+				<line>
+					<reportElement x="331" y="70" width="225" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="0" y="7" width="178" height="20" forecolor="#595959">
+						<printWhenExpression><![CDATA[$P{reportType}.equals("both") && $F{issotrx}.equals("Y")]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font fontName="DejaVu Sans" size="16"/>
+					</textElement>
+					<text><![CDATA[Customer Statement]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="128" y="36" width="202" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Description]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="36" width="47" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="47" y="36" width="81" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Document Type]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="330" y="36" width="75" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Debit]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="405" y="36" width="75" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Credit]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="480" y="36" width="75" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Net]]></text>
+				</staticText>
+				<line>
+					<reportElement x="0" y="49" width="555" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="0" y="7" width="178" height="20" forecolor="#595959">
+						<printWhenExpression><![CDATA[$P{reportType}.equals("both") && $F{issotrx}.equals("N")]]></printWhenExpression>
+					</reportElement>
+					<textElement>
+						<font fontName="DejaVu Sans" size="16"/>
+					</textElement>
+					<text><![CDATA[Vendor Statement]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="" isBlankWhenNull="true">
+					<reportElement style="Detail_Line" stretchType="RelativeToTallestObject" mode="Transparent" x="446" y="56" width="110" height="14" forecolor="#000000" backcolor="#FFFFFF">
+						<printWhenExpression><![CDATA[($P{reportType}.equals("ven")) || ($P{reportType}.equals("both") && $F{issotrx}.equals("N"))]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{vendorInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{vendorInitialBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{vendorInitialBalance})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="44">
+				<textField evaluationTime="Group" evaluationGroup="Customer" pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" mode="Transparent" x="445" y="12" width="110" height="15" forecolor="#000000" backcolor="#FFFFFF">
+						<printWhenExpression><![CDATA[($P{reportType}.equals("cus")) || ($P{reportType}.equals("both") && $F{issotrx}.equals("Y"))]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{customerBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{customerBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{customerBalance})]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" mode="Opaque" x="330" y="12" width="115" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<text><![CDATA[Balance :]]></text>
+				</staticText>
+				<line>
+					<reportElement x="330" y="27" width="225" height="1"/>
+				</line>
+				<line>
+					<reportElement x="330" y="29" width="225" height="1"/>
+				</line>
+				<textField evaluationTime="Group" evaluationGroup="Customer" pattern="" isBlankWhenNull="true">
+					<reportElement positionType="Float" mode="Transparent" x="445" y="12" width="110" height="15" forecolor="#000000" backcolor="#FFFFFF">
+						<printWhenExpression><![CDATA[($P{reportType}.equals("ven")) || ($P{reportType}.equals("both") && $F{issotrx}.equals("N"))]]></printWhenExpression>
+					</reportElement>
+					<box rightPadding="5"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{vendorBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{vendorBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{vendorBalance})]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
 	</group>
 	<background>
 		<band splitType="Stretch"/>
@@ -156,7 +332,7 @@ ORDER BY f.dateacct, f.created]]>
 		<band splitType="Stretch"/>
 	</title>
 	<pageHeader>
-		<band height="193" splitType="Stretch">
+		<band height="146" splitType="Stretch">
 			<rectangle>
 				<reportElement x="0" y="0" width="559" height="77" forecolor="#FFFFFF" backcolor="#FFFFFF"/>
 			</rectangle>
@@ -187,7 +363,9 @@ ORDER BY f.dateacct, f.created]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{org_address} + " " + $F{org_postal}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="371" y="4" width="178" height="20" forecolor="#595959"/>
+				<reportElement x="371" y="4" width="178" height="20" forecolor="#595959">
+					<printWhenExpression><![CDATA[$P{reportType}.equals("cus") && $F{issotrx}.equals("Y")]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans" size="16"/>
 				</textElement>
@@ -229,48 +407,6 @@ ORDER BY f.dateacct, f.created]]>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="128" y="148" width="202" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="DejaVu Sans" size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Description]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="-1" y="148" width="48" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement verticalAlignment="Top">
-					<font fontName="DejaVu Sans" size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Date]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="47" y="148" width="81" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="DejaVu Sans" size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Document Type]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="330" y="148" width="75" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font fontName="DejaVu Sans" size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Debit]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="405" y="148" width="75" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font fontName="DejaVu Sans" size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Credit]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="480" y="148" width="75" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font fontName="DejaVu Sans" size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Net]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="0" y="124" width="32" height="12"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>
@@ -298,26 +434,15 @@ ORDER BY f.dateacct, f.created]]>
 				</textElement>
 				<text><![CDATA[to]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="" isBlankWhenNull="true">
-				<reportElement style="Detail_Line" stretchType="RelativeToTallestObject" mode="Transparent" x="445" y="170" width="110" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{initialBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{initialBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{initialBalance})]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="330" y="170" width="115" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Right" verticalAlignment="Top">
-					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				<reportElement x="371" y="4" width="178" height="20" forecolor="#595959">
+					<printWhenExpression><![CDATA[$P{reportType}.equals("ven") && $F{issotrx}.equals("N")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="16"/>
 				</textElement>
-				<text><![CDATA[Initial Balance :]]></text>
+				<text><![CDATA[Vendor Statement]]></text>
 			</staticText>
-			<line>
-				<reportElement x="0" y="161" width="555" height="1"/>
-			</line>
-			<line>
-				<reportElement x="330" y="184" width="225" height="1"/>
-			</line>
 		</band>
 	</pageHeader>
 	<detail>
@@ -371,26 +496,44 @@ ORDER BY f.dateacct, f.created]]>
 	</detail>
 	<summary>
 		<band height="66" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{reportType}.equals("both")]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="" isBlankWhenNull="true">
+				<reportElement style="Detail_Line" stretchType="RelativeToTallestObject" mode="Transparent" x="445" y="13" width="110" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{totalInitialBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{totalInitialBalance})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="235" y="13" width="210" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Business Partner Initial Balance :]]></text>
+			</staticText>
+			<line>
+				<reportElement x="235" y="27" width="320" height="1"/>
+			</line>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="235" y="42" width="210" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Business Partner Balance :]]></text>
+			</staticText>
+			<line>
+				<reportElement x="235" y="55" width="320" height="3"/>
+			</line>
 			<textField evaluationTime="Report" pattern="" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="445" y="19" width="110" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="Float" mode="Transparent" x="445" y="42" width="110" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box rightPadding="5"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{balance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{balance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{balance})]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{totalBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{totalBalance})]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="330" y="19" width="115" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-				</textElement>
-				<text><![CDATA[Balance :]]></text>
-			</staticText>
 			<line>
-				<reportElement x="330" y="34" width="225" height="1"/>
-			</line>
-			<line>
-				<reportElement x="330" y="36" width="225" height="1"/>
+				<reportElement x="235" y="57" width="320" height="3"/>
 			</line>
 		</band>
 	</summary>
