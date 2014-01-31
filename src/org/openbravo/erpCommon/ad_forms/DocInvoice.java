@@ -712,66 +712,71 @@ public class DocInvoice extends AcctServer {
                 this.C_Currency_ID, taxToFinalAccount.toString(), "", Fact_Acct_Group_ID,
                 nextSeqNo(SeqNo), DocumentType, conn);
           }
-        }
-      }
 
-      DocLineInvoiceData[] data = null;
-      try {
-        data = DocLineInvoiceData.selectUndeductable(connectionProvider, Record_ID);
-      } catch (ServletException e) {
-        log4jDocInvoice.warn(e);
-      }
-
-      BigDecimal cumulativeTaxLineAmount = new BigDecimal(0);
-      BigDecimal taxAmount = new BigDecimal(0);
-      for (int i = 0; data != null && i < data.length; i++) {
-        DocLine docLine = new DocLine(DocumentType, Record_ID, "");
-        docLine.m_C_Tax_ID = data[i].cTaxId;
-        docLine.m_C_BPartner_ID = data[i].cBpartnerId;
-        docLine.m_M_Product_ID = data[i].mProductId;
-        docLine.m_C_Costcenter_ID = data[i].cCostcenterId;
-        docLine.m_C_Project_ID = data[i].cProjectId;
-        docLine.m_User1_ID = data[i].user1id;
-        docLine.m_User2_ID = data[i].user2id;
-        docLine.m_C_Activity_ID = data[i].cActivityId;
-        docLine.m_C_Campaign_ID = data[i].cCampaignId;
-        docLine.m_A_Asset_ID = data[i].aAssetId;
-        String strtaxAmount = null;
-
-        strtaxAmount = m_taxes[i].getAmount();
-        taxAmount = new BigDecimal(strtaxAmount.equals("") ? "0.00" : strtaxAmount);
-
-        try {
-          DocInvoiceData[] dataEx = DocInvoiceData.selectProductAcct(conn, as.getC_AcctSchema_ID(),
-              m_taxes[i].m_C_Tax_ID, Record_ID);
-
-          if (i == data.length - 1) {
-            data[i].taxamt = taxAmount.subtract(cumulativeTaxLineAmount).toPlainString();
-          }
+        } else {
+          DocLineInvoiceData[] data = null;
           try {
-
-            if (this.DocumentType.equals(AcctServer.DOCTYPE_APInvoice)) {
-              if (IsReversal.equals("Y")) {
-                fact.createLine(docLine, Account.getAccount(conn, dataEx[0].pExpenseAcct),
-                    this.C_Currency_ID, "", data[i].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                    DocumentType, conn);
-
-              } else {
-                fact.createLine(docLine, Account.getAccount(conn, dataEx[0].pExpenseAcct),
-                    this.C_Currency_ID, data[i].taxamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                    DocumentType, conn);
-              }
-            } else if (this.DocumentType.equals(AcctServer.DOCTYPE_APCredit)) {
-              fact.createLine(docLine, Account.getAccount(conn, dataEx[0].pExpenseAcct),
-                  this.C_Currency_ID, "", data[i].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                  DocumentType, conn);
-            }
-            cumulativeTaxLineAmount = cumulativeTaxLineAmount.add(new BigDecimal(data[i].taxamt));
+            data = DocLineInvoiceData.selectUndeductable(connectionProvider, Record_ID);
           } catch (ServletException e) {
-            log4jDocInvoice.error("Exception in createLineForTaxUndeductable method: " + e);
+            log4jDocInvoice.warn(e);
           }
-        } catch (ServletException e) {
-          log4jDocInvoice.warn(e);
+
+          BigDecimal cumulativeTaxLineAmount = new BigDecimal(0);
+          BigDecimal taxAmount = new BigDecimal(0);
+          for (int j = 0; data != null && j < data.length; j++) {
+            DocLine docLine1 = new DocLine(DocumentType, Record_ID, "");
+            docLine1.m_C_Tax_ID = data[j].cTaxId;
+            docLine1.m_C_BPartner_ID = data[j].cBpartnerId;
+            docLine1.m_M_Product_ID = data[j].mProductId;
+            docLine1.m_C_Costcenter_ID = data[j].cCostcenterId;
+            docLine1.m_C_Project_ID = data[j].cProjectId;
+            docLine1.m_User1_ID = data[j].user1id;
+            docLine1.m_User2_ID = data[j].user2id;
+            docLine1.m_C_Activity_ID = data[j].cActivityId;
+            docLine1.m_C_Campaign_ID = data[j].cCampaignId;
+            docLine1.m_A_Asset_ID = data[j].aAssetId;
+            String strtaxAmount = null;
+
+            try {
+
+              DocInvoiceData[] dataEx = DocInvoiceData.selectProductAcct(conn,
+                  as.getC_AcctSchema_ID(), m_taxes[i].m_C_Tax_ID, Record_ID);
+              if (dataEx.length == 0) {
+                dataEx = DocInvoiceData.selectGLItemAcctForTaxLine(conn, as.getC_AcctSchema_ID(),
+                    m_taxes[i].m_C_Tax_ID, Record_ID);
+              }
+              strtaxAmount = m_taxes[i].getAmount();
+              taxAmount = new BigDecimal(strtaxAmount.equals("") ? "0.00" : strtaxAmount);
+              if (j == data.length - 1) {
+                data[j].taxamt = taxAmount.subtract(cumulativeTaxLineAmount).toPlainString();
+              }
+              try {
+
+                if (this.DocumentType.equals(AcctServer.DOCTYPE_APInvoice)) {
+                  if (IsReversal.equals("Y")) {
+                    fact.createLine(docLine1, Account.getAccount(conn, dataEx[0].pExpenseAcct),
+                        this.C_Currency_ID, "", data[j].taxamt, Fact_Acct_Group_ID,
+                        nextSeqNo(SeqNo), DocumentType, conn);
+
+                  } else {
+                    fact.createLine(docLine1, Account.getAccount(conn, dataEx[0].pExpenseAcct),
+                        this.C_Currency_ID, data[j].taxamt, "", Fact_Acct_Group_ID,
+                        nextSeqNo(SeqNo), DocumentType, conn);
+                  }
+                } else if (this.DocumentType.equals(AcctServer.DOCTYPE_APCredit)) {
+                  fact.createLine(docLine1, Account.getAccount(conn, dataEx[0].pExpenseAcct),
+                      this.C_Currency_ID, "", data[j].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                      DocumentType, conn);
+                }
+                cumulativeTaxLineAmount = cumulativeTaxLineAmount
+                    .add(new BigDecimal(data[j].taxamt));
+              } catch (ServletException e) {
+                log4jDocInvoice.error("Exception in createLineForTaxUndeductable method: " + e);
+              }
+            } catch (ServletException e) {
+              log4jDocInvoice.warn(e);
+            }
+          }
         }
       }
       // Expense DR
