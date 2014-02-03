@@ -163,6 +163,7 @@ window.onerror = function <%=KernelConstants.BOOTSTRAP_ERROR_HANDLER_NAME%> (err
 $LAB.setGlobalDefaults({AppendTo: 'body'});
 
 var isomorphicDir='./web/org.openbravo.userinterface.smartclient/isomorphic/';
+var isc = window.isc ? window.isc : {};
 
 // starts the application is called as the last statement in the StaticResources part
 function OBStartApplication() {
