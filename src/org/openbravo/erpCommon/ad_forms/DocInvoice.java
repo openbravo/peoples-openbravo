@@ -174,8 +174,10 @@ public class DocInvoice extends AcctServer {
         }
       }
 
+      boolean taxIsCashVAT = StringUtils.equals(data[i].iscashvat, "Y");
+
       DocTax taxLine = new DocTax(C_Tax_ID, name, rate, taxBaseAmt, amount, isTaxUndeductable,
-          isTaxDeductable);
+          isTaxDeductable, taxIsCashVAT);
       list.add(taxLine);
     }
     // Return Array
@@ -379,7 +381,7 @@ public class DocInvoice extends AcctServer {
             StringUtils.isBlank(m_taxes[i].m_amount) ? "0" : m_taxes[i].m_amount);
         BigDecimal taxToTransAccount = BigDecimal.ZERO;
         if (IsReversal.equals("Y")) {
-          if (isCashVAT) {
+          if (isCashVAT && m_taxes[i].m_isCashVAT) {
             percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
                 m_taxes[i].m_C_Tax_ID, Record_ID);
             taxToTransAccount = CashVATUtil.calculatePercentageAmount(
@@ -393,7 +395,7 @@ public class DocInvoice extends AcctServer {
               C_Currency_ID, taxToFinalAccount.toString(), "", Fact_Acct_Group_ID,
               nextSeqNo(SeqNo), DocumentType, conn);
         } else {
-          if (isCashVAT) {
+          if (isCashVAT && m_taxes[i].m_isCashVAT) {
             percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
                 m_taxes[i].m_C_Tax_ID, Record_ID);
             taxToTransAccount = CashVATUtil.calculatePercentageAmount(
@@ -547,7 +549,7 @@ public class DocInvoice extends AcctServer {
         final BigDecimal taxesAmountTotal = new BigDecimal(StringUtils.isBlank(m_taxes[i]
             .getAmount()) ? "0" : m_taxes[i].getAmount());
         BigDecimal taxToTransAccount = BigDecimal.ZERO;
-        if (isCashVAT) {
+        if (isCashVAT && m_taxes[i].m_isCashVAT) {
           percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
               m_taxes[i].m_C_Tax_ID, Record_ID);
           taxToTransAccount = CashVATUtil.calculatePercentageAmount(
@@ -680,7 +682,7 @@ public class DocInvoice extends AcctServer {
               .getAmount()) ? "0" : m_taxes[i].getAmount());
           BigDecimal taxToTransAccount = BigDecimal.ZERO;
           if (IsReversal.equals("Y")) {
-            if (isCashVAT) {
+            if (isCashVAT && m_taxes[i].m_isCashVAT) {
               percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
                   m_taxes[i].m_C_Tax_ID, Record_ID);
               taxToTransAccount = CashVATUtil.calculatePercentageAmount(
@@ -696,7 +698,7 @@ public class DocInvoice extends AcctServer {
                 this.C_Currency_ID, "", taxToFinalAccount.toString(), Fact_Acct_Group_ID,
                 nextSeqNo(SeqNo), DocumentType, conn);
           } else {
-            if (isCashVAT) {
+            if (isCashVAT && m_taxes[i].m_isCashVAT) {
               percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
                   m_taxes[i].m_C_Tax_ID, Record_ID);
               taxToTransAccount = CashVATUtil.calculatePercentageAmount(
@@ -926,7 +928,7 @@ public class DocInvoice extends AcctServer {
           final BigDecimal taxesAmountTotal = new BigDecimal(StringUtils.isBlank(m_taxes[i]
               .getAmount()) ? "0" : m_taxes[i].getAmount());
           BigDecimal taxToTransAccount = BigDecimal.ZERO;
-          if (isCashVAT) {
+          if (isCashVAT && m_taxes[i].m_isCashVAT) {
             percentageFinalAccount = CashVATUtil.calculatePrepaidPercentageForCashVATTax(
                 m_taxes[i].m_C_Tax_ID, Record_ID);
             taxToTransAccount = CashVATUtil.calculatePercentageAmount(

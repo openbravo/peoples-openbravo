@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2013 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -317,6 +317,8 @@ BEGIN --BODY
     into v_count
     from c_invoicetax it inner join c_tax t on (it.c_tax_id = t.c_tax_id)
     where it.c_invoice_id = v_Record_ID
+    and t.iswithholdingtax = 'N'
+    and t.rate <> 0
     and t.IsCashVat <> v_iscashvat;
 
     IF (v_count > 0) THEN
