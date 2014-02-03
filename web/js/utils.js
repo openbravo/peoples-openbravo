@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2013 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -101,7 +101,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '21641';
+  var number = '21897';
   return number;
 }
 
@@ -131,6 +131,9 @@ function getBrowserInfo(param) {
   if (navUserAgent.indexOf("MSIE") >= 0) {
     browserName = "Microsoft Internet Explorer";
     i=navUserAgent.indexOf("MSIE")+5;
+  } else if (navUserAgent.indexOf("TRIDENT") >= 0 && navUserAgent.indexOf("RV:") >= 0) {
+    browserName = "Microsoft Internet Explorer";
+    i=navUserAgent.indexOf("RV:")+3;
   } else if (navUserAgent.indexOf("FIREFOX") >= 0) {
     browserName = "Mozilla Firefox";
     i=navUserAgent.indexOf("FIREFOX")+8;
@@ -162,7 +165,7 @@ function getBrowserInfo(param) {
     i=navUserAgent.indexOf("KONQUEROR")+10;
   }
   if (i!=0) {
-    while (navUserAgent.substring(i, i+1) != " " && navUserAgent.substring(i, i+1) != ";" && i < navUserAgent.length) {
+    while (navUserAgent.substring(i, i+1) != " " && navUserAgent.substring(i, i+1) != ";" && navUserAgent.substring(i, i+1) != ")" && i < navUserAgent.length) {
       browserVersion += navUserAgent.substring(i, i+1);
       i++;
     }
