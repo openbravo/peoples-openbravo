@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -440,14 +440,6 @@ function validate() {
                           <td class="List_ContentCell"> <select class="List_width List_height" name="inpmProductCategoryId" size="5" multiple="" id="reportM_PRODUCTCATEGORY">
                           </select></td>
                         </tr>
-  <!--tr>
-    <td width="10%" > <span >User1</span></td>
-      <td width="40%" > <select name="inpUser1" size="5" multiple="" id="reportUser1">
-</select></td>
-      <td width="10%" > <span >User2</span></td>
-      <td width="40%" > <select name="inpUser2" size="5" multiple="" id="reportUser2">
-</select></td>
-  </TR-->
                         <tr>
                           <td class="TitleCell"><span class="LabelText">Sales Region</span></td>
                           <td colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpcSalesRegionId" size="5" multiple="" id="reportCSalesRegionId"></select></td>
@@ -463,9 +455,19 @@ function validate() {
                         <tr>
                           <td class="TitleCell"><span class="LabelText">Trx organization</span></td>
                           <td colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpTrxOrg" size="5" multiple="" id="reportTrxOrg"></select></td>
+                          <td class="TitleCell"><span class="LabelText">Cost Center</span></td>
+                          <td colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpcCostcenterId" size="5" multiple="" id="reportCCostcenterId"></select></td>
+                        </tr>                        
+                        <tr>
+                          <td class="TitleCell"><span class="LabelText">User1</span></td>
+                          <td colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpUser1Id" size="5" multiple="" id="reportUser1"></select></td>
+                          <td class="TitleCell"><span class="LabelText">User2</span></td>
+                          <td colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpUser2Id" size="5" multiple="" id="reportUser2"></select></td>
+                        </tr>
+                        <tr>
                           <td class="TitleCell"><span class="LabelText">Month</span></td>
                           <td colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpMonth" size="5" multiple="" id="reportMonth"></select></td>
-                        </tr>
+                        </tr> 
                         <tr>
                           <td class="TitleCell"> <span class="LabelText">General Ledger</span></td>
                           <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshAccountingReports(); logChanges(this); return true;">

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,6 +60,12 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
           "ReportBudgetGenerateExcel|inpmProductId_IN", IsIDFilter.instance);
       String strProdCategory = vars.getRequestInGlobalVariable("inpmProductCategoryId",
           "ReportBudgetGenerateExcel|inpmProductCategoryId", IsIDFilter.instance);
+      String strUser1 = vars.getRequestInGlobalVariable("inpUser1Id",
+          "ReportBudgetGenerateExcel|inpUser1Id", IsIDFilter.instance);
+      String strUser2 = vars.getRequestInGlobalVariable("inpUser2Id",
+          "ReportBudgetGenerateExcel|inpcSalesRegionId", IsIDFilter.instance);
+      String strCostcenter = vars.getRequestInGlobalVariable("inpcCostcenterId",
+          "ReportBudgetGenerateExcel|inpcCostcenterId", IsIDFilter.instance);
       String strSalesRegion = vars.getRequestInGlobalVariable("inpcSalesRegionId",
           "ReportBudgetGenerateExcel|inpcSalesRegionId", IsIDFilter.instance);
       String strCampaign = vars.getRequestInGlobalVariable("inpcCampaingId",
@@ -76,8 +82,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
           "ReportBudgetGenerateExcel|cAccountId");
       String strcAcctSchemaId = vars.getStringParameter("inpcAcctSchemaId", "");
       printPageDataExcel(response, vars, strBPartner, strBPGroup, strProduct, strProdCategory,
-          strSalesRegion, strCampaign, strActivity, strProject, strTrxOrg, strMonth,
-          strcAcctSchemaId, strAccount);
+          strUser1, strUser2, strCostcenter, strSalesRegion, strCampaign, strActivity, strProject,
+          strTrxOrg, strMonth, strcAcctSchemaId, strAccount);
     } else
       pageErrorPopUp(response);
   }
@@ -166,6 +172,40 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     }
 
     try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "User1_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
+      xmlDocument.setData("reportUser1", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "User2_ID", "",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
+      xmlDocument.setData("reportUser2", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Costcenter_ID",
+          "", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBudgetGenerateExcel"),
+          Utility.getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
+      xmlDocument.setData("reportCCostcenterId", "liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
           "C_SalesRegion_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
               "ReportBudgetGenerateExcel"), Utility.getContext(this, vars, "#User_Client",
@@ -244,15 +284,10 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
   }
 
   private void printPageDataExcel(HttpServletResponse response, VariablesSecureApp vars,
-      String strBPartner, String strBPGroup, String strProduct, String strProdCategory, /*
-                                                                                         * String
-                                                                                         * strUser1,
-                                                                                         * String
-                                                                                         * strUser2,
-                                                                                         */
-      String strSalesRegion, String strCampaign, String strActivity, String strProject,
-      String strTrxOrg, String strMonth, String strcAcctSchemaId, String strAccount)
-      throws IOException, ServletException {
+      String strBPartner, String strBPGroup, String strProduct, String strProdCategory,
+      String strUser1, String strUser2, String strCostcenter, String strSalesRegion,
+      String strCampaign, String strActivity, String strProject, String strTrxOrg, String strMonth,
+      String strcAcctSchemaId, String strAccount) throws IOException, ServletException {
 
     if (log4j.isDebugEnabled())
       log4j.debug("Output: EXCEL");
@@ -293,6 +328,28 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
           .append(strProdCategory).append(") PRODCAT");
     } else
       columns.append("' ' AS PRODCATEGORY, ");
+    if (strUser1 != null && !strUser1.equals("")) {
+      columns.append("USER1, ");
+      tables.append(", (SELECT AD_COLUMN_IDENTIFIER('USER1', TO_CHAR(USER1_ID), '")
+          .append(vars.getLanguage()).append("') AS USER1 FROM USER1 WHERE USER1_ID IN ")
+          .append(strUser1).append(") USER1");
+    } else
+      columns.append("' ' AS USER1, ");
+    if (strUser2 != null && !strUser2.equals("")) {
+      columns.append("USER2, ");
+      tables.append(", (SELECT AD_COLUMN_IDENTIFIER('USER2', TO_CHAR(USER2_ID), '")
+          .append(vars.getLanguage()).append("') AS USER2 FROM USER2 WHERE USER2_ID IN ")
+          .append(strUser2).append(") USER2");
+    } else
+      columns.append("' ' AS USER2, ");
+    if (strCostcenter != null && !strCostcenter.equals("")) {
+      columns.append("COSTCENTER, ");
+      tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_COSTCENTER', TO_CHAR(C_COSTCENTER_ID), '")
+          .append(vars.getLanguage())
+          .append("') AS COSTCENTER FROM C_COSTCENTER WHERE C_COSTCENTER_ID IN ")
+          .append(strCostcenter).append(") COSTCENTER");
+    } else
+      columns.append("' ' AS COSTCENTER, ");
     if (strSalesRegion != null && !strSalesRegion.equals("")) {
       columns.append("SALESREGION, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_SALESREGION', TO_CHAR(C_SALESREGION_ID), '")
