@@ -107,20 +107,13 @@ BEGIN
                   where fin_payment_scheduledetail_id =v_paymentSchedDet1;
 
                   sumGrandTotal := sumGrandTotal + cursor1.grandtotal;
-
-                  raise NOTICE '%', 'rn:' ||sumGrandTotal;
-
                 END IF;
                ELSE
-                  v_updateRecord=false;
+                  v_updateRecord:=false;
              end if;                 
 
           end loop;
              if(v_updateRecord) then    
-               if (sumGrandTotal<> v_candidateInvoices.diff_amt) THEN
-                 RAISE NO_DATA_FOUND||v_invoice2 ;
-               END IF;
-        
                update fin_payment_scheduledetail set amount = v_candidateInvoices.amount
                where fin_payment_scheduledetail_id = v_paymentSchedDet1;
              end if;          

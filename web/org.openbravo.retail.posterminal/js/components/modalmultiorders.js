@@ -220,7 +220,7 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this,
         toMatch = 0,
-        re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader'), negativeLines;
+        re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
     me.filters = inEvent.filters;
     this.clearAction();
     processHeader.exec({
@@ -231,11 +231,8 @@ enyo.kind({
         _.each(me.model.get('orderList').models, function (iter) {
           if (iter.get('lines') && iter.get('lines').length > 0) {
             re = new RegExp(me.filters.filterText, 'gi');
-            negativeLines = _.find(iter.get('lines').models, function (line) {
-              return line.get('gross') < 0;
-            });
             toMatch = iter.get('documentNo').match(re) + iter.get('bp').get('_identifier').match(re);
-            if ((me.filters.filterText === "" || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation') && !negativeLines) {
+            if ((me.filters.filterText === "" || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation')) {
               actualDate = new Date().setHours(0, 0, 0, 0);
               if (me.filters.endDate === "" || new Date(me.filters.endDate) >= actualDate) {
                 for (i = 0; i < me.filters.documentType.length; i++) {
