@@ -66,7 +66,7 @@ public class OrderGroupingProcessor {
         + "', '"
         + posTerminal.getObposTerminaltype().getDocumentTypeForReturns().getId()
         + "') and not exists (select 1 from OrderLine as ord where invoicedQuantity<>0 and ord.salesOrder = line.salesOrder)"
-        + " order by line.businessPartner.id";
+        + " order by line.businessPartner.id, line.salesOrder.id";
 
     OBQuery<OrderLine> query = OBDal.getInstance().createQuery(OrderLine.class, hqlWhereClause);
     query.setNamedParameter("terminal", posTerminal);
