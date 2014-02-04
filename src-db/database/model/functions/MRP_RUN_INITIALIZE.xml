@@ -92,6 +92,7 @@ BEGIN --BODY
                         AND p.ad_client_id = p_client_id
                         AND ((p_production = 'Y' AND p.ispurchased = 'N') OR (p_production = 'N' AND p.ispurchased = 'Y'))
                         AND p.isactive = 'Y'
+                        AND p.isgeneric = 'N'
                         AND (p_production = 'Y' OR
                              (p_vendor_id IS NULL
                              OR EXISTS (SELECT 1
