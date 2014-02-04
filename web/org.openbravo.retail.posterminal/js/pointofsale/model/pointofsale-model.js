@@ -599,7 +599,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     for (i = 0; i < approvals.length; i++) {
       // reset approvals
-      if (approvals[i].approvalType !== approvalType) {
+      if (_.filter(approvalType, function (approval) {
+        return approval === approvals[i].approvalType
+      }).length === 0) {
         newApprovals.push(approvals[i]);
       }
     }
