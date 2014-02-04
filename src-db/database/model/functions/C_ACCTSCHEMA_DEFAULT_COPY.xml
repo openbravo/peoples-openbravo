@@ -25,7 +25,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -359,6 +359,8 @@
         T_Credit_Acct=Cur_Acct.T_Credit_Acct,
         T_Receivables_Acct=Cur_Acct.T_Receivables_Acct,
         T_Expense_Acct=Cur_Acct.T_Expense_Acct,
+        T_Due_Trans_Acct=Cur_Acct.T_Due_Trans_Acct,
+        T_Credit_Trans_Acct=Cur_Acct.T_Credit_Trans_Acct,
         Updated=now(),
         UpdatedBy='0'
       WHERE C_Tax_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
@@ -374,12 +376,14 @@
           C_Tax_Acct_ID, C_Tax_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated,
           UpdatedBy, T_Due_Acct, T_Liability_Acct, T_Credit_Acct,
-          T_Receivables_Acct, T_Expense_Acct
+          T_Receivables_Acct, T_Expense_Acct,
+          T_Due_Trans_Acct, T_Credit_Trans_Acct
         )
       SELECT get_uuid(), x.C_Tax_ID, Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID,
         'Y', now(), '0', now(), '0',
         Cur_Acct.T_Due_Acct, Cur_Acct.T_Liability_Acct, Cur_Acct.T_Credit_Acct, Cur_Acct.T_Receivables_Acct,
-        Cur_Acct.T_Expense_Acct
+        Cur_Acct.T_Expense_Acct,
+        Cur_Acct.T_Due_Trans_Acct, Cur_Acct.T_Credit_Trans_Acct
       FROM C_Tax x
       WHERE AD_Client_ID=Cur_Acct.AD_Client_ID
         AND NOT EXISTS
