@@ -1086,7 +1086,9 @@ isc.OBViewGrid.addProperties({
       if (this.filterEditor && !this.filterEditor.getEditForm()) {
         this.filterEditor.setValuesAsCriteria(localState.filter);
       }
-
+      // this initial criteria needs to be removed in order to properly
+      // manage filtering clean up
+      this.initialCriteriaSetBySavedView = true;
       this.setCriteria(localState.filter);
     }
   },
@@ -1548,6 +1550,11 @@ isc.OBViewGrid.addProperties({
       }
     }
     delete this.isOpenDirectMode;
+
+    if (this.initialCriteriaSetBySavedView) {
+      delete this.initialCriteria;
+      delete this.initialCriteriaSetBySavedView;
+    }
 
     if (!this.targetRecordId) {
       delete this.isOpenDirectModeLeaf;
