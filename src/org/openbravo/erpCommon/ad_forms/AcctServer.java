@@ -2848,6 +2848,11 @@ public abstract class AcctServer {
 
     HashMap<String, BigDecimal> amountAndWriteOff = new HashMap<String, BigDecimal>();
 
+    // Default return values
+    amountAndWriteOff.put("amount", paymentDetails.get(currentPaymentDetailIndex).getAmount());
+    amountAndWriteOff.put("writeoff", paymentDetails.get(currentPaymentDetailIndex)
+        .getWriteoffAmount());
+
     // If the Payment Detail has either an Invoice or an Order associated to it
     if (psi != null || pso != null) {
       // If the Payment Detail has no Order associated to it, or it has an Invoice associated and is
@@ -2878,11 +2883,6 @@ public abstract class AcctServer {
         }
       }
     }
-
-    // In any other case
-    amountAndWriteOff.put("amount", paymentDetails.get(currentPaymentDetailIndex).getAmount());
-    amountAndWriteOff.put("writeoff", paymentDetails.get(currentPaymentDetailIndex)
-        .getWriteoffAmount());
 
     return amountAndWriteOff;
 
