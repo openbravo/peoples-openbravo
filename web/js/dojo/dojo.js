@@ -1399,7 +1399,7 @@ return _14a;
 if(_14a.substr(0,5)=="dojo:"){
 return _14a;
 }
-if(dojo.render.html.capable&&dojo.render.html.ie&&node.scopeName!="HTML"){
+if(dojo.render.html.capable&&dojo.render.html.ie&&node.scopeName&&node.scopeName!="HTML"){
 return node.scopeName.toLowerCase()+":"+_14a;
 }
 if(_14a.substr(0,4)=="dojo"){
