@@ -657,8 +657,12 @@ public class OBViewFieldHandler {
         Boolean canSort = null;
         Boolean canFilter = null;
         try {
-          canFilter = (Boolean) this.gridConfiguration.get("canFilter");
-          canSort = (Boolean) this.gridConfiguration.get("canSort");
+          if (this.gridConfiguration.has("canFilter")) {
+            canFilter = (Boolean) this.gridConfiguration.get("canFilter");
+          }
+          if (this.gridConfiguration.has("canSort")) {
+            canSort = (Boolean) this.gridConfiguration.get("canSort");
+          }
         } catch (JSONException e) {
           log.error("Error while getting the grid field properties of an audit field", e);
         }

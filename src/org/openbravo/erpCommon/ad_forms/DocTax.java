@@ -38,6 +38,12 @@ public class DocTax {
     m_isTaxDeductable = isTaxDeductable;
   } // DocTax
 
+  public DocTax(String C_Tax_ID, String name, String rate, String taxBaseAmt, String amount,
+      boolean isUndeductable, boolean isTaxDeductable, boolean isCashVAT) {
+    this(C_Tax_ID, name, rate, taxBaseAmt, amount, isUndeductable, isTaxDeductable);
+    m_isCashVAT = isCashVAT;
+  }
+
   /** Tax ID */
   public String m_C_Tax_ID = "";
   /** Amount */
@@ -51,6 +57,8 @@ public class DocTax {
   public boolean m_isTaxUndeductable = false;
   // m_isTaxDeductable will be used for commercial organization in intracommunity.
   public boolean m_isTaxDeductable = false;
+
+  public boolean m_isCashVAT = false;
 
   /** Tax Due Acct */
   public static final int ACCTTYPE_TaxDue = 0;

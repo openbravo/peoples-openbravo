@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2013 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -310,6 +310,8 @@
       into v_Aux
       from c_ordertax ot inner join c_tax t on (ot.c_tax_id = t.c_tax_id)
       where ot.c_order_id = v_Record_ID
+      and t.iswithholdingtax = 'N'
+      and t.rate <> 0
       and t.IsCashVat <> v_iscashvat;
 
       IF (v_Aux > 0) THEN
