@@ -1677,7 +1677,7 @@ function keyControl(pushedKey) {
     return false;
   }
   if (isKeyboardLocked==false && !isCtrlPressed && !isAltPressed && pushedKey.type=='keydown' && pressedKeyCode!='16' && pressedKeyCode!='17' && pressedKeyCode!='18') {
-    if (typeof focusedWindowElement != "undefined") {
+    if (typeof focusedWindowElement != "undefined" && focusedWindowElement != null) {
       if (focusedWindowElement.tagName == 'SELECT') {
         if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) setTimeout("focusedWindowElement.onchange();",50);
       }
@@ -2389,7 +2389,7 @@ function hideMenuIcon(id) {
   if (parent.frameMenu) {
     getFrame('main').isMenuBlock=true;
   }
-  if (aTag.className.indexOf("Main_LeftTabsBar_ButtonLeft_hidden") == -1) {
+  if (aTag && aTag.className && aTag.className.indexOf("Main_LeftTabsBar_ButtonLeft_hidden") == -1) {
     aTag.className = "Main_LeftTabsBar_ButtonLeft_hidden";
     imgTag.className = "Main_LeftTabsBar_ButtonLeft_Icon";
     disableAttributeWithFunction(aTag, 'obj', 'onclick');
