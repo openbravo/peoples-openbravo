@@ -66,12 +66,11 @@ enyo.kind({
       }, {
         command: 'opendrawer',
         i18nLabel: 'OBPOS_OpenDrawer',
-        permission: 'OBPOS_approval.opendrawer',
         stateless: true,
         definition: {
           stateless: true,
           action: function (keyboard, amt) {
-            if (OB.POS.modelterminal.hasPermission(me.permission)) {
+            if (OB.POS.modelterminal.hasPermission('OBPOS_approval.opendrawer')) {
               OB.UTIL.Approval.requestApproval(
               me.model, 'OBPOS_approval.opendrawer', function (approved, supervisor, approvalType) {
                 if (approved) {
