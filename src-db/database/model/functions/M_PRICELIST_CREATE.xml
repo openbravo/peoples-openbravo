@@ -516,18 +516,18 @@
           ;       
         ELSE    
          UPDATE M_ProductPrice
-          SET PriceList=(
+          SET PriceList=ROUND((
           CASE Cur_DiscountLine.List_Base WHEN 'C' THEN PriceList*(1+Cur_DiscountLine.LIST_MARGIN/100) ELSE PriceList
           END
-          ),
-          PriceStd=(
+          ), v_StdPrecision),
+          PriceStd=ROUND((
           CASE Cur_DiscountLine.Std_Base WHEN 'C' THEN PriceStd*(1+Cur_DiscountLine.STD_MARGIN/100) ELSE PriceStd 
           END
-          ),
-          PriceLimit=(
+          ), v_StdPrecision),
+          PriceLimit=ROUND((
           CASE Cur_DiscountLine.Limit_Base WHEN 'C' THEN PriceLimit*(1+Cur_DiscountLine.LIMIT_MARGIN/100) ELSE PriceLimit
           END
-          ),
+          ), v_StdPrecision),
 	      updated=now()
         WHERE M_PriceList_Version_ID=v_PriceList_Version_ID
           AND EXISTS
