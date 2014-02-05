@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -25,10 +25,15 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.common.plm.ProductCharacteristic;
+import org.openbravo.model.common.plm.ProductCharacteristicConf;
 
 public class ProductEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Product.ENTITY_NAME) };
@@ -55,5 +60,31 @@ public class ProductEventHandler extends EntityPersistenceEventObserver {
       }
     }
 
+    if (newGeneric == true && oldGeneric == false) {
+      // check that whether the there are characteristic already define
+      final Product product = (Product) event.getTargetInstance();
+      if (!product.getProductCharacteristicList().isEmpty()) {
+        for (ProductCharacteristic productCh : product.getProductCharacteristicList()) {
+          if (productCh.getProductCharacteristicConfList().isEmpty()
+              && productCh.getCharacteristicSubset() == null && productCh.isVariant()) {
+            // Create configuration based on Characteristic Values.
+            for (CharacteristicValue chValue : productCh.getCharacteristic()
+                .getCharacteristicValueList()) {
+              if (!chValue.isSummaryLevel()) {
+                ProductCharacteristicConf charConf = OBProvider.getInstance().get(
+                    ProductCharacteristicConf.class);
+                charConf.setCharacteristicOfProduct(productCh);
+                charConf.setOrganization(productCh.getOrganization());
+                charConf.setCharacteristicValue(chValue);
+                charConf.setCode(chValue.getCode());
+                OBDal.getInstance().save(charConf);
+              }
+            }
+          }
+          // Subset Value cannot be set unless Generic Flag = Yes.
+          // so Create configuration based on Characteristic Subset Values is skipped
+        }
+      }
+    }
   }
 }
