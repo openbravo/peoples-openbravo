@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -219,8 +219,10 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     xmlDocument.setParameter("product", strProduct);
     String strName = Utility.messageBD(this, "Description", vars.getLanguage());
     xmlDocument.setParameter("nameDescription", strName.equals("") ? "Description" : strName);
-    xmlDocument.setParameter("description", AttributeSetInstanceData.selectDescription(this,
-        (strInstance.equals("") ? strProductInstance : strInstance)));
+    xmlDocument.setParameter(
+        "description",
+        Utility.formatMessageBDToHtml(AttributeSetInstanceData.selectDescription(this,
+            (strInstance.equals("") ? strProductInstance : strInstance))));
     AttributeSetInstanceData[] data = AttributeSetInstanceData.select(this, strAttributeSet);
     xmlDocument.setParameter(
         "data",
@@ -335,9 +337,11 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         strHtml.append("value=\""
             + AttributeSetInstanceData.selectNextLot(this, fields[0].mLotctlId) + "\" ");
       else
-        strHtml.append("value=\""
-            + ((instanceData != null && instanceData.length > 0) ? instanceData[0].lot : "")
-            + "\" ");
+        strHtml
+            .append("value=\""
+                + Utility
+                    .formatMessageBDToHtml(((instanceData != null && instanceData.length > 0) ? instanceData[0].lot
+                        : "")) + "\" ");
       strHtml.append("></td><td></td><td></td></tr>\n");
     }
     if (fields[0].isserno.equals("Y")) {
