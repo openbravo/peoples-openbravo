@@ -1304,7 +1304,13 @@ public class OBViewFieldHandler {
     }
 
     public String getInpColumnName() {
-      return "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
+      String inpColumnName = null;
+      if (field != null && field.getProperty() != null) {
+        inpColumnName = "inp" + this.getColumnName();
+      } else {
+        inpColumnName = "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
+      }
+      return inpColumnName;
     }
 
     public String getReferencedKeyColumnName() {
