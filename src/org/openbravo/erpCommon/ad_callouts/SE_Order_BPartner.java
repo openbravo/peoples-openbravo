@@ -60,8 +60,6 @@ public class SE_Order_BPartner extends SimpleCallout {
       strDeliveryRule = data[0].deliveryrule.equals("") ? info.vars
           .getStringParameter("inpdeliveryrule") : data[0].deliveryrule;
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
-      strUserRep = strUserRep.equals("") ? info.vars.getStringParameter("inpsalesrepId")
-          : strUserRep;
       SLOrderDocTypeData[] docTypeData = SLOrderDocTypeData.select(this, strDocTypeTarget);
       if (docTypeData != null && docTypeData.length > 0) {
         docSubTypeSO = docTypeData[0].docsubtypeso;
