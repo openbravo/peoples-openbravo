@@ -71,10 +71,14 @@ enyo.kind({
   classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblNewCustomer',
   handlers: {
-    onSetModel: 'setModel'
+    onSetModel: 'setModel',
+    onNewBPDisabled: 'doDisableNewBP'
   },
   setModel: function (inSender, inEvent) {
     this.model = inEvent.model;
+  },
+  doDisableNewBP: function (inSender, inEvent) {
+    this.putDisabled(inEvent.status);
   },
   tap: function (model) {
     if (this.disabled) {
@@ -112,10 +116,14 @@ enyo.kind({
   i18nLabel: 'OBPOS_LblAdvancedSearch',
   disabled: false,
   handlers: {
-    onSetModel: 'setModel'
+    onSetModel: 'setModel',
+    onNewBPDisabled: 'doDisableNewBP'
   },
   setModel: function (inSender, inEvent) {
     this.model = inEvent.model;
+  },
+  doDisableNewBP: function (inSender, inEvent) {
+    this.putDisabled(inEvent.status);
   },
   events: {
     onHideThisPopup: ''

@@ -53,6 +53,8 @@ enyo.kind({
     onDiscountsModeFinished: 'discountsModeFinished',
     onDisableLeftToolbar: 'leftToolbarDisabled',
     onDisableBPSelection: 'BPSelectionDisabled',
+    onDisableNewBP: 'newBPDisabled',
+    onDisableNewBPLoc: 'newBPLocDisabled',
     onDisableOrderSelection: 'orderSelectionDisabled',
     onDisableKeyboard: 'keyboardDisabled',
     onDiscountsModeKeyboard: 'keyboardOnDiscountsMode',
@@ -67,7 +69,8 @@ enyo.kind({
     onRemoveMultiOrders: 'removeMultiOrders',
     onRightToolDisabled: 'rightToolbarDisabled',
     onSelectCharacteristicValue: 'selectCharacteristicValue',
-    onSelectBrand: 'selectBrand'
+    onSelectBrand: 'selectBrand',
+    onShowLeftHeader: 'doShowLeftHeader'
   },
   events: {
     onShowPopup: '',
@@ -192,7 +195,13 @@ enyo.kind({
       },
       leftPanel: {
         name: 'leftPanel',
+        style: 'max-height: 622px;',
         components: [{
+          classes: 'span12',
+          kind: 'OB.OBPOSPointOfSale.UI.LeftHeader',
+          style: 'height: 30px;',
+          name: 'divHeader'
+        }, {
           classes: 'span12',
           kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
           name: 'receiptview',
@@ -533,6 +542,12 @@ enyo.kind({
   BPSelectionDisabled: function (inSender, inEvent) {
     this.waterfall('onBPSelectionDisabled', inEvent);
   },
+  newBPDisabled: function (inSender, inEvent) {
+    this.waterfall('onNewBPDisabled', inEvent);
+  },
+  newBPLocDisabled: function (inSender, inEvent) {
+    this.waterfall('onNewBPLocDisabled', inEvent);
+  },
   orderSelectionDisabled: function (inSender, inEvent) {
     this.waterfall('onOrderSelectionDisabled', inEvent);
   },
@@ -817,6 +832,9 @@ enyo.kind({
     }
     return true;
   },
+  doShowLeftHeader: function (inSender, inEvent) {
+    this.waterfall('onLeftHeaderShow', inEvent);
+  },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;
     this.inherited(arguments);
@@ -925,6 +943,35 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.LeftHeader',
+  showing: false,
+  published: {
+    text: null
+  },
+  handlers: {
+    onLeftHeaderShow: 'doShowHeader'
+  },
+  doShowHeader: function (inSender, inEvent) {
+    this.setText(inEvent.text);
+    this.show();
+  },
+
+  components: [{
+    style: 'text-align: center; font-size: 30px; padding: 5px;',
+    components: [{
+      name: 'headerText',
+      attributes: {
+        style: 'background-color: #ffffff; height: 30px; font-weight:bold; padding: 5px;'
+      },
+      content: ''
+    }]
+  }],
+  textChanged: function () {
+    this.$.headerText.setContent(this.text);
   }
 });
 

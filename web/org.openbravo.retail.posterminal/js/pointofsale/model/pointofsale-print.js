@@ -39,45 +39,49 @@
   PrintReceipt.prototype.print = function (order, forcePrint) {
 
     // Clone the receipt
-    var receipt = new OB.Model.Order();
-    var me = this;
-    var template;
+    var receipt = new OB.Model.Order(),
+        me = this,
+        template;
 
     OB.MobileApp.model.hookManager.executeHooks('OBPRINT_PrePrint', {
-      forcePrint: forcePrint
+      forcePrint: forcePrint,
+      order: order,
+      template: template
     }, function (args) {
       if (args.cancelOperation && args.cancelOperation === true) {
         return true;
       }
-      if (!_.isUndefined(order) && !_.isNull(order)) {
-        receipt.clearWith(order);
+      if (!_.isUndefined(args.order) && !_.isNull(args.order)) {
+        receipt.clearWith(args.order);
       } else {
         receipt.clearWith(me.receipt);
       }
-      if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
+      if (args.forcedtemplate) {
+        args.template = args.forcedtemplate;
+      } else if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
         if (receipt.get('orderType') === 1) {
-          template = me.templatereturninvoice;
+          args.template = me.templatereturninvoice;
         } else {
-          template = me.templateinvoice;
+          args.template = me.templateinvoice;
         }
       } else {
         if (receipt.get('isPaid')) {
           if (receipt.get('orderType') === 1) {
-            template = me.templatereturn;
+            args.template = me.templatereturn;
           } else {
-            template = me.templateclosedreceipt;
+            args.template = me.templateclosedreceipt;
           }
         } else {
           if (receipt.get('orderType') === 1) {
-            template = me.templatereturn;
+            args.template = me.templatereturn;
           } else if (receipt.get('orderType') === 2 || receipt.get('isLayaway') || receipt.get('orderType') === 3) {
-            template = me.templatelayaway;
+            args.template = me.templatelayaway;
           } else {
-            template = me.templatereceipt;
+            args.template = me.templatereceipt;
           }
         }
       }
-      OB.POS.hwserver.print(template, {
+      OB.POS.hwserver.print(args.template, {
         order: receipt
       }, function (result) {
         var otherMe = me;
@@ -96,7 +100,7 @@
         }
       });
       if (receipt.get('orderType') === 1 && !OB.POS.modelterminal.hasPermission('OBPOS_print.once')) {
-        OB.POS.hwserver.print(template, {
+        OB.POS.hwserver.print(args.template, {
           order: receipt
         }, function (result) {
           var otherMe = me;

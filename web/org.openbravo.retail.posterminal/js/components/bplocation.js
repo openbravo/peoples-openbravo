@@ -68,10 +68,14 @@ enyo.kind({
   classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblNewCustomerAddress',
   handlers: {
-    onSetModel: 'setModel'
+    onSetModel: 'setModel',
+    onNewBPLocDisabled: 'doDisableNewBPLoc'
   },
   setModel: function (inSender, inEvent) {
     this.model = inEvent.model;
+  },
+  doDisableNewBPLoc: function (inSender, inEvent) {
+    this.putDisabled(inEvent.status);
   },
   tap: function (model) {
     if (this.disabled) {
@@ -120,7 +124,11 @@ enyo.kind({
   i18nLabel: 'OBPOS_LblEditAddress',
   disabled: false,
   handlers: {
-    onSetModel: 'setModel'
+    onSetModel: 'setModel',
+    onNewBPLocDisabled: 'doDisableNewBPLoc'
+  },
+  doDisableNewBPLoc: function (inSender, inEvent) {
+    this.putDisabled(inEvent.status);
   },
   setModel: function (inSender, inEvent) {
     this.model = inEvent.model;

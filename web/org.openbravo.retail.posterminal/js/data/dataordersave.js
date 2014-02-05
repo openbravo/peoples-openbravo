@@ -51,6 +51,9 @@
         context: this,
         receipt: model.get('order')
       }, function (args) {
+        if (args && args.cancellation && args.cancellation === true) {
+          return true;
+        }
         var receipt = args.context.receipt,
             currentDocNo = receipt.get('documentNo') || docno;
 
