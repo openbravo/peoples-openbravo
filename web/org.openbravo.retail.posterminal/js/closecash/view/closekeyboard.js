@@ -70,14 +70,12 @@ enyo.kind({
         definition: {
           stateless: true,
           action: function (keyboard, amt) {
-            if (OB.POS.modelterminal.hasPermission('OBPOS_approval.opendrawer')) {
-              OB.UTIL.Approval.requestApproval(
-              me.model, 'OBPOS_approval.opendrawer', function (approved, supervisor, approvalType) {
-                if (approved) {
-                  OB.POS.hwserver.openDrawer();
-                }
-              });
-            }
+            OB.UTIL.Approval.requestApproval(
+            me.model, 'OBPOS_approval.opendrawer', function (approved, supervisor, approvalType) {
+              if (approved) {
+                OB.POS.hwserver.openDrawer();
+              }
+            });
           }
         }
       }]
