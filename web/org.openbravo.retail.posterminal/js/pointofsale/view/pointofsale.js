@@ -199,7 +199,7 @@ enyo.kind({
         components: [{
           classes: 'span12',
           kind: 'OB.OBPOSPointOfSale.UI.LeftHeader',
-          style: 'height: 30px;',
+          style: 'height: 35px;',
           name: 'divHeader'
         }, {
           classes: 'span12',
@@ -957,15 +957,19 @@ enyo.kind({
   },
   doShowHeader: function (inSender, inEvent) {
     this.setText(inEvent.text);
+    if (inEvent.style) {
+      this.$.innerDiv.addStyles(inEvent.style);
+    }
     this.show();
   },
 
   components: [{
-    style: 'text-align: center; font-size: 30px; padding: 5px;',
+    name: 'innerDiv',
+    style: 'text-align: center; font-size: 30px; padding: 5px; padding-top: 0px;',
     components: [{
       name: 'headerText',
       attributes: {
-        style: 'background-color: #ffffff; height: 30px; font-weight:bold; padding: 5px;'
+        style: 'background-color: #ffffff; height: 30px; font-weight:bold; padding-top: 15px;'
       },
       content: ''
     }]
