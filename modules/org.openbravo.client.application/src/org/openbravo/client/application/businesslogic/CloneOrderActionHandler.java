@@ -65,6 +65,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       objCloneOrder.setDocumentStatus("DR");
       objCloneOrder.setPosted("N");
       objCloneOrder.setProcessed(false);
+      objCloneOrder.setDelivered(false);
       objCloneOrder.setSalesTransaction(true);
       objCloneOrder.setDocumentNo(null);
       objCloneOrder.setSalesTransaction(objOrder.isSalesTransaction());
