@@ -30,6 +30,7 @@
   v_PriceList_ID VARCHAR2(32);
   v_PriceList_Version_ID VARCHAR2(32);
   v_Record_ID VARCHAR2(32);
+  v_C_Tax_ID VARCHAR2(32) ;
   TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
   Cur_MPriceListVersion RECORD;
@@ -90,14 +91,14 @@
       v_PriceList_Version_ID:=Cur_MPriceListVersion.PriceList_Version_ID;
       EXIT;
     END LOOP;
- 
     -- Replace Lines
     v_ResultStr:='Inserting lines';
     FOR CUR_BOM_Line IN
-      (SELECT *
-       FROM C_ORDERLINE l
+      (SELECT l.*,o.M_Warehouse_ID,o.C_BPartner_Location_ID,o.issotrx
+       FROM C_ORDERLINE l,c_order o
        WHERE l.C_Orderline_ID=v_Record_ID
-         AND IsActive='Y'
+         AND l.c_order_id=o.c_order_id
+         AND l.IsActive='Y'
          AND EXISTS
            (SELECT *
             FROM M_PRODUCT p
@@ -119,6 +120,10 @@
          ORDER BY Line
          )
       LOOP
+        v_C_Tax_ID:=C_Gettax(CUR_BOM.M_ProductBOM_ID, CUR_BOM_Line.dateordered, 
+        CUR_BOM_Line.AD_Org_ID, CUR_BOM_Line.M_Warehouse_ID, CUR_BOM_Line.C_BPartner_Location_ID, 
+        CUR_BOM_Line.C_BPartner_Location_ID, null, CUR_BOM_Line.issotrx) ;
+
         v_Line:=v_Line + 1;
         INSERT
         INTO C_ORDERLINE
@@ -149,7 +154,7 @@
             M_BOM_PriceList(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
             M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID), M_BOM_PriceLimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
             M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID) * CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty, CUR_BOM_Line.Discount,
-            CUR_BOM_Line.FreightAmt, CUR_BOM_Line.C_Charge_ID, CUR_BOM_Line.ChargeAmt, CUR_BOM_Line.C_Tax_ID,
+            CUR_BOM_Line.FreightAmt, CUR_BOM_Line.C_Charge_ID, CUR_BOM_Line.ChargeAmt, coalesce(v_C_Tax_ID,CUR_BOM_Line.c_tax_id),
             CUR_BOM_Line.QuantityOrder, CUR_BOM_Line.M_Product_UOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
             CUR_BOM_Line.c_project_id, CUR_BOM_Line.a_asset_id, CUR_BOM_Line.c_costcenter_id,
             CUR_BOM_Line.user1_id, CUR_BOM_Line.user2_id, v_Record_ID

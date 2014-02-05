@@ -30,6 +30,7 @@
   v_PriceList_ID VARCHAR2(32);
   v_PriceList_Version_ID VARCHAR2(32);
   v_Record_ID VARCHAR2(32);
+  v_C_Tax_ID VARCHAR2(32) ;
   TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
   Cur_MPriceListVersion RECORD;
@@ -105,10 +106,11 @@
     v_ResultStr:='Inserting lines';
         
     FOR CUR_BOM_Line IN
-      (SELECT *
-       FROM C_INVOICELINE l
+      (SELECT l.*,i.dateinvoiced,i.C_BPartner_Location_ID,i.issotrx
+       FROM C_INVOICELINE l, c_invoice i
        WHERE l.C_invoiceline_ID=v_Record_ID
-         AND IsActive='Y'
+         AND l.c_invoice_id = i.c_invoice_id
+         AND l.IsActive='Y'
          AND EXISTS
            (SELECT *
             FROM M_PRODUCT p
@@ -166,6 +168,11 @@
             END IF;
           END IF;
         END IF;
+
+        v_C_Tax_ID:=C_Gettax(CUR_BOM.M_ProductBOM_ID, CUR_BOM_Line.dateinvoiced, 
+        CUR_BOM_Line.AD_Org_ID, null, CUR_BOM_Line.C_BPartner_Location_ID, 
+        CUR_BOM_Line.C_BPartner_Location_ID, null, CUR_BOM_Line.issotrx) ;
+
  
         INSERT INTO C_INVOICELINE
           (
@@ -189,7 +196,7 @@
             M_Get_Offers_Price(v_DateInvoiced, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID),
             M_BOM_PriceLimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
             M_Get_Offers_Price(v_DateInvoiced, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID) * CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, CUR_BOM_Line.C_Charge_ID, CUR_BOM_Line.ChargeAmt,
-            CUR_BOM_Line.C_Tax_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
+            coalesce(v_C_Tax_ID,CUR_BOM_Line.c_tax_id), M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
             v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
             CUR_BOM_Line.c_bpartner_id, CUR_BOM_Line.c_project_id, CUR_BOM_Line.c_projectline_id, CUR_BOM_Line.a_asset_id,
             CUR_BOM_Line.user1_id, CUR_BOM_Line.user2_id,v_Record_ID
