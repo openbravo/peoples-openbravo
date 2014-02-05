@@ -37,9 +37,11 @@ public class DuplicatedPosTerminalPaymentType extends BuildValidation {
     try {
       String msg = "";
       boolean error = false;
-      for (DuplicatedPosTerminalPaymentTypeData err : DuplicatedPosTerminalPaymentTypeData.duplicatedPaymentType(cp)) {
-        msg += "\nPOS Terminal name:" + err.terminalTypeName + " - Payment Method:" + err.paymentMethod;
-        error = true;
+      if ("Y".equals(DuplicatedPosTerminalPaymentTypeData.tableExists(cp))) {
+        for (DuplicatedPosTerminalPaymentTypeData err : DuplicatedPosTerminalPaymentTypeData.duplicatedPaymentType(cp)) {
+          msg += "\nPOS Terminal name:" + err.terminalTypeName + " - Payment Method:" + err.paymentMethod;
+          error = true;
+        }
       }
       if (error) {
         errors
