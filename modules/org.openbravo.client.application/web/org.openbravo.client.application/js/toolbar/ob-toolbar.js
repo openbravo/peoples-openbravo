@@ -123,7 +123,7 @@ isc.OBToolbar.addClassProperties({
     updateState: function () {
       var view = this.view,
           selectedRecords = view.viewGrid.getSelectedRecords();
-      this.setDisabled(view.viewGrid.isGrouped || view.isShowingForm || view.readOnly || view.editOrDeleteOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1));
+      this.setDisabled(view.viewGrid.isGrouped || view.isShowingForm || view.readOnly || view.editOrDeleteOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1) || view.isShowingTree);
     },
     keyboardShortcutId: 'ToolBar_NewRow'
   },
