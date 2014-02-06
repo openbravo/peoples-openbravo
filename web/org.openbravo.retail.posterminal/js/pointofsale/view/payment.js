@@ -178,6 +178,10 @@ enyo.kind({
     var symbol = '',
         rate = OB.DEC.One,
         symbolAtRight = true;
+    if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
+      symbol = OB.MobileApp.model.get('terminal').symbol;
+      symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+    }
     if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment])) {
       symbol = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].symbol;
       rate = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].mulrate;
@@ -203,7 +207,9 @@ enyo.kind({
     if (paymentstatus.done) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
-      this.$.doneaction.show();
+      if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
+        this.$.doneaction.show();
+      }
       this.$.creditsalesaction.hide();
       this.$.layawayaction.hide();
     } else {
@@ -235,7 +241,9 @@ enyo.kind({
       this.$.creditsalesaction.hide();
       this.$.layawayaction.hide();
     } else {
-      this.$.exactaction.show();
+      if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
+        this.$.exactaction.show();
+      }
       if (this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) {
         this.$.layawayaction.show();
         if (!this.receipt.get('isLayaway')) {
@@ -278,6 +286,10 @@ enyo.kind({
         rate = OB.DEC.One,
         selectedPayment;
     this.$.layawayaction.hide();
+    if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
+      symbol = OB.MobileApp.model.get('terminal').symbol;
+      symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+    }
     if (paymentstatus.get('selectedPayment')) {
       selectedPayment = OB.POS.terminal.terminal.paymentnames[paymentstatus.get('selectedPayment')];
     } else {
@@ -309,7 +321,9 @@ enyo.kind({
     if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
-      this.$.doneaction.show();
+      if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
+        this.$.doneaction.show();
+      }
       this.$.creditsalesaction.hide();
       //            this.$.layawayaction.hide();
     } else {
@@ -328,7 +342,9 @@ enyo.kind({
     if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 || paymentstatus.get('total') === 0)) {
       this.$.exactaction.hide();
     } else {
-      this.$.exactaction.show();
+      if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
+        this.$.exactaction.show();
+      }
     }
     if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 && !paymentstatus.get('change') && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) <= 0) {
       if (paymentstatus.get('total') === 0) {
@@ -355,6 +371,10 @@ enyo.kind({
   init: function (model) {
     var me = this;
     this.model = model;
+    if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
+      this.$.doneaction.show();
+      this.$.exactaction.hide();
+    }
     this.model.get('multiOrders').get('multiOrdersList').on('all', function (event) {
       if (this.model.isValidMultiOrderState()) {
         this.updatePendingMultiOrders();
@@ -682,12 +702,13 @@ enyo.kind({
     this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
   },
   tap: function () {
-    var receipt = this.owner.receipt, negativeLines;
+    var receipt = this.owner.receipt,
+        negativeLines;
     if (receipt) {
       negativeLines = _.find(receipt.get('lines').models, function (line) {
         return line.get('gross') < 0;
       });
-      if (negativeLines){
+      if (negativeLines) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
         return true;
       }
