@@ -146,8 +146,14 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       // datasource
       if (parameters.containsKey(JsonConstants.DISTINCT_PARAMETER)) {
         String tabId = parameters.get("_tabId");
-        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-        Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+        String tableId = parameters.get("_tableId");
+        Entity entity = null;
+        if (tabId != null) {
+          Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+          entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+        } else if (tableId != null) {
+          entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+        }
         DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
         return dataSource.fetch(parameters);
       }
