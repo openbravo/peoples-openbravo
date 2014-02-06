@@ -149,7 +149,7 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
             productionPlan.setEstimatedTime(BigDecimal.ZERO);
           }
 
-          productionPlan.setRejectedQuantity(0L);
+          productionPlan.setRejectedQuantity(BigDecimal.ZERO);
           productionPlan.setCostCenterUse(BigDecimal.ZERO);
 
           productionPlan.setStartingTime(starttime);
