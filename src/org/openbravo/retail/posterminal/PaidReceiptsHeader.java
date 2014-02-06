@@ -79,7 +79,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
   }
 
   @Override
-  protected String getProperty() {
-    return "OBPOS_retail.paidReceipts";
+  protected boolean bypassPreferenceCheck() {
+    return true;
   }
 }

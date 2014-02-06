@@ -229,7 +229,7 @@ public class PaidReceipts extends JSONProcessSimple {
   }
 
   @Override
-  protected String getProperty() {
-    return "OBPOS_retail.paidReceipts";
+  protected boolean bypassPreferenceCheck() {
+    return true;
   }
 }
