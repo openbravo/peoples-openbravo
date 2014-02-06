@@ -2182,7 +2182,7 @@ isc.OBStandardView.addProperties({
   setContextInfo: function (sessionProperties, callbackFunction, forced) {
     var newCallback, me = this,
         gridVisibleProperties = [],
-        len, i;
+        len, i, originalID;
     // no need to set the context in this case
     if (!forced && (this.isEditingGrid || this.isShowingForm)) {
       if (callbackFunction) {
@@ -2196,13 +2196,23 @@ isc.OBStandardView.addProperties({
       sessionProperties = this.getContextInfo(false, true, false, true);
     }
 
+    if (this.viewGrid && this.viewGrid.getSelectedRecord()) {
+      originalID = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
+    }
+
     newCallback = function (response, data, request) {
       var context = {},
-          grid = me.viewGrid;
-      context.rowNum = grid.getRecordIndex(grid.getSelectedRecord());
+          grid = me.viewGrid,
+          currentRecord, currentID;
+      currentRecord = grid.getSelectedRecord();
+      context.rowNum = grid.getRecordIndex(currentRecord);
+      currentID = currentRecord[OB.Constants.ID];
       context.grid = grid;
       response.clientContext = context;
-      grid.processFICReturn(response, data, request);
+      if (originalID === currentID) {
+        // Only update the grid if the user has not changed rows
+        grid.processFICReturn(response, data, request);
+      }
       if (callbackFunction) {
         callbackFunction();
       }
