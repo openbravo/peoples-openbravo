@@ -610,6 +610,12 @@ public class AdvancedQueryBuilder {
     if (ignoreCase(properties, operator)) {
       clause = "upper(" + clause + ")";
     }
+
+    // if the operator is isNull or notNull comparison should be done at the object level and not at
+    // the field value level. Refer issue https://issues.openbravo.com/view.php?id=25447
+    if (tableReference && (operator.equals(OPERATOR_ISNULL) || operator.equals(OPERATOR_NOTNULL))) {
+      clause = clause.substring(0, clause.lastIndexOf(DalUtil.DOT));
+    }
     return clause;
   }
 
