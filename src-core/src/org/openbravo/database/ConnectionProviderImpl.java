@@ -90,7 +90,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     String rdbms = null;
 
     poolName = properties.getProperty("bbdd.poolName", "myPool");
-    externalPoolClassName = properties.getProperty("bbdd.externalPoolClassName");
+    externalPoolClassName = properties.getProperty("db.externalPoolClassName");
     dbDriver = properties.getProperty("bbdd.driver");
     dbServer = properties.getProperty("bbdd.url");
     dbLogin = properties.getProperty("bbdd.user");

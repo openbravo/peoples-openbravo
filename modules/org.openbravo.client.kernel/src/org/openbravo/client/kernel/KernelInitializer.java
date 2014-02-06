@@ -67,7 +67,7 @@ public class KernelInitializer {
 
     // If an external connection pool is used, its injected interceptors are added to the pool
     String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("bbdd.externalPoolClassName");
+        .getProperty("db.externalPoolClassName");
     if (poolClassName != null) {
       try {
         ExternalConnectionPool pool = ExternalConnectionPool.getInstance(poolClassName);
