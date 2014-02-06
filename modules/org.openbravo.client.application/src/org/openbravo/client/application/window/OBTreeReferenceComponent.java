@@ -412,7 +412,7 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
     public String getFilterEditorProperties() {
       if (getUIDefinition() != null) {
         if (getUIDefinition() instanceof FKComboUIDefinition) {
-          return ", canFilter:true, required: false, filterEditorType: 'OBSelectorFilterSelectItem', filterEditorProperties: {entity: '"
+          return ", canFilter:true, required: false, filterEditorType: 'OBTreeFilterSelectItem', filterEditorProperties: {entity: '"
               + getEntityName() + "'}";
         }
         return getUIDefinition().getFilterEditorProperties(null);
@@ -620,5 +620,9 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
     } else {
       return null;
     }
+  }
+
+  public String getReferencedTableId() {
+    return referencedTree.getTable().getId();
   }
 }

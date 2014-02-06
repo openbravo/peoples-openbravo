@@ -180,6 +180,28 @@ isc.OBTreeItem.addProperties({
       this.form.focusInNextItem(this.name);
     }
     delete this._notUpdatingManually;
+  },
+
+  mapValueToDisplay: function (value) {
+    var ret = this.Super('mapValueToDisplay', arguments);
+    if (ret === value && this.isDisabled()) {
+      return '';
+    }
+    // if value is null then don't set it in the valueMap, this results 
+    // in null being displayed in the combobox
+    if (ret === value && value) {
+      if (!this.valueMap) {
+        this.valueMap = {};
+        this.valueMap[value] = '';
+        return '';
+      } else if (!this.valueMap[value] && OB.Utilities.isUUID(value)) {
+        return '';
+      }
+    }
+    if (value && value !== '' && ret === '' && !OB.Utilities.isUUID(value)) {
+      this.savedEnteredValue = value;
+    }
+    return ret;
   }
 
 });
@@ -349,6 +371,8 @@ isc.OBTreeItemPopupWindow.addProperties({
         treeWindow.closeClick();
       }
     });
+
+    this.setFilterEditorProperties(this.treeGridFields);
 
     OB.Utilities.applyDefaultValues(this.treeGridFields, this.defaultTreeGridField);
 
@@ -537,6 +561,15 @@ isc.OBTreeItemPopupWindow.addProperties({
     this.Super('initWidget', arguments);
   },
 
+  setFilterEditorProperties: function (gridFields) {
+    var i, gridField;
+    for (i = 0; i < gridFields.length; i++) {
+      gridField = gridFields[i];
+      gridField.filterEditorProperties = gridField.filterEditorProperties || {};
+      gridFields[i].filterEditorProperties.treeWindow = this;
+    }
+  },
+
   destroy: function () {
     var i;
     for (i = 0; i < this.items.length; i++) {
@@ -597,5 +630,26 @@ isc.OBTreeItemPopupWindow.addProperties({
     }
     this.treeItem.setValueFromRecord(record);
     this.hide();
+  }
+});
+
+isc.ClassFactory.defineClass('OBTreeFilterSelectItem', isc.OBFKFilterTextItem);
+
+isc.OBTreeFilterSelectItem.addProperties({
+
+  filterDataBoundPickList: function (requestProperties, dropCache) {
+    requestProperties = requestProperties || {};
+    requestProperties.params = requestProperties.params || {};
+    // on purpose not passing the third boolean param
+    var contextInfo = this.treeWindow.treeItem.form.view.getContextInfo(false, true);
+
+    // also add the special ORG parameter
+    if (this.treeWindow.treeItem.form.getField('organization')) {
+      requestProperties.params[OB.Constants.ORG_PARAMETER] = this.treeWindow.treeItem.form.getValue('organization');
+    } else if (contextInfo.inpadOrgId) {
+      requestProperties.params[OB.Constants.ORG_PARAMETER] = contextInfo.inpadOrgId;
+    }
+    requestProperties.params._tableId = this.treeWindow.treeItem.referencedTableId;
+    return this.Super('filterDataBoundPickList', [requestProperties, true]);
   }
 });
