@@ -93,8 +93,8 @@
     END LOOP;
     -- Replace Lines
     v_ResultStr:='Inserting lines';
-    FOR CUR_BOM_Line IN
-      (SELECT l.*,o.M_Warehouse_ID,o.C_BPartner_Location_ID,o.issotrx
+    For Cur_Bom_Line In
+      (SELECT l.*,o.M_Warehouse_ID as ord_m_warehouse_id,o.C_BPartner_Location_ID as ord_C_BPartner_Location_ID,o.issotrx
        FROM C_ORDERLINE l,c_order o
        WHERE l.C_Orderline_ID=v_Record_ID
          AND l.c_order_id=o.c_order_id
@@ -120,9 +120,9 @@
          ORDER BY Line
          )
       LOOP
-        v_C_Tax_ID:=C_Gettax(CUR_BOM.M_ProductBOM_ID, CUR_BOM_Line.dateordered, 
-        CUR_BOM_Line.AD_Org_ID, CUR_BOM_Line.M_Warehouse_ID, CUR_BOM_Line.C_BPartner_Location_ID, 
-        CUR_BOM_Line.C_BPartner_Location_ID, null, CUR_BOM_Line.issotrx) ;
+        V_C_Tax_Id:=C_Gettax(Cur_Bom.M_Productbom_Id, Cur_Bom_Line.Dateordered, 
+        Cur_Bom_Line.Ad_Org_Id, Cur_Bom_Line.Ord_M_Warehouse_Id, Cur_Bom_Line.Ord_C_Bpartner_Location_Id, 
+        CUR_BOM_Line.ord_C_BPartner_Location_ID, null, CUR_BOM_Line.issotrx) ;
 
         v_Line:=v_Line + 1;
         INSERT
