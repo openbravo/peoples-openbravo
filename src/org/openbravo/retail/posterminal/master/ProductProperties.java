@@ -10,9 +10,11 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
@@ -37,8 +39,25 @@ import org.openbravo.retail.posterminal.POSUtils;
 @Qualifier(Product.productPropertyExtension)
 public class ProductProperties extends ModelExtension {
 
+  public static final Logger log = Logger.getLogger(ProductProperties.class);
+
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
+
+    // Calculate POS Precision
+    String localPosPrecision = "";
+    try {
+      if (params != null) {
+        @SuppressWarnings("unchecked")
+        HashMap<String, Object> localParams = (HashMap<String, Object>) params;
+        localPosPrecision = (String) localParams.get("posPrecision");
+      }
+    } catch (Exception e) {
+      log.error("Error getting posPrecision: " + e.getMessage(), e);
+    }
+    final String posPrecision = localPosPrecision;
+
+    // Build Product Tax Category select clause
     final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
         .getSessionFactory()).getDialect();
     Map<String, SQLFunction> function = dialect.getFunctions();
@@ -52,7 +71,6 @@ public class ProductProperties extends ModelExtension {
     if (posDetail == null) {
       throw new OBException("terminal id is not present in session ");
     }
-
     StringBuffer taxCategoryQry = new StringBuffer();
     taxCategoryQry.append("c_get_product_taxcategory(product.id, '");
     taxCategoryQry.append(posDetail.getOrganization().getId());
@@ -103,8 +121,17 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
         add(new HQLProperty("pli.bestseller", "bestseller"));
         add(new HQLProperty("'false'", "ispack"));
-        add(new HQLProperty("ppp.listPrice", "listPrice"));
-        add(new HQLProperty("ppp.standardPrice", "standardPrice"));
+        if (posPrecision != null && !"".equals(posPrecision)) {
+          add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));
+        } else {
+          add(new HQLProperty("ppp.listPrice", "listPrice"));
+        }
+        if (posPrecision != null && !"".equals(posPrecision)) {
+          add(new HQLProperty("round(ppp.standardPrice, " + posPrecision + ")", "standardPrice"));
+        } else {
+          add(new HQLProperty("ppp.standardPrice", "standardPrice"));
+        }
+
         add(new HQLProperty("ppp.priceLimit", "priceLimit"));
         add(new HQLProperty("ppp.cost", "cost"));
         Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);

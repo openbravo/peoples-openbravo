@@ -682,8 +682,15 @@ enyo.kind({
     this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
   },
   tap: function () {
-    var receipt = this.owner.receipt;
+    var receipt = this.owner.receipt, negativeLines;
     if (receipt) {
+      negativeLines = _.find(receipt.get('lines').models, function (line) {
+        return line.get('gross') < 0;
+      });
+      if (negativeLines){
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+        return true;
+      }
       if (receipt.get('generateInvoice')) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
         receipt.set('generateInvoice', false);

@@ -92,7 +92,7 @@
               }
             } else if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
-              window.localStorage.setItem('terminalId', data[0].id)
+              window.localStorage.setItem('terminalId', data[0].id);
               terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
               OB.MobileApp.view.scanningFocus(true);
               if (!terminalModel.usermodel) {
