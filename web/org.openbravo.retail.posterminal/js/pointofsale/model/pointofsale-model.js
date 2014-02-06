@@ -443,7 +443,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           receipt.trigger('closed');
         }
         receipt.trigger('print'); // to guaranty execution order
-        orderList.deleteCurrent();
+        orderList.deleteCurrent(true);
       });
     }, this);
 
