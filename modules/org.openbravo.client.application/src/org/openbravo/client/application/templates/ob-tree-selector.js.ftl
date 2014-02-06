@@ -27,6 +27,7 @@
     defaultPopupFilterField : '${data.defaultPopupFilterField}',
     displayField: '${data.displayField?js_string}',
     valueField: '${data.valueField?js_string}',
+    referencedTableId: '${data.referencedTableId?js_string}',
     pickListFields: [
     <#list data.pickListFields as pickListField>
 <@compress single_line=true>
