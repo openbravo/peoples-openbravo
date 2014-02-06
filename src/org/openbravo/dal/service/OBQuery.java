@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.service.db.QueryTimeOutUtil;
 
 /**
  * The OBQuery supports querying in the Data Access Layer with free-format (HQL) where and order by
@@ -70,6 +71,7 @@ public class OBQuery<E extends BaseOBObject> {
   private int firstResult = -1;
   private int maxResult = -1;
   private int fetchSize = -1;
+  private String queryType = null;
 
   private String selectClause;
 
@@ -237,6 +239,9 @@ public class OBQuery<E extends BaseOBObject> {
       }
       if (maxResult > -1) {
         qry.setMaxResults(maxResult);
+      }
+      if (this.getQueryType() != null) {
+        QueryTimeOutUtil.getInstance().setQueryTimeOut(qry, this.getQueryType());
       }
       return qry;
     } catch (final Exception e) {
@@ -629,5 +634,13 @@ public class OBQuery<E extends BaseOBObject> {
 
   public void setSelectClause(String selectClause) {
     this.selectClause = selectClause;
+  }
+
+  public void setQueryType(String queryType) {
+    this.queryType = queryType;
+  }
+
+  public String getQueryType() {
+    return this.queryType;
   }
 }

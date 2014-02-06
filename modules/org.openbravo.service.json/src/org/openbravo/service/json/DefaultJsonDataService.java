@@ -251,6 +251,7 @@ public class DefaultJsonDataService implements JsonDataService {
             bobs.add(bob);
           }
         } else {
+          queryService.setQueryType("grid");
           bobs = queryService.list();
         }
 

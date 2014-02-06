@@ -747,6 +747,7 @@ public class Sqlc extends DefaultHandler {
     out1.append("import org.openbravo.data.FieldProvider;\n");
     out1.append("import org.openbravo.database.ConnectionProvider;\n");
     out1.append("import org.openbravo.data.UtilSql;\n");
+    out1.append("import org.openbravo.service.db.QueryTimeOutUtil;\n");
 
     if (sql.sqlImport != null) {
       out2.append("import " + sql.sqlImport + ";\n");
@@ -877,7 +878,7 @@ public class Sqlc extends DefaultHandler {
   }
 
   private void printFunctionConstant() throws IOException {
-    printHeadFunctionSql(false, false, false);
+    printHeadFunctionSql(false, false, false, false);
     out2.append("    " + sqlcName + " object" + sqlcName + "[] = new " + sqlcName + "[1];\n");
     out2.append("    object" + sqlcName + "[0] = new " + sqlcName + "();\n");
     try {
@@ -1025,22 +1026,26 @@ public class Sqlc extends DefaultHandler {
     final StringBuffer aux = new StringBuffer();
     boolean declareiParameter = false;
 
+    String queryTimeoutStr = "      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, queryType);\n";
     aux.append("    try {\n");
     if (sql.sqlType.equals("preparedStatement")) {
       aux.append("    st = connectionProvider.getPreparedStatement(");
       if (sql.sqlConnection.equals("true"))
         aux.append("conn, ");
       aux.append("strSql);\n");
+      aux.append(queryTimeoutStr);
     } else if (sql.sqlType.equals("statement")) {
       aux.append("    st = connectionProvider.getStatement(");
       if (sql.sqlConnection.equals("true"))
         aux.append("conn");
       aux.append(");\n");
+      aux.append(queryTimeoutStr);
     } else if (sql.sqlType.equals("callableStatement")) {
       aux.append("      st = connectionProvider.getCallableStatement(");
       if (sql.sqlConnection.equals("true"))
         aux.append("conn, ");
       aux.append("strSql);\n");
+      aux.append(queryTimeoutStr);
     }
     // set value of parameters
     for (final Parameter parameter : sql.vecParameter) {
@@ -1101,18 +1106,35 @@ public class Sqlc extends DefaultHandler {
     boolean boolSequence = false;
     // *** Call to the argument-less creation header, who calls the header
     // with them
+    boolean boolQueryTimeout;
     if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) { // parameters por
       // paging the output
       // && 1==2
-      printHeadFunctionSql(true, false, false);
+      boolQueryTimeout = false;
+      printHeadFunctionSql(true, false, false, boolQueryTimeout);
       out2.append("    return ");
-      printCallFunctionSql(true);
+      printCallFunctionSql(true, true, boolQueryTimeout);
       out2.append(";\n");
       out2.append("  }\n");
       boolSequence = true;
+
+      boolQueryTimeout = true;
+      printHeadFunctionSql(true, false, false, boolQueryTimeout);
+      out2.append("    return ");
+      printCallFunctionSql(true, true, boolQueryTimeout);
+      out2.append(";\n");
+      out2.append("  }\n");
     }
 
-    printHeadFunctionSql(true, boolSequence, false);
+    boolQueryTimeout = false;
+    printHeadFunctionSql(true, boolSequence, false, boolQueryTimeout);
+    out2.append("    return ");
+    printCallFunctionSql(true, false, boolQueryTimeout);
+    out2.append(";\n");
+    out2.append("  }\n");
+
+    boolQueryTimeout = true;
+    printHeadFunctionSql(true, boolSequence, false, boolQueryTimeout);
     // Sequences
     if (sql.strSequenceName != null) {
       out2.append("    long keySequence = 0;\n");
@@ -1367,7 +1389,7 @@ public class Sqlc extends DefaultHandler {
   }
 
   private void printHeadFunctionSql(boolean printProviderConnection, boolean boolPagin,
-      boolean boolSequence) throws IOException {
+      boolean boolSequence, boolean boolQueryType) throws IOException {
     out2.append("\n");
     final String[] strSqlCommentsVector = stringToVector(sql.strSqlComments, false);
     for (int i = 0; i < strSqlCommentsVector.length; i++) {
@@ -1403,8 +1425,16 @@ public class Sqlc extends DefaultHandler {
     }
     out2.append(sql.sqlName + "(");
     boolean firstParameter = true;
-    if (sql.sqlConnection.equals("true")) {
+    if (boolQueryType) {
       firstParameter = false;
+      out2.append("String queryType");
+    }
+    if (sql.sqlConnection.equals("true")) {
+      if (firstParameter) {
+        firstParameter = false;
+      } else {
+        out2.append(", ");
+      }
       out2.append("Connection conn");
     }
     if (printProviderConnection) {
@@ -1451,19 +1481,21 @@ public class Sqlc extends DefaultHandler {
     out2.append("    throws ServletException {\n");
   }
 
-  private void printCallFunctionSql(boolean printProviderConnection) throws IOException {
+  private void printCallFunctionSql(boolean printProviderConnection, boolean printPaginParameters,
+      boolean printQueryType) throws IOException {
     out2.append(sql.sqlName + "(");
-    boolean firstParameter = true;
+    if (printQueryType) {
+      out2.append("queryType");
+    } else {
+      out2.append("(String)null");
+    }
+    boolean firstParameter = false;
     if (sql.sqlConnection.equals("true")) {
-      firstParameter = false;
+      out2.append(", ");
       out2.append("conn");
     }
     if (printProviderConnection) {
-      if (firstParameter) {
-        firstParameter = false;
-      } else {
-        out2.append(", ");
-      }
+      out2.append(", ");
       out2.append("connectionProvider");
     }
     if (log4j.isDebugEnabled())
@@ -1472,21 +1504,15 @@ public class Sqlc extends DefaultHandler {
       if (sql.sqlStatic.equals("true")) {
         if (parameter.strName != null && !parameter.boolRepeated && !parameter.boolSequence
             && !parameter.strInOut.equals("out")) {
-          if (firstParameter) {
-            firstParameter = false;
-          } else {
-            out2.append(", ");
-          }
+          out2.append(", ");
           out2.append(parameter.strName);
         }
       }
     }
-    if (firstParameter) {
-      firstParameter = false;
-    } else {
+    if (printPaginParameters) {
       out2.append(", ");
+      out2.append("0, 0");
     }
-    out2.append("0, 0");
     out2.append(")");
   }
 

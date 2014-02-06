@@ -74,6 +74,8 @@ public class DataEntityQueryService {
   private String summarySettings;
   private List<String> summaryFields = new ArrayList<String>();
 
+  private String queryType = null;
+
   /**
    * Count the records which fit in the filter criteria.
    * 
@@ -170,6 +172,7 @@ public class DataEntityQueryService {
 
     obq.setNamedParameters(queryBuilder.getNamedParameters());
 
+    obq.setQueryType(this.queryType);
     return obq;
   }
 
@@ -363,6 +366,14 @@ public class DataEntityQueryService {
 
   public void setFilterOnReadableClients(boolean filterOnReadableClients) {
     this.filterOnReadableClients = filterOnReadableClients;
+  }
+
+  public void setQueryType(String queryType) {
+    this.queryType = queryType;
+  }
+
+  public String getQueryType() {
+    return this.queryType;
   }
 
 }
