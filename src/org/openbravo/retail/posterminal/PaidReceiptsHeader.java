@@ -14,14 +14,18 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.dal.core.OBContext;
 
 public class PaidReceiptsHeader extends ProcessHQLQuery {
 
   @Override
+  protected boolean isAdminMode() {
+    return true;
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
-    OBContext.setAdminMode(true);
+    // OBContext.setAdminMode(true);
     JSONObject json = jsonsent.getJSONObject("filters");
     String strIsLayaway = "false";
     if (json.getBoolean("isLayaway")) {
