@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,6 +61,7 @@ public class SessionHandler implements OBNotSingleton {
         externalConnectionPool = ExternalConnectionPool.getInstance(poolClassName);
       } catch (Throwable e) {
         externalConnectionPool = null;
+        log.warn("External connection pool class not found: " + poolClassName, e);
       }
     }
   }
@@ -135,11 +136,15 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   protected Session createSession() {
+    // Checks if the session connection has to be obtained using an external connection pool
     if (externalConnectionPool != null && this.getConnection() == null) {
       Connection externalConnection = externalConnectionPool.getConnection();
       this.setConnection(externalConnection);
     }
     if (this.connection != null) {
+      // If the connection has been obtained using an external connection pool it is passed to
+      // openSession, to prevent a new connection to be created using the Hibernate default
+      // connection pool
       return SessionFactoryController.getInstance().getSessionFactory()
           .openSession(this.connection);
     } else {
@@ -270,7 +275,7 @@ public class SessionHandler implements OBNotSingleton {
           connection.close();
         }
       } catch (SQLException e) {
-        // ignore these exception not to hide others
+        log.error("Error while closing the connection", e);
       }
       deleteSessionHandler();
       closeSession();
@@ -330,8 +335,7 @@ public class SessionHandler implements OBNotSingleton {
         log.debug("Closing session");
         closeSession();
       } catch (SQLException e) {
-      } finally {
-        // purposely ignoring it to not hide other errors
+        log.error("Error while closing the connection", e);
       }
     }
     setSession(null);
