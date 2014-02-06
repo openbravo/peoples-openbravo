@@ -198,8 +198,6 @@ public class PaidReceipts extends JSONProcessSimple {
             }
           }
         }
-        int res = 10 / 0;
-        System.out.println(res);
 
         paidReceipt.put("receiptPayments", listpaidReceiptsPayments);
 
