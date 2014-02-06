@@ -323,7 +323,7 @@ public class SessionInfo {
     SessionInfo.isAuditActive = isAuditActive;
   }
 
-  public static void setSessionConnection(Connection conn) {
+  static void setSessionConnection(Connection conn) {
     sessionConnection.set(conn);
   }
 
