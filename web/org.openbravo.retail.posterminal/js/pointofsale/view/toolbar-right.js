@@ -9,6 +9,64 @@
 
 /*global enyo, $ */
 
+// Toolbar container
+// ----------------------------------------------------------------------------
+//enyo.kind({
+//  name: 'OB.OBPOSPointOfSale.UI.RightToolbar',
+//  handlers: {
+//    onTabButtonTap: 'tabButtonTapHandler'
+//  },
+//  components: [{
+//    tag: 'ul',
+//    classes: 'unstyled nav-pos row-fluid',
+//    name: 'toolbar'
+//  }],
+//  tabButtonTapHandler: function (inSender, inEvent) {
+//    if (inEvent.tabPanel) {
+//      this.setTabButtonActive(inEvent.tabPanel);
+//    }
+//  },
+//  setTabButtonActive: function (tabName) {
+//    var buttonContainerArray = this.$.toolbar.getComponents(),
+//        i;
+//
+//    for (i = 0; i < buttonContainerArray.length; i++) {
+//      buttonContainerArray[i].removeClass('active');
+//      if (buttonContainerArray[i].getComponents()[0].getComponents()[0].name === tabName) {
+//        buttonContainerArray[i].addClass('active');
+//      }
+//    }
+//  },
+//  manualTap: function (tabName, options) {
+//    var tab;
+//
+//    function getButtonByName(name, me) {
+//      var componentArray = me.$.toolbar.getComponents(),
+//          i;
+//      for (i = 0; i < componentArray.length; i++) {
+//        if (componentArray[i].$.theButton.getComponents()[0].name === name) {
+//          return componentArray[i].$.theButton.getComponents()[0];
+//        }
+//      }
+//      return null;
+//    }
+//
+//    tab = getButtonByName(tabName, this);
+//    if (tab) {
+//      tab.tap(options);
+//    }
+//  },
+//  initComponents: function () {
+//    this.inherited(arguments);
+//    enyo.forEach(this.buttons, function (btn) {
+//      this.$.toolbar.createComponent({
+//        kind: 'OB.OBPOSPointOfSale.UI.RightToolbarButton',
+//        button: btn
+//      });
+//    }, this);
+//  }
+//});
+
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
   published: {
@@ -40,7 +98,7 @@ enyo.kind({
       var componentArray = me.$.toolbar.getComponents(),
           i;
       for (i = 0; i < componentArray.length; i++) {
-        if (componentArray[i].$.theButton.getComponents()[0].name === name) {
+        if (componentArray[i].$.theButton.getComponents()[0].tabToOpen === name) {
           return componentArray[i].$.theButton.getComponents()[0];
         }
       }
