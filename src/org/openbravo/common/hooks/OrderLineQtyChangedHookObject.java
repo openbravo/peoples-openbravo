@@ -2,6 +2,8 @@ package org.openbravo.common.hooks;
 
 import java.math.BigDecimal;
 
+import org.openbravo.model.pricing.pricelist.PriceList;
+
 public class OrderLineQtyChangedHookObject {
 
   private String productId;
@@ -10,6 +12,8 @@ public class OrderLineQtyChangedHookObject {
   private BigDecimal price;
   private String changed;
   private int pricePrecision;
+  private PriceList priceList;
+  private BigDecimal listPrice;
 
   public int getPricePrecision() {
     return pricePrecision;
@@ -61,6 +65,22 @@ public class OrderLineQtyChangedHookObject {
 
   public void setPrice(BigDecimal price) {
     this.price = price;
+  }
+
+  public PriceList getPriceList() {
+    return priceList;
+  }
+
+  public void setPriceList(PriceList priceList) {
+    this.priceList = priceList;
+  }
+
+  public BigDecimal getListPrice() {
+    return listPrice;
+  }
+
+  public void setListPrice(BigDecimal listPrice) {
+    this.listPrice = listPrice;
   }
 
 }

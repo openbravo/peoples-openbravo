@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -102,6 +102,11 @@ isc.OBPersonalizeFormLayout.addProperties({
   initWidget: function () {
 
     this.initializing = true;
+
+    if (this.form && this.form.view && !this.form.getDataSource()) {
+      // If the viewForm has not been yet fully loaded, do it now.
+      this.form.view.prepareViewForm();
+    }
 
     this.createAddToolbar();
     this.createAddStatusbar();

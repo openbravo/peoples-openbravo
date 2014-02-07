@@ -110,8 +110,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     String strStockNoAttribute;
     String strStockAttribute;
     String strPriceActual = _strPriceActual;
-    boolean isTaxIncludedPriceList = OBDal.getInstance().get(PriceList.class, data[0].mPricelistId)
-        .isPriceIncludesTax();
+    PriceList currentPriceList = OBDal.getInstance().get(PriceList.class, data[0].mPricelistId);
+    boolean isTaxIncludedPriceList = currentPriceList.isPriceIncludesTax();
     boolean isGrossUnitPriceChanged = strChanged.equals("inpgrossUnitPrice");
     boolean forceSetPriceStd = false;
     if (data1 != null && data1.length > 0) {
@@ -158,10 +158,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         hookObject.setQty(qtyOrdered);
         hookObject.setOrderId(strCOrderId);
         hookObject.setPricePrecision(pricePrecision);
+        hookObject.setPriceList(currentPriceList);
         if (isTaxIncludedPriceList) {
-          hookObject.setPrice(grossPriceList);
+          hookObject.setListPrice(grossPriceList);
+          hookObject.setPrice(grossBaseUnitPrice);
         } else {
-          hookObject.setPrice(netPriceList);
+          hookObject.setListPrice(netPriceList);
+          hookObject.setPrice(priceStd);
         }
 
         hookObject.setChanged(strChanged);

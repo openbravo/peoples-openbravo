@@ -155,8 +155,15 @@ public abstract class UIDefinition {
     String columnValue = "";
     RequestContext rq = RequestContext.get();
     if (getValueFromSession) {
-      columnValue = rq.getRequestParameter("inp"
-          + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
+      String inpColumnName = null;
+      if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+        inpColumnName = "inp" + "_propertyField_"
+            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+            + field.getColumn().getDBColumnName();
+      } else {
+        inpColumnName = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      }
+      columnValue = rq.getRequestParameter(inpColumnName);
     } else {
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("documentno")
           || (field.getColumn().isUseAutomaticSequence() && field.getColumn().getDBColumnName()

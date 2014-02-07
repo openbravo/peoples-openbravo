@@ -282,6 +282,34 @@ isc.OBStandardView.addProperties({
     return this.Super('destroy', arguments);
   },
 
+  prepareViewForm: function () {
+    var personalizationData = {};
+
+    if (!this.viewForm) {
+      return;
+    }
+
+    // setDataSource executes setFields which replaces the current fields
+    // We don't want to destroy the associated DataSource objects
+    this.viewForm.destroyItemObjects = false;
+
+    // is used to keep track of the original simple objects
+    // used to create fields
+    this.viewForm._originalFields = isc.clone(this.formFields);
+    this.viewForm.fields = this.formFields;
+    this.viewForm.firstFocusedField = this.firstFocusedField;
+
+    this.viewForm.setDataSource(this.dataSource, this.formFields);
+    this.viewForm.isViewForm = true;
+    this.viewForm.destroyItemObjects = true;
+
+    personalizationData = this.getFormPersonalization(true);
+    if (personalizationData && personalizationData.form) {
+      OB.Personalization.personalizeForm(personalizationData, this.viewForm);
+    }
+
+  },
+
   buildStructure: function () {
     var length, i, fld, lazyFiltering;
     this.createMainParts();
@@ -317,22 +345,6 @@ isc.OBStandardView.addProperties({
         }
       }
       this.refreshContents = false;
-    }
-
-    if (this.viewForm) {
-      // setDataSource executes setFields which replaces the current fields
-      // We don't want to destroy the associated DataSource objects
-      this.viewForm.destroyItemObjects = false;
-
-      // is used to keep track of the original simple objects
-      // used to create fields
-      this.viewForm._originalFields = isc.clone(this.formFields);
-      this.viewForm.fields = this.formFields;
-      this.viewForm.firstFocusedField = this.firstFocusedField;
-
-      this.viewForm.setDataSource(this.dataSource, this.formFields);
-      this.viewForm.isViewForm = true;
-      this.viewForm.destroyItemObjects = true;
     }
 
     if (this.isRootView) {
@@ -1069,6 +1081,9 @@ isc.OBStandardView.addProperties({
   // Switch from form to grid view or the other way around
   switchFormGridVisibility: function () {
     if (!this.isShowingForm) {
+      if (!this.viewForm.getDataSource()) {
+        this.prepareViewForm();
+      }
       this.viewGrid.hide();
       this.statusBarFormLayout.show();
       this.statusBarFormLayout.setHeight('100%');
@@ -2184,7 +2199,7 @@ isc.OBStandardView.addProperties({
   setContextInfo: function (sessionProperties, callbackFunction, forced) {
     var newCallback, me = this,
         gridVisibleProperties = [],
-        len, i;
+        len, i, originalID;
     // no need to set the context in this case
     if (!forced && (this.isEditingGrid || this.isShowingForm)) {
       if (callbackFunction) {
@@ -2198,13 +2213,23 @@ isc.OBStandardView.addProperties({
       sessionProperties = this.getContextInfo(false, true, false, true);
     }
 
+    if (this.viewGrid && this.viewGrid.getSelectedRecord()) {
+      originalID = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
+    }
+
     newCallback = function (response, data, request) {
       var context = {},
-          grid = me.viewGrid;
-      context.rowNum = grid.getRecordIndex(grid.getSelectedRecord());
+          grid = me.viewGrid,
+          currentRecord, currentID;
+      currentRecord = grid.getSelectedRecord();
+      context.rowNum = grid.getRecordIndex(currentRecord);
+      currentID = currentRecord[OB.Constants.ID];
       context.grid = grid;
       response.clientContext = context;
-      grid.processFICReturn(response, data, request);
+      if (originalID === currentID) {
+        // Only update the grid if the user has not changed rows
+        grid.processFICReturn(response, data, request);
+      }
       if (callbackFunction) {
         callbackFunction();
       }

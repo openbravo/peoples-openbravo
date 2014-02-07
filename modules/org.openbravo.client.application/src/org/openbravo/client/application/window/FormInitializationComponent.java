@@ -408,10 +408,16 @@ public class FormInitializationComponent extends BaseActionHandler {
             continue;
           }
 
-          jsonColumnValues.put(
-              OBViewFieldHandler.getFieldColumnName(field, null),
-              columnValues.get("inp"
-                  + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())));
+          String inpColName = null;
+          if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+            inpColName = "inp" + "_propertyField_"
+                + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+                + field.getColumn().getDBColumnName();
+          } else {
+            inpColName = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+          }
+          jsonColumnValues.put(OBViewFieldHandler.getFieldColumnName(field, null),
+              columnValues.get(inpColName));
         }
         finalObject.put("columnValues", jsonColumnValues);
       }
@@ -553,7 +559,16 @@ public class FormInitializationComponent extends BaseActionHandler {
       if (field.getColumn() == null) {
         continue;
       }
-      columnsOfFields.put(field.getColumn().getDBColumnName(), field);
+
+      String colName = null;
+      if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+        colName = "_propertyField_"
+            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+            + field.getColumn().getDBColumnName();
+      } else {
+        colName = field.getColumn().getDBColumnName();
+      }
+      columnsOfFields.put(colName, field);
     }
     List<String> changedCols = new ArrayList<String>();
     for (String col : allColumns) {
@@ -661,9 +676,15 @@ public class FormInitializationComponent extends BaseActionHandler {
             }
           }
 
-          columnValues
-              .put("inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()),
-                  jsonobject);
+          String colName = null;
+          if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+            colName = "_propertyField_"
+                + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+                + field.getColumn().getDBColumnName();
+          } else {
+            colName = Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+          }
+          columnValues.put("inp" + colName, jsonobject);
           setRequestContextParameter(field, jsonobject);
 
           String fullPropertyName = null;
@@ -697,8 +718,15 @@ public class FormInitializationComponent extends BaseActionHandler {
       UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(columnId);
       // We need to fire callouts if the field is a combo
       // (due to how ComboReloads worked, callouts were always called)
-      JSONObject value = columnValues.get("inp"
-          + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
+      String inpColName = null;
+      if (field.getProperty() != null) {
+        inpColName = "inp" + "_propertyField_"
+            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+            + field.getColumn().getDBColumnName();
+      } else {
+        inpColName = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      }
+      JSONObject value = columnValues.get(inpColName);
       String classicValue;
       try {
         classicValue = (value == null || !value.has("classicValue")) ? "" : value
@@ -866,17 +894,20 @@ public class FormInitializationComponent extends BaseActionHandler {
 
         final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
         String fullPropertyName = null;
+        String inpColName = null;
         if (field.getProperty() != null) {
           fullPropertyName = field.getProperty().replace('.', '$');
+          inpColName = "inp" + "_propertyField_"
+              + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+              + field.getColumn().getDBColumnName();
         } else {
           fullPropertyName = prop.getName();
+          inpColName = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
         }
         if ((mode.equals("EDIT") || mode.equals("SETSESSION"))
             && !gridVisibleProperties.contains(fullPropertyName)) {
           continue;
         }
-        String inpColName = "inp"
-            + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
         try {
           if (jsContent.has(inpColName)) {
             final Object jsonValue = jsContent.get(inpColName);
@@ -1017,7 +1048,14 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (field.getColumn() == null) {
           continue;
         }
-        String colName = field.getColumn().getDBColumnName();
+        String colName = null;
+        if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+          colName = "_propertyField_"
+              + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+              + field.getColumn().getDBColumnName();
+        } else {
+          colName = field.getColumn().getDBColumnName();
+        }
         if (!columnsWithValidation.contains(field.getColumn().getDBColumnName())
             && !sortedColumns.contains(colName) && !colName.equalsIgnoreCase("documentno")) {
           sortedColumns.add(colName);
