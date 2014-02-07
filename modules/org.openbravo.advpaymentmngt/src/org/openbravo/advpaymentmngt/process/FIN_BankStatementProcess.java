@@ -4,13 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.criterion.Restrictions;
-import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
@@ -42,8 +38,6 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
       final VariablesSecureApp vars = bundle.getContext().toVars();
       final ConnectionProvider conProvider = bundle.getConnection();
       final String language = bundle.getContext().getLanguage();
-      final boolean isForceProcess = (Boolean) "2DDE7D3618034C38A4462B7F3456C28D".equals(bundle
-          .getProcessId());
 
       bankStatement.setProcessNow(true);
       OBDal.getInstance().save(bankStatement);
@@ -55,9 +49,9 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
         // ***********************
 
         // Check all dates are after last reconciliation date or last transaction date of previous
-        // bank statements. Skip when force
-        Date maxBSLDate = getMaxBSLDate(bankStatement);
-        if (maxBSLDate != null && !isForceProcess) {
+        // bank statements.
+        Date maxBSLDate = getMaxBSLDate(bankStatement.getAccount(), bankStatement);
+        if (maxBSLDate != null) {
           for (FIN_BankStatementLine bsl : bankStatement.getFINBankStatementLineList()) {
             if (bsl.getTransactionDate().compareTo(maxBSLDate) <= 0) {
               if (!msg.getMessage().equals("")) {
@@ -76,17 +70,13 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
             }
           }
         }
+
         if (msg.getType() != null && !msg.getType().toLowerCase().equals("warning")) {
           // Success
           bankStatement.setProcessed(true);
           bankStatement.setAPRMProcessBankStatement("R");
-          bankStatement.setAPRMProcessBankStatementForce("R");
           OBDal.getInstance().save(bankStatement);
           OBDal.getInstance().flush();
-        }
-        if (isForceProcess) {
-          // Update affected Reconciliations
-          updateAffectedReconciliations(bankStatement);
         }
       } else if (strAction.equals("R")) {
         // *************************
@@ -101,23 +91,20 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
           bundle.setResult(msg);
           return;
         }
-        if (!isForceProcess) {
-          // Already Reconciled
-          for (FIN_BankStatementLine bsl : bankStatement.getFINBankStatementLineList()) {
-            if (bsl.getFinancialAccountTransaction() != null) {
-              msg.setType("Error");
-              msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-              msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
-                  "@APRM_BSLineReconciled@" + ": " + bsl.getLineNo().toString()));
-              bundle.setResult(msg);
-              return;
-            }
+        // Already Reconciled
+        for (FIN_BankStatementLine bsl : bankStatement.getFINBankStatementLineList()) {
+          if (bsl.getFinancialAccountTransaction() != null) {
+            msg.setType("Error");
+            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+            msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+                "@APRM_BSLineReconciled@" + ": " + bsl.getLineNo().toString()));
+            bundle.setResult(msg);
+            return;
           }
         }
 
         bankStatement.setProcessed(false);
         bankStatement.setAPRMProcessBankStatement("P");
-        bankStatement.setAPRMProcessBankStatementForce("P");
         OBDal.getInstance().save(bankStatement);
         OBDal.getInstance().flush();
       }
@@ -139,7 +126,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
 
   }
 
-  private Date getMaxBSLDate(FIN_BankStatement bankstatement) {
+  private Date getMaxBSLDate(FIN_FinancialAccount account, FIN_BankStatement bankstatement) {
     // Get last transaction date from previous bank statements
     final StringBuilder whereClause = new StringBuilder();
     List<Object> parameters = new ArrayList<Object>();
@@ -147,7 +134,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
     whereClause.append(" where bsl.");
     whereClause.append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
     whereClause.append("." + FIN_BankStatement.PROPERTY_ACCOUNT + " = ?");
-    parameters.add(bankstatement.getAccount());
+    parameters.add(account);
     whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT + " <> ?");
     parameters.add(bankstatement);
     whereClause.append(" and bsl.bankStatement.processed = 'Y'");
@@ -162,7 +149,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
 
     // If no previous bank statement is found get the ending date of the last reconciliation
     FIN_Reconciliation rec = org.openbravo.advpaymentmngt.dao.TransactionsDao
-        .getLastReconciliation(bankstatement.getAccount(), "Y");
+        .getLastReconciliation(account, "Y");
     org.openbravo.dal.core.OBContext.setAdminMode(true);
     try {
       return (rec == null) ? null : rec.getEndingDate();
@@ -170,63 +157,4 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
       org.openbravo.dal.core.OBContext.restorePreviousMode();
     }
   }
-
-  private Date getBankStatementLineMinDate(FIN_BankStatement bankStatement) {
-    OBContext.setAdminMode();
-    Date minDate = new Date();
-    try {
-      final OBCriteria<FIN_BankStatementLine> obc = OBDal.getInstance().createCriteria(
-          FIN_BankStatementLine.class);
-      obc.createAlias(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, "bs");
-      obc.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ID, bankStatement.getId()));
-      obc.addOrderBy(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE, true);
-      obc.setMaxResults(1);
-      final List<FIN_BankStatementLine> bst = obc.list();
-      if (bst.size() == 0)
-        return minDate;
-      minDate = bst.get(0).getTransactionDate();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return minDate;
-  }
-
-  private void updateAffectedReconciliations(FIN_BankStatement bankStatement) {
-    List<FIN_Reconciliation> affectedReconciliations = getAffectedReconciliations(
-        bankStatement.getAccount(), getBankStatementLineMinDate(bankStatement));
-    for (FIN_Reconciliation rec : affectedReconciliations) {
-      updateReconciliation(rec);
-    }
-
-  }
-
-  private List<FIN_Reconciliation> getAffectedReconciliations(FIN_FinancialAccount account,
-      Date bankStatementLineMinDate) {
-    OBContext.setAdminMode();
-    try {
-      final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance().createCriteria(
-          FIN_Reconciliation.class);
-      obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, account));
-      obc.add(Restrictions.ge(FIN_Reconciliation.PROPERTY_ENDINGDATE, bankStatementLineMinDate));
-      obc.setMaxResults(1);
-      return obc.list();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  private void updateReconciliation(FIN_Reconciliation reconciliation) {
-    OBContext.setAdminMode(false);
-    try {
-      // This is needed to allow completing a reconciliation with unmatched bank statement lines
-      reconciliation.setStartingbalance(MatchTransactionDao.getStartingBalance(reconciliation));
-      reconciliation.setEndingBalance(MatchTransactionDao.getEndingBalance(reconciliation));
-      OBDal.getInstance().save(reconciliation);
-      OBDal.getInstance().flush();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return;
-  }
-
 }

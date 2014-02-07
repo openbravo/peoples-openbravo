@@ -36,7 +36,6 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -159,9 +158,6 @@ public abstract class FIN_BankStatementImport {
 
     try {
       bankStatementLines = loadFile(file, bankStatement);
-    } catch (OBException e) {
-      OBDal.getInstance().rollbackAndClose();
-      return getOBError(conn, vars, e.getMessage(), "Error", "Error");
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       return getOBError(conn, vars, "@APRM_InvalidOrMissingValues@", "Error", "Error");

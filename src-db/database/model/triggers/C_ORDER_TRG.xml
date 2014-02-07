@@ -54,14 +54,11 @@ BEGIN
     )
     THEN  RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
-    IF (COALESCE(:old.POReference, '.') <> COALESCE(:NEW.POReference, '.')
-    OR COALESCE(:old.Description, '0') <> COALESCE(:NEW.Description, '0')) THEN
-		  -- Propagate Description changes
-		  UPDATE C_Invoice
-		   SET Description=:new.Description,
-		   POReference=:new.POReference
-		  WHERE C_Order_ID=:new.C_Order_ID;
-		END IF;
+  -- Propagate Description changes
+  UPDATE C_Invoice
+   SET Description=:new.Description,
+   POReference=:new.POReference
+  WHERE C_Order_ID=:new.C_Order_ID;
   END IF;
  END IF;
 END C_ORDER_TRG

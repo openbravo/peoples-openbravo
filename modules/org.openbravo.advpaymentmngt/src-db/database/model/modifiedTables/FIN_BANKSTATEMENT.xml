@@ -5,9 +5,5 @@
         <default><![CDATA[P]]></default>
         <onCreateDefault/>
       </column>
-      <column name="EM_APRM_PROCESS_BS_FORCE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default><![CDATA[P]]></default>
-        <onCreateDefault/>
-      </column>
     </table>
   </database>

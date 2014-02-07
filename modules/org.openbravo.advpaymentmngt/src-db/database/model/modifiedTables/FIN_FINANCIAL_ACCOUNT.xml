@@ -17,9 +17,5 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="EM_APRM_MATCHTRANS_FORCE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
     </table>
   </database>

@@ -205,10 +205,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="DATEBALANCED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_FACT_ACCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -296,17 +292,8 @@
       <index name="FACT_ACCT_DATEACCT" unique="false">
         <index-column name="DATEACCT"/>
       </index>
-      <index name="FACT_ACCT_DATEBALANCED" unique="false">
-        <index-column name="DATEBALANCED"/>
-      </index>
-      <index name="FACT_ACCT_FACT_ACCT_GROUP_ID" unique="false">
-        <index-column name="FACT_ACCT_GROUP_ID"/>
-      </index>
       <index name="FACT_ACCT_GROUP" unique="false">
         <index-column name="FACT_ACCT_GROUP_ID"/>
-      </index>
-      <index name="FACT_ACCT_RECORD_ID2" unique="false">
-        <index-column name="RECORD_ID2"/>
       </index>
       <index name="FACT_ACCT_TABLE_RECORD_ID" unique="false">
         <index-column name="AD_TABLE_ID"/>

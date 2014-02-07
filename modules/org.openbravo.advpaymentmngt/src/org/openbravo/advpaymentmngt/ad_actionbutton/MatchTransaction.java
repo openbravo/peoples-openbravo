@@ -24,7 +24,6 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
@@ -311,17 +309,21 @@ public class MatchTransaction extends HttpSecureAppServlet {
           strReconciliationId);
       FIN_FinancialAccount financialAccount = MatchTransactionDao.getObject(
           FIN_FinancialAccount.class, strFinancialAccountId);
-      if (MatchTransactionDao.islastreconciliation(reconciliation)) {
-        Date maxBSLDate = MatchTransactionDao.getBankStatementLineMaxDate(financialAccount);
-        reconciliation.setEndingDate(maxBSLDate);
-        reconciliation.setTransactionDate(maxBSLDate);
-      } else {
-        Date maxClearItemDate = getClearItemsMaxDate(reconciliation);
-        reconciliation.setEndingDate(maxClearItemDate);
-        reconciliation.setTransactionDate(maxClearItemDate);
+      FIN_Reconciliation lastReconciliation = TransactionsDao.getLastReconciliation(OBDal
+          .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "Y");
+      BigDecimal unreconciledInLastReconciliation = BigDecimal.ZERO;
+      if (lastReconciliation != null) {
+        unreconciledInLastReconciliation = MatchTransactionDao
+            .getLastReconciliationUnmatchedBalance(lastReconciliation);
       }
-      reconciliation.setEndingBalance(MatchTransactionDao.getEndingBalance(reconciliation));
-
+      // This is needed to allow completing a reconciliation with unmatched bank statement lines
+      reconciliation.setEndingBalance(reconciliation.getStartingbalance()
+          .subtract(unreconciledInLastReconciliation)
+          .add(MatchTransactionDao.getReconciliationEndingBalance(reconciliation)));
+      reconciliation.setEndingDate(MatchTransactionDao
+          .getBankStatementLineMaxDate(financialAccount));
+      reconciliation.setTransactionDate(MatchTransactionDao
+          .getBankStatementLineMaxDate(financialAccount));
       if (!process) {
         reconciliation.setProcessed(false);
         reconciliation.setDocumentStatus("DR");
@@ -345,17 +347,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
       OBContext.restorePreviousMode();
     }
     return true;
-  }
-
-  private Date getClearItemsMaxDate(FIN_Reconciliation reconciliation) {
-    OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance().createCriteria(
-        FIN_ReconciliationLine_v.class);
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
-    obc.addOrder(Order.desc(FIN_ReconciliationLine_v.PROPERTY_TRANSACTIONDATE));
-    obc.setMaxResults(1);
-    return ((FIN_ReconciliationLine_v) obc.uniqueResult()).getTransactionDate();
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strOrgId,
