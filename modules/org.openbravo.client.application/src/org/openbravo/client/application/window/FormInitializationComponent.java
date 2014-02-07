@@ -554,6 +554,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     if (mode.equals("CHANGE") && changedColumn != null) {
       RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
     }
+    log.debug("computeColumnValues - forceComboReload: " + forceComboReload);
     HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
     for (Field field : getADFieldList(tab.getId())) {
       if (field.getColumn() == null) {
@@ -595,9 +596,11 @@ public class FormInitializationComponent extends BaseActionHandler {
             value = uiDef.getFieldProperties(field, true);
           } else {
             // Else, the default is used
-            if (visibleProperties != null
-                && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))
-                && !field.isDisplayed() && !field.isShowInGridView() && !field.isShownInStatusBar()
+            if ((visibleProperties == null || !visibleProperties.contains("inp"
+                + Sqlc.TransformaNombreColumna(col)))
+                && !field.isDisplayed()
+                && !field.isShowInGridView()
+                && !field.isShownInStatusBar()
                 && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory()) {
               // If the column is not currently visible, and its not mandatory, we don't need to
               // compute the combo.
@@ -614,16 +617,40 @@ public class FormInitializationComponent extends BaseActionHandler {
           // On EDIT mode, the values are computed through the UIDefinition (the values have been
           // previously set in the RequestContext)
           // This is also done this way on CHANGE mode where a combo reload is needed
-          if (visibleProperties != null
-              && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))
-              && !field.isDisplayed() && !field.isShowInGridView() && !field.isShownInStatusBar()
+          if ((visibleProperties == null || !visibleProperties.contains("inp"
+              + Sqlc.TransformaNombreColumna(col)))
+              && !field.isDisplayed()
+              && !field.isShowInGridView()
+              && !field.isShownInStatusBar()
               && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory()) {
             // If the column is not currently visible, and its not mandatory, we don't need to
             // compute the combo.
             // If a column is mandatory then the combo needs to be computed, because the selected
             // value can depend on the computation if there is no default value
+            log.debug("field: "
+                + field
+                + " - getFieldPropertiesWithoutCombo: hasVisibleProperties: "
+                + (visibleProperties != null)
+                + ", &contains: "
+                + (visibleProperties != null && visibleProperties.contains("inp"
+                    + Sqlc.TransformaNombreColumna(col))) + ", isDisplayed=" + field.isDisplayed()
+                + ", isShowInGridView=" + field.isShowInGridView() + ", isShownInStatusBar="
+                + field.isShowInGridView() + ", hasDefaultValue="
+                + (field.getColumn().getDefaultValue() != null) + ", isMandatory="
+                + field.getColumn().isMandatory());
             uiDef.getFieldPropertiesWithoutCombo(field, true);
           } else {
+            log.debug("field: "
+                + field
+                + " - getFieldProperties: hasVisibleProperties: "
+                + (visibleProperties != null)
+                + ", &contains: "
+                + (visibleProperties != null && visibleProperties.contains("inp"
+                    + Sqlc.TransformaNombreColumna(col))) + ", isDisplayed=" + field.isDisplayed()
+                + ", isShowInGridView=" + field.isShowInGridView() + ", isShownInStatusBar="
+                + field.isShowInGridView() + ", hasDefaultValue="
+                + (field.getColumn().getDefaultValue() != null) + ", isMandatory="
+                + field.getColumn().isMandatory());
             value = uiDef.getFieldProperties(field, true);
           }
         } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
