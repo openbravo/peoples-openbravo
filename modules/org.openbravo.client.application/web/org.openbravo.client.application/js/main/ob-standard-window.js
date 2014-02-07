@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -555,7 +555,7 @@ isc.OBStandardWindow.addProperties({
           // check the default form and grid viewstates
           length = this.views.length;
           for (i = 0; i < length; i++) {
-            if (personalization.forms && personalization.forms[this.views[i].tabId]) {
+            if (personalization.forms && personalization.forms[this.views[i].tabId] && this.views[i].viewForm.getDataSource()) {
               this.lastViewApplied = true;
               OB.Personalization.personalizeForm(personalization.forms[this.views[i].tabId], this.views[i].viewForm);
             }
@@ -659,8 +659,8 @@ isc.OBStandardWindow.addProperties({
       if (checkSavedView && this.getClass().personalization && this.getClass().personalization.views && this.selectedPersonalizationId) {
         for (i = 0; i < this.getClass().personalization.views.length; i++) {
           persView = this.getClass().personalization.views[i];
-          if (persView.viewDefinition && persView.viewDefinition[view.tabId] && persView.personalizationId === this.selectedPersonalizationId) {
-            return persView.viewDefinition[view.tabId].form;
+          if (persView.viewDefinition && persView.viewDefinition[view.tabId] && persView.personalizationId === this.selectedPersonalizationId && persView.viewDefinition[view.tabId].form) {
+            return persView.viewDefinition[view.tabId];
           }
         }
       }

@@ -830,7 +830,9 @@ isc.OBViewGrid.addProperties({
   },
 
   setData: function (data) {
-    data.grid = this;
+    if (typeof data !== 'undefined' && data !== null) {
+      data.grid = this;
+    }
     this.Super('setData', arguments);
   },
 
@@ -2144,7 +2146,7 @@ isc.OBViewGrid.addProperties({
         this.emptyMessage = this.noDataEmptyMessage;
       }
     }
-    if (oldMessage !== this.emptyMessage) {
+    if (oldMessage !== this.emptyMessage && this.body) {
       this.body.markForRedraw();
     }
   },
