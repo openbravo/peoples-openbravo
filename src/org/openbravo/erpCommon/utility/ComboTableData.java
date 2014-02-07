@@ -1062,10 +1062,14 @@ public class ComboTableData {
               vector.addElement(sqlReturnObject);
               idFound = true;
             }
-          } else
+          } else {
             vector.addElement(sqlReturnObject);
+          }
         } else
           vector.addElement(sqlReturnObject);
+        if (lparameters != null && lparameters.containsKey("#ONLY_ONE_RECORD#")) {
+          break;
+        }
       }
       result.close();
 
@@ -1080,6 +1084,9 @@ public class ComboTableData {
         UtilSql.setValue(st, ++iParameter, 12, null, actual);
         result = st.executeQuery();
         while (result.next()) {
+          if (lparameters != null && lparameters.containsKey("#ONLY_ONE_RECORD#")) {
+            vector.clear();
+          }
           SQLReturnObject sqlReturnObject = new SQLReturnObject();
           sqlReturnObject.setData("ID", UtilSql.getValue(result, "ID"));
           String strName = UtilSql.getValue(result, "NAME");
@@ -1088,6 +1095,9 @@ public class ComboTableData {
           sqlReturnObject.setData("NAME", strName);
           vector.addElement(sqlReturnObject);
           idFound = true;
+          if (lparameters != null && lparameters.containsKey("#ONLY_ONE_RECORD#")) {
+            break;
+          }
         }
         result.close();
         if (!idFound) {

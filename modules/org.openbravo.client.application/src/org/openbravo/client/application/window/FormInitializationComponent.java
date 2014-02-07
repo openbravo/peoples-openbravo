@@ -615,7 +615,11 @@ public class FormInitializationComponent extends BaseActionHandler {
               // value can depend on the computation if there is no default value
               value = uiDef.getFieldPropertiesWithoutCombo(field, false);
             } else {
-              value = uiDef.getFieldProperties(field, false);
+              if (isNotActiveOrVisible(field, visibleProperties)) {
+                value = uiDef.getFieldPropertiesFirstRecord(field, false);
+              } else {
+                value = uiDef.getFieldProperties(field, false);
+              }
             }
           }
         } else if (mode.equals("EDIT")
