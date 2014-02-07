@@ -12,12 +12,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -34,6 +37,7 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class Product extends ProcessHQLQuery {
   public static final String productPropertyExtension = "OBPOS_ProductExtension";
+  public static final Logger log = Logger.getLogger(Product.class);
 
   @Inject
   @Any
@@ -61,9 +65,23 @@ public class Product extends ProcessHQLQuery {
     Calendar now = Calendar.getInstance();
 
     List<String> products = new ArrayList<String>();
+    String posPrecision = "";
+    try {
+      OBContext.setAdminMode();
+      posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
+          .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
+          .toString();
+    } catch (Exception e) {
+      log.error("Error getting currency by id: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
 
-    HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils
-        .getPropertyExtensions(extensions);
+    Map<String, Object> args = new HashMap<String, Object>();
+    args.put("posPrecision", posPrecision);
+
+    HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
+        extensions, args);
 
     // regular products
     products
@@ -101,7 +119,11 @@ public class Product extends ProcessHQLQuery {
             + discountNameTrl
             + " as searchkey, "
             + discountNameTrl
-            + " as _identifier, p.discountType.id as productCategory, p.obdiscPrice as listPrice, p.obdiscPrice as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, '[[null]]' as generic_product_id, 'false' as showchdesc, 'true' as ispack, 'false' as isGeneric , 'false' as stocked"//
+            + " as _identifier, p.discountType.id as productCategory, round(p.obdiscPrice, "
+            + posPrecision
+            + ") as listPrice, round(p.obdiscPrice, "
+            + posPrecision
+            + ") as standardPrice, p.obdiscUpc as uPCEAN, img.bindaryData as img, '[[null]]' as generic_product_id, 'false' as showchdesc, 'true' as ispack, 'false' as isGeneric , 'false' as stocked"//
             + "  from PricingAdjustment as p left outer join p.obdiscImage img" //
             + " where p.discountType.obposIsCategory = true "//
             + "   and p.discountType.active = true " //

@@ -10,23 +10,74 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.function.SQLFunction;
+import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.impl.SessionFactoryImpl;
+import org.hibernate.impl.SessionImpl;
+import org.hibernate.type.StringType;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
+import org.openbravo.retail.posterminal.OBPOSApplications;
+import org.openbravo.retail.posterminal.POSUtils;
 
 @Qualifier(Product.productPropertyExtension)
 public class ProductProperties extends ModelExtension {
 
+  public static final Logger log = Logger.getLogger(ProductProperties.class);
+
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
+
+    // Calculate POS Precision
+    String localPosPrecision = "";
+    try {
+      if (params != null) {
+        @SuppressWarnings("unchecked")
+        HashMap<String, Object> localParams = (HashMap<String, Object>) params;
+        localPosPrecision = (String) localParams.get("posPrecision");
+      }
+    } catch (Exception e) {
+      log.error("Error getting posPrecision: " + e.getMessage(), e);
+    }
+    final String posPrecision = localPosPrecision;
+
+    // Build Product Tax Category select clause
+    final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
+        .getSessionFactory()).getDialect();
+    Map<String, SQLFunction> function = dialect.getFunctions();
+    if (!function.containsKey("c_get_product_taxcategory")) {
+      dialect.getFunctions().put("c_get_product_taxcategory",
+          new StandardSQLFunction("c_get_product_taxcategory", new StringType()));
+    }
+    OBPOSApplications posDetail;
+    posDetail = POSUtils.getTerminalById(RequestContext.get().getSessionAttribute("POSTerminal")
+        .toString());
+    if (posDetail == null) {
+      throw new OBException("terminal id is not present in session ");
+    }
+    StringBuffer taxCategoryQry = new StringBuffer();
+    taxCategoryQry.append("c_get_product_taxcategory(product.id, '");
+    taxCategoryQry.append(posDetail.getOrganization().getId());
+    // Date, shipfrom and shipto as null
+    taxCategoryQry.append("', null, null, null)");
+    final String strTaxCategoryQry = taxCategoryQry.toString();
+
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {
@@ -42,7 +93,7 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty("product.id", "id"));
         add(new HQLProperty("product.searchKey", "searchkey"));
         add(new HQLProperty(trlName, "_identifier"));
-        add(new HQLProperty("product.taxCategory.id", "taxCategory"));
+        add(new HQLProperty(strTaxCategoryQry, "taxCategory"));
         add(new HQLProperty("product.productCategory.id", "productCategory"));
         add(new HQLProperty("product.obposScale", "obposScale"));
         add(new HQLProperty("product.uOM.id", "uOM"));
@@ -70,8 +121,17 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
         add(new HQLProperty("pli.bestseller", "bestseller"));
         add(new HQLProperty("'false'", "ispack"));
-        add(new HQLProperty("ppp.listPrice", "listPrice"));
-        add(new HQLProperty("ppp.standardPrice", "standardPrice"));
+        if (posPrecision != null && !"".equals(posPrecision)) {
+          add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));
+        } else {
+          add(new HQLProperty("ppp.listPrice", "listPrice"));
+        }
+        if (posPrecision != null && !"".equals(posPrecision)) {
+          add(new HQLProperty("round(ppp.standardPrice, " + posPrecision + ")", "standardPrice"));
+        } else {
+          add(new HQLProperty("ppp.standardPrice", "standardPrice"));
+        }
+
         add(new HQLProperty("ppp.priceLimit", "priceLimit"));
         add(new HQLProperty("ppp.cost", "cost"));
         Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);

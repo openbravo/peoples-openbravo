@@ -33,4 +33,10 @@
           ]]>
       </Sql>
   </SqlMethod>
+  <SqlMethod name="tableExists" type="preparedStatement" return="String">
+      <Sql><![CDATA[
+      select  (case when count(1) =0 then 'N' else 'Y' end) as exists from ad_table where lower(tablename)='obpos_app_payment'
+          ]]>
+      </Sql>
+  </SqlMethod>
 </SqlClass>

@@ -771,8 +771,10 @@ public class OrderLoader extends JSONProcessSimple {
 
       AttributeSetInstance oldAttributeSetValues = null;
       if (negativeLine) {
+        lineNo += 10;
         addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty.negate(), getBinForReturns(jsonorder.getString("posTerminal")), null);
+
       } else {
         if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           // The M_GetStock function is used
@@ -930,6 +932,12 @@ public class OrderLoader extends JSONProcessSimple {
 
   protected void createOrderLines(Order order, JSONObject jsonorder, JSONArray orderlines,
       ArrayList<OrderLine> lineReferences) throws JSONException {
+    boolean isQuotation = false;
+    try {
+      isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
+    } catch (Exception ex) {
+      isQuotation = false;
+    }
     Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
@@ -949,7 +957,7 @@ public class OrderLoader extends JSONProcessSimple {
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           stdPrecision, RoundingMode.HALF_UP));
 
-      if (!isLayaway && !partialpayLayaway && createShipment) {
+      if (!isLayaway && !partialpayLayaway && (createShipment || isQuotation)) {
         // shipment is created, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
       }

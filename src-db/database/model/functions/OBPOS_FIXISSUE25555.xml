@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION OBPOS_FIXISSUE25555">
+    <function name="OBPOS_FIXISSUE25555" type="NULL">
+      <body><![CDATA[TYPE RECORD IS REF CURSOR;
+v_candidateInvoices RECORD;
+v_wrongPaymentSched RECORD;
+cursor1 RECORD;
+v_needToExecute NUMBER:=0;
+v_isWrongInvoice NUMBER:=0;
+v_invoice1 character varying(32);
+v_invoice2 character varying(32);
+v_paymentSchedDet1 character varying(32);
+v_paymentSched2 character varying(32);
+v_order1 character varying(32);
+v_numWrongInvoicesByOrder NUMBER:=0;
+v_numOfPaymentSched NUMBER:=0;
+v_numOfPaymentSched2 NUMBER:=0;
+sumGrandTotal NUMBER:=0;
+v_updateRecord boolean:=true;
+
+
+BEGIN
+
+  SELECT count(*) into v_needToExecute FROM ad_preference WHERE attribute = 'obpos_fixissue25555';
+
+  IF (v_needToExecute > 0) THEN
+    DBMS_OUTPUT.PUT_LINE('skip obpos_fixissue25555. Already executed - ' || v_needToExecute);
+    RETURN;
+  END IF;
+  DBMS_OUTPUT.PUT_LINE('Fixing wrong data because off issue 25555');
+  
+  FOR v_candidateInvoices IN (
+    select s.fin_payment_schedule_id , sum(psd.amount+psd.writeoffamt) as received_detail, s.amount, sum(psd.amount+psd.writeoffamt) - s.amount as diff_amt, s.c_invoice_id
+    from fin_payment_schedule s, fin_payment_scheduledetail psd
+    where s.fin_payment_schedule_id = psd.fin_payment_schedule_invoice
+    group by s.fin_payment_schedule_id, s.amount, s.c_invoice_id
+    having sum(psd.amount+psd.writeoffamt) > s.amount) LOOP
+
+    v_updateRecord := true;
+    select count(*) INTO v_isWrongInvoice from(
+    select distinct il.c_invoice_id, o.c_order_id 
+    from c_invoiceline il, c_orderline ol, c_order o
+    where il.c_invoice_id= v_candidateInvoices.c_invoice_id
+    and il.c_orderline_id = ol.c_orderline_id
+    and ol.c_order_id = o.c_order_id
+    and o.em_obpos_applications_id is not null
+    and exists (select 1 from c_invoiceline il2, c_orderline ol2, c_order o2
+                where il2.c_orderline_id = ol2.c_orderline_id 
+                and ol2.c_order_id = o2.c_order_id
+                and o2.em_obpos_applications_id is not null
+                and ol2.c_order_id = ol.c_order_id and il2.c_invoice_id <> il.c_invoice_id)) A;
+
+    IF (v_isWrongInvoice=1) THEN
+          select distinct il.c_invoice_id, o.c_order_id INTO v_invoice1, v_order1
+          from c_invoiceline il, c_orderline ol, c_order o
+          where il.c_invoice_id= v_candidateInvoices.c_invoice_id
+          and il.c_orderline_id = ol.c_orderline_id
+          and ol.c_order_id = o.c_order_id
+          and o.em_obpos_applications_id is not null
+          and exists (select 1 from c_invoiceline il2, c_orderline ol2, c_order o2
+                      where il2.c_orderline_id = ol2.c_orderline_id 
+                      and ol2.c_order_id = o2.c_order_id
+                      and o2.em_obpos_applications_id is not null
+                      and ol2.c_order_id = ol.c_order_id and il2.c_invoice_id <> il.c_invoice_id);
+
+           sumGrandTotal :=0;
+          for cursor1 in (select distinct il.c_invoice_id, i.grandtotal
+		      from c_invoiceline il, c_orderline ol, c_order o, c_invoice i
+		      where il.c_orderline_id = ol.c_orderline_id 
+		      and ol.c_order_id = o.c_order_id
+		      and il.c_invoice_id = i.c_invoice_id
+		      and i.ispaid='Y'
+		      and o.em_obpos_applications_id is not null
+		      and ol.c_order_id = v_order1
+		      and il.c_invoice_id <> v_invoice1) loop 
+              
+              v_invoice2:= cursor1.c_invoice_id;
+
+              select count(1) INTO v_numOfPaymentSched
+              from fin_payment_schedule ps, fin_payment_scheduledetail psd
+              where ps.c_invoice_id = v_invoice1
+              and ps.fin_payment_schedule_id = psd.fin_payment_schedule_invoice;
+
+              IF (v_numOfPaymentSched=1) then
+                select psd.fin_payment_scheduledetail_id INTO v_paymentSchedDet1
+                from fin_payment_schedule ps, fin_payment_scheduledetail psd
+                where ps.c_invoice_id = v_invoice1
+                and ps.fin_payment_schedule_id = psd.fin_payment_schedule_invoice;
+
+
+                select count (ps.fin_payment_schedule_id) INTO v_numOfPaymentSched2
+                from fin_payment_schedule ps
+                where ps.c_invoice_id = v_invoice2;
+
+                IF (v_numOfPaymentSched2=1) then
+
+                  select ps.fin_payment_schedule_id INTO v_paymentSched2
+                  from fin_payment_schedule ps
+                  where ps.c_invoice_id = v_invoice2;
+                                   
+                  insert into fin_payment_scheduledetail
+                  select get_uuid(), ad_client_id, ad_org_id, now(), '100', now(), '100', 
+                  fin_payment_detail_id, fin_payment_schedule_order, v_paymentSched2, cursor1.grandtotal, isactive, writeoffamt, iscanceled,
+                  c_bpartner_id, c_activity_id, m_product_id, c_campaign_id, c_project_id, c_salesregion_id, c_costcenter_id, 
+                  user1_id, user2_id, doubtfuldebt_amount 
+                  from fin_payment_scheduledetail dv
+                  where fin_payment_scheduledetail_id =v_paymentSchedDet1;
+
+                  sumGrandTotal := sumGrandTotal + cursor1.grandtotal;
+                END IF;
+               ELSE
+                  v_updateRecord:=false;
+             end if;                 
+
+          end loop;
+             if(v_updateRecord) then    
+               update fin_payment_scheduledetail set amount = v_candidateInvoices.amount
+               where fin_payment_scheduledetail_id = v_paymentSchedDet1;
+             end if;          
+    END IF;
+  END LOOP;
+  
+  INSERT INTO ad_preference (ad_preference_id, ad_client_id, ad_org_id, isactive, createdby, created, updatedby, updated, attribute) 
+    VALUES ( get_uuid(), '0', '0', 'Y', '0', now(), '0', now(), 'obpos_fixissue25555' );
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('Error fixing data off issue 25555');
+END OBPOS_FIXISSUE25555
+]]></body>
+    </function>
+  </database>
