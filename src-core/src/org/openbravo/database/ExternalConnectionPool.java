@@ -41,7 +41,7 @@ public abstract class ExternalConnectionPool {
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
    */
-  public synchronized static ExternalConnectionPool getInstance(
+  public final synchronized static ExternalConnectionPool getInstance(
       String externalConnectionPoolClassName) throws InstantiationException,
       IllegalAccessException, ClassNotFoundException {
     if (instance == null) {
