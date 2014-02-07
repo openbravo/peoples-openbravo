@@ -545,6 +545,18 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   }
 
+  private boolean isNotActiveOrVisible(Field field, List<String> visibleProperties) {
+    return ((visibleProperties == null || !visibleProperties.contains("inp"
+        + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())))
+        && !field.isDisplayed() && !field.isShowInGridView() && !field.isShownInStatusBar())
+        || !field.isActive();
+  }
+
+  private boolean isNotActiveOrVisibleAndNotNeeded(Field field, List<String> visibleProperties) {
+    return isNotActiveOrVisible(field, visibleProperties)
+        && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory();
+  }
+
   private void computeColumnValues(String mode, Tab tab, List<String> allColumns,
       Map<String, JSONObject> columnValues, BaseOBObject parentRecord, String parentId,
       String changedColumn, JSONObject jsContent, List<String> changeEventCols,
@@ -596,12 +608,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             value = uiDef.getFieldProperties(field, true);
           } else {
             // Else, the default is used
-            if ((visibleProperties == null || !visibleProperties.contains("inp"
-                + Sqlc.TransformaNombreColumna(col)))
-                && !field.isDisplayed()
-                && !field.isShowInGridView()
-                && !field.isShownInStatusBar()
-                && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory()) {
+            if (isNotActiveOrVisibleAndNotNeeded(field, visibleProperties)) {
               // If the column is not currently visible, and its not mandatory, we don't need to
               // compute the combo.
               // If a column is mandatory then the combo needs to be computed, because the selected
@@ -617,12 +624,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           // On EDIT mode, the values are computed through the UIDefinition (the values have been
           // previously set in the RequestContext)
           // This is also done this way on CHANGE mode where a combo reload is needed
-          if ((visibleProperties == null || !visibleProperties.contains("inp"
-              + Sqlc.TransformaNombreColumna(col)))
-              && !field.isDisplayed()
-              && !field.isShowInGridView()
-              && !field.isShownInStatusBar()
-              && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory()) {
+          if (isNotActiveOrVisibleAndNotNeeded(field, visibleProperties)) {
             // If the column is not currently visible, and its not mandatory, we don't need to
             // compute the combo.
             // If a column is mandatory then the combo needs to be computed, because the selected
