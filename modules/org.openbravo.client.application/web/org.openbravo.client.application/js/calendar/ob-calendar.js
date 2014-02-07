@@ -62,6 +62,7 @@ isc.OBCalendar.addProperties({
   mainViewConstructor: isc.OBCalendarTabSet,
   useEventCanvasRolloverControls: false,
   eventDialogConstructor: isc.OBCalendar_EventDialogBridge,
+  eventsAdaptationRequired: true,
   initWidget: function () {
     var calendar = this,
         multiCalendar = this.multiCalendar;
@@ -77,6 +78,44 @@ isc.OBCalendar.addProperties({
     }
     if (this.OBEventEditorClass) {
       this.OBEventEditor = isc[this.OBEventEditorClass].create({});
+    }
+
+    this.adaptEvents = function (events) {
+      var i, j;
+      for (i = 0; i < events.getLength(); i++) {
+        if (typeof events[i][calendar.startDateField] === 'string') {
+          events[i][calendar.startDateField] = new Date(events[i][calendar.startDateField]);
+        }
+        if (typeof events[i][calendar.endDateField] === 'string') {
+          events[i][calendar.endDateField] = new Date(events[i][calendar.endDateField]);
+        }
+        if (typeof events[i][calendar.nameField] === 'undefined') {
+          //To avoid the event displays 'undefined' when no name has been set
+          events[i][calendar.nameField] = '';
+        }
+        if (typeof events[i][calendar.descriptionField] === 'undefined') {
+          events[i][calendar.descriptionField] = '';
+        }
+        if (multiCalendar && multiCalendar.showCustomEventsBgColor) {
+          events[i].eventWindowStyle = multiCalendar.eventStyles[events[i][calendar.legendIdField]] + ' ' + calendar.eventWindowStyle;
+        }
+        if (typeof calendar.customTransformResponse === 'function') {
+          events[i] = calendar.customTransformResponse(events[i], calendar);
+        }
+        if (multiCalendar && multiCalendar.calendarData.hasCustomFilters) {
+          for (j = 0; j < multiCalendar.calendarData.customFilters.length; j++) {
+            if (typeof multiCalendar.calendarData.customFilters[j].handler.transformResponse === 'function') {
+              events[i] = multiCalendar.calendarData.customFilters[j].handler.transformResponse(events[i], calendar, multiCalendar.calendarData.customFilters[j]);
+            }
+          }
+        }
+      }
+      return events;
+    };
+
+    if (this.data && this.eventsAdaptationRequired) {
+      //If 'data' (local data) is being used instead of 'dataSource', adapt/transform/process the raw events.
+      this.data = this.adaptEvents(this.data);
     }
 
     if (this.dataSourceProps) {
@@ -140,29 +179,8 @@ isc.OBCalendar.addProperties({
             showDSAlert(JSON.stringify(data.response.errors));
             calendar.filterData();
           } else {
-            if (records) {
-              for (i = 0; i < records.getLength(); i++) {
-                if (typeof records[i][calendar.nameField] === 'undefined') {
-                  //To avoid the event displays 'undefined' when no name has been set
-                  records[i][calendar.nameField] = '';
-                }
-                if (typeof records[i][calendar.descriptionField] === 'undefined') {
-                  records[i][calendar.descriptionField] = '';
-                }
-                if (multiCalendar && multiCalendar.showCustomEventsBgColor) {
-                  records[i].eventWindowStyle = multiCalendar.eventStyles[records[i][calendar.legendIdField]] + ' ' + calendar.eventWindowStyle;
-                }
-                if (typeof calendar.customTransformResponse === 'function') {
-                  records[i] = calendar.customTransformResponse(records[i], calendar);
-                }
-                if (multiCalendar && multiCalendar.calendarData.hasCustomFilters) {
-                  for (j = 0; j < multiCalendar.calendarData.customFilters.length; j++) {
-                    if (typeof multiCalendar.calendarData.customFilters[j].handler.transformResponse === 'function') {
-                      records[i] = multiCalendar.calendarData.customFilters[j].handler.transformResponse(records[i], calendar, multiCalendar.calendarData.customFilters[j]);
-                    }
-                  }
-                }
-              }
+            if (records && calendar.eventsAdaptationRequired) {
+              records = calendar.adaptEvents(records);
             }
             if (typeof calendar.OBEventEditor.closeClick === 'function') {
               // close editor popup on success
