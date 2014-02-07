@@ -55,7 +55,8 @@ public class OrderGroupingProcessor {
 
   private static final Logger log = Logger.getLogger(OrderGroupingProcessor.class);
 
-  public JSONObject groupOrders(OBPOSApplications posTerminal) throws JSONException, SQLException {
+  public JSONObject groupOrders(OBPOSApplications posTerminal, Date cashUpDate)
+      throws JSONException, SQLException {
     // Obtaining order lines that have been created in current terminal and have not already been
     // reconciled. This query must be kept in sync with the one in CashCloseReport
 
@@ -96,12 +97,13 @@ public class OrderGroupingProcessor {
         if (!orderId.equals(currentOrderId)
             && !posTerminal.getObposTerminaltype().isGroupingOrders()) {
           // New Order. We need to finish current invoice, and create a new one
-          finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
+          finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule,
+              origPaymentSchedule, cashUpDate);
           currentOrderId = orderId;
           Order order = OBDal.getInstance().get(Order.class, orderId);
           currentOrder = OBDal.getInstance().get(Order.class, orderId);
-          invoice = createNewInvoice(posTerminal, currentOrder, orderLine);
-          paymentSchedule = createNewPaymentSchedule(invoice);
+          invoice = createNewInvoice(posTerminal, currentOrder, orderLine, cashUpDate);
+          paymentSchedule = createNewPaymentSchedule(invoice, cashUpDate);
           if (!posTerminal.getObposTerminaltype().isGroupingOrders()) {
 
             String language = RequestContext.get().getVariablesSecureApp().getLanguage();
@@ -125,11 +127,12 @@ public class OrderGroupingProcessor {
         }
         if (!bpId.equals(currentbpId) && posTerminal.getObposTerminaltype().isGroupingOrders()) {
           // New business partner. We need to finish current invoice, and create a new one
-          finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
+          finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule,
+              origPaymentSchedule, cashUpDate);
           currentbpId = bpId;
           currentBp = OBDal.getInstance().get(BusinessPartner.class, bpId);
-          invoice = createNewInvoice(posTerminal, currentBp, orderLine);
-          paymentSchedule = createNewPaymentSchedule(invoice);
+          invoice = createNewInvoice(posTerminal, currentBp, orderLine, cashUpDate);
+          paymentSchedule = createNewPaymentSchedule(invoice, cashUpDate);
           origPaymentSchedule = createOriginalPaymentSchedule(invoice, paymentSchedule);
           invoiceTaxes = new HashMap<String, InvoiceTax>();
           totalNetAmount = BigDecimal.ZERO;
@@ -201,7 +204,8 @@ public class OrderGroupingProcessor {
       orderLines.close();
     }
 
-    finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule);
+    finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule,
+        cashUpDate);
     // The commit will be done in ProcessCashClose.java (flush), Transactional process.
     // OBDal.getInstance().getConnection().commit();
 
@@ -211,7 +215,7 @@ public class OrderGroupingProcessor {
     return jsonResponse;
   }
 
-  protected FIN_PaymentSchedule createNewPaymentSchedule(Invoice invoice) {
+  protected FIN_PaymentSchedule createNewPaymentSchedule(Invoice invoice, Date cashUpDate) {
     FIN_PaymentSchedule paymentScheduleInvoice = OBProvider.getInstance().get(
         FIN_PaymentSchedule.class);
     paymentScheduleInvoice.setCurrency(invoice.getCurrency());
@@ -220,8 +224,8 @@ public class OrderGroupingProcessor {
     paymentScheduleInvoice.setFinPaymentmethod(invoice.getPaymentMethod());
     paymentScheduleInvoice.setAmount(BigDecimal.ZERO);
     paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
-    paymentScheduleInvoice.setDueDate(new Date());
-    paymentScheduleInvoice.setExpectedDate(new Date());
+    paymentScheduleInvoice.setDueDate(cashUpDate);
+    paymentScheduleInvoice.setExpectedDate(cashUpDate);
     if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class).hasProperty("origDueDate")) {
       // This property is checked and set this way to force compatibility with both MP13, MP14
       // and
@@ -365,7 +369,7 @@ public class OrderGroupingProcessor {
   }
 
   protected Invoice createNewInvoice(OBPOSApplications terminal, BusinessPartner bp,
-      OrderLine firstLine) {
+      OrderLine firstLine, Date cashUpDate) {
     Invoice invoice = OBProvider.getInstance().get(Invoice.class);
     invoice.setBusinessPartner(bp);
     if (bp.getBusinessPartnerLocationList().size() == 0) {
@@ -387,13 +391,14 @@ public class OrderGroupingProcessor {
         .getDocumentTypeForInvoice());
     invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
         invoice.getDocumentType()));
-    invoice.setAccountingDate(POSUtils.getCurrentDate());
-    invoice.setInvoiceDate(POSUtils.getCurrentDate());
+    invoice.setAccountingDate(cashUpDate);
+    invoice.setInvoiceDate(cashUpDate);
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
     return invoice;
   }
 
-  protected Invoice createNewInvoice(OBPOSApplications terminal, Order order, OrderLine firstLine) {
+  protected Invoice createNewInvoice(OBPOSApplications terminal, Order order, OrderLine firstLine,
+      Date cashUpDate) {
     Invoice invoice = OBProvider.getInstance().get(Invoice.class);
     invoice.setBusinessPartner(order.getBusinessPartner());
     if (order.getBusinessPartner().getBusinessPartnerLocationList().size() == 0) {
@@ -416,8 +421,8 @@ public class OrderGroupingProcessor {
         .getDocumentTypeForInvoice());
     invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
         invoice.getDocumentType()));
-    invoice.setAccountingDate(POSUtils.getCurrentDate());
-    invoice.setInvoiceDate(POSUtils.getCurrentDate());
+    invoice.setAccountingDate(cashUpDate);
+    invoice.setInvoiceDate(cashUpDate);
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
     invoice.setSalesOrder(order);
     return invoice;
@@ -425,7 +430,7 @@ public class OrderGroupingProcessor {
 
   protected void finishInvoice(Invoice oriInvoice, BigDecimal totalNetAmount,
       HashMap<String, InvoiceTax> invoiceTaxes, FIN_PaymentSchedule paymentSchedule,
-      Fin_OrigPaymentSchedule origPaymentSchedule) throws SQLException {
+      Fin_OrigPaymentSchedule origPaymentSchedule, Date cashUpDate) throws SQLException {
     if (oriInvoice == null) {
       return;
     }
@@ -447,7 +452,7 @@ public class OrderGroupingProcessor {
     invoice.setPaymentComplete(true);
     invoice.setTotalPaid(grossamount);
     invoice.setPercentageOverdue(new Long(0));
-    invoice.setFinalSettlementDate(POSUtils.getCurrentDate());
+    invoice.setFinalSettlementDate(cashUpDate);
     invoice.setDaysSalesOutstanding(new Long(0));
     invoice.setOutstandingAmount(BigDecimal.ZERO);
 
