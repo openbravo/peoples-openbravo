@@ -193,6 +193,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/modals/modalwarehousesrequired",
         "pointofsale/view/modals/modalcreditsales",
         "pointofsale/view/modals/modaldiscountneedqty",
+        "pointofsale/view/modals/modalmessage",
 
         // Cash Management window
         "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",

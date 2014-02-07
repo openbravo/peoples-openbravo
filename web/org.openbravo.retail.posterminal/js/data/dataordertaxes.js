@@ -283,10 +283,22 @@
                 }
               }
             } else {
-              OB.UTIL.showError("OBDAL error: Not tax found for " + args.get('_identifier'));
+              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                popup: 'OB_UI_MessageDialog',
+                args: {
+                  header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+                  message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.get('_identifier')])
+                }
+              });
             }
           }, function (tx, error) { // error
-            OB.UTIL.showError("OBDAL error: " + error);
+            OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+              popup: 'OB_UI_MessageDialog',
+              args: {
+                header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+                message: OB.I18N.getLabel('OBPOS_TaxCalculationError_Message')
+              }
+            });
           }, product);
 
           // add line to queue of pending to be processed
@@ -489,10 +501,22 @@
                   }
                 }
               } else {
-                OB.UTIL.showError("OBDAL error: Not tax found for " + args.get('_identifier'));
+                OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                  popup: 'OB_UI_MessageDialog',
+                  args: {
+                    header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+                    message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.get('_identifier')])
+                  }
+                });
               }
             }, function (tx, error) { // error
-              OB.UTIL.showError("OBDAL error: " + error);
+              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                popup: 'OB_UI_MessageDialog',
+                args: {
+                  header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+                  message: OB.I18N.getLabel('OBPOS_TaxCalculationError_Message')
+                }
+              });
             }, product);
 
             // add line to queue of pending to be processed
