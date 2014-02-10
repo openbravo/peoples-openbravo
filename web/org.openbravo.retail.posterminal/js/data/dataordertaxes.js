@@ -283,6 +283,7 @@
                 }
               }
             } else {
+              me.deleteLine(element);
               OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
                 popup: 'OB_UI_MessageDialog',
                 args: {
@@ -292,6 +293,7 @@
               });
             }
           }, function (tx, error) { // error
+            me.deleteLine(element);
             OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
               popup: 'OB_UI_MessageDialog',
               args: {
@@ -501,6 +503,7 @@
                   }
                 }
               } else {
+                me.deleteLine(element);
                 OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
                   popup: 'OB_UI_MessageDialog',
                   args: {
@@ -510,6 +513,7 @@
                 });
               }
             }, function (tx, error) { // error
+              me.deleteLine(element);
               OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
                 popup: 'OB_UI_MessageDialog',
                 args: {
