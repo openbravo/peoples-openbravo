@@ -71,7 +71,7 @@ enyo.kind({
           stateless: true,
           action: function (keyboard, amt) {
             OB.UTIL.Approval.requestApproval(
-            me.model, 'OBPOS_approval.opendrawer', function (approved, supervisor, approvalType) {
+            me.model, 'OBPOS_approval.opendrawer.cashup', function (approved, supervisor, approvalType) {
               if (approved) {
                 OB.POS.hwserver.openDrawer();
               }

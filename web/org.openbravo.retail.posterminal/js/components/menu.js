@@ -292,7 +292,7 @@ enyo.kind({
       return true;
     }
     OB.UTIL.Approval.requestApproval(
-    me.model, 'OBPOS_approval.opendrawer', function (approved, supervisor, approvalType) {
+    me.model, 'OBPOS_approval.opendrawer.menu', function (approved, supervisor, approvalType) {
       if (approved) {
         OB.POS.hwserver.openDrawer();
       }
