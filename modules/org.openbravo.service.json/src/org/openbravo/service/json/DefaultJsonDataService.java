@@ -39,6 +39,7 @@ import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
 
 /**
@@ -251,7 +252,10 @@ public class DefaultJsonDataService implements JsonDataService {
             bobs.add(bob);
           }
         } else {
-          queryService.setQueryType("grid");
+          String currentProfile = SessionInfo.getQueryProfile();
+          if (currentProfile == null || currentProfile.isEmpty()) {
+            SessionInfo.setQueryProfile("grid");
+          }
           bobs = queryService.list();
         }
 

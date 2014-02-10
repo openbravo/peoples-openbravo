@@ -748,6 +748,7 @@ public class Sqlc extends DefaultHandler {
     out1.append("import org.openbravo.database.ConnectionProvider;\n");
     out1.append("import org.openbravo.data.UtilSql;\n");
     out1.append("import org.openbravo.service.db.QueryTimeOutUtil;\n");
+    out1.append("import org.openbravo.database.SessionInfo;\n");
 
     if (sql.sqlImport != null) {
       out2.append("import " + sql.sqlImport + ";\n");
@@ -1026,7 +1027,13 @@ public class Sqlc extends DefaultHandler {
     final StringBuffer aux = new StringBuffer();
     boolean declareiParameter = false;
 
-    String queryTimeoutStr = "      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, queryType);\n";
+    StringBuilder queryTimeoutStr = new StringBuilder();
+    ;
+    queryTimeoutStr.append("      String profile = queryType;\n");
+    queryTimeoutStr.append("      if (profile == null || profile.isEmpty()) {\n");
+    queryTimeoutStr.append("        profile = SessionInfo.getQueryProfile();\n");
+    queryTimeoutStr.append("      }\n");
+    queryTimeoutStr.append("      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, profile);\n");
     aux.append("    try {\n");
     if (sql.sqlType.equals("preparedStatement")) {
       aux.append("    st = connectionProvider.getPreparedStatement(");

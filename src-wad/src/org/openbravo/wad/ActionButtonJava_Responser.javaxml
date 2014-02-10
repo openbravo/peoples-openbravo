@@ -62,6 +62,7 @@ public class ActionButtonJava_Responser extends HttpSecureAppServlet {
     SessionInfo.setProcessId(strProcessId);
     SessionInfo.setUserId(vars.getSessionValue("#AD_User_ID"));
     SessionInfo.setSessionId(vars.getSessionValue("#AD_Session_ID"));
+    SessionInfo.setQueryProfile("manualProcess");
 
     try {
       OBContext.setAdminMode();

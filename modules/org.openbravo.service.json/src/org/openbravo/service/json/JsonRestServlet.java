@@ -41,6 +41,7 @@ import org.openbravo.base.util.CheckException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.service.web.BaseWebServiceServlet;
 import org.openbravo.service.web.InvalidContentException;
 import org.openbravo.service.web.InvalidRequestException;
@@ -122,6 +123,7 @@ public class JsonRestServlet extends BaseWebServiceServlet {
       if (!checkSetParameters(request, response, parameters)) {
         return;
       }
+      SessionInfo.setQueryProfile("jsonWebService");
       // now do the action
       String result = DefaultJsonDataService.getInstance().fetch(parameters);
 

@@ -79,6 +79,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     if (command.contains("BUTTON")) {
      SessionInfo.setUserId(vars.getSessionValue("#AD_User_ID"));
      SessionInfo.setSessionId(vars.getSessionValue("#AD_Session_ID"));
+     SessionInfo.setQueryProfile("manualProcess");
      <FIELDS_TMP id="sectionActionButtonsServiceJava">
       if (command.contains("<FIELD_TMP id="ProcessIDsrvJ">processId</FIELD_TMP>")) {
         SessionInfo.setProcessType("P");

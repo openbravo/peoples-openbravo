@@ -38,6 +38,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.service.db.QueryTimeOutUtil;
 
 /**
@@ -240,8 +241,14 @@ public class OBQuery<E extends BaseOBObject> {
       if (maxResult > -1) {
         qry.setMaxResults(maxResult);
       }
+      String queryProfile = null;
       if (this.getQueryType() != null) {
-        QueryTimeOutUtil.getInstance().setQueryTimeOut(qry, this.getQueryType());
+        queryProfile = this.getQueryType();
+      } else if (SessionInfo.getQueryProfile() != null) {
+        queryProfile = SessionInfo.getQueryProfile();
+      }
+      if (queryProfile != null) {
+        QueryTimeOutUtil.getInstance().setQueryTimeOut(qry, queryProfile);
       }
       return qry;
     } catch (final Exception e) {
