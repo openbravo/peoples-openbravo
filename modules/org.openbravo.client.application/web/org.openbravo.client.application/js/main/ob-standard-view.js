@@ -307,6 +307,7 @@ isc.OBStandardView.addProperties({
     if (personalizationData && personalizationData.form) {
       OB.Personalization.personalizeForm(personalizationData, this.viewForm);
     }
+    this.setMaximizeRestoreButtonState();
 
   },
 
