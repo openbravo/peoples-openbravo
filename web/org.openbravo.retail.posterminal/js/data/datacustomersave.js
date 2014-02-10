@@ -47,8 +47,10 @@
         bpLocToSave.set('cityName', me.customer.get('cityName'));
         if (isNew) {
           bpLocToSave.set('countryName', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry_name);
+          bpLocToSave.set('countryId', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry);
         } else {
           bpLocToSave.set('countryName', me.customer.get('countryName'));
+          bpLocToSave.set('countryId', me.customer.get('country'));
         }
         bpLocToSave.set('_identifier', me.customer.get('locName'));
         OB.Dal.save(bpLocToSave, function () {}, function () {

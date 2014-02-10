@@ -149,10 +149,18 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_LblLayawayReceipt',
   tap: function () {
+    var negativeLines;
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
+    negativeLines = _.find(this.model.get('order').get('lines').models, function (line) {
+      return line.get('gross') < 0;
+    });
+    if (negativeLines){
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+      return true;
+    }
     this.doShowDivText({
       permission: this.permission,
       orderType: 2
