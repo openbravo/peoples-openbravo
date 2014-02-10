@@ -115,6 +115,7 @@ public class OrderGroupingProcessor {
           invoiceTaxes = new HashMap<String, InvoiceTax>();
           totalNetAmount = BigDecimal.ZERO;
           taxLineNo = 10;
+          lineno = 10;
           OBDal.getInstance().save(invoice);
           OBDal.getInstance().save(paymentSchedule);
           OBDal.getInstance().save(origPaymentSchedule);
@@ -137,6 +138,7 @@ public class OrderGroupingProcessor {
           invoiceTaxes = new HashMap<String, InvoiceTax>();
           totalNetAmount = BigDecimal.ZERO;
           taxLineNo = 10;
+          lineno = 10;
           OBDal.getInstance().save(invoice);
           OBDal.getInstance().save(paymentSchedule);
           OBDal.getInstance().save(origPaymentSchedule);
