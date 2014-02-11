@@ -55,6 +55,7 @@ isc.OBAlertGrid.addProperties({
     displayField: OB.Constants.IDENTIFIER,
     canFilter: true,
     canEdit: false,
+    escapeHTML: true,
     filterOnKeypress: true,
     filterEditorType: 'OBFKFilterTextItem',
     type: '_id_19'
@@ -63,6 +64,7 @@ isc.OBAlertGrid.addProperties({
     title: OB.I18N.getLabel('OBUIAPP_AlertGrid_Alert'),
     canFilter: true,
     canEdit: false,
+    escapeHTML: true,
     filterOnKeypress: true,
     filterEditorType: 'OBTextItem',
     type: '_id_10'
@@ -78,6 +80,7 @@ isc.OBAlertGrid.addProperties({
     title: OB.I18N.getLabel('OBUIAPP_AlertGrid_Note'),
     canFilter: true,
     canEdit: true,
+    escapeHTML: true,
     filterOnKeypress: true,
     filterEditorType: 'OBTextItem',
     editorType: 'OBTextItem',
@@ -93,6 +96,7 @@ isc.OBAlertGrid.addProperties({
     title: OB.I18N.getLabel('OBUIAPP_AlertGrid_Record'),
     canFilter: true,
     canEdit: false,
+    escapeHTML: true,
     clientClass: 'OBAlertGridCanvasItem_Link',
     filterOnKeypress: true,
     filterEditorType: 'OBTextItem',
