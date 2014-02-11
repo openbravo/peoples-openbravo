@@ -613,9 +613,11 @@ public class FormInitializationComponent extends BaseActionHandler {
               // compute the combo.
               // If a column is mandatory then the combo needs to be computed, because the selected
               // value can depend on the computation if there is no default value
+              log.debug("Not calculating combo in " + mode + " mode for column " + col);
               value = uiDef.getFieldPropertiesWithoutCombo(field, false);
             } else {
               if (isNotActiveOrVisible(field, visibleProperties)) {
+                log.debug("Only first combo record in " + mode + " mode for column " + col);
                 value = uiDef.getFieldPropertiesFirstRecord(field, false);
               } else {
                 value = uiDef.getFieldProperties(field, false);
@@ -657,7 +659,12 @@ public class FormInitializationComponent extends BaseActionHandler {
                 + field.isShowInGridView() + ", hasDefaultValue="
                 + (field.getColumn().getDefaultValue() != null) + ", isMandatory="
                 + field.getColumn().isMandatory());
-            value = uiDef.getFieldProperties(field, true);
+            if (isNotActiveOrVisible(field, visibleProperties)) {
+              log.debug("Only first combo record in " + mode + " mode for column " + col);
+              value = uiDef.getFieldPropertiesFirstRecord(field, true);
+            } else {
+              value = uiDef.getFieldProperties(field, true);
+            }
           }
         } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
           // On CHANGE and SETSESSION mode, the values are read from the request

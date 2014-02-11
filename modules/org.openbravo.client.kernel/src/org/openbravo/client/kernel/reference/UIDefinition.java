@@ -547,7 +547,7 @@ public abstract class UIDefinition {
           new DalConnectionProvider(false), vars, tabData, field.getTab().getWindow().getId(),
           (getValueFromSession && !comboreload) ? columnValue : "");
       if (onlyFirstRecord) {
-        parameters.put("#ONLY_ONE_RECORD#", "true");
+        parameters.put("@ONLY_ONE_RECORD@", columnValue);
       }
       FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), parameters,
           getValueFromSession && !comboreload);
