@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -38,6 +38,8 @@ import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.scheduling.ProcessBundle;
 
 public class FIN_TransactionProcess implements org.openbravo.scheduling.Process {
@@ -97,6 +99,21 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             if (transaction.getDescription() == null || "".equals(transaction.getDescription())) {
               transaction.setDescription(payment.getDescription());
             }
+            Boolean invoicePaidold = false;
+            for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+              for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+                invoicePaidold = psd.isInvoicePaid();
+                if (!invoicePaidold) {
+                  if ((FIN_Utility.invoicePaymentStatus(payment).equals(payment.getStatus()))) {
+                    psd.setInvoicePaid(true);
+                  }
+                  if (psd.isInvoicePaid()) {
+                    FIN_Utility.updatePaymentAmounts(psd);
+                  }
+                }
+              }
+            }
+            FIN_Utility.updateBusinessPartnerCredit(payment);
           } else {
             transaction.setStatus(transaction.getDepositAmount().compareTo(
                 transaction.getPaymentAmount()) > 0 ? "RDNC" : "PWNC");
@@ -110,6 +127,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           OBDal.getInstance().save(transaction);
           OBDal.getInstance().flush();
           bundle.setResult(msg);
+
         } else if (strAction.equals("R")) {
           // ***********************
           // Reactivate Transaction
@@ -155,6 +173,20 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           OBDal.getInstance().flush();
           FIN_Payment payment = transaction.getFinPayment();
           if (payment != null) {
+            Boolean invoicePaidold = false;
+            for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+              for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+                invoicePaidold = psd.isInvoicePaid();
+                if (invoicePaidold) {
+                  boolean restore = (FIN_Utility.seqnumberpaymentstatus(payment.isReceipt() ? "RPR"
+                      : "PPM")) < (FIN_Utility.seqnumberpaymentstatus(FIN_Utility
+                      .invoicePaymentStatus(payment)));
+                  if (restore) {
+                    FIN_Utility.restorePaidAmounts(psd);
+                  }
+                }
+              }
+            }
             payment.setStatus(payment.isReceipt() ? "RPR" : "PPM");
             transaction.setStatus(payment.isReceipt() ? "RPR" : "PPM");
             OBDal.getInstance().save(payment);
@@ -164,6 +196,8 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           }
           OBDal.getInstance().save(transaction);
           OBDal.getInstance().flush();
+          bundle.setResult(msg);
+
         }
         bundle.setResult(msg);
       } finally {

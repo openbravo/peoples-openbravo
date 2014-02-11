@@ -163,7 +163,15 @@ public class FIN_ExecutePayment {
               dao.removeFromExecutionPending(paymentRunPayment.getPayment());
           }
 
-          String paymentStatus = paymentRunPayment.getPayment().getStatus();
+          FIN_Payment payment = paymentRunPayment.getPayment();
+          if ((FIN_Utility.invoicePaymentStatus(payment).equals(payment.getStatus()))) {
+            for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+              for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+                psd.setInvoicePaid(true);
+              }
+            }
+          }
+
           if ("S".equals(paymentRunPayment.getResult())) {
             if ("PPW".equals(paymentRun.getSourceOfTheExecution())) {
               FIN_PaymentProposal pp = getPaymentProposalFromPayment(paymentRunPayment.getPayment());
@@ -172,27 +180,41 @@ public class FIN_ExecutePayment {
               OBDal.getInstance().flush();
             }
             paymentRunPayment.getPayment().setPosted("N");
-            if (("RPR".equals(paymentStatus) || "PPM".equals(paymentStatus))
-                && FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
-                && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0) {
-              FIN_FinaccTransaction transaction = TransactionsDao
-                  .createFinAccTransaction(paymentRunPayment.getPayment());
-              // VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser()
-              // .getId(), OBContext.getOBContext().getCurrentOrganization().getId(), OBContext
-              // .getOBContext().getRole().getId());
-              VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get().getRequest());
-              OBError processTransactionError = processTransaction(vars,
-                  new DalConnectionProvider(), "P", transaction);
-              if (processTransactionError != null
-                  && "Error".equals(processTransactionError.getType())) {
-                return processTransactionError;
+            try {
+              for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+                for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+                  if (psd.isInvoicePaid()
+                      && FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
+                      && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0) {
+                    FIN_FinaccTransaction transaction = TransactionsDao
+                        .createFinAccTransaction(paymentRunPayment.getPayment());
+                    VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get()
+                        .getRequest());
+                    OBError processTransactionError = processTransaction(vars,
+                        new DalConnectionProvider(), "P", transaction);
+                    if (processTransactionError != null
+                        && "Error".equals(processTransactionError.getType())) {
+                      return processTransactionError;
+                    }
+                  }
+                }
               }
+
+            } finally {
+              OBContext.restorePreviousMode();
             }
           }
-          if ("PPM".equals(paymentStatus) || "RPR".equals(paymentStatus)
-              || "PWNC".equals(paymentStatus) || "RDNC".equals(paymentStatus)
-              || "RPPC".equals(paymentStatus)) {
-            updatePaymentAmounts(paymentRunPayment.getPayment());
+          try {
+            OBContext.setAdminMode(true);
+            for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+              for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+                if (psd.isInvoicePaid()) {
+                  updatePaymentAmounts(paymentRunPayment.getPayment());
+                }
+              }
+            }
+          } finally {
+            OBContext.restorePreviousMode();
           }
           OBDal.getInstance().save(paymentRunPayment.getPayment());
 

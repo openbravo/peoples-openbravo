@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -34,6 +34,9 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.scheduling.ProcessBundle;
@@ -105,6 +108,27 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
         OBDal.getInstance().save(reconciliation);
         OBDal.getInstance().flush();
 
+        Boolean invoicePaidold = false;
+        for (FIN_FinaccTransaction finacctransaction : reconciliation.getFINFinaccTransactionList()) {
+          for (FIN_PaymentDetail pd : finacctransaction.getFinPayment().getFINPaymentDetailList()) {
+            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+              invoicePaidold = psd.isInvoicePaid();
+              if (!invoicePaidold) {
+                if ((FIN_Utility.invoicePaymentStatus(finacctransaction.getFinPayment()
+                    .getPaymentMethod(), reconciliation.getAccount(), finacctransaction
+                    .getFinPayment().isReceipt()).equals(finacctransaction.getFinPayment()
+                    .getStatus()))) {
+                  psd.setInvoicePaid(true);
+                }
+                if (psd.isInvoicePaid()) {
+                  FIN_Utility.updatePaymentAmounts(psd);
+                }
+              }
+            }
+          }
+          FIN_Utility.updateBusinessPartnerCredit(finacctransaction.getFinPayment());
+        }
+
         // ***********************
         // Reactivate Reconciliation
         // ***********************
@@ -135,6 +159,31 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
         reconciliation.setAprmProcessRec("P");
         OBDal.getInstance().save(reconciliation);
         OBDal.getInstance().flush();
+        Boolean invoicePaidold = false;
+
+        for (FIN_FinaccTransaction finacctransaction : reconciliation.getFINFinaccTransactionList()) {
+          for (FIN_PaymentDetail pd : finacctransaction.getFinPayment().getFINPaymentDetailList()) {
+            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+              invoicePaidold = psd.isInvoicePaid();
+              if (invoicePaidold) {
+                if (FIN_Utility.invoicePaymentStatus(
+                    finacctransaction.getFinPayment().getPaymentMethod(),
+                    reconciliation.getAccount(), finacctransaction.getFinPayment().isReceipt())
+                    .equals(finacctransaction.getFinPayment().getStatus())) {
+                  boolean restore = (FIN_Utility.seqnumberpaymentstatus(finacctransaction
+                      .getFinPayment().getStatus())) <= (FIN_Utility
+                      .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(finacctransaction
+                          .getFinPayment().getPaymentMethod(), reconciliation.getAccount(),
+                          finacctransaction.getFinPayment().isReceipt())));
+                  if (restore) {
+                    FIN_Utility.restorePaidAmounts(psd);
+                  }
+                }
+              }
+            }
+          }
+        }
+
       }
       reconciliation.setProcessNow(false);
       OBDal.getInstance().save(reconciliation);

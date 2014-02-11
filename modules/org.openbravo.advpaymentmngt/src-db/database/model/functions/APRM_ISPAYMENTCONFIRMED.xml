@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2011-2012 Openbravo SLU
+* All portions are Copyright (C) 2011-2013 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -28,30 +28,46 @@
   v_module   VARCHAR2(32);
   v_dbprefix   VARCHAR2(7);
   v_isPaymentConfirmed CHAR(1) := 'N';
+  v_isinvoicepaid CHAR(1):= 'N';
+  v_referencelist VARCHAR2(32):='575BCB88A4694C27BC013DE9C73E6FE7';
   TYPE RECORD IS REF CURSOR;
   Cur_Dbprefix RECORD;
-
+  v_invoicepaidstatus  VARCHAR2(32);
 BEGIN
   -- Check if the status exists
   SELECT count(*) INTO v_count FROM DUAL
   WHERE EXISTS (SELECT 1 FROM ad_ref_list
-                WHERE ad_reference_id = '575BCB88A4694C27BC013DE9C73E6FE7'
+                WHERE ad_reference_id = v_referencelist
                       AND value = status);
 
   IF (v_count = 0) THEN
     RETURN 'N';
   END IF;
-  IF (status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC')) THEN
-    -- core final statuses
-    v_isPaymentConfirmed := 'Y';
-  ELSIF (status IN ('RPAP', 'RPAE', 'RPVOID')) THEN
-    -- core intermediate statuses
-    v_isPaymentConfirmed := 'N';
-  ELSE
+  select isinvoicepaid 
+  into v_isinvoicepaid
+  from fin_payment_scheduledetail 
+  where fin_payment_scheduledetail_id=fin_payment_scheduledetail_id;
+  
+  IF ((fin_payment_scheduledetail_id <> '') AND (fin_payment_scheduledetail_id is not null))THEN
+    IF(v_isinvoicepaid='Y')THEN
+     -- core intermediate statuses
+      v_isPaymentConfirmed := 'Y';
+    ELSE
+     -- core intermediate statuses
+      v_isPaymentConfirmed := 'N';
+    END IF;
+  ELSE 
+    IF(status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC'))THEN
+     -- core intermediate statuses
+      v_isPaymentConfirmed := 'Y';
+    ELSIF (status IN ('RPAP', 'RPAE', 'RPVOID')) THEN
+     -- core intermediate statuses
+      v_isPaymentConfirmed := 'N'; 
+    ELSE
     -- statuses implemented by other module
     SELECT ad_module_id INTO v_module
     FROM ad_ref_list
-    WHERE ad_reference_id = '575BCB88A4694C27BC013DE9C73E6FE7'
+    WHERE ad_reference_id = v_referencelist
       AND value = status;
 
     -- if the module defines a merge can have several dbprefix
@@ -74,7 +90,7 @@ BEGIN
       END;
     END LOOP;
   END IF;
-
+  END IF;
   RETURN v_isPaymentConfirmed;
 
 EXCEPTION

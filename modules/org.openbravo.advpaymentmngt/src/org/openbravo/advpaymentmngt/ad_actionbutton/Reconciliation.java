@@ -55,6 +55,8 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -292,6 +294,23 @@ public class Reconciliation extends HttpSecureAppServlet {
             }
             // Changing dates for accounting entries as well
             TransactionsDao.updateAccountingDate(trans);
+          }
+          Boolean invoicePaidold = false;
+          for (FIN_PaymentDetail pd : finacctrxv.getPayment().getFINPaymentDetailList()) {
+            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+              invoicePaidold = psd.isInvoicePaid();
+              if (!invoicePaidold) {
+                if ((FIN_Utility.invoicePaymentStatus(finacctrxv.getPayment().getPaymentMethod(),
+                    reconciliation.getAccount(), finacctrxv.getPayment().isReceipt())
+                    .equals(finacctrxv.getPayment().getStatus()))) {
+                  psd.setInvoicePaid(true);
+                }
+                if (psd.isInvoicePaid()) {
+                  FIN_Utility.updatePaymentAmounts(psd);
+                }
+              }
+            }
+            FIN_Utility.updateBusinessPartnerCredit(finacctrxv.getPayment());
           }
         }
 
