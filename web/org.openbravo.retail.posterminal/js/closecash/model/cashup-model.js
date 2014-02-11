@@ -438,23 +438,19 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         cashUp.at(0).set('isbeingprocessed', 'Y');
         OB.Dal.save(cashUp.at(0), null, null);
         if (OB.MobileApp.model.get('connectedToERP')) {
-          OB.UTIL.initCashUp(function () {
-            OB.MobileApp.model.runSyncProcess(null, null, null, null);
+          OB.MobileApp.model.runSyncProcess(null, null, null, null);
+          OB.UTIL.showLoading(false);
+          me.set("finished", true);
+          if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
+            me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
+          }
+        } else {
+          OB.Dal.save(cashUp.at(0), function () {
             OB.UTIL.showLoading(false);
             me.set("finished", true);
             if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
               me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
             }
-          });
-        } else {
-          OB.Dal.save(cashUp.at(0), function () {
-            OB.UTIL.initCashUp(function () {
-              OB.UTIL.showLoading(false);
-              me.set("finished", true);
-              if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
-                me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
-              }
-            });
           }, null);
 
         }

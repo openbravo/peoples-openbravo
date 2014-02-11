@@ -37,10 +37,12 @@
                 errorCallback();
               }
             } else {
-              OB.UTIL.deleteCashUps(cashups.models);
-              if (successCallback) {
-                successCallback();
-              }
+              OB.UTIL.initCashUp(function () {
+                OB.UTIL.deleteCashUps(cashups.models);
+                if (successCallback) {
+                  successCallback();
+                }
+              });
             }
           }, null, null, 4000);
         }
