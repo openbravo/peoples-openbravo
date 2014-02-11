@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,7 +18,7 @@ enyo.kind({
     onButtonStatusChanged: 'buttonStatusChanged'
   },
   buttonStatusChanged: function (inSender, inEvent) {
-    var payment, amt, change, pending, isMultiOrders;
+    var payment, amt, change, pending, isMultiOrders, requiredCash = OB.DEC.Zero;
     if (!_.isUndefined(inEvent.value.payment)) {
       payment = inEvent.value.payment;
       isMultiOrders = this.model.isValidMultiOrderState();
@@ -32,13 +32,18 @@ enyo.kind({
 
       if (!_.isNull(change) && change) {
         this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+        requiredCash = change;
       } else if (!_.isNull(pending) && pending) {
         this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+        if (this.model.getTotal() < 0 && OB.POS.terminal.terminal.paymentnames[payment.payment.searchKey].paymentMethod.iscash) {
+          requiredCash = pending;
+        }
       }
+      this.checkEnoughCashAvailable(requiredCash);
     }
   },
   components: [{
-    style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
+    style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px; position: relative;',
     components: [{
       classes: 'row-fluid',
       components: [{
@@ -108,6 +113,10 @@ enyo.kind({
                 style: 'height: 36px'
               }),
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
+            }, {
+              style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
+              name: 'noenoughchangelbl',
+              showing: false
             }]
           }]
         }]
@@ -177,19 +186,29 @@ enyo.kind({
     var paymentstatus = this.receipt.getPaymentStatus();
     var symbol = '',
         rate = OB.DEC.One,
-        symbolAtRight = true;
+        symbolAtRight = true,
+        currentCash = OB.DEC.Zero,
+        hasEnoughChange = true,
+        isCashType = true;
     if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment])) {
       symbol = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].symbol;
       rate = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].mulrate;
       symbolAtRight = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].currencySymbolAtTheRight;
+      isCashType = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].paymentMethod.iscash;
     }
     if (paymentstatus.change) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
       this.$.change.show();
       this.$.changelbl.show();
+      this.checkEnoughCashAvailable(paymentstatus.change);
     } else {
       this.$.change.hide();
       this.$.changelbl.hide();
+      if (paymentstatus.isNegative && isCashType) {
+        this.checkEnoughCashAvailable(paymentstatus.pending);
+      } else {
+        this.checkEnoughCashAvailable(OB.DEC.Zero);
+      }
     }
     if (paymentstatus.overpayment) {
       this.$.overpayment.setContent(paymentstatus.overpayment);
@@ -276,6 +295,7 @@ enyo.kind({
     var symbol = '',
         symbolAtRight = true,
         rate = OB.DEC.One,
+        isCashType = true,
         selectedPayment;
     this.$.layawayaction.hide();
     if (paymentstatus.get('selectedPayment')) {
@@ -287,14 +307,21 @@ enyo.kind({
       symbol = selectedPayment.symbol;
       rate = selectedPayment.mulrate;
       symbolAtRight = selectedPayment.currencySymbolAtTheRight;
+      isCashType = selectedPayment.paymentMethod.iscash;
     }
     if (paymentstatus.get('change')) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
       this.$.change.show();
       this.$.changelbl.show();
+      this.checkEnoughCashAvailable(paymentstatus.get('change'));
     } else {
       this.$.change.hide();
       this.$.changelbl.hide();
+      if (OB.DEC.compare(paymentstatus.get('total')) < 0 && isCashType) {
+        this.checkEnoughCashAvailable(OB.DEC.mul(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate));
+      } else {
+        this.checkEnoughCashAvailable(OB.DEC.Zero);
+      }
     }
     //overpayment
     if (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) > 0) {
@@ -344,6 +371,35 @@ enyo.kind({
       this.$.donezerolbl.hide();
     }
   },
+
+  checkEnoughCashAvailable: function (requiredcash) {
+    var currentCash = OB.DEC.Zero,
+        selectedPayment, hasEnoughChange;
+    if (this.model.isValidMultiOrderState()) {
+      if (this.model.get('multiOrders').get('selectedPayment')) {
+        selectedPayment = OB.POS.terminal.terminal.paymentnames[this.model.get('multiOrders').get('selectedPayment')];
+      } else {
+        selectedPayment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
+      }
+    } else {
+      selectedPayment = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment];
+    }
+    if (selectedPayment && selectedPayment.paymentMethod.iscash) {
+      currentCash = selectedPayment.currentCash || OB.DEC.Zero;
+    }
+
+    hasEnoughChange = OB.DEC.compare(OB.DEC.sub(currentCash, requiredcash)) >= 0;
+    if (hasEnoughChange) {
+      this.$.noenoughchangelbl.hide();
+      this.$.payments.scrollAreaMaxHeight = '150px';
+      this.$.doneButton.setDisabled(false);
+    } else {
+      this.$.noenoughchangelbl.show();
+      this.$.payments.scrollAreaMaxHeight = '130px';
+      this.$.doneButton.setDisabled(true);
+    }
+  },
+
   initComponents: function () {
     this.inherited(arguments);
     this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
@@ -351,6 +407,7 @@ enyo.kind({
     this.$.overpaymentlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsOverpayment'));
     this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
     this.$.donezerolbl.setContent(OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero'));
+    this.$.noenoughchangelbl.setContent(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
   },
   init: function (model) {
     var me = this;
@@ -682,12 +739,13 @@ enyo.kind({
     this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
   },
   tap: function () {
-    var receipt = this.owner.receipt, negativeLines;
+    var receipt = this.owner.receipt,
+        negativeLines;
     if (receipt) {
       negativeLines = _.find(receipt.get('lines').models, function (line) {
         return line.get('gross') < 0;
       });
-      if (negativeLines){
+      if (negativeLines) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
         return true;
       }
