@@ -1130,7 +1130,11 @@
         qty: OB.DEC.number(units),
         price: OB.DEC.number(p.get('standardPrice')),
         priceList: OB.DEC.number(p.get('standardPrice')),
-        priceIncludesTax: this.get('priceIncludesTax')
+        priceIncludesTax: this.get('priceIncludesTax'),
+        warehouse: {
+          id: OB.POS.modelterminal.get('warehouses')[0].warehouseid,
+          warehousename: OB.POS.modelterminal.get('warehouses')[0].warehousename
+        }
       });
       if (!_.isUndefined(attrs)) {
         _.each(_.keys(attrs), function (key) {
@@ -1717,7 +1721,11 @@
                 price: price,
                 priceList: price,
                 promotions: iter.promotions,
-                priceIncludesTax: order.get('priceIncludesTax')
+                priceIncludesTax: order.get('priceIncludesTax'),
+                warehouse: {
+                  id: iter.warehouse,
+                  warehousename: iter.warehousename
+                }
               });
               newline.calculateGross();
               // add the created line
