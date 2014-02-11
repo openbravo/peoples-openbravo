@@ -377,7 +377,7 @@ enyo.kind({
     if (this.line) {
       this.line.on('change', this.render, this);
     }
-    if ((this.line.get('product').get('showstock') || this.line.get('product').get('_showstock')) && !this.line.get('product').get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
+    if (this.line && (this.line.get('product').get('showstock') || this.line.get('product').get('_showstock')) && !this.line.get('product').get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
       this.$.checkStockButton.show();
     } else {
       this.$.checkStockButton.hide();
