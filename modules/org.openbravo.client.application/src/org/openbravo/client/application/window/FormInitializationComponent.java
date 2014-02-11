@@ -986,8 +986,16 @@ public class FormInitializationComponent extends BaseActionHandler {
       columns.add(columnName.toUpperCase());
       String validation = getValidation(field);
       if (!validation.equals("")) {
-        columnsWithValidation.add(field.getColumn().getDBColumnName());
-        validations.put(field.getColumn().getDBColumnName(), validation);
+        String colName = null;
+        if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+          colName = "_propertyField_"
+              + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+              + field.getColumn().getDBColumnName();
+        } else {
+          colName = field.getColumn().getDBColumnName();
+        }
+        columnsWithValidation.add(colName);
+        validations.put(colName, validation);
       }
     }
     for (String column : columnsWithValidation) {
@@ -1076,6 +1084,11 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
         String colName = field.getColumn().getDBColumnName();
         if (colName.equalsIgnoreCase("documentno")) {
+          if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+            colName = "_propertyField_"
+                + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+                + field.getColumn().getDBColumnName();
+          }
           sortedColumns.add(colName);
         }
       }
