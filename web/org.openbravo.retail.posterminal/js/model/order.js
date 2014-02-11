@@ -1143,6 +1143,11 @@
       }
 
       newline.calculateGross();
+      
+      if (newline.get('product').get("showstock") === true){
+        newline.get('product').set("showstock", false);
+        newline.get('product').set("_showstock", true); 
+      }
 
       // add the created line
       this.get('lines').add(newline, options);
