@@ -816,6 +816,7 @@
           OB.MobileApp.model.hookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
             receipt: this,
             line: line,
+            allLines: this.get('lines'),
             p: p,
             qty: qty,
             options: options,
@@ -827,8 +828,6 @@
             if (args.line) {
               args.receipt.addUnit(args.line, args.qty);
               args.line.trigger('selected', args.line);
-            } else if (args.receipt.get('orderType') === 1) {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_AddProductReturn'));
             } else {
               args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
             }
@@ -1234,7 +1233,7 @@
         }
         this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
         if (orderType !== 3) { //Void this Layaway, do not need to save
-          if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)){
+          if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)) {
             this.save();
           }
         } else {
@@ -1244,7 +1243,7 @@
           this.get('payments').reset();
         }
         // remove promotions
-        if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)){
+        if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)) {
           OB.Model.Discounts.applyPromotions(this);
         }
       }

@@ -227,6 +227,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     };
 
+    final String[] cssDependency = { "pos-login" };
+
     for (String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource
           + ".js", POSUtils.APP_NAME));
@@ -234,6 +236,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
         + "components/errors.js", ComponentResource.APP_OB3));
+
+    for (String resource : cssDependency) {
+      globalResources.add(createComponentResource(ComponentResourceType.Stylesheet, prefix
+          + "../css/" + resource + ".css", POSUtils.APP_NAME));
+    }
 
     return globalResources;
   }

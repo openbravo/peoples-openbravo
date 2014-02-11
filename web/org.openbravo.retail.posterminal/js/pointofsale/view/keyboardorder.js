@@ -83,34 +83,40 @@ enyo.kind({
     var me = this;
 
     var actionAddProduct = function (keyboard, value) {
-        if (keyboard.receipt.get('isEditable') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
-          return true;
-        }
-        if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
-          return true;
-        }
-        if (keyboard.line) {
-          if ((_.isNaN(value) || value > 0) && keyboard.line.get('product').get('groupProduct') === false) {
-            me.doShowPopup({
-              popup: 'modalProductCannotBeGroup'
+        OB.MobileApp.model.hookManager.executeHooks('OBPOS_preChangeQtyFromKeyboard', {
+          keyboard: keyboard,
+          context: me,
+          value: value
+        }, function (args) {
+          if (args.cancelOperation) {
+            return;
+          }
+
+          args.keyboard.line.get('product').set('groupProduct', true);
+
+          if (args.keyboard.receipt.get('isEditable') === false) {
+            args.context.doShowPopup({
+              popup: 'modalNotEditableOrder'
             });
             return true;
           }
-          me.doAddProduct({
-            product: keyboard.line.get('product'),
-            qty: value,
-            options: {
-              line: keyboard.line
-            }
-          });
-          keyboard.receipt.trigger('scan');
-        }
+          if (args.keyboard.line && args.keyboard.line.get('product').get('isEditableQty') === false) {
+            args.context.doShowPopup({
+              popup: 'modalNotEditableLine'
+            });
+            return true;
+          }
+          if (args.keyboard.line) {
+            args.context.doAddProduct({
+              product: args.keyboard.line.get('product'),
+              qty: args.value,
+              options: {
+                line: args.keyboard.line
+              }
+            });
+            args.keyboard.receipt.trigger('scan');
+          }
+        });
         };
 
     var actionRemoveProduct = function (keyboard, value) {
@@ -242,7 +248,11 @@ enyo.kind({
     this.addCommand('+', {
       stateless: true,
       action: function (keyboard, txt) {
-        actionAddProduct(keyboard, OB.I18N.parseNumber(txt));
+        var qty = 1;
+        if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
+          qty = OB.I18N.parseNumber(txt);
+        }
+        actionAddProduct(keyboard, qty);
       }
     });
     this.addCommand('-', {

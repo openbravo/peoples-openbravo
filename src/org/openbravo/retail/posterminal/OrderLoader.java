@@ -572,6 +572,8 @@ public class OrderLoader extends JSONProcessSimple {
           ModelProvider.getInstance().getEntity(InvoiceLine.class), line, jsonorder,
           jsonorder.getLong("timezoneOffset"));
       line.setLineNo((long) ((i + 1) * 10));
+      line.setDescription(orderlines.getJSONObject(i).has("description") ? orderlines
+          .getJSONObject(i).getString("description") : "");
       line.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("net"))
           .setScale(stdPrecision, RoundingMode.HALF_UP));
       BigDecimal qty = lineReferences.get(i).getOrderedQuantity();
@@ -656,7 +658,11 @@ public class OrderLoader extends JSONProcessSimple {
       description = jsonorder.getString("Invoice.description");
     } else {
       // other case use generic description if present and add relationship to order
-      description = jsonorder.has("description") ? jsonorder.getString("description") + "\n" : "";
+      if (jsonorder.has("description") && !jsonorder.getString("description").equals("")) {
+        description = jsonorder.getString("description") + "\n";
+      } else {
+        description = "";
+      }
       description += OBMessageUtils.getI18NMessage("OBPOS_InvoiceRelatedToOrder", null)
           + jsonorder.getString("documentNo");
     }
