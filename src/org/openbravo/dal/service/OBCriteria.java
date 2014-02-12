@@ -38,7 +38,9 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.QueryTimeOutUtil;
 
 /**
  * This object is an implementation of the Hibernate Criteria interface. It adds transparent client
@@ -167,6 +169,10 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
       } else {
         addOrder(Order.desc(orderOn));
       }
+    }
+
+    if (SessionInfo.getQueryProfile() != null) {
+      QueryTimeOutUtil.getInstance().setQueryTimeOut(this, SessionInfo.getQueryProfile());
     }
   }
 
