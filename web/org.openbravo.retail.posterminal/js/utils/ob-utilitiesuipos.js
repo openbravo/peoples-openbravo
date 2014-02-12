@@ -32,3 +32,15 @@ OB.UTIL.getImageURL = function (id) {
   imageUrl += "/" + id;
   return imageUrl;
 };
+
+OB.UTIL.getNumberOfSequence = function (documentNo, isQuotation) {
+  if (!OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')) && !OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')).docNoPrefix) {
+    var posDocumentNoPrefix = OB.MobileApp.model.get('terminal').docNoPrefix;
+    if (isQuotation) {
+      posDocumentNoPrefix = OB.MobileApp.model.get('terminal').quotationDocNoPrefix;
+    }
+    return parseInt(documentNo.substr(posDocumentNoPrefix.length + 1), 10);
+  } else {
+    return null;
+  }
+};

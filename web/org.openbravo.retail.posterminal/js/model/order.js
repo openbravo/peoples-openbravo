@@ -1817,7 +1817,6 @@
     },
 
     addFirstOrder: function () {
-      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence') - 1);
       this.addNewOrder();
     },
 
