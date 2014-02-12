@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2014 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -87,6 +87,7 @@ public class Sqlc extends DefaultHandler {
   private static boolean queryWithOptionalParameterTypeArgument = false;
 
   static Logger log4j = Logger.getLogger(Sqlc.class); // log4j
+  private static boolean includeQueryTimeOut;
 
   private Sqlc() {
     init();
@@ -141,10 +142,17 @@ public class Sqlc extends DefaultHandler {
     // include only directories (and sub-directories under this one) with
     // this pattern, the packaging will be from this point, not from call
     // point
-    if (argv.length <= 4)
+    if (argv.length <= 4 || "null".equals(argv[4])) {
       includeDirectories = null;
-    else
+    } else {
       includeDirectories = getDirectories(argv[4]);
+    }
+
+    if (argv.length <= 5) {
+      includeQueryTimeOut = true;
+    } else {
+      includeQueryTimeOut = argv[5].equalsIgnoreCase("true");
+    }
 
     // the second parameter is the string-chain to make the filter
     // the file must end with this string-chain in order to be recognized
@@ -747,7 +755,9 @@ public class Sqlc extends DefaultHandler {
     out1.append("import org.openbravo.data.FieldProvider;\n");
     out1.append("import org.openbravo.database.ConnectionProvider;\n");
     out1.append("import org.openbravo.data.UtilSql;\n");
-    out1.append("import org.openbravo.service.db.QueryTimeOutUtil;\n");
+    if (includeQueryTimeOut) {
+      out1.append("import org.openbravo.service.db.QueryTimeOutUtil;\n");
+    }
     out1.append("import org.openbravo.database.SessionInfo;\n");
 
     if (sql.sqlImport != null) {
@@ -1028,12 +1038,14 @@ public class Sqlc extends DefaultHandler {
     boolean declareiParameter = false;
 
     StringBuilder queryTimeoutStr = new StringBuilder();
-    ;
-    queryTimeoutStr.append("      String profile = queryType;\n");
-    queryTimeoutStr.append("      if (profile == null || profile.isEmpty()) {\n");
-    queryTimeoutStr.append("        profile = SessionInfo.getQueryProfile();\n");
-    queryTimeoutStr.append("      }\n");
-    queryTimeoutStr.append("      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, profile);\n");
+    if (includeQueryTimeOut) {
+      queryTimeoutStr.append("      String profile = queryType;\n");
+      queryTimeoutStr.append("      if (profile == null || profile.isEmpty()) {\n");
+      queryTimeoutStr.append("        profile = SessionInfo.getQueryProfile();\n");
+      queryTimeoutStr.append("      }\n");
+      queryTimeoutStr
+          .append("      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, profile);\n");
+    }
     aux.append("    try {\n");
     if (sql.sqlType.equals("preparedStatement")) {
       aux.append("    st = connectionProvider.getPreparedStatement(");
