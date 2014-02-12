@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,10 +27,10 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT  ' ' AS PARTNER, ' ' AS PARTNERGROUP, ' ' AS PRODUCT, ' ' AS PRODCATEGORY, /*' ' AS USER1, ' ' AS USER2,*/ ' ' AS SALESREGION, ' ' AS CAMPAIGN, ' ' AS ACTIVITY, ' ' AS PROJECT, ' ' AS TRXORG, ' ' AS MONTH, ' ' AS VALIDCOMBINATION, ' ' AS ACCOUNTSCHEMA, '' AS CURRENCY, 0 AS QTY, 0 AS PRICE, ' ' AS AMOUNT, '' AS NAME, '' AS ID, '' AS DESCRIPTION, '' AS ACTUAL, ' ' AS PADRE, '' AS EXPORTACTUAL
+      SELECT  ' ' AS PARTNER, ' ' AS PARTNERGROUP, ' ' AS PRODUCT, ' ' AS PRODCATEGORY, ' ' AS USER1, ' ' AS USER2, ' ' AS COSTCENTER, ' ' AS SALESREGION, ' ' AS CAMPAIGN, ' ' AS ACTIVITY, ' ' AS PROJECT, ' ' AS TRXORG, ' ' AS MONTH, ' ' AS VALIDCOMBINATION, ' ' AS ACCOUNTSCHEMA, '' AS CURRENCY, 0 AS QTY, 0 AS PRICE, ' ' AS AMOUNT, '' AS NAME, '' AS ID, '' AS DESCRIPTION, '' AS ACTUAL, ' ' AS PADRE, '' AS EXPORTACTUAL
       FROM DUAL
      ]]></Sql>
-     <Parameter name="columns" optional="true" type="replace" after="SELECT  " text="' ' AS PARTNER, ' ' AS PARTNERGROUP, ' ' AS PRODUCT, ' ' AS PRODCATEGORY, /*' ' AS USER1, ' ' AS USER2,*/ ' ' AS SALESREGION, ' ' AS CAMPAIGN, ' ' AS ACTIVITY, ' ' AS PROJECT, ' ' AS TRXORG, ' ' AS MONTH, ' ' AS VALIDCOMBINATION, ' ' AS ACCOUNTSCHEMA, '' AS CURRENCY"/>
+     <Parameter name="columns" optional="true" type="replace" after="SELECT  " text="' ' AS PARTNER, ' ' AS PARTNERGROUP, ' ' AS PRODUCT, ' ' AS PRODCATEGORY, ' ' AS USER1, ' ' AS USER2, ' ' AS COSTCENTER, ' ' AS SALESREGION, ' ' AS CAMPAIGN, ' ' AS ACTIVITY, ' ' AS PROJECT, ' ' AS TRXORG, ' ' AS MONTH, ' ' AS VALIDCOMBINATION, ' ' AS ACCOUNTSCHEMA, '' AS CURRENCY"/>
      <Parameter name="tables" optional="true" type="replace" after=" DUAL" text="DUAL"/>
   </SqlMethod>
 
@@ -63,7 +63,10 @@
 		  CASE WHEN B.C_BPartner_ID IS NULL THEN ' '       ELSE AD_COLUMN_IDENTIFIER('C_BPARTNER', TO_CHAR(B.C_BPARTNER_ID), TO_CHAR(?)) END AS PARTNER ,    
 		  CASE WHEN C_BP_GROUP_ID IS NULL THEN ' '       ELSE AD_COLUMN_IDENTIFIER('C_BP_GROUP', TO_CHAR(C_BP_GROUP_ID), TO_CHAR(?)) END AS PARTNERGROUP,    
 		  CASE WHEN B.M_PRODUCT_ID IS NULL THEN ' '       ELSE AD_COLUMN_IDENTIFIER('M_PRODUCT', TO_CHAR(B.M_PRODUCT_ID), TO_CHAR(?)) END AS PRODUCT,    
-		  CASE WHEN M_PRODUCT_CATEGORY_ID IS NULL THEN ' '       ELSE AD_COLUMN_IDENTIFIER('M_PRODUCT_CATEGORY', TO_CHAR(M_PRODUCT_CATEGORY_ID), TO_CHAR(?)) END AS PRODCATEGORY,    
+		  CASE WHEN M_PRODUCT_CATEGORY_ID IS NULL THEN ' '       ELSE AD_COLUMN_IDENTIFIER('M_PRODUCT_CATEGORY', TO_CHAR(M_PRODUCT_CATEGORY_ID), TO_CHAR(?)) END AS PRODCATEGORY,
+		  CASE WHEN USER1_ID IS NULL THEN ' '       ELSE AD_COLUMN_IDENTIFIER('USER1', TO_CHAR(USER1_ID), TO_CHAR(?)) END AS USER1,
+		  CASE WHEN USER2_ID IS NULL THEN ' '       ELSE AD_COLUMN_IDENTIFIER('USER2', TO_CHAR(USER2_ID), TO_CHAR(?)) END AS USER2,
+		  CASE WHEN C_COSTCENTER_ID IS NULL THEN ' '       ELSE AD_COLUMN_IDENTIFIER('C_COSTCENTER', TO_CHAR(C_COSTCENTER_ID), TO_CHAR(?)) END AS COSTCENTER,
 		  CASE WHEN B.C_SALESREGION_ID IS NULL THEN ' '       ELSE AD_COLUMN_IDENTIFIER('C_SALESREGION', TO_CHAR(B.C_SALESREGION_ID), TO_CHAR(?)) END AS SALESREGION,    
 		  CASE WHEN B.C_CAMPAIGN_ID IS NULL THEN ' '       ELSE AD_COLUMN_IDENTIFIER('C_CAMPAIGN', TO_CHAR(B.C_CAMPAIGN_ID), TO_CHAR(?)) END AS CAMPAIGN,    
 		  CASE WHEN B.C_ACTIVITY_ID IS NULL THEN ' '       ELSE AD_COLUMN_IDENTIFIER('C_ACTIVITY', TO_CHAR(B.C_ACTIVITY_ID), TO_CHAR(?)) END AS ACTIVITY,    
@@ -84,35 +87,17 @@
               WHERE C_PERIOD.C_PERIOD_ID=B.C_PERIOD_ID)        ), TO_CHAR(?)      
             ) END AS MONTH,    
 		  C_BUDGET.EXPORTACTUAL,
-		  CASE WHEN C_BUDGET.EXPORTACTUAL = 'Y' THEN        (        
-		    SELECT CASE WHEN E.ACCOUNTSIGN='C' THEN SUM(AMTACCTCR-AMTACCTDR) ELSE SUM(AMTACCTDR-AMTACCTCR) END AS AMOUNT        
-		    FROM FACT_ACCT F, C_ELEMENTVALUE E        
-		    WHERE        
-		    COALESCE(B.C_ELEMENTVALUE_ID,'1')     = CASE WHEN B.C_ELEMENTVALUE_ID     IS NULL THEN '1' ELSE E.C_ELEMENTVALUE_ID     END AND          
-		    COALESCE(B.C_ELEMENTVALUE_ID,'1')     = CASE WHEN B.C_ELEMENTVALUE_ID     IS NULL THEN '1' ELSE F.ACCOUNT_ID            END AND          
-		    COALESCE(B.C_PERIOD_ID,'1')           = CASE WHEN B.C_PERIOD_ID           IS NULL THEN '1' ELSE F.C_PERIOD_ID           END AND          
-		    COALESCE(B.C_BPARTNER_ID,'1')         = CASE WHEN B.C_BPARTNER_ID         IS NULL THEN '1' ELSE F.C_BPARTNER_ID         END AND          
-		    COALESCE(B.M_PRODUCT_ID,'1')          = CASE WHEN B.M_PRODUCT_ID          IS NULL THEN '1' ELSE F.M_PRODUCT_ID          END AND          
-		    COALESCE(B.C_SALESREGION_ID,'1')      = CASE WHEN B.C_SALESREGION_ID      IS NULL THEN '1' ELSE F.C_SALESREGION_ID      END AND          
-		    COALESCE(B.C_CAMPAIGN_ID,'1')         = CASE WHEN B.C_CAMPAIGN_ID         IS NULL THEN '1' ELSE F.C_CAMPAIGN_ID         END AND          
-		    COALESCE(B.C_ACTIVITY_ID,'1')         = CASE WHEN B.C_ACTIVITY_ID         IS NULL THEN '1' ELSE F.C_ACTIVITY_ID         END AND          
-		    COALESCE(B.C_PROJECT_ID,'1')          = CASE WHEN B.C_PROJECT_ID          IS NULL THEN '1' ELSE F.C_PROJECT_ID          END AND          
-		    COALESCE(B.M_PRODUCT_CATEGORY_ID,'1') = CASE WHEN B.M_PRODUCT_CATEGORY_ID IS NULL THEN '1' ELSE (SELECT TO_CHAR(MAX(M_PRODUCT_CATEGORY_ID)) 
-		                                                                                                            FROM M_PRODUCT 
-		                                                                                                            WHERE M_PRODUCT_ID=F.M_PRODUCT_ID
-		                                                                                                            AND M_PRODUCT_ID IS NOT NULL)          END AND          
-		    COALESCE(B.C_BP_GROUP_ID,'1')         = CASE WHEN B.C_BP_GROUP_ID         IS NULL THEN '1' ELSE (SELECT TO_CHAR(MAX(C_BP_GROUP_ID)) 
-		                                                                                                            FROM C_BPARTNER 
-		                                                                                                            WHERE C_BPARTNER_ID=F.C_BPARTNER_ID
-		                                                                                                            AND C_BPARTNER_ID IS NOT NULL)          END AND 
-		    AD_ISORGINCLUDED(CASE WHEN B.AD_ORG_ID             IS NULL THEN '1' ELSE F.AD_ORG_ID             END,COALESCE(B.AD_ORG_ID,'1'), B.AD_CLIENT_ID) <> '-1'
-		    GROUP BY E.ACCOUNTSIGN        )        ELSE -1 END AS ACTUAL,         
+		  CASE WHEN C_BUDGET.EXPORTACTUAL = 'Y' THEN        
+		  B.ACTUALAMT ELSE -1 END  AS ACTUAL,         
 		  AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(B.C_ELEMENTVALUE_ID), TO_CHAR(?)) AS VALIDCOMBINATION,        
 		  AD_COLUMN_IDENTIFIER('C_ACCTSCHEMA', TO_CHAR(B.C_ACCTSCHEMA_ID), TO_CHAR(?)) AS ACCOUNTSCHEMA      
 		FROM    C_BUDGETLINE B, C_BUDGET      
 		WHERE   B.C_BUDGET_ID = C_BUDGET.C_BUDGET_ID                  
 		  AND B.C_BUDGET_ID = ?
      ]]></Sql>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
      <Parameter name="adLanguage"/>
      <Parameter name="adLanguage"/>
      <Parameter name="adLanguage"/>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -302,7 +302,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               continue;
             }
           }
-          if (!warehouseBelongsToOrg) {
+          String strIsSoTrx = vars.getSessionValue("isSOTrx");
+          if (!warehouseBelongsToOrg && ("Y").equals(strIsSoTrx)) {
             OrderLine ol = OBDal.getInstance().get(OrderLine.class, strOrderlineId);
             myMessage.setType("Error");
             myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));

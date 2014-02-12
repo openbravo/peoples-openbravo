@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -43,6 +43,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
+import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -1081,6 +1082,36 @@ public class FIN_Utility {
   }
 
   /**
+   * Returns a list of Payment Status. If isConfirmed equals true, then the status returned are
+   * confirmed payments. Else they are pending of execution
+   * 
+   */
+  private static List<String> getListPaymentConfirmedOrNot(Boolean isConfirmed,
+      FIN_PaymentScheduleDetail psd) {
+
+    List<String> listPaymentConfirmedOrNot = new ArrayList<String>();
+    OBContext.setAdminMode(true);
+    try {
+      final OBCriteria<org.openbravo.model.ad.domain.List> obCriteria = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.domain.List.class);
+      obCriteria.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id",
+          "575BCB88A4694C27BC013DE9C73E6FE7"));
+      List<org.openbravo.model.ad.domain.List> adRefList = obCriteria.list();
+      for (org.openbravo.model.ad.domain.List adRef : adRefList) {
+        if (isConfirmed.equals(isPaymentConfirmed(adRef.getSearchKey(), psd))) {
+          listPaymentConfirmedOrNot.add(adRef.getSearchKey());
+        }
+      }
+      return listPaymentConfirmedOrNot;
+    } catch (Exception e) {
+      log4j.error("Error building the payment confirmed list", e);
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
    * Returns a list confirmed Payment Status
    * 
    */
@@ -1089,11 +1120,27 @@ public class FIN_Utility {
   }
 
   /**
+   * Returns a list confirmed Payment Status
+   * 
+   */
+  public static List<String> getListPaymentConfirmed(FIN_PaymentScheduleDetail psd) {
+    return getListPaymentConfirmedOrNot(true, psd);
+  }
+
+  /**
    * Returns a list not confirmed Payment Status
    * 
    */
   public static List<String> getListPaymentNotConfirmed() {
     return getListPaymentConfirmedOrNot(false);
+  }
+
+  /**
+   * Returns a list not confirmed Payment Status
+   * 
+   */
+  public static List<String> getListPaymentNotConfirmed(FIN_PaymentScheduleDetail psd) {
+    return getListPaymentConfirmedOrNot(false, psd);
   }
 
   /**
@@ -1269,5 +1316,171 @@ public class FIN_Utility {
     final Query qry = session.createQuery(hql.toString());
 
     return ((Long) qry.list().get(0) > Long.parseLong("0"));
+  }
+
+  /**
+   * Returns the invoice payment status value configured in the payment method in the financial
+   * account for a payment
+   */
+  public static String invoicePaymentStatus(FIN_Payment payment) {
+    return invoicePaymentStatus(payment.getPaymentMethod(), payment.getAccount(),
+        payment.isReceipt());
+  }
+
+  /**
+   * Returns the invoice payment status value configured in the payment method in the financial
+   * account for a payment
+   */
+  public static String invoicePaymentStatus(FIN_PaymentMethod paymentMethod,
+      FIN_FinancialAccount financialAccount, boolean isReceipt) {
+    String status = null;
+    for (FinAccPaymentMethod finaccpaymentmethod : financialAccount
+        .getFinancialMgmtFinAccPaymentMethodList()) {
+      if (finaccpaymentmethod.getPaymentMethod().equals(paymentMethod)) {
+        if (isReceipt) {
+          status = finaccpaymentmethod.getPayinInvoicepaidstatus();
+        } else {
+          status = finaccpaymentmethod.getPayoutInvoicepaidstatus();
+        }
+      }
+    }
+    return status;
+  }
+
+  /**
+   * This function should only be called when it should update the payment amounts
+   */
+  public static void updatePaymentAmounts(FIN_PaymentScheduleDetail psd) {
+
+    if (psd.getInvoicePaymentSchedule() != null) {
+      BusinessPartner bPartner = psd.getInvoicePaymentSchedule().getInvoice().getBusinessPartner();
+      BigDecimal creditUsed = bPartner.getCreditUsed();
+      BigDecimal amountWithSign = psd.getInvoicePaymentSchedule().getInvoice().isSalesTransaction() ? psd
+          .getAmount() : psd.getAmount().negate();
+      creditUsed = creditUsed.subtract(amountWithSign);
+      bPartner.setCreditUsed(creditUsed);
+      OBDal.getInstance().save(bPartner);
+      FIN_AddPayment.updatePaymentScheduleAmounts(psd.getInvoicePaymentSchedule(), psd.getAmount(),
+          psd.getWriteoffAmount());
+    }
+    if (psd.getOrderPaymentSchedule() != null) {
+      FIN_AddPayment.updatePaymentScheduleAmounts(psd.getOrderPaymentSchedule(), psd.getAmount(),
+          psd.getWriteoffAmount());
+    }
+    if (psd.getPaymentDetails().isPrepayment() && psd.getOrderPaymentSchedule() == null
+        && psd.getInvoicePaymentSchedule() == null) {
+      // This PSD is credit
+      BusinessPartner bPartner = psd.getPaymentDetails().getFinPayment().getBusinessPartner();
+      BigDecimal creditUsed = bPartner.getCreditUsed();
+      BigDecimal amountWithSign = psd.getPaymentDetails().getFinPayment().isReceipt() ? psd
+          .getAmount() : psd.getAmount().negate();
+      creditUsed = creditUsed.subtract(amountWithSign);
+      bPartner.setCreditUsed(creditUsed);
+      OBDal.getInstance().save(bPartner);
+    }
+
+  }
+
+  public static void updateBusinessPartnerCredit(FIN_Payment payment) {
+    // When credit is used (consumed) we compensate so_creditused as this amount is already
+    // included in the payment details. Credit consumed should not affect to so_creditused
+    if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
+        && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
+      BusinessPartner bp = payment.getBusinessPartner();
+      if (payment.isReceipt()) {
+        bp.setCreditUsed(bp.getCreditUsed().add(payment.getUsedCredit()));
+      } else {
+        bp.setCreditUsed(bp.getCreditUsed().subtract(payment.getUsedCredit()));
+      }
+      OBDal.getInstance().save(bp);
+    }
+  }
+
+  /**
+   * Returns the secuence number of payment status in reference list
+   * 
+   * 
+   */
+  public static int seqnumberpaymentstatus(String status) {
+    List<Object> parameters = new ArrayList<Object>();
+    parameters.add(status);
+    int result = Integer.parseInt((String) CallStoredProcedure.getInstance().call(
+        "aprm_seqnumberpaymentstatus", parameters, null));
+
+    return result;
+  }
+
+  /**
+   * This function should only be called when it should update the payment amounts
+   */
+  public static void restorePaidAmounts(FIN_PaymentScheduleDetail paymentScheduleDetail) {
+
+    BigDecimal psdWriteoffAmount = paymentScheduleDetail.getWriteoffAmount();
+    BigDecimal psdAmount = paymentScheduleDetail.getAmount();
+    BigDecimal amount = psdAmount.add(psdWriteoffAmount);
+    BusinessPartner businessPartner = paymentScheduleDetail.getPaymentDetails().getFinPayment()
+        .getBusinessPartner();
+    if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
+
+      FIN_AddPayment.updatePaymentScheduleAmounts(
+          paymentScheduleDetail.getInvoicePaymentSchedule(), psdAmount.negate(),
+          psdWriteoffAmount.negate());
+      // BP SO_CreditUsed
+      businessPartner = paymentScheduleDetail.getInvoicePaymentSchedule().getInvoice()
+          .getBusinessPartner();
+      if (paymentScheduleDetail.getPaymentDetails().getFinPayment().isReceipt()) {
+        increaseCustomerCredit(businessPartner, amount);
+      } else {
+        decreaseCustomerCredit(businessPartner, amount);
+      }
+
+    }
+    if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
+      FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail.getOrderPaymentSchedule(),
+          psdAmount.negate(), psdWriteoffAmount.negate());
+    }
+    // when generating credit for a BP SO_CreditUsed is also updated
+    if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
+        && paymentScheduleDetail.getOrderPaymentSchedule() == null
+        && paymentScheduleDetail.getPaymentDetails().getGLItem() == null
+        && !paymentScheduleDetail.getPaymentDetails().isRefund()) {
+      // BP SO_CreditUsed
+      if (paymentScheduleDetail.getPaymentDetails().getFinPayment().isReceipt()) {
+        increaseCustomerCredit(businessPartner, amount);
+      } else {
+        decreaseCustomerCredit(businessPartner, amount);
+      }
+    }
+    paymentScheduleDetail.setInvoicePaid(false);
+    OBDal.getInstance().save(paymentScheduleDetail);
+
+  }
+
+  /**
+   * Method used to update the credit used when the user doing invoice processing or payment
+   * processing
+   * 
+   * @param amount
+   *          Payment amount
+   */
+  private static void updateCustomerCredit(BusinessPartner businessPartner, BigDecimal amount,
+      boolean add) {
+    BigDecimal creditUsed = businessPartner.getCreditUsed();
+    if (add) {
+      creditUsed = creditUsed.add(amount);
+    } else {
+      creditUsed = creditUsed.subtract(amount);
+    }
+    businessPartner.setCreditUsed(creditUsed);
+    OBDal.getInstance().save(businessPartner);
+    // OBDal.getInstance().flush();
+  }
+
+  private static void increaseCustomerCredit(BusinessPartner businessPartner, BigDecimal amount) {
+    updateCustomerCredit(businessPartner, amount, true);
+  }
+
+  private static void decreaseCustomerCredit(BusinessPartner businessPartner, BigDecimal amount) {
+    updateCustomerCredit(businessPartner, amount, false);
   }
 }

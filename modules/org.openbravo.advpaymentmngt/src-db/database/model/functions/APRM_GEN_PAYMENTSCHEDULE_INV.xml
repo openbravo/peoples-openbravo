@@ -81,6 +81,7 @@ v_description_first BOOLEAN := TRUE;
 v_finacct_currency VARCHAR2(32);
 v_rate NUMBER;
 v_PricePr NUMBER;
+v_isinvoicepaid CHAR(1):= 'N';
 v_IsCashVAT C_Invoice.IsCashVAT%TYPE;
 
 TYPE RECORD IS REF CURSOR;
@@ -89,6 +90,8 @@ cur_paymentschedule RECORD;
 cur_finaccpaymentmethod RECORD;
 cur_PaymentScheduleOrder RECORD;
 cur_linktopayment_scheddetails RECORD;
+cur_update_scheddetails RECORD;
+cur_invoicepaid RECORD;
 
 BEGIN
 
@@ -169,7 +172,8 @@ BEGIN
       END;
     END IF;
     -- END Extension Point
-
+    
+    
     DECLARE
       cur_payments RECORD;
       cur_order_schdet_ISOPEN BOOLEAN:=false;
@@ -203,7 +207,7 @@ BEGIN
              fin_payment_scheduledetail_id,
              fin_payment_scheduledetail.fin_payment_schedule_order,
              fin_payment_scheduledetail.fin_payment_detail_id,
-             CASE WHEN fin_payment.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC') THEN 'Y' ELSE 'N' END AS paid,
+             fin_payment_scheduledetail.isinvoicepaid AS paid,
              CASE WHEN fin_payment_scheduledetail.fin_payment_detail_id is not null THEN 0 ELSE 1 END AS priority
       FROM c_invoiceline, c_orderline, fin_payment_schedule,
         fin_payment_scheduledetail LEFT JOIN fin_payment_detail ON fin_payment_scheduledetail.fin_payment_detail_id = fin_payment_detail.fin_payment_detail_id
@@ -242,7 +246,7 @@ BEGIN
             
       --Insert Payment Schedules for Invoices
       v_pendingAmount := v_GrandTotal - coalesce(v_ConsumedGranTotal, 0);
-      
+
       IF (v_pendingAmount <> 0) THEN
 
         --get number of payment schedules expected for the invoice
@@ -353,7 +357,7 @@ BEGIN
               v_scheduledetailamount := v_differenceamount;
               v_scheduledetailid := v_new_scheduledetailid;
             END IF;
-
+            
             IF (order_schdet.order_id <> v_oldorder) THEN
               -- get invoiced amount for the order
               SELECT COALESCE(SUM(c_invoiceline.linenetamt+c_getinvoiceline_taxamount(c_invoiceline.c_invoiceline_id)),0) INTO v_invoicedamount
@@ -477,8 +481,25 @@ BEGIN
                   updatedby = p_user
               WHERE fin_payment_scheduledetail_id = v_scheduledetailid;
 
+               UPDATE FIN_PAYMENT_SCHEDULEDETAIL
+              SET isinvoicepaid=(select CASE WHEN fpsd.fin_payment_detail_id is null then 'N'
+                  WHEN ((aprm_seqnumberpaymentstatus(fp.status))>= (aprm_seqnumberpaymentstatus((CASE WHEN fp.isreceipt='Y' 
+                  THEN Payin_Invoicepaidstatus ELSE Payout_Invoicepaidstatus END)))) THEN 'Y' ELSE 'N' END
+                  from fin_payment_scheduledetail fpsd
+                  left join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+                  left join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
+                  left join fin_financial_account fa on fa.fin_financial_account_id=fp.fin_financial_account_id 
+                  left join FIN_FinAcc_PaymentMethod fpm on fpm.fin_financial_account_id=fp.fin_financial_account_id 
+                 and fpm.fin_paymentmethod_id=fp.fin_paymentmethod_id WHERE fin_payment_scheduledetail_id = v_scheduledetailid) 
+                 WHERE FIN_PAYMENT_SCHEDULEDETAIL_ID = v_scheduledetailid;
+              
               -- if paid, update paid and outstanding amount
-              IF (order_schdet.paid = 'Y') THEN
+              select isinvoicepaid 
+              into v_isinvoicepaid 
+              from fin_payment_scheduledetail
+              where fin_payment_scheduledetail_id = v_scheduledetailid;
+              
+              IF (v_isinvoicepaid = 'Y') THEN
                 UPDATE fin_payment_schedule
                 SET outstandingamt = outstandingamt - COALESCE(v_scheduledetailamount,0),
                     paidamt = paidamt + COALESCE(v_scheduledetailamount, 0)
@@ -543,7 +564,7 @@ BEGIN
         CLOSE cur_order_schdet;
       
       END IF;
-
+             
       -- Reading Data from FIN_PAYMENT_SCHEDULE
       SELECT COALESCE(sum(PAIDAMT),0) as PaidAmount, COALESCE(SUM(OUTSTANDINGAMT),0) as OutstandingAmount
         INTO v_PaidAmount,V_OutstandingAmount
@@ -725,8 +746,9 @@ BEGIN
                 'N', 'N', 'N', v_finpayment_desc,
                 v_Financial_Account_ID, v_PaymentDocType_ID, v_project_id, v_campaign_id, v_costcenter,
                 v_activity_id, v_user1, v_user2, 'N', 'N', 'N');
-              
+
               v_description_first := TRUE;
+              
               -- link to the new payment all the pending payment schedule details
               FOR cur_linktopayment_scheddetails IN (
                    SELECT FIN_PAYMENT_SCHEDULEDETAIL_ID, AMOUNT
@@ -792,6 +814,27 @@ BEGIN
                   EM_APRM_PROCESS_PAYMENT = 'R'
               WHERE FIN_PAYMENT_ID = v_FIN_PAYMENT_ID;
 
+                           FOR cur_update_scheddetails IN (
+                SELECT fin_payment_scheduledetail_id
+                FROM fin_payment_schedule ps
+                INNER JOIN fin_payment_scheduledetail psd 
+                ON ps.fin_payment_schedule_id = psd.fin_payment_schedule_invoice                                                    
+                WHERE ps.c_invoice_id =p_record_id
+              )
+              LOOP
+              UPDATE FIN_PAYMENT_SCHEDULEDETAIL
+              SET isinvoicepaid=(select CASE WHEN fpsd.fin_payment_detail_id is null then 'N'
+                  WHEN ((aprm_seqnumberpaymentstatus(fp.status))>= (aprm_seqnumberpaymentstatus((CASE WHEN fp.isreceipt='Y' 
+                  THEN Payin_Invoicepaidstatus ELSE Payout_Invoicepaidstatus END)))) THEN 'Y' ELSE 'N' END
+                  from fin_payment_scheduledetail fpsd
+                  left join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+                  left join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
+                  left join fin_financial_account fa on fa.fin_financial_account_id=fp.fin_financial_account_id 
+                  left join FIN_FinAcc_PaymentMethod fpm on fpm.fin_financial_account_id=fp.fin_financial_account_id 
+                 and fpm.fin_paymentmethod_id=fp.fin_paymentmethod_id WHERE fin_payment_scheduledetail_id = cur_update_scheddetails.fin_payment_scheduledetail_id) 
+                 WHERE FIN_PAYMENT_SCHEDULEDETAIL_ID = cur_update_scheddetails.fin_payment_scheduledetail_id;
+              END LOOP;
+
               -- Update payment schedule amounts and payment monitor in case that the payment is not left in awaiting
               -- execution status.
               FOR cur_PaymentScheduleOrder IN (
@@ -814,7 +857,8 @@ BEGIN
                     v_finpayment_desc:=v_finpayment_desc || ', ' || v_orderno;
                   END IF;
                 END IF;
-                IF (cur_finaccpaymentmethod.ExecutionType<>'A') THEN
+                
+                  IF (cur_finaccpaymentmethod.ExecutionType<>'A') THEN
                   UPDATE FIN_PAYMENT_SCHEDULE
                   SET PAIDAMT = (SELECT COALESCE(sum(amount + COALESCE(writeoffamt, 0)), 0)
                                  FROM fin_payment_scheduledetail
@@ -823,7 +867,8 @@ BEGIN
                                        exists (SELECT 1
                                                FROM fin_payment, fin_payment_detail
                                                WHERE fin_payment.fin_payment_id = fin_payment_detail.fin_payment_id
-                                                      and fin_payment.processed='Y' and fin_payment.status<>'RPAE'
+                                                      and fin_payment.processed='Y' 
+                                                      and fin_payment_scheduledetail.isinvoicepaid='Y'
                                                       and fin_payment_detail.fin_payment_detail_id = fin_payment_scheduledetail.fin_payment_detail_id)),
                       OUTSTANDINGAMT = (SELECT COALESCE(sum(amount), 0)
                                         FROM fin_payment_scheduledetail
@@ -832,8 +877,10 @@ BEGIN
                                        exists (SELECT 1
                                                FROM fin_payment, fin_payment_detail
                                                WHERE fin_payment.fin_payment_id = fin_payment_detail.fin_payment_id
-                                                      and fin_payment.processed='Y' and fin_payment.status = 'RPAE'
+                                                      and fin_payment.processed='Y' 
+                                                      and fin_payment_scheduledetail.isinvoicepaid='Y'
                                                       and fin_payment_detail.fin_payment_detail_id = fin_payment_scheduledetail.fin_payment_detail_id)))
+
                   WHERE FIN_PAYMENT_SCHEDULE_ID = cur_PaymentScheduleOrder.FIN_PAYMENT_SCHEDULE_ORDER;
                 END IF;
               END LOOP;
@@ -842,7 +889,17 @@ BEGIN
               END IF;
               UPDATE FIN_PAYMENT SET DESCRIPTION = v_finpayment_desc
                 WHERE FIN_PAYMENT_ID = v_FIN_PAYMENT_ID;
-              IF (cur_finaccpaymentmethod.ExecutionType<>'A') THEN  
+
+              FOR cur_invoicepaid IN (
+                select isinvoicepaid from fin_payment_scheduledetail fpsd
+               left join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+               left join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
+               left join fin_payment_schedule ps ON ps.fin_payment_schedule_id = fpsd.fin_payment_schedule_invoice
+                 WHERE ps.c_invoice_id =p_record_id
+              )
+             LOOP
+
+              IF ((cur_finaccpaymentmethod.ExecutionType<>'A') AND (cur_invoicepaid.isinvoicepaid='Y')) THEN 
                 UPDATE FIN_PAYMENT_SCHEDULE
                 SET PAIDAMT = PAIDAMT + COALESCE(cur_paymentschedule.OUTSTANDINGAMT,0),
                     OUTSTANDINGAMT = OUTSTANDINGAMT - COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0)
@@ -870,7 +927,7 @@ BEGIN
                 SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - (COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0) * v_creditmultiplier)
                 WHERE C_BPARTNER_ID = v_BPartner_ID;
               END IF;
-
+            END LOOP;
               -- Automatic creation of financial transaction
               IF(cur_finaccpaymentmethod.CreateFinTransaction = 'Y' AND cur_finaccpaymentmethod.ExecutionType = 'M') THEN
                 v_ResultStr:='Generating FIN_FINACC_TRANSACTION';

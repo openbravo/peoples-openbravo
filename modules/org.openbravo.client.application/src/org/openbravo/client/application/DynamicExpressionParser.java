@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.KernelUtils;
@@ -312,7 +313,11 @@ public class DynamicExpressionParser {
           parametersInExpression.add(parameter);
           UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
               parameter.getReference());
-
+          if (uiDef.getDomainType() instanceof DateDomainType) {
+            return new DisplayLogicElement(
+                "OB.Utilities.Date.JSToOB(OB.Utilities.getValue(currentValues,'" + token
+                    + "'),OB.Format.date)", uiDef instanceof YesNoUIDefinition);
+          }
           return new DisplayLogicElement("OB.Utilities.getValue(currentValues,'" + token + "')",
               uiDef instanceof YesNoUIDefinition);
         }
@@ -340,6 +345,11 @@ public class DynamicExpressionParser {
 
           UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
               field.getColumn().getId());
+          if (uiDef.getDomainType() instanceof DateDomainType) {
+            return new DisplayLogicElement(
+                "OB.Utilities.Date.JSToOB(OB.Utilities.getValue(currentValues,'" + fieldName
+                    + "'),OB.Format.date)", uiDef instanceof YesNoUIDefinition);
+          }
 
           return new DisplayLogicElement(
               "OB.Utilities.getValue(currentValues,'" + fieldName + "')",

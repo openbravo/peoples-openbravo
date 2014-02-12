@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -824,6 +824,10 @@ public class ComboTableData {
     canBeCached = uiref.canBeCached();
   }
 
+  private String getQuery(boolean onlyId, String[] discard) {
+    return getQuery(onlyId, discard, null);
+  }
+
   /**
    * Returns the generated query.
    * 
@@ -833,7 +837,7 @@ public class ComboTableData {
    *          Array of field groups to remove from the query.
    * @return String with the query.
    */
-  private String getQuery(boolean onlyId, String[] discard) {
+  private String getQuery(boolean onlyId, String[] discard, String recordId) {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = getSelectFields();
     String idName = "";
@@ -906,8 +910,12 @@ public class ComboTableData {
           txtAux.append(auxStructure.toString()).append(" \n");
         }
       }
-      if (hasWhere)
+      if (hasWhere) {
+        if (recordId != null) {
+          txtAux.append(" AND " + idName + "=(?) ");
+        }
         text.append("WHERE ").append(txtAux.toString());
+      }
     }
 
     if (!onlyId) {
@@ -954,6 +962,11 @@ public class ComboTableData {
     return false;
   }
 
+  private int setSQLParameters(PreparedStatement st, Map<String, String> lparameters,
+      int iParameter, String[] discard) {
+    return setSQLParameters(st, lparameters, iParameter, discard, null);
+  }
+
   /**
    * Fills the query parameter's values.
    * 
@@ -966,7 +979,7 @@ public class ComboTableData {
    * @return Integer with the next parameter's index.
    */
   private int setSQLParameters(PreparedStatement st, Map<String, String> lparameters,
-      int iParameter, String[] discard) {
+      int iParameter, String[] discard, String recordId) {
     Vector<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
@@ -1006,6 +1019,9 @@ public class ComboTableData {
         }
       }
     }
+    if (recordId != null) {
+      UtilSql.setValue(st, ++iParameter, 12, null, recordId);
+    }
     vAux = getOrderByParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
@@ -1037,6 +1053,57 @@ public class ComboTableData {
 
   public FieldProvider[] select(ConnectionProvider conn, Map<String, String> lparameters,
       boolean includeActual) throws Exception {
+    String actual = lparameters != null ? lparameters.get("@ACTUAL_VALUE@")
+        : getParameter("@ACTUAL_VALUE@");
+    if (lparameters != null && lparameters.containsKey("@ONLY_ONE_RECORD@")
+        && !lparameters.get("@ONLY_ONE_RECORD@").isEmpty()) {
+      String strSqlSingleRecord = getQuery(false, null, lparameters.get("@ONLY_ONE_RECORD@"));
+      PreparedStatement stSingleRecord = conn.getPreparedStatement(strSqlSingleRecord);
+      try {
+        ResultSet result;
+        int iParameter = 0;
+        iParameter = setSQLParameters(stSingleRecord, lparameters, iParameter, null,
+            lparameters.get("@ONLY_ONE_RECORD@"));
+        result = stSingleRecord.executeQuery();
+        if (result.next()) {
+          SQLReturnObject sqlReturnObject = new SQLReturnObject();
+          sqlReturnObject.setData("ID", UtilSql.getValue(result, "ID"));
+          sqlReturnObject.setData("NAME", UtilSql.getValue(result, "NAME"));
+          sqlReturnObject.setData("DESCRIPTION", UtilSql.getValue(result, "DESCRIPTION"));
+          Vector<Object> vector = new Vector<Object>(0);
+          vector.add(sqlReturnObject);
+          FieldProvider objectListData[] = new FieldProvider[vector.size()];
+          vector.copyInto(objectListData);
+          return (objectListData);
+        }
+
+        if (includeActual && actual != null && !actual.equals("")) {
+          String[] discard = { "filter", "orderBy", "CLIENT_LIST", "ORG_LIST" };
+          String strSqlDisc = getQuery(true, discard);
+          PreparedStatement stInactive = conn.getPreparedStatement(strSqlDisc);
+          iParameter = setSQLParameters(stInactive, lparameters, 0, discard);
+          UtilSql.setValue(stInactive, ++iParameter, 12, null, actual);
+          ResultSet resultIn = stInactive.executeQuery();
+          while (resultIn.next()) {
+            SQLReturnObject sqlReturnObject = new SQLReturnObject();
+            sqlReturnObject.setData("ID", UtilSql.getValue(resultIn, "ID"));
+            String strName = UtilSql.getValue(resultIn, "NAME");
+            if (!strName.startsWith(INACTIVE_DATA))
+              strName = INACTIVE_DATA + strName;
+            sqlReturnObject.setData("NAME", strName);
+            Vector<Object> vector = new Vector<Object>(0);
+            vector.add(sqlReturnObject);
+            FieldProvider objectListData[] = new FieldProvider[vector.size()];
+            vector.copyInto(objectListData);
+            return (objectListData);
+          }
+
+        }
+      } finally {
+        conn.releasePreparedStatement(stSingleRecord);
+      }
+
+    }
     String strSql = getQuery(false, null);
     if (log4j.isDebugEnabled())
       log4j.debug("SQL: " + strSql);
@@ -1048,8 +1115,6 @@ public class ComboTableData {
       int iParameter = 0;
       iParameter = setSQLParameters(st, lparameters, iParameter, null);
       boolean idFound = false;
-      String actual = lparameters != null ? lparameters.get("@ACTUAL_VALUE@")
-          : getParameter("@ACTUAL_VALUE@");
       result = st.executeQuery();
       while (result.next()) {
         SQLReturnObject sqlReturnObject = new SQLReturnObject();
@@ -1062,10 +1127,16 @@ public class ComboTableData {
               vector.addElement(sqlReturnObject);
               idFound = true;
             }
-          } else
+          } else {
             vector.addElement(sqlReturnObject);
+          }
         } else
           vector.addElement(sqlReturnObject);
+        if (lparameters != null && lparameters.containsKey("#ONLY_ONE_RECORD#")) {
+          FieldProvider objectListData[] = new FieldProvider[vector.size()];
+          vector.copyInto(objectListData);
+          return (objectListData);
+        }
       }
       result.close();
 

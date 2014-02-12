@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -545,6 +545,18 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   }
 
+  private boolean isNotActiveOrVisible(Field field, List<String> visibleProperties) {
+    return ((visibleProperties == null || !visibleProperties.contains("inp"
+        + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName())))
+        && !field.isDisplayed() && !field.isShowInGridView() && !field.isShownInStatusBar())
+        || !field.isActive();
+  }
+
+  private boolean isNotActiveOrVisibleAndNotNeeded(Field field, List<String> visibleProperties) {
+    return isNotActiveOrVisible(field, visibleProperties)
+        && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory();
+  }
+
   private void computeColumnValues(String mode, Tab tab, List<String> allColumns,
       Map<String, JSONObject> columnValues, BaseOBObject parentRecord, String parentId,
       String changedColumn, JSONObject jsContent, List<String> changeEventCols,
@@ -554,6 +566,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     if (mode.equals("CHANGE") && changedColumn != null) {
       RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
     }
+    log.debug("computeColumnValues - forceComboReload: " + forceComboReload);
     HashMap<String, Field> columnsOfFields = new HashMap<String, Field>();
     for (Field field : getADFieldList(tab.getId())) {
       if (field.getColumn() == null) {
@@ -595,17 +608,20 @@ public class FormInitializationComponent extends BaseActionHandler {
             value = uiDef.getFieldProperties(field, true);
           } else {
             // Else, the default is used
-            if (visibleProperties != null
-                && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))
-                && !field.isDisplayed() && !field.isShowInGridView() && !field.isShownInStatusBar()
-                && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory()) {
+            if (isNotActiveOrVisibleAndNotNeeded(field, visibleProperties)) {
               // If the column is not currently visible, and its not mandatory, we don't need to
               // compute the combo.
               // If a column is mandatory then the combo needs to be computed, because the selected
               // value can depend on the computation if there is no default value
+              log.debug("Not calculating combo in " + mode + " mode for column " + col);
               value = uiDef.getFieldPropertiesWithoutCombo(field, false);
             } else {
-              value = uiDef.getFieldProperties(field, false);
+              if (isNotActiveOrVisible(field, visibleProperties)) {
+                log.debug("Only first combo record in " + mode + " mode for column " + col);
+                value = uiDef.getFieldPropertiesFirstRecord(field, false);
+              } else {
+                value = uiDef.getFieldProperties(field, false);
+              }
             }
           }
         } else if (mode.equals("EDIT")
@@ -614,17 +630,41 @@ public class FormInitializationComponent extends BaseActionHandler {
           // On EDIT mode, the values are computed through the UIDefinition (the values have been
           // previously set in the RequestContext)
           // This is also done this way on CHANGE mode where a combo reload is needed
-          if (visibleProperties != null
-              && !visibleProperties.contains("inp" + Sqlc.TransformaNombreColumna(col))
-              && !field.isDisplayed() && !field.isShowInGridView() && !field.isShownInStatusBar()
-              && field.getColumn().getDefaultValue() == null && !field.getColumn().isMandatory()) {
+          if (isNotActiveOrVisibleAndNotNeeded(field, visibleProperties)) {
             // If the column is not currently visible, and its not mandatory, we don't need to
             // compute the combo.
             // If a column is mandatory then the combo needs to be computed, because the selected
             // value can depend on the computation if there is no default value
+            log.debug("field: "
+                + field
+                + " - getFieldPropertiesWithoutCombo: hasVisibleProperties: "
+                + (visibleProperties != null)
+                + ", &contains: "
+                + (visibleProperties != null && visibleProperties.contains("inp"
+                    + Sqlc.TransformaNombreColumna(col))) + ", isDisplayed=" + field.isDisplayed()
+                + ", isShowInGridView=" + field.isShowInGridView() + ", isShownInStatusBar="
+                + field.isShowInGridView() + ", hasDefaultValue="
+                + (field.getColumn().getDefaultValue() != null) + ", isMandatory="
+                + field.getColumn().isMandatory());
             uiDef.getFieldPropertiesWithoutCombo(field, true);
           } else {
-            value = uiDef.getFieldProperties(field, true);
+            log.debug("field: "
+                + field
+                + " - getFieldProperties: hasVisibleProperties: "
+                + (visibleProperties != null)
+                + ", &contains: "
+                + (visibleProperties != null && visibleProperties.contains("inp"
+                    + Sqlc.TransformaNombreColumna(col))) + ", isDisplayed=" + field.isDisplayed()
+                + ", isShowInGridView=" + field.isShowInGridView() + ", isShownInStatusBar="
+                + field.isShowInGridView() + ", hasDefaultValue="
+                + (field.getColumn().getDefaultValue() != null) + ", isMandatory="
+                + field.getColumn().isMandatory());
+            if (isNotActiveOrVisible(field, visibleProperties)) {
+              log.debug("Only first combo record in " + mode + " mode for column " + col);
+              value = uiDef.getFieldPropertiesFirstRecord(field, true);
+            } else {
+              value = uiDef.getFieldProperties(field, true);
+            }
           }
         } else if (mode.equals("CHANGE") || mode.equals("SETSESSION")) {
           // On CHANGE and SETSESSION mode, the values are read from the request
@@ -986,8 +1026,16 @@ public class FormInitializationComponent extends BaseActionHandler {
       columns.add(columnName.toUpperCase());
       String validation = getValidation(field);
       if (!validation.equals("")) {
-        columnsWithValidation.add(field.getColumn().getDBColumnName());
-        validations.put(field.getColumn().getDBColumnName(), validation);
+        String colName = null;
+        if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+          colName = "_propertyField_"
+              + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+              + field.getColumn().getDBColumnName();
+        } else {
+          colName = field.getColumn().getDBColumnName();
+        }
+        columnsWithValidation.add(colName);
+        validations.put(colName, validation);
       }
     }
     for (String column : columnsWithValidation) {
@@ -1076,6 +1124,11 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
         String colName = field.getColumn().getDBColumnName();
         if (colName.equalsIgnoreCase("documentno")) {
+          if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+            colName = "_propertyField_"
+                + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+                + field.getColumn().getDBColumnName();
+          }
           sortedColumns.add(colName);
         }
       }

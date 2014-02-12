@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -1208,10 +1208,8 @@ public class FIN_AddPayment {
       Date paymentDueDate = paymentSchedule.getDueDate();
       for (FIN_PaymentScheduleDetail psd : paymentSchedule
           .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-        if (!psd.isCanceled()
-            && psd.getPaymentDetails() != null
-            && (FIN_Utility.isPaymentConfirmed(psd.getPaymentDetails().getFinPayment().getStatus(),
-                psd) || currentPSD.getId().equals(psd.getId()))) {
+        if (!psd.isCanceled() && psd.getPaymentDetails() != null
+            && (psd.isInvoicePaid() || currentPSD.getId().equals(psd.getId()))) {
           Date paymentDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
           if (paymentDate.after(paymentDueDate)) {
             overdueOriginal = overdueOriginal.add(psd.getAmount());

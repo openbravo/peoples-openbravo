@@ -307,6 +307,7 @@ isc.OBStandardView.addProperties({
     if (personalizationData && personalizationData.form) {
       OB.Personalization.personalizeForm(personalizationData, this.viewForm);
     }
+    this.setMaximizeRestoreButtonState();
 
   },
 
@@ -1382,13 +1383,18 @@ isc.OBStandardView.addProperties({
         // Calling getContextInfo with (false, true, true) in order to obtain also the value of the
         // session attributes of the form
         contextInfo = this.getContextInfo(false, true, true);
-        isc.addProperties(contextInfo, tabViewPane.sessionAttributes);
+        this.addSessionAttributes(contextInfo, tabViewPane);
         if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(contextInfo))) {
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
         } else {
           if (this.childTabSet.visibility === 'hidden') {
             this.childTabSet.show();
+            if (tabViewPane.showTabIf && !tabViewPane.data && !tabViewPane.refreshingData && tabViewPane.isVisible()) {
+                // If the child tab does not have data yet, refresh it
+                tabViewPane.refreshingData = true;
+                tabViewPane.refresh();
+              }
           }
           this.childTabSet.tabBar.members[i].show();
           tabViewPane.hidden = false;
@@ -1416,6 +1422,21 @@ isc.OBStandardView.addProperties({
         } else {
           this.childTabSet.hide();
         }
+      }
+    }
+  },
+
+  // Adds to contextInfo the session attributes of the childView, 
+  // unless the session attribute is an auxiliary input of its parent tab
+  addSessionAttributes: function (contextInfo, childView) {
+    var auxInputs = {},
+        p;
+    if (this.viewForm && this.viewForm.auxInputs) {
+      auxInputs = this.viewForm.auxInputs;
+    }
+    for (p in childView.sessionAttributes) {
+      if (childView.sessionAttributes.hasOwnProperty(p) && !auxInputs.hasOwnProperty(p)) {
+        contextInfo[p] = childView.sessionAttributes[p];
       }
     }
   },

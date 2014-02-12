@@ -50,6 +50,7 @@ import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.dal.xml.ModelXMLConverter;
 import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.dal.xml.XMLUtil;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 import org.openbravo.service.web.InvalidContentException;
@@ -150,6 +151,7 @@ public class DalWebService implements WebService {
           whereOrderByClause += " order by " + orderBy;
         }
 
+        SessionInfo.setQueryProfile("xmlWebService");
         final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
             whereOrderByClause);
 

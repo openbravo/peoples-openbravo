@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -140,8 +140,8 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
             BigDecimal estimatedTime = BigDecimal.ZERO;
             if (wrOp.getEstimatedTime() != null && wrOp.getQuantity() != null
                 && wrOp.getQuantity().compareTo(BigDecimal.ZERO) != 0) {
-              estimatedTime = wrOp.getEstimatedTime().divide(wrOp.getQuantity())
-                  .multiply(requeriedQty);
+              estimatedTime = wrOp.getEstimatedTime()
+                  .divide(wrOp.getQuantity(), BigDecimal.ROUND_HALF_UP).multiply(requeriedQty);
             }
             productionPlan.setEstimatedTime(new BigDecimal(estimatedTime.longValue()));
           } else {
