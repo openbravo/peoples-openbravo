@@ -1388,13 +1388,13 @@ isc.OBStandardView.addProperties({
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
         } else {
-          if (!tabViewPane.data && !tabViewPane.refreshingData) {
+          if (this.childTabSet.visibility === 'hidden') {
+            this.childTabSet.show();
+          }
+          if (tabViewPane.showTabIf && !tabViewPane.data && !tabViewPane.refreshingData && tabViewPane.isVisible()) {
             // If the child tab does not have data yet, refresh it
             tabViewPane.refreshingData = true;
             tabViewPane.refresh();
-          }
-          if (this.childTabSet.visibility === 'hidden') {
-            this.childTabSet.show();
           }
           this.childTabSet.tabBar.members[i].show();
           tabViewPane.hidden = false;
