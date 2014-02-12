@@ -19,7 +19,7 @@ enyo.kind({
   classes: 'btnlink-green',
   style: 'min-width: 200px; margin: 2px 5px 2px 5px;',
   tap: function () {
-    if (this.model.get('order').get('isEditable') && this.leftSubWindow.line) {
+    if ((this.leftSubWindow && this.leftSubWindow.line) || !OB.MobileApp.model.get('permissions').OBPOS_warehouseselectionforline || !this.model.get('order').get('isEditable')) {
       this.doOpenLocalStockModal();
     } else {
       this.doOpenLocalStockClickableModal();
