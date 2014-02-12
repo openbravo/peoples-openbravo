@@ -1535,6 +1535,8 @@ isc.OBViewGrid.addProperties({
       this.selectionUpdated();
     }
 
+    delete this.view.refreshingData;
+
     // no data and the grid is not visible, only do this is if the 
     // form is not in new mode
     if (this.data && this.data.getLength() === 0 && !this.isVisible() && !this.view.viewForm.isNew) {
