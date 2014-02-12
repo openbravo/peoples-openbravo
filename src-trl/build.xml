@@ -57,7 +57,7 @@ doc: generates the api for the project.
 
   <target name="sqlc" depends="init">
     <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties .xsql ./src '${build.trl.sqlc}'"/>
+      <arg line="'${base.config}'/Openbravo.properties .xsql ./src '${build.trl.sqlc}' null false"/>
       <classpath refid="trl.class.path"/>
       <syspropertyset>
         <propertyref name="java.security.egd" />
