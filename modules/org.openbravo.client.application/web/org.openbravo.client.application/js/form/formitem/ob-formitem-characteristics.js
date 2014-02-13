@@ -337,7 +337,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
 
       setDataSource: function (ds, fields) {
         var treeField;
-        if (fields === null || fields.length === 0) {
+        if (!fields || fields.length === 0) {
           treeField = isc.shallowClone(isc.TreeGrid.TREE_FIELD);
           treeField.escapeHTML = true;
           fields = [treeField];
