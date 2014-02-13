@@ -431,19 +431,17 @@
     getMaxDocumentSequenceFromPendingOrders: function (pendingOrders) {
       var nPreviousOrders = pendingOrders.length,
           maxDocumentSequence = OB.MobileApp.model.get('terminal').lastDocumentNumber,
-          posDocumentNoPrefix = OB.MobileApp.model.get('terminal').docNoPrefix,
           maxQuotationDocumentSequence = OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber,
-          posQuotationDocumentNoPrefix = OB.MobileApp.model.get('terminal').quotationDocNoPrefix,
           orderCompleteDocumentNo, orderDocumentSequence, i;
       for (i = 0; i < nPreviousOrders; i++) {
         orderCompleteDocumentNo = pendingOrders[i].get('documentNo');
         if (!pendingOrders[i].get('isQuotation')) {
-          orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posDocumentNoPrefix.length + 1), 10) + 1;
+          orderDocumentSequence = OB.UTIL.getNumberOfSequence(pendingOrders[i].get('documentNo'), false);
           if (orderDocumentSequence > maxDocumentSequence) {
             maxDocumentSequence = orderDocumentSequence;
           }
         } else {
-          orderDocumentSequence = parseInt(orderCompleteDocumentNo.substr(posQuotationDocumentNoPrefix.length + 1) + 1, 10);
+          orderDocumentSequence = OB.UTIL.getNumberOfSequence(pendingOrders[i].get('documentNo'), true);
           if (orderDocumentSequence > maxQuotationDocumentSequence) {
             maxQuotationDocumentSequence = orderDocumentSequence;
           }

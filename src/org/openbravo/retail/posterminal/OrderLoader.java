@@ -808,6 +808,11 @@ public class OrderLoader extends JSONProcessSimple {
             parameters.put("M_Warehouse_Rule_ID",
                 (String) DalUtil.getId(orderLine.get("warehouseRule")));
           }
+          if (orderLine.getEntity().hasProperty("warehouse")
+              && orderLine.get("warehouse") != null) {
+            parameters.put("Priority_Warehouse_ID",
+                (String) DalUtil.getId(orderLine.get("warehouse")));
+          }
 
           ProcessInstance pInstance = CallProcess.getInstance().callProcess(process, null,
               parameters);

@@ -72,6 +72,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/js/";
+    final String cssPrefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/css/";
 
     final String[] resourceDependency = {
         "login/model/login-model",
@@ -188,6 +189,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/subwindows/customeraddress/customeraddrdetailview",
         // Point of sale modals
         "pointofsale/view/modals/modalstockinstore",
+        "pointofsale/view/modals/modalstockinstoreclickable",
         "pointofsale/view/modals/modalstockinotherstore",
         "pointofsale/view/modals/modalproductcannotbegroup",
         "pointofsale/view/modals/modalwarehousesrequired",
@@ -227,7 +229,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     };
 
-    final String[] cssDependency = { "pos-login" };
+    final String[] cssDependency = { "pos-login", "obpos-main" };
 
     for (String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource

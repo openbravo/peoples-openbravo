@@ -1131,7 +1131,11 @@
         qty: OB.DEC.number(units),
         price: OB.DEC.number(p.get('standardPrice')),
         priceList: OB.DEC.number(p.get('standardPrice')),
-        priceIncludesTax: this.get('priceIncludesTax')
+        priceIncludesTax: this.get('priceIncludesTax'),
+        warehouse: {
+          id: OB.POS.modelterminal.get('warehouses')[0].warehouseid,
+          warehousename: OB.POS.modelterminal.get('warehouses')[0].warehousename
+        }
       });
       if (!_.isUndefined(attrs)) {
         _.each(_.keys(attrs), function (key) {
@@ -1140,6 +1144,15 @@
       }
 
       newline.calculateGross();
+      
+      //issue 25655: ungroup feature is just needed when the line is created. Then lines work as grouped lines.
+      newline.get('product').set("groupProduct", true);
+
+      //issue 25448: Show stock screen is just shown when a new line is created.
+      if (newline.get('product').get("showstock") === true){
+        newline.get('product').set("showstock", false);
+        newline.get('product').set("_showstock", true); 
+      }
 
       // add the created line
       this.get('lines').add(newline, options);
@@ -1718,7 +1731,11 @@
                 price: price,
                 priceList: price,
                 promotions: iter.promotions,
-                priceIncludesTax: order.get('priceIncludesTax')
+                priceIncludesTax: order.get('priceIncludesTax'),
+                warehouse: {
+                  id: iter.warehouse,
+                  warehousename: iter.warehousename
+                }
               });
               newline.calculateGross();
               // add the created line
@@ -1801,7 +1818,6 @@
     },
 
     addFirstOrder: function () {
-      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence') - 1);
       this.addNewOrder();
     },
 
