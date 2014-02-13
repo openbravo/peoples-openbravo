@@ -83,6 +83,8 @@ public class CashUpReport extends HttpSecureAppServlet {
   BigDecimal totalDrops;
   BigDecimal totalDeposits;
   BigDecimal expected;
+  BigDecimal taxAmount;
+  String hqlWhere;
 
   List<HashMap<String, String>> hashMapList;
   List<HashMap<String, String>> hashMapStartingsList;
@@ -106,6 +108,8 @@ public class CashUpReport extends HttpSecureAppServlet {
     totalRetailTransactions = BigDecimal.ZERO;
     totalDrops = BigDecimal.ZERO;
     totalDeposits = BigDecimal.ZERO;
+    taxAmount = BigDecimal.ZERO;
+    hqlWhere = new String();
 
     salesTaxList = new ArrayList<Object[]>();
     returnsTaxList = new ArrayList<Object[]>();
@@ -481,37 +485,25 @@ public class CashUpReport extends HttpSecureAppServlet {
       }
 
       /******************************* SALES ***************************************************************/
-      String hqlSales = "select abs(sum(ord.summedLineAmount)), abs(sum(ord.grandTotalAmount)) from Order as ord"
+      String hqlSales = "select abs(sum(ordLine.lineNetAmount)) from OrderLine as ordLine"
           + " where exists (select 1 from FIN_Payment_ScheduleDetail d"
-          + "              where d.orderPaymentSchedule.order = ord"
+          + "              where d.orderPaymentSchedule.order = ordLine.salesOrder"
           + "                 and exists (select 1 "
           + "                               from FIN_Finacc_Transaction t"
-          + "                              where t.reconciliation.id in ("
-          + reconIds
-          + ")"
-          + "                                and t.finPayment = d.paymentDetails.finPayment))"
-          + "and ord.documentType.id=? ";
-
-      Query salesQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
-      salesQuery.setString(0, cashup.getPOSTerminal().getObposTerminaltype().getDocumentType()
-          .getId());
-      Object[] totalSalesAmount = (Object[]) salesQuery.list().get(0);
-      if (totalSalesAmount[0] != null)
-        totalNetSalesAmount = totalNetSalesAmount.add((BigDecimal) totalSalesAmount[0]);
-      if (totalSalesAmount[1] != null)
-        totalGrossSalesAmount = totalGrossSalesAmount.add((BigDecimal) totalSalesAmount[1]);
+          + "                              where t.reconciliation.id in (" + reconIds + ")"
+          + "                                and t.finPayment = d.paymentDetails.finPayment))";
+      hqlWhere = "and ordLine.orderedQuantity > 0";
+      Query salesQuery = OBDal.getInstance().getSession().createQuery(hqlSales + hqlWhere);
+      BigDecimal totalSalesAmount = (BigDecimal) salesQuery.list().get(0);
+      if (totalSalesAmount != null)
+        totalNetSalesAmount = totalNetSalesAmount.add(totalSalesAmount);
 
       /******************************* RETURNS ***************************************************************/
-      Query returnsQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
-      returnsQuery.setString(0, cashup.getPOSTerminal().getObposTerminaltype()
-          .getDocumentTypeForReturns().getId());
-      Object[] totalReturnsAmount = (Object[]) returnsQuery.list().get(0);
-      if (totalReturnsAmount[0] != null)
-        totalNetReturnsAmount = totalNetReturnsAmount.add((BigDecimal) totalReturnsAmount[0]);
-      if (totalReturnsAmount[1] != null)
-        totalGrossReturnsAmount = totalGrossReturnsAmount.add((BigDecimal) totalReturnsAmount[1]);
-
-      totalRetailTransactions = totalGrossSalesAmount.subtract(totalGrossReturnsAmount);
+      hqlWhere = "and ordLine.orderedQuantity < 0";
+      Query returnsQuery = OBDal.getInstance().getSession().createQuery(hqlSales + hqlWhere);
+      BigDecimal totalReturnsAmount = (BigDecimal) returnsQuery.list().get(0);
+      if (totalReturnsAmount != null)
+        totalNetReturnsAmount = totalNetReturnsAmount.add(totalReturnsAmount);
 
       try {
         JasperReport subReportSalesTaxes;
@@ -527,33 +519,40 @@ public class CashUpReport extends HttpSecureAppServlet {
       }
 
       // SALES TAXES
-      String hqlTaxes = "select ordertax.tax.name ,str(abs(sum(ordertax.taxAmount))) from OrderTax as ordertax "
+      String hqlTaxes = "select orderLineTax.tax.name ,str(abs(sum(orderLineTax.taxAmount))) from OrderLineTax as orderLineTax "
           + " where exists (select 1 "
           + "                 from FIN_Payment_ScheduleDetail d"
-          + "              where d.orderPaymentSchedule.order = ordertax.salesOrder"
+          + "              where d.orderPaymentSchedule.order = orderLineTax.salesOrder"
           + "                 and exists (select 1 "
           + "                               from FIN_Finacc_Transaction t"
           + "                              where t.reconciliation.id in ("
           + reconIds
           + ") "
-          + "                                and t.finPayment = d.paymentDetails.finPayment)) "
-          + "and ordertax.salesOrder.documentType.id=? "
-          + "group by ordertax.tax.id, ordertax.tax.name";
-
-      Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
-      salesTaxesQuery.setString(0, cashup.getPOSTerminal().getObposTerminaltype().getDocumentType()
-          .getId());
+          + "                                and t.finPayment = d.paymentDetails.finPayment)) ";
+      hqlWhere = "and orderLineTax.salesOrderLine.orderedQuantity > 0 group by orderLineTax.tax.id, orderLineTax.tax.name";
+      Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes + hqlWhere);
       salesTaxList = salesTaxesQuery.list();
+      for (Object obj : salesTaxList) {
+        Object[] obja = (Object[]) obj;
+        taxAmount = new BigDecimal(obja[1].toString());
+        totalGrossSalesAmount = totalNetSalesAmount.add(taxAmount);
+      }
       dataSource = new ListOfArrayDataSource(salesTaxList, new String[] { "LABEL", "VALUE" });
       parameters.put("SALES_TAXES", dataSource);
 
       // RETURNS TAXES
-      Query returnsTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
-      returnsTaxesQuery.setString(0, cashup.getPOSTerminal().getObposTerminaltype()
-          .getDocumentTypeForReturns().getId());
+      hqlWhere = "and orderLineTax.salesOrderLine.orderedQuantity < 0 group by orderLineTax.tax.id, orderLineTax.tax.name";
+      Query returnsTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes + hqlWhere);
       returnsTaxList = returnsTaxesQuery.list();
+      for (Object obj : returnsTaxList) {
+        Object[] obja = (Object[]) obj;
+        taxAmount = new BigDecimal(obja[1].toString());
+        totalGrossReturnsAmount = totalNetReturnsAmount.add(taxAmount);
+      }
       dataSource = new ListOfArrayDataSource(returnsTaxList, new String[] { "LABEL", "VALUE" });
       parameters.put("RETURNS_TAXES", dataSource);
+
+      totalRetailTransactions = totalGrossSalesAmount.subtract(totalGrossReturnsAmount);
 
       parameters.put("USER", OBMessageUtils.getI18NMessage("OBPOS_LblUser", new String[] {}) + ": "
           + cashup.getUserContact().getName());

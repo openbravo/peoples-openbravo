@@ -49,39 +49,49 @@
       var cashuptaxes;
       orderType = receipt.get('orderType');
       if (cashUp.length !== 0) {
-        if (orderType === 0 || orderType === 2) {
-          cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), receipt.get('net')));
-          cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), receipt.get('gross')));
-        } else if (orderType === 1) {
-          cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), -receipt.get('net')));
-          cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), -receipt.get('gross')));
-        } else if (orderType === 3) {
-          cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), -receipt.get('net')));
-          cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), -receipt.get('gross')));
-        }
+        _.each(receipt.get('lines').models, function (line) {
+          //Sales order: Positive line
+          if (line.get('qty') > 0 && orderType !== 3) {
+            cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), line.get('net')));
+            cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), line.get('gross')));
+            //Return from customer or Sales with return: Negative line
+          } else if (line.get('qty') < 0 && orderType !== 3) {
+            cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), -line.get('net')));
+            cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), -line.get('gross')));
+            //Void Layaway
+          } else if (orderType === 3) {
+            if (line.get('qty') > 0) {
+              cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), -line.get('net')));
+              cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), -line.get('gross')));
+            } else {
+              cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), line.get('net')));
+              cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), line.get('gross')));
+            }
+          }
+        });
         cashUp.at(0).set('totalRetailTransactions', OB.DEC.sub(cashUp.at(0).get('grossSales'), cashUp.at(0).get('grossReturns')));
         OB.Dal.save(cashUp.at(0), null, null);
         cashuptaxes = [];
-        for (var i in receipt.get('taxes')) {
-          if (orderType === 3) {
-            taxOrderType = 0;
-          } else if (orderType === 2) {
-            taxOrderType = 0;
-          } else {
-            taxOrderType = orderType;
+        _.each(receipt.get('lines').models, function (line) {
+          for (var i in line.get('taxLines')) {
+            if (orderType === 1 || line.get('qty') < 0) {
+              taxOrderType = 1;
+            } else {
+              taxOrderType = 0;
+            }
+            if (line.get('qty') > 0 && orderType !== 3) {
+              taxAmount = line.get('taxLines')[i].amount;
+            } else {
+              taxAmount = -line.get('taxLines')[i].amount;
+            }
+            cashuptaxes.push({
+              taxName: line.get('taxLines')[i].name,
+              taxAmount: taxAmount,
+              taxOrderType: taxOrderType.toString(),
+              cashupID: cashUp.at(0).get('id')
+            });
           }
-          if (orderType !== 1 && orderType !== 3) {
-            taxAmount = receipt.get('taxes')[i].amount;
-          } else {
-            taxAmount = -receipt.get('taxes')[i].amount;
-          }
-          cashuptaxes.push({
-            taxName: receipt.get('taxes')[i].name,
-            taxAmount: taxAmount,
-            taxOrderType: taxOrderType.toString(),
-            cashupID: cashUp.at(0).get('id')
-          });
-        }
+        });
         findAndSave(cashuptaxes, 0);
 
         OB.Dal.find(OB.Model.PaymentMethodCashUp, {
@@ -91,9 +101,9 @@
             auxPay = payMthds.filter(function (payMthd) {
               return payMthd.get('searchKey') === payment.get('kind');
             })[0];
-            if (orderType === 0 || orderType === 2) {
+            if (receipt.getGross() > 0 && (orderType === 0 || orderType === 2)) {
               auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
-            } else if (orderType === 1) {
+            } else if (receipt.getGross() < 0 || orderType === 1) {
               auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), payment.get('amount')));
             } else if (orderType === 3) {
               auxPay.set('totalSales', OB.DEC.sub(auxPay.get('totalSales'), payment.get('amount')));
