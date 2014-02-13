@@ -31,7 +31,7 @@
     OB.POS.hwserver = new OB.DS.HWServer(terminal.hardwareurl, terminal.scaleurl);
 
     // Set Arithmetic properties:
-    OB.DEC.setContext(OB.POS.modelterminal.get('currency').obposPosprecision || OB.POS.modelterminal.get('currency').pricePrecision, BigDecimal.prototype.ROUND_HALF_UP);
+    OB.DEC.setContext(OB.UTIL.getFirstValidValue([OB.POS.modelterminal.get('currency').obposPosprecision, OB.POS.modelterminal.get('currency').pricePrecision]), BigDecimal.prototype.ROUND_HALF_UP);
 
     // Set disable promotion discount property
     OB.Dal.find(OB.Model.Discount, {

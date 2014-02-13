@@ -78,7 +78,7 @@
               orders.each(function (order) {
                 var isErrorId = _.find(notProcessedOrders, function (errId) {
                   if (order.get('id') === errId) {
-                    return true
+                    return true;
                   }
                 });
                 if (isErrorId) {

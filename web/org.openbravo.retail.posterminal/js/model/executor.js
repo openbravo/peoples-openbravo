@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2013 Openbravo S.L.U.
+ * Copyright (C) 2012-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -229,7 +229,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     var line = evt.get('line'),
         order = evt.get('receipt'),
         manualPromotions = [],
-        appliedPromotions;
+        appliedPromotions, appliedPack;
 
     // Keep discretionary discounts at the beginning, recalculate them based on 
     // new info in line
@@ -246,7 +246,25 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       }
     }
 
+    appliedPack = line.isAffectedByPack();
+    if (appliedPack) {
+      // we need to remove this pack from other lines in order to warranty consistency
+      order.get('lines').forEach(function (l) {
+        var promos = l.get('promotions'),
+            newPromos = [];
+        if (!promos) {
+          return;
+        }
 
+        promos.forEach(function (p) {
+          if (p.ruleId !== appliedPack.ruleId) {
+            newPromos.push(p);
+          }
+        });
+
+        l.set('promotions', newPromos);
+      });
+    }
 
     line.set({
       promotions: null,
@@ -274,7 +292,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
     // Forcing local db save. Rule implementations could (should!) do modifications
     // without persisting them improving performance in this manner.
-    if (evt.get('receipt') && evt.get('receipt').get('lines') && evt.get('receipt').get('lines').length > 0){
+    if (evt.get('receipt') && evt.get('receipt').get('lines') && evt.get('receipt').get('lines').length > 0) {
       evt.get('receipt').save();
     }
   }

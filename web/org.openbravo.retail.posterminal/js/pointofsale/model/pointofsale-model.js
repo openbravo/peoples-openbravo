@@ -18,8 +18,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [{
     generatedModel: true,
     modelName: 'TaxRate'
-  },
-  {
+  }, {
     generatedModel: true,
     modelName: 'TaxZone'
   },
@@ -303,9 +302,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             return line.get('gross') < 0;
           }).length;
           if (negativeLines === order.get('lines').models.length) {
-            order.setOrderType('OBPOS_receipt.return', OB.DEC.One);
+            order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {applyPromotions: false, saveOrder: false});
           } else {
-            receipt.setOrderType('', OB.DEC.Zero);
+            order.setOrderType('', OB.DEC.Zero, {applyPromotions: false, saveOrder: false});
           }
         }
         me.get('multiOrders').trigger('closed', order);
@@ -502,13 +501,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     receipt.get('lines').on('remove', function () {
       if (!receipt.get('isEditable')) {
         return;
-      }
-      if (_.isNull(receipt.get('lines')) || receipt.get('lines').length === 0) {
-        OB.Dal.remove(receipt, function () {
-          OB.info('Order without lines removed from Local DB');
-        }, function () {
-          OB.warn('Error removing an order without lines from Local DB');
-        });
       }
       OB.Model.Discounts.applyPromotions(receipt);
     });

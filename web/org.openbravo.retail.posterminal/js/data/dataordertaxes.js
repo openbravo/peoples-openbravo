@@ -26,6 +26,8 @@
     this.receipt.calculateTaxes = function (callback) {
       var me = this,
           bpTaxCategory = this.get('bp').get('taxCategory'),
+          fromRegionOrg = OB.MobileApp.model.get('terminal').organizationRegionId,
+          fromCountryOrg = OB.MobileApp.model.get('terminal').organizationCountryId,
           lines = this.get('lines'),
           len = lines.length,
           taxes = {},
@@ -47,25 +49,24 @@
         _.each(lines.models, function (element, index, list) {
           var product = element.get('product');
 
-          var whereClause = " left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id " + "join c_bpartner_location bpl on bpl.c_bpartner_location_id = '" + me.get('bp').get('locId') + "' " + " where c_tax.sopotype in ('B', 'S') " + " and c_tax.c_taxCategory_id = '" + product.get('taxCategory') + "'";
+          // OB.Dal.find(model, criteria, success, error);
+          var sql = "select c_tax.c_tax_id, c_tax.name,  c_tax.description, c_tax.taxindicator, c_tax.validfrom, c_tax.issummary, c_tax.rate, c_tax.parent_tax_id, (case when c_tax.c_country_id = '" + fromCountryOrg + "' then c_tax.c_country_id else tz.from_country_id end) as c_country_id, (case when c_tax.c_region_id = '" + fromRegionOrg + "' then c_tax.c_region_id else tz.from_region_id end) as c_region_id, (case when c_tax.to_country_id = bpl.countryId then c_tax.to_country_id else tz.to_country_id end) as to_country_id, (case when c_tax.to_region_id = bpl.regionId then c_tax.to_region_id else tz.to_region_id end)  as to_region_id, c_tax.c_taxcategory_id, c_tax.isdefault, c_tax.istaxexempt, c_tax.sopotype, c_tax.cascade, c_tax.c_bp_taxcategory_id,  c_tax.line, c_tax.iswithholdingtax, c_tax.isnotaxable, c_tax.deducpercent, c_tax.originalrate, c_tax.istaxundeductable,  c_tax.istaxdeductable, c_tax.isnovat, c_tax.baseamount, c_tax.c_taxbase_id, c_tax.doctaxamount, c_tax.iscashvat,  c_tax._identifier,  c_tax._idx,  (case when (c_tax.to_country_id = bpl.countryId or tz.to_country_id= bpl.countryId) then 0 else 1 end) as orderCountryTo,  (case when (c_tax.to_region_id = bpl.regionId or tz.to_region_id = bpl.regionId) then 0 else 1 end) as orderRegionTo,  (case when coalesce(c_tax.c_country_id, tz.from_country_id) is null then 1 else 0 end) as orderCountryFrom,  (case when coalesce(c_tax.c_region_id, tz.from_region_id) is null then 1 else 0 end) as orderRegionFrom  from c_tax left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id  join c_bpartner_location bpl on bpl.c_bpartner_location_id = '" + me.get('bp').get('locId') + "'   where c_tax.sopotype in ('B', 'S')   and c_tax.c_taxCategory_id = '" + product.get('taxCategory') + "'";
           if (bpTaxCategory) {
-            whereClause = whereClause + " and c_tax.c_bp_taxcategory_id = '" + bpTaxCategory + "'";
+            sql = sql + " and c_tax.c_bp_taxcategory_id = '" + bpTaxCategory + "'";
           } else {
-            whereClause = whereClause + " and c_tax.c_bp_taxcategory_id is null";
+            sql = sql + " and c_tax.c_bp_taxcategory_id is null";
           }
-          whereClause = whereClause + " and c_tax.validFrom <= date()";
-          whereClause = whereClause + " and ((c_tax.to_country_id = bpl.countryId or c_tax.to_country_id is null) or (tz.to_country_id = bpl.countryId))";
-          whereClause = whereClause + " and ((c_tax.to_region_id = bpl.regionId or c_tax.to_region_id is null) or (tz.to_region_id = bpl.regionId))";
+          sql = sql + " and c_tax.validFrom <= date()";
+          sql = sql + " and (c_tax.to_country_id = bpl.countryId   or tz.to_country_id = bpl.countryId   or (c_tax.to_country_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id = bpl.countryId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id is null))))";
 
-          var orderByClause = " coalesce(c_tax.to_country_id, tz.to_country_id) desc, coalesce(c_tax.to_region_id, tz.to_region_id) desc, c_tax.validFrom desc, c_tax.isdefault desc";
+          sql = sql + " and (c_tax.to_region_id = bpl.regionId   or tz.to_region_id = bpl.regionId  or (c_tax.to_region_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id = bpl.regionId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id is null))))";
+
+          sql = sql + " order by orderRegionTo, orderRegionFrom, orderCountryTo, orderCountryFrom, c_tax.validFrom desc, c_tax.isdefault desc";
 
           // the query is ordered by countryId desc and regionId desc 
           // (so, the first record will be the tax with the same country or region that the customer, 
-          // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)          
-          OB.Dal.find(OB.Model.TaxRate, {
-            _whereClause: whereClause,
-            _orderByClause: orderByClause
-          }, function (coll, args) { // success
+          // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)           
+          OB.Dal.query(OB.Model.TaxRate, sql, [], function (coll, args) { // success
             var rate, taxAmt, net, gross, pricenet, pricenetcascade, amount, taxId;
             if (coll && coll.length > 0) {
 
@@ -82,25 +83,24 @@
               var linerate = BigDecimal.prototype.ONE;
               var linetaxid = coll.at(0).get('id');
               var validFromDate = coll.at(0).get('validFromDate');
-              var toCountryId = coll.at(0).get('destinationCountry');
-              var toRegionId = coll.at(0).get('destinationRegion');
               var taxamt = new BigDecimal(String(orggross));
               var taxamtdc;
               if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
                 taxamtdc = new BigDecimal(String(discountedGross));
               }
+              var fromCountryId = coll.at(0).get('country');
+              var fromRegionId = coll.at(0).get('region');
+              var toCountryId = coll.at(0).get('destinationCountry');
+              var toRegionId = coll.at(0).get('destinationRegion');
               coll = _.filter(coll.models, function (taxRate) {
-                var isSimilar = true;
-                if (!_.isNull(toCountryId)) {
-                  isSimilar = isSimilar && !_.isNull(taxRate.get('destinationCountry'));
-                }
-                if (!_.isNull(toRegionId)) {
-                  isSimilar = isSimilar && !_.isNull(taxRate.get('destinationRegion'));
-                }
-                return isSimilar && ((taxRate.get('validFromDate') === validFromDate));
+                var isOK = true;
+                isOK = isOK && (taxRate.get('destinationCountry') === toCountryId);
+                isOK = isOK && (taxRate.get('destinationRegion') === toRegionId);
+                isOK = isOK && (taxRate.get('country') === fromCountryId);
+                isOK = isOK && (taxRate.get('region') === fromRegionId);
+                return isOK && ((taxRate.get('validFromDate') === validFromDate));
               });
               _.each(coll, function (taxRate, taxIndex) {
-
                 if (!taxRate.get('summaryLevel')) {
                   rate = new BigDecimal(String(taxRate.get('rate'))); // 10
                   rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP); // 0.10
@@ -329,45 +329,42 @@
             };
             element.set('taxLines', taxLine);
           } else {
-            var whereClause = " left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id " + "join c_bpartner_location bpl on bpl.c_bpartner_location_id = '" + me.get('bp').get('locId') + "' " + " where c_tax.sopotype in ('B', 'S') " + " and c_tax.c_taxCategory_id = '" + product.get('taxCategory') + "'";
+            var sql = "select c_tax.c_tax_id, c_tax.name,  c_tax.description, c_tax.taxindicator, c_tax.validfrom, c_tax.issummary, c_tax.rate, c_tax.parent_tax_id, (case when c_tax.c_country_id = '" + fromCountryOrg + "' then c_tax.c_country_id else tz.from_country_id end) as c_country_id, (case when c_tax.c_region_id = '" + fromRegionOrg + "' then c_tax.c_region_id else tz.from_region_id end) as c_region_id, (case when c_tax.to_country_id = bpl.countryId then c_tax.to_country_id else tz.to_country_id end) as to_country_id, (case when c_tax.to_region_id = bpl.regionId then c_tax.to_region_id else tz.to_region_id end)  as to_region_id, c_tax.c_taxcategory_id, c_tax.isdefault, c_tax.istaxexempt, c_tax.sopotype, c_tax.cascade, c_tax.c_bp_taxcategory_id,  c_tax.line, c_tax.iswithholdingtax, c_tax.isnotaxable, c_tax.deducpercent, c_tax.originalrate, c_tax.istaxundeductable,  c_tax.istaxdeductable, c_tax.isnovat, c_tax.baseamount, c_tax.c_taxbase_id, c_tax.doctaxamount, c_tax.iscashvat,  c_tax._identifier,  c_tax._idx,  (case when (c_tax.to_country_id = bpl.countryId or tz.to_country_id= bpl.countryId) then 0 else 1 end) as orderCountryTo,  (case when (c_tax.to_region_id = bpl.regionId or tz.to_region_id = bpl.regionId) then 0 else 1 end) as orderRegionTo,  (case when coalesce(c_tax.c_country_id, tz.from_country_id) is null then 1 else 0 end) as orderCountryFrom,  (case when coalesce(c_tax.c_region_id, tz.from_region_id) is null then 1 else 0 end) as orderRegionFrom  from c_tax left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id  join c_bpartner_location bpl on bpl.c_bpartner_location_id = '" + me.get('bp').get('locId') + "'   where c_tax.sopotype in ('B', 'S')   and c_tax.c_taxCategory_id = '" + product.get('taxCategory') + "'";
             if (bpTaxCategory) {
-              whereClause = whereClause + " and c_tax.c_bp_taxcategory_id = '" + bpTaxCategory + "'";
+              sql = sql + " and c_tax.c_bp_taxcategory_id = '" + bpTaxCategory + "'";
             } else {
-              whereClause = whereClause + " and c_tax.c_bp_taxcategory_id is null";
+              sql = sql + " and c_tax.c_bp_taxcategory_id is null";
             }
-            whereClause = whereClause + " and c_tax.validFrom <= date()";
-            whereClause = whereClause + " and ((c_tax.to_country_id = bpl.countryId or c_tax.to_country_id is null) or (tz.to_country_id = bpl.countryId))";
-            whereClause = whereClause + " and ((c_tax.to_region_id = bpl.regionId or c_tax.to_region_id is null) or (tz.to_region_id = bpl.regionId))";
+            sql = sql + " and c_tax.validFrom <= date()";
+            sql = sql + " and (c_tax.to_country_id = bpl.countryId   or tz.to_country_id = bpl.countryId   or (c_tax.to_country_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id = bpl.countryId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id is null))))";
 
-            var orderByClause = " coalesce(c_tax.to_country_id, tz.to_country_id) desc, coalesce(c_tax.to_region_id, tz.to_region_id) desc, c_tax.validFrom desc, c_tax.isdefault desc";
+            sql = sql + " and (c_tax.to_region_id = bpl.regionId   or tz.to_region_id = bpl.regionId  or (c_tax.to_region_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id = bpl.regionId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id is null))))";
+
+            sql = sql + " order by orderRegionTo, orderRegionFrom, orderCountryTo, orderCountryFrom, c_tax.validFrom desc, c_tax.isdefault desc";
 
             // the query is ordered by countryId desc and regionId desc 
             // (so, the first record will be the tax with the same country or region that the customer, 
-            // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)          
-            OB.Dal.find(OB.Model.TaxRate, {
-              _whereClause: whereClause,
-              _orderByClause: orderByClause
-            }, function (coll, args) { // success
+            // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)           
+            OB.Dal.query(OB.Model.TaxRate, sql, [], function (coll, args) { // success
               var rate, taxAmt, net, pricenet, pricenetcascade, amount, taxId, roundingLoses;
               if (coll && coll.length > 0) {
 
+                // First calculate the line rate.
                 var linerate = BigDecimal.prototype.ONE;
                 var linetaxid = coll.at(0).get('id');
                 var validFromDate = coll.at(0).get('validFromDate');
+                var fromCountryId = coll.at(0).get('country');
+                var fromRegionId = coll.at(0).get('region');
                 var toCountryId = coll.at(0).get('destinationCountry');
                 var toRegionId = coll.at(0).get('destinationRegion');
                 coll = _.filter(coll.models, function (taxRate) {
-                  var isSimilar = true;
-                  if (!_.isNull(toCountryId)) {
-                    isSimilar = isSimilar && !_.isNull(taxRate.get('destinationCountry'));
-                  }
-                  if (!_.isNull(toRegionId)) {
-                    isSimilar = isSimilar && !_.isNull(taxRate.get('destinationRegion'));
-                  }
-                  return isSimilar && ((taxRate.get('validFromDate') === validFromDate));
+                  var isOK = true;
+                  isOK = isOK && (taxRate.get('destinationCountry') === toCountryId);
+                  isOK = isOK && (taxRate.get('destinationRegion') === toRegionId);
+                  isOK = isOK && (taxRate.get('country') === fromCountryId);
+                  isOK = isOK && (taxRate.get('region') === fromRegionId);
+                  return isOK && ((taxRate.get('validFromDate') === validFromDate));
                 });
-
-
 
                 var discAmt = null;
                 if (element.get('promotions') && element.get('promotions').length > 0) {

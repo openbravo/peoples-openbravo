@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
@@ -24,6 +25,8 @@ import org.openbravo.service.json.JsonUtils;
 
 public class Discount extends ProcessHQLQuery {
 
+  public static final Logger log = Logger.getLogger(Discount.class);
+
   @Override
   protected boolean isAdminMode() {
     return true;
@@ -34,6 +37,18 @@ public class Discount extends ProcessHQLQuery {
 
     PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     String priceListId = priceList.getId();
+
+    String posPrecision = "";
+    try {
+      OBContext.setAdminMode();
+      posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
+          .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
+          .toString();
+    } catch (Exception e) {
+      log.error("Error getting currency by id: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
 
     String hql = "from PricingAdjustment p ";
     hql += "where active = true ";
