@@ -1001,6 +1001,7 @@
               for (k = 0; k < line.get('promotions').length; k++) {
                 found = _.find(otherPromos, compareRule);
                 line.get('promotions')[k].amt += found.amt;
+                line.get('promotions')[k].displayedTotalAmount += found.displayedTotalAmount;
               }
               toRemove.push(otherLine);
               line.calculateGross();
