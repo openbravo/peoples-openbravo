@@ -19,6 +19,7 @@
 package org.openbravo.service.json;
 
 import java.sql.BatchUpdateException;
+import java.sql.SQLTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.QueryTimeoutException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -219,6 +221,16 @@ public class JsonUtils {
         final JSONObject error = new JSONObject();
         error.put("message", "OBUIAPP_ActionNotAllowed");
         error.put("type", "user");
+        jsonResponse.put(JsonConstants.RESPONSE_ERROR, error);
+      } else if (localThrowable instanceof SQLTimeoutException
+          || localThrowable instanceof QueryTimeoutException) {
+        final JSONObject error = new JSONObject();
+        error.put(
+            "message",
+            Utility.messageBD(new DalConnectionProvider(false), "OBUIAPP_QueryTimeOut",
+                vars.getLanguage()));
+        error.put("messageType", obError.getType());
+        error.put("title", obError.getTitle());
         jsonResponse.put(JsonConstants.RESPONSE_ERROR, error);
       } else if (obError != null) {
         final JSONObject error = new JSONObject();

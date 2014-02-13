@@ -256,6 +256,10 @@ public abstract class UIDefinition {
     return getFieldProperties(field, getValueFromSession);
   }
 
+  public String getFieldPropertiesFirstRecord(Field field, boolean getValueFromSession) {
+    return getFieldProperties(field, getValueFromSession);
+  }
+
   /**
    * Returns alignment in grid view. In case it returns null, default alignment for actual data type
    * is used.
@@ -500,6 +504,11 @@ public abstract class UIDefinition {
 
   protected String getValueInComboReference(Field field, boolean getValueFromSession,
       String columnValue) {
+    return getValueInComboReference(field, getValueFromSession, columnValue, false);
+  }
+
+  protected String getValueInComboReference(Field field, boolean getValueFromSession,
+      String columnValue, boolean onlyFirstRecord) {
     try {
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
@@ -537,6 +546,9 @@ public abstract class UIDefinition {
       Map<String, String> parameters = comboTableData.fillSQLParametersIntoMap(
           new DalConnectionProvider(false), vars, tabData, field.getTab().getWindow().getId(),
           (getValueFromSession && !comboreload) ? columnValue : "");
+      if (onlyFirstRecord) {
+        parameters.put("@ONLY_ONE_RECORD@", columnValue);
+      }
       FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), parameters,
           getValueFromSession && !comboreload);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();

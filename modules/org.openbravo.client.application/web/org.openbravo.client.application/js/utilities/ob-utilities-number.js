@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,7 +51,8 @@ OB.Utilities.Number.roundJSNumber = function (num, dec) {
 // * The plain OB number
 OB.Utilities.Number.OBMaskedToOBPlain = function (number, decSeparator, groupSeparator) {
   number = number.toString();
-  var plainNumber = number;
+  var plainNumber = number,
+      decimalNotation = (number.indexOf('E') !== -1);
 
   // Remove group separators
   if (groupSeparator) {
@@ -69,8 +70,8 @@ OB.Utilities.Number.OBMaskedToOBPlain = function (number, decSeparator, groupSep
     plainNumber = plainNumber.substring(1, number.length);
   }
 
-  // Remove ending decimal '0'
-  if (plainNumber.indexOf(decSeparator) !== -1) {
+  // Remove ending decimal '0' if the number is not expressed in decimal notation
+  if (plainNumber.indexOf(decSeparator) !== -1 && !decimalNotation) {
     while (plainNumber.substring(plainNumber.length - 1, plainNumber.length) === '0') {
       plainNumber = plainNumber.substring(0, plainNumber.length - 1);
     }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2011 Openbravo SLU
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -113,6 +113,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
       if (strAcctSchema.equals("")) {
         strAcctSchema = Utility.getContext(this, vars, "$C_AcctSchema_ID", "AccountElementValue");
         vars.setSessionValue("AccountElementValue.cAcctschemaId", strAcctSchema);
+      } else {
+        vars.setSessionValue("$C_AcctSchema_ID", strAcctSchema);
       }
       vars.removeSessionValue("AccountElementValue.name");
       vars.setSessionValue("AccountElementValue.value", strKeyValue + "%");

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,14 +19,22 @@
 
 package org.openbravo.client.kernel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.client.kernel.event.PersistenceEventOBInterceptor;
 import org.openbravo.dal.core.OBInterceptor;
+import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.database.PoolInterceptorProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class responsible for initializing the kernel layer. Can be used in a servlet as well as a
@@ -37,12 +45,18 @@ import org.openbravo.dal.core.OBInterceptor;
 @ApplicationScoped
 public class KernelInitializer {
 
+  final static private Logger log = LoggerFactory.getLogger(KernelInitializer.class);
+
   @Inject
   private PersistenceEventOBInterceptor persistenceEventOBInterceptor;
 
   @Inject
   @Any
   private Instance<ApplicationInitializer> applicationInitializers;
+
+  @Inject
+  @Any
+  private Instance<PoolInterceptorProvider> poolInterceptors;
 
   public void initialize() {
     setInterceptor();
@@ -51,6 +65,21 @@ public class KernelInitializer {
       initializer.initialize();
     }
 
+    // If an external connection pool is used, its injected interceptors are added to the pool
+    String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("db.externalPoolClassName");
+    if (poolClassName != null) {
+      try {
+        ExternalConnectionPool pool = ExternalConnectionPool.getInstance(poolClassName);
+        List<PoolInterceptorProvider> poolInterceptorList = new ArrayList<PoolInterceptorProvider>();
+        for (PoolInterceptorProvider poolInterceptor : poolInterceptors) {
+          poolInterceptorList.add(poolInterceptor);
+        }
+        pool.loadInterceptors(poolInterceptorList);
+      } catch (Throwable e) {
+        log.warn("External connection pool class not found: " + poolClassName, e);
+      }
+    }
   }
 
   public synchronized void setInterceptor() {
