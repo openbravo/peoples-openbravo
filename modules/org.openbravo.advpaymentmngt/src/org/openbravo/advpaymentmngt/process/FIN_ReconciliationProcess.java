@@ -110,25 +110,26 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
 
         Boolean invoicePaidold = false;
         for (FIN_FinaccTransaction finacctransaction : reconciliation.getFINFinaccTransactionList()) {
-          for (FIN_PaymentDetail pd : finacctransaction.getFinPayment().getFINPaymentDetailList()) {
-            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-              invoicePaidold = psd.isInvoicePaid();
-              if (!invoicePaidold) {
-                if ((FIN_Utility.invoicePaymentStatus(finacctransaction.getFinPayment()
-                    .getPaymentMethod(), reconciliation.getAccount(), finacctransaction
-                    .getFinPayment().isReceipt()).equals(finacctransaction.getFinPayment()
-                    .getStatus()))) {
-                  psd.setInvoicePaid(true);
-                }
-                if (psd.isInvoicePaid()) {
-                  FIN_Utility.updatePaymentAmounts(psd);
+          if (finacctransaction.getFinPayment() != null) {
+            for (FIN_PaymentDetail pd : finacctransaction.getFinPayment().getFINPaymentDetailList()) {
+              for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+                invoicePaidold = psd.isInvoicePaid();
+                if (!invoicePaidold) {
+                  if ((FIN_Utility.invoicePaymentStatus(finacctransaction.getFinPayment()
+                      .getPaymentMethod(), reconciliation.getAccount(), finacctransaction
+                      .getFinPayment().isReceipt()).equals(finacctransaction.getFinPayment()
+                      .getStatus()))) {
+                    psd.setInvoicePaid(true);
+                  }
+                  if (psd.isInvoicePaid()) {
+                    FIN_Utility.updatePaymentAmounts(psd);
+                  }
                 }
               }
             }
+            FIN_Utility.updateBusinessPartnerCredit(finacctransaction.getFinPayment());
           }
-          FIN_Utility.updateBusinessPartnerCredit(finacctransaction.getFinPayment());
         }
-
         // ***********************
         // Reactivate Reconciliation
         // ***********************
@@ -162,21 +163,23 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
         Boolean invoicePaidold = false;
 
         for (FIN_FinaccTransaction finacctransaction : reconciliation.getFINFinaccTransactionList()) {
-          for (FIN_PaymentDetail pd : finacctransaction.getFinPayment().getFINPaymentDetailList()) {
-            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-              invoicePaidold = psd.isInvoicePaid();
-              if (invoicePaidold) {
-                if (FIN_Utility.invoicePaymentStatus(
-                    finacctransaction.getFinPayment().getPaymentMethod(),
-                    reconciliation.getAccount(), finacctransaction.getFinPayment().isReceipt())
-                    .equals(finacctransaction.getFinPayment().getStatus())) {
-                  boolean restore = (FIN_Utility.seqnumberpaymentstatus(finacctransaction
-                      .getFinPayment().getStatus())) <= (FIN_Utility
-                      .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(finacctransaction
-                          .getFinPayment().getPaymentMethod(), reconciliation.getAccount(),
-                          finacctransaction.getFinPayment().isReceipt())));
-                  if (restore) {
-                    FIN_Utility.restorePaidAmounts(psd);
+          if (finacctransaction.getFinPayment() != null) {
+            for (FIN_PaymentDetail pd : finacctransaction.getFinPayment().getFINPaymentDetailList()) {
+              for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+                invoicePaidold = psd.isInvoicePaid();
+                if (invoicePaidold) {
+                  if (FIN_Utility.invoicePaymentStatus(
+                      finacctransaction.getFinPayment().getPaymentMethod(),
+                      reconciliation.getAccount(), finacctransaction.getFinPayment().isReceipt())
+                      .equals(finacctransaction.getFinPayment().getStatus())) {
+                    boolean restore = (FIN_Utility.seqnumberpaymentstatus(finacctransaction
+                        .getFinPayment().getStatus())) <= (FIN_Utility
+                        .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(finacctransaction
+                            .getFinPayment().getPaymentMethod(), reconciliation.getAccount(),
+                            finacctransaction.getFinPayment().isReceipt())));
+                    if (restore) {
+                      FIN_Utility.restorePaidAmounts(psd);
+                    }
                   }
                 }
               }
