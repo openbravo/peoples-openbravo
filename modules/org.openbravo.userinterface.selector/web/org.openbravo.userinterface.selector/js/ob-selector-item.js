@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,6 +63,7 @@ isc.OBSelectorPopupWindow.addProperties({
 
     for (i = 0; i < this.selectorGridFields.length; i++) {
       this.selectorGridFields[i].canSort = (this.selectorGridFields[i].canSort === false ? false : true);
+      this.selectorGridFields[i].escapeHTML = true;
       if (this.selectorGridFields[i].disableFilter) {
         this.selectorGridFields[i].canFilter = false;
       } else {
