@@ -666,6 +666,7 @@ isc.OBSelectorItem.addProperties({
     }
 
     fields = form.fields || grid.fields;
+    form.hiddenInputs = form.hiddenInputs | {};
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
@@ -997,6 +998,7 @@ isc.OBSelectorLinkItem.addProperties({
         form = this.form,
         grid = this.grid,
         item, value, fields = form.fields || grid.fields;
+    form.hiddenInputs = form.hiddenInputs | {};
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
