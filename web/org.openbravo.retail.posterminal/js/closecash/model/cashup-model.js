@@ -86,6 +86,17 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     OB.Dal.find(OB.Model.Order, {
       hasbeenpaid: 'N'
     }, function (pendingOrderList, me) {
+      var emptyOrders;
+      // Detect empty orders and remove them from here
+      emptyOrders = _.filter(pendingOrderList.models, function (pendingorder) {
+        if (pendingorder && pendingorder.get('lines') && pendingorder.get('lines').length === 0) {
+          return true;
+        }
+      });
+
+      _.each(emptyOrders, function (orderToRemove) {
+        pendingOrderList.remove(orderToRemove);
+      });
 
       // Recalculate total properly for all  pendingorders.
       pendingOrderList.each(function (pendingorder) {
@@ -110,7 +121,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     var result = null;
     _.each(this.get('paymentList').models, function (model) {
       if (model.get('paymentMethod').automatemovementtoother === false) {
-        model.set('qtyToKeep', null);
+        model.set('qtyToKeep', 0);
+        model.set('foreignCounted', 0);
         if (result !== false) {
           result = true;
         }
@@ -228,9 +240,12 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }
       }, 0),
       totalQtyToDepo: _.reduce(this.get('paymentList').models, function (total, model) {
-        if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undf) {
+        if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undf && 
+            model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) {
           return OB.DEC.add(total, OB.DEC.mul(OB.DEC.sub(model.get('foreignCounted'), model.get('qtyToKeep')), model.get('rate')));
-        } else {
+        } else if (model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf)
+          return OB.DEC.add(total, OB.DEC.mul(model.get('foreignCounted'), model.get('rate')));
+        else {
           return total;
         }
       }, 0)
@@ -296,7 +311,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     var objToSend = {
       terminalId: OB.POS.modelterminal.get('terminal').id,
       cashUpId: OB.UTIL.get_UUID(),
-      cashCloseInfo: []
+      cashCloseInfo: [],
+      cashUpDate: new Date()
     },
         server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
         me = this;

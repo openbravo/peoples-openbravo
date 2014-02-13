@@ -14,7 +14,18 @@
         <image>ticket-image.png</image>
     </line>
     <line>
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ReceiptRpt_Title')) %></text>
+      <%
+        var title,
+            negativeLines = _.filter(order.get('lines').models, function (line) {
+                return line.get('gross') < 0;
+              }).length;
+        if (negativeLines === 0) {
+          title = OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ReceiptRpt_Title'));
+        } else {
+          title = OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ReceiptWithReturnRpt_Title'))
+        }
+       %>
+      <text align="center" length="42"><%= title %></text>
     </line>
     <line></line>
     <line>

@@ -572,6 +572,8 @@ public class OrderLoader extends JSONProcessSimple {
           ModelProvider.getInstance().getEntity(InvoiceLine.class), line, jsonorder,
           jsonorder.getLong("timezoneOffset"));
       line.setLineNo((long) ((i + 1) * 10));
+      line.setDescription(orderlines.getJSONObject(i).has("description") ? orderlines
+          .getJSONObject(i).getString("description") : "");
       line.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("net"))
           .setScale(stdPrecision, RoundingMode.HALF_UP));
       BigDecimal qty = lineReferences.get(i).getOrderedQuantity();
@@ -656,7 +658,11 @@ public class OrderLoader extends JSONProcessSimple {
       description = jsonorder.getString("Invoice.description");
     } else {
       // other case use generic description if present and add relationship to order
-      description = jsonorder.has("description") ? jsonorder.getString("description") + "\n" : "";
+      if (jsonorder.has("description") && !jsonorder.getString("description").equals("")) {
+        description = jsonorder.getString("description") + "\n";
+      } else {
+        description = "";
+      }
       description += OBMessageUtils.getI18NMessage("OBPOS_InvoiceRelatedToOrder", null)
           + jsonorder.getString("documentNo");
     }
@@ -771,8 +777,10 @@ public class OrderLoader extends JSONProcessSimple {
 
       AttributeSetInstance oldAttributeSetValues = null;
       if (negativeLine) {
+        lineNo += 10;
         addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty.negate(), getBinForReturns(jsonorder.getString("posTerminal")), null);
+
       } else {
         if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           // The M_GetStock function is used
@@ -799,6 +807,11 @@ public class OrderLoader extends JSONProcessSimple {
               && orderLine.get("warehouseRule") != null) {
             parameters.put("M_Warehouse_Rule_ID",
                 (String) DalUtil.getId(orderLine.get("warehouseRule")));
+          }
+          if (orderLine.getEntity().hasProperty("warehouse")
+              && orderLine.get("warehouse") != null) {
+            parameters.put("Priority_Warehouse_ID",
+                (String) DalUtil.getId(orderLine.get("warehouse")));
           }
 
           ProcessInstance pInstance = CallProcess.getInstance().callProcess(process, null,
@@ -930,6 +943,12 @@ public class OrderLoader extends JSONProcessSimple {
 
   protected void createOrderLines(Order order, JSONObject jsonorder, JSONArray orderlines,
       ArrayList<OrderLine> lineReferences) throws JSONException {
+    boolean isQuotation = false;
+    try {
+      isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
+    } catch (Exception ex) {
+      isQuotation = false;
+    }
     Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
@@ -949,7 +968,7 @@ public class OrderLoader extends JSONProcessSimple {
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           stdPrecision, RoundingMode.HALF_UP));
 
-      if (!isLayaway && !partialpayLayaway && createShipment) {
+      if (!isLayaway && !partialpayLayaway && (createShipment || isQuotation)) {
         // shipment is created, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
       }

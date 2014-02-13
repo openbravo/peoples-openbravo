@@ -23,8 +23,12 @@ public class BPLocationProperties extends ModelExtension {
         add(new HQLProperty("bploc.locationAddress.country.name", "countryName"));
         add(new HQLProperty("bploc.locationAddress.addressLine1", "_identifier"));
         add(new HQLProperty("bploc.locationAddress.country.id", "countryId"));
-        add(new HQLProperty("bploc.locationAddress.region.name", "regionName"));
-        add(new HQLProperty("bploc.locationAddress.region.id", "regionId"));
+        add(new HQLProperty(
+            "(select bploc.locationAddress.region.name from BusinessPartnerLocation bploc2 where bploc2 = bploc)",
+            "regionName"));
+        add(new HQLProperty(
+            "(select bploc.locationAddress.region.id from BusinessPartnerLocation bploc2 where bploc2 = bploc)",
+            "regionId"));
       }
     };
     return list;

@@ -65,6 +65,10 @@
         <default><![CDATA[scan]]></default>
         <onCreateDefault/>
       </column>
+      <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -73,6 +77,9 @@
       </foreign-key>
       <foreign-key foreignTable="OBPOS_TERMINALTYPE" name="OBPOS_APP_TERTYPE">
         <reference local="OBPOS_TERMINALTYPE_ID" foreign="OBPOS_TERMINALTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="OBPOS_APPLICATIONS_BPARTNER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <index name="OBPOS_APP_TERTYPE" unique="false">
         <index-column name="OBPOS_TERMINALTYPE_ID"/>
