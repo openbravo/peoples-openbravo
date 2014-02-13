@@ -152,7 +152,7 @@ enyo.kind({
         model = inEvent.originator.model;
 
     OB.UTIL.Approval.requestApproval(
-    this.model, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+    this.model, 'OBPOS_approval.cashupremovereceipts', function (approved, supervisor, approvalType) {
       if (approved) {
         // approved so remove the entry
         OB.Dal.remove(model, function () {
@@ -171,7 +171,7 @@ enyo.kind({
     }
 
     OB.UTIL.Approval.requestApproval(
-    this.model, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+    this.model, 'OBPOS_approval.cashupremovereceipts', function (approved, supervisor, approvalType) {
       if (approved) {
         var models = me.collection.toArray();
         var i;

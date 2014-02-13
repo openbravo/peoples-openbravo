@@ -62,7 +62,7 @@
         this.set('name', null);
         this.set('postalCode', null);
         this.set('cityName', null);
-        this.set('country', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry);
+        this.set('countryId', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry);
         this.set('countryName', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry_name);
         this.set('client', OB.POS.modelterminal.get('terminal').client);
         this.set('organization', OB.POS.modelterminal.get('terminal').defaultbp_bporg);

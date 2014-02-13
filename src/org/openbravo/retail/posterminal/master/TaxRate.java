@@ -52,18 +52,33 @@ public class TaxRate extends ProcessHQLQuery {
     String hql = "from FinancialMgmtTaxRate as financialMgmtTaxRate where "
         + "financialMgmtTaxRate.$readableClientCriteria AND "
         + "financialMgmtTaxRate.$naturalOrgCriteria AND "
-        + "(financialMgmtTaxRate.$incrementalUpdateCriteria) AND active = true "
-        + "and salesPurchaseType in ('S', 'B') ";
+        + "(financialMgmtTaxRate.$incrementalUpdateCriteria) AND financialMgmtTaxRate.active = true "
+        + "and financialMgmtTaxRate.salesPurchaseType in ('S', 'B') ";
 
     if (fromCountry != null) {
-      hql = hql + "and (country.id = '" + fromCountry.getId() + "' or country is null) ";
+      hql = hql
+          + "and (financialMgmtTaxRate.country.id = '"
+          + fromCountry.getId()
+          + "' or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
+          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry.id = '"
+          + fromCountry.getId()
+          + "')"
+          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry is null)))";
     } else {
-      hql = hql + "and country is null ";
+      hql = hql + "and financialMgmtTaxRate.country is null ";
     }
     if (fromRegion != null) {
-      hql = hql + "and (region.id = '" + fromRegion.getId() + "' or region is null) ";
+      hql = hql
+          + "and (financialMgmtTaxRate.region.id = '"
+          + fromRegion.getId()
+          + "' or (financialMgmtTaxRate.region is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
+          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id = '"
+          + fromRegion.getId()
+          + "')"
+          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null))))";
+
     } else {
-      hql = hql + "and region is null ";
+      hql = hql + "and financialMgmtTaxRate.region is null ";
     }
     hql = hql + "and $readableCriteria order by validFromDate desc ";
 

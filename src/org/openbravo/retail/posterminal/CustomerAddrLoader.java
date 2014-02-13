@@ -28,6 +28,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
+import org.openbravo.model.common.geography.Country;
 import org.openbravo.service.json.JsonConstants;
 
 public class CustomerAddrLoader extends JSONProcessSimple {
@@ -165,6 +166,16 @@ public class CustomerAddrLoader extends JSONProcessSimple {
           rootLocation.setAddressLine1(jsonCustomerAddr.getString("name"));
         }
       }
+
+      if (jsonCustomerAddr.has("countryId")) {
+        rootLocation.setCountry(OBDal.getInstance().get(Country.class,
+            jsonCustomerAddr.getString("countryId")));
+      } else {
+        String errorMessage = "Country ID is a mandatory field to create a new customer address from Web Pos";
+        log.error(errorMessage);
+        throw new OBException(errorMessage, null);
+      }
+
       rootLocation.setPostalCode(jsonCustomerAddr.getString("postalCode"));
       rootLocation.setCityName(jsonCustomerAddr.getString("cityName"));
       OBDal.getInstance().save(rootLocation);

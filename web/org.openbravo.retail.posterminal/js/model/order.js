@@ -816,6 +816,7 @@
           OB.MobileApp.model.hookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
             receipt: this,
             line: line,
+            allLines: this.get('lines'),
             p: p,
             qty: qty,
             options: options,
@@ -827,8 +828,6 @@
             if (args.line) {
               args.receipt.addUnit(args.line, args.qty);
               args.line.trigger('selected', args.line);
-            } else if (args.receipt.get('orderType') === 1) {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_AddProductReturn'));
             } else {
               args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
             }
@@ -1001,6 +1000,7 @@
               for (k = 0; k < line.get('promotions').length; k++) {
                 found = _.find(otherPromos, compareRule);
                 line.get('promotions')[k].amt += found.amt;
+                line.get('promotions')[k].displayedTotalAmount += found.displayedTotalAmount;
               }
               toRemove.push(otherLine);
               line.calculateGross();
@@ -1131,7 +1131,11 @@
         qty: OB.DEC.number(units),
         price: OB.DEC.number(p.get('standardPrice')),
         priceList: OB.DEC.number(p.get('standardPrice')),
-        priceIncludesTax: this.get('priceIncludesTax')
+        priceIncludesTax: this.get('priceIncludesTax'),
+        warehouse: {
+          id: OB.POS.modelterminal.get('warehouses')[0].warehouseid,
+          warehousename: OB.POS.modelterminal.get('warehouses')[0].warehousename
+        }
       });
       if (!_.isUndefined(attrs)) {
         _.each(_.keys(attrs), function (key) {
@@ -1140,6 +1144,15 @@
       }
 
       newline.calculateGross();
+      
+      //issue 25655: ungroup feature is just needed when the line is created. Then lines work as grouped lines.
+      newline.get('product').set("groupProduct", true);
+
+      //issue 25448: Show stock screen is just shown when a new line is created.
+      if (newline.get('product').get("showstock") === true){
+        newline.get('product').set("showstock", false);
+        newline.get('product').set("_showstock", true); 
+      }
 
       // add the created line
       this.get('lines').add(newline, options);
@@ -1155,48 +1168,6 @@
       });
       this.adjustPayment();
       return newline;
-    },
-    returnLine: function (line, options, skipValidaton) {
-      var me = this;
-      if (!_.isUndefined(OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn')) && !OB.POS.modelterminal.hasPermission('OBPOS_AllowSalesWithReturn') && !skipValidaton) {
-        //The value of qty need to be negate because we want to change it
-        var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('gross') < 0;
-        }).length;
-        if (this.get('lines').length > 0) {
-          if (-line.get('qty') > 0 && negativeLines > 0) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
-            return;
-          } else if (-line.get('qty') < 0 && negativeLines !== this.get('lines').length) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
-            return;
-          }
-        }
-      }
-      if (line.get('qty') > 0) {
-        line.get('product').set('ignorePromotions', true);
-      } else {
-        line.get('product').set('ignorePromotions', false);
-      }
-      line.set('qty', -line.get('qty'));
-      line.calculateGross();
-
-      // set the undo action
-      this.set('undo', {
-        text: OB.I18N.getLabel('OBPOS_ReturnLine', [line.get('product').get('_identifier')]),
-        line: line,
-        undo: function () {
-          line.set('qty', -line.get('qty'));
-          me.set('undo', null);
-        }
-      });
-      this.adjustPayment();
-      if (line.get('promotions')) {
-        line.unset('promotions');
-      }
-      me.calculateGross();
-      this.save();
-
     },
     returnLine: function (line, options, skipValidaton) {
       var me = this;
@@ -1261,7 +1232,7 @@
       }
     },
 
-    setOrderType: function (permission, orderType) {
+    setOrderType: function (permission, orderType, options) {
       var me = this;
       if (OB.POS.modelterminal.hasPermission(permission)) {
         if (permission === 'OBPOS_receipt.return') {
@@ -1276,7 +1247,9 @@
         }
         this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
         if (orderType !== 3) { //Void this Layaway, do not need to save
-          this.save();
+          if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)) {
+            this.save();
+          }
         } else {
           this.set('layawayGross', this.getGross());
           this.set('gross', this.get('payment'));
@@ -1284,7 +1257,9 @@
           this.get('payments').reset();
         }
         // remove promotions
-        OB.Model.Discounts.applyPromotions(this);
+        if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)) {
+          OB.Model.Discounts.applyPromotions(this);
+        }
       }
     },
 
@@ -1756,7 +1731,11 @@
                 price: price,
                 priceList: price,
                 promotions: iter.promotions,
-                priceIncludesTax: order.get('priceIncludesTax')
+                priceIncludesTax: order.get('priceIncludesTax'),
+                warehouse: {
+                  id: iter.warehouse,
+                  warehousename: iter.warehousename
+                }
               });
               newline.calculateGross();
               // add the created line
@@ -1839,7 +1818,6 @@
     },
 
     addFirstOrder: function () {
-      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence') - 1);
       this.addNewOrder();
     },
 

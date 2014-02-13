@@ -132,6 +132,18 @@ enyo.kind({
         this.$.propertyValue.setContent('');
       }
     }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 60,
+    name: 'warehouseLine',
+    I18NLabel: 'OBPOS_LineWarehouse',
+    render: function (line) {
+      if (line && line.get('warehouse')) {
+        this.$.propertyValue.setContent(line.get('warehouse').warehousename);
+      } else {
+        this.$.propertyValue.setContent(OB.POS.modelterminal.get('warehouses')[0].warehousename);
+      }
+    }
   }],
   published: {
     receipt: null
@@ -365,7 +377,7 @@ enyo.kind({
     if (this.line) {
       this.line.on('change', this.render, this);
     }
-    if (this.line && this.line.get('product').get('showstock') && !this.line.get('product').get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
+    if (this.line && (this.line.get('product').get('showstock') || this.line.get('product').get('_showstock')) && !this.line.get('product').get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
       this.$.checkStockButton.show();
     } else {
       this.$.checkStockButton.hide();
@@ -485,12 +497,15 @@ enyo.kind({
   content: '',
   classes: 'btnlink-orange',
   tap: function () {
+    var line = this.owner.line;
     var product = this.owner.line.get('product');
     var params = {};
     //show always or just when the product has been set to show stock screen?
-    if (product.get('showstock') && !product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
+    if ((product.get('showstock') || product.get('_showstock')) && !product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
       params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
       params.product = product;
+      params.line = line;
+      params.warehouse = this.owner.line.get('warehouse');
       this.doShowLeftSubWindow(params);
     }
   },
