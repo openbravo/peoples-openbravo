@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2012 Openbravo SLU 
+* All portions are Copyright (C) 2001-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -57,8 +57,8 @@
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
     <FIELD id="fieldValue">value</FIELD>
     <FIELD id="fieldDateacct">dateacct</FIELD>
-    <FIELD id="fieldName">name</FIELD>
-    <FIELD id="fieldDescription">description</FIELD>
+    <FIELD id="fieldName" replaceCharacters="html">name</FIELD>
+    <FIELD id="fieldDescription" replaceCharacters="html">description</FIELD>
     <FIELD id="fieldAmtacctdr" format="euroInform">amtacctdr</FIELD>
     <FIELD id="fieldAmtacctcr" format="euroInform">amtacctcr</FIELD>
     <FIELD id="fieldTotal" format="euroInform">total</FIELD>
@@ -129,8 +129,8 @@
     <FIELD id="fieldGroupBy">groupby</FIELD>
     <FIELD id="fieldGroupByName">groupbyname</FIELD>
     <FIELD id="fieldDateacct2">dateacct</FIELD>
-    <FIELD id="fieldName2">name</FIELD>
-    <FIELD id="fieldDescription2">description</FIELD>
+    <FIELD id="fieldName2" replaceCharacters="html">name</FIELD>
+    <FIELD id="fieldDescription2" replaceCharacters="html">description</FIELD>
     <FIELD id="fieldAmtacctdr2" format="euroInform">amtacctdr</FIELD>
     <FIELD id="fieldAmtacctcr2" format="euroInform">amtacctcr</FIELD>
     <FIELD id="fieldTotal2">total</FIELD>
