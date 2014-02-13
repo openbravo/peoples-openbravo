@@ -614,6 +614,15 @@
       this.set('isPaid', _order.get('isPaid'));
       this.set('paidOnCredit', _order.get('paidOnCredit'));
       this.set('isLayaway', _order.get('isLayaway'));
+
+      // we need to set the lines before to set the business partner (issue 25552): apply promotions process is triggered
+      if (!OB.UTIL.isNullOrUndefined(this.get('lines')) && !OB.UTIL.isNullOrUndefined(_order.get('lines'))) {
+        this.get('lines').reset();
+        _order.get('lines').forEach(function (elem) {
+          me.get('lines').add(elem);
+        });
+      }
+
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
@@ -1144,14 +1153,14 @@
       }
 
       newline.calculateGross();
-      
+
       //issue 25655: ungroup feature is just needed when the line is created. Then lines work as grouped lines.
       newline.get('product').set("groupProduct", true);
 
       //issue 25448: Show stock screen is just shown when a new line is created.
-      if (newline.get('product').get("showstock") === true){
+      if (newline.get('product').get("showstock") === true) {
         newline.get('product').set("showstock", false);
-        newline.get('product').set("_showstock", true); 
+        newline.get('product').set("_showstock", true);
       }
 
       // add the created line
