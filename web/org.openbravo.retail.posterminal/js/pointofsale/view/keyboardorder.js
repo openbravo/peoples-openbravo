@@ -92,8 +92,6 @@ enyo.kind({
             return;
           }
 
-          args.keyboard.line.get('product').set('groupProduct', true);
-
           if (args.keyboard.receipt.get('isEditable') === false) {
             args.context.doShowPopup({
               popup: 'modalNotEditableOrder'

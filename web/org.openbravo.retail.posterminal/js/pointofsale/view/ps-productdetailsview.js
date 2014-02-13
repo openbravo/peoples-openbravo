@@ -54,8 +54,9 @@ enyo.kind({
   },
   tap: function () {
     if (this.leftSubWindow.product) {
-      if (this.leftSubWindow.product && this.leftSubWindow.line && this.leftSubWindow.product.get("groupProduct") === false) {
-        this.leftSubWindow.product.set("groupProduct", true);
+      var line = null;
+      if (this.leftSubWindow && this.leftSubWindow.line){
+        line = this.leftSubWindow.line;
       }
       this.doAddProduct({
         attrs: {
@@ -64,6 +65,9 @@ enyo.kind({
             warehousename: this.leftSubWindow.warehouse.warehousename,
             warehouseqty: this.leftSubWindow.warehouse.warehouseqty
           }
+        },
+        options: {
+          line: line
         },
         product: this.leftSubWindow.product,
         ignoreStockTab: true
