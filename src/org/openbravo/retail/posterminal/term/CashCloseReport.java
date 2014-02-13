@@ -104,11 +104,10 @@ public class CashCloseReport extends JSONProcessSimple {
     for (Object obj : returnTaxesQuery.list()) {
       Object[] returns = (Object[]) obj;
       JSONObject returnTax = new JSONObject();
-      returnTax.put("taxId", returns[0]);
-      returnTax.put("taxName", returns[1]);
-      returnTax.put("taxAmount", ((BigDecimal) returns[2]).abs());
+      returnTax.put("taxName", returns[0]);
+      returnTax.put("taxAmount", ((BigDecimal) returns[1]).abs());
       returnTaxes.put(returnTax);
-      totalReturnsTax = totalReturnsTax.add(((BigDecimal) returns[2]).abs());
+      totalReturnsTax = totalReturnsTax.add(((BigDecimal) returns[1]).abs());
     }
 
     Query returnsQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
