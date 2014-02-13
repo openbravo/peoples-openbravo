@@ -294,7 +294,7 @@
     /**
     * Check if order has lines
     */
-    IF (v_DocAction = 'CO') THEN
+    IF (v_DocAction = 'CO' OR v_DocAction = 'PR') THEN
       SELECT COUNT(*)
         INTO v_Aux
        FROM C_ORDERLINE
