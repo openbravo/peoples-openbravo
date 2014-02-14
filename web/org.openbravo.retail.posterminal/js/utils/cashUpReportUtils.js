@@ -42,7 +42,7 @@
   }
 
   OB.UTIL.cashUpReport = function (receipt, sucessCallback) {
-    var auxPay, orderType, taxOrderType, taxAmount;
+    var auxPay, orderType, taxOrderType, taxAmount, gross;
     OB.Dal.find(OB.Model.CashUp, {
       'isbeingprocessed': 'N'
     }, function (cashUp) {
@@ -50,22 +50,27 @@
       orderType = receipt.get('orderType');
       if (cashUp.length !== 0) {
         _.each(receipt.get('lines').models, function (line) {
+          if (receipt.get('priceIncludesTax')) {
+            gross = line.get('lineGrossAmount');
+          } else {
+            gross = line.get('discountedGross');
+          }
           //Sales order: Positive line
           if (line.get('qty') > 0 && orderType !== 3) {
             cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), line.get('net')));
-            cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), line.get('lineGrossAmount')));
+            cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), gross));
             //Return from customer or Sales with return: Negative line
           } else if (line.get('qty') < 0 && orderType !== 3) {
             cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), -line.get('net')));
-            cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), -line.get('lineGrossAmount')));
+            cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), -gross));
             //Void Layaway
           } else if (orderType === 3) {
             if (line.get('qty') > 0) {
               cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), -line.get('net')));
-              cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), -line.get('lineGrossAmount')));
+              cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), -gross));
             } else {
               cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), line.get('net')));
-              cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), line.get('lineGrossAmount')));
+              cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), gross));
             }
           }
         });
