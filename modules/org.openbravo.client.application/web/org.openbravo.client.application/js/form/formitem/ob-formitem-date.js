@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -261,6 +261,9 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     if (date && isc.isA.Date(date) && newTime && isc.isA.Date(newTime)) {
       date.setHours(newTime.getHours(), newTime.getMinutes(), newTime.getSeconds());
       ret = date;
+      if (this.isAbsoluteDateTime && Object.prototype.toString.call(ret) === '[object Date]') {
+        ret = new Date(ret.getTime() - (ret.getTimezoneOffset() * 60000));
+      }
     }
     return ret;
   },

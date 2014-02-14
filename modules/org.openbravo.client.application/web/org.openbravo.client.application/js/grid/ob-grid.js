@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -554,10 +554,31 @@ isc.OBGrid.addProperties({
 
   initWidget: function () {
     // prevent the value to be displayed in case of a clientClass
-    var i, length, field, formatCellValueFunction;
+    var i, length, field, formatCellValueFunction, OBAbsoluteTimeItem_FormatCellValueFunction, OBAbsoluteDateTimeItem_FormatCellValueFunction;
 
     formatCellValueFunction = function (value, record, rowNum, colNum, grid) {
       return '';
+    };
+
+    OBAbsoluteTimeItem_FormatCellValueFunction = function (value, record, rowNum, colNum, grid) {
+      var newValue = value,
+          format = isc.OBAbsoluteTimeItem.getPrototype().timeFormatter;
+      if (Object.prototype.toString.call(newValue) === '[object String]') {
+        newValue = isc.Time.parseInput(newValue);
+      }
+      if (Object.prototype.toString.call(newValue) === '[object Date]') {
+        newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
+      }
+      newValue = isc.Time.format(newValue, format);
+      return newValue;
+    };
+
+    OBAbsoluteDateTimeItem_FormatCellValueFunction = function (value, record, rowNum, colNum, grid) {
+      var newValue = value;
+      if (Object.prototype.toString.call(newValue) === '[object Date]') {
+        newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
+      }
+      return OB.Utilities.Date.JSToOB(newValue, OB.Format.dateTime);
     };
 
     if (this.fields) {
@@ -573,6 +594,18 @@ isc.OBGrid.addProperties({
 
         if (field.criteriaField) {
           field.filterEditorProperties.criteriaField = field.criteriaField;
+        }
+
+        if (field.editorType && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteTime')()) {
+          // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
+          // http://forums.smartclient.com/showthread.php?p=116135
+          field.formatCellValue = OBAbsoluteTimeItem_FormatCellValueFunction;
+        }
+
+        if (field.editorType && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteDateTime')()) {
+          // In the case of an absolute datetime, the JS date needs to be converted in order to avoid the UTC conversion
+          // http://forums.smartclient.com/showthread.php?p=116135
+          field.formatCellValue = OBAbsoluteDateTimeItem_FormatCellValueFunction;
         }
 
         if (field.clientClass) {

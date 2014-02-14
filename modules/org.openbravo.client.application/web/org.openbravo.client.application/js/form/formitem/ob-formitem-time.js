@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -131,11 +131,19 @@ isc.OBTimeItem.addProperties({
     return this.Super('keyDown', arguments);
   },
   click: function () {
-    this.doShowTimeGrid(isc.Time.parseInput(this.getEnteredValue()));
+    var selectedDate = isc.Time.parseInput(this.getEnteredValue());
+    if (this.isAbsoluteTime) {
+      selectedDate = new Date(selectedDate.getTime() + (selectedDate.getTimezoneOffset() * 60000));
+    }
+    this.doShowTimeGrid(selectedDate);
     return this.Super('click', arguments);
   },
   focus: function () {
-    this.doShowTimeGrid(this.getValue());
+    var selectedDate = this.getValue();
+    if (this.isAbsoluteTime) {
+      selectedDate = new Date(selectedDate.getTime() + (selectedDate.getTimezoneOffset() * 60000));
+    }
+    this.doShowTimeGrid(selectedDate);
     return this.Super('focus', arguments);
   },
   blur: function () {
@@ -157,6 +165,46 @@ isc.OBTimeItem.addProperties({
         data[this.name].setTime(data[this.name].getTime() + UTCOffsetInMiliseconds);
       }
       this.setValue(data[this.name]);
+    }
+  },
+
+  // Convert a text value entered in this item's text field to a final data value for storage
+  parseEditorValue: function (value, form, item) {
+    if (this.isAbsoluteTime) {
+      // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
+      // http://forums.smartclient.com/showthread.php?p=116135
+      var newValue = value,
+          format = this.timeFormatter;
+      if (Object.prototype.toString.call(newValue) === '[object String]') {
+        newValue = isc.Time.parseInput(newValue);
+      }
+      if (Object.prototype.toString.call(newValue) === '[object Date]') {
+        newValue = new Date(newValue.getTime() - (newValue.getTimezoneOffset() * 60000));
+      }
+      newValue = isc.Time.format(newValue, format);
+      return newValue;
+    } else {
+      return value;
+    }
+  },
+
+  // Convert this item's data value to a text value for display in this item's text field
+  formatEditorValue: function (value, record, form, item) {
+    if (this.isAbsoluteTime) {
+      // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
+      // http://forums.smartclient.com/showthread.php?p=116135
+      var newValue = value,
+          format = this.timeFormatter;
+      if (Object.prototype.toString.call(newValue) === '[object String]') {
+        newValue = isc.Time.parseInput(newValue);
+      }
+      if (Object.prototype.toString.call(newValue) === '[object Date]') {
+        newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
+      }
+      newValue = isc.Time.format(newValue, format);
+      return newValue;
+    } else {
+      return value;
     }
   }
 });
@@ -358,7 +406,12 @@ isc.OBTimeItemGrid.addProperties({
   doSelectionUpdated: true,
   selectionUpdated: function (record) {
     if (this.formItem && record && this.doSelectionUpdated) {
-      this.formItem.setValue(record.jsTime);
+      var selectedDate = record.jsTime;
+      if (this.formItem.isAbsoluteTime) {
+        selectedDate = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
+      }
+      this.formItem.setValue(selectedDate);
+      this.formItem._hasChanged = true;
     }
     return this.Super('selectionUpdated ', arguments);
   },
@@ -534,4 +587,11 @@ isc.OBTimeItemGrid.addProperties({
     title: 'JS Time',
     showIf: 'false'
   }]
+});
+
+
+isc.ClassFactory.defineClass('OBAbsoluteTimeItem', isc.OBTimeItem);
+
+isc.OBAbsoluteTimeItem.addProperties({
+  isAbsoluteTime: true
 });

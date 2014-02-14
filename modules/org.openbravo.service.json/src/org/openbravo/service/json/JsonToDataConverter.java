@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.AbsoluteDateTimeDomainType;
+import org.openbravo.base.model.domaintype.AbsoluteTimeDomainType;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BinaryDomainType;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
@@ -145,7 +147,9 @@ public class JsonToDataConverter {
       final Class<?> clz = property.getPrimitiveObjectType();
       if (clz != null && Date.class.isAssignableFrom(clz)) {
         try {
-          if (property.getDomainType() instanceof TimestampDomainType) {
+          Date UTCTime = null;
+          if (property.getDomainType() instanceof TimestampDomainType
+              || property.getDomainType() instanceof AbsoluteTimeDomainType) {
             String strValue = (String) value;
             if (strValue.equals("null")) {
               return null;
@@ -164,11 +168,16 @@ public class JsonToDataConverter {
 
             Calendar now = Calendar.getInstance();
             strValue = xmlDateFormat.format(now.getTime()) + "T" + strValue;
-            Date UTCTime = new Timestamp(jsTimeFormat.parse(strValue).getTime());
-
+            UTCTime = new Timestamp(jsTimeFormat.parse(strValue).getTime());
+          }
+          if (property.getDomainType() instanceof TimestampDomainType) {
             Date localTime = convertToLocalTime(UTCTime);
-
             return new Timestamp(localTime.getTime());
+          } else if (property.getDomainType() instanceof AbsoluteTimeDomainType) {
+            return UTCTime;
+          } else if (property.getDomainType() instanceof AbsoluteDateTimeDomainType) {
+            final String repairedString = JsonUtils.convertFromXSDToJavaFormat((String) value);
+            return new Timestamp(jsTimeFormat.parse(repairedString).getTime());
           } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
             final String repairedString = JsonUtils.convertFromXSDToJavaFormat((String) value);
             return new Timestamp(xmlDateTimeFormat.parse(repairedString).getTime());
@@ -676,8 +685,11 @@ public class JsonToDataConverter {
           // there are mismatches between json and the database in
           // precision of times/dates, these are repaired here by
           // not updating if the relevant part is the same
-          if (areDatesEqual((Date) value, (Date) currentValue, property.isDatetime(),
-              property.getDomainType() instanceof TimestampDomainType)) {
+          if (areDatesEqual((Date) value, (Date) currentValue,
+              property.isDatetime()
+                  || property.getDomainType() instanceof AbsoluteDateTimeDomainType,
+              property.getDomainType() instanceof TimestampDomainType
+                  || property.getDomainType() instanceof AbsoluteTimeDomainType)) {
             return;
           }
         }

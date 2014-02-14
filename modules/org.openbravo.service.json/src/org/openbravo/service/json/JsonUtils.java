@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -136,7 +136,8 @@ public class JsonUtils {
    * @return a colon added in the timezone part: 2009-12-06T15:59:34+01:00
    */
   public static String convertToCorrectXSDFormat(String dateValue) {
-    if (dateValue == null || dateValue.length() < 3) {
+    if (dateValue == null || dateValue.length() < 3 || dateValue.indexOf("+") == -1
+        || dateValue.indexOf("-") == -1) {
       return dateValue;
     }
     final int length = dateValue.length();

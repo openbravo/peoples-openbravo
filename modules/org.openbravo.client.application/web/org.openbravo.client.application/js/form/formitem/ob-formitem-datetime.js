@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -181,16 +181,75 @@ isc.OBDateTimeItem.addProperties({
     if (this.previousValue) {
       time = this.previousValue;
       delete this.previousValue;
+
+      if (this.isAbsoluteDateTime && Object.prototype.toString.call(time) === '[object Date]') {
+        // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 1/2)
+        time = new Date(time.getTime() + (time.getTimezoneOffset() * 60000));
+      }
     } else {
       time = new Date();
     }
     date.setHours(time.getHours(), time.getMinutes(), time.getSeconds());
 
+    if (this.isAbsoluteDateTime && Object.prototype.toString.call(date) === '[object Date]') {
+      // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 2/2)
+      date = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    }
+
     this.setValue(date);
+    this.updateValue();
   },
 
   compareValues: function (value1, value2) {
     return (0 === isc.Date.compareDates(value1, value2));
+  },
+
+  // Convert a text value entered in this item's text field to a final data value for storage
+  parseEditorValue: function (value, form, item) {
+    if (this.isAbsoluteDateTime) {
+      // In the case of an absolute datetime, the JS date needs to be converted in order to avoid the UTC conversion
+      // http://forums.smartclient.com/showthread.php?p=116135
+      var newValue = OB.Utilities.Date.OBToJS(value, OB.Format.dateTime),
+          fixedTime = this.fixedTime;
+      if (Object.prototype.toString.call(newValue) === '[object Date]') {
+        newValue = new Date(newValue.getTime() - (newValue.getTimezoneOffset() * 60000));
+      }
+      if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
+        if (Object.prototype.toString.call(fixedTime) === '[object String]') {
+          fixedTime = isc.Time.parseInput(fixedTime);
+        }
+        if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
+          newValue.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
+        }
+      }
+      return newValue;
+    } else {
+      return OB.Utilities.Date.OBToJS(value, OB.Format.dateTime);
+    }
+  },
+
+  // Convert this item's data value to a text value for display in this item's text field
+  formatEditorValue: function (value, record, form, item) {
+    if (this.isAbsoluteDateTime) {
+      // In the case of an absolute datetime, the JS date needs to be converted in order to avoid the UTC conversion
+      // http://forums.smartclient.com/showthread.php?p=116135
+      var newValue = value,
+          fixedTime = this.fixedTime;
+      if (Object.prototype.toString.call(newValue) === '[object Date]') {
+        newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
+      }
+      if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
+        if (Object.prototype.toString.call(fixedTime) === '[object String]') {
+          fixedTime = isc.Time.parseInput(fixedTime);
+        }
+        if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
+          newValue.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
+        }
+      }
+      return OB.Utilities.Date.JSToOB(newValue, OB.Format.dateTime);
+    } else {
+      return OB.Utilities.Date.JSToOB(value, OB.Format.dateTime);
+    }
   }
 });
 
@@ -215,4 +274,14 @@ isc.ClassFactory.defineClass('OBDateTimeToDateItem', isc.OBDateTimeItem);
 isc.OBDateTimeToDateItem.addProperties({
   showTime: false,
   fixedTime: '00:00:00'
+});
+
+
+// == OBDateTimeToDateItem ==
+// OBAbsoluteDateTimeItem inherits from OBDateTimeItem
+// It displays the received date and send to the backend the modified one "as it is". So there is no any kind of UTC conversion.
+isc.ClassFactory.defineClass('OBAbsoluteDateTimeItem', isc.OBDateTimeItem);
+
+isc.OBAbsoluteDateTimeItem.addProperties({
+  isAbsoluteDateTime: true
 });

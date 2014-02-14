@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ObjectNotFoundException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.AbsoluteDateTimeDomainType;
+import org.openbravo.base.model.domaintype.AbsoluteTimeDomainType;
 import org.openbravo.base.model.domaintype.BinaryDomainType;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
@@ -65,6 +67,7 @@ public class DataToJsonConverter {
   // TODO: need to be revisited when client side data formatting is solved
   private final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
   private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
+  private final SimpleDateFormat jsTimeFormat = JsonUtils.createJSTimeFormat();
   // private final static SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
   private final static SimpleDateFormat xmlTimeFormatWithoutMTOffset = JsonUtils
       .createTimeFormatWithoutGMTOffset();
@@ -324,6 +327,12 @@ public class DataToJsonConverter {
         Date UTCTime = convertToUTC(localTime);
 
         return xmlTimeFormatWithoutMTOffset.format(UTCTime.getTime());
+      } else if (property.getDomainType() instanceof AbsoluteTimeDomainType) {
+        final String formattedValue = jsTimeFormat.format(value);
+        return JsonUtils.convertToCorrectXSDFormat(formattedValue);
+      } else if (property.getDomainType() instanceof AbsoluteDateTimeDomainType) {
+        final String formattedValue = jsTimeFormat.format(value);
+        return JsonUtils.convertToCorrectXSDFormat(formattedValue);
       } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
         final String formattedValue = xmlDateTimeFormat.format(value);
         return JsonUtils.convertToCorrectXSDFormat(formattedValue);
