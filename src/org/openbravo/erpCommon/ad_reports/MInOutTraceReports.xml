@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2008 Openbravo SLU 
+* All portions are Copyright (C) 2001-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -45,10 +45,10 @@
     <ARGUMENT name="parameterListSelected" withId="paramM_ATTRIBUTESETINSTANCE_ID"/>
   </SUBREPORT>
   <structure name="structure1">
-    <FIELD id="fieldProductName">productName</FIELD>
-    <FIELD id="fieldAttributeName">attributeName</FIELD>
-    <FIELD id="fieldLocatorName">locatorName</FIELD>
-    <FIELD id="fieldHTML">html</FIELD>
+    <FIELD id="fieldProductName" replaceCharacters="html">productName</FIELD>
+    <FIELD id="fieldAttributeName" replaceCharacters="html">attributeName</FIELD>
+    <FIELD id="fieldLocatorName" replaceCharacters="html">locatorName</FIELD>
+    <FIELD id="fieldHTML" replaceCharacters="html">html</FIELD>
 
     <SECTION id="sectionDetail"/>
   </structure>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -213,7 +214,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     resultado.append("</td>\n");
     if (totalPedido.intValue() != 0) {
       resultado.append("<td class=\"DataGrid_Body_Cell_Amount\">\n");
-      resultado.append(totalPedido.toString()).append(" ").append(strUnitPedido);
+      resultado.append(totalPedido.toString()).append(" ")
+          .append(StringEscapeUtils.escapeHtml(strUnitPedido));
       resultado.append("</td>\n");
     }
     return resultado.toString();
@@ -313,15 +315,17 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"70\">")
               .append(dataProduction[j].movementdate).append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
-              .append(dataProduction[j].movementtypeName).append("</td>\n");
+              .append(StringEscapeUtils.escapeHtml(dataProduction[j].movementtypeName))
+              .append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
               .append(dataProduction[j].locatorName).append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">")
               .append(dataProduction[j].movementqty).append("&nbsp;")
-              .append(dataProduction[j].uomName).append("</td>\n");
+              .append(StringEscapeUtils.escapeHtml(dataProduction[j].uomName)).append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">")
               .append(dataProduction[j].quantityorder).append("&nbsp;")
-              .append(dataProduction[j].productUomName).append("</td>\n");
+              .append(StringEscapeUtils.escapeHtml(dataProduction[j].productUomName))
+              .append("</td>\n");
           resultado2 = dataProduction[j].productName;
           strHtml
               .append("    <td class=\"DataGrid_Body_Cell\"><a href=\"#\" onclick=\"submitCommandForm('INVERSE', true, null, 'MInOutTraceReports.html?inpmProductId2="
@@ -332,12 +336,12 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                   + (strIn.equals("Y") ? "N" : "Y")
                   + "', '_self');return true;\" class=\"LabelLink\">");
           if (!resultado2.equals(""))
-            strHtml.append(resultado2);
+            strHtml.append(StringEscapeUtils.escapeHtml(resultado2));
           strHtml.append("&nbsp;</a></td>\n");
           resultado2 = dataProduction[j].attributeName;
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"120\">");
           if (!resultado2.equals(""))
-            strHtml.append(resultado2);
+            strHtml.append(StringEscapeUtils.escapeHtml(resultado2));
           strHtml.append("&nbsp;</td>\n");
           strHtml.append("</tr></table>");
 
@@ -467,11 +471,12 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
         .append(data.locatorName).append("</td>\n");
     resultado.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">")
-        .append(data.movementqty).append("&nbsp;").append(data.uomName).append("</td>\n");
+        .append(data.movementqty).append("&nbsp;")
+        .append(StringEscapeUtils.escapeHtml(data.uomName)).append("</td>\n");
     if (!data.quantityorder.equals("")) {
       resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">")
-          .append(data.quantityorder).append("&nbsp;").append(data.productUomName)
-          .append("</td>\n");
+          .append(data.quantityorder).append("&nbsp;")
+          .append(StringEscapeUtils.escapeHtml(data.productUomName)).append("</td>\n");
     }
     if (data.movementtype.equalsIgnoreCase("W+")) {
       // resultado2 = data.productionName;
@@ -502,7 +507,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
 
     resultado.append("    <td class=\"DataGrid_Body_Cell\">");
     if (!resultado2.equals(""))
-      resultado.append(resultado2);
+      resultado.append(StringEscapeUtils.escapeHtml(resultado2));
     resultado.append("&nbsp;</td>\n");
     resultado.append("</tr></table>");
     return resultado.toString();
