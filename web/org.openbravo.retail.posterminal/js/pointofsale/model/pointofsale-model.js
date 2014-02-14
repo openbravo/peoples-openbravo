@@ -405,9 +405,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             return line.get('gross') < 0;
           }).length;
           if (negativeLines === receipt.get('lines').models.length) {
-            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One);
+            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One, {applyPromotions: false, saveOrder: false});
           } else {
-            receipt.setOrderType('', OB.DEC.Zero);
+            receipt.setOrderType('', OB.DEC.Zero, {applyPromotions: false, saveOrder: false});
           }
         }
         if (!_.isUndefined(receipt.selectedPayment) && receipt.getChange() > 0) {
