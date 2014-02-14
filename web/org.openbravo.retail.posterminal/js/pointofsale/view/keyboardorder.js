@@ -154,16 +154,25 @@ enyo.kind({
 
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
-        var value = OB.I18N.parseNumber(txt);
+        var value = OB.I18N.parseNumber(txt),
+            toadd;
         if (!keyboard.line) {
           return true;
         }
         if (value || value === 0) {
-          value = value - keyboard.line.get('qty');
-          if (value > 0) {
-            actionAddProduct(keyboard, value);
-          } else if (value < 0) {
-            actionAddProduct(keyboard, value);
+          toadd = value - keyboard.line.get('qty');
+          if (toadd === 0) { // If nothing to add then return
+            return;
+          }
+
+          if (value === 0) { // If final quantity will be 0 then request approval
+            OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+              if (approved) {
+                actionAddProduct(keyboard, toadd);
+              }
+            });
+          } else {
+            actionAddProduct(keyboard, toadd);
           }
         }
       }
@@ -253,18 +262,32 @@ enyo.kind({
     this.addCommand('-', {
       stateless: true,
       action: function (keyboard, txt) {
-        var qty = 1;
+        var qty = 1,
+            value;
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
         }
-        actionAddProduct(keyboard, -qty);
+        value = keyboard.line.get('qty') - qty;
+        if (value === 0) { // If final quantity will be 0 then request approval
+          OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+            if (approved) {
+              actionAddProduct(keyboard, -qty);
+            }
+          });
+        } else {
+          actionAddProduct(keyboard, -qty);
+        }
       }
     });
     // add a command that will handle the DELETE keyboard key
     this.addCommand('line:delete', {
       stateless: true,
       action: function (keyboard) {
-        actionDeleteLine(keyboard);
+        OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+          if (approved) {
+            actionDeleteLine(keyboard);
+          }
+        });
       }
     });
 
