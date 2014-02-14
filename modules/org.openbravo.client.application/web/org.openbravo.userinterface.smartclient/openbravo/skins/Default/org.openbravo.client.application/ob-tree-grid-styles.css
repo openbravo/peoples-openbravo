@@ -73,3 +73,20 @@
   text-align: center;
   background: none;
 }
+
+.OBTreeGridCellSelected,
+.OBTreeGridCellSelectedDark {
+  background-color: #ffe1c0; /* Orange for active grid, for non active grid: #b8d587 */
+}
+
+.OBTreeGridCellSelectedOver,
+.OBTreeGridCellSelectedOverDark {
+  background-color: #ffe1c0;
+}
+
+.OBTreeGridCellOver,
+.OBTreeGridCellOverDark,
+.OBTreeGridCellEditOver,
+.OBTreeGridCellEditOverDark {
+  background-color: #e1e1e1;  /* Orange for active grid, for non active grid: #dbe6c7 */
+}
