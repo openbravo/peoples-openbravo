@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2014 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -46,9 +46,11 @@ public class FormatUtilities {
   }
 
   public static String replaceJS(String strIni, boolean isUnderQuotes) {
-    return Replace.replace(Replace.replace(Replace.replace(
-        Replace.replace(strIni, "'", (isUnderQuotes ? "\\'" : "&#039;")), "\"", "\\\""), "\n",
-        "\\n"), "\r", "");
+    return Replace
+        .replace(
+            Replace.replace(Replace.replace(
+                Replace.replace(strIni, "'", (isUnderQuotes ? "\\'" : "&#039;")), "\"", "\\\""),
+                "\n", "\\n"), "\r", "").replace("<", "\\<").replace(">", "\\>");
   }
 
   public static String sha1Base64(String text) throws ServletException {
