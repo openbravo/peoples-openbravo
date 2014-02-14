@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,24 +53,24 @@
     <FUNCTION id="funcEvenOddRow" name="MODULE" arg1="fieldRownum" arg2="param2" format="integerEdition" attribute="class" replace="xx"/>
     <FIELD id="fieldId" attribute="onclick" replace="xx">id</FIELD>
     <FIELD id="fieldCOrderlineId" attribute="value">id</FIELD>
-	<FIELD id="paramDateReceiptxx" attribute="id" replace="xx">cBpartnerId</FIELD>
-	<FIELD id="paramDateReceiptxx" attribute="name" replace="xx">cBpartnerId</FIELD>
-	<PARAMETER id="paramDateReceiptxx" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
+    <FIELD id="paramDateReceiptxx" attribute="id" replace="xx">cBpartnerId</FIELD>
+    <FIELD id="paramDateReceiptxx" attribute="name" replace="xx">cBpartnerId</FIELD>
+    <PARAMETER id="paramDateReceiptxx" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
     <PARAMETER id="paramDateReceiptxx" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
-	<FIELD id="paramDateReceiptxxinvalidSpan" attribute="id" replace="xx">cBpartnerId</FIELD>
-	<FIELD id="paramDateReceiptxxinvalidSpanText" attribute="id" replace="xx">cBpartnerId</FIELD>
-	<FIELD id="paramDateReceiptxxmissingSpan" attribute="id" replace="xx">cBpartnerId</FIELD>
-	<FIELD id="paramDateReceiptxxmissingSpanText" attribute="id" replace="xx">cBpartnerId</FIELD>
-	<FIELD id="paramDateReceiptxxrangeSpan" attribute="id" replace="xx">cBpartnerId</FIELD>
-	<FIELD id="paramDateReceiptxxrangeSpanText" attribute="id" replace="xx">cBpartnerId</FIELD>
+    <FIELD id="paramDateReceiptxxinvalidSpan" attribute="id" replace="xx">cBpartnerId</FIELD>
+    <FIELD id="paramDateReceiptxxinvalidSpanText" attribute="id" replace="xx">cBpartnerId</FIELD>
+    <FIELD id="paramDateReceiptxxmissingSpan" attribute="id" replace="xx">cBpartnerId</FIELD>
+    <FIELD id="paramDateReceiptxxmissingSpanText" attribute="id" replace="xx">cBpartnerId</FIELD>
+    <FIELD id="paramDateReceiptxxrangeSpan" attribute="id" replace="xx">cBpartnerId</FIELD>
+    <FIELD id="paramDateReceiptxxrangeSpanText" attribute="id" replace="xx">cBpartnerId</FIELD>
     <FIELD id="paramLinkDateReceipt" attribute="onclick" replace="xx">cBpartnerId</FIELD>
     <FIELD id="paramLinkDateReceipt" attribute="onclick" replace="yy">cBpartnerId</FIELD>
     <FIELD id="idfieldCOrderId" attribute="onclick" replace="xx">cOrderId</FIELD>
-    <FIELD id="fieldDocumentno">documentno</FIELD>
+    <FIELD id="fieldDocumentno" replaceCharacters="html">documentno</FIELD>
     <FIELD id="fieldDateordered">dateordered</FIELD>
-    <FIELD id="fieldPartnerName">partnerName</FIELD>
-    <FIELD id="fieldProductName">productName</FIELD>
-    <FIELD id="fieldDescription">description</FIELD>
+    <FIELD id="fieldPartnerName" replaceCharacters="html">partnerName</FIELD>
+    <FIELD id="fieldProductName" replaceCharacters="html">productName</FIELD>
+    <FIELD id="fieldDescription" replaceCharacters="html">description</FIELD>
     <FIELD id="fieldTotalQty" format="euroEdition">totalQty</FIELD>
     <FIELD id="fieldQtyordered" attribute="value" format="euroEdition">qtyordered</FIELD>
     <FIELD id="fieldQtyordered" attribute="name" replace="xx">id</FIELD>
