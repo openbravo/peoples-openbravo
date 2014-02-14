@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -131,7 +131,7 @@ isc.OBListItem.addProperties({
     for (i = 0; i < length; i++) {
       id = entries[i][OB.Constants.ID] || '';
       identifier = entries[i][OB.Constants.IDENTIFIER] || '';
-      valueMap[id] = identifier;
+      valueMap[id] = identifier.asHTML();
       this.entries[i] = {};
       this.entries[i][valueField] = id;
     }
@@ -179,7 +179,7 @@ isc.OBListItem.addProperties({
         }
       } else if (this.valueMap[value]) {
         this.lastSelectedValue = value;
-        return this.valueMap[value];
+        return this.valueMap[value].unescapeHTML();
       }
     }
 
