@@ -338,6 +338,9 @@
         //MASTER DATA REFRESH
         var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
         if (minIncRefresh) {
+          if (!OB.MobileApp.model.get('FullRefreshWasDone')) {
+            OB.MobileApp.model.loadModels(null, true);
+          }
           loadModelsIncFunc = function () {
             OB.MobileApp.model.loadModels(null, true);
           };
