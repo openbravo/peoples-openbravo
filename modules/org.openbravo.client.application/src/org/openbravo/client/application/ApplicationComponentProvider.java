@@ -320,6 +320,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
+            + "/org.openbravo.client.application/ob-tree-grid-styles.css", false));
+    globalResources.add(createStyleSheetResource(
+        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+            + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-navigation-bar-styles.css", false));
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"

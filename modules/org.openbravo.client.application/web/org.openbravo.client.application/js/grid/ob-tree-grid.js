@@ -26,7 +26,7 @@ isc.OBTreeGrid.addProperties({
   showDropIcons: false,
   nodeIcon: null,
   folderIcon: null,
-  showSortArrow: false,
+  showSortArrow: 'field',
   showRecordComponentsByCell: true,
   showRecordComponents: true,
   autoFetchTextMatchStyle: 'substring',
