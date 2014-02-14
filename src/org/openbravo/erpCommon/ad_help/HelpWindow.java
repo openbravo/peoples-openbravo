@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -78,6 +79,8 @@ public class HelpWindow {
       add("FF8081812E008C6E012E00A613DC0019"); // Openbravo 3 Demo Sampledata API
     }
   };
+
+  private static final String COMPATIBILITY_MODULE = "677192D0C60F411384832241227360E3";
 
   private static Logger log4j = Logger.getLogger(HelpWindow.class);
 
@@ -124,9 +127,18 @@ public class HelpWindow {
     final String YES_NO_DEFAULT_REF = "Yes/No/Default";
     final String TEXT_FILTER_BEHAVIOR_REF = "Text Filter Behavior (Window/Tab/Field)";
 
-    if (discardEdit)
+    boolean forcedDiscardEdit = false;
+    if (!discardEdit) {
+      // help edition is now only available in compatibility module
+      Module compatModule = OBDal.getInstance().get(Module.class, COMPATIBILITY_MODULE);
+      forcedDiscardEdit = compatModule == null;
+    }
+
+    if (forcedDiscardEdit || discardEdit) {
       discard[nDiscards++] = new String("discardEdit");
-    else if (strKeyId.equals("")) {
+    }
+
+    if (!discardEdit && strKeyId.equals("")) {
       strType = vars.getRequiredStringParameter("inpwindowType");
       window = false;
       if (strType.equals("X")) {
