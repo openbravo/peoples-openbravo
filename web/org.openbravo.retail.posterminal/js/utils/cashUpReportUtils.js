@@ -53,19 +53,19 @@
           //Sales order: Positive line
           if (line.get('qty') > 0 && orderType !== 3) {
             cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), line.get('net')));
-            cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), line.get('gross')));
+            cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), line.get('lineGrossAmount')));
             //Return from customer or Sales with return: Negative line
           } else if (line.get('qty') < 0 && orderType !== 3) {
             cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), -line.get('net')));
-            cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), -line.get('gross')));
+            cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), -line.get('lineGrossAmount')));
             //Void Layaway
           } else if (orderType === 3) {
             if (line.get('qty') > 0) {
               cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), -line.get('net')));
-              cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), -line.get('gross')));
+              cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), -line.get('lineGrossAmount')));
             } else {
               cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), line.get('net')));
-              cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), line.get('gross')));
+              cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), line.get('lineGrossAmount')));
             }
           }
         });
