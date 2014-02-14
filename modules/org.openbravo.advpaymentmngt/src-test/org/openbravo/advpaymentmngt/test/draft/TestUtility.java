@@ -457,10 +457,10 @@ public class TestUtility extends BaseTest {
    * Method used to generating payment document with refund amount.
    * 
    * @param payment
-   *          . Created Payment.
+   *          Created Payment.
    * @param refundAmount
-   *          . Refund Amount need to transfer to the customer.
-   * @return. Created FIN_Payment object.
+   *          Refund Amount need to transfer to the customer.
+   * @return Created FIN_Payment object.
    * @throws Exception
    *           In case of executing invalid data.
    */
