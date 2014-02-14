@@ -281,7 +281,7 @@ enyo.kind({
   orderChanged: function (oldValue) {
     this.$.totalReceiptLine.renderTotal(this.order.getTotal());
     this.$.totalReceiptLine.renderQty(this.order.getQty());
-    this.$.totalTaxLine.renderTax(this.order.getTotal() - this.order.getNet());
+    this.$.totalTaxLine.renderTax(OB.DEC.sub(this.order.getTotal(), this.order.getNet()));
     this.$.totalTaxLine.renderBase('');
     this.$.listOrderLines.setCollection(this.order.get('lines'));
     this.$.listPaymentLines.setCollection(this.order.get('payments'));
@@ -289,7 +289,7 @@ enyo.kind({
     this.order.on('change:gross change:net change:taxes', function (model) {
       if (model.get('orderType') !== 3) {
         this.$.totalReceiptLine.renderTotal(model.getTotal());
-        this.$.totalTaxLine.renderTax(model.getTotal() - model.getNet());
+        this.$.totalTaxLine.renderTax(OB.DEC.sub(model.getTotal(), model.getNet()));
         this.setTaxes();
       }
     }, this);
