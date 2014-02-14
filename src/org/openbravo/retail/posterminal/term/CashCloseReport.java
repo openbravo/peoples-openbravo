@@ -46,7 +46,7 @@ public class CashCloseReport extends JSONProcessSimple {
 
     // Total sales computation
 
-    String hqlTaxes = "select olt.tax.name, sum(olt.taxAmount)"
+    String hqlTaxes = "select olt.tax.name, sum(olt.taxAmount), sum(olt.taxableAmount)"
         + " from OrderLineTax as olt"
         + " where exists (select 1 "
         + "               from FIN_Payment_ScheduleDetail d"
@@ -68,6 +68,7 @@ public class CashCloseReport extends JSONProcessSimple {
       JSONObject salesTax = new JSONObject();
       salesTax.put("taxName", sales[0]);
       salesTax.put("taxAmount", sales[1]);
+      salesTax.put("taxableAmount", sales[2]);
       salesTaxes.put(salesTax);
       totalSalesTax = totalSalesTax.add((BigDecimal) sales[1]);
     }
@@ -106,6 +107,7 @@ public class CashCloseReport extends JSONProcessSimple {
       JSONObject returnTax = new JSONObject();
       returnTax.put("taxName", returns[0]);
       returnTax.put("taxAmount", ((BigDecimal) returns[1]).abs());
+      returnTax.put("taxableAmount", ((BigDecimal) returns[2]).abs());
       returnTaxes.put(returnTax);
       totalReturnsTax = totalReturnsTax.add(((BigDecimal) returns[1]).abs());
     }
