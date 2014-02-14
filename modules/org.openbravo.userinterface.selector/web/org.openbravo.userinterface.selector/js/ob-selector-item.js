@@ -36,7 +36,7 @@ isc.OBSelectorPopupWindow.addProperties({
 
   initWidget: function () {
     var selectorWindow = this,
-        okButton, cancelButton, operator, i;
+        okButton, cancelButton, operator, i, hasIdentifier;
 
     this.setFilterEditorProperties(this.selectorGridFields);
 
@@ -61,6 +61,7 @@ isc.OBSelectorPopupWindow.addProperties({
       operator = 'iStartsWith';
     }
 
+    hasIdentifier = false;
     for (i = 0; i < this.selectorGridFields.length; i++) {
       this.selectorGridFields[i].canSort = (this.selectorGridFields[i].canSort === false ? false : true);
       this.selectorGridFields[i].escapeHTML = (this.selectorGridFields[i].escapeHTML === false ? false : true);
@@ -69,8 +70,17 @@ isc.OBSelectorPopupWindow.addProperties({
       } else {
         this.selectorGridFields[i].canFilter = true;
       }
+      if (this.selectorGridFields[i].name === OB.Constants.IDENTIFIER) {
+        hasIdentifier = true;
+      }
     }
     if (!this.dataSource.fields || !this.dataSource.fields.length || this.dataSource.fields.length === 0) {
+      if (!hasIdentifier && this.selectorGridFields) {
+        this.selectorGridFields.push({
+          name: OB.Constants.IDENTIFIER,
+          escapeHTML: true
+        });
+      }
       this.dataSource.fields = this.selectorGridFields;
       this.dataSource.init();
     }
