@@ -445,7 +445,7 @@
                     pricenetcascade = pricenet.multiply(rate.add(BigDecimal.prototype.ONE));
 
                     taxesline[taxId] = {};
-                    taxesline[taxId].name = taxRate.get('net');
+                    taxesline[taxId].name = taxRate.get('name');
                     taxesline[taxId].rate = taxRate.get('rate');
                     taxesline[taxId].net = net;
                     taxesline[taxId].amount = amount;
