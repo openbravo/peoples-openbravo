@@ -76,16 +76,6 @@
         <Parameter name="grp"/>
    </SqlMethod>
    
-   <SqlMethod name="groupTitle" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT name
-        FROM C_ACCT_RPT_GROUP
-        WHERE C_ACCT_RPT_GROUP_ID = ?
-      ]]></Sql>
-        <Parameter name="grp"/>
-   </SqlMethod>
-   
    <SqlMethod name="rptTitle" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
@@ -96,38 +86,6 @@
         <Parameter name="rpt"/>
    </SqlMethod>
    
-   
-   
-   
-  <SqlMethod name="fieldtitle" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT m.Name 
-        FROM C_ElementValue m
-        WHERE m.C_ElementValue_ID = ?
-      ]]></Sql>
-        <Parameter name="cElementvalueId"/>
-  </SqlMethod>
-  <SqlMethod name="fieldtitleTrl" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT COALESCE(mt.Name, m.Name) AS NAME 
-        FROM C_ElementValue m left join C_ElementValue_Trl mt on m.C_ElementValue_ID = mt.C_ElementValue_ID 
-                                                             AND mt.AD_Language  = ?
-        WHERE m.C_ElementValue_ID = ? 
-      ]]></Sql>
-        <Parameter name="adLanguage"/>
-        <Parameter name="cElementvalueId"/>     
-  </SqlMethod>
-  <SqlMethod name="selectElement" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT m.AccountType 
-        FROM C_ElementValue m
-        WHERE m.C_ElementValue_ID = ?
-      ]]></Sql>
-        <Parameter name="cElementvalueId"/>
-  </SqlMethod>
   <SqlMethod name="treeOrg" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -179,128 +137,6 @@
         <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = ?]]></Parameter>
         <Parameter name="year" optional="true" type="replace" after="AND C_YEAR.YEAR IN (" text="'1'"/>
         <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
-   </SqlMethod>
-   <SqlMethod name="checkFiscalYears" type="preparedStatement" return="multiple" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT CASE WHEN C.CLOSE_FACT_ACCT_GROUP_ID IS NULL THEN 'N' ELSE 'Y' END || SELECTED.C_YEAR_ID AS ID,
-          C_YEAR.YEAR AS NAME
-        FROM C_PERIOD PREVIOUS LEFT JOIN AD_ORG_CLOSING C ON C.C_YEAR_ID = PREVIOUS.C_YEAR_ID, C_PERIOD SELECTED, C_YEAR
-        WHERE PREVIOUS.AD_CLIENT_ID = ?
-          AND SELECTED.AD_CLIENT_ID = ?
-          AND SELECTED.ISACTIVE = 'Y'
-          AND C_YEAR.ISACTIVE = 'Y'
-          AND PREVIOUS.ENDDATE = SELECTED.STARTDATE-1
-          AND PREVIOUS.ENDDATE IN (
-            SELECT MAX(P.ENDDATE) AS END
-            FROM C_PERIOD P, C_YEAR Y
-            WHERE P.AD_CLIENT_ID = ?
-              AND Y.C_YEAR_ID = P.C_YEAR_ID
-            GROUP BY Y.YEAR, P.C_YEAR_ID
-          )
-          AND C_YEAR.C_YEAR_ID = SELECTED.C_YEAR_ID
-        UNION
-        SELECT 'M'||Y.C_YEAR_ID AS ID, Y.YEAR AS NAME
-        FROM C_PERIOD P, C_YEAR Y
-        WHERE P.AD_CLIENT_ID=?
-          AND P.C_YEAR_ID = Y.C_YEAR_ID
-          AND P.ISACTIVE = 'Y'
-          AND Y.ISACTIVE = 'Y'
-          AND P.STARTDATE-1 NOT IN (
-                SELECT ENDDATE
-                FROM C_PERIOD
-                WHERE C_PERIOD.AD_CLIENT_ID = ?
-          )
-        ORDER BY NAME DESC
-        ]]></Sql>
-        <Parameter name="adClientId"/>
-        <Parameter name="adClientId"/>
-        <Parameter name="adClientId"/>
-        <Parameter name="adClientId"/>
-        <Parameter name="adClientId"/>
-   </SqlMethod>
-   <SqlMethod name="checkFiscalYearsGenLed" type="preparedStatement" return="multiple" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT CASE WHEN C.CLOSE_FACT_ACCT_GROUP_ID IS NULL THEN 'N' ELSE 'Y' END || SELECTED.C_YEAR_ID AS ID,
-          C_YEAR.YEAR AS NAME
-        FROM C_PERIOD PREVIOUS LEFT JOIN AD_ORG_CLOSING C ON C.C_YEAR_ID = PREVIOUS.C_YEAR_ID, C_PERIOD SELECTED, C_YEAR,
-          AD_ORG_ACCTSCHEMA OAS
-        WHERE PREVIOUS.AD_CLIENT_ID = ?
-          AND SELECTED.AD_CLIENT_ID = ?
-          AND SELECTED.ISACTIVE = 'Y'
-          AND C_YEAR.ISACTIVE = 'Y'
-          AND PREVIOUS.ENDDATE = SELECTED.STARTDATE-1
-          AND PREVIOUS.ENDDATE IN (
-            SELECT MAX(P.ENDDATE) AS END
-            FROM C_PERIOD P, C_YEAR Y
-            WHERE P.AD_CLIENT_ID = ?
-              AND Y.C_YEAR_ID = P.C_YEAR_ID
-            GROUP BY Y.YEAR, P.C_YEAR_ID
-          )
-          AND C_YEAR.C_YEAR_ID = SELECTED.C_YEAR_ID
-          AND C.AD_ORG_ACCTSCHEMA_ID = OAS.AD_ORG_ACCTSCHEMA_ID
-          AND OAS.C_ACCTSCHEMA_ID = ?
-        UNION
-        SELECT 'M'||Y.C_YEAR_ID AS ID, Y.YEAR AS NAME
-        FROM C_PERIOD P, C_YEAR Y
-        WHERE P.AD_CLIENT_ID=?
-          AND P.C_YEAR_ID = Y.C_YEAR_ID
-          AND P.ISACTIVE = 'Y'
-          AND Y.ISACTIVE = 'Y'
-          AND P.STARTDATE-1 NOT IN (
-                SELECT ENDDATE
-                FROM C_PERIOD
-                WHERE C_PERIOD.AD_CLIENT_ID = ?
-          )
-        ORDER BY NAME DESC
-        ]]></Sql>
-        <Parameter name="adClientId"/>
-        <Parameter name="adClientId"/>
-        <Parameter name="adClientId"/>
-        <Parameter name="cAcctschemaId"/>
-        <Parameter name="adClientId"/>
-        <Parameter name="adClientId"/>
-   </SqlMethod>
-   <SqlMethod name="previousYear" type="preparedStatement" return="multiple" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT A.ID, A.NAME, Y.YEAR AS PREVIOUS_YEAR, Y.C_YEAR_ID AS PREVIOUS_YEAR_ID
-        FROM (
-                SELECT MIN(P.STARTDATE) AS BEGINING, MAX(P.ENDDATE) AS END, Y.YEAR AS NAME, Y.C_YEAR_ID AS ID
-                FROM C_PERIOD P, C_YEAR Y
-                WHERE P.AD_CLIENT_ID = ?
-                  AND Y.C_YEAR_ID = P.C_YEAR_ID
-                GROUP BY Y.C_YEAR_ID, Y.YEAR
-             ) A, C_YEAR Y, C_PERIOD P
-        WHERE P.ENDDATE = A.BEGINING-1
-          AND Y.AD_CLIENT_ID = ?
-          AND P.AD_CLIENT_ID = ?
-          AND P.C_YEAR_ID = Y.C_YEAR_ID
-        ]]></Sql>
-        <Parameter name="adClientId"/>
-        <Parameter name="adClientId"/>
-        <Parameter name="adClientId"/>
-   </SqlMethod>
-   <SqlMethod name="startEndYear" type="preparedStatement" return="multiple" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-          SELECT MIN(P.STARTDATE) AS BEGINING, MAX(P.ENDDATE) AS END, Y.YEAR AS NAME, Y.C_YEAR_ID AS ID
-          FROM C_PERIOD P, C_YEAR Y
-          WHERE P.AD_CLIENT_ID=?
-            AND Y.C_YEAR_ID = P.C_YEAR_ID
-            AND Y.C_YEAR_ID IN ('1')
-          GROUP BY Y.C_YEAR_ID, Y.YEAR
-        ]]></Sql>
-        <Parameter name="adClientId"/>
-        <Parameter name="cYearId" optional="true" type="replace" after="AND Y.C_YEAR_ID IN (" text="'1'"/>
-   </SqlMethod>
-   <SqlMethod name="selectCalculateOpening" type="preparedStatement" return="String" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-          SELECT COALESCE(REPORTTYPE,'N') FROM C_ACCT_RPT WHERE C_ACCT_RPT_ID=?
-        ]]></Sql>
-        <Parameter name="cAcctRptId"/>
    </SqlMethod>
    <SqlMethod name="selectOrgsDouble" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

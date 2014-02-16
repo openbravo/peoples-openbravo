@@ -37,18 +37,6 @@
      </Sql>
      <Parameter name="cash"/>
    </SqlMethod>
-  <SqlMethod name="selectBPartner" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-	SELECT O.C_BPARTNER_ID as C_BPARTNER_ID, o.ISSOTRX AS ISSOTRX 
-	FROM C_CASHLINE C, C_ORDER O
-	WHERE C.C_ORDER_ID = O.C_ORDER_ID
-	AND C.C_CASHLINE_ID = ?
-     ]]>
-     </Sql>
-     <Parameter name="cashLine"/>
-   </SqlMethod>
   <SqlMethod name="selectRegistro" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

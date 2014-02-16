@@ -24,18 +24,6 @@
 
 <SqlClass name="WarehouseData" package="org.openbravo.erpCommon.ad_forms">
    <SqlClassComment></SqlClassComment>
-   <SqlMethod name="select" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT AD_ROLE_ORGACCESS.AD_ROLE_ID || '-' || M_Warehouse.AD_Client_ID as PADRE, M_Warehouse.M_WAREHOUSE_ID AS ID, 
-        M_Warehouse.Name AS Name 
-        FROM M_Warehouse, AD_ORG , AD_ROLE_ORGACCESS
-        WHERE M_Warehouse.AD_ORG_ID = AD_ORG.AD_ORG_ID
-        AND AD_ORG.AD_ORG_ID = AD_ROLE_ORGACCESS.AD_ORG_ID
-        AND M_Warehouse.IsActive='Y' 
-        ORDER BY AD_ROLE_ORGACCESS.AD_ROLE_ID, M_Warehouse.Name
-      </Sql>
-   </SqlMethod>
   <SqlMethod name="selectByRoleAndClient" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

@@ -132,15 +132,6 @@
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>
-  <SqlMethod name="selectCompany" type="preparedStatement" return="string" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-        SELECT NAME
-        FROM AD_CLIENT
-        WHERE AD_CLIENT_ID = ?
-    </Sql>
-    <Parameter name="client"/>
-  </SqlMethod>
   <SqlMethod name="selectAccountName" type="preparedStatement" return="string" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

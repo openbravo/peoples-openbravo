@@ -56,9 +56,5 @@ SELECT DISTINCT REPLACE(table3.HEADERNOTE, CHR(10), '') AS headernote, table3.C_
         <Parameter name="adOrgClient" type="replace" optional="true" after="table3.AD_ORG_ID IN (" text="'1'"/>
 
    </SqlMethod>
-   <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-   </SqlMethod>
    
 </SqlClass>

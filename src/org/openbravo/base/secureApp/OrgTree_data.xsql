@@ -29,30 +29,4 @@
     <Parameter name="adRoleId"/>
   </SqlMethod>
   
-  <SqlMethod name="selectAllClients" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT AD_CLIENT_ID
-        FROM AD_CLIENT
-    </Sql>
-  </SqlMethod>
-  
-  <SqlMethod name="selectAllOrgs" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT AD_ORG_ID
-        FROM AD_ORG
-    </Sql>
-  </SqlMethod>
-  
-  <SqlMethod name="selectRoles" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT AD_ROLE_ID, userlevel
-        FROM AD_ROLE
-       WHERE AD_CLIENT_ID = ?
-    </Sql>
-   <Parameter name="client"/>
-  </SqlMethod>
-  
 </SqlClass>

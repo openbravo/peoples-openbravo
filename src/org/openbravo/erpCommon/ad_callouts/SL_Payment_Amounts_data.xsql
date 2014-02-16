@@ -36,19 +36,6 @@
     <Parameter name="cInvoiceId"/>
 
   </SqlMethod>
- <SqlMethod name="selectCurrency" type="preparedStatement" return="string" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT C_CONVERSION_RATE.MULTIPLYRATE 
-        FROM C_CONVERSION_RATE
-        WHERE C_CONVERSION_RATE.C_CURRENCY_ID = ?
-        AND C_CONVERSION_RATE.C_CURRENCY_ID_TO = ?
-      ]]>
-    </Sql>
-    <Parameter name="cCurrencyId"/>
-    <Parameter name="cCurrencyIdTo"/>
-  </SqlMethod>
    <SqlMethod name="selectConversion" type="preparedStatement" return="String" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

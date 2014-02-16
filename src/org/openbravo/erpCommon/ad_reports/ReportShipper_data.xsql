@@ -67,10 +67,6 @@
     <Parameter name="shipper" optional="true" after="AND 1=1" text=" AND i.M_SHIPPER_ID = ? "/>
     <Parameter name="issotrx" optional="true" after="AND 1=1" text=" AND i.IsSOTrx = ? "/>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
   <SqlMethod name="selectLine" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

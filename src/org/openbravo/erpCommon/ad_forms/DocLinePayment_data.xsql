@@ -47,20 +47,6 @@
      </Sql>
      <Parameter name="C_SETTLEMENT_ID"/>
    </SqlMethod>
-  <SqlMethod name="selectManualAcct" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT C_GLITEM_ACCT.GLITEM_CREDIT_ACCT AS CREDIT_ACCT, C_GLITEM_ACCT.GLITEM_DEBIT_ACCT AS DEBIT_ACCT
-      FROM C_DEBT_PAYMENT, C_GLITEM_ACCT
-      WHERE C_DEBT_PAYMENT.C_GLITEM_ID = C_GLITEM_ACCT.C_GLITEM_ID
-      AND C_GLITEM_ACCT.C_ACCTSCHEMA_ID = ?
-      AND C_DEBT_PAYMENT.C_SETTLEMENT_GENERATE_ID = ?
-     ]]>
-     </Sql>
-     <Parameter name="C_ACCTSCHEMA_ID"/>
-     <Parameter name="C_SETTLEMENT_ID"/>
-   </SqlMethod>
   <SqlMethod name="getDPStatus" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

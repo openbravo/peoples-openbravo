@@ -47,9 +47,4 @@
     <Parameter name="parTaxRegisId" optional="true" after="and 1=1"><![CDATA[ and taxreg.c_taxregister_id in ( ? )  ]]></Parameter>
   </SqlMethod>
 
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
-  
 </SqlClass>

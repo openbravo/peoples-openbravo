@@ -76,8 +76,4 @@
     <Parameter name="parDateTo" optional="true" after="AND 2=2"><![CDATA[AND C_CASH.STATEMENTDATE < TO_DATE(?)]]></Parameter>
     <Parameter name="cashBook" optional="true" after="AND 2=2"><![CDATA[AND C_CASHBOOK.C_CASHBOOK_ID = ?]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
 </SqlClass>

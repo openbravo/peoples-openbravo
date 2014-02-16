@@ -50,11 +50,6 @@
     <Parameter name="cBpartnerId" optional="true" after="AND stl.C_InvoiceLine_ID IS NULL"><![CDATA[ AND st.C_BPartner_ID = ?]]></Parameter>
   </SqlMethod>
 
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment>Create a registry</SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
-
   <SqlMethod name="selectInvoiceHeader" type="preparedStatement" connection="true" return="String" default="">
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql><![CDATA[
@@ -192,27 +187,6 @@
     <Parameter name="adOrgId"/>
   </SqlMethod>
   
-  <SqlMethod name="cDoctypeId" type="preparedStatement" return="string" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-     SELECT C_DocTypeInvoice_ID
-     FROM C_DOCTYPE
-     WHERE C_DocType_ID = ?
-    ]]>
-    </Sql>
-  <Parameter name="cDoctypeId"/>
-  </SqlMethod>
-  <SqlMethod name="bPartnerDescription" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-     <Sql>
-     <![CDATA[
-       SELECT NAME FROM C_BPARTNER
-       WHERE C_BPARTNER_ID = ?
-    ]]></Sql>
-    <Parameter name="cBpartnerId"/>
-  </SqlMethod>
-
   <SqlMethod name="bPartnerLocation" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -235,17 +209,6 @@
         AND ISSHIPTO = 'Y'
       ]]></Sql>
     <Parameter name="cBpartnerId"/>
-  </SqlMethod>
-
-  <SqlMethod name="salesrepId" type="preparedStatement" return="String" default="">
-    <SqlMethodComment>nt></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT MAX(AD_USER_ID)
-      FROM AD_USER
-      WHERE C_BPARTNER_ID = ?
-     ]]></Sql>
-      <Parameter name="cBpartnerId"/>
   </SqlMethod>
 
   <SqlMethod name="paymentrule" type="preparedStatement" return="String" default="">

@@ -57,10 +57,6 @@
     </Sql>
   </SqlMethod>
 
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment>Create a registry</SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
   <SqlMethod name="selectMapping" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
@@ -183,17 +179,6 @@
       ORDER BY SEQNO, NAME
       ]]>
     </Sql>
-  </SqlMethod>
-  <SqlMethod name="selectPixelSize" type="preparedStatement" return="String" default="">
-    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT PIXELSIZE 
-      FROM AD_LANGUAGE 
-      WHERE AD_LANGUAGE = ? 
-      ]]>
-    </Sql>
-    <Parameter name="adLanguage"/>
   </SqlMethod>
   
   <SqlMethod name="genereteWebXml" type="preparedStatement" return="boolean" default="true">

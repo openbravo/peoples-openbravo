@@ -64,11 +64,6 @@
         <Parameter name="oraLimit1" type="argument" optional="true" after=") A "><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
         <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
-   <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-   </SqlMethod>
-
    <SqlMethod name="countRows" type="preparedStatement" return="String">
       <Sql> <![CDATA[
             SELECT count(*) AS VALUE FROM ( SELECT '0' AS RN1, B.* FROM ( select 1
