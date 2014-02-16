@@ -258,9 +258,6 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
 
   getDateWithNewTime: function (date, time) {
     var newDate, newTime, ret = date;
-    if (time === '24:00:00') {
-      time = '00:00:00';
-    }
     if (time) {
       newTime = isc.Time.parseInput(time);
     }
@@ -286,15 +283,6 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     }
 
     ret = this.Super('setValue', newArguments);
-
-    // If fixed time (if exists) is '24:00:00', here is the logic to show in the input the day before of the real value of the component.
-    // This logic applies only in the case the time is not shown.
-    if (!this.showTime && this.fixedTime && this.fixedTime === '24:00:00' && newArguments[0] && isc.isA.Date(newArguments[0])) {
-      newArguments[0].setDate(newArguments[0].getDate() - 1);
-      dateText = OB.Utilities.Date.JSToOB(newArguments[0], (this.showTime ? OB.Format.dateTime : OB.Format.date));
-      newArguments[0].setDate(newArguments[0].getDate() + 1);
-      this.dateTextField.setValue(dateText);
-    }
 
     return ret;
   },
@@ -325,11 +313,6 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
       this.Super('updateValue', arguments);
       value = this.getValue();
       if (this.fixedTime && value && isc.isA.Date(value)) {
-        if (this.fixedTime === '24:00:00' && (!this.showTime || !this.isAPickerDataChange)) {
-          // If fixed time (if exists) is '24:00:00', we need to add a day to the entered date, since we really want the 00:00:00 of the next day
-          // Later, the setValue function will manage the proper displayed value by substracting a day again
-          value.setDate(value.getDate() + 1);
-        }
         this.setValue(value); // To force change the time with the fixed time (if exists) after expandValue
       }
       //  when the date field has a callout and all the mandatory fields have been entered, 
@@ -350,16 +333,6 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
       date.setFullYear(date.getUTCFullYear());
       date.setMonth(date.getUTCMonth());
       date.setDate(date.getUTCDate());
-    }
-    // If fixed time (if exists) is '24:00:00', we need to substract a day to the real date value,
-    // to view in the date-picker the same date as in the input
-    if (this.fixedTime === '24:00:00' && date !== null) {
-      if (!isc.isA.Date(date)) {
-        date = new Date(date);
-      }
-      if (isc.isA.Date(date) && !isNaN(date.getTime())) {
-        date.setDate(date.getDate() - 1);
-      }
     }
     if (isc.isA.Date(date)) {
       return date;
