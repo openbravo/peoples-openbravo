@@ -148,7 +148,7 @@ isc.OBDateTimeItem.addProperties({
 
   // ** {{{ change }}} **
   // Called when changing a value.
-  change: function (form, item, value, oldValue) { /* transformInput */
+  change: function (form, item, value, oldValue) { // transformInput 
     var isADate = value !== null && Object.prototype.toString.call(value) === '[object Date]';
     if (isADate) {
       return;
@@ -178,41 +178,23 @@ isc.OBDateTimeItem.addProperties({
     // SC sets time to local 0:00 to date in pickerDataChanged method
     // setting now time if there was one previously selected, or current time if not 
     date = this.getValue();
-    if (!this.fixedTime) {
-      if (this.previousValue) {
-        time = this.previousValue;
-        delete this.previousValue;
 
-        if (this.isAbsoluteDateTime && Object.prototype.toString.call(time) === '[object Date]') {
-          // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 1/2)
-          time = new Date(time.getTime() + (time.getTimezoneOffset() * 60000));
-        }
-      } else {
-        time = new Date();
-      }
-      date.setHours(time.getHours(), time.getMinutes(), time.getSeconds());
+    if (this.previousValue) {
+      time = this.previousValue;
+      delete this.previousValue;
 
-      if (this.isAbsoluteDateTime && Object.prototype.toString.call(date) === '[object Date]') {
-        // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 2/2)
-        date = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+      if (this.isAbsoluteDateTime && Object.prototype.toString.call(time) === '[object Date]') {
+        // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 1/2)
+        time = new Date(time.getTime() + (time.getTimezoneOffset() * 60000));
       }
+    } else {
+      time = new Date();
     }
+    date.setHours(time.getHours(), time.getMinutes(), time.getSeconds());
 
-    //TODO: There is a problem in the GMT frontier with fixedTimes.
-    //      For example, in a "GMT+1" try to set fixedTime: '23:30:00' or fixedTime: '00:30:00'
-    //      Although this logic is quite accurate, it is not perfect, and sometimes while selecting a date in the date picker,
-    //      the written date is not the same than the selected. Also when saving, the stored value in the database is not the viewed one
-    if (this.isAbsoluteDateTime && this.fixedTime && Object.prototype.toString.call(date) === '[object Date]') {
-      var tmpDateA = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
-      var tmpDateB = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
-
-      if (date.getDate() === tmpDateA.getDate() && date.getDate() === tmpDateB.getDate()) {
-        date.setDate(date.getDate() + 1);
-      } else if (date.getDate() < tmpDateA.getDate()) {
-        date.setDate(date.getDate() - 2);
-      } else if (date.getDate() > tmpDateB.getDate()) {
-        date.setDate(date.getDate() + 6);
-      }
+    if (this.isAbsoluteDateTime && Object.prototype.toString.call(date) === '[object Date]') {
+      // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 2/2)
+      date = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
     }
 
     this.setValue(date);
@@ -225,20 +207,11 @@ isc.OBDateTimeItem.addProperties({
 
   // Convert a text value entered in this item's text field to a final data value for storage
   parseEditorValue: function (value, form, item) {
-    var newValue = value,
-        fixedTime = this.fixedTime;
-    if (this.showTime) {
-      newValue = OB.Utilities.Date.OBToJS(value, OB.Format.dateTime);
-    } else {
-      newValue = OB.Utilities.Date.OBToJS(value, OB.Format.date);
-    }
+    var newValue = OB.Utilities.Date.OBToJS(value, (this.showTime ? OB.Format.dateTime : OB.Format.date)),
+        fixedTime = this.fixedTime,
+        valueA, valueB, valueDiff;
 
-    if (this.isAbsoluteDateTime) {
-      if (Object.prototype.toString.call(newValue) === '[object Date]') {
-        newValue = new Date(newValue.getTime() - (newValue.getTimezoneOffset() * 60000));
-      }
-    }
-
+    valueA = new Date(newValue);
     if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
       if (Object.prototype.toString.call(fixedTime) === '[object String]') {
         fixedTime = isc.Time.parseInput(fixedTime);
@@ -248,6 +221,24 @@ isc.OBDateTimeItem.addProperties({
       }
     }
 
+    if (this.isAbsoluteDateTime) {
+      if (Object.prototype.toString.call(newValue) === '[object Date]') {
+        newValue = new Date(newValue.getTime() - (newValue.getTimezoneOffset() * 60000));
+      }
+    }
+    valueB = new Date(newValue);
+
+    valueDiff = parseInt((valueA - valueB) / 3600000, 10);
+    if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
+      // If the diff after the injection of the fixed time and the absolute date time conversion
+      // is higher than any kind of existant GMT it means that there is one day delay due to
+      // both time conversions. Fix it. PS: This happens usually when called from date picker.
+      if (valueDiff > 14) {
+        newValue.setDate(newValue.getDate() + 1);
+      } else if (valueDiff < -14) {
+        newValue.setDate(newValue.getDate() - 1);
+      }
+    }
     return newValue;
   },
 
@@ -262,20 +253,7 @@ isc.OBDateTimeItem.addProperties({
       }
     }
 
-    if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
-      if (Object.prototype.toString.call(fixedTime) === '[object String]') {
-        fixedTime = isc.Time.parseInput(fixedTime);
-      }
-      if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
-        newValue.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
-      }
-    }
-
-    if (this.showTime) {
-      return OB.Utilities.Date.JSToOB(newValue, OB.Format.dateTime);
-    } else {
-      return OB.Utilities.Date.JSToOB(newValue, OB.Format.date);
-    }
+    return OB.Utilities.Date.JSToOB(newValue, (this.showTime ? OB.Format.dateTime : OB.Format.date));
   }
 });
 

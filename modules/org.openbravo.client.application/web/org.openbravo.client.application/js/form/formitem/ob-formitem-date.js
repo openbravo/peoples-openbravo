@@ -256,26 +256,8 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     }
   },
 
-  getDateWithNewTime: function (date, time) {
-    var newDate, newTime, ret = date;
-    if (time) {
-      newTime = isc.Time.parseInput(time);
-    }
-    if (date && isc.isA.Date(date) && newTime && isc.isA.Date(newTime)) {
-      date.setHours(newTime.getHours(), newTime.getMinutes(), newTime.getSeconds());
-      ret = date;
-      if (this.isAbsoluteDateTime && Object.prototype.toString.call(ret) === '[object Date]') {
-        ret = new Date(ret.getTime() - (ret.getTimezoneOffset() * 60000));
-      }
-    }
-    return ret;
-  },
-
   setValue: function (value) {
     var ret, dateText, newArguments = arguments;
-    if (this.fixedTime && newArguments[0] && isc.isA.Date(newArguments[0])) {
-      newArguments[0] = this.getDateWithNewTime(newArguments[0], this.fixedTime);
-    }
 
     //Setting the value to the textual value in case text field is changed. Fixes Issue https://issues.openbravo.com/view.php?id=22381
     if (this.textField._textChanged && this.textField.getValue() && (this.textField.getValue() !== value)) {
@@ -299,7 +281,7 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   // update the value in update value as this is called from cellEditEnd in the
   // grid, after losing the focus on the form and when autosaving
   updateValue: function () {
-    var savingWithShortcut, value;
+    var savingWithShortcut;
     if (this.grid && this.grid.view && this.grid.view.savingWithShortcut) {
       savingWithShortcut = this.grid.view.savingWithShortcut;
     } else {
@@ -311,10 +293,6 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
     if (this.textField._textChanged) {
       this.expandValue();
       this.Super('updateValue', arguments);
-      value = this.getValue();
-      if (this.fixedTime && value && isc.isA.Date(value)) {
-        this.setValue(value); // To force change the time with the fixed time (if exists) after expandValue
-      }
       //  when the date field has a callout and all the mandatory fields have been entered, 
       //  the grid does not save the value before making the FIC call, so the value has to 
       //  be saved explicitly
