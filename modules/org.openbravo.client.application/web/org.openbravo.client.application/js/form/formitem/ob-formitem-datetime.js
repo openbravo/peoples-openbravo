@@ -178,22 +178,41 @@ isc.OBDateTimeItem.addProperties({
     // SC sets time to local 0:00 to date in pickerDataChanged method
     // setting now time if there was one previously selected, or current time if not 
     date = this.getValue();
-    if (this.previousValue) {
-      time = this.previousValue;
-      delete this.previousValue;
+    if (!this.fixedTime) {
+      if (this.previousValue) {
+        time = this.previousValue;
+        delete this.previousValue;
 
-      if (this.isAbsoluteDateTime && Object.prototype.toString.call(time) === '[object Date]') {
-        // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 1/2)
-        time = new Date(time.getTime() + (time.getTimezoneOffset() * 60000));
+        if (this.isAbsoluteDateTime && Object.prototype.toString.call(time) === '[object Date]') {
+          // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 1/2)
+          time = new Date(time.getTime() + (time.getTimezoneOffset() * 60000));
+        }
+      } else {
+        time = new Date();
       }
-    } else {
-      time = new Date();
-    }
-    date.setHours(time.getHours(), time.getMinutes(), time.getSeconds());
+      date.setHours(time.getHours(), time.getMinutes(), time.getSeconds());
 
-    if (this.isAbsoluteDateTime && Object.prototype.toString.call(date) === '[object Date]') {
-      // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 2/2)
-      date = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+      if (this.isAbsoluteDateTime && Object.prototype.toString.call(date) === '[object Date]') {
+        // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 2/2)
+        date = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+      }
+    }
+
+    //TODO: There is a problem in the GMT frontier with fixedTimes.
+    //      For example, in a "GMT+1" try to set fixedTime: '23:30:00' or fixedTime: '00:30:00'
+    //      Although this logic is quite accurate, it is not perfect, and sometimes while selecting a date in the date picker,
+    //      the written date is not the same than the selected. Also when saving, the stored value in the database is not the viewed one
+    if (this.isAbsoluteDateTime && this.fixedTime && Object.prototype.toString.call(date) === '[object Date]') {
+      var tmpDateA = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+      var tmpDateB = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
+
+      if (date.getDate() === tmpDateA.getDate() && date.getDate() === tmpDateB.getDate()) {
+        date.setDate(date.getDate() + 1);
+      } else if (date.getDate() < tmpDateA.getDate()) {
+        date.setDate(date.getDate() - 2);
+      } else if (date.getDate() > tmpDateB.getDate()) {
+        date.setDate(date.getDate() + 6);
+      }
     }
 
     this.setValue(date);
@@ -206,49 +225,56 @@ isc.OBDateTimeItem.addProperties({
 
   // Convert a text value entered in this item's text field to a final data value for storage
   parseEditorValue: function (value, form, item) {
+    var newValue = value,
+        fixedTime = this.fixedTime;
+    if (this.showTime) {
+      newValue = OB.Utilities.Date.OBToJS(value, OB.Format.dateTime);
+    } else {
+      newValue = OB.Utilities.Date.OBToJS(value, OB.Format.date);
+    }
+
     if (this.isAbsoluteDateTime) {
-      // In the case of an absolute datetime, the JS date needs to be converted in order to avoid the UTC conversion
-      // http://forums.smartclient.com/showthread.php?p=116135
-      var newValue = OB.Utilities.Date.OBToJS(value, OB.Format.dateTime),
-          fixedTime = this.fixedTime;
       if (Object.prototype.toString.call(newValue) === '[object Date]') {
         newValue = new Date(newValue.getTime() - (newValue.getTimezoneOffset() * 60000));
       }
-      if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
-        if (Object.prototype.toString.call(fixedTime) === '[object String]') {
-          fixedTime = isc.Time.parseInput(fixedTime);
-        }
-        if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
-          newValue.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
-        }
-      }
-      return newValue;
-    } else {
-      return OB.Utilities.Date.OBToJS(value, OB.Format.dateTime);
     }
+
+    if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
+      if (Object.prototype.toString.call(fixedTime) === '[object String]') {
+        fixedTime = isc.Time.parseInput(fixedTime);
+      }
+      if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
+        newValue.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
+      }
+    }
+
+    return newValue;
   },
 
   // Convert this item's data value to a text value for display in this item's text field
   formatEditorValue: function (value, record, form, item) {
+    var newValue = value,
+        fixedTime = this.fixedTime;
+
     if (this.isAbsoluteDateTime) {
-      // In the case of an absolute datetime, the JS date needs to be converted in order to avoid the UTC conversion
-      // http://forums.smartclient.com/showthread.php?p=116135
-      var newValue = value,
-          fixedTime = this.fixedTime;
       if (Object.prototype.toString.call(newValue) === '[object Date]') {
         newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
       }
-      if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
-        if (Object.prototype.toString.call(fixedTime) === '[object String]') {
-          fixedTime = isc.Time.parseInput(fixedTime);
-        }
-        if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
-          newValue.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
-        }
+    }
+
+    if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
+      if (Object.prototype.toString.call(fixedTime) === '[object String]') {
+        fixedTime = isc.Time.parseInput(fixedTime);
       }
+      if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
+        newValue.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
+      }
+    }
+
+    if (this.showTime) {
       return OB.Utilities.Date.JSToOB(newValue, OB.Format.dateTime);
     } else {
-      return OB.Utilities.Date.JSToOB(value, OB.Format.dateTime);
+      return OB.Utilities.Date.JSToOB(newValue, OB.Format.date);
     }
   }
 });

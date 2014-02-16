@@ -578,7 +578,12 @@ isc.OBGrid.addProperties({
       if (Object.prototype.toString.call(newValue) === '[object Date]') {
         newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
       }
-      return OB.Utilities.Date.JSToOB(newValue, OB.Format.dateTime);
+      var showTime = false;
+      if (field.editorType && new Function('return isc.' + field.editorType + '.getPrototype().showTime')()) {
+        showTime = true;
+      }
+
+      return OB.Utilities.Date.JSToOB(newValue, (showTime ? OB.Format.dateTime : OB.Format.date));
     };
 
     if (this.fields) {

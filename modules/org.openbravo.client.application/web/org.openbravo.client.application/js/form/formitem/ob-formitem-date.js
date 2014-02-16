@@ -76,7 +76,7 @@ OB.DateItemProperties = {
   doInit: function () {
     this.setDateParams();
 
-    this.Super('init', arguments);
+    var ret = this.Super('init', arguments);
 
     if (this.textField) {
       if (this.length) {
@@ -117,6 +117,8 @@ OB.DateItemProperties = {
     if (this.showDisabled === false) {
       this.textField.showDisabled = false;
     }
+
+    return ret;
   },
 
   // compare while ignoring milli difference
@@ -247,7 +249,11 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
 
   init: function () {
     // this call super.init
-    this.doInit();
+    if (typeof this.doInit === 'function') {
+      return this.doInit();
+    } else {
+      return this.Super('init', arguments);
+    }
   },
 
   getDateWithNewTime: function (date, time) {
@@ -339,6 +345,12 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
 
   getPickerData: function () {
     var date = this.getValue();
+    // To visualize in the calendar the displayed value instead of internal value, since due to the GMT difference it can be in a different day
+    if (this.isAbsoluteDateTime && isc.isA.Date(date)) {
+      date.setFullYear(date.getUTCFullYear());
+      date.setMonth(date.getUTCMonth());
+      date.setDate(date.getUTCDate());
+    }
     // If fixed time (if exists) is '24:00:00', we need to substract a day to the real date value,
     // to view in the date-picker the same date as in the input
     if (this.fixedTime === '24:00:00' && date !== null) {
@@ -347,8 +359,10 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
       }
       if (isc.isA.Date(date) && !isNaN(date.getTime())) {
         date.setDate(date.getDate() - 1);
-        return date;
       }
+    }
+    if (isc.isA.Date(date)) {
+      return date;
     } else {
       return this.Super('getPickerData', arguments);
     }
