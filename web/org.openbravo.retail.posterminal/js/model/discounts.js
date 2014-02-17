@@ -27,7 +27,7 @@
         return;
       }
 
-      if (receipt && !receipt.get('isEditable')) {
+      if (receipt && (!receipt.get('isEditable') || (!OB.UTIL.isNullOrUndefined(receipt.get('isNewReceipt')) && receipt.get('isNewReceipt')))) {
         return;
       }
 

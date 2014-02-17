@@ -609,6 +609,9 @@
     clearWith: function (_order) {
       var me = this,
           undf;
+
+      // we set first this property to avoid that the apply promotions is triggered
+      this.set('isNewReceipt', _order.get('isNewReceipt'));
       //we need this data when IsPaid, IsLayaway changes are triggered
       this.set('documentType', _order.get('documentType'));
 
@@ -1145,14 +1148,14 @@
       }
 
       newline.calculateGross();
-      
+
       //issue 25655: ungroup feature is just needed when the line is created. Then lines work as grouped lines.
       newline.get('product').set("groupProduct", true);
 
       //issue 25448: Show stock screen is just shown when a new line is created.
-      if (newline.get('product').get("showstock") === true){
+      if (newline.get('product').get("showstock") === true) {
         newline.get('product').set("showstock", false);
-        newline.get('product').set("_showstock", true); 
+        newline.get('product').set("_showstock", true);
       }
 
       // add the created line
@@ -1898,8 +1901,10 @@
           //this values will be copied to modelOrder
           //in the next instruction
           this.modelorder.trigger('beforeChangeOrderForNewOne', this.current);
+          this.current.set('isNewReceipt', true);
         }
         this.modelorder.clearWith(this.current);
+        this.modelorder.set('isNewReceipt', false);
       }
     }
 
