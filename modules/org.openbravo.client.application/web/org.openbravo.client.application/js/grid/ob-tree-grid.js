@@ -26,7 +26,7 @@ isc.OBTreeGrid.addProperties({
   showDropIcons: false,
   nodeIcon: null,
   folderIcon: null,
-  showSortArrow: 'field',
+  showSortArrow: 'both',
   showRecordComponentsByCell: true,
   showRecordComponents: true,
   autoFetchTextMatchStyle: 'substring',
@@ -36,6 +36,12 @@ isc.OBTreeGrid.addProperties({
     idField: 'nodeId',
     parentIdField: 'parentId',
     openProperty: 'isOpen'
+  },
+  
+
+  initWidget: function () {
+      this.sorterDefaults = {};
+      this.Super('initWidget', arguments);
   },
 
   /**

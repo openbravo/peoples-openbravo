@@ -30,26 +30,40 @@ isc.OBTreeGrid.addProperties({
 });
 
 isc.OBTreeGrid.changeDefaults('headerButtonDefaults', {
-	  showTitle: true,
-	  showDown: true,
-	  showFocused: false,
-	  // baseStyle / titleStyle is auto-assigned from headerBaseStyle
-	  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
+  showTitle: true,
+  showDown: true,
+  showFocused: false,
+  // baseStyle / titleStyle is auto-assigned from headerBaseStyle
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
 });
 
 isc.OBTreeGrid.changeDefaults('headerMenuButtonDefaults', {
-	  showDown: false,
-	  showTitle: true
-	  //src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
+  showDown: false,
+  showTitle: true
+  //src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
 });
 
-isc.OBTreeGrid.changeDefaults('sorterDefaults', {
-	  // baseStyle / titleStyle is auto-assigned from headerBaseStyle
-	  showFocused: false,
-	  //  src: '[SKIN]ListGrid/header.png',
-	  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png',
-	  baseStyle: 'OBGridSorterButton'
-	});
+isc.OBTreeGrid.changeDefaults('sorterDefaults', {});
+
+isc.OBTreeGrid.changeDefaults('filterEditorDefaults', {
+  height: 22,
+  styleName: 'OBGridFilterBase',
+  baseStyle: 'OBGridFilterCell'
+});
+
+isc.OBTreeGrid.changeDefaults('headerButtonDefaults', {
+  showTitle: true,
+  showDown: true,
+  showFocused: false,
+  // baseStyle / titleStyle is auto-assigned from headerBaseStyle
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
+});
+
+isc.OBTreeGrid.changeDefaults('headerMenuButtonDefaults', {
+  showDown: false,
+  showTitle: true
+//  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
+});
 
 isc.OBTreeGrid.addProperties({
   // note should be the same as the height of the OBGridButtonsComponent
