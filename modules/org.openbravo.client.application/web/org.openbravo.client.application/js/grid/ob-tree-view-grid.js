@@ -37,6 +37,14 @@ isc.OBTreeViewGrid.addProperties({
   showFilterEditor: true,
   selectionAppearance: 'checkbox',
   showSelectedStyle: true,
+
+  autoFitFieldWidths: true,
+  autoFitWidthApproach: 'title',
+  canAutoFitFields: false,
+  minFieldWidth: 75,
+  width: '100%',
+  height: '100%',
+
   // the grid will be refreshed when:
   // - The tree category is LinkToParent and
   // - There has been at least a reparent
