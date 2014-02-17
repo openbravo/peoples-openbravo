@@ -283,10 +283,24 @@
                 }
               }
             } else {
-              OB.UTIL.showError("OBDAL error: Not tax found for " + args.get('_identifier'));
+              me.deleteLine(element);
+              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                popup: 'OB_UI_MessageDialog',
+                args: {
+                  header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+                  message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.get('_identifier')])
+                }
+              });
             }
           }, function (tx, error) { // error
-            OB.UTIL.showError("OBDAL error: " + error);
+            me.deleteLine(element);
+            OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+              popup: 'OB_UI_MessageDialog',
+              args: {
+                header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+                message: OB.I18N.getLabel('OBPOS_TaxCalculationError_Message')
+              }
+            });
           }, product);
 
           // add line to queue of pending to be processed
@@ -431,7 +445,7 @@
                     pricenetcascade = pricenet.multiply(rate.add(BigDecimal.prototype.ONE));
 
                     taxesline[taxId] = {};
-                    taxesline[taxId].name = taxRate.get('net');
+                    taxesline[taxId].name = taxRate.get('name');
                     taxesline[taxId].rate = taxRate.get('rate');
                     taxesline[taxId].net = net;
                     taxesline[taxId].amount = amount;
@@ -486,10 +500,24 @@
                   }
                 }
               } else {
-                OB.UTIL.showError("OBDAL error: Not tax found for " + args.get('_identifier'));
+                me.deleteLine(element);
+                OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                  popup: 'OB_UI_MessageDialog',
+                  args: {
+                    header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+                    message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.get('_identifier')])
+                  }
+                });
               }
             }, function (tx, error) { // error
-              OB.UTIL.showError("OBDAL error: " + error);
+              me.deleteLine(element);
+              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                popup: 'OB_UI_MessageDialog',
+                args: {
+                  header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+                  message: OB.I18N.getLabel('OBPOS_TaxCalculationError_Message')
+                }
+              });
             }, product);
 
             // add line to queue of pending to be processed

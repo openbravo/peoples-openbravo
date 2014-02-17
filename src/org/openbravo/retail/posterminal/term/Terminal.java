@@ -59,11 +59,11 @@ public class Terminal extends ProcessHQLQuery {
     doctypeIds.add(pOSTerminal.getObposTerminaltype().getDocumentType().getId());
     doctypeIds.add(pOSTerminal.getObposTerminaltype().getDocumentTypeForReturns().getId());
     int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(pOSTerminal.getSearchKey(),
-        doctypeIds) + 1;
+        doctypeIds);
     int lastQuotationDocumentNumber = 0;
     if (quotationsDocTypeId != null) {
       lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(
-          pOSTerminal.getSearchKey(), quotationsDocTypeId) + 1;
+          pOSTerminal.getSearchKey(), quotationsDocTypeId);
     }
     String warehouseId = POSUtils.getWarehouseForTerminal(pOSTerminal).getId();
     final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
@@ -72,20 +72,20 @@ public class Terminal extends ProcessHQLQuery {
     HQLPropertyList regularTerminalHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    final OrganizationInformation myOrgInfo = pOSTerminal.getOrganization().getOrganizationInformationList().get(0);
-    String regionId="";
-    String countryId="";
+    final OrganizationInformation myOrgInfo = pOSTerminal.getOrganization()
+        .getOrganizationInformationList().get(0);
+    String regionId = "";
+    String countryId = "";
     if (myOrgInfo.getLocationAddress().getRegion() != null) {
       regionId = myOrgInfo.getLocationAddress().getRegion().getId();
     }
 
     if (myOrgInfo.getLocationAddress().getCountry() != null) {
-     countryId = myOrgInfo.getLocationAddress().getCountry().getId();
+      countryId = myOrgInfo.getLocationAddress().getCountry().getId();
     }
-    
+
     return Arrays
-        .asList(new String[] { "select "
-            + "'"
+        .asList(new String[] { "select " + "'"
             + pricesList.getId()
             + "' as priceList, "
             + "'"
@@ -97,15 +97,25 @@ public class Terminal extends ProcessHQLQuery {
             + getIdentifierAlias("currency")
             + ", "
             + "'"
+            + pricesList.getCurrency().isCurrencySymbolAtTheRight()
+            + "' as currencySymbolAtTheRight, "
+            + "'"
+            + pricesList.getCurrency().getSymbol()
+            + "' as symbol, "
+            + "'"
             + warehouseId
             + "' as warehouse, "
             + lastDocumentNumber
             + " as lastDocumentNumber, "
             + lastQuotationDocumentNumber
             + " as lastQuotationDocumentNumber, "
-            +  "'" + regionId + "'"
+            + "'"
+            + regionId
+            + "'"
             + " as organizationRegionId, "
-            +  "'" + countryId + "'"
+            + "'"
+            + countryId
+            + "'"
             + " as organizationCountryId, "
             + regularTerminalHQLProperties.getHqlSelect()
             + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype where pos.$readableCriteria and pos.searchKey = '"

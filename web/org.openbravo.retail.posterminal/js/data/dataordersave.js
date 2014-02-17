@@ -41,6 +41,7 @@
       delete this.receipt.attributes.json;
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
+      this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
 
       // The order will not be processed if the navigator is offline
       if (OB.POS.modelterminal.get('connectedToERP')) {
@@ -51,6 +52,9 @@
         context: this,
         receipt: model.get('order')
       }, function (args) {
+        if (args && args.cancellation && args.cancellation === true) {
+          return true;
+        }
         var receipt = args.context.receipt,
             currentDocNo = receipt.get('documentNo') || docno;
 
@@ -105,6 +109,7 @@
       delete this.receipt.attributes.json;
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
+      this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
       this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
 
       // The order will not be processed if the navigator is offline

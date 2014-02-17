@@ -280,20 +280,17 @@ enyo.kind({
       this.model.completePayment();
     }
   },
-
   attributes: {
     style: 'text-align: center; font-size: 30px;'
   },
   components: [{
-    tag: 'span',
-    attributes: {
-      style: 'font-weight: bold; margin: 0px 5px 0px 0px;'
-    },
-    components: [{
-      kind: 'OB.UI.Total',
-      name: 'totalPrinter'
-    }]
+    style: 'font-weight: bold; margin: 0px 5px 0px 0px;',
+    kind: 'OB.UI.Total',
+    name: 'totalPrinter'
   }],
+  getLabel: function() {
+    return this.$.totalPrinter.content;
+  },
   initComponents: function () {
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
@@ -329,7 +326,7 @@ enyo.kind({
     span: 3
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
-    name: 'payment',
+    name: 'btnTotalToPay',
     span: 6
   }],
   initComponents: function () {

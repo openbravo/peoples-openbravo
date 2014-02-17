@@ -53,6 +53,8 @@ enyo.kind({
     onDiscountsModeFinished: 'discountsModeFinished',
     onDisableLeftToolbar: 'leftToolbarDisabled',
     onDisableBPSelection: 'BPSelectionDisabled',
+    onDisableNewBP: 'newBPDisabled',
+    onDisableNewBPLoc: 'newBPLocDisabled',
     onDisableOrderSelection: 'orderSelectionDisabled',
     onDisableKeyboard: 'keyboardDisabled',
     onDiscountsModeKeyboard: 'keyboardOnDiscountsMode',
@@ -67,7 +69,9 @@ enyo.kind({
     onRemoveMultiOrders: 'removeMultiOrders',
     onRightToolDisabled: 'rightToolbarDisabled',
     onSelectCharacteristicValue: 'selectCharacteristicValue',
-    onSelectBrand: 'selectBrand'
+    onSelectBrand: 'selectBrand',
+    onShowLeftHeader: 'doShowLeftHeader',
+    onWarehouseSelected: 'warehouseSelected'
   },
   events: {
     onShowPopup: '',
@@ -145,6 +149,9 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore',
       name: 'modalLocalStock'
     }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStoreClickable',
+      name: 'modalLocalStockClickable'
+    }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores',
       name: 'modalStockInOtherStores'
     }, {
@@ -192,7 +199,13 @@ enyo.kind({
       },
       leftPanel: {
         name: 'leftPanel',
+        style: 'max-height: 622px;',
         components: [{
+          classes: 'span12',
+          kind: 'OB.OBPOSPointOfSale.UI.LeftHeader',
+          style: 'height: 35px;',
+          name: 'divHeader'
+        }, {
           classes: 'span12',
           kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
           name: 'receiptview',
@@ -346,7 +359,7 @@ enyo.kind({
     if (inEvent.ignoreStockTab) {
       this.showOrder(inSender, inEvent);
     } else {
-      if (!this.model.get('order').get('lines').isProductPresent(inEvent.product) && inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
+      if (inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         if (enyo.Panels.isScreenNarrow()) {
@@ -363,12 +376,13 @@ enyo.kind({
       receipt: this.model.get('order'),
       productToAdd: inEvent.product,
       qtyToAdd: inEvent.qty,
-      options: inEvent.options
+      options: inEvent.options,
+      attrs: inEvent.attrs
     }, function (args) {
       if (args.cancelOperation && args.cancelOperation === true) {
         return true;
       }
-      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options);
+      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs);
       args.context.model.get('orderList').saveCurrent();
     });
     return true;
@@ -532,6 +546,12 @@ enyo.kind({
   },
   BPSelectionDisabled: function (inSender, inEvent) {
     this.waterfall('onBPSelectionDisabled', inEvent);
+  },
+  newBPDisabled: function (inSender, inEvent) {
+    this.waterfall('onNewBPDisabled', inEvent);
+  },
+  newBPLocDisabled: function (inSender, inEvent) {
+    this.waterfall('onNewBPLocDisabled', inEvent);
   },
   orderSelectionDisabled: function (inSender, inEvent) {
     this.waterfall('onOrderSelectionDisabled', inEvent);
@@ -795,6 +815,9 @@ enyo.kind({
       value: inEvent
     });
   },
+  warehouseSelected: function (inSender, inEvent) {
+    this.waterfall('onModifyWarehouse', inEvent);
+  },
   selectMultiOrders: function (inSender, inEvent) {
     var me = this;
     me.model.get('multiOrders').get('multiOrdersList').reset();
@@ -816,6 +839,9 @@ enyo.kind({
       me.model.get('orderList').deleteCurrentFromDatabase(inEvent.order);
     }
     return true;
+  },
+  doShowLeftHeader: function (inSender, inEvent) {
+    this.waterfall('onLeftHeaderShow', inEvent);
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;
@@ -925,6 +951,39 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.LeftHeader',
+  showing: false,
+  published: {
+    text: null
+  },
+  handlers: {
+    onLeftHeaderShow: 'doShowHeader'
+  },
+  doShowHeader: function (inSender, inEvent) {
+    this.setText(inEvent.text);
+    if (inEvent.style) {
+      this.$.innerDiv.addStyles(inEvent.style);
+    }
+    this.show();
+  },
+
+  components: [{
+    name: 'innerDiv',
+    style: 'text-align: center; font-size: 30px; padding: 5px; padding-top: 0px;',
+    components: [{
+      name: 'headerText',
+      attributes: {
+        style: 'background-color: #ffffff; height: 30px; font-weight:bold; padding-top: 15px;'
+      },
+      content: ''
+    }]
+  }],
+  textChanged: function () {
+    this.$.headerText.setContent(this.text);
   }
 });
 

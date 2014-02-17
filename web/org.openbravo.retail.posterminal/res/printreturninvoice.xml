@@ -77,7 +77,7 @@
         <text align ="left" length="21"><%= OB.I18N.getLabel('OBPOS_LblTotalTax') %></text>
         <text align ="right" length="5"></text>
         <text align ="right" length="8"></text>
-        <text align ="right" length="8"><%= OB.I18N.formatCurrency(order.getGross()-order.getNet()) %></text>  
+        <text align ="right" length="8"><%= OB.I18N.formatCurrency(OB.DEC.sub(order.getGross() , order.getNet())) %></text>  
       </line>
     <%}%>
     <line></line>

@@ -34,7 +34,7 @@
 
   OB.I18N.formatRate = function (number) {
     var symbol = '%',
-        maskNumeric = OB.Format.formats.euroEdition,
+        maskNumeric = OB.Format.formats.taxInform || OB.Format.formats.euroEdition,
         decSeparator = OB.Format.defaultDecimalSymbol,
         groupSeparator = OB.Format.defaultGroupingSymbol,
         groupInterval = OB.Format.defaultGroupingSize;

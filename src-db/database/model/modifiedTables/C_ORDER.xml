@@ -13,6 +13,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_CREATEDABSOLUTE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="EM_OBPOS_APP_ID">
         <reference local="EM_OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>

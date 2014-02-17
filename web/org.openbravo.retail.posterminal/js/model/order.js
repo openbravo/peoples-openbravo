@@ -352,6 +352,7 @@
             discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_UP).toString(), 10);
           }
         } else {
+          grossListPrice = line.get('priceList');
           discountPercentage = OB.DEC.Zero;
         }
         line.set({
@@ -816,6 +817,7 @@
           OB.MobileApp.model.hookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
             receipt: this,
             line: line,
+            allLines: this.get('lines'),
             p: p,
             qty: qty,
             options: options,
@@ -827,8 +829,6 @@
             if (args.line) {
               args.receipt.addUnit(args.line, args.qty);
               args.line.trigger('selected', args.line);
-            } else if (args.receipt.get('orderType') === 1) {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_AddProductReturn'));
             } else {
               args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
             }
@@ -1001,6 +1001,7 @@
               for (k = 0; k < line.get('promotions').length; k++) {
                 found = _.find(otherPromos, compareRule);
                 line.get('promotions')[k].amt += found.amt;
+                line.get('promotions')[k].displayedTotalAmount += found.displayedTotalAmount;
               }
               toRemove.push(otherLine);
               line.calculateGross();
@@ -1131,7 +1132,11 @@
         qty: OB.DEC.number(units),
         price: OB.DEC.number(p.get('standardPrice')),
         priceList: OB.DEC.number(p.get('standardPrice')),
-        priceIncludesTax: this.get('priceIncludesTax')
+        priceIncludesTax: this.get('priceIncludesTax'),
+        warehouse: {
+          id: OB.POS.modelterminal.get('warehouses')[0].warehouseid,
+          warehousename: OB.POS.modelterminal.get('warehouses')[0].warehousename
+        }
       });
       if (!_.isUndefined(attrs)) {
         _.each(_.keys(attrs), function (key) {
@@ -1140,6 +1145,15 @@
       }
 
       newline.calculateGross();
+      
+      //issue 25655: ungroup feature is just needed when the line is created. Then lines work as grouped lines.
+      newline.get('product').set("groupProduct", true);
+
+      //issue 25448: Show stock screen is just shown when a new line is created.
+      if (newline.get('product').get("showstock") === true){
+        newline.get('product').set("showstock", false);
+        newline.get('product').set("_showstock", true); 
+      }
 
       // add the created line
       this.get('lines').add(newline, options);
@@ -1234,7 +1248,7 @@
         }
         this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
         if (orderType !== 3) { //Void this Layaway, do not need to save
-          if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)){
+          if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)) {
             this.save();
           }
         } else {
@@ -1244,7 +1258,7 @@
           this.get('payments').reset();
         }
         // remove promotions
-        if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)){
+        if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)) {
           OB.Model.Discounts.applyPromotions(this);
         }
       }
@@ -1718,7 +1732,11 @@
                 price: price,
                 priceList: price,
                 promotions: iter.promotions,
-                priceIncludesTax: order.get('priceIncludesTax')
+                priceIncludesTax: order.get('priceIncludesTax'),
+                warehouse: {
+                  id: iter.warehouse,
+                  warehousename: iter.warehousename
+                }
               });
               newline.calculateGross();
               // add the created line
@@ -1801,7 +1819,6 @@
     },
 
     addFirstOrder: function () {
-      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence') - 1);
       this.addNewOrder();
     },
 

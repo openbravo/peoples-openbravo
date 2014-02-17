@@ -1,17 +1,32 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2013 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
 /*global OB, $, Backbone, enyo */
-
-
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore',
   kind: 'OB.UI.SmallButton',
   events: {
-    onOpenLocalStockModal: ''
+    onOpenLocalStockModal: '',
+    onOpenLocalStockClickableModal: ''
   },
   classes: 'btnlink-green',
   style: 'min-width: 200px; margin: 2px 5px 2px 5px;',
   tap: function () {
-    this.doOpenLocalStockModal();
+    if ((this.leftSubWindow && this.leftSubWindow.line) || !OB.MobileApp.model.get('permissions').OBPOS_warehouseselectionforline || !this.model.get('order').get('isEditable')) {
+      this.doOpenLocalStockModal();
+    } else {
+      this.doOpenLocalStockClickableModal();
+    }
+  },
+  init: function (model) {
+    this.model = model;
   }
 });
 
@@ -39,7 +54,21 @@ enyo.kind({
   },
   tap: function () {
     if (this.leftSubWindow.product) {
+      var line = null;
+      if (this.leftSubWindow && this.leftSubWindow.line){
+        line = this.leftSubWindow.line;
+      }
       this.doAddProduct({
+        attrs: {
+          warehouse: {
+            id: this.leftSubWindow.warehouse.warehouseid,
+            warehousename: this.leftSubWindow.warehouse.warehousename,
+            warehouseqty: this.leftSubWindow.warehouse.warehouseqty
+          }
+        },
+        options: {
+          line: line
+        },
         product: this.leftSubWindow.product,
         ignoreStockTab: true
       });
@@ -71,6 +100,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_body',
   handlers: {
     onOpenLocalStockModal: 'openLocalStockModal',
+    onOpenLocalStockClickableModal: 'openLocalStockClickableModal',
     onOpenOtherStoresStockModal: 'openOtherStoresStockModal'
   },
   events: {
@@ -80,6 +110,17 @@ enyo.kind({
     if (this.leftSubWindow.localStockModel) {
       this.doShowPopup({
         popup: 'modalLocalStock',
+        args: {
+          stockInfo: this.leftSubWindow.localStockModel
+        }
+      });
+    }
+    return true;
+  },
+  openLocalStockClickableModal: function () {
+    if (this.leftSubWindow.localStockModel) {
+      this.doShowPopup({
+        popup: 'modalLocalStockClickable',
         args: {
           stockInfo: this.leftSubWindow.localStockModel
         }
@@ -154,6 +195,13 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
+  handlers: {
+    onModifyWarehouse: 'changeWarehouseInfo'
+  },
+  changeWarehouseInfo: function (inSender, inEvent) {
+    this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [inEvent.warehousename, inEvent.warehouseqty]));
+    this.warehouse = inEvent;
+  },
   loadDefaultWarehouseData: function (defaultWarehouse) {
     if (defaultWarehouse) {
       this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [defaultWarehouse.get('warehousename'), defaultWarehouse.get('warehouseqty')]));
@@ -177,7 +225,11 @@ enyo.kind({
           data.product = me.product;
           me.localStockModel = new OB.OBPOSPointOfSale.UsedModels.LocalStock(data);
           if (me.localStockModel.get('warehouses').at(0)) {
-            me.loadDefaultWarehouseData(me.localStockModel.getWarehouseById(OB.POS.modelterminal.get('warehouses')[0].warehouseid));
+            if (me.warehouse.warehouseid) {
+              me.loadDefaultWarehouseData(me.localStockModel.getWarehouseById(me.warehouse.warehouseid));
+            } else {
+              me.loadDefaultWarehouseData(me.localStockModel.getWarehouseById(me.warehouse.id));
+            }
           }
           me.bodyComponent.$.stockHere.removeClass("error");
           me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.qty);
@@ -213,16 +265,22 @@ enyo.kind({
       });
       return false;
     }
+    this.line = params.line || null;
     this.product = params.product;
     this.localStockModel = null;
     this.otherStoresStockModel = null;
+    if (params.warehouse) {
+      this.warehouse = params.warehouse;
+    } else {
+      this.warehouse = OB.POS.modelterminal.get('warehouses')[0];
+    }
     this.headerComponent.$.productName.setContent(params.product.get('_identifier') + ' (' + params.product.get('uOMsymbol') + ')');
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
       this.bodyComponent.$.productImage.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(params.product.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
     } else {
       this.bodyComponent.$.productImage.applyStyle('background-image', 'url(data:image/png;base64,' + params.product.get('img') + ')');
     }
-    this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_loadingFromWarehouse', [OB.POS.modelterminal.get('warehouses')[0].warehousename]));
+    this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_loadingFromWarehouse', [this.warehouse.warehousename]));
     this.bodyComponent.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(params.product.get('standardPrice')) + '</b>');
     this.bodyComponent.$.descriptionArea.setContent(params.product.get('description'));
     this.getOtherStock();

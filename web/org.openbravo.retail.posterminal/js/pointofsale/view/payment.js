@@ -190,6 +190,11 @@ enyo.kind({
         currentCash = OB.DEC.Zero,
         hasEnoughChange = true,
         isCashType = true;
+
+    if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
+      symbol = OB.MobileApp.model.get('terminal').symbol;
+      symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+    }
     if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment])) {
       symbol = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].symbol;
       rate = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].mulrate;
@@ -222,7 +227,9 @@ enyo.kind({
     if (paymentstatus.done) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
-      this.$.doneaction.show();
+      if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
+        this.$.doneaction.show();
+      }
       this.$.creditsalesaction.hide();
       this.$.layawayaction.hide();
     } else {
@@ -254,7 +261,9 @@ enyo.kind({
       this.$.creditsalesaction.hide();
       this.$.layawayaction.hide();
     } else {
-      this.$.exactaction.show();
+      if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
+        this.$.exactaction.show();
+      }
       if (this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) {
         this.$.layawayaction.show();
         if (!this.receipt.get('isLayaway')) {
@@ -298,6 +307,10 @@ enyo.kind({
         isCashType = true,
         selectedPayment;
     this.$.layawayaction.hide();
+    if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
+      symbol = OB.MobileApp.model.get('terminal').symbol;
+      symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+    }
     if (paymentstatus.get('selectedPayment')) {
       selectedPayment = OB.POS.terminal.terminal.paymentnames[paymentstatus.get('selectedPayment')];
     } else {
@@ -336,7 +349,9 @@ enyo.kind({
     if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
-      this.$.doneaction.show();
+      if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
+        this.$.doneaction.show();
+      }
       this.$.creditsalesaction.hide();
       //            this.$.layawayaction.hide();
     } else {
@@ -355,7 +370,9 @@ enyo.kind({
     if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 || paymentstatus.get('total') === 0)) {
       this.$.exactaction.hide();
     } else {
-      this.$.exactaction.show();
+      if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
+        this.$.exactaction.show();
+      }
     }
     if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 && !paymentstatus.get('change') && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) <= 0) {
       if (paymentstatus.get('total') === 0) {
@@ -412,6 +429,10 @@ enyo.kind({
   init: function (model) {
     var me = this;
     this.model = model;
+    if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
+      this.$.doneaction.show();
+      this.$.exactaction.hide();
+    }
     this.model.get('multiOrders').get('multiOrdersList').on('all', function (event) {
       if (this.model.isValidMultiOrderState()) {
         this.updatePendingMultiOrders();
