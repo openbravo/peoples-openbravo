@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -144,7 +144,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
             .getInstance()
             .createQuery(
                 Field.class,
-                " as f where  tab.window = :window "
+                " as f where  tab.window = :window and tab.active = true "
                     + "and ( (column.oBUIAPPProcess is not null"
                     + " and not exists (select 1 from "
                     + " OBUIAPP_Process_Access a"
