@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2014 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -183,8 +183,7 @@ enyo.kind({
   },
 
   showPaymentTab: function () {
-    var receipt = this.model.get('order'),
-        me = this;
+    var receipt = this.model.get('order');
     if (receipt.get('isQuotation')) {
       if (receipt.get('hasbeenpaid') !== 'Y') {
         receipt.prepareToSend(function () {
@@ -209,64 +208,14 @@ enyo.kind({
       receipt.trigger('displayTotal');
     }
 
-    this.calculateCurrentCash(function () {
-      me.doTabChange({
-        tabPanel: me.tabPanel,
-        keyboard: 'toolbarpayment',
-        edit: false
-      });
-      me.bubble('onShowColumn', {
-        colNum: 1
-      });
+    this.doTabChange({
+      tabPanel: this.tabPanel,
+      keyboard: 'toolbarpayment',
+      edit: false
     });
-  },
-
-  calculateCurrentCash: function (callback) {
-    var me = this;
-    OB.Dal.find(OB.Model.CashUp, {
-      'isbeingprocessed': 'N'
-    }, function (cashUp) {
-      OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUp.at(0).get('id')
-      }, function (payMthds) { //OB.Dal.find success
-        var payMthdsCash;
-        _.each(OB.POS.modelterminal.get('payments'), function (paymentType, index) {
-          var cash = 0,
-              auxPay = payMthds.filter(function (payMthd) {
-              return payMthd.get('paymentmethod_id') === paymentType.payment.id;
-            })[0];
-          auxPay.set('_id', paymentType.payment.searchKey);
-          auxPay.set('isocode', paymentType.isocode);
-          auxPay.set('paymentMethod', paymentType.paymentMethod);
-          auxPay.set('id', paymentType.payment.id);
-          OB.Dal.find(OB.Model.CashManagement, {
-            'cashup_id': cashUp.at(0).get('id'),
-            'paymentMethodId': paymentType.payment.id
-          }, function (cashMgmts, args) {
-            var startingCash = auxPay.get('startingCash'),
-                rate = auxPay.get('rate'),
-                totalSales = auxPay.get('totalSales'),
-                totalReturns = auxPay.get('totalReturns'),
-                cashMgmt = _.reduce(cashMgmts.models, function (accum, trx) {
-                if (trx.get('type') === 'deposit') {
-                  return OB.DEC.add(accum, trx.get('origAmount'));
-                } else {
-                  return OB.DEC.sub(accum, trx.get('origAmount'));
-                }
-              }, 0);
-            cash = OB.DEC.add(OB.DEC.add(OB.DEC.mul(startingCash, rate), OB.DEC.sub(totalSales, totalReturns)), cashMgmt);
-            OB.POS.terminal.terminal.paymentnames[paymentType.payment.searchKey].currentCash = cash;
-            OB.POS.terminal.terminal.paymentnames[paymentType.payment.searchKey].foreignCash = OB.DEC.div(cash, rate);
-
-            if (typeof callback === 'function') {
-              callback();
-            }
-          }, null, {
-            me: me
-          });
-        }, this);
-      });
-    }, this);
+    this.bubble('onShowColumn', {
+      colNum: 1
+    });
   },
 
   tap: function () {
