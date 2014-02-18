@@ -68,6 +68,7 @@
     Cur_InOutLine RECORD;
     Cur_Order RECORD;
     Cur_OrderLine RECORD;
+    Cur_InOutAcctDim RECORD;
     Cur_Lines RECORD;
     --
     v_Result NUMBER:=1;
@@ -75,6 +76,7 @@
     v_Warehouse_Org VARCHAR2(32);
     v_AD_Client_ID VARCHAR2(32);
     v_NextNo VARCHAR2(32);
+    v_AcctDim VARCHAR2(32);
     v_Qty NUMBER;
     v_QtyPO NUMBER;
     v_QtySO NUMBER;
@@ -1006,6 +1008,36 @@
                 Cur_InOutLine.explode 
               )
               ;
+
+           FOR Cur_InOutAcctDim IN
+            (SELECT *
+            FROM m_inoutline_acctdimension
+            WHERE M_InOutLine_ID=Cur_InOutLine.M_InOutLine_ID
+              AND IsActive='Y'  FOR UPDATE
+            )
+          LOOP
+            -- Create InOut acctounting dimension
+            Ad_Sequence_Next('M_InOutLine_Acctdimension', Cur_InOutLine.M_InOutLine_ID, v_AcctDim) ;
+            v_ResultStr:='CreateInOutLineAcctDimension';
+            INSERT
+            INTO M_INOUTLINE_ACCTDIMENSION
+              (
+                M_InOutLine_Acctdimension_ID, M_InOutLine_ID, Quantity,
+                AD_Client_ID, AD_Org_ID, IsActive, Created,
+                CreatedBy, Updated, UpdatedBy, M_Product_ID, C_BPartner_ID,
+                C_Project_ID, C_Campaign_ID, C_Activity_ID, A_Asset_ID,
+                User1_ID, User2_ID, C_CostCenter_ID
+              )
+              VALUES
+              (
+                v_AcctDim, v_NextNo, Cur_InOutAcctDim.Quantity,
+                Cur_InOutAcctDim.AD_Client_ID, Cur_InOutAcctDim.AD_Org_ID, 'Y', now(),
+                v_User, now(), v_User, Cur_InOutAcctDim.M_Product_ID, Cur_InOutAcctDim.C_BPartner_ID,
+                Cur_InOutAcctDim.C_Project_ID, Cur_InOutAcctDim.C_Campaign_ID, Cur_InOutAcctDim.C_Activity_ID , Cur_InOutAcctDim.A_Asset_ID, 
+                Cur_InOutAcctDim.User1_ID, Cur_InOutAcctDim.User2_ID, Cur_InOutAcctDim.C_CostCenter_ID
+              )
+              ;
+            END LOOP;
             INSERT INTO M_MATCHINV
               (M_MATCHINV_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
               M_INOUTLINE_ID, C_INVOICELINE_ID, M_PRODUCT_ID, DATETRX, QTY, PROCESSING, PROCESSED, POSTED)
