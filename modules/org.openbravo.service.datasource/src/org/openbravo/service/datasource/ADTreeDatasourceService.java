@@ -395,14 +395,13 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    * @param parentRecordId
    * @return
    */
-  private Tree getTree(String referencedTableId, String parentRecordId) {
+  private Tree getTree(String referencedTableId) {
     Table referencedTable = OBDal.getInstance().get(Table.class, referencedTableId);
 
     OBCriteria<Tree> treeCriteria = OBDal.getInstance().createCriteria(Tree.class);
     treeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, referencedTable));
-    if (parentRecordId != null && !parentRecordId.isEmpty() && !"null".equals(parentRecordId)) {
-      treeCriteria.add(Restrictions.eq(Tree.PROPERTY_PARENTRECORDID, parentRecordId));
-    }
+    treeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
+        .getCurrentClient()));
     return (Tree) treeCriteria.uniqueResult();
   }
 
@@ -514,7 +513,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
     String tableId = null;
     String referencedTableId = parameters.get("referencedTableId");
-    String parentRecordId = parameters.get("parentRecordId");
     String treeReferenceId = parameters.get("treeReferenceId");
     JSONArray selectedProperties = null;
     if (referencedTableId != null) {
@@ -535,7 +533,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       return new JSONObject();
     }
 
-    Tree tree = this.getTree(tableId, parentRecordId);
+    Tree tree = this.getTree(tableId);
     boolean isOrdered = this.isOrdered(tree);
     Long seqNo = null;
     if (isOrdered) {
@@ -637,7 +635,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   @Override
   protected Map<String, Object> getDatasourceSpecificParams(Map<String, String> parameters) {
     Map<String, Object> datasourceParams = new HashMap<String, Object>();
-    String parentRecordId = parameters.get("parentRecordId");
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
     String tableId = null;
@@ -652,7 +649,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
           .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return datasourceParams;
     }
-    Tree tree = this.getTree(tableId, parentRecordId);
+    Tree tree = this.getTree(tableId);
     datasourceParams.put("tree", tree);
     return datasourceParams;
   }
