@@ -532,10 +532,11 @@ public class CashUpReport extends HttpSecureAppServlet {
       hqlWhere = "and orderLineTax.salesOrderLine.orderedQuantity > 0 group by orderLineTax.tax.id, orderLineTax.tax.name";
       Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes + hqlWhere);
       salesTaxList = salesTaxesQuery.list();
+      totalGrossSalesAmount = totalNetSalesAmount;
       for (Object obj : salesTaxList) {
         Object[] obja = (Object[]) obj;
         taxAmount = new BigDecimal(obja[1].toString());
-        totalGrossSalesAmount = totalNetSalesAmount.add(taxAmount);
+        totalGrossSalesAmount = totalGrossSalesAmount.add(taxAmount);
       }
       dataSource = new ListOfArrayDataSource(salesTaxList, new String[] { "LABEL", "VALUE" });
       parameters.put("SALES_TAXES", dataSource);
@@ -544,10 +545,11 @@ public class CashUpReport extends HttpSecureAppServlet {
       hqlWhere = "and orderLineTax.salesOrderLine.orderedQuantity < 0 group by orderLineTax.tax.id, orderLineTax.tax.name";
       Query returnsTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes + hqlWhere);
       returnsTaxList = returnsTaxesQuery.list();
+      totalGrossReturnsAmount = totalNetReturnsAmount;
       for (Object obj : returnsTaxList) {
         Object[] obja = (Object[]) obj;
         taxAmount = new BigDecimal(obja[1].toString());
-        totalGrossReturnsAmount = totalNetReturnsAmount.add(taxAmount);
+        totalGrossReturnsAmount = totalGrossReturnsAmount.add(taxAmount);
       }
       dataSource = new ListOfArrayDataSource(returnsTaxList, new String[] { "LABEL", "VALUE" });
       parameters.put("RETURNS_TAXES", dataSource);
