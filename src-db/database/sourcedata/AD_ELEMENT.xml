@@ -30844,6 +30844,24 @@ The main purpose of this whereclause is to select which of the records in a part
 <!--D1AD99999295450280709FE47BEDDE55-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--D1AD99999295450280709FE47BEDDE55--></AD_ELEMENT>
 
+<!--D2089AFD9A304F45BD5FCDFC617F138F--><AD_ELEMENT>
+<!--D2089AFD9A304F45BD5FCDFC617F138F-->  <AD_ELEMENT_ID><![CDATA[D2089AFD9A304F45BD5FCDFC617F138F]]></AD_ELEMENT_ID>
+<!--D2089AFD9A304F45BD5FCDFC617F138F-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--D2089AFD9A304F45BD5FCDFC617F138F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--D2089AFD9A304F45BD5FCDFC617F138F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--D2089AFD9A304F45BD5FCDFC617F138F-->  <COLUMNNAME><![CDATA[Is_Explicit_Access]]></COLUMNNAME>
+<!--D2089AFD9A304F45BD5FCDFC617F138F-->  <NAME><![CDATA[Requires Explicit Access Permission]]></NAME>
+<!--D2089AFD9A304F45BD5FCDFC617F138F-->  <PRINTNAME><![CDATA[Requires Explicit Access Permission]]></PRINTNAME>
+<!--D2089AFD9A304F45BD5FCDFC617F138F-->  <DESCRIPTION><![CDATA[Requires Explicit Access Permission]]></DESCRIPTION>
+<!--D2089AFD9A304F45BD5FCDFC617F138F-->  <HELP><![CDATA[When processes are executed from a button in a window, by default, they inherit permissions granted to the window. So if the window is accessible it can be executed without the need of explicitly granting access for that role to the process.
+
+This behavior can be overwritten by the "Secured Process" preference.
+
+Processes with "Requires Explicit Access Permission" flag set to true, do not inherit permissions from the window but they always require the role to be explicitly granted to this process.]]></HELP>
+<!--D2089AFD9A304F45BD5FCDFC617F138F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--D2089AFD9A304F45BD5FCDFC617F138F-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--D2089AFD9A304F45BD5FCDFC617F138F--></AD_ELEMENT>
+
 <!--D3E4B412F90E4D13A290F5EAA0278261--><AD_ELEMENT>
 <!--D3E4B412F90E4D13A290F5EAA0278261-->  <AD_ELEMENT_ID><![CDATA[D3E4B412F90E4D13A290F5EAA0278261]]></AD_ELEMENT_ID>
 <!--D3E4B412F90E4D13A290F5EAA0278261-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
