@@ -1238,8 +1238,7 @@
 
     setOrderType: function (permission, orderType, options) {
       var me = this;
-      if (OB.POS.modelterminal.hasPermission(permission)) {
-        if (permission === 'OBPOS_receipt.return') {
+        if (orderType === OB.DEC.One) {
           this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
           _.each(this.get('lines').models, function (line) {
             if (line.get('qty') > 0) {
@@ -1264,7 +1263,6 @@
         if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)) {
           OB.Model.Discounts.applyPromotions(this);
         }
-      }
     },
 
     // returns the ordertype: 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway

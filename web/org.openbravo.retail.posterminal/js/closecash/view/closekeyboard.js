@@ -15,11 +15,26 @@ enyo.kind({
     payments: null
   },
   kind: 'OB.UI.Keyboard',
+  sideBarEnabled: true,
   init: function (model) {
     this.model = model;
     var me = this;
     this.inherited(arguments);
-
+    this.showSidepad('sidecashup');
+    this.addCommand('+', {
+      stateless: true,
+      action: function (keyboard, txt) {
+        t = keyboard.$.editbox.getContent();
+        keyboard.$.editbox.setContent(t + '+');
+      }
+    });
+    this.addCommand('-', {
+      stateless: true,
+      action: function (keyboard, txt) {
+        t = keyboard.$.editbox.getContent();
+        keyboard.$.editbox.setContent(t + '-');
+      }
+    });
     this.addToolbar({
       name: 'toolbarempty',
       buttons: []
@@ -42,6 +57,17 @@ enyo.kind({
     this.addToolbar({
       name: 'toolbarcashpayments',
       buttons: [{
+        command: 'cashpayments',
+        i18nLabel: 'OBPOS_SetQuantity',
+        definition: {
+          action: function (keyboard, amt) {
+            keyboard.model.trigger('action:addUnitToCollection', {
+              coin: keyboard.selectedCoin,
+              amount: parseInt(amt, 10)
+            });
+          }
+        }
+      }, {
         command: 'resetallcoins',
         i18nLabel: 'OBPOS_ResetAllCoins',
         stateless: true,
