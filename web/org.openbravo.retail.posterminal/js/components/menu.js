@@ -26,6 +26,9 @@ enyo.kind({
       permission: this.permission,
       orderType: 1
     });
+    if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
+      this.model.get('order').trigger('scan');
+    }
   },
   displayLogic: function () {
     var negativeLines = _.filter(this.model.get('order').get('lines').models, function (line) {
@@ -157,7 +160,7 @@ enyo.kind({
     negativeLines = _.find(this.model.get('order').get('lines').models, function (line) {
       return line.get('gross') < 0;
     });
-    if (negativeLines){
+    if (negativeLines) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
       return true;
     }
