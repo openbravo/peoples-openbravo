@@ -1,3 +1,11 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2013-2014 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
@@ -17,11 +25,15 @@ public class BPLocationProperties extends ModelExtension {
       {
         add(new HQLProperty("bploc.id", "id"));
         add(new HQLProperty("bploc.businessPartner.id", "bpartner"));
-        add(new HQLProperty("bploc.locationAddress.addressLine1", "name"));
+        add(new HQLProperty(
+            "COALESCE(bploc.locationAddress.addressLine1, bploc.locationAddress.addressLine2, bploc.locationAddress.postalCode, bploc.locationAddress.cityName)",
+            "name"));
         add(new HQLProperty("bploc.locationAddress.postalCode", "postalCode"));
         add(new HQLProperty("bploc.locationAddress.cityName", "cityName"));
         add(new HQLProperty("bploc.locationAddress.country.name", "countryName"));
-        add(new HQLProperty("bploc.locationAddress.addressLine1", "_identifier"));
+        add(new HQLProperty(
+            "COALESCE(bploc.locationAddress.addressLine1, bploc.locationAddress.addressLine2, bploc.locationAddress.postalCode, bploc.locationAddress.cityName)",
+            "_identifier"));
       }
     };
     return list;
