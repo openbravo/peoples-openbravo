@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2013 Openbravo S.L.U.
+ * Copyright (C) 2012-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -42,7 +42,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterRole'
   },
-  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.PaymentMethodCashUp, OB.Model.TaxCashUp],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
@@ -219,13 +219,26 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('brandFilter', []);
 
     function searchCurrentBP() {
-      function errorCallback(tx, error) {
+      var errorCallback = function(tx, error) {
         OB.UTIL.showError("OBDAL error while getting BP info: " + error);
-      }
+      };
 
       function successCallbackBPs(dataBps) {
+        var partnerAddressId = OB.MobileApp.model.get('terminal').partnerAddress,
+            successCallbackBPLoc;
+        
         if (dataBps) {
-          OB.POS.modelterminal.set('businessPartner', dataBps);
+          if (partnerAddressId && dataBps.get('locId') !== partnerAddressId) {
+            // Set default location
+            successCallbackBPLoc = function(bpLoc) {
+              dataBps.set('locId', bpLoc.get('id'));
+              dataBps.set('locName', bpLoc.get('name'));
+              OB.POS.modelterminal.set('businessPartner', dataBps);
+            };
+            OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback);
+          } else {
+            OB.POS.modelterminal.set('businessPartner', dataBps);
+          }
         }
       }
       OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
@@ -515,26 +528,33 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       OB.Model.Discounts.applyPromotions(receipt);
     }, this);
     receipt.on('voidLayaway', function () {
-      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
-      process.exec({
-        order: receipt
-      }, function (data, message) {
-        if (data && data.exception) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
-        } else {
-          OB.Dal.remove(receipt, null, function (tx, err) {
-            OB.UTIL.showError(err);
-          });
-          receipt.trigger('print');
-          if (receipt.get('layawayGross')) {
-            receipt.set('layawayGross', null);
-          }
-          orderList.deleteCurrent();
-          receipt.trigger('change:gross', receipt);
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
-        }
-      });
+      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway'),
+          auxReceipt = new OB.Model.Order();
+      if (OB.MobileApp.model.get('connectedToERP')) {
+        auxReceipt.clearWith(receipt);
+        OB.UTIL.cashUpReport(auxReceipt);
+        process.exec({
+          order: receipt
+        }, function (data, message) {
+          if (data && data.exception) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
+          } else {
+            OB.Dal.remove(receipt, null, function (tx, err) {
+              OB.UTIL.showError(err);
+            });
+            receipt.trigger('print');
+            if (receipt.get('layawayGross')) {
+              receipt.set('layawayGross', null);
+            }
+            orderList.deleteCurrent();
+            receipt.trigger('change:gross', receipt);
 
+            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
+          }
+        });
+      } else {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+      }
     }, this);
   },
 

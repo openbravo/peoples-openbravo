@@ -7,22 +7,25 @@
  ************************************************************************************
  */
 
-package org.openbravo.retail.posterminal;
+package org.openbravo.retail.posterminal.ad_reports;
 
-import org.codehaus.jettison.json.JSONObject;
+import java.util.HashMap;
+import java.util.List;
 
-public interface CashupHook {
-  public CashupHookResult exec(OBPOSApplications terminal, OBPOSAppCashup cashup,
-      JSONObject cashUpJsonObj) throws Exception;
+import org.openbravo.retail.posterminal.OBPOSAppCashup;
+
+public interface CashupReportHook {
+  public CashupReportHookResult exec(OBPOSAppCashup cashup,
+      List<HashMap<String, String>> hashMapList) throws Exception;
 }
 
 // Example of a hook:
 //
 // @ApplicationScoped
-// public class CashupHookTest implements CashupHook {
+// public class CashupReportHookTest implements CashupReportHook {
 //
 // @Override
-// public void exec(OBPOSApplications terminal, OBPOSAppCashup cashup)
+// public void exec(OBPOSAppCashup cashup, List<HashMap<String, String>> hashMapList)
 // throws Exception {
 // // TODO Auto-generated method stub
 // System.out.println("somebody is calling me");

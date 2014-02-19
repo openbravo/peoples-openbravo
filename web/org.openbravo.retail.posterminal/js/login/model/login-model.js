@@ -143,6 +143,34 @@
       });
 
       this.addPropertiesLoader({
+        properties: ['cashMgmtDepositEvents'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.CashMgmtDepositEvents').exec(null, function (data) {
+            if (data) {
+              terminalModel.set(me.properties[0], data);
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
+        properties: ['cashMgmtDropEvents'],
+        loadFunction: function (terminalModel) {
+          console.log('loading... ' + this.properties);
+          var me = this;
+          new OB.DS.Request('org.openbravo.retail.posterminal.term.CashMgmtDropEvents').exec(null, function (data) {
+            if (data) {
+              terminalModel.set(me.properties[0], data);
+              terminalModel.propertiesReady(me.properties);
+            }
+          });
+        }
+      });
+
+      this.addPropertiesLoader({
         properties: ['businesspartner'],
         loadFunction: function (terminalModel) {
           OB.info('loading... ' + this.properties);
@@ -272,18 +300,38 @@
       });
     },
 
-    runSyncProcess: function (model, orderSuccessCallback) {
+    runSyncProcess: function (model, orderSuccessCallback, cashMgmtSuccessCallback, cashUpSuccessCallback) {
       model = model || null;
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
         OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (customersChangedNotProcessed) { //OB.Dal.find success
           var successCallback, errorCallback;
           if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
-            OB.UTIL.processPaidOrders(model, orderSuccessCallback);
+            OB.UTIL.processPaidOrders(model, function () {
+              if (orderSuccessCallback) {
+                orderSuccessCallback(model);
+              }
+              OB.UTIL.processCashMgmt(function () {
+                if (cashMgmtSuccessCallback) {
+                  cashMgmtSuccessCallback();
+                }
+                OB.UTIL.processCashUp(cashUpSuccessCallback);
+              });
+            });
             return;
           }
           successCallback = function () {
             OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomersProcessed'));
-            OB.UTIL.processPaidOrders(model, orderSuccessCallback);
+            OB.UTIL.processPaidOrders(model, function () {
+              if (orderSuccessCallback) {
+                orderSuccessCallback(model);
+              }
+              OB.UTIL.processCashMgmt(function () {
+                if (cashMgmtSuccessCallback) {
+                  cashMgmtSuccessCallback();
+                }
+                OB.UTIL.processCashUp(cashUpSuccessCallback);
+              });
+            });
           };
           errorCallback = function () {
             //nothing to show
@@ -291,7 +339,6 @@
           customersChangedNotProcessed.each(function (cus) {
             cus.set('json', enyo.json.parse(cus.get('json')));
           });
-          OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
         });
       });
     },
@@ -334,6 +381,7 @@
       // sets the default payment method
       this.set('paymentcash', paymentcashcurrency || paymentcash || paymentlegacy);
 
+      OB.UTIL.initCashUp();
       OB.MobileApp.model.on('window:ready', function () {
         //MASTER DATA REFRESH
         var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;

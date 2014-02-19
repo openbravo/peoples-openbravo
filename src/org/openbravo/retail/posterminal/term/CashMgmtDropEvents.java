@@ -21,13 +21,11 @@ public class CashMgmtDropEvents extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     return Arrays
         .asList(new String[] { "select c.id as id, c.name as name from OBRETCO_CashManagementEvents c "
-            + "where c.organization.id='"
-            + jsonsent.getString("organization")
-            + "' and c.eventtype like '%OUT%'" });
+            + "where  c.$naturalOrgCriteria and c.eventtype like '%OUT%'" });
   }
 
   @Override
-  protected String getProperty() {
-    return "OBPOS_retail.cashmanagement";
+  protected boolean bypassPreferenceCheck() {
+    return true;
   }
 }

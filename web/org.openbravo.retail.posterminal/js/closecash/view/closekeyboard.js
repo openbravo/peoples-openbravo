@@ -58,7 +58,12 @@ enyo.kind({
         definition: {
           stateless: true,
           action: function (keyboard, amt) {
-            OB.POS.hwserver.openDrawer();
+            OB.UTIL.Approval.requestApproval(
+            me.model, 'OBPOS_approval.opendrawer.cashup', function (approved, supervisor, approvalType) {
+              if (approved) {
+                OB.POS.hwserver.openDrawer();
+              }
+            });
           }
         }
       }]
@@ -80,29 +85,31 @@ enyo.kind({
     }, this);
 
     this.showToolbar('toolbarempty');
-  },
 
-  paymentsChanged: function () {
-    var buttons = [];
-    this.payments.each(function (payment) {
-      if (!payment.get('paymentMethod').iscash || !payment.get('paymentMethod').countcash) {
-        buttons.push({
-          command: payment.get('_id'),
-          definition: {
-            action: function (keyboard, amt) {
-              var convAmt = OB.I18N.parseNumber(amt);
-              payment.set('foreignCounted', OB.DEC.add(0, convAmt));
-              payment.set('counted', OB.DEC.mul(convAmt, payment.get('rate')));
-            }
-          },
-          label: payment.get('name')
+    this.model.get('paymentList').on('reset', function () {
+      var buttons = [];
+      this.model.get('paymentList').each(function (payment) {
+        if (!payment.get('paymentMethod').iscash || !payment.get('paymentMethod').countcash) {
+          buttons.push({
+            command: payment.get('_id'),
+            definition: {
+              action: function (keyboard, amt) {
+                var convAmt = OB.I18N.parseNumber(amt);
+                payment.set('foreignCounted', OB.DEC.add(0, convAmt));
+                payment.set('counted', OB.DEC.mul(convAmt, payment.get('rate')));
+              }
+            },
+            label: payment.get('name')
+          });
+        }
+      }, this);
+      if (this.model.get('paymentList').length !== 0) {
+        this.addToolbar({
+          name: 'toolbarcountcash',
+          buttons: buttons
         });
       }
     }, this);
-    this.addToolbar({
-      name: 'toolbarcountcash',
-      buttons: buttons
-    });
   }
 
 });

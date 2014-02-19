@@ -24,7 +24,10 @@
       OB.Dal.find(OB.Model.Order, criteria, function (ordersPaidNotProcessed) { //OB.Dal.find success
         var successCallback, errorCallback, pendingOrdersMessage;
         if (!ordersPaidNotProcessed || ordersPaidNotProcessed.length === 0) {
-          return;
+          if (orderSucessCallback) {
+            orderSucessCallback(model);
+            return;
+          }
         }
         ordersPaidNotProcessed.each(function (order) {
           order.set('isbeingretriggered', 'Y');

@@ -201,6 +201,9 @@ enyo.kind({
     kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
     name: 'modalPendingToProcess'
   }],
+  finalAction: function () {
+    OB.POS.navigate('retail.pointofsale');
+  },
   init: function () {
     var me = this;
     this.inherited(arguments);
@@ -225,7 +228,6 @@ enyo.kind({
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.setCollection(this.model.get('paymentList'));
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.total.printAmount(this.model.get('totalExpected'));
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(OB.DEC.sub(0, this.model.get('totalExpected')));
-    this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.setPayments(this.model.getData('DataCloseCashPaymentMethod'));
 
     this.model.on('change:totalCounted', function () {
       this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
@@ -235,14 +237,23 @@ enyo.kind({
     }, this);
 
     // Cash to keep - Step 3.
-    this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('substep')));
-
-    this.model.get('paymentList').at(this.model.get('substep')).on('change:foreignCounted', function () {
-      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('substep')));
+    this.model.on('change:stepOfStep3', function (model) {
+      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.disableSelection();
+      this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setPaymentToKeep(this.model.get('paymentList').at(this.model.get('stepOfStep3')));
+      this.refresh();
     }, this);
+    //FIXME:It is triggered only once, but it is not the best way to do it
+    this.model.get('paymentList').on('reset', function () {
+      this.model.get('paymentList').at(this.model.get('substep')).on('change:foreignCounted', function () {
+        this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(this.model.get('paymentList').at(this.model.get('substep')));
+      }, this);
+    }, this);
+
     // Cash Up Report - Step 4
     //this data doesn't changes
-    this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
+    this.model.get('cashUpReport').on('reset', function (model) {
+      this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setModel(this.model.get('cashUpReport').at(0));
+    });
 
     //This data changed when money is counted
     //difference is calculated after counted
@@ -258,7 +269,8 @@ enyo.kind({
       var content;
       var i;
       var messages = this.model.get('messages');
-      var next = this.model.get('next');
+      var next = this.model.get('next'),
+          me = this;
 
       // Build the content of the dialog.
       if (messages && messages.length) {
@@ -280,12 +292,7 @@ enyo.kind({
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         action: function () {
-          if ('logout' === next) {
-            OB.UTIL.showLoggingOut(true);
-            OB.MobileApp.model.logout();
-          } else {
-            OB.POS.navigate('retail.pointofsale');
-          }
+          me.finalAction();
           return true;
         }
       }]);
@@ -437,7 +444,7 @@ enyo.kind({
 OB.POS.registerWindow({
   windowClass: OB.OBPOSCashUp.UI.CashUp,
   route: 'retail.cashup',
-  online: true,
+  online: false,
   menuPosition: 20,
   menuI18NLabel: 'OBPOS_LblCloseCash',
   permission: 'OBPOS_retail.cashup'

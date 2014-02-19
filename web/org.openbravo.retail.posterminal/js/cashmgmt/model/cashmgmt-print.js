@@ -15,10 +15,10 @@
       this.templatecashmgmt = new OB.DS.HWResource(OB.OBPOSCashMgmt.Print.CashMgmtTemplate);
       };
 
-  PrintCashMgmt.prototype.print = function (depsdropstosend) {
+  PrintCashMgmt.prototype.print = function (depsdropstosave) {
 
     OB.POS.hwserver.print(this.templatecashmgmt, {
-      cashmgmt: depsdropstosend
+      cashmgmt: depsdropstosave
     });
   };
 

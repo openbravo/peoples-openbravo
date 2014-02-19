@@ -29,8 +29,11 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblDone',
     stepCount: 0,
     span: 6,
+    init: function (model) {
+      this.model = model;
+    },
     tap: function () {
-      this.owner.owner.owner.owner.owner.owner.owner.model.depsdropstosend.trigger('makeDeposits');
+      this.model.depsdropstosave.trigger('makeDeposits');
     }
   }]
 });
@@ -105,30 +108,28 @@ enyo.kind({
       kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
       i18nHeader: 'OBPOS_SelectDepositDestinations',
       name: 'modaldepositevents',
-      type: 'DataDepositEvents'
+      type: 'cashMgmtDepositEvents'
     }, {
       kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
       i18nHeader: 'OBPOS_SelectDropDestinations',
       name: 'modaldropevents',
-      type: 'DataDropEvents'
+      type: 'cashMgmtDropEvents'
     }]
   }],
 
 
   init: function () {
     this.inherited(arguments);
-    var depositEvent = this.model.getData('DataDepositEvents'),
-        dropEvent = this.model.getData('DataDropEvents');
 
-    // DepositEvent Collection is shown by OB.UI.Table, when selecting an option 'click' event 
+    // cashMgmtDepositEvents or cashMgmtDropEvents Collection is shown by OB.UI.Table, when selecting an option 'click' event 
     // is triggered, propagating this UI event to model here
-    depositEvent.on('click', function (model) {
-      this.model.depsdropstosend.trigger('paymentDone', model, this.currentPayment);
+    this.model.get('cashMgmtDepositEvents').on('click', function (model) {
+      this.model.depsdropstosave.trigger('paymentDone', model, this.currentPayment);
       delete this.currentPayment;
     }, this);
 
-    dropEvent.on('click', function (model) {
-      this.model.depsdropstosend.trigger('paymentDone', model, this.currentPayment);
+    this.model.get('cashMgmtDropEvents').on('click', function (model) {
+      this.model.depsdropstosave.trigger('paymentDone', model, this.currentPayment);
       delete this.currentPayment;
     }, this);
 
@@ -154,13 +155,10 @@ enyo.kind({
   }
 });
 
-
-//OB.POS.registerWindow('retail.cashmanagement', OB.OBPOSCashMgmt.UI.CashManagement, 10);
 OB.POS.registerWindow({
   windowClass: OB.OBPOSCashMgmt.UI.CashManagement,
   route: 'retail.cashmanagement',
   menuPosition: 10,
-  online: true,
   menuI18NLabel: 'OBPOS_LblCashManagement',
   permission: 'OBPOS_retail.cashmanagement'
 });

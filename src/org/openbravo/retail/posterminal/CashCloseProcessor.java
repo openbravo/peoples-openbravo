@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
@@ -29,6 +30,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.gl.GLItem;
@@ -45,9 +47,11 @@ public class CashCloseProcessor {
   @Any
   private Instance<CashupHook> cashupHooks;
 
-  public JSONObject processCashClose(OBPOSApplications posTerminal, String cashUpId,
-      JSONArray cashCloseInfo, Date cashUpDate) throws Exception {
+  public JSONObject processCashClose(OBPOSApplications posTerminal, JSONObject jsonCashup,
+      JSONArray cashMgmtIds, Date cashUpDate) throws Exception {
 
+    String cashUpId = jsonCashup.getString("cashUpId");
+    JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
     OBPOSAppCashup cashUp = createCashUp(posTerminal, cashUpId, cashUpDate);
     OBDal.getInstance().save(cashUp);
 
@@ -104,7 +108,7 @@ public class CashCloseProcessor {
 
       }
 
-      associateTransactions(paymentType, reconciliation);
+      associateTransactions(paymentType, reconciliation, cashUpId, cashMgmtIds);
 
     }
 
@@ -112,7 +116,7 @@ public class CashCloseProcessor {
     JSONArray messages = new JSONArray(); // all messages returned by hooks
     String next = null; // the first next action of all hooks wins
     for (CashupHook hook : cashupHooks) {
-      CashupHookResult result = hook.exec(posTerminal, cashUp);
+      CashupHookResult result = hook.exec(posTerminal, cashUp, jsonCashup);
       if (result != null) {
         if (result.getMessage() != null && !result.getMessage().equals("")) {
           messages.put(result.getMessage());
@@ -134,12 +138,39 @@ public class CashCloseProcessor {
   }
 
   protected void associateTransactions(OBPOSAppPayment paymentType,
+      FIN_Reconciliation reconciliation, String cashUpId, JSONArray cashMgmtIds) {
+    String orderTransactionsQueryHQL = " as fintrans, FIN_Payment_ScheduleDetail as schedDetail"
+        + " where schedDetail.paymentDetails.finPayment = fintrans.finPayment"
+        + " and fintrans.account=:account and fintrans.reconciliation is null"
+        + " and schedDetail.orderPaymentSchedule.order.obposAppCashup=:cashUpId";
+
+    OBQuery<FIN_FinaccTransaction> orderTransactionsQuery = OBDal.getInstance().createQuery(
+        FIN_FinaccTransaction.class, orderTransactionsQueryHQL);
+    orderTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount());
+    orderTransactionsQuery.setNamedParameter("cashUpId", cashUpId);
+    associateTransactionsFromQuery(orderTransactionsQuery, reconciliation);
+
+    List<String> cashMgmtIdsList = new ArrayList<String>();
+    for (int i = 0; i < cashMgmtIds.length(); i++) {
+      try {
+        cashMgmtIdsList.add(cashMgmtIds.getString(i));
+      } catch (JSONException e) {
+        // Won't happen
+      }
+    }
+    if (cashMgmtIdsList.size() > 0) {
+      OBQuery<FIN_FinaccTransaction> cashMgmtTransactionsQuery = OBDal.getInstance().createQuery(
+          FIN_FinaccTransaction.class, "where id in (:transIds) and account.id=:account");
+      cashMgmtTransactionsQuery.setNamedParameter("transIds", cashMgmtIdsList);
+      cashMgmtTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount()
+          .getId());
+      associateTransactionsFromQuery(cashMgmtTransactionsQuery, reconciliation);
+    }
+  }
+
+  protected void associateTransactionsFromQuery(OBQuery<FIN_FinaccTransaction> transactionQuery,
       FIN_Reconciliation reconciliation) {
-    OBCriteria<FIN_FinaccTransaction> openTransactionsForAccount = OBDal.getInstance()
-        .createCriteria(FIN_FinaccTransaction.class);
-    openTransactionsForAccount.add(Restrictions.eq("account", paymentType.getFinancialAccount()));
-    openTransactionsForAccount.add(Restrictions.isNull("reconciliation"));
-    ScrollableResults transactions = openTransactionsForAccount.scroll();
+    ScrollableResults transactions = transactionQuery.scroll(ScrollMode.FORWARD_ONLY);
     try {
       while (transactions.next()) {
         FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) transactions.get(0);
