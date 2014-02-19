@@ -339,7 +339,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 'isocode': paymentMethod.isocode,
                 'allowOpenDrawer': payment.get('allowopendrawer'),
                 'isCash': payment.get('iscash'),
-                'openDrawer': payment.get('openDrawer')
+                'openDrawer': payment.get('openDrawer'),
+                'printtwice': paymentMethod.printtwice
               }));
               if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
                 iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), payment.get('origAmount')));
@@ -367,7 +368,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 'isocode': paymentMethod.isocode,
                 'allowOpenDrawer': payment.get('allowopendrawer'),
                 'isCash': payment.get('iscash'),
-                'openDrawer': payment.get('openDrawer')
+                'openDrawer': payment.get('openDrawer'),
+                'printtwice': paymentMethod.printtwice
               }));
               if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
                 iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
@@ -428,7 +430,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               'isocode': payment.isocode,
               'allowOpenDrawer': payment.paymentMethod.allowopendrawer,
               'isCash': payment.paymentMethod.iscash,
-              'openDrawer': payment.paymentMethod.openDrawer
+              'openDrawer': payment.paymentMethod.openDrawer,
+              'printtwice': payment.paymentMethod.printtwice
             }));
           }
           receipt.set('change', oldChange);
@@ -443,7 +446,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           receipt.trigger('closed');
         }
         receipt.trigger('print'); // to guaranty execution order
-        orderList.deleteCurrent();
+        orderList.deleteCurrent(true);
       });
     }, this);
 
@@ -563,7 +566,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var negativeLines = _.filter(me.get('order').get('lines').models, function (line) {
         return line.get('gross') < 0;
       }).length;
-      if (negativeLines > 0 && OB.POS.modelterminal.get('permissions')['OBPOS_approval.returns']) {
+      if (negativeLines > 0 && !OB.POS.modelterminal.get('permissions')['OBPOS_approval.returns']) {
         args.approvals.push('OBPOS_approval.returns');
       }
       if (args.approvals.length > 0) {
@@ -589,7 +592,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
    * case of granted approval, the approval is added to the order so it can be saved
    * in backend for audit purposes.
    */
-  approvedRequest: function (approved, supervisor, approvalType) {
+  approvedRequest: function (approved, supervisor, approvalType, callback) {
     var order = this.get('order'),
         newApprovals = [],
         approvals, approval, i, date;
@@ -599,7 +602,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     for (i = 0; i < approvals.length; i++) {
       // reset approvals
-      if (approvals[i].approvalType !== approvalType) {
+      if (_.filter(approvalType, function (approval) {
+        return approval === approvals[i].approvalType
+      }).length === 0) {
         newApprovals.push(approvals[i]);
       }
     }
@@ -607,6 +612,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     if (approved) {
       date = new Date();
       date = date.getTime();
+      if (!Array.isArray(approvalType)) {
+        approvalType = [approvalType];
+      }
       for (i = 0; i < approvalType.length; i++) {
         approval = {
           approvalType: approvalType[i],
@@ -622,5 +630,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.trigger('approvalChecked', {
       approved: approved
     });
+    if (enyo.isFunction(callback)) {
+      callback(approved, supervisor, approvalType);
+    }
   }
 });

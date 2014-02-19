@@ -83,38 +83,34 @@ enyo.kind({
     var me = this;
 
     var actionAddProduct = function (keyboard, value) {
-        OB.MobileApp.model.hookManager.executeHooks('OBPOS_preChangeQtyFromKeyboard', {
-          keyboard: keyboard,
-          context: me,
-          value: value
-        }, function (args) {
-          if (args.cancelOperation) {
-            return;
-          }
-
-          if (args.keyboard.receipt.get('isEditable') === false) {
-            args.context.doShowPopup({
-              popup: 'modalNotEditableOrder'
+        if (keyboard.receipt.get('isEditable') === false) {
+          me.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          return true;
+        }
+        if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
+          me.doShowPopup({
+            popup: 'modalNotEditableLine'
+          });
+          return true;
+        }
+        if (keyboard.line) {
+          if ((_.isNaN(value) || value > 0) && keyboard.line.get('product').get('groupProduct') === false) {
+            me.doShowPopup({
+              popup: 'modalProductCannotBeGroup'
             });
             return true;
           }
-          if (args.keyboard.line && args.keyboard.line.get('product').get('isEditableQty') === false) {
-            args.context.doShowPopup({
-              popup: 'modalNotEditableLine'
-            });
-            return true;
-          }
-          if (args.keyboard.line) {
-            args.context.doAddProduct({
-              product: args.keyboard.line.get('product'),
-              qty: args.value,
-              options: {
-                line: args.keyboard.line
-              }
-            });
-            args.keyboard.receipt.trigger('scan');
-          }
-        });
+          me.doAddProduct({
+            product: keyboard.line.get('product'),
+            qty: value,
+            options: {
+              line: keyboard.line
+            }
+          });
+          keyboard.receipt.trigger('scan');
+        }
         };
 
     var actionRemoveProduct = function (keyboard, value) {
@@ -158,16 +154,25 @@ enyo.kind({
 
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
-        var value = OB.I18N.parseNumber(txt);
+        var value = OB.I18N.parseNumber(txt),
+            toadd;
         if (!keyboard.line) {
           return true;
         }
         if (value || value === 0) {
-          value = value - keyboard.line.get('qty');
-          if (value > 0) {
-            actionAddProduct(keyboard, value);
-          } else if (value < 0) {
-            actionAddProduct(keyboard, value);
+          toadd = value - keyboard.line.get('qty');
+          if (toadd === 0) { // If nothing to add then return
+            return;
+          }
+
+          if (value === 0) { // If final quantity will be 0 then request approval
+            OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+              if (approved) {
+                actionAddProduct(keyboard, toadd);
+              }
+            });
+          } else {
+            actionAddProduct(keyboard, toadd);
           }
         }
       }
@@ -192,8 +197,13 @@ enyo.kind({
           return true;
         }
         if (keyboard.line) {
-          keyboard.receipt.setPrice(keyboard.line, OB.I18N.parseNumber(txt));
-          keyboard.receipt.trigger('scan');
+          OB.UTIL.Approval.requestApproval(
+          me.model, 'OBPOS_approval.setPrice', function (approved, supervisor, approvalType) {
+            if (approved) {
+              keyboard.receipt.setPrice(keyboard.line, OB.I18N.parseNumber(txt));
+              keyboard.receipt.trigger('scan');
+            }
+          });
         }
       }
     });
@@ -256,18 +266,32 @@ enyo.kind({
     this.addCommand('-', {
       stateless: true,
       action: function (keyboard, txt) {
-        var qty = 1;
+        var qty = 1,
+            value;
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
         }
-        actionAddProduct(keyboard, -qty);
+        value = keyboard.line.get('qty') - qty;
+        if (value === 0) { // If final quantity will be 0 then request approval
+          OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+            if (approved) {
+              actionAddProduct(keyboard, -qty);
+            }
+          });
+        } else {
+          actionAddProduct(keyboard, -qty);
+        }
       }
     });
     // add a command that will handle the DELETE keyboard key
     this.addCommand('line:delete', {
       stateless: true,
       action: function (keyboard) {
-        actionDeleteLine(keyboard);
+        OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+          if (approved) {
+            actionDeleteLine(keyboard);
+          }
+        });
       }
     });
 
@@ -280,7 +304,8 @@ enyo.kind({
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarDiscounts);
   },
 
-  init: function () {
+  init: function (model) {
+    this.model = model;
     // Add the keypads for each payment method
     this.initCurrencyKeypads();
 
@@ -428,6 +453,9 @@ enyo.kind({
   // Overwrite this component to customize the BarcodeActionHandler
   name: 'OB.UI.BarcodeActionHandler',
   kind: 'OB.UI.AbstractBarcodeActionHandler',
+  addWhereFilter: function (txt) {
+    return "where product.upc = '" + txt + "'";
+  },
   findProductByBarcode: function (txt, callback) {
     var criteria;
 
@@ -443,10 +471,7 @@ enyo.kind({
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [txt]));
       }
     }
-    criteria = {
-      '_whereClause': 'WHERE upper(upc) = "' + txt + '"'
-    };
-    OB.Dal.find(OB.Model.Product, criteria, successCallbackProducts, errorCallback);
+    OB.Dal.query(OB.Model.Product, 'select * from m_product as product ' + this.addWhereFilter(txt), null, successCallbackProducts, errorCallback, this);
   },
 
   addProductToReceipt: function (keyboard, product) {

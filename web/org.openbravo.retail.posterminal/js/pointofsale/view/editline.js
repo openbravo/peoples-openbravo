@@ -202,8 +202,14 @@ enyo.kind({
           i18nContent: 'OBPOS_ButtonDelete',
           classes: 'btnlink-orange',
           tap: function () {
-            this.owner.doDeleteLine({
-              line: this.owner.line
+            var me = this;
+            OB.UTIL.Approval.requestApproval(
+            me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+              if (approved) {
+                me.owner.doDeleteLine({
+                  line: me.owner.line
+                });
+              }
             });
           },
           init: function (model) {

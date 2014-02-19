@@ -1863,12 +1863,12 @@
         OB.UTIL.showError('Error removing');
       });
     },
-    deleteCurrent: function () {
+    deleteCurrent: function (forceCreateNew) {
       var isNew = false;
 
       if (this.current) {
         this.remove(this.current);
-        if (this.length > 0) {
+        if (this.length > 0 && !forceCreateNew) {
           this.current = this.at(this.length - 1);
         } else {
           this.current = this.newOrder();

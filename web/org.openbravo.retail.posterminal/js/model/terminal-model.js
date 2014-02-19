@@ -107,7 +107,25 @@
           var supervisor, countApprovals = 0,
               approved = false;
           if (users.models.length === 0) {
-            alert(OB.I18N.getLabel('OBPOS_OfflineSupervisorNotRegistered'));
+            countApprovals = 0;
+            OB.Dal.find(OB.Model.User, null, enyo.bind(this, function (users) {
+              _.each(users.models, function (user) {
+                if (username === user.get('name') && user.get('password') === OB.MobileApp.model.generate_sha1(password + user.get('created'))) {
+                  _.each(approvalType, function (perm) {
+                    if (JSON.parse(user.get('terminalinfo')).permissions[perm]) {
+                      countApprovals += 1;
+                      supervisor = user;
+                    }
+                  }, this);
+                }
+              });
+              if (countApprovals === approvalType.length) {
+                approved = true;
+                this.approvedRequest(approved, supervisor, approvalType, callback);
+              } else {
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
+              }
+            }), function () {});
           } else {
             supervisor = users.models[0];
             if (supervisor.get('password') === OB.MobileApp.model.generate_sha1(password + supervisor.get('created'))) {
@@ -119,7 +137,25 @@
               if (countApprovals === approvalType.length) {
                 approved = true;
               } else {
-                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
+                countApprovals = 0;
+                OB.Dal.find(OB.Model.User, null, enyo.bind(this, function (users) {
+                  _.each(users.models, function (user) {
+                    if (username === user.get('name') && user.get('password') === OB.MobileApp.model.generate_sha1(password + user.get('created'))) {
+                      _.each(approvalType, function (perm) {
+                        if (JSON.parse(user.get('terminalinfo')).permissions[perm]) {
+                          countApprovals += 1;
+                          supervisor = user;
+                        }
+                      }, this);
+                    }
+                  });
+                  if (countApprovals === approvalType.length) {
+                    approved = true;
+                    this.approvedRequest(approved, supervisor, approvalType, callback);
+                  } else {
+                    OB.UTIL.showError(OB.I18N.getLabel('OBPOS_UserCannotApprove'));
+                  }
+                }), function () {});
               }
             } else {
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_InvalidUserPassword'));

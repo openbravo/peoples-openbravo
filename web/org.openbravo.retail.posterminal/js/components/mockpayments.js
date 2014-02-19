@@ -60,7 +60,8 @@ enyo.kind({
       'amount': this.owner.paymentAmount,
       'allowOpenDrawer': this.owner.allowOpenDrawer,
       'isCash': this.owner.isCash,
-      'openDrawer': this.owner.openDrawer
+      'openDrawer': this.owner.openDrawer,
+      'printtwice': this.owner.printtwice
     }));
 
     this.doHideThisPopup();
