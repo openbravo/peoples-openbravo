@@ -322,10 +322,8 @@ enyo.kind({
       resetAmt = true;
     }
 
-    var newcollection = new Backbone.Collection();
     var totalCounted = 0;
     collection.each(function (coin) {
-      var coinModel = new Backbone.Model();
       if (coin.get('coinValue') === coinValue) {
         if (resetAmt) {
           newAmount = lAmount;
@@ -333,23 +331,13 @@ enyo.kind({
           newAmount = coin.get('numberOfCoins') + lAmount;
         }
         if (newAmount >= 0) {
-          coinModel.set('numberOfCoins', newAmount);
-        } else {
-          coinModel.set('numberOfCoins', coin.get('numberOfCoins'));
+          coin.set('numberOfCoins', newAmount);
         }
-      } else {
-        coinModel.set('numberOfCoins', coin.get('numberOfCoins'));
       }
-      coinModel.set('coinValue', coin.get('coinValue'));
-      coinModel.set('totalAmount', OB.DEC.mul(coinModel.get('numberOfCoins'), coinModel.get('coinValue')));
-      totalCounted += coinModel.get('totalAmount');
-      coinModel.set('backcolor', coin.get('backcolor'));
-      coinModel.set('bordercolor', coin.get('bordercolor'));
-      newcollection.add(coinModel);
+      coin.set('totalAmount', OB.DEC.mul(coin.get('numberOfCoins'), coin.get('coinValue')));
+      totalCounted += coin.get('totalAmount');
     });
 
-    this.payment.set('coinsCollection', newcollection);
-    this.$.paymentsList.setCollection(newcollection);
     this.payment.set('foreignCounted', totalCounted);
     this.payment.set('counted', OB.DEC.mul(totalCounted, this.payment.get('rate')));
     this.payment.set('foreignDifference', OB.DEC.sub(totalCounted, this.payment.get('foreignExpected')));
@@ -360,20 +348,12 @@ enyo.kind({
 
   resetAllCoins: function () {
     var collection = this.$.paymentsList.collection;
-    var newcollection = new Backbone.Collection();
 
     collection.each(function (coin) {
-      var coinModel = new Backbone.Model();
-      coinModel.set('numberOfCoins', 0);
-      coinModel.set('coinValue', coin.get('coinValue'));
-      coinModel.set('totalAmount', 0);
-      coinModel.set('backcolor', coin.get('backcolor'));
-      coinModel.set('bordercolor', coin.get('bordercolor'));
-      newcollection.add(coinModel);
+      coin.set('numberOfCoins', 0);
+      coin.set('totalAmount', 0);
     });
 
-    this.payment.set('coinsCollection', newcollection);
-    this.$.paymentsList.setCollection(newcollection);
     this.payment.set('foreignCounted', 0);
     this.payment.set('counted', 0);
     this.payment.set('foreignDifference', OB.DEC.sub(0, this.payment.get('foreignExpected')));
