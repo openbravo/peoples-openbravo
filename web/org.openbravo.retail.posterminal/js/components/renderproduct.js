@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OB.UI.RenderProduct',
-  kind: 'OB.UI.SelectButton',
+  kind: 'OB.UI.listItemButton',
   components: [{
     style: 'float: left; width: 25%',
     components: [{
@@ -31,7 +31,7 @@ enyo.kind({
   }, {
     style: 'float: left; width: 38%; ',
     components: [{
-      name: 'topLine'
+      name: 'identifier'
     }, {
       style: 'color: #888888',
       name: 'bottonLine'
@@ -47,7 +47,7 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
-    this.$.topLine.setContent(this.model.get('_identifier'));
+    this.$.identifier.setContent(this.model.get('_identifier'));
     if (this.model.get('showchdesc')) {
       this.$.bottonLine.setContent(this.model.get('characteristicDescription'));
     }
