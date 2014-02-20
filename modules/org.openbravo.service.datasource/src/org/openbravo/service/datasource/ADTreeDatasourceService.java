@@ -76,7 +76,10 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       String entityName = bobProperties.getString("_entity");
       Entity entity = ModelProvider.getInstance().getEntity(entityName);
       Table table = OBDal.getInstance().get(Table.class, entity.getTableId());
-
+      TableTree tableTree = getTableTree(table);
+      if (tableTree.isHandleNodesManually()) {
+        return;
+      }
       Tree adTree = getTree(table, bobProperties);
       if (adTree == null) {
         // The adTree does not exists, create it
@@ -107,7 +110,10 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       String entityName = bobProperties.getString("_entity");
       Entity entity = ModelProvider.getInstance().getEntity(entityName);
       Table table = OBDal.getInstance().get(Table.class, entity.getTableId());
-
+      TableTree tableTree = getTableTree(table);
+      if (tableTree.isHandleNodesManually()) {
+        return;
+      }
       Tree tree = getTree(table, bobProperties);
       OBCriteria<TreeNode> adTreeNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
       adTreeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
@@ -121,6 +127,23 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       logger.error("Error while deleting tree node: ", e);
       throw new OBException("The treenode could not be created");
     }
+  }
+
+  /**
+   * Obtains the ADTree TableTree associated with the table
+   * 
+   * @param table
+   *          table whose ADTree TableTree will be returned
+   * @return the ADTree TableTree associated with the given table
+   */
+  private TableTree getTableTree(Table table) {
+    TableTree tableTree = null;
+    OBCriteria<TableTree> criteria = OBDal.getInstance().createCriteria(TableTree.class);
+    criteria.add(Restrictions.eq(TableTree.PROPERTY_TABLE, table));
+    criteria.add(Restrictions.eq(TableTree.PROPERTY_TREESTRUCTURE, "ADTree"));
+    // There can be at most one ADTree table per table, so it is safe to use uniqueResult
+    tableTree = (TableTree) criteria.uniqueResult();
+    return tableTree;
   }
 
   /**
