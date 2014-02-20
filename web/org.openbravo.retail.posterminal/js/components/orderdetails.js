@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -15,15 +15,23 @@ enyo.kind({
     order: null
   },
   attributes: {
-    style: 'float:left; padding: 15px 15px 5px 10px; font-weight: bold; color: #6CB33F;'
+    style: 'float: left; padding: 10px 10px 0px 10px; font-weight: bold; color: #6CB33F;'
   },
   initComponents: function () {},
   renderData: function (docNo) {
+    var content, me = this;
     if (this.order.get('orderDate') instanceof Date) {
-      this.setContent(OB.I18N.formatHour(this.order.get('orderDate')) + ' - ' + docNo);
+      content = OB.I18N.formatHour(this.order.get('orderDate')) + ' - ' + docNo;
     } else {
-      this.setContent(this.order.get('orderDate') + ' - ' + docNo);
+      content = this.order.get('orderDate') + ' - ' + docNo;
     }
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_OrderDetailContentHook', {
+      content: content,
+      docNo: docNo,
+      order: me.order
+    }, function (args) {
+      me.setContent(args.content);
+    });
   },
   orderChanged: function (oldValue) {
     this.renderData(this.order.get('documentNo'));

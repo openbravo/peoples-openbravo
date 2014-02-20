@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -26,28 +26,21 @@ enyo.kind({
       }, {
         style: 'padding: 5px;',
         components: [{
-          classes: 'row-fluid',
+          classes: 'row-fluid span12',
+          style: 'border-bottom: 1px solid #cccccc;',
           components: [{
             classes: 'span12',
-            style: 'padding: 5px 0px 10px 0px; border-bottom: 1px solid #cccccc;',
+            kind: 'OB.UI.OrderDetails',
+            name: 'orderdetails'
+          }, {
+            classes: 'span12',
+            style: 'float: left;',
             components: [{
-              classes: 'row-fluid',
-              components: [{
-                kind: 'OB.UI.OrderDetails',
-                name: 'orderdetails'
-              }]
+              kind: 'OB.UI.BusinessPartner',
+              name: 'bpbutton'
             }, {
-              style: 'float: left;',
-              components: [{
-                kind: 'OB.UI.BusinessPartner',
-                name: 'bpbutton'
-              }, {
-                style: 'float: left;',
-                components: [{
-                  kind: 'OB.UI.BPLocation',
-                  name: 'bplocbutton'
-                }]
-              }]
+              kind: 'OB.UI.BPLocation',
+              name: 'bplocbutton'
             }]
           }]
         }, {
