@@ -69,6 +69,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="OBPOS_C_BPARTNER_LOC_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA[SELECT cbl.C_BPartner_Location_id FROM OBPOS_Applications oba RIGHT JOIN C_BPartner cbp on cbp.C_BPartner_id = oba.C_BPartner_id RIGHT JOIN C_BPartner_Location cbl on cbp.C_BPartner_id = cbl.C_BPartner_id LIMIT 1]]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -80,6 +84,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="OBPOS_APPLICATIONS_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="OBPOS_C_BPARTNER_LOC">
+        <reference local="OBPOS_C_BPARTNER_LOC_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
       <index name="OBPOS_APP_TERTYPE" unique="false">
         <index-column name="OBPOS_TERMINALTYPE_ID"/>
@@ -95,5 +102,6 @@
         <unique-column name="VALUE"/>
       </unique>
       <check name="OBPOS_APP_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBPOS_LOCATION_CHECK"><![CDATA[NOT ((OBPOS_C_BPARTNER_LOC_ID IS NULL) AND (C_BPARTNER_ID IS NOT NULL))]]></check>
     </table>
   </database>

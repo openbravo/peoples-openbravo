@@ -226,10 +226,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       function successCallbackBPs(dataBps) {
         var partnerAddressId = OB.MobileApp.model.get('terminal').partnerAddress,
             successCallbackBPLoc;
-        
+
         if (dataBps) {
           if (partnerAddressId && dataBps.get('locId') !== partnerAddressId) {
-            // Set default location
+             // Set default location
             successCallbackBPLoc = function(bpLoc) {
               dataBps.set('locId', bpLoc.get('id'));
               dataBps.set('locName', bpLoc.get('name'));
@@ -241,6 +241,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
       }
+
       OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
     }
 

@@ -33,10 +33,14 @@ public class TerminalProperties extends ModelExtension {
 
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>();
     list.add(new HQLProperty("pos.id", "id"));
-    list.add(new HQLProperty("pos.organization.obretcoCBpartner.id", "businessPartner"));
+    list.add(new HQLProperty(
+        "(COALESCE(pos.defaultCustomer.id, pos.organization.obretcoCBpartner.id))",
+        "businessPartner"));
     list.add(new HQLProperty("pos.name", "_identifier"));
     list.add(new HQLProperty("pos.searchKey", "searchKey"));
-    list.add(new HQLProperty("pos.organization.obretcoCBpLocation.id", "partnerAddress"));
+    list.add(new HQLProperty(
+        "(COALESCE(pos.obposCBpartnerLoc.id, pos.organization.obretcoCBpLocation.id))",
+        "partnerAddress"));
     list.add(new HQLProperty("pos.organization.id", "organization"));
     list.add(new HQLProperty("pos.organization.name", getIdentifierAlias("organization")));
     list.add(new HQLProperty("pos.client.id", "client"));
