@@ -612,8 +612,10 @@ isc.OBStandardView.addProperties({
     url = url + '?tabId=' + this.tabId;
     if (this.isShowingForm && this.viewForm.isNew && this.isRootView) {
       url = url + '&command=NEW';
-    } else if ((this.isShowingForm || !this.isRootView) && this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
+    } else if ((this.isShowingForm || !this.isRootView) && !this.isShowingTree && this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
       url = url + '&recordId=' + this.viewGrid.getSelectedRecord().id;
+    } else if ((this.isShowingForm || !this.isRootView) && this.isShowingTree && this.treeGrid.getSelectedRecords() && this.treeGrid.getSelectedRecords().length === 1) {
+      url = url + '&recordId=' + this.treeGrid.getSelectedRecord().id;
     } else if (!this.isShowingForm && this.isRootView) {
       crit = this.viewGrid.getCriteria();
       if (crit && crit.criteria && crit.criteria.length > 0) {
