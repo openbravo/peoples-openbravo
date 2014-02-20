@@ -50,7 +50,6 @@ import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.domain.ReferencedTreeField;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.utility.ADTreeType;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
@@ -383,8 +382,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       return false;
     } else {
       TableTree tableTree = tableTreeList.get(0);
-      ADTreeType treeType = tableTree.getTreeCategory();
-      return treeType.isOrdered();
+      return tableTree.isOrdered();
     }
   }
 
