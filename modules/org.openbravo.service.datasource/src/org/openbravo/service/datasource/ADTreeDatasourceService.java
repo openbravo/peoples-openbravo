@@ -38,6 +38,8 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.ApplicationUtils;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -57,6 +59,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
+import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,10 +195,16 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       Map<String, Object> datasourceParameters, String parentId, String hqlWhereClause,
       String hqlWhereClauseRootNodes) throws JSONException, TooManyTreeNodesException {
 
-    String referencedTableId = parameters.get("referencedTableId");
+    String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
+    Tab tab = null;
+    Table table = null;
+    TableTree tableTree = null;
     JSONArray selectedProperties = null;
-    if (referencedTableId != null) {
+    if (tabId != null) {
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+      table = tab.getTable();
+      tableTree = tab.getTableTree();
       String selectedPropertiesStr = parameters.get("_selectedProperties");
       selectedProperties = new JSONArray(selectedPropertiesStr);
     } else if (treeReferenceId != null) {
@@ -205,6 +214,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       for (ReferencedTreeField treeField : treeReference.getADReferencedTreeFieldList()) {
         selectedProperties.put(treeField.getProperty());
       }
+      table = treeReference.getTable();
+      tableTree = treeReference.getTableTreeCategory();
     } else {
       logger
           .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
@@ -226,6 +237,19 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       joinClause.append(" and (" + hqlWhereClause + ")");
     }
     joinClause.append(" and tn.tree.id = '" + tree.getId() + "' ");
+    if (hqlWhereClauseRootNodes == null && tab.getTabLevel() > 0) {
+      // Add the criteria to filter only the records that belong to the record selected in the
+      // parent tab
+      Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
+      String parentPropertyName = ApplicationUtils.getParentProperty(tab, parentTab);
+      if (parentPropertyName != null) {
+        JSONArray criteria = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+        String parentRecordId = getParentRecordIdFromCriteria(criteria, parentPropertyName);
+        if (parentRecordId != null) {
+          joinClause.append(" and e." + parentPropertyName + ".id = '" + parentRecordId + "' ");
+        }
+      }
+    }
     if (hqlWhereClauseRootNodes != null) {
       joinClause.append(" and (" + hqlWhereClauseRootNodes + ") ");
     } else {
@@ -292,6 +316,22 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       cont++;
     }
     return responseData;
+  }
+
+  private String getParentRecordIdFromCriteria(JSONArray criteria, String parentPropertyName) {
+    String parentRecordId = null;
+    for (int i = 0; i < criteria.length(); i++) {
+      try {
+        JSONObject criterion = (JSONObject) criteria.get(i);
+        if (parentPropertyName.equals(criterion.getString("fieldName"))) {
+          parentRecordId = criterion.getString("value");
+          break;
+        }
+      } catch (JSONException e) {
+        // TODO Auto-generated catch block
+      }
+    }
+    return parentRecordId;
   }
 
   /**
