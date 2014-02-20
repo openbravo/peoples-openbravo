@@ -724,7 +724,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return null;
     }
-    String treeTypeName = tableTree.getTreeCategory().getName();
+    String treeTypeName = tableTree.getName();
     CheckTreeOperationManager ctom = null;
     try {
       ctom = checkTreeOperationManagers.select(new ComponentProvider.Selector(treeTypeName)).get();

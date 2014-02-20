@@ -25,7 +25,6 @@ import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.utility.ADTreeType;
 import org.openbravo.model.ad.utility.TableTree;
 
 /**
@@ -78,7 +77,7 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
   public boolean isOrderedTree() {
     TableTree tableTree = tab.getTableTree();
     if (tableTree != null) {
-      return tableTree.getTreeCategory().isOrdered();
+      return tableTree.isOrdered();
     } else {
       return false;
     }
@@ -93,13 +92,12 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
     String dataSourceId = null;
     TableTree tableTree = tab.getTableTree();
     if (tableTree != null) {
-      ADTreeType treeCategory = tableTree.getTreeCategory();
-      if (TREENODE_STRUCTURE.equals(treeCategory.getTreeStructure())) {
+      if (TREENODE_STRUCTURE.equals(tableTree.getTreeStructure())) {
         dataSourceId = TREENODE_DATASOURCE;
-      } else if (LINKTOPARENT_STRUCTURE.equals(treeCategory.getTreeStructure())) {
+      } else if (LINKTOPARENT_STRUCTURE.equals(tableTree.getTreeStructure())) {
         dataSourceId = LINKTOPARENT_DATASOURCE;
       } else {
-        return treeCategory.getDatasource().getId();
+        return tableTree.getDatasource().getId();
       }
       return dataSourceId;
     } else {
@@ -110,8 +108,7 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
   public String getTreeStructure() {
     TableTree tableTree = tab.getTableTree();
     if (tableTree != null) {
-      ADTreeType treeCategory = tableTree.getTreeCategory();
-      return treeCategory.getTreeStructure();
+      return tableTree.getTreeStructure();
     } else {
       return null;
     }

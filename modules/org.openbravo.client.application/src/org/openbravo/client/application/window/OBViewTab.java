@@ -613,14 +613,6 @@ public class OBViewTab extends BaseTemplateComponent {
     return preferenceAttributes;
   }
 
-  public String getTreeTypeId() {
-    if (tab.getTableTree() != null) {
-      return tab.getTableTree().getTreeCategory().getId();
-    } else {
-      return "";
-    }
-  }
-
   public class ButtonField {
     private static final String AD_DEF_ERROR = "AD definition error: process parameter (%s) is using %s reference without %s";
     private String id;

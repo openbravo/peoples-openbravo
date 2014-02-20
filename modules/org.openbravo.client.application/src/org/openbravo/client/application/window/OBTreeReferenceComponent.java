@@ -56,7 +56,6 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.domain.ReferencedTreeField;
 import org.openbravo.model.ad.module.Module;
-import org.openbravo.model.ad.utility.ADTreeType;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.datasource.DataSourceProperty;
@@ -126,7 +125,7 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
   }
 
   public boolean isParentSelectionAllowed() {
-    return getReferencedTree().getTableTreeCategory().getTreeCategory().isParentSelectionAllowed();
+    return getReferencedTree().getTableTreeCategory().isParentSelectionAllowed();
   }
 
   private static String getPropertyOrDataSourceField(ReferencedTreeField treeField) {
@@ -608,13 +607,12 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
     String dataSourceId = null;
     TableTree tableTree = referencedTree.getTableTreeCategory();
     if (tableTree != null) {
-      ADTreeType treeCategory = tableTree.getTreeCategory();
-      if (TREENODE_STRUCTURE.equals(treeCategory.getTreeStructure())) {
+      if (TREENODE_STRUCTURE.equals(tableTree.getTreeStructure())) {
         dataSourceId = TREENODE_DATASOURCE;
-      } else if (LINKTOPARENT_STRUCTURE.equals(treeCategory.getTreeStructure())) {
+      } else if (LINKTOPARENT_STRUCTURE.equals(tableTree.getTreeStructure())) {
         dataSourceId = LINKTOPARENT_DATASOURCE;
       } else {
-        return treeCategory.getDatasource().getId();
+        return tableTree.getDatasource().getId();
       }
       return dataSourceId;
     } else {

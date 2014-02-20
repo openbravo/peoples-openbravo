@@ -41,7 +41,6 @@ import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.model.ad.utility.ADTreeType;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.datasource.DataSourceService;
 import org.openbravo.service.datasource.DataSourceServiceProvider;
@@ -107,12 +106,11 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
       return null;
     }
     TableTree tableTree = tableTreeList.get(0);
-    ADTreeType treeType = tableTree.getTreeCategory();
 
     DataSourceService dataSource = null;
-    if (TREENODE_STRUCTURE.equals(treeType.getTreeStructure())) {
+    if (TREENODE_STRUCTURE.equals(tableTree.getTreeStructure())) {
       dataSource = dataSourceServiceProvider.getDataSource(TREENODE_DATASOURCE);
-    } else if (LINKTOPARENT_STRUCTURE.equals(treeType.getTreeStructure())) {
+    } else if (LINKTOPARENT_STRUCTURE.equals(tableTree.getTreeStructure())) {
       dataSource = dataSourceServiceProvider.getDataSource(LINKTOPARENT_DATASOURCE);
     }
     return dataSource;
