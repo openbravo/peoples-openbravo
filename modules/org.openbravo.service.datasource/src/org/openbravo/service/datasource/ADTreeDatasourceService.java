@@ -20,6 +20,7 @@
 package org.openbravo.service.datasource;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +66,7 @@ import org.slf4j.LoggerFactory;
 
 public class ADTreeDatasourceService extends TreeDatasourceService {
   final static Logger logger = LoggerFactory.getLogger(ADTreeDatasourceService.class);
+  final static String AD_MENU_TABLE_ID = "116";
 
   @Override
   /**
@@ -411,19 +413,75 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     queryStr.append(" AND parent_id = ? ");
     queryStr.append(" AND seqno >= ? ");
 
+    // Menu Tree, do not update the nodes that belong to windows not in development
+    int seqNoOfFirstModNotInDev = -1;
+    if (tree.getTable().getId().equals(AD_MENU_TABLE_ID)) {
+      seqNoOfFirstModNotInDev = getSeqNoOfFirstModNotInDev(tree.getId(), newParentId, seqNo);
+      if (seqNoOfFirstModNotInDev > 0) {
+        queryStr.append(" AND seqno < ? ");
+      }
+    }
+
     ConnectionProvider conn = new DalConnectionProvider(false);
-    PreparedStatement st;
+    PreparedStatement st = null;
     try {
       st = conn.getPreparedStatement(queryStr.toString());
       st.setString(1, tree.getId());
       st.setString(2, newParentId);
       st.setLong(3, seqNo);
+      if (seqNoOfFirstModNotInDev > 0) {
+        st.setLong(4, seqNoOfFirstModNotInDev);
+      }
       int nUpdated = st.executeUpdate();
       logger.debug("Recomputing sequence numbers: " + nUpdated + " nodes updated");
-      conn.releasePreparedStatement(st);
     } catch (Exception e) {
       logger.error("Exception while recomputing sequence numbers: ", e);
+    } finally {
+      try {
+        conn.releasePreparedStatement(st);
+      } catch (SQLException e) {
+        // Will not happen
+      }
     }
+  }
+
+  /**
+   * Obtains the lower sequence number of the tree nodes that: belong to the treeId tree, are
+   * children of the parentId node, their sequence number is higher or equals to seqNo, are
+   * associated to a menu entry that belongs to a module not in development
+   */
+  private int getSeqNoOfFirstModNotInDev(String treeId, String parentId, Long seqNo) {
+    StringBuilder queryStr = new StringBuilder();
+    queryStr.append(" SELECT min(tn.seqno) ");
+    queryStr.append(" FROM ad_treenode tn, ad_menu me, ad_module mo ");
+    queryStr.append(" WHERE tn.node_id = me.ad_menu_id ");
+    queryStr.append(" AND me.ad_module_id = mo.ad_module_id ");
+    queryStr.append(" AND tn.ad_tree_id = ? ");
+    queryStr.append(" AND tn.parent_id = ? ");
+    queryStr.append(" AND tn.seqno >= ? ");
+    queryStr.append(" AND mo.isindevelopment = 'N' ");
+    ConnectionProvider conn = new DalConnectionProvider(false);
+    PreparedStatement st = null;
+    int seq = -1;
+    try {
+      st = conn.getPreparedStatement(queryStr.toString());
+      st.setString(1, treeId);
+      st.setString(2, parentId);
+      st.setLong(3, seqNo);
+      ResultSet rs = st.executeQuery();
+      if (rs.next()) {
+        seq = rs.getInt(1);
+      }
+    } catch (Exception e) {
+      logger.error("Exception while recomputing sequence numbers: ", e);
+    } finally {
+      try {
+        conn.releasePreparedStatement(st);
+      } catch (SQLException e) {
+        // Will not happen
+      }
+    }
+    return seq;
   }
 
   /**
