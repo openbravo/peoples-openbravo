@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2005-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2005-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -674,8 +674,6 @@ build.war: build a war file in the lib directory.
         <exclude name="**/js/jscalendar/lang/calendar-al.js" />
         <exclude name="**/js/jscalendar/lang/calendar-he-utf8.js" />
         <exclude name="**/js/jscalendar/lang/calendar-hr.js" />
-        <exclude name="**/js/xinha/lang/**" />
-        <exclude name="**/js/xinha/plugins/**" />
         <!-- dojotoolkit files are already compressd -->
         <exclude name="**/dojotoolkit/**" />
         <!-- from old dojo, only compress main file -->

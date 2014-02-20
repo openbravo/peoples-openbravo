@@ -83,7 +83,7 @@
     <FIELD id="fieldRownum">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
     <FIELD id="fieldAccount">accountId</FIELD>
-    <FIELD id="fieldAccountName">name</FIELD>
+    <FIELD id="fieldAccountName" replaceCharacters="html">name</FIELD>
     <FIELD id="fieldDescAccount">accountId</FIELD>
     <FIELD id="fieldAmtacctdr" format="euroInform">amtacctdr</FIELD>
     <FIELD id="fieldAmtacctcr" format="euroInform">amtacctcr</FIELD>

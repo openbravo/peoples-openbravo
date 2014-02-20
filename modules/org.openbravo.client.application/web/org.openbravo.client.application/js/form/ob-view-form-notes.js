@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Valery Lezhebokov.
  ************************************************************************
@@ -396,7 +396,11 @@ isc.OBNoteLayout.addProperties({
           return value;
         }
 
-        value = value + ' <span class="OBNoteListGridAuthor">' + OB.Utilities.getTimePassedInterval(record.recordTime - record.creationDate.getTime()) + ' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' + record['createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER] + '</span>';
+        if (value && value.asHTML) {
+          value = value.asHTML();
+        }
+
+        value = value + ' <span class="OBNoteListGridAuthor">' + OB.Utilities.getTimePassedInterval(record.recordTime - record.creationDate.getTime()) + ' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' + record['createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER].asHTML() + '</span>';
 
         // show delete link if the note was created by
         // the current user

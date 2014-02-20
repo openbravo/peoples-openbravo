@@ -561,7 +561,7 @@ isc.OBMyOpenbravo.addProperties({
             width: '100%',
             showHover: true,
             showPrompt: true,
-            prompt: recent.tabTitle + ' - ' + recent.recentTitle,
+            prompt: (recent.tabTitle + ' - ' + recent.recentTitle).asHTML(),
             baseStyle: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',

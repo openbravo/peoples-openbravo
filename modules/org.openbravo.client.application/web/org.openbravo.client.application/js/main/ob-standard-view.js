@@ -1566,9 +1566,8 @@ isc.OBStandardView.addProperties({
     }
 
     if (title) {
-
       // show a prompt with the title info
-      tab.prompt = title;
+      tab.prompt = title.asHTML();
       tab.showPrompt = true;
       tab.hoverWidth = 150;
 

@@ -77,7 +77,7 @@
 
     <FIELD id="fieldRownum1">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
-    <FIELD id="fieldSchemaName">schemaName</FIELD>  
+    <FIELD id="fieldSchemaName" replaceCharacters="html">schemaName</FIELD>  
     <FIELD id="fieldIdentifier" attribute="onclick" replace="xx">identifier</FIELD>
     <FIELD id="fieldIdentifier" attribute="onclick" replace="yy">dateacct</FIELD>
     <FIELD id="fieldDateacct">dateacct</FIELD>
@@ -85,12 +85,12 @@
     <FIELD id="fieldDateacct" attribute="style" replace="xx">newstyle</FIELD>
     <FIELD id="fieldDetail" attribute="style" replace="xx">newstyle</FIELD>
     <FIELD id="fieldDocName" attribute="style" replace="xx">newstyle</FIELD>
-    <FIELD id="fieldName">name</FIELD>
+    <FIELD id="fieldName" replaceCharacters="html">name</FIELD>
     <FIELD id="fieldAmtacctdr" format="euroInform">amtacctdr</FIELD>
     <FIELD id="fieldAmtacctcr" format="euroInform">amtacctcr</FIELD>
-    <FIELD id="fieldValue">value</FIELD>
-    <FIELD id="fieldDescription">description</FIELD>
-    <FIELD id="fieldDocName">docName</FIELD>
+    <FIELD id="fieldValue" replaceCharacters="html">value</FIELD>
+    <FIELD id="fieldDescription" replaceCharacters="html">description</FIELD>
+    <FIELD id="fieldDocName" replaceCharacters="html">docName</FIELD>
     <FIELD id="fieldId" attribute="onclick" replace="xx">id</FIELD>
     <FIELD id="fieldId" attribute="onclick" replace="yy">adTableId</FIELD>
     <FIELD id="fieldId" attribute="onclick" replace="zz">docbasetype</FIELD>

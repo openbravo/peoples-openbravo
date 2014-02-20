@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,26 +27,26 @@
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   
-  <PARAMETER id="moduleName"       name="moduleName"       default=""/>
+  <PARAMETER id="moduleName"       name="moduleName"       replaceCharacters="html" default=""/>
   <PARAMETER id="moduleVersion"    name="moduleVersion"    default=""/>
-  <PARAMETER id="description"      name="description"      default=""/>
-  <PARAMETER id="help"             name="help"             default=""/>
-  <PARAMETER id="author"           name="author"           default=""/>
+  <PARAMETER id="description"      name="description"      replaceCharacters="html" default=""/>
+  <PARAMETER id="help"             name="help"             replaceCharacters="html" default=""/>
+  <PARAMETER id="author"           name="author"           replaceCharacters="html" default=""/>
   <PARAMETER id="urlDisplay"       name="urlDisplay"       default="" attribute="style" replace="xx" />
   <PARAMETER id="url"              name="urlLink"          default="" attribute="onclick" replace="xx"/>
   <PARAMETER id="url"              name="url"              default="" />
-  <PARAMETER id="license"          name="license"          default=""/>
+  <PARAMETER id="license"          name="license"          replaceCharacters="html" default=""/>
   <PARAMETER id="type"             name="type"             default="Module"/>
   <PARAMETER id="icon"  name="type" attribute="class" replace="xx"  default="Module"/>
 
   <structure name="dependencies">
-    <FIELD id="dependency">moduleName</FIELD>
+    <FIELD id="dependency" replaceCharacters="html">moduleName</FIELD>
     <FIELD id="dependency" attribute="onclick" replace="xx">moduleVersionID</FIELD>
     <SECTION id="dependencies"/>
   </structure>
   
   <structure name="includes">
-    <FIELD id="include">moduleName</FIELD>
+    <FIELD id="include" replaceCharacters="html">moduleName</FIELD>
     <FIELD id="include" attribute="onclick" replace="xx">moduleVersionID</FIELD>
     <SECTION id="includes"/>
   </structure>

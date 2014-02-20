@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -331,8 +331,18 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       selectionChanged: function () {
         me.fireOnPause('updateCharacteristicsText', function () {
           //fire on pause because selecting a node raises several time selectionChanged to select its parants
-          me.selectionVisualization.setContents(isc.OBCharacteristicsFilterItem.getDisplayValue(me.getValue()));
+          me.selectionVisualization.setContents(isc.OBCharacteristicsFilterItem.getDisplayValue(me.getValue()).asHTML());
         }, 100);
+      },
+
+      setDataSource: function (ds, fields) {
+        var treeField;
+        if (!fields || fields.length === 0) {
+          treeField = isc.shallowClone(isc.TreeGrid.TREE_FIELD);
+          treeField.escapeHTML = true;
+          fields = [treeField];
+        }
+        return this.Super("setDataSource", [ds, fields]);
       }
     });
 
