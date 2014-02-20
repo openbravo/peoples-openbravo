@@ -400,7 +400,7 @@ isc.OBNoteLayout.addProperties({
           value = value.asHTML();
         }
 
-        value = value + ' <span class="OBNoteListGridAuthor">' + OB.Utilities.getTimePassedInterval(record.recordTime - record.creationDate.getTime()) + ' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' + record['createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER] + '</span>';
+        value = value + ' <span class="OBNoteListGridAuthor">' + OB.Utilities.getTimePassedInterval(record.recordTime - record.creationDate.getTime()) + ' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' + record['createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER].asHTML() + '</span>';
 
         // show delete link if the note was created by
         // the current user
