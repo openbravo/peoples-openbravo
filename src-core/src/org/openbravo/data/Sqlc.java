@@ -447,6 +447,8 @@ public class Sqlc extends DefaultHandler {
           sqlPackage = amap.getValue(i);
         } else if (amap.getQName(i).equals("import")) {
           sql.sqlImport = amap.getValue(i);
+        } else if (amap.getQName(i).equals("useQueryProfile")) {
+          sql.useQueryProfile = "true".equalsIgnoreCase(amap.getValue(i));
         }
       }
       if (sqlPackage != null)
@@ -757,8 +759,8 @@ public class Sqlc extends DefaultHandler {
     out1.append("import org.openbravo.data.UtilSql;\n");
     if (includeQueryTimeOut) {
       out1.append("import org.openbravo.service.db.QueryTimeOutUtil;\n");
+      out1.append("import org.openbravo.database.SessionInfo;\n");
     }
-    out1.append("import org.openbravo.database.SessionInfo;\n");
 
     if (sql.sqlImport != null) {
       out2.append("import " + sql.sqlImport + ";\n");
@@ -1037,14 +1039,9 @@ public class Sqlc extends DefaultHandler {
     final StringBuffer aux = new StringBuffer();
     boolean declareiParameter = false;
 
-    StringBuilder queryTimeoutStr = new StringBuilder();
+    String queryTimeoutStr = "";
     if (includeQueryTimeOut) {
-      queryTimeoutStr.append("      String profile = queryType;\n");
-      queryTimeoutStr.append("      if (profile == null || profile.isEmpty()) {\n");
-      queryTimeoutStr.append("        profile = SessionInfo.getQueryProfile();\n");
-      queryTimeoutStr.append("      }\n");
-      queryTimeoutStr
-          .append("      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, profile);\n");
+      queryTimeoutStr = "      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, SessionInfo.getQueryProfile());\n";
     }
     aux.append("    try {\n");
     if (sql.sqlType.equals("preparedStatement")) {
@@ -1123,37 +1120,37 @@ public class Sqlc extends DefaultHandler {
 
   private void printFunctionSql() throws IOException {
     boolean boolSequence = false;
-    // *** Call to the argument-less creation header, who calls the header
-    // with them
-    boolean boolQueryTimeout;
-    if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) { // parameters por
-      // paging the output
-      // && 1==2
-      boolQueryTimeout = false;
-      printHeadFunctionSql(true, false, false, boolQueryTimeout);
-      out2.append("    return ");
-      printCallFunctionSql(true, true, boolQueryTimeout);
-      out2.append(";\n");
-      out2.append("  }\n");
-      boolSequence = true;
 
-      boolQueryTimeout = true;
-      printHeadFunctionSql(true, false, false, boolQueryTimeout);
-      out2.append("    return ");
-      printCallFunctionSql(true, true, boolQueryTimeout);
+    if (sql.useQueryProfile) {
+      printHeadFunctionSql(true, false, false, true);
+      out2.append("     String oldQueryProfile = SessionInfo.getQueryProfile();\n");
+      out2.append("     try {\n");
+      out2.append("       SessionInfo.setQueryProfile(queryProfile);\n");
+      out2.append("       return ");
+      // call the normal version without limit,offset
+      printCallFunctionSql(true, false);
       out2.append(";\n");
+      out2.append("     } finally {\n");
+      out2.append("       SessionInfo.setQueryProfile(oldQueryProfile);\n");
+      out2.append("     }\n");
       out2.append("  }\n");
     }
 
-    boolQueryTimeout = false;
-    printHeadFunctionSql(true, boolSequence, false, boolQueryTimeout);
-    out2.append("    return ");
-    printCallFunctionSql(true, false, boolQueryTimeout);
-    out2.append(";\n");
-    out2.append("  }\n");
+    // *** Call to the argument-less creation header, who calls the header
+    // with them
+    if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) { // parameters por
+      // paging the output
+      // && 1==2
+      printHeadFunctionSql(true, false, false, false);
+      out2.append("    return ");
+      // call the version with int,int (limit,offset)
+      printCallFunctionSql(true, true);
+      out2.append(";\n");
+      out2.append("  }\n");
+      boolSequence = true;
+    }
 
-    boolQueryTimeout = true;
-    printHeadFunctionSql(true, boolSequence, false, boolQueryTimeout);
+    printHeadFunctionSql(true, boolSequence, false, false);
     // Sequences
     if (sql.strSequenceName != null) {
       out2.append("    long keySequence = 0;\n");
@@ -1408,7 +1405,7 @@ public class Sqlc extends DefaultHandler {
   }
 
   private void printHeadFunctionSql(boolean printProviderConnection, boolean boolPagin,
-      boolean boolSequence, boolean boolQueryType) throws IOException {
+      boolean boolSequence, boolean useQueryType) throws IOException {
     out2.append("\n");
     final String[] strSqlCommentsVector = stringToVector(sql.strSqlComments, false);
     for (int i = 0; i < strSqlCommentsVector.length; i++) {
@@ -1443,17 +1440,12 @@ public class Sqlc extends DefaultHandler {
       out2.append(sql.sqlClass + " ");
     }
     out2.append(sql.sqlName + "(");
-    boolean firstParameter = true;
-    if (boolQueryType) {
-      firstParameter = false;
-      out2.append("String queryType");
+    if (useQueryType) {
+      out2.append("String queryProfile, ");
     }
+    boolean firstParameter = true;
     if (sql.sqlConnection.equals("true")) {
-      if (firstParameter) {
-        firstParameter = false;
-      } else {
-        out2.append(", ");
-      }
+      firstParameter = false;
       out2.append("Connection conn");
     }
     if (printProviderConnection) {
@@ -1500,21 +1492,20 @@ public class Sqlc extends DefaultHandler {
     out2.append("    throws ServletException {\n");
   }
 
-  private void printCallFunctionSql(boolean printProviderConnection, boolean printPaginParameters,
-      boolean printQueryType) throws IOException {
+  private void printCallFunctionSql(boolean printProviderConnection, boolean boolSequence)
+      throws IOException {
     out2.append(sql.sqlName + "(");
-    if (printQueryType) {
-      out2.append("queryType");
-    } else {
-      out2.append("(String)null");
-    }
-    boolean firstParameter = false;
+    boolean firstParameter = true;
     if (sql.sqlConnection.equals("true")) {
-      out2.append(", ");
+      firstParameter = false;
       out2.append("conn");
     }
     if (printProviderConnection) {
-      out2.append(", ");
+      if (firstParameter) {
+        firstParameter = false;
+      } else {
+        out2.append(", ");
+      }
       out2.append("connectionProvider");
     }
     if (log4j.isDebugEnabled())
@@ -1523,13 +1514,21 @@ public class Sqlc extends DefaultHandler {
       if (sql.sqlStatic.equals("true")) {
         if (parameter.strName != null && !parameter.boolRepeated && !parameter.boolSequence
             && !parameter.strInOut.equals("out")) {
-          out2.append(", ");
+          if (firstParameter) {
+            firstParameter = false;
+          } else {
+            out2.append(", ");
+          }
           out2.append(parameter.strName);
         }
       }
     }
-    if (printPaginParameters) {
-      out2.append(", ");
+    if (boolSequence) {
+      if (firstParameter) {
+        firstParameter = false;
+      } else {
+        out2.append(", ");
+      }
       out2.append("0, 0");
     }
     out2.append(")");

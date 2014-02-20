@@ -29,6 +29,7 @@ class Sql {
   String sqlObject;
   String sqlClass;
   String sqlImport;
+  boolean useQueryProfile;
   Vector<Parameter> vecParameter; // vector of Parameter's
   Vector<Object> vecFieldAdded; // vector of fields added to the Class
   String strSequenceName = null;
