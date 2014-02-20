@@ -20,7 +20,7 @@
 OB.ReservedGoodMovement = OB.ReservedGoodMovement || {};
 
 /**
- * Check that entered movementqty is not higher than (ReservedQty-releasedQty). 
+ * Check that entered movementqty is not higher than (ReservedQty-releasedQty).
  * Check that entered movementqty is higher than 0
  */
 OB.ReservedGoodMovement.QuantityValidate = function (item, validator, value, record) {
@@ -50,7 +50,7 @@ OB.ReservedGoodMovement.QuantityValidate = function (item, validator, value, rec
 };
 
 /**
- * Check that entered storageBin is different from actual storageBin. 
+ * Check that entered storageBin is different from actual storageBin.
  * Check that entered storageBin is not null
  */
 

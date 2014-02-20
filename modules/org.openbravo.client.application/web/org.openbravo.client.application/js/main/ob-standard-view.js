@@ -1391,10 +1391,10 @@ isc.OBStandardView.addProperties({
           if (this.childTabSet.visibility === 'hidden') {
             this.childTabSet.show();
             if (tabViewPane.showTabIf && !tabViewPane.data && !tabViewPane.refreshingData && tabViewPane.isVisible()) {
-                // If the child tab does not have data yet, refresh it
-                tabViewPane.refreshingData = true;
-                tabViewPane.refresh();
-              }
+              // If the child tab does not have data yet, refresh it
+              tabViewPane.refreshingData = true;
+              tabViewPane.refresh();
+            }
           }
           this.childTabSet.tabBar.members[i].show();
           tabViewPane.hidden = false;
