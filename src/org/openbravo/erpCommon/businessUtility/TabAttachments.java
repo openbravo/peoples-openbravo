@@ -264,8 +264,10 @@ public class TabAttachments extends HttpSecureAppServlet {
       attachmentFiles.list().toArray();
       HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
       for (Attachment attachmentFile : attachmentFiles.list()) {
-        final File file = new File(globalParameters.strFTPDirectory + "/" + tableId + "-"
-            + attachmentFile.getRecord(), attachmentFile.getName());
+        String attachmentDirectory = TabAttachments.getAttachmentDirectory(tableId, recordIds,
+            attachmentFile.getName());
+        final File file = new File(globalParameters.strFTPDirectory + "/" + attachmentDirectory,
+            attachmentFile.getName());
         String zipName = "";
         if (!writtenFiles.containsKey(file.getName())) {
           zipName = file.getName();
@@ -391,11 +393,13 @@ public class TabAttachments extends HttpSecureAppServlet {
       try {
         FileUtility f = new FileUtility();
         // FIXME: Get the directory separator from Java runtime
-        final File file = new File(globalParameters.strFTPDirectory + "/" + data[0].adTableId + "-"
-            + data[0].adRecordId, data[0].name);
+        String attachmentDirectory = TabAttachments.getAttachmentDirectory(data[0].adTableId,
+            data[0].adRecordId, data[0].name);
+        final File file = new File(globalParameters.strFTPDirectory + "/" + attachmentDirectory,
+            data[0].name);
         if (file.exists())
-          f = new FileUtility(globalParameters.strFTPDirectory + "/" + data[0].adTableId + "-"
-              + data[0].adRecordId, data[0].name, false);
+          f = new FileUtility(globalParameters.strFTPDirectory + "/" + attachmentDirectory,
+              data[0].name, false);
         else
           f = new FileUtility(globalParameters.strFTPDirectory, strFileReference, false);
         if (!f.deleteFile()) {
