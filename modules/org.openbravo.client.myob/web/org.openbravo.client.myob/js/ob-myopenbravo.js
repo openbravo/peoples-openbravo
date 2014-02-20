@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -561,7 +561,7 @@ isc.OBMyOpenbravo.addProperties({
             width: '100%',
             showHover: true,
             showPrompt: true,
-            prompt: recent.tabTitle + ' - ' + recent.recentTitle,
+            prompt: (recent.tabTitle + ' - ' + recent.recentTitle).asHTML(),
             baseStyle: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',

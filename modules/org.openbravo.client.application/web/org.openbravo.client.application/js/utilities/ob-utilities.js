@@ -85,7 +85,7 @@ OB.Utilities.truncTitle = function (title, cutLength, suffix) {
   }
 
   if (title.length < cutLength) {
-    return title.convertTags();
+    return title.asHTML();
   }
 
   var newTitle = title.substring(0, cutLength);
@@ -102,7 +102,7 @@ OB.Utilities.truncTitle = function (title, cutLength, suffix) {
     }
   }
   newTitle += suffix || '...';
-  return newTitle.convertTags();
+  return newTitle.asHTML();
 };
 
 // ** {{{OB.Utilities.createDialog}}} **
