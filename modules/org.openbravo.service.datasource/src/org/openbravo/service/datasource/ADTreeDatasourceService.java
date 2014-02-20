@@ -298,9 +298,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         value.put("seqno", node[SEQNO]);
         value.put("_hasChildren",
             (this.nodeHasChildren(entity, (String) node[NODE_ID], hqlWhereClause)) ? true : false);
-        for (int i = 0; i < selectedProperties.length(); i++) {
-          value.put(selectedProperties.getString(i), bob.get(selectedProperties.getString(i)));
-        }
       } catch (JSONException e) {
         logger.error("Error while constructing JSON reponse", e);
       }
