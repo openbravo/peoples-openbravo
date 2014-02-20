@@ -78,7 +78,7 @@ isc.OBUserProfile.addProperties({
     // ** {{{ setPrompt }}} **
     // Shown on hover, shows some user information.
     if (!OB.User.isPortal) {
-      this.setPrompt('<b>' + OB.I18N.getLabel('UINAVBA_Role') + '</b>: ' + OB.User.roleName + '<br/>' + '<b>' + OB.I18N.getLabel('UINAVBA_Client') + '</b>: ' + OB.User.clientName + '<br/>' + '<b>' + OB.I18N.getLabel('UINAVBA_Organization') + '</b>: ' + OB.User.organizationName);
+      this.setPrompt('<b>' + OB.I18N.getLabel('UINAVBA_Role') + '</b>: ' + OB.User.roleName.asHTML() + '<br/>' + '<b>' + OB.I18N.getLabel('UINAVBA_Client') + '</b>: ' + OB.User.clientName.asHTML() + '<br/>' + '<b>' + OB.I18N.getLabel('UINAVBA_Organization') + '</b>: ' + OB.User.organizationName.asHTML());
     }
 
     this.title = this.title.asHTML();
@@ -152,7 +152,7 @@ isc.OBUserProfile.addProperties({
         for (i = 0; i < length; i++) {
           id = entries[i][OB.Constants.ID] || '';
           identifier = entries[i][OB.Constants.IDENTIFIER] || '';
-          valueMap[id] = identifier;
+          valueMap[id] = identifier.asHTML();
           this.entries[i] = {};
           this.entries[i][valueField] = id;
         }
