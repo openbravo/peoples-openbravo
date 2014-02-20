@@ -198,13 +198,9 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
-    Table table = null;
-    TableTree tableTree = null;
     JSONArray selectedProperties = null;
     if (tabId != null) {
       tab = OBDal.getInstance().get(Tab.class, tabId);
-      table = tab.getTable();
-      tableTree = tab.getTableTree();
       String selectedPropertiesStr = parameters.get("_selectedProperties");
       selectedProperties = new JSONArray(selectedPropertiesStr);
     } else if (treeReferenceId != null) {
@@ -214,8 +210,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       for (ReferencedTreeField treeField : treeReference.getADReferencedTreeFieldList()) {
         selectedProperties.put(treeField.getProperty());
       }
-      table = treeReference.getTable();
-      tableTree = treeReference.getTableTreeCategory();
     } else {
       logger
           .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
