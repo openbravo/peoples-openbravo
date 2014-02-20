@@ -152,7 +152,7 @@ isc.OBUserProfile.addProperties({
         for (i = 0; i < length; i++) {
           id = entries[i][OB.Constants.ID] || '';
           identifier = entries[i][OB.Constants.IDENTIFIER] || '';
-          valueMap[id] = identifier.asHTML();
+          valueMap[id] = identifier.convertTags();
           this.entries[i] = {};
           this.entries[i][valueField] = id;
         }
