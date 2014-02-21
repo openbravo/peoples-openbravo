@@ -19,6 +19,8 @@
 package org.openbravo.client.application.window;
 
 import org.openbravo.client.kernel.BaseTemplateComponent;
+import org.openbravo.client.kernel.Template;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TableTree;
 
@@ -39,6 +41,10 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
 
   private Tab tab;
   private OBViewTab viewTab;
+
+  protected Template getComponentTemplate() {
+    return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
+  }
 
   public Tab getTab() {
     return tab;
