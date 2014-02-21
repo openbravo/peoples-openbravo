@@ -18,12 +18,7 @@
  */
 package org.openbravo.client.application.window;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.openbravo.client.kernel.BaseTemplateComponent;
-import org.openbravo.client.kernel.Template;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TableTree;
 
@@ -35,7 +30,6 @@ import org.openbravo.model.ad.utility.TableTree;
 public class OBTreeGridComponent extends BaseTemplateComponent {
 
   private static final String DEFAULT_TEMPLATE_ID = "74451C30650946FC855FCFDB4577070C";
-  protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
 
   private static final String TREENODE_DATASOURCE = "90034CAE96E847D78FBEF6D38CB1930D";
   private static final String LINKTOPARENT_DATASOURCE = "610BEAE5E223447DBE6FF672B703F72F";
@@ -45,14 +39,6 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
 
   private Tab tab;
   private OBViewTab viewTab;
-
-  protected Template getComponentTemplate() {
-    final String windowType = tab.getWindow().getWindowType();
-    if (TEMPLATE_MAP.containsKey(windowType)) {
-      return OBDal.getInstance().get(Template.class, TEMPLATE_MAP.get(windowType));
-    }
-    return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
-  }
 
   public Tab getTab() {
     return tab;
