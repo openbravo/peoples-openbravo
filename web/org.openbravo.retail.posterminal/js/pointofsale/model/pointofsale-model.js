@@ -219,9 +219,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('brandFilter', []);
 
     function searchCurrentBP() {
-      var errorCallback = function(tx, error) {
-        OB.UTIL.showError("OBDAL error while getting BP info: " + error);
-      };
+      var errorCallback = function (tx, error) {
+          OB.UTIL.showError("OBDAL error while getting BP info: " + error);
+          };
 
       function successCallbackBPs(dataBps) {
         var partnerAddressId = OB.MobileApp.model.get('terminal').partnerAddress,
@@ -229,8 +229,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
         if (dataBps) {
           if (partnerAddressId && dataBps.get('locId') !== partnerAddressId) {
-             // Set default location
-            successCallbackBPLoc = function(bpLoc) {
+            // Set default location
+            successCallbackBPLoc = function (bpLoc) {
               dataBps.set('locId', bpLoc.get('id'));
               dataBps.set('locName', bpLoc.get('name'));
               OB.POS.modelterminal.set('businessPartner', dataBps);
@@ -241,7 +241,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
       }
-
       OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
     }
 
@@ -316,9 +315,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             return line.get('gross') < 0;
           }).length;
           if (negativeLines === order.get('lines').models.length) {
-            order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {applyPromotions: false, saveOrder: false});
+            order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
+              applyPromotions: false,
+              saveOrder: false
+            });
           } else {
-            order.setOrderType('', OB.DEC.Zero, {applyPromotions: false, saveOrder: false});
+            order.setOrderType('', OB.DEC.Zero, {
+              applyPromotions: false,
+              saveOrder: false
+            });
           }
         }
         me.get('multiOrders').trigger('closed', order);
@@ -421,9 +426,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             return line.get('gross') < 0;
           }).length;
           if (negativeLines === receipt.get('lines').models.length) {
-            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One, {applyPromotions: false, saveOrder: false});
+            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
+              applyPromotions: false,
+              saveOrder: false
+            });
           } else {
-            receipt.setOrderType('', OB.DEC.Zero, {applyPromotions: false, saveOrder: false});
+            receipt.setOrderType('', OB.DEC.Zero, {
+              applyPromotions: false,
+              saveOrder: false
+            });
           }
         }
         if (!_.isUndefined(receipt.selectedPayment) && receipt.getChange() > 0) {
@@ -620,7 +631,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
 
     approvals = order.get('approvals') || [];
-
+    if (!Array.isArray(approvalType)) {
+      approvalType = [approvalType];
+    }
     for (i = 0; i < approvals.length; i++) {
       // reset approvals
       if (_.filter(approvalType, function (approval) {
@@ -633,9 +646,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     if (approved) {
       date = new Date();
       date = date.getTime();
-      if (!Array.isArray(approvalType)) {
-        approvalType = [approvalType];
-      }
       for (i = 0; i < approvalType.length; i++) {
         approval = {
           approvalType: approvalType[i],
