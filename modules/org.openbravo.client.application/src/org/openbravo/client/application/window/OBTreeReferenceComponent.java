@@ -30,7 +30,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -61,6 +60,8 @@ import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.DataSourceProperty.RefListEntry;
 import org.openbravo.service.json.JsonConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The backing bean for generating the OBTreeReference client-side representation.
@@ -80,7 +81,7 @@ public class OBTreeReferenceComponent extends BaseTemplateComponent {
   private ReferencedTree referencedTree;
   private List<ReferencedTreeField> treeFields;
 
-  private static Logger log = Logger.getLogger(OBTreeReferenceComponent.class);
+  private static Logger log = LoggerFactory.getLogger(OBTreeReferenceComponent.class);
 
   @Override
   protected Template getComponentTemplate() {
