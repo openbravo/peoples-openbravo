@@ -19,7 +19,6 @@
 
 package org.openbravo.base.model;
 
-import org.apache.log4j.Logger;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Ref_Table table in the application
@@ -29,8 +28,6 @@ import org.apache.log4j.Logger;
  */
 
 public class RefTree extends ModelObject {
-  private static final Logger log = Logger.getLogger(RefTree.class);
-
   private Table table;
   private Column column;
   private String referenceId;
