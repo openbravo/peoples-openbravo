@@ -205,7 +205,7 @@ isc.OBViewGrid.addProperties({
     fetchRemoteData: function (serverCriteria, startRow, endRow) {
       // clone to prevent side effects
       var requestProperties = isc.clone(this.context);
-      this.grid.getFetchRequestParams(requestProperties.params);
+      this.context.params = this.grid.getFetchRequestParams(requestProperties.params);
 
       return this.Super('fetchRemoteData', arguments);
     },
