@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,10 +43,8 @@ import org.openbravo.userinterface.selector.SelectorComponent;
 import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
- * Implementation of the foreign key ui definition which uses a combo box for its input/filter
- * types.
- * 
- * @author mtaal
+ * Implementation of the foreign key tree ui definition. It uses a tree grid for its input and
+ * filter types
  */
 public class FKTreeUIDefinition extends ForeignKeyUIDefinition {
 
