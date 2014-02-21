@@ -27,7 +27,6 @@ import java.util.Map;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -44,6 +43,8 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.datasource.DataSourceService;
 import org.openbravo.service.datasource.DataSourceServiceProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
 
@@ -55,8 +56,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
   private static final String TREENODE_STRUCTURE = "ADTree";
   private static final String LINKTOPARENT_STRUCTURE = "LinkToParent";
   // private static final String CUSTOM_STRUCTURE = "Custom";
-
-  protected Logger logger = Logger.getLogger(this.getClass());
+  private static Logger logger = LoggerFactory.getLogger(TreeTablesEventHandler.class);
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;
@@ -116,7 +116,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     return dataSource;
   }
 
-  public JSONObject fromBobToJSONObject(BaseOBObject bob) {
+  private JSONObject fromBobToJSONObject(BaseOBObject bob) {
     Entity entity = bob.getEntity();
     List<Property> propertyList = entity.getProperties();
     JSONObject jsonBob = new JSONObject();
