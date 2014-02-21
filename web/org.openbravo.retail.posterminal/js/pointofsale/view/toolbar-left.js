@@ -275,7 +275,7 @@ enyo.kind({
           });
         }, this);
       });
-    }, this);
+    });
   },
 
   tap: function () {
