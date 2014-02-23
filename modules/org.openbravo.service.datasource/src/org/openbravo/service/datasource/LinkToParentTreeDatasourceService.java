@@ -52,8 +52,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
-  final static Logger logger = LoggerFactory.getLogger(LinkToParentTreeDatasourceService.class);
-  final static String ID_SEPARATOR = "-";
+  private static final Logger logger = LoggerFactory
+      .getLogger(LinkToParentTreeDatasourceService.class);
+  private static final String ID_SEPARATOR = "-";
 
   @Override
   protected void addNewNode(JSONObject bobProperties) {
@@ -354,7 +355,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     if (!linkToParentProperty.isPrimitive()) {
       whereClause.append(".id");
     }
-    whereClause.append(" = '" + nodeIdStr + "' ");
+    whereClause.append(" = ? ");
     if (hqlWhereClause != null) {
       whereClause.append(" and " + hqlWhereClause);
     }
@@ -783,10 +784,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       try {
         json.put("nodeId", nodeIdStr);
         if (parentNodeIdStr == null) {
-                    json.put("parentId", ROOT_NODE);
-                  } else {
-                    json.put("parentId", parentNodeIdStr); 
-                  }
+          json.put("parentId", ROOT_NODE);
+        } else {
+          json.put("parentId", parentNodeIdStr);
+        }
       } catch (JSONException e) {
         logger.error("Error on tree datasource", e);
       }
