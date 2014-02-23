@@ -56,14 +56,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class TreeDatasourceService extends DefaultDataSourceService {
-  final static Logger log = LoggerFactory.getLogger(TreeDatasourceService.class);
-  final static String JSON_PREFIX = "<SCRIPT>//'\"]]>>isc_JSONResponseStart>>";
-  final static String JSON_SUFFIX = "//isc_JSONResponseEnd";
+  private static final Logger log = LoggerFactory.getLogger(TreeDatasourceService.class);
+  private static final String JSON_PREFIX = "<SCRIPT>//'\"]]>>isc_JSONResponseStart>>";
+  private static final String JSON_SUFFIX = "//isc_JSONResponseEnd";
+  private static final String ROOT_NODE = "0";
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;
-
-  final String ROOT_NODE = "0";
 
   // A CheckTreeOperationManager allows to check if an action on a node is valid before actually
   // doing it
