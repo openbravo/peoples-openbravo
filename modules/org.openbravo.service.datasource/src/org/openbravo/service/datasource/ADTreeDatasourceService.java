@@ -22,6 +22,7 @@ package org.openbravo.service.datasource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,8 +66,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ADTreeDatasourceService extends TreeDatasourceService {
-  final static Logger logger = LoggerFactory.getLogger(ADTreeDatasourceService.class);
-  final static String AD_MENU_TABLE_ID = "116";
+  private static final Logger logger = LoggerFactory.getLogger(ADTreeDatasourceService.class);
+  private static final String AD_MENU_TABLE_ID = "116";
 
   @Override
   /**
@@ -152,12 +153,9 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   }
 
   /**
-   * Reparents the children of deletedNodeId, change it to newParentId
+   * In the given tree, reparents the children of deletedNodeId, change it to newParentId
    * 
-   * @param tree
-   * @param newParentId
-   * @param deletedNodeId
-   * @return
+   * @return The number of nodes that have been reparented
    */
   public int reparentChildrenOfDeletedNode(Tree tree, String newParentId, String deletedNodeId) {
     int nChildrenMoved = -1;
@@ -180,14 +178,13 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   /**
    * 
-   * @param parameters
    * @param parentId
    *          id of the node whose children are to be retrieved
    * @param hqlWhereClause
    *          hql where clase of the tab/selector
    * @param hqlWhereClauseRootNodes
    *          hql where clause that define what nodes are roots
-   * @return
+   * @return A JSONArray containing all the children of the given node
    * @throws JSONException
    * @throws TooManyTreeNodesException
    *           if the number of returned nodes were to be too high
@@ -321,7 +318,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
           break;
         }
       } catch (JSONException e) {
-        // TODO Auto-generated catch block
+        logger.error("Error while obtaining a property from a JSONObject", e);
       }
     }
     return parentRecordId;
@@ -346,9 +343,12 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     if (hqlWhereClause != null) {
       joinClause.append(" and (" + hqlWhereClause + ")");
     }
-    joinClause.append(" and tn.reportSet = '" + nodeId + "' order by tn.sequenceNumber ");
+    joinClause.append(" and tn.reportSet = ? order by tn.sequenceNumber ");
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
+    final List<Object> parameters = new ArrayList<Object>();
+    parameters.add(nodeId);
+    obq.setParameters(parameters);
     return obq.count() > 0;
   }
 
@@ -357,6 +357,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    * number of its peers when needed
    * 
    * @param tree
+   *          the ADTree being modified
    * @param prevNodeId
    *          id of the node that will be placed just before the updated node after it has been
    *          moved
@@ -364,7 +365,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    *          id of the node that will be placed just after the updated node after it has been moved
    * @param newParentId
    *          id of the parent node of the node whose sequence number is being calculated
-   * @return
+   * @return The sequence number of the node that has just been reparented
    * @throws Exception
    */
   private Long calculateSequenceNumberAndRecompute(Tree tree, String prevNodeId, String nextNodeId,
@@ -395,12 +396,9 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   }
 
   /**
-   * Sums to the seqno of all the child nodes of newParentId, if they seqNo is equals or higher than
-   * the provided seqNo
-   * 
-   * @param tree
-   * @param newParentId
-   * @param seqNo
+   * Adds 10 to the seqno of all the child nodes of newParentId, if they seqNo is equals or higher
+   * than the provided seqNo For the ADMenu tree, it updates the seqno of all the nodes until the
+   * first node associated with a menu entry that belong to a module not in developement is reached
    */
   private void recomputeSequenceNumbers(Tree tree, String newParentId, Long seqNo) {
     StringBuilder queryStr = new StringBuilder();
@@ -437,7 +435,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       try {
         conn.releasePreparedStatement(st);
       } catch (SQLException e) {
-        // Will not happen
+        logger.error("Error while releasing a prepared statement", e);
       }
     }
   }
@@ -587,9 +585,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   /**
    * Creates a new tree (record in ADTree)
    * 
-   * @param table
-   * @param bobProperties
-   * @return
    */
   private Tree createTree(Table table, JSONObject bobProperties) {
     Client client = OBContext.getOBContext().getCurrentClient();
@@ -599,7 +594,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     adTree.setClient(client);
     adTree.setOrganization(org);
     adTree.setAllNodes(true);
-    adTree.setTypeArea("NEW");
+    adTree.setTypeArea(table.getName());
     adTree.setTable(table);
     String name = table.getName();
     List<Column> parentColumns = getParentColumns(table);
@@ -715,6 +710,9 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return json;
   }
 
+  /**
+   * Checks if the provided node complies with the hql where clause
+   */
   protected boolean nodeConformsToWhereClause(TableTree tableTree, String nodeId,
       String hqlWhereClause) {
 
@@ -726,9 +724,14 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     if (hqlWhereClause != null) {
       joinClause.append(" and (" + hqlWhereClause + ")");
     }
-    joinClause.append(" and tn.node = '" + nodeId + "'");
+    joinClause.append(" and tn.node = ?");
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
+
+    final List<Object> parameters = new ArrayList<Object>();
+    parameters.add(nodeId);
+    obq.setParameters(parameters);
+
     return obq.count() > 0;
   }
 
@@ -738,7 +741,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       TableTree tableTree, List<String> filteredNodes, String hqlTreeWhereClause,
       String hqlTreeWhereClauseRootNodes, boolean allowNotApplyingWhereClauseToChildren)
       throws MultipleParentsException, TooManyTreeNodesException {
-    // Not applicable
+    // Not applicable, an ADTreeNode can only have one parent node
     return new JSONArray();
   }
 
