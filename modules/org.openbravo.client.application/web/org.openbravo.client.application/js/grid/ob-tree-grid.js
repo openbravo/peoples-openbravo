@@ -32,7 +32,7 @@ isc.OBTreeGrid.addProperties({
   autoFetchTextMatchStyle: 'substring',
   dataProperties: {
     modelType: 'parent',
-    rootValue: '0',
+    rootValue: '-1',
     idField: 'nodeId',
     parentIdField: 'parentId',
     openProperty: 'isOpen'

@@ -99,7 +99,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       adTreeNode.setNode(bobId);
       adTreeNode.setSequenceNumber(100L);
       // Added as root node
-      adTreeNode.setReportSet("0");
+      adTreeNode.setReportSet(ROOT_NODE);
       OBDal.getInstance().save(adTreeNode);
     } catch (Exception e) {
       logger.error("Error while adding the tree node", e);
