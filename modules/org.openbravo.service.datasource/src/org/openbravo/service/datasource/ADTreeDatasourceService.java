@@ -246,7 +246,11 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     if (hqlWhereClauseRootNodes != null) {
       joinClause.append(" and (" + hqlWhereClauseRootNodes + ") ");
     } else {
-      joinClause.append(" and tn.reportSet = '" + parentId + "' ");
+      if (ROOT_NODE.equals(parentId)) {
+        joinClause.append(" and (tn.reportSet = '" + parentId + "' or tn.reportSet is null)");
+      } else {
+        joinClause.append(" and tn.reportSet = '" + parentId + "' ");
+      }
     }
     joinClause.append(" order by tn.sequenceNumber ");
 
@@ -673,7 +677,11 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       BaseOBObject bob = OBDal.getInstance().get(entity.getName(), treeNode.getNode());
       json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
       json.put("nodeId", bobId);
-      json.put("parentId", treeNode.getReportSet());
+      if (treeNode.getReportSet() == null) {
+        json.put("parentId", ROOT_NODE);
+      } else {
+        json.put("parentId", treeNode.getReportSet());
+      }
       json.put("_hasChildren", this.nodeHasChildren(entity, treeNode.getNode(), hqlWhereClause));
     } catch (Exception e) {
       logger.error("Error on tree datasource", e);
