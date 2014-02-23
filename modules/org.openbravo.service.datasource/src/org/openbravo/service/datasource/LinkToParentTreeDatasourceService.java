@@ -363,6 +363,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
 
+    final List<Object> parameters = new ArrayList<Object>();
+    parameters.add(nodeId);
+    query.setParameters(parameters);
+
     return query.count() > 0;
   }
 
