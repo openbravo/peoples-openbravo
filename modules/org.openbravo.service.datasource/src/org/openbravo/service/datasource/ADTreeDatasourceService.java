@@ -526,30 +526,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     Tree tree = null;
     OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
     adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-
-    List<Column> parentColumns = getParentColumns(table);
-    // If it is a subtab, the tree must be associated to the id of its parent tab
-    if (parentColumns != null && !parentColumns.isEmpty()) {
-      String referencedColumnValue = getReferencedColumnValue(bobProperties, parentColumns);
-      if (referencedColumnValue != null && !referencedColumnValue.isEmpty()) {
-        adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_PARENTRECORDID, referencedColumnValue));
-      }
-    }
     tree = (Tree) adTreeCriteria.uniqueResult();
     return tree;
-  }
-
-  /**
-   * Given a table, returns the list of properties with the linktoparentcolumn property set to true
-   * 
-   * @param table
-   * @return
-   */
-  private List<Column> getParentColumns(Table table) {
-    OBCriteria<Column> isParentColumnsCriteria = OBDal.getInstance().createCriteria(Column.class);
-    isParentColumnsCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, table));
-    isParentColumnsCriteria.add(Restrictions.eq(Column.PROPERTY_LINKTOPARENTCOLUMN, true));
-    return isParentColumnsCriteria.list();
   }
 
   /**
@@ -597,13 +575,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     adTree.setTypeArea(table.getName());
     adTree.setTable(table);
     String name = table.getName();
-    List<Column> parentColumns = getParentColumns(table);
-    if (parentColumns != null && !parentColumns.isEmpty()) {
-      String referencedColumnValue = getReferencedColumnValue(bobProperties, parentColumns);
-      adTree.setParentRecordID(referencedColumnValue);
-      name = name + referencedColumnValue;
-      name = name.substring(0, 59);
-    }
     adTree.setName(name);
     OBDal.getInstance().save(adTree);
     return adTree;
