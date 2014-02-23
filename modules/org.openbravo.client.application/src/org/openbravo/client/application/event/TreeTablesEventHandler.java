@@ -100,17 +100,18 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
 
   private DataSourceService getDataSource(String tableId) {
     Table table = OBDal.getInstance().get(Table.class, tableId);
-    // TODO: Terminar. Soportar tablas con varios árboles asociados
-    List<TableTree> tableTreeList = table.getADTableTreeList();
-    if (tableTreeList.size() != 1) {
+    OBCriteria<TableTree> obq = OBDal.getInstance().createCriteria(TableTree.class);
+    obq.add(Restrictions.eq(TableTree.PROPERTY_TABLE, table));
+    obq.add(Restrictions.eq(TableTree.PROPERTY_ISMAINTREE, true));
+    List<TableTree> tableTreeList = obq.list();
+    if (tableTreeList.isEmpty()) {
       return null;
     }
-    TableTree tableTree = tableTreeList.get(0);
-
+    TableTree mainTableTree = tableTreeList.get(0);
     DataSourceService dataSource = null;
-    if (TREENODE_STRUCTURE.equals(tableTree.getTreeStructure())) {
+    if (TREENODE_STRUCTURE.equals(mainTableTree.getTreeStructure())) {
       dataSource = dataSourceServiceProvider.getDataSource(TREENODE_DATASOURCE);
-    } else if (LINKTOPARENT_STRUCTURE.equals(tableTree.getTreeStructure())) {
+    } else if (LINKTOPARENT_STRUCTURE.equals(mainTableTree.getTreeStructure())) {
       dataSource = dataSourceServiceProvider.getDataSource(LINKTOPARENT_DATASOURCE);
     }
     return dataSource;

@@ -81,6 +81,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISMAINTREE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_TABLETREE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -104,6 +108,7 @@
       </index>
       <check name="AD_TABLETREE_APPLYHQL_CHK"><![CDATA[APPLYWHERECLAUSETOCHILDNODES IN ('Y', 'N')]]></check>
       <check name="AD_TABLETREE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_TABLETREE_ISMAINTREE_CHK"><![CDATA[ISMAINTREE IN ('Y', 'N')]]></check>
       <check name="AD_TABLETREE_MULTPAR_CHK"><![CDATA[HASMULTIPARENTNODES IN ('Y', 'N')]]></check>
     </table>
   </database>
