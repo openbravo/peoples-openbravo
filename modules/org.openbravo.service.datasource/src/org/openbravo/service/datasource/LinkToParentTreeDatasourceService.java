@@ -222,7 +222,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       table = treeReference.getTable();
       tableTree = treeReference.getTableTreeCategory();
     } else {
-      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      logger
+          .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return new JSONArray();
     }
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
@@ -428,7 +429,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       table = treeReference.getTable();
       tableTree = treeReference.getTableTreeCategory();
     } else {
-      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      logger
+          .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return new JSONObject();
     }
     // Obtain the recordId based on the nodeId
@@ -503,7 +505,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       tableTree = treeReference.getTableTreeCategory();
       hqlWhereClause = treeReference.getHQLSQLWhereClause();
     } else {
-      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      logger
+          .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return new JSONObject();
     }
 
@@ -605,7 +608,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         responseData.put(addedNodesMap.get(key));
       }
     } catch (JSONException e) {
-      log.error("Error while processing the filtered nodes from the datasource", e);
+      logger.error("Error while processing the filtered nodes from the datasource", e);
     }
 
     return responseData;
@@ -657,7 +660,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         }
       }
     } catch (JSONException e) {
-      log.error("Error while processing the filtered nodes from the datasource", e);
+      logger.error("Error while processing the filtered nodes from the datasource", e);
     }
 
     return pathsToRootNodes;
@@ -722,7 +725,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       table = treeReference.getTable();
       tableTree = treeReference.getTableTreeCategory();
     } else {
-      log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
+      logger
+          .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return new ArrayList<JSONObject>();
     }
 
