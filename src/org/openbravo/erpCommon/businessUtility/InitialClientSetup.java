@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
@@ -41,6 +40,7 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.utility.DataSet;
+import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.service.db.ImportResult;
@@ -58,21 +58,21 @@ public class InitialClientSetup {
   private static final String NEW_LINE = "<br />\n";
   private static final String STRMESSAGEOK = "Success";
   private static final String STRMESSAGEERROR = "Error";
-  private static final String STRTREETYPEMENU = "MM";
-  private static final String STRTREETYPEORG = "OO";
-  private static final String STRTREETYPEBP = "BP";
-  private static final String STRTREETYPEPROJECT = "PJ";
-  private static final String STRTREETYPESALESREGION = "SR";
-  private static final String STRTREETYPEPRODUCT = "PR";
-  private static final String STRTREETYPEACCOUNT = "EV";
-  private static final String STRTREETYPECAMPAIGN = "MC";
-  private static final String STRTREETYPEASSET = "AS";
-  private static final String STRTREETYPEPRODUCTCATEGORY = "PC";
-  private static final String STRTREETYPECOSTCENTER = "CC";
-  private static final String STRTREETYPEUSERDIMENSION1 = "U1";
-  private static final String STRTREETYPEUSERDIMENSION2 = "U2";
+  private static final String STRTREETYPEMENU = "Menu";
+  private static final String STRTREETYPEORG = "Organization";
+  private static final String STRTREETYPEBP = "Business Partner";
+  private static final String STRTREETYPEPROJECT = "Project";
+  private static final String STRTREETYPESALESREGION = "Sales Region";
+  private static final String STRTREETYPEPRODUCT = "Product";
+  private static final String STRTREETYPEACCOUNT = "Element Value";
+  private static final String STRTREETYPECAMPAIGN = "Campaign";
+  private static final String STRTREETYPEASSET = "Asset";
+  private static final String STRTREETYPEPRODUCTCATEGORY = "Product Category";
+  private static final String STRTREETYPECOSTCENTER = "Cost Center";
+  private static final String STRTREETYPEUSERDIMENSION1 = "User Dimension 1";
+  private static final String STRTREETYPEUSERDIMENSION2 = "User Dimension 2";
   private static final String STRTREETYPEOBRE_RESOURCECATEGORY = "OBRE_RC";
-  private static final String STRTREETYPEPRODUCTCHARACTERISTIC = "CH";
+  private static final String STRTREETYPEPRODUCTCHARACTERISTIC = "Product Characteristic";
   private static final String STRSEPARATOR = "*****************************************************";
   private static final String STRCLIENTNAMESUFFIX = " Admin";
   private boolean bAccountingCreated = false;
@@ -269,29 +269,26 @@ public class InitialClientSetup {
     logEvent(NEW_LINE + "@Client@=" + client.getName());
 
     log4j.debug("insertTrees() - Obtaining tree relation");
-    List<org.openbravo.model.ad.domain.List> treeList;
+    List<TableTree> tableTreeList;
     try {
-      treeList = InitialSetupUtility.treeRelation();
+      tableTreeList = InitialSetupUtility.treeRelation();
     } catch (Exception e) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertTrees() - ERROR - Not able to retrieve trees", e);
     }
-    if (treeList == null) {
+    if (tableTreeList == null) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertTrees() - ERROR - Not able to retrieve trees");
     } else {
-      log4j.debug("insertTrees() - Retrieved " + treeList.size() + " trees.");
+      log4j.debug("insertTrees() - Retrieved " + tableTreeList.size() + " trees.");
     }
 
     log4j.debug("insertTrees() - Creating trees");
     try {
-      for (Iterator<org.openbravo.model.ad.domain.List> listElements = treeList.iterator(); listElements
-          .hasNext();) {
-        org.openbravo.model.ad.domain.List listElement = listElements.next();
-        log4j.debug("insertTrees() - Processing tree " + listElement.getName() + "("
-            + listElement.getDescription() + ")");
+      for (TableTree tableTree : tableTreeList) {
+        log4j.debug("insertTrees() - Processing tree " + tableTree.getName());
 
-        if (listElement.getSearchKey().equals(STRTREETYPEMENU)) {
+        if (tableTree.getName().equals(STRTREETYPEMENU)) {
           log4j.debug("insertTrees() - It is a menu tree");
           Tree t = InitialSetupUtility.getSystemMenuTree(STRTREETYPEMENU);
           if (t == null)
@@ -302,12 +299,13 @@ public class InitialClientSetup {
             log4j.debug("insertTrees() - Saved menu tree.");
           }
         } else {
-          String strTreeType = (String) listElement.getSearchKey();
-          String strName = client.getName() + " " + (String) listElement.getName();
+          String strTreeType = (String) tableTree.getName();
+          String strName = client.getName() + " " + strTreeType;
           log4j.debug("insertTrees() - Tree of type " + strTreeType + ". Inserting new tree named "
               + strName);
 
-          Tree t = InitialSetupUtility.insertTree(client, strName, strTreeType, true);
+          Tree t = InitialSetupUtility.insertTree(client, strName, strTreeType, true,
+              tableTree.getTable());
           if (t == null)
             return logErrorAndRollback("@CreateClientFailed@",
                 "insertTrees() - ERROR - Unable to create trees for the client");
@@ -384,7 +382,7 @@ public class InitialClientSetup {
         || treeProject == null || treeSalesRegion == null || treeProduct == null
         || treeCampaign == null || treeAsset == null || treeProductCategory == null
         || treeCostcenter == null || treeUserDimension1 == null || treeUserDimension2 == null
-        || treeOBRE_ResourceCategory == null || treeProductCharacteristic == null) {
+        || treeProductCharacteristic == null) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertClientInfo() - ERROR - Required information is not present. "
               + "Please check that client and trees where correctly created.");
