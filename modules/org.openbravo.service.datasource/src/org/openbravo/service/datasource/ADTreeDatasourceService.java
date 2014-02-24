@@ -99,7 +99,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       adTreeNode.setNode(bobId);
       adTreeNode.setSequenceNumber(100L);
       // Added as root node
-      adTreeNode.setReportSet(ROOT_NODE);
+      adTreeNode.setReportSet(ROOT_NODE_DB);
       OBDal.getInstance().save(adTreeNode);
     } catch (Exception e) {
       logger.error("Error while adding the tree node", e);
@@ -243,11 +243,20 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         }
       }
     }
+    final String ad_org_table_id = "155";
     if (hqlWhereClauseRootNodes != null) {
       joinClause.append(" and (" + hqlWhereClauseRootNodes + ") ");
     } else {
-      if (ROOT_NODE.equals(parentId)) {
-        joinClause.append(" and (tn.reportSet = '" + parentId + "' or tn.reportSet is null)");
+      if (ROOT_NODE_CLIENT.equals(parentId)) {
+        if (ad_org_table_id.equals(tree.getTable().getId())) {
+          // The ad_org table needs a special treatment, since is the only table tree that has an
+          // actual node ('*' organization) with node_id = ROOT_NODE_DB
+          // In this table the root nodes have the parent_id property set to null
+          joinClause.append(" and tn.reportSet is null");
+        } else {
+          // Other ad_tree nodes can have either ROOT_NODE_DB or null as parent_id
+          joinClause.append(" and (tn.reportSet = '" + ROOT_NODE_DB + "' or tn.reportSet is null)");
+        }
       } else {
         joinClause.append(" and tn.reportSet = '" + parentId + "' ");
       }
@@ -276,7 +285,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       throw new TooManyTreeNodesException();
     }
 
-    boolean fetchRoot = ROOT_NODE.equals(parentId);
+    boolean fetchRoot = ROOT_NODE_CLIENT.equals(parentId);
 
     int PARENT_ID = 1;
     int SEQNO = 2;
@@ -292,7 +301,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         value = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
         value.put("nodeId", bob.getId().toString());
         if (fetchRoot) {
-          value.put("parentId", ROOT_NODE);
+          value.put("parentId", ROOT_NODE_CLIENT);
         } else {
           value.put("parentId", node[PARENT_ID]);
         }
@@ -628,7 +637,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     if (isOrdered) {
       treeNode.setSequenceNumber(seqNo);
     }
-    OBDal.getInstance().flush();
     return null;
   }
 
@@ -678,7 +686,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       json = toJsonConverter.toJsonObject((BaseOBObject) bob, DataResolvingMode.FULL);
       json.put("nodeId", bobId);
       if (treeNode.getReportSet() == null) {
-        json.put("parentId", ROOT_NODE);
+        json.put("parentId", ROOT_NODE_CLIENT);
       } else {
         json.put("parentId", treeNode.getReportSet());
       }

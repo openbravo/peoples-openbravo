@@ -59,7 +59,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   private static final Logger log = LoggerFactory.getLogger(TreeDatasourceService.class);
   private static final String JSON_PREFIX = "<SCRIPT>//'\"]]>>isc_JSONResponseStart>>";
   private static final String JSON_SUFFIX = "//isc_JSONResponseEnd";
-  protected static final String ROOT_NODE = "-1";
+  protected static final String ROOT_NODE_DB = "0";
+  protected static final String ROOT_NODE_CLIENT = "-1";
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;
@@ -233,7 +234,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
       Map<String, Object> datasourceSpecificParams = this.getDatasourceSpecificParams(parameters);
 
-      if (validCriteria && parentId.equals(ROOT_NODE)) {
+      if (validCriteria && parentId.equals(ROOT_NODE_CLIENT)) {
 
         try {
           // Obtain the list of nodes that conforms to the criteria
@@ -466,7 +467,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
             savedNode.put("filterHit", true);
           }
           while (node.has("parentId")
-              && !ROOT_NODE.equals(node.get("parentId"))
+              && !ROOT_NODE_CLIENT.equals(node.get("parentId"))
               && (allowNotApplyingWhereClauseToChildren || this.nodeConformsToWhereClause(
                   tableTree, node.getString("parentId"), hqlTreeWhereClause))) {
             nodeId = node.getString("parentId");
@@ -514,7 +515,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         if (allowNotApplyingWhereClauseToChildren
             || this.nodeConformsToWhereClause(tableTree, node.getString("parentId"),
                 hqlTreeWhereClause)) {
-          node.put("parentId", ROOT_NODE);
+          node.put("parentId", ROOT_NODE_CLIENT);
         }
       }
 
@@ -557,7 +558,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       String parentId = null;
       nodeId = node.getString("id");
       parentId = node.getString("parentId");
-      if (ROOT_NODE.equals(parentId)) {
+      if (ROOT_NODE_CLIENT.equals(parentId)) {
         return true;
       }
       if (hqlTreeWhereClauseRootNodes != null) {
