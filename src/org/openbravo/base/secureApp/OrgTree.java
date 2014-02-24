@@ -23,6 +23,7 @@ import org.openbravo.erpCommon.utility.WindowTreeData;
 public class OrgTree implements Serializable {
   private static final long serialVersionUID = 1L;
   private List<OrgTreeNode> nodes;
+  private static final String AD_ORG_TABLE_ID = "155";
 
   /**
    * Creates a new Organization tree with all the nodes
@@ -34,7 +35,8 @@ public class OrgTree implements Serializable {
    */
   public OrgTree(ConnectionProvider conn, String strClient) {
     try {
-      String treeID = WindowTreeData.selectTreeID(conn, "'" + strClient + "'", "OO")[0].id;
+      String treeID = WindowTreeData.selectTreeIDWithTableId(conn, "'" + strClient + "'",
+          AD_ORG_TABLE_ID)[0].id;
       WindowTreeData[] data = WindowTreeData.selectOrg(conn, "", "", "", treeID);
       this.nodes = OrgTreeNode.createTree(data);
     } catch (Exception e) {
