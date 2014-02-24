@@ -283,7 +283,13 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   },
 
   setValue: function (value) {
-    var ret, dateText, newArguments = arguments;
+    var ret, dateText, oldValue, newArguments = arguments;
+
+    oldValue = this.getValue();
+    if (Object.prototype.toString.call(newArguments[0]) === '[object String]' && !this.hasSeparator(newArguments[0])) {
+      newArguments[0] = oldValue;
+    }
+
     if (this.fixedTime && newArguments[0] && isc.isA.Date(newArguments[0])) {
       newArguments[0] = this.getDateWithNewTime(newArguments[0], this.fixedTime);
     }
