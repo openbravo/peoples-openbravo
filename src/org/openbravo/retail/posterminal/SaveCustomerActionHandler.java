@@ -47,6 +47,7 @@ public class SaveCustomerActionHandler extends BaseActionHandler {
           CustomerLoader loader = new CustomerLoader();
           loader.saveCustomer(jsonCustomer);
           error.setOrderstatus("Y");
+          OBDal.getInstance().save(error);
           OBDal.getInstance().flush();
           OBDal.getInstance().commitAndClose();
 
@@ -61,6 +62,7 @@ public class SaveCustomerActionHandler extends BaseActionHandler {
           error.setTypeofdata("BP");
           error.setObposApplications(OBDal.getInstance()
               .get(OBPOSApplications.class, posTerminalId));
+          OBDal.getInstance().save(error);
           OBDal.getInstance().flush();
           OBDal.getInstance().commitAndClose();
           log.error("Error while generating the JSON object", e1);
