@@ -68,6 +68,7 @@ import org.slf4j.LoggerFactory;
 public class ADTreeDatasourceService extends TreeDatasourceService {
   private static final Logger logger = LoggerFactory.getLogger(ADTreeDatasourceService.class);
   private static final String AD_MENU_TABLE_ID = "116";
+  private static final String AD_ORG_TABLE_ID = "155";
 
   @Override
   /**
@@ -243,12 +244,11 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         }
       }
     }
-    final String ad_org_table_id = "155";
     if (hqlWhereClauseRootNodes != null) {
       joinClause.append(" and (" + hqlWhereClauseRootNodes + ") ");
     } else {
       if (ROOT_NODE_CLIENT.equals(parentId)) {
-        if (ad_org_table_id.equals(tree.getTable().getId())) {
+        if (AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
           // The ad_org table needs a special treatment, since is the only table tree that has an
           // actual node ('*' organization) with node_id = ROOT_NODE_DB
           // In this table the root nodes have the parent_id property set to null
@@ -418,7 +418,11 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     queryStr.append(" UPDATE ad_treenode ");
     queryStr.append(" SET seqno = (seqno + 10) ");
     queryStr.append(" WHERE ad_tree_id = ? ");
-    queryStr.append(" AND parent_id = ? ");
+    if (newParentId == null) {
+      queryStr.append(" AND parent_id is null ");
+    } else {
+      queryStr.append(" AND parent_id = ? ");
+    }
     queryStr.append(" AND seqno >= ? ");
 
     // Menu Tree, do not update the nodes that belong to windows not in development
@@ -433,12 +437,15 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     ConnectionProvider conn = new DalConnectionProvider(false);
     PreparedStatement st = null;
     try {
+      int nParam = 1;
       st = conn.getPreparedStatement(queryStr.toString());
-      st.setString(1, tree.getId());
-      st.setString(2, newParentId);
-      st.setLong(3, seqNo);
+      st.setString(nParam++, tree.getId());
+      if (newParentId != null) {
+        st.setString(nParam++, newParentId);
+      }
+      st.setLong(nParam++, seqNo);
       if (seqNoOfFirstModNotInDev > 0) {
-        st.setLong(4, seqNoOfFirstModNotInDev);
+        st.setLong(nParam++, seqNoOfFirstModNotInDev);
       }
       int nUpdated = st.executeUpdate();
       logger.debug("Recomputing sequence numbers: " + nUpdated + " nodes updated");
@@ -623,18 +630,25 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       return new JSONObject();
     }
 
+    String parentIdDB = null;
+    if (AD_ORG_TABLE_ID.equals(tableId)) {
+      parentIdDB = null;
+    } else {
+      parentIdDB = ROOT_NODE_DB;
+    }
+
     Tree tree = this.getTree(tableId);
     boolean isOrdered = this.isOrdered(tree);
     Long seqNo = null;
     if (isOrdered) {
-      seqNo = this.calculateSequenceNumberAndRecompute(tree, prevNodeId, nextNodeId, newParentId);
+      seqNo = this.calculateSequenceNumberAndRecompute(tree, prevNodeId, nextNodeId, parentIdDB);
     }
 
     OBCriteria<TreeNode> treeNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
     treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_TREE, tree));
     treeNodeCriteria.add(Restrictions.eq(TreeNode.PROPERTY_NODE, nodeId));
     TreeNode treeNode = (TreeNode) treeNodeCriteria.uniqueResult();
-    treeNode.setReportSet(newParentId);
+    treeNode.setReportSet(parentIdDB);
     if (isOrdered) {
       treeNode.setSequenceNumber(seqNo);
     }
