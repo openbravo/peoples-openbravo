@@ -61,9 +61,3 @@
         this.optionDataSource = ${data.dataSourceJavascript};
         this.Super('init', arguments);
     }, 
-<#--
-    // TODO
-    //<#if data.whereClause != "">
-    //    whereClause: '${data.whereClause?js_string}',
-    //</#if>
--->
