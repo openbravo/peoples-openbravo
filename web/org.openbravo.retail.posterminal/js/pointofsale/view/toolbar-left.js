@@ -107,36 +107,38 @@ enyo.kind({
   },
   tap: function () {
     var i, me = this;
-    OB.UTIL.Approval.requestApproval(
-    this.model, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
-      if (approved) {
-        if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-          for (i = 0; me.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
-            if (!me.model.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)
-              me.model.get('multiOrders').get('multiOrdersList').at(i).unset('amountToLayaway');
-              me.model.get('multiOrders').get('multiOrdersList').at(i).set('orderType', 0);
-              continue;
-            }
-            me.model.get('orderList').current = me.model.get('multiOrders').get('multiOrdersList').at(i);
-            me.model.get('orderList').deleteCurrent();
-            if (!_.isNull(me.model.get('multiOrders').get('multiOrdersList').at(i).id)) {
-              me.model.get('orderList').deleteCurrentFromDatabase(me.model.get('multiOrders').get('multiOrdersList').at(i));
-            }
-          }
-          me.model.get('multiOrders').resetValues();
-          me.model.get('leftColumnViewManager').setOrderMode();
-          return true;
+
+    if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+      for (i = 0; me.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
+        if (!me.model.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)
+          me.model.get('multiOrders').get('multiOrdersList').at(i).unset('amountToLayaway');
+          me.model.get('multiOrders').get('multiOrdersList').at(i).set('orderType', 0);
+          continue;
         }
-        // deletion without warning is allowed if the ticket has been processed
-        if (me.hasClass('paidticket')) {
-          me.doDeleteOrder();
-        } else {
+        me.model.get('orderList').current = me.model.get('multiOrders').get('multiOrdersList').at(i);
+        me.model.get('orderList').deleteCurrent();
+        if (!_.isNull(me.model.get('multiOrders').get('multiOrdersList').at(i).id)) {
+          me.model.get('orderList').deleteCurrentFromDatabase(me.model.get('multiOrders').get('multiOrdersList').at(i));
+        }
+      }
+      me.model.get('multiOrders').resetValues();
+      me.model.get('leftColumnViewManager').setOrderMode();
+      return true;
+    }
+    // deletion without warning is allowed if the ticket has been processed
+    if (me.hasClass('paidticket')) {
+      me.doDeleteOrder();
+    } else {
+      OB.UTIL.Approval.requestApproval(
+      this.model, 'OBPOS_approval.removereceipts', function (approved, supervisor, approvalType) {
+        if (approved) {
           me.doShowPopup({
             popup: 'modalConfirmReceiptDelete'
           });
         }
-      }
-    });
+      });
+    }
+
   },
   init: function (model) {
     this.model = model;
@@ -297,7 +299,7 @@ enyo.kind({
     kind: 'OB.UI.Total',
     name: 'totalPrinter'
   }],
-  getLabel: function() {
+  getLabel: function () {
     return this.$.totalPrinter.content;
   },
   initComponents: function () {
