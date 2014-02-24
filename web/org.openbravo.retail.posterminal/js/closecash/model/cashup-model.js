@@ -423,7 +423,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       objToSend = new Backbone.Model({
         terminalId: OB.POS.modelterminal.get('terminal').id,
         cashUpId: cashUp.at(0).get('id'),
-        cashCloseInfo: []
+        cashCloseInfo: [],
+        cashUpDate: new Date()
       });
       for (i = 0; i < me.additionalProperties.length; i++) {
         objToSend.set(me.additionalProperties[i], me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0)));

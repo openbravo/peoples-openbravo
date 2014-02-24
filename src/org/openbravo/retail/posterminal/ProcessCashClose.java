@@ -42,9 +42,18 @@ public class ProcessCashClose extends JSONProcessSimple {
     String cashUpId = jsonCashup.getString("cashUpId");
     Date cashUpDate = new Date();
 
-    String strCashUpDate = (String) jsonCashup.getString("cashUpDate");
-    cashUpDate = (Date) JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.DATE,
-        strCashUpDate);
+    try {
+      if (jsonCashup.has("cashUpDate")) {
+        String strCashUpDate = (String) jsonCashup.getString("cashUpDate");
+        cashUpDate = (Date) JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.DATE,
+            strCashUpDate);
+      } else {
+        log.error("Error processing cash close: error retrieving cashUp date. Using current date");
+      }
+    } catch (Exception e) {
+      log.error("Error processing cash close: error retrieving cashUp date. Using current date");
+    }
+
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
         jsonCashup.getString("terminalId"));
     OBContext.setOBContext(jsonCashup.getString("userId"), OBContext.getOBContext().getRole()

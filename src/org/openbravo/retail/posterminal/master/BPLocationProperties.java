@@ -31,7 +31,9 @@ public class BPLocationProperties extends ModelExtension {
         add(new HQLProperty("bploc.locationAddress.postalCode", "postalCode"));
         add(new HQLProperty("bploc.locationAddress.cityName", "cityName"));
         add(new HQLProperty("bploc.locationAddress.country.name", "countryName"));
-        add(new HQLProperty("bploc.locationAddress.addressLine1", "_identifier"));
+        add(new HQLProperty(
+            "COALESCE(bploc.locationAddress.addressLine1, bploc.locationAddress.addressLine2, bploc.locationAddress.postalCode, bploc.locationAddress.cityName)",
+            "_identifier"));
         add(new HQLProperty("bploc.locationAddress.country.id", "countryId"));
         add(new HQLProperty(
             "COALESCE(bploc.locationAddress.addressLine1, bploc.locationAddress.addressLine2, bploc.locationAddress.postalCode, bploc.locationAddress.cityName)",
