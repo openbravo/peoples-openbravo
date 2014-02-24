@@ -566,7 +566,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    * Given a column returns its property
    * 
    * @param column
-   * @return
+   *          whose property is going to be returned
+   * @return the property of the provided column
    */
   private Property getPropertyFromColumn(Column column) {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(column.getTable().getId());
