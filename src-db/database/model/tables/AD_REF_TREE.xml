@@ -84,7 +84,7 @@
       <foreign-key foreignTable="AD_MODULE" name="AD_REF_TREE_MODULE" onDelete="cascade">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="AD_REF_TREE_TABLE">
+      <foreign-key foreignTable="AD_TABLE" name="AD_REF_TREE_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TABLE_TREE" name="AD_REF_TREE_TABTREE" onDelete="cascade">
