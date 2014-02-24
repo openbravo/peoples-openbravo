@@ -220,6 +220,8 @@ isc.OBDateTimeItem.addProperties({
     }
 
     if (this.isAbsoluteDateTime) {
+      // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
+      // http://forums.smartclient.com/showthread.php?p=116135
       if (Object.prototype.toString.call(newValue) === '[object Date]') {
         newValue = new Date(newValue.getTime() - (newValue.getTimezoneOffset() * 60000));
       }
@@ -233,6 +235,8 @@ isc.OBDateTimeItem.addProperties({
         fixedTime = this.fixedTime;
 
     if (this.isAbsoluteDateTime) {
+      // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
+      // http://forums.smartclient.com/showthread.php?p=116135
       if (Object.prototype.toString.call(newValue) === '[object Date]') {
         newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
       }
