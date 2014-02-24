@@ -48,6 +48,11 @@ import org.openbravo.userinterface.selector.SelectorConstants;
  */
 public class FKTreeUIDefinition extends ForeignKeyUIDefinition {
 
+  private static final String PARAM_TAB_ID = "adTabId";
+  private static final String PARAM_COLUMN_NAME = "columnName";
+  private static final String SELECTOR_ITEM_PARAMETER = "IsSelectorItem";
+  private static final String PARAM_TARGET_PROPERTY_NAME = "targetProperty";
+
   @Override
   public String getFormEditorType() {
     return "OBTreeItem";
@@ -162,10 +167,10 @@ public class FKTreeUIDefinition extends ForeignKeyUIDefinition {
         .getInstanceFromStaticBeanManager(OBTreeReferenceComponent.class);
     final Map<String, Object> parameters = new HashMap<String, Object>();
     // TODO: Do not use Selector constants
-    parameters.put(SelectorConstants.PARAM_TAB_ID, field.getTab().getId());
-    parameters.put(SelectorConstants.PARAM_COLUMN_NAME, field.getColumn().getDBColumnName());
-    parameters.put(SelectorComponent.SELECTOR_ITEM_PARAMETER, "true");
-    parameters.put(SelectorConstants.PARAM_TARGET_PROPERTY_NAME, property.getName());
+    parameters.put(PARAM_TAB_ID, field.getTab().getId());
+    parameters.put(PARAM_COLUMN_NAME, field.getColumn().getDBColumnName());
+    parameters.put(SELECTOR_ITEM_PARAMETER, "true");
+    parameters.put(PARAM_TARGET_PROPERTY_NAME, property.getName());
     treeReferenceComponent.setId(referencedTree.getId());
     treeReferenceComponent.setParameters(parameters);
     treeReferenceComponent.setReferencedTree(referencedTree);
