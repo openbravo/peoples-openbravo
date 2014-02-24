@@ -174,7 +174,8 @@ OB.DateItemProperties = {
         parts[i] = this.expandPart(parts[i], i);
       }
     }
-    return parts[0] + this.dateSeparator + parts[1] + this.dateSeparator + parts[2];
+    result = parts[0] + this.dateSeparator + parts[1] + this.dateSeparator + parts[2];
+    return result;
   },
 
   expandPart: function (part, index) {

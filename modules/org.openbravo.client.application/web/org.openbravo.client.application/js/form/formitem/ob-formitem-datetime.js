@@ -128,22 +128,19 @@ isc.OBDateTimeItem.addProperties({
   showTime: true,
   fixedTime: null,
 
-  blurValue: function () {
-    if (this.showTime) {
-      var value = OB.Utilities.Date.OBToJS(this.dateTextField.getElementValue(), OB.Format.dateTime);
-      this.setValue(value);
-      return value;
-    } else {
-      return this.Super('blurValue', arguments);
+  doInit: function () {
+    if (Object.prototype.toString.call(this.fixedTime) === '[object String]') {
+      this.fixedTime = isc.Time.parseInput(this.fixedTime);
     }
+    return this.Super('doInit', arguments);
   },
 
   parseValue: function () {
-    if (this.showTime) {
-      return this.dateTextField.getElementValue();
-    } else {
-      return this.Super('parseValue', arguments);
+    var parseVal = this.Super('parseValue', arguments);
+    if (this.showTime && parseVal.indexOf(' ') === -1) {
+      parseVal = parseVal + ' ' + '00:00:00';
     }
+    return parseVal;
   },
 
   // ** {{{ change }}} **
@@ -172,12 +169,12 @@ isc.OBDateTimeItem.addProperties({
   },
 
   pickerDataChanged: function (picker) {
-    var date, time;
+    var date, time, fixedTime = this.fixedTime;
     this.Super('pickerDataChanged', arguments);
 
     // SC sets time to local 0:00 to date in pickerDataChanged method
     // setting now time if there was one previously selected, or current time if not 
-    date = this.getValue();
+    date = picker.chosenDate;
 
     if (this.previousValue) {
       time = this.previousValue;
@@ -189,6 +186,12 @@ isc.OBDateTimeItem.addProperties({
       }
     } else {
       time = new Date();
+    }
+
+    if (fixedTime && Object.prototype.toString.call(time) === '[object Date]') {
+      if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
+        time.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
+      }
     }
     date.setHours(time.getHours(), time.getMinutes(), time.getSeconds());
 
@@ -208,14 +211,9 @@ isc.OBDateTimeItem.addProperties({
   // Convert a text value entered in this item's text field to a final data value for storage
   parseEditorValue: function (value, form, item) {
     var newValue = OB.Utilities.Date.OBToJS(value, (this.showTime ? OB.Format.dateTime : OB.Format.date)),
-        fixedTime = this.fixedTime,
-        valueA, valueB, valueDiff;
+        fixedTime = this.fixedTime;
 
-    valueA = new Date(newValue);
     if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
-      if (Object.prototype.toString.call(fixedTime) === '[object String]') {
-        fixedTime = isc.Time.parseInput(fixedTime);
-      }
       if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
         newValue.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
       }
@@ -224,19 +222,6 @@ isc.OBDateTimeItem.addProperties({
     if (this.isAbsoluteDateTime) {
       if (Object.prototype.toString.call(newValue) === '[object Date]') {
         newValue = new Date(newValue.getTime() - (newValue.getTimezoneOffset() * 60000));
-      }
-    }
-    valueB = new Date(newValue);
-
-    valueDiff = parseInt((valueA - valueB) / 3600000, 10);
-    if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
-      // If the diff after the injection of the fixed time and the absolute date time conversion
-      // is higher than any kind of existant GMT it means that there is one day delay due to
-      // both time conversions. Fix it. PS: This happens usually when called from date picker.
-      if (valueDiff > 14) {
-        newValue.setDate(newValue.getDate() + 1);
-      } else if (valueDiff < -14) {
-        newValue.setDate(newValue.getDate() - 1);
       }
     }
     return newValue;
@@ -253,6 +238,11 @@ isc.OBDateTimeItem.addProperties({
       }
     }
 
+    if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {
+      if (Object.prototype.toString.call(fixedTime) === '[object Date]') {
+        newValue.setHours(fixedTime.getHours(), fixedTime.getMinutes(), fixedTime.getSeconds());
+      }
+    }
     return OB.Utilities.Date.JSToOB(newValue, (this.showTime ? OB.Format.dateTime : OB.Format.date));
   }
 });
