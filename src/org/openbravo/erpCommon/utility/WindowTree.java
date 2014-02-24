@@ -87,7 +87,9 @@ public class WindowTree extends HttpSecureAppServlet {
       Table table = tab.getTable();
       OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
       adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-      // TODO: Assuming one tree per table
+      adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
+          .getCurrentClient()));
+      adTreeCriteria.setFilterOnReadableOrganization(false);
       Tree adTree = (Tree) adTreeCriteria.uniqueResult();
 
       String strTreeID = "";
@@ -169,7 +171,9 @@ public class WindowTree extends HttpSecureAppServlet {
       Table table = tab.getTable();
       OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
       adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-      // TODO: Assuming one tree per table
+      adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
+          .getCurrentClient()));
+      adTreeCriteria.setFilterOnReadableOrganization(false);
       Tree adTree = (Tree) adTreeCriteria.uniqueResult();
 
       TreeID = adTree.getId();
@@ -366,7 +370,9 @@ public class WindowTree extends HttpSecureAppServlet {
     Table table = tab.getTable();
     OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
     adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-    // TODO: Assuming one tree per table
+    adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
+        .getCurrentClient()));
+    adTreeCriteria.setFilterOnReadableOrganization(false);
     Tree adTree = (Tree) adTreeCriteria.uniqueResult();
     String key = "";
     if (adTree != null) {
@@ -456,7 +462,9 @@ public class WindowTree extends HttpSecureAppServlet {
       Table table = tab.getTable();
       OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
       adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-      // TODO: Assuming one tree per table
+      adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
+          .getCurrentClient()));
+      adTreeCriteria.setFilterOnReadableOrganization(false);
       Tree adTree = (Tree) adTreeCriteria.uniqueResult();
 
       if (adTree != null) {
