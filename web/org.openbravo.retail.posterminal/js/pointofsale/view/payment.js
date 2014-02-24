@@ -19,28 +19,29 @@ enyo.kind({
   },
   buttonStatusChanged: function (inSender, inEvent) {
     var payment, amt, change, pending, isMultiOrders, requiredCash = OB.DEC.Zero;
-    if (!_.isUndefined(inEvent.value.payment)) {
-      payment = inEvent.value.payment;
-      isMultiOrders = this.model.isValidMultiOrderState();
-      change = this.model.getChange();
-      pending = this.model.getPending();
-      if (!isMultiOrders) {
-        this.receipt.selectedPayment = payment.payment.searchKey;
-      } else {
-        this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
-      }
-
-      if (!_.isNull(change) && change) {
-        this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-        requiredCash = change;
-      } else if (!_.isNull(pending) && pending) {
-        this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-        if (this.model.getTotal() < 0 && OB.POS.terminal.terminal.paymentnames[payment.payment.searchKey].paymentMethod.iscash) {
-          requiredCash = pending;
-        }
-      }
-      this.checkEnoughCashAvailable(requiredCash);
+    payment = inEvent.value.payment || OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
+    if (_.isUndefined(payment)) {
+      return true;
+    } 
+    isMultiOrders = this.model.isValidMultiOrderState();
+    change = this.model.getChange();
+    pending = this.model.getPending();
+    if (!isMultiOrders) {
+      this.receipt.selectedPayment = payment.payment.searchKey;
+    } else {
+      this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
     }
+
+    if (!_.isNull(change) && change) {
+      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+      requiredCash = change;
+    } else if (!_.isNull(pending) && pending) {
+      this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+      if (this.model.getTotal() < 0 && OB.POS.terminal.terminal.paymentnames[payment.payment.searchKey].paymentMethod.iscash) {
+        requiredCash = pending;
+      }
+    }
+    this.checkEnoughCashAvailable(requiredCash);
   },
   components: [{
     style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px; position: relative;',
