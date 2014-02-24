@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -161,17 +163,10 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   public int reparentChildrenOfDeletedNode(Tree tree, String newParentId, String deletedNodeId) {
     int nChildrenMoved = -1;
     try {
-      StringBuilder sql = new StringBuilder();
-      sql.append(" UPDATE AD_TREENODE set parent_id = ? ");
-      sql.append(" WHERE ad_tree_id = ? ");
-      sql.append(" AND parent_id= ? ");
-      PreparedStatement ps = OBDal.getInstance().getConnection(false)
-          .prepareStatement(sql.toString());
-      ps.setString(1, newParentId);
-      ps.setString(2, tree.getId());
-      ps.setString(3, deletedNodeId);
-      nChildrenMoved = ps.executeUpdate();
-    } catch (SQLException e) {
+      ConnectionProvider conn = new DalConnectionProvider(false);
+      nChildrenMoved = TreeDatasourceServiceData.reparentChildrenADTree(conn, newParentId,
+          tree.getId(), deletedNodeId);
+    } catch (ServletException e) {
       logger.error("Error while deleting tree node: ", e);
     }
     return nChildrenMoved;

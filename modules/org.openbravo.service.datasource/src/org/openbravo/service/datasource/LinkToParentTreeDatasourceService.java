@@ -19,12 +19,12 @@
 
 package org.openbravo.service.datasource;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -40,12 +40,14 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TableTree;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.slf4j.Logger;
@@ -104,25 +106,10 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     Column linkToParentColumn = OBDal.getInstance().get(Column.class,
         linkToParentProperty.getColumnId());
     try {
-      StringBuilder sql = new StringBuilder();
-      sql.append(" UPDATE " + table.getDBTableName() + " ");
-      if (newParentId == null) {
-        sql.append(" set " + linkToParentColumn.getDBColumnName() + " = null ");
-      } else {
-        sql.append(" set " + linkToParentColumn.getDBColumnName() + " = ? ");
-      }
-      sql.append(" WHERE " + linkToParentColumn.getDBColumnName() + " = ? ");
-      PreparedStatement ps = OBDal.getInstance().getConnection(false)
-          .prepareStatement(sql.toString());
-
-      if (newParentId == null) {
-        ps.setString(1, oldParentId);
-      } else {
-        ps.setString(1, newParentId);
-        ps.setString(2, oldParentId);
-      }
-      nChildrenMoved = ps.executeUpdate();
-    } catch (SQLException e) {
+      ConnectionProvider conn = new DalConnectionProvider(false);
+      nChildrenMoved = TreeDatasourceServiceData.reparentChildrenLinkToParent(conn,
+          table.getDBTableName(), linkToParentColumn.getDBColumnName(), newParentId, oldParentId);
+    } catch (ServletException e) {
       logger.error("Error while deleting tree node: ", e);
     }
     return nChildrenMoved;
