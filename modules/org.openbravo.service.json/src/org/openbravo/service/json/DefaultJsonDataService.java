@@ -182,7 +182,7 @@ public class DefaultJsonDataService implements JsonDataService {
         bobs = bobFetchTransformation(bobs, parameters);
         // take start row from actual query service because it can be modified from the originally
         // requested one
-        int startRow = queryService.getFirstResult();
+        int startRow = queryService.getFirstResult() != null ? queryService.getFirstResult() : 0;
 
         if (preventCountOperation) {
           count = bobs.size() + startRow;
