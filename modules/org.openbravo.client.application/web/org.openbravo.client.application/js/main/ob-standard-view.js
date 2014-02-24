@@ -2242,8 +2242,10 @@ isc.OBStandardView.addProperties({
           grid = me.viewGrid,
           currentRecord, currentID;
       currentRecord = grid.getSelectedRecord();
-      context.rowNum = grid.getRecordIndex(currentRecord);
-      currentID = currentRecord[OB.Constants.ID];
+      if (currentRecord) {
+        context.rowNum = grid.getRecordIndex(currentRecord);
+        currentID = currentRecord[OB.Constants.ID];
+      }
       context.grid = grid;
       response.clientContext = context;
       if (originalID === currentID) {

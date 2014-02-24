@@ -116,7 +116,6 @@ public class DefaultJsonDataService implements JsonDataService {
         // explicitly
         boolean doCount = false;
         int count = -1;
-        int startRow = (startRowStr != null ? queryService.getFirstResult() : 0);
         int computedMaxResults = (queryService.getMaxResults() == null ? Integer.MAX_VALUE
             : queryService.getMaxResults());
         if (startRowStr != null) {
@@ -181,6 +180,9 @@ public class DefaultJsonDataService implements JsonDataService {
         }
 
         bobs = bobFetchTransformation(bobs, parameters);
+        // take start row from actual query service because it can be modified from the originally
+        // requested one
+        int startRow = queryService.getFirstResult();
 
         if (preventCountOperation) {
           count = bobs.size() + startRow;
