@@ -55,6 +55,7 @@ public class SaveOrderActionHandler extends BaseActionHandler {
           OrderLoader loader = WeldUtils.getInstanceFromStaticBeanManager(OrderLoader.class);
           loader.saveOrder(jsonorder);
           error.setOrderstatus("Y");
+          OBDal.getInstance().save(error);
           OBDal.getInstance().flush();
           OBDal.getInstance().commitAndClose();
 
@@ -69,6 +70,7 @@ public class SaveOrderActionHandler extends BaseActionHandler {
           error.setTypeofdata("order");
           error.setObposApplications(OBDal.getInstance()
               .get(OBPOSApplications.class, posTerminalId));
+          OBDal.getInstance().save(error);
           OBDal.getInstance().flush();
           OBDal.getInstance().commitAndClose();
           log.error("Error while generating the JSON object", e1);

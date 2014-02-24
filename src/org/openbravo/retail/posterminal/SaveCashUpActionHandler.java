@@ -49,6 +49,7 @@ public class SaveCashUpActionHandler extends BaseActionHandler {
               .getInstanceFromStaticBeanManager(ProcessCashClose.class);
           loader.saveCashUp(jsonCashUp);
           error.setOrderstatus("Y");
+          OBDal.getInstance().save(error);
           OBDal.getInstance().flush();
           OBDal.getInstance().commitAndClose();
 
@@ -63,6 +64,7 @@ public class SaveCashUpActionHandler extends BaseActionHandler {
           error.setTypeofdata("CU");
           error.setObposApplications(OBDal.getInstance()
               .get(OBPOSApplications.class, posTerminalId));
+          OBDal.getInstance().save(error);
           OBDal.getInstance().flush();
           OBDal.getInstance().commitAndClose();
           log.error("Error while generating the JSON object", e1);

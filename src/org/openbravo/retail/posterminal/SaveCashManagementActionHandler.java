@@ -49,6 +49,7 @@ public class SaveCashManagementActionHandler extends BaseActionHandler {
               .getInstanceFromStaticBeanManager(ProcessCashMgmt.class);
           loader.saveCashMgmt(jsonCashMgmt);
           error.setOrderstatus("Y");
+          OBDal.getInstance().save(error);
           OBDal.getInstance().flush();
           OBDal.getInstance().commitAndClose();
 
@@ -63,6 +64,7 @@ public class SaveCashManagementActionHandler extends BaseActionHandler {
           error.setTypeofdata("CM");
           error.setObposApplications(OBDal.getInstance()
               .get(OBPOSApplications.class, posTerminalId));
+          OBDal.getInstance().save(error);
           OBDal.getInstance().flush();
           OBDal.getInstance().commitAndClose();
           log.error("Error while generating the JSON object", e1);
