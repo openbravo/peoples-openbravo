@@ -107,6 +107,51 @@ isc.ResultTree.addProperties({
   }
 });
 
+isc.ResultSet.addProperties({
+  _original_removeCacheData: isc.ResultSet.getPrototype().removeCacheData,
+  removeCacheData: function (updateData) {
+    var filteringOnClient = this.allRows !== null,
+        i, index, ds;
+    this._original_removeCacheData(updateData);
+    if (filteringOnClient) {
+      ds = this.getDataSource();
+      // remove any rows that were present in the cache
+      for (i = 0; i < updateData.length; i++) {
+        index = ds.findByKeys(updateData[i], this.localData);
+        if (index !== -1) {
+          this.localData.removeAt(index);
+        }
+      }
+    }
+  },
+
+  _original_updateCacheData: isc.ResultSet.getPrototype().updateCacheData,
+  updateCacheData: function (updateData, dsRequest) {
+    var filteringOnClient = this.allRows !== null,
+        i, indexAllRows, indexLocalData, ds;
+    this._original_updateCacheData(updateData, dsRequest);
+    if (filteringOnClient) {
+      ds = this.getDataSource();
+      // remove any rows that were present in the cache
+      for (i = 0; i < updateData.length; i++) {
+        indexLocalData = ds.findByKeys(updateData[i], this.localData);
+        indexAllRows = ds.findByKeys(updateData[i], this.allRows);
+        if (indexLocalData !== -1 && indexAllRows !== -1) {
+          this.localData[indexLocalData] = this.allRows[indexAllRows];
+        }
+      }
+    }
+  },
+
+  _original_shouldUseClientSorting: isc.ResultSet.getPrototype().shouldUseClientSorting,
+  shouldUseClientSorting: function () {
+    if (this.grid && this.grid._filteringAndSortingManually) {
+      return false;
+    } else {
+      return this._original_shouldUseClientSorting();
+    }
+  }
+});
 
 isc.Canvas.addProperties({
 
@@ -778,6 +823,7 @@ isc.DateItem.changeDefaults('textFieldDefaults', {
 // if not overridden then also errors handled by OB are shown in a popup
 // see https://issues.openbravo.com/view.php?id=17136
 isc.RPCManager.addClassProperties({
+  _handleError: isc.RPCManager.getPrototype().handleError,
   handleError: function (response, request) {
     if (!request.willHandleError) {
       isc.RPCManager.handleError(response, request);
@@ -785,12 +831,19 @@ isc.RPCManager.addClassProperties({
   }
 });
 
-// uncomment this code and put a breakpoint to get a better control
-// on from where async operations are started
-//isc.Class._fireOnPause = isc.Class.fireOnPause;
-//isc.Class.fireOnPause = function(id, callback, delay, target, instanceID) {
-//  isc.Class._fireOnPause(id, callback, delay, target, instanceID);
-//};
+isc.Class.addClassProperties({
+  _originalFireOnPause: isc.Class.fireOnPause,
+  fireOnPause: function (id, callback, delay, target, instanceID) {
+    if (id === 'performFilter') {
+      if (target.currentThresholdToFilter) {
+        delay = target.currentThresholdToFilter;
+      }
+    }
+    this._originalFireOnPause(id, callback, delay, target, instanceID);
+  }
+});
+
+
 // Allow searchs (with full dataset in memory/the datasource) not distinguish
 // between accent or non-accent words
 isc.DataSource.addProperties({
@@ -818,3 +871,70 @@ isc.DataSource.addProperties({
     return this._fieldMatchesFilter(fieldValue, filterValue, requestProperties);
   }
 });
+
+isc.RecordEditor.addProperties({
+  _originalPerformFilter: isc.RecordEditor.getPrototype().performFilter,
+  performFilter: function (suppressPrompt, forceFilter) {
+    var grid = this.parentElement,
+        key = isc.EventHandler.getKey();
+    if (grid.lazyFiltering && !forceFilter && key === 'Enter') {
+      // Pressing the enter key in the filter editor triggers the 'Apply Filter' actions
+      grid.sorter.click();
+      return;
+    }
+    if (!grid.lazyFiltering || forceFilter || grid._cleaningFilter) {
+      this._originalPerformFilter(suppressPrompt);
+    }
+  }
+});
+
+// When filtering strings in backend, spaces are replaced by % in the resultant
+// ilike expression. For example if filter is "jo sm" the query will be 
+// "ilike '%jo%sm%'", so "John Smith" would be found. When filtering in client
+// Smartclient doesn't do this conversion. This code, overwrittes Smartclient
+// isc.contains comparator to work like in backend when it is called from stringComparasion
+// function.
+(function () {
+  var containsNoBlanks, stringComparison = isc.DataSource.getSearchOperators().iContains.condition,
+      originalContains = isc.clone(isc.contains);
+
+  // Replaces isc.contains in the custom string comparator. Blank spaces are not
+  // part of the comparision, but they separate different tokens to be found in 
+  // the text. It returns true in case the tested text contains, in order, all the
+  // tokens separated by blank spaces. 
+  containsNoBlanks = function (tested, test) {
+    var tokens, token, i, pendingToTest, idx;
+    if (!tested) {
+      return true;
+    }
+
+    tokens = test.split(' ');
+    pendingToTest = tested;
+    for (i = 0; i < tokens.length; i++) {
+      token = tokens[i];
+      idx = pendingToTest.indexOf(token);
+      if (token && idx === -1) {
+        return false;
+      }
+      pendingToTest = pendingToTest.substring(idx + token.length);
+    }
+    return true;
+  };
+
+  isc.addMethods(isc, {
+    contains: function (string1, substring) {
+      var args = arguments;
+      if (args.callee.caller === stringComparison) {
+        // invoking from stringComparsin function to do local (adaptive) filtering
+        return containsNoBlanks(string1, substring);
+      } else {
+        // in other cases, use default logic
+        return OB.Utilities.callAction({
+          method: originalContains,
+          target: this,
+          parameters: arguments
+        });
+      }
+    }
+  });
+}());

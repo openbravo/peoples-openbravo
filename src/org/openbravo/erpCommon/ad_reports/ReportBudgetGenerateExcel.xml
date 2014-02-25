@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2006 Openbravo SLU 
+* All portions are Copyright (C) 2001-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -39,8 +39,9 @@
   <PARAMETER id="paramArrayAccounts" name="accounts"/>
   <PARAMETER id="paramCBPGroupID" name="cBPGroupId" attribute="" default=""/>
   <PARAMETER id="paramM_PRODUCTCATEGORY_ID" name="mProductCatId" attribute="" default=""/>
-  <!--PARAMETER id="paramUser1" name="user1" attribute="" default=""/>
-<PARAMETER id="paramUser2" name="user2" attribute="" default=""/-->
+  <PARAMETER id="paramUser1" name="user1" attribute="" default=""/>
+  <PARAMETER id="paramUser2" name="user2" attribute="" default=""/>
+  <PARAMETER id="paramCCostcenterID" name="cCostcenterId" attribute="" default=""/>
   <PARAMETER id="paramCSalesRegionID" name="cSalesRegionId" attribute="" default=""/>
   <PARAMETER id="paramCCampaignID" name="cCampaignId" attribute="" default=""/>
   <PARAMETER id="paramCActivityID" name="cActivityId" attribute="" default=""/>
@@ -68,12 +69,15 @@
 <SUBREPORT id="reportM_PRODUCTCATEGORY" name="reportM_PRODUCTCATEGORY" report="org/openbravo/erpCommon/reference/List">
   <ARGUMENT name="parameterListSelected" withId="paramM_PRODUCTCATEGORY_ID"/>
 </SUBREPORT>
-<!--SUBREPORT id="reportUser1" name="reportUser1" report="org/openbravo/erpCommon/reference/List">
-<ARGUMENT name="parameterListSelected" withId="paramUser1"/>
+<SUBREPORT id="reportUser1" name="reportUser1" report="org/openbravo/erpCommon/reference/List">
+  <ARGUMENT name="parameterListSelected" withId="paramUser1"/>
+</SUBREPORT>
+<SUBREPORT id="reportUser2" name="reportUser2" report="org/openbravo/erpCommon/reference/List">
+  <ARGUMENT name="parameterListSelected" withId="paramUser2"/>
+</SUBREPORT>
+  <SUBREPORT id="reportCCostcenterId" name="reportCCostcenterId" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramCCostcenterID"/>
   </SUBREPORT>
-  <SUBREPORT id="reportUser2" name="reportUser2" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="paramUser2"/>
-  </SUBREPORT-->
   <SUBREPORT id="reportCSalesRegionId" name="reportCSalesRegionId" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramCSalesRegionID"/>
   </SUBREPORT>

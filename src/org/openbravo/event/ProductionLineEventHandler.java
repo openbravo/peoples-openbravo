@@ -28,6 +28,8 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
@@ -44,6 +46,7 @@ public class ProductionLineEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       ProductionLine.ENTITY_NAME) };
   protected Logger logger = Logger.getLogger(this.getClass());
+  private static String BOM_PRODUCTION = "321";
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -55,33 +58,45 @@ public class ProductionLineEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
-    final Entity productionLineEntity = ModelProvider.getInstance().getEntity(
-        ProductionLine.ENTITY_NAME);
-    final BigDecimal ONE = new BigDecimal("1");
-    final BigDecimal ZERO = new BigDecimal("0");
-    final Property productionPlanProperty = productionLineEntity
-        .getProperty(ProductionLine.PROPERTY_PRODUCTIONPLAN);
-    final Property movementQtyProperty = productionLineEntity
-        .getProperty(ProductionLine.PROPERTY_MOVEMENTQUANTITY);
-    final ProductionPlan productionPlan = (ProductionPlan) event
-        .getCurrentState(productionPlanProperty);
-    final BigDecimal currentMovementQty = (BigDecimal) event.getCurrentState(movementQtyProperty);
-    final BigDecimal previousMovementQty = (BigDecimal) event.getPreviousState(movementQtyProperty);
-    OBCriteria<ProductionLine> productionLineCriteria = OBDal.getInstance().createCriteria(
-        ProductionLine.class);
-    productionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
-        productionPlan));
-    productionLineCriteria.add(Restrictions.gt(ProductionLine.PROPERTY_MOVEMENTQUANTITY, ONE));
-    if (productionLineCriteria.count() > 0 && previousMovementQty != currentMovementQty
-        && currentMovementQty.compareTo(ZERO) == 1) {
-      String language = OBContext.getOBContext().getLanguage().getLanguage();
-      ConnectionProvider conn = new DalConnectionProvider(false);
-      throw new OBException(Utility.messageBD(conn, "@ConsumedProductWithPostiveQty@", language));
-    } else if (productionLineCriteria.count() == 1 && previousMovementQty != currentMovementQty
-        && currentMovementQty.compareTo(ZERO) == -1) {
-      String language = OBContext.getOBContext().getLanguage().getLanguage();
-      ConnectionProvider conn = new DalConnectionProvider(false);
-      throw new OBException(Utility.messageBD(conn, "@ProducedProductWithNegativeQty@", language));
+    VariablesSecureApp vars = null;
+    try {
+      vars = RequestContext.get().getVariablesSecureApp();
+    } catch (Exception e) {
+      logger.error("Error:", e);
+    }
+    String currentTabId = vars.getStringParameter("tabId");
+    if (BOM_PRODUCTION.equals(currentTabId)) {
+      final Entity productionLineEntity = ModelProvider.getInstance().getEntity(
+          ProductionLine.ENTITY_NAME);
+      final BigDecimal ZERO = new BigDecimal("0");
+      final Property productionPlanProperty = productionLineEntity
+          .getProperty(ProductionLine.PROPERTY_PRODUCTIONPLAN);
+      final Property movementQtyProperty = productionLineEntity
+          .getProperty(ProductionLine.PROPERTY_MOVEMENTQUANTITY);
+      final ProductionPlan productionPlan = (ProductionPlan) event
+          .getCurrentState(productionPlanProperty);
+      final BigDecimal currentMovementQty = (BigDecimal) event.getCurrentState(movementQtyProperty);
+      final BigDecimal previousMovementQty = (BigDecimal) event
+          .getPreviousState(movementQtyProperty);
+      OBCriteria<ProductionLine> productionLineCriteria = OBDal.getInstance().createCriteria(
+          ProductionLine.class);
+      productionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
+          productionPlan));
+      productionLineCriteria.add(Restrictions.gt(ProductionLine.PROPERTY_MOVEMENTQUANTITY, ZERO));
+      if (productionLineCriteria.count() > 0 && previousMovementQty != currentMovementQty) {
+        if (currentMovementQty.compareTo(ZERO) == 1 && previousMovementQty.compareTo(ZERO) != 1) {
+          String language = OBContext.getOBContext().getLanguage().getLanguage();
+          ConnectionProvider conn = new DalConnectionProvider(false);
+          throw new OBException(
+              Utility.messageBD(conn, "@ConsumedProductWithPostiveQty@", language));
+        } else if (currentMovementQty.compareTo(ZERO) == -1
+            && previousMovementQty.compareTo(ZERO) != -1 && productionLineCriteria.count() == 1) {
+          String language = OBContext.getOBContext().getLanguage().getLanguage();
+          ConnectionProvider conn = new DalConnectionProvider(false);
+          throw new OBException(Utility.messageBD(conn, "@ProducedProductWithNegativeQty@",
+              language));
+        }
+      }
     }
   }
 }

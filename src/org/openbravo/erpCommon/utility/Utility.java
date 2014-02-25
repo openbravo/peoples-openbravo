@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,6 +65,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.HttpBaseServlet;
@@ -1952,7 +1953,8 @@ public class Utility {
     }
     strArray = strArray + "new Array(";
     for (int i = 0; i < data.length; i++) {
-      strArray = strArray + "\nnew Array(\"" + data[i].getField("padre") + "\", \""
+      strArray = strArray + "\nnew Array(\""
+          + StringEscapeUtils.escapeHtml(data[i].getField("padre")) + "\", \""
           + data[i].getField("id") + "\", \"" + FormatUtilities.replaceJS(data[i].getField("name"))
           + "\")";
       if (i < data.length - 1)

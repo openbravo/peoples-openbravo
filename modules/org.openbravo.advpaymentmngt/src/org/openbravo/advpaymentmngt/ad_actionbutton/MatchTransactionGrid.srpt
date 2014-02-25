@@ -23,7 +23,7 @@
     <td class="DataGrid_Body_LineNoCell"></td>
     <!--input type="hidden" id="fieldBLId" name="inpRecordIdxx" value=""></input-->
     <td class="DataGrid_Body_Cell"><span id="fieldBLTransactionDate">xx01-07-2010</span></td>
-    <td class="DataGrid_Body_Cell"><span id="fieldBLBusinessPartner" title="" style="font-weight: xx;">xxBP Name</span></td>
+    <td class="DataGrid_Body_Cell" id="fieldBLBusinessPartnerCeld" title=""><span id="fieldBLBusinessPartner" style="font-weight: xx;">xxBP Name</span></td>
     <td class="DataGrid_Body_Cell"><span id="fieldBLReferenceNo">xx11100011</span></td>
     <td class="DataGrid_Body_Cell_Amount"><span id="fieldAmount">xx12233</span></td>
     <td class="DataGrid_Body_LineNoCell" style="background-color: xx; text-align: center;" id="inpMatchStyle_xx" name="inpMatchStyle_xx">

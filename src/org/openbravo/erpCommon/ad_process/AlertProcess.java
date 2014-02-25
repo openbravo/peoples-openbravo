@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,6 +63,7 @@ public class AlertProcess implements Process {
   private ConnectionProvider connection;
   private ProcessLogger logger;
   private static final String SYSTEM_CLIENT_ID = "0";
+  private static String LANGUAGE = null;
 
   public void execute(ProcessBundle bundle) throws Exception {
 
@@ -74,6 +75,7 @@ public class AlertProcess implements Process {
     try {
       AlertProcessData[] alertRule = null;
       final String adClientId = bundle.getContext().getClient();
+      LANGUAGE = bundle.getContext().getLanguage();
 
       if (adClientId.equals(SYSTEM_CLIENT_ID)) {
         // Process all clients
@@ -97,9 +99,11 @@ public class AlertProcess implements Process {
   }
 
   private static AlertProcessData[] selectAlert(ConnectionProvider connectionProvider,
-      String alertRule) throws ServletException {
+      String alertRule, String alertRuleId) throws ServletException {
     String alertRuleSQL = (alertRule == null || alertRule.equals("")) ? "" : alertRule;
-    String strSql = "SELECT * FROM (" + alertRuleSQL + ") AAA";
+    String strSql = "SELECT * FROM (" + alertRuleSQL + ") AAA where not exists ("
+        + "select 1 from ad_alert a where a.ad_alertrule_id = ? "
+        + "and a.referencekey_id = aaa.referencekey_id and coalesce(a.status, 'NEW') != 'SOLVED')";
 
     String dateTimeFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("dateTimeFormat.java");
@@ -109,7 +113,9 @@ public class AlertProcess implements Process {
     PreparedStatement st = null;
 
     try {
+      connectionProvider.getConnection().setReadOnly(true);
       st = connectionProvider.getPreparedStatement(strSql);
+      st.setString(1, alertRuleId);
       result = st.executeQuery();
       while (result.next()) {
         AlertProcessData objectAlertProcessData = new AlertProcessData();
@@ -138,6 +144,7 @@ public class AlertProcess implements Process {
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
+        connectionProvider.getConnection().setReadOnly(false);
         connectionProvider.releasePreparedStatement(st);
       } catch (Exception ignore) {
         ignore.printStackTrace();
@@ -235,10 +242,13 @@ public class AlertProcess implements Process {
     logger.log("Processing rule " + alertRule.name + "\n");
 
     AlertProcessData[] alert = null;
-
     if (!alertRule.sql.equals("")) {
       try {
-        alert = selectAlert(conn, alertRule.sql);
+        if (!alertRule.sql.toUpperCase().trim().startsWith("SELECT ")) {
+          logger.log(Utility.messageBD(conn, "AlertSelectConstraint", LANGUAGE) + " \n");
+        } else {
+          alert = selectAlert(conn, alertRule.sql, alertRule.adAlertruleId);
+        }
       } catch (Exception ex) {
         logger.log("Error processing: " + ex.getMessage() + "\n");
         return;
@@ -251,22 +261,18 @@ public class AlertProcess implements Process {
       ;
 
       for (int i = 0; i < alert.length; i++) {
-        if (AlertProcessData
-            .existsReference(conn, alertRule.adAlertruleId, alert[i].referencekeyId).equals("0")) {
+        String adAlertId = SequenceIdData.getUUID();
 
-          String adAlertId = SequenceIdData.getUUID();
+        logger.log("Inserting alert " + adAlertId + " org:" + alert[i].adOrgId + " client:"
+            + alert[i].adClientId + " reference key: " + alert[i].referencekeyId + " created"
+            + alert[i].created + "\n");
 
-          logger.log("Inserting alert " + adAlertId + " org:" + alert[i].adOrgId + " client:"
-              + alert[i].adClientId + " reference key: " + alert[i].referencekeyId + " created"
-              + alert[i].created + "\n");
+        insertAlert(conn, adAlertId, alert[i].adClientId, alert[i].adOrgId, alert[i].created,
+            alert[i].createdby, alertRule.adAlertruleId, alert[i].recordId,
+            alert[i].referencekeyId, alert[i].description, alert[i].adUserId, alert[i].adRoleId);
+        insertions++;
 
-          insertAlert(conn, adAlertId, alert[i].adClientId, alert[i].adOrgId, alert[i].created,
-              alert[i].createdby, alertRule.adAlertruleId, alert[i].recordId,
-              alert[i].referencekeyId, alert[i].description, alert[i].adUserId, alert[i].adRoleId);
-          insertions++;
-
-          msg.append("\n\nAlert: " + alert[i].description + "\nRecord: " + alert[i].recordId);
-        }
+        msg.append("\n\nAlert: " + alert[i].description + "\nRecord: " + alert[i].recordId);
       }
 
       if (insertions > 0) {
@@ -489,7 +495,7 @@ public class AlertProcess implements Process {
     }
 
     // Update
-    if (!alertRule.sql.equals("")) {
+    if (!alertRule.sql.equals("") && (alertRule.sql.toUpperCase().trim().startsWith("SELECT "))) {
       try {
         Integer count = AlertProcessData.updateAlert(conn, alertRule.adAlertruleId, alertRule.sql);
         logger.log("updated alerts: " + count + "\n");

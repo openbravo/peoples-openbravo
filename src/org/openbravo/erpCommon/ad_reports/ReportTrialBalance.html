@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,8 +89,8 @@ function displayAdvancedFilters(){
 
 function onloadFunctions() {
   displayLogic();
-  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value, 'Command', 'KEY');", "inpElementValueIdFrom_DES", "null");
-  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value, 'Command', 'KEY');", "inpElementValueIdTo_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value, 'Command', 'KEY');", "inpElementValueIdFrom_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value, 'Command', 'KEY');", "inpElementValueIdTo_DES", "null");
 }
 
 function validate() {
@@ -114,6 +114,14 @@ function validate() {
     }  else if (inputValue(frm.inpcAcctSchemaId)==null || inputValue(frm.inpcAcctSchemaId)=="") {
       setWindowElementFocus(frm.inpcAcctSchemaId);
       showJSMessage(7);
+      return false;
+    }  else if (!dojo.widget.byId(frm.inpDateFrom.id).isValid()) {
+      setWindowElementFocus(frm.inpDateFrom);
+      showJSMessage(5);
+      return false;
+    }  else if (!dojo.widget.byId(frm.inpDateTo.id).isValid()) {
+      setWindowElementFocus(frm.inpDateTo);
+      showJSMessage(5);
       return false;
     }
     markCheckedAllElements(frm.inpcBPartnerId_IN);

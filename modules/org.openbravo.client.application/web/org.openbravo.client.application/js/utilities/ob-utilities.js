@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,9 +80,14 @@ OB.Utilities.encodeSearchOperator = function (value) {
 // example
 OB.Utilities.truncTitle = function (title, cutLength, suffix) {
   cutLength = cutLength || 30;
-  if (!title || title.length < cutLength) {
+  if (!title) {
     return title;
   }
+
+  if (title.length < cutLength) {
+    return title.asHTML();
+  }
+
   var newTitle = title.substring(0, cutLength);
   // To remove ugly title ends
   while (newTitle.length > 4 && (newTitle.lastIndexOf(' - ') === newTitle.length - 3 || newTitle.lastIndexOf(' -') === newTitle.length - 2 || newTitle.lastIndexOf('  ') === newTitle.length - 2)) {
@@ -97,7 +102,7 @@ OB.Utilities.truncTitle = function (title, cutLength, suffix) {
     }
   }
   newTitle += suffix || '...';
-  return newTitle;
+  return newTitle.asHTML();
 };
 
 // ** {{{OB.Utilities.createDialog}}} **
@@ -343,14 +348,14 @@ OB.Utilities.useClassicMode = function (windowId) {
 // Open a view using a tab id and record id. The tab can be a child tab. If the record id
 // is not set then the tab is opened in grid mode. If command is not set then default is
 // used.
-OB.Utilities.openDirectTab = function (tabId, recordId, command, position) {
+OB.Utilities.openDirectTab = function (tabId, recordId, command, position, criteria, direct) {
 
   tabId = OB.Utilities.removeFragment(tabId);
   recordId = OB.Utilities.removeFragment(recordId);
   command = OB.Utilities.removeFragment(command);
 
   var urlParams = OB.Utilities.getUrlParameters(),
-      callback;
+      callback, isDirect = direct;
 
   //added to have the additional filter clause and tabid. Mallikarjun M
   callback = function (response, data, request) {
@@ -360,6 +365,7 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position) {
       tabTitle: data.tabTitle,
       windowId: data.windowId,
       tabId: data.tabId,
+      id: data.tabId,
       command: command,
       tabPosition: position
     };
@@ -370,6 +376,9 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position) {
 
     if (recordId) {
       view.targetRecordId = recordId;
+      if (direct !== false) {
+        isDirect = true;
+      }
     }
 
     //// Begins-added to have the additional filter clause and tabid..Mallikarjun M
@@ -386,8 +395,13 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position) {
     if (urlParams.replaceDefaultFilter) {
       view.replaceDefaultFilter = urlParams.replaceDefaultFilter;
     }
+
+    if (criteria) {
+      view.additionalCriteriaTabId = data.tabId;
+      view.additionalCriteria = criteria;
+    }
     ////Ends..
-    OB.Layout.ViewManager.openView(view.viewId, view);
+    OB.Layout.ViewManager.openView(view.viewId, view, null, isDirect);
   };
 
   OB.RemoteCallManager.call('org.openbravo.client.application.ComputeWindowActionHandler', {}, {
@@ -413,9 +427,17 @@ OB.Utilities.removeFragment = function (str) {
 // Open a view taking into account if a specific window should be opened in classic mode or not.
 // Returns the object used to open the window.
 OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, icon, readOnly, singleRecord, direct, editOrDeleteOnly) {
-  var isClassicEnvironment = OB.Utilities.useClassicMode(windowId);
-
-  var openObject;
+  var isClassicEnvironment = OB.Utilities.useClassicMode(windowId),
+      openObject, isDirect = direct,
+      isSingleRecord;
+  if (recordId) {
+    if (direct !== false) {
+      isDirect = true;
+    }
+    if (singleRecord !== false) {
+      isSingleRecord = true;
+    }
+  }
   if (isClassicEnvironment) {
     if (recordId) {
       OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);
@@ -439,7 +461,7 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       tabTitle: tabTitle,
       windowId: windowId,
       readOnly: readOnly,
-      singleRecord: singleRecord,
+      singleRecord: isSingleRecord,
       editOrDeleteOnly: editOrDeleteOnly
     };
   } else {
@@ -451,14 +473,14 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
       windowId: windowId,
       icon: icon,
       readOnly: readOnly,
-      singleRecord: singleRecord,
+      singleRecord: isSingleRecord,
       editOrDeleteOnly: editOrDeleteOnly
     };
   }
   if (command) {
     openObject.command = command;
   }
-  OB.Layout.ViewManager.openView(openObject.viewId, openObject, null, direct);
+  OB.Layout.ViewManager.openView(openObject.viewId, openObject, null, isDirect);
   return openObject;
 };
 
@@ -1025,16 +1047,21 @@ OB.Utilities.generateRandomString = function (stringLength, allowLowerCaseChars,
 
 /* This function will return true if it receives a string parameter, and 
  * which complies with the OB UUID format (that is, its a
- * hexadecimal number of length 32)
+ * hexadecimal number of length 32 or numeric numbers of length less than or equal to 10)
  */
 OB.Utilities.isUUID = function (object) {
   if (typeof object !== 'string') {
     return false;
   }
-  if (object.length !== 32) {
+  if (object.length > 10 && object.length !== 32) {
     return false;
   }
-  return (/[A-Fa-f0-9]{32,32}/).test(object);
+  if (object.length === 32) {
+    return (/[A-Fa-f0-9]{32,32}/).test(object);
+  } else if (object.length <= 10) {
+    //return true if uuid contains only numbers
+    return (/^\d+$/).test(object);
+  }
 };
 
 //** {{{ OB.Utilities.clientClassSplitProps }}} **
@@ -1195,4 +1222,24 @@ OB.Utilities.getProcessTabBarPosition = function (processView) {
   }
   return -1;
 
+};
+
+OB.Utilities.yesNoSortNormalizer = function (item, field, context) {
+  var value = item[field];
+  if (value === true) {
+    return 1;
+  } else if (value === false) {
+    return 2;
+  } else {
+    return 3;
+  }
+};
+
+OB.Utilities.enumSortNormalizer = function (item, field, context) {
+  var value = item[field],
+      undef;
+  if (value === null || value === undef) {
+    return '-'; // hack to sort nulls last
+  }
+  return ' ' + value;
 };

@@ -104,6 +104,17 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
     }
   }
 
+  public String getFieldPropertiesFirstRecord(Field field, boolean getValueFromSession) {
+    JSONObject value;
+    try {
+      value = new JSONObject(super.getFieldProperties(field, getValueFromSession));
+      return getValueInComboReference(field, getValueFromSession, value.getString("classicValue"),
+          true);
+    } catch (JSONException e) {
+      throw new OBException("Error while computing combo data", e);
+    }
+  }
+
   @Override
   public String getFieldPropertiesWithoutCombo(Field field, boolean getValueFromSession) {
     return super.getFieldProperties(field, getValueFromSession);

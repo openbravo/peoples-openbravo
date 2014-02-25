@@ -46,6 +46,7 @@
     v_Sequence_No			             VARCHAR2(32);
     v_C_AcctSchema_ID			         VARCHAR2(32);
     v_Count 	 	               NUMBER;
+    v_qtyin_hand 	 	       NUMBER;
   			
 BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -69,6 +70,14 @@ BEGIN
    SELECT 0 AS QtyOnHand, QtyReserved, QtyOrdered
    FROM M_Storage_Pending s
    WHERE s.M_Product_ID=:new.M_Product_ID) A;
+   select COALESCE(sum(QtyOnHand),0) Into v_qtyin_hand from (
+   SELECT QtyOnHand
+   FROM M_Storage_Detail s
+   WHERE s.M_Product_ID=:new.M_Product_ID
+   UNION
+   SELECT 0 AS QtyOnHand
+   FROM M_Storage_Pending s
+   WHERE s.M_Product_ID=:new.M_Product_ID )A;
    IF (v_ControlNo <> 0) THEN
     IF (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null')) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20633@');
@@ -76,6 +85,8 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20000, '@20634@');
     ELSIF (:old.isStocked = 'Y' AND :new.isStocked = 'N') THEN
       RAISE_APPLICATION_ERROR(-20000, '@StockedProductWithMovements@');
+    ELSIF (v_qtyin_hand=0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@ActivePoSo@');
     ELSE
       RAISE_APPLICATION_ERROR(-20000, '@20400@');
     END IF;

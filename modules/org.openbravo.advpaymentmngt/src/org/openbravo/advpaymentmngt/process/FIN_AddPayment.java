@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.process;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,6 +50,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -333,8 +335,8 @@ public class FIN_AddPayment {
         isRefund, null, null, null);
   }
 
-  public static FIN_Payment setFinancialTransactionAmountAndRate(FIN_Payment payment,
-      BigDecimal finTxnConvertRate, BigDecimal finTxnAmount) {
+  public static FIN_Payment setFinancialTransactionAmountAndRate(VariablesSecureApp vars,
+      FIN_Payment payment, BigDecimal finTxnConvertRate, BigDecimal finTxnAmount) {
     if (payment == null) {
       return payment;
     }
@@ -352,12 +354,22 @@ public class FIN_AddPayment {
     } else if (paymentAmount.compareTo(BigDecimal.ZERO) != 0) {
       // Correct exchange rate for rounding that occurs in UI
       finTxnConvertRate = finTxnAmount.divide(paymentAmount, MathContext.DECIMAL64);
+      if (vars != null) {
+        DecimalFormat generalQtyRelationFmt = Utility.getFormat(vars, "generalQtyEdition");
+        finTxnConvertRate = finTxnConvertRate.setScale(
+            generalQtyRelationFmt.getMaximumFractionDigits(), BigDecimal.ROUND_HALF_UP);
+      }
     }
 
     payment.setFinancialTransactionAmount(finTxnAmount);
     payment.setFinancialTransactionConvertRate(finTxnConvertRate);
 
     return payment;
+  }
+
+  public static FIN_Payment setFinancialTransactionAmountAndRate(FIN_Payment payment,
+      BigDecimal finTxnConvertRate, BigDecimal finTxnAmount) {
+    return setFinancialTransactionAmountAndRate(null, payment, finTxnConvertRate, finTxnAmount);
   }
 
   public static FIN_Payment createRefundPayment(ConnectionProvider conProvider,
@@ -546,12 +558,6 @@ public class FIN_AddPayment {
    *          accounting dimension
    * @param salesRegion
    *          accounting dimension
-   * @param costCenter
-   *          accounting dimension
-   * @param user1
-   *          accounting dimension
-   * @param user2
-   *          accounting dimension
    */
   public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem,
       BusinessPartner businessPartner, Product product, Project project, Campaign campaign,
@@ -657,9 +663,9 @@ public class FIN_AddPayment {
    * 
    * @param vars
    *          VariablseSecureApp with the session data.
-   * @param selectedPaymentScheduleDetails
-   *          List of FIN_PaymentScheduleDetails that need to be included in the HashMap.
-   * @return A HashMap mapping the FIN_PaymentScheduleDetail's Id with the corresponding amount.
+   * @param selectedBaseOBObjects
+   *          List of bobs that need to be included in the HashMap.
+   * @return A HashMap mapping the Id with the corresponding amount.
    */
   public static <T extends BaseOBObject> HashMap<String, BigDecimal> getSelectedBaseOBObjectAmount(
       VariablesSecureApp vars, List<T> selectedBaseOBObjects, String htmlElementId)
@@ -1088,7 +1094,7 @@ public class FIN_AddPayment {
 
   /**
    * Update Payment Schedule amounts with the amount of the Payment Schedule Detail or Payment
-   * Detail
+   * Detail. Useful when paying orders
    * 
    * @param paymentSchedule
    *          Payment Schedule to be updated
@@ -1099,6 +1105,25 @@ public class FIN_AddPayment {
    */
   public static void updatePaymentScheduleAmounts(FIN_PaymentSchedule paymentSchedule,
       BigDecimal amount, BigDecimal writeOffAmount) {
+    updatePaymentScheduleAmounts(null, paymentSchedule, amount, writeOffAmount);
+  }
+
+  /**
+   * Update Payment Schedule amounts with the amount of the Payment Schedule Detail or Payment
+   * Detail. Useful when paying invoices. It supports Invoices with Cash VAT, creating the records
+   * into the Cash VAT management table (InvoiceTaxCashVAT)
+   * 
+   * @param paymentDetail
+   *          payment
+   * @param paymentSchedule
+   *          Payment Schedule to be updated
+   * @param amount
+   *          Amount of the Payment Schedule Detail or Payment Detail
+   * @param writeOffAmount
+   *          Write off amount, null or 0 if not applicable.
+   */
+  public static void updatePaymentScheduleAmounts(FIN_PaymentDetail paymentDetail,
+      FIN_PaymentSchedule paymentSchedule, BigDecimal amount, BigDecimal writeOffAmount) {
     paymentSchedule.setPaidAmount(paymentSchedule.getPaidAmount().add(amount));
     paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(amount));
     if (writeOffAmount != null && writeOffAmount.compareTo(BigDecimal.ZERO) != 0) {
@@ -1107,6 +1132,7 @@ public class FIN_AddPayment {
           writeOffAmount));
     }
     OBDal.getInstance().save(paymentSchedule);
+    CashVATUtil.createInvoiceTaxCashVAT(paymentDetail, paymentSchedule, amount.add(writeOffAmount));
     if (paymentSchedule.getInvoice() != null) {
       updateInvoicePaymentMonitor(paymentSchedule, amount, writeOffAmount);
     }
@@ -1176,10 +1202,8 @@ public class FIN_AddPayment {
       Date paymentDueDate = paymentSchedule.getDueDate();
       for (FIN_PaymentScheduleDetail psd : paymentSchedule
           .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-        if (!psd.isCanceled()
-            && psd.getPaymentDetails() != null
-            && (FIN_Utility.isPaymentConfirmed(psd.getPaymentDetails().getFinPayment().getStatus(),
-                psd) || currentPSD.getId().equals(psd.getId()))) {
+        if (!psd.isCanceled() && psd.getPaymentDetails() != null
+            && (psd.isInvoicePaid() || currentPSD.getId().equals(psd.getId()))) {
           Date paymentDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
           if (paymentDate.after(paymentDueDate)) {
             overdueOriginal = overdueOriginal.add(psd.getAmount());

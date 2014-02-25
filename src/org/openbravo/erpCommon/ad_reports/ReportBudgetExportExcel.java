@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_reports;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ad_process.UpdateActuals;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.model.financialmgmt.accounting.Budget;
+import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportBudgetExportExcel extends HttpSecureAppServlet {
@@ -58,6 +66,25 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
 
     XmlDocument xmlDocument = null;
     ReportBudgetGenerateExcelData[] data = null;
+    Budget budget = OBDal.getInstance().get(Budget.class, strBudgetId);
+    boolean exportActualData = budget.isExportActualData();
+    if (exportActualData) {
+      try {
+        ConnectionProvider conn = new DalConnectionProvider(false);
+        ProcessBundle pb = new ProcessBundle("ABDFC8131D964936AD2EF7E0CED97FD9", vars).init(conn);
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("C_Budget_ID", strBudgetId);
+        pb.setParams(parameters);
+        OBError myMessage = null;
+        new UpdateActuals().execute(pb);
+        myMessage = (OBError) pb.getResult();
+        if (myMessage != null && "Error".equals(myMessage.getType())) {
+          log4j.error(myMessage.getMessage());
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     data = ReportBudgetGenerateExcelData.selectLines(this, vars.getLanguage(), strBudgetId);
 
     if (data.length != 0 && data[0].exportactual.equals("Y")) {

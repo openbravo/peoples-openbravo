@@ -190,6 +190,8 @@ public abstract class AcctServer {
   public static final String STATUS_TableDisabled = "T";
   /** Document Status */
   public static final String STATUS_BackgroundDisabled = "d";
+  /** Document Status */
+  public static final String STATUS_NoAccountingDate = "AD";
 
   /** Table IDs for document level conversion rates */
   public static final String TABLEID_Invoice = "318";
@@ -2102,25 +2104,14 @@ public abstract class AcctServer {
         .getOrganizationStructureProvider(AD_Client_ID).getChildTree(AD_Org_ID, true);
     String strorgs = Utility.getInStrSet(orgSet);
 
-    String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
-    if (connectionProvider.getRDBMS().equalsIgnoreCase("ORACLE")) {
-      oraLimit1 = "2";
-      oraLimit2 = "1 AND 2";
-      rownum = "ROWNUM";
-    } else {
-      pgLimit = "2";
-    }
-
     for (int i = 0; i < docTypes.length; i++) {
-      AcctServerData data = AcctServerData.selectDocumentsDates(connectionProvider, rownum,
-          tableName, strDateColumn, AD_Client_ID, strorgs, docTypes[i].name, dateFrom, dateTo,
-          pgLimit, oraLimit1, oraLimit2);
+      long init = System.currentTimeMillis();
+      AcctServerData data = AcctServerData.selectDocumentsDates(connectionProvider, strDateColumn,
+          tableName, AD_Client_ID, strorgs, docTypes[i].name, dateFrom, dateTo);
+      log4j.debug("AcctServerData.selectDocumentsDates for: " + docTypes[i].name + " took: "
+          + (System.currentTimeMillis() - init));
       if (data != null) {
         if (data.id != null && !data.id.equals("")) {
-          if (log4j.isDebugEnabled()) {
-            log4j.debug("AcctServer - not posted - " + docTypes[i].name + " document id: "
-                + data.id);
-          }
           return true;
         }
       }
@@ -2128,29 +2119,12 @@ public abstract class AcctServer {
     return false;
   } // end of checkDocuments() method
 
+  @Deprecated
+  /*
+   * Use checkDocuments method instead
+   */
   public boolean filterDatesCheckDocuments(String dateFrom, String dateTo) throws ServletException {
-    if (m_as.length == 0)
-      return false;
-    AcctServerData[] docTypes = AcctServerData.selectDocTypes(connectionProvider, AD_Table_ID,
-        AD_Client_ID);
-    // if (log4j.isDebugEnabled())
-    // log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
-
-    for (int i = 0; i < docTypes.length; i++) {
-      AcctServerData data = AcctServerData.filterDatesSelectDocuments(connectionProvider,
-          tableName, AD_Client_ID, AD_Org_ID, docTypes[i].name, strDateColumn, dateFrom, dateTo);
-
-      if (data != null) {
-        if (data.id != null && !data.id.equals("")) {
-          if (log4j.isDebugEnabled()) {
-            log4j.debug("AcctServer - not posted - " + docTypes[i].name + " document id: "
-                + data.id);
-          }
-          return true;
-        }
-      }
-    }
-    return false;
+    return checkDocuments(dateFrom, dateTo);
   } // end of filterDatesCheckDocuments() method
 
   public void setMessageResult(OBError error) {
@@ -2247,6 +2221,8 @@ public abstract class AcctServer {
       strTitle = "@TableDisabled@";
       parameters.put("Table", tableName);
       messageResult.setType("Warning");
+    } else if (strStatus.equals(STATUS_NoAccountingDate)) {
+      strTitle = "@NoAccountingDate@";
     }
     messageResult.setMessage(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
         Utility.parseTranslation(conn, vars, vars.getLanguage(), strTitle)));
@@ -2815,21 +2791,25 @@ public abstract class AcctServer {
    *          Invoice Payment Schedule of actual Payment Detail
    * @param pso
    *          Order Payment Schedule of actual Payment Detail
-   * @param i
+   * @param currentPaymentDetailIndex
    *          Index
    */
+  @Deprecated
   public BigDecimal getPaymentDetailAmount(List<FIN_PaymentDetail> paymentDetails,
-      FIN_PaymentSchedule ps, FIN_PaymentSchedule psi, FIN_PaymentSchedule pso, int i) {
+      FIN_PaymentSchedule ps, FIN_PaymentSchedule psi, FIN_PaymentSchedule pso,
+      int currentPaymentDetailIndex) {
     if (psi == null && pso == null) {
-      return paymentDetails.get(i).getAmount();
+      return paymentDetails.get(currentPaymentDetailIndex).getAmount();
     }
     // If the actual Payment Detail belongs to the same Invoice Payment Schedule as the previous
     // record, or it has no Order related.
     if ((psi != null && psi.equals(ps)) || pso == null) {
-      FIN_PaymentScheduleDetail psdNext = (i == paymentDetails.size() - 1) ? null : paymentDetails
-          .get(i + 1).getFINPaymentScheduleDetailList().get(0);
-      FIN_PaymentScheduleDetail psdPrevious = (i == 0) ? null : paymentDetails.get(i - 1)
-          .getFINPaymentScheduleDetailList().get(0);
+      FIN_PaymentScheduleDetail psdNext = (currentPaymentDetailIndex == paymentDetails.size() - 1) ? null
+          : paymentDetails.get(currentPaymentDetailIndex + 1).getFINPaymentScheduleDetailList()
+              .get(0);
+      FIN_PaymentScheduleDetail psdPrevious = (currentPaymentDetailIndex == 0) ? null
+          : paymentDetails.get(currentPaymentDetailIndex - 1).getFINPaymentScheduleDetailList()
+              .get(0);
       // If it has no Order related, and the next record belongs to the same Invoice Payment
       // Schedule and the next record has an Order related.
       if (pso == null && psdNext != null && psdNext.getInvoicePaymentSchedule() == psi
@@ -2839,13 +2819,77 @@ public abstract class AcctServer {
         // record has no Order related.
       } else if (psdPrevious != null && psdPrevious.getInvoicePaymentSchedule() == psi
           && psdPrevious.getOrderPaymentSchedule() == null) {
-        return paymentDetails.get(i).getAmount().add(paymentDetails.get(i - 1).getAmount());
+        return paymentDetails.get(currentPaymentDetailIndex).getAmount()
+            .add(paymentDetails.get(currentPaymentDetailIndex - 1).getAmount());
       } else {
-        return paymentDetails.get(i).getAmount();
+        return paymentDetails.get(currentPaymentDetailIndex).getAmount();
       }
     } else {
-      return paymentDetails.get(i).getAmount();
+      return paymentDetails.get(currentPaymentDetailIndex).getAmount();
     }
+  }
+
+  /**
+   * Returns the writeoff and the amount of a Payment Detail. In case the related Payment Schedule
+   * Detail was generated for compensate the difference between an Order and a related Invoice, it
+   * merges it's amount with the next Payment Schedule Detail. Issue 19567:
+   * https://issues.openbravo.com/view.php?id=19567
+   * 
+   * @param paymentDetails
+   *          List of payment Details
+   * @param ps
+   *          Previous Payment Schedule
+   * @param psi
+   *          Invoice Payment Schedule of actual Payment Detail
+   * @param pso
+   *          Order Payment Schedule of actual Payment Detail
+   * @param currentPaymentDetailIndex
+   *          Index
+   */
+  public HashMap<String, BigDecimal> getPaymentDetailWriteOffAndAmount(
+      List<FIN_PaymentDetail> paymentDetails, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
+      FIN_PaymentSchedule pso, int currentPaymentDetailIndex) {
+
+    HashMap<String, BigDecimal> amountAndWriteOff = new HashMap<String, BigDecimal>();
+
+    // Default return values
+    amountAndWriteOff.put("amount", paymentDetails.get(currentPaymentDetailIndex).getAmount());
+    amountAndWriteOff.put("writeoff", paymentDetails.get(currentPaymentDetailIndex)
+        .getWriteoffAmount());
+
+    // If the Payment Detail has either an Invoice or an Order associated to it
+    if (psi != null || pso != null) {
+      // If the Payment Detail has no Order associated to it, or it has an Invoice associated and is
+      // the same one as the previous Payment Detail
+      if ((psi != null && psi.equals(ps)) || pso == null) {
+        FIN_PaymentScheduleDetail psdNext = (currentPaymentDetailIndex == paymentDetails.size() - 1) ? null
+            : paymentDetails.get(currentPaymentDetailIndex + 1).getFINPaymentScheduleDetailList()
+                .get(0);
+        FIN_PaymentScheduleDetail psdPrevious = (currentPaymentDetailIndex == 0) ? null
+            : paymentDetails.get(currentPaymentDetailIndex - 1).getFINPaymentScheduleDetailList()
+                .get(0);
+        // If the Payment Detail has no Order associated, and the next Payment Detail belongs to the
+        // same Invoice and it has an Order related, then return null
+        if (pso == null && psdNext != null && psdNext.getInvoicePaymentSchedule() == psi
+            && psdNext.getOrderPaymentSchedule() != null) {
+          amountAndWriteOff.put("amount", null);
+          amountAndWriteOff.put("writeoff", null);
+          // If there is a previous Payment Detail that belongs to the same Invoice and has no Order
+          // related to it, return the sum of amounts.
+        } else if (psdPrevious != null && psdPrevious.getInvoicePaymentSchedule() == psi
+            && psdPrevious.getOrderPaymentSchedule() == null) {
+          amountAndWriteOff.put("amount", paymentDetails.get(currentPaymentDetailIndex).getAmount()
+              .add(paymentDetails.get(currentPaymentDetailIndex - 1).getAmount()));
+          amountAndWriteOff.put(
+              "writeoff",
+              paymentDetails.get(currentPaymentDetailIndex).getWriteoffAmount()
+                  .add(paymentDetails.get(currentPaymentDetailIndex - 1).getWriteoffAmount()));
+        }
+      }
+    }
+
+    return amountAndWriteOff;
+
   }
 
 }

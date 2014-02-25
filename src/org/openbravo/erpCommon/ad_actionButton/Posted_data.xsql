@@ -35,18 +35,6 @@
     <Parameter name="record_id"/>
     <Parameter name="ad_table_id"/>
   </SqlMethod>
-  <SqlMethod name="selectClient" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT AD_CLIENT_ID FROM FACT_ACCT
-        WHERE RECORD_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="tablename" optional="true" type="replace" after="FROM " text="FACT_ACCT"/>
-    <Parameter name="tablename" optional="true" type="replace" after="WHERE " text="RECORD"/>
-    <Parameter name="ad_record_id"/>
-  </SqlMethod>
   <SqlMethod name="selectTableName" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

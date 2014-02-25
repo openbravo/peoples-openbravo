@@ -58,9 +58,7 @@ public interface DataSourceService {
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters);
 
   /**
-   * Execute a query request and return the result as a json string. For a query request the content
-   * ({@link #getPath()}) is normally empty, the query parameters can be found in the parameters map
-   * ({@link #getParameters()}).
+   * Execute a query request and return the result as a json string.
    * 
    * @param parameters
    *          the parameters often coming from the HTTP request
@@ -78,9 +76,7 @@ public interface DataSourceService {
   public String remove(Map<String, String> parameters);
 
   /**
-   * Execute an insert action. There can be parameters in the parameter map (
-   * {@link #getParameters()}) but often the data to insert is present in the content (
-   * {@link #getPath()}).
+   * Execute an insert action.
    * 
    * @param parameters
    *          the parameters often coming from the HTTP request
@@ -91,9 +87,7 @@ public interface DataSourceService {
   public String add(Map<String, String> parameters, String content);
 
   /**
-   * Execute an update action. There can be parameters in the parameter map (
-   * {@link #getParameters()}) but often the data to insert is present in the content (
-   * {@link #getPath()}).
+   * Execute an update action.
    * 
    * @param parameters
    *          the parameters often coming from the HTTP request

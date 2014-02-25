@@ -166,7 +166,7 @@ abstract class ErrorTextParser {
    * Helper method to get a (slightly better) human-readable name for a database column based on its
    * name. Method uses AD_ELEMENT.name and AD_ELEMENT_TRL.NAME for this purpose
    * 
-   * @param tableName
+   * @param columnName
    *          name of a database column
    * @return translated, human-readable name
    */

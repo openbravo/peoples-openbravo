@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2012 Openbravo SLU
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -252,7 +252,7 @@ OB.Utilities.Date.getTimeFields = function (allFields) {
   for (i = 0; i < length; i++) {
     field = allFields[i];
     if (field.type === '_id_24') {
-      timeFields.push(field.name);
+      timeFields.push(field);
     }
   }
   return timeFields;
@@ -275,12 +275,17 @@ OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
       convertedDataLength = convertedData.length;
   for (i = 0; i < timeFieldsLength; i++) {
     for (j = 0; j < convertedDataLength; j++) {
-      textField = convertedData[j][timeFields[i]];
-      if (textField && textField.length > 0) {
-        fieldToDate = isc.Time.parseInput(textField);
-        fieldToDate.setTime(fieldToDate.getTime() + UTCOffsetInMiliseconds);
-        convertedData[j][timeFields[i]] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
+      textField = convertedData[j][timeFields[i].name];
+      if (!textField) {
+        continue;
       }
+      if (isc.isA.String(textField)) {
+        fieldToDate = isc.Time.parseInput(textField);
+      } else if (isc.isA.Date(textField)) {
+        fieldToDate = textField;
+      }
+      fieldToDate.setTime(fieldToDate.getTime() + UTCOffsetInMiliseconds);
+      convertedData[j][timeFields[i].name] = fieldToDate.getHours() + ':' + fieldToDate.getMinutes() + ':' + fieldToDate.getSeconds();
     }
   }
   return convertedData;
@@ -293,4 +298,44 @@ OB.Utilities.Date.getUTCOffsetInMiliseconds = function () {
   var UTCHourOffset = isc.Time.getUTCHoursDisplayOffset(new Date()),
       UTCMinuteOffset = isc.Time.getUTCMinutesDisplayOffset(new Date());
   return (UTCHourOffset * 60 * 60 * 1000) + (UTCMinuteOffset * 60 * 1000);
+};
+
+//** {{{ OB.Utilities.Date.roundToNextQuarter }}} **
+//
+// Round any date to the next quarter
+OB.Utilities.Date.roundToNextQuarter = function (date) {
+  var newDate = new Date(date),
+      minutes = newDate.getMinutes(),
+      timeBreak = 15;
+  if (newDate.getMilliseconds() === 0 && newDate.getSeconds() === 0 && minutes % timeBreak === 0) {
+    return newDate;
+  }
+  var roundedMinutes = (parseInt((minutes + timeBreak) / timeBreak, 10) * timeBreak) % 60;
+  newDate.setMilliseconds(0);
+  newDate.setSeconds(0);
+  newDate.setMinutes(roundedMinutes);
+  if (roundedMinutes === 0) {
+    newDate.setHours(newDate.getHours() + 1);
+  }
+  return newDate;
+};
+
+//** {{{ OB.Utilities.Date.roundToNextHalfHour }}} **
+//
+// Round any date to the next half hour
+OB.Utilities.Date.roundToNextHalfHour = function (date) {
+  var newDate = new Date(date),
+      minutes = newDate.getMinutes(),
+      timeBreak = 30;
+  if (newDate.getMilliseconds() === 0 && newDate.getSeconds() === 0 && minutes % timeBreak === 0) {
+    return newDate;
+  }
+  var roundedMinutes = (parseInt((minutes + timeBreak) / timeBreak, 10) * timeBreak) % 60;
+  newDate.setMilliseconds(0);
+  newDate.setSeconds(0);
+  newDate.setMinutes(roundedMinutes);
+  if (roundedMinutes === 0) {
+    newDate.setHours(newDate.getHours() + 1);
+  }
+  return newDate;
 };

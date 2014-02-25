@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,11 +55,6 @@ public class BaseWebServiceServlet extends HttpServlet {
   @Override
   protected final void service(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    // already logged in?
-    if (OBContext.getOBContext() != null) {
-      doService(request, response);
-      return;
-    }
 
     // do the login action
     AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
@@ -98,12 +93,20 @@ public class BaseWebServiceServlet extends HttpServlet {
   protected void doService(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
-      if (OBContext.getOBContext() != null && OBContext.getOBContext().isPortalRole()) {
-        // Portal users are not granted to direct web services
-        log.error("Portal user " + OBContext.getOBContext().getUser() + " with role "
-            + OBContext.getOBContext().getRole()
-            + " is trying to access to non granted web service " + request.getRequestURL());
-        throw new OBSecurityException("Web Services are not granted to Portal roles");
+      if (OBContext.getOBContext() != null) {
+        if (OBContext.getOBContext().isPortalRole()) {
+          // Portal users are not granted to direct web services
+          log.error("Portal user " + OBContext.getOBContext().getUser() + " with role "
+              + OBContext.getOBContext().getRole()
+              + " is trying to access to non granted web service " + request.getRequestURL());
+          throw new OBSecurityException("Web Services are not granted to Portal roles");
+        } else if (!OBContext.getOBContext().getRole().isWebServiceEnabled()) {
+          log.error("User " + OBContext.getOBContext().getUser() + " with role "
+              + OBContext.getOBContext().getRole()
+              + " is trying to access to non granted web service " + request.getRequestURL());
+          throw new OBSecurityException("Web Services are not granted to "
+              + OBContext.getOBContext().getRole().getName() + " role");
+        }
       }
       super.service(request, response);
       response.setStatus(200);

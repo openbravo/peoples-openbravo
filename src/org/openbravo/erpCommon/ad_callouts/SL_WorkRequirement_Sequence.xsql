@@ -34,30 +34,4 @@
     </Sql>
     <Parameter name="maSequenceId"/>
   </SqlMethod>
-  <SqlMethod name="qty" type="preparedStatement" return="String">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT  (s.multiplier * w.quantity) AS quantity
-        FROM    MA_Sequence s, MA_WorkRequirement w
-        WHERE   s.MA_Sequence_ID = ?
-        AND     w.MA_WorkRequirement_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="maSequenceId"/>
-    <Parameter name="maWorkRequirementId"/>
-  </SqlMethod>
-  <SqlMethod name="doneqty" type="preparedStatement" return="String">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT  (s.multiplier * w.quantity) AS quantity
-        FROM    MA_Sequence s, MA_WorkRequirement w
-        WHERE   s.MA_Sequence_ID = ?
-        AND     w.MA_WorkRequirement_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="maSequenceId"/>
-    <Parameter name="maWorkRequirementId"/>
-  </SqlMethod>
 </SqlClass>

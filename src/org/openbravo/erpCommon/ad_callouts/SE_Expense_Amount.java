@@ -78,7 +78,7 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
     if (c_Currency_To_ID == null) {
       c_Currency_To_ID = OBDal.getInstance()
           .get(org.openbravo.model.timeandexpense.Sheet.class, strTimeExpenseId).getClient()
-          .getCurrency().toString();
+          .getCurrency().getId();
     }
 
     // Checks if there is a conversion rate for each of the transactions of

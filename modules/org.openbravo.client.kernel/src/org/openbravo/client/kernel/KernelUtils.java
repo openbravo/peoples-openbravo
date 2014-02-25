@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,8 +20,9 @@ package org.openbravo.client.kernel;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+
+import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -33,17 +34,18 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * Contains several utility methods used in the kernel.
@@ -355,17 +357,16 @@ public class KernelUtils {
    * @return The BaseOBObject of the parent record
    */
   public BaseOBObject getParentRecord(BaseOBObject object, Tab tab) {
-    List<Tab> tabsOfWindow = tab.getWindow().getADTabList();
-    ArrayList<Entity> entities = new ArrayList<Entity>();
-    for (Tab aTab : tabsOfWindow) {
-      Entity entity = ModelProvider.getInstance().getEntityByTableName(
-          aTab.getTable().getDBTableName());
-      entities.add(entity);
+    Entity parentEntity = null;
+    Tab parentTab = getParentTab(tab);
+    if (parentTab != null) {
+      parentEntity = ModelProvider.getInstance().getEntityByTableId(parentTab.getTable().getId());
     }
     Property fkProp = null;
     for (Property property : object.getEntity().getProperties()) {
       if (property.isParent()) {
-        if (property.getTargetEntity() != null && entities.contains(property.getTargetEntity())) {
+        if (property.getTargetEntity() != null && parentEntity != null
+            && parentEntity == property.getTargetEntity()) {
           fkProp = property;
         }
       }
@@ -382,52 +383,63 @@ public class KernelUtils {
    * 
    * @param tab
    *          The tab the object belongs to
-   * @return The parent tab of the given tab
+   * @return The parent tab of the given tab, <code>null</code> in case the tab is root
    */
   public Tab getParentTab(Tab tab) {
-    List<Tab> tabsOfWindow = tab.getWindow().getADTabList();
-    ArrayList<Entity> entities = new ArrayList<Entity>();
-    HashMap<Entity, Tab> tabOfEntity = new HashMap<Entity, Tab>();
-    Entity theEntity = null;
-    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
-      theEntity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
-    } else {
-      theEntity = ModelProvider.getInstance().getEntityByTableName(tab.getTable().getDBTableName());
+    if (tab.getTabLevel() == 0L) {
+      // root level, there is no parent
+      return null;
     }
 
-    for (Tab aTab : tabsOfWindow) {
-      Entity entity = null;
-      if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(aTab.getTable().getDataOriginType())) {
-        entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
-      } else {
-        entity = ModelProvider.getInstance().getEntityByTableName(aTab.getTable().getDBTableName());
-      }
-      entities.add(entity);
-      if (!tabOfEntity.containsKey(entity)){
-        tabOfEntity.put(entity, aTab);
-      }
-    }
-
-    if (tab.getColumn() != null) {
-      final String colId = (String) DalUtil.getId(tab.getColumn());
-      for (Property prop : theEntity.getProperties()) {
-        if (prop.getColumnId() != null && prop.getColumnId().equals(colId)
-            && prop.getTargetEntity() != null && prop.isParent()
-            && tabOfEntity.containsKey(prop.getTargetEntity())) {
-          return tabOfEntity.get(prop.getTargetEntity());
-        }
-      }
-    }
-
+    ConnectionProvider connection = new DalConnectionProvider(false);
     Tab targetTab = null;
-    for (Property property : theEntity.getProperties()) {
-      if (property.isParent()) {
-        if (property.getTargetEntity() != null && entities.contains(property.getTargetEntity())) {
-          targetTab = tabOfEntity.get(property.getTargetEntity());
-        }
+    String tabId = null;
+    try {
+      tabId = KernelUtilsData.getParentTab(connection, tab.getWindow().getId(), tab.getTabLevel()
+          .toString(), tab.getSequenceNumber().toString());
+      if (tabId != null) {
+        targetTab = OBDal.getInstance().get(Tab.class, tabId);
       }
+    } catch (ServletException e) {
+      log.error(e.getMessage(), e);
     }
     return targetTab;
+  }
+
+  /**
+   * Returns the list of subtabs of a given tab
+   * 
+   * @param tab
+   *          The tab whose subtabs are to be retrieved
+   * @param onlyFirstLevel
+   *          Boolean used to determine whether all the descendent tabs should be returned or only
+   *          the next level ones
+   * @return The list of subtabs of the given tab, an empty List if the tab has none
+   */
+  public List<Tab> getTabSubtabs(Tab tab, boolean onlyFirstLevel) {
+    ConnectionProvider connection = new DalConnectionProvider(false);
+    Long seqno = tab.getSequenceNumber();
+    Long tabLevel = tab.getTabLevel();
+    String windowId = tab.getWindow().getId();
+    KernelUtilsData[] tabIds = null;
+    try {
+      if (onlyFirstLevel) {
+        tabIds = KernelUtilsData.getFirstLevelSubtabs(connection, windowId, seqno.toString(),
+            tabLevel.toString());
+      } else {
+        tabIds = KernelUtilsData.getAllSubtabs(connection, windowId, seqno.toString(),
+            tabLevel.toString());
+      }
+    } catch (ServletException e) {
+      log.error(e.getMessage(), e);
+    }
+    List<Tab> subTabList = new ArrayList<Tab>();
+    for (int i = 0; i < tabIds.length; i++) {
+      String tabId = ((KernelUtilsData) tabIds[i]).adTabId;
+      Tab subTab = OBDal.getInstance().get(Tab.class, tabId);
+      subTabList.add(subTab);
+    }
+    return subTabList;
   }
 
   /**
@@ -457,5 +469,37 @@ public class KernelUtils {
       super(message);
     }
 
+  }
+
+  /**
+   * Returns the name of the parent column of the tab
+   * 
+   * @param tab
+   *          The tab the object belongs to
+   * @return The parent column of the table in the given tab, <code>null</code> in case there is no
+   *         parent tab
+   * 
+   */
+  public String getParentColumnName(Tab tab) {
+    String targetColumnName = null;
+    Entity parentEntity = null;
+    Entity currentEntity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+    Tab parentTab = getParentTab(tab);
+    if (parentTab != null) {
+      parentEntity = ModelProvider.getInstance().getEntityByTableId(parentTab.getTable().getId());
+    }
+    Property fkProp = null;
+    for (Property property : currentEntity.getProperties()) {
+      if (property.isParent()) {
+        if (property.getTargetEntity() != null && parentEntity != null
+            && parentEntity == property.getTargetEntity()) {
+          fkProp = property;
+        }
+      }
+    }
+    if (fkProp != null) {
+      targetColumnName = fkProp.getColumnName();
+    }
+    return targetColumnName;
   }
 }

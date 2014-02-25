@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@ package org.openbravo.service.json;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import org.openbravo.base.util.CheckException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.service.web.BaseWebServiceServlet;
 import org.openbravo.service.web.InvalidContentException;
 import org.openbravo.service.web.InvalidRequestException;
@@ -75,12 +77,20 @@ public class JsonRestServlet extends BaseWebServiceServlet {
   protected void doService(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
-      if (OBContext.getOBContext() != null && OBContext.getOBContext().isPortalRole()) {
-        // Portal users are not granted to direct web services
-        log.error("Portal user " + OBContext.getOBContext().getUser() + " with role "
-            + OBContext.getOBContext().getRole()
-            + " is trying to access to non granted web service " + request.getRequestURL());
-        throw new OBSecurityException();
+      if (OBContext.getOBContext() != null) {
+        if (OBContext.getOBContext().isPortalRole()) {
+          // Portal users are not granted to direct web services
+          log.error("Portal user " + OBContext.getOBContext().getUser() + " with role "
+              + OBContext.getOBContext().getRole()
+              + " is trying to access to non granted web service " + request.getRequestURL());
+          throw new OBSecurityException("Web Services are not granted to Portal roles");
+        } else if (!OBContext.getOBContext().getRole().isWebServiceEnabled()) {
+          log.error("User " + OBContext.getOBContext().getUser() + " with role "
+              + OBContext.getOBContext().getRole()
+              + " is trying to access to non granted web service " + request.getRequestURL());
+          throw new OBSecurityException("Web Services are not granted to "
+              + OBContext.getOBContext().getRole().getName() + " role");
+        }
       }
       callServiceInSuper(request, response);
       response.setStatus(200);
@@ -122,11 +132,12 @@ public class JsonRestServlet extends BaseWebServiceServlet {
       if (!checkSetParameters(request, response, parameters)) {
         return;
       }
+      SessionInfo.setQueryProfile("jsonWebService");
       // now do the action
-      String result = DefaultJsonDataService.getInstance().fetch(parameters);
 
       // a special case if the id is asked directly then only return the single record.
       if (parameters.containsKey(JsonConstants.ID)) {
+        String result = DefaultJsonDataService.getInstance().fetch(parameters);
         final JSONObject jsonObject = new JSONObject(result);
         final JSONObject responseObject = jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE);
         if (responseObject.get(JsonConstants.DATA) instanceof JSONArray) {
@@ -141,8 +152,12 @@ public class JsonRestServlet extends BaseWebServiceServlet {
           final JSONObject jsonDataObject = responseObject.getJSONObject(JsonConstants.DATA);
           result = jsonDataObject.toString();
         }
+        writeResult(response, result);
+      } else {
+        JSONStreamWriter writer = new JSONStreamWriter(response, parameters);
+        DefaultJsonDataService.getInstance().fetch(parameters, writer);
+        writer.close();
       }
-      writeResult(response, result);
 
     } catch (final JSONException e) {
       throw new InvalidContentException(e);
@@ -319,6 +334,75 @@ public class JsonRestServlet extends BaseWebServiceServlet {
     log.debug("REQUEST CONTENT>>>>");
     log.debug(sb.toString());
     return sb.toString();
+  }
+
+  /**
+   * Helper class to write JSON results streaming them directly into the response PrintWriter
+   * 
+   * @author alostale
+   * 
+   */
+  private class JSONStreamWriter extends DefaultJsonDataService.QueryResultWriter {
+    PrintWriter writer;
+    int lines = 0;
+    int startRow = 0;
+    int endRow = -1;
+    int computedMaxResults = Integer.MAX_VALUE;
+    boolean limitReached = false;
+
+    public JSONStreamWriter(HttpServletResponse response, Map<String, String> parameters)
+        throws IOException {
+
+      if (parameters.containsKey(JsonConstants.ENDROW_PARAMETER)) {
+        endRow = Integer.valueOf(parameters.get(JsonConstants.ENDROW_PARAMETER));
+      }
+
+      if (parameters.containsKey(JsonConstants.STARTROW_PARAMETER)) {
+        startRow = Integer.valueOf(parameters.get(JsonConstants.STARTROW_PARAMETER));
+        computedMaxResults = endRow - startRow + 1;
+      }
+      response.setCharacterEncoding("UTF-8");
+      writer = response.getWriter();
+
+      response.setContentType("application/json;charset=UTF-8");
+      response.setHeader("Content-Type", "application/json;charset=UTF-8");
+
+      writer.write("{\"" + JsonConstants.RESPONSE_RESPONSE + "\":{\"" + JsonConstants.RESPONSE_DATA
+          + "\":[");
+    }
+
+    @Override
+    public void write(JSONObject json) {
+      try {
+        lines += 1;
+        if (lines >= computedMaxResults) {
+          limitReached = true;
+          return;
+        }
+        if (lines > 1) {
+          writer.write(",");
+        }
+        writer.write(json.toString());
+      } catch (Exception e) {
+        log.error("Error writing json ws response", e);
+      }
+    }
+
+    public void close() throws IOException {
+      writer.write("]");
+      writer.write(",\"" + JsonConstants.RESPONSE_STATUS + "\":"
+          + JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+      writer.write(",\"" + JsonConstants.RESPONSE_TOTALROWS + "\":"
+          + (lines + (limitReached ? 1 : 0)));
+      if (startRow != -1) {
+        writer.write(",\"" + JsonConstants.RESPONSE_STARTROW + "\":" + startRow);
+      }
+
+      writer.write(",\"" + JsonConstants.RESPONSE_ENDROW + "\":" + (startRow + lines - 1));
+
+      writer.write("}}");
+      writer.close();
+    }
   }
 
 }

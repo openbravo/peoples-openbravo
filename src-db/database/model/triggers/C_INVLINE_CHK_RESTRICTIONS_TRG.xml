@@ -29,6 +29,7 @@
   v_Currency     VARCHAR2(32);
   v_productname m_product.name%TYPE;
   v_isgeneric   CHAR(1);
+  v_Issotrx     CHAR(1);
     
 BEGIN
     
@@ -42,9 +43,9 @@ BEGIN
     v_C_INVOICE_ID:=:OLD.C_INVOICE_ID;
   END IF;
   SELECT PROCESSED, POSTED,
-    C_CURRENCY_ID
+    C_CURRENCY_ID, Issotrx
   INTO v_Processed, v_Posted,
-    v_Currency
+    v_Currency, v_Issotrx
   FROM C_INVOICE
   WHERE C_INVOICE_ID=v_C_INVOICE_ID;
   IF UPDATING THEN
@@ -81,6 +82,18 @@ BEGIN
       OR(COALESCE(:OLD.USER2_ID, '0') <> COALESCE(:NEW.USER2_ID, '0'))
       )) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
+    END IF;
+
+    IF(:NEW.M_Product_ID <> :OLD.M_Product_ID) THEN
+      IF(:NEW.C_OrderLine_ID IS NOT NULL) THEN
+	RAISE_APPLICATION_ERROR(-20000, '@ProductDefinedByOrder@') ;
+      ELSE IF(:NEW.M_InOutLine_ID IS NOT NULL AND v_Issotrx = 'N') THEN
+	RAISE_APPLICATION_ERROR(-20000, '@20206@') ;
+      ELSE IF(:NEW.M_InOutLine_ID IS NOT NULL AND v_Issotrx = 'Y') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@ProductDefinedByShipment@') ;
+      END IF;
+      END IF;
+      END IF;
     END IF;
   END IF;
   IF((DELETING OR INSERTING) AND v_Processed='Y') THEN

@@ -25,7 +25,6 @@ isc.OBGrid.addProperties({
 
   reverseRTLAlign: true,
   dragTrackerMode: 'none',
-
   // recycle gives better performance but also results
   // in strange results that not all record components are
   // drawn when scrolling very fast
@@ -58,6 +57,79 @@ isc.OBGrid.addProperties({
         });
       }
     }
+  },
+
+  //prevent multi-line content to show strangely
+  //https://issues.openbravo.com/view.php?id=17531, https://issues.openbravo.com/view.php?id=24878
+  formatDisplayValue: function (value, record, rowNum, colNum) {
+    var fld = this.getFields()[colNum],
+        index;
+
+    if (this.inCellHoverHTML || !isc.isA.String(value)) {
+      return value;
+    }
+
+    index = value.indexOf('\n');
+    if (index !== -1) {
+      return value.substring(0, index) + '...';
+    }
+
+    return value;
+  },
+
+  cellHoverHTML: function (record, rowNum, colNum) {
+
+    var ret, field = this.getField(colNum),
+        cellErrors, msg = '',
+        prefix = '',
+        i, func = this.getGridSummaryFunction(field),
+        isGroupOrSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
+
+    if (!record) {
+      return;
+    }
+
+    if (func && (isGroupOrSummary)) {
+      if (func === 'sum') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionSum');
+      }
+      if (func === 'min') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionMin');
+      }
+      if (func === 'max') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionMax');
+      }
+      if (func === 'count') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionCount');
+      }
+      if (func === 'avg') {
+        prefix = OB.I18N.getLabel('OBUIAPP_SummaryFunctionAvg');
+      }
+      if (prefix) {
+        prefix = prefix + ' ';
+      }
+    }
+
+    if (this.isCheckboxField(field)) {
+      return OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt');
+    }
+
+    if (this.cellHasErrors(rowNum, colNum)) {
+      cellErrors = this.getCellErrors(rowNum, colNum);
+      // note cellErrors can be a string or array
+      // accidentally both have the length property
+      if (cellErrors && cellErrors.length > 0) {
+        return OB.Utilities.getPromptString(cellErrors);
+      }
+    }
+    if (record && record[isc.OBViewGrid.ERROR_MESSAGE_PROP]) {
+      return record[isc.OBViewGrid.ERROR_MESSAGE_PROP];
+    }
+
+    this.inCellHoverHTML = true;
+    ret = this.Super('cellHoverHTML', arguments);
+    delete this.inCellHoverHTML;
+    return prefix + (ret ? ret : '');
   },
 
   enableShortcuts: function () {
@@ -303,7 +375,8 @@ isc.OBGrid.addProperties({
     // https://issues.openbravo.com/view.php?id=18509
     editorChanged: function (item) {
       var prop, same, opDefs, val = item.getElementValue(),
-          actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress;
+          actOnKeypress = item.actOnKeypress === true ? item.actOnKeypress : this.actOnKeypress,
+          grid = this.parentElement;
 
       if (this.sourceWidget.allowFilterExpressions && val && actOnKeypress) {
 
@@ -339,14 +412,26 @@ isc.OBGrid.addProperties({
           }
         }
       }
+
+      if (item.thresholdToFilter && item.thresholdToFilter > grid.fetchDelay) {
+        this.currentThresholdToFilter = item.thresholdToFilter;
+      } else {
+        delete this.currentThresholdToFilter;
+      }
+
+      if (grid && grid.lazyFiltering) {
+        grid.filterHasChanged = true;
+        grid.sorter.enable();
+      }
       return this.Super('editorChanged', arguments);
     },
+
 
     // function called to clear any pending performFilter calls
     // earlier type actions can already have pending filter actions
     // this deletes them
     preventPerformFilterFiring: function () {
-      this.fireOnPause("performFilter", {}, this.fetchDelay);
+      this.fireOnPause('performFilter', {}, this.fetchDelay);
     },
 
     // If the criteria contains an 'or' operator due to the changes made for solving
@@ -501,17 +586,88 @@ isc.OBGrid.addProperties({
       }
     }
 
+    if (this.lazyFiltering) {
+      this.showSortArrow = isc.ListGrid.BOTH;
+      this.sorterDefaults = {
+        click: function () {
+          var grid = this.parentElement;
+          if (!this._iconEnabled) {
+            return;
+          }
+          if (grid.filterHasChanged) {
+            // Do not change the sorting after receiving the data from the datasource
+            grid._filteringAndSortingManually = true;
+            grid.filterEditor.performFilter(true, true);
+            delete grid.filterHasChanged;
+            delete grid.sortingHasChanged;
+            delete grid._filteringAndSortingManually;
+          } else if (!isc.isA.ResultSet(grid.data)) {
+            // The initial data has not been loaded yet, refreshGrid
+            // refreshGrid applies also the current sorting
+            grid.refreshGrid();
+            delete grid.sortingHasChanged;
+          } else if (grid.sortingHasChanged) {
+            grid.setSort(grid.savedSortSpecifiers, true);
+            delete grid.sortingHasChanged;
+          }
+          if (grid && grid.sorter) {
+            grid.sorter.disable();
+          }
+        },
+        disable: function () {
+          this.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/applyPendingChanges_Disabled.png');
+          this._iconEnabled = false;
+        },
+        enable: function () {
+          this.setIcon(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/applyPendingChanges.png');
+          this._iconEnabled = true;
+        },
+        align: 'center',
+        prompt: OB.I18N.getLabel('OBUIAPP_ApplyFilters'),
+        iconWidth: 10,
+        iconHeight: 10,
+        icon: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/applyPendingChanges.png',
+        _iconEnabled: true
+      };
+    }
+
     this.Super('initWidget', arguments);
   },
 
   clearFilter: function (keepFilterClause, noPerformAction) {
     var i = 0,
-        fld, length;
+        fld, length, groupState, forceRefresh;
+    if (this.lazyFiltering) {
+      noPerformAction = true;
+      if (this.sorter) {
+        this.filterHasChanged = true;
+        this.sorter.enable();
+      }
+    }
     if (!keepFilterClause) {
+      // forcing fetch from server in case default filters are removed, in other
+      // cases adaptive filtering can be used if possible
+      if (this.data) {
+        forceRefresh = this.filterClause || this.sqlFilterClause;
+
+        groupState = this.getGroupState();
+        if (forceRefresh && groupState && groupState.groupByFields) {
+          // in case of field grouping and filter clause, remove filter grouping
+          // because when filter clause is removed data could be bigger than the
+          // amount allowed by grouping
+          this.setGroupState(null);
+        }
+
+        this.data.forceRefresh = forceRefresh;
+        if (this.data.context && this.data.context.params) {
+          delete this.data.context.params._where;
+        }
+      }
+
       delete this.filterClause;
       delete this.sqlFilterClause;
     }
-    this.forceRefresh = true;
+
     if (this.filterEditor) {
       if (this.filterEditor.getEditForm()) {
         this.filterEditor.getEditForm().clearValues();
@@ -711,7 +867,8 @@ isc.OBGrid.addProperties({
         dsURL = this.dataSource.dataURL;
     var sortCriteria;
     var lcriteria = this.getCriteria();
-    var gdata = this.getData();
+    var gdata = this.getData(),
+        isExporting = true;
     if (gdata && gdata.dataSource) {
       lcriteria = gdata.dataSource.convertRelativeDates(lcriteria);
     }
@@ -728,7 +885,7 @@ isc.OBGrid.addProperties({
       exportToFile: true,
       _textMatchStyle: 'substring',
       _UTCOffsetMiliseconds: OB.Utilities.Date.getUTCOffsetInMiliseconds()
-    }, lcriteria, this.getFetchRequestParams());
+    }, lcriteria, this.getFetchRequestParams(null, isExporting));
     if (this.getSortField()) {
       sortCriteria = this.getSort();
       if (sortCriteria && sortCriteria.length > 0) {
@@ -780,6 +937,121 @@ isc.OBGrid.addProperties({
       }
     }
     return errorRows;
+  },
+
+
+  // Does not apply if the grid is filtering lazily
+  setSort: function (sortSpecifiers, forceSort) {
+    if (!forceSort && this.lazyFiltering) {
+      this.sortingHasChanged = true;
+      if (this.sorter) {
+        this.sorter.enable();
+      }
+      this.savedSortSpecifiers = isc.shallowClone(sortSpecifiers);
+      // Refresh the header button titles
+      this.refreshHeaderButtons();
+    } else {
+      this.Super('setSort', arguments);
+    }
+  },
+
+  refreshHeaderButtons: function () {
+    var i, headerButton;
+    for (i = 0; i < this.fields.length; i++) {
+      headerButton = this.getFieldHeaderButton(i);
+      if (headerButton) {
+        headerButton.setTitle(headerButton.getTitle());
+      }
+    }
+  },
+
+  getSortFieldCount: function () {
+    if (this.lazyFiltering) {
+      if (this.savedSortSpecifiers) {
+        return this.savedSortSpecifiers.length;
+      } else {
+        return 0;
+      }
+    } else {
+      return this.Super('getSortFieldCount', arguments);
+    }
+  },
+
+  toggleSort: function (fieldName, direction) {
+    var fullIdentifierName = fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+    if (this.lazyFiltering) {
+      this.sortingHasChanged = true;
+      // If the user clicks on a column that is already ordered, reverse the sort direction
+      if (this.savedSortSpecifiers && this.savedSortSpecifiers.length > 0) {
+        if (this.savedSortSpecifiers[0].property === fieldName || this.savedSortSpecifiers[0].property === fullIdentifierName) {
+          if (this.savedSortSpecifiers[0].direction === 'ascending') {
+            this.savedSortSpecifiers[0].direction = 'descending';
+          } else {
+            this.savedSortSpecifiers[0].direction = 'ascending';
+          }
+        }
+        if (this.sorter) {
+          this.sorter.enable();
+        }
+        this.refreshHeaderButtons();
+      }
+    } else {
+      this.Super('toggleSort', arguments);
+    }
+  },
+
+  getSort: function () {
+    if (this.lazyFiltering) {
+      return this.savedSortSpecifiers;
+    } else {
+      return this.Super('getSort', arguments);
+    }
+  },
+
+  // If the grid is lazy filtering, a field will be considered ordered if it is saved in savedSortSpecifiers
+  isSortField: function (fieldName) {
+    var i, len, fullIdentifierName = fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+    if (this.lazyFiltering) {
+      if (!this.savedSortSpecifiers) {
+        return false;
+      } else {
+        //Search for the fieldName in the savedSortSpecifiers
+        len = this.savedSortSpecifiers.length;
+        for (i = 0; i < len; i++) {
+          if (this.savedSortSpecifiers[i].property === fieldName || this.savedSortSpecifiers[0].property === fullIdentifierName) {
+            return true;
+          }
+        }
+        return false;
+      }
+    } else {
+      return this.Super('isSortField', arguments);
+    }
+  },
+
+  getSortArrowImage: function (fieldNum) {
+    var sortDirection, field = this.getField(fieldNum),
+        fullIdentifierName;
+
+    if (this.lazyFiltering) {
+      if (!field) {
+        return isc.Canvas.spacerHTML(1, 1);
+      }
+      fullIdentifierName = field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+      if (this.savedSortSpecifiers && this.savedSortSpecifiers.length > 0) {
+        if (this.savedSortSpecifiers[0].property === field.name || this.savedSortSpecifiers[0].property === fullIdentifierName) {
+          sortDirection = this.savedSortSpecifiers[0].direction;
+        }
+      }
+      if (sortDirection) {
+        return this.imgHTML(Array.shouldSortAscending(sortDirection) ? this.sortAscendingImage : this.sortDescendingImage, null, null, null, null, this.widgetImgDir);
+      } else {
+        return isc.Canvas.spacerHTML(1, 1);
+      }
+    } else {
+      return this.Super('getSortArrowImage', arguments);
+    }
+
   }
 });
 

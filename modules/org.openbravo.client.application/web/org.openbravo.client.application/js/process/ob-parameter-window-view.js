@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -288,7 +288,7 @@ isc.OBParameterWindowView.addProperties({
     });
   },
 
-  handleResponse: function (refresh, message, responseActions, retryExecution) {
+  handleResponse: function (refresh, message, responseActions, retryExecution, data) {
     var window = this.parentWindow,
         tab = OB.MainView.TabSet.getTab(this.viewTabId),
         i;
@@ -296,6 +296,19 @@ isc.OBParameterWindowView.addProperties({
     // change title to done
     if (tab) {
       tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Done', [this.tabTitle]));
+    }
+
+    if (data.showResultsInProcessView) {
+      if (!this.resultLayout) {
+        this.resultLayout = isc.HLayout.create({
+          width: '100%',
+          height: '*'
+        });
+        this.addMember(this.resultLayout);
+      } else {
+        // clear the resultLayout
+        this.resultLayout.setMembers([]);
+      }
     }
 
     this.showProcessing(false);
@@ -338,6 +351,7 @@ isc.OBParameterWindowView.addProperties({
     }
 
     if (responseActions) {
+      responseActions._processView = this;
       OB.Utilities.Action.executeJSON(responseActions, null, null, this);
     }
 
@@ -417,14 +431,20 @@ isc.OBParameterWindowView.addProperties({
       if (this.grid) {
         this.grid.show();
       }
+
       this.loading.hide();
     }
   },
+
   doProcess: function (btnValue) {
     var i, tmp, view = this,
         grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
         selection, len, allRows, params, tab;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
+    if (this.resultLayout && this.resultLayout.destroy) {
+      this.resultLayout.destroy();
+      delete this.resultLayout;
+    }
     this.showProcessing(true);
 
     // change tab title to show executing...
@@ -465,7 +485,7 @@ isc.OBParameterWindowView.addProperties({
       processId: this.processId,
       windowId: this.windowId
     }, function (rpcResponse, data, rpcRequest) {
-      view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution));
+      view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
     });
   },
 

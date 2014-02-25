@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,7 +39,6 @@
       WHERE 1=1
       AND t.AD_ORG_ID IN ('1')
       AND t.AD_CLIENT_ID IN ('1')
-      AND t.M_ATTRIBUTESETINSTANCE_ID <> '0'
       GROUP BY t.M_PRODUCT_ID, t.M_ATTRIBUTESETINSTANCE_ID, t.M_LOCATOR_ID
     ]]></Sql>
     <Parameter name="adLanguage"/>
@@ -49,11 +48,6 @@
     <Parameter name="parmAttributeSetInstanceId" optional="true" after="WHERE 1=1"><![CDATA[AND T.M_ATTRIBUTESETINSTANCE_ID = ?]]></Parameter>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND t.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND t.AD_CLIENT_ID IN (" text="'1'"/>
-  </SqlMethod>
-
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
   </SqlMethod>
 
   <SqlMethod name="selectChilds" type="preparedStatement" return="multiple">

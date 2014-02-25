@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -113,7 +113,9 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
             jTab.put("fields", jFields);
             final Set<String> fields = new TreeSet<String>();
             for (Field field : tabAccess.getTab().getADFieldList()) {
-              fields.add(KernelUtils.getProperty(entity, field).getName());
+              if (!field.isReadOnly() && !field.isShownInStatusBar()) {
+                fields.add(KernelUtils.getProperty(entity, field).getName());
+              }
             }
             for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
               final String name = KernelUtils.getProperty(entity, fieldAccess.getField()).getName();
@@ -127,7 +129,10 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
         }
       }
 
-      // Processes without access
+      // processes can be secured in 3 ways:
+      // - Secured preference is set: explicit grant is required
+      // - Process is marked as requiresExplicitAccessPermission: explicit grant is required
+      // - None of the above: permission is inherited from window
       boolean securedProcess = false;
       try {
         securedProcess = "Y".equals(Preferences.getPreferenceValue("SecuredProcess", true,
@@ -137,42 +142,54 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       } catch (PropertyException e) {
         // do nothing, property is not set so securedProcess is false
       }
-      if (securedProcess) {
-        OBQuery<Field> q = OBDal
-            .getInstance()
-            .createQuery(
-                Field.class,
-                " as f where  tab.window = :window "
-                    + "and ( (column.oBUIAPPProcess is not null"
-                    + " and not exists (select 1 from "
-                    + " OBUIAPP_Process_Access a"
-                    + " where a.obuiappProcess = f.column.oBUIAPPProcess"
-                    + " and a.role.id = :role and a.active=true))"
-                    + "or (column.process is not null and "
-                    + " not exists (select 1 from ADProcessAccess a where a.process = f.column.process and "
-                    + " a.role.id = :role and a.active=true)))" + " order by f.tab");
 
-        q.setNamedParameter("window", window);
-        q.setNamedParameter("role", OBContext.getOBContext().getRole().getId());
+      String restrictedProcessesQry = " as f where  tab.window = :window and tab.active = true and (";
 
-        final JSONArray processes = new JSONArray();
-        json.put("notAccessibleProcesses", processes);
-        Tab tab = null;
-        JSONObject t;
-        JSONArray ps = null;
-        for (Field f : q.list()) {
-          if (tab == null || !tab.getId().equals(f.getTab().getId())) {
-            t = new JSONObject();
-            tab = f.getTab();
-            ps = new JSONArray();
-            t.put("tabId", tab.getId());
-            t.put("processes", ps);
-            processes.put(t);
-          }
-          final Entity entity = ModelProvider.getInstance().getEntityByTableId(
-              f.getTab().getTable().getId());
-          ps.put(KernelUtils.getProperty(f).getName());
+      restrictedProcessesQry += "(column.oBUIAPPProcess is not null";
+      if (!securedProcess) {
+        // not secured, restrict only those that require explicit permission
+        // subquery required to prevent inner join due to compound path check
+        // (process.requiresExplicitAccessPermission)
+        restrictedProcessesQry += " and exists (select 1 from OBUIAPP_Process p where p = f.column.oBUIAPPProcess and requiresExplicitAccessPermission = true) ";
+      }
+      restrictedProcessesQry += " and not exists (select 1 from " //
+          + " OBUIAPP_Process_Access a"
+          + " where a.obuiappProcess = f.column.oBUIAPPProcess"
+          + " and a.role.id = :role and a.active=true))"//
+
+          + " or (column.process is not null ";
+
+      if (!securedProcess) {
+        // not secured, restrict only those that require explicit permission
+        // subquery required to prevent inner join due to compound path check
+        // (process.requiresExplicitAccessPermission)
+        restrictedProcessesQry += " and exists (select 1 from ADProcess p where p = f.column.process and requiresExplicitAccessPermission = true) ";
+      }
+
+      restrictedProcessesQry += " and not exists (select 1 from ADProcessAccess a where a.process = f.column.process and "
+          + " a.role.id = :role and a.active=true))";
+
+      restrictedProcessesQry += ")  order by f.tab";
+
+      OBQuery<Field> q = OBDal.getInstance().createQuery(Field.class, restrictedProcessesQry);
+      q.setNamedParameter("window", window);
+      q.setNamedParameter("role", OBContext.getOBContext().getRole().getId());
+
+      final JSONArray processes = new JSONArray();
+      json.put("notAccessibleProcesses", processes);
+      Tab tab = null;
+      JSONObject t;
+      JSONArray ps = null;
+      for (Field f : q.list()) {
+        if (tab == null || !tab.getId().equals(f.getTab().getId())) {
+          t = new JSONObject();
+          tab = f.getTab();
+          ps = new JSONArray();
+          t.put("tabId", tab.getId());
+          t.put("processes", ps);
+          processes.put(t);
         }
+        ps.put(KernelUtils.getProperty(f).getName());
       }
 
       return json;

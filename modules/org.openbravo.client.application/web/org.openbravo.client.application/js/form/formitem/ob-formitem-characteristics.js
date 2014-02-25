@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,6 +51,9 @@ isc.OBCharacteristicsItem.addProperties({
     //Remove all members the widget might have
     //this.canvas.removeMembers(this.canvas.getMembers());
     //
+    //clear existing values. Refer issue https://issues.openbravo.com/view.php?id=25113
+    this.canvas.clearValues();
+
     if (value.characteristics) {
       for (field in value.characteristics) {
         if (value.characteristics.hasOwnProperty(field)) {
@@ -110,20 +113,21 @@ isc.OBCharacteristicsFilterDialog.addProperties({
   vertical: true,
   showMinimizeButton: false,
   destroyOnClose: false,
+  width: 100,
+  height: 200,
 
   mainLayoutDefaults: {
     _constructor: 'VLayout',
-    width: 380,
-    height: 105,
+    width: 300,
     layoutMargin: 5
   },
 
   buttonLayoutDefaults: {
     _constructor: 'HLayout',
     width: '100%',
-    height: 22,
+    height: 40,
     layoutAlign: 'right',
-    align: 'right',
+    align: 'center',
     membersMargin: 5,
     autoParent: 'mainLayout'
   },
@@ -306,6 +310,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     };
 
     this.tree = isc.TreeGrid.create({
+      styleName: '',
       showHeader: false,
       autoFetchData: true,
       dataArrived: dataArrived,
@@ -313,7 +318,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       getNodeByID: getNodeByID,
       loadDataOnDemand: false,
       // loading the whole tree in a single request
-      height: 400,
+      height: 200,
       showOpenIcons: false,
       showDropIcons: false,
       nodeIcon: null,
@@ -326,8 +331,18 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       selectionChanged: function () {
         me.fireOnPause('updateCharacteristicsText', function () {
           //fire on pause because selecting a node raises several time selectionChanged to select its parants
-          me.selectionVisualization.setContents(isc.OBCharacteristicsFilterItem.getDisplayValue(me.getValue()));
+          me.selectionVisualization.setContents(isc.OBCharacteristicsFilterItem.getDisplayValue(me.getValue()).asHTML());
         }, 100);
+      },
+
+      setDataSource: function (ds, fields) {
+        var treeField;
+        if (!fields || fields.length === 0) {
+          treeField = isc.shallowClone(isc.TreeGrid.TREE_FIELD);
+          treeField.escapeHTML = true;
+          fields = [treeField];
+        }
+        return this.Super("setDataSource", [ds, fields]);
       }
     });
 
@@ -393,7 +408,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
   filterDialogConstructor: isc.OBCharacteristicsFilterDialog,
   pickerIconDefaults: {
     name: 'showDateRange',
-    src: '../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/form/productCharacteristicsFilter_ico.png',
+    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/productCharacteristicsFilter_ico.png',
     width: 21,
     height: 21,
     showOver: false,
@@ -475,6 +490,17 @@ isc.OBCharacteristicsFilterItem.addProperties({
   },
 
   filterDialogCallback: function (value) {
+    // Whenever filter is changed, new criteria must force a backend call, adaptive
+    // filter cannot be used for characteristics as the information to do the matching
+    // is not present in client. Cache of localData needs to be cleaned up to force it;
+    // if not, this criteria can be considered to be more restrictive without even
+    // executing compare criteria method in case the whole page was originally retrieved
+    // without any criteria.
+    // See issue #24750
+    if (this.grid.parentElement.data) {
+      this.grid.parentElement.data.localData = null;
+    }
+
     this.internalValue = value;
     this.setElementValue(isc.OBCharacteristicsFilterItem.getDisplayValue(value));
     this.form.grid.performAction();

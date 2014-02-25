@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -170,9 +170,11 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
         //clear grouping, will be applied later
         view.viewGrid.clearGroupBy();
         view.viewGrid.setViewState(viewTabDefinition.grid);
-        view.viewGrid.refreshContents();
+        if (!view.viewGrid.lazyFiltering) {
+          view.viewGrid.refreshContents();
+        }
       }
-      if (viewTabDefinition.form) {
+      if (viewTabDefinition.form && view.viewForm.getDataSource()) {
         OB.Personalization.personalizeForm(viewTabDefinition, view.viewForm);
       }
     }
@@ -351,6 +353,11 @@ OB.Personalization.deleteViewDefinition = function (standardWindow, personalizat
           views.splice(i, 1);
           break;
         }
+      }
+      if (OB.PropertyStore.get('OBUIAPP_DefaultSavedView', standardWindow.windowId) === personalizationId) {
+        // If the 'Default View' has been deleted, the local property pointing to it is still
+        // in the browser until the following logout/login, so it should be deleted
+        delete OB.Properties['OBUIAPP_DefaultSavedView' + '_' + standardWindow.windowId];
       }
     }
   });

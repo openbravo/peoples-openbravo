@@ -139,7 +139,7 @@
       </column>
       <column name="AD_MODULE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default><![CDATA[0]]></default>
-        <onCreateDefault><![CDATA[SELECT AD_MODULE_ID FROM AD_MODULE WHERE AD_MODULE_ID<>'0' AND TYPE='M']]></onCreateDefault>
+        <onCreateDefault/>
       </column>
       <column name="UIPATTERN" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[STD]]></default>
@@ -176,6 +176,10 @@
       <column name="HQLTREEWHERECLAUSE" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
+      </column>
+      <column name="DISABLE_PARENT_KEY_PROPERTY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_AD_TAB">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
@@ -237,6 +241,7 @@
       <check name="AD_TAB_ISSINGLEROW_CHK"><![CDATA[ISSINGLEROW IN ('Y', 'N')]]></check>
       <check name="AD_TAB_ISTRANSLATIONTAB_CHK"><![CDATA[ISTRANSLATIONTAB IN ('Y', 'N')]]></check>
       <check name="AD_TAB_NAME_CHK"><![CDATA[INSTR(NAME, TO_CHAR('_')) = 0]]></check>
+      <check name="AD_TAB_PARENTKEYPROPERTY_CHK"><![CDATA[DISABLE_PARENT_KEY_PROPERTY IN ('Y', 'N')]]></check>
       <check name="AD_TAB_SHOWPARENTBUTTONS_CHK"><![CDATA[SHOWPARENTBUTTONS IN ('Y', 'N')]]></check>
     </table>
   </database>

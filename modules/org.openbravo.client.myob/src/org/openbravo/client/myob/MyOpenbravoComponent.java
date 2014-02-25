@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.ApplicationUtils;
-import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.DalUtil;
@@ -106,7 +105,6 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
       final List<JSONObject> definitions = new ArrayList<JSONObject>();
       final List<String> tmp = new ArrayList<String>();
       String classDef = "";
-      boolean hasNullMandatory = false;
       final OBQuery<WidgetClass> widgetClassesQry = OBDal.getInstance().createQuery(
           WidgetClass.class, WidgetClass.PROPERTY_SUPERCLASS + " is false");
       for (WidgetClass widgetClass : widgetClassesQry.list()) {
@@ -115,23 +113,8 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
           if (!widgetProvider.validate()) {
             continue;
           }
-          // If fetching the widgets of the own workspace, there is no need
-          // to filter out the widgets with null mandatory parameters
-          if (!isAdminMode) {
-            definitions.add(widgetProvider.getWidgetClassDefinition());
-          } else {
-            for (Parameter p : widgetClass.getOBUIAPPParameterEMObkmoWidgetClassIDList()) {
-              if (p.isMandatory() && p.getDefaultValue() == null) {
-                hasNullMandatory = true;
-                break;
-              }
-            }
-            if (!hasNullMandatory) {
-              definitions.add(widgetProvider.getWidgetClassDefinition());
-            } else {
-              hasNullMandatory = false;
-            }
-          }
+
+          definitions.add(widgetProvider.getWidgetClassDefinition());
 
           try {
             classDef = widgetProvider.generate();

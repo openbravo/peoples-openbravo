@@ -59,7 +59,7 @@
       </column>
       <column name="AD_MODULE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default><![CDATA[0]]></default>
-        <onCreateDefault><![CDATA[SELECT AD_MODULE_ID FROM AD_MODULE WHERE AD_MODULE_ID<>'0' AND TYPE='M']]></onCreateDefault>
+        <onCreateDefault/>
       </column>
       <column name="SECONDARYWHERECLAUSE" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
         <default/>

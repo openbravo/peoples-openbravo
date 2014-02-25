@@ -117,7 +117,7 @@ public class FIN_AddPaymentFromJournal extends DalBaseProcess {
           if (journalLine.isOpenItems() && journalLine.getRelatedPayment() == null) {
             // Create bundle
             vars = new VariablesSecureApp(varsAux.getUser(), varsAux.getClient(), varsAux.getOrg(),
-                varsAux.getRole());
+                varsAux.getRole(), varsAux.getLanguage());
             ProcessBundle pb = new ProcessBundle("DE1B382FDD2540199D223586F6E216D0", vars)
                 .init(conn);
             HashMap<String, Object> parameters = new HashMap<String, Object>();

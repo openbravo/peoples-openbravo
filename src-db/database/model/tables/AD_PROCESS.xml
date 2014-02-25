@@ -99,7 +99,7 @@
       </column>
       <column name="AD_MODULE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default><![CDATA[0]]></default>
-        <onCreateDefault><![CDATA[SELECT AD_MODULE_ID FROM AD_MODULE WHERE AD_MODULE_ID<>'0' AND TYPE='M']]></onCreateDefault>
+        <onCreateDefault/>
       </column>
       <column name="UIPATTERN" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[S]]></default>
@@ -110,6 +110,10 @@
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="PREVENTCONCURRENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="IS_EXPLICIT_ACCESS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
@@ -124,6 +128,7 @@
       </foreign-key>
       <check name="AD_PROCESS_ADV_CHCK"><![CDATA[ISADVANCEDFEATURE IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_CONCURRENT_CHCK"><![CDATA[PREVENTCONCURRENT IN ('Y', 'N')]]></check>
+      <check name="AD_PROCESS_EXPLICITACCESS_CK"><![CDATA[IS_EXPLICIT_ACCESS IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_ISBACKGROUND_CHK"><![CDATA[ISBACKGROUND IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_ISDIRECTPRINT_CHK"><![CDATA[ISDIRECTPRINT IN ('Y', 'N')]]></check>

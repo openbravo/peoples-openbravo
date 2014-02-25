@@ -17,7 +17,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -282,35 +282,31 @@ function updateConvertedAmounts(recalcExchangeRate) {
   var exchangeRate = frm.inpExchangeRate;
   var precision = frm.inpFinancialAccountCurrencyPrecision ? frm.inpFinancialAccountCurrencyPrecision.value : 2;
   var roundedMask = applyPrecisionToMask(precision);
+  var exchangeRateRoundedMask = OB.Format.formats.generalQtyEdition;
+  exchangeRateRoundedMask = returnMaskChange(exchangeRateRoundedMask, '.', ',', globalDecSeparator, globalGroupSeparator);
   var expectedConverted = frm.inpExpectedConverted;
   var actualConverted = frm.inpActualConverted;
   var expectedPayment = frm.inpExpectedPayment;
   var actualPayment = frm.inpActualPayment;
-  var exchangeRateValue = exchangeRate.value;
 
   if (actualConverted && expectedConverted && exchangeRate) {
-    actualConverted.value = formattedNumberOpTemp(actualConverted.value, 'round', precision, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
     if (recalcExchangeRate) {
       if (actualConverted.value && actualPayment.value) {
         if (compare(actualPayment.value, '!=', 0)) {
-          var actualConvertedValue = OB.Utilities.Number.OBMaskedToJS(actualConverted.value, globalDecSeparator, globalGroupSeparator);
-          var actualPaymentValue = OB.Utilities.Number.OBMaskedToJS(actualPayment.value, globalDecSeparator, globalGroupSeparator);
-          exchangeRateValue = (actualConvertedValue / actualPaymentValue).toString();
-          exchangeRateValue = exchangeRateValue.replace('.', globalDecSeparator);
-          exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+          exchangeRate.value = formattedNumberOpTemp(actualConverted.value, '/', actualPayment.value, exchangeRateRoundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
         }
       } else {
         exchangeRate.value = '';
       }
     } else {
       if (exchangeRate.value) {
-        actualConverted.value = formattedNumberOpTemp(actualPayment.value, '*', exchangeRateValue, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+        actualConverted.value = formattedNumberOpTemp(actualPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
       } else {
         actualConverted.value = applyFormat('0');
       }
     }
     if (exchangeRate.value && expectedPayment.value) {
-      expectedConverted.value = formattedNumberOpTemp(expectedPayment.value, '*', exchangeRateValue, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
+      expectedConverted.value = formattedNumberOpTemp(expectedPayment.value, '*', exchangeRate.value, roundedMask, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
     } else {
       expectedConverted.value = applyFormat('0');
     }

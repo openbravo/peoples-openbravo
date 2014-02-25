@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2013 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -42,6 +42,7 @@
   -- Record Info
   v_Client_ID VARCHAR2(32);
   v_Org_ID VARCHAR2(32);
+  v_Warehouse_Org VARCHAR2(32);
   v_Org_Name VARCHAR2(60);
   v_UpdatedBy VARCHAR2(32);
   v_DocAction VARCHAR(60) ;
@@ -119,6 +120,8 @@
   v_bpartner_name c_bpartner.name%TYPE;
   v_productname m_product.name%TYPE;
 
+  v_iscashvat C_Order.IsCashVat%TYPE;
+
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -179,12 +182,14 @@
       C_DocType_ID, C_DocTypeTarget_ID, c_order.AD_Client_ID,
       c_order.AD_Org_ID, c_order.UpdatedBy, M_Warehouse_ID, TRUNC(DateOrdered),
       Issotrx, c_Bpartner_Id, c_order.c_currency_id, C_PROJECT_ID,
-      C_BPartner_ID, c_order.M_PriceList_ID, invoicerule, m_pricelist.istaxincluded
+      C_BPartner_ID, c_order.M_PriceList_ID, invoicerule, m_pricelist.istaxincluded,
+      c_order.IsCashVat
     INTO v_IsProcessing, v_IsProcessed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID, v_Client_ID,
       v_Org_ID, v_UpdatedBy, v_M_Warehouse_ID, v_Date,
       v_isSoTrx, v_c_Bpartner_Id, v_c_currency_id, v_C_PROJECT_ID,
-      v_CBPartner_ID, v_PriceList_ID, v_invoicerule, v_istaxincluded
+      v_CBPartner_ID, v_PriceList_ID, v_invoicerule, v_istaxincluded,
+      v_iscashvat
     FROM C_ORDER JOIN m_pricelist ON c_order.m_pricelist_id = m_pricelist.m_pricelist_id
     WHERE C_Order_ID=v_Record_ID  FOR UPDATE;
     -- Get current DocSubTypeSO
@@ -204,8 +209,17 @@
     WHERE M_Warehouse_ID=v_M_Warehouse_ID
     AND AD_Org_ID = v_Org_ID;
 
-    IF v_count = 0 THEN
+    IF v_count = 0 AND v_IsSOTrx = 'Y' THEN
     RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@') ;
+    END IF;
+
+    SELECT AD_Org_ID
+    INTO v_Warehouse_Org
+    FROM M_Warehouse
+    WHERE M_Warehouse_ID = v_M_Warehouse_ID;
+
+    IF(ad_org_isinnaturaltree(v_Warehouse_Org, v_Org_ID, v_Client_ID) = 'N' AND v_isSoTrx = 'N') THEN
+      RAISE_APPLICATION_ERROR(-20000,'@WrongWarehouse@');
     END IF;
 
     SELECT CASE WHEN (m.ISSOTRX='Y') THEN customer_blocking  ELSE vendor_blocking END ,  
@@ -251,37 +265,8 @@
       /*
         * Undo inventory reservation
         */
-        DECLARE
-          Cur_ResLine RECORD;
-          v_QtySO NUMBER; -- Reserved
-          v_QtyOrderSO NUMBER;
-          v_QtyPO NUMBER; -- Ordered
-          v_QtyOrderPO NUMBER;
         BEGIN
           v_ResultStr:='ReserveInventory';
-          -- For all lines needing reservation
-          FOR Cur_ResLine IN
-            (SELECT l.M_Warehouse_ID, l.M_Product_ID, l.M_AttributeSetInstance_ID, l.C_OrderLine_ID,
-                 l.QtyOrdered AS Qty, l.QUANTITYORDER, l.qtyreserved, l.qtydelivered,
-                l.C_UOM_ID, l.M_PRODUCT_UOM_ID
-             FROM C_ORDERLINE l, M_PRODUCT p
-             WHERE l.C_Order_ID=v_Record_ID  -- Reserve Products (not: services, null products)
-               AND l.M_Product_ID=p.M_Product_ID
-               AND p.IsStocked='Y'
-               AND p.ProductType='I'  FOR UPDATE
-             )
-            LOOP
-            -- Qty corrected for SO/PO
-              v_QtySO:=-Cur_ResLine.QtyReserved;
-              IF (Cur_ResLine.QtyReserved=Cur_ResLine.Qty) THEN
-                v_QtyOrderSO := -Cur_ResLine.QuantityOrder;
-              ELSIF Cur_ResLine.M_Product_UOM_ID IS NOT NULL THEN
-                v_QtyOrderSO := -C_Uom_Convert(v_QtySO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
-              END IF;
-              v_QtyPO:=0;
-              v_QtyOrderPO:=NULL;
-              M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO) ;
-          END LOOP;
           -- Set reserved quantity to 0
           UPDATE C_ORDERLINE
           SET QtyReserved = 0,
@@ -309,7 +294,7 @@
     /**
     * Check if order has lines
     */
-    IF (v_DocAction = 'CO') THEN
+    IF (v_DocAction = 'CO' OR v_DocAction = 'PR') THEN
       SELECT COUNT(*)
         INTO v_Aux
        FROM C_ORDERLINE
@@ -317,6 +302,21 @@
        IF v_Aux=0 THEN
          RAISE_APPLICATION_ERROR(-20000, '@OrderWithoutLines@');
        END IF;
+    END IF;
+
+    -- Check the cash vat flag for all the taxes matches the order one
+    IF (v_DocAction IN ('CO', 'PR')) THEN
+      select count(1)
+      into v_Aux
+      from c_ordertax ot inner join c_tax t on (ot.c_tax_id = t.c_tax_id)
+      where ot.c_order_id = v_Record_ID
+      and t.iswithholdingtax = 'N'
+      and t.rate <> 0
+      and t.IsCashVat <> v_iscashvat;
+
+      IF (v_Aux > 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@CashVATNotMatch@');
+      END IF;
     END IF;
 
     /**
@@ -491,7 +491,7 @@
               v_QtyPO:=0;
               v_QtyOrderPO:=NULL;
             END IF;
-            IF (v_DocStatus<>'IP' OR v_DocAction<>'CO') THEN
+            IF ((v_DocStatus<>'IP' OR v_DocAction<>'CO') AND COALESCE(v_DocSubTypeSO, '')<>'OB') THEN
               M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO) ;
             END IF;
           END LOOP;
@@ -1089,7 +1089,7 @@
                 v_QtyOrderPO := C_Uom_Convert(v_QtyPO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
               END IF;
             END IF;
-            IF (v_DocStatus<>'IP' OR v_DocAction<>'CO') THEN
+            IF ((v_DocStatus<>'IP' OR v_DocAction<>'CO') AND COALESCE(v_DocSubTypeSO, '')<>'OB') THEN
               M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID,
               Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO);
             END IF;

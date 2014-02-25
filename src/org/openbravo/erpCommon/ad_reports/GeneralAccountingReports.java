@@ -61,8 +61,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class GeneralAccountingReports extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  String openingEntryOwner;
-  String openingEntryOwnerRef;
   private static final String C_ELEMENT_VALUE_TABLE_ID = "188";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
@@ -174,8 +172,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         TreeID = dataTree[0].id;
       OBContext.setAdminMode(false);
       try {
-        openingEntryOwner = "";
-        openingEntryOwnerRef = "";
+        String openingEntryOwner = "";
+        String openingEntryOwnerRef = "";
         // For each year, the initial and closing date is obtained
         Year year = OBDal.getInstance().get(Year.class, strYearId);
         Year yearRef = OBDal.getInstance().get(Year.class, strYearRefId);
@@ -190,14 +188,18 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           strDateToRef = strAsDateToRef;
           strDateFrom = "";
           strDateFromRef = "";
-          strYearsToClose = getYearsToClose(startingEndingDate.get("startingDate"), strOrg,
+          String[] yearsInfo = getYearsToClose(startingEndingDate.get("startingDate"), strOrg,
               year.getCalendar(), strcAcctSchemaId, false);
+          strYearsToClose = yearsInfo[0];
+          openingEntryOwner = yearsInfo[1];
           if (strYearsToClose.length() > 0) {
             strCalculateOpening = "Y";
             strYearsToClose = "," + strYearsToClose;
           }
-          strYearsToCloseRef = getYearsToClose(startingEndingDateRef.get("startingDate"), strOrg,
+          yearsInfo = getYearsToClose(startingEndingDateRef.get("startingDate"), strOrg,
               yearRef.getCalendar(), strcAcctSchemaId, true);
+          strYearsToCloseRef = yearsInfo[0];
+          openingEntryOwnerRef = yearsInfo[1];
           if (strYearsToCloseRef.length() > 0) {
             strCalculateOpening = "Y";
             strYearsToCloseRef = "," + strYearsToCloseRef;
@@ -303,8 +305,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     }
   }
 
-  private String getYearsToClose(Date startingDate, String strOrg, Calendar calendar,
+  private String[] getYearsToClose(Date startingDate, String strOrg, Calendar calendar,
       String strcAcctSchemaId, boolean isYearRef) {
+    String openingEntryOwner = "";
     Set<Year> previousYears = getOrderedPreviousYears(startingDate, calendar);
     Set<String> notClosedYears = new HashSet<String>();
     for (Year previousYear : previousYears) {
@@ -312,15 +315,12 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         if (isNotClosed(previousYear, org, strcAcctSchemaId)) {
           notClosedYears.add(previousYear.getFiscalYear());
         } else {
-          if (isYearRef) {
-            openingEntryOwnerRef = previousYear.getFiscalYear();
-          } else {
-            openingEntryOwner = previousYear.getFiscalYear();
-          }
+          openingEntryOwner = previousYear.getFiscalYear();
         }
       }
     }
-    return Utility.getInStrSet(notClosedYears);
+    String[] result = { Utility.getInStrSet(notClosedYears), openingEntryOwner };
+    return result;
   }
 
   private Set<Organization> getCalendarOwnerOrgs(String strOrg) {

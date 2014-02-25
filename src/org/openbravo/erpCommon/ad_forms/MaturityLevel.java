@@ -46,7 +46,7 @@ public class MaturityLevel {
   public MaturityLevel() {
     // Check internet availability and set proxy, to obtain maturity levels
     error = !HttpsUtils.isInternetAvailable();
-    log4j.error("Couldn't connect to Internet to obtain maturity levels");
+    log4j.debug("Connecting to Internet to obtain maturity levels");
     try {
       // retrieve the module details from the webservice
       final WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -1912,14 +1912,12 @@ public class AdvPaymentMngtDao {
   public List<FIN_Payment> getCustomerPaymentsWithCredit(Organization org, BusinessPartner bp,
       boolean isReceipt) {
 
-    List<String> confirmedStatus = FIN_Utility.getListPaymentConfirmed();
     try {
       OBContext.setAdminMode(true);
       OBCriteria<FIN_Payment> obcPayment = OBDal.getInstance().createCriteria(FIN_Payment.class);
       obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_BUSINESSPARTNER, bp));
       obcPayment.add(Restrictions.eq(FIN_Payment.PROPERTY_RECEIPT, isReceipt));
       obcPayment.add(Restrictions.ne(FIN_Payment.PROPERTY_GENERATEDCREDIT, BigDecimal.ZERO));
-      obcPayment.add(Restrictions.in(FIN_Payment.PROPERTY_STATUS, confirmedStatus));
       obcPayment.add(Restrictions.neProperty(FIN_Payment.PROPERTY_GENERATEDCREDIT,
           FIN_Payment.PROPERTY_USEDCREDIT));
       final Organization legalEntity = FIN_Utility.getLegalEntityOrg(org);
@@ -1928,7 +1926,17 @@ public class AdvPaymentMngtDao {
       obcPayment.add(Restrictions.in("organization.id", orgIds));
       obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
       obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, true);
-      return obcPayment.list();
+      List<FIN_Payment> paymentList = new ArrayList<FIN_Payment>();
+      for (FIN_Payment fp : obcPayment.list()) {
+        for (FIN_PaymentDetail fpd : fp.getFINPaymentDetailList()) {
+          for (FIN_PaymentScheduleDetail fpsd : fpd.getFINPaymentScheduleDetailList()) {
+            if (fpsd.isInvoicePaid()) {
+              paymentList.add(fp);
+            }
+          }
+        }
+      }
+      return paymentList;
     } finally {
       OBContext.restorePreviousMode();
     }

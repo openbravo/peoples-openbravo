@@ -62,10 +62,9 @@ public class TimeUIDefinition extends UIDefinition {
     if (value instanceof String) {
       return (String) value;
     }
-
     String timestamp = value.toString();
     timestamp = timestamp.substring(timestamp.indexOf(" ") + 1);
-    StringBuffer convertedValue = convertUtcToLocalTime(timestamp);
+    StringBuffer convertedValue = convertLocalTimeToUTC(timestamp);
     return convertedValue.toString();
   }
 
@@ -103,6 +102,28 @@ public class TimeUIDefinition extends UIDefinition {
 
       int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
       calendar.add(Calendar.MILLISECOND, gmtMillisecondOffset);
+      localTimeColumnValue = getClassicFormat().format(calendar.getTime(), new StringBuffer(),
+          new FieldPosition(0));
+    } catch (ParseException e) {
+      throw new OBException("Exception when parsing date ", e);
+    }
+    return localTimeColumnValue;
+  }
+
+  private StringBuffer convertLocalTimeToUTC(String value) {
+    StringBuffer localTimeColumnValue = null;
+    try {
+      Date UTCDate = getClassicFormat().parse(value);
+      Calendar now = Calendar.getInstance();
+
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(UTCDate);
+      calendar.set(Calendar.DATE, now.get(Calendar.DATE));
+      calendar.set(Calendar.MONTH, now.get(Calendar.MONTH));
+      calendar.set(Calendar.YEAR, now.get(Calendar.YEAR));
+
+      int gmtMillisecondOffset = (now.get(Calendar.ZONE_OFFSET) + now.get(Calendar.DST_OFFSET));
+      calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
       localTimeColumnValue = getClassicFormat().format(calendar.getTime(), new StringBuffer(),
           new FieldPosition(0));
     } catch (ParseException e) {

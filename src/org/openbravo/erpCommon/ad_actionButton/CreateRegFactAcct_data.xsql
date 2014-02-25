@@ -48,57 +48,6 @@
     <Parameter name="c_year_id"/>
     <Parameter name="c_year_id"/>
   </SqlMethod>
-  <SqlMethod name="getAmounts" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT (CASE SIGN(SUM(AMTACCTDR)-SUM(AMTACCTCR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-SUM(AMTACCTCR)) END) AS TOTALAMTCR,
-        (CASE SIGN(SUM(AMTACCTCR)-SUM(AMTACCTDR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-SUM(AMTACCTDR)) END) AS TOTALAMTDR, ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE,
-        RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID,C_TAX_ID,C_PROJECT_ID,C_ACTIVITY_ID,USER1_ID,USER2_ID,C_CAMPAIGN_ID,C_SALESREGION_ID
-        FROM FACT_ACCT
-        WHERE EXISTS (SELECT 1 FROM C_PERIOD P
-                      WHERE P.C_YEAR_ID = ?
-                      AND P.C_PERIOD_ID = FACT_ACCT.C_PERIOD_ID)
-        AND ACCOUNT_ID IN (SELECT C_ELEMENTVALUE_ID
-                FROM C_ELEMENTVALUE
-                WHERE C_ELEMENTVALUE.ACCOUNTTYPE = ?)
-        AND AD_ORG_ID = ?
-        AND C_ACCTSCHEMA_ID = ?
-        GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID,
-                 C_TAX_ID,C_PROJECT_ID,C_ACTIVITY_ID,USER1_ID,USER2_ID,C_CAMPAIGN_ID,C_SALESREGION_ID
-      ]]>
-    </Sql>
-    <Parameter name="c_year_id"/>
-    <Parameter name="accounttype"/>
-    <Parameter name="org"/>
-    <Parameter name="acctSchema"/>
-  </SqlMethod>
-  <SqlMethod name="getAmountsClose" type="preparedStatement" connection="true" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT (CASE sign(SUM(AMTACCTDR)-sum(amtacctcr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-sum(amtacctcr)) END) AS TOTALAMTCR,
-          (CASE sign(SUM(AMTACCTCR)-sum(amtacctdr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-sum(amtacctdr)) END) AS TOTALAMTDR, ACCOUNT_ID,
-          ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID, C_TAX_ID, C_PROJECT_ID, C_ACTIVITY_ID,
-          USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_SALESREGION_ID
-        FROM FACT_ACCT
-        WHERE EXISTS (SELECT 1 FROM C_PERIOD P
-                      WHERE P.C_YEAR_ID = ?
-                      AND P.C_PERIOD_ID = FACT_ACCT.C_PERIOD_ID)
-        AND ACCOUNT_ID IN (SELECT C_ELEMENTVALUE_ID
-                FROM C_ELEMENTVALUE
-                WHERE C_ELEMENTVALUE.ACCOUNTTYPE IN ('1'))
-        AND AD_ORG_ID = ?
-        AND C_ACCTSCHEMA_ID = ?
-        GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID, C_TAX_ID, C_PROJECT_ID,
-                 C_ACTIVITY_ID, USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_SALESREGION_ID
-      ]]>
-    </Sql>
-    <Parameter name="c_year_id"/>
-    <Parameter name="accounttype" optional="true" type="replace" after="WHERE C_ELEMENTVALUE.ACCOUNTTYPE IN (" text="'1'"/>
-    <Parameter name="org"/>
-    <Parameter name="acctSchema"/>
-  </SqlMethod>
   <SqlMethod name="getTotalAmounts" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -529,20 +478,6 @@
     <Parameter name="cYearId"/>
     <Parameter name="adOrgId"/>
   </SqlMethod>
-   <SqlMethod name="selectOrg" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME
-        FROM AD_ORG A_O, AD_ROLE_ORGACCESS A_R_O, AD_ROLE R
-        WHERE A_R_O.AD_ORG_ID = A_O.AD_ORG_ID
-        AND A_R_O.ISACTIVE = 'Y'
-        AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID
-        AND R.ISACTIVE = 'Y'
-        AND A_R_O.AD_ROLE_ID = ?
-        ORDER BY A_O.NAME
-      ]]></Sql>
-        <Parameter name="rol"/>
-   </SqlMethod>
    <SqlMethod name="treeOrgAcctSchemas" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
@@ -587,14 +522,6 @@
         <Parameter name="organizationId"/>
         <Parameter name="organizationId"/>
    </SqlMethod>
-  <SqlMethod name="getTreeOrg" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-        SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = ?
-    </Sql>
-    <Parameter name="client"/>
-  </SqlMethod>
    <SqlMethod name="getRegCount" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[

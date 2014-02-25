@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -28,7 +28,10 @@
       <![CDATA[
 	  SELECT IL.AD_ORG_ID, IL.M_PRODUCT_ID, IL.LINE, IL.DESCRIPTION,
 	  IL.C_UOM_ID, IL.M_INVENTORYLINE_ID, IL.QTYBOOK, IL.QTYCOUNT,
-	  IL.M_LOCATOR_ID FROM M_InventoryLine IL WHERE M_Inventory_ID=? ORDER BY Line
+	  IL.M_LOCATOR_ID FROM M_InventoryLine IL 
+	  WHERE M_Inventory_ID=?
+	  AND IL.QTYBOOK<>IL.QTYCOUNT
+	  ORDER BY Line
      ]]>
      </Sql>
      <Parameter name="M_Inventory_ID"/>

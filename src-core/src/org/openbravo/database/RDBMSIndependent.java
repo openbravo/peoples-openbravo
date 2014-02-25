@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2013 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -30,7 +30,7 @@ public class RDBMSIndependent {
     StringBuffer strSql = new StringBuffer();
     sql = sql.toUpperCase().replace("CALL ", "SELECT * FROM ");
     sql = sql.toUpperCase().replace("ALL TRIGGERS", "TRIGGER ALL");
-    if (totalOutParameters == 1) {
+    if (totalOutParameters > 0) {
       int init = sql.indexOf("(");
       if (init == -1)
         throw new ServletException("Badly formed sql: " + sql);
@@ -38,15 +38,13 @@ public class RDBMSIndependent {
       int end = sql.lastIndexOf(")");
       if (end == -1)
         throw new ServletException("Badly formed sql: " + sql);
-      boolean found = false, first = true;
+      boolean first = true;
       int count = 0;
       StringTokenizer stoken = new StringTokenizer(sql.substring(init + 1, end), ",", false);
       while (stoken.hasMoreTokens()) {
         String token = stoken.nextToken();
         if (token.indexOf("?") != -1) {
-          if (!found && types.elementAt(count).equalsIgnoreCase("out")) {
-            found = true;
-          } else {
+          if (!types.elementAt(count).equalsIgnoreCase("out")) {
             strSql.append((!first ? "," : "")).append(token);
             first = false;
           }

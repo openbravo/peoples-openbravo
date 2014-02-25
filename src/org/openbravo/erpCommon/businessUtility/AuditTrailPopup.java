@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -316,7 +317,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       if (bob != null) {
         // for existing records we use the current identifier
         recordStatus = "AUDIT_HISTORY_RECORD_EXISTS";
-        identifier = bob.getIdentifier();
+        identifier = StringEscapeUtils.escapeHtml(bob.getIdentifier());
       } else {
         // for deleted record we build the identifier manually
         recordStatus = "AUDIT_HISTORY_RECORD_DELETED";
@@ -545,7 +546,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         String text = Utility.messageBD(this, "AUDIT_HISTORY_DELETED_CHILDTAB", vars.getLanguage());
         text = text.replace("@elementnameCurrentTab@", elementCurrentTab);
         text = text.replace("@elementnameParentTab@", elementParentTab);
-        text = text.replace("@parentIdentifier@", parentIdentifier);
+        text = text.replace("@parentIdentifier@", StringEscapeUtils.escapeHtml(parentIdentifier));
 
         xmlDocument.setParameter("recordIdentifierText", text);
 

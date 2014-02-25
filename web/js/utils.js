@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -101,7 +101,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '18119';
+  var number = '21897';
   return number;
 }
 
@@ -131,6 +131,9 @@ function getBrowserInfo(param) {
   if (navUserAgent.indexOf("MSIE") >= 0) {
     browserName = "Microsoft Internet Explorer";
     i=navUserAgent.indexOf("MSIE")+5;
+  } else if (navUserAgent.indexOf("TRIDENT") >= 0 && navUserAgent.indexOf("RV:") >= 0) {
+    browserName = "Microsoft Internet Explorer";
+    i=navUserAgent.indexOf("RV:")+3;
   } else if (navUserAgent.indexOf("FIREFOX") >= 0) {
     browserName = "Mozilla Firefox";
     i=navUserAgent.indexOf("FIREFOX")+8;
@@ -162,7 +165,7 @@ function getBrowserInfo(param) {
     i=navUserAgent.indexOf("KONQUEROR")+10;
   }
   if (i!=0) {
-    while (navUserAgent.substring(i, i+1) != " " && navUserAgent.substring(i, i+1) != ";" && i < navUserAgent.length) {
+    while (navUserAgent.substring(i, i+1) != " " && navUserAgent.substring(i, i+1) != ";" && navUserAgent.substring(i, i+1) != ")" && i < navUserAgent.length) {
       browserVersion += navUserAgent.substring(i, i+1);
       i++;
     }
@@ -1674,7 +1677,7 @@ function keyControl(pushedKey) {
     return false;
   }
   if (isKeyboardLocked==false && !isCtrlPressed && !isAltPressed && pushedKey.type=='keydown' && pressedKeyCode!='16' && pressedKeyCode!='17' && pressedKeyCode!='18') {
-    if (typeof focusedWindowElement != "undefined") {
+    if (typeof focusedWindowElement != "undefined" && focusedWindowElement != null) {
       if (focusedWindowElement.tagName == 'SELECT') {
         if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) setTimeout("focusedWindowElement.onchange();",50);
       }
@@ -2386,7 +2389,7 @@ function hideMenuIcon(id) {
   if (parent.frameMenu) {
     getFrame('main').isMenuBlock=true;
   }
-  if (aTag.className.indexOf("Main_LeftTabsBar_ButtonLeft_hidden") == -1) {
+  if (aTag && aTag.className && aTag.className.indexOf("Main_LeftTabsBar_ButtonLeft_hidden") == -1) {
     aTag.className = "Main_LeftTabsBar_ButtonLeft_hidden";
     imgTag.className = "Main_LeftTabsBar_ButtonLeft_Icon";
     disableAttributeWithFunction(aTag, 'obj', 'onclick');

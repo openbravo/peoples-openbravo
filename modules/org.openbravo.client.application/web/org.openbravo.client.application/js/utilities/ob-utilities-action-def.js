@@ -85,7 +85,7 @@ OB.Utilities.Action.set('openDirectTab', function (paramObj) {
     }
   }
   if (!paramObj.isOpening) {
-    OB.Utilities.openDirectTab(paramObj.tabId, paramObj.recordId, paramObj.command, paramObj.newTabPosition);
+    OB.Utilities.openDirectTab(paramObj.tabId, paramObj.recordId, paramObj.command, paramObj.newTabPosition, paramObj.criteria);
   }
   if ((paramObj.wait === true || paramObj.wait === 'true') && paramObj.threadId) {
     if (!OB.MainView.TabSet.getTabObject(paramObj.newTabPosition) || OB.MainView.TabSet.getTabObject(paramObj.newTabPosition).pane.isLoadingTab === true) {

@@ -44,16 +44,18 @@ isc.OBViewDataSource.addProperties({
     }
 
     // Always show progress in save button and disable save and close one
-    btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
-    btn.setDisabled(true);
-    btn.customState = 'Progress';
-    btn.resetBaseStyle();
-    btn.markForRedraw();
+    if (this.view.toolBar) {
+      btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
+      btn.setDisabled(true);
+      btn.customState = 'Progress';
+      btn.resetBaseStyle();
+      btn.markForRedraw();
 
-    btn2 = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVECLOSE);
-    if (btn2) {
-      btn2.setDisabled(true);
-      btn2.markForRedraw();
+      btn2 = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVECLOSE);
+      if (btn2) {
+        btn2.setDisabled(true);
+        btn2.markForRedraw();
+      }
     }
   },
 
@@ -64,11 +66,13 @@ isc.OBViewDataSource.addProperties({
       editedRecord.editColumnLayout.toggleProgressIcon(false);
     }
 
-    // always remove the progress style here anyway
-    btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
-    btn.customState = '';
-    btn.resetBaseStyle();
-    btn.markForRedraw();
+    if (this.view.toolBar) {
+      // always remove the progress style here anyway
+      btn = this.view.toolBar.getLeftMember(isc.OBToolbar.TYPE_SAVE);
+      btn.customState = '';
+      btn.resetBaseStyle();
+      btn.markForRedraw();
+    }
   },
 
   performDSOperation: function (operationType, data, callback, requestProperties) {
@@ -108,6 +112,19 @@ isc.OBViewDataSource.addProperties({
       requestProperties.clientContext.editRow = this.view.viewGrid.getEditRow();
     }
 
+    if (operationType === 'fetch' && this.view.viewGrid.lazyFiltering) {
+      // Use the stored sort properties
+      if (this.view.viewGrid.savedSortSpecifiers && this.view.viewGrid.savedSortSpecifiers.length > 0) {
+        if (this.view.viewGrid.savedSortSpecifiers[0].direction === 'ascending') {
+          requestProperties.sortBy = this.view.viewGrid.savedSortSpecifiers[0].property;
+        } else {
+          requestProperties.sortBy = '-' + this.view.viewGrid.savedSortSpecifiers[0].property;
+        }
+      } else {
+        delete requestProperties.sortBy;
+      }
+    }
+
     var newRequestProperties = this.getTabInfoRequestProperties(this.view, requestProperties);
     // standard update is not sent with operationType
     var additionalPara = {
@@ -135,8 +152,21 @@ isc.OBViewDataSource.addProperties({
       if (isNewRecord && (operationType === 'update' || operationType === 'add')) {
         this.view._savingNewRecord = true;
       }
+      data = this.deleteNulls(data);
       this.Super('performDSOperation', [operationType, data, callback, newRequestProperties]);
     }
+  },
+
+  deleteNulls: function (data) {
+    var column;
+    for (column in data) {
+      if (data.hasOwnProperty(column)) {
+        if (!data[column] && data[column] !== false && data[column] !== 0 && !this.view.viewForm.getFieldFromFieldName(column)) {
+          delete data[column];
+        }
+      }
+    }
+    return data;
   },
 
   getAdditionalProps: function () {

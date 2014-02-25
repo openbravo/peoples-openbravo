@@ -31,15 +31,6 @@
       ]]>
     </Sql>
   </SqlMethod>
-  <SqlMethod name="selectProductUom" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT C_UOM_ID
-      FROM M_PRODUCT
-      WHERE M_PRODUCT_ID = ?
-    </Sql>
-    <Parameter name="mProductId"/>
-  </SqlMethod>
   <SqlMethod name="strMProductUOMID" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

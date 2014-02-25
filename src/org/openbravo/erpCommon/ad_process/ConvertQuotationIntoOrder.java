@@ -20,7 +20,6 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,13 +34,11 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBErrorBuilder;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -54,7 +51,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
-import org.openbravo.model.project.Project;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalBaseProcess;
@@ -65,9 +61,6 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
   @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
 
-    String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("dateFormat.java");
-    SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatString);
     HttpServletRequest request = RequestContext.get().getRequest();
     VariablesSecureApp vars = new VariablesSecureApp(request);
     boolean recalculatePrices = "N".equals(vars.getStringParameter("inprecalculateprices", false,
@@ -78,6 +71,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       String orderId = (String) bundle.getParams().get("C_Order_ID");
       Order objOrder = OBDal.getInstance().get(Order.class, orderId);
       Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
+      boolean update = false;
+      BigDecimal Zero = BigDecimal.ZERO;
 
       if (FIN_Utility.isBlockedBusinessPartner(objOrder.getBusinessPartner().getId(), true, 1)) {
         // If the Business Partner is blocked, the Order should not be completed.
@@ -135,13 +130,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
 
         // Copy line to the new Sales Order
         OrderLine objCloneOrdLine = (OrderLine) DalUtil.copy(ordLine, false);
-        Project project = objOrder.getProject();
-        String strProjectID = project == null ? "" : project.getId();
-        // Recalculate Taxes
-        String strCTaxID = Tax.get(new DalConnectionProvider(false), ordLine.getProduct().getId(),
-            dateFormat.format(new Date()), ordLine.getOrganization().getId(), ordLine
-                .getWarehouse().getId(), ordLine.getSalesOrder().getInvoiceAddress().getId(),
-            ordLine.getSalesOrder().getPartnerAddress().getId(), strProjectID, true);
+
+        String strCTaxID = objCloneOrdLine.getTax().getId();
         TaxRate lineTax = OBDal.getInstance().get(TaxRate.class, strCTaxID);
 
         if (lineTax == null) {
@@ -150,7 +140,6 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
           }
           strMessage = strMessage.append(lineNo);
         }
-        objCloneOrdLine.setTax(lineTax);
 
         // Update the HashMap of the Taxes. HashMap<TaxId, TotalAmount>
         BigDecimal price = BigDecimal.ZERO;
@@ -286,6 +275,21 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       OBDal.getInstance().refresh(objCloneOrder);
       OBDal.getInstance().refresh(objOrder);
 
+      for (OrderLine orderLine : objCloneOrder.getOrderLineList()) {
+        if (("I".equals(orderLine.getProduct().getProductType()))
+            && (orderLine.getProduct().isStocked())) {
+          if (orderLine.isDirectShipment()) {
+            update = ((Zero.subtract(orderLine.getReservedQuantity())).subtract(orderLine
+                .getDeliveredQuantity())) != Zero;
+          } else {
+            update = ((orderLine.getOrderedQuantity().subtract(orderLine.getReservedQuantity()))
+                .subtract(orderLine.getDeliveredQuantity())) != Zero;
+          }
+          if (update) {
+            callUpdateStoragePending(objCloneOrder, orderLine);
+          }
+        }
+      }
       OBDal.getInstance().commitAndClose();
       OBError result = OBErrorBuilder.buildMessage(null, "success", "@SalesOrderDocumentno@ "
           + objCloneOrder.getDocumentNo() + " @beenCreated@");
@@ -368,6 +372,49 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       parameters.add(objCloneOrder.getId());
       final String procedureName = "c_order_post1";
       CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  /**
+   * Update storage details
+   */
+  private void callUpdateStoragePending(Order objCloneOrder, OrderLine objCloneOrderLine) {
+    BigDecimal qtySo = BigDecimal.ZERO;
+    BigDecimal qtyOrderSo = BigDecimal.ZERO;
+    String productUom = null;
+    try {
+      final List<Object> parameters = new ArrayList<Object>();
+      parameters.add(objCloneOrder.getClient().getId());
+      parameters.add(objCloneOrder.getOrganization().getId());
+      parameters.add(objCloneOrder.getUpdatedBy().getId());
+      parameters.add(objCloneOrderLine.getProduct().getId());
+      parameters.add(objCloneOrderLine.getWarehouse().getId());
+      parameters.add(objCloneOrderLine.getAttributeSetValue() != null ? objCloneOrderLine
+          .getAttributeSetValue().getId() : null);
+      parameters.add(objCloneOrderLine.getUOM().getId());
+      productUom = objCloneOrderLine.getOrderUOM() != null ? objCloneOrderLine.getOrderUOM()
+          .getId() : null;
+      parameters.add(productUom);
+      if (objCloneOrderLine.isDirectShipment()) {
+        qtySo = BigDecimal.ZERO;
+      } else {
+        qtySo = objCloneOrderLine.getOrderedQuantity();
+      }
+      qtySo = qtySo.subtract(objCloneOrderLine.getReservedQuantity());
+      qtySo = qtySo.subtract(objCloneOrderLine.getDeliveredQuantity());
+      parameters.add(qtySo);
+      qtyOrderSo = objCloneOrderLine.getOrderQuantity();
+      parameters.add(qtyOrderSo);
+      parameters.add(BigDecimal.ZERO); // PO quantity
+      parameters.add(null);
+      final String procedureName = "m_update_storage_pending";
+      CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
+
+      // update orderline
+      objCloneOrderLine.setReservedQuantity(objCloneOrderLine.getReservedQuantity().add(qtySo));
+
     } catch (Exception e) {
       throw new OBException(e);
     }

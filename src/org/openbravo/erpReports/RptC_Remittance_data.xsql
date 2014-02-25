@@ -50,8 +50,4 @@
         <![CDATA[ AND cs.C_REMITTANCE_ID IN ]]>
         </Parameter>
    </SqlMethod>
-   <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-   </SqlMethod>
 </SqlClass>

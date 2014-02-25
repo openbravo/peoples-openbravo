@@ -57,6 +57,10 @@ isc.OBTextItem.addProperties({
     if (!mask) {
       return null;
     }
+    //when ranges are already present, return the same
+    if (mask.indexOf('[') !== -1) {
+      return mask;
+    }
     split = mask.split('');
     for (i = 0; i < split.length; i++) {
       if (escaped) {
@@ -113,6 +117,21 @@ isc.ClassFactory.defineClass('OBTextFilterItem', isc.OBTextItem);
 isc.OBTextFilterItem.addProperties({
   allowExpressions: true,
   validateAgainstMask: false,
+
+  init: function () {
+    var field = this.grid.getField(this.name);
+    if (field && field.gridProps && field.gridProps.filterOnChange === false) {
+      this.actOnKeypress = false;
+    }
+    this.Super('init', arguments);
+  },
+
+  blur: function () {
+    if (this.actOnKeypress === false) {
+      this.form.grid.performAction();
+    }
+    return this.Super('blur', arguments);
+  },
 
   // solve a small bug in the value expressions
   buildValueExpressions: function () {

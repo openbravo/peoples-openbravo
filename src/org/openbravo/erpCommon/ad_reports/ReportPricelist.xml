@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2006 Openbravo SLU 
+* All portions are Copyright (C) 2001-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -45,11 +45,11 @@
     <FIELD id="fieldRownum1">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
     <FIELD id="fieldVersionId" attribute="onclick" replace="xx">mPricelistVersionId</FIELD>
-    <FIELD id="fieldVersionName">versionName</FIELD>
+    <FIELD id="fieldVersionName" replaceCharacters="html">versionName</FIELD>
     <FIELD id="fieldMProductCategoryId">mProductCategoryId</FIELD>
-    <FIELD id="fieldCategoryName">categoryName</FIELD>
+    <FIELD id="fieldCategoryName" replaceCharacters="html">categoryName</FIELD>
     <FIELD id="fieldProductName" attribute="onclick" replace="yy">mProductId</FIELD>
-    <FIELD id="fieldProductName">productName</FIELD>
+    <FIELD id="fieldProductName" replaceCharacters="html">productName</FIELD>
     <FIELD id="fieldPricelimit" format="priceInform">pricelimit</FIELD>
     <FIELD id="fieldPricelist" format="priceInform">pricelist</FIELD>
     <FIELD id="fieldPricestd" format="priceInform">pricestd</FIELD>

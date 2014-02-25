@@ -193,7 +193,7 @@ public abstract class NumberUIDefinition extends UIDefinition {
     }
 
     public String getFormat() {
-      return "euroEdition";
+      return "generalQtyEdition";
     }
   }
 

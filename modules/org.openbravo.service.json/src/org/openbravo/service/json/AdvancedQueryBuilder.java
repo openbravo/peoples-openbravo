@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,7 +49,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
@@ -66,12 +65,12 @@ public class AdvancedQueryBuilder {
   private static final String CRITERIA_KEY = "criteria";
   private static final String VALUE_KEY = "value";
   private static final String FIELD_NAME_KEY = "fieldName";
-  private static final String EXISTS_QUERY_KEY = "existsQuery";
+  public static final String EXISTS_QUERY_KEY = "existsQuery";
   private static final String OPERATOR_KEY = "operator";
   private static final String ALIAS_PREFIX = "alias_";
   private static final String JOIN_ALIAS_PREFIX = "join_";
   private static final char ESCAPE_CHAR = '|';
-  private static final String EXISTS_VALUE_HOLDER = "$value";
+  public static final String EXISTS_VALUE_HOLDER = "$value";
 
   private static final String OPERATOR_AND = "and";
   static final String OPERATOR_OR = "or";
@@ -120,7 +119,7 @@ public class AdvancedQueryBuilder {
   private static final String OPERATOR_BETWEENINCLUSIVE = "betweenInclusive";
   private static final String OPERATOR_IBETWEEN = "iBetween";
   private static final String OPERATOR_IBETWEENINCLUSIVE = "iBetweenInclusive";
-  private static final String OPERATOR_EXISTS = "exists";
+  public static final String OPERATOR_EXISTS = "exists";
 
   private JSONObject criteria = null;
 
@@ -151,6 +150,11 @@ public class AdvancedQueryBuilder {
   private boolean joinAssociatedEntities = false;
 
   private List<String> additionalProperties = new ArrayList<String>();
+  private Entity subEntity;
+  private Property distinctProperty;
+  private DataEntityQueryService subDataEntityQueryService;
+
+  private int aliasOffset = 0;
 
   public Entity getEntity() {
     return entity;
@@ -201,7 +205,49 @@ public class AdvancedQueryBuilder {
 
     whereClause += " ";
 
+    if (subEntity != null) {
+      // if there's subentity, process it as a subquery with "exists"
+      String subEntityClientOrg = " and e.organization.id "
+          + createInClause(OBContext.getOBContext().getReadableOrganizations());
+      subEntityClientOrg += " and e.client.id "
+          + createInClause(OBContext.getOBContext().getReadableClients());
+
+      AdvancedQueryBuilder subEntityQueryBuilder = subDataEntityQueryService.getQueryBuilder();
+      subEntityQueryBuilder.aliasOffset = typedParameters.size();
+
+      String subentityWhere = subEntityQueryBuilder.getWhereClause();
+      if (StringUtils.isEmpty(subentityWhere.trim())) {
+        subentityWhere += " where ";
+      } else {
+        subentityWhere += " and ";
+      }
+
+      String distinctPropName = distinctProperty.getName();
+      if (distinctProperty.isComputedColumn()) {
+        distinctPropName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + distinctPropName;
+      }
+      whereClause += StringUtils.isEmpty(whereClause.trim()) ? "where" : "and";
+      whereClause += " exists (select 1 from " + subEntity.getName() + " "
+          + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e." + distinctPropName
+          + " = " + mainAlias + subEntityClientOrg + ") ";
+      typedParameters.addAll(subEntityQueryBuilder.typedParameters);
+    }
+
     return whereClause;
+  }
+
+  private String createInClause(String[] values) {
+    if (values.length == 0) {
+      return " in ('') ";
+    }
+    final StringBuilder sb = new StringBuilder();
+    for (final String v : values) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append("'" + v + "'");
+    }
+    return " in (" + sb.toString() + ")";
   }
 
   private String addWhereOrgParameters(String where) {
@@ -499,9 +545,11 @@ public class AdvancedQueryBuilder {
       useFieldName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + useFieldName;
     }
 
+    boolean tableReference = false;
     if (properties.size() >= 2) {
       final Property refProperty = properties.get(properties.size() - 2);
-      if (refProperty.getDomainType() instanceof TableDomainType) {
+      tableReference = refProperty.getDomainType() instanceof TableDomainType;
+      if (tableReference) {
         // special case table reference itself
         final boolean isTable = property.getEntity() == ModelProvider.getInstance().getEntity(
             Table.ENTITY_NAME);
@@ -552,9 +600,13 @@ public class AdvancedQueryBuilder {
       }
     } else if (!useProperty.isPrimitive()) {
       clause = clause + ".id";
+    } else if (tableReference && useProperty.isTranslatable()
+        && OBContext.hasTranslationInstalled()) {
+      // filtering by table reference translatable field: use translation table
+      clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause);
     }
 
-    if (ignoreCase(useProperty, operator)) {
+    if (ignoreCase(properties, operator)) {
       clause = "upper(" + clause + ")";
     }
     return clause;
@@ -570,16 +622,12 @@ public class AdvancedQueryBuilder {
     // property is not part of the identifier. Also hyphen is accepted if
     // the property is the unique property of the identifier
     if (property.isIdentifier()) {
-      // column associated with the property
-      final Column relatedColumn = OBDal.getInstance().get(Column.class, property.getColumnId());
-      final Table relatedTable = relatedColumn.getTable();
-
       // TODO: this can be improved the left clause computation
       // correctly uses a || concatenation, so the value clause
       // can also be made more advanced.
       // Also filtering by date and number values can be a problem
       // maybe use a pragmatic approach there
-      if (isTableWithMultipleIdentifierColumns(relatedTable)) {
+      if (property.getEntity().getIdentifierProperties().size() > 1) {
         // if the value consists of multiple parts then filtering won't work
         // only search on the first part then, is pragmatic but very workable
         if (localValue != null && localValue.toString().contains(IdentifierProvider.SEPARATOR)) {
@@ -627,22 +675,6 @@ public class AdvancedQueryBuilder {
     return clause;
   }
 
-  /* Return true if the identifier of the table is composed of more than one column */
-  private Boolean isTableWithMultipleIdentifierColumns(Table relatedTable) {
-    int identifierCounter = 0;
-    for (Column curColumn : relatedTable.getADColumnList()) {
-      if (curColumn.isIdentifier()) {
-        identifierCounter += 1;
-        if (identifierCounter > 1) {
-          // if there are more than one identifier return true
-          return true;
-        }
-      }
-    }
-    // only one identifier. Is not multiple
-    return false;
-  }
-
   private Object getTypeSafeValue(String operator, Property property, Object value)
       throws JSONException {
     if (value == null) {
@@ -650,14 +682,16 @@ public class AdvancedQueryBuilder {
     }
 
     if (isLike(operator)) {
-      if (operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_NOTCONTAINS)
-          || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_ICONTAINS)
+      if (operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_ICONTAINS)
           || operator.equals(OPERATOR_CONTAINSFIELD)) {
         return "%" + escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
-      } else if (operator.equals(OPERATOR_NOTSTARTSWITH)
-          || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)
-          || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_STARTSWITHFIELD)) {
+      } else if (operator.equals(OPERATOR_NOTCONTAINS) || operator.equals(OPERATOR_CONTAINS)) {
+        return "%" + escapeLike(value.toString()).replaceAll(" ", "%") + "%";
+      } else if (operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
+          || operator.equals(OPERATOR_STARTSWITHFIELD)) {
         return escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
+      } else if (operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)) {
+        return escapeLike(value.toString()).replaceAll(" ", "%") + "%";
       } else {
         return "%" + escapeLike(value.toString());
       }
@@ -882,17 +916,35 @@ public class AdvancedQueryBuilder {
     throw new IllegalArgumentException("Operator not supported " + operator);
   }
 
+  private boolean ignoreCase(List<Property> properties, String operator) {
+    boolean operatorCase = operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
+        || operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ENDSWITH)
+        || operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ICONTAINS)
+        || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_INOTENDSWITH)
+        || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_NOTCONTAINS)
+        || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
+        || operator.equals(OPERATOR_IENDSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
+        || operator.equals(OPERATOR_IBETWEEN) || operator.equals(OPERATOR_IGREATEROREQUAL)
+        || operator.equals(OPERATOR_ILESSOREQUAL) || operator.equals(OPERATOR_IGREATERTHAN)
+        || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_IBETWEENINCLUSIVE);
+
+    for (Property property : properties) {
+      if (!property.isPrimitive()
+          || (!property.isNumericType() && !property.isDate() && !property.isDatetime())) {
+        return operatorCase;
+      }
+    }
+    return false;
+  }
+
   private boolean ignoreCase(Property property, String operator) {
     if (property.isPrimitive()
         && (property.isNumericType() || property.isDate() || property.isDatetime())) {
       return false;
     }
     return operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
-        || operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ENDSWITH)
-        || operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ICONTAINS)
-        || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_INOTENDSWITH)
-        || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_NOTCONTAINS)
-        || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
+        || operator.equals(OPERATOR_ICONTAINS) || operator.equals(OPERATOR_INOTSTARTSWITH)
+        || operator.equals(OPERATOR_INOTENDSWITH) || operator.equals(OPERATOR_INOTCONTAINS)
         || operator.equals(OPERATOR_IENDSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
         || operator.equals(OPERATOR_IBETWEEN) || operator.equals(OPERATOR_IGREATEROREQUAL)
         || operator.equals(OPERATOR_ILESSOREQUAL) || operator.equals(OPERATOR_IGREATERTHAN)
@@ -1051,7 +1103,7 @@ public class AdvancedQueryBuilder {
   }
 
   private String getTypedParameterAlias() {
-    return ":" + ALIAS_PREFIX + typedParameters.size();
+    return ":" + ALIAS_PREFIX + (typedParameters.size() + aliasOffset);
   }
 
   /**
@@ -1190,7 +1242,7 @@ public class AdvancedQueryBuilder {
     if (isIdentifier) {
       Entity searchEntity = getEntity();
       // a path to an entity, find the last entity
-      final String prefix;
+      String prefix;
       if (!localOrderBy.equals(JsonConstants.IDENTIFIER)) {
         // be lazy get the last property, it belongs to the last entity
         final Property prop = DalUtil.getPropertyFromPath(searchEntity, localOrderBy);
@@ -1198,6 +1250,13 @@ public class AdvancedQueryBuilder {
             + searchEntity);
         searchEntity = prop.getEntity();
         prefix = localOrderBy.substring(0, localOrderBy.lastIndexOf(DalUtil.DOT) + 1);
+
+        String originalPropName = localOrderBy.replace(DalUtil.DOT + JsonConstants.IDENTIFIER, "");
+        Property originalProp = DalUtil.getPropertyFromPath(getEntity(), originalPropName);
+        if (originalProp.isComputedColumn()) {
+          prefix += Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + prefix;
+        }
+
       } else {
         prefix = "";
       }
@@ -1220,13 +1279,6 @@ public class AdvancedQueryBuilder {
         }
       }
     } else {
-      Entity searchEntity = getEntity();
-      Property property = searchEntity.getProperty(localOrderBy, false);
-      if (property != null && property.isComputedColumn()) {
-        // Computed columns are accessed through proxy
-        localOrderBy = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + localOrderBy;
-      }
-
       paths.add(localOrderBy);
     }
 
@@ -1336,6 +1388,28 @@ public class AdvancedQueryBuilder {
     return query;
   }
 
+  /*
+   * To handle cases where if the select part contains a summary function, the query builder fails
+   * as the join values are not properly replaced. Refer
+   * https://issues.openbravo.com/view.php?id=25008
+   */
+  private String replaceJoinsWithValue(String value) {
+    String query = value, joinValue = null;
+    if (value.contains("join")) {
+      joinValue = value.substring(0, value.indexOf("."));
+      for (JoinDefinition joinDefinition : joinDefinitions) {
+        if (joinDefinition.joinAlias.equals(joinValue)) {
+          String string = joinDefinition.property.toString();
+          string = string.substring(string.indexOf(".") + 1, string.length());
+          query = getMainAlias() + DalUtil.DOT + string + DalUtil.DOT
+              + value.substring(value.indexOf(".") + 1, value.length());
+          break;
+        }
+      }
+    }
+    return query;
+  }
+
   /**
    * @return true if one of the filter parameters is the {@link JsonConstants#ORG_PARAMETER}.
    */
@@ -1423,7 +1497,18 @@ public class AdvancedQueryBuilder {
     if (joinedPropertyIndex == (props.size() - 1)) {
       return alias;
     }
-    return alias + DalUtil.DOT + props.get(props.size() - 1).getName();
+    Property prop = props.get(props.size() - 1);
+    String propName = null;
+    if (props.get(0).isComputedColumn()) {
+      propName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY;
+      for (Property p : props) {
+        propName += DalUtil.DOT + p.getName();
+      }
+    } else {
+      propName = prop.getName();
+    }
+
+    return alias + DalUtil.DOT + propName;
   }
 
   private String getNewUniqueJoinAlias() {
@@ -1440,26 +1525,19 @@ public class AdvancedQueryBuilder {
       return checkAlias.equals(ownerAlias) && checkProperty == property;
     }
 
-    public String getPropertyPath() {
-      if (ownerAlias != null) {
-        for (JoinDefinition jd : AdvancedQueryBuilder.this.joinDefinitions) {
-          if (jd.getJoinAlias().equals(ownerAlias)) {
-            return jd.getPropertyPath() + DalUtil.DOT + property.getName();
-          }
-        }
-      }
-      return property.getName();
-    }
-
     public String getJoinStatement() {
+      String propName;
+      if (property.isComputedColumn()) {
+        propName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + property.getName();
+      } else {
+        propName = property.getName();
+      }
       if (orNesting > 0) {
         return " left outer join " + (fetchJoin ? "fetch " : "")
-            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + property.getName() + " as "
-            + joinAlias;
+            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + propName + " as " + joinAlias;
       } else {
         return " left join " + (fetchJoin ? "fetch " : "")
-            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + property.getName() + " as "
-            + joinAlias;
+            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + propName + " as " + joinAlias;
       }
     }
 
@@ -1475,16 +1553,8 @@ public class AdvancedQueryBuilder {
       this.ownerAlias = ownerAlias;
     }
 
-    public boolean isFetchJoin() {
-      return fetchJoin;
-    }
-
     public void setFetchJoin(boolean fetchJoin) {
       this.fetchJoin = fetchJoin;
-    }
-
-    public Property getProperty() {
-      return property;
     }
   }
 
@@ -1569,6 +1639,9 @@ public class AdvancedQueryBuilder {
         localField = sb.toString();
       }
     }
+    // for select clause with functions replace the joins before so that the join values are not
+    // lost later. Refer issue https://issues.openbravo.com/view.php?id=25008
+    localField = replaceJoinsWithValue(localField);
     selectClauseParts.add(function + "(" + localField + ")");
   }
 
@@ -1593,5 +1666,19 @@ public class AdvancedQueryBuilder {
 
   public void setAdditionalProperties(List<String> additionalProperties) {
     this.additionalProperties = additionalProperties;
+  }
+
+  public void setSubEntityName(String subEntityName) {
+    this.subEntity = ModelProvider.getInstance().getEntity(subEntityName);
+  }
+
+  public void setSubDataEntityQueryService(DataEntityQueryService dataEntityQueryService) {
+    this.subDataEntityQueryService = dataEntityQueryService;
+
+  }
+
+  public void setDistinctProperty(Property distinctProperty) {
+    this.distinctProperty = distinctProperty;
+
   }
 }

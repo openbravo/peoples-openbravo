@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -99,10 +99,10 @@
 <FIELD id="parameterProposed" attribute="value" format="euroEdition">amount</FIELD>
 <FIELD id="fieldDate">dateplanned</FIELD>
 <FIELD id="fieldOrg">org</FIELD>
-<FIELD id="fieldPayment">debtPayment</FIELD>
-<FIELD id="fieldBank">bank</FIELD>
-<FIELD id="fieldCurrency">currency</FIELD>
-<FIELD id="fieldInvoice">invoice</FIELD>
+<FIELD id="fieldPayment" replaceCharacters="html">debtPayment</FIELD>
+<FIELD id="fieldBank" replaceCharacters="html">bank</FIELD>
+<FIELD id="fieldCurrency" replaceCharacters="html">currency</FIELD>
+<FIELD id="fieldInvoice" replaceCharacters="html">invoice</FIELD>
 <FIELD id="fieldAmount" format="euroInform">pAmount</FIELD>
 <FIELD id="fieldConverted" format="euroInform">converted</FIELD>
 

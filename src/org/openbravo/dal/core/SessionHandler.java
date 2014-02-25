@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,8 @@
 package org.openbravo.dal.core;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
@@ -29,11 +31,13 @@ import org.hibernate.Transaction;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.Identifiable;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ExternalConnectionPool;
 
 /**
  * Keeps the Hibernate Session and Transaction in a ThreadLocal so that it is available throughout
@@ -46,6 +50,21 @@ import org.openbravo.dal.service.OBDal;
 // framework
 public class SessionHandler implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(SessionHandler.class);
+
+  private static ExternalConnectionPool externalConnectionPool;
+
+  {
+    String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("db.externalPoolClassName");
+    if (poolClassName != null) {
+      try {
+        externalConnectionPool = ExternalConnectionPool.getInstance(poolClassName);
+      } catch (Throwable e) {
+        externalConnectionPool = null;
+        log.warn("External connection pool class not found: " + poolClassName, e);
+      }
+    }
+  }
 
   // The threadlocal which handles the session
   private static ThreadLocal<SessionHandler> sessionHandler = new ThreadLocal<SessionHandler>();
@@ -93,6 +112,7 @@ public class SessionHandler implements OBNotSingleton {
 
   private Session session;
   private Transaction tx;
+  private Connection connection;
 
   // Sets the session handler at rollback so that the controller can rollback
   // at the end
@@ -107,8 +127,29 @@ public class SessionHandler implements OBNotSingleton {
     session = thisSession;
   }
 
+  public void setConnection(Connection connection) {
+    this.connection = connection;
+  }
+
+  public Connection getConnection() {
+    return this.connection;
+  }
+
   protected Session createSession() {
-    return SessionFactoryController.getInstance().getSessionFactory().openSession();
+    // Checks if the session connection has to be obtained using an external connection pool
+    if (externalConnectionPool != null && this.getConnection() == null) {
+      Connection externalConnection = externalConnectionPool.getConnection();
+      this.setConnection(externalConnection);
+    }
+    if (this.connection != null) {
+      // If the connection has been obtained using an external connection pool it is passed to
+      // openSession, to prevent a new connection to be created using the Hibernate default
+      // connection pool
+      return SessionFactoryController.getInstance().getSessionFactory()
+          .openSession(this.connection);
+    } else {
+      return SessionFactoryController.getInstance().getSessionFactory().openSession();
+    }
   }
 
   protected void closeSession() {
@@ -210,9 +251,16 @@ public class SessionHandler implements OBNotSingleton {
     try {
       checkInvariant();
       flushRemainingChanges();
-      tx.commit();
+      if (connection == null || (connection != null && !connection.isClosed())) {
+        if (connection != null) {
+          connection.setAutoCommit(false);
+        }
+        tx.commit();
+      }
       tx = null;
       err = false;
+    } catch (SQLException e) {
+      log.error("Error while closing the connection", e);
     } finally {
       if (err) {
         try {
@@ -221,6 +269,13 @@ public class SessionHandler implements OBNotSingleton {
         } catch (Throwable t) {
           // ignore these exception not to hide others
         }
+      }
+      try {
+        if (connection != null && !connection.isClosed()) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        log.error("Error while closing the connection", e);
       }
       deleteSessionHandler();
       closeSession();
@@ -265,15 +320,22 @@ public class SessionHandler implements OBNotSingleton {
     log.debug("Rolling back transaction");
     try {
       checkInvariant();
-      tx.rollback();
+      if (connection == null || (connection != null && !connection.isClosed())) {
+        tx.rollback();
+      }
       tx = null;
+    } catch (SQLException e) {
+      log.error("Error while closing the connection", e);
     } finally {
       deleteSessionHandler();
       try {
+        if (connection != null && !connection.isClosed()) {
+          connection.close();
+        }
         log.debug("Closing session");
         closeSession();
-      } finally {
-        // purposely ignoring it to not hide other errors
+      } catch (SQLException e) {
+        log.error("Error while closing the connection", e);
       }
     }
     setSession(null);

@@ -43,13 +43,6 @@
     <Parameter name="adOrgClient"   type="replace" optional="true"  after="AD_OrgInfo.AD_Org_ID IN (" text="'1'"></Parameter>
   </SqlMethod>
 
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment>Create a registry</SqlMethodComment>
-      <Sql></Sql>
-    <Parameter name="adOrgId" id="paramKeyParent"></Parameter>
-<Parameter name="adClientId"></Parameter><Parameter name="isactive"></Parameter><Parameter name="cLocationId"></Parameter><Parameter name="cLocationIdr"></Parameter><Parameter name="duns"></Parameter><Parameter name="taxid"></Parameter><Parameter name="paGoalId"></Parameter><Parameter name="cBpartnerId"></Parameter><Parameter name="cBpartnerIdr"></Parameter><Parameter name="logo"></Parameter><Parameter name="referenceOrder"></Parameter>
-   </SqlMethod>
-
    <SqlMethod name="selectOrgName" type="preparedStatement" return="string" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

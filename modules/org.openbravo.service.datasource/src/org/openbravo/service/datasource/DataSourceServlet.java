@@ -232,7 +232,6 @@ public class DataSourceServlet extends BaseKernelServlet {
           } finally {
             OBContext.restorePreviousMode();
           }
-          response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
           if (getDataSource(request) instanceof DefaultDataSourceService) {
             QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
                 getDataSource(request).getEntity());
@@ -285,6 +284,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       try {
         OBContext.setAdminMode();
         response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
+        response.setCharacterEncoding("UTF-8");
         writer = response.getWriter();
         VariablesSecureApp vars = new VariablesSecureApp(request);
         Window window = parameters.get("tab") == null || parameters.get("tab").equals("undefined") ? null

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.openbravo.test.webservice.PerformanceTest;
+import org.openbravo.test.webservice.WSAddRecordWithComputedColumns;
 import org.openbravo.test.webservice.WSReadTest;
 import org.openbravo.test.webservice.WSUpdateTest;
 
@@ -40,6 +41,7 @@ public class AllWebserviceTests {
     suite.addTestSuite(WSReadTest.class);
     suite.addTestSuite(WSUpdateTest.class);
     suite.addTestSuite(PerformanceTest.class);
+    suite.addTestSuite(WSAddRecordWithComputedColumns.class);
 
     // $JUnit-END$
     return suite;

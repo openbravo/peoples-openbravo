@@ -29,11 +29,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.ProcessInvoiceHook;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
@@ -74,6 +78,10 @@ public class ProcessInvoice extends HttpSecureAppServlet {
   private List<FIN_Payment> creditPayments = new ArrayList<FIN_Payment>();
   private final AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
   private static final String Purchase_Invoice_Window = "183";
+
+  @Inject
+  @Any
+  private Instance<ProcessInvoiceHook> hooks;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -133,6 +141,19 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         OBDal.getInstance().save(invoice);
         OBDal.getInstance().flush();
 
+        OBError msg = null;
+        for (ProcessInvoiceHook hook : hooks) {
+          msg = hook.preProcess(invoice, strdocaction);
+          if (msg != null && "Error".equals(msg.getType())) {
+            vars.setMessage(strTabId, msg);
+            String strWindowPath = Utility.getTabURL(strTabId, "R", true);
+            if (strWindowPath.equals(""))
+              strWindowPath = strDefaultServlet;
+            printPageClosePopUp(response, vars, strWindowPath);
+            return;
+          }
+        }
+
         OBContext.setAdminMode(true);
         Process process = null;
         try {
@@ -186,16 +207,51 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         }
         OBDal.getInstance().save(invoice);
         OBDal.getInstance().flush();
+
+        OBContext.setAdminMode();
+        try {
+          // on error close popup
+          if (pinstance.getResult() == 0L) {
+            OBDal.getInstance().commitAndClose();
+            final PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this,
+                pinstance.getId());
+            myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
+            log4j.debug(myMessage.getMessage());
+            vars.setMessage(strTabId, myMessage);
+
+            String strWindowPath = Utility.getTabURL(strTabId, "R", true);
+            if (strWindowPath.equals(""))
+              strWindowPath = strDefaultServlet;
+            printPageClosePopUp(response, vars, strWindowPath);
+            return;
+          }
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+
+        for (ProcessInvoiceHook hook : hooks) {
+          msg = hook.postProcess(invoice, strdocaction);
+          if (msg != null && "Error".equals(msg.getType())) {
+            vars.setMessage(strTabId, msg);
+            String strWindowPath = Utility.getTabURL(strTabId, "R", true);
+            if (strWindowPath.equals(""))
+              strWindowPath = strDefaultServlet;
+            printPageClosePopUp(response, vars, strWindowPath);
+            OBDal.getInstance().rollbackAndClose();
+            return;
+          }
+        }
+
         OBDal.getInstance().commitAndClose();
         final PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this,
             pinstance.getId());
         myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
         log4j.debug(myMessage.getMessage());
         vars.setMessage(strTabId, myMessage);
+
         OBContext.setAdminMode();
         try {
-          // on error close popup
-          if (pinstance.getResult() == 0L || !"CO".equals(strdocaction)) {
+          if (!"CO".equals(strdocaction)) {
             String strWindowPath = Utility.getTabURL(strTabId, "R", true);
             if (strWindowPath.equals(""))
               strWindowPath = strDefaultServlet;
@@ -625,3 +681,4 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     return "Servlet to Process Invoice";
   }
 }
+

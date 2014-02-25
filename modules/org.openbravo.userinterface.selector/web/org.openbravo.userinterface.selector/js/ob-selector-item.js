@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,7 @@ isc.OBSelectorPopupWindow.addProperties({
 
   initWidget: function () {
     var selectorWindow = this,
-        okButton, cancelButton, operator, i;
+        okButton, cancelButton, operator, i, hasIdentifier;
 
     this.setFilterEditorProperties(this.selectorGridFields);
 
@@ -61,15 +61,26 @@ isc.OBSelectorPopupWindow.addProperties({
       operator = 'iStartsWith';
     }
 
+    hasIdentifier = false;
     for (i = 0; i < this.selectorGridFields.length; i++) {
       this.selectorGridFields[i].canSort = (this.selectorGridFields[i].canSort === false ? false : true);
+      this.selectorGridFields[i].escapeHTML = (this.selectorGridFields[i].escapeHTML === false ? false : true);
       if (this.selectorGridFields[i].disableFilter) {
         this.selectorGridFields[i].canFilter = false;
       } else {
         this.selectorGridFields[i].canFilter = true;
       }
+      if (this.selectorGridFields[i].name === OB.Constants.IDENTIFIER) {
+        hasIdentifier = true;
+      }
     }
     if (!this.dataSource.fields || !this.dataSource.fields.length || this.dataSource.fields.length === 0) {
+      if (!hasIdentifier && this.selectorGridFields) {
+        this.selectorGridFields.push({
+          name: OB.Constants.IDENTIFIER,
+          escapeHTML: true
+        });
+      }
       this.dataSource.fields = this.selectorGridFields;
       this.dataSource.init();
     }
@@ -522,7 +533,13 @@ isc.OBSelectorItem.addProperties({
     }
 
     //Setting the element value again to align the cursor position correctly.
-    this.setElementValue(identifier);
+    //Before setting the value check if the identifier is part of the value map or the full identifier is entered.
+    //If it fails set newValue as value.
+    if ((this.valueMap && this.valueMap[newValue] === identifier && identifier.trim() !== '') || this.fullIdentifierEntered) {
+      this.setElementValue(identifier);
+    } else {
+      this.setElementValue(newValue);
+    }
   },
 
   setPickListWidth: function () {
@@ -660,6 +677,7 @@ isc.OBSelectorItem.addProperties({
     }
 
     fields = form.fields || grid.fields;
+    form.hiddenInputs = form.hiddenInputs || {};
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {
@@ -822,7 +840,9 @@ isc.OBSelectorItem.addProperties({
   mapValueToDisplay: function (value) {
     var ret = this.Super('mapValueToDisplay', arguments);
     if (ret === value && this.isDisabled()) {
-      return '';
+      if (!this.valueMap || (this.valueMap && !this.valueMap[value])) {
+        return '';
+      }
     }
     // if value is null then don't set it in the valueMap, this results 
     // in null being displayed in the combobox
@@ -989,6 +1009,7 @@ isc.OBSelectorLinkItem.addProperties({
         form = this.form,
         grid = this.grid,
         item, value, fields = form.fields || grid.fields;
+    form.hiddenInputs = form.hiddenInputs || {};
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {
         if (outFields[i].suffix) {

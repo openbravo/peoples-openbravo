@@ -87,6 +87,8 @@ public class OBViewTab extends BaseTemplateComponent {
   private OBViewTab parentTabComponent;
   private String parentProperty = null;
   private List<ButtonField> buttonFields = null;
+  // Includes also the non displayed buttons
+  private List<ButtonField> allButtonFields = null;
   private List<IconButton> iconButtons = null;
   private boolean buttonSessionLogic;
   private boolean isRootTab;
@@ -204,6 +206,25 @@ public class OBViewTab extends BaseTemplateComponent {
     return buttonFields;
   }
 
+  public List<ButtonField> getAllButtonFields() {
+    if (allButtonFields != null) {
+      return allButtonFields;
+    }
+    allButtonFields = new ArrayList<ButtonField>();
+    final List<Field> adFields = new ArrayList<Field>(tab.getADFieldList());
+    Collections.sort(adFields, new FormFieldComparator());
+    for (Field fld : adFields) {
+      if (fld.isActive()) {
+        if (!(ApplicationUtils.isUIButton(fld))) {
+          continue;
+        }
+        ButtonField btn = new ButtonField(fld);
+        allButtonFields.add(btn);
+      }
+    }
+    return allButtonFields;
+  }
+
   public List<IconButton> getIconButtons() {
     if (iconButtons != null) {
       return iconButtons;
@@ -267,7 +288,8 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getParentProperty() {
-    if (parentTabComponent == null) {
+    Boolean disableParentKeyProperty = getTab().isDisableParentKeyProperty();
+    if (parentTabComponent == null || disableParentKeyProperty) {
       return "";
     }
     if (parentProperty != null) {
@@ -572,7 +594,6 @@ public class OBViewTab extends BaseTemplateComponent {
       final DynamicExpressionParser parser = new DynamicExpressionParser(tab.getDisplayLogic(),
           tab, inpColumnNames);
       jsExpression = parser.getJSExpression();
-
       // Retrieves the preference attributes used in the display logic of the tab
       setPreferenceAttributesFromParserResult(parser, this.getWindowId());
     }
@@ -611,6 +632,27 @@ public class OBViewTab extends BaseTemplateComponent {
       }
     }
     return preferenceAttributes;
+  }
+
+  // Return the list of fields of these tab that are part of the display logic of its subtabs
+  public List<String> getDisplayLogicFields() {
+    boolean getOnlyFirstLevelSubTabs = false;
+    List<Tab> subTabs = KernelUtils.getInstance().getTabSubtabs(tab, getOnlyFirstLevelSubTabs);
+    List<String> displayLogicFields = new ArrayList<String>();
+    for (Tab subTab : subTabs) {
+      if (subTab.getDisplayLogic() != null && !subTab.getDisplayLogic().isEmpty()) {
+        boolean inpColumnNames = true;
+        final DynamicExpressionParser parser = new DynamicExpressionParser(
+            subTab.getDisplayLogic(), tab, inpColumnNames);
+        List<String> tokens = parser.getOtherTokensInExpression();
+        for (String token : tokens) {
+          if (!displayLogicFields.contains(token) && fieldHandler.isField(token)) {
+            displayLogicFields.add(token);
+          }
+        }
+      }
+    }
+    return displayLogicFields;
   }
 
   public class ButtonField {

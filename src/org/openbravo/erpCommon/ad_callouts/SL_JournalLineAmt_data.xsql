@@ -33,31 +33,6 @@
     </Sql>
     <Parameter name="cAcctSchemaId"/>
   </SqlMethod>
-  <SqlMethod name="currencyRate" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      select c_currency_rate(?, ?, TO_DATE(?), ?, ?, ?) from dual
-    </Sql>
-    <Parameter name="cCurrencyId"/>
-    <Parameter name="targetCurrencyId"/>
-    <Parameter name="DateAcct"/>
-    <Parameter name="currencyRateType"/>
-    <Parameter name="adCientId"/>
-    <Parameter name="adOrgId"/>
-  </SqlMethod>
-  <SqlMethod name="currencyRate2" type="preparedStatement" return="String" default="1">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-	SELECT CurrencyRate 
-	FROM GL_Journal 
-	WHERE GL_Journal_ID=? 
-	AND C_Currency_ID=? 
-	AND CurrencyRateType=?
-    </Sql>
-    <Parameter name="GLJournalId"/>
-    <Parameter name="cCurrencyId"/>
-    <Parameter name="currencyRateType"/>
-  </SqlMethod>
    <SqlMethod name="selectGeneralLedger" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

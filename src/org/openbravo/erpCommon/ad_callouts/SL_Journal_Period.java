@@ -92,7 +92,6 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     }
 
     String strDateAcct = strDateAcctNew;
-    String strDateDoc = strDateDocNew;
     String strcPeriodId = strcPeriodIdNew;
     // When DateDoc is changed, update DateAcct
     if (strChanged.equals("inpdatedoc")) {
@@ -119,14 +118,12 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
           strDateAcct = EndDate;
       } else {
         strDateAcct = EndDate;
-        strDateDoc = EndDate;
       }
     }
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Journal_Period';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpdateacct\", \"" + strDateAcct + "\"),");
-    resultado.append("new Array(\"inpdatedoc\", \"" + strDateAcct + "\"),");
     resultado.append("new Array(\"inpcPeriodId\", \"" + strcPeriodId + "\"),");
     if (myMessage != null) {
       resultado.append("new Array('MESSAGE', \"" + myMessage.getMessage() + "\"),");

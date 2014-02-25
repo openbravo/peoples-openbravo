@@ -10,6 +10,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.QueryTimeoutException;
+import org.hibernate.Session;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
@@ -28,6 +29,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSet;
@@ -41,6 +43,7 @@ import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class InventoryCountProcess implements Process {
   private static final Logger log4j = Logger.getLogger(InventoryCountProcess.class);
@@ -156,6 +159,7 @@ public class InventoryCountProcess implements Process {
     insert.append(", " + MaterialTransaction.PROPERTY_UPDATED);
     insert.append(", " + MaterialTransaction.PROPERTY_UPDATEDBY);
     insert.append(", " + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
+    insert.append(", " + MaterialTransaction.PROPERTY_CHECKRESERVEDQUANTITY);
     insert.append(", " + MaterialTransaction.PROPERTY_MOVEMENTDATE);
     insert.append(", " + MaterialTransaction.PROPERTY_STORAGEBIN);
     insert.append(", " + MaterialTransaction.PROPERTY_PRODUCT);
@@ -176,6 +180,9 @@ public class InventoryCountProcess implements Process {
     insert.append(", now()");
     insert.append(", u");
     insert.append(", 'I+'");
+    // We have to set check reservation quantity flag equal to false
+    insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
+        + InventoryCount.PROPERTY_PROCESSED);
     insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
         + InventoryCount.PROPERTY_MOVEMENTDATE);
     insert.append(", e." + InventoryCountLine.PROPERTY_STORAGEBIN);
@@ -229,7 +236,7 @@ public class InventoryCountProcess implements Process {
     where.append("   join p." + Product.PROPERTY_ATTRIBUTESET + " as aset");
     where.append(" where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory");
     where.append("   and aset." + AttributeSet.PROPERTY_REQUIREATLEASTONEVALUE + " = true");
-    where.append("   and coalesce(p." + Product.PROPERTY_ATTRIBUTESETVALUE + ", '-') <> 'F'");
+    where.append("   and coalesce(p." + Product.PROPERTY_USEATTRIBUTESETVALUEAS + ", '-') <> 'F'");
     where.append("   and coalesce(icl." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
         + ", '0') = '0'");
     where.append("  order by icl." + InventoryCountLine.PROPERTY_LINENO);
@@ -256,6 +263,8 @@ public class InventoryCountProcess implements Process {
         + ", '0') = coalesce(icl2." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE + ", '0')");
     where.append("         and coalesce(icl." + InventoryCountLine.PROPERTY_ORDERUOM
         + ", '0') = coalesce(icl2." + InventoryCountLine.PROPERTY_ORDERUOM + ", '0')");
+    where.append(" and coalesce(icl." + InventoryCountLine.PROPERTY_UOM
+        + ", '0') = coalesce(icl2." + InventoryCountLine.PROPERTY_UOM + ", '0')");
     where.append("         and icl." + InventoryCountLine.PROPERTY_STORAGEBIN + " = icl2."
         + InventoryCountLine.PROPERTY_STORAGEBIN);
     where.append("         and icl." + InventoryCountLine.PROPERTY_LINENO + " <> icl2."
@@ -327,23 +336,38 @@ public class InventoryCountProcess implements Process {
   }
 
   private void checkStock(InventoryCount inventory) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as icl");
-    where.append(" , " + StorageDetail.ENTITY_NAME + " as sd");
-    where.append(" where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inv");
-    where.append("   and sd." + StorageDetail.PROPERTY_PRODUCT + " = icl."
+    String attribute;
+    final StringBuilder hqlString = new StringBuilder();
+    hqlString.append("select sd.id ");
+    hqlString.append(" from MaterialMgmtInventoryCountLine as icl");
+    hqlString.append(" , " + StorageDetail.ENTITY_NAME + " as sd");
+    hqlString.append(" where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = ?");
+    hqlString.append("   and sd." + StorageDetail.PROPERTY_PRODUCT + " = icl."
         + InventoryCountLine.PROPERTY_PRODUCT);
-    where.append("   and sd." + StorageDetail.PROPERTY_ORGANIZATION + " = icl."
+    hqlString.append("   and sd." + StorageDetail.PROPERTY_ORGANIZATION + " = icl."
         + InventoryCountLine.PROPERTY_ORGANIZATION);
-    where.append("   and (sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " < 0");
-    where.append("     or sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + " < 0");
-    where.append("     )");
-    where.append(" order by icl." + InventoryCountLine.PROPERTY_LINENO);
-    OBQuery<InventoryCountLine> iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class,
-        where.toString());
-    iclQry.setNamedParameter("inv", inventory.getId());
-    if (iclQry.count() > 0) {
-      throw new OBException("@NotEnoughStocked@ @line@ " + iclQry.list().get(0).getLineNo());
+    hqlString.append("   and (sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " < 0");
+    hqlString.append("     or sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + " < 0");
+    hqlString.append("     )");
+    hqlString.append(" order by icl." + InventoryCountLine.PROPERTY_LINENO);
+
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(hqlString.toString());
+    query.setString(0, inventory.getId());
+    query.setMaxResults(1);
+
+    if (!query.list().isEmpty()) {
+      StorageDetail storageDetail = OBDal.getInstance().get(StorageDetail.class,
+          query.list().get(0).toString());
+      attribute = (!storageDetail.getAttributeSetValue().getIdentifier().isEmpty()) ? " @PCS_ATTRIBUTE@ '"
+          + storageDetail.getAttributeSetValue().getIdentifier() + "', "
+          : "";
+      throw new OBException(String.format(Utility
+          .messageBD(new DalConnectionProvider(), "insuffient_stock",
+              OBContext.getOBContext().getLanguage().getLanguage())
+          .replaceAll("%1", storageDetail.getProduct().getIdentifier()).replaceAll("%2", attribute)
+          .replaceAll("%3", storageDetail.getUOM().getIdentifier())
+          .replaceAll("%4", storageDetail.getStorageBin().getIdentifier())));
     }
   }
 }

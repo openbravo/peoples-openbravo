@@ -11,26 +11,34 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.window;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.window.OBViewFieldHandler.OBViewField;
 import org.openbravo.client.application.window.OBViewFieldHandler.OBViewFieldDefinition;
+import org.openbravo.client.application.window.OBViewTab.ButtonField;
 import org.openbravo.client.kernel.BaseTemplateComponent;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
@@ -46,6 +54,8 @@ import org.openbravo.service.json.JsonConstants;
 public class OBViewGridComponent extends BaseTemplateComponent {
 
   private static final String DEFAULT_TEMPLATE_ID = "91DD63545B674BE8801E1FA4F48FF4C6";
+  private static final String PROCESS_NOW_PROPERTY = "processNow";
+  private static final String PROCESSED_PROPERTY = "processed";
   protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
 
   static {
@@ -231,4 +241,139 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     this.viewTab = viewTab;
   }
 
+  /**
+   * Returns the string representation of an array that contains all the properties that must always
+   * be returned from the datasource when the grid asks for data: - id - client and organization -
+   * all the properties that compose the identifier of the entity - all button fields with label
+   * values - the link to parent properties - all the properties that are part of the display logic
+   * of the tab buttons
+   */
+  public List<String> getRequiredGridProperties() {
+    List<String> requiredGridProperties = new ArrayList<String>();
+    requiredGridProperties.add("id");
+    // Needed to check if the record is readonly (check addWritableAttribute method of
+    // DefaultJsonDataService)
+    requiredGridProperties.add("client");
+    requiredGridProperties.add("organization");
+    // Audit fields are mandatory because the FIC does not returned them when called in EDIT mode
+    requiredGridProperties.add("updatedBy");
+    requiredGridProperties.add("updated");
+    requiredGridProperties.add("creationDate");
+    requiredGridProperties.add("createdBy");
+
+    // Always include all the properties that are part of the identifier of the entity
+    for (Property identifierProperty : this.entity.getIdentifierProperties()) {
+      requiredGridProperties.add(identifierProperty.getName());
+    }
+
+    // Properties related to buttons that have label values
+    List<ButtonField> buttonFields = getViewTab().getAllButtonFields();
+    for (ButtonField buttonField : buttonFields) {
+      requiredGridProperties.add(buttonField.getPropertyName());
+    }
+
+    // List of properties that are part of the display logic of the subtabs
+    List<String> tabDisplayLogicFields = getViewTab().getDisplayLogicFields();
+    for (String tabDisplayLogicField : tabDisplayLogicFields) {
+      requiredGridProperties.add(tabDisplayLogicField);
+    }
+
+    // List of properties that are part of the display logic of buttons
+    List<String> propertiesInButtonFieldDisplayLogic = getViewTab().getFieldHandler()
+        .getPropertiesInButtonFieldDisplayLogic();
+    for (String propertyName : propertiesInButtonFieldDisplayLogic) {
+      requiredGridProperties.add(propertyName);
+    }
+
+    // List of hidden properties that are part of display logic (see
+    // https://issues.openbravo.com/view.php?id=25586)
+    List<String> hiddenPropertiesInDisplayLogic = getViewTab().getFieldHandler()
+        .getHiddenPropertiesInDisplayLogic();
+    for (String propertyName : hiddenPropertiesInDisplayLogic) {
+      requiredGridProperties.add(propertyName);
+    }
+
+    // Always include the propertyt that links to the parent tab
+    String linkToParentPropertyName = this.getLinkToParentPropertyName();
+    if (linkToParentPropertyName != null && !linkToParentPropertyName.isEmpty()) {
+      requiredGridProperties.add(linkToParentPropertyName);
+    }
+
+    // Include the Stored in Session properties
+    List<String> storedInSessionProperties = getViewTab().getFieldHandler()
+        .getStoredInSessionProperties();
+    for (String storedInSessionProperty : storedInSessionProperties) {
+      requiredGridProperties.add(storedInSessionProperty);
+    }
+
+    // Include the Processing and Processed propertes, required by doc action buttons (see
+    // https://issues.openbravo.com/view.php?id=25460)
+    if (getViewTab().getFieldHandler().hasProcessNowProperty()) {
+      requiredGridProperties.add(PROCESS_NOW_PROPERTY);
+    }
+    if (getViewTab().getFieldHandler().hasProcessedProperty()) {
+      requiredGridProperties.add(PROCESSED_PROPERTY);
+    }
+
+    return requiredGridProperties;
+  }
+
+  private String getLinkToParentPropertyName() {
+    Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
+    if (parentTab == null) {
+      return null;
+    }
+    List<Property> linkToparentPropertyList = entity.getParentProperties();
+    if (linkToparentPropertyList.isEmpty()) {
+      return null;
+    }
+    String parentTableId = parentTab.getTable().getId();
+    for (Property linkToParentProperty : linkToparentPropertyList) {
+      Property referencedProperty = linkToParentProperty.getReferencedProperty();
+      String referencedTableId = referencedProperty.getEntity().getTableId();
+      if (parentTableId.equals(referencedTableId)) {
+        return linkToParentProperty.getName();
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns true if the grid should filter and sort lazily. In that case, the changes done by the
+   * user to filter editor and to the grid sorting will not by applied until the user clicks on an
+   * 'Apply changes' button
+   */
+  public boolean getLazyFiltering() {
+    Boolean lazyFiltering = null;
+    List<Object> parameterList = new ArrayList<Object>();
+
+    String tabConfsHql = " as p where p.tab.id = ? ";
+    parameterList.add(tab.getId());
+
+    // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
+    OBQuery<GCTab> query = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql);
+    query.setParameters(parameterList);
+    List<GCTab> tabConfs = query.list();
+    if (!tabConfs.isEmpty()) {
+      if ("Y".equals(tabConfs.get(0).getIsLazyFiltering())) {
+        lazyFiltering = true;
+      } else if ("N".equals(tabConfs.get(0).getIsLazyFiltering())) {
+        lazyFiltering = false;
+      }
+    }
+    if (lazyFiltering == null) {
+      // Trying to get parameters from "Grid Configuration (System)" window
+      List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
+      if (!sysConfs.isEmpty()) {
+        if (lazyFiltering == null) {
+          lazyFiltering = sysConfs.get(0).isLazyFiltering();
+        }
+      }
+    }
+    if (lazyFiltering != null) {
+      return lazyFiltering;
+    } else {
+      return false;
+    }
+  }
 }

@@ -1243,6 +1243,8 @@ isc.OBToolbar.addProperties({
           }
           currentContext.viewForm.view.attachmentExists = attachmentExists;
           doRefresh(buttonsByContext[currentContext], currentContext.getCurrentValues() || {}, noneOrMultipleRecordsSelected, noneOrMultipleRecordsSelected, me);
+          //compute and apply tab display logic again after fetching auxilary inputs.
+          currentContext.updateSubtabVisibility();
         };
       };
 
@@ -1256,7 +1258,9 @@ isc.OBToolbar.addProperties({
             theForm = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm,
             isNew = currentContext.viewForm.isNew,
             hideAllButtons = selectedRecords.size() === 0 && !currentContext.isShowingForm,
-            currentValues = currentContext.getCurrentValues();
+            currentValues = currentContext.getCurrentValues(),
+            gridVisibleProperties = [],
+            len;
 
         if (!hideAllButtons && (this.view.isEditingGrid || this.view.isShowingForm)) {
           hideAllButtons = theForm.hasErrors() || !theForm.allRequiredFieldsSet();
@@ -1290,6 +1294,15 @@ isc.OBToolbar.addProperties({
             requestParams.MULTIPLE_ROW_IDS = multipleSelectedRowIds;
           }
           allProperties = currentContext.getContextInfo(false, true, false, true);
+          if (currentContext.viewGrid && currentContext.viewGrid.fields) {
+            len = currentContext.viewGrid.fields.length;
+            for (i = 0; i < len; i++) {
+              if (currentContext.viewGrid.fields[i].name[0] !== '_') {
+                gridVisibleProperties.push(currentContext.viewGrid.fields[i].name);
+              }
+            }
+            allProperties._gridVisibleProperties = gridVisibleProperties;
+          }
           OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, callbackHandler(currentContext, me));
         } else {
           doRefresh(buttonsByContext[currentContext], currentValues || {}, hideAllButtons || noneOrMultipleRecordsSelected, numOfSelRecords !== 1, this);

@@ -92,7 +92,7 @@ public abstract class WidgetProvider {
   private static final String ABOUTFIELDDEFINITIONS = "aboutFieldDefinitions";
   protected static final String PARAMETERS = "parameters";
   protected static final String FIELDDEFINITIONS = "fieldDefinitions";
-  private static final String ITEMDATA = "itemData";
+  private static final String VALUEMAP = "valueMap";
   private static final String PARAMETERID = "parameterId";
   private static final String PARAMETERNAME = "name";
   private static final String PARAMETERTITLE = "title";
@@ -212,9 +212,9 @@ public abstract class WidgetProvider {
         final Object valueMap = getComboBoxData(reference);
         if (valueMap != null) {
           if (valueMap instanceof Collection<?>) {
-            fieldDefinition.put(ITEMDATA, (Collection<?>) valueMap);
+            fieldDefinition.put(VALUEMAP, (Collection<?>) valueMap);
           } else {
-            fieldDefinition.put(ITEMDATA, valueMap);
+            fieldDefinition.put(VALUEMAP, valueMap);
           }
         }
         fieldDefinition.put(PARAMETERTITLE, getParameterLabel(parameter));

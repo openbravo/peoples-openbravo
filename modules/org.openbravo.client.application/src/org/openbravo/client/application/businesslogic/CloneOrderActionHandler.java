@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Mallikarjun M
  ************************************************************************
@@ -65,6 +65,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       objCloneOrder.setDocumentStatus("DR");
       objCloneOrder.setPosted("N");
       objCloneOrder.setProcessed(false);
+      objCloneOrder.setDelivered(false);
       objCloneOrder.setSalesTransaction(true);
       objCloneOrder.setDocumentNo(null);
       objCloneOrder.setSalesTransaction(objOrder.isSalesTransaction());
@@ -72,6 +73,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       objCloneOrder.setUpdated(new Date());
       objCloneOrder.setCreatedBy(currentUser);
       objCloneOrder.setUpdatedBy(currentUser);
+      objCloneOrder.setReservationStatus(null);
       // Setting order date and scheduled delivery date of header and the order lines to current
       // date to avoid issues with tax rates. Refer issue
       // https://issues.openbravo.com/view.php?id=23671
@@ -106,6 +108,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
         objCloneOrdLine.setScheduledDeliveryDate(new Date());
         objCloneOrder.getOrderLineList().add(objCloneOrdLine);
         objCloneOrdLine.setSalesOrder(objCloneOrder);
+        objCloneOrdLine.setReservationStatus(null);
       }
 
       OBDal.getInstance().save(objCloneOrder);

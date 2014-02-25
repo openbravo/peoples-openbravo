@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,6 +50,8 @@ import javax.servlet.http.*;
 import java.util.*;
 import java.sql.Connection;
 import org.apache.log4j.Logger;
+import java.util.List;
+import java.util.Arrays;
 
 public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -77,8 +79,11 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     
     boolean securedProcess = false;
     if (command.contains("BUTTON")) {
+     List&lt;String&gt; explicitAccess = Arrays.asList(<FIELDS_TMP id="sectionExplicitAccessProcess">"<FIELD_TMP id="explicitAccess">id</FIELD_TMP>", </FIELDS_TMP> "");
+    
      SessionInfo.setUserId(vars.getSessionValue("#AD_User_ID"));
      SessionInfo.setSessionId(vars.getSessionValue("#AD_Session_ID"));
+     SessionInfo.setQueryProfile("manualProcess");
      <FIELDS_TMP id="sectionActionButtonsServiceJava">
       if (command.contains("<FIELD_TMP id="ProcessIDsrvJ">processId</FIELD_TMP>")) {
         SessionInfo.setProcessType("P");
@@ -97,7 +102,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         SessionInfo.setProcessType("P");
         SessionInfo.setProcessId("<FIELD_TMP id="ProcessIDsrv">processId</FIELD_TMP>");
         SessionInfo.setModuleId("<FIELD_TMP id="ProcessModulesrv">moduleId</FIELD_TMP>");
-        if (securedProcess) {
+        if (securedProcess || explicitAccess.contains("<FIELD_TMP id="ProcessIDsrv">processId</FIELD_TMP>")) {
           classInfo.type = "P";
           classInfo.id = "<FIELD_TMP id="ProcessIDsrv">processId</FIELD_TMP>";
         }
@@ -105,7 +110,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
      </FIELDS_TMP>
 
      <FIELDS_TMP id="sectionActionButtonsServiceJavaSecuredProcess">
-      if (securedProcess &amp;&amp; command.contains("<FIELD_TMP id="ProcessIDsrvJSP">processId</FIELD_TMP>")) {
+      if (explicitAccess.contains("<FIELD_TMP id="ProcessIDsrvJSP">processId</FIELD_TMP>") || (securedProcess &amp;&amp; command.contains("<FIELD_TMP id="ProcessIDsrvJSP">processId</FIELD_TMP>"))) {
         classInfo.type = "P";
         classInfo.id = "<FIELD_TMP id="ProcessIDsrvJSP">processId</FIELD_TMP>";
       }

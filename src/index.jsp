@@ -28,7 +28,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,6 +84,7 @@ response.addHeader("Expires", "0");
 
 <html dir="<%=(OBContext.isRightToLeft() ? "RTL" : "LTR")%>">
 <head>
+<meta http-equiv="X-UA-Compatible" content="IE=9">
 <meta http-equiv="Expires" content="Tue, 24 Apr 1979 00:00:01 GMT"/>
 <meta http-equiv="Content-type" content="text/html;charset=utf-8"/>
 <meta http-equiv="Cache-Control" content="no-cache no-store must-revalidate" >
@@ -162,6 +163,7 @@ window.onerror = function <%=KernelConstants.BOOTSTRAP_ERROR_HANDLER_NAME%> (err
 $LAB.setGlobalDefaults({AppendTo: 'body'});
 
 var isomorphicDir='./web/org.openbravo.userinterface.smartclient/isomorphic/';
+var isc = window.isc ? window.isc : {};
 
 // starts the application is called as the last statement in the StaticResources part
 function OBStartApplication() {

@@ -646,8 +646,8 @@ public class UsedByLink extends HttpSecureAppServlet {
   private List<LinkedTable> getLinkedTables(String tableId) {
     OBContext.setAdminMode();
     try {
-      Table table = OBDal.getInstance().get(Table.class, tableId);
-      String tableName = table.getDBTableName();
+      Table table = OBDal.getInstance().get(Table.class, tableId), linkedTableObject = null;
+      String tableName = table.getDBTableName(), dataOriginType = null, linkedTableId = null;
 
       final List<LinkedTable> linkedTables = new ArrayList<LinkedTable>();
       for (Entity entity : ModelProvider.getInstance().getModel()) {
@@ -656,10 +656,16 @@ public class UsedByLink extends HttpSecureAppServlet {
           if (!property.isOneToMany() && property.getColumnName() != null
               && property.getTargetEntity() != null
               && property.getTargetEntity().getTableName().equalsIgnoreCase(tableName)) {
-            final LinkedTable linkedTable = new LinkedTable();
-            log4j.debug("p:" + property.getColumnName());
-            linkedTable.setColumnId(property.getColumnId());
-            linkedTables.add(linkedTable);
+            // Datasource tables are skipped
+            linkedTableId = property.getEntity().getTableId();
+            linkedTableObject = OBDal.getInstance().get(Table.class, linkedTableId);
+            dataOriginType = linkedTableObject.getDataOriginType();
+            if ("TABLE".equals(dataOriginType.toUpperCase())) {
+              final LinkedTable linkedTable = new LinkedTable();
+              log4j.debug("p:" + property.getColumnName());
+              linkedTable.setColumnId(property.getColumnId());
+              linkedTables.add(linkedTable);
+            }
           }
         }
       }

@@ -51,15 +51,6 @@
     </Sql>
     <Parameter name="cPhaseId"/>
   </SqlMethod>
-  <SqlMethod name="selectPriceListVersion" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT M_GET_PRICELIST_VERSION(?, to_date(?)) as pricelist_version
-      FROM DUAL
-    </Sql>
-    <Parameter name="mPriceListId"/>
-    <Parameter name="date"/>
-  </SqlMethod>
   <SqlMethod name="selectPlannedPrice" type="preparedStatement" return="String" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

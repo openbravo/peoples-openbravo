@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,7 @@ import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.IndexesTest;
 import org.openbravo.test.model.OneToManyTest;
 import org.openbravo.test.model.RuntimeModelTest;
+import org.openbravo.test.model.TrlColumnsOraTypeTest;
 import org.openbravo.test.model.UniqueConstraintTest;
 import org.openbravo.test.modularity.DBPrefixTest;
 import org.openbravo.test.modularity.DatasetServiceTest;
@@ -117,6 +118,7 @@ public class AllAntTaskTests {
     suite.addTestSuite(UniqueConstraintTest.class);
     suite.addTestSuite(ClassLoaderTest.class);
     suite.addTestSuite(IndexesTest.class);
+    suite.addTestSuite(TrlColumnsOraTypeTest.class);
 
     // modularity
     suite.addTestSuite(DatasetServiceTest.class);

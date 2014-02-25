@@ -320,5 +320,65 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
       addResult(param, (Object) (value == null ? null : "\"" + FormatUtilities.replaceJS(value)
           + "\""));
     }
+
+    /**
+     * Shows a message in the browser with the value indicated.
+     * 
+     * @param value
+     *          The message to display in the browser.
+     */
+    protected void showMessage(String value) {
+      addResult("MESSAGE", value);
+    }
+
+    /**
+     * Shows an error message in the browser with the value indicated.
+     * 
+     * @param value
+     *          The error message to display in the browser.
+     */
+    protected void showError(String value) {
+      addResult("ERROR", value);
+    }
+
+    /**
+     * Shows a warning message in the browser with the value indicated.
+     * 
+     * @param value
+     *          The warning message to display in the browser.
+     */
+    protected void showWarning(String value) {
+      addResult("WARNING", value);
+    }
+
+    /**
+     * Shows an information message in the browser with the value indicated.
+     * 
+     * @param value
+     *          The information message to display in the browser.
+     */
+    protected void showInformation(String value) {
+      addResult("INFO", value);
+    }
+
+    /**
+     * Shows a success message in the browser with the value indicated.
+     * 
+     * @param value
+     *          The success message to display in the browser.
+     */
+    protected void showSuccess(String value) {
+      addResult("SUCCESS", value);
+    }
+
+    /**
+     * Executes the javascript code indicated in the value in the browser.
+     * 
+     * @param value
+     *          The javascript code to execute in the browser.
+     */
+    protected void executeCodeInBrowser(String value) {
+      addResult("JSEXECUTE", value);
+    }
   }
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
@@ -36,6 +37,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
@@ -106,6 +108,32 @@ public class BaseWSTest extends BaseTest {
    */
   protected String doContentRequest(String wsPart, String content, int expectedResponse,
       String expectedContent, String method) {
+    return doContentRequest(wsPart, content, expectedResponse, expectedContent, method, true);
+  }
+
+  /**
+   * Execute a REST webservice HTTP request which posts/puts content and returns a result. If
+   * validateXML parameter is <code>true</code>, the content is validated against the XML schema
+   * retrieved using the /ws/dal/schema webservice call.
+   * 
+   * @param wsPart
+   *          the actual webservice part of the url, is appended to the openbravo url (
+   *          {@link #getOpenbravoURL()}), includes any query parameters
+   * @param content
+   *          the content (XML) to post or put
+   * @param expectedResponse
+   *          the expected HTTP response code
+   * @param expectedContent
+   *          the system check that the returned content contains this expectedContent
+   * @param method
+   *          POST or PUT
+   * @param validateXML
+   *          should response be validated as XML
+   * @return the result from the rest request (i.e. the content of the response), most of the time
+   *         an xml string
+   */
+  protected String doContentRequest(String wsPart, String content, int expectedResponse,
+      String expectedContent, String method, boolean validateXML) {
     try {
       final HttpURLConnection hc = createConnection(wsPart, method);
       final OutputStream os = hc.getOutputStream();
@@ -120,15 +148,27 @@ public class BaseWSTest extends BaseTest {
         // no content available anyway
         return "";
       }
-      final SAXReader sr = new SAXReader();
-      final InputStream is = hc.getInputStream();
-      final Document doc = sr.read(is);
-      final String retContent = XMLUtil.getInstance().toString(doc);
+
+      String retContent;
+
+      if (validateXML) {
+        final SAXReader sr = new SAXReader();
+        final InputStream is = hc.getInputStream();
+        final Document doc = sr.read(is);
+        retContent = XMLUtil.getInstance().toString(doc);
+        validateXML(retContent);
+      } else {
+        StringWriter writer = new StringWriter();
+        IOUtils.copy(hc.getInputStream(), writer, "utf-8");
+        retContent = writer.toString();
+      }
+
       if (retContent.indexOf(expectedContent) == -1) {
         log.debug(retContent);
-        fail();
+        fail("WS response does not contain: [" + expectedContent + "]\nActual result:\n"
+            + retContent);
       }
-      validateXML(retContent);
+
       return retContent;
     } catch (final Exception e) {
       throw new OBException(e);

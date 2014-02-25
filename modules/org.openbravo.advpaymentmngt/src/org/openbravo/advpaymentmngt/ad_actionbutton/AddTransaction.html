@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -90,7 +90,11 @@ function validate() {
       }
     }
   } else if (opt == 'GL') {
-    if (frm.inpGLItemId.value==null || frm.inpGLItemId.value=="") {
+	if (frm.inpadOrgTrxId.value===null || frm.inpadOrgTrxId.value==="") {
+	  setWindowElementFocus(frm.inpadOrgTrxId);
+	  showJSMessage(7);
+	  return false;
+	} else if (frm.inpGLItemId.value==null || frm.inpGLItemId.value=="") {
       setWindowElementFocus(frm.inpGLItemId);
       showJSMessage(7);
       return false;
@@ -182,6 +186,12 @@ function showHideLayers() {
 
 function autoDisplayLogicDimensions(isDisplayed) {
   var displayTitle = false;
+  if (document.frmMain.strElement_OT.value === 'Y' && isDisplayed) {
+	    displayLogicDimension('ad_orgtrx_id', true);
+	    displayTitle = true;
+	  } else {
+	    displayLogicDimension('ad_orgtrx_id', false);
+	  }
   if (document.frmMain.strElement_BP.value === 'Y' && isDisplayed) {
     displayLogicDimension('c_bpartner_id', true);
     displayTitle = true;
@@ -279,7 +289,7 @@ function submitThisPage(strCommand) {
           }else{
             if (validate() ) {
               setProcessingMode('popup', true);
-              submitCommandForm(strCommand, false, null, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html');
+              submitCommandForm(strCommand, false, null, '../org.openbravo.advpaymentmngt.ad_actionbutton/AddTransaction.html', '_self');
               disableButtonProcess();
               return true;
             } else {
@@ -392,6 +402,7 @@ function reloadWindowGrid() {
 
   function onResizeDo(){
     resizeAreaCreateFrom(true);
+    showHideLayers();
   }
 </script>
 </head>
@@ -406,6 +417,7 @@ function reloadWindowGrid() {
   <input type="hidden" name="inpFinBankStatementLineId" value="" id="fieldFinBankStatementLineId"></input>
   <input type="hidden" name="buttonRefresh" value="" id="buttonRefresh" onclick="loadGrid();return true;"></input>
   <input type="hidden" name="isReceipt" value="dummyField" id="fieldReceipt"/>
+  <input type="hidden" name="strElement_OT" id="paramStrElement_OT" value=""/>
   <input type="hidden" name="strElement_BP" id="paramStrElement_BP" value=""/>
   <input type="hidden" name="strElement_PR" id="paramStrElement_PR" value=""/>
   <input type="hidden" name="strElement_PJ" id="paramStrElement_PJ" value=""/>
@@ -922,9 +934,22 @@ function reloadWindowGrid() {
               </td>
             </tr>
             <tr id="GLItemSection1_Dim">
+              <!-- Organization Dimension -->
+              <td id="ad_orgtrx_id_dim_label" class="TitleCell"><span class="LabelText">Organization</span></td>
+              <td id="ad_orgtrx_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_AD_OrgTrx_ID = null;</script>
+                      <input type="hidden" name="inpadOrgTrxId" identifier="" id="AD_Org_ID" value="" onreset="sc_AD_OrgTrx_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_AD_OrgTrx_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/B15DC1DA631A402C9B05AC11A2EA724C?columnName=AD_Org_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=true"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
               <!-- Business Partner Dimension -->
               <td id="c_bpartner_id_dim_label" class="TitleCell"><span class="LabelText">Business Partner</span></td>
-              <td id="c_bpartner_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+              <td id="c_bpartner_id_dim_inp" class="TextBox_ContentCell" colspan="1">
                 <table style="border:0px;border-collapse:collapse;">
                   <tr>
                     <td style="padding-top: 0px;">
@@ -935,9 +960,12 @@ function reloadWindowGrid() {
                   </tr>
                 </table>
               </td>
+            <td class="TitleCell"></td>
+            </tr>
+            <tr id="GLItemSection2_Dim">
                 <!-- Product Dimension -->
               <td id="m_product_id_dim_label" class="TitleCell"><span class="LabelText">Product</span></td>
-              <td id="m_product_id_dim_inp" class="TextBox_ContentCell" colspan="1">
+              <td id="m_product_id_dim_inp" class="TextBox_ContentCell" colspan="2">
                 <table style="border:0px;border-collapse:collapse;">
                   <tr>
                     <td style="padding-top: 0px;">
@@ -947,13 +975,10 @@ function reloadWindowGrid() {
                     </td>
                   </tr>
                 </table>
-              </td> 
-            <td class="TitleCell"></td>
-            </tr>
-            <tr id="GLItemSection2_Dim">
+              </td>
                <!-- Project Dimension -->
               <td id="c_project_id_dim_label" class="TitleCell"><span class="LabelText">Project</span></td>
-              <td id="c_project_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+              <td id="c_project_id_dim_inp" class="TextBox_ContentCell" colspan="1">
                 <table style="border:0px;border-collapse:collapse;">
                   <tr>
                     <td style="padding-top: 0px;">
@@ -964,9 +989,12 @@ function reloadWindowGrid() {
                   </tr>
                 </table>
               </td>
-              <!-- Cost center -->
+            <td class="TitleCell"></td>
+            </tr>
+            <tr id="GLItemSection3_Dim">
+                <!-- Cost center -->
               <td id="c_costcenter_id_dim_label" class="TitleCell"><span class="LabelText">Cost Center</span></td>
-              <td id="c_costcenter_id_dim_inp" class="TextBox_ContentCell" colspan="1">
+              <td id="c_costcenter_id_dim_inp" class="TextBox_ContentCell" colspan="2">
                 <table style="border:0px;border-collapse:collapse;">
                   <tr>
                     <td style="padding-top: 0px;">
@@ -977,12 +1005,9 @@ function reloadWindowGrid() {
                   </tr>
                 </table>
               </td>
-            <td class="TitleCell"></td>
-            </tr>
-            <tr id="GLItemSection3_Dim">
              <!-- Campaign Dimension -->
               <td id="c_campaign_id_dim_label" class="TitleCell"><span class="LabelText">Campaign</span></td>
-              <td id="c_campaign_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+              <td id="c_campaign_id_dim_inp" class="TextBox_ContentCell" colspan="1">
                 <table style="border:0px;border-collapse:collapse;">
                   <tr>
                     <td style="padding-top: 0px;">
@@ -993,19 +1018,6 @@ function reloadWindowGrid() {
                   </tr>
                 </table>
               </td>
-               <!-- Activity Dimension -->
-              <td id="c_activity_id_dim_label" class="TitleCell"><span class="LabelText">Activity</span></td>
-              <td id="c_activity_id_dim_inp" class="TextBox_ContentCell" colspan="1">
-                <table style="border:0px;border-collapse:collapse;">
-                  <tr>
-                    <td style="padding-top: 0px;">
-                      <script>var sc_C_Activity_ID = null;</script>
-                      <input type="hidden" name="inpCActivityId" id="C_Activity_ID" value="" onreset="sc_C_Activity_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Activity_ID.selectorField);"></input>
-                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312D569C01312D8C1EC40036?columnName=C_Activity_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
-                    </td>
-                  </tr>
-                </table>
-              </td>             
              <td class="TitleCell"></td>
              </tr>
               <tr id="GLItemSection4_Dim">
@@ -1038,9 +1050,22 @@ function reloadWindowGrid() {
               <td class="TitleCell"></td> 
               </tr>
               <tr id="GLItemSection5_Dim">
+              <!-- Activity Dimension -->
+              <td id="c_activity_id_dim_label" class="TitleCell"><span class="LabelText">Activity</span></td>
+              <td id="c_activity_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+                <table style="border:0px;border-collapse:collapse;">
+                  <tr>
+                    <td style="padding-top: 0px;">
+                      <script>var sc_C_Activity_ID = null;</script>
+                      <input type="hidden" name="inpCActivityId" id="C_Activity_ID" value="" onreset="sc_C_Activity_ID.resetSelector();" onchange="openbravo.Utilities.updateSmartClientComponentValue(this, sc_C_Activity_ID.selectorField);"></input>
+                      <script id="selectorLink" src="../org.openbravo.client.kernel/OBUISEL_Selector/FF808181312D569C01312D8C1EC40036?columnName=C_Activity_ID&disabled=false&CssSize=TwoCells&DisplayLength=45.0&required=false"></script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
               <!-- Sales Region Dimension -->
               <td id="c_salesregion_id_dim_label" class="TitleCell"><span class="LabelText">Sales Region</span></td>
-              <td id="c_salesregion_id_dim_inp" class="TextBox_ContentCell" colspan="2">
+              <td id="c_salesregion_id_dim_inp" class="TextBox_ContentCell" colspan="1">
                 <table style="border:0px;border-collapse:collapse;">
                   <tr>
                     <td style="padding-top: 0px;">

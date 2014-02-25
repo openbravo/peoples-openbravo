@@ -52,6 +52,7 @@
   v_ID                    varchar2(32);
   v_No_Cost               BOOLEAN := TRUE;
   v_Cost                  NUMBER;
+  v_CostingPrecision         NUMBER;
 
   TYPE RECORD IS REF CURSOR;
   Cur_UsedProducts RECORD;
@@ -168,7 +169,7 @@ BEGIN --BODY
     -- Purchased raw material
     IF (v_No_Cost) THEN
       SELECT COALESCE(MAX(bl.price),M_GET_PRODUCT_PRICE_DATE(MAX(p.AD_CLIENT_ID), MAX(p.M_PRODUCT_ID), p_Calcdate)) INTO v_Cost
-      FROM M_Product p LEFT JOIN (SELECT C_CURRENCY_CONVERT(C_BudgetLine.Price, C_BudgetLine.C_CURRENCY_ID, p_Currency, p_Calcdate, C_BudgetLine.ad_client_id, C_BudgetLine.ad_org_id) as price,
+      FROM M_Product p LEFT JOIN (SELECT C_CURRENCY_CONVERT_PRECISION(C_BudgetLine.Price, C_BudgetLine.C_CURRENCY_ID, p_Currency, p_Calcdate, C_BudgetLine.ad_client_id, C_BudgetLine.ad_org_id,'C') as price,
                                    C_BudgetLine.M_Product_ID
                                   FROM C_BudgetLine
                                   WHERE C_BudgetLine.C_Budget_ID IS NULL) bl ON p.M_Product_ID = bl.M_Product_ID
@@ -357,9 +358,12 @@ BEGIN --BODY
 
   v_ResultStr := 'Update produced products cost: ' || v_SequenceCost || ' component cost total: ' || v_CompCostSum;
   --Update produced products cost
+
+  SELECT costingprecision INTO v_CostingPrecision FROM C_CURRENCY WHERE C_CURRENCY_ID = p_Currency;
+  
   UPDATE MA_SequenceProduct
   SET cost = ROUND(((v_SequenceCost*COALESCE(componentcost,1)*COALESCE(rejected,1)*COALESCE(decrease,1))/
-              (v_CompCostSum*quantity)),4),
+              (v_CompCostSum*quantity)),v_CostingPrecision),
       UPDATED = now()
   WHERE productiontype = '+'
     AND quantity <> 0

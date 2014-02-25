@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -98,12 +98,14 @@ function displayAdvancedFilters(){
         displayLogicElement('advancedFiltersrow2', true);
         displayLogicElement('advancedFiltersrow3', true);
         displayLogicElement('advancedFiltersrow4', true);
+        displayLogicElement('advancedFiltersrow5', true);
     }
     else{
         displayLogicElement('advancedFiltersrow1', false);
         displayLogicElement('advancedFiltersrow2', false);
         displayLogicElement('advancedFiltersrow3', false);
         displayLogicElement('advancedFiltersrow4', false);
+        displayLogicElement('advancedFiltersrow5', false);
     }    
 }
 
@@ -510,6 +512,11 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
           <td class="ContentCell"></td>
           <td class="TitleCell"><span class="LabelText">Show Entry Description</span></td>
           <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowDescription" name="inpShowDescription" value="Y"/></td>
+          <td class="ContentCell"></td>
+        </tr>
+        <tr id=advancedFiltersrow5>
+          <td class="TitleCell"><span class="LabelText">Show Divide Up Entries</span></td>
+          <td class="Radio_Check_ContentCell"><input TYPE="checkbox" id="paramShowDivideUp" name="inpShowDivideUp" value="Y"/></td>
           <td class="ContentCell"></td>
         </tr>
             <tr>

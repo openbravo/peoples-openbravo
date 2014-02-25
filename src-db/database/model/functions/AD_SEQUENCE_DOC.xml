@@ -41,7 +41,6 @@
   *  if ID < 1000000, use System Doc Sequence
   ************************************************************************/
   v_NextNo VARCHAR2(32);
-  v_NextNoSys NUMBER;
   v_Prefix VARCHAR2(30) ;
   v_Suffix VARCHAR2(30) ;
 BEGIN

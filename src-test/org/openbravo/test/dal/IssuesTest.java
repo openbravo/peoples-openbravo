@@ -818,14 +818,6 @@ public class IssuesTest extends BaseTest {
     Assert.assertTrue(test22235.isErrorOccured());
     test22235.execute(processBundle);
     Assert.assertFalse(test22235.isErrorOccured());
-
-    // this should again fail, to ensure everything is cleaned up
-    try {
-      RequestContext.get().getVariablesSecureApp();
-      fail();
-    } catch (OBException e) {
-      // fine, should fail at this point
-    }
   }
 
   public void test23627() throws Exception {

@@ -284,8 +284,37 @@ isc.OBStandardView.addProperties({
     return this.Super('destroy', arguments);
   },
 
+  prepareViewForm: function () {
+    var personalizationData = {};
+
+    if (!this.viewForm) {
+      return;
+    }
+
+    // setDataSource executes setFields which replaces the current fields
+    // We don't want to destroy the associated DataSource objects
+    this.viewForm.destroyItemObjects = false;
+
+    // is used to keep track of the original simple objects
+    // used to create fields
+    this.viewForm._originalFields = isc.clone(this.formFields);
+    this.viewForm.fields = this.formFields;
+    this.viewForm.firstFocusedField = this.firstFocusedField;
+
+    this.viewForm.setDataSource(this.dataSource, this.formFields);
+    this.viewForm.isViewForm = true;
+    this.viewForm.destroyItemObjects = true;
+
+    personalizationData = this.getFormPersonalization(true);
+    if (personalizationData && personalizationData.form) {
+      OB.Personalization.personalizeForm(personalizationData, this.viewForm);
+    }
+    this.setMaximizeRestoreButtonState();
+
+  },
+
   buildStructure: function () {
-    var length, i, fld;
+    var length, i, fld, lazyFiltering;
     this.createMainParts();
     this.createViewStructure();
     if (this.childTabSet && this.childTabSet.tabs.length === 0) {
@@ -299,34 +328,26 @@ isc.OBStandardView.addProperties({
     //   -Grid is not rendered twice (one for the standard confing and another
     //    one for the saved config)
     if (this.standardWindow && this.standardWindow.viewState && this.standardWindow.viewState[this.tabId]) {
-      this.viewGrid.setViewState(this.standardWindow.viewState[this.tabId]);
+      this.viewGrid.setViewState(this.standardWindow.viewState[this.tabId], true);
       // lastViewApplied is set because there are modifications in grid, so not
       // marking "Standard View" in view's menu
       this.standardWindow.lastViewApplied = true;
+    }
+
+    if (this.viewGrid) {
+      lazyFiltering = this.viewGrid.lazyFiltering;
     }
 
     // directTabInfo is set when we are in direct link mode, i.e. directly opening
     // a specific tab with a record, the direct link logic will already take care
     // of fetching data
     if (this.isRootView && !this.standardWindow.directTabInfo) {
-      this.viewGrid.fetchData(this.viewGrid.getCriteria());
+      if (!lazyFiltering) {
+        if (!this.standardWindow.checkIfDefaultSavedView()) {
+          this.viewGrid.fetchData(this.viewGrid.getCriteria());
+        }
+      }
       this.refreshContents = false;
-    }
-
-    if (this.viewForm) {
-      // setDataSource executes setFields which replaces the current fields
-      // We don't want to destroy the associated DataSource objects
-      this.viewForm.destroyItemObjects = false;
-
-      // is used to keep track of the original simple objects
-      // used to create fields
-      this.viewForm._originalFields = isc.clone(this.formFields);
-      this.viewForm.fields = this.formFields;
-      this.viewForm.firstFocusedField = this.firstFocusedField;
-
-      this.viewForm.setDataSource(this.dataSource, this.formFields);
-      this.viewForm.isViewForm = true;
-      this.viewForm.destroyItemObjects = true;
     }
 
     if (this.isRootView) {
@@ -1079,6 +1100,9 @@ isc.OBStandardView.addProperties({
   // Switch from form to grid view or the other way around
   switchFormGridVisibility: function () {
     if (!this.isShowingForm) {
+      if (!this.viewForm.getDataSource()) {
+        this.prepareViewForm();
+      }
       if (this.treeGrid) {
         if (this.isShowingTree) {
           this.treeGrid.hide();
@@ -1406,19 +1430,26 @@ isc.OBStandardView.addProperties({
   },
 
   updateSubtabVisibility: function () {
-    var i, length, tabViewPane, activeTab, activeTabNum, activeTabPane, indexFirstNotHiddenTab;
+    var i, length, tabViewPane, activeTab, activeTabNum, activeTabPane, indexFirstNotHiddenTab, contextInfo;
     if (this.childTabSet) {
       length = this.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
         // Calling getContextInfo with (false, true, true) in order to obtain also the value of the
         // session attributes of the form
-        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(tabViewPane.getContextInfo(false, true, true)))) {
+        contextInfo = this.getContextInfo(false, true, true);
+        this.addSessionAttributes(contextInfo, tabViewPane);
+        if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(contextInfo))) {
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
         } else {
           if (this.childTabSet.visibility === 'hidden') {
             this.childTabSet.show();
+            if (tabViewPane.showTabIf && !tabViewPane.data && !tabViewPane.refreshingData && tabViewPane.isVisible()) {
+              // If the child tab does not have data yet, refresh it
+              tabViewPane.refreshingData = true;
+              tabViewPane.refresh();
+            }
           }
           this.childTabSet.tabBar.members[i].show();
           tabViewPane.hidden = false;
@@ -1446,6 +1477,21 @@ isc.OBStandardView.addProperties({
         } else {
           this.childTabSet.hide();
         }
+      }
+    }
+  },
+
+  // Adds to contextInfo the session attributes of the childView, 
+  // unless the session attribute is an auxiliary input of its parent tab
+  addSessionAttributes: function (contextInfo, childView) {
+    var auxInputs = {},
+        p;
+    if (this.viewForm && this.viewForm.auxInputs) {
+      auxInputs = this.viewForm.auxInputs;
+    }
+    for (p in childView.sessionAttributes) {
+      if (childView.sessionAttributes.hasOwnProperty(p) && !auxInputs.hasOwnProperty(p)) {
+        contextInfo[p] = childView.sessionAttributes[p];
       }
     }
   },
@@ -1575,9 +1621,8 @@ isc.OBStandardView.addProperties({
     }
 
     if (title) {
-
       // show a prompt with the title info
-      tab.prompt = title;
+      tab.prompt = title.asHTML();
       tab.showPrompt = true;
       tab.hoverWidth = 150;
 
@@ -1798,9 +1843,11 @@ isc.OBStandardView.addProperties({
 
         //modal dialog shown to restrict the user from accessing records when deleting records. Will be closed after successful deletion in removeCallback.
         //refer issue https://issues.openbravo.com/view.php?id=24611
-        isc.showPrompt(OB.I18N.getLabel('OBUIAPP_DeletingRecords') + isc.Canvas.imgHTML({
-          src: "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/system/windowLoading.gif"
-        }));
+        if (ok) {
+          isc.showPrompt(OB.I18N.getLabel('OBUIAPP_DeletingRecords') + isc.Canvas.imgHTML({
+            src: OB.Styles.LoadingPrompt.loadingImage.src
+          }));
+        }
 
         removeCallBack = function (resp, data, req) {
           var length, localData = resp.dataObject || resp.data || data,
@@ -1808,6 +1855,8 @@ isc.OBStandardView.addProperties({
 
           if (!localData) {
             // bail out, an error occured which should be displayed to the user now
+            //clear deleting prompt
+            isc.clearPrompt();
             return;
           }
           var status = resp.status;
@@ -2233,6 +2282,9 @@ isc.OBStandardView.addProperties({
   },
 
   setContextInfo: function (sessionProperties, callbackFunction, forced) {
+    var newCallback, me = this,
+        gridVisibleProperties = [],
+        len, i, originalID;
     // no need to set the context in this case
     if (!forced && (this.isEditingGrid || this.isShowingForm)) {
       if (callbackFunction) {
@@ -2242,15 +2294,49 @@ isc.OBStandardView.addProperties({
     }
 
     if (!sessionProperties) {
-      sessionProperties = this.getContextInfo(true, true, false, true);
+      // Call to the FIC in EDIT mode, all properties must be sent, not only the session properties
+      sessionProperties = this.getContextInfo(false, true, false, true);
+    }
+
+    if (this.viewGrid && this.viewGrid.getSelectedRecord()) {
+      originalID = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
+    }
+
+    newCallback = function (response, data, request) {
+      var context = {},
+          grid = me.viewGrid,
+          currentRecord, currentID;
+      currentRecord = grid.getSelectedRecord();
+      context.rowNum = grid.getRecordIndex(currentRecord);
+      currentID = currentRecord[OB.Constants.ID];
+      context.grid = grid;
+      response.clientContext = context;
+      if (originalID === currentID) {
+        // Only update the grid if the user has not changed rows
+        grid.processFICReturn(response, data, request);
+      }
+      if (callbackFunction) {
+        callbackFunction();
+      }
+    };
+
+    if (this.viewGrid && this.viewGrid.fields) {
+      gridVisibleProperties.push('id');
+      len = this.viewGrid.fields.length;
+      for (i = 0; i < len; i++) {
+        if (this.viewGrid.fields[i].name[0] !== '_') {
+          gridVisibleProperties.push(this.viewGrid.fields[i].name);
+        }
+      }
+      sessionProperties._gridVisibleProperties = gridVisibleProperties;
     }
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', sessionProperties, {
-      MODE: 'SETSESSION',
+      MODE: 'EDIT',
       TAB_ID: this.tabId,
       PARENT_ID: this.getParentId(),
       ROW_ID: this.viewGrid.getSelectedRecord() ? this.viewGrid.getSelectedRecord().id : this.getCurrentValues().id
-    }, callbackFunction);
+    }, newCallback);
 
   },
 
@@ -2475,6 +2561,10 @@ isc.OBStandardView.addProperties({
 
       if (type.filterEditorType && !fld.filterEditorType) {
         fld.filterEditorType = type.filterEditorType;
+      }
+
+      if (type.sortNormalizer) {
+        fld.sortNormalizer = type.sortNormalizer;
       }
 
       if (!fld.filterEditorProperties) {

@@ -99,32 +99,6 @@
     <Parameter name="issotrx"/>
     <Parameter name="lastDays"/>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
-  <SqlMethod name="selectPrices" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT M_BOM_PRICELIST(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIST,
-        M_BOM_PRICELIMIT(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIMIT, CUR.STDPRECISION AS STDPRECISION, CUR.PRICEPRECISION AS PRICEPRECISION
-        FROM M_PRODUCT P, M_PRODUCTPRICE PP, M_PRICELIST PL, M_PRICELIST_VERSION PV, C_CURRENCY CUR  
-        WHERE P.M_PRODUCT_ID=PP.M_PRODUCT_ID
-        AND PP.M_PRICELIST_VERSION_ID=PV.M_PRICELIST_VERSION_ID
-        AND PV.M_PRICELIST_ID=PL.M_PRICELIST_ID
-        AND PL.C_CURRENCY_ID = CUR.C_CURRENCY_ID
-        AND PV.ISACTIVE='Y'
-        AND PV.VALIDFROM <= TO_DATE(?)
-        AND P.M_PRODUCT_ID = ?
-        AND PL.M_PRICELIST_ID = ?
-        ORDER BY PV.VALIDFROM DESC
-      ]]>
-    </Sql>
-    <Parameter name="dateordered"/>
-    <Parameter name="MProductID"/>
-    <Parameter name="MPriceListID"/>
-  </SqlMethod>
   <SqlMethod name="getOffersStdPrice" type="preparedStatement" return="String" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -185,16 +159,5 @@
     <Parameter name="priceGross"/>
     <Parameter name="amtGross"/>
     <Parameter name="pricestdgross"/>
-  </SqlMethod>
-  <SqlMethod name="selectPrecisions" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT C_Currency.StdPrecision, C_Currency.PricePrecision 
-      FROM C_Order, M_PriceList, C_Currency 
-      WHERE C_Order.M_PriceList_ID = M_PriceList.M_PriceList_ID
-      AND M_PriceList.C_Currency_ID = C_Currency.C_Currency_ID
-      AND C_Order.C_Order_ID = ?
-    </Sql>
-    <Parameter name="cOrderId"/>
   </SqlMethod>
 </SqlClass>

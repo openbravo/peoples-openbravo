@@ -1275,8 +1275,16 @@ public class InitialSetupUtility {
         newAcctSchemaDefault.setTaxDue(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
       }
+      if (strDefault.equals("T_DUE_TRANS_ACCT")) {
+        newAcctSchemaDefault.setDueTransAcct(getAcctComb(client, org,
+            defaultElementValues.get(strDefault), acctSchema, true));
+      }
       if (strDefault.equals("T_CREDIT_ACCT")) {
         newAcctSchemaDefault.setTaxCredit(getAcctComb(client, org,
+            defaultElementValues.get(strDefault), acctSchema, true));
+      }
+      if (strDefault.equals("T_CREDIT_TRANS_ACCT")) {
+        newAcctSchemaDefault.setCreditTransAcct(getAcctComb(client, org,
             defaultElementValues.get(strDefault), acctSchema, true));
       }
       if (strDefault.equals("B_INTRANSIT_ACCT")) {

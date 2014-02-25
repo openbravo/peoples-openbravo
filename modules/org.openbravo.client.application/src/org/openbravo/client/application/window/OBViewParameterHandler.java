@@ -19,6 +19,8 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,10 @@ import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.model.ad.domain.ListTrl;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.FieldGroup;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
@@ -112,6 +118,12 @@ public class OBViewParameterHandler {
       if (readOnlyLogicMap.containsKey(param)) {
         parameter.setReadOnlyIf(readOnlyLogicMap.get(param));
       }
+      // 17 is the list reference
+      if (param.getReferenceSearchKey() != null
+          && param.getReferenceSearchKey().getParentReference() != null
+          && DalUtil.getId(param.getReferenceSearchKey().getParentReference()).equals("17")) {
+        parameter.addListReferenceValues(param.getReferenceSearchKey());
+      }
 
       params.add(parameter);
     }
@@ -124,6 +136,7 @@ public class OBViewParameterHandler {
     String showIf = "";
     String readOnlyIf = "";
     boolean redrawOnChange = false;
+    List<ValueMapValue> valueMap = new ArrayList<ValueMapValue>();
 
     public OBViewParameter() {
 
@@ -132,6 +145,53 @@ public class OBViewParameterHandler {
     public OBViewParameter(Parameter param) {
       uiDefinition = UIDefinitionController.getInstance().getUIDefinition(param.getReference());
       parameter = param;
+    }
+
+    public boolean isValueMapPresent() {
+      return !valueMap.isEmpty();
+    }
+
+    public List<ValueMapValue> getValueMap() {
+      Collections.sort(valueMap, new Comparator<ValueMapValue>() {
+        @Override
+        public int compare(ValueMapValue v1, ValueMapValue v2) {
+          final long seqno1 = v1.seqno;
+          final long seqno2 = v2.seqno;
+
+          // compare the names if no seqno set.
+          if (seqno1 == -1 || seqno2 == -1) {
+            return v1.getValue().compareTo(v2.getValue());
+          }
+
+          return (int) (seqno1 - seqno2);
+        }
+      });
+      return valueMap;
+    }
+
+    public void addListReferenceValues(Reference reference) {
+      for (org.openbravo.model.ad.domain.List list : reference.getADListList()) {
+        if (list.isActive()) {
+          addListValueReference(list);
+        }
+      }
+    }
+
+    public void addListValueReference(org.openbravo.model.ad.domain.List listValue) {
+      String name = listValue.getName();
+      final String languageId = OBContext.getOBContext().getLanguage().getId();
+      for (ListTrl listTrl : listValue.getADListTrlList()) {
+        if (!listTrl.isActive()) {
+          continue;
+        }
+        if (DalUtil.getId(listTrl.getLanguage()).equals(languageId)) {
+          name = listTrl.getName();
+          break;
+        }
+      }
+      final ValueMapValue vmv = new ValueMapValue(listValue.getSearchKey(), name,
+          listValue.getSequenceNumber());
+      valueMap.add(vmv);
     }
 
     public String getId() {
@@ -232,6 +292,30 @@ public class OBViewParameterHandler {
         return -1L;
       }
       return parameter.getLength();
+    }
+
+    public class ValueMapValue {
+      final String key;
+      final String value;
+      final long seqno;
+
+      ValueMapValue(String key, String value, Long seqno) {
+        this.key = key;
+        this.value = value;
+        this.seqno = (seqno != null ? seqno : -1);
+      }
+
+      public String getKey() {
+        return key;
+      }
+
+      public String getValue() {
+        return value;
+      }
+
+      public long getSeqno() {
+        return seqno;
+      }
     }
   }
 

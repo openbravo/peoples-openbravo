@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2006 Openbravo SLU 
+* All portions are Copyright (C) 2001-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -30,6 +30,9 @@
     <FIELD id="fieldcBPGroup">partnergroup</FIELD>
     <FIELD id="fieldmProduct">product</FIELD>
     <FIELD id="fieldmProductCategory">prodcategory</FIELD>
+    <FIELD id="fieldUser1">user1</FIELD>
+    <FIELD id="fieldUser2">user2</FIELD>
+    <FIELD id="fieldcCostcenter">costcenter</FIELD>
     <FIELD id="fieldcSalesRegion">salesregion</FIELD>
     <FIELD id="fieldcCampaign">campaign</FIELD>
     <FIELD id="fieldcActivity">activity</FIELD>

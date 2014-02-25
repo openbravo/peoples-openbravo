@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -234,6 +234,10 @@ public class DocInOut extends AcctServer {
           log4j.error("No Account Asset for product: " + product.getName()
               + " in accounting schema: " + schema.getName());
         }
+        if (!isConvertible(as, conn)) {
+          setMessageResult(conn, STATUS_NotConvertible, "error", null);
+          throw new IllegalStateException();
+        }
         if (CostingStatus.getInstance().isMigrated() && line.transaction != null
             && !line.transaction.isCostCalculated()) {
           Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
@@ -326,6 +330,10 @@ public class DocInOut extends AcctServer {
         }
         String costs = "0";
         String strCosts = "0";
+        if (!isConvertible(as, conn)) {
+          setMessageResult(conn, STATUS_NotConvertible, "error", null);
+          throw new IllegalStateException();
+        }
         if (product.isBookUsingPurchaseOrderPrice()) {
           // If the Product is checked as book using PO Price, the Price of the Purchase Order will
           // be used to create the FactAcct Line
@@ -567,6 +575,17 @@ public class DocInOut extends AcctServer {
         } else {
           trxCost = new BigDecimal(ProductInfoData.selectProductAverageCost(conn,
               data[i].getField("mProductId"), strDateAcct));
+          if (trxCost == null || trxCost.signum() == 0) {
+            ShipmentInOutLine inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+                data[i].mInoutlineId);
+            if (inOutLine.getProduct() == null) {
+              continue;
+            }
+            Map<String, String> parameters = getInvalidCostParameters(inOutLine.getProduct()
+                .getIdentifier(), strDateAcct);
+            setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+            throw new IllegalStateException();
+          }
         }
 
         if (trxCost != null && trxCost.signum() != 0) {

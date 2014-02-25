@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -171,7 +171,8 @@ isc.OBFKFilterTextItem.addProperties({
   // are being used
   getPickListFields: function () {
     return [{
-      name: this.displayField
+      name: this.displayField,
+      escapeHTML: true
     }];
   },
 
@@ -198,8 +199,14 @@ isc.OBFKFilterTextItem.addProperties({
   // filter values
   getPickListFilterCriteria: function () {
     var pickListCriteria = this.getCriterion(),
-        gridCriteria = this.form.grid.sourceWidget.getCriteria(),
-        i, criteriaFieldName = this.getCriteriaFieldName();
+        gridCriteria, i, criteriaFieldName = this.getCriteriaFieldName();
+
+    if (this.form.grid.sourceWidget.lazyFiltering) {
+      // Fetch the criteria from the current values of the filter editor
+      gridCriteria = this.form.grid.getValues();
+    } else {
+      gridCriteria = this.form.grid.sourceWidget.getCriteria();
+    }
 
     gridCriteria = gridCriteria || {
       _constructor: 'AdvandedCriteria',
@@ -240,7 +247,20 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   canEditCriterion: function (criterion) {
-    return criterion && (criterion.fieldName === this.name || criterion.fieldName === this.criteriaField);
+    var firstCriteria;
+    if (criterion.operator === 'and') {
+      // and operator does not include the fieldName as a root property
+      if (!criterion.criteria || criterion.criteria.length === 0) {
+        return true;
+      } else {
+        // all criteria of the criterion are associated with the same name, pick the first
+        firstCriteria = criterion.criteria[0];
+        return (firstCriteria.fieldName === this.name || (this.criteriaField && (firstCriteria.fieldName === this.criteriaField)));
+      }
+
+    } else {
+      return criterion && (criterion.fieldName === this.name || (this.criteriaField && (criterion.fieldName === this.criteriaField)));
+    }
   },
 
   getCriterion: function (textMatchStyle) {
@@ -260,15 +280,47 @@ isc.OBFKFilterTextItem.addProperties({
     fieldName = this.getCriteriaFieldName();
 
     crit = this.parseValueExpressions(value, fieldName, operator);
-    if (crit !== null) {
-      return crit;
+
+    if (crit === null) {
+      crit = {
+        fieldName: fieldName,
+        operator: operator,
+        value: value
+      };
     }
 
-    return {
-      fieldName: fieldName,
-      operator: operator,
-      value: value
-    };
+    if (this.operator && this.operator !== 'iContains') {
+      // In this case we need to overwrite the operator assigned by the parseValueExpressions/parseOBValueExpressions logic
+      crit = this.replaceCriterionOperator(crit, value, this.operator);
+    }
+
+    return crit;
+  },
+
+  getOperator: function (textMatchStyle) {
+    if (this.operator && this.operator !== 'iContains') {
+      return this.operator;
+    } else {
+      return this.Super('getOperator', arguments);
+    }
+  },
+
+  replaceCriterionOperator: function (criterion, value, newOperator) {
+    var newCriterion = criterion,
+        i;
+    if (newCriterion.criteria && newCriterion.criteria.length > 0) {
+      // If there is a sub-criteria, go inside to process the childs
+      for (i = 0; i < newCriterion.criteria.length; i++) {
+        newCriterion.criteria[i] = this.replaceCriterionOperator(newCriterion.criteria[i], value, newOperator);
+      }
+    } else if ((criterion.operator === 'iContains' || criterion.operator === 'contains') && value.indexOf('~') !== 0 && value.indexOf('!~') !== 0) {
+      // In case the criteria is 'iContains'/'contains', replace it by the desired one,
+      // but only in the case there are no explicit 'iContains'/'contains' prefixes
+      newCriterion.operator = newOperator;
+    }
+    // TODO: If there is a complex criteria with a 'iContains'/'contains' prefix, like "Cust or ~mplo", it won't work ok, since it will be
+    //       translated to "^Cust or ^mplo" or "==Cust or ==mplo" (depending of the newOperator) instead of "^Cust or ~mplo" or "==Cust or ~mplo"
+    return newCriterion;
   },
 
   setCriterion: function (criterion) {

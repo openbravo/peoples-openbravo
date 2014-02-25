@@ -31,6 +31,8 @@ import java.util.StringTokenizer;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -404,25 +406,17 @@ public abstract class FIN_BankStatementImport {
       final OBQuery<BusinessPartner> bl = OBDal.getInstance().createQuery(BusinessPartner.class,
           whereClause.toString(), parameters);
       bl.setFilterOnReadableOrganization(false);
-      List<BusinessPartner> businessPartners = bl.list();
-      if (businessPartners.size() == 0) {
-        return null;
-      } else if (businessPartners.size() == 1) {
-        return businessPartners.get(0);
-      } else {
-        BusinessPartner closest = closest(businessPartners, partnername);
 
-        /*
-         * The query above did load a potentially huge number of bp objects into the hibernate
-         * session. This leads to a very high runtime of sub-sequent flush() calls which needs to
-         * iterate over all those objects. As we know that those objects have not been modified in
-         * this function remove them directly from the session to avoid this problem.
-         */
-        for (BusinessPartner bp : businessPartners) {
-          if (bp != closest) {
-            OBDal.getInstance().getSession().evict(bp);
-          }
-        }
+      final ScrollableResults businessPartnersScroll = bl.scroll(ScrollMode.SCROLL_SENSITIVE);
+      int countBp = bl.count();
+      if (countBp == 0) {
+        return null;
+      } else if (countBp == 1) {
+        businessPartnersScroll.next();
+        return (BusinessPartner) businessPartnersScroll.get(0);
+      } else {
+        BusinessPartner closest = closest(businessPartnersScroll, partnername);
+
         return closest;
       }
 
@@ -431,10 +425,11 @@ public abstract class FIN_BankStatementImport {
     }
   }
 
-  private BusinessPartner closest(List<BusinessPartner> businessPartners, String partnername) {
-    BusinessPartner targetBusinessPartner = businessPartners.get(0);
-    int distance = StringUtils.getLevenshteinDistance(partnername, businessPartners.get(0)
-        .getName());
+  private BusinessPartner closest(ScrollableResults businessPartners, String partnername) {
+    businessPartners.next();
+    BusinessPartner targetBusinessPartner = (BusinessPartner) businessPartners.get(0);
+    businessPartners.beforeFirst();
+    int distance = StringUtils.getLevenshteinDistance(partnername, targetBusinessPartner.getName());
     String parsedPartnername = partnername.toLowerCase();
     // Remove exceptions
     for (String eliminate : stringExceptions) {
@@ -446,16 +441,20 @@ public abstract class FIN_BankStatementImport {
       parsedPartnername = parsedPartnername.replace(character, ' ');
       parsedPartnername = parsedPartnername.trim();
     }
-
-    for (BusinessPartner bp : businessPartners) {
+    while (businessPartners.next()) {
+      BusinessPartner bp = (BusinessPartner) businessPartners.get(0);
       // Calculates distance between two strings meaning number of changes required for a string to
       // convert in another string
       int bpDistance = StringUtils.getLevenshteinDistance(parsedPartnername, bp.getName()
           .toLowerCase());
       if (bpDistance < distance) {
         distance = bpDistance;
+        OBDal.getInstance().getSession().evict(targetBusinessPartner);
         targetBusinessPartner = bp;
+      } else {
+        OBDal.getInstance().getSession().evict(bp);
       }
+      // The clear is not done because the evict is being done previously
     }
     return targetBusinessPartner;
   }

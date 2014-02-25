@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -271,13 +271,14 @@ BEGIN
          RAISE_APPLICATION_ERROR(-20000, '@C_BPWithCreditPriceList@' || ' ' || v_currency_iso || '. ' || '@C_BPWithCreditPriceList2@');
 			 END IF;
      END IF;
-
-     UPDATE C_BP_CUSTOMER_ACCT SET AD_ORG_ID = :new.AD_Org_ID
-     WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
-     UPDATE C_BP_VENDOR_ACCT SET AD_ORG_ID = :new.AD_Org_ID
-     WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
-     UPDATE C_BP_EMPLOYEE_ACCT SET AD_ORG_ID = :new.AD_Org_ID
-     WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
+     IF(:old.AD_Org_ID <> :new.AD_Org_ID) THEN 
+	     UPDATE C_BP_CUSTOMER_ACCT SET AD_ORG_ID = :new.AD_Org_ID
+	     WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
+	     UPDATE C_BP_VENDOR_ACCT SET AD_ORG_ID = :new.AD_Org_ID
+	     WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
+	     UPDATE C_BP_EMPLOYEE_ACCT SET AD_ORG_ID = :new.AD_Org_ID
+	     WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
+	   END IF;
   END IF;
 EXCEPTION
  WHEN NO_DATA_FOUND THEN

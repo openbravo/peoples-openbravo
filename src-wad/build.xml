@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2005-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2005-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -59,7 +59,7 @@ doc: generates the api for the project.
 
   <target name="sqlc" depends="init">
     <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties .xsql ./src/org '${build.wad.sqlc}'" />
+      <arg line="'${base.config}'/Openbravo.properties .xsql ./src/org '${build.wad.sqlc}' null false" />
       <classpath refid="wad.class.path" />
       <syspropertyset>
         <propertyref name="java.security.egd" />
@@ -67,7 +67,7 @@ doc: generates the api for the project.
     </java>
   	
   	<java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${build.wad.sqlc}'/src */src-wad" />
+      <arg line="'${base.config}'/Openbravo.properties .xsql '${base.modules}' '${build.wad.sqlc}'/src */src-wad false" />
   	  <classpath refid="wad.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />

@@ -543,6 +543,22 @@ OB.ViewFormProperties = {
     return this.fieldsByColumnName[columnName.toLowerCase()];
   },
 
+  getFieldFromFieldName: function (fieldName) {
+    var i, length, localResult, fields;
+    if (!this.fieldsByFieldName) {
+      localResult = {};
+      fields = this.getFields();
+      length = fields.length;
+      for (i = 0; i < fields.length; i++) {
+        if (fields[i].name) {
+          localResult[fields[i].name] = fields[i];
+        }
+      }
+      this.fieldsByFieldName = localResult;
+    }
+    return this.fieldsByFieldName[fieldName];
+  },
+
   setFields: function () {
     var i, item, length;
 
@@ -567,7 +583,9 @@ OB.ViewFormProperties = {
     var parentId = this.view.getParentId(),
         i, fldNames = [],
         requestParams, allProperties, parentColumn, me = this,
-        mode, length = this.getFields().length;
+        mode, length = this.getFields().length,
+        gridVisibleProperties = [],
+        len;
 
     this.setParentDisplayInfo();
 
@@ -592,6 +610,18 @@ OB.ViewFormProperties = {
       parentColumn = this.view.getPropertyDefinition(this.view.parentProperty).inpColumn;
       requestParams[parentColumn] = parentId;
     }
+
+    if (this.view && this.view.viewGrid && this.view.viewGrid.fields) {
+      gridVisibleProperties.push('id');
+      len = this.view.viewGrid.fields.length;
+      for (i = 0; i < len; i++) {
+        if (this.view.viewGrid.fields[i].name[0] !== '_') {
+          gridVisibleProperties.push(this.view.viewGrid.fields[i].name);
+        }
+      }
+      allProperties._gridVisibleProperties = gridVisibleProperties;
+    }
+
 
     allProperties._entityName = this.view.entity;
 
@@ -1911,9 +1941,24 @@ OB.ViewFormProperties = {
   },
 
   redraw: function () {
+    var focusItemValue;
     this._isRedrawing = true;
+    //fetch the focus item value as it is lost sometimes during reflow. Refer issue https://issues.openbravo.com/view.php?id=24960
+    if (this.getFocusItem()) {
+      focusItemValue = this.getFocusItem().getValue();
+    }
     this.Super('redraw', arguments);
     delete this._isRedrawing;
+    //reset focus item value if lost
+    if (focusItemValue && this.getFocusItem() && this.getFocusItem().getValue() !== focusItemValue) {
+      this.getFocusItem().setValue(focusItemValue);
+    }
+
+    // Restore the focus item if it has been deleted because it was a number and was mistaken as an UUID
+    if (this.getFocusItem() && this.getFocusItem().targetEntity !== null && (/^\d+$/).test(focusItemValue) && !this.getFocusItem().getElementValue() && (!this.getFocusItem().valueMap || !this.getFocusItem().valueMap[focusItemValue])) {
+      this.getFocusItem().setElementValue(focusItemValue);
+    }
+
     if (this.selectOnFocusStored) {
       this.selectOnFocus = this.previousSelectOnFocus;
       delete this.previousSelectOnFocus;

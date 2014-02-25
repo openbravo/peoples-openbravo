@@ -306,24 +306,6 @@
     <Parameter name="adAccountingrptElementId"/>
   </SqlMethod>
 
-  <SqlMethod name="selectPeriod" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT AD_REF_LIST.AD_REF_LIST_ID AS ID, CASE ? WHEN 'en_US' THEN AD_REF_LIST.NAME ELSE AD_REF_LIST_TRL.NAME END AS NAME
-	   FROM AD_REF_LIST, AD_REF_LIST_TRL
-	   WHERE AD_REF_LIST.AD_REF_LIST_ID = AD_REF_LIST_TRL.AD_REF_LIST_ID
-	   AND AD_REF_LIST.AD_CLIENT_ID IN ('1')
-	   AND AD_REF_LIST.AD_ORG_ID IN ('1')
-	   AND AD_REF_LIST.AD_REFERENCE_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="adLanguage"/>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="AND AD_REF_LIST.AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_REF_LIST.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="adAccountingrptElementId"/>
-  </SqlMethod>
-
   <SqlMethod name="selectCombo" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,9 +49,23 @@
       <![CDATA[
         SELECT MAX(M_WAREHOUSE_ID) AS ID FROM M_WAREHOUSE_SHIPPER
         WHERE M_WAREHOUSE_SHIPPER.C_BPARTNER_ID = ?
+        AND (SELECT ISACTIVE FROM M_WAREHOUSE WHERE M_WAREHOUSE_ID=M_WAREHOUSE_SHIPPER.M_WAREHOUSE_ID)='Y'
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
+  </SqlMethod>
+  <SqlMethod name="mWarehouseOnhand" type="preparedStatement" return="string" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select m_warehouse_id AS ID from ad_org_warehouse
+        where ad_org_id = ?
+        and (select isactive from m_warehouse where m_warehouse_id=ad_org_warehouse.m_warehouse_id)='Y'
+        group by m_warehouse_id, priority
+        having min(priority) = priority
+      ]]>
+    </Sql>
+    <Parameter name="adOrgId"/>
   </SqlMethod>
   <SqlMethod name="getIsDicountPrinted" type="preparedStatement" return="string" default="">
     <SqlMethodComment></SqlMethodComment>

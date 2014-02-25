@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.utility;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -251,7 +252,7 @@ class WindowTreeUtility {
           element.append(" onclick=\"").append(strOnDblClick).append("return true;\"");
         }
       }
-      element.append(">").append(name).append("</a>\n");
+      element.append(">").append(StringEscapeUtils.escapeHtml(name)).append("</a>\n");
       // element.append("</li>\n");
     } else {
       element.append("<li id=\"").append(windowTypeNico(action)).append("__").append(nodeId)
@@ -267,7 +268,7 @@ class WindowTreeUtility {
         }
       }
 
-      element.append(">").append(name).append("</a>\n");
+      element.append(">").append(StringEscapeUtils.escapeHtml(name)).append("</a>\n");
       element.append("</li>\n");
     }
     return element.toString();

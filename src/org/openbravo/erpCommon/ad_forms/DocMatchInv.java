@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -366,15 +366,16 @@ public class DocMatchInv extends AcctServer {
     BigDecimal totalLines = BigDecimal.ZERO;
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Invoice line = (DocLine_Invoice) p_lines[i];
-      BigDecimal lineAmount = bdExpenses.multiply(new BigDecimal(line.getAmount())).divide(
-          new BigDecimal(invoiceData[0].linenetamt),
-          OBDal.getInstance().get(Currency.class, strInvoiceCurrency).getStandardPrecision()
-              .intValue(), BigDecimal.ROUND_HALF_UP);
+      BigDecimal lineAmount = bdExpensesAcctCurrency.multiply(new BigDecimal(line.getAmount()))
+          .divide(
+              new BigDecimal(invoiceData[0].linenetamt),
+              OBDal.getInstance().get(Currency.class, strInvoiceCurrency).getStandardPrecision()
+                  .intValue(), BigDecimal.ROUND_HALF_UP);
       if (i == p_lines.length - 1) {
-        lineAmount = bdExpenses.subtract(totalLines);
+        lineAmount = bdExpensesAcctCurrency.subtract(totalLines);
       }
       cr = fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-          strInvoiceCurrency, "0", lineAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          as.m_C_Currency_ID, "0", lineAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
       totalLines = totalLines.add(lineAmount);
     }

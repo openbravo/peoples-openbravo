@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,6 +42,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -166,6 +167,7 @@ public class DocFINReconciliation extends AcctServer {
     List<FIN_PaymentDetail> paymentDetails = FIN_Utility.getOrderedPaymentDetailList(payment);
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
     FIN_PaymentSchedule ps = null;
+    FIN_PaymentDetail pd = null;
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
@@ -175,12 +177,24 @@ public class DocFINReconciliation extends AcctServer {
           continue;
         }
 
+        // If the Payment Detail has already been processed, skip it
+        if (paymentDetails.get(i).equals(pd)) {
+          continue;
+        }
+        pd = paymentDetails.get(i);
+
         data[i] = new FieldProviderFactory(null);
         FIN_PaymentSchedule psi = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getInvoicePaymentSchedule();
         FIN_PaymentSchedule pso = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getOrderPaymentSchedule();
-        BigDecimal amount = getPaymentDetailAmount(paymentDetails, ps, psi, pso, i);
+        // Related to Issue Issue 19567. Some Payment Detail's amount and writeoff amount are merged
+        // into one.
+        // https://issues.openbravo.com/view.php?id=19567
+        HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
+            paymentDetails, ps, psi, pso, i);
+        BigDecimal amount = amountAndWriteOff.get("amount");
+        BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
           data[i] = null;
           ps = psi;
@@ -218,8 +232,7 @@ public class DocFINReconciliation extends AcctServer {
             .get(i));
         FieldProviderFactory.setField(data[i], "isPaymentDatePriorToInvoiceDate",
             isPaymentDatePriorToInvoiceDate && !paymentDetails.get(i).isPrepayment() ? "Y" : "N");
-        FieldProviderFactory.setField(data[i], "WriteOffAmt", paymentDetails.get(i)
-            .getWriteoffAmount().toString());
+        FieldProviderFactory.setField(data[i], "WriteOffAmt", writeOff.toString());
         FieldProviderFactory.setField(data[i], "cGlItemId",
             paymentDetails.get(i).getGLItem() != null ? paymentDetails.get(i).getGLItem().getId()
                 : "");
@@ -675,9 +688,11 @@ public class DocFINReconciliation extends AcctServer {
         detail.m_User2_ID = data[i].getField("user2Id");
         detail.m_C_Costcenter_ID = data[i].getField("cCostcenterId");
         detail.setAmount(data[i].getField("Amount"));
+        final String finPaymentDetailID = data[i].getField("FIN_Payment_Detail_ID");
+        detail.setInvoiceTaxCashVAT_V(finPaymentDetailID);
         // Cambiar line to reflect BPs
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
-            data[i].getField("FIN_Payment_Detail_ID"));
+            finPaymentDetailID);
         fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID,
             Fact_Acct_Group_ID2);
       }
@@ -846,6 +861,10 @@ public class DocFINReconciliation extends AcctServer {
         bpAmountConverted = convertAmount(bpAmountConverted, !isReceipt, line.m_DateAcct,
             TABLEID_Invoice, invoice.getId(), paymentCurrency.getId(), as.m_C_Currency_ID, line,
             as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn);
+
+        // Cash VAT
+        SeqNo = CashVATUtil.createFactCashVAT(as, conn, fact, Fact_Acct_Group_ID, line, invoice,
+            DocumentType, C_Currency_ID, SeqNo);
       }
       if (isPrepayment) {
         // To force opposite posting isReceipt is opposite as well. this is required when
@@ -1185,6 +1204,11 @@ public class DocFINReconciliation extends AcctServer {
       }
       // Exists line in closed period
       for (FIN_FinaccTransaction line : transactionsToBePosted) {
+        if (line.getDateAcct() == null) {
+          setStatus(STATUS_Error);
+          setMessageResult(conn, STATUS_NoAccountingDate, "error", null);
+          return false;
+        }
         String linePeriod = getOpenPeriod(OBDateUtils.formatDate(line.getDateAcct()),
             reconciliation.getOrganization().getId(), reconciliation.getClient().getId(),
             DOCTYPE_Reconciliation);

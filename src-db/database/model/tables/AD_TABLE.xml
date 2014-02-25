@@ -103,7 +103,7 @@
       </column>
       <column name="AD_PACKAGE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default><![CDATA[0]]></default>
-        <onCreateDefault><![CDATA[SELECT AD_PACKAGE_ID FROM AD_PACKAGE WHERE AD_MODULE_ID<>'0']]></onCreateDefault>
+        <onCreateDefault/>
       </column>
       <column name="TREETYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
@@ -158,13 +158,13 @@
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TABLE" onDelete="setnull">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
+      <index name="AD_TABLE_CLASSNAME_PACKAGE_UN" unique="true">
+        <index-column name="CLASSNAME"/>
+        <index-column name="AD_PACKAGE_ID"/>
+      </index>
       <index name="AD_TABLE_PACKAGE_IDX" unique="false">
         <index-column name="AD_PACKAGE_ID"/>
       </index>
-      <unique name="AD_TABLE_CLASSNAME_PACKAGE_UN">
-        <unique-column name="CLASSNAME"/>
-        <unique-column name="AD_PACKAGE_ID"/>
-      </unique>
       <unique name="AD_TABLE_NAME">
         <unique-column name="NAME"/>
       </unique>

@@ -143,7 +143,7 @@
        FROM (
        SELECT auxSeq.MA_Machine_ID AS ID, MA_Machine.name,  
         SUM(auxSeq.TotalRealCost*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnit,
-        SUM(C_CURRENCY_CONVERT(sm.CalcCost, ?, ?, TO_DATE(sm.Updated), null, sm.ad_client_id, sm.ad_org_id)*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, 
+        SUM(C_CURRENCY_CONVERT(sm.CalcCost, ?, ?, TO_DATE(sm.Updated), null, sm.ad_client_id, sm.ad_org_id)*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, 
             to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
         FROM 
           (SELECT rmc.MA_Machine_ID, rpp.ComponentCost, SUM(rpp.ProducedQty) AS ProducedQty,
@@ -203,7 +203,7 @@
        FROM (
        SELECT auxSeq.MA_Indirect_Cost_ID AS ID, MA_Indirect_Cost.name,  
         SUM(auxSeq.TotalRealCost*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnit,
-        SUM(C_CURRENCY_CONVERT(si.CalcCost, ?, ?, TO_DATE(si.Updated), null, si.ad_client_id, si.ad_org_id)*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, 
+        SUM(C_CURRENCY_CONVERT(si.CalcCost, ?, ?, TO_DATE(si.Updated), null, si.ad_client_id, si.ad_org_id)*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, 
             to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
         FROM 
           (SELECT rmi.MA_Indirect_Cost_ID, rpp.ComponentCost, SUM(rpp.ProducedQty) AS ProducedQty,
@@ -263,7 +263,7 @@
        FROM (
        SELECT auxSeq.C_Salary_Category_ID AS ID, C_Salary_Category.name,
         SUM(auxSeq.TotalRealCost*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnit,
-        SUM(C_CURRENCY_CONVERT(se.CalcCost, ?, ?, TO_DATE(se.Updated), null, se.ad_client_id, se.ad_org_id)*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
+        SUM(C_CURRENCY_CONVERT(se.CalcCost, ?, ?, TO_DATE(se.Updated), null, se.ad_client_id, se.ad_org_id)*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
         FROM 
           (SELECT rme.C_Salary_Category_ID, rpp.ComponentCost, SUM(rpp.ProducedQty) AS ProducedQty,
            SUM(rme.CalcCost) AS TotalRealCost, rpp.MA_Sequence_ID
@@ -322,7 +322,7 @@
        FROM (
        SELECT auxSeq.MA_CostCenter_Version_ID AS ID, MA_CostCenter.name,
         SUM(auxSeq.TotalRealCost*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnit,
-        SUM(C_CURRENCY_CONVERT(se.CostCenterCost, ?, ?, TO_DATE(se.Updated), null, se.ad_client_id, se.ad_org_id)*auxSeq.ComponentCost*auxSeq.ProducedQty)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, 
+        SUM(C_CURRENCY_CONVERT(se.CostCenterCost, ?, ?, TO_DATE(se.Updated), null, se.ad_client_id, se.ad_org_id)*auxSeq.ComponentCost)/SUM(auxSeq.ProducedQty) AS CostPerUnitStd, 
             to_char((to_number(?)+1)*5) as level_blanck, to_char(40-((to_number(?)+1)*5)) as level_name, to_char(to_number(?)+1) as levelid
         FROM 
           (SELECT rpp.MA_CostCenter_Version_ID, rpp.ComponentCost, SUM(rpp.ProducedQty) AS ProducedQty,

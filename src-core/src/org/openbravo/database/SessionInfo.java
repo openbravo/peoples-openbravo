@@ -49,6 +49,7 @@ public class SessionInfo {
   private static ThreadLocal<String> processType = new ThreadLocal<String>();
   private static ThreadLocal<String> processId = new ThreadLocal<String>();
   private static ThreadLocal<String> command = new ThreadLocal<String>();
+  private static ThreadLocal<String> queryProfile = new ThreadLocal<String>();
 
   /*
    * To optimize updating of the AD_CONTEXT_INFO information, getConnection() is changed to return
@@ -77,6 +78,7 @@ public class SessionInfo {
     changedInfo.set(null);
     moduleId.set(null);
     command.set(null);
+    queryProfile.set(null);
     // if there is an open connection associated to get current request, close it
     Connection conn = sessionConnection.get();
     try {
@@ -116,7 +118,7 @@ public class SessionInfo {
 
         if (rs.next() && rs.getString(1).equals("0")) {
           StringBuffer sql = new StringBuffer();
-          sql.append("CREATE GLOBAL TEMPORARY TABLE AD_CONTEXT_INFO");
+          sql.append("CREATE TEMPORARY TABLE AD_CONTEXT_INFO");
           sql.append("(AD_USER_ID VARCHAR(32), ");
           sql.append("  AD_SESSION_ID VARCHAR(32),");
           sql.append("  PROCESSTYPE VARCHAR(60), ");
@@ -313,6 +315,14 @@ public class SessionInfo {
 
   public static void setCommand(String comm) {
     command.set(comm);
+  }
+
+  public static String getQueryProfile() {
+    return queryProfile.get();
+  }
+
+  public static void setQueryProfile(String profile) {
+    queryProfile.set(profile);
   }
 
   public static String getSessionId() {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -73,6 +75,9 @@ public class OBViewFieldHandler {
 
   private List<String> windowEntities = null;
   private List<OBViewFieldDefinition> fields;
+  private List<String> propertiesInButtonFieldDisplayLogic = new ArrayList<String>();
+  private List<String> hiddenPropertiesInDisplayLogic = new ArrayList<String>();
+  private List<String> storedInSessionProperties = new ArrayList<String>();
 
   private List<Field> ignoredFields = new ArrayList<Field>();
 
@@ -94,7 +99,8 @@ public class OBViewFieldHandler {
   }
 
   public List<OBViewFieldDefinition> getFields() {
-
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+        getTab().getTable().getId());
     if (fields != null) {
       return fields;
     }
@@ -128,6 +134,23 @@ public class OBViewFieldHandler {
       for (Field fieldExpression : parser.getFields()) {
         if (!fieldsInDynamicExpression.contains(fieldExpression)) {
           fieldsInDynamicExpression.add(fieldExpression);
+        }
+        // All the properties that are used in the display logic of the buttons must be included in
+        // the list of grid mandatory columns
+        if ("Button".equals(f.getColumn().getReference().getName())) {
+          Property property = entity.getPropertyByColumnName(fieldExpression.getColumn()
+              .getDBColumnName());
+          if (!propertiesInButtonFieldDisplayLogic.contains(property.getName())) {
+            propertiesInButtonFieldDisplayLogic.add(property.getName());
+          }
+        } else {
+          if (!fieldExpression.isDisplayed()) {
+            Property property = entity.getPropertyByColumnName(fieldExpression.getColumn()
+                .getDBColumnName());
+            if (!hiddenPropertiesInDisplayLogic.contains(property.getName())) {
+              hiddenPropertiesInDisplayLogic.add(property.getName());
+            }
+          }
         }
       }
     }
@@ -176,21 +199,20 @@ public class OBViewFieldHandler {
       }
     }
     List<OBViewFieldDefinition> auditFields = new ArrayList<OBViewFieldDefinition>();
-
     if (!hasCreatedField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement);
+      OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement, tab);
       auditFields.add(audit);
     }
     if (!hasCreatedByField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement);
+      OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement, tab);
       auditFields.add(audit);
     }
     if (!hasUpdatedField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement);
+      OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement, tab);
       auditFields.add(audit);
     }
     if (!hasUpdatedByField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement);
+      OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement, tab);
       auditFields.add(audit);
     }
 
@@ -321,6 +343,20 @@ public class OBViewFieldHandler {
       }
     }
 
+    // Stores the stored in session properties, even if they are not shown in the grid or form view
+    for (Field field : adFields) {
+      if (field.getColumn() == null || !field.isActive() || !field.getColumn().isActive()) {
+        continue;
+      }
+      if (field.getColumn().isStoredInSession()) {
+        Property prop = entity.getPropertyByColumnName(field.getColumn().getDBColumnName()
+            .toLowerCase(), false);
+        if (prop != null) {
+          storedInSessionProperties.add(prop.getName());
+        }
+      }
+    }
+
     // Add audit info
     if (!auditFields.isEmpty()) {
       final OBViewFieldGroup viewFieldGroup = new OBViewFieldGroup();
@@ -375,6 +411,10 @@ public class OBViewFieldHandler {
     }
 
     return fields;
+  }
+
+  public List<String> getStoredInSessionProperties() {
+    return storedInSessionProperties;
   }
 
   public boolean getHasStatusBarFields() {
@@ -432,6 +472,44 @@ public class OBViewFieldHandler {
 
       viewFields.add(viewField);
     }
+  }
+
+  /**
+   * Returns column name for a field, in case of property fields, a virtual name is generated to
+   * prevent multiple fields with same column name
+   * 
+   * @param f
+   *          Field to get name for
+   * @param p
+   *          Property for the column of the field; if {@code null}, it is obtained from @{code
+   *          field.getColumn}
+   * @return Column name to be used for the field
+   */
+  static String getFieldColumnName(Field f, Property p) {
+    String columnName;
+    if (p == null) {
+      columnName = f.getColumn().getDBColumnName();
+    } else {
+      columnName = p.getColumnName();
+    }
+
+    if (f != null && f.getProperty() != null) {
+      columnName = "_propertyField_" + Sqlc.TransformaNombreColumna(f.getName()).replace(" ", "")
+          + "_" + columnName;
+    }
+
+    return columnName;
+  }
+
+  public boolean isField(String columnName) {
+    final List<Field> adFields = new ArrayList<Field>(tab.getADFieldList());
+    for (Field field : adFields) {
+      if (field.getColumn() != null
+          && columnName.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   interface OBViewFieldDefinition {
@@ -516,6 +594,8 @@ public class OBViewFieldHandler {
     private String refType;
     private String refEntity;
     private Element element;
+    private Tab auditTab;
+    JSONObject gridConfiguration;
 
     public String getOnChangeFunction() {
       return null;
@@ -551,10 +631,14 @@ public class OBViewFieldHandler {
     }
 
     public OBViewFieldAudit(String type, Element element) {
+      this(type, element, null);
+    }
+
+    public OBViewFieldAudit(String type, Element element, Tab tab) {
       // force reload of element as if it was previously loaded but its children were not touched,
       // lazy initialization fails
       this.element = OBDal.getInstance().get(Element.class, element.getId());
-
+      this.auditTab = tab;
       name = type;
       if (type.endsWith("By")) {
         // User search
@@ -568,7 +652,28 @@ public class OBViewFieldHandler {
     }
 
     public String getGridFieldProperties() {
-      return "";
+      StringBuffer result = new StringBuffer();
+      if (this.gridConfiguration != null) {
+        Boolean canSort = null;
+        Boolean canFilter = null;
+        try {
+          if (this.gridConfiguration.has("canFilter")) {
+            canFilter = (Boolean) this.gridConfiguration.get("canFilter");
+          }
+          if (this.gridConfiguration.has("canSort")) {
+            canSort = (Boolean) this.gridConfiguration.get("canSort");
+          }
+        } catch (JSONException e) {
+          log.error("Error while getting the grid field properties of an audit field", e);
+        }
+        if (canSort != null) {
+          result.append(", canSort: " + canSort.toString());
+        }
+        if (canFilter != null) {
+          result.append(", canFilter: " + canFilter.toString());
+        }
+      }
+      return result.toString();
     }
 
     public Integer getLength() {
@@ -633,7 +738,12 @@ public class OBViewFieldHandler {
 
     @Override
     public String getFieldProperties() {
-      return "";
+      if (tab != null) {
+        gridConfiguration = OBViewUtil.getGridConfigurationSettings(auditTab);
+        return "";
+      } else {
+        return "";
+      }
     }
 
     @Override
@@ -1088,9 +1198,6 @@ public class OBViewFieldHandler {
         return true;
       }
       final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-      if (prop.isParent() && getWindowEntities().contains(prop.getTargetEntity().getName())) {
-        return false;
-      }
       if (prop.isId()) {
         return false;
       }
@@ -1152,6 +1259,8 @@ public class OBViewFieldHandler {
     }
 
     public String getFieldProperties() {
+      // First obtain the gridConfigurationSettings which will be used in other places
+      getUIDefinition().establishGridConfigurationSettings(field);
 
       if (getClientClass().length() > 0) {
         return "editorType: 'OBClientClassCanvasItem', filterEditorType: 'TextItem', ";
@@ -1191,11 +1300,17 @@ public class OBViewFieldHandler {
     }
 
     public String getColumnName() {
-      return property.getColumnName();
+      return OBViewFieldHandler.getFieldColumnName(field, property);
     }
 
     public String getInpColumnName() {
-      return "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
+      String inpColumnName = null;
+      if (field != null && field.getProperty() != null) {
+        inpColumnName = "inp" + this.getColumnName();
+      } else {
+        inpColumnName = "inp" + Sqlc.TransformaNombreColumna(property.getColumnName());
+      }
+      return inpColumnName;
     }
 
     public String getReferencedKeyColumnName() {
@@ -2043,4 +2158,25 @@ public class OBViewFieldHandler {
     getFields(); // initializes stuff
     return ignoredFields;
   }
+
+  public List<String> getPropertiesInButtonFieldDisplayLogic() {
+    return propertiesInButtonFieldDisplayLogic;
+  }
+
+  public List<String> getHiddenPropertiesInDisplayLogic() {
+    return hiddenPropertiesInDisplayLogic;
+  }
+
+  public boolean hasProcessNowProperty() {
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+        getTab().getTable().getId());
+    return (entity == null) ? false : entity.hasProperty("processNow");
+  }
+
+  public boolean hasProcessedProperty() {
+    final Entity entity = ModelProvider.getInstance().getEntityByTableId(
+        getTab().getTable().getId());
+    return (entity == null) ? false : entity.hasProperty("processed");
+  }
+
 }

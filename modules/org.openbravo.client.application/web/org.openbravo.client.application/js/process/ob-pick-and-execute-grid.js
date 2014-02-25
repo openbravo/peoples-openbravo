@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,7 +44,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   minFieldWidth: 75,
   width: '100%',
   height: '100%',
-  autoFitFieldsFillViewport: false,
+  autoFitFieldsFillViewport: true,
   confirmDiscardEdits: false,
   animateRemoveRecord: false,
   removeFieldProperties: {
@@ -106,6 +106,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     // required to show the funnel icon and to work
     this.filterClause = this.gridProperties.filterClause;
     this.sqlFilterClause = this.gridProperties.sqlFilterClause;
+    this.lazyFiltering = this.gridProperties.lazyFiltering;
     if ((this.filterClause || this.sqlFilterClause) && this.gridProperties.filterName) {
       this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.gridProperties.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
       this.view.messageBar.hasFilterMessage = true;
@@ -138,7 +139,22 @@ isc.OBPickAndExecuteGrid.addProperties({
       window.warn('grid fiel not found!');
     }
 
+    this.autoFitExpandField = this.getLongestFieldName();
+
     this.Super('initWidget', arguments);
+  },
+
+  getLongestFieldName: function () {
+    var len = this.fields.length,
+        maxWidth = -1,
+        i, longestFieldName;
+    for (i = 0; i < len; i++) {
+      if (this.fields[i].displaylength > maxWidth) {
+        longestFieldName = this.fields[i].name;
+        maxWidth = this.fields[i].displaylength;
+      }
+    }
+    return longestFieldName;
   },
 
   // when starting row editing make sure that the current
@@ -239,6 +255,19 @@ isc.OBPickAndExecuteGrid.addProperties({
       }
     }
     this.Super('cellEditEnd', arguments);
+
+    // after editing a field value read only can be affected
+    this.handleReadOnlyLogic();
+  },
+
+  // disables/enables fields with read only logic
+  handleReadOnlyLogic: function () {
+    var form;
+    if (!this.viewProperties.handleReadOnlyLogic) {
+      return;
+    }
+    form = this.getEditForm();
+    this.viewProperties.handleReadOnlyLogic(form.getValues(), this.getContextInfo(), form);
   },
 
   handleFilterEditorSubmit: function (criteria, context) {
@@ -382,7 +411,7 @@ isc.OBPickAndExecuteGrid.addProperties({
         }
       }
     }
-    return null;
+    return OB.User.organizationId;
   },
 
   onFetchData: function (criteria, requestProperties) {
@@ -507,6 +536,8 @@ isc.OBPickAndExecuteGrid.addProperties({
         grid.processColumnValue(rowNum, prop, columnValues[prop]);
       }
     }
+
+    grid.handleReadOnlyLogic();
   },
 
   getContextInfo: function (rowNum) {
@@ -551,7 +582,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       MODE: (newRow ? 'NEW' : 'EDIT'),
       PARENT_ID: null,
       TAB_ID: this.viewProperties.tabId,
-      ROW_ID: (record ? record[OB.Constants.ID] : null)
+      ROW_ID: (!newRow && record ? record[OB.Constants.ID] : null)
     };
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, this.processFICReturn, {

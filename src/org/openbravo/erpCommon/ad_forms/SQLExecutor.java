@@ -205,6 +205,7 @@ public class SQLExecutor extends HttpSecureAppServlet {
     xmlDocument.setData("structureHeader", dataHeader);
 
     response.setContentType("text/xls; charset=UTF-8");
+    response.setHeader("Content-Disposition", "attachment");
     PrintWriter out = response.getWriter();
     if (log4j.isDebugEnabled())
       log4j.debug("printPage - Printing document\n");

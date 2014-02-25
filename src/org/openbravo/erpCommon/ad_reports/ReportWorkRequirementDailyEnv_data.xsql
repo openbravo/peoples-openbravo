@@ -51,8 +51,4 @@
     <Parameter name="parStartDateTo" optional="true" after="AND 1=1"><![CDATA[AND wr.STARTDATE <= TO_DATE(?)]]></Parameter>
     <Parameter name="parProcessPlan" optional="true" after="AND 1=1"><![CDATA[AND wr.MA_ProcessPlan_id = ?]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
 </SqlClass>

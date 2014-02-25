@@ -31,6 +31,16 @@
     </Sql>
     <Parameter name="adPinstanceId"/>
   </SqlMethod>
+  <SqlMethod name="select" type="preparedStatement" return="multiple" connection="true">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT P.RESULT, REPLACE(REPLACE(P.ERRORMSG, CHR(10), CHR(92) || CHR(92) || 'n'), CHR(13), CHR(92) || CHR(92) || 'n') AS ERRORMSG, 
+      '' AS P_MSG 
+      FROM AD_PINSTANCE P
+      WHERE P.AD_PINSTANCE_ID = ?
+    </Sql>
+    <Parameter name="adPinstanceId"/>
+  </SqlMethod>
   <SqlMethod name="selectConnection" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

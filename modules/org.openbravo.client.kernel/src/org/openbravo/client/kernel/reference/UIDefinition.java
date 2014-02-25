@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,6 +42,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
+import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
@@ -65,6 +66,7 @@ public abstract class UIDefinition {
 
   private Reference reference;
   private DomainType domainType;
+  private JSONObject gridConfigurationSettings;
   protected static final Logger log = Logger.getLogger(UIDefinition.class);
 
   /**
@@ -153,8 +155,15 @@ public abstract class UIDefinition {
     String columnValue = "";
     RequestContext rq = RequestContext.get();
     if (getValueFromSession) {
-      columnValue = rq.getRequestParameter("inp"
-          + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
+      String inpColumnName = null;
+      if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+        inpColumnName = "inp" + "_propertyField_"
+            + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+            + field.getColumn().getDBColumnName();
+      } else {
+        inpColumnName = "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName());
+      }
+      columnValue = rq.getRequestParameter(inpColumnName);
     } else {
       if (field.getColumn().getDBColumnName().equalsIgnoreCase("documentno")
           || (field.getColumn().isUseAutomaticSequence() && field.getColumn().getDBColumnName()
@@ -247,6 +256,10 @@ public abstract class UIDefinition {
     return getFieldProperties(field, getValueFromSession);
   }
 
+  public String getFieldPropertiesFirstRecord(Field field, boolean getValueFromSession) {
+    return getFieldProperties(field, getValueFromSession);
+  }
+
   /**
    * Returns alignment in grid view. In case it returns null, default alignment for actual data type
    * is used.
@@ -334,7 +347,13 @@ public abstract class UIDefinition {
     if (getFilterEditorType() == null) {
       return ",canFilter: false";
     }
-    return getFilterEditorPropertiesProperty(field);
+    String filterEditorProperties = getFilterEditorPropertiesProperty(field);
+    if (!"".equals(filterEditorProperties)) {
+      filterEditorProperties = filterEditorProperties.replaceAll("(^)( *?)(,)", "");
+      return ", filterEditorProperties: {" + filterEditorProperties + "}";
+    } else {
+      return "";
+    }
   }
 
   /**
@@ -344,7 +363,6 @@ public abstract class UIDefinition {
    * @param field
    *          the field to generate the filter editor properties for, note it is allowed to pass
    *          null, implementors should gracefully handle this.
-   * @return
    */
   protected String getFilterEditorPropertiesProperty(Field field) {
     return "";
@@ -362,11 +380,21 @@ public abstract class UIDefinition {
    * @return a JSONObject string which is used to initialize the formitem.
    */
   public String getGridFieldProperties(Field field) {
+    StringBuffer result = new StringBuffer();
     if (this.getGridEditorType() != null
         && !this.getGridEditorType().equals(this.getFormEditorType())) {
-      return ", editorType: '" + this.getGridEditorType() + "'";
+      result.append(", editorType: '" + this.getGridEditorType() + "'");
     }
-    return "";
+    Boolean canSort = (Boolean) readGridConfigurationSetting("canSort");
+    Boolean canFilter = (Boolean) readGridConfigurationSetting("canFilter");
+
+    if (canSort != null) {
+      result.append(", canSort: " + canSort.toString());
+    }
+    if (canFilter != null) {
+      result.append(", canFilter: " + canFilter.toString());
+    }
+    return result.toString();
   }
 
   public String getParameterProperties(Parameter parameter) {
@@ -419,6 +447,48 @@ public abstract class UIDefinition {
     return domainType;
   }
 
+  protected String removeAttributeFromString(String inpString, String attr) {
+    String result = inpString;
+    if (result.indexOf(attr) != -1) {
+      // If there is a previous 'canSort' set, remove it to avoid collision when the new one is set
+      // later
+      result = result.replaceAll("(,)( *?)(canSort)( *?)(:)( *?)(false|true)( *?)", "");
+    }
+    return result;
+
+  }
+
+  /**
+   * Reads a particular value from the grid configuration settings
+   * 
+   * @param setting
+   *          the setting whose value is to be returned.
+   */
+  protected Object readGridConfigurationSetting(String setting) {
+    Object result = null;
+    try {
+      result = this.gridConfigurationSettings.get(setting);
+    } catch (JSONException e) {
+    } catch (Exception e) {
+    }
+    return result;
+  }
+
+  /**
+   * Obtains the grid configuration values for the given field and sets them into the
+   * 'gridConfigurationSettings' variable.
+   * 
+   * The aim of having all these values in a single variable at once is to make a single call to the
+   * database and then be able to use the values stored into 'gridConfigurationSettings' wherever it
+   * be needed (without more calls to the database).
+   * 
+   * @param field
+   *          the field for which the information should be computed.
+   */
+  public void establishGridConfigurationSettings(Field field) {
+    this.gridConfigurationSettings = OBViewUtil.getGridConfigurationSettings(field);
+  }
+
   // note can make sense to also enable hover of values for enums
   // but then the value should be converted to the translated
   // value of the enum
@@ -433,6 +503,11 @@ public abstract class UIDefinition {
 
   protected String getValueInComboReference(Field field, boolean getValueFromSession,
       String columnValue) {
+    return getValueInComboReference(field, getValueFromSession, columnValue, false);
+  }
+
+  protected String getValueInComboReference(Field field, boolean getValueFromSession,
+      String columnValue, boolean onlyFirstRecord) {
     try {
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
@@ -470,6 +545,9 @@ public abstract class UIDefinition {
       Map<String, String> parameters = comboTableData.fillSQLParametersIntoMap(
           new DalConnectionProvider(false), vars, tabData, field.getTab().getWindow().getId(),
           (getValueFromSession && !comboreload) ? columnValue : "");
+      if (onlyFirstRecord) {
+        parameters.put("@ONLY_ONE_RECORD@", columnValue);
+      }
       FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), parameters,
           getValueFromSession && !comboreload);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();

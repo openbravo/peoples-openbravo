@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -162,7 +162,12 @@ public class DataToJsonConverter {
           continue;
         }
 
-        final Object value = bob.get(property.getName());
+        Object value;
+        if (dataResolvingMode == DataResolvingMode.FULL_TRANSLATABLE) {
+          value = bob.get(property.getName(), OBContext.getOBContext().getLanguage());
+        } else {
+          value = bob.get(property.getName());
+        }
         if (value != null) {
           if (property.isPrimitive()) {
             // TODO: format!
@@ -265,13 +270,22 @@ public class DataToJsonConverter {
 
       Property displayColumnProperty = DalUtil.getPropertyFromPath(referencedProperty.getEntity(),
           referencingProperty.getDisplayPropertyName());
+      // translating the displayPropertyName before retrieving inside the condition
+      // statements. The values will be automatically translated if
+      // getIdentifier() is called.
       if (referencingProperty.hasDisplayColumn()) {
         Object referenceObject = obObject.get(referencingProperty.getDisplayPropertyName(),
             OBContext.getOBContext().getLanguage(), (String) obObject.getId());
-        identifier = referenceObject != null ? referenceObject.toString() : "";
+        if (referenceObject instanceof BaseOBObject) {
+          identifier = referenceObject != null ? ((BaseOBObject) referenceObject).getIdentifier()
+              : "";
+        } else {
+          identifier = referenceObject != null ? referenceObject.toString() : "";
+        }
         if (referencingProperty.isDisplayValue()) {
           if (obObject.getEntity().hasProperty("searchKey")) {
-            String value = (String) obObject.get("searchKey");
+            String value = obObject.get("searchKey", OBContext.getOBContext().getLanguage(),
+                (String) obObject.getId()).toString();
             identifier = value + " - " + identifier;
           } else {
             log.warn("Entity "

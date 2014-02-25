@@ -341,8 +341,4 @@
     <Parameter name="parDateFrom" optional="true" after="and 1=1"><![CDATA[AND DATEACCT >= TO_DATE(?) ]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="and 1=1"><![CDATA[AND DATEACCT <= TO_DATE(?) ]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment>Create a registry</SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
 </SqlClass>

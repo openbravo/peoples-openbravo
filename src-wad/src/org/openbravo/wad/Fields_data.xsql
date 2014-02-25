@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -724,4 +724,20 @@
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
+  
+   <SqlMethod name="explicitAccessProcess" type="preparedStatement" return="multiple">
+    <Sql>
+      <![CDATA[
+      select p.ad_process_id as id
+        from ad_process p, ad_column c, ad_field f
+       where f.ad_tab_id = ?
+         and f.ad_column_id = c.ad_column_id
+         and c.ad_process_id = p.ad_process_id
+         and p.is_explicit_access = 'Y'
+      ]]>
+    </Sql>
+    <Parameter name="tab"/>
+  </SqlMethod>
+  
+  
   </SqlClass>

@@ -593,7 +593,13 @@ isc.OBNumberFilterItem.addProperties({
 
   // If the filter has not been applied yet, apply it when it loses the focus
   blur: function () {
-    this.form.grid.performAction();
+    var undef;
+    //do not apply the filter if the value is undefined. Can happen in cases where a record is opened directly and creates an additional datasource call.
+    //Refer issue https://issues.openbravo.com/view.php?id=24692
+    //if there was an existing value in filter and it is removed, the getValue() returns null, so the filter will be removed to show all values.
+    if (this.getValue() !== undef) {
+      this.form.grid.performAction();
+    }
     return this.Super('blur', arguments);
   },
 

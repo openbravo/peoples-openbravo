@@ -573,6 +573,26 @@ public class Entity {
     return prop;
   }
 
+  /**
+   * Retrieves the property using the columnName. Throws a CheckException if no property exists with
+   * that columnName in case checkIsNotNull is true.
+   * 
+   * @param columnName
+   *          the name used to search for the property.
+   * @param checkIsNotNull
+   *          if true, fails if property does not exists in entity, if false, returns null in this
+   *          case
+   * @return the found property
+   * @throws CheckException
+   */
+  public Property getPropertyByColumnName(String columnName, boolean checkIsNotNull) {
+    final Property prop = propertiesByColumnName.get(columnName);
+    if (checkIsNotNull) {
+      Check.isNotNull(prop, "Property " + columnName + " does not exist for entity " + this);
+    }
+    return prop;
+  }
+
   public String getPackageName() {
     final int lastIndexOf = getClassName().lastIndexOf('.');
     return getClassName().substring(0, lastIndexOf);

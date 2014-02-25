@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2366,6 +2366,8 @@ public class Wad extends DefaultHandler {
         shortcutsAux[i].name = ik.next();
     }
     xmlDocument.setData("structure37", shortcutsAux);
+
+    xmlDocument.setData("structure38", FieldsData.explicitAccessProcess(pool, strTab));
 
     if (needsComboTableData)
       controlsJavaSource

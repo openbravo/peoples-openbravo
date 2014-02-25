@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2014 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -87,6 +87,7 @@ public class Sqlc extends DefaultHandler {
   private static boolean queryWithOptionalParameterTypeArgument = false;
 
   static Logger log4j = Logger.getLogger(Sqlc.class); // log4j
+  private static boolean includeQueryTimeOut;
 
   private Sqlc() {
     init();
@@ -141,10 +142,17 @@ public class Sqlc extends DefaultHandler {
     // include only directories (and sub-directories under this one) with
     // this pattern, the packaging will be from this point, not from call
     // point
-    if (argv.length <= 4)
+    if (argv.length <= 4 || "null".equals(argv[4])) {
       includeDirectories = null;
-    else
+    } else {
       includeDirectories = getDirectories(argv[4]);
+    }
+
+    if (argv.length <= 5) {
+      includeQueryTimeOut = true;
+    } else {
+      includeQueryTimeOut = argv[5].equalsIgnoreCase("true");
+    }
 
     // the second parameter is the string-chain to make the filter
     // the file must end with this string-chain in order to be recognized
@@ -439,6 +447,8 @@ public class Sqlc extends DefaultHandler {
           sqlPackage = amap.getValue(i);
         } else if (amap.getQName(i).equals("import")) {
           sql.sqlImport = amap.getValue(i);
+        } else if (amap.getQName(i).equals("useQueryProfile")) {
+          sql.useQueryProfile = "true".equalsIgnoreCase(amap.getValue(i));
         }
       }
       if (sqlPackage != null)
@@ -747,6 +757,10 @@ public class Sqlc extends DefaultHandler {
     out1.append("import org.openbravo.data.FieldProvider;\n");
     out1.append("import org.openbravo.database.ConnectionProvider;\n");
     out1.append("import org.openbravo.data.UtilSql;\n");
+    if (includeQueryTimeOut) {
+      out1.append("import org.openbravo.service.db.QueryTimeOutUtil;\n");
+      out1.append("import org.openbravo.database.SessionInfo;\n");
+    }
 
     if (sql.sqlImport != null) {
       out2.append("import " + sql.sqlImport + ";\n");
@@ -877,7 +891,7 @@ public class Sqlc extends DefaultHandler {
   }
 
   private void printFunctionConstant() throws IOException {
-    printHeadFunctionSql(false, false, false);
+    printHeadFunctionSql(false, false, false, false);
     out2.append("    " + sqlcName + " object" + sqlcName + "[] = new " + sqlcName + "[1];\n");
     out2.append("    object" + sqlcName + "[0] = new " + sqlcName + "();\n");
     try {
@@ -1025,22 +1039,29 @@ public class Sqlc extends DefaultHandler {
     final StringBuffer aux = new StringBuffer();
     boolean declareiParameter = false;
 
+    String queryTimeoutStr = "";
+    if (includeQueryTimeOut) {
+      queryTimeoutStr = "      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, SessionInfo.getQueryProfile());\n";
+    }
     aux.append("    try {\n");
     if (sql.sqlType.equals("preparedStatement")) {
       aux.append("    st = connectionProvider.getPreparedStatement(");
       if (sql.sqlConnection.equals("true"))
         aux.append("conn, ");
       aux.append("strSql);\n");
+      aux.append(queryTimeoutStr);
     } else if (sql.sqlType.equals("statement")) {
       aux.append("    st = connectionProvider.getStatement(");
       if (sql.sqlConnection.equals("true"))
         aux.append("conn");
       aux.append(");\n");
+      aux.append(queryTimeoutStr);
     } else if (sql.sqlType.equals("callableStatement")) {
       aux.append("      st = connectionProvider.getCallableStatement(");
       if (sql.sqlConnection.equals("true"))
         aux.append("conn, ");
       aux.append("strSql);\n");
+      aux.append(queryTimeoutStr);
     }
     // set value of parameters
     for (final Parameter parameter : sql.vecParameter) {
@@ -1099,20 +1120,37 @@ public class Sqlc extends DefaultHandler {
 
   private void printFunctionSql() throws IOException {
     boolean boolSequence = false;
+
+    if (sql.useQueryProfile) {
+      printHeadFunctionSql(true, false, false, true);
+      out2.append("     String oldQueryProfile = SessionInfo.getQueryProfile();\n");
+      out2.append("     try {\n");
+      out2.append("       SessionInfo.setQueryProfile(queryProfile);\n");
+      out2.append("       return ");
+      // call the normal version without limit,offset
+      printCallFunctionSql(true, false);
+      out2.append(";\n");
+      out2.append("     } finally {\n");
+      out2.append("       SessionInfo.setQueryProfile(oldQueryProfile);\n");
+      out2.append("     }\n");
+      out2.append("  }\n");
+    }
+
     // *** Call to the argument-less creation header, who calls the header
     // with them
     if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) { // parameters por
       // paging the output
       // && 1==2
-      printHeadFunctionSql(true, false, false);
+      printHeadFunctionSql(true, false, false, false);
       out2.append("    return ");
-      printCallFunctionSql(true);
+      // call the version with int,int (limit,offset)
+      printCallFunctionSql(true, true);
       out2.append(";\n");
       out2.append("  }\n");
       boolSequence = true;
     }
 
-    printHeadFunctionSql(true, boolSequence, false);
+    printHeadFunctionSql(true, boolSequence, false, false);
     // Sequences
     if (sql.strSequenceName != null) {
       out2.append("    long keySequence = 0;\n");
@@ -1367,7 +1405,7 @@ public class Sqlc extends DefaultHandler {
   }
 
   private void printHeadFunctionSql(boolean printProviderConnection, boolean boolPagin,
-      boolean boolSequence) throws IOException {
+      boolean boolSequence, boolean useQueryType) throws IOException {
     out2.append("\n");
     final String[] strSqlCommentsVector = stringToVector(sql.strSqlComments, false);
     for (int i = 0; i < strSqlCommentsVector.length; i++) {
@@ -1402,6 +1440,9 @@ public class Sqlc extends DefaultHandler {
       out2.append(sql.sqlClass + " ");
     }
     out2.append(sql.sqlName + "(");
+    if (useQueryType) {
+      out2.append("String queryProfile, ");
+    }
     boolean firstParameter = true;
     if (sql.sqlConnection.equals("true")) {
       firstParameter = false;
@@ -1451,7 +1492,8 @@ public class Sqlc extends DefaultHandler {
     out2.append("    throws ServletException {\n");
   }
 
-  private void printCallFunctionSql(boolean printProviderConnection) throws IOException {
+  private void printCallFunctionSql(boolean printProviderConnection, boolean boolSequence)
+      throws IOException {
     out2.append(sql.sqlName + "(");
     boolean firstParameter = true;
     if (sql.sqlConnection.equals("true")) {
@@ -1481,12 +1523,14 @@ public class Sqlc extends DefaultHandler {
         }
       }
     }
-    if (firstParameter) {
-      firstParameter = false;
-    } else {
-      out2.append(", ");
+    if (boolSequence) {
+      if (firstParameter) {
+        firstParameter = false;
+      } else {
+        out2.append(", ");
+      }
+      out2.append("0, 0");
     }
-    out2.append("0, 0");
     out2.append(")");
   }
 

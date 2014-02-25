@@ -40,23 +40,30 @@ BEGIN
 
   IF(UPDATING) THEN
     IF(:NEW.M_PRODUCT_ID IS NOT NULL) THEN
-      IF((COALESCE(:old.QtyDelivered, 0) <> COALESCE(:NEW.QtyDelivered, 0))) THEN
-        -- Get ID
-        v_ID:=:new.C_Order_ID;
-        v_QtyReserved:=-(:new.qtydelivered - :old.qtydelivered) ;
-        IF :old.qtydelivered=0 AND :new.qtydelivered=:new.qtyordered THEN
-          v_QtyOrderReserved:=-:new.QuantityOrder;
-        ELSIF :new.M_Product_UOM_ID IS NOT NULL THEN
-          v_QtyOrderReserved:=C_Uom_Convert(v_QtyReserved, :new.C_UOM_ID, :new.m_product_uom_id, 'Y') ;
-        END IF;
-        SELECT COUNT(*)
-        INTO V_STOCKED
-        FROM M_PRODUCT
-        WHERE M_Product_ID=:NEW.M_PRODUCT_ID
-          AND IsStocked='Y'
-          AND ProductType='I';
-        IF V_STOCKED > 0 THEN
-          M_UPDATE_STORAGE_PENDING(:new.AD_Client_ID, :new.AD_Org_ID, :new.UpdatedBy, :new.M_Product_ID, :new.M_Warehouse_ID, :new.M_AttributeSetInstance_ID, :new.C_UOM_ID, :new.M_PRODUCT_UOM_ID, v_QtyReserved, v_QtyOrderReserved, 0, NULL) ;
+    v_ID:=:old.C_Order_ID;
+    SELECT DocStatus
+    INTO v_DocStatus
+    FROM c_Order
+    WHERE c_order_id = v_ID;
+      IF(v_DocStatus <> 'DR') THEN
+        IF((COALESCE(:old.QtyDelivered, 0) <> COALESCE(:NEW.QtyDelivered, 0))) THEN
+          -- Get ID
+          v_ID:=:new.C_Order_ID;
+          v_QtyReserved:=-(:new.qtydelivered - :old.qtydelivered) ;
+          IF :old.qtydelivered=0 AND :new.qtydelivered=:new.qtyordered THEN
+            v_QtyOrderReserved:=-:new.QuantityOrder;
+          ELSIF :new.M_Product_UOM_ID IS NOT NULL THEN
+            v_QtyOrderReserved:=C_Uom_Convert(v_QtyReserved, :new.C_UOM_ID, :new.m_product_uom_id, 'Y') ;
+          END IF;
+          SELECT COUNT(*)
+          INTO V_STOCKED
+          FROM M_PRODUCT
+          WHERE M_Product_ID=:NEW.M_PRODUCT_ID
+            AND IsStocked='Y'
+            AND ProductType='I';
+          IF V_STOCKED > 0 THEN
+            M_UPDATE_STORAGE_PENDING(:new.AD_Client_ID, :new.AD_Org_ID, :new.UpdatedBy, :new.M_Product_ID, :new.M_Warehouse_ID, :new.M_AttributeSetInstance_ID, :new.C_UOM_ID, :new.M_PRODUCT_UOM_ID, v_QtyReserved, v_QtyOrderReserved, 0, NULL) ;
+          END IF;
         END IF;
       END IF;
     END IF;

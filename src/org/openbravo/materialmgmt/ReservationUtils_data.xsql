@@ -58,5 +58,18 @@
       <Parameter name="allocated"/>
       <Parameter name="returnValue" type="out"/>
    </SqlMethod>
+   <SqlMethod name="reallocateStock" connection="true" type="callableStatement" return="object" object="CSResponse">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        CALL M_RESERVATION_REALLOCATE(?, ?, ?, to_number(?), ?, ?, ?)
+      ]]></Sql>
+      <Parameter name="mReservationId"/>
+      <Parameter name="mLocatorId"/>
+      <Parameter name="mAttributeSetInstanceId"/>
+      <Parameter name="quantity"/>
+      <Parameter name="adUserId"/>
+      <Parameter name="returnValue" type="out"/>
+      <Parameter name="returnValueMsg" type="out"/>
+   </SqlMethod>
    
 </SqlClass>

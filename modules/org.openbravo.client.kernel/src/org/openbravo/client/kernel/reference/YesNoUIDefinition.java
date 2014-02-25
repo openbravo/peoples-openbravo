@@ -65,6 +65,7 @@ public class YesNoUIDefinition extends UIDefinition {
   @Override
   public String getTypeProperties() {
     return "    valueMap: [null, true, false],"
+        + "sortNormalizer: function (item, field, context){ return OB.Utilities.yesNoSortNormalizer(item, field, context);},"
         + "shortDisplayFormatter: function(value, field, component, record) {"
         + "return OB.Utilities.getYesNoDisplayValue(value);" + "},  "
         + "createClassicString: function(value) {return OB.Utilities.getClassicValue(value);},"

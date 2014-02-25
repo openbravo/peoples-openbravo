@@ -1008,6 +1008,7 @@ public class ActivationKey {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
     obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
     obCriteria.add(Restrictions.eq(Session.PROPERTY_USERNAME, username));
+    obCriteria.add(Restrictions.in(Session.PROPERTY_LOGINSTATUS, ACTIVE_SESSION_TYPES));
     if (currentSession != null && !currentSession.equals("")) {
       obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
     }

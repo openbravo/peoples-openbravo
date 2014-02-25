@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -37,6 +38,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -90,6 +92,7 @@ public class DocFINPayment extends AcctServer {
 
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
     FIN_PaymentSchedule ps = null;
+    FIN_PaymentDetail pd = null;
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
@@ -99,12 +102,24 @@ public class DocFINPayment extends AcctServer {
           continue;
         }
 
+        // If the Payment Detail has already been processed, skip it
+        if (paymentDetails.get(i).equals(pd)) {
+          continue;
+        }
+        pd = paymentDetails.get(i);
+
         data[i] = new FieldProviderFactory(null);
         FIN_PaymentSchedule psi = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getInvoicePaymentSchedule();
         FIN_PaymentSchedule pso = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
             .getOrderPaymentSchedule();
-        BigDecimal amount = getPaymentDetailAmount(paymentDetails, ps, psi, pso, i);
+        // Related to Issue Issue 19567. Some Payment Detail's amount and writeoff amount are merged
+        // into one.
+        // https://issues.openbravo.com/view.php?id=19567
+        HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
+            paymentDetails, ps, psi, pso, i);
+        BigDecimal amount = amountAndWriteOff.get("amount");
+        BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
           data[i] = null;
           ps = psi;
@@ -135,8 +150,7 @@ public class DocFINPayment extends AcctServer {
             : "");
         FieldProviderFactory.setField(data[i], "DoubtFulDebtAmount", paymentDetails.get(i)
             .getFINPaymentScheduleDetailList().get(0).getDoubtfulDebtAmount().toString());
-        FieldProviderFactory.setField(data[i], "WriteOffAmt", paymentDetails.get(i)
-            .getWriteoffAmount().toString());
+        FieldProviderFactory.setField(data[i], "WriteOffAmt", writeOff.toString());
         FieldProviderFactory.setField(data[i], "C_GLItem_ID",
             paymentDetails.get(i).getGLItem() != null ? paymentDetails.get(i).getGLItem().getId()
                 : "");
@@ -203,16 +217,51 @@ public class DocFINPayment extends AcctServer {
             .getFINPaymentScheduleDetailList().get(0).getSalesRegion() != null ? paymentDetails
             .get(i).getFINPaymentScheduleDetailList().get(0).getSalesRegion().getId() : "");
         FieldProviderFactory
-            .setField(data[i], "cCostcenterId", paymentDetails.get(i)
-                .getFINPaymentScheduleDetailList().get(0).getCostCenter() != null ? paymentDetails
-                .get(i).getFINPaymentScheduleDetailList().get(0).getCostCenter().getId() : "");
+            .setField(
+                data[i],
+                "cCostcenterId",
+                paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                    .getInvoicePaymentSchedule() != null
+                    && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                        .getInvoicePaymentSchedule().getInvoice().getCostcenter() != null ? paymentDetails
+                    .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                    .getInvoice().getCostcenter().getId()
+                    : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                        .getOrderPaymentSchedule() != null
+                        && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                            .getOrderPaymentSchedule().getOrder().getCostcenter() != null ? paymentDetails
+                        .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
+                        .getOrder().getCostcenter().getId()
+                        : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                            .getCostCenter() != null ? paymentDetails.get(i)
+                            .getFINPaymentScheduleDetailList().get(0).getCostCenter().getId() : "")));
 
         FieldProviderFactory.setField(data[i], "user1Id", paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getStDimension() != null ? paymentDetails
-            .get(i).getFINPaymentScheduleDetailList().get(0).getStDimension().getId() : "");
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getInvoicePaymentSchedule().getInvoice().getStDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+            .getInvoice().getStDimension().getId() : (paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getOrderPaymentSchedule().getOrder().getStDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getStDimension().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList()
+            .get(0).getStDimension() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getStDimension().getId() : "")));
         FieldProviderFactory.setField(data[i], "user2Id", paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getNdDimension() != null ? paymentDetails
-            .get(i).getFINPaymentScheduleDetailList().get(0).getNdDimension().getId() : "");
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getInvoicePaymentSchedule().getInvoice().getNdDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+            .getInvoice().getNdDimension().getId() : (paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
+            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+                .getOrderPaymentSchedule().getOrder().getNdDimension() != null ? paymentDetails
+            .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getNdDimension().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList()
+            .get(0).getNdDimension() != null ? paymentDetails.get(i)
+            .getFINPaymentScheduleDetailList().get(0).getNdDimension().getId() : "")));
 
       }
     } finally {
@@ -247,6 +296,7 @@ public class DocFINPayment extends AcctServer {
                 && detail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null ? detail
                 .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
                 : null);
+        docLine.setInvoiceTaxCashVAT_V(Line_ID);
         list.add(docLine);
       } finally {
         OBContext.restorePreviousMode();
@@ -388,6 +438,10 @@ public class DocFINPayment extends AcctServer {
                   assignedAmount = assignedAmount.add(lineAmount);
                 }
               }
+
+              // Cash VAT
+              SeqNo = CashVATUtil.createFactCashVAT(as, conn, fact, Fact_Acct_Group_ID, line,
+                  invoice, DocumentType, C_Currency_ID, SeqNo);
             }
           }
           fact.createLine(line, getAccountBPartner(bpartnerId, as, isReceipt, isPrepayment, conn),
@@ -612,7 +666,7 @@ public class DocFINPayment extends AcctServer {
     if (paymentInfo.length > 0) {
       FieldProviderFactory.setField(data[0], "User1_ID", paymentInfo[0].user1Id);
       FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].user2Id);
-      FieldProviderFactory.setField(data[0], "User2_ID", paymentInfo[0].cCostcenterId);
+      FieldProviderFactory.setField(data[0], "C_Costcenter_ID", paymentInfo[0].cCostcenterId);
     }
 
     setObjectFieldProvider(data);

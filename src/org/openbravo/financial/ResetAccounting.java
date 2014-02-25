@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -174,6 +174,30 @@ public class ResetAccounting {
     results.put("updated", updated);
     log4j.debug("total totalProcess (milies): " + (System.currentTimeMillis() - totalProcess));
     if (recordId != null && !"".equals(recordId) && deleted == 0 && updated == 0) {
+      if (recordId != null && !"".equals(recordId) && adTableId != null && !"".equals(adTableId)) {
+        // If record exists but there is no entry in fact table then unpost record
+        try {
+          OBContext.setAdminMode(false);
+          Table table = OBDal.getInstance().get(Table.class, adTableId);
+          OBCriteria<AccountingFact> obc = OBDal.getInstance().createCriteria(AccountingFact.class);
+          obc.setFilterOnReadableClients(false);
+          obc.setFilterOnReadableOrganization(false);
+          obc.setFilterOnActive(false);
+          obc.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, recordId));
+          obc.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
+          if (obc.list().size() == 0) {
+            String strUpdate = "update "
+                + table.getName()
+                + " set posted='N', processNow=false where (posted<>'N' or posted is null or processNow = false) and id = :recordID ";
+            final Query update = OBDal.getInstance().getSession().createQuery(strUpdate);
+            update.setParameter("recordID", recordId);
+            updated = update.executeUpdate();
+            return results;
+          }
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      }
       throw new OBException("@PeriodClosedForUnPosting@");
     }
     return results;

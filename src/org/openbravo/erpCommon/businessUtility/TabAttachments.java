@@ -86,7 +86,7 @@ public class TabAttachments extends HttpSecureAppServlet {
       vars.setSessionValue("TabAttachments.windowId", strWindow);
       final String key = vars.getStringParameter("inpKey");
       vars.setSessionValue("TabAttachments.key", key);
-      final String strText = vars.getStringParameter("inptext");
+      final String strText = vars.getStringParameter("inpDescription");
       final String strDataType = vars.getStringParameter("inpadDatatypeId");
       final TabAttachmentsData[] data = TabAttachmentsData.selectTabInfo(this, strTab);
       String tableId = "";
@@ -126,6 +126,16 @@ public class TabAttachments extends HttpSecureAppServlet {
           }
         }
       }
+    } else if (vars.commandIn("EDIT_DESC_OB3")) {
+      final String strText = vars.getStringParameter("inpDescription");
+      vars.setSessionValue("TabAttachments.inpDescription", strText);
+      final String attachId = vars.getStringParameter("inpAttachId");
+      vars.setSessionValue("TabAttachments.buttonId", attachId);
+      final String strTab = vars.getStringParameter("inpTabId");
+      vars.setSessionValue("TabAttachments.tabId", strTab);
+      final String key = vars.getStringParameter("inpKey");
+      vars.setSessionValue("TabAttachments.key", key);
+      editDescOB3(response, vars, attachId, strText, strTab, key);
     } else if (vars.getCommand().startsWith("SAVE_EDIT")) {
       final String strTab = vars.getStringParameter("inpTabId");
       vars.setSessionValue("TabAttachments.tabId", strTab);
@@ -254,8 +264,10 @@ public class TabAttachments extends HttpSecureAppServlet {
       attachmentFiles.list().toArray();
       HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
       for (Attachment attachmentFile : attachmentFiles.list()) {
-        final File file = new File(globalParameters.strFTPDirectory + "/" + tableId + "-"
-            + attachmentFile.getRecord(), attachmentFile.getName());
+        String attachmentDirectory = TabAttachments.getAttachmentDirectory(tableId, recordIds,
+            attachmentFile.getName());
+        final File file = new File(globalParameters.strFTPDirectory + "/" + attachmentDirectory,
+            attachmentFile.getName());
         String zipName = "";
         if (!writtenFiles.containsKey(file.getName())) {
           zipName = file.getName();
@@ -381,11 +393,13 @@ public class TabAttachments extends HttpSecureAppServlet {
       try {
         FileUtility f = new FileUtility();
         // FIXME: Get the directory separator from Java runtime
-        final File file = new File(globalParameters.strFTPDirectory + "/" + data[0].adTableId + "-"
-            + data[0].adRecordId, data[0].name);
+        String attachmentDirectory = TabAttachments.getAttachmentDirectory(data[0].adTableId,
+            data[0].adRecordId, data[0].name);
+        final File file = new File(globalParameters.strFTPDirectory + "/" + attachmentDirectory,
+            data[0].name);
         if (file.exists())
-          f = new FileUtility(globalParameters.strFTPDirectory + "/" + data[0].adTableId + "-"
-              + data[0].adRecordId, data[0].name, false);
+          f = new FileUtility(globalParameters.strFTPDirectory + "/" + attachmentDirectory,
+              data[0].name, false);
         else
           f = new FileUtility(globalParameters.strFTPDirectory, strFileReference, false);
         if (!f.deleteFile()) {
@@ -593,6 +607,32 @@ public class TabAttachments extends HttpSecureAppServlet {
     final PrintWriter out = response.getWriter();
     out.print(Utility.hasTabAttachments(this, vars, strTab, recordId));
     out.close();
+  }
+
+  private void editDescOB3(HttpServletResponse response, VariablesSecureApp vars,
+      String attachmentId, String desc, String strTab, String key) {
+    OBContext.setAdminMode(true);
+    try {
+      Attachment attachment = OBDal.getInstance().get(Attachment.class, attachmentId);
+
+      attachment.setText(desc);
+      OBDal.getInstance().save(attachment);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getConnection().commit();
+
+      Tab tab = OBDal.getInstance().get(Tab.class, strTab);
+      JSONObject obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
+      String buttonId = vars.getStringParameter("buttonId");
+      response.setContentType("text/html; charset=UTF-8");
+      Writer writer = response.getWriter();
+      writer.write("<HTML><BODY><script type=\"text/javascript\">");
+      writer.write("top.OB.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString() + ");");
+      writer.write("</SCRIPT></BODY></HTML>");
+    } catch (Exception e) {
+      log4j.debug("Problem saving attachment: " + e.getMessage());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,6 +82,7 @@ isc.OBToolbarActionButton.addProperties({
     }
 
     allProperties.inpProcessId = this.processId;
+    allProperties._UTCOffsetMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds();
 
     // obuiapp_process definition
     if (this.newDefinition) {

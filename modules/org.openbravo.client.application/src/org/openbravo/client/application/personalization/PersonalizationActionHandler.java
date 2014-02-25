@@ -11,13 +11,15 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.personalization;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
@@ -31,6 +33,8 @@ import org.openbravo.client.application.window.OBViewFormComponent;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.ui.Tab;
 
 /**
@@ -82,7 +86,8 @@ public class PersonalizationActionHandler extends BaseActionHandler {
       final String tabId = (String) parameters.get(TABID);
       final String windowId = (String) parameters.get(WINDOWID);
       final String applyLevelInformation = (String) parameters.get(APPLYLEVELINFORMATION);
-      final String personalizationID = (String) parameters.get(PERSONALIZATIONID);
+      Boolean saveAsNewPreference = false;
+      String personalizationID = (String) parameters.get(PERSONALIZATIONID);
       if (action.equals(ACTION_DELETE)) {
         final UIPersonalization uiPersonalization = OBDal.getInstance().get(
             UIPersonalization.class, personalizationID);
@@ -90,6 +95,25 @@ public class PersonalizationActionHandler extends BaseActionHandler {
           // is null if already removed
           OBDal.getInstance().remove(uiPersonalization);
         }
+
+        // Delete also all the preferences that has this uiPersonalization as the 'Default View'
+        List<Object> params = new ArrayList<Object>();
+        StringBuilder hql = new StringBuilder();
+        hql.append(" as p where ");
+        hql.append(" p.searchKey = ? ");
+        params.add(uiPersonalization);
+        hql.append(" and p.property = ?");
+        params.add("OBUIAPP_DefaultSavedView");
+
+        OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class,
+            hql.toString());
+        qPref.setParameters(params);
+        List<Preference> preferences = qPref.list();
+
+        for (Preference preference : preferences) {
+          OBDal.getInstance().remove(preference);
+        }
+
         return new JSONObject().put("result", "success");
       } else if (action.equals(ACTION_STORE)) {
 
@@ -103,15 +127,24 @@ public class PersonalizationActionHandler extends BaseActionHandler {
           // updated, use the original level information
           final UIPersonalization uiPersonalization = OBDal.getInstance().get(
               UIPersonalization.class, personalizationID);
-          clientID = uiPersonalization.getVisibleAtClient().getId();
-          orgID = uiPersonalization.getVisibleAtOrganization().getId();
-          roleID = uiPersonalization.getVisibleAtRole().getId();
-          userID = uiPersonalization.getUser().getId();
+          clientID = uiPersonalization.getVisibleAtClient() != null ? uiPersonalization
+              .getVisibleAtClient().getId() : null;
+          orgID = uiPersonalization.getVisibleAtOrganization() != null ? uiPersonalization
+              .getVisibleAtOrganization().getId() : null;
+          roleID = uiPersonalization.getVisibleAtRole() != null ? uiPersonalization
+              .getVisibleAtRole().getId() : null;
+          userID = uiPersonalization.getUser() != null ? uiPersonalization.getUser().getId() : null;
+        }
+
+        if (clientID == null || orgID == null || roleID == null || userID == null) {
+          // the personalization is a global personalization. do not update it. create a new
+          // personalization for the user
+          saveAsNewPreference = true;
         }
 
         final UIPersonalization uiPersonalization = personalizationHandler.storePersonalization(
             personalizationID, clientID, orgID, roleID, userID, tabId, windowId,
-            (String) parameters.get(TARGET), data);
+            (String) parameters.get(TARGET), data, saveAsNewPreference);
         final JSONObject result = new JSONObject();
         result.put("personalizationId", uiPersonalization.getId());
         return result;

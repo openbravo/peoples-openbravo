@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,8 +67,8 @@
         <FIELD id="fieldBomParent" attribute="value">id</FIELD>
         <FIELD id="fieldBomParent" attribute="name" replace="xx">bom_parent_id</FIELD>
         <FIELD id="fieldQuantity" format="euroRelation">qty</FIELD>
-        <FIELD id="fieldCuomid">uomsymbol</FIELD>
-        <FIELD id="fieldMproductid">relationName</FIELD>
+        <FIELD id="fieldCuomid" replaceCharacters="html">uomsymbol</FIELD>
+        <FIELD id="fieldMproductid" replaceCharacters="html">relationName</FIELD>
         <FIELD id="fieldPurchaseorder">line</FIELD>
         <SECTION id="sectionDetail"/>  
     </structure>

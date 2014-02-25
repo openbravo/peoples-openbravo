@@ -272,8 +272,6 @@ BEGIN
                             END
         WHERE c_order_id = v_sales_order_id;
       END IF;
-      -- ADD RESERVED STOCK
-      M_RESERVE_STOCK_AUTO(v_reservation_id, v_user_id, v_message);
 
       v_newstatus := 'CO';
       v_newaction := 'HO';
@@ -400,6 +398,11 @@ BEGIN
       updated = now(),
       updatedby = v_user_id
   WHERE m_reservation_id = v_reservation_id;
+
+  IF (v_resaction = 'PR') THEN
+    -- ADD RESERVED STOCK
+    M_RESERVE_STOCK_AUTO(v_reservation_id, v_user_id, v_message);
+  END IF;
 
   IF (p_pinstance_id IS NOT NULL) THEN
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;

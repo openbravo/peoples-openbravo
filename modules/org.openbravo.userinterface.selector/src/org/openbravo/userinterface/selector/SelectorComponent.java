@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2012 Openbravo SLU
+ * All portions are Copyright (C) 2009-2013 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -846,11 +846,19 @@ public class SelectorComponent extends BaseTemplateComponent {
             column = OBDal.getInstance().get(Column.class, property.getColumnId());
           }
         }
+
+        // getting the preference based on property column or directly set in field
+        org.openbravo.model.ad.domain.Reference reference = null;
         if (column != null && column.getReferenceSearchKey() != null) {
-          Set<String> allowedValues = DataSourceProperty.getAllowedValues(column
-              .getReferenceSearchKey());
-          List<RefListEntry> entries = DataSourceProperty.createValueMap(allowedValues, column
-              .getReferenceSearchKey().getId());
+          reference = column.getReferenceSearchKey();
+        } else if (selectorField.getReference() != null) {
+          reference = selectorField.getReference();
+        }
+
+        if (reference != null) {
+          Set<String> allowedValues = DataSourceProperty.getAllowedValues(reference);
+          List<RefListEntry> entries = DataSourceProperty.createValueMap(allowedValues,
+              reference.getId());
           JSONObject jsonValueMap = new JSONObject();
           for (RefListEntry entry : entries) {
             try {

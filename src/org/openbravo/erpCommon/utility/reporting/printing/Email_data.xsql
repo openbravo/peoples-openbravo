@@ -127,52 +127,6 @@
         <Parameter name="documentId"/>
    </SqlMethod>
    
-   <SqlMethod name="insertEmailUser" type="preparedStatement" connection="true" return="rowCount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql> <![CDATA[
-        INSERT INTO
-        	C_POC_EMAIL_USER
-        	(
-				C_POC_EMAIL_USER_ID, 
-				AD_CLIENT_ID ,
-				AD_ORG_ID ,
-				ISACTIVE ,
-				CREATED ,
-				CREATEDBY, 
-				UPDATED ,
-				UPDATEDBY, 
-
-				ADDRESS_TYPE,
-				C_POC_EMAIL_ID ,
-				AD_USER_ID
-        	)
-        	VALUES
-        	(
-        		TO_NUMBER(?),
-        		TO_NUMBER(?),
-        		TO_NUMBER(?), 
-        		'Y', 
-        		now(), 
-        		TO_NUMBER(?),
-				now(),
-				TO_NUMBER(?),
-				
-				TO_NUMBER(?),
-				TO_NUMBER(?),
-				TO_NUMBER(?)
-			)
-      ]]></Sql>
-        <Parameter name="bmPocEmailUserId"/>
-        <Parameter name="adClientId"/>
-        <Parameter name="adOrgId"/>
-        <Parameter name="adUserId"/>
-        <Parameter name="adUserId"/>
-        
-        <Parameter name="type"/>
-        <Parameter name="bmPocEmailId"/>
-        <Parameter name="email_adUserId"/>
-   </SqlMethod>   
-
    <SqlMethod name="getSenderAddress" type="preparedStatement" return="String">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,10 +22,12 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
+import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
@@ -58,8 +60,6 @@ public class SE_Order_BPartner extends SimpleCallout {
       strDeliveryRule = data[0].deliveryrule.equals("") ? info.vars
           .getStringParameter("inpdeliveryrule") : data[0].deliveryrule;
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
-      strUserRep = strUserRep.equals("") ? info.vars.getStringParameter("inpsalesrepId")
-          : strUserRep;
       SLOrderDocTypeData[] docTypeData = SLOrderDocTypeData.select(this, strDocTypeTarget);
       if (docTypeData != null && docTypeData.length > 0) {
         docSubTypeSO = docTypeData[0].docsubtypeso;
@@ -118,9 +118,9 @@ public class SE_Order_BPartner extends SimpleCallout {
     FieldProvider[] td = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "18", "M_Warehouse_ID",
-          "197", "", Utility.getReferenceableOrg(info.vars,
-              info.vars.getStringParameter("inpadOrgId")), Utility.getContext(this, info.vars,
-              "#User_Client", info.getWindowId()), 0);
+          "197", strIsSOTrx.equals("Y") ? "C4053C0CD3DC420A9924F24FC1F860A0" : "",
+          Utility.getReferenceableOrg(info.vars, info.vars.getStringParameter("inpadOrgId")),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       td = comboTableData.select(false);
       comboTableData = null;
@@ -130,7 +130,8 @@ public class SE_Order_BPartner extends SimpleCallout {
 
     if (td != null && td.length > 0) {
       info.addSelect("inpmWarehouseId");
-      String strMwarehouse = SEOrderBPartnerData.mWarehouse(this, strBPartner);
+      String strMwarehouse = strIsSOTrx.equals("N") ? SEOrderBPartnerData.mWarehouse(this,
+          strBPartner) : SEOrderBPartnerData.mWarehouseOnhand(this, strOrgId);
 
       if (strMwarehouse.equals("")) {
         strMwarehouse = info.vars.getWarehouse();
@@ -346,5 +347,20 @@ public class SE_Order_BPartner extends SimpleCallout {
     }
 
     info.addResult("MESSAGE", message.toString());
+
+    // Cash VAT
+    // Purchase flow only (from Business Partner OR organization) "double cash"
+    if (StringUtils.equals("N", strIsSOTrx)) {
+      final String bpCashVAT = CashVATUtil.getBusinessPartnerIsCashVAT(strBPartner);
+      if (StringUtils.equals("Y", bpCashVAT)) {
+        info.addResult("inpiscashvat", "Y");
+      } else {
+        final String orgCashVAT = CashVATUtil.getOrganizationIsCashVAT(strOrgId);
+        final String orgDoubleCash = CashVATUtil.getOrganizationIsDoubleCash(strOrgId);
+        info.addResult("inpiscashvat",
+            StringUtils.equals("Y", orgCashVAT) && StringUtils.equals("Y", orgDoubleCash) ? "Y"
+                : "N");
+      }
+    }
   }
 }

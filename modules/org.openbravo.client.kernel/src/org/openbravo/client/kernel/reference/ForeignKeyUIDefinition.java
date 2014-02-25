@@ -45,6 +45,28 @@ public class ForeignKeyUIDefinition extends UIDefinition {
   }
 
   @Override
+  public String getFilterEditorPropertiesProperty(Field field) {
+    String operator = (String) this.readGridConfigurationSetting("operator");
+    String append = "";
+
+    if (operator != null) {
+      append = ", operator: '" + operator + "'";
+    }
+
+    Boolean filterOnChange = (Boolean) readGridConfigurationSetting("filterOnChange");
+    if (Boolean.FALSE.equals(filterOnChange)) {
+      append = append + ", filterOnChange: " + filterOnChange.toString();
+    } else {
+      Long thresholdToFilter = (Long) readGridConfigurationSetting("thresholdToFilter");
+      if (thresholdToFilter != null) {
+        append = append + ", thresholdToFilter: " + thresholdToFilter.toString();
+      }
+    }
+
+    return super.getFilterEditorPropertiesProperty(field) + append;
+  }
+
+  @Override
   public String getGridFieldProperties(Field field) {
     final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
 
@@ -75,5 +97,10 @@ public class ForeignKeyUIDefinition extends UIDefinition {
 
   protected String getSuperGridFieldName(Field field) {
     return super.getGridFieldName(field);
+  }
+
+  @Override
+  public String getTypeProperties() {
+    return "sortNormalizer: function (item, field, context){ return OB.Utilities.enumSortNormalizer(item, field, context);},";
   }
 }

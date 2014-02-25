@@ -441,7 +441,7 @@ public class PrintController extends HttpSecureAppServlet {
     }
   }
 
-  private void printReports(HttpServletResponse response, Collection<JasperPrint> jrPrintReports,
+  public void printReports(HttpServletResponse response, Collection<JasperPrint> jrPrintReports,
       Collection<Report> reports) {
     ServletOutputStream os = null;
     String filename = "";
@@ -553,14 +553,14 @@ public class PrintController extends HttpSecureAppServlet {
     }
   }
 
-  private Report buildReport(HttpServletResponse response, VariablesSecureApp vars,
+  public Report buildReport(HttpServletResponse response, VariablesSecureApp vars,
       String strDocumentId, final ReportManager reportManager, DocumentType documentType,
       OutputTypeEnum outputType) {
     return buildReport(response, vars, strDocumentId, reportManager, documentType, outputType,
         "default");
   }
 
-  private Report buildReport(HttpServletResponse response, VariablesSecureApp vars,
+  public Report buildReport(HttpServletResponse response, VariablesSecureApp vars,
       String strDocumentId, final ReportManager reportManager, DocumentType documentType,
       OutputTypeEnum outputType, String templateId) {
     Report report = null;
@@ -580,7 +580,7 @@ public class PrintController extends HttpSecureAppServlet {
     return report;
   }
 
-  private void buildReport(HttpServletResponse response, VariablesSecureApp vars,
+  public void buildReport(HttpServletResponse response, VariablesSecureApp vars,
       String strDocumentId, Map<String, Report> reports, final ReportManager reportManager)
       throws ServletException, IOException {
     final String documentId = vars.getStringParameter("inpDocumentId");

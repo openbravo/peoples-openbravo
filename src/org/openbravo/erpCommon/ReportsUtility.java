@@ -33,6 +33,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.CustomerAccounts;
+import org.openbravo.model.common.businesspartner.VendorAccounts;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
@@ -42,6 +43,11 @@ public class ReportsUtility {
 
   public static BigDecimal getBeginningBalance(String orgId, String acctSchemaId,
       String bpartnerId, String dateFrom) {
+    return getBeginningBalance(orgId, acctSchemaId, bpartnerId, dateFrom, true);
+  }
+
+  public static BigDecimal getBeginningBalance(String orgId, String acctSchemaId,
+      String bpartnerId, String dateFrom, boolean isCustomer) {
     if (dateFrom == null || "".equals(dateFrom)) {
       return BigDecimal.ZERO;
     }
@@ -56,8 +62,13 @@ public class ReportsUtility {
     } catch (ParseException pe) {
       // do nothing
     }
-    obc.add(Restrictions.in(AccountingFact.PROPERTY_ACCOUNT,
-        getValidAccountsList(acctSchemaId, bpartnerId)));
+    if (isCustomer) {
+      obc.add(Restrictions.in(AccountingFact.PROPERTY_ACCOUNT,
+          getValidAccountsList(acctSchemaId, bpartnerId)));
+    } else {
+      obc.add(Restrictions.in(AccountingFact.PROPERTY_ACCOUNT,
+          getValidAccountsListVendor(acctSchemaId, bpartnerId)));
+    }
     obc.setFilterOnReadableOrganization(false);
 
     ProjectionList projections = Projections.projectionList();
@@ -92,6 +103,27 @@ public class ReportsUtility {
       }
       if (ca.getCustomerPrepayment() != null) {
         result.add(ca.getCustomerPrepayment().getAccount());
+      }
+    }
+    return result;
+  }
+
+  private static List<ElementValue> getValidAccountsListVendor(String acctSchemaId,
+      String bpartnerId) {
+    List<ElementValue> result = new ArrayList<ElementValue>();
+    OBCriteria<VendorAccounts> obc = OBDal.getInstance().createCriteria(VendorAccounts.class);
+    obc.add(Restrictions.eq(VendorAccounts.PROPERTY_BUSINESSPARTNER,
+        OBDal.getInstance().get(BusinessPartner.class, bpartnerId)));
+    obc.add(Restrictions.eq(VendorAccounts.PROPERTY_ACCOUNTINGSCHEMA,
+        OBDal.getInstance().get(AcctSchema.class, acctSchemaId)));
+    obc.setFilterOnReadableOrganization(false);
+    obc.setFilterOnActive(false);
+    for (VendorAccounts va : obc.list()) {
+      if (va.getVendorLiability() != null) {
+        result.add(va.getVendorLiability().getAccount());
+      }
+      if (va.getVendorPrepayment() != null) {
+        result.add(va.getVendorPrepayment().getAccount());
       }
     }
     return result;

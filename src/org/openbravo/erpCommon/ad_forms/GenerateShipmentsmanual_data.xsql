@@ -80,15 +80,6 @@
       ]]></Sql>
     <Parameter name="parSalesOrders" optional="true" type="argument" after="WHERE 1=1" text="AND C_Order_ID IN"/>
   </SqlMethod>
-    <SqlMethod name="bPartnerDescription" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-    SELECT NAME FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = ?
-    ]]></Sql>
-    <Parameter name="cBpartnerId"/>
-  </SqlMethod>
   <SqlMethod name="treeOrg" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

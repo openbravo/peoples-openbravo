@@ -89,7 +89,6 @@ BEGIN
         OR COALESCE(:NEW.C_Currency_ID,'0')<>COALESCE(:OLD.C_Currency_ID,'0')
         OR COALESCE(:NEW.S_Resourceassignment_ID,'0')<>COALESCE(:OLD.S_Resourceassignment_ID,'0')
         OR COALESCE(:NEW.C_BPartner_ID,'0')<>COALESCE(:OLD.C_BPartner_ID,'0')
-        OR COALESCE(:NEW.C_InvoiceLine_ID,'0')<>COALESCE(:OLD.C_InvoiceLine_ID,'0')
         OR COALESCE(:NEW.InvoicePrice,0)<>COALESCE(:OLD.InvoicePrice,0)
         OR COALESCE(:NEW.C_Uom_ID,'0')<>COALESCE(:OLD.C_Uom_ID,'0')
         OR COALESCE(:NEW.C_OrderLine_ID,'0')<>COALESCE(:OLD.C_OrderLine_ID,'0')

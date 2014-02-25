@@ -54,7 +54,7 @@ dojo.xml.Parse = function(){
 		if(tagName.substr(0,5) == "dojo:"){
 			return tagName;
 		}
-		if(dojo.render.html.capable && dojo.render.html.ie && node.scopeName != 'HTML'){
+		if(dojo.render.html.capable && dojo.render.html.ie && node.scopeName && node.scopeName != 'HTML'){
 			return node.scopeName.toLowerCase() + ':' + tagName;
 		}
 		// <dojoTag> => dojo:tag

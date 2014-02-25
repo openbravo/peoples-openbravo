@@ -213,7 +213,8 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);
       strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID, strMWarehouseID,
           (data[0].billtoId.equals("") ? strCBPartnerLocationID : data[0].billtoId),
-          strCBPartnerLocationID, data[0].cProjectId, strIsSOTrx.equals("Y"));
+          strCBPartnerLocationID, data[0].cProjectId, strIsSOTrx.equals("Y"),
+          "Y".equals(data[0].iscashvat));
     }
     if (!strCTaxID.equals("")) {
       resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\"),\n");

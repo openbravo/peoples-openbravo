@@ -125,11 +125,16 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
     } else {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_forms/GenerateShipmentsmanual").createXmlDocument();
-      data = GenerateShipmentsmanualData.select(this, vars.getLanguage(),
+      data = GenerateShipmentsmanualData.select(
+          this,
+          vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "GenerateShipmentsmanual"),
-          Utility.getContext(this, vars, "#User_Org", "GenerateShipmentsmanual"), strC_BPartner_ID,
-          strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-          Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
+          Utility.getContext(this, vars, "#User_Org", "GenerateShipmentsmanual"),
+          strC_BPartner_ID,
+          strDateFrom,
+          DateTimeData.nDaysAfter(this, strDateTo, "1"),
+          (strAD_Org_ID == null || strAD_Org_ID.isEmpty()) ? Tree.getMembers(this, strTreeOrg,
+              strAD_Org_ID) : "'" + strAD_Org_ID + "'");
     }
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "GenerateShipmentsmanual", false, "",

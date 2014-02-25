@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2010-2012 Openbravo SL 
+ * All portions are Copyright (C) 2010-2014 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ package org.openbravo.base.secureApp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -102,27 +103,49 @@ public class UserLock {
     this.userName = userName;
     setUser();
 
-    if (delayInc == 0) {
+    if (delayInc == 0 && lockAfterTrials == 0) {
       // No need to check number of fails as login security is not enabled
       delay = 0;
       numberOfFails = 0;
       return;
     }
 
-    // Count how many times this user has failed without success
+    // Count how many times this user has attempted to login without success
+    long t = System.currentTimeMillis();
+
+    // to improve performance this query is not done as subquery of the main one, see issue #25466
     StringBuilder hql = new StringBuilder();
+    hql.append("select max(s1.creationDate)");
+    hql.append("  from ADSession s1");
+    hql.append(" where s1.username = :name");
+    hql.append("   and s1.loginStatus!='F')");
+    Query q1 = OBDal.getInstance().getSession().createQuery(hql.toString());
+    q1.setParameter("name", userName);
+    Date lastFailedAttempt = (Date) q1.list().get(0);
+    log4j.debug("Time taken to check user lock 1st query " + (System.currentTimeMillis() - t));
+
+    long t1 = System.currentTimeMillis();
+    hql = new StringBuilder();
     hql.append("select count(*)");
     hql.append("  from ADSession s ");
     hql.append(" where s.loginStatus='F'");
     hql.append("   and s.username = :name");
-    hql.append("   and s.creationDate > (select coalesce(max(s1.creationDate), s.creationDate-1)");
-    hql.append("                           from ADSession s1");
-    hql.append("                          where s1.username = s.username");
-    hql.append("                            and s1.loginStatus!='F')");
+    if (lastFailedAttempt != null) {
+      hql.append(" and s.creationDate > :lastFail");
+    } else {
+      hql.append(" and s.creationDate > s.creationDate-1");
+    }
     Query q = OBDal.getInstance().getSession().createQuery(hql.toString());
     q.setParameter("name", userName);
+    if (lastFailedAttempt != null) {
+      q.setParameter("lastFail", lastFailedAttempt);
+    }
 
     numberOfFails = ((Long) q.list().get(0)).intValue();
+    log4j.debug("Time taken to check user lock " + (System.currentTimeMillis() - t)
+        + "ms. Time of 2nd query " + ((System.currentTimeMillis() - t1))
+        + "ms. Number of failed login attempts: " + numberOfFails);
+
     if (numberOfFails == 0) {
       delay = 0;
       return;
@@ -154,7 +177,7 @@ public class UserLock {
    */
   public void addFail() {
     numberOfFails++;
-    boolean lockUser = (lockAfterTrials != 0) && (numberOfFails > lockAfterTrials);
+    boolean lockUser = (lockAfterTrials != 0) && (numberOfFails >= lockAfterTrials);
     log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:"
         + numberOfFails + " - user:" + user);
     if (lockUser) {

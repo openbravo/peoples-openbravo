@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.KernelUtils;
@@ -65,6 +66,7 @@ public class DynamicExpressionParser {
   }
 
   private List<Field> fieldsInExpression = new ArrayList<Field>();
+  private List<String> otherTokensInExpression = new ArrayList<String>();
   private List<Parameter> parametersInExpression = new ArrayList<Parameter>();
   private List<AuxiliaryInput> auxInputsInExpression = new ArrayList<AuxiliaryInput>();
   private List<String> sessionAttributesInExpression = new ArrayList<String>();
@@ -209,6 +211,15 @@ public class DynamicExpressionParser {
   }
 
   /**
+   * Returns the list of tokens that are not fields of the tab It is only used when parsing the
+   * display logic of the tabs
+   * 
+   */
+  public List<String> getOtherTokensInExpression() {
+    return otherTokensInExpression;
+  }
+
+  /**
    * Returns the list of Parameters used in the dynamic expression
    * 
    */
@@ -302,7 +313,11 @@ public class DynamicExpressionParser {
           parametersInExpression.add(parameter);
           UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
               parameter.getReference());
-
+          if (uiDef.getDomainType() instanceof DateDomainType) {
+            return new DisplayLogicElement(
+                "OB.Utilities.Date.JSToOB(OB.Utilities.getValue(currentValues,'" + token
+                    + "'),OB.Format.date)", uiDef instanceof YesNoUIDefinition);
+          }
           return new DisplayLogicElement("OB.Utilities.getValue(currentValues,'" + token + "')",
               uiDef instanceof YesNoUIDefinition);
         }
@@ -323,17 +338,26 @@ public class DynamicExpressionParser {
         if (field.getColumn() == null) {
           continue;
         }
-        if (token.equalsIgnoreCase(field.getColumn().getDBColumnName())) {
+        if (token.equalsIgnoreCase(field.getColumn().getDBColumnName()) && !tabLevelDisplayLogic) {
           fieldsInExpression.add(field);
           final String fieldName = KernelUtils.getInstance()
               .getPropertyFromColumn(field.getColumn()).getName();
 
           UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
               field.getColumn().getId());
+          if (uiDef.getDomainType() instanceof DateDomainType) {
+            return new DisplayLogicElement(
+                "OB.Utilities.Date.JSToOB(OB.Utilities.getValue(currentValues,'" + fieldName
+                    + "'),OB.Format.date)", uiDef instanceof YesNoUIDefinition);
+          }
 
           return new DisplayLogicElement(
               "OB.Utilities.getValue(currentValues,'" + fieldName + "')",
               uiDef instanceof YesNoUIDefinition);
+        } else if (tabLevelDisplayLogic) {
+          if (!otherTokensInExpression.contains(token)) {
+            otherTokensInExpression.add(token);
+          }
         }
       }
       for (AuxiliaryInput auxIn : auxIns) {

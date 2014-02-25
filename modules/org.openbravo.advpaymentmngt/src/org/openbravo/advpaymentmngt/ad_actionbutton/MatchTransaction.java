@@ -115,7 +115,28 @@ public class MatchTransaction extends HttpSecureAppServlet {
             wait(strReconciliationId);
           }
           runingReconciliations.add(reconciliation.getId());
-          if (isManualReconciliation(reconciliation)) {
+          List<FIN_FinaccTransaction> mixedLines = getManualReconciliationLines(reconciliation);
+          if (mixedLines.size() > 0) {
+            // Fix mixing Reconciliation and log the issue
+            log4j
+                .warn("Mixing Reconciliations: An error occured which left an inconsistent status for the current reconciliation: "
+                    + reconciliation.getIdentifier());
+            OBContext.setAdminMode(false);
+            try {
+              for (FIN_FinaccTransaction mixedLine : mixedLines) {
+                fixMixedLine(mixedLine);
+                log4j
+                    .warn("Fixing Mixed Line (transaction appears as cleared but no bank statement line is linked to it): "
+                        + mixedLine.getLineNo() + " - " + mixedLine.getIdentifier());
+              }
+              OBDal.getInstance().flush();
+            } finally {
+              OBContext.restorePreviousMode();
+            }
+          }
+          // Check if problem remains
+          mixedLines = getManualReconciliationLines(reconciliation);
+          if (mixedLines.size() > 0) {
             OBDal.getInstance().rollbackAndClose();
             OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
                 .parseTranslation(this, vars, vars.getLanguage(), "@APRM_ReconciliationMixed@"));
@@ -709,7 +730,19 @@ public class MatchTransaction extends HttpSecureAppServlet {
     }
   }
 
-  private boolean isManualReconciliation(FIN_Reconciliation reconciliation) {
+  private void fixMixedLine(FIN_FinaccTransaction mixedLine) {
+    boolean isReceipt = mixedLine.getDepositAmount().compareTo(BigDecimal.ZERO) != 0;
+    mixedLine.setStatus(isReceipt ? "RDNC" : "PWNC");
+    mixedLine.setReconciliation(null);
+    OBDal.getInstance().save(mixedLine);
+    if (mixedLine.getFinPayment() != null) {
+      mixedLine.getFinPayment().setStatus(isReceipt ? "RDNC" : "PWNC");
+      OBDal.getInstance().save(mixedLine.getFinPayment());
+    }
+  }
+
+  private List<FIN_FinaccTransaction> getManualReconciliationLines(FIN_Reconciliation reconciliation) {
+    List<FIN_FinaccTransaction> result = new ArrayList<FIN_FinaccTransaction>();
     OBContext.setAdminMode();
     try {
       final OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance().createCriteria(
@@ -717,8 +750,10 @@ public class MatchTransaction extends HttpSecureAppServlet {
       obc.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
       obc.add(Restrictions.isNull(FIN_ReconciliationLine_v.PROPERTY_BANKSTATEMENTLINE));
       obc.setMaxResults(1);
-      final List<FIN_ReconciliationLine_v> rec = obc.list();
-      return (rec.size() != 0);
+      for (FIN_ReconciliationLine_v line : obc.list()) {
+        result.add(line.getFinancialAccountTransaction());
+      }
+      return result;
     } finally {
       OBContext.restorePreviousMode();
     }
