@@ -291,6 +291,7 @@ enyo.kind({
             me.prsList.add(order);
           });
         });
+        me.$.prslistitemprinter.getScrollArea().scrollToTop();
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }

@@ -78,7 +78,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       // (It is not Layaway or it is a Return)
       hqlPaidReceipts += " and ((select sum(deliveredQuantity) from ord.orderLineList where deliveredQuantity > 0) > 0 or (select sum(deliveredQuantity) from ord.orderLineList) < 0) ";
     }
-    hqlPaidReceipts += " order by ord.orderDate asc, ord.documentNo asc";
+    hqlPaidReceipts += " order by ord.orderDate desc, ord.documentNo desc";
     return Arrays.asList(new String[] { hqlPaidReceipts });
   }
 
