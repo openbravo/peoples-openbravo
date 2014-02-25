@@ -33,7 +33,7 @@
      <![CDATA[ 
         update fin_payment_scheduledetail set isinvoicepaid=(select CASE WHEN fpsd.fin_payment_detail_id is null then 'N'
         WHEN 
-       fp.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC') THEN 'Y' ELSE 'N' END, fp.status
+       fp.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC') THEN 'Y' ELSE 'N' END
         from fin_payment_scheduledetail fpsd
          left join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
          left join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
