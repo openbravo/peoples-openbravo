@@ -136,7 +136,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         cashUpReport.set('returnsTaxes', taxcashups.models);
       }, this);
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUpReport.get('id')
+        'cashup_id': cashUpReport.get('id'),
+        '_orderByClause': 'name asc'
       }, function (payMthds) { //OB.Dal.find success
         cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
           return OB.DEC.add(accum, trx.get('startingCash'));
@@ -338,11 +339,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }
       }, 0),
       totalQtyToDepo: _.reduce(this.get('paymentList').models, function (total, model) {
-        if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undf && 
-            model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) {
+        if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undf && model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) {
           return OB.DEC.add(total, OB.DEC.mul(OB.DEC.sub(model.get('foreignCounted'), model.get('qtyToKeep')), model.get('rate')));
-        } else if (model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf)
-          return OB.DEC.add(total, OB.DEC.mul(model.get('foreignCounted'), model.get('rate')));
+        } else if (model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) return OB.DEC.add(total, OB.DEC.mul(model.get('foreignCounted'), model.get('rate')));
         else {
           return total;
         }
@@ -413,7 +412,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       cashUpId: OB.UTIL.get_UUID(),
       cashCloseInfo: [],
       cashUpDate: new Date()
-    }, server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
+    },
+        server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
         me = this,
         i;
     OB.UTIL.showLoading(true);
