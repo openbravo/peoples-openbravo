@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -950,7 +950,7 @@ OB.ViewFormProperties = {
     var typeInstance;
     var assignValue;
     var assignClassicValue;
-    var isDate, isDateTime, isImage, i, valueMap = {},
+    var isDate, jsDateTime, isDateTime, isAbsoluteDateTime, isImage, i, valueMap = {},
         oldValue, field = this.getFieldFromColumnName(columnName),
         entries = columnValue.entries;
     // not a field on the form, probably a datasource field
@@ -997,22 +997,44 @@ OB.ViewFormProperties = {
       assignClassicValue = columnValue.classicValue;
     }
 
+    if (field && field.type && isc.SimpleType.getType(field.type)) {
+      typeInstance = isc.SimpleType.getType(field.type);
+    } else {
+      typeInstance = null;
+    }
+
     if (columnValue.value && (columnValue.value === 'null' || columnValue.value === '')) {
       // handle the case that the FIC returns a null value as a string
       // should be repaired in the FIC
       // note: do not use clearvalue as this removes the value from the form
       this.setItemValue(field.name, null);
     } else if (columnValue.value || columnValue.value === 0 || columnValue.value === false) {
-      isDate = field.type && (isc.SimpleType.getType(field.type).inheritsFrom === 'date' || isc.SimpleType.getType(field.type).inheritsFrom === 'time');
-      isDateTime = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'datetime';
-      isImage = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'image';
+      isDate = field.type && (typeInstance.inheritsFrom === 'date' || typeInstance.inheritsFrom === 'time');
+      isDateTime = field.type && typeInstance.inheritsFrom === 'datetime';
+      isImage = field.type && typeInstance.inheritsFrom === 'image';
+      if (isDateTime && typeInstance.editorType && new Function('return isc.' + typeInstance.editorType + '.getPrototype().isAbsoluteDateTime')()) {
+        isAbsoluteDateTime = true;
+        isDateTime = false;
+      }
       if (isDate) {
         this.setItemValue(field.name, isc.Date.parseSchemaDate(columnValue.value));
         if (field.textField) {
           delete field.textField._textChanged;
         }
       } else if (isDateTime) {
-        this.setItemValue(field.name, isc.Date.parseStandardDate(columnValue.value));
+        jsDateTime = isc.Date.parseStandardDate(columnValue.value);
+        this.setItemValue(field.name, jsDateTime);
+        if (field.textField) {
+          delete field.textField._textChanged;
+        }
+      } else if (isAbsoluteDateTime) {
+        jsDateTime = isc.Date.parseStandardDate(columnValue.value);
+        // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
+        // http://forums.smartclient.com/showthread.php?p=116135
+        if (Object.prototype.toString.call(jsDateTime) === '[object Date]') {
+          jsDateTime = new Date(jsDateTime.getTime() - (jsDateTime.getTimezoneOffset() * 60000));
+        }
+        this.setItemValue(field.name, jsDateTime);
         if (field.textField) {
           delete field.textField._textChanged;
         }
@@ -1062,7 +1084,7 @@ OB.ViewFormProperties = {
     } else {
       // note: do not use clearvalue as this removes the value from the form
       // which results it to not be sent to the server anymore
-      isImage = field.type && isc.SimpleType.getType(field.type).inheritsFrom === 'image';
+      isImage = field.type && typeInstance.inheritsFrom === 'image';
       if (isImage) {
         //calls setValue to handle buttons display for read-only windows
         this.setValue(field.name, null);
@@ -1084,7 +1106,6 @@ OB.ViewFormProperties = {
     }
 
     // store the textualvalue so that it is correctly send back to the server
-    typeInstance = isc.SimpleType.getType(field.type);
     if ((columnValue.classicValue || columnValue.classicValue === '') && typeInstance.decSeparator) {
       this.setTextualValue(field.name, assignClassicValue, typeInstance);
     }
