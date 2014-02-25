@@ -93,7 +93,7 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty("product.id", "id"));
         add(new HQLProperty("product.searchKey", "searchkey"));
         add(new HQLProperty(trlName, "_identifier"));
-        add(new HQLProperty("product.taxCategory.id", "taxCategory"));
+        add(new HQLProperty(strTaxCategoryQry, "taxCategory"));
         add(new HQLProperty("product.productCategory.id", "productCategory"));
         add(new HQLProperty("product.obposScale", "obposScale"));
         add(new HQLProperty("product.uOM.id", "uOM"));

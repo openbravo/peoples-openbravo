@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -44,6 +44,7 @@ public class BusinessPartner extends ProcessHQLQuery {
                 + "WHERE "
                 + "bpl.invoiceToAddress = true AND "
                 + "bpl.businessPartner.customer = true AND "
+                + "bpl.businessPartner.priceList IS NOT NULL AND "
                 + "bpl.$readableClientCriteria AND "
                 + "bpl.$naturalOrgCriteria AND"
                 + "(bpl.$incrementalUpdateCriteria or bpl.businessPartner.$incrementalUpdateCriteria or bpl.locationAddress.$incrementalUpdateCriteria or ulist.$incrementalUpdateCriteria) AND bpl.businessPartner.active=true"
@@ -58,6 +59,7 @@ public class BusinessPartner extends ProcessHQLQuery {
                 + "WHERE "
                 + "bpl.invoiceToAddress = true AND "
                 + "bpl.businessPartner.customer = true AND "
+                + "bpl.businessPartner.priceList IS NOT NULL AND "
                 + "bpl.$readableClientCriteria AND "
                 + "bpl.$naturalOrgCriteria AND"
                 + " (bpl.$incrementalUpdateCriteria or bpl.businessPartner.$incrementalUpdateCriteria or bpl.locationAddress.$incrementalUpdateCriteria or ulist.$incrementalUpdateCriteria) AND bpl.businessPartner.active=true"

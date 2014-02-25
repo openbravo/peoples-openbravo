@@ -1722,7 +1722,7 @@
             if (order.get('priceIncludesTax')) {
               price = OB.DEC.number(iter.unitPrice);
             } else {
-              price = OB.DEC.number(iter.netPrice);
+              price = OB.DEC.number(iter.baseNetUnitPrice);
             }
 
             OB.Dal.get(OB.Model.Product, iter.id, function (prod) {

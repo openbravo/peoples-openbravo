@@ -71,7 +71,7 @@
       </column>
       <column name="OBPOS_C_BPARTNER_LOC_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
-        <onCreateDefault><![CDATA[SELECT cbl.C_BPartner_Location_id FROM OBPOS_Applications oba RIGHT JOIN C_BPartner cbp on cbp.C_BPartner_id = oba.C_BPartner_id RIGHT JOIN C_BPartner_Location cbl on cbp.C_BPartner_id = cbl.C_BPartner_id LIMIT 1]]></onCreateDefault>
+        <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

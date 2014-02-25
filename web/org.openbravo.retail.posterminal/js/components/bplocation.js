@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -15,7 +15,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BPLocation',
   classes: 'btnlink btnlink-small btnlink-gray',
-  style: 'width: 170px; text-overflow:ellipsis; white-space: nowrap; overflow: hidden;',
+  style: 'float: right; width: 250px; text-overflow:ellipsis; white-space: nowrap; overflow: hidden;',
   published: {
     order: null
   },
