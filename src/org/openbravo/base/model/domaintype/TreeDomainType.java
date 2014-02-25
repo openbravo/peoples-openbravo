@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,9 +33,7 @@ import org.openbravo.base.model.RefTree;
 import org.openbravo.base.model.Table;
 
 /**
- * The type of columns which have a table reference.
- * 
- * @author mtaal
+ * The type of columns which have a tree reference.
  */
 
 public class TreeDomainType extends BaseForeignKeyDomainType {
@@ -51,8 +49,6 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
     return listOfClasses;
   }
 
-  // Note: implementation should clean-up and close database connections or hibernate sessions. If
-  // this is not done then the update.database task may hang when disabling foreign keys.
   public void initialize() {
 
     Session session = ModelProvider.getInstance().getSession();
@@ -79,12 +75,9 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
     }
     tableName = table.getTableName();
     if (treeReference.getColumn() == null) {
-      final List<Column> columns = readColumns(session, table);
-      for (Column col : columns) {
-        if (col.isKey()) {
-          column = col;
-          break;
-        }
+      Column keyColumn = readKeyColumn(session, table);
+      if (keyColumn != null) {
+        column = keyColumn;
       }
     } else {
       column = treeReference.getColumn();
@@ -92,20 +85,20 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
   }
 
   @SuppressWarnings("unchecked")
-  private List<Column> readColumns(Session session, Table table) {
+  private Column readKeyColumn(Session session, Table table) {
     final Criteria c = session.createCriteria(Column.class);
-    c.addOrder(Order.asc("position"));
     c.add(Restrictions.eq("table", table));
-    return c.list();
+    c.add(Restrictions.eq("key", true));
+    c.addOrder(Order.asc("position"));
+    Column keyColumn = null;
+    List<Column> keyColumns = c.list();
+    if (!keyColumns.isEmpty()) {
+      keyColumn = keyColumns.get(0);
+    }
+    return keyColumn;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.openbravo.base.model.domaintype.BaseForeignKeyDomainType#getForeignKeyColumn(java.lang.
-   * String)
-   */
+  @Override
   public Column getForeignKeyColumn(String columnName) {
     while (!column.isKey() && column.getDomainType() instanceof ForeignKeyDomainType) {
       column = ((ForeignKeyDomainType) column.getDomainType()).getForeignKeyColumn(column
@@ -115,13 +108,7 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
     return column;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.openbravo.base.model.domaintype.BaseForeignKeyDomainType#getReferedTableName(java.lang.
-   * String)
-   */
+  @Override
   protected String getReferedTableName(String columnName) {
     return tableName;
   }
