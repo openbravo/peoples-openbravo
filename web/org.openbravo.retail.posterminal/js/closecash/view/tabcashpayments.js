@@ -191,7 +191,7 @@ enyo.kind({
                 }]
               }]
             }, {
-              style: 'overflow:auto; height: 485px;',
+              style: 'overflow:auto; height: 454px;',
               components: [{
                 name: 'paymentsList',
                 kind: 'OB.UI.Table',
@@ -210,44 +210,51 @@ enyo.kind({
               classes: 'row-fluid',
               components: [{
                 classes: 'span12',
-                style: 'border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc;',
+                style: 'border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; height: 70px;',                
                 components: [{
-                  name: 'totalLbl',
-                  style: 'padding: 10px 20px 10px 10px; float: left;',
-                  initComponents: function () {
-                    this.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
-                  }
-                }, {
-                  style: 'padding: 10px 20px 10px 0px; float: left;',
+                  style: 'float:left; display: table-row;',
                   components: [{
-                    name: 'total',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
-                  }]
-                }, {
-                  name: 'countedLbl',
-                  style: 'padding: 10px 20px 10px 10px; float: left;',
-                  initComponents: function () {
-                    this.setContent(OB.I18N.getLabel('OBPOS_Counted'));
-                  }
-                }, {
-                  style: 'padding: 10px 5px 10px 0px; float: left;',
+                    name: 'totalLbl',
+                    style: 'padding: 10px 20px 10px 10px; display: table-cell;',
+                    initComponents: function () {
+                      this.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
+                    }
+                  }, {
+                    style: 'padding: 10px 20px 10px 0px; display: table-cell;',
+                    components: [{
+                      name: 'total',
+                      kind: 'OB.OBPOSCashUp.UI.RenderTotal'
+                    }]                               
+                  }]}, {
+                  style: 'float:left; display: table-row;',
                   components: [{
-                    name: 'counted',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
-                  }]
-                }, {
-                  name: 'differenceLbl',
-                  style: 'padding: 10px 20px 10px 10px; float: left;',
-                  initComponents: function () {
-                    this.setContent(OB.I18N.getLabel('OBPOS_Remaining'));
-                  }
-                }, {
-                  style: 'padding: 10px 5px 10px 0px; float: left;',
+                    name: 'countedLbl',
+                    style: 'padding: 10px 20px 10px 10px; display: table-cell;',
+                    initComponents: function () {
+                      this.setContent(OB.I18N.getLabel('OBPOS_Counted'));
+                    }
+                  }, {
+                    style: 'padding: 10px 5px 10px 0px; display: table-cell;',
+                    components: [{
+                      name: 'counted',
+                      kind: 'OB.OBPOSCashUp.UI.RenderTotal'
+                    }]                    
+                  }]}, {
+                  style: 'float:left; display: table-row;',
                   components: [{
-                    name: 'difference',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
+                    name: 'differenceLbl',
+                    style: 'padding: 10px 20px 10px 10px; display: table-cell;',
+                    initComponents: function () {
+                      this.setContent(OB.I18N.getLabel('OBPOS_Remaining'));
+                    }
+                  }, {
+                    style: 'padding: 10px 5px 10px 0px; display: table-cell;',
+                    components: [{
+                      name: 'difference',
+                      kind: 'OB.OBPOSCashUp.UI.RenderTotal'
+                    }]                    
                   }]
-                }]
+                }]   
               }]
             }]
           }]

@@ -21,38 +21,44 @@ enyo.kind({
         classes: 'span12',
         style: 'border-bottom: 1px solid #cccccc;',
         components: [{
-          name: 'name',
-          style: 'padding: 10px 20px 10px 10px; float: left; width: 15%'
+          style: 'float:left; display: table; width: 50%',
+          components: [{          
+            name: 'name',
+            style: 'padding: 10px 20px 10px 10px; display: table-cell; width: 40%;'
+          }, {
+            name: 'foreignExpected',
+            style: 'padding: 10px 10px 10px 0px; text-align:right; display: table-cell; width: 35%;'
+          }, {
+            name: 'expected',
+            style: 'padding: 10px 10px 10px 0px; text-align:right; display: table-cell; width: 35%;'
+          }]            
         }, {
-          name: 'foreignExpected',
-          style: 'padding: 10px 10px 10px 0px; float: left; width: 15%;'
-        }, {
-          name: 'expected',
-          style: 'padding: 10px 10px 10px 0px; float: left; width: 15%'
-        }, {
-          style: 'float: left;',
+          style: 'float:left; display: table; width: 50%;',
           components: [{
-            name: 'buttonEdit',
-            kind: 'OB.UI.SmallButton',
-            classes: 'btnlink-orange btnlink-cashup-edit btn-icon-small btn-icon-edit',
-            ontap: 'lineEdit'
+            style: 'display: table-cell; width: 15%;',
+            components: [{
+              name: 'buttonEdit',
+              kind: 'OB.UI.SmallButton',
+              classes: 'btnlink-orange btnlink-cashup-edit btn-icon-small btn-icon-edit',
+              ontap: 'lineEdit'
+            }]
+          }, {
+            style: 'display: table-cell; width: 15%;',
+            components: [{
+              name: 'buttonOk',
+              kind: 'OB.UI.SmallButton',
+              classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
+              ontap: 'lineOK'
+            }]
+          }, {
+            name: 'foreignCounted',
+            style: 'display: table-cell; padding: 10px 10px 10px 0px; text-align:right; width: 35%;',
+            content: ''
+          }, {
+            name: 'counted',
+            style: 'display: table-cell; padding: 10px 10px 10px 0px; text-align:right; width: 35%;',
+            showing: false
           }]
-        }, {
-          style: 'float: left;',
-          components: [{
-            name: 'buttonOk',
-            kind: 'OB.UI.SmallButton',
-            classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
-            ontap: 'lineOK'
-          }]
-        }, {
-          name: 'foreignCounted',
-          style: 'float: left; padding: 10px 0px 10px 0px; width: 15%',
-          content: ''
-        }, {
-          name: 'counted',
-          style: 'float: left; padding: 10px 0px 10px 0px; width: 15%',
-          showing: false
         }]
       }]
     }]
@@ -123,20 +129,26 @@ enyo.kind({
                 classes: 'span12',
                 style: 'border-bottom: 1px solid #cccccc;',
                 components: [{
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 32%',
-                  initComponents: function () {
-                    this.setContent(OB.I18N.getLabel('OBPOS_LblPaymentMethod'));
-                  }
+                  style: 'float: left; display:table; width: 50%; ',
+                  components: [{
+                    style: 'padding: 10px 10px 10px 10px; display: table-cell; width: 60%;',
+                    initComponents: function () {
+                      this.setContent(OB.I18N.getLabel('OBPOS_LblPaymentMethod'));
+                    }
+                  }, {
+                    style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 40%; text-align:right;',
+                    initComponents: function () {
+                      this.setContent(OB.I18N.getLabel('OBPOS_LblExpected'));
+                    }
+                  }]
                 }, {
-                  style: 'padding: 10px 20px 10px 0px; float: left; width: 39%',
-                  initComponents: function () {
-                    this.setContent(OB.I18N.getLabel('OBPOS_LblExpected'));
-                  }
-                }, {
-                  style: 'padding: 10px 0px 10px 0px;  float: left;',
-                  initComponents: function () {
-                    this.setContent(OB.I18N.getLabel('OBPOS_LblCounted'));
-                  }
+                  style: 'float: left; display:table; width: 50%; ',
+                  components: [{                  
+                    style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 100%; text-align: right;',
+                    initComponents: function () {
+                      this.setContent(OB.I18N.getLabel('OBPOS_LblCounted'));
+                    }
+                  }]
                 }]
               }]
             }, {
@@ -152,18 +164,26 @@ enyo.kind({
                   classes: 'span12',
                   style: 'border-bottom: 1px solid #cccccc;',
                   components: [{
-                    style: 'padding: 10px 20px 10px 10px;  float: left; width: 20%;'
-                  }, {
-                    style: 'padding: 10px 20px 10px 10px;  float: left; width: 20%;'
-                  }, {
-                    style: 'padding: 10px 20px 10px 10px;  float: left; width: 49px;'
-                  }, {
-                    style: 'float: left;',
+                    style: 'float: left; display:table; width: 50%; ',
                     components: [{
-                      name: 'buttonAllOk',
-                      kind: 'OB.UI.SmallButton',
-                      classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
-                      ontap: 'doCountAllOK'
+                      style: 'display:table-cell; width: 100%;', 
+                      content: '&nbsp;', 
+                      allowHtml: true
+                    }]
+                  }, {
+                    style: 'float: left; display:table; width: 50%; ',
+                    components: [{
+                      style: 'display:table-cell; width: 50px; padding: 10px 10px 10px 0px;'
+                    }, {               
+                      style: 'display:table-cell; width: 15%;',
+                      components: [{
+                        name: 'buttonAllOk',
+                        kind: 'OB.UI.SmallButton',
+                        classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
+                        ontap: 'doCountAllOK'
+                      }]
+                    }, {        
+                      // This element has been intentionally created empty.
                     }]
                   }]
                 }]
@@ -174,25 +194,29 @@ enyo.kind({
                 classes: 'span12',
                 style: 'border-bottom: 1px solid #cccccc;',
                 components: [{
-                  name: 'totalLbl',
-                  style: 'padding: 10px 20px 10px 10px; float: left; width: 32%;',
-                  initComponents: function () {
-                    this.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
-                  }
-                }, {
-                  style: 'padding: 10px 20px 10px 0px; float: left; width: 14%;',
-                  components: [{
-                    name: 'total',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
-
+                  style: 'float: left; display:table; width: 50%; ',   
+                  components: [{                                                 
+                    name: 'totalLbl',
+                    style: 'padding: 10px 10px 10px 10px; display: table-cell; width: 60%;',
+                    initComponents: function () {
+                      this.setContent(OB.I18N.getLabel('OBPOS_ReceiptTotal'));
+                    }
+                  }, {
+                    style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 40%; text-align:right;',
+                    components: [{
+                      name: 'total',
+                      kind: 'OB.OBPOSCashUp.UI.RenderTotal'
+  
+                    }]
                   }]
                 }, {
-                  style: 'padding: 17px 10px 17px 10px; float: left; width: 126px'
-                }, {
-                  style: 'padding: 10px 5px 10px 0px; float: left;',
                   components: [{
-                    name: 'difference',
-                    kind: 'OB.OBPOSCashUp.UI.RenderTotal'
+                    style: 'float: left; display:table; width: 50%; ',                
+                    components: [{
+                      style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 100%; text-align: right;',
+                      name: 'difference',
+                      kind: 'OB.OBPOSCashUp.UI.RenderTotal'
+                    }]
                   }]
                 }]
               }]
