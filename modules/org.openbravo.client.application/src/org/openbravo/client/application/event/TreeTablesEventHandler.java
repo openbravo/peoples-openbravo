@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,6 +46,12 @@ import org.openbravo.service.datasource.DataSourceServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This event handler listen to events that are fired in all the tables with the flag isTree
+ * checked. When a record is created or deleted in one of these tables, the add or remove method of
+ * the corresponding datasource is executed.
+ * 
+ */
 public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = getTreeTables();
