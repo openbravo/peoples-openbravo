@@ -13,7 +13,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
+* All portions are Copyright (C) 2009-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -40,7 +40,7 @@ BEGIN
                    WHERE pp.node_id = hh.parent_id
                    AND hh.ad_tree_id = pp.ad_tree_id
                    AND hh.parent_id=ad_org.ad_org_id 
-                   AND  EXISTS (SELECT 1 FROM ad_tree WHERE treetype='OO' AND hh.Ad_tree_id=ad_tree.ad_tree_id))
+                   AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_table_id='155' AND hh.Ad_tree_id=ad_tree.ad_tree_id))
   )
 
   LOOP
@@ -71,7 +71,7 @@ BEGIN
                   FROM ad_tree, ad_org
                   WHERE ad_tree.ad_client_id = ad_org.ad_client_id
                   AND ad_tree.ad_client_id=t.ad_client_id
-                  AND ad_tree.treetype='OO'
+                  AND ad_tree.ad_table_id='155'
                   AND t.ad_tree_id=ad_tree.ad_tree_id
                   );
                   
