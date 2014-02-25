@@ -579,7 +579,7 @@ isc.OBGrid.addProperties({
         newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
       }
       var showTime = false;
-      if (field.editorType && new Function('return isc.' + field.editorType + '.getPrototype().showTime')()) {
+      if (this.editorType && new Function('return isc.' + this.editorType + '.getPrototype().showTime')()) {
         showTime = true;
       }
 
