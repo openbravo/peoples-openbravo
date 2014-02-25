@@ -108,6 +108,7 @@ public class ProcessCashClose extends JSONProcessSimple {
         jsonData.put("messages", result.opt("messages"));
         jsonData.put("next", result.opt("next"));
       } finally {
+        TriggerHandler.getInstance().enable();
         RequestContext.get().removeSessionAttribute(
             "cashupTerminalId|" + jsonCashup.getString("terminalId"));
       }
