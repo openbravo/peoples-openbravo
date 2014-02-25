@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2013 Openbravo SLU
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -289,6 +289,38 @@ OB.Utilities.Date.convertUTCTimeToLocalTime = function (newData, allFields) {
     }
   }
   return convertedData;
+};
+
+//** {{{ OB.Utilities.Date.addTimezoneOffset }}} **
+//
+// Adds to a date its timezone offset
+//
+// Parameters:
+// * {{{date}}}: date in which it be added its timezone offset
+OB.Utilities.Date.addTimezoneOffset = function (date) {
+  var newDate;
+
+  if (Object.prototype.toString.call(date) !== '[object Date]') {
+    return date;
+  }
+  newDate = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
+  return newDate;
+};
+
+//** {{{ OB.Utilities.Date.substractTimezoneOffset }}} **
+//
+// Substracts to a date its timezone offset
+//
+// Parameters:
+// * {{{date}}}: date in which it be substracted its timezone offset
+OB.Utilities.Date.substractTimezoneOffset = function (date) {
+  var newDate;
+
+  if (Object.prototype.toString.call(date) !== '[object Date]') {
+    return date;
+  }
+  newDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+  return newDate;
 };
 
 //** {{{ OB.Utilities.Date.getUTCOffsetInMiliseconds }}} **

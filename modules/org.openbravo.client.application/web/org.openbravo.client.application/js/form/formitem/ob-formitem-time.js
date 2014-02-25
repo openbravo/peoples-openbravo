@@ -133,7 +133,7 @@ isc.OBTimeItem.addProperties({
   click: function () {
     var selectedDate = isc.Time.parseInput(this.getEnteredValue());
     if (this.isAbsoluteTime) {
-      selectedDate = new Date(selectedDate.getTime() + (selectedDate.getTimezoneOffset() * 60000));
+      selectedDate = OB.Utilities.Date.addTimezoneOffset(selectedDate);
     }
     this.doShowTimeGrid(selectedDate);
     return this.Super('click', arguments);
@@ -141,7 +141,7 @@ isc.OBTimeItem.addProperties({
   focus: function () {
     var selectedDate = this.getValue();
     if (this.isAbsoluteTime) {
-      selectedDate = new Date(selectedDate.getTime() + (selectedDate.getTimezoneOffset() * 60000));
+      selectedDate = OB.Utilities.Date.addTimezoneOffset(selectedDate);
     }
     this.doShowTimeGrid(selectedDate);
     return this.Super('focus', arguments);
@@ -178,9 +178,7 @@ isc.OBTimeItem.addProperties({
       if (Object.prototype.toString.call(newValue) === '[object String]') {
         newValue = isc.Time.parseInput(newValue);
       }
-      if (Object.prototype.toString.call(newValue) === '[object Date]') {
-        newValue = new Date(newValue.getTime() - (newValue.getTimezoneOffset() * 60000));
-      }
+      newValue = OB.Utilities.Date.substractTimezoneOffset(newValue);
       newValue = isc.Time.format(newValue, format);
       return newValue;
     } else {
@@ -198,9 +196,7 @@ isc.OBTimeItem.addProperties({
       if (Object.prototype.toString.call(newValue) === '[object String]') {
         newValue = isc.Time.parseInput(newValue);
       }
-      if (Object.prototype.toString.call(newValue) === '[object Date]') {
-        newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
-      }
+      newValue = OB.Utilities.Date.addTimezoneOffset(newValue);
       newValue = isc.Time.format(newValue, format);
       return newValue;
     } else {
@@ -408,7 +404,7 @@ isc.OBTimeItemGrid.addProperties({
     if (this.formItem && record && this.doSelectionUpdated) {
       var selectedDate = record.jsTime;
       if (this.formItem.isAbsoluteTime) {
-        selectedDate = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000));
+        selectedDate = OB.Utilities.Date.substractTimezoneOffset(selectedDate);
       }
       this.formItem.setValue(selectedDate);
       this.formItem._hasChanged = true;

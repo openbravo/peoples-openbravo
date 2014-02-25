@@ -180,9 +180,9 @@ isc.OBDateTimeItem.addProperties({
       time = this.previousValue;
       delete this.previousValue;
 
-      if (this.isAbsoluteDateTime && Object.prototype.toString.call(time) === '[object Date]') {
+      if (this.isAbsoluteDateTime) {
         // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 1/2)
-        time = new Date(time.getTime() + (time.getTimezoneOffset() * 60000));
+        time = OB.Utilities.Date.addTimezoneOffset(time);
       }
     } else {
       time = new Date();
@@ -195,9 +195,9 @@ isc.OBDateTimeItem.addProperties({
     }
     date.setHours(time.getHours(), time.getMinutes(), time.getSeconds());
 
-    if (this.isAbsoluteDateTime && Object.prototype.toString.call(date) === '[object Date]') {
+    if (this.isAbsoluteDateTime) {
       // Trick to ensure that if we are moving from a DST to a non-DST date (or the other way around), the time remains the same (Part 2/2)
-      date = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+      date = OB.Utilities.Date.substractTimezoneOffset(date);
     }
 
     this.setValue(date);
@@ -222,9 +222,7 @@ isc.OBDateTimeItem.addProperties({
     if (this.isAbsoluteDateTime) {
       // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
       // http://forums.smartclient.com/showthread.php?p=116135
-      if (Object.prototype.toString.call(newValue) === '[object Date]') {
-        newValue = new Date(newValue.getTime() - (newValue.getTimezoneOffset() * 60000));
-      }
+      newValue = OB.Utilities.Date.substractTimezoneOffset(newValue);
     }
     return newValue;
   },
@@ -237,9 +235,7 @@ isc.OBDateTimeItem.addProperties({
     if (this.isAbsoluteDateTime) {
       // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
       // http://forums.smartclient.com/showthread.php?p=116135
-      if (Object.prototype.toString.call(newValue) === '[object Date]') {
-        newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
-      }
+      newValue = OB.Utilities.Date.addTimezoneOffset(newValue);
     }
 
     if (fixedTime && Object.prototype.toString.call(newValue) === '[object Date]') {

@@ -566,18 +566,14 @@ isc.OBGrid.addProperties({
       if (Object.prototype.toString.call(newValue) === '[object String]') {
         newValue = isc.Time.parseInput(newValue);
       }
-      if (Object.prototype.toString.call(newValue) === '[object Date]') {
-        newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
-      }
+      newValue = OB.Utilities.Date.addTimezoneOffset(newValue);
       newValue = isc.Time.format(newValue, format);
       return newValue;
     };
 
     OBAbsoluteDateTimeItem_FormatCellValueFunction = function (value, record, rowNum, colNum, grid) {
       var newValue = value;
-      if (Object.prototype.toString.call(newValue) === '[object Date]') {
-        newValue = new Date(newValue.getTime() + (newValue.getTimezoneOffset() * 60000));
-      }
+      newValue = OB.Utilities.Date.addTimezoneOffset(newValue);
       var showTime = false;
       if (this.editorType && new Function('return isc.' + this.editorType + '.getPrototype().showTime')()) {
         showTime = true;
