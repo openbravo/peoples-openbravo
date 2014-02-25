@@ -105,6 +105,7 @@
         this.set('cityName', null);
         this.set('phone', null);
         this.set('email', null);
+        this.set('taxExempt', null);
       } else {
         _.each(_.keys(cusToLoad.attributes), function (key) {
           if (cusToLoad.get(key) !== undf) {
@@ -243,6 +244,10 @@
     name: 'creditUsed',
     column: 'creditUsed',
     type: 'NUMERIC'
+  }, {
+    name: 'taxExempt',
+    column: 'taxExempt',
+    type: 'TEXT'
   }]);
 
 
