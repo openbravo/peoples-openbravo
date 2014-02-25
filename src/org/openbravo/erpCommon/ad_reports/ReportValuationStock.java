@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -240,6 +240,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     where.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :maxDate");
     where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
     where.append("   and loc." + Locator.PROPERTY_WAREHOUSE + ".id = :wh");
+    where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     if (!"".equals(strCategoryProduct)) {
       where.append("   and p." + Product.PROPERTY_PRODUCTCATEGORY + ".id = :prodCategory");
     }
