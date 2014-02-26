@@ -1356,6 +1356,7 @@
       this.set('generateInvoice', OB.POS.modelterminal.get('terminal').terminalType.generateInvoice);
       this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
       this.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
+      this.set('salesRepresentative', OB.POS.modelterminal.get('context').user.id);
       this.set('hasbeenpaid', 'N');
       this.set('isPaid', false);
       this.set('isEditable', true);
