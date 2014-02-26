@@ -188,8 +188,6 @@ enyo.kind({
     var symbol = '',
         rate = OB.DEC.One,
         symbolAtRight = true,
-        currentCash = OB.DEC.Zero,
-        hasEnoughChange = true,
         isCashType = true;
 
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
@@ -206,7 +204,7 @@ enyo.kind({
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
       this.$.change.show();
       this.$.changelbl.show();
-      this.checkEnoughCashAvailable(paymentstatus.change);
+      this.checkEnoughCashAvailable(this.receipt.getChange());
     } else {
       this.$.change.hide();
       this.$.changelbl.hide();
