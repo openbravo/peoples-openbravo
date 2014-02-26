@@ -39,7 +39,6 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.ApplicationUtils;
@@ -50,7 +49,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.domain.ReferencedTreeField;
@@ -543,37 +541,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
     tree = (Tree) adTreeCriteria.uniqueResult();
     return tree;
-  }
-
-  /**
-   * Returns the value of the column that references to a parent tab
-   * 
-   * @param bobProperties
-   * @param parentColumns
-   * @return
-   */
-  private String getReferencedColumnValue(JSONObject bobProperties, List<Column> parentColumns) {
-    Column parentColumn = parentColumns.get(0);
-    Property property = getPropertyFromColumn(parentColumn);
-    String referencedBobId = null;
-    try {
-      referencedBobId = (String) bobProperties.get(property.getName());
-    } catch (JSONException e) {
-      logger.error("Error on tree datasource while fetching the referenced column value", e);
-    }
-    return referencedBobId;
-  }
-
-  /**
-   * Given a column returns its property
-   * 
-   * @param column
-   *          whose property is going to be returned
-   * @return the property of the provided column
-   */
-  private Property getPropertyFromColumn(Column column) {
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(column.getTable().getId());
-    return entity.getPropertyByColumnName(column.getDBColumnName());
   }
 
   /**
