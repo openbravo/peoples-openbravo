@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -221,7 +221,8 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
           // TODO: make this option controlled
           final boolean isNotImportableProperty = p.isTransient(bob)
               || (p.isAuditInfo() && !isOptionImportAuditInfo()) || p.isInactive() || p.isProxy()
-              || p.getEntity().isVirtualEntity();
+              || p.getEntity().isVirtualEntity() || p.isComputedColumn();
+
           if (isNotImportableProperty) {
             log.debug("Property " + p + " is inactive, transient or auditinfo, " + "ignoring it");
             continue;

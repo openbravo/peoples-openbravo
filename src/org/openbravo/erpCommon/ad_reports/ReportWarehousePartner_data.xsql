@@ -59,8 +59,4 @@
     <Parameter name="locatorY" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_LOCATOR.Y) = UPPER(?)]]></Parameter>
     <Parameter name="locatorZ" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_LOCATOR.Z) = UPPER(?)]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
 </SqlClass>

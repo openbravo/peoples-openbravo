@@ -112,17 +112,6 @@
     <Parameter name="processId"/>
   </SqlMethod>
 
-  <SqlMethod name="selectFormat" type="preparedStatement" return="String">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      select TO_CHAR(TO_DATE(?), TO_CHAR(?)) from dual
-      ]]>
-    </Sql>
-    <Parameter name="quarter"/>
-    <Parameter name="dateFormat"/>
-  </SqlMethod>
-
   <SqlMethod name="selectTax" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

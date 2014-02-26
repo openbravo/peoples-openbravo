@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2010 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2014 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -42,6 +42,7 @@ public class TemplateInfo {
     private String _Body;
     private String _Language;
     private boolean _IsDefault;
+    private String _Id;
 
     public EmailDefinition(EmailDefinitionData emailDefinitionData) {
       _Subject = emailDefinitionData.getField("subject");
@@ -50,6 +51,7 @@ public class TemplateInfo {
       if (emailDefinitionData.getField("isdefault") != null) {
         _IsDefault = emailDefinitionData.getField("isdefault") == "Y" ? true : false;
       }
+      _Id = emailDefinitionData.getField("id");
     }
 
     public String getSubject() {
@@ -66,6 +68,10 @@ public class TemplateInfo {
 
     public boolean isDefault() {
       return _IsDefault;
+    }
+
+    public String getId() {
+      return _Id;
     }
   }
 
@@ -175,6 +181,10 @@ public class TemplateInfo {
     if (emailDefinition == null)
       throw new ReportingException("No email definition available.");
     return emailDefinition;
+  }
+
+  Map<String, EmailDefinition> getEmailDefinitions() throws ReportingException {
+    return _EmailDefinitions;
   }
 
   public EmailDefinition get_DefaultEmailDefinition() {

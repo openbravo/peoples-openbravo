@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2008 Openbravo SLU 
+* All portions are Copyright (C) 2001-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -56,7 +56,7 @@
   <FIELD id="fieldIdentifier" attribute="onclick" replace="ttpp">levelid</FIELD>
   <FIELD id="fieldRealUnitCost" format="euroInform">realUnitCost</FIELD>
   <FIELD id="fieldStandarUnitCost" format="euroInform">standarUnitCost</FIELD>
-  <FIELD id="fieldName">name</FIELD>
+  <FIELD id="fieldName" replaceCharacters="html">name</FIELD>
 
   <FIELD id="buttonTreemmm" attribute="class">buttonClass</FIELD>
   <FIELD id="buttonTreemmm" attribute="id" replace="mmm">identifier</FIELD>

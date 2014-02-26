@@ -32,10 +32,6 @@
       ]]>
     </Sql>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql></Sql>
-  </SqlMethod>
   <SqlMethod name="selectOrganization" type="preparedStatement" return="multiple">
      <SqlMethodComment></SqlMethodComment>
      <Sql><![CDATA[

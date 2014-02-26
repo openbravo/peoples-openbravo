@@ -145,10 +145,6 @@
     <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9" text=", 1"/>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
 
   <SqlMethod name="selectCount" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
@@ -343,17 +339,6 @@
       WHERE AD_USER.AD_USER_ID = ?
      ]]></Sql>
     <Parameter name="mWarehouseId"/>
-  </SqlMethod>
-
-  <SqlMethod name="selectEntity" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT AD_CLIENT.NAME
-      FROM AD_CLIENT
-      WHERE AD_CLIENT.AD_CLIENT_ID = ?
-     ]]></Sql>
-    <Parameter name="adClientId"/>
   </SqlMethod>
 
   <SqlMethod name="selectNotShown" type="preparedStatement" return="multiple">

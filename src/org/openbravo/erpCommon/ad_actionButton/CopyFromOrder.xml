@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,13 +37,13 @@
 <PARAMETER id="paramPendingdelivery" name="pendingdelivery" format="euroInform"/>
 <PARAMETER id="paramPendingInvoice" name="pendingInvoice" format="euroInform"/>
 <PARAMETER id="paramDebtpending" name="debtpending" format="euroInform"/>
-<PARAMETER id="paramContact" name="contact"/>
+<PARAMETER id="paramContact" replaceCharacters="html" name="contact"/>
 <PARAMETER id="paramLastorder" name="lastOrder"/>
-<PARAMETER id="paramOrgname" name="orgname"/>
+<PARAMETER id="paramOrgname" replaceCharacters="html" name="orgname"/>
 <PARAMETER id="paramLastmonth" name="lastmonth"/>
 <PARAMETER id="paramInvoicing" name="invoicing" format="euroInform"/>
 <PARAMETER id="paramTotalAverage" name="totalAverage" format="euroInform"/>
-<PARAMETER id="paramBpartnername" name="bpartnername"/>
+<PARAMETER id="paramBpartnername" name="bpartnername" replaceCharacters="html"/>
 
 <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
 <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
@@ -64,15 +64,15 @@
 
 <FIELD id="fieldProductid" attribute="value">mProductId</FIELD>
 <FIELD id="fieldProductid" attribute="name" replace="xx">rownum</FIELD>
-<FIELD id="fieldProductname">productname</FIELD>
+<FIELD id="fieldProductname" replaceCharacters="html">productname</FIELD>
 <FIELD id="fieldmAttributesetinstanceId" attribute="value">mAttributesetinstanceId</FIELD>
-<FIELD id="fieldmAttributesetinstanceId" attribute="name" replace="xx">rownum</FIELD>
+<FIELD id="fieldmAttributesetinstanceId" attribute="name" replace="xx"  replaceCharacters="html">rownum</FIELD>
 <FIELD id="fieldAttributeclass" attribute="class" replace="xx">attributeClass</FIELD>
-<FIELD id="fieldDescription">description</FIELD>
+<FIELD id="fieldDescription"  replaceCharacters="html">description</FIELD>
 <FIELD id="fieldMofferid" attribute="value">mOfferId</FIELD>
-<FIELD id="fieldMofferid" attribute="name" replace="xx">rownum</FIELD>
+<FIELD id="fieldMofferid" attribute="name" replace="xx"  replaceCharacters="html">rownum</FIELD>
 <FIELD id="fieldOffernameclass" attribute="class" replace="xx">classOffer</FIELD>
-<FIELD id="fieldOffername">offerName</FIELD>
+<FIELD id="fieldOffername"  replaceCharacters="html">offerName</FIELD>
 <FIELD id="fieldPricestdvalue" attribute="value" format="priceEdition">pricestd</FIELD>
 <FIELD id="fieldPricestdvalue" attribute="name" replace="xx">rownum</FIELD>
 <FIELD id="fieldPricestd" format="priceEdition">pricestd</FIELD>
@@ -81,10 +81,10 @@
 <FIELD id="fieldLastpriceso" attribute="class" replace="xx">classOffer</FIELD>
 <FIELD id="fieldTaxid" attribute="value">cTaxId</FIELD>
 <FIELD id="fieldTaxid" attribute="name" replace="xx">rownum</FIELD>
-<FIELD id="fieldNametax">nametax</FIELD>
+<FIELD id="fieldNametax" replaceCharacters="html">nametax</FIELD>
 <FIELD id="fieldUomid" attribute="value">cUomId</FIELD>
 <FIELD id="fieldUomid" attribute="name" replace="xx">rownum</FIELD>
-<FIELD id="fieldUomsymbol">uomsymbol</FIELD>
+<FIELD id="fieldUomsymbol" replaceCharacters="html">uomsymbol</FIELD>
 <FIELD id="fieldQty" attribute="value" format="euroEdition">qty</FIELD>
 <FIELD id="fieldQty" attribute="name" replace="xx">rownum</FIELD>
 <FIELD id="lpinvalidxx" attribute="id" replace="xx">rownum</FIELD>
@@ -95,11 +95,11 @@
 
 <structure name="structure2">
 
-<FIELD id="fieldDocumentno">documentno</FIELD>
-<FIELD id="fieldPoreference">poreference</FIELD>
+<FIELD id="fieldDocumentno" replaceCharacters="html">documentno</FIELD>
+<FIELD id="fieldPoreference" replaceCharacters="html">poreference</FIELD>
 <FIELD id="fieldDateordered">dateordered</FIELD>
-<FIELD id="fieldLocationname">locationname</FIELD>
-<FIELD id="fieldPricelistname">pricelistname</FIELD>
+<FIELD id="fieldLocationname" replaceCharacters="html">locationname</FIELD>
+<FIELD id="fieldPricelistname" replaceCharacters="html">pricelistname</FIELD>
 
 <SECTION id="sectionDetail2"/>
 </structure>

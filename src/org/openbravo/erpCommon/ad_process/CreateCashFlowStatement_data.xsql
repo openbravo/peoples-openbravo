@@ -233,11 +233,6 @@
     <Parameter name="payment"/>
   </SqlMethod>
 
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
-
   <SqlMethod name="insertStatements" type="preparedStatement" connection="true" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

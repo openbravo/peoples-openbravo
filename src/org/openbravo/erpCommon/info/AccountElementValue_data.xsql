@@ -123,14 +123,6 @@
         <Parameter name="key"/>
    </SqlMethod>
 
-   <SqlMethod name="selectname" type="preparedStatement" return="String" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql> <![CDATA[
-        SELECT NAME FROM C_ELEMENTVALUE WHERE C_ELEMENTVALUE_ID = ?
-      ]]></Sql>
-        <Parameter name="key"/>
-   </SqlMethod>
-
    <SqlMethod name="selectschemaname" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[

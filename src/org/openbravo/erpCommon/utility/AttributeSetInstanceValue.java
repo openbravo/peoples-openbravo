@@ -124,7 +124,7 @@ public class AttributeSetInstanceValue {
    *          String with the productId.
    * @param attributeValues
    *          Map with the attribute values.
-   * @param Organization
+   * @param organization
    *          Organization for the attribute set instance.
    * @return OBError with the result.
    * @throws ServletException

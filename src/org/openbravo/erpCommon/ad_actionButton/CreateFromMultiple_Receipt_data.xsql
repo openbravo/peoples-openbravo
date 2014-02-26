@@ -62,13 +62,6 @@
     ]]></Sql>
     <Parameter name="warehouse"/>
   </SqlMethod>
-  <SqlMethod name="tabName" type="preparedStatement" return="String" default="">
-    <SqlMethodComment>Ids and Names of table dir M_Locator</SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT NAME FROM AD_TAB WHERE AD_TAB_ID = ?
-    ]]></Sql>
-    <Parameter name="adTabId"/>
-  </SqlMethod>
   <SqlMethod name="insert" connection="true" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

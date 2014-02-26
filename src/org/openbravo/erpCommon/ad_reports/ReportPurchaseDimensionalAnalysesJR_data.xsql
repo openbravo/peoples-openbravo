@@ -115,10 +115,6 @@
     <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5" text=", 1"/>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
   <SqlMethod name="selectNoComparative" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -197,17 +193,6 @@
       WHERE M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?
      ]]></Sql>
     <Parameter name="mProductCategoryId"/>
-  </SqlMethod>
-
-  <SqlMethod name="selectEntity" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT AD_CLIENT.NAME
-      FROM AD_CLIENT
-      WHERE AD_CLIENT.AD_CLIENT_ID = ?
-     ]]></Sql>
-    <Parameter name="adClientId"/>
   </SqlMethod>
 
   <SqlMethod name="selectNotShown" type="preparedStatement" return="multiple">

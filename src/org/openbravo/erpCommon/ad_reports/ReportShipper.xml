@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2008 Openbravo SLU 
+* All portions are Copyright (C) 2001-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -48,11 +48,11 @@
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <structure name="structure">
-    <FIELD id="fieldShipper">shipper</FIELD>
-    <FIELD id="fieldShipment">shipment</FIELD>
-    <FIELD id="fieldCategory">category</FIELD>
-    <FIELD id="fieldOrigin">origin</FIELD>
-    <FIELD id="fieldDestination">destination</FIELD>
+    <FIELD id="fieldShipper" replaceCharacters="html">shipper</FIELD>
+    <FIELD id="fieldShipment" replaceCharacters="html">shipment</FIELD>
+    <FIELD id="fieldCategory" replaceCharacters="html">category</FIELD>
+    <FIELD id="fieldOrigin" replaceCharacters="html">origin</FIELD>
+    <FIELD id="fieldDestination" replaceCharacters="html">destination</FIELD>
     <FIELD id="fieldQty" format="euroInform">qty</FIELD>
     <FIELD id="fieldAmount" format="euroInform" default="0">freightamt</FIELD>
     <SUBREPORT id="reportShipper" name="reportShipper" report="org/openbravo/erpCommon/reference/List">

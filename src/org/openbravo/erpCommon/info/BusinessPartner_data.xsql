@@ -102,10 +102,6 @@
         <Parameter name="oraLimit1" type="argument" optional="true" after=") B"><![CDATA[ WHERE ROWNUM <= ]]></Parameter>
         <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter> 
    </SqlMethod>
-   <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-   </SqlMethod>
    <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[

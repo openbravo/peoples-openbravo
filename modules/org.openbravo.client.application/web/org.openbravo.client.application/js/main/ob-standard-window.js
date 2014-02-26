@@ -401,6 +401,9 @@ isc.OBStandardWindow.addProperties({
       for (t = 0; t < data.notAccessibleProcesses.length; t++) {
         notAccessibleProcesses = data.notAccessibleProcesses[t];
         view = this.getView(notAccessibleProcesses.tabId);
+        if (!view) {
+          continue;
+        }
         for (i = 0; i < view.toolBar.rightMembers.length; i++) {
           button = view.toolBar.rightMembers[i];
           if (notAccessibleProcesses.tabId === button.contextView.tabId && button.property && notAccessibleProcesses.processes.contains(button.property)) {
@@ -413,7 +416,7 @@ isc.OBStandardWindow.addProperties({
               }
               for (stBtns = 0; stBtns < stView.toolBar.rightMembers.length; stBtns++) {
                 stBtn = stView.toolBar.rightMembers[stBtns];
-                if (stBtn.contextView === button.contextView && stBtn.property && notAccessibleProcesses.processes.contains(stBtn.property)) {
+                if (stBtn.contextView === button.contextView && stBtn.property && stBtn.property === button.property && notAccessibleProcesses.processes.contains(stBtn.property)) {
                   stBtn.readOnlyIf = alwaysReadOnly;
                   break;
                 }

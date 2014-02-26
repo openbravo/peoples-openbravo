@@ -128,14 +128,6 @@
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
-  <SqlMethod name="treeOrg" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-        SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = ?
-    </Sql>
-    <Parameter name="client"/>
-  </SqlMethod>  
   <SqlMethod name="process134" type="callableStatement" return="object" object="GenerateInvoicesmanualData" connection="true">
       <SqlMethodComment>procedure C_Invoice_Create0</SqlMethodComment>
       <Sql><![CDATA[

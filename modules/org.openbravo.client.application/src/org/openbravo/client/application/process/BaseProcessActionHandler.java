@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -100,20 +100,38 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     }
   }
 
+  /**
+   * Permissions to processes can be given in 2 ways:
+   * <p>
+   * Explicit grant to process definition access:
+   * <ul>
+   * <li>whenever the process is directly executed from menu
+   * <li>in case the process is marked as "Requires Explicit Access Permission"
+   * <li>in case there is a "Secured Process" preference for current window
+   * </ul>
+   * <p>
+   * Inherited from window access in case it is invoked from a window button and none of the
+   * previous conditions is satisfied.
+   * 
+   */
   private boolean hasAccess(Process processDefinition, Map<String, Object> parameters) {
     String windowId = (String) parameters.get("windowId");
     if (windowId != null && !"null".equals(windowId)) {
       Window window = OBDal.getInstance().get(Window.class, windowId);
-      boolean securedProcess = false;
-      try {
-        securedProcess = "Y".equals(Preferences.getPreferenceValue("SecuredProcess", true,
-            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                .getOBContext().getRole(), window));
-      } catch (PropertyException e) {
-        // do nothing, property is not set so securedProcess is false
+
+      boolean checkPermission = processDefinition.isRequiresExplicitAccessPermission();
+
+      if (!checkPermission) {
+        try {
+          checkPermission = "Y".equals(Preferences.getPreferenceValue("SecuredProcess", true,
+              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                  .getOBContext().getRole(), window));
+        } catch (PropertyException e) {
+          // do nothing, property is not set so securedProcess is false
+        }
       }
-      if (!securedProcess) {
+      if (!checkPermission) {
         // check if window is accessible
         OBCriteria<WindowAccess> qAccess = OBDal.getInstance().createCriteria(WindowAccess.class);
         qAccess.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, window));

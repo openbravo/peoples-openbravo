@@ -85,16 +85,6 @@
     <Parameter name="adClientId"/>
     <Parameter name="cInvoiceLineId"/>
   </SqlMethod>
-  <SqlMethod name="selectClientCurrencyPrecission" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      select stdprecision 
-      from c_currency cu, ad_client cl
-       where cu.c_currency_id=cl.c_currency_id
-         and cl.ad_client_id=?
-    </Sql>
-    <Parameter name="adClientId"/>
-  </SqlMethod>
   <SqlMethod name="selectInvoiceLine" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

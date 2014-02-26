@@ -90,11 +90,6 @@
     <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 <= ]]></Parameter>
     <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
-  
   <SqlMethod name="countRows" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -139,26 +134,6 @@
     <Parameter name="statusFrom" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.STATUS = ? "/>
   </SqlMethod>
   
-  <SqlMethod name="bpartner" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID=?
-    </Sql>
-    <Parameter name="cBpartnerId"/>
-  </SqlMethod>
-  <SqlMethod name="NotIsCancelled" type="preparedStatement" connection="true" return="boolean">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT COUNT(*) 
-      FROM C_DEBT_PAYMENT DP 
-      WHERE DP.C_DEBT_PAYMENT_ID = ? 
-      AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.Cancel_Processed, DP.Generate_Processed, 
-      DP.IsPaid, DP.IsValid, DP.C_CashLine_ID, DP.C_BankStatementLine_ID)='P' 
-      AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE DP.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID) 
-      AND NOT EXISTS (SELECT * FROM C_CashLine l WHERE DP.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID) 
-    ]]></Sql>
-    <Parameter name="cDebtPaymentId"/>
-  </SqlMethod>
   <SqlMethod name="insert" connection="true" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

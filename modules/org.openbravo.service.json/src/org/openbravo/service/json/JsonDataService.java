@@ -37,7 +37,7 @@ public interface JsonDataService {
   /**
    * Do a query for {@link BaseOBObject} objects and return the result as a json string.
    * 
-   * One parameter is mandatory: {@link JsonConstants.ENTITYNAME}. The possible query parameters can
+   * One parameter is mandatory: {@link JsonConstants#ENTITYNAME}. The possible query parameters can
    * be found in {@link JsonConstants}, see the constants ending with _PARAMETER. All other request
    * parameters which correspond to properties of the queried objects are considered to be filter
    * properties.
@@ -49,15 +49,15 @@ public interface JsonDataService {
    * 
    * @param parameters
    *          the parameters driving the query, one parameter is mandatory:
-   *          {@link JsonConstants.ENTITYNAME}
+   *          {@link JsonConstants#ENTITYNAME}
    * @return a json result string
    * @see QueryBuilder
    */
   public abstract String fetch(Map<String, String> parameters);
 
   /**
-   * Remove an object, this method expects two parameters: {@link JsonConstants.ID} and
-   * {@link JsonConstants.ENTITYNAME}. If they are not present an error is returned.
+   * Remove an object, this method expects two parameters: {@link JsonConstants#ID} and
+   * {@link JsonConstants#ENTITYNAME}. If they are not present an error is returned.
    * 
    * @param parameters
    *          two parameters should be present: id and entityName

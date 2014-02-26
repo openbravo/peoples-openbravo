@@ -625,8 +625,8 @@ public class JsonToDataConverter {
 
   /**
    * Checks if the property is settable ({@link #isNotConvertable(BaseOBObject, Property)}. If so
-   * the jsonValue is converted ({@link #convertPrimitive(Property, Object)}, in case of a primive),
-   * or in case of a reference property the referenced object is read/created.
+   * the jsonValue is converted ({@link #convertJsonToPropertyValue(Property, Object)}, in case of a
+   * primitive), or in case of a reference property the referenced object is read/created.
    * 
    * @param obObject
    *          the object to set
@@ -765,7 +765,6 @@ public class JsonToDataConverter {
    * @see Property#isAuditInfo()
    * @see Property#isClientOrOrganization()
    * @see Property#isOneToMany()
-   * @return
    */
   protected boolean isNotConvertable(BaseOBObject obObject, Property property) {
     // one-to-many are never json-ized

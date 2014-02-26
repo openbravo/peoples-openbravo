@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
@@ -301,7 +301,7 @@
         l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?)) AS NAME, 
         l.C_OrderLine_ID,l.Line, max(uom.stdprecision) AS stdprecision, cur.priceprecision, il.M_InOutLine_ID as M_InOutLine_ID, l.Description,
         (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.quantityOrder*C_DIVIDE((l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)),(l.QtyOrdered)) ELSE il.quantityOrder END) AS quantityOrder, 
-        (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.M_Product_UOM_ID ELSE il.M_Product_UOM_ID END) AS M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id,
+        (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.M_Product_UOM_ID ELSE il.M_Product_UOM_ID END) AS M_Product_UOM_ID, COALESCE(l.M_ATTRIBUTESETINSTANCE_ID, il.M_ATTRIBUTESETINSTANCE_ID) AS M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id,
         l.taxbaseamt, COALESCE(l.A_Asset_ID, o.A_Asset_ID) as A_Asset_ID, COALESCE(l.C_Project_ID, o.C_Project_ID) as C_Project_ID,
         COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID) as C_Costcenter_ID, COALESCE(l.User1_ID, o.User1_ID) as User1_ID, COALESCE(l.User2_ID, o.User2_ID) as User2_ID, l.explode, 'Y' as isOrder
         FROM C_ORDERLINE l left join (SELECT M_InOutLine.* FROM M_InOutLine, M_InOut
@@ -314,7 +314,7 @@
         AND l.M_Product_ID=p.M_Product_ID 
         GROUP BY l.QtyOrdered,l.qtydelivered,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, 
         l.QTYINVOICED, il.M_InOutLine_ID, il.MovementQty, l.Description, l.quantityOrder, il.quantityOrder, 
-        l.M_Product_UOM_ID, il.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID,l.ad_org_id, cur.priceprecision,
+        l.M_Product_UOM_ID, il.M_Product_UOM_ID, COALESCE(l.M_ATTRIBUTESETINSTANCE_ID, il.M_ATTRIBUTESETINSTANCE_ID),l.ad_org_id, cur.priceprecision,
         l.taxbaseamt, COALESCE(l.A_Asset_ID, o.A_Asset_ID), COALESCE(l.C_Project_ID, o.C_Project_ID), COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID),
         COALESCE(l.User1_ID, o.User1_ID), COALESCE(l.User2_ID, o.User2_ID), l.explode
         HAVING ( (l.explode='Y') OR ((l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)) <> 0)) 

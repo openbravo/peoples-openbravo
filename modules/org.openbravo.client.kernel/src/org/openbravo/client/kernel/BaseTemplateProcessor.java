@@ -121,7 +121,6 @@ public abstract class BaseTemplateProcessor<T extends Object> implements Templat
    * 
    * @param template
    * @param source
-   * @return
    */
   protected synchronized T createSetFreeMarkerTemplateInCache(Template template, String source) {
     final T specificTemplate = createTemplateImplementation(template, source);

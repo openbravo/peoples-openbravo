@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2012 Openbravo SLU
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -604,8 +604,8 @@ isc.OBSelectorWidget.addProperties({
   initWidget: function () {
 
     var baseTestRegistryName = 'org.openbravo.userinterface.selector.' + this.openbravoField + '.',
-        initialValueMap = {};
-
+        initialValueMap = {},
+        f;
     if (this.openbravoField.value) {
       initialValueMap[this.openbravoField.value] = this.openbravoField.getAttribute('identifier');
     }
@@ -613,6 +613,20 @@ isc.OBSelectorWidget.addProperties({
     // Do not destroy dataSource after creation
     // https://issues.openbravo.com/view.php?id=18456
     this.dataSource.potentiallyShared = true;
+
+    if (this.dataSource.fields) {
+      for (f in this.dataSource.fields) {
+        if (this.dataSource.fields.hasOwnProperty(f)) {
+          this.dataSource.fields[f].escapeHTML = true;
+        }
+      }
+    }
+
+    if (this.pickListFields) {
+      for (f = 0; f < this.pickListFields.length; f++) {
+        this.pickListFields[f].escapeHTML = true;
+      }
+    }
 
     if (this.numCols > 0 && this.numCols <= isc.OBSelectorWidget.styling.widthDefinition.length) {
       this.width = isc.OBSelectorWidget.styling.widthDefinition[this.numCols - 1];

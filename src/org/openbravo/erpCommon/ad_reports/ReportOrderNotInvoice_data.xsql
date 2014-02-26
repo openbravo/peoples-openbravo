@@ -140,10 +140,6 @@
     <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[ AND C.DATEORDERED >= to_date(?) ]]></Parameter>
     <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[ AND C.DATEORDERED < to_date(?) ]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
   <SqlMethod name="bPartnerDescription" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

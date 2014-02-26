@@ -205,7 +205,7 @@ isc.OBViewGrid.addProperties({
     fetchRemoteData: function (serverCriteria, startRow, endRow) {
       // clone to prevent side effects
       var requestProperties = isc.clone(this.context);
-      this.grid.getFetchRequestParams(requestProperties.params);
+      this.context.params = this.grid.getFetchRequestParams(requestProperties.params);
 
       return this.Super('fetchRemoteData', arguments);
     },
@@ -233,7 +233,7 @@ isc.OBViewGrid.addProperties({
     },
 
     transformData: function (newData, dsResponse) {
-      var i, length, timeFields, responseToFilter;
+      var i, length, timeFields, responseToFilter, newTotalRows;
 
       // when the data is received from the datasource, time fields are formatted in UTC time. They have to be converted to local time
       if (dsResponse && dsResponse.context && (dsResponse.context.operationType === 'fetch' || dsResponse.context.operationType === 'update' || dsResponse.context.operationType === 'add')) {
@@ -256,12 +256,20 @@ isc.OBViewGrid.addProperties({
 
       if (this.localData && !responseToFilter) {
         length = this.localData.length;
+        newTotalRows = dsResponse.totalRows;
         for (i = dsResponse.endRow + 1; i < length; i++) {
           if (!Array.isLoading(this.localData[i]) && this.localData[i]) {
-            dsResponse.totalRows = i + 1;
+            newTotalRows = i + 1;
           } else {
             break;
           }
+        }
+
+        // never decrease totalRows because when multiple requests are obtained it can
+        // cause an incorrect computation of the whole data size
+        if (newTotalRows > dsResponse.totalRows) {
+          dsResponse.totalRows = newTotalRows + 1;
+          // increase one to request additional page to backend
         }
 
         // get rid of old loading markers, this has to be done explicitly

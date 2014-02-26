@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -237,6 +237,10 @@ public class AddTransaction extends HttpSecureAppServlet {
 
       } else if (strTransactionType.equals("GL")) { // GL Item
         // Accounting Dimensions
+        final String strElement_OT = vars.getStringParameter("inpadOrgTrxId", IsIDFilter.instance);
+        final Organization organization = OBDal.getInstance()
+            .get(Organization.class, strElement_OT);
+
         final String strElement_BP = vars.getStringParameter("inpCBPartnerId", IsIDFilter.instance);
         final BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
             strElement_BP);
@@ -278,9 +282,9 @@ public class AddTransaction extends HttpSecureAppServlet {
         boolean isReceipt = (glItemDepositAmt.compareTo(glItemPaymentAmt) >= 0);
 
         // Currency, Organization, paymentDate,
-        FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(account.getOrganization(),
-            account, TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description,
-            FIN_Utility.getDate(strTransactionDate), glItem, isReceipt ? "RDNC" : "PWNC",
+        FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(organization, account,
+            TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description, FIN_Utility
+                .getDate(strTransactionDate), glItem, isReceipt ? "RDNC" : "PWNC",
             glItemDepositAmt, glItemPaymentAmt, project, campaign, activity, isReceipt ? "BPD"
                 : "BPW", FIN_Utility.getDate(strTransactionDate), null, null, null,
             businessPartner, product, salesRegion, user1, user2, costcenter);
@@ -365,6 +369,9 @@ public class AddTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("windowId", strWindowId);
     xmlDocument.setParameter("tabId", strTabId);
     xmlDocument.setParameter("orgId", strOrgId);
+    xmlDocument.setParameter("orgTrxId", strOrgId);
+    Organization orgTrx = OBDal.getInstance().get(Organization.class, strOrgId);
+    xmlDocument.setParameter("orgTrxName", orgTrx.getIdentifier());
     xmlDocument.setParameter("finFinancialAccountId", strFinancialAccountId);
     xmlDocument.setParameter("finBankStatementLineId", strBankStatementLineId);
     String transactionType = "P";
@@ -448,6 +455,9 @@ public class AddTransaction extends HttpSecureAppServlet {
     final String strCentrally = Utility.getContext(this, vars,
         DimensionDisplayUtility.IsAcctDimCentrally, strWindowId);
 
+    final String strElement_OT = Utility.getContext(this, vars, DimensionDisplayUtility
+        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Organization,
+            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
     final String strElement_BP = Utility.getContext(this, vars, DimensionDisplayUtility
         .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_BPartner,
             AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
@@ -470,6 +480,7 @@ public class AddTransaction extends HttpSecureAppServlet {
         .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_CostCenter,
             AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
 
+    xmlDocument.setParameter("strElement_OT", strElement_OT);
     xmlDocument.setParameter("strElement_BP", strElement_BP);
     xmlDocument.setParameter("strElement_PR", strElement_PR);
     xmlDocument.setParameter("strElement_PJ", strElement_PJ);

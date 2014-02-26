@@ -34,20 +34,6 @@
   <Parameter name="parTaxPaymId" optional="false" after=" 1=1"><![CDATA[ and c_taxpayment_id in ( ? )  ]]></Parameter> 
   </SqlMethod>
 
-  <SqlMethod name="updateProcessed" type="preparedStatement" return="rowcount">
-  <SqlMethodComment>delete All Tax Register Lines Child</SqlMethodComment>
-  <Sql>
-  <![CDATA[
-  		UPDATE C_TAXPAYMENT 
-  		SET Processed = ? , UPDATED=now() , UPDATEDBY =  ?
-  		WHERE C_TaxPayment_ID = ?
-      ]]>
-  </Sql>
-  <Parameter name="processed" default='N'/>
-  <Parameter name="updateby"/>
-  <Parameter name="taxpayment_id"/>
-  </SqlMethod>
-
 <SqlMethod name="updateGeneratePayment" type="preparedStatement" return="rowcount">
   <SqlMethodComment>delete All Tax Register Lines Child</SqlMethodComment>
   <Sql>
@@ -112,22 +98,6 @@
   <Parameter name="DateTo"/>
   </SqlMethod>
  
-  <SqlMethod name="calculatePrevvatcredit" type="preparedStatement" return="String">
-  <SqlMethodComment>Update Tax Register Totals</SqlMethodComment>
-  <Sql>
-  <![CDATA[
-  	   select sum(case when  c_taxregister.C_TAXREGISTER_TYPE_ID in 
-        (select C_TAXREGISTER_TYPE_ID from c_taxregister_type where c_taxregister_type.ISSOTRX='Y')
-        then coalesce(-lastregaccumamt,0)
-        else coalesce(lastregaccumamt,0) end ) as prevvatcredit
-        from c_taxregister where c_taxregister.C_TAXPAYMENT_id = ?
-      	
-      ]]>
-  </Sql>
-  <Parameter name="taxpayment_id"/>
-  
-  </SqlMethod>
-  
   <SqlMethod name="calculateVatPayment" type="preparedStatement" return="String">
   <SqlMethodComment>Update Tax Register Totals</SqlMethodComment>
   <Sql>

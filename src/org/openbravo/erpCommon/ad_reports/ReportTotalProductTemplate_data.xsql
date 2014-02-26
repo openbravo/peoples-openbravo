@@ -42,8 +42,4 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_PRODUCT_TEMPLATE.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND M_PRODUCT_TEMPLATE.AD_ORG_ID IN (" text="'1'"/>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
 </SqlClass>

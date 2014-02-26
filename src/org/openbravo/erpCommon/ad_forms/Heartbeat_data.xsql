@@ -24,25 +24,6 @@
       <Sql>select 1 as dummy from dual</Sql>
    </SqlMethod>
 
-   <SqlMethod name="disableHeartbeat" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        update AD_SYSTEM_INFO set ISHEARTBEATACTIVE = 'N'
-     ]]>
-     </Sql>
-   </SqlMethod>
-
-   <SqlMethod name="postpone" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        update AD_SYSTEM_INFO set POSTPONE_DATE = TO_DATE(?)
-     ]]>
-     </Sql>
-     <Parameter name="postponeDate"/>
-   </SqlMethod>
-
    <SqlMethod name="updateServletContainer" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
