@@ -99,6 +99,11 @@ BEGIN
                   where ps.c_invoice_id = v_invoice2;
                                    
                   insert into fin_payment_scheduledetail
+                  (fin_payment_scheduledetail_id,  ad_client_id,  ad_org_id, created,  createdby,
+                   updated, updatedby, fin_payment_detail_id, fin_payment_schedule_order,
+                   fin_payment_schedule_invoice, amount, isactive, writeoffamt, iscanceled,
+                   c_bpartner_id, c_activity_id, m_product_id, c_campaign_id, c_project_id, 
+                   c_salesregion_id, c_costcenter_id, user1_id, user2_id, doubtfuldebt_amount)
                   select get_uuid(), ad_client_id, ad_org_id, now(), '100', now(), '100', 
                   fin_payment_detail_id, fin_payment_schedule_order, v_paymentSched2, cursor1.grandtotal, isactive, writeoffamt, iscanceled,
                   c_bpartner_id, c_activity_id, m_product_id, c_campaign_id, c_project_id, c_salesregion_id, c_costcenter_id, 
