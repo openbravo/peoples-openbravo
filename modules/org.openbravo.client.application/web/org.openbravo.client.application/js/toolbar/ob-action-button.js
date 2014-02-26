@@ -143,12 +143,20 @@ isc.OBToolbarActionButton.addProperties({
     //Keep current view for the callback function. Refresh and look for tab message.
     var contextView = OB.ActionButton.executingProcess.contextView,
         currentView = this.view,
-        afterRefresh, parsePathPart, parts;
+        afterRefresh, isAfterRefreshAlreadyExecuted, parsePathPart, parts;
 
     afterRefresh = function (doRefresh) {
       var undef, refresh = (doRefresh === undef || doRefresh),
           autosaveDone = false,
           currentRecordId, recordsAfterRefresh;
+
+      if (isAfterRefreshAlreadyExecuted) {
+        // To avoid multiple calls to this function when
+        // ob-standard-view.js -> refreshCurrentRecord -> this.refreshParentRecord
+        // calls again this function, since it is passed as the 'callBackFunction' argument
+        return;
+      }
+      isAfterRefreshAlreadyExecuted = true;
 
       // Refresh context view
       contextView.getTabMessage();

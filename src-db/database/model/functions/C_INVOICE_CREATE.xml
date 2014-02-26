@@ -73,6 +73,7 @@
     --
     v_LineNo NUMBER:=0;
     v_count NUMBER:=0;
+    v_isSchedule NUMBER:=0;
     
     v_isdeferredrevenue M_Product.IsDeferredRevenue%TYPE;
     v_revplantype M_Product.RevPlanType%TYPE;
@@ -233,7 +234,7 @@
         * Order Loop == all not completely invoiced orders == No Summary ==
         */
 
-          DBMS_OUTPUT.PUT_LINE('  C_Order_ID=' || v_C_Order_ID || ', BPartner_ID=' || v_BPartner_ID || ', AD_Org_ID=' || v_AD_Org_ID) ;
+          DBMS_OUTPUT.PUT_LINE('  C_Order_ID=' || coalesce(v_C_Order_ID, 'null') || ', BPartner_ID=' || coalesce(v_BPartner_ID, 'null') || ', AD_Org_ID=' || coalesce(v_AD_Org_ID, 'null')) ;
           -- For all Orders
           
           FOR Cur_Bpblocked IN(
@@ -799,12 +800,16 @@
               Cur_InOutLine_ISOPEN:=false;
             END IF;
           END LOOP; -- Order Loop
-
+   
+          SELECT count(*) 
+          INTO v_isSchedule
+          FROM DUAL WHERE EXISTS (SELECT 1 FROM C_ORDER WHERE ISSELECTED = 'Y' AND INVOICERULE = 'S');
+       
         /**
         * Invoice Schedule ======================================================
         */
-        IF(p_PInstance_ID IS NOT NULL AND v_C_Order_ID IS NULL) THEN -- Not when processing a single order
-          DECLARE
+        IF(p_PInstance_ID IS NOT NULL AND v_C_Order_ID IS NULL AND (v_isSchedule > 0 OR v_Selection = 'N')) THEN -- Not when processing a single order
+         DECLARE
             -- Invoice Schedule Lines
             Cur_InvoiceSchedule RECORD;
             v_Partner_ID VARCHAR2(32):='-1';

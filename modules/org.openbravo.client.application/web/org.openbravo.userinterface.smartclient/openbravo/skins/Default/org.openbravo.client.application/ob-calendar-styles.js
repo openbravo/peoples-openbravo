@@ -58,24 +58,24 @@ isc.OBCalendarTabSet.addProperties({
 
 
 isc.OBCalendar.addProperties({
+  eventWindowStyle: 'OBEventWindow',
+  baseStyle: 'OBCalendarGridCell',
   workdayBaseStyle: 'OBCalendarGridCellWorkday',
   selectedCellStyle: 'OBCalendarGridCellSelected'
 });
 
-OB.Styles.OBCalendar = {
-  eventWindowStyle: 'OBEventWindow',
-  addEventButton: {
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/add_icon.png',
-    // It doesn't exist yet
-    width: 21,
-    height: 21
-  },
-  dayView_baseStyle: 'OBCalendarGridCell',
-  weekView_baseStyle: 'OBCalendarGridCell',
-  weekView_headerBaseStyle: 'OBCalendarGridHeaderCell',
-  monthView_baseStyle: 'OBCalendarGridCell',
-  monthView_headerBaseStyle: 'OBCalendarGridHeaderCell'
-};
+isc.OBCalendar.changeDefaults('dayViewDefaults', {
+  alternateRecordStyles: false,
+  headerBaseStyle: 'OBCalendarGridHeaderCell'
+});
+
+isc.OBCalendar.changeDefaults('weekViewDefaults', {
+  headerBaseStyle: 'OBCalendarGridHeaderCell'
+});
+
+isc.OBCalendar.changeDefaults('monthViewDefaults', {
+  headerBaseStyle: 'OBCalendarGridHeaderCell'
+});
 
 isc.OBCalendar.changeDefaults('datePickerButtonDefaults', {
   src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/date_control.png',
@@ -95,6 +95,23 @@ isc.OBCalendar.changeDefaults('nextButtonDefaults', {
   height: 20
 });
 
+isc.OBCalendar.changeDefaults('addEventButtonDefaults', {
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/statusbar/iconButton-add.png',
+  width: 18,
+  height: 18
+});
+
+isc.OBCalendar.changeDefaults('dayLanesToggleButtonDefaults', {
+  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/calendar/iconDayLanesToggle.png',
+  width: 21,
+  height: 21
+});
+
+//isc.OBCalendar.changeDefaults('addEventButtonDefaults', {
+//  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/add_icon.png',
+//  width: 21,
+//  height: 21
+//});
 isc.OBCalendar.changeDefaults('controlsBarDefaults', {
   layoutTopMargin: 6
 });

@@ -27,12 +27,26 @@ isc.ClassFactory.defineClass('OBTabBar', isc.TabBar);
 
 isc.ClassFactory.defineClass('OBTabBarButtonMain', isc.OBTabBarButton);
 
+isc.OBTabBarButtonMain.addProperties({
+  mouseDown: function () {
+    this.select();
+    return this.Super('mouseDown', arguments);
+  }
+});
+
 isc.ClassFactory.defineClass('OBTabSetMain', isc.OBTabSet);
 
 isc.OBTabSetMain.addProperties({
   destroyPanes: true,
 
   stateAsString: null,
+
+  canReorderTabs: true,
+  reorderTab: function (tab, moveToPosition) {
+    var ret = this.Super('reorderTab', arguments);
+    OB.Layout.HistoryManager.updateHistory();
+    return ret;
+  },
 
   // note see the smartclient autochild concept for why tabBarProperties is valid
   tabBarProperties: isc.addProperties({
@@ -347,6 +361,12 @@ isc.OBTabBarMain.addProperties({
 isc.ClassFactory.defineClass('OBTabBarButtonChild', isc.OBTabBarButton);
 
 isc.OBTabBarButtonChild.addProperties({
+  // Needed to replicate the "click" behavior in automated tests
+  virtualClick: function () {
+    this.getParentCanvas().getParentCanvas().doHandleClick();
+    this.focus();
+    this.getParentCanvas().getParentCanvas().selectTab(this);
+  },
   // when a tab is drawn the first time it steals the focus 
   // from the active view, prevent this
   focus: function () {

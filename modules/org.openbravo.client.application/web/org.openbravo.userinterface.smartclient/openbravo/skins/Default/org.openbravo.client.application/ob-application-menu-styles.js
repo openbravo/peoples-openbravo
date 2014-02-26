@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,8 +80,7 @@ isc.OBApplicationMenuButton.addProperties({
   height: 26,
   iconHeight: 6,
   iconWidth: 10,
-  iconSpacing: 10,
-  iconAlign: 'left',
+  iconSpacing: 9,
   iconOrientation: 'right',
   nodeIcons: {
     Window: OB.Styles.OBApplicationMenu.Icons.window,

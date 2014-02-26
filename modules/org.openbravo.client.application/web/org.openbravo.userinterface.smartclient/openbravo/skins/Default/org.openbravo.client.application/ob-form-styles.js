@@ -58,8 +58,6 @@ OB.Styles.OBFormField.DefaultTextItem = {
 
 isc.OBTextItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 
-isc.OBTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
-
 isc.OBFKFilterTextItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
 
 isc.OBEncryptedItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
@@ -252,25 +250,28 @@ isc.OBDateChooser.addProperties({
   baseWeekdayStyle: 'OBDateChooserWeekday',
   baseWeekendStyle: 'OBDateChooserWeekend',
   baseBottomButtonStyle: 'OBDateChooserBottomButton',
+  disabledWeekdayStyle: "OBDateChooserWeekdayDisabled",
+  disabledWeekendStyle: "OBDateChooserWeekendDisabled",
+
   alternateWeekStyles: false,
   firstDayOfWeek: 1,
 
   showEdges: true,
 
   edgeImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/dateChooser-popup.png',
-  edgeSize: 6,
+  edgeSize: 3,
   edgeTop: 26,
-  edgeBottom: 5,
+  edgeBottom: 3,
   edgeOffsetTop: 1,
-  edgeOffsetRight: 5,
-  edgeOffsetLeft: 5,
+  edgeOffsetRight: 3,
+  edgeOffsetLeft: 3,
   edgeOffsetBottom: 5,
 
   todayButtonHeight: 20,
 
   headerHeight: 24,
 
-  edgeCenterBackgroundColor: '#FFFFFF',
+  edgeCenterBackgroundColor: '#E5E5E5',
   backgroundColor: null,
 
   showShadow: false,
@@ -305,7 +306,7 @@ OB.Styles.OBFormField.DefaultDateInput = {
     textBoxStyle: 'OBFormFieldDateInput'
   },
 
-  height: 25,
+  height: 21,
 
   pickerIconWidth: 21,
   pickerIconHeight: 21,
@@ -318,6 +319,12 @@ isc.OBDateItem.addProperties({
 });
 
 isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
+
+isc.OBTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultTextItem));
+
+isc.OBTimeItem.addProperties({
+  height: 25
+});
 
 isc.OBTimeItemGrid.addProperties({
   baseStyle: 'OBFormFieldPickListCell',
@@ -431,7 +438,7 @@ isc.OBMiniDateRangeItem.addProperties({
   pickerIconPrompt: OB.I18N.getLabel('OBUIAPP_pickerIconPrompt')
 });
 
-isc.DateRangeItem.changeDefaults('dateRangeFormDefaults', {
+isc.OBDateRangeItem.changeDefaults('dateRangeFormDefaults', {
   titleSuffix: '</b>',
   titlePrefix: '<b>',
   requiredTitleSuffix: ' *</b>',
@@ -440,7 +447,7 @@ isc.DateRangeItem.changeDefaults('dateRangeFormDefaults', {
   rightTitleSuffix: '</b>'
 });
 
-isc.DateRangeItem.addProperties({
+isc.OBDateRangeItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldInput',
@@ -449,14 +456,14 @@ isc.DateRangeItem.addProperties({
   toTitle: OB.I18N.getLabel('OBUIAPP_To')
 });
 
-isc.RelativeDateItem.addProperties({
+isc.OBRelativeDateItem.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
   controlStyle: 'OBFormFieldSelectControl'
 });
 
-isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {
+isc.OBRelativeDateItem.changeDefaults('quantityFieldDefaults', {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
@@ -464,7 +471,7 @@ isc.RelativeDateItem.changeDefaults('quantityFieldDefaults', {
   width: 65
 });
 
-isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
+isc.OBRelativeDateItem.changeDefaults('valueFieldDefaults', {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
   textBoxStyle: 'OBFormFieldSelectInput',
@@ -480,7 +487,7 @@ isc.RelativeDateItem.changeDefaults('valueFieldDefaults', {
   calendarIconHspace: 0
 });
 
-isc.RelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
+isc.OBRelativeDateItem.changeDefaults('calculatedDateFieldDefaults', {
   canFocus: false,
   disabled: true,
   showDisabled: false,

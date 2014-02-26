@@ -26,7 +26,15 @@ isc.ClassFactory.defineClass('OBRichTextEditor', isc.RichTextEditor);
 isc.OBRichTextItem.addProperties({
   operator: 'iContains',
   validateOnExit: true,
+  moveFocusOnTab: true,
   canvasConstructor: 'OBRichTextEditor',
+
+  editAreaFocusChanged: function () {
+    var ret = this.Super('editAreaFocusChanged', arguments);
+    this.canvas.handleFocus(this.hasFocus);
+    return ret;
+  },
+
   canvasProperties: {
     canFocus: true,
     editAreaBackgroundColor: 'transparent',
@@ -36,17 +44,6 @@ isc.OBRichTextItem.addProperties({
     controlGroups: ["fontControls", "styleControls", "formatControls"],
 
     keyDown: function (event, eventInfo) {
-      var me = this;
-      if (this.parentElement && typeof this.parentElement.handleItemChange === 'function' && (isc.EH.getKey() === 'Backspace' || isc.EH.getKey() === 'Delete') && !isc.EH.altKeyDown()) {
-        var oldValue = this.getValue();
-        setTimeout(function () {
-          var newValue = me.getValue();
-          if (oldValue !== newValue) {
-            me._hasChanged = true;
-            me.parentElement.handleItemChange(me);
-          }
-        }, 100);
-      }
       var response = OB.KeyboardManager.Shortcuts.monitor('OBViewForm');
       if (response !== false) {
         response = this.Super('keyDown', arguments);
@@ -55,9 +52,9 @@ isc.OBRichTextItem.addProperties({
     },
 
     handleFocus: function (hasFocus) {
-      if (hasFocus) {
+      if (hasFocus && !this.styleName.endsWith('Focused')) {
         this.setStyleName(this.styleName + 'Focused');
-      } else if (this.styleName.endsWith('Focused')) {
+      } else if (!hasFocus && this.styleName.endsWith('Focused')) {
         this.setStyleName(this.styleName.substring(0, this.styleName.length - 'Focused'.length));
       }
       if (hasFocus && !this.hasFocus) {
@@ -91,10 +88,6 @@ isc.OBRichTextItem.addProperties({
           response = this.Super('keyDown', arguments);
         }
         return response;
-      },
-
-      focusChanged: function (hasFocus) {
-        this.parentElement.handleFocus(hasFocus);
       }
     },
     toolbarProperties: {
@@ -109,7 +102,7 @@ isc.OBRichTextItem.addProperties({
       },
 
       focusChanged: function (hasFocus) {
-        this.parentElement.handleFocus(hasFocus);
+        this.parentElement.parentElement.handleFocus(hasFocus);
       },
 
       // autochild of the autochild

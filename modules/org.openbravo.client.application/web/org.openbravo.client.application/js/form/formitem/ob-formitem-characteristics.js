@@ -85,9 +85,11 @@ isc.OBCharacteristicsItem.addProperties({
   },
 
   destroy: function () {
-    this.canvas.destroy();
-    this.canvas = null;
-    this.Super('destroy', arguments);
+    if (this.canvas && typeof this.canvas.destroy === 'function') {
+      this.canvas.destroy();
+      this.canvas = null;
+    }
+    return this.Super('destroy', arguments);
   }
 });
 
