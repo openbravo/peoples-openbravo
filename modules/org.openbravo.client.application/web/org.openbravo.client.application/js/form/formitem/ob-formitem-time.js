@@ -155,9 +155,9 @@ isc.OBTimeItem.addProperties({
   },
   formSaved: function (request, response, data) {
     var UTCOffsetInMiliseconds;
-    if (data[this.name] && this.getValue() !== data[this.name]) {
+    if (this.getValue() !== data[this.name]) {
       // it has not been converted to the local time yet, do it now
-      if (data[this.name].getFullYear() <= 1970) {
+      if (data[this.name] && data[this.name].getFullYear() <= 1970) {
         UTCOffsetInMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds();
         data[this.name].setTime(data[this.name].getTime() + UTCOffsetInMiliseconds);
       }
