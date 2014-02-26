@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2013 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2014 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.regex.Matcher;
 
@@ -52,6 +53,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.email.EmailUtils;
+import org.openbravo.erpCommon.utility.BasicUtility;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -66,7 +68,10 @@ import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.model.ad.system.Language;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
+import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -386,7 +391,7 @@ public class PrintController extends HttpSecureAppServlet {
               final String senderAddress = vars.getStringParameter("fromEmail");
               sendDocumentEmail(report, vars,
                   (Vector<Object>) request.getSession().getAttribute("files"), documentData,
-                  senderAddress, checks);
+                  senderAddress, checks, documentType);
               nrOfEmailsSend++;
             }
           }
@@ -413,6 +418,29 @@ public class PrintController extends HttpSecureAppServlet {
               reports.put(documentId, report);
             }
             vars.setSessionObject(sessionValuePrefix + ".Documents", reports);
+
+          } catch (Exception e) {
+            log4j.error("Error in change template ajax", e);
+            o = new JSONObject();
+            try {
+              o.put("error", true);
+            } catch (JSONException e1) {
+              log4j.error("Error in change template ajax", e1);
+            }
+          }
+
+          response.setContentType("application/json");
+          final PrintWriter out = response.getWriter();
+          out.println(o.toString());
+          out.close();
+        } else if (vars.commandIn("UPDATE_EMAILCONFIG")) {
+          JSONObject o = new JSONObject();
+          try {
+            String currentEmailConfigId = vars.getStringParameter("emailConfigList");
+            EmailTemplate emailTemplate = OBDal.getInstance().get(EmailTemplate.class,
+                currentEmailConfigId);
+            o.put("subject", emailTemplate.getSubject());
+            o.put("body", emailTemplate.getBody());
 
           } catch (Exception e) {
             log4j.error("Error in change template ajax", e);
@@ -650,10 +678,10 @@ public class PrintController extends HttpSecureAppServlet {
   }
 
   void sendDocumentEmail(Report report, VariablesSecureApp vars, Vector<Object> object,
-      PocData documentData, String senderAddress, HashMap<String, Boolean> checks)
-      throws IOException, ServletException {
+      PocData documentData, String senderAddress, HashMap<String, Boolean> checks,
+      DocumentType documentType) throws IOException, ServletException {
     final String attachmentFileLocation = report.getTargetLocation();
-
+    String emailSubject = null, emailBody = null;
     final String ourReference = report.getOurReference();
     final String cusReference = report.getCusReference();
     if (log4j.isDebugEnabled())
@@ -679,8 +707,18 @@ public class PrintController extends HttpSecureAppServlet {
     } else {
       replyToEmail = vars.getStringParameter("replyToEmail");
     }
-    String emailSubject = vars.getStringParameter("emailSubject");
-    String emailBody = vars.getStringParameter("emailBody");
+    if (differentDocTypes.size() > 1) {
+      try {
+        EmailDefinition emailDefinition = report.getDefaultEmailDefinition();
+        emailSubject = emailDefinition.getSubject();
+        emailBody = emailDefinition.getBody();
+      } catch (ReportingException e) {
+        log4j.error(e.getMessage(), e);
+      }
+    } else {
+      emailSubject = vars.getStringParameter("emailSubject");
+      emailBody = vars.getStringParameter("emailBody");
+    }
 
     // TODO: Move this to the beginning of the print handling and do nothing
     // if these conditions fail!!!)
@@ -859,7 +897,8 @@ public class PrintController extends HttpSecureAppServlet {
   void createEmailOptionsPage(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, DocumentType documentType, String strDocumentId,
       Map<String, Report> reports, HashMap<String, Boolean> checks, String fullDocumentIdentifier)
-      throws IOException, ServletException {
+      throws IOException, ServletException, ReportingException {
+    boolean hasMultipleEmailConfigurations = false;
     XmlDocument xmlDocument = null;
     PocData[] pocData = getContactDetails(documentType, strDocumentId);
     @SuppressWarnings("unchecked")
@@ -911,14 +950,24 @@ public class PrintController extends HttpSecureAppServlet {
 
     EmailDefinition emailDefinition = null;
     try {
-      if (moreThanOneLenguageDefined(reports)) {
+      if (moreThanOneLanguageDefined(reports) && hasDifferentBpLanguages(reports)) {
+        // set multiple email configurations
+        List<EmailDefinition> emailDef = new ArrayList<EmailDefinition>();
+        Map<String, EmailDefinition> emailDefinitions = reports.values().iterator().next()
+            .getEmailDefinitions();
+        Iterator<Entry<String, EmailDefinition>> entries = emailDefinitions.entrySet().iterator();
+        while (entries.hasNext()) {
+          Map.Entry<String, EmailDefinition> entry = entries.next();
+          emailDef.add(entry.getValue());
+        }
         emailDefinition = reports.values().iterator().next().getTemplateInfo()
             .get_DefaultEmailDefinition();
-        if (emailDefinition == null) {
-          throw new OBException("No default lenguage configured");
-        }
+        String emailDefinitionsComboHtml = getOptionsList(emailDef, emailDefinition.getId(), false);
+        xmlDocument.setParameter("reportEmailConfig", emailDefinitionsComboHtml);
+        hasMultipleEmailConfigurations = true;
       } else {
         emailDefinition = reports.values().iterator().next().getEmailDefinition();
+        hasMultipleEmailConfigurations = false;
       }
     } catch (final OBException exception) {
       final OBError on = new OBError();
@@ -1153,6 +1202,12 @@ public class PrintController extends HttpSecureAppServlet {
     xmlDocument.setParameter("inpArchive", vars.getStringParameter("inpArchive"));
     xmlDocument.setParameter("multCusCount", String.valueOf(numberOfCustomers));
     xmlDocument.setParameter("multSalesRepCount", String.valueOf(numberOfSalesReps));
+    if (!hasMultipleEmailConfigurations) {
+      xmlDocument.setParameter("useDefault", "Y");
+    }
+    if (differentDocTypes.size() > 1) {
+      xmlDocument.setParameter("multiDocType", "Y");
+    }
 
     vars.setSessionObject("pocData" + fullDocumentIdentifier, pocData);
     response.setContentType("text/html; charset=UTF-8");
@@ -1161,16 +1216,54 @@ public class PrintController extends HttpSecureAppServlet {
     out.close();
   }
 
-  private boolean moreThanOneLenguageDefined(Map<String, Report> reports) throws ReportingException {
+  private String getOptionsList(List<EmailDefinition> emailDef, String selectedValue,
+      boolean isMandatory) {
+    StringBuilder strOptions = new StringBuilder();
+    if (!isMandatory)
+      strOptions.append("<option value=\"\"></option>");
+    for (EmailDefinition obObject : emailDef) {
+      strOptions.append("<option value=\"").append(obObject.getId()).append("\"");
+      if (obObject.getId().equals(selectedValue))
+        strOptions.append(" selected=\"selected\"");
+      strOptions.append(">");
+      strOptions.append(BasicUtility.formatMessageBDToHtml(obObject.getSubject() + " - "
+          + obObject.getLanguage()));
+      strOptions.append("</option>");
+    }
+    return strOptions.toString();
+  }
+
+  private boolean moreThanOneLanguageDefined(Map<String, Report> reports) throws ReportingException {
+    boolean hasMoreThanOneLanguage = false;
     @SuppressWarnings("rawtypes")
     Iterator itRep = reports.values().iterator();
-    HashMap<String, String> lenguages = new HashMap<String, String>();
     while (itRep.hasNext()) {
       Report report = (Report) itRep.next();
-      lenguages.put(report.getEmailDefinition().getLanguage(), report.getEmailDefinition()
-          .getLanguage());
+      if (report.getEmailDefinitions().size() > 1) {
+        hasMoreThanOneLanguage = true;
+        break;
+      }
     }
-    return ((lenguages.values().size() > 1) ? true : false);
+    return hasMoreThanOneLanguage;
+  }
+
+  private boolean hasDifferentBpLanguages(Map<String, Report> reports) throws ReportingException {
+    boolean hasMoreThanOneLanguage = false;
+    @SuppressWarnings("rawtypes")
+    Iterator itRep = reports.values().iterator();
+    Language currentLanguage = null;
+    while (itRep.hasNext()) {
+      Report report = (Report) itRep.next();
+      String bPartnerId = report.getBPartnerId();
+      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class, bPartnerId);
+      Language language = businessPartner.getLanguage();
+      if (currentLanguage == null) {
+        currentLanguage = language;
+      } else if (currentLanguage != language) {
+        hasMoreThanOneLanguage = true;
+      }
+    }
+    return hasMoreThanOneLanguage;
   }
 
   private void getEnvironentInformation(PocData[] pocData, HashMap<String, Boolean> checks) {

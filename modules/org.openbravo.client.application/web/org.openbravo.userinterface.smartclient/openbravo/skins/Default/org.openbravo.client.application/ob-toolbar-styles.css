@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,7 +45,7 @@
 }
 
 .OBToolbarIconButton {
-  border: 1px solid #64932d;
+  border: 1px solid #64932d !important;
 }
 
 .OBToolbarIconButtonDisabledProgress {
@@ -58,7 +58,7 @@
 .OBToolbarIconButtonSelectedFocused,
 .OBToolbarIconButtonSelectedFocusedOver,
 .OBToolbarIconButtonSelectedFocusedDown {
-  border: 1px solid #FA962F;
+  border: 1px solid #FA962F !important;
 }
 
 .OBToolbarIconButtonOver,
@@ -70,7 +70,7 @@
 
 .OBToolbarIconButtonOver,
 .OBToolbarIconButtonSelectedOver {
-  border: 1px solid #74a23f;
+  border: 1px solid #74a23f !important;
 }
 
 .OBToolbarIconButtonSelected,
@@ -85,7 +85,7 @@
 .OBToolbarIconButtonSelected,
 .OBToolbarIconButtonDown,
 .OBToolbarIconButtonSelectedDown {
-  border: 1px solid #74a23f;
+  border: 1px solid #74a23f !important;
 }
 
 .OBToolbarIconButtonDisabled,

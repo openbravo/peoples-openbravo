@@ -11,17 +11,22 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
+// set global time formatters
+isc.Time.shortDisplayFormat = OB.Utilities.getTimeFormatDefinition().timeFormatter;
+isc.Time.displayFormat = OB.Utilities.getTimeFormatDefinition().timeFormatter;
 
 // == OBTimeItem ==
 // For entering times.
 isc.ClassFactory.defineClass('OBTimeItem', isc.TimeItem);
 
 isc.OBTimeItem.addProperties({
+  useTextField: true,
   operator: 'equals',
   validateOnExit: true,
   showHint: false,
@@ -31,6 +36,13 @@ isc.OBTimeItem.addProperties({
   shortTimeFormat: 'HH:MM:SS',
   long24TimeFormat: 'HH:MM:SS',
   longTimeFormat: 'HH:MM:SS',
+
+  mapValueToDisplay: function (value) {
+    if (isc.isA.Date(value)) {
+      return isc.Time.toShortTime(value, this.timeFormatter);
+    }
+    return value;
+  },
 
   // make sure that the undo/save buttons get enabled, needs to be done like
   // this because changeOnKeypress is false. Activating changeOnKeypress makes the
@@ -50,7 +62,6 @@ isc.OBTimeItem.addProperties({
         }
       }
     }
-    this.Super('keyPress', arguments);
   },
 
   // SmartClient's TimeItem doesn't keep time zone. Preserve it in case the
@@ -78,9 +89,14 @@ isc.OBTimeItem.addProperties({
 
   setTodaysDate: function (date) {
     var today = new Date();
-    date.setYear(today.getFullYear());
-    date.setMonth(today.getMonth());
+    // Set the month initially to January to prevent error like this
+    // provided date: 15/02/2014
+    // today: 31/03/2014
+    // date.setDate(today.getDate()) would result in Mon Mar 02 2014 18:00:00 GMT+0100 (CET), because february does not have 31 days 
+    date.setMonth(0);
     date.setDate(today.getDate());
+    date.setMonth(today.getMonth());
+    date.setYear(today.getFullYear());
   },
 
   /* The following functions allow proper timeGrid operation */
@@ -103,8 +119,13 @@ isc.OBTimeItem.addProperties({
   },
 
   init: function () {
-    var oldShowHint, hint;
+    var oldShowHint, hint, formatDefinition = OB.Utilities.getTimeFormatDefinition();
+
+    this.timeFormatter = formatDefinition.timeFormatter;
+    this.timeFormat = formatDefinition.timeFormat;
+
     this.Super('init', arguments);
+
     if (this.showTimeGrid && this.form && !this.timeGrid) {
       oldShowHint = this.showHint;
       this.showHint = true;
@@ -113,11 +134,13 @@ isc.OBTimeItem.addProperties({
       this.timeGridProps = this.timeGridProps || {};
       this.timeGrid = isc.OBTimeItemGrid.create(isc.addProperties({
         formItem: this,
-        timeFormat: hint
+        timeFormat: hint || this.timeFormat,
+        is24hTime: formatDefinition.is24h
       }, this.timeGridProps));
       this.form.addChild(this.timeGrid); // Added grid in the form to avoid position problems
     }
   },
+
   keyDown: function () {
     if (this.timeGrid) {
       if (isc.EH.getKey() === 'Arrow_Up' && (!isc.EH.ctrlKeyDown() && !isc.EH.altKeyDown() && !isc.EH.shiftKeyDown()) && this.timeGrid.isVisible()) {
@@ -128,12 +151,12 @@ isc.OBTimeItem.addProperties({
         this.timeGrid.hide();
       }
     }
-    return this.Super('keyDown', arguments);
   },
+
   click: function () {
     this.doShowTimeGrid(isc.Time.parseInput(this.getEnteredValue()));
-    return this.Super('click', arguments);
   },
+  
   focus: function () {
     this.doShowTimeGrid(this.getValue());
     return this.Super('focus', arguments);
@@ -152,7 +175,7 @@ isc.OBTimeItem.addProperties({
     var UTCOffsetInMiliseconds;
     if (this.getValue() !== data[this.name]) {
       // it has not been converted to the local time yet, do it now
-      if (data[this.name].getFullYear() === 1970) {
+      if (data[this.name] && data[this.name].getFullYear() <= 1970) {
         UTCOffsetInMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds();
         data[this.name].setTime(data[this.name].getTime() + UTCOffsetInMiliseconds);
       }
@@ -221,9 +244,9 @@ isc.OBTimeItemGrid.addProperties({
       dateString += ':' + tmpString;
     }
     if (!this.is24hTime && isPM) {
-      dateString += ' pm';
+      dateString += isc.Time.PMIndicator;
     } else if (!this.is24hTime && !isPM) {
-      dateString += ' am';
+      dateString += isc.Time.AMIndicator;
     }
 
     return dateString;
@@ -360,7 +383,6 @@ isc.OBTimeItemGrid.addProperties({
     if (this.formItem && record && this.doSelectionUpdated) {
       this.formItem.setValue(record.jsTime);
     }
-    return this.Super('selectionUpdated ', arguments);
   },
 
   show: function () {

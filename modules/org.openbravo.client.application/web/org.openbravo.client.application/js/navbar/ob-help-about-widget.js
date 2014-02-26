@@ -99,23 +99,10 @@ isc.OBHelpAbout.addProperties({
       }
     });
 
-    this.helpLink = isc.OBHelpAboutLinkButton.create({
-      name: 'helpLink',
-      title: OB.I18N.getLabel('UINAVBA_Help'),
-      keyPress: function () {
-        var key = isc.EventHandler.getKey();
-        if (key === 'Escape') {
-          if (isc.OBQuickRun.currentQuickRun) {
-            isc.OBQuickRun.currentQuickRun.doHide();
-          }
-        }
-        return true;
-      },
-      action: function () {
-        isc.OBQuickRun.hide();
-        OB.Layout.ViewManager.openView(helpView.viewId, helpView);
-      }
-    });
+    // use null to be sure it is null for selenium test code
+    this.helpLink = null;
+    // remove from the testregistry also
+    OB.TestRegistry.register('org.openbravo.client.application.HelpAbout.HelpLink', null);
 
     // get the selected tab
     var selectedTab = OB.MainView.TabSet.getSelectedTab();
@@ -134,12 +121,30 @@ isc.OBHelpAbout.addProperties({
       if (!helpView) {
         this.members[0].addMembers([this.aboutLink]);
       } else {
+        this.helpLink = isc.OBHelpAboutLinkButton.create({
+          name: 'helpLink',
+          title: OB.I18N.getLabel('UINAVBA_Help'),
+          keyPress: function () {
+            var key = isc.EventHandler.getKey();
+            if (key === 'Escape') {
+              if (isc.OBQuickRun.currentQuickRun) {
+                isc.OBQuickRun.currentQuickRun.doHide();
+              }
+            }
+            return true;
+          },
+          action: function () {
+            isc.OBQuickRun.hide();
+            OB.Layout.ViewManager.openView(helpView.viewId, helpView);
+          }
+        });
+        OB.TestRegistry.register('org.openbravo.client.application.HelpAbout.HelpLink', this.helpLink);
+
         this.members[0].addMembers([this.helpLink, this.aboutLink]);
       }
     }
     this.members[0].addMembers(this.dummyFirstField, 0);
     this.members[0].addMembers(this.dummyLastField, this.members[0].getMembers().length);
-    OB.TestRegistry.register('org.openbravo.client.application.HelpAbout.HelpLink', this.helpLink);
     OB.TestRegistry.register('org.openbravo.client.application.HelpAbout.AboutLink', this.aboutLink);
   },
 

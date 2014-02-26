@@ -2262,11 +2262,16 @@ isc.OBStandardView.addProperties({
   convertToDate: function (stringValue) {
     var today = new Date(),
         dateValue = isc.Time.parseInput(stringValue);
+    // Set the month initially to January to prevent error like this
+    // provided date: 15/02/2014
+    // today: 31/03/2014
+    // date.setDate(today.getDate()) would result in Mon Mar 02 2014 18:00:00 GMT+0100 (CET), because february does not have 31 days 
+    dateValue.setMonth(0);
     // Only the time is relevant. In order to be able to convert it from UTC to local time
     //   properly the date value should be today's date
-    dateValue.setYear(today.getFullYear());
-    dateValue.setMonth(today.getMonth());
     dateValue.setDate(today.getDate());
+    dateValue.setMonth(today.getMonth());
+    dateValue.setYear(today.getFullYear());
     return dateValue;
   },
 
@@ -2307,8 +2312,10 @@ isc.OBStandardView.addProperties({
           grid = me.viewGrid,
           currentRecord, currentID;
       currentRecord = grid.getSelectedRecord();
-      context.rowNum = grid.getRecordIndex(currentRecord);
-      currentID = currentRecord[OB.Constants.ID];
+      if (currentRecord) {
+        context.rowNum = grid.getRecordIndex(currentRecord);
+        currentID = currentRecord[OB.Constants.ID];
+      }
       context.grid = grid;
       response.clientContext = context;
       if (originalID === currentID) {

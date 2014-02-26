@@ -174,6 +174,11 @@ public class StyleSheetResourceComponent extends BaseComponent {
                     + "/");
 
                 if (!module.isInDevelopment()) {
+                  // CSSMinimizer have problems dealing with selectors like url('data:image/....')
+                  // and it needs to be with double quotes in order to work ok
+                  resourceContents = resourceContents.replaceAll("(url\\()(')(.*)(')(.*)",
+                      "$1\"$3\"$5");
+
                   resourceContents = CSSMinimizer.formatString(resourceContents);
                   if (makeCssDataUri) {
                     String resourceContentsLine;

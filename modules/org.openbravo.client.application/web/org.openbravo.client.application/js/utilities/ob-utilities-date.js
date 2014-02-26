@@ -65,6 +65,36 @@ OB.Utilities.Date.normalizeDisplayFormat = function (displayFormat) {
   return newFormat;
 };
 
+//** {{{ OB.Utilities.getTimeFormat }}} **
+//
+// Returns an object with the timeformatter, a boolean if 24 hours 
+// time clock are being used and the timeformat itself
+OB.Utilities.getTimeFormatDefinition = function () {
+  var timeFormat, is24h = true;
+  if (OB.Format.dateTime.indexOf(' ') === -1) {
+    return 'to24HourTime';
+  }
+
+  timeFormat = OB.Format.dateTime.substring(OB.Format.dateTime.indexOf(' ') + 1);
+
+  if (timeFormat && timeFormat.toLowerCase().endsWith('a')) {
+    is24h = false;
+  }
+
+  if (timeFormat.toLowerCase().contains('ss')) {
+    return {
+      timeFormat: timeFormat,
+      is24h: is24h,
+      timeFormatter: is24h ? 'to24HourTime' : 'toTime'
+    };
+  }
+  return {
+    timeFormat: timeFormat,
+    is24h: is24h,
+    timeFormatter: is24h ? 'toShort24HourTime' : 'toShortTime'
+  };
+};
+
 // ** {{{ OB.Utilities.Date.OBToJS }}} **
 //
 // Converts a String to a Date object.

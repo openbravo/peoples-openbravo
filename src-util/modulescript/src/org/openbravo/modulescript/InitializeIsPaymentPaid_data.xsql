@@ -33,14 +33,10 @@
      <![CDATA[ 
         update fin_payment_scheduledetail set isinvoicepaid=(select CASE WHEN fpsd.fin_payment_detail_id is null then 'N'
         WHEN 
-        ((aprm_seqnumberpaymentstatus(fp.status))>= (aprm_seqnumberpaymentstatus((CASE WHEN fp.isreceipt='Y' 
-        THEN Payin_Invoicepaidstatus ELSE Payout_Invoicepaidstatus END)))) THEN 'Y' ELSE 'N' END
+       fp.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC') THEN 'Y' ELSE 'N' END
         from fin_payment_scheduledetail fpsd
          left join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
          left join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
-         left join fin_financial_account fa on fa.fin_financial_account_id=fp.fin_financial_account_id 
-         left join FIN_FinAcc_PaymentMethod fpm on fpm.fin_financial_account_id=fp.fin_financial_account_id 
-         and fpm.fin_paymentmethod_id=fp.fin_paymentmethod_id  
          and fin_payment_schedule_invoice is not null
          where fin_payment_scheduledetail.fin_payment_scheduledetail_id=fpsd.fin_payment_scheduledetail_id)
       ]]>

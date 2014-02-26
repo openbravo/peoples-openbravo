@@ -535,12 +535,13 @@ OB.ViewFormProperties = {
 
       for (i = 0; i < fields.length; i++) {
         if (fields[i].columnName) {
-          localResult[fields[i].columnName.toLowerCase()] = fields[i];
+          // add a prefix to prevent errors when the columnname is a js reserved word
+          localResult['_' + fields[i].columnName.toLowerCase()] = fields[i];
         }
       }
       this.fieldsByColumnName = localResult;
     }
-    return this.fieldsByColumnName[columnName.toLowerCase()];
+    return this.fieldsByColumnName['_' + columnName.toLowerCase()];
   },
 
   getFieldFromFieldName: function (fieldName) {
@@ -551,12 +552,13 @@ OB.ViewFormProperties = {
       length = fields.length;
       for (i = 0; i < fields.length; i++) {
         if (fields[i].name) {
-          localResult[fields[i].name] = fields[i];
+          // add a prefix to prevent errors when the columnname is a js reserved word
+          localResult['_' + fields[i].name] = fields[i];
         }
       }
       this.fieldsByFieldName = localResult;
     }
-    return this.fieldsByFieldName[fieldName];
+    return this.fieldsByFieldName['_' + fieldName];
   },
 
   setFields: function () {

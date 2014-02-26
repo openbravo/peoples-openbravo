@@ -21,9 +21,11 @@ package org.openbravo.erpCommon.ad_reports;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -39,6 +41,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.AccountTree;
 import org.openbravo.erpCommon.businessUtility.AccountTreeData;
 import org.openbravo.erpCommon.businessUtility.AccountingSchemaMiscData;
@@ -46,6 +49,7 @@ import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBDateUtils;
@@ -134,8 +138,6 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/GeneralAccountingReportsPDF").createXmlDocument();
 
     String strCalculateOpening = strElementValue.substring(0, 1);
     strElementValue = strElementValue.substring(1, strElementValue.length());
@@ -252,18 +254,21 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
             log4j.debug("acct null!!!");
         }
 
-        xmlDocument.setData("group", strGroups);
+        String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/GeneralAccountingReportsPDF.jrxml";
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
 
-        xmlDocument.setParameter("agno", year.getFiscalYear());
-        xmlDocument.setParameter("agno2", yearRef.getFiscalYear());
-        xmlDocument.setParameter("column", year.getFiscalYear());
-        xmlDocument.setParameter("columnRef", yearRef.getFiscalYear());
-        xmlDocument.setParameter("org", OrganizationData.selectOrgName(this, strOrg));
-        xmlDocument.setParameter("column1", year.getFiscalYear());
-        xmlDocument.setParameter("columnRef1", yearRef.getFiscalYear());
-        xmlDocument.setParameter("companyName",
+        parameters.put("group", strGroups);
+        parameters.put("agno", year.getFiscalYear());
+
+        parameters.put("agno2", yearRef.getFiscalYear());
+        parameters.put("column", year.getFiscalYear());
+        parameters.put("columnRef", yearRef.getFiscalYear());
+        parameters.put("org", OrganizationData.selectOrgName(this, strOrg));
+        parameters.put("column1", year.getFiscalYear());
+        parameters.put("columnRef1", yearRef.getFiscalYear());
+        parameters.put("companyName",
             GeneralAccountingReportsData.companyName(this, vars.getClient()));
-        xmlDocument.setParameter("date", DateTimeData.today(this));
+        parameters.put("date", DateTimeData.today(this));
         if (strDateFrom.equals(""))
           strDateFrom = OBDateUtils.formatDate(startingEndingDate.get("startingDate"));
         if (strDateTo.equals(""))
@@ -272,28 +277,42 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           strDateFromRef = OBDateUtils.formatDate(startingEndingDateRef.get("startingDate"));
         if (strDateToRef.equals(""))
           strDateToRef = OBDateUtils.formatDate(startingEndingDateRef.get("endingDate"));
-        xmlDocument.setParameter("period", strDateFrom + " - " + strDateTo);
-        xmlDocument.setParameter("periodRef", strDateFromRef + " - " + strDateToRef);
-        xmlDocument.setParameter("agnoInitial", year.getFiscalYear());
-        xmlDocument.setParameter("agnoRef", yearRef.getFiscalYear());
+        parameters.put("period", strDateFrom + " - " + strDateTo);
+        parameters.put("periodRef", strDateFromRef + " - " + strDateToRef);
+        parameters.put("agnoInitial", year.getFiscalYear());
+        parameters.put("agnoRef", yearRef.getFiscalYear());
 
-        xmlDocument.setParameter(
+        parameters.put(
             "principalTitle",
             strCalculateOpening.equals("Y") ? GeneralAccountingReportsData.rptTitle(this,
                 strElementValue) + " (Provisional)" : GeneralAccountingReportsData.rptTitle(this,
                 strElementValue));
 
-        xmlDocument.setParameter("pageNo", strPageNo);
+        parameters.put("pageNo", strPageNo);
 
         AccountTreeData[][] trees = new AccountTreeData[strGroups.length][];
 
         for (int i = 0; i < strGroups.length; i++)
           trees[i] = acct[i].getAccounts();
 
-        xmlDocument.setDataArray("reportDetail", "structure1", trees);
+        List<HashMap<String, String>> hashMapList = new ArrayList<HashMap<String, String>>();
 
-        String strResult = xmlDocument.print();
-        renderFO(strResult, response);
+        for (int i = 0; i < trees.length; i++) {
+
+          for (int j = 0; j < trees[i].length; j++) {
+            HashMap<String, String> hashMap = new HashMap<String, String>();
+            hashMap.put("elementLevel", trees[i][j].elementLevel);
+            hashMap.put("name", trees[i][j].name);
+            hashMap.put("qty", trees[i][j].qty);
+            hashMap.put("qtyRef", trees[i][j].qtyRef);
+            hashMapList.add(hashMap);
+          }
+
+        }
+
+        FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(hashMapList);
+        renderJR(vars, response, strReportName, "pdf", parameters, data, null);
+
       } finally {
         OBContext.restorePreviousMode();
       }

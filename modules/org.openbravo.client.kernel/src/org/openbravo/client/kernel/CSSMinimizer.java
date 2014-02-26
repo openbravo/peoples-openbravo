@@ -57,6 +57,7 @@ import org.apache.log4j.Logger;
  * <ul>
  * <li>Kevin de Groote</li>
  * <li>Pedro Pinheiro</li>
+ * <li>Asier Lostalé</li>
  * </ul>
  * Some code is based on the YUI CssCompressor code, by Julien Lecomte.
  * 
@@ -84,8 +85,9 @@ class CSSMinimizer {
       BufferedReader br = new BufferedReader(new StringReader(input));
       StringBuffer sb = new StringBuffer();
 
-      log.debug("Reading file into StringBuffer...");
-
+      if (log.isDebugEnabled()) {
+        log.debug("Reading file into StringBuffer...");
+      }
       String s;
       while ((s = br.readLine()) != null) {
         if (s.trim().equals(""))
@@ -93,8 +95,9 @@ class CSSMinimizer {
         sb.append(s);
       }
 
-      log.debug("Removing comments...");
-
+      if (log.isDebugEnabled()) {
+        log.debug("Removing comments...");
+      }
       // Find the start of the comment
       n = 0;
       while ((n = sb.indexOf("/*", n)) != -1) {
@@ -104,7 +107,7 @@ class CSSMinimizer {
         }
         k = sb.indexOf("*/", n + 2);
         if (k == -1) {
-          throw new Exception("Unterminated comment. Aborting.");
+          throw new UnterminatedCommentException();
         }
         sb.delete(n, k + 2);
       }
@@ -113,8 +116,9 @@ class CSSMinimizer {
         log.debug("\n\n");
       }
 
-      log.debug("Parsing and processing selectors...");
-
+      if (log.isDebugEnabled()) {
+        log.debug("Parsing and processing selectors...");
+      }
       Vector<Selector> selectors = new Vector<Selector>();
       n = 0;
       j = 0;
@@ -122,7 +126,7 @@ class CSSMinimizer {
       for (int i = 0; i < sb.length(); i++) {
         curr = sb.charAt(i);
         if (j < 0) {
-          throw new Exception("Unbalanced braces!");
+          throw new UnbalancedBracesException();
         }
         if (curr == '{') {
           j++;
@@ -131,12 +135,10 @@ class CSSMinimizer {
           if (j == 0) {
             try {
               selectors.addElement(new Selector(sb.substring(n, i + 1)));
-            } catch (Exception e) {
-              if (e.getMessage().contains("Empty selector body:")) {
-                log.debug(e.getMessage());
-              } else {
-                log.error(e.getMessage(), e);
-              }
+            } catch (UnterminatedSelectorException usex) {
+              log.debug("Unterminated selector: " + usex.getMessage());
+            } catch (EmptySelectorBodyException ebex) {
+              log.debug("Empty selector body: " + ebex.getMessage());
             }
             n = i + 1;
           }
@@ -148,10 +150,16 @@ class CSSMinimizer {
       }
       generatedSB.append("\r\n");
 
-      log.debug("Process completed successfully.");
+      if (log.isDebugEnabled()) {
+        log.debug("Process completed successfully.");
+      }
 
-    } catch (Exception e) {
-      log.debug(e.getMessage(), e);
+    } catch (UnterminatedCommentException ucex) {
+      log.debug("Unterminated comment.");
+    } catch (UnbalancedBracesException ubex) {
+      log.debug("Unbalanced braces.");
+    } catch (Exception ex) {
+      log.debug(ex.getMessage(), ex);
     }
     return generatedSB.toString();
   }
@@ -171,11 +179,11 @@ class Selector {
    * @throws Exception
    *           If the selector is incomplete and cannot be parsed.
    */
-  public Selector(String selector) throws Exception {
+  public Selector(String selector) throws IncompleteSelectorException,
+      UnterminatedSelectorException, EmptySelectorBodyException {
     String[] parts = selector.split("\\{"); // We have to escape the { with a \ for the regex, which
-    // itself requires escaping for the string. Sigh.
     if (parts.length < 2) {
-      throw new Exception("Warning: Incomplete selector: " + selector);
+      throw new IncompleteSelectorException(selector);
     }
 
     this.selector = parts[0].toString().trim();
@@ -202,10 +210,10 @@ class Selector {
       }
       if (contents.charAt(contents.length() - 1) != '}') { // Ensure that we have a leading and
         // trailing brace.
-        throw new Exception("\tUnterminated selector: " + selector);
+        throw new UnterminatedSelectorException(selector);
       }
       if (contents.length() == 1) {
-        throw new Exception("\tEmpty selector body: " + selector);
+        throw new EmptySelectorBodyException(selector);
       }
       contents = contents.substring(0, contents.length() - 2);
       this.properties = parseProperties(contents);
@@ -312,9 +320,9 @@ class Property implements Comparable<Property> {
       boolean bCanSplit = true;
       int j = 0;
       String substr;
-
-      log.debug("\t\tExamining property: " + property);
-
+      if (log.isDebugEnabled()) {
+        log.debug("\t\tExamining property: " + property);
+      }
       for (int i = 0; i < property.length(); i++) {
         if (!bCanSplit) { // If we're inside a string
           bCanSplit = (property.charAt(i) == '"');
@@ -615,6 +623,60 @@ class Part {
    */
   public String toString() {
     return this.contents;
+  }
+}
+
+class UnterminatedCommentException extends Exception {
+}
+
+class UnbalancedBracesException extends Exception {
+}
+
+class IncompletePropertyException extends Exception {
+  String message = null;
+
+  public IncompletePropertyException(String message) {
+    this.message = message;
+  }
+
+  public String getMessage() {
+    return this.message;
+  }
+}
+
+class EmptySelectorBodyException extends Exception {
+  String message = null;
+
+  public EmptySelectorBodyException(String message) {
+    this.message = message;
+  }
+
+  public String getMessage() {
+    return this.message;
+  }
+}
+
+class UnterminatedSelectorException extends Exception {
+  String message = null;
+
+  public UnterminatedSelectorException(String message) {
+    this.message = message;
+  }
+
+  public String getMessage() {
+    return this.message;
+  }
+}
+
+class IncompleteSelectorException extends Exception {
+  String message = null;
+
+  public IncompleteSelectorException(String message) {
+    this.message = message;
+  }
+
+  public String getMessage() {
+    return this.message;
   }
 }
 

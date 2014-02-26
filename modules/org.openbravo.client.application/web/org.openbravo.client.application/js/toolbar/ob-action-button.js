@@ -143,16 +143,30 @@ isc.OBToolbarActionButton.addProperties({
     //Keep current view for the callback function. Refresh and look for tab message.
     var contextView = OB.ActionButton.executingProcess.contextView,
         currentView = this.view,
-        afterRefresh, parsePathPart, parts;
+        afterRefresh, isAfterRefreshAlreadyExecuted, parsePathPart, parts;
 
     afterRefresh = function (doRefresh) {
       var undef, refresh = (doRefresh === undef || doRefresh),
           autosaveDone = false,
           currentRecordId, recordsAfterRefresh;
 
+      if (isAfterRefreshAlreadyExecuted) {
+        // To avoid multiple calls to this function when
+        // ob-standard-view.js -> refreshCurrentRecord -> this.refreshParentRecord
+        // calls again this function, since it is passed as the 'callBackFunction' argument
+        return;
+      }
+      isAfterRefreshAlreadyExecuted = true;
+
       // Refresh context view
       contextView.getTabMessage();
       contextView.toolBar.refreshCustomButtons();
+
+      if (contextView && contextView.viewGrid && contextView.viewGrid.discardAllEdits) {
+        // discard edits coming from FIC as they pollute the state and they're already
+        // reloaded
+        contextView.viewGrid.discardAllEdits();
+      }
 
       if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
         // Executing an action defined in parent tab, current tab is maximized,

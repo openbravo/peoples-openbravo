@@ -100,6 +100,9 @@ OB.DateItemProperties = {
       // This is needed for the unit tests to be able to enter the dates using the setValue method
       this.dateTextField.setValue = function (newValue) {
         var oldValue = this.getValue();
+        if (newValue && !this.parentItem.hasSeparator(newValue)) {
+          newValue = oldValue;
+        }
         this.Super('setValue', newValue);
         // only flag the date as changed if it had a value, and it
         // has been actually changed
@@ -221,6 +224,20 @@ OB.DateItemProperties = {
     return str.charAt(position) === '-' || str.charAt(position) === '\\' || str.charAt(position) === '/';
   },
 
+  hasSeparator: function (str) {
+    var result = false,
+        i;
+    if (typeof str === 'string') {
+      for (i = 0; i < str.length; i++) {
+        if (this.isSeparator(str, i)) {
+          result = true;
+          break;
+        }
+      }
+    }
+    return result;
+  },
+
   pickerDataChanged: function (picker) {
     this.isAPickerDataChange = true;
     this.Super('pickerDataChanged', arguments);
@@ -266,7 +283,13 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   },
 
   setValue: function (value) {
-    var ret, dateText, newArguments = arguments;
+    var ret, dateText, oldValue, newArguments = arguments;
+
+    oldValue = this.getValue();
+    if (Object.prototype.toString.call(newArguments[0]) === '[object String]' && !this.hasSeparator(newArguments[0])) {
+      newArguments[0] = oldValue;
+    }
+
     if (this.fixedTime && newArguments[0] && isc.isA.Date(newArguments[0])) {
       newArguments[0] = this.getDateWithNewTime(newArguments[0], this.fixedTime);
     }

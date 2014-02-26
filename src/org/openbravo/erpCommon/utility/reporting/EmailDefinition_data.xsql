@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,7 +35,8 @@
 			emaildefinitions.ad_language as ad_language,
 			emaildefinitions.subject as subject,
 			emaildefinitions.body as body,
-			emaildefinitions.isdefault as isdefault
+			emaildefinitions.isdefault as isdefault,
+			emaildefinitions.c_poc_emaildefinition_id as id
 		from
 			c_poc_emaildefinition emaildefinitions
 		where
