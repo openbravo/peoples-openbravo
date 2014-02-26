@@ -50,11 +50,6 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND t.AD_CLIENT_ID IN (" text="'1'"/>
   </SqlMethod>
 
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
-
   <SqlMethod name="selectChilds" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

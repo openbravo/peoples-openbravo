@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -26,6 +26,10 @@
     * when element becomes mandatory
     **/
     v_UpdateIt BOOLEAN:=FALSE;
+    TYPE RECORD IS REF CURSOR;
+    v_CreateCombination BOOLEAN :=FALSE;
+    v_count NUMBER;
+		cur_ElementValue RECORD;
     
 BEGIN
     
@@ -38,6 +42,14 @@ BEGIN
     IF(:new.IsMandatory='Y') THEN
       v_UpdateIt:=TRUE;
     END IF;
+    IF(:new.ElementType='AC' AND :new.C_Element_ID IS NOT NULL) THEN
+			IF(INSERTING) THEN
+				v_CreateCombination:=TRUE;
+			END IF;
+			IF(UPDATING AND COALESCE(:NEW.C_Element_ID,'0') <> COALESCE(:OLD.C_Element_ID,'0')) THEN
+				v_CreateCombination:=TRUE;
+			END IF;
+		END IF;
   END IF;
   --
   IF(v_UpdateIt) THEN
@@ -89,6 +101,34 @@ BEGIN
         SET User2_ID=:new.C_ElementValue_ID
       WHERE User2_ID IS NULL;
     END IF;
+  END IF;
+  IF(V_CreateCombination) THEN
+		FOR cur_ElementValue IN
+		(SELECT C_ElementValue_ID, Value FROM C_ElementValue
+			WHERE C_ElementValue.C_Element_ID = :new.C_Element_ID
+			AND C_ElementValue.ElementLevel='S'
+		)
+    LOOP
+			v_Count:=0;
+			SELECT COUNT(*) INTO v_Count FROM C_VALIDCOMBINATION
+				WHERE C_AcctSchema_ID = :new.C_AcctSchema_ID
+				AND ACCOUNT_ID = cur_ElementValue.C_ElementValue_ID
+				AND ISACTIVE='Y';
+			IF(v_Count=0) THEN
+				INSERT INTO C_VALIDCOMBINATION
+					(C_VALIDCOMBINATION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
+					UPDATED, UPDATEDBY, ALIAS, COMBINATION, DESCRIPTION, ISFULLYQUALIFIED,
+					C_ACCTSCHEMA_ID, ACCOUNT_ID, M_PRODUCT_ID, C_BPARTNER_ID, AD_ORGTRX_ID, C_LOCFROM_ID,
+					C_LOCTO_ID, C_SALESREGION_ID, C_PROJECT_ID, C_CAMPAIGN_ID, C_ACTIVITY_ID, USER1_ID,
+					USER2_ID)
+				VALUES (
+					GET_UUID(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive, :new.Created, :new.CreatedBy,
+					:new.Updated, :new.UpdatedBy, cur_ElementValue.value, cur_ElementValue.value, '', 'Y',
+					:new.C_AcctSchema_ID, cur_ElementValue.C_ElementValue_ID, null, null, null, null,
+					null, null, null, null, null, null,
+					null);
+			END IF;
+		END LOOP;
   END IF;
   --
 END C_ACCTSCHEMA_ELEMENT_TRG

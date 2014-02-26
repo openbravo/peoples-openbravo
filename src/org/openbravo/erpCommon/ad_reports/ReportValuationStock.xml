@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2008 Openbravo SLU 
+* All portions are Copyright (C) 2001-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -23,8 +23,8 @@
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
-	<PARAMETER id="paramDate" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDate" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
+    <PARAMETER id="paramDate" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
+    <PARAMETER id="paramDate" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramDate" name="date" attribute="value"/>
   <PARAMETER id="paramM_WAREHOUSE_ID" name="mWarehouseId" attribute="value"/>
   <PARAMETER id="paramM_PRODUCT_CATEGORY_ID" name="categoryProduct" attribute="value"/>
@@ -41,11 +41,11 @@
   <structure name="structure1">
     <FIELD id="fieldRownum1">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
-    <FIELD id="fieldCategoryName">categoryName</FIELD>
+    <FIELD id="fieldCategoryName" replaceCharacters="html">categoryName</FIELD>
     <FIELD id="idfieldmProductId" attribute="onclick" replace="xx">mProductId</FIELD>
-    <FIELD id="fieldProductName">productName</FIELD>
+    <FIELD id="fieldProductName"  replaceCharacters="html">productName</FIELD>
     <FIELD id="fieldQty">qty</FIELD>
-    <FIELD id="fieldUomName">uomName</FIELD>
+    <FIELD id="fieldUomName"  replaceCharacters="html">uomName</FIELD>
     <FIELD id="fieldAverageCost" format="euroInform">averageCost</FIELD>
     <FIELD id="fieldTotalCost" format="euroInform">totalCost</FIELD>
     <SUBREPORT id="reportM_Warehouse_ID" name="reportM_Warehouse_ID" report="org/openbravo/erpCommon/reference/List">

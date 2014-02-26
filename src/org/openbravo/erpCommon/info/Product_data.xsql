@@ -113,11 +113,6 @@
       <Parameter name="oraLimit2" type="argument" optional="true" after=") A "><![CDATA[WHERE RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
   
-   <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-   </SqlMethod>
-
    <SqlMethod name="priceListDefault" type="preparedStatement" return="String">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[

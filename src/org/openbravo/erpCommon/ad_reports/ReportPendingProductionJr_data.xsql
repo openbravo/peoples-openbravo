@@ -53,8 +53,4 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_ORDER.AD_ORG_ID IN (" text="'1'"/>
    </SqlMethod>
 
-   <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-   </SqlMethod>
 </SqlClass>

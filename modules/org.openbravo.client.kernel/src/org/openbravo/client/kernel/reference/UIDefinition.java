@@ -363,7 +363,6 @@ public abstract class UIDefinition {
    * @param field
    *          the field to generate the filter editor properties for, note it is allowed to pass
    *          null, implementors should gracefully handle this.
-   * @return
    */
   protected String getFilterEditorPropertiesProperty(Field field) {
     return "";

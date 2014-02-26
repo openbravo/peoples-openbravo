@@ -68,6 +68,7 @@
     Cur_InOutLine RECORD;
     Cur_Order RECORD;
     Cur_OrderLine RECORD;
+    Cur_Lines RECORD;
     --
     v_Result NUMBER:=1;
     v_AD_Org_ID VARCHAR2(32);
@@ -179,13 +180,31 @@
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerInout@') ;
         END IF;
       END IF;
-
+       Declare
+       v_Message_product VARCHAR(2000) :='';
+       Begin
+          FOR Cur_Lines IN (
+                             SELECT M.line
+                             FROM M_InOut I,
+                                  M_InOutLine M
+                             WHERE I.M_InOut_ID=M.M_InOut_ID
+                               AND I.M_INOUT_ID=v_Record_ID
+                               AND (M.M_PRODUCT_ID IS NULL AND M.MOVEMENTQTY <> 0)
+                               ORDER BY M.line
+                            ) LOOP
+               v_Message_product:=v_Message_product||Cur_Lines.line||', ';
+          END LOOP;
+          if v_Message_product != '' then
+             RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_product||' '||'@ProductNullAndMovementQtyGreaterZero@') ;
+          end if ;
+	     End ;
       if(v_isreturndoctype = 'N' AND v_isSoTrx = 'Y' and v_DocAction<>'RC') then
         v_message := null;
         for Cur_OrderLine in (
           select c_orderline_id, line
           from m_inoutline
           where m_inout_id = v_Record_ID
+          and c_orderline_id is not null
           order by line
         ) loop
           select COALESCE(sum(movementqty), 0)
@@ -987,6 +1006,27 @@
                 Cur_InOutLine.explode 
               )
               ;
+
+            -- Create InOut acctounting dimension
+            v_ResultStr:='CreateInOutLineAcctDimension';
+            INSERT
+            INTO M_INOUTLINE_ACCTDIMENSION
+              (
+                M_InOutLine_Acctdimension_ID, M_InOutLine_ID, Quantity,
+                AD_Client_ID, AD_Org_ID, IsActive, Created,
+                CreatedBy, Updated, UpdatedBy, M_Product_ID, C_BPartner_ID,
+                C_Project_ID, C_Campaign_ID, C_Activity_ID, A_Asset_ID,
+                User1_ID, User2_ID, C_CostCenter_ID
+              )
+              SELECT
+                get_uuid(), v_NextNo, Quantity * -1,
+                AD_Client_ID, AD_Org_ID, 'Y', now(),
+                v_User, now(), v_User, M_Product_ID, C_BPartner_ID,
+                C_Project_ID, C_Campaign_ID, C_Activity_ID , A_Asset_ID,
+                User1_ID, User2_ID, C_CostCenter_ID
+              FROM M_INOUTLINE_ACCTDIMENSION where M_INOUTLINE_ID=Cur_InOutLine.M_INOUTLINE_ID
+              and IsActive = 'Y';
+
             INSERT INTO M_MATCHINV
               (M_MATCHINV_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
               M_INOUTLINE_ID, C_INVOICELINE_ID, M_PRODUCT_ID, DATETRX, QTY, PROCESSING, PROCESSED, POSTED)

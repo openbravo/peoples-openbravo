@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2006 Openbravo SLU 
+* All portions are Copyright (C) 2001-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -40,7 +40,7 @@
     <FIELD id="fieldRownum1">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
     <FIELD id="fieldDateacct">dateacct</FIELD>
-    <FIELD id="fieldName">name</FIELD>
+    <FIELD id="fieldName" replaceCharacters="html">name</FIELD>
     <FIELD id="fieldAmtacctdr" format="euroInform">amtacctdr</FIELD>
     <FIELD id="fieldAmtacctcr" format="euroInform">amtacctcr</FIELD>
     <FIELD id="fieldValue" attribute="onclick" replace="xx">dp</FIELD>
@@ -48,7 +48,7 @@
     <FIELD id="fieldValue">value</FIELD>
     <FIELD id="fieldValue2" attribute="style" replace="yy">display2</FIELD>
     <FIELD id="fieldValue2">value</FIELD>
-    <FIELD id="fieldDescription">description</FIELD>
+    <FIELD id="fieldDescription" replaceCharacters="html">description</FIELD>
     <SECTION id="sectionJournal" field="identifier"/>
     <SECTION id="sectionDetail"/>
   </structure>

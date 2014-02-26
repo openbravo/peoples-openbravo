@@ -558,12 +558,6 @@ public class FIN_AddPayment {
    *          accounting dimension
    * @param salesRegion
    *          accounting dimension
-   * @param costCenter
-   *          accounting dimension
-   * @param user1
-   *          accounting dimension
-   * @param user2
-   *          accounting dimension
    */
   public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem,
       BusinessPartner businessPartner, Product product, Project project, Campaign campaign,
@@ -669,9 +663,9 @@ public class FIN_AddPayment {
    * 
    * @param vars
    *          VariablseSecureApp with the session data.
-   * @param selectedPaymentScheduleDetails
-   *          List of FIN_PaymentScheduleDetails that need to be included in the HashMap.
-   * @return A HashMap mapping the FIN_PaymentScheduleDetail's Id with the corresponding amount.
+   * @param selectedBaseOBObjects
+   *          List of bobs that need to be included in the HashMap.
+   * @return A HashMap mapping the Id with the corresponding amount.
    */
   public static <T extends BaseOBObject> HashMap<String, BigDecimal> getSelectedBaseOBObjectAmount(
       VariablesSecureApp vars, List<T> selectedBaseOBObjects, String htmlElementId)

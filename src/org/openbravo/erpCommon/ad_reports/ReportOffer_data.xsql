@@ -58,10 +58,6 @@
     <Parameter name="dateto"/>    
     <Parameter name="parBPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND A.C_BPARTNER_ID IN]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
 </SqlClass>
 
 

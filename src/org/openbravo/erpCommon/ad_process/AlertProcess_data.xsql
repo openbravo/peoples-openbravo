@@ -51,15 +51,6 @@
     ]]></Sql>
    </SqlMethod>
    
-   <SqlMethod name="selectAlert" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-          SELECT * 
-            FROM (SELECT '' AS AD_CLIENT_ID, '' AS AD_ORG_ID, TO_DATE(NULL) AS CREATED, '' AS CREATEDBY,'' AS UPDATED,'' AS UPDATEDBY,'' AS RECORD_ID, '' AS REFERENCEKEY_ID, '' AS DESCRIPTION, '' AS ISACTIVE, '' AS AD_USER_ID, '' AS AD_ROLE_ID FROM DUAL) AAA 
-      ]]></Sql>
-      <Parameter name="sql" type="replace" optional="true" after="FROM (" text="SELECT '' AS AD_CLIENT_ID, '' AS AD_ORG_ID, TO_DATE(NULL) AS CREATED, '' AS CREATEDBY,'' AS UPDATED,'' AS UPDATEDBY,'' AS RECORD_ID, '' AS REFERENCEKEY_ID, '' AS DESCRIPTION, '' AS ISACTIVE, '' AS AD_USER_ID, '' AS AD_ROLE_ID FROM DUAL"/>
-   </SqlMethod>
-   
    <SqlMethod name="selectSQL" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
@@ -80,40 +71,6 @@
     <Parameter name="adClientId"/>
    </SqlMethod>
 
-  <SqlMethod name="InsertAlert" type="preparedStatement" return="rowcount">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        INSERT INTO AD_ALERT
-        (AD_ALERT_ID, AD_CLIENT_ID, AD_ORG_ID,
-         ISACTIVE, CREATED, CREATEDBY, 
-         UPDATED, UPDATEDBY, 
-         AD_ALERTRULE_ID, RECORD_ID, REFERENCEKEY_ID, 
-         DESCRIPTION, AD_USER_ID, AD_ROLE_ID,
-         STATUS)
-        VALUES
-         (?,?,?,
-          'Y',TO_DATE(?),?,
-          now(),0,
-          ?,?,?,
-          ?,?,?,
-          'NEW')
-    ]]></Sql>
-    <Parameter name="alertId"/>
-    <Parameter name="clientId"/>
-    <Parameter name="orgId"/>
-    
-    <Parameter name="created"/>
-    <Parameter name="createdBy"/>
-    
-    <Parameter name="ruleId"/>
-    <Parameter name="recordId"/>
-    <Parameter name="referenceKey"/>
-    
-    <Parameter name="description"/>
-    <Parameter name="user"/>
-    <Parameter name="role"/>
-   </SqlMethod>
-   
    <SqlMethod name="updateAlert" type="preparedStatement" return="rowcount"> 
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

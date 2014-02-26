@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,14 +22,18 @@ import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
+import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
+import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -44,6 +48,27 @@ public class MInOutLineEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
+  public void onSave(@Observes EntityNewEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    ShipmentInOutLine shipmentInOutLine = (ShipmentInOutLine) event.getTargetInstance();
+
+    if (shipmentInOutLine.getProduct() == null &&  (shipmentInOutLine.getMovementQuantity().doubleValue() != 0) ){
+          throw new OBException(OBMessageUtils.messageBD("ProductNullAndMovementQtyGreaterZero"));
+    }
+ }
+
+  public void onUpdate(@Observes EntityUpdateEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    ShipmentInOutLine shipmentInOutLine = (ShipmentInOutLine) event.getTargetInstance();
+
+    if (shipmentInOutLine.getProduct()== null && (shipmentInOutLine.getMovementQuantity().doubleValue() != 0)){
+        throw new OBException(OBMessageUtils.messageBD("ProductNullAndMovementQtyGreaterZero"));
+     }
+}
   public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;

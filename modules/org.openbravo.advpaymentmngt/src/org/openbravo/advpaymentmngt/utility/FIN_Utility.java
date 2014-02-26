@@ -1382,6 +1382,9 @@ public class FIN_Utility {
   }
 
   public static void updateBusinessPartnerCredit(FIN_Payment payment) {
+    if (payment == null) {
+      return;
+    }
     // When credit is used (consumed) we compensate so_creditused as this amount is already
     // included in the payment details. Credit consumed should not affect to so_creditused
     if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0

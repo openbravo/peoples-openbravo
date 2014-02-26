@@ -140,8 +140,8 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
             BigDecimal estimatedTime = BigDecimal.ZERO;
             if (wrOp.getEstimatedTime() != null && wrOp.getQuantity() != null
                 && wrOp.getQuantity().compareTo(BigDecimal.ZERO) != 0) {
-              estimatedTime = wrOp.getEstimatedTime()
-                  .divide(wrOp.getQuantity(), BigDecimal.ROUND_HALF_UP).multiply(requeriedQty);
+              estimatedTime = wrOp.getEstimatedTime().multiply(requeriedQty)
+                  .divide(wrOp.getQuantity(), BigDecimal.ROUND_HALF_UP);
             }
             productionPlan.setEstimatedTime(new BigDecimal(estimatedTime.longValue()));
           } else {

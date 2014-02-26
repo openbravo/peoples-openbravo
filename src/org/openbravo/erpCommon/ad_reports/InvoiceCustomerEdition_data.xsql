@@ -77,10 +77,6 @@
     <Parameter name="salesRep" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.SALESREP_ID = ?]]></Parameter>
     <Parameter name="productId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment>Create a registry</SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
   <SqlMethod name="selectProject" type="preparedStatement" return="String" default="">
     <SqlMethodComment>Standard Precision</SqlMethodComment>
     <Sql>

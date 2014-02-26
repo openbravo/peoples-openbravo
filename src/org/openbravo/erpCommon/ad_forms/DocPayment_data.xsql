@@ -127,22 +127,6 @@
      <Parameter name="C_CASHLINE_ID"/>
      <Parameter name="C_ACCTSCHEMA_ID"/>
    </SqlMethod>
-  <SqlMethod name="selectCancelManual" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT B.AMOUNTCREDIT AS AMOUNTCREDIT, B.AMOUNTDEBIT AS AMOUNTDEBIT, GA.GLITEM_CREDIT_ACCT AS CREDIT_ACCT, GA.GLITEM_DEBIT_ACCT AS DEBIT_ACCT
-        FROM C_DEBT_PAYMENT D, C_DEBT_PAYMENT_BALANCING B, C_GLITEM G, C_GLITEM_ACCT GA
-        WHERE D.C_DEBT_PAYMENT_ID = B.C_DEBT_PAYMENT_ID
-        AND B.C_GLITEM_ID = G.C_GLITEM_ID
-        AND G.C_GLITEM_ID = GA.C_GLITEM_ID
-        AND GA.C_ACCTSCHEMA_ID = ?
-        AND B.C_DEBT_PAYMENT_ID = (SELECT C_DEBT_PAYMENT_ID FROM C_DEBT_PAYMENT WHERE C_SETTLEMENT_CANCEL_ID = ?)
-     ]]>
-     </Sql>
-     <Parameter name="C_ACCTSCHEMA_ID"/>
-     <Parameter name="C_SETTLEMENT_ID"/>
-   </SqlMethod>
   <SqlMethod name="selectManual" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

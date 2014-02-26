@@ -154,7 +154,6 @@ public class QueryTimeOutUtil implements OBSingleton {
   /**
    * Sets a timeout for a sql statement, if possible
    * 
-   * @param criteria
    * @param type
    *          query type, it will be used to fetch the proper timeout
    */
@@ -184,8 +183,6 @@ public class QueryTimeOutUtil implements OBSingleton {
 
   /**
    * Sets the 0 the timeout of a hibernate query
-   * 
-   * @param query
    */
   public static void resetQueryTimeOut(Query query) {
     query.setTimeout(0);
@@ -193,8 +190,6 @@ public class QueryTimeOutUtil implements OBSingleton {
 
   /**
    * Sets the 0 the timeout of a hibernate criteria
-   * 
-   * @param query
    */
   public static void resetQueryTimeOut(Criteria criteria) {
     criteria.setTimeout(0);
@@ -202,8 +197,6 @@ public class QueryTimeOutUtil implements OBSingleton {
 
   /**
    * Sets the 0 the timeout of a sql statement
-   * 
-   * @param query
    */
   public static void resetQueryTimeOut(Statement statement) {
     try {

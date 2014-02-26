@@ -35,20 +35,6 @@
     <Parameter name="adWindowId"/>
     <Parameter name="adTableId"/>
   </SqlMethod>
-  <SqlMethod name="selectParent" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
-    <Sql>
-      SELECT W.AD_WINDOW_ID, '' AS PO_WINDOW_ID, W.NAME AS WINDOWNAME, T.NAME AS TABNAME 
-      FROM AD_WINDOW W, AD_TAB T 
-      WHERE W.AD_WINDOW_ID = T.AD_WINDOW_ID 
-      AND W.ISACTIVE = 'Y' 
-      AND T.ISACTIVE = 'Y' 
-      AND T.tablevel = 0 
-      AND W.AD_WINDOW_ID = ?
-      ORDER BY T.SEQNO 
-    </Sql>
-    <Parameter name="adWindowId"/>
-  </SqlMethod>
   <SqlMethod name="selectWindow" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql>
@@ -66,17 +52,6 @@
       WHERE AD_COLUMN_ID = ?
     </Sql>
     <Parameter name="adColumnId"/>
-  </SqlMethod>
-  
-  <SqlMethod name="tableNameId" type="preparedStatement" return="String" default="">
-    <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
-    <Sql>
-      SELECT AD_TABLE_ID 
-      FROM AD_TABLE 
-      WHERE UPPER(TABLENAME) = UPPER(?)
-      AND ISACTIVE = 'Y'
-    </Sql>
-    <Parameter name="tablename"/>
   </SqlMethod>
   
   <SqlMethod name="columnName" type="preparedStatement" return="String" default="">

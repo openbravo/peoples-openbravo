@@ -193,8 +193,8 @@ public abstract class AuthenticationManager {
    * @param password
    *          Password to validate user
    * @return the value of AD_User_ID if the user is already authenticated or <b>null</b> if not
-   * @throws AuthenticationExceptionin
-   *           case of an authentication error different than incorrect user/password (which just
+   * @throws AuthenticationException
+   *           in case of an authentication error different than incorrect user/password (which just
    *           returns null)
    */
   public final String webServiceAuthenticate(String user, String password)
@@ -263,8 +263,8 @@ public abstract class AuthenticationManager {
    * @param password
    *          Password to validate user
    * @return the value of AD_User_ID if the user is already authenticated or <b>null</b> if not
-   * @throws AuthenticationExceptionin
-   *           case of an authentication error different than incorrect user/password (which just
+   * @throws AuthenticationException
+   *           in case of an authentication error different than incorrect user/password (which just
    *           returns null)
    */
   public final String connectorAuthenticate(String user, String password)

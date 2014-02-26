@@ -24,13 +24,6 @@
 
 <SqlClass name="MonedaComboData" package="org.openbravo.erpCommon.ad_forms">
    <SqlClassComment></SqlClassComment>
-   <SqlMethod name="select" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-      SELECT C_Currency_ID as id, Description as name
-      FROM C_Currency ORDER BY 2
-      </Sql>
-   </SqlMethod>
    <SqlMethod name="selectISO" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

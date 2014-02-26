@@ -72,7 +72,7 @@ public class KernelUtilTest extends BaseTest {
   }
 
   /**
-   * Test generation of the version id number {@link KernelUtils#getVersionString()}.
+   * Test generation of the version id number {@link KernelUtils#getVersionParameters(Module)}.
    * 
    * @throws Exception
    */

@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2009 Openbravo SLU 
+* All portions are Copyright (C) 2009-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -60,8 +60,8 @@
     	<FIELD id="fieldEndDate">endDate</FIELD>    
     	<FIELD id="fieldAmount" format="euroInform">amount</FIELD>
     	<FIELD id="fieldCurrency">currency</FIELD>
-    	<FIELD id="fieldAssetName">assetName</FIELD>
-    	<FIELD id="fieldAssetDescription">assetDescription</FIELD>
+    	<FIELD id="fieldAssetName" replaceCharacters="html">assetName</FIELD>
+    	<FIELD id="fieldAssetDescription" replaceCharacters="html">assetDescription</FIELD>
 		<FUNCTION id="fieldTotalSaldoInicial" name="SUM" format="euroInform">amount</FUNCTION>
    		<SECTION id="sectionAssetReport" field="assetName"/>     
     	<SECTION id="sectionDetail"/>  

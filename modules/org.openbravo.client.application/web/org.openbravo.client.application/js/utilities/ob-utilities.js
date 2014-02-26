@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,9 +80,14 @@ OB.Utilities.encodeSearchOperator = function (value) {
 // example
 OB.Utilities.truncTitle = function (title, cutLength, suffix) {
   cutLength = cutLength || 30;
-  if (!title || title.length < cutLength) {
+  if (!title) {
     return title;
   }
+
+  if (title.length < cutLength) {
+    return title.asHTML();
+  }
+
   var newTitle = title.substring(0, cutLength);
   // To remove ugly title ends
   while (newTitle.length > 4 && (newTitle.lastIndexOf(' - ') === newTitle.length - 3 || newTitle.lastIndexOf(' -') === newTitle.length - 2 || newTitle.lastIndexOf('  ') === newTitle.length - 2)) {
@@ -97,7 +102,7 @@ OB.Utilities.truncTitle = function (title, cutLength, suffix) {
     }
   }
   newTitle += suffix || '...';
-  return newTitle;
+  return newTitle.asHTML();
 };
 
 // ** {{{OB.Utilities.createDialog}}} **

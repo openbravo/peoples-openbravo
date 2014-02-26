@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2006 Openbravo SLU 
+* All portions are Copyright (C) 2001-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -21,8 +21,8 @@
   <template file="ReportShipperDetailLine.srpt"/>
 
   <structure name="structureLine">
-    <FIELD id="fieldLine">line</FIELD>
-    <FIELD id="fieldProduct">product</FIELD>
+    <FIELD id="fieldLine" replaceCharacters="html">line</FIELD>
+    <FIELD id="fieldProduct" replaceCharacters="html">product</FIELD>
     <FIELD id="fieldLineQty" format="euroInform" default="0">qtyline</FIELD>
     <SECTION id="sectionLine"/>
   </structure>

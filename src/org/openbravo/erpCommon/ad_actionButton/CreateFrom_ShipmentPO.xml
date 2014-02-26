@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,10 +73,10 @@
         <FIELD id="fieldSecQuantity" attribute="name" replace="xx">id</FIELD>
         <FIELD id="fieldSecQuantity" attribute="type" replace="zzz">havesec</FIELD>
         <FIELD id="fieldSecQuantity" attribute="onchange" replace="ff">id</FIELD>
-        <FIELD id="fieldCuomName">uomsymbol</FIELD>
+        <FIELD id="fieldCuomName" replaceCharacters="html">uomsymbol</FIELD>
         <FIELD id="fieldCuomId" attribute="name" replace="xx">id</FIELD>
         <FIELD id="fieldCuomId" attribute="value">cUomId</FIELD>
-        <FIELD id="fieldMproductid">relationName</FIELD>
+        <FIELD id="fieldMproductid" replaceCharacters="html">relationName</FIELD>
         <FIELD id="fieldPurchaseorder">line</FIELD>
         <FIELD id="fieldSecUom" attribute="name" replace="xx">id</FIELD>
         <FIELD id="fieldSecUom" attribute="onchange" replace="ff">id</FIELD>
@@ -92,7 +92,7 @@
         <FIELD id="M_AttributeSetInstance_ID" attribute="name" replace="xxx">id</FIELD>
         <FIELD id="M_AttributeSetInstance_ID" attribute="value">mAttributesetinstanceId</FIELD>
         <FIELD id="M_AttributeSetInstance_ID_R" attribute="name" replace="xxx">id</FIELD>
-        <FIELD id="M_AttributeSetInstance_ID_R" attribute="value">ATTRIBUTESETINSTANCENAME</FIELD>
+        <FIELD id="M_AttributeSetInstance_ID_R" attribute="value" replaceCharacters="html">ATTRIBUTESETINSTANCENAME</FIELD>
         <FIELD id="M_Product_ID" attribute="name" replace="zzzz">id</FIELD>
         <FIELD id="M_Product_ID" attribute="value" >mProductId</FIELD>
         <FIELD id="fieldAttributeseinstance" attribute="onclick" replace="uuu">id</FIELD>

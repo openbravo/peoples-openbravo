@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2013 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2014 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -18,6 +18,7 @@ package org.openbravo.erpCommon.utility.reporting;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
@@ -198,6 +199,14 @@ public class Report {
 
   public EmailDefinition getEmailDefinition() throws ReportingException {
     return templateInfo.getEmailDefinition(_BPartnerLanguage);
+  }
+
+  public EmailDefinition getDefaultEmailDefinition() throws ReportingException {
+    return templateInfo.get_DefaultEmailDefinition();
+  }
+
+  public Map<String, EmailDefinition> getEmailDefinitions() throws ReportingException {
+    return templateInfo.getEmailDefinitions();
   }
 
   public String getOurReference() {

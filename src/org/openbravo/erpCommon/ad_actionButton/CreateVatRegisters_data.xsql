@@ -63,8 +63,4 @@
         <Parameter name="parDateTo" optional="true" after="and 1=1"><![CDATA[ and coalesce(C_invoice.TaxDate, C_invoice.DateAcct) < to_date(?)]]></Parameter>
         <Parameter name="adUserOrg" type="replace" optional="true" after="and C_Invoice.AD_Org_ID IN (" text="'1'"/>
       </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
 </SqlClass>

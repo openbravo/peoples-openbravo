@@ -49,16 +49,6 @@
       </Sql>
     <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
-   <SqlMethod name="selectAcctSchemaGL" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-      SELECT UseSuspenseBalancing,SuspenseBalancing_Acct, UseSuspenseError,SuspenseError_Acct, UseCurrencyBalancing,
-      CurrencyBalancing_Acct, RetainedEarning_Acct,IncomeSummary_Acct, InterCompanyDueTo_Acct,InterCompanyDueFrom_Acct 
-      FROM C_AcctSchema_GL 
-      WHERE C_AcctSchema_ID=?
-      </Sql>
-    <Parameter name="C_AcctSchema_ID"/>
-   </SqlMethod>
    <SqlMethod name="GetValidAccountCombination" connection="true" type="callableStatement" return="object" object="RespuestaCS">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

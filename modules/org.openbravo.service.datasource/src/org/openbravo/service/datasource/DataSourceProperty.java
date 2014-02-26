@@ -42,7 +42,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
 
 /**
- * A representation of the {@link DataSourceField} which can be read from the DataSourceField table
+ * A representation of the {@link DatasourceField} which can be read from the DataSourceField table
  * or created on the basis of an existing {@link Property} from the in-memory model.
  * 
  * DataSourceProperties are passed into the data source template to generate the data source
@@ -91,7 +91,7 @@ public class DataSourceProperty {
   }
 
   /**
-   * Create a DataSourceProperty using a {@link DataSourceField} to initialize it.
+   * Create a DataSourceProperty using a {@link DatasourceField} to initialize it.
    * 
    * @param dsField
    *          the data source field used to initialize the new data source property

@@ -85,8 +85,4 @@
     <Parameter name="parBPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="discount" optional="true" type="none" after="AND 2=2"><![CDATA[ AND (ROUND((ROUND(TOTALLINE/QTY,3)-ROUND(TOTALLINEDISCOUNT/QTY,3))/ROUND(TOTALLINE/QTY,3),2))*100 <>0]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
 </SqlClass>

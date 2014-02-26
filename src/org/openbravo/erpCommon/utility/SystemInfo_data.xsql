@@ -73,18 +73,6 @@
       	select Servlet_Container_Version from ad_system_info
     ]]></Sql>
    </SqlMethod>
-   <SqlMethod name="selectWebserver" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      	select Webserver from ad_system_info
-    ]]></Sql>
-   </SqlMethod>
-   <SqlMethod name="selectWebserverVersion" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      	select Webserver_Version from ad_system_info
-    ]]></Sql>
-   </SqlMethod>
    <SqlMethod name="selectAntVersion" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -561,7 +561,7 @@ isc.OBMyOpenbravo.addProperties({
             width: '100%',
             showHover: true,
             showPrompt: true,
-            prompt: recent.tabTitle + ' - ' + recent.recentTitle,
+            prompt: (recent.tabTitle + ' - ' + recent.recentTitle).asHTML(),
             baseStyle: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
@@ -759,6 +759,11 @@ isc.OBMyOpenbravo.addProperties({
           this.availableWidgetClasses.push(classDef);
         }
       }
+    }
+
+    if (OB.MyOB.leftColumnLayout.addWigetSelector) {
+      // after updating cache lets reflect it in the drop down list if present
+      OB.MyOB.leftColumnLayout.addWigetSelector.refreshAvailableWidgets();
     }
   },
 
@@ -1013,21 +1018,21 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
     this.Super('destroy', arguments);
   },
 
+  // ** {{{ refreshAvailableWidgets }} **
+  //
+  // Is called when after refreshing the cache of available widget classes
+  // to reflect the available widgets in the drop down list
+  //
+  refreshAvailableWidgets: function () {
+    var i, availableWidgetsMap = {},
+        widgetClasses = OB.MyOB.availableWidgetClasses;
+    for (i = 0; i < widgetClasses.length; i++) {
+      availableWidgetsMap[i] = widgetClasses[i].title;
+    }
+    this.form.setValueMap('widget', availableWidgetsMap);
+  },
+
   createDialogContents: function (rpcResponse, data, rpcRequest) {
-    var i, widgetClasses, availableWidgetsMap = {};
-
-    if (data && data.availableWidgetClasses) {
-      OB.MyOB.updateClassesCache(data.availableWidgetClasses);
-      widgetClasses = OB.MyOB.availableWidgetClasses;
-      for (i = 0; i < widgetClasses.length; i++) {
-        availableWidgetsMap[i] = widgetClasses[i].title;
-      }
-    }
-
-    if (this.loadingLabel) {
-      this.loadingLabel.destroy();
-    }
-
     this.form = isc.DynamicForm.create({
       width: '100%',
       height: 1,
@@ -1058,7 +1063,7 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
         titleSuffix: '',
         requiredTitleSuffix: '',
         type: 'select',
-        valueMap: availableWidgetsMap,
+        valueMap: {},
         changed: function (form, item, value) {
           if (value) {
             form.parentElement.parentElement.buttonsLayout.getMember(0).setDisabled(false);
@@ -1066,6 +1071,16 @@ isc.defineClass('OBMyOBAddWidgetDialog', isc.OBMyOBDialog).addProperties({
         }
       }]
     });
+
+    OB.MyOB.leftColumnLayout.addWigetSelector = this;
+
+    if (data && data.availableWidgetClasses) {
+      OB.MyOB.updateClassesCache(data.availableWidgetClasses);
+    }
+
+    if (this.loadingLabel) {
+      this.loadingLabel.destroy();
+    }
 
     this.addItem(this.form);
 

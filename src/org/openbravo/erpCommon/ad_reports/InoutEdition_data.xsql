@@ -86,8 +86,4 @@
     <Parameter name="issotrx"/>
   </SqlMethod>
   
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
 </SqlClass>

@@ -29,6 +29,7 @@ import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentGenerator;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.client.kernel.I18NComponent;
 import org.openbravo.client.kernel.KernelComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;
@@ -39,8 +40,8 @@ import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.ad.ui.MessageTrl;
 
 /**
- * Test the {@link labelComponent}, test that a translated label actually is used inside of the
- * label template.
+ * Test the {@link I18NComponent}, test that a translated label actually is used inside of the label
+ * template.
  * 
  * @author mtaal
  */

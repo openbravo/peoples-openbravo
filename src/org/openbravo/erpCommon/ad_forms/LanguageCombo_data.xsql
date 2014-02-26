@@ -35,24 +35,4 @@
         ORDER BY NAME
       </Sql>
    </SqlMethod>
-
-   <SqlMethod name="defaultLanguage" type="preparedStatement" return="String" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE ISACTIVE='Y' AND ISBASELANGUAGE='Y'
-      </Sql>
-   </SqlMethod>
-
-   <SqlMethod name="selectOthers" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT AD_LANGUAGE 
-        FROM AD_LANGUAGE 
-        WHERE ISACTIVE='Y'
-        AND ISSYSTEMLANGUAGE = 'Y' 
-        AND ISBASELANGUAGE = 'N' 
-        ORDER BY NAME
-      </Sql>
-      <Parameter name="language" optional="true" after="WHERE " text=" AD_LANGUAGE = ? AND "/>
-   </SqlMethod>
 </SqlClass>

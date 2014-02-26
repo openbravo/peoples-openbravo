@@ -167,7 +167,8 @@ isc.OBFKFilterTextItem.addProperties({
   // are being used
   getPickListFields: function () {
     return [{
-      name: this.displayField
+      name: this.displayField,
+      escapeHTML: true
     }];
   },
 

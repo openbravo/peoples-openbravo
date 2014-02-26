@@ -33,15 +33,4 @@
     </Sql>
     <Parameter name="cInvoiceId"/>
   </SqlMethod>
-  <SqlMethod name="selectPriceLimit" type="preparedStatement" return="String" default="0">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT PRICELIMIT 
-      FROM M_PRODUCTPRICE 
-      WHERE M_PRICELIST_VERSION_ID = ? 
-      AND M_PRODUCT_ID=?
-    </Sql>
-    <Parameter name="mPricelistVersionId"/>
-    <Parameter name="mProductId"/>
-  </SqlMethod>
 </SqlClass>

@@ -42,24 +42,6 @@
      </Sql>
      <Parameter name="cash"/>
    </SqlMethod>
-  <SqlMethod name="selectBank" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT AD_Org_ID, C_Currency_ID, 0 AS C_BPARTNER_ID FROM C_BankAccount WHERE C_BankAccount_ID=?
-     ]]>
-     </Sql>
-     <Parameter name="bankAccount"/>
-   </SqlMethod>
-  <SqlMethod name="selectReferenceInfo" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT AD_Org_ID, C_Currency_ID, C_BPartner_ID FROM C_Invoice WHERE C_Invoice_ID=?
-     ]]>
-     </Sql>
-     <Parameter name="invoice"/>
-   </SqlMethod>
   <SqlMethod name="selectOrder" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

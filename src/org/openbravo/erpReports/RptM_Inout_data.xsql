@@ -35,10 +35,6 @@
         <![CDATA[ AND M_INOUT.M_INOUT_ID IN ]]>
         </Parameter>
    </SqlMethod>
-   <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-   </SqlMethod>
    <SqlMethod name="selectCopies" type="preparedStatement" return="String" default="0">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

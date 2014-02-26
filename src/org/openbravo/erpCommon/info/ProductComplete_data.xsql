@@ -80,11 +80,6 @@
         <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
-   <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-   </SqlMethod>
-
 	<SqlMethod name="countRows" type="preparedStatement" return="String">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
@@ -294,17 +289,4 @@
         <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
    </SqlMethod>
 
-   <SqlMethod name="existsActualValue" type="preparedStatement" return="String" default="">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql> <![CDATA[
-        SELECT value as value
-        FROM M_Product 
-        WHERE UPPER(AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(M_Product_ID), TO_CHAR(?))) = UPPER(?)
-        AND M_Product_ID = ? 
-        ORDER BY value
-      ]]></Sql>
-        <Parameter name="language"/>
-        <Parameter name="description"/>
-        <Parameter name="cBpartnerId"/>
-   </SqlMethod>
 </SqlClass>

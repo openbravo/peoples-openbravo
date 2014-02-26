@@ -25,8 +25,8 @@ import org.openbravo.model.ad.ui.Field;
  * both encrypted (reversible) and hashed storage of passwords.
  * 
  * @author shuehner
- * @See org.openbravo.base.model.domaintype.HashedStringDomainType
- * @See org.openbravo.base.model.domaintype.EncryptedStringDomainType
+ * @see org.openbravo.base.model.domaintype.HashedStringDomainType
+ * @see org.openbravo.base.model.domaintype.EncryptedStringDomainType
  */
 public class PasswordUIDefinition extends StringUIDefinition {
 

@@ -333,8 +333,18 @@ isc.OBCharacteristicsFilterDialog.addProperties({
       selectionChanged: function () {
         me.fireOnPause('updateCharacteristicsText', function () {
           //fire on pause because selecting a node raises several time selectionChanged to select its parants
-          me.selectionVisualization.setContents(isc.OBCharacteristicsFilterItem.getDisplayValue(me.getValue()));
+          me.selectionVisualization.setContents(isc.OBCharacteristicsFilterItem.getDisplayValue(me.getValue()).asHTML());
         }, 100);
+      },
+
+      setDataSource: function (ds, fields) {
+        var treeField;
+        if (!fields || fields.length === 0) {
+          treeField = isc.shallowClone(isc.TreeGrid.TREE_FIELD);
+          treeField.escapeHTML = true;
+          fields = [treeField];
+        }
+        return this.Super("setDataSource", [ds, fields]);
       }
     });
 

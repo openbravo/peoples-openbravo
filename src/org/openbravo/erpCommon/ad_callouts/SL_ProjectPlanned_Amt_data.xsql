@@ -35,28 +35,6 @@
     </Sql>
     <Parameter name="cProjectId"/>
   </SqlMethod>
-  <SqlMethod name="selectPriceLimit" type="preparedStatement" return="String" default="0">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT PRICELIMIT 
-      FROM M_PRODUCTPRICE 
-      WHERE M_PRICELIST_VERSION_ID = ? 
-      AND M_PRODUCT_ID=?
-    </Sql>
-    <Parameter name="mPricelistVersionId"/>
-    <Parameter name="mProductId"/>
-  </SqlMethod>
-  <SqlMethod name="update" type="preparedStatement" return="rowCount" static="true">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        UPDATE C_PROJECTLINE SET 
-        PLANNEDAMT = TO_NUMBER(?), UPDATED = now(), UPDATEDBY = ?
-        WHERE C_PROJECTLINE_ID = ?
-      </Sql>
-      <Parameter name="plannedAmt"/>
-      <Parameter name="updatedby"/>
-      <Parameter name="cProjectlineId"/>
-   </SqlMethod>
    <SqlMethod name="selectPrecision" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

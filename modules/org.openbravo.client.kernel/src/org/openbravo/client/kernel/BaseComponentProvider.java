@@ -88,8 +88,6 @@ public abstract class BaseComponentProvider implements ComponentProvider {
 
   /**
    * Override this method if the component is in a different package than the module.
-   * 
-   * @return
    */
   protected String getModulePackageName() {
     return this.getClass().getPackage().getName();

@@ -266,36 +266,6 @@
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
-  <SqlMethod name="insertPInstance" connection="true" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      INSERT INTO AD_PINSTANCE
-        (AD_PINSTANCE_ID, AD_PROCESS_ID, RECORD_ID,
-         ISPROCESSING, CREATED, AD_USER_ID,
-         UPDATED, AD_CLIENT_ID, AD_ORG_ID,
-         CREATEDBY, UPDATEDBY)
-      VALUES
-        (?,?,?,
-         'N',now(),?,
-         now(), ?, ?,
-         ?, ?)
-    </Sql>
-    <Parameter name="adPinstanceId"/>
-    <Parameter name="adProcessId"/>
-    <Parameter name="recordId"/>
-    <Parameter name="adUserId"/>
-    <Parameter name="adClientId"/>
-    <Parameter name="adOrgId"/>
-    <Parameter name="adUserId"/>
-    <Parameter name="adUserId"/>
-  </SqlMethod>
-  <SqlMethod name="processOrder" type="callableStatement" connection="true" return="object" object="ExpenseSOrderData">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        CALL C_Order_Post(?)
-      ]]></Sql>
-      <Parameter name="adPinstanceId"/>
-   </SqlMethod>
   <SqlMethod name="selectPrecisions" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

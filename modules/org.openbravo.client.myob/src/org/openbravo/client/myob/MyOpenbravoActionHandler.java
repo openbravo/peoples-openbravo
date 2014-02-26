@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -175,7 +175,7 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
     if (widgets.length() == 0) {
       message.setType("Warning");
       message.setMessage("OBKMO_NoInstancesFound");
-      log.warn(">> No instances found.");
+      log.debug(">> No instances found.");
     }
 
   }
