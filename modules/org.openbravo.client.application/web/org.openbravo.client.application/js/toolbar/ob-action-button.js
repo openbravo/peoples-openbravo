@@ -153,6 +153,12 @@ isc.OBToolbarActionButton.addProperties({
       contextView.getTabMessage();
       contextView.toolBar.refreshCustomButtons();
 
+      if (contextView && contextView.viewGrid && contextView.viewGrid.discardAllEdits) {
+        // discard edits coming from FIC as they pollute the state and they're already
+        // reloaded
+        contextView.viewGrid.discardAllEdits();
+      }
+
       if (contextView !== currentView && currentView.state === isc.OBStandardView.STATE_TOP_MAX) {
         // Executing an action defined in parent tab, current tab is maximized,
         // let's set half for each in order to see the message
