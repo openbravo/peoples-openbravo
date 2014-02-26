@@ -78,9 +78,14 @@ isc.OBTimeItem.addProperties({
 
   setTodaysDate: function (date) {
     var today = new Date();
-    date.setYear(today.getFullYear());
-    date.setMonth(today.getMonth());
+    // Set the month initially to January to prevent error like this
+    // provided date: 15/02/2014
+    // today: 31/03/2014
+    // date.setDate(today.getDate()) would result in Mon Mar 02 2014 18:00:00 GMT+0100 (CET), because february does not have 31 days 
+    date.setMonth(0);
     date.setDate(today.getDate());
+    date.setMonth(today.getMonth());
+    date.setYear(today.getFullYear());
   },
 
   /* The following functions allow proper timeGrid operation */
