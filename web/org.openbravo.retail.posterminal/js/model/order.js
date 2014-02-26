@@ -1238,31 +1238,31 @@
 
     setOrderType: function (permission, orderType, options) {
       var me = this;
-        if (orderType === OB.DEC.One) {
-          this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
-          _.each(this.get('lines').models, function (line) {
-            if (line.get('qty') > 0) {
-              me.returnLine(line, null, true);
-            }
-          }, this);
-        } else {
-          this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
-        }
-        this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
-        if (orderType !== 3) { //Void this Layaway, do not need to save
-          if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)) {
-            this.save();
+      if (orderType === OB.DEC.One) {
+        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
+        _.each(this.get('lines').models, function (line) {
+          if (line.get('qty') > 0) {
+            me.returnLine(line, null, true);
           }
-        } else {
-          this.set('layawayGross', this.getGross());
-          this.set('gross', this.get('payment'));
-          this.set('payment', OB.DEC.Zero);
-          this.get('payments').reset();
+        }, this);
+      } else {
+        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
+      }
+      this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+      if (orderType !== 3) { //Void this Layaway, do not need to save
+        if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)) {
+          this.save();
         }
-        // remove promotions
-        if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)) {
-          OB.Model.Discounts.applyPromotions(this);
-        }
+      } else {
+        this.set('layawayGross', this.getGross());
+        this.set('gross', this.get('payment'));
+        this.set('payment', OB.DEC.Zero);
+        this.get('payments').reset();
+      }
+      // remove promotions
+      if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)) {
+        OB.Model.Discounts.applyPromotions(this);
+      }
     },
 
     // returns the ordertype: 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
