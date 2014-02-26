@@ -156,7 +156,7 @@ isc.OBTimeItem.addProperties({
   click: function () {
     this.doShowTimeGrid(isc.Time.parseInput(this.getEnteredValue()));
   },
-  
+
   focus: function () {
     this.doShowTimeGrid(this.getValue());
     return this.Super('focus', arguments);
