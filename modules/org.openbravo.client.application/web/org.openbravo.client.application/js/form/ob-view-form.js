@@ -1029,9 +1029,6 @@ OB.ViewFormProperties = {
         }
       } else if (isAbsoluteDateTime) {
         jsDateTime = isc.Date.parseStandardDate(columnValue.value);
-        // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
-        // http://forums.smartclient.com/showthread.php?p=116135
-        jsDateTime = OB.Utilities.Date.substractTimezoneOffset(jsDateTime);
         this.setItemValue(field.name, jsDateTime);
         if (field.textField) {
           delete field.textField._textChanged;
