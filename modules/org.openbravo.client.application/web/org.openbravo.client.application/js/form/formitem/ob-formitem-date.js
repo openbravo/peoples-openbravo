@@ -334,6 +334,9 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
       date.setFullYear(date.getUTCFullYear());
       date.setMonth(date.getUTCMonth());
       date.setDate(date.getUTCDate());
+      date.setHours(date.getUTCHours());
+      date.setMinutes(date.getUTCMinutes());
+      date.setSeconds(date.getUTCSeconds());
     }
     if (isc.isA.Date(date)) {
       return date;

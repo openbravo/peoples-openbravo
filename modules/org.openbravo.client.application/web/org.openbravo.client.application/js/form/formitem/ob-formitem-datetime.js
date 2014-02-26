@@ -132,6 +132,11 @@ isc.OBDateTimeItem.addProperties({
     if (Object.prototype.toString.call(this.fixedTime) === '[object String]') {
       this.fixedTime = isc.Time.parseInput(this.fixedTime);
     }
+    if (this.showTime) {
+      this.showPickerTimeItem = true;
+    } else {
+      this.showPickerTimeItem = false;
+    }
     return this.Super('doInit', arguments);
   },
 
@@ -176,7 +181,9 @@ isc.OBDateTimeItem.addProperties({
     // setting now time if there was one previously selected, or current time if not 
     date = picker.chosenDate;
 
-    if (this.previousValue) {
+    if (this.showPickerTimeItem) {
+      time = date;
+    } else if (this.previousValue) {
       time = this.previousValue;
       delete this.previousValue;
 
@@ -247,6 +254,16 @@ isc.OBDateTimeItem.addProperties({
   }
 });
 
+isc.OBDateTimeItem.changeDefaults('pickerDefaults', {
+  initWidget: function () {
+    if (OB.Format.dateTime.toLowerCase().indexOf('ss') !== -1) {
+      this.showSecondItem = true;
+    } else {
+      this.showSecondItem = false;
+    }
+    return this.Super('initWidget', arguments);
+  }
+});
 
 // == OBDateTimeFromDateItem ==
 // OBDateTimeFromDateItem inherits from OBDateTimeItem
