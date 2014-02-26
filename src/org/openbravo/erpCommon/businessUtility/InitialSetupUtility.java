@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2012 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -290,13 +290,41 @@ public class InitialSetupUtility {
   }
 
   /**
+   * @Deprecated use tableTreeRelation, because it retrieves all tableTrees, instead of only the
+   *             trees defined in the DA_TreeType type list reference Returns the relation of trees
+   *             defined in the reference list of the application dictionary called AD_TreeType Type
+   * 
+   * @return java.util.List<org.openbravo.model.ad.domain.List>: the relation of AD list elements
+   * @throws Exception
+   */
+  @Deprecated
+  public static List<org.openbravo.model.ad.domain.List> treeRelation() throws Exception {
+
+    final OBCriteria<org.openbravo.model.ad.domain.Reference> obcReference = OBDal.getInstance()
+        .createCriteria(org.openbravo.model.ad.domain.Reference.class);
+    obcReference.add(Restrictions.eq(org.openbravo.model.ad.domain.Reference.PROPERTY_NAME,
+        "AD_TreeType Type"));
+    List<org.openbravo.model.ad.domain.Reference> listReferences = obcReference.list();
+    if (listReferences.size() != 1)
+      return null;
+
+    org.openbravo.model.ad.domain.Reference referenceTree = listReferences.get(0);
+    final OBCriteria<org.openbravo.model.ad.domain.List> obcRefTreeList = OBDal.getInstance()
+        .createCriteria(org.openbravo.model.ad.domain.List.class);
+    obcRefTreeList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
+        referenceTree));
+    obcRefTreeList.addOrder(Order.asc("name"));
+    return obcRefTreeList.list();
+  }
+
+  /**
    * Returns the relation of trees that use the ADTree tree structure, AD_TABLE_TREE table
    * 
    * @return java.util.List<TableTree>: the relation of all the trees that use the ADTree tree
    *         structure
    * @throws Exception
    */
-  public static List<TableTree> treeRelation() throws Exception {
+  public static List<TableTree> tableTreeRelation() throws Exception {
     final OBCriteria<TableTree> obcTableTree = OBDal.getInstance().createCriteria(TableTree.class);
     obcTableTree.add(Restrictions.eq(TableTree.PROPERTY_TREESTRUCTURE, "ADTree"));
     obcTableTree.addOrder(Order.asc(TableTree.PROPERTY_NAME));
@@ -323,7 +351,7 @@ public class InitialSetupUtility {
   }
 
   /**
-   * 
+   * @deprecated use new insertTree method where new parameter "table" is added
    * @param client
    * @param name
    * @param treeType
@@ -331,6 +359,12 @@ public class InitialSetupUtility {
    * @return object Tree for the new tree
    * @throws Exception
    */
+  @Deprecated
+  public static Tree insertTree(Client client, String name, String treeType, Boolean boIsAllNodes)
+      throws Exception {
+    return insertTree(client, name, treeType, boIsAllNodes, null);
+  }
+
   public static Tree insertTree(Client client, String name, String treeType, Boolean boIsAllNodes,
       Table table) throws Exception {
     final Tree newTree = OBProvider.getInstance().get(Tree.class);

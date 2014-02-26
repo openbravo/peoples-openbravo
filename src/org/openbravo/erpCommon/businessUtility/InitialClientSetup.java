@@ -271,7 +271,7 @@ public class InitialClientSetup {
     log4j.debug("insertTrees() - Obtaining tree relation");
     List<TableTree> tableTreeList;
     try {
-      tableTreeList = InitialSetupUtility.treeRelation();
+      tableTreeList = InitialSetupUtility.tableTreeRelation();
     } catch (Exception e) {
       return logErrorAndRollback("@CreateClientFailed@",
           "insertTrees() - ERROR - Not able to retrieve trees", e);
