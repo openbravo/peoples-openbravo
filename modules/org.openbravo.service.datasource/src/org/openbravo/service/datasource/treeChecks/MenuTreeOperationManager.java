@@ -25,6 +25,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.service.datasource.CheckTreeOperationManager;
@@ -43,7 +44,7 @@ public class MenuTreeOperationManager extends CheckTreeOperationManager {
     Module module = menuEntry.getModule();
     if (module != null && !module.isInDevelopment()) {
       return new ActionResponse(false, "error",
-          "The node must belong to a module that is in development in order to be reparented.");
+          OBMessageUtils.messageBD("OBSERDS_ReparentNotInDevTreeNode"));
     } else {
       return new ActionResponse(true);
     }
