@@ -4,7 +4,7 @@
       <parameter name="status" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="fin_payment_scheduledetail_id" type="VARCHAR" mode="in">
+      <parameter name="p_fin_psd_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -45,10 +45,10 @@ BEGIN
   END IF;
   select isinvoicepaid 
   into v_isinvoicepaid
-  from fin_payment_scheduledetail 
-  where fin_payment_scheduledetail_id=fin_payment_scheduledetail_id;
+  from fin_payment_scheduledetail
+  where fin_payment_scheduledetail_id=p_fin_psd_id;
   
-  IF ((fin_payment_scheduledetail_id <> '') AND (fin_payment_scheduledetail_id is not null))THEN
+  IF ((p_fin_psd_id <> '') AND (p_fin_psd_id is not null))THEN
     IF(v_isinvoicepaid='Y')THEN
      -- core intermediate statuses
       v_isPaymentConfirmed := 'Y';
@@ -78,7 +78,7 @@ BEGIN
       ORDER BY name)
     LOOP
       BEGIN
-        v_Sql := 'SELECT ' || Cur_Dbprefix.dbprefix || '_ispaymentconfirmed' || '(''' || coalesce(status, '') || ''', ''' || coalesce(fin_payment_scheduledetail_id, '') || ''') FROM DUAL';
+        v_Sql := 'SELECT ' || Cur_Dbprefix.dbprefix || '_ispaymentconfirmed' || '(''' || coalesce(status, '') || ''', ''' || coalesce(p_fin_psd_id, '') || ''') FROM DUAL';
 
         EXECUTE IMMEDIATE v_Sql INTO v_isPaymentConfirmed;
         IF (v_ispaymentconfirmed = 'Y') THEN
