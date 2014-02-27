@@ -138,11 +138,6 @@ isc.OBTreeItem.addProperties({
     return this.Super('moved', arguments);
   },
 
-  focus: function () {
-    this.tree.hide();
-    return this.Super('focus', arguments);
-  },
-
   changed: function (form, item, value) {
     if (!this.tree.isVisible()) {
       this.tree.show();
