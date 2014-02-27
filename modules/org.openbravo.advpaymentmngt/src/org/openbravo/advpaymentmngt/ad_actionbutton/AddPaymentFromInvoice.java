@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -267,7 +267,8 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
                 (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
             String strNewPaymentMessage = Utility.parseTranslation(this, vars, vars.getLanguage(),
                 "@PaymentCreated@" + " " + payment.getDocumentNo()) + ".";
-            message.setMessage(strNewPaymentMessage + " " + message.getMessage());
+            if (!"Error".equalsIgnoreCase(message.getType()))
+              message.setMessage(strNewPaymentMessage + " " + message.getMessage());
             if (strDifferenceAction.equals("refund")) {
               Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
               FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(this, vars, payment,

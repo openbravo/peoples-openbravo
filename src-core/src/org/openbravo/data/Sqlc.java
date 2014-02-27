@@ -71,7 +71,11 @@ public class Sqlc extends DefaultHandler {
   int numCols;
   boolean first = true;
   OutputStreamWriter out;
-  StringBuffer out1; // to be fixed: out1 and out2 are two auxiliar buffers...
+  // out1 contains header part of the class up to the import statements
+  StringBuffer out1;
+  // out3 contains header starting from import just to before the SqlMethods start
+  StringBuffer out3;
+  // out2 contains rest of the file (all SqlMethods + up to the end)
   StringBuffer out2;
   PrintWriter printWriterTxt;
   Parameter parameterSql;
@@ -89,6 +93,8 @@ public class Sqlc extends DefaultHandler {
   static Logger log4j = Logger.getLogger(Sqlc.class); // log4j
   private static boolean includeQueryTimeOut;
 
+  private List<String> scrollableFunctionNames = new ArrayList<String>();
+
   private Sqlc() {
     init();
   }
@@ -100,6 +106,7 @@ public class Sqlc extends DefaultHandler {
     sqlcPackage = null;
     strComments = null;
     sqlcAccessModifier = "";
+    scrollableFunctionNames = new ArrayList<String>();
   }
 
   public static void main(String argv[]) throws Exception {
@@ -326,6 +333,7 @@ public class Sqlc extends DefaultHandler {
         final FileOutputStream resultsFile = new FileOutputStream(fileJava);
         sqlc.out = new OutputStreamWriter(resultsFile, "UTF-8");
         sqlc.out1 = new StringBuffer();
+        sqlc.out3 = new StringBuffer();
         sqlc.out2 = new StringBuffer();
         /*
          * FileWriter resultsFile = new FileWriter(fileJava); sqlc.out = new
@@ -362,7 +370,12 @@ public class Sqlc extends DefaultHandler {
           sqlc.out1.append("import org.openbravo.database.RDBMSIndependent;\n");
           sqlc.out1.append("import org.openbravo.exception.*;\n");
         }
+
+        // after all functions have been parsed, finish building class header
+        sqlc.printInitClass2();
+
         sqlc.out.write(sqlc.out1.toString());
+        sqlc.out.write(sqlc.out3.toString());
         sqlc.out.write(sqlc.out2.toString());
         sqlc.out.flush();
         sqlc.importJavaUtil = false;
@@ -419,6 +432,9 @@ public class Sqlc extends DefaultHandler {
               || sql.sqlReturn.equalsIgnoreCase("DATE") || sql.sqlReturn.equalsIgnoreCase("SINGLE")
               || sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) {
             sql.executeType = "executeQuery";
+          } else if (sql.sqlReturn.equalsIgnoreCase("SCROLLABLE")) {
+            sql.executeType = "executeQuery";
+            scrollableFunctionNames.add(sql.sqlName);
           } else if (sql.sqlReturn.equalsIgnoreCase("ROWCOUNT")
               || sql.sqlReturn.equalsIgnoreCase("SEQUENCE")) {
             sql.executeType = "executeUpdate";
@@ -763,56 +779,56 @@ public class Sqlc extends DefaultHandler {
     }
 
     if (sql.sqlImport != null) {
-      out2.append("import " + sql.sqlImport + ";\n");
+      out3.append("import " + sql.sqlImport + ";\n");
     }
-    out2.append("\n");
+    out3.append("\n");
 
     final String[] strCommentsVector = stringToVector(strComments, false);
     for (int i = 0; i < strCommentsVector.length; i++) {
       if (i == 0) {
-        out2.append("/**\n" + strCommentsVector[i] + "\n");
+        out3.append("/**\n" + strCommentsVector[i] + "\n");
       } else {
-        out2.append(" *" + strCommentsVector[i] + "\n");
+        out3.append(" *" + strCommentsVector[i] + "\n");
       }
       if (i == strCommentsVector.length - 1) {
-        out2.append(" */\n");
+        out3.append(" */\n");
       }
     }
     if (!javaFileName.equals(sqlcName))
       throw new IOException("File name for xsql class " + javaFileName
           + " is different than the class name defined inside the file: " + sqlcName);
     if (sqlcAccessModifier.length() > 0) {
-      out2.append(sqlcAccessModifier);
-      out2.append(" ");
+      out3.append(sqlcAccessModifier);
+      out3.append(" ");
     }
-    out2.append("class " + sqlcName + " implements FieldProvider {\n");
-    out2.append("static Logger log4j = Logger.getLogger(" + sqlcName + ".class);\n");
+    out3.append("class " + sqlcName + " implements FieldProvider {\n");
+    out3.append("static Logger log4j = Logger.getLogger(" + sqlcName + ".class);\n");
     try {
       // Display column headings
       if (log4j.isDebugEnabled())
         log4j.debug("Number of columns: " + numCols);
-      out2.append("  private String InitRecordNumber=\"0\";\n");
+      out3.append("  private String InitRecordNumber=\"0\";\n");
       for (int i = 1; i <= numCols; i++) {
-        out2.append("  public String ");
-        out2.append(TransformaNombreColumna(rsmd.getColumnLabel(i)));
-        out2.append(";\n");
+        out3.append("  public String ");
+        out3.append(TransformaNombreColumna(rsmd.getColumnLabel(i)));
+        out3.append(";\n");
       }
       for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e.hasMoreElements();) {
         final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
-        out2.append("  public String ");
-        out2.append(fieldAdded.strName);
-        out2.append(";\n");
+        out3.append("  public String ");
+        out3.append(fieldAdded.strName);
+        out3.append(";\n");
       }
     } catch (final SQLException e) {
       log4j.error("SQL Exception error:" + e);
     }
-    out2.append("\n");
-    out2.append("  public String getInitRecordNumber() {\n");
-    out2.append("    return InitRecordNumber;\n");
-    out2.append("  }\n");
+    out3.append("\n");
+    out3.append("  public String getInitRecordNumber() {\n");
+    out3.append("    return InitRecordNumber;\n");
+    out3.append("  }\n");
     // the getField function
-    out2.append("\n");
-    out2.append("  public String getField(String fieldName) {\n");
+    out3.append("\n");
+    out3.append("  public String getField(String fieldName) {\n");
     try {
       // Display column headings
       if (log4j.isDebugEnabled())
@@ -821,32 +837,129 @@ public class Sqlc extends DefaultHandler {
         final String columnLabel = rsmd.getColumnLabel(i);
         final String transformedColumnLabel = TransformaNombreColumna(columnLabel);
         if (i == 1) {
-          out2.append("    if ");
+          out3.append("    if ");
         } else {
-          out2.append("    else if ");
+          out3.append("    else if ");
         }
-        out2.append("(fieldName.equalsIgnoreCase(\"");
-        out2.append(columnLabel);
+        out3.append("(fieldName.equalsIgnoreCase(\"");
+        out3.append(columnLabel);
         if (!columnLabel.equalsIgnoreCase(transformedColumnLabel))
-          out2.append("\") || fieldName.equals(\"" + transformedColumnLabel);
-        out2.append("\"))\n");
-        out2.append("      return " + transformedColumnLabel + ";\n");
+          out3.append("\") || fieldName.equals(\"" + transformedColumnLabel);
+        out3.append("\"))\n");
+        out3.append("      return " + transformedColumnLabel + ";\n");
       }
       for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e.hasMoreElements();) {
         final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
-        out2.append("    else if ");
-        out2.append("(fieldName.equals(\"");
-        out2.append(fieldAdded.strName + "\"))\n");
-        out2.append("      return " + fieldAdded.strName + ";\n");
+        out3.append("    else if ");
+        out3.append("(fieldName.equals(\"");
+        out3.append(fieldAdded.strName + "\"))\n");
+        out3.append("      return " + fieldAdded.strName + ";\n");
       }
     } catch (final SQLException e) {
       log4j.error("SQL Exception error:" + e);
     }
-    out2.append("   else {\n");
-    out2.append("     log4j.debug(\"Field does not exist: \" + fieldName);\n");
-    out2.append("     return null;\n");
-    out2.append("   }\n");
-    out2.append(" }\n");
+    out3.append("   else {\n");
+    out3.append("     log4j.debug(\"Field does not exist: \" + fieldName);\n");
+    out3.append("     return null;\n");
+    out3.append("   }\n");
+    out3.append(" }\n");
+  }
+
+  /*
+   * Write 2nd part of class init, to be called after all SqlMethod have been parsed. This allows to
+   * modify class header easily depending on info from all SqlMethod's
+   */
+  private void printInitClass2() throws IOException {
+
+    // the following emits the common code needed for scrollable results if there are any
+    // SqlMethod's using them
+    if (!scrollableFunctionNames.isEmpty()) {
+      out1.append("import org.openbravo.data.ScrollableFieldProvider;\n");
+
+      // modify implements
+      String searchString = "implements FieldProvider";
+
+      // TODO: improve this when code to built header string fields based on all SqlMethod (avoiding
+      // need for dummy methods) is added
+      int offset = out3.indexOf(searchString);
+      out3.delete(offset, offset + searchString.length());
+      out3.insert(offset, "implements FieldProvider, ScrollableFieldProvider");
+
+      // add needed instance variables & functions
+      String toInsert = "\n";
+      toInsert += "  private String scrollableGetter;\n";
+      toInsert += "  private long countRecord;\n";
+      toInsert += "  private ResultSet result;\n";
+      toInsert += "  private boolean hasData;\n";
+      toInsert += "  private ConnectionProvider internalConnProvider;\n";
+      toInsert += "  private Connection internalConnection;\n";
+      toInsert += "  private boolean errorOcurred;\n";
+      toInsert += " \n";
+      toInsert += "  @Override\n";
+      toInsert += "  public boolean hasData() {\n";
+      toInsert += "    return hasData;\n";
+      toInsert += "  }\n";
+      toInsert += "\n";
+      toInsert += "  @Override\n";
+      toInsert += "  public boolean next() throws ServletException {\n";
+      toInsert += "    try {\n";
+      toInsert += "      if (result.next()) {\n";
+      toInsert += "        countRecord++;\n";
+      toInsert += "        return true;\n";
+      toInsert += "      }\n";
+      toInsert += "      return false;\n";
+      toInsert += "    } catch(SQLException e){\n";
+      toInsert += "      errorOcurred = true;\n";
+      toInsert += "      log4j.error(\"Error calling jdbc next()\", e);\n";
+      toInsert += "      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n";
+      toInsert += "    }\n";
+      toInsert += "  }\n";
+      toInsert += "\n";
+
+      toInsert += "  @Override\n";
+      toInsert += "  public " + sqlcName + " get() throws ServletException {\n";
+      toInsert += "    try {\n";
+      boolean isFirst = true;
+      for (String name : scrollableFunctionNames) {
+        if (isFirst) {
+          toInsert += "      if (\"" + name + "\".equals(scrollableGetter)) {\n";
+          isFirst = false;
+        } else {
+          toInsert += "      } else if (\"" + name + "\".equals(scrollableGetter)) {\n";
+        }
+        toInsert += "        return get" + name + "();\n";
+      }
+      toInsert += "      } else {\n";
+      toInsert += "        throw new ServletException(\"getNext() called without calling any scrollable select first\");\n";
+      toInsert += "      }\n";
+      toInsert += "    } catch(SQLException e){\n";
+      toInsert += "      errorOcurred = true;\n";
+      toInsert += "      log4j.error(\"Error calling jdbc getter()\", e);\n";
+      toInsert += "      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n";
+      toInsert += "    }\n";
+      toInsert += "  }\n" + "\n";
+
+      toInsert += "  @Override\n";
+      toInsert += "  public void close() {\n";
+      toInsert += "    try {\n";
+      toInsert += "      if (result != null) {\n";
+      toInsert += "        result.getStatement().close();\n";
+      toInsert += "      }\n";
+      toInsert += "       // handle internalConnection != null explicitely here? then more obvious?\n";
+      toInsert += "      if (errorOcurred) {\n";
+      toInsert += "        internalConnProvider.releaseRollbackConnection(internalConnection);\n";
+      toInsert += "      } else {\n";
+      toInsert += "        internalConnProvider.releaseCommitConnection(internalConnection);\n";
+      toInsert += "      }\n";
+      toInsert += "    } catch (SQLException sqe) {\n";
+      toInsert += "      log4j.error(\"Exception on closing statement/resultset\", sqe);\n";
+      toInsert += "    }\n";
+      toInsert += "  }\n";
+      toInsert += "\n";
+
+      out3.append(toInsert);
+    }
+
   }
 
   private void printTxtFile() {
@@ -981,7 +1094,7 @@ public class Sqlc extends DefaultHandler {
 
     out2.append("\n");
 
-    if (sql.executeType.equals("executeQuery")) {
+    if (sql.executeType.equals("executeQuery") && (!sql.sqlReturn.equalsIgnoreCase("SCROLLABLE"))) {
       out2.append("    ResultSet result;\n");
     }
     if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) {
@@ -1044,24 +1157,47 @@ public class Sqlc extends DefaultHandler {
       queryTimeoutStr = "      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, SessionInfo.getQueryProfile());\n";
     }
     aux.append("    try {\n");
-    if (sql.sqlType.equals("preparedStatement")) {
-      aux.append("    st = connectionProvider.getPreparedStatement(");
-      if (sql.sqlConnection.equals("true"))
-        aux.append("conn, ");
-      aux.append("strSql);\n");
-      aux.append(queryTimeoutStr);
-    } else if (sql.sqlType.equals("statement")) {
-      aux.append("    st = connectionProvider.getStatement(");
-      if (sql.sqlConnection.equals("true"))
-        aux.append("conn");
-      aux.append(");\n");
-      aux.append(queryTimeoutStr);
-    } else if (sql.sqlType.equals("callableStatement")) {
-      aux.append("      st = connectionProvider.getCallableStatement(");
-      if (sql.sqlConnection.equals("true"))
-        aux.append("conn, ");
-      aux.append("strSql);\n");
-      aux.append(queryTimeoutStr);
+
+    // Scrollable functions always need non auto-commit transaction (as required on postgres to read
+    // with a cursor and to avoid reading all resultset at once)
+    if (sql.sqlReturn.equalsIgnoreCase("SCROLLABLE")) {
+      if (!sql.sqlConnection.equals("true")) {
+        aux.append("    Connection conn = connectionProvider.getTransactionConnection();\n");
+        // store connection to close() method can commit/rollback and close it
+        aux.append("    instance.internalConnection = conn;\n");
+      }
+      if (sql.sqlType.equals("preparedStatement")) {
+        aux.append("    st = conn.prepareStatement(strSql);\n");
+        // TODO: test me
+        aux.append(queryTimeoutStr);
+      } else if (sql.sqlType.equals("statement")) {
+        aux.append("    st = conn.getStatement();\n");
+        // TODO: test me
+        aux.append(queryTimeoutStr);
+      } else {
+        throw new RuntimeException(
+            "Scrollable results only support type: preparedStatement & statement at of now");
+      }
+    } else {
+      if (sql.sqlType.equals("preparedStatement")) {
+        aux.append("    st = connectionProvider.getPreparedStatement(");
+        if (sql.sqlConnection.equals("true"))
+          aux.append("conn, ");
+        aux.append("strSql);\n");
+        aux.append(queryTimeoutStr);
+      } else if (sql.sqlType.equals("statement")) {
+        aux.append("    st = connectionProvider.getStatement(");
+        if (sql.sqlConnection.equals("true"))
+          aux.append("conn");
+        aux.append(");\n");
+        aux.append(queryTimeoutStr);
+      } else if (sql.sqlType.equals("callableStatement")) {
+        aux.append("      st = connectionProvider.getCallableStatement(");
+        if (sql.sqlConnection.equals("true"))
+          aux.append("conn, ");
+        aux.append("strSql);\n");
+        aux.append(queryTimeoutStr);
+      }
     }
     // set value of parameters
     for (final Parameter parameter : sql.vecParameter) {
@@ -1118,7 +1254,63 @@ public class Sqlc extends DefaultHandler {
     out2.append(aux.toString());
   }
 
+  private void printScrollableFunctionSql() throws IOException {
+    printHeadFunctionSql(true, false, false, false);
+    out2.append("    " + sqlcName + " instance = new " + sqlcName + "();\n");
+    out2.append("    instance.scrollableGetter = \"" + sql.sqlName + "\";\n");
+    out2.append("    instance.internalConnProvider = connectionProvider;\n");
+    out2.append("    instance.errorOcurred = false;\n");
+    out2.append('\n');
+
+    printSQLBody();
+    printSQLParameters();
+
+    out2.append("      // on postgres use non zero fetchsize to read data via cursor and not all at once\n");
+    out2.append("      if (connectionProvider.getRDBMS().equalsIgnoreCase(\"POSTGRE\")) {\n");
+    out2.append("        st.setFetchSize(1000);\n");
+    out2.append("      }\n");
+    out2.append("      instance.result = st.executeQuery();\n");
+    out2.append("      instance.hasData = instance.result.isBeforeFirst();\n");
+    out2.append("      instance.countRecord = 0;\n");
+    out2.append("    } catch (SQLException e) {\n");
+    out2.append("      log4j.error(\"SQL error in query: \" + strSql + \"Exception:\" + e);\n");
+    out2.append("      instance.errorOcurred = true;\n");
+    out2.append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\"\n");
+    out2.append("          + e.getMessage());\n");
+    out2.append("    } catch (Exception ex) {\n");
+    out2.append("      log4j.error(\"Exception in query: \" + strSql + \"Exception:\", ex);\n");
+    out2.append("      instance.errorOcurred = true;\n");
+    out2.append("      throw new ServletException(\"@CODE=@\" + ex.getMessage());\n");
+    out2.append("    }\n");
+
+    out2.append("\n");
+    out2.append("    return instance;\n");
+    out2.append("  }\n");
+  }
+
+  private void printScrollableFunctionGetter() throws IOException {
+    out2.append("  private " + sqlcName + " get" + sql.sqlName + "() throws SQLException {\n");
+    out2.append("    " + sqlcName + " object" + sqlcName + " = new " + sqlcName + "();\n");
+    out2.append("\n");
+
+    try {
+      printSQLReadResultRow();
+    } catch (final SQLException e) {
+      log4j.error("Error generating SQL Read Result part:", e);
+    }
+
+    out2.append("      return object" + sqlcName + ";\n");
+    out2.append("  }\n");
+  }
+
   private void printFunctionSql() throws IOException {
+    if (sql.sqlReturn.equalsIgnoreCase("SCROLLABLE")) {
+      printScrollableFunctionSql();
+      out2.append('\n');
+      printScrollableFunctionGetter();
+      return;
+    }
+
     boolean boolSequence = false;
 
     if (sql.useQueryProfile) {
@@ -1236,35 +1428,7 @@ public class Sqlc extends DefaultHandler {
           out2.append("        dateReturn = UtilSql.getDateValue(result, \""
               + rsmd.getColumnLabel(1) + "\", \"" + javaDateFormat + "\");\n");
         } else {
-          for (int i = 1; i <= numCols; i++) {
-            if (log4j.isDebugEnabled())
-              log4j.debug("Columna: " + rsmd.getColumnName(i) + " tipo: " + rsmd.getColumnType(i));
-            if (rsmd.getColumnType(i) == java.sql.Types.TIMESTAMP || rsmd.getColumnType(i) == 91) {
-              out2.append("        object" + sqlcName + "."
-                  + TransformaNombreColumna(rsmd.getColumnLabel(i))
-                  + " = UtilSql.getDateValue(result, \"" + rsmd.getColumnLabel(i) + "\", \""
-                  + javaDateFormat + "\");\n");
-            } else if (rsmd.getColumnType(i) == java.sql.Types.BLOB) {
-              out2.append("        object" + sqlcName + "."
-                  + TransformaNombreColumna(rsmd.getColumnLabel(i))
-                  + " = UtilSql.getBlobValue(result, \"" + rsmd.getColumnLabel(i) + "\");\n");
-            } else {
-              out2.append("        object" + sqlcName + "."
-                  + TransformaNombreColumna(rsmd.getColumnLabel(i))
-                  + " = UtilSql.getValue(result, \"" + rsmd.getColumnLabel(i) + "\");\n");
-            }
-          }
-          for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e.hasMoreElements();) {
-            final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
-            if (fieldAdded.strValue.equals("count"))
-              out2.append("        object" + sqlcName + "." + fieldAdded.strName
-                  + " = Long.toString(countRecord);\n");
-            else if (fieldAdded.strValue.equals("void"))
-              out2.append("        object" + sqlcName + "." + fieldAdded.strName + " = \"\";\n");
-          }
-          if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE"))
-            out2.append("        object" + sqlcName
-                + ".InitRecordNumber = Integer.toString(firstRegister);\n");
+          printSQLReadResultRow();
         }
       } catch (final SQLException e) {
         log4j.error("SQL Exception error:", e);
@@ -1404,6 +1568,39 @@ public class Sqlc extends DefaultHandler {
     out2.append("  }\n");
   }
 
+  // emits code to process a single row of a result
+  private void printSQLReadResultRow() throws SQLException {
+    for (int i = 1; i <= numCols; i++) {
+      if (log4j.isDebugEnabled())
+        log4j.debug("Columna: " + rsmd.getColumnName(i) + " tipo: " + rsmd.getColumnType(i));
+      if (rsmd.getColumnType(i) == java.sql.Types.TIMESTAMP || rsmd.getColumnType(i) == 91) {
+        out2.append("        object" + sqlcName + "."
+            + TransformaNombreColumna(rsmd.getColumnLabel(i))
+            + " = UtilSql.getDateValue(result, \"" + rsmd.getColumnLabel(i) + "\", \""
+            + javaDateFormat + "\");\n");
+      } else if (rsmd.getColumnType(i) == java.sql.Types.BLOB) {
+        out2.append("        object" + sqlcName + "."
+            + TransformaNombreColumna(rsmd.getColumnLabel(i))
+            + " = UtilSql.getBlobValue(result, \"" + rsmd.getColumnLabel(i) + "\");\n");
+      } else {
+        out2.append("        object" + sqlcName + "."
+            + TransformaNombreColumna(rsmd.getColumnLabel(i)) + " = UtilSql.getValue(result, \""
+            + rsmd.getColumnLabel(i) + "\");\n");
+      }
+    }
+    for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e.hasMoreElements();) {
+      final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
+      if (fieldAdded.strValue.equals("count"))
+        out2.append("        object" + sqlcName + "." + fieldAdded.strName
+            + " = Long.toString(countRecord);\n");
+      else if (fieldAdded.strValue.equals("void"))
+        out2.append("        object" + sqlcName + "." + fieldAdded.strName + " = \"\";\n");
+    }
+    if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE"))
+      out2.append("        object" + sqlcName
+          + ".InitRecordNumber = Integer.toString(firstRegister);\n");
+  }
+
   private void printHeadFunctionSql(boolean printProviderConnection, boolean boolPagin,
       boolean boolSequence, boolean useQueryType) throws IOException {
     out2.append("\n");
@@ -1422,7 +1619,9 @@ public class Sqlc extends DefaultHandler {
     if (sql.sqlStatic.equals("true")) {
       out2.append("static ");
     }
-    if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) {
+    if (sql.sqlReturn.equalsIgnoreCase("SCROLLABLE")) {
+      out2.append(sqlcName + " ");
+    } else if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) {
       out2.append(sqlcName + "[] ");
     } else if (sql.sqlReturn.equalsIgnoreCase("SINGLE")) {
       out2.append(sqlcName + " ");

@@ -123,7 +123,7 @@
     <Parameter name="oraLimit2" type="argument" optional="true" after="WHERE 1=1"><![CDATA[ AND RN1 BETWEEN ]]></Parameter>
   </SqlMethod>
 
-  <SqlMethod name="select2" type="preparedStatement" return="multiple">
+  <SqlMethod name="select2" type="preparedStatement" return="scrollable">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
@@ -457,7 +457,7 @@
     <Parameter name="paramAmtTo" optional="true" after="3=3"><![CDATA[ AND (FACT_ACCT.AMTACCTDR + FACT_ACCT.AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
   </SqlMethod>
 
-  <SqlMethod name="selectXLS2" type="preparedStatement" return="multiple">
+  <SqlMethod name="selectXLS2" type="preparedStatement" return="scrollable">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[

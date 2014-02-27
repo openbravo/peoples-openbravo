@@ -33,26 +33,27 @@ public class JRFieldProviderDataSource implements JRDataSource {
    *
    */
   private FieldProvider[] fieldProvider = null;
-  private static String strDateFormat;
+  protected FieldProvider oneDataRow;
+  protected final String strDateFormat;
   private int index = -1;
 
-  /**
-   *
-   */
-  public JRFieldProviderDataSource(FieldProvider[] fp, String strDateFormat) {
-    fieldProvider = fp;
-    JRFieldProviderDataSource.strDateFormat = strDateFormat;
+  protected JRFieldProviderDataSource(String strDateFormat) {
+    this.strDateFormat = strDateFormat;
   }
 
-  /**
-   *
-   */
+  public JRFieldProviderDataSource(FieldProvider[] fp, String strDateFormat) {
+    this(strDateFormat);
+    fieldProvider = fp;
+  }
+
+  @Override
   public boolean next() throws JRException {
     boolean hasNext = false;
 
     if (fieldProvider != null) {
       if (index < fieldProvider.length - 1) {
         index++;
+        oneDataRow = fieldProvider[index];
         hasNext = true;
       }
       // else throw new JRException("Unable to get the FieldProvider.");
@@ -61,14 +62,12 @@ public class JRFieldProviderDataSource implements JRDataSource {
     return hasNext;
   }
 
-  /**
-   *
-   */
+  @Override
   public Object getFieldValue(JRField field) throws JRException {
     Object objValue = null;
 
-    if (field != null && fieldProvider != null) {
-      String value = fieldProvider[index].getField(field.getName());
+    if (field != null && oneDataRow != null) {
+      String value = oneDataRow.getField(field.getName());
       Class<?> clazz = field.getValueClass();
       try {
         if (clazz.equals(java.lang.Boolean.class)) {
