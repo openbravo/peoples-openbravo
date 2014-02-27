@@ -121,7 +121,8 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
       },
 
       setDataSource: function (ds, fields) {
-        var me = this;
+        var me = this,
+            i;
         ds.transformRequest = function (dsRequest) {
           var target = window[dsRequest.componentId];
           dsRequest.params = dsRequest.params || {};
@@ -145,6 +146,9 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         };
 
         fields = this.treePopup.treeGridFields;
+        for (i = 0; i < fields.length; i++) {
+          fields[i].escapeHTML = true;
+        }
         ds.primaryKeys = {
           id: 'id'
         };
