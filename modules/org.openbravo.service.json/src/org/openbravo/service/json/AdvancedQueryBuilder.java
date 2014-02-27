@@ -39,6 +39,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.AbsoluteDateTimeDomainType;
 import org.openbravo.base.model.domaintype.SearchDomainType;
 import org.openbravo.base.model.domaintype.TableDomainType;
 import org.openbravo.base.structure.IdentifierProvider;
@@ -734,7 +735,7 @@ public class AdvancedQueryBuilder {
     } else if (Date.class.isAssignableFrom(property.getPrimitiveObjectType())) {
       try {
         Date date = null;
-        if (property.isDatetime()) {
+        if (property.isDatetime() || property.getDomainType() instanceof AbsoluteDateTimeDomainType) {
           try {
             date = simpleDateTimeFormat.parse(value.toString());
           } catch (ParseException e) {
@@ -764,8 +765,10 @@ public class AdvancedQueryBuilder {
           calendar.set(Calendar.SECOND, 59);
           calendar.set(Calendar.MILLISECOND, 999);
         }
-        // Applies the time zone offset difference of the server
-        calendar.add(Calendar.MINUTE, -UTCServerMinutesTimeZoneDiff);
+        if (property.isDatetime() || property.isDate()) {
+          // Applies the time zone offset difference of the server
+          calendar.add(Calendar.MINUTE, -UTCServerMinutesTimeZoneDiff);
+        }
         return calendar.getTime();
       } catch (Exception e) {
         throw new IllegalArgumentException(e);
