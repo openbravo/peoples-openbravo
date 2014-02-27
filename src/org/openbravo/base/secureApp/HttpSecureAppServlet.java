@@ -37,6 +37,7 @@ import javax.servlet.http.HttpSession;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
@@ -48,6 +49,8 @@ import net.sf.jasperreports.engine.export.JExcelApiExporter;
 import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
+import net.sf.jasperreports.engine.util.JRSwapFile;
 import net.sf.jasperreports.j2ee.servlets.ImageServlet;
 
 import org.codehaus.jettison.json.JSONObject;
@@ -62,6 +65,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.data.ScrollableFieldProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
@@ -70,6 +74,7 @@ import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
+import org.openbravo.erpCommon.utility.JRScrollableFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
@@ -1181,7 +1186,34 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       String strReportName, String strFileName, String strOutputType,
       HashMap<String, Object> designParameters, FieldProvider[] data,
       Map<Object, Object> exportParameters) throws ServletException {
+    if (data != null) {
+      renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
+          new JRFieldProviderDataSource(data, variables.getJavaDateFormat()), exportParameters);
+    } else {
+      renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
+          (JRDataSource) null, exportParameters);
+    }
+  }
 
+  /**
+   * Render a jrxml based report using a {@link ScrollableFieldProvider} as its datasource.
+   * 
+   * @see #renderJR(VariablesSecureApp, HttpServletResponse, String, String, String, HashMap,
+   *      JRDatasource, HashMap)
+   */
+  protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
+      String strReportName, String strFileName, String strOutputType,
+      HashMap<String, Object> designParameters, ScrollableFieldProvider sfp,
+      Map<Object, Object> exportParameters) throws ServletException {
+    renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
+        new JRScrollableFieldProviderDataSource(sfp, variables.getJavaDateFormat()),
+        exportParameters);
+  }
+
+  private void renderJR(VariablesSecureApp variables, HttpServletResponse response,
+      String strReportName, String strFileName, String strOutputType,
+      HashMap<String, Object> designParameters, JRDataSource data,
+      Map<Object, Object> exportParameters) throws ServletException {
     if (strReportName == null || strReportName.equals(""))
       strReportName = PrintJRData.getReportName(this, classInfo.id);
 
@@ -1200,6 +1232,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     ServletOutputStream os = null;
     UUID reportId = null;
+    JRSwapFileVirtualizer virtualizer = null;
     try {
 
       final JasperReport jasperReport = Utility.getTranslatedJasperReport(this, strReportName,
@@ -1235,14 +1268,23 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       jrFormatFactory.setDatePattern(variables.getJavaDateFormat());
       designParameters.put(JRParameter.REPORT_FORMAT_FACTORY, jrFormatFactory);
 
+      // if no custom virtualizer is requested use a default one
+      if (!designParameters.containsKey(JRParameter.REPORT_VIRTUALIZER)) {
+        // virtualizer is essentially using a tmp-file to avoid huge memory consumption by jasper
+        // when processing big reports
+        JRSwapFile swap = new JRSwapFile(System.getProperty("java.io.tmpdir"), 4096, 1);
+        // start using the virtualizer when having more than 100 pages of data
+        virtualizer = new JRSwapFileVirtualizer(100, swap);
+        designParameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
+      }
+
       JasperPrint jasperPrint;
       Connection con = null;
       try {
         con = getTransactionConnection();
         if (data != null) {
           designParameters.put("REPORT_CONNECTION", con);
-          jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters,
-              new JRFieldProviderDataSource(data, variables.getJavaDateFormat()));
+          jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, data);
         } else {
           jasperPrint = JasperFillManager.fillReport(jasperReport, designParameters, con);
         }
@@ -1319,6 +1361,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       try {
         os.close();
       } catch (final Exception e) {
+      }
+      // remove virtualizer tmp files if we created them
+      if (virtualizer != null) {
+        virtualizer.cleanup();
       }
     }
   }
