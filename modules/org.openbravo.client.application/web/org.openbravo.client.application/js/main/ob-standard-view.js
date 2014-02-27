@@ -1693,6 +1693,7 @@ isc.OBStandardView.addProperties({
     }
     if (!this.isShowingForm) {
       if (this.isShowingTree) {
+        this.treeGrid.setData([]);
         this.treeGrid.refreshGrid(refreshCallback);
       } else {
         this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);
