@@ -96,8 +96,7 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
     strSql = strSql + 
       "        SELECT count(*) as existpreference" +
       "        FROM ad_preference" +
-      "        WHERE attribute = 'IsCustomerBalanceRestored'" +
-      "        AND ad_module_id = NULL ";
+      "        WHERE attribute = 'IsCustomerBalanceRestored'        ";
 
     ResultSet result;
     boolean boolReturn = false;
@@ -125,6 +124,70 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
       }
     }
     return(boolReturn);
+  }
+
+  public static boolean hasIsCustomerBalanceRestoredWithValue(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "        SELECT count(*) as existpreference" +
+      "        FROM ad_preference" +
+      "        WHERE attribute = 'IsCustomerBalanceRestored' AND value='Y'        ";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "existpreference").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(boolReturn);
+  }
+
+  public static int deleteIsCustomerBalanceRestoredWithValue(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "        DELETE FROM ad_preference" +
+      "        WHERE attribute = 'IsCustomerBalanceRestored' AND value='Y'        ";
+
+    int updateCount = 0;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      updateCount = st.executeUpdate();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(updateCount);
   }
 
   public static int resetCustomerCredit(ConnectionProvider connectionProvider)    throws ServletException {
@@ -259,11 +322,11 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
       "        INSERT INTO ad_preference (" +
       "          ad_preference_id, ad_client_id, ad_org_id, isactive," +
       "          createdby, created, updatedby, updated," +
-      "          attribute, value" +
+      "          attribute" +
       "        ) VALUES (" +
       "          get_uuid(), '0', '0', 'Y'," +
       "          '0', NOW(), '0', NOW()," +
-      "          'IsCustomerBalanceRestored', 'Y'" +
+      "          'IsCustomerBalanceRestored'" +
       "        )";
 
     int updateCount = 0;

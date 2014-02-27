@@ -33,6 +33,11 @@ public class UpdateCustomerBalance extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
       // Check if the modulescript has been executed before.
       // If the preference does not exist in the database yet the modulescript must be executed.
+      boolean isCustomerBalanceRestoredWithValue = UpdateCustomerBalanceData.hasIsCustomerBalanceRestoredWithValue(cp);
+      if(isCustomerBalanceRestoredWithValue) {
+    	  UpdateCustomerBalanceData.deleteIsCustomerBalanceRestoredWithValue(cp);
+      }
+    	  
       boolean isCustomerBalanceFixed = UpdateCustomerBalanceData.isCustomerBalanceFixed(cp);
       if (!isCustomerBalanceFixed) {
         UpdateCustomerBalanceData.createPreference(cp);

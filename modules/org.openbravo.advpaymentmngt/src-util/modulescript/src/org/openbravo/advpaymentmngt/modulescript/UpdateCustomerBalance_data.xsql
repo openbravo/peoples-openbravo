@@ -23,8 +23,26 @@
       <![CDATA[
         SELECT count(*) as existpreference
         FROM ad_preference
-        WHERE attribute = 'IsCustomerBalanceRestored'
-        AND ad_module_id = NULL 
+        WHERE attribute = 'IsCustomerBalanceRestored'        
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="hasIsCustomerBalanceRestoredWithValue" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as existpreference
+        FROM ad_preference
+        WHERE attribute = 'IsCustomerBalanceRestored' AND value='Y'        
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="deleteIsCustomerBalanceRestoredWithValue" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        DELETE FROM ad_preference
+        WHERE attribute = 'IsCustomerBalanceRestored' AND value='Y'        
       ]]>
     </Sql>
   </SqlMethod>
@@ -74,11 +92,11 @@
         INSERT INTO ad_preference (
           ad_preference_id, ad_client_id, ad_org_id, isactive,
           createdby, created, updatedby, updated,
-          attribute, value
+          attribute
         ) VALUES (
           get_uuid(), '0', '0', 'Y',
           '0', NOW(), '0', NOW(),
-          'IsCustomerBalanceRestored', 'Y'
+          'IsCustomerBalanceRestored'
         )
       ]]>
     </Sql>
