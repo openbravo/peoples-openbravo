@@ -71,7 +71,11 @@ public class Sqlc extends DefaultHandler {
   int numCols;
   boolean first = true;
   OutputStreamWriter out;
-  StringBuffer out1; // to be fixed: out1 and out2 are two auxiliar buffers...
+  // out1 contains header part of the class up to the import statements
+  StringBuffer out1;
+  // out3 contains header starting from import just to before the SqlMethods start
+  StringBuffer out3;
+  // out2 contains rest of the file (all SqlMethods + up to the end)
   StringBuffer out2;
   PrintWriter printWriterTxt;
   Parameter parameterSql;
@@ -326,6 +330,7 @@ public class Sqlc extends DefaultHandler {
         final FileOutputStream resultsFile = new FileOutputStream(fileJava);
         sqlc.out = new OutputStreamWriter(resultsFile, "UTF-8");
         sqlc.out1 = new StringBuffer();
+        sqlc.out3 = new StringBuffer();
         sqlc.out2 = new StringBuffer();
         /*
          * FileWriter resultsFile = new FileWriter(fileJava); sqlc.out = new
@@ -362,7 +367,12 @@ public class Sqlc extends DefaultHandler {
           sqlc.out1.append("import org.openbravo.database.RDBMSIndependent;\n");
           sqlc.out1.append("import org.openbravo.exception.*;\n");
         }
+
+        // after all functions have been parsed, finish building class header
+        sqlc.printInitClass2();
+
         sqlc.out.write(sqlc.out1.toString());
+        sqlc.out.write(sqlc.out3.toString());
         sqlc.out.write(sqlc.out2.toString());
         sqlc.out.flush();
         sqlc.importJavaUtil = false;
@@ -763,56 +773,56 @@ public class Sqlc extends DefaultHandler {
     }
 
     if (sql.sqlImport != null) {
-      out2.append("import " + sql.sqlImport + ";\n");
+      out3.append("import " + sql.sqlImport + ";\n");
     }
-    out2.append("\n");
+    out3.append("\n");
 
     final String[] strCommentsVector = stringToVector(strComments, false);
     for (int i = 0; i < strCommentsVector.length; i++) {
       if (i == 0) {
-        out2.append("/**\n" + strCommentsVector[i] + "\n");
+        out3.append("/**\n" + strCommentsVector[i] + "\n");
       } else {
-        out2.append(" *" + strCommentsVector[i] + "\n");
+        out3.append(" *" + strCommentsVector[i] + "\n");
       }
       if (i == strCommentsVector.length - 1) {
-        out2.append(" */\n");
+        out3.append(" */\n");
       }
     }
     if (!javaFileName.equals(sqlcName))
       throw new IOException("File name for xsql class " + javaFileName
           + " is different than the class name defined inside the file: " + sqlcName);
     if (sqlcAccessModifier.length() > 0) {
-      out2.append(sqlcAccessModifier);
-      out2.append(" ");
+      out3.append(sqlcAccessModifier);
+      out3.append(" ");
     }
-    out2.append("class " + sqlcName + " implements FieldProvider {\n");
-    out2.append("static Logger log4j = Logger.getLogger(" + sqlcName + ".class);\n");
+    out3.append("class " + sqlcName + " implements FieldProvider {\n");
+    out3.append("static Logger log4j = Logger.getLogger(" + sqlcName + ".class);\n");
     try {
       // Display column headings
       if (log4j.isDebugEnabled())
         log4j.debug("Number of columns: " + numCols);
-      out2.append("  private String InitRecordNumber=\"0\";\n");
+      out3.append("  private String InitRecordNumber=\"0\";\n");
       for (int i = 1; i <= numCols; i++) {
-        out2.append("  public String ");
-        out2.append(TransformaNombreColumna(rsmd.getColumnLabel(i)));
-        out2.append(";\n");
+        out3.append("  public String ");
+        out3.append(TransformaNombreColumna(rsmd.getColumnLabel(i)));
+        out3.append(";\n");
       }
       for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e.hasMoreElements();) {
         final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
-        out2.append("  public String ");
-        out2.append(fieldAdded.strName);
-        out2.append(";\n");
+        out3.append("  public String ");
+        out3.append(fieldAdded.strName);
+        out3.append(";\n");
       }
     } catch (final SQLException e) {
       log4j.error("SQL Exception error:" + e);
     }
-    out2.append("\n");
-    out2.append("  public String getInitRecordNumber() {\n");
-    out2.append("    return InitRecordNumber;\n");
-    out2.append("  }\n");
+    out3.append("\n");
+    out3.append("  public String getInitRecordNumber() {\n");
+    out3.append("    return InitRecordNumber;\n");
+    out3.append("  }\n");
     // the getField function
-    out2.append("\n");
-    out2.append("  public String getField(String fieldName) {\n");
+    out3.append("\n");
+    out3.append("  public String getField(String fieldName) {\n");
     try {
       // Display column headings
       if (log4j.isDebugEnabled())
@@ -821,32 +831,39 @@ public class Sqlc extends DefaultHandler {
         final String columnLabel = rsmd.getColumnLabel(i);
         final String transformedColumnLabel = TransformaNombreColumna(columnLabel);
         if (i == 1) {
-          out2.append("    if ");
+          out3.append("    if ");
         } else {
-          out2.append("    else if ");
+          out3.append("    else if ");
         }
-        out2.append("(fieldName.equalsIgnoreCase(\"");
-        out2.append(columnLabel);
+        out3.append("(fieldName.equalsIgnoreCase(\"");
+        out3.append(columnLabel);
         if (!columnLabel.equalsIgnoreCase(transformedColumnLabel))
-          out2.append("\") || fieldName.equals(\"" + transformedColumnLabel);
-        out2.append("\"))\n");
-        out2.append("      return " + transformedColumnLabel + ";\n");
+          out3.append("\") || fieldName.equals(\"" + transformedColumnLabel);
+        out3.append("\"))\n");
+        out3.append("      return " + transformedColumnLabel + ";\n");
       }
       for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e.hasMoreElements();) {
         final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
-        out2.append("    else if ");
-        out2.append("(fieldName.equals(\"");
-        out2.append(fieldAdded.strName + "\"))\n");
-        out2.append("      return " + fieldAdded.strName + ";\n");
+        out3.append("    else if ");
+        out3.append("(fieldName.equals(\"");
+        out3.append(fieldAdded.strName + "\"))\n");
+        out3.append("      return " + fieldAdded.strName + ";\n");
       }
     } catch (final SQLException e) {
       log4j.error("SQL Exception error:" + e);
     }
-    out2.append("   else {\n");
-    out2.append("     log4j.debug(\"Field does not exist: \" + fieldName);\n");
-    out2.append("     return null;\n");
-    out2.append("   }\n");
-    out2.append(" }\n");
+    out3.append("   else {\n");
+    out3.append("     log4j.debug(\"Field does not exist: \" + fieldName);\n");
+    out3.append("     return null;\n");
+    out3.append("   }\n");
+    out3.append(" }\n");
+  }
+
+  /*
+   * Write 2nd part of class init, to be called after all SqlMethod have been parsed. This allows to
+   * modify class header easily depending on info from all SqlMethod's
+   */
+  private void printInitClass2() throws IOException {
   }
 
   private void printTxtFile() {
