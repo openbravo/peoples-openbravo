@@ -158,7 +158,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         return dataSource.fetch(parameters);
       }
 
-      String parentId = parameters.get("parentId");
       String tabId = parameters.get("tabId");
       String treeReferenceId = parameters.get("treeReferenceId");
       Tab tab = null;
@@ -224,11 +223,19 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       // Do not consider dummy criteria as valid criteria
       boolean validCriteria = false;
       JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+
+      String parentId = parameters.get("parentId");
+
       for (int i = 0; i < criterias.length(); i++) {
         JSONObject criteria = criterias.getJSONObject(i);
-        if (!isDummyCriteria(criteria) && !isSubtabCriteria(entity, criteria)) {
+        if (!isDummyCriteria(criteria) && !isSubtabCriteria(entity, criteria)
+            && !isParentIdCriteria(criteria)) {
           validCriteria = true;
-          break;
+        } else if (parentId == null && isParentIdCriteria(criteria)) {
+          {
+            parentId = criteria.getString("value");
+          }
+
         }
       }
 
@@ -308,14 +315,32 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   private boolean isDummyCriteria(JSONObject jsonCriteria) {
     try {
-      if ("_dummy".equals(jsonCriteria.get("fieldName"))) {
+      if (jsonCriteria.has("fieldName") && "_dummy".equals(jsonCriteria.get("fieldName"))) {
         return true;
       } else {
+        if (jsonCriteria.has("criteria")) {
+          JSONArray criteriaArray = jsonCriteria.getJSONArray("criteria");
+          if (criteriaArray.length() == 0) {
+            return true;
+          }
+        }
         return false;
       }
     } catch (JSONException e) {
       return false;
     }
+  }
+
+  private boolean isParentIdCriteria(JSONObject jsonCriteria) {
+    boolean isParentIdCriteria = false;
+    try {
+      if (jsonCriteria.has("fieldName") && "parentId".equals(jsonCriteria.get("fieldName"))) {
+        isParentIdCriteria = true;
+      }
+    } catch (JSONException e) {
+      return false;
+    }
+    return isParentIdCriteria;
   }
 
   private boolean hasAccess(Entity entity, boolean fromTreeView) {
