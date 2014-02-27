@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -124,14 +124,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|cProjectId", IsIDFilter.instance);
       String strGroupBy = vars
           .getRequestGlobalVariable("inpGroupBy", "ReportGeneralLedger|GroupBy");
-      if (log4j.isDebugEnabled())
-        log4j.debug("##################### DoPost - Find - strcBpartnerId= " + strcBpartnerId);
-      if (log4j.isDebugEnabled())
-        log4j.debug("##################### DoPost - XLS - strcelementvaluefrom= "
-            + strcelementvaluefrom);
-      if (log4j.isDebugEnabled())
-        log4j.debug("##################### DoPost - XLS - strcelementvalueto= "
-            + strcelementvalueto);
+      log4j.debug("##################### DoPost - Find - strcBpartnerId= " + strcBpartnerId);
+      log4j.debug("##################### DoPost - XLS - strcelementvaluefrom= "
+          + strcelementvaluefrom);
+      log4j.debug("##################### DoPost - XLS - strcelementvalueto= " + strcelementvalueto);
       vars.setSessionValue("ReportGeneralLedger.initRecordNumber", "0");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strAmtFrom, strAmtTo,
           strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
@@ -211,27 +207,20 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String rowNum = "0";
     String oraLimit1 = null;
     String oraLimit2 = null;
-    String oraSubtotalLimit = null;
     String pgLimit = null;
-    String pgSubtotalLimit = null;
     if (intRecordRange != 0) {
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         rowNum = "ROWNUM";
         oraLimit1 = String.valueOf(initRecordNumber + intRecordRange);
         oraLimit2 = (initRecordNumber + 1) + " AND " + oraLimit1;
-        oraSubtotalLimit = String.valueOf(initRecordNumber);
       } else {
         rowNum = "0";
         pgLimit = intRecordRange + " OFFSET " + initRecordNumber;
-        pgSubtotalLimit = String.valueOf(initRecordNumber);
       }
     }
     log4j.debug("offset= " + initRecordNumber + " pageSize= " + intRecordRange);
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    if (log4j.isDebugEnabled())
-      log4j.debug("Date From:" + strDateFrom + "- To:" + strDateTo + " - Schema:"
-          + strcAcctSchemaId);
+    log4j.debug("Output: dataSheet");
+    log4j.debug("Date From:" + strDateFrom + "- To:" + strDateTo + " - Schema:" + strcAcctSchemaId);
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
@@ -276,10 +265,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
         }
         strAllaccounts = "N";
-        if (log4j.isDebugEnabled())
-          log4j.debug("##################### strcelementvaluefrom= " + strcelementvaluefrom);
-        if (log4j.isDebugEnabled())
-          log4j.debug("##################### strcelementvalueto= " + strcelementvalueto);
+        log4j.debug("##################### strcelementvaluefrom= " + strcelementvaluefrom);
+        log4j.debug("##################### strcelementvalueto= " + strcelementvalueto);
       } else {
         strcelementvalueto = "";
         strcelementvaluetodes = "";
@@ -293,8 +280,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId,
           strAmtFrom, strAmtTo, null, null, pgLimit, oraLimit1, oraLimit2, null);
       log4j.debug("Select2. Time in mils: " + (System.currentTimeMillis() - initMainSelect));
-      if (log4j.isDebugEnabled())
-        log4j.debug("RecordNo: " + initRecordNumber);
+      log4j.debug("RecordNo: " + initRecordNumber);
 
       ReportGeneralLedgerData[] dataTotal = null;
       ReportGeneralLedgerData[] dataSubtotal = null;
@@ -501,8 +487,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                 Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
                 strcAcctSchemaId));
 
-    if (log4j.isDebugEnabled())
-      log4j.debug("data.length: " + data.length);
+    log4j.debug("data.length: " + data.length);
 
     if (data != null && data.length > 0) {
       if (strGroupBy.equals(""))
@@ -529,14 +514,11 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strAmtTo, String strcelementvaluefrom, String strcelementvalueto, String strOrg,
       String strcBpartnerId, String strmProductId, String strcProjectId, String strGroupBy,
       String strcAcctSchemaId, String strPageNo) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: PDF");
+    log4j.debug("Output: PDF");
     response.setContentType("text/html; charset=UTF-8");
-    ReportGeneralLedgerData[] data = null;
     ReportGeneralLedgerData[] subreport = null;
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
-    String strOrgFamily = "";
-    strOrgFamily = getFamily(strTreeOrg, strOrg);
+    String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String toDatePlusOne = DateTimeData.nDaysAfter(this, strDateTo, "1");
 
     String strGroupByText = (strGroupBy.equals("BPartner") ? Utility.messageBD(this, "BusPartner",
@@ -545,14 +527,21 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         vars.getLanguage()) : "")));
     String strAllaccounts = "Y";
 
-    if (!strDateFrom.equals("") && !strDateTo.equals("")) {
-      strOrgFamily = getFamily(strTreeOrg, strOrg);
-      if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
-        if (strcelementvalueto.equals(""))
-          strcelementvalueto = strcelementvaluefrom;
-        strAllaccounts = "N";
-      }
+    if (strDateFrom.equals("") || strDateTo.equals("")) {
+      advisePopUp(request, response, "WARNING",
+          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+      return;
+    }
 
+    if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
+      if (strcelementvalueto.equals(""))
+        strcelementvalueto = strcelementvaluefrom;
+      strAllaccounts = "N";
+    }
+
+    ReportGeneralLedgerData[] data = null;
+    {
       data = ReportGeneralLedgerData.select2(this, "0", strGroupByText, strGroupBy, strAllaccounts,
           strcelementvaluefrom, strcelementvalueto,
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
@@ -635,10 +624,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strAmtTo, String strcelementvaluefrom, String strcelementvalueto, String strOrg,
       String strcBpartnerId, String strmProductId, String strcProjectId, String strGroupBy,
       String strcAcctSchemaId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: XLS");
+    log4j.debug("Output: XLS");
     response.setContentType("text/html; charset=UTF-8");
-    ReportGeneralLedgerData[] data = null;
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = "";
     strOrgFamily = getFamily(strTreeOrg, strOrg);
@@ -646,12 +633,21 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
     String strAllaccounts = "Y";
 
-    if (!strDateFrom.equals("") && !strDateTo.equals("")) {
-      if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
-        if (strcelementvalueto.equals(""))
-          strcelementvalueto = strcelementvaluefrom;
-        strAllaccounts = "N";
-      }
+    if (strDateFrom.equals("") || strDateTo.equals("")) {
+      advisePopUp(request, response, "WARNING",
+          Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
+          Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
+      return;
+    }
+
+    if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
+      if (strcelementvalueto.equals(""))
+        strcelementvalueto = strcelementvaluefrom;
+      strAllaccounts = "N";
+    }
+
+    ReportGeneralLedgerData[] data = null;
+    {
       data = ReportGeneralLedgerData.selectXLS2(this, strAllaccounts, strcelementvaluefrom,
           strcelementvalueto,
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
