@@ -623,10 +623,14 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     }
 
     String parentIdDB = null;
-    if (AD_ORG_TABLE_ID.equals(tableId)) {
-      parentIdDB = null;
-    } else {
-      parentIdDB = ROOT_NODE_DB;
+    if (newParentId.equals(ROOT_NODE_CLIENT)) {
+      // AD_ORG is special, root nodes have parentId = null, while the other in the trees root nodes
+      // have parentId = '0'
+      if (AD_ORG_TABLE_ID.equals(tableId)) {
+        parentIdDB = null;
+      } else {
+        parentIdDB = ROOT_NODE_DB;
+      }
     }
 
     Tree tree = this.getTree(tableId);
