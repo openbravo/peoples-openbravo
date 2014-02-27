@@ -1253,35 +1253,7 @@ public class Sqlc extends DefaultHandler {
           out2.append("        dateReturn = UtilSql.getDateValue(result, \""
               + rsmd.getColumnLabel(1) + "\", \"" + javaDateFormat + "\");\n");
         } else {
-          for (int i = 1; i <= numCols; i++) {
-            if (log4j.isDebugEnabled())
-              log4j.debug("Columna: " + rsmd.getColumnName(i) + " tipo: " + rsmd.getColumnType(i));
-            if (rsmd.getColumnType(i) == java.sql.Types.TIMESTAMP || rsmd.getColumnType(i) == 91) {
-              out2.append("        object" + sqlcName + "."
-                  + TransformaNombreColumna(rsmd.getColumnLabel(i))
-                  + " = UtilSql.getDateValue(result, \"" + rsmd.getColumnLabel(i) + "\", \""
-                  + javaDateFormat + "\");\n");
-            } else if (rsmd.getColumnType(i) == java.sql.Types.BLOB) {
-              out2.append("        object" + sqlcName + "."
-                  + TransformaNombreColumna(rsmd.getColumnLabel(i))
-                  + " = UtilSql.getBlobValue(result, \"" + rsmd.getColumnLabel(i) + "\");\n");
-            } else {
-              out2.append("        object" + sqlcName + "."
-                  + TransformaNombreColumna(rsmd.getColumnLabel(i))
-                  + " = UtilSql.getValue(result, \"" + rsmd.getColumnLabel(i) + "\");\n");
-            }
-          }
-          for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e.hasMoreElements();) {
-            final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
-            if (fieldAdded.strValue.equals("count"))
-              out2.append("        object" + sqlcName + "." + fieldAdded.strName
-                  + " = Long.toString(countRecord);\n");
-            else if (fieldAdded.strValue.equals("void"))
-              out2.append("        object" + sqlcName + "." + fieldAdded.strName + " = \"\";\n");
-          }
-          if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE"))
-            out2.append("        object" + sqlcName
-                + ".InitRecordNumber = Integer.toString(firstRegister);\n");
+          printSQLReadResultRow();
         }
       } catch (final SQLException e) {
         log4j.error("SQL Exception error:", e);
@@ -1419,6 +1391,39 @@ public class Sqlc extends DefaultHandler {
       out2.append("    return(object" + sql.sqlObject + ");\n");
     }
     out2.append("  }\n");
+  }
+
+  // emits code to process a single row of a result
+  private void printSQLReadResultRow() throws SQLException {
+    for (int i = 1; i <= numCols; i++) {
+      if (log4j.isDebugEnabled())
+        log4j.debug("Columna: " + rsmd.getColumnName(i) + " tipo: " + rsmd.getColumnType(i));
+      if (rsmd.getColumnType(i) == java.sql.Types.TIMESTAMP || rsmd.getColumnType(i) == 91) {
+        out2.append("        object" + sqlcName + "."
+            + TransformaNombreColumna(rsmd.getColumnLabel(i))
+            + " = UtilSql.getDateValue(result, \"" + rsmd.getColumnLabel(i) + "\", \""
+            + javaDateFormat + "\");\n");
+      } else if (rsmd.getColumnType(i) == java.sql.Types.BLOB) {
+        out2.append("        object" + sqlcName + "."
+            + TransformaNombreColumna(rsmd.getColumnLabel(i))
+            + " = UtilSql.getBlobValue(result, \"" + rsmd.getColumnLabel(i) + "\");\n");
+      } else {
+        out2.append("        object" + sqlcName + "."
+            + TransformaNombreColumna(rsmd.getColumnLabel(i)) + " = UtilSql.getValue(result, \""
+            + rsmd.getColumnLabel(i) + "\");\n");
+      }
+    }
+    for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e.hasMoreElements();) {
+      final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
+      if (fieldAdded.strValue.equals("count"))
+        out2.append("        object" + sqlcName + "." + fieldAdded.strName
+            + " = Long.toString(countRecord);\n");
+      else if (fieldAdded.strValue.equals("void"))
+        out2.append("        object" + sqlcName + "." + fieldAdded.strName + " = \"\";\n");
+    }
+    if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE"))
+      out2.append("        object" + sqlcName
+          + ".InitRecordNumber = Integer.toString(firstRegister);\n");
   }
 
   private void printHeadFunctionSql(boolean printProviderConnection, boolean boolPagin,
