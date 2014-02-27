@@ -72,8 +72,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onNew(@Observes
-  EntityNewEvent event) {
+  public void onNew(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -88,8 +87,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     dataSource.add(parameters, null);
   }
 
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
+  public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
