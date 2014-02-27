@@ -293,6 +293,14 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   private boolean isSubtabCriteria(Entity entity, JSONObject jsonCriteria) {
     try {
+      if (jsonCriteria.has("criteria")) {
+        JSONArray criteriaArray = (JSONArray) jsonCriteria.get("criteria");
+        if (criteriaArray.length() > 0) {
+          return isSubtabCriteria(entity, criteriaArray.getJSONObject(0));
+        } else {
+          return false;
+        }
+      }
       if (jsonCriteria.has("fieldName")) {
         String fieldName = jsonCriteria.getString("fieldName");
         if (entity.hasProperty(fieldName)) {
@@ -315,6 +323,14 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   private boolean isDummyCriteria(JSONObject jsonCriteria) {
     try {
+      if (jsonCriteria.has("criteria")) {
+        JSONArray criteriaArray = (JSONArray) jsonCriteria.get("criteria");
+        if (criteriaArray.length() > 0) {
+          return isDummyCriteria(criteriaArray.getJSONObject(0));
+        } else {
+          return false;
+        }
+      }
       if (jsonCriteria.has("fieldName") && "_dummy".equals(jsonCriteria.get("fieldName"))) {
         return true;
       } else {
@@ -334,6 +350,14 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   private boolean isParentIdCriteria(JSONObject jsonCriteria) {
     boolean isParentIdCriteria = false;
     try {
+      if (jsonCriteria.has("criteria")) {
+        JSONArray criteriaArray = (JSONArray) jsonCriteria.get("criteria");
+        if (criteriaArray.length() > 0) {
+          return isParentIdCriteria(criteriaArray.getJSONObject(0));
+        } else {
+          return false;
+        }
+      }
       if (jsonCriteria.has("fieldName") && "parentId".equals(jsonCriteria.get("fieldName"))) {
         isParentIdCriteria = true;
       }

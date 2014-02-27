@@ -350,6 +350,10 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     for (int i = 0; i < criteria.length(); i++) {
       try {
         JSONObject criterion = (JSONObject) criteria.get(i);
+        if (criterion.has("criteria")) {
+          return getParentRecordIdFromCriteria(criterion.getJSONArray("criteria"),
+              parentPropertyName);
+        }
         if (parentPropertyName.equals(criterion.getString("fieldName"))) {
           parentRecordId = criterion.getString("value");
           break;
