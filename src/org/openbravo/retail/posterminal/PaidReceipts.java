@@ -31,6 +31,7 @@ import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.model.common.order.OrderLineOffer;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
@@ -88,6 +89,26 @@ public class PaidReceipts extends JSONProcessSimple {
           paidReceiptLine.put("priceIncludesTax", paidReceipt.getBoolean("priceIncludesTax"));
           paidReceiptLine.put("warehouse", objpaidReceiptsLines[9]);
           paidReceiptLine.put("warehousename", objpaidReceiptsLines[10]);
+
+          // get shipmentLines for returns
+          if (jsonsent.has("forReturn") && jsonsent.getBoolean("forReturn")) {
+            OBCriteria<ShipmentInOutLine> shipLinesCri = OBDal.getInstance().createCriteria(
+                ShipmentInOutLine.class);
+            shipLinesCri.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE + ".id",
+                (String) objpaidReceiptsLines[6]));
+            shipLinesCri.addOrder(Order.asc(ShipmentInOutLine.PROPERTY_LINENO));
+            JSONArray shipmentlines = new JSONArray();
+            for (ShipmentInOutLine shipline : shipLinesCri.list()) {
+              JSONObject jsonShipline = new JSONObject();
+              jsonShipline.put("shipLineId", shipline.getId());
+              jsonShipline.put("shipment", shipline.getShipmentReceipt().getDocumentNo());
+              jsonShipline.put("shipmentlineNo", shipline.getLineNo());
+              jsonShipline.put("qty", shipline.getMovementQuantity());
+              shipmentlines.put(jsonShipline);
+              paidReceiptLine.put("shipmentlines", shipmentlines);
+            }
+
+          }
 
           // promotions per line
           OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(

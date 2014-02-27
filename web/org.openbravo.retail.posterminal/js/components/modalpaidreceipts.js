@@ -279,16 +279,21 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this,
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
+    me.filters = inEvent.filters;
     this.clearAction();
     process.exec({
-      filters: inEvent.filters,
+      filters: me.filters,
       _limit: OB.Model.Order.prototype.dataLimit,
       _dateFormat: OB.Format.date
     }, function (data) {
       if (data) {
         _.each(data, function (iter) {
           me.model.get('orderList').newDynamicOrder(iter, function (order) {
+            if (me.filters.isReturn) {
+              order.set('forReturn', true);
+            }
             me.prsList.add(order);
+
           });
         });
         me.$.prslistitemprinter.getScrollArea().scrollToTop();
@@ -308,7 +313,8 @@ enyo.kind({
     this.prsList.on('click', function (model) {
       OB.UTIL.showLoading(true);
       process.exec({
-        orderid: model.get('id')
+        orderid: model.get('id'),
+        forReturn: model.get('forReturn')
       }, function (data) {
         OB.UTIL.showLoading(false);
         if (data) {
