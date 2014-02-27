@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -270,7 +270,8 @@ isc.OBTreeItemTree.addProperties({
   },
 
   setDataSource: function (ds, fields) {
-    var me = this;
+    var me = this,
+        i;
     ds.transformRequest = function (dsRequest) {
       var target = window[dsRequest.componentId];
       dsRequest.params = dsRequest.params || {};
@@ -294,6 +295,10 @@ isc.OBTreeItemTree.addProperties({
     };
 
     fields = this.treeItem.pickListFields;
+
+    for (i = 0; i < fields.length; i++) {
+      fields[i].escapeHTML = true;
+    }
     ds.primaryKeys = {
       id: 'id'
     };
