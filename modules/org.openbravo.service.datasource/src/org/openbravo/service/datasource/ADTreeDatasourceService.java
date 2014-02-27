@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,6 +69,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   private static final Logger logger = LoggerFactory.getLogger(ADTreeDatasourceService.class);
   private static final String AD_MENU_TABLE_ID = "116";
   private static final String AD_ORG_TABLE_ID = "155";
+  private static final String ROOT_ORGANIZATION_ID = "0";
+  private static final String SUMMARY_LEVEL_PROPERTY = "summaryLevel";
 
   @Override
   /**
@@ -300,6 +302,10 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         } else {
           value.put("parentId", node[PARENT_ID]);
         }
+
+        if (!canAcceptDrop(entity, bob)) {
+          value.put("canAcceptDrop", false);
+        }
         value.put("seqno", node[SEQNO]);
         value.put("_hasChildren",
             (this.nodeHasChildren(entity, (String) node[NODE_ID], hqlWhereClause)) ? true : false);
@@ -314,6 +320,29 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       cont++;
     }
     return responseData;
+  }
+
+  /**
+   * 
+   * @param entity
+   *          entity of the tree being fetched
+   * @param bob
+   *          node whose disponibility to accept drops is to be determined
+   * @return true if the node can accept dropped records, false otherwise
+   */
+  private boolean canAcceptDrop(Entity entity, BaseOBObject bob) {
+    if (AD_ORG_TABLE_ID.equals(entity.getTableId()) && ROOT_ORGANIZATION_ID.equals(bob.getId())) {
+      // Special case, * organization has summaryField = false but can accept drop
+      return true;
+    }
+    boolean canAcceptDrop = true;
+    if (entity.hasProperty(SUMMARY_LEVEL_PROPERTY)
+        && (Boolean) bob.get(SUMMARY_LEVEL_PROPERTY) == false) {
+      canAcceptDrop = false;
+    }
+    // else {} If the entity does not have a summaryLevel property then all its nodes can accept
+    // drop
+    return canAcceptDrop;
   }
 
   private String getParentRecordIdFromCriteria(JSONArray criteria, String parentPropertyName) {
