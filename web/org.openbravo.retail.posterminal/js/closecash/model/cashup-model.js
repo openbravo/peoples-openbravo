@@ -54,7 +54,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       'isbeingprocessed': 'N'
     }, function (cashUp) {
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUp.at(0).get('id')
+        'cashup_id': cashUp.at(0).get('id'),
+        '_orderByClause': 'name asc'
       }, function (payMthds) { //OB.Dal.find success
         _.each(OB.POS.modelterminal.get('payments'), function (payment, index) {
           expected = 0;
@@ -411,7 +412,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       terminalId: OB.POS.modelterminal.get('terminal').id,
       cashUpId: OB.UTIL.get_UUID(),
       cashCloseInfo: [],
-      cashUpDate: new Date()
+      cashUpDate: this.get('cashUpReport').at(0).get('time')
     },
         server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
         me = this,
@@ -424,7 +425,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         terminalId: OB.POS.modelterminal.get('terminal').id,
         cashUpId: cashUp.at(0).get('id'),
         cashCloseInfo: [],
-        cashUpDate: new Date()
+        cashUpDate: me.get('cashUpReport').at(0).get('time')
       });
       for (i = 0; i < me.additionalProperties.length; i++) {
         objToSend.set(me.additionalProperties[i], me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0)));

@@ -450,6 +450,12 @@ enyo.kind({
               }
             }, {
               style: 'padding: 5px; text-align:center;',
+              name: 'store'
+            }, {
+              style: 'padding: 5px; text-align:center;',
+              name: 'terminal'
+            }, {
+              style: 'padding: 5px; text-align:center;',
               name: 'user'
             }, {
               name: 'time',
@@ -536,8 +542,10 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
+    this.$.store.setContent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.POS.modelterminal.get('terminal').organization$_identifier);
+    this.$.terminal.setContent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.POS.modelterminal.get('terminal')._identifier);
     this.$.user.setContent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier);
-    this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + new Date().toString().substring(3, 24));
+    this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(new Date()) + ' - ' + OB.I18N.formatHour(new Date()));
   },
   init: function (model) {
     this.model = model;

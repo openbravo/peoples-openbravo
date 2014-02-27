@@ -57,24 +57,24 @@
           }
           //Sales order: Positive line
           if (line.get('qty') > 0 && orderType !== 3) {
-            cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), line.get('net')));
-            cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), gross));
+            cashUp.at(0).set('netSales', OB.I18N.formatCurrency(OB.DEC.add(cashUp.at(0).get('netSales'), line.get('net'))));
+            cashUp.at(0).set('grossSales', OB.I18N.formatCurrency(OB.DEC.add(cashUp.at(0).get('grossSales'), gross)));
             //Return from customer or Sales with return: Negative line
           } else if (line.get('qty') < 0 && orderType !== 3) {
-            cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), -line.get('net')));
-            cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), -gross));
+            cashUp.at(0).set('netReturns', OB.I18N.formatCurrency(OB.DEC.add(cashUp.at(0).get('netReturns'), -line.get('net'))));
+            cashUp.at(0).set('grossReturns', OB.I18N.formatCurrency(OB.DEC.add(cashUp.at(0).get('grossReturns'), -gross)));
             //Void Layaway
           } else if (orderType === 3) {
             if (line.get('qty') > 0) {
-              cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), -line.get('net')));
-              cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), -gross));
+              cashUp.at(0).set('netSales', OB.I18N.formatCurrency(OB.DEC.add(cashUp.at(0).get('netSales'), -line.get('net'))));
+              cashUp.at(0).set('grossSales', OB.I18N.formatCurrency(OB.DEC.add(cashUp.at(0).get('grossSales'), -gross)));
             } else {
-              cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), line.get('net')));
-              cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), gross));
+              cashUp.at(0).set('netReturns', OB.I18N.formatCurrency(OB.DEC.add(cashUp.at(0).get('netReturns'), line.get('net'))));
+              cashUp.at(0).set('grossReturns', OB.I18N.formatCurrency(OB.DEC.add(cashUp.at(0).get('grossReturns'), gross)));
             }
           }
         });
-        cashUp.at(0).set('totalRetailTransactions', OB.DEC.sub(cashUp.at(0).get('grossSales'), cashUp.at(0).get('grossReturns')));
+        cashUp.at(0).set('totalRetailTransactions', OB.I18N.formatCurrency(OB.DEC.sub(cashUp.at(0).get('grossSales'), cashUp.at(0).get('grossReturns'))));
         OB.Dal.save(cashUp.at(0), null, null);
         cashuptaxes = [];
         _.each(receipt.get('lines').models, function (line) {
@@ -91,7 +91,7 @@
             }
             cashuptaxes.push({
               taxName: line.get('taxLines')[i].name,
-              taxAmount: taxAmount,
+              taxAmount: OB.I18N.formatCurrency(taxAmount),
               taxOrderType: taxOrderType.toString(),
               cashupID: cashUp.at(0).get('id')
             });

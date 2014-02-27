@@ -45,8 +45,8 @@ public class ProcessCashClose extends JSONProcessSimple {
     try {
       if (jsonCashup.has("cashUpDate")) {
         String strCashUpDate = (String) jsonCashup.getString("cashUpDate");
-        cashUpDate = (Date) JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.DATE,
-            strCashUpDate);
+        cashUpDate = (Date) JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.DATETIME,
+            ((String) strCashUpDate).subSequence(0, ((String) strCashUpDate).lastIndexOf(".")));
       } else {
         log.error("Error processing cash close: error retrieving cashUp date. Using current date");
       }
