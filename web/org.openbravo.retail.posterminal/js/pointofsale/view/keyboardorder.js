@@ -271,7 +271,9 @@ enyo.kind({
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
         }
-        value = keyboard.line.get('qty') - qty;
+        if (!_.isUndefined(keyboard.line)) {
+          value = keyboard.line.get('qty') - qty;
+        }
         if (value === 0) { // If final quantity will be 0 then request approval
           OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
             if (approved) {
