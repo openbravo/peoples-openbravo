@@ -38,10 +38,29 @@ isc.OBTimeItem.addProperties({
   longTimeFormat: 'HH:MM:SS',
 
   mapValueToDisplay: function (value) {
-    if (isc.isA.Date(value)) {
-      return isc.Time.toShortTime(value, this.timeFormatter);
+    var newValue = value;
+    if (isc.isA.Date(newValue)) {
+      if (this.isAbsoluteTime) {
+        // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
+        // http://forums.smartclient.com/showthread.php?p=116135
+        newValue = OB.Utilities.Date.addTimezoneOffset(newValue);
+      }
+      newValue = isc.Time.toShortTime(newValue, this.timeFormatter);
     }
-    return value;
+    return newValue;
+  },
+
+  mapDisplayToValue: function (value) {
+    var newValue = value;
+    if (Object.prototype.toString.call(newValue) === '[object String]') {
+      newValue = isc.Time.parseInput(newValue);
+      if (this.isAbsoluteTime) {
+        // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
+        // http://forums.smartclient.com/showthread.php?p=116135
+        newValue = OB.Utilities.Date.substractTimezoneOffset(newValue);
+      }
+    }
+    return newValue;
   },
 
   // make sure that the undo/save buttons get enabled, needs to be done like
@@ -126,6 +145,14 @@ isc.OBTimeItem.addProperties({
 
     this.Super('init', arguments);
 
+    if (this.items && this.items[0]) {
+      // Since Smartclient 10.0d, there is a TextItem inside the TimeItem
+      // which is the one that at least renders the value
+      if (this.isAbsoluteTime) {
+        this.items[0].isAbsoluteTime = true;
+      }
+    }
+
     if (this.showTimeGrid && this.form && !this.timeGrid) {
       oldShowHint = this.showHint;
       this.showHint = true;
@@ -188,42 +215,6 @@ isc.OBTimeItem.addProperties({
         data[this.name].setTime(data[this.name].getTime() + UTCOffsetInMiliseconds);
       }
       this.setValue(data[this.name]);
-    }
-  },
-
-  // Convert a text value entered in this item's text field to a final data value for storage
-  parseEditorValue: function (value, form, item) {
-    if (this.isAbsoluteTime) {
-      // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
-      // http://forums.smartclient.com/showthread.php?p=116135
-      var newValue = value,
-          format = this.timeFormatter;
-      if (Object.prototype.toString.call(newValue) === '[object String]') {
-        newValue = isc.Time.parseInput(newValue);
-      }
-      newValue = OB.Utilities.Date.substractTimezoneOffset(newValue);
-      newValue = isc.Time.format(newValue, format);
-      return newValue;
-    } else {
-      return value;
-    }
-  },
-
-  // Convert this item's data value to a text value for display in this item's text field
-  formatEditorValue: function (value, record, form, item) {
-    if (this.isAbsoluteTime) {
-      // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
-      // http://forums.smartclient.com/showthread.php?p=116135
-      var newValue = value,
-          format = this.timeFormatter;
-      if (Object.prototype.toString.call(newValue) === '[object String]') {
-        newValue = isc.Time.parseInput(newValue);
-      }
-      newValue = OB.Utilities.Date.addTimezoneOffset(newValue);
-      newValue = isc.Time.format(newValue, format);
-      return newValue;
-    } else {
-      return value;
     }
   }
 });

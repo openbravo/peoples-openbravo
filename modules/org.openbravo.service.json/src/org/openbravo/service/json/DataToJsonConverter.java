@@ -69,8 +69,8 @@ public class DataToJsonConverter {
   private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
   private final SimpleDateFormat jsTimeFormat = JsonUtils.createJSTimeFormat();
   // private final static SimpleDateFormat xmlTimeFormat = JsonUtils.createTimeFormat();
-  // private final static SimpleDateFormat xmlTimeFormatWithoutMTOffset = JsonUtils
-  // .createTimeFormatWithoutGMTOffset();
+  private final static SimpleDateFormat xmlTimeFormatWithoutMTOffset = JsonUtils
+      .createTimeFormatWithoutGMTOffset();
 
   // additional properties to return as a flat list
   private List<String> additionalProperties = new ArrayList<String>();
@@ -326,9 +326,7 @@ public class DataToJsonConverter {
         Timestamp localTime = (Timestamp) value;
         Date UTCTime = convertToUTC(localTime);
 
-        // Smartclient expects a datetime because we set this property in the client:
-        // isc.DataSource.serializeTimeAsDatetime = true;
-        return xmlDateTimeFormat.format(UTCTime);
+        return xmlTimeFormatWithoutMTOffset.format(UTCTime);
       } else if (property.getDomainType() instanceof AbsoluteTimeDomainType) {
         final String formattedValue = jsTimeFormat.format(value);
         return JsonUtils.convertToCorrectXSDFormat(formattedValue);
