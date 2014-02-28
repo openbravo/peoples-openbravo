@@ -23,6 +23,7 @@ import java.util.List;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
+import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -33,8 +34,8 @@ import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
@@ -101,9 +102,11 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
             }
           }
         }
+        updateReconciliations(reconciliation);
         reconciliation.setProcessed(true);
         reconciliation.setAPRMProcessReconciliation("R");
         reconciliation.setAprmProcessRec("R");
+        reconciliation.setAPRMProcessReconciliationForce("R");
         reconciliation.setDocumentStatus("CO");
         OBDal.getInstance().save(reconciliation);
         OBDal.getInstance().flush();
@@ -143,8 +146,10 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
           bundle.setResult(msg);
           return;
         }
+        final boolean isForceProcess = (Boolean) "6BF16EFC772843AC9A17552AE0B26AB7".equals(bundle
+            .getProcessId());
         // Transaction exists
-        if (!isLastReconciliation(reconciliation)) {
+        if (!isForceProcess && !MatchTransactionDao.islastreconciliation(reconciliation)) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
           msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
@@ -152,12 +157,40 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
           bundle.setResult(msg);
           return;
         }
+        if (existsDraftReconciliation(reconciliation.getAccount())) {
+          msg.setType("Error");
+          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+              "@APRM_DraftReconciliationExists@"));
+          bundle.setResult(msg);
+          return;
+        }
+        for (FIN_ReconciliationLine_v recLine : reconciliation.getFINReconciliationLineVList()) {
+          boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(recLine
+              .getFinancialAccountTransaction().getReconciliation().TABLE_NAME, recLine
+              .getFinancialAccountTransaction().getReconciliation().getId(), recLine
+              .getFinancialAccountTransaction().getReconciliation().TABLE_NAME + "_ID", "LE");
+          if (!FIN_Utility.isPeriodOpen(recLine.getFinancialAccountTransaction().getClient()
+              .getId(), AcctServer.DOCTYPE_Reconciliation, recLine.getFinancialAccountTransaction()
+              .getOrganization().getId(),
+              OBDateUtils.formatDate(recLine.getFinancialAccountTransaction().getDateAcct()))
+              && orgLegalWithAccounting) {
+            msg.setType("Error");
+            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+            msg.setMessage(String.format(Utility.parseTranslation(conProvider, vars, language,
+                "@APRM_PeriodNotAvailableClearedItem@"), recLine.getIdentifier()));
+            bundle.setResult(msg);
+            OBDal.getInstance().rollbackAndClose();
+            return;
+          }
+        }
         reconciliation.setProcessed(false);
         OBDal.getInstance().save(reconciliation);
         OBDal.getInstance().flush();
         reconciliation.setDocumentStatus("DR");
         reconciliation.setAPRMProcessReconciliation("P");
         reconciliation.setAprmProcessRec("P");
+        reconciliation.setAPRMProcessReconciliationForce("P");
         OBDal.getInstance().save(reconciliation);
         OBDal.getInstance().flush();
         Boolean invoicePaidold = false;
@@ -205,39 +238,49 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
     }
   }
 
-  private boolean isLastReconciliation(FIN_Reconciliation reconciliation) {
+  private boolean existsDraftReconciliation(FIN_FinancialAccount account) {
+    OBContext.setAdminMode(false);
+    try {
+      OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance().createCriteria(
+          FIN_Reconciliation.class);
+      obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_DOCUMENTSTATUS, "DR"));
+      obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_PROCESSED, false));
+      obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, account));
+      obc.setMaxResults(1);
+      return obc.uniqueResult() != null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private void updateReconciliations(FIN_Reconciliation reconciliation) {
     final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance().createCriteria(
         FIN_Reconciliation.class);
     obc.add(Restrictions.ge(FIN_Reconciliation.PROPERTY_ENDINGDATE, reconciliation.getEndingDate()));
-    obc.add(Restrictions.gt(FIN_Reconciliation.PROPERTY_CREATIONDATE,
+    obc.add(Restrictions.ge(FIN_Reconciliation.PROPERTY_CREATIONDATE,
         reconciliation.getCreationDate()));
     obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, reconciliation.getAccount()));
     obc.addOrder(Order.asc(FIN_Reconciliation.PROPERTY_ENDINGDATE));
     obc.addOrder(Order.asc(FIN_Reconciliation.PROPERTY_CREATIONDATE));
     final List<FIN_Reconciliation> reconciliations = obc.list();
-    if (reconciliations.size() == 0) {
-      return true;
-    } else if (reconciliations.size() == 1) {
-      if (reconciliations.get(0).isProcessed()) {
-        return false;
-      } else if (reconciliations.get(0).getFINReconciliationLineVList().size() == 0) {
-        FIN_Reconciliation reconciliationToDelete = OBDal.getInstance().get(
-            FIN_Reconciliation.class, reconciliations.get(0).getId());
-        for (FIN_BankStatement bst : reconciliationToDelete.getFINBankStatementList()) {
-          FIN_BankStatement bankstatement = OBDal.getInstance().get(FIN_BankStatement.class,
-              bst.getId());
-          bankstatement.setFINReconciliation(null);
-          OBDal.getInstance().save(bankstatement);
-          OBDal.getInstance().flush();
-        }
-        OBDal.getInstance().remove(reconciliationToDelete);
-        OBDal.getInstance().flush();
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
+    for (FIN_Reconciliation rec : reconciliations) {
+      updateReconciliation(rec);
     }
+    return;
   }
+
+  private void updateReconciliation(FIN_Reconciliation reconciliation) {
+    OBContext.setAdminMode(false);
+    try {
+      // This is needed to allow completing a reconciliation with unmatched bank statement lines
+      reconciliation.setStartingbalance(MatchTransactionDao.getStartingBalance(reconciliation));
+      reconciliation.setEndingBalance(MatchTransactionDao.getEndingBalance(reconciliation));
+      OBDal.getInstance().save(reconciliation);
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return;
+  }
+
 }

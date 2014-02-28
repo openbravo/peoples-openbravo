@@ -267,6 +267,7 @@ isc.OBToolbarActionButton.addProperties({
 
     if (!multiSelect) {
       OB.Utilities.fixNull250(currentValues);
+      OB.Utilities.fixNull250(context);
 
       this.visible = !this.displayIf || (context && this.displayIf(this.contextView.viewForm, currentValues, context));
       readonly = this.readOnlyIf && context && this.readOnlyIf(this.contextView.viewForm, currentValues, context);
