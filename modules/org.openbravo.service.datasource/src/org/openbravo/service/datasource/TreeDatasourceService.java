@@ -280,6 +280,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
     } catch (Throwable t) {
       log.error("Error on tree datasource", t);
+      return JsonUtils.convertExceptionToJson(t);
     } finally {
       OBContext.restorePreviousMode();
     }
