@@ -360,8 +360,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     enumConcepts = ['expected', 'counted', 'difference', 'qtyToKeep', 'foreignCounted'];
     enumSecondConcepts = ['foreignExpected', 'foreignCounted', 'foreignDifference', 'qtyToKeep', 'qtyToKeep'];
     for (counter = 0; counter < 5; counter++) {
-      for (i = 0; i < this.get('paymentList').models.length; i++) {
-        model = this.get('paymentList').models[i];
+      var sortedPays = _.sortBy(this.get('paymentList').models, function (p) {
+        return p.get('name');
+      });
+      for (i = 0; i < sortedPays.length; i++) {
+        model = sortedPays[i];
         if (!model.get(enumConcepts[counter])) {
           countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
             name: model.get('name'),

@@ -22,7 +22,7 @@ enyo.kind({
         style: 'border-bottom: 1px solid #cccccc;',
         components: [{
           style: 'float:left; display: table; width: 50%',
-          components: [{          
+          components: [{
             name: 'name',
             style: 'padding: 10px 20px 10px 10px; display: table-cell; width: 40%;'
           }, {
@@ -31,7 +31,7 @@ enyo.kind({
           }, {
             name: 'expected',
             style: 'padding: 10px 10px 10px 0px; text-align:right; display: table-cell; width: 35%;'
-          }]            
+          }]
         }, {
           style: 'float:left; display: table; width: 50%;',
           components: [{
@@ -66,7 +66,7 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.name.setContent(this.model.get('name'));
-    if (this.model.get('rate') && this.model.get('rate') !== '1') {
+    if (this.model.get('rate') && this.model.get('rate') !== 1) {
       this.$.foreignExpected.setContent('(' + OB.I18N.formatCurrency(this.model.get('foreignExpected')) + ' ' + this.model.get('isocode') + ')');
       this.$.foreignExpected.show();
     }
@@ -79,7 +79,7 @@ enyo.kind({
     if (counted !== null && counted !== udfn) {
       this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, counted)));
       this.$.counted.show();
-      if (this.model.get('rate') && this.model.get('rate') !== '1') {
+      if (this.model.get('rate') && this.model.get('rate') !== 1) {
         this.$.foreignCounted.setContent('(' + OB.I18N.formatCurrency(this.model.get('foreignCounted')) + ' ' + this.model.get('isocode') + ')');
       }
       this.$.buttonOk.hide();
@@ -143,7 +143,7 @@ enyo.kind({
                   }]
                 }, {
                   style: 'float: left; display:table; width: 50%; ',
-                  components: [{                  
+                  components: [{
                     style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 100%; text-align: right;',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_LblCounted'));
@@ -166,15 +166,15 @@ enyo.kind({
                   components: [{
                     style: 'float: left; display:table; width: 50%; ',
                     components: [{
-                      style: 'display:table-cell; width: 100%;', 
-                      content: '&nbsp;', 
+                      style: 'display:table-cell; width: 100%;',
+                      content: '&nbsp;',
                       allowHtml: true
                     }]
                   }, {
                     style: 'float: left; display:table; width: 50%; ',
                     components: [{
                       style: 'display:table-cell; width: 50px; padding: 10px 10px 10px 0px;'
-                    }, {               
+                    }, {
                       style: 'display:table-cell; width: 15%;',
                       components: [{
                         name: 'buttonAllOk',
@@ -182,7 +182,7 @@ enyo.kind({
                         classes: 'btnlink-green btnlink-cashup-ok btn-icon-small btn-icon-check',
                         ontap: 'doCountAllOK'
                       }]
-                    }, {        
+                    }, {
                       // This element has been intentionally created empty.
                     }]
                   }]
@@ -194,8 +194,8 @@ enyo.kind({
                 classes: 'span12',
                 style: 'border-bottom: 1px solid #cccccc;',
                 components: [{
-                  style: 'float: left; display:table; width: 50%; ',   
-                  components: [{                                                 
+                  style: 'float: left; display:table; width: 50%; ',
+                  components: [{
                     name: 'totalLbl',
                     style: 'padding: 10px 10px 10px 10px; display: table-cell; width: 60%;',
                     initComponents: function () {
@@ -206,12 +206,12 @@ enyo.kind({
                     components: [{
                       name: 'total',
                       kind: 'OB.OBPOSCashUp.UI.RenderTotal'
-  
+
                     }]
                   }]
                 }, {
                   components: [{
-                    style: 'float: left; display:table; width: 50%; ',                
+                    style: 'float: left; display:table; width: 50%; ',
                     components: [{
                       style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 100%; text-align: right;',
                       name: 'difference',
