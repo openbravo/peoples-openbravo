@@ -782,6 +782,7 @@ public class OrderLoader extends JSONProcessSimple {
             lineNo, pendingQty.negate(), getBinForReturns(jsonorder.getString("posTerminal")), null);
 
       } else {
+        HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
         if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           // The M_GetStock function is used
           Process process = (Process) OBDal.getInstance().get(Process.class,
@@ -808,8 +809,7 @@ public class OrderLoader extends JSONProcessSimple {
             parameters.put("M_Warehouse_Rule_ID",
                 (String) DalUtil.getId(orderLine.get("warehouseRule")));
           }
-          if (orderLine.getEntity().hasProperty("warehouse")
-              && orderLine.get("warehouse") != null) {
+          if (orderLine.getEntity().hasProperty("warehouse") && orderLine.get("warehouse") != null) {
             parameters.put("Priority_Warehouse_ID",
                 (String) DalUtil.getId(orderLine.get("warehouse")));
           }
@@ -847,9 +847,13 @@ public class OrderLoader extends JSONProcessSimple {
               if (negativeLine) {
                 qty = qty.negate();
               }
-              addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                  jsonorder, lineNo, qty, stock.getStorageDetail().getStorageBin(), stock
-                      .getStorageDetail().getAttributeSetValue());
+              ShipmentInOutLine objShipmentLine = addShipemntline(shipment, shplineentity,
+                  orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, qty, stock
+                      .getStorageDetail().getStorageBin(), stock.getStorageDetail()
+                      .getAttributeSetValue());
+
+              usedBins.put(stock.getStorageDetail().getStorageBin().getId(), objShipmentLine);
+
             }
           } finally {
             bins.close();
@@ -885,14 +889,22 @@ public class OrderLoader extends JSONProcessSimple {
           if (jsonorder.getLong("orderType") == 1) {
             pendingQty = pendingQty.negate();
           }
-          addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-              jsonorder, lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues);
+          ShipmentInOutLine objShipmentInOutLine = getValueOfKey(queryLoc.list().get(0).getId(),
+              usedBins);
+          if (objShipmentInOutLine != null) {
+            objShipmentInOutLine.setMovementQuantity(objShipmentInOutLine.getMovementQuantity()
+                .add(pendingQty));
+            OBDal.getInstance().save(objShipmentInOutLine);
+          } else {
+            addShipemntline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+                jsonorder, lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues);
+          }
         }
       }
     }
   }
 
-  private void addShipemntline(ShipmentInOut shipment, Entity shplineentity,
+  private ShipmentInOutLine addShipemntline(ShipmentInOut shipment, Entity shplineentity,
       JSONObject jsonOrderLine, OrderLine orderLine, JSONObject jsonorder, long lineNo,
       BigDecimal qty, Locator bin, AttributeSetInstance attributeSetInstance) throws JSONException {
     ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
@@ -915,6 +927,7 @@ public class OrderLoader extends JSONProcessSimple {
     }
     shipment.getMaterialMgmtShipmentInOutLineList().add(line);
     OBDal.getInstance().save(line);
+    return line;
   }
 
   protected void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder)
@@ -1579,6 +1592,19 @@ public class OrderLoader extends JSONProcessSimple {
         new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "", entity
             .getTableName(), doctypeTarget == null ? "" : doctypeTarget.getId(),
         doctype == null ? "" : doctype.getId(), false, true);
+  }
+
+  public static ShipmentInOutLine getValueOfKey(String key,
+      HashMap<String, ShipmentInOutLine> hashMap) {
+
+    Iterator it = hashMap.entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry e = (Map.Entry) it.next();
+      if (e.getKey() == key) {
+        return (ShipmentInOutLine) e.getValue();
+      }
+    }
+    return null;
   }
 
   @Override
