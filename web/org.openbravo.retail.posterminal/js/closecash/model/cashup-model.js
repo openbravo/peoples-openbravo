@@ -150,7 +150,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport.get('deposits').push(new Backbone.Model({
             origAmount: OB.DEC.add(0, p.get('totalSales')),
             amount: OB.DEC.div(p.get('totalSales'), p.get('rate')),
-            description: OB.I18N.getLabel('OBPOS_Sales', [p.get('name')]),
+            description: p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
@@ -158,7 +158,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport.get('drops').push(new Backbone.Model({
             origAmount: OB.DEC.add(0, p.get('totalReturns')),
             amount: OB.DEC.div(p.get('totalReturns'), p.get('rate')),
-            description: OB.I18N.getLabel('OBPOS_Returns', [p.get('name')]),
+            description: p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));

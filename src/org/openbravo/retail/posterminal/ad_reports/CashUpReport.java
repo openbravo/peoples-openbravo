@@ -278,8 +278,7 @@ public class CashUpReport extends HttpSecureAppServlet {
                   BigDecimal.ROUND_UP));
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "WITHDRAWAL");
-              psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_Returns",
-                  new String[] { obja[0].toString() }));
+              psData.put("LABEL", obja[0].toString());
               psData.put("VALUE", drop.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
                   .toString());
               if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
@@ -295,8 +294,7 @@ public class CashUpReport extends HttpSecureAppServlet {
             } else {
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "WITHDRAWAL");
-              psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_Returns",
-                  new String[] { obja[0].toString() }));
+              psData.put("LABEL", obja[0].toString());
               psData.put("VALUE", BigDecimal.ZERO.toString());
               if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
                 psData.put("FOREIGN_VALUE", BigDecimal.ZERO.toString());
@@ -316,11 +314,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               expected = expected.add(deposit);
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "SALE");
-              psData
-                  .put(
-                      "LABEL",
-                      OBMessageUtils.getI18NMessage("OBPOS_Sales",
-                          new String[] { obja[0].toString() }));
+              psData.put("LABEL", obja[0].toString());
               psData.put("VALUE", deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
                   .toString());
               if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
@@ -336,11 +330,7 @@ public class CashUpReport extends HttpSecureAppServlet {
             } else {
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "SALE");
-              psData
-                  .put(
-                      "LABEL",
-                      OBMessageUtils.getI18NMessage("OBPOS_Sales",
-                          new String[] { obja[0].toString() }));
+              psData.put("LABEL", obja[0].toString());
               psData.put("VALUE", BigDecimal.ZERO.toString());
               if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
                 psData.put("FOREIGN_VALUE", BigDecimal.ZERO.toString());
@@ -358,9 +348,8 @@ public class CashUpReport extends HttpSecureAppServlet {
         } else {
           psData = new HashMap<String, String>();
           psData.put("GROUPFIELD", "WITHDRAWAL");
-          psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_Returns",
-              new String[] { ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-                  .getPaymentType().getCommercialName().toString() }));
+          psData.put("LABEL", ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
+              .getPaymentType().getCommercialName().toString());
           psData.put("VALUE", BigDecimal.ZERO.toString());
           if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
             psData.put("FOREIGN_VALUE", BigDecimal.ZERO.toString());
@@ -375,9 +364,8 @@ public class CashUpReport extends HttpSecureAppServlet {
 
           psData = new HashMap<String, String>();
           psData.put("GROUPFIELD", "SALE");
-          psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_Sales",
-              new String[] { ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-                  .getPaymentType().getCommercialName().toString() }));
+          psData.put("LABEL", ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
+              .getPaymentType().getCommercialName().toString());
           psData.put("VALUE", BigDecimal.ZERO.toString());
           if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
             psData.put("FOREIGN_VALUE", BigDecimal.ZERO.toString());
