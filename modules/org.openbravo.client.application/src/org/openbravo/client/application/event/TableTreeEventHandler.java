@@ -58,8 +58,7 @@ public class TableTreeEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onNew(@Observes
-  EntityNewEvent event) {
+  public void onNew(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -70,8 +69,7 @@ public class TableTreeEventHandler extends EntityPersistenceEventObserver {
     checkTreeStructure(tableValue, treeStructureValue);
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
