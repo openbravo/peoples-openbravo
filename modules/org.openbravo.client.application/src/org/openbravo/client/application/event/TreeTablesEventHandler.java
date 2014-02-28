@@ -37,6 +37,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
@@ -76,30 +77,40 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
-    BaseOBObject bob = event.getTargetInstance();
-    DataSourceService dataSource = getDataSource(bob.getEntity().getTableId());
-    if (dataSource == null) {
-      return;
+    OBContext.setAdminMode(true);
+    try {
+      BaseOBObject bob = event.getTargetInstance();
+      DataSourceService dataSource = getDataSource(bob.getEntity().getTableId());
+      if (dataSource == null) {
+        return;
+      }
+      JSONObject jsonBob = this.fromBobToJSONObject(bob);
+      Map<String, String> parameters = new HashMap<String, String>();
+      parameters.put("jsonBob", jsonBob.toString());
+      dataSource.add(parameters, null);
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    JSONObject jsonBob = this.fromBobToJSONObject(bob);
-    Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put("jsonBob", jsonBob.toString());
-    dataSource.add(parameters, null);
   }
 
   public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
-    BaseOBObject bob = event.getTargetInstance();
-    DataSourceService dataSource = getDataSource(bob.getEntity().getTableId());
-    if (dataSource == null) {
-      return;
+    OBContext.setAdminMode(true);
+    try {
+      BaseOBObject bob = event.getTargetInstance();
+      DataSourceService dataSource = getDataSource(bob.getEntity().getTableId());
+      if (dataSource == null) {
+        return;
+      }
+      JSONObject jsonBob = this.fromBobToJSONObject(bob);
+      Map<String, String> parameters = new HashMap<String, String>();
+      parameters.put("jsonBob", jsonBob.toString());
+      dataSource.remove(parameters);
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    JSONObject jsonBob = this.fromBobToJSONObject(bob);
-    Map<String, String> parameters = new HashMap<String, String>();
-    parameters.put("jsonBob", jsonBob.toString());
-    dataSource.remove(parameters);
   }
 
   private DataSourceService getDataSource(String tableId) {
