@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -57,7 +57,9 @@ isc.OBTreeViewGrid.addProperties({
     } else {
       this.canSort = true;
     }
-    this.confirmNodeReparent = OB.PropertyStore.get("OBUIAPP_ConfirmNodeReparent", this.view.windowId);
+    this.confirmNodeReparent = OB.PropertyStore.get('OBUIAPP_ConfirmNodeReparent', this.view.windowId);
+    this.filterNoRecordsEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
+    console.log('tree popup', this.isPopup);
   },
 
   // Some OBTreeViewGrid functionality is alreadyd implemented in OBViewGrid
@@ -75,7 +77,6 @@ isc.OBTreeViewGrid.addProperties({
     this.loadingDataMessage = this.view.viewGrid.loadingDataMessage;
     this.emptyMessage = this.view.viewGrid.emptyMessage;
     this.noDataEmptyMessage = this.view.viewGrid.noDataEmptyMessage;
-    this.filterNoRecordsEmptyMessage = this.view.viewGrid.filterNoRecordsEmptyMessage;
     this.clearFilter = this.view.viewGrid.clearFilter;
   },
 
