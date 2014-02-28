@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -41,9 +42,11 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.ui.Tab;
@@ -76,7 +79,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    * abstract method, which is implemented in the classes that extend TreeDatasourceService
    */
   @Override
-  public String add(Map<String, String> parameters, String content) {
+  public final String add(Map<String, String> parameters, String content) {
     try {
       // We can't get the bob from DAL, it has not been saved yet
       JSONObject bobProperties = new JSONObject(parameters.get("jsonBob"));
@@ -99,7 +102,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    * abstract method, which is implemented in the classes that extend TreeDatasourceService
    */
   @Override
-  public String remove(Map<String, String> parameters) {
+  public final String remove(Map<String, String> parameters) {
 
     try {
       // We can't get the bob from DAL, it has not been saved yet
@@ -137,7 +140,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    * user
    */
   @Override
-  public String fetch(Map<String, String> parameters) {
+  public final String fetch(Map<String, String> parameters) {
     OBContext.setAdminMode(true);
     final JSONObject jsonResult = new JSONObject();
 
@@ -192,7 +195,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       }
 
       Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-      if (!hasAccess(entity, fromTreeView)) {
+      if (!hasAccess(entity, tab, fromTreeView)) {
         JSONObject jsonResponse = new JSONObject();
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("messageType", "error");
@@ -373,13 +376,21 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return isParentIdCriteria;
   }
 
-  private boolean hasAccess(Entity entity, boolean fromTreeView) {
+  private boolean hasAccess(Entity entity, Tab tab, boolean fromTreeView) {
     boolean hasAccessToTable = true;
     // TODO: If it is a reference, check if it is derived readable
     try {
       OBContext.getOBContext().getEntityAccessChecker().checkReadable(entity);
     } catch (OBSecurityException e) {
       hasAccessToTable = false;
+    }
+    if (hasAccessToTable && tab != null) {
+      OBCriteria<WindowAccess> qWindowAccess = OBDal.getInstance().createCriteria(
+          WindowAccess.class);
+      qWindowAccess.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, tab.getWindow()));
+      qWindowAccess.add(Restrictions.eq(WindowAccess.PROPERTY_ROLE, OBContext.getOBContext()
+          .getRole()));
+      hasAccessToTable = qWindowAccess.count() > 0;
     }
     return hasAccessToTable;
   }
@@ -704,8 +715,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    * @param content json objects containing the definition of the updated node(s)
    * @return a valid response that contains the definition of the updated node(s)
    */
-  public String update(Map<String, String> parameters, String content) {
-
+  public final String update(Map<String, String> parameters, String content) {
     OBContext.setAdminMode(true);
     String response = null;
     try {
