@@ -229,13 +229,10 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       for (int i = 0; i < criterias.length(); i++) {
         JSONObject criteria = criterias.getJSONObject(i);
         if (!isDummyCriteria(criteria) && !isSubtabCriteria(entity, criteria)
-            && !isParentIdCriteria(criteria)) {
+            && !isParentIdCriteria(criteria) && !isEmptyCriteria(criteria)) {
           validCriteria = true;
         } else if (parentId == null && isParentIdCriteria(criteria)) {
-          {
-            parentId = criteria.getString("value");
-          }
-
+          parentId = criteria.getString("value");
         }
       }
 
@@ -316,6 +313,14 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       } else {
         return false;
       }
+    } catch (JSONException e) {
+      return false;
+    }
+  }
+
+  private boolean isEmptyCriteria(JSONObject jsonCriteria) {
+    try {
+      return jsonCriteria.has("criteria") && jsonCriteria.getJSONArray("criteria").length() == 0;
     } catch (JSONException e) {
       return false;
     }
