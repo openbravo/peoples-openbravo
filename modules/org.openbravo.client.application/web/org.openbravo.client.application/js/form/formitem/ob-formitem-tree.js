@@ -215,7 +215,7 @@ isc.OBTreeItemTree.addProperties({
   },
 
   dataArrived: function () {
-    var selectedValue, record, rowNum;
+    var selectedValue, record, rowNum, me = this;
     this.Super('dataArrived', arguments);
     selectedValue = this.treeItem.getValue();
     record = this.data.find('id', selectedValue);
@@ -224,7 +224,9 @@ isc.OBTreeItemTree.addProperties({
       rowNum = this.getRecordIndex(record);
       this.selectSingleRecord(record);
       // give grid time to draw
-      this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
+      setTimeout(function () {
+        me.scrollRecordIntoView(rowNum, true);
+      }, 100);
     }
   },
 
@@ -443,14 +445,16 @@ isc.OBTreeItemPopupWindow.addProperties({
 
       dataArrived: function () {
         var record, rowNum, i, selectedRecords = [],
-            ds, ids;
+            ds, ids, me = this;
         this.Super('dataArrived', arguments);
         if (this.treeItem.targetRecordId) {
           record = this.data.find(OB.Constants.ID, this.treeItem.targetRecordId);
           rowNum = this.getRecordIndex(record);
           this.selectSingleRecord(record);
           // give grid time to draw
-          this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
+          setTimeout(function () {
+            me.scrollRecordIntoView(rowNum, true);
+          }, 100);
           delete this.treeItem.targetRecordId;
         }
       },
