@@ -195,6 +195,9 @@ isc.OBTreeViewGrid.addProperties({
         i, len = nodes.length,
         nodesIdentifier = "",
         parentIdentifier, message;
+    if (folder.canBeParentNode === false) {
+      return;
+    }
     if (this.canReorderRecords) {
       if (this.confirmNodeReparent && this.canReorderRecords) {
         for (i = 0; i < len; i++) {
