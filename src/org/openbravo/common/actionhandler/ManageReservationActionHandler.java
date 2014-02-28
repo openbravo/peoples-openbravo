@@ -39,7 +39,6 @@ import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
-import org.openbravo.model.materialmgmt.onhandquantity.ReservationManualPickEdit;
 import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.service.db.DbUtility;
 
@@ -52,7 +51,7 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
   private static final Logger log = Logger.getLogger(ManageReservationActionHandler.class);
   private static final String strOrderLineTableId = "260";
   private static final String strReservationsTableId = "77264B07BB0E4FA483A07FB40C2E0FE0";
-  private static final String strResStockTableId = "D6079A4A6C2542678D9A50114367B967";
+  private static final String strResStockTableId = "7BDAC914CA60418795E453BC0E8C89DC";
   private static final String strResStockOrderTableId = "8A36D18D1D164189B7C3AE892F310E11";
 
   @Override
@@ -131,9 +130,8 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
       JSONObject selectedLine = selectedLines.getJSONObject(i);
       log.debug(selectedLine);
       ReservationStock resStock = null;
-      String strReservationStockId = selectedLine.get(
-          ReservationManualPickEdit.PROPERTY_RESERVATIONSTOCK).equals(null) ? "" : selectedLine
-          .getString(ReservationManualPickEdit.PROPERTY_RESERVATIONSTOCK);
+      String strReservationStockId = selectedLine.get("reservationStock").equals(null) ? ""
+          : selectedLine.getString("reservationStock");
       boolean existsReservationStock = StringUtils.isNotBlank(strReservationStockId);
       if (existsReservationStock) {
         resStock = OBDal.getInstance().get(ReservationStock.class, strReservationStockId);
@@ -143,23 +141,20 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
         resStock.setReservation(reservation);
         resStock.setOrganization(reservation.getOrganization());
 
-        final String strLocator = selectedLine.get(ReservationManualPickEdit.PROPERTY_STORAGEBIN)
-            .equals(null) ? "" : selectedLine
-            .getString(ReservationManualPickEdit.PROPERTY_STORAGEBIN);
+        final String strLocator = selectedLine.get("storageBin").equals(null) ? "" : selectedLine
+            .getString("storageBin");
         if (StringUtils.isNotBlank(strLocator)) {
           resStock.setStorageBin((Locator) OBDal.getInstance().getProxy(Locator.ENTITY_NAME,
               strLocator));
         }
-        final String strASIId = selectedLine.get(
-            ReservationManualPickEdit.PROPERTY_ATTRIBUTESETVALUE).equals(null) ? "" : selectedLine
-            .getString(ReservationManualPickEdit.PROPERTY_ATTRIBUTESETVALUE);
+        final String strASIId = selectedLine.get("attributeSetValue").equals(null) ? ""
+            : selectedLine.getString("attributeSetValue");
         if (StringUtils.isNotBlank(strASIId)) {
           resStock.setAttributeSetValue((AttributeSetInstance) OBDal.getInstance().getProxy(
               AttributeSetInstance.ENTITY_NAME, strASIId));
         }
-        final String strOrderLineId = selectedLine.get(
-            ReservationManualPickEdit.PROPERTY_PURCHASEORDERLINE).equals(null) ? "" : selectedLine
-            .getString(ReservationManualPickEdit.PROPERTY_PURCHASEORDERLINE);
+        final String strOrderLineId = selectedLine.get("purchaseOrderLine").equals(null) ? ""
+            : selectedLine.getString("purchaseOrderLine");
         if (StringUtils.isNotBlank(strOrderLineId)) {
           resStock.setSalesOrderLine((OrderLine) OBDal.getInstance().getProxy(
               OrderLine.ENTITY_NAME, strOrderLineId));
@@ -170,13 +165,11 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
         reservation.setMaterialMgmtReservationStockList(resStocks);
       }
 
-      final Boolean isAllocated = selectedLine.getString(
-          ReservationManualPickEdit.PROPERTY_ALLOCATED).equals(null) ? false : selectedLine
-          .getBoolean(ReservationManualPickEdit.PROPERTY_ALLOCATED);
+      final Boolean isAllocated = selectedLine.getString("allocated").equals(null) ? false
+          : selectedLine.getBoolean("allocated");
       resStock.setAllocated(isAllocated == true);
 
-      final BigDecimal qty = new BigDecimal(
-          selectedLine.getString(ReservationManualPickEdit.PROPERTY_QUANTITY));
+      final BigDecimal qty = new BigDecimal(selectedLine.getString("quantity"));
       resStock.setQuantity(qty);
 
       OBDal.getInstance().save(resStock);

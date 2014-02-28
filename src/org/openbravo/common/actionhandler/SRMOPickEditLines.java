@@ -134,7 +134,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       }
 
       OrderLine newOrderLine = null;
-      boolean notExistsOrderLine = selectedLine.get("salesOrderLine").equals(null);
+      boolean notExistsOrderLine = selectedLine.get("salesOrderLine").equals(null)
+          || "".equals(selectedLine.get("salesOrderLine"));
       if (notExistsOrderLine) {
         newOrderLine = OBProvider.getInstance().get(OrderLine.class);
         newOrderLine.setSalesOrder(order);
