@@ -39,7 +39,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.model.domaintype.AbsoluteDateTimeDomainType;
 import org.openbravo.base.model.domaintype.SearchDomainType;
 import org.openbravo.base.model.domaintype.TableDomainType;
 import org.openbravo.base.structure.IdentifierProvider;
@@ -425,7 +424,7 @@ public class AdvancedQueryBuilder {
       // create the clauses, re-uses the code in parseSimpleClause
       // which translates a lesserthan/greater than to the end/start
       // time of a date
-      if (property.isDate() || property.isDatetime()) {
+      if (property.isDate() || property.isDatetime() || property.isAbsoluteDateTime()) {
         if (operator.equals(OPERATOR_EQUALS)) {
           return "(" + parseSimpleClause(fieldName, OPERATOR_GREATEROREQUAL, value) + " and "
               + parseSimpleClause(fieldName, OPERATOR_LESSOREQUAL, value) + ")";
@@ -504,8 +503,9 @@ public class AdvancedQueryBuilder {
         final StringBuilder sb = new StringBuilder();
         for (Property prop : getEntity().getProperties()) {
           if (prop.isId() || prop.isOneToMany() || prop.isBoolean() || prop.isDate()
-              || prop.isDatetime() || prop.getAllowedValues().size() > 0 || prop.isInactive()
-              || prop.isEncrypted() || prop.isOneToOne()) {
+              || prop.isDatetime() || prop.isAbsoluteDateTime()
+              || prop.getAllowedValues().size() > 0 || prop.isInactive() || prop.isEncrypted()
+              || prop.isOneToOne()) {
             continue;
           }
           if (!prop.isPrimitive()) {
@@ -735,23 +735,27 @@ public class AdvancedQueryBuilder {
     } else if (Date.class.isAssignableFrom(property.getPrimitiveObjectType())) {
       try {
         Date date = null;
-        if (property.isDatetime() || property.getDomainType() instanceof AbsoluteDateTimeDomainType) {
+        boolean hasComeADateTime = true;
+        if (property.isDatetime() || property.isAbsoluteDateTime()) {
           try {
             date = simpleDateTimeFormat.parse(value.toString());
           } catch (ParseException e) {
             // When a DateTime column is filtered, plan Date values are used
             // See issue https://issues.openbravo.com/view.php?id=23203
+            hasComeADateTime = false;
             date = simpleDateFormat.parse(value.toString());
           }
         }
         if (property.isDate()) {
           date = simpleDateFormat.parse(value.toString());
         }
-
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        // Applies the time zone offset difference of the client
-        calendar.add(Calendar.MINUTE, clientUTCMinutesTimeZoneDiff);
+
+        if (hasComeADateTime || property.isDatetime() || property.isDate()) {
+          // Applies the time zone offset difference of the client
+          calendar.add(Calendar.MINUTE, clientUTCMinutesTimeZoneDiff);
+        }
         // move the date to the beginning of the day
         if (isGreaterOperator(operator)) {
           calendar.set(Calendar.HOUR, 0);
@@ -933,7 +937,8 @@ public class AdvancedQueryBuilder {
 
     for (Property property : properties) {
       if (!property.isPrimitive()
-          || (!property.isNumericType() && !property.isDate() && !property.isDatetime())) {
+          || (!property.isNumericType() && !property.isDate() && !property.isDatetime() && !property
+              .isAbsoluteDateTime())) {
         return operatorCase;
       }
     }
@@ -942,7 +947,8 @@ public class AdvancedQueryBuilder {
 
   private boolean ignoreCase(Property property, String operator) {
     if (property.isPrimitive()
-        && (property.isNumericType() || property.isDate() || property.isDatetime())) {
+        && (property.isNumericType() || property.isDate() || property.isDatetime() || property
+            .isAbsoluteDateTime())) {
       return false;
     }
     return operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)

@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.expression.Evaluator;
+import org.openbravo.base.model.domaintype.AbsoluteDateTimeDomainType;
 import org.openbravo.base.model.domaintype.BasePrimitiveDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DatetimeDomainType;
@@ -1071,6 +1072,10 @@ public class Property {
 
   public boolean isDatetime() {
     return getDomainType() instanceof DatetimeDomainType;
+  }
+
+  public boolean isAbsoluteDateTime() {
+    return getDomainType() instanceof AbsoluteDateTimeDomainType;
   }
 
   public boolean isTime() {
