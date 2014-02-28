@@ -78,6 +78,7 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         OB.Datasource.get(this.dataSourceId, this, null, true);
         this.copyFunctionsFromViewGrid();
         this.Super('init', arguments);
+        this.filterNoRecordsEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
       },
 
       copyFunctionsFromViewGrid: function () {
@@ -92,7 +93,6 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         this.loadingDataMessage = this.view.viewGrid.loadingDataMessage;
         this.emptyMessage = this.view.viewGrid.emptyMessage;
         this.noDataEmptyMessage = this.view.viewGrid.noDataEmptyMessage;
-        this.filterNoRecordsEmptyMessage = this.view.viewGrid.filterNoRecordsEmptyMessage;
       },
 
       onFetchData: function (criteria, requestProperties) {
