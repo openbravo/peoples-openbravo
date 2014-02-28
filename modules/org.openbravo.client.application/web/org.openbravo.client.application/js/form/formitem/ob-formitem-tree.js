@@ -139,7 +139,7 @@ isc.OBTreeItem.addProperties({
   },
 
   changed: function (form, item, value) {
-    if (!this.tree.isVisible()) {
+    if (!this.tree.isVisible() && !this.valueChangedFromPopup) {
       this.tree.show();
     }
     this.fireOnPause('refreshTree', this.refreshTree, 500, this);
@@ -628,7 +628,9 @@ isc.OBTreeItemPopupWindow.addProperties({
     if (!this.treeItem.parentSelectionAllowed && this.treeGrid.data.hasChildren(record)) {
       return;
     }
+    this.treeItem.valueChangedFromPopup = true;
     this.treeItem.setValueFromRecord(record);
+    delete this.treeItem.valueChangedFromPopup;
     this.hide();
   }
 });
