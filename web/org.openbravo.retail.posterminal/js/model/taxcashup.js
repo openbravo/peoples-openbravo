@@ -31,7 +31,7 @@
   }, {
     name: 'amount',
     column: 'amount',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'orderType',
     column: 'orderType',

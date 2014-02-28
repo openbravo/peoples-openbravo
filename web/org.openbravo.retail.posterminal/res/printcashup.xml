@@ -95,7 +95,7 @@
     </line>
     <%
     _.each(cashup.report.get('drops'), function(drop){
-    if(drop.get('rate') !== '1'){
+    if(drop.get('amount') !== drop.get('origAmount')){
     %>
     <line>
       <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(drop.get('description')) %></text>
@@ -121,7 +121,7 @@
     </line>
     <%
     _.each(cashup.report.get('deposits'), function(deposit){
-    if(deposit.get('rate') !== '1'){
+    if(deposit.get('amount') !== deposit.get('origAmount')){
     %>
     <line>
       <text align ="left" length="10"><%=OB.UTIL.encodeXMLComponent(deposit.get('description')) %></text>
