@@ -45,6 +45,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.datamodel.Table;
@@ -83,9 +84,14 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     try {
       // We can't get the bob from DAL, it has not been saved yet
       JSONObject bobProperties = new JSONObject(parameters.get("jsonBob"));
+      Entity theEntity = getEntity();
+      if (!hasAccess(theEntity, null, false)) {
+        throw new OBException(OBMessageUtils.messageBD("AccessTableNoView"));
+      }
       addNewNode(bobProperties);
     } catch (Exception e) {
       log.error("Error while adding the tree node", e);
+      throw new OBException(e);
     }
     // This is called from TreeTablesEventHandler, no need to return anything
     return "";
@@ -103,14 +109,18 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    */
   @Override
   public final String remove(Map<String, String> parameters) {
-
     try {
       // We can't get the bob from DAL, it has not been saved yet
       JSONObject bobProperties = new JSONObject(parameters.get("jsonBob"));
+      Entity theEntity = getEntity();
+      if (!hasAccess(theEntity, null, false)) {
+        throw new OBException(OBMessageUtils.messageBD("AccessTableNoView"));
+      }
+
       this.deleteNode(bobProperties);
     } catch (Exception e) {
       log.error("Error while deleting tree node: ", e);
-      throw new OBException("The treenode could not be created");
+      throw new OBException(e);
     }
 
     // This is called from TreeTablesEventHandler, no need to return anything
@@ -196,21 +206,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
       Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
       if (!hasAccess(entity, tab, fromTreeView)) {
-        JSONObject jsonResponse = new JSONObject();
-        JSONObject jsonMessage = new JSONObject();
-        jsonMessage.put("messageType", "error");
-        jsonMessage.put(
-            "message",
-            Utility.messageBD(new DalConnectionProvider(false), "AccessTableNoView", OBContext
-                .getOBContext().getLanguage().getLanguage()));
-        jsonResponse.put("message", jsonMessage);
-        jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
-        jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray());
-        jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
-        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, 0);
-        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
-        jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
-        return jsonResult.toString();
+        return noAccessError().toString();
       }
 
       if (hqlTreeWhereClause != null) {
@@ -717,6 +713,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    */
   public final String update(Map<String, String> parameters, String content) {
     OBContext.setAdminMode(true);
+
     String response = null;
     try {
       final JSONObject jsonObject = new JSONObject(content);
@@ -782,6 +779,9 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     if (tabId != null) {
       tab = OBDal.getInstance().get(Tab.class, tabId);
       tableTree = tab.getTableTree();
+      if (!hasAccess(tab.getTable().getEntity(), tab, false)) {
+        return noAccessError().toString();
+      }
     } else if (treeReferenceId != null) {
       ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
       tableTree = treeReference.getTableTreeCategory();
@@ -789,6 +789,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       log.error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return null;
     }
+
     String tableName = tableTree.getTable().getName();
     CheckTreeOperationManager ctom = null;
     try {
@@ -854,6 +855,35 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   protected class TooManyTreeNodesException extends Exception {
     private static final long serialVersionUID = 1L;
 
+  }
+
+  protected Entity getEntity(JSONObject bobProperties) throws JSONException {
+    String entityName = bobProperties.getString("_entity");
+    return ModelProvider.getInstance().getEntity(entityName);
+  }
+
+  private JSONObject noAccessError() {
+    JSONObject jsonResult = new JSONObject();
+    JSONObject jsonResponse = new JSONObject();
+    JSONObject jsonMessage = new JSONObject();
+    try {
+      jsonMessage.put("messageType", "error");
+      jsonMessage.put(
+          "message",
+          Utility.messageBD(new DalConnectionProvider(false), "AccessTableNoView", OBContext
+              .getOBContext().getLanguage().getLanguage()));
+      jsonResponse.put("message", jsonMessage);
+      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+      jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray());
+      jsonResponse.put(JsonConstants.RESPONSE_STARTROW, 0);
+      jsonResponse.put(JsonConstants.RESPONSE_ENDROW, 0);
+      jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, 0);
+      jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+    } catch (JSONException e) {
+      log.error("Error generating no access message", e);
+    }
+
+    return jsonResult;
   }
 
 }
