@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -88,10 +88,17 @@ isc.Tree.addProperties({
 isc.ResultTree.addProperties({
   _original_loadChildrenReply: isc.ResultTree.getPrototype().loadChildrenReply,
   loadChildrenReply: function (dsResponse, data, request) {
-    var target;
+    var target = window[this.componentId];
+
+    if (dsResponse && dsResponse.error && dsResponse.error.type === 'tooManyNodes') {
+      if (target && target.view) {
+        target.view.messageBar.setMessage('error', null, OB.I18N.getLabel('OBUIAPP_TooManyNodes'));
+      }
+      return;
+    }
+
     this._original_loadChildrenReply(dsResponse, data, request);
     if (request && request.params && request.params.selectedRecords) {
-      target = window[this.componentId];
       if (target && target.treeDataArrived) {
         target.treeDataArrived();
       }

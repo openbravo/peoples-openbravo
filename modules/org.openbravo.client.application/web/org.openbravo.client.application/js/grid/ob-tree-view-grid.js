@@ -76,6 +76,7 @@ isc.OBTreeViewGrid.addProperties({
     this.emptyMessage = this.view.viewGrid.emptyMessage;
     this.noDataEmptyMessage = this.view.viewGrid.noDataEmptyMessage;
     this.filterNoRecordsEmptyMessage = this.view.viewGrid.filterNoRecordsEmptyMessage;
+    this.clearFilter = this.view.viewGrid.clearFilter;
   },
 
   // Sets the fields of the datasource and extends the transformRequest and transformResponse functions
@@ -387,7 +388,6 @@ isc.OBTreeViewGrid.addProperties({
   },
 
   dataArrived: function (startRow, endRow) {
-    this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     this.resetEmptyMessage();
     if (this.actionAfterDataArrived) {
       this.actionAfterDataArrived();
