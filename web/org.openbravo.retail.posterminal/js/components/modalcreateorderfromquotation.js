@@ -73,7 +73,11 @@ enyo.kind({
     }]
   },
   init: function (model) {
-    var receipt = model.get('order');
+    this.model = model;
+    var receipt = this.model.get('order');
+    receipt.on('orderCreatedFromQuotation', function () {
+      this.model.get('orderList').add(this.theQuotation);
+    }, this);
     this.theQuotation = receipt;
   }
 });
