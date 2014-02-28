@@ -626,8 +626,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       return new JSONObject();
     }
 
-    String parentIdDB = null;
-    if (newParentId.equals(ROOT_NODE_CLIENT)) {
+    String parentIdDB = newParentId;
+    if (parentIdDB.equals(ROOT_NODE_CLIENT)) {
       // AD_ORG is special, root nodes have parentId = null, while the other in the trees root nodes
       // have parentId = '0'
       if (AD_ORG_TABLE_ID.equals(tableId)) {
