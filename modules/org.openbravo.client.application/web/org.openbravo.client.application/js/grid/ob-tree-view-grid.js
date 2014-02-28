@@ -393,6 +393,23 @@ isc.OBTreeViewGrid.addProperties({
       this.actionAfterDataArrived();
       this.actionAfterDataArrived = null;
     }
-  }
+  },
 
+  // refreshes record after edition
+  refreshRecord: function (values) {
+    var record, p;
+    record = this.getNodeByID(values.id);
+    if (record) {
+      for (p in values) {
+        if (values.hasOwnProperty(p)) {
+          record[p] = values[p];
+        }
+      }
+      this.markForRedraw();
+    } else {
+      // record not found, can be new, force refresh
+      this.setData([]);
+      this.fetchData(this.getCriteria());
+    }
+  }
 });
