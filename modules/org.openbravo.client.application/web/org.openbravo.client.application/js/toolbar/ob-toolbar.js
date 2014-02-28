@@ -1731,6 +1731,7 @@ OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
     view.isShowingTree = false;
   } else {
     treeGrid.copyCriteriaFromViewGrid();
+    treeGrid.setData([]); // forcing refresh
     treeGrid.fetchData(treeGrid.getCriteria());
     treeGrid.checkShowFilterFunnelIcon(treeGrid.getCriteria());
     treeGrid.show();
