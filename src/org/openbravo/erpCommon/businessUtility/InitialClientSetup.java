@@ -299,19 +299,25 @@ public class InitialClientSetup {
             log4j.debug("insertTrees() - Saved menu tree.");
           }
         } else {
-          String strTreeType = (String) tableTree.getName();
-          String strName = client.getName() + " " + strTreeType;
-          log4j.debug("insertTrees() - Tree of type " + strTreeType + ". Inserting new tree named "
-              + strName);
+          String tableTreeName = (String) tableTree.getName();
+          String treeTypeName = null;
+          if (tableTree.getTable().getTreeType() != null) {
+            treeTypeName = tableTree.getTable().getTreeType();
+          } else {
+            treeTypeName = tableTreeName;
+          }
+          String strName = client.getName() + " " + tableTreeName;
+          log4j.debug("insertTrees() - Tree of type " + treeTypeName
+              + ". Inserting new tree named " + strName);
 
-          Tree t = InitialSetupUtility.insertTree(client, strName, strTreeType, true,
+          Tree t = InitialSetupUtility.insertTree(client, strName, treeTypeName, true,
               tableTree.getTable());
           if (t == null)
             return logErrorAndRollback("@CreateClientFailed@",
                 "insertTrees() - ERROR - Unable to create trees for the client");
           logEvent("@Client@=" + strName);
           log4j.debug("insertTrees() - Tree correctly inserted in database");
-          saveTree(t, strTreeType);
+          saveTree(t, tableTreeName);
         }
       }
     } catch (Exception e) {
