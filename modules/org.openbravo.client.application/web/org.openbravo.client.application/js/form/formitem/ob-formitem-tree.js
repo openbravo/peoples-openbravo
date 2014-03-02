@@ -259,10 +259,10 @@ isc.OBTreeItemTree.addProperties({
         interval, treeItemWidth;
     if (this.treeItem) {
       treeItemWidth = this.treeItem.getVisibleWidth();
-      if (treeItemWidth && treeItemWidth - 2 > this.getWidth()) {
-        this.setWidth(treeItemWidth - 2);
+      if (treeItemWidth && treeItemWidth > this.getWidth()) {
+        this.setWidth(treeItemWidth);
       }
-      this.placeNear(this.treeItem.getPageLeft() + 2, this.treeItem.getPageTop() + 26);
+      this.placeNear(this.treeItem.getPageLeft(), this.treeItem.getPageTop() + 20);
     }
   },
 
