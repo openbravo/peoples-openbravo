@@ -304,7 +304,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
         }
 
         if (!canAcceptDrop(entity, bob)) {
-          value.put("canAcceptDrop", false);
+          value.put("canBeParentNode", false);
         }
         value.put("seqno", node[SEQNO]);
         value.put("_hasChildren",

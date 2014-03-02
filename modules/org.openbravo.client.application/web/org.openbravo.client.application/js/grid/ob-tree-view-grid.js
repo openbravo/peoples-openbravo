@@ -59,7 +59,6 @@ isc.OBTreeViewGrid.addProperties({
     }
     this.confirmNodeReparent = OB.PropertyStore.get('OBUIAPP_ConfirmNodeReparent', this.view.windowId);
     this.filterNoRecordsEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
-    console.log('tree popup', this.isPopup);
   },
 
   // Some OBTreeViewGrid functionality is alreadyd implemented in OBViewGrid
@@ -196,6 +195,9 @@ isc.OBTreeViewGrid.addProperties({
         i, len = nodes.length,
         nodesIdentifier = "",
         parentIdentifier, message;
+    if (folder.canBeParentNode === false) {
+      return;
+    }
     if (this.canReorderRecords) {
       if (this.confirmNodeReparent && this.canReorderRecords) {
         for (i = 0; i < len; i++) {
