@@ -12,6 +12,7 @@ isc.OBTreeGrid.addProperties({
   /* Set in the CSS */
   cellAlign: 'center',
   leaveHeaderMenuButtonSpace: false,
+  sorterConstructor: 'ImgButton',
   sortAscendingImage: {
     src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_sortAscending.png',
     width: 7,
