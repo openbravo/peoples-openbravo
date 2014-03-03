@@ -543,7 +543,10 @@
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
         'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
         'isReturn': isReturn,
-        'isNegative': this.get('gross') < 0 ? true : false
+        'isNegative': this.get('gross') < 0 ? true : false,
+        'changeAmt': this.getChange(),
+        'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
+        'payments': this.get('payments')
       };
     },
 
@@ -1934,9 +1937,14 @@
         'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
         'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
-        'isReturn': this.get('gross') < 0 ? true : false
+        'isReturn': this.get('gross') < 0 ? true : false,
+        'isNegative': this.get('gross') < 0 ? true : false,
+        'changeAmt': this.getChange(),
+        'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
+        'payments': this.get('payments')
       };
     },
+
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
