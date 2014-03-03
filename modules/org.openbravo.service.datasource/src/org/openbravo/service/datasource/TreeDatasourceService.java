@@ -372,15 +372,34 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     return isParentIdCriteria;
   }
 
-  private boolean hasAccess(Entity entity, Tab tab, boolean fromTreeView) {
+  /**
+   * Checks if an entity is accessible
+   * 
+   * @param entity
+   *          Entity whose accessibility is to be determined
+   * @param tab
+   *          Tab from where the entity wants to be accessed. Can be null.
+   * @param fromReference
+   *          flag that determines if the entity is being accessed from a reference o from a tree
+   *          grid view
+   * @return true if the entity is accessible, false otherwise
+   */
+  private boolean hasAccess(Entity entity, Tab tab, boolean fromReference) {
     boolean hasAccessToTable = true;
-    // TODO: If it is a reference, check if it is derived readable
+    boolean isDerivedReadable = OBContext.getOBContext().getEntityAccessChecker()
+        .isDerivedReadable(entity);
     try {
       OBContext.getOBContext().getEntityAccessChecker().checkReadable(entity);
     } catch (OBSecurityException e) {
       hasAccessToTable = false;
     }
+    if (fromReference) {
+      // If accessing the entity from a reference, it is enough for the entity to be derived
+      // readable
+      return hasAccessToTable || isDerivedReadable;
+    }
     if (hasAccessToTable && tab != null) {
+      // If the tab has been provided, check if the user has access to its window
       OBCriteria<WindowAccess> qWindowAccess = OBDal.getInstance().createCriteria(
           WindowAccess.class);
       qWindowAccess.add(Restrictions.eq(WindowAccess.PROPERTY_WINDOW, tab.getWindow()));
