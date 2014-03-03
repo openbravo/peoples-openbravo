@@ -26,7 +26,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2013 Openbravo SLU
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -199,7 +199,10 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     @Override
     public Object get(String propName) {
       <#list entity.computedColumnProperties as p>
-      if (COMPUTED_COLUMN_${p.name?upper_case}.equals(propName)){
+      if (COMPUTED_COLUMN_${p.name?upper_case}.equals(propName)) {
+        if (get_computedColumns() == null) {
+          return null;
+        }
         return get_computedColumns().${getter(p)}();
       }
       </#list>
