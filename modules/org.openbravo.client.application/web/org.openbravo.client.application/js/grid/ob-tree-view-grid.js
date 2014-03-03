@@ -116,6 +116,24 @@ isc.OBTreeViewGrid.addProperties({
         me.view.messageBar.setMessage('error', null, OB.I18N.getLabel('OBUIAPP_TooManyNodes'));
       }
     };
+
+    ds.updateData = function (updatedRecord, callback, requestProperties) {
+      // the new callback checks if the node movement has to be reverted
+      var newCallback = function (dsResponse, data, dsRequest) {
+          var i, node, parentNode;
+          for (i = 0; i < data.length; i++) {
+            node = data[i];
+            if (node.revertMovement) {
+              parentNode = dsRequest.dragTree.find('id', node.parentId);
+              if (parentNode) {
+                // move the node back to its previous index
+                dsRequest.dragTree.move(node, parentNode, node.prevIndex);
+              }
+            }
+          }
+          };
+      this.Super('updateData', [updatedRecord, newCallback, requestProperties]);
+    };
     fields = this.getTreeGridFields(me.fields);
     ds.primaryKeys = {
       id: 'id'
@@ -233,6 +251,8 @@ isc.OBTreeViewGrid.addProperties({
       dataSource = this.getDataSource();
       for (i = 0; i < nodes.length; i++) {
         node = nodes[i];
+        // stores the node original index just in case the movement is not valid and the node has to be moved back to its original position
+        node.prevIndex = this.getData().getChildren(this.getData().getParent(node)).indexOf(node);
         oldValues = isc.addProperties({}, node);
         dataSourceProperties = {
           oldValues: oldValues,

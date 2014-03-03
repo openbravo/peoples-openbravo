@@ -849,6 +849,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       }
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     } else {
+      // These node movement is not valid, it has to be reverted in the client
+      oldValues.put("revertMovement", true);
       dataResponse.put(oldValues);
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
     }
