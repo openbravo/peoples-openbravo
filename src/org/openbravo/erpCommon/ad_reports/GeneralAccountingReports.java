@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -326,7 +326,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   private String[] getYearsToClose(Date startingDate, String strOrg, Calendar calendar,
       String strcAcctSchemaId, boolean isYearRef) {
     String openingEntryOwner = "";
-    Set<Year> previousYears = getOrderedPreviousYears(startingDate, calendar);
+    ArrayList<Year> previousYears = getOrderedPreviousYears(startingDate, calendar);
     Set<String> notClosedYears = new HashSet<String>();
     for (Year previousYear : previousYears) {
       for (Organization org : getCalendarOwnerOrgs(strOrg)) {
@@ -370,9 +370,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     }
   }
 
-  private Set<Year> getOrderedPreviousYears(Date startingDate, Calendar calendar) {
+  private ArrayList<Year> getOrderedPreviousYears(Date startingDate, Calendar calendar) {
     final StringBuilder hqlString = new StringBuilder();
-    Set<Year> result = new HashSet<Year>();
+    ArrayList<Year> result = new ArrayList<Year>();
     hqlString.append("select y");
     hqlString.append(" from FinancialMgmtYear y, FinancialMgmtPeriod as p");
     hqlString
@@ -383,7 +383,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     query.setParameter("calendar", calendar);
     for (Object resultObject : query.list()) {
       final Year previousYear = (Year) resultObject;
-      result.add(previousYear);
+      if (!(result.contains(previousYear))) {
+        result.add(previousYear);
+      }
     }
     return result;
   }
