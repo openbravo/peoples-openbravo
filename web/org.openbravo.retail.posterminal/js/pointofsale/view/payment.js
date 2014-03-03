@@ -18,30 +18,28 @@ enyo.kind({
     onButtonStatusChanged: 'buttonStatusChanged'
   },
   buttonStatusChanged: function (inSender, inEvent) {
-    var payment, amt, change, pending, isMultiOrders, requiredCash = OB.DEC.Zero;
+    var payment, amt, change, pending, isMultiOrders, paymentstatus;
     payment = inEvent.value.payment || OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
     if (_.isUndefined(payment)) {
       return true;
-    } 
+    }
     isMultiOrders = this.model.isValidMultiOrderState();
     change = this.model.getChange();
     pending = this.model.getPending();
     if (!isMultiOrders) {
       this.receipt.selectedPayment = payment.payment.searchKey;
+      paymentstatus = this.receipt.getPaymentStatus();
     } else {
       this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
+      paymentstatus = this.model.get('multiOrders').getPaymentStatus();
     }
 
     if (!_.isNull(change) && change) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-      requiredCash = change;
     } else if (!_.isNull(pending) && pending) {
       this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-      if (this.model.getTotal() < 0 && OB.POS.terminal.terminal.paymentnames[payment.payment.searchKey].paymentMethod.iscash) {
-        requiredCash = pending;
-      }
     }
-    this.checkEnoughCashAvailable(requiredCash);
+    this.checkEnoughCashAvailable(paymentstatus, payment);
   },
   components: [{
     style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px; position: relative;',
@@ -200,19 +198,14 @@ enyo.kind({
       symbolAtRight = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].currencySymbolAtTheRight;
       isCashType = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].paymentMethod.iscash;
     }
+    this.checkEnoughCashAvailable(paymentstatus, OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment || OB.POS.modelterminal.get('paymentcash')]);
     if (paymentstatus.change) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
       this.$.change.show();
       this.$.changelbl.show();
-      this.checkEnoughCashAvailable(this.receipt.getChange());
     } else {
       this.$.change.hide();
       this.$.changelbl.hide();
-      if (paymentstatus.isNegative && isCashType) {
-        this.checkEnoughCashAvailable(paymentstatus.pending);
-      } else {
-        this.checkEnoughCashAvailable(OB.DEC.Zero);
-      }
     }
     if (paymentstatus.overpayment) {
       this.$.overpayment.setContent(paymentstatus.overpayment);
@@ -321,19 +314,14 @@ enyo.kind({
       symbolAtRight = selectedPayment.currencySymbolAtTheRight;
       isCashType = selectedPayment.paymentMethod.iscash;
     }
+    this.checkEnoughCashAvailable(paymentstatus.getPayementStatus(), selectedPayment);
     if (paymentstatus.get('change')) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
       this.$.change.show();
       this.$.changelbl.show();
-      this.checkEnoughCashAvailable(paymentstatus.get('change'));
     } else {
       this.$.change.hide();
       this.$.changelbl.hide();
-      if (OB.DEC.compare(paymentstatus.get('total')) < 0 && isCashType) {
-        this.checkEnoughCashAvailable(OB.DEC.mul(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate));
-      } else {
-        this.checkEnoughCashAvailable(OB.DEC.Zero);
-      }
     }
     //overpayment
     if (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) > 0) {
@@ -388,24 +376,28 @@ enyo.kind({
     }
   },
 
-  checkEnoughCashAvailable: function (requiredcash) {
+  checkEnoughCashAvailable: function (paymentstatus, selectedPayment) {
     var currentCash = OB.DEC.Zero,
-        selectedPayment, hasEnoughChange;
-    if (this.model.isValidMultiOrderState()) {
-      if (this.model.get('multiOrders').get('selectedPayment')) {
-        selectedPayment = OB.POS.terminal.terminal.paymentnames[this.model.get('multiOrders').get('selectedPayment')];
-      } else {
-        selectedPayment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
-      }
-    } else {
-      selectedPayment = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment];
-    }
+        requiredCash, hasEnoughCash;
     if (selectedPayment && selectedPayment.paymentMethod.iscash) {
       currentCash = selectedPayment.currentCash || OB.DEC.Zero;
     }
 
-    hasEnoughChange = OB.DEC.compare(OB.DEC.sub(currentCash, requiredcash)) >= 0;
-    if (hasEnoughChange) {
+    if (!selectedPayment.paymentMethod.iscash) {
+      requiredCash = OB.DEC.Zero;
+    } else if (paymentstatus.isNegative) {
+      requiredCash = paymentstatus.pendingAmt;
+      paymentstatus.payments.each(function (payment) {
+        if (payment.get('kind') === selectedPayment.payment.searchKey) {
+          requiredCash = OB.DEC.add(requiredCash, payment.get('amount'));
+        }
+      });
+    } else {
+      requiredCash = paymentstatus.changeAmt;
+    }
+
+    hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+    if (hasEnoughCash) {
       this.$.noenoughchangelbl.hide();
       this.$.payments.scrollAreaMaxHeight = '150px';
       this.$.doneButton.setDisabled(false);
