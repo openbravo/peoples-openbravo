@@ -849,89 +849,91 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                     decreaseCustomerCredit(businessPartner, amount);
                   }
                 }
-                if (strAction.equals("R")
-                    || (strAction.equals("RE")
-                        && paymentScheduleDetail.getInvoicePaymentSchedule() == null
-                        && paymentScheduleDetail.getOrderPaymentSchedule() == null && paymentScheduleDetail
-                        .getPaymentDetails().getGLItem() == null)) {
-                  FIN_AddPayment.mergePaymentScheduleDetails(paymentScheduleDetail);
-                  removedPDS.add(paymentScheduleDetail);
-                }
               }
-              paymentDetail.getFINPaymentScheduleDetailList().removeAll(removedPDS);
-              if (strAction.equals("R")) {
-                OBDal.getInstance().getSession().refresh(paymentDetail);
+              if (strAction.equals("R")
+                  || (strAction.equals("RE")
+                      && paymentScheduleDetail.getInvoicePaymentSchedule() == null
+                      && paymentScheduleDetail.getOrderPaymentSchedule() == null && paymentScheduleDetail
+                      .getPaymentDetails().getGLItem() == null)) {
+                FIN_AddPayment.mergePaymentScheduleDetails(paymentScheduleDetail);
+                removedPDS.add(paymentScheduleDetail);
               }
-              // If there is any schedule detail with amount zero, those are deleted
-              for (FIN_PaymentScheduleDetail psd : removedPDS) {
-                if (BigDecimal.ZERO.compareTo(psd.getAmount()) == 0
-                    && BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0) {
-                  paymentDetail.getFINPaymentScheduleDetailList().remove(psd);
-                  OBDal.getInstance().getSession().refresh(paymentDetail);
-                  psd.getInvoicePaymentSchedule()
-                      .getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(psd);
-                  psd.getOrderPaymentSchedule()
-                      .getFINPaymentScheduleDetailOrderPaymentScheduleList().remove(psd);
-                  OBDal.getInstance().remove(psd);
-                }
-              }
-              if (paymentDetail.getFINPaymentScheduleDetailList().size() == 0) {
-                removedPD.add(paymentDetail);
-                removedPDIds.add(paymentDetail.getId());
-              }
-              OBDal.getInstance().save(paymentDetail);
+
             }
-            for (String pdToRm : removedPDIds) {
-              OBDal.getInstance().remove(OBDal.getInstance().get(FIN_PaymentDetail.class, pdToRm));
-            }
-            payment.getFINPaymentDetailList().removeAll(removedPD);
+            paymentDetail.getFINPaymentScheduleDetailList().removeAll(removedPDS);
             if (strAction.equals("R")) {
-              payment.getCurrencyConversionRateDocList().removeAll(conversionRates);
-              payment.setFinancialTransactionConvertRate(BigDecimal.ZERO);
+              OBDal.getInstance().getSession().refresh(paymentDetail);
             }
-            OBDal.getInstance().save(payment);
+            // If there is any schedule detail with amount zero, those are deleted
+            for (FIN_PaymentScheduleDetail psd : removedPDS) {
+              if (BigDecimal.ZERO.compareTo(psd.getAmount()) == 0
+                  && BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0) {
+                paymentDetail.getFINPaymentScheduleDetailList().remove(psd);
+                OBDal.getInstance().getSession().refresh(paymentDetail);
+                psd.getInvoicePaymentSchedule()
+                    .getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(psd);
+                psd.getOrderPaymentSchedule().getFINPaymentScheduleDetailOrderPaymentScheduleList()
+                    .remove(psd);
+                OBDal.getInstance().remove(psd);
+              }
+            }
+            if (paymentDetail.getFINPaymentScheduleDetailList().size() == 0) {
+              removedPD.add(paymentDetail);
+              removedPDIds.add(paymentDetail.getId());
+            }
+            OBDal.getInstance().save(paymentDetail);
+          }
+          for (String pdToRm : removedPDIds) {
+            OBDal.getInstance().remove(OBDal.getInstance().get(FIN_PaymentDetail.class, pdToRm));
+          }
+          payment.getFINPaymentDetailList().removeAll(removedPD);
+          if (strAction.equals("R")) {
+            payment.getCurrencyConversionRateDocList().removeAll(conversionRates);
+            payment.setFinancialTransactionConvertRate(BigDecimal.ZERO);
+          }
+          OBDal.getInstance().save(payment);
 
-            if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
-                && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
-              undoUsedCredit(payment, vars, invoiceDocNos);
-            }
+          if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
+              && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
+            undoUsedCredit(payment, vars, invoiceDocNos);
+          }
 
-            List<FIN_Payment> creditPayments = new ArrayList<FIN_Payment>();
-            for (final FIN_Payment_Credit pc : payment.getFINPaymentCreditList()) {
-              creditPayments.add(pc.getCreditPaymentUsed());
-            }
-            for (final FIN_Payment creditPayment : creditPayments) {
-              // Update Description
-              final String payDesc = creditPayment.getDescription();
-              if (payDesc != null) {
-                final String invoiceDocNoMsg = Utility.messageBD(new DalConnectionProvider(),
-                    "APRM_CreditUsedinInvoice", vars.getLanguage());
-                if (invoiceDocNoMsg != null) {
-                  final StringBuffer newDesc = new StringBuffer();
-                  for (final String line : payDesc.split("\n")) {
-                    boolean include = true;
-                    if (line.startsWith(invoiceDocNoMsg.substring(0,
-                        invoiceDocNoMsg.lastIndexOf("%s")))) {
-                      for (final String docNo : invoiceDocNos) {
-                        if (line.indexOf(docNo) > 0) {
-                          include = false;
-                          break;
-                        }
+          List<FIN_Payment> creditPayments = new ArrayList<FIN_Payment>();
+          for (final FIN_Payment_Credit pc : payment.getFINPaymentCreditList()) {
+            creditPayments.add(pc.getCreditPaymentUsed());
+          }
+          for (final FIN_Payment creditPayment : creditPayments) {
+            // Update Description
+            final String payDesc = creditPayment.getDescription();
+            if (payDesc != null) {
+              final String invoiceDocNoMsg = Utility.messageBD(new DalConnectionProvider(),
+                  "APRM_CreditUsedinInvoice", vars.getLanguage());
+              if (invoiceDocNoMsg != null) {
+                final StringBuffer newDesc = new StringBuffer();
+                for (final String line : payDesc.split("\n")) {
+                  boolean include = true;
+                  if (line.startsWith(invoiceDocNoMsg.substring(0,
+                      invoiceDocNoMsg.lastIndexOf("%s")))) {
+                    for (final String docNo : invoiceDocNos) {
+                      if (line.indexOf(docNo) > 0) {
+                        include = false;
+                        break;
                       }
                     }
-                    if (include) {
-                      newDesc.append(line);
-                      if (!"".equals(line))
-                        newDesc.append("\n");
-                    }
                   }
-                  // Truncate Description to keep length as 255
-                  creditPayment.setDescription(newDesc.toString().length() > 255 ? newDesc
-                      .toString().substring(0, 255) : newDesc.toString());
+                  if (include) {
+                    newDesc.append(line);
+                    if (!"".equals(line))
+                      newDesc.append("\n");
+                  }
                 }
+                // Truncate Description to keep length as 255
+                creditPayment.setDescription(newDesc.toString().length() > 255 ? newDesc.toString()
+                    .substring(0, 255) : newDesc.toString());
               }
             }
           }
+
           payment.getFINPaymentCreditList().clear();
           payment.setGeneratedCredit(BigDecimal.ZERO);
           if (strAction.equals("R")) {
