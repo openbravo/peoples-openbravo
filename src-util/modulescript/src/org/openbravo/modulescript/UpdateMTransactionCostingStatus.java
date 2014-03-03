@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,30 +21,27 @@ package org.openbravo.modulescript;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 
 public class UpdateMTransactionCostingStatus extends ModuleScript {
+  
+  private static final Logger log4j = Logger.getLogger(UpdateMTransactionCostingStatus.class);
 
   public void execute() {
-    PreparedStatement ps = null;
     try {
       ConnectionProvider cp = getConnectionProvider();
-      ps = cp
-          .getPreparedStatement("UPDATE m_transaction SET costing_status = 'CC' WHERE iscostcalculated = 'Y' AND costing_status = 'NC'");
-      ps.executeUpdate();
-      ps = cp.getPreparedStatement("UPDATE m_transaction SET isprocessed = 'Y' WHERE iscostcalculated = 'Y' AND isprocessed = 'N'");
-      ps.executeUpdate();
+      // If the preference does not exist in the database yet the modulescript must be executed.
+      boolean isUpdated = UpdateMTransactionCostingStatusData.isUpdated(cp);
+      log4j.error(isUpdated);
+      if (!isUpdated) {
+        UpdateMTransactionCostingStatusData.updateCostingStatus(cp);
+        UpdateMTransactionCostingStatusData.updateIsProcessed(cp);
+        UpdateMTransactionCostingStatusData.createPreference(cp);
+      }
     } catch (Exception e) {
       handleError(e);
-    } finally {
-      try {
-        if (!ps.isClosed()) {
-          ps.close();
-        }
-      } catch (Exception e) {
-        handleError(e);
-      }
     }
   }
 }

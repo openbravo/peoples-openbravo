@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -85,7 +85,7 @@ public class CostingBackground extends DalBaseProcess {
       }
 
       // Fix the Not Processed flag for those Transactions with Cost Not Calculated
-      SetNotProcessedWhenNotCalculatedTransactions(orgsWithRule);
+      setNotProcessedWhenNotCalculatedTransactions(orgsWithRule);
 
       List<MaterialTransaction> trxs = getTransactionsBatch(orgsWithRule);
       int counter = 0, total = trxs.size(), batch = 0;
@@ -140,7 +140,7 @@ public class CostingBackground extends DalBaseProcess {
     }
   }
 
-  private void SetNotProcessedWhenNotCalculatedTransactions(List<String> orgsWithRule) {
+  private void setNotProcessedWhenNotCalculatedTransactions(List<String> orgsWithRule) {
     ScrollableResults trxs = getTransactionsNotCalculated(orgsWithRule);
     while (trxs.next()) {
       MaterialTransaction transaction = (MaterialTransaction) trxs.get(0);
