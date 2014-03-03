@@ -557,9 +557,11 @@ isc.OBTreeItemPopupWindow.addProperties({
     this.items = [isc.VLayout.create({
       height: this.height,
       width: this.width,
-      members: [this.treeGrid, isc.HLayout.create({
+      members: [this.treeGrid, isc.LayoutSpacer.create({
+        height: 10
+      }), isc.HLayout.create({
         styleName: this.buttonBarStyleName,
-        height: 40,
+        height: 30,
         defaultLayoutAlign: 'center',
         members: [isc.LayoutSpacer.create({}), okButton, isc.LayoutSpacer.create({
           width: 20
