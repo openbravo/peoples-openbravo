@@ -16,7 +16,8 @@ import org.openbravo.retail.posterminal.OBPOSAppCashup;
 
 public interface CashupReportHook {
   public CashupReportHookResult exec(OBPOSAppCashup cashup,
-      List<HashMap<String, String>> hashMapList) throws Exception;
+      List<HashMap<String, String>> hashMapList, HashMap<String, Object> parameters)
+      throws Exception;
 }
 
 // Example of a hook:
