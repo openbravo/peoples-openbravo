@@ -143,13 +143,15 @@ public class CashUpReport extends HttpSecureAppServlet {
 
         if (i != 0)
           reconIds = reconIds + ",";
-        reconIds = reconIds + "'" + (recons.get(i).getId().toString()) + "'";
+        reconIds = reconIds + "'"
+            + ((OBPOSAppCashReconcil) recons.get(i)).getReconciliation().getId().toString() + "'";
 
         String hqlConversionRate = "select c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, null, null, payment.obposApplications.client.id, payment.obposApplications.organization.id) as rate, payment.financialAccount.currency.iSOCode as isocode "
             + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
             + "where trans.reconciliation.id=? and trans.account=payment.financialAccount ";
         Query conversionRateQuery = OBDal.getInstance().getSession().createQuery(hqlConversionRate);
-        conversionRateQuery.setString(0, recons.get(i).getId());
+        conversionRateQuery.setString(0, ((OBPOSAppCashReconcil) recons.get(i)).getReconciliation()
+            .getId());
         List<?> conversionRateList = conversionRateQuery.list();
         if (!conversionRateList.isEmpty()) {
           conversionRate = new BigDecimal(((Object[]) conversionRateList.get(0))[0].toString());
@@ -198,7 +200,8 @@ public class CashUpReport extends HttpSecureAppServlet {
             + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation=? "
             + "and trans.account=payment.financialAccount order by payment.commercialName";
         Query dropsDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlDropsDeposits);
-        dropsDepositsQuery.setString(0, recons.get(i).getId());
+        dropsDepositsQuery.setString(0, ((OBPOSAppCashReconcil) recons.get(i)).getReconciliation()
+            .getId());
         List<?> dropsDepositList = dropsDepositsQuery.list();
 
         for (Object obj : dropsDepositList) {
@@ -263,7 +266,8 @@ public class CashUpReport extends HttpSecureAppServlet {
             + " order by obpay.commercialName";
 
         Query salesDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlSalesDeposits);
-        salesDepositsQuery.setString(0, recons.get(i).getId());
+        salesDepositsQuery.setString(0, ((OBPOSAppCashReconcil) recons.get(i)).getReconciliation()
+            .getId());
         List<Object> sales = salesDepositsQuery.list();
         if (sales.size() > 0) {
           for (Object obj : sales) {
@@ -403,7 +407,8 @@ public class CashUpReport extends HttpSecureAppServlet {
             + "and trans.account=payment.financialAccount";
         Query differenceDepositQuery = OBDal.getInstance().getSession()
             .createQuery(hqlDifferenceDeposit);
-        differenceDepositQuery.setString(0, recons.get(i).getId());
+        differenceDepositQuery.setString(0, ((OBPOSAppCashReconcil) recons.get(i))
+            .getReconciliation().getId());
         Object[] differenceObj = (Object[]) differenceDepositQuery.uniqueResult();
         BigDecimal differenceDeposit = BigDecimal.ZERO;
         if (differenceObj != null) {
@@ -492,7 +497,8 @@ public class CashUpReport extends HttpSecureAppServlet {
             + "where trans.gLItem=payment.paymentMethod.glitemDropdep and trans.reconciliation=? "
             + "and trans.account=payment.financialAccount";
         Query cashToDepositQuery = OBDal.getInstance().getSession().createQuery(hqlCashToDeposit);
-        cashToDepositQuery.setString(0, recons.get(i).getId());
+        cashToDepositQuery.setString(0, ((OBPOSAppCashReconcil) recons.get(i)).getReconciliation()
+            .getId());
         List<BigDecimal> lstCashToDeposit = cashToDepositQuery.list();
         cashToDeposit = BigDecimal.ZERO;
         if (!lstCashToDeposit.isEmpty()) {
