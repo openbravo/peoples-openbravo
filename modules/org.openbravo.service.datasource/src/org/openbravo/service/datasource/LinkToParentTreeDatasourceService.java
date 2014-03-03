@@ -307,6 +307,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
       } else {
         json.put("nodeId", nodeIdStr);
       }
+      addNodeCommonAttributes(entity, bob, json);
       json.put("_hasChildren", (this.nodeHasChildren(entity, linkToParentProperty, nodeIdProperty,
           bob, hqlWhereClause)) ? true : false);
       responseData.put(json);
@@ -396,6 +397,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         DataToJsonConverter.class);
     JSONObject updatedData = toJsonConverter.toJsonObject((BaseOBObject) bob,
         DataResolvingMode.FULL);
+    addNodeCommonAttributes(entity, bob, updatedData);
     updatedData.put("parentId", newParentId);
     updatedData.put("_hasChildren", (this.nodeHasChildren(entity, linkToParentProperty,
         nodeIdProperty, bob, hqlWhereClause)) ? true : false);
@@ -555,7 +557,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         }
         json.put("nodeId", nodeIdStr);
       }
-
+      addNodeCommonAttributes(entity, bob, json);
       json.put("_hasChildren", (this.nodeHasChildren(entity, linkToParentProperty, nodeIdProperty,
           bob, hqlWhereClause)) ? true : false);
     } catch (JSONException e) {

@@ -40,6 +40,7 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -70,6 +71,11 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   private static final String JSON_SUFFIX = "//isc_JSONResponseEnd";
   protected static final String ROOT_NODE_DB = "0";
   protected static final String ROOT_NODE_CLIENT = "-1";
+  private static final String AD_ORG_TABLE_ID = "155";
+  private static final String ROOT_ORGANIZATION_ID = "0";
+  private static final String SUMMARY_LEVEL_PROPERTY = "summaryLevel";
+  private static final String FOLDER_ICON_SRC = "../web/skins/ltr/Default/Popup/DragDropTree/iconFolderClosed.png";
+  private static final String LEAF_ICON_SRC = "../web/skins/ltr/Default/Popup/DragDropTree/iconElement.png";
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;
@@ -878,7 +884,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    */
   protected class TooManyTreeNodesException extends Exception {
     private static final long serialVersionUID = 1L;
-
   }
 
   protected Entity getEntity(JSONObject bobProperties) throws JSONException {
@@ -908,6 +913,54 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     }
 
     return jsonResult;
+  }
+
+  /**
+   * Adds to a json representation of a node some attributes that are common to all trees regardless
+   * of its particular implementation
+   * 
+   * @param entity
+   *          entity of the table associated with the tree
+   * @param bob
+   *          BaseOBObject representation of the node
+   * @param node
+   *          JSONObject representation of the node. The common attributes will be added to this
+   *          object
+   */
+  protected final void addNodeCommonAttributes(Entity entity, BaseOBObject bob, JSONObject node) {
+    try {
+      if (!canAcceptDrop(entity, bob)) {
+        node.put("canBeParentNode", false);
+        node.put("icon", LEAF_ICON_SRC);
+      } else {
+        node.put("icon", FOLDER_ICON_SRC);
+      }
+    } catch (JSONException e) {
+      log.error("Error while adding the node common attributes", e);
+    }
+  }
+
+  /**
+   * 
+   * @param entity
+   *          entity of the tree being fetched
+   * @param bob
+   *          node whose disponibility to accept drops is to be determined
+   * @return true if the node can accept dropped records, false otherwise
+   */
+  private boolean canAcceptDrop(Entity entity, BaseOBObject bob) {
+    if (AD_ORG_TABLE_ID.equals(entity.getTableId()) && ROOT_ORGANIZATION_ID.equals(bob.getId())) {
+      // Special case, * organization has summaryField = false but can accept drop
+      return true;
+    }
+    boolean canAcceptDrop = true;
+    if (entity.hasProperty(SUMMARY_LEVEL_PROPERTY)
+        && (Boolean) bob.get(SUMMARY_LEVEL_PROPERTY) == false) {
+      canAcceptDrop = false;
+    }
+    // else {} If the entity does not have a summaryLevel property then all its nodes can accept
+    // drop
+    return canAcceptDrop;
   }
 
 }
