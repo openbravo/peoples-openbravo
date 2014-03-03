@@ -59,6 +59,11 @@ import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The TreeDatasourceService is an abstract class that provides a simple way of returning data in
+ * the correct format for a OBTreeGrid client side component using a datasource.
+ * 
+ */
 public abstract class TreeDatasourceService extends DefaultDataSourceService {
   private static final Logger log = LoggerFactory.getLogger(TreeDatasourceService.class);
   private static final String JSON_PREFIX = "<SCRIPT>//'\"]]>>isc_JSONResponseStart>>";
