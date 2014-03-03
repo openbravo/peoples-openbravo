@@ -217,7 +217,7 @@ enyo.kind({
           });
           return true;
         }
-        if (OB.MobileApp.model.get('permissions')["OBPOS_retail.discountkeyboard"] === true) {
+        if (OB.MobileApp.model.get('permissions')["OBPOS_retail.discountkeyboard"] === true || keyboard.line.get('notSelectableLine') === true) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBMOBC_LineCanNotBeSelected'));
           return true;
         }
