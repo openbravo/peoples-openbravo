@@ -165,6 +165,8 @@ public class DataToJsonConverter {
           continue;
         }
 
+        System.out.println("P:" + property);
+
         Object value;
         if (dataResolvingMode == DataResolvingMode.FULL_TRANSLATABLE) {
           value = bob.get(property.getName(), OBContext.getOBContext().getLanguage());

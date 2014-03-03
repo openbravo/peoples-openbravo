@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,10 +21,13 @@ package org.openbravo.test.dal;
 
 import java.util.Set;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.QueryException;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.EntityKey;
 import org.hibernate.stat.SessionStatistics;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
@@ -32,6 +35,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.Order_ComputedColumns;
+import org.openbravo.service.json.DataResolvingMode;
+import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -135,5 +140,19 @@ public class ComputedColumnsTest extends BaseTest {
       }
     }
     return false;
+  }
+
+  /**
+   * Tests issue #25862
+   * 
+   * Computed columns for a new object should be null when converting to JSON
+   */
+  public void testJSONConverter() throws JSONException {
+    Order myOrder = OBProvider.getInstance().get(Order.class);
+    DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(DataToJsonConverter.class);
+    JSONObject json = toJsonConverter.toJsonObject(myOrder, DataResolvingMode.FULL);
+
+    assertTrue("delivery status property should be present and null",
+        json.isNull(Order.COMPUTED_COLUMN_DELIVERYSTATUS));
   }
 }
