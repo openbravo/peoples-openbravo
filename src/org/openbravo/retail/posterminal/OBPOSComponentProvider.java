@@ -232,9 +232,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/mockpayments",
 
         // Discounts
-        "model/discounts"
+        "model/discounts",
 
-    };
+        // Hook
+        "components/menuhook" };
 
     final String[] cssDependency = { "pos-login", "obpos-main" };
 
