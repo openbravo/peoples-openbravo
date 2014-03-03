@@ -217,6 +217,10 @@ enyo.kind({
           });
           return true;
         }
+        if (OB.MobileApp.model.get('permissions')["OBPOS_retail.discountkeyboard"] === false) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBMOBC_LineCanNotBeSelected'));
+          return true;
+        }
         if (keyboard.line) {
           keyboard.receipt.trigger('discount', keyboard.line, OB.I18N.parseNumber(txt));
         }
