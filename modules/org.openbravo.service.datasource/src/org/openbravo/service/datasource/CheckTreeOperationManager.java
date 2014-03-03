@@ -21,8 +21,41 @@ package org.openbravo.service.datasource;
 
 import java.util.Map;
 
+/**
+ * Abstract class used to restrict the movements of nodes for a particular tree
+ * 
+ * To check if a node movement is valid for a particular tree, this class has to be subclassed and
+ * the checkNodeMovement method must be implemented to determine whether a node movement is valid.
+ * Also this annotations must be added for the class to be used using dependency injection:
+ * 
+ * @ApplicationScoped
+ * @Qualifier("tableName"), tableName being the name of the table associated with the tree
+ * 
+ */
 public abstract class CheckTreeOperationManager {
 
+  /**
+   * Checks if a node movement is valid
+   * 
+   * @param parameters
+   *          Map of the parameters sent to the client to the datasource
+   * @param nodeId
+   *          id of the node being moved
+   * @param newParentId
+   *          id of the new parent of the node (ROOT_NODE_CLIENT if the node is being moved to the
+   *          root)
+   * @param prevNodeId
+   *          id of the sibling node that would be placed just before the node being moved. Can be
+   *          null if the node is being placed in the first position of its siblings. Irrelevant if
+   *          the tree is not ordered
+   * @param nextNodeId
+   *          id of the sibling node that would be placed just after the node being moved. Can be
+   *          null if the node is being placed in the last position of its siblings. Irrelevant if
+   *          the tree is not ordered
+   * @return an ActionResponse object. If the movement is valid, the success attribute must be true,
+   *         false otherwise. The message and messageType attributes can be used to show a message
+   *         in the client message bar
+   */
   public abstract ActionResponse checkNodeMovement(Map<String, String> parameters, String nodeId,
       String newParentId, String prevNodeId, String nextNodeId);
 
