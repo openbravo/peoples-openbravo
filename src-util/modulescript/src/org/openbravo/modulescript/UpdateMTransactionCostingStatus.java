@@ -33,6 +33,8 @@ public class UpdateMTransactionCostingStatus extends ModuleScript {
       ps = cp
           .getPreparedStatement("UPDATE m_transaction SET costing_status = 'CC' WHERE iscostcalculated = 'Y' AND costing_status = 'NC'");
       ps.executeUpdate();
+      ps = cp.getPreparedStatement("UPDATE m_transaction SET isprocessed = 'Y' WHERE iscostcalculated = 'Y' AND isprocessed = 'N'");
+      ps.executeUpdate();
     } catch (Exception e) {
       handleError(e);
     } finally {

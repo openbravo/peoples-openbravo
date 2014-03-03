@@ -121,6 +121,10 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISPROCESSED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="M_INTERNAL_CONSUMPTIONLINE" name="M_INTL_CONSUMP_MTRANSACTION">
         <reference local="M_INTERNAL_CONSUMPTIONLINE_ID" foreign="M_INTERNAL_CONSUMPTIONLINE_ID"/>
       </foreign-key>
@@ -188,5 +192,6 @@
       <check name="M_TRANSACTION_CURRENCY"><![CDATA[(TRANSACTIONCOST IS NULL) OR ((TRANSACTIONCOST IS NOT NULL) AND (C_CURRENCY_ID IS NOT NULL))]]></check>
       <check name="M_TRANSACTION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_TRANSACTION_ISCOSTCALC_TRX"><![CDATA[ISCOSTCALCULATED IN ('Y', 'N')]]></check>
+      <check name="M_TRANSACTION_ISPROCESSED"><![CDATA[ISPROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>
