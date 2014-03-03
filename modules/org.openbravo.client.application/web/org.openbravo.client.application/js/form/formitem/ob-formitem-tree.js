@@ -139,7 +139,7 @@ isc.OBTreeItem.addProperties({
   },
 
   changed: function (form, item, value) {
-    if (!this.tree.isVisible() && !this.valueChangedFromPopup) {
+    if (!this.tree.isVisible() && !this.valueChangedFromPopup && !this.valueChangedFromDropDownTree) {
       this.tree.show();
     }
     this.fireOnPause('refreshTree', this.refreshTree, 500, this);
@@ -148,6 +148,14 @@ isc.OBTreeItem.addProperties({
 
   refreshTree: function () {
     this.tree.fetchData();
+  },
+
+
+  blur: function (form, item) {
+    // Do not execute FormItem.blur if the tree is visible, to avoid executing callouts without having selected a record
+    if (!this.tree.isVisible()) {
+      this.Super('blur', arguments);
+    }
   },
 
   setValueFromRecord: function (record) {
@@ -168,6 +176,7 @@ isc.OBTreeItem.addProperties({
       this.valueMap[record[this.valueField]] = record[this.treeDisplayField].replace(/[\n\r]/g, '');
       this.updateValueMap();
     }
+    this.form.handleItemChange(this);
     // only jump to the next field if the value has really been set
     // do not jump to the next field if the event has been triggered by the Tab key,
     // to prevent a field from being skipped (see https://issues.openbravo.com/view.php?id=21419)
@@ -309,16 +318,11 @@ isc.OBTreeItemTree.addProperties({
     if (!this.treeItem.parentSelectionAllowed && this.data.hasChildren(record)) {
       return;
     }
-    if (!this.treeItem.valueMap) {
-      this.treeItem.valueMap = {};
-    }
-    if (!this.treeItem.valueMap[id]) {
-      this.treeItem.valueMap[id] = identifier;
-    }
-    this.treeItem.setElementValue(identifier);
-    this.treeItem.updateValue();
     this.treeItem.form.view.toolBar.updateButtonState(true);
     this.hide();
+    this.treeItem.valueChangedFromDropDownTree = true;
+    this.treeItem.setValueFromRecord(record);
+    delete this.treeItem.valueChangedFromDropDownTree;
   },
 
   fetchData: function (criteria, callback, requestProperties) {
