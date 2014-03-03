@@ -31,6 +31,8 @@ isc.ClassFactory.mixInInterface('OBTreeItem', 'OBLinkTitleItem');
 isc.OBTreeItem.addProperties({
   showPickerIcon: true,
   pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
+  pickerIconHSpace: 0,
+  iconHSpace: 0,
   tree: null,
   init: function () {
     this.Super('init', arguments);
