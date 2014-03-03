@@ -889,8 +889,7 @@ public class OrderLoader extends JSONProcessSimple {
           if (jsonorder.getLong("orderType") == 1) {
             pendingQty = pendingQty.negate();
           }
-          ShipmentInOutLine objShipmentInOutLine = getValueOfKey(queryLoc.list().get(0).getId(),
-              usedBins);
+          ShipmentInOutLine objShipmentInOutLine = usedBins.get(queryLoc.list().get(0).getId());
           if (objShipmentInOutLine != null) {
             objShipmentInOutLine.setMovementQuantity(objShipmentInOutLine.getMovementQuantity()
                 .add(pendingQty));
@@ -1592,19 +1591,6 @@ public class OrderLoader extends JSONProcessSimple {
         new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "", entity
             .getTableName(), doctypeTarget == null ? "" : doctypeTarget.getId(),
         doctype == null ? "" : doctype.getId(), false, true);
-  }
-
-  public static ShipmentInOutLine getValueOfKey(String key,
-      HashMap<String, ShipmentInOutLine> hashMap) {
-
-    Iterator it = hashMap.entrySet().iterator();
-    while (it.hasNext()) {
-      Map.Entry e = (Map.Entry) it.next();
-      if (e.getKey() == key) {
-        return (ShipmentInOutLine) e.getValue();
-      }
-    }
-    return null;
   }
 
   @Override
