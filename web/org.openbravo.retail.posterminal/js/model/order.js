@@ -352,7 +352,6 @@
             discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_UP).toString(), 10);
           }
         } else {
-          grossListPrice = line.get('priceList');
           discountPercentage = OB.DEC.Zero;
         }
         line.set({
