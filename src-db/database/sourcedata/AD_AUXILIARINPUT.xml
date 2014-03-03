@@ -2485,6 +2485,25 @@ where ord.c_order_id = @c_order_id@]]></CODE>
 <!--9E0F5BB107EE463B8E4F18395952D8F2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9E0F5BB107EE463B8E4F18395952D8F2--></AD_AUXILIARINPUT>
 
+<!--9E5EF28335254D948E30BAF9BF41B3A7--><AD_AUXILIARINPUT>
+<!--9E5EF28335254D948E30BAF9BF41B3A7-->  <AD_AUXILIARINPUT_ID><![CDATA[9E5EF28335254D948E30BAF9BF41B3A7]]></AD_AUXILIARINPUT_ID>
+<!--9E5EF28335254D948E30BAF9BF41B3A7-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--9E5EF28335254D948E30BAF9BF41B3A7-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--9E5EF28335254D948E30BAF9BF41B3A7-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--9E5EF28335254D948E30BAF9BF41B3A7-->  <AD_TAB_ID><![CDATA[290]]></AD_TAB_ID>
+<!--9E5EF28335254D948E30BAF9BF41B3A7-->  <NAME><![CDATA[showAddPayment]]></NAME>
+<!--9E5EF28335254D948E30BAF9BF41B3A7-->  <CODE><![CDATA[@SQL=select case when sum(fpsd.amount)=ci.GrandTotal then 'N' else 'Y' end 
+          from fin_payment_scheduledetail fpsd
+              left join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+               left join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
+                left join fin_payment_schedule ps ON ps.fin_payment_schedule_id = fpsd.fin_payment_schedule_invoice
+                left join c_invoice ci on ci.c_invoice_id=ps.c_invoice_id
+                WHERE ps.c_invoice_id =@c_invoice_id@
+                and to_number(aprm_seqnumberpaymentstatus(fp.status)) >= 40
+                group by ci.GrandTotal]]></CODE>
+<!--9E5EF28335254D948E30BAF9BF41B3A7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--9E5EF28335254D948E30BAF9BF41B3A7--></AD_AUXILIARINPUT>
+
 <!--9EC3A191A6D84253A26520E4849B73EF--><AD_AUXILIARINPUT>
 <!--9EC3A191A6D84253A26520E4849B73EF-->  <AD_AUXILIARINPUT_ID><![CDATA[9EC3A191A6D84253A26520E4849B73EF]]></AD_AUXILIARINPUT_ID>
 <!--9EC3A191A6D84253A26520E4849B73EF-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3878,5 +3897,24 @@ AND EXISTS (SELECT 1 FROM C_CONVERSION_RATE_DOCUMENT WHERE C_INVOICE_ID = (SELEC
 <!--FF80818132916D6E013291C49E7E00E6-->  <CODE><![CDATA[@SQL=SELECT M_PRODUCTION.PROCESSED FROM M_PRODUCTION WHERE M_PRODUCTION.M_PRODUCTION_ID =  @M_PRODUCTION_ID@]]></CODE>
 <!--FF80818132916D6E013291C49E7E00E6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--FF80818132916D6E013291C49E7E00E6--></AD_AUXILIARINPUT>
+
+<!--FFA925AAC4BB49D5A67C05DAD16EFA32--><AD_AUXILIARINPUT>
+<!--FFA925AAC4BB49D5A67C05DAD16EFA32-->  <AD_AUXILIARINPUT_ID><![CDATA[FFA925AAC4BB49D5A67C05DAD16EFA32]]></AD_AUXILIARINPUT_ID>
+<!--FFA925AAC4BB49D5A67C05DAD16EFA32-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--FFA925AAC4BB49D5A67C05DAD16EFA32-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--FFA925AAC4BB49D5A67C05DAD16EFA32-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--FFA925AAC4BB49D5A67C05DAD16EFA32-->  <AD_TAB_ID><![CDATA[263]]></AD_TAB_ID>
+<!--FFA925AAC4BB49D5A67C05DAD16EFA32-->  <NAME><![CDATA[showAddPayment]]></NAME>
+<!--FFA925AAC4BB49D5A67C05DAD16EFA32-->  <CODE><![CDATA[@SQL=select case when sum(fpsd.amount)=ci.GrandTotal then 'N' else 'Y' end 
+          from fin_payment_scheduledetail fpsd
+              left join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+               left join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
+                left join fin_payment_schedule ps ON ps.fin_payment_schedule_id = fpsd.fin_payment_schedule_invoice
+                left join c_invoice ci on ci.c_invoice_id=ps.c_invoice_id
+                WHERE ps.c_invoice_id =@c_invoice_id@
+                and to_number(aprm_seqnumberpaymentstatus(fp.status)) >= 40
+                group by ci.GrandTotal]]></CODE>
+<!--FFA925AAC4BB49D5A67C05DAD16EFA32-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--FFA925AAC4BB49D5A67C05DAD16EFA32--></AD_AUXILIARINPUT>
 
 </data>
