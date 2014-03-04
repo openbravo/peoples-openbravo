@@ -262,9 +262,9 @@ isc.OBTreeFilterItem.addProperties({
   showPickerIcon: true,
   filterDialogConstructor: isc.OBTreeItemPopupFilterWindow,
   lastValueFromPopup: null,
+  pickerConstructor: 'ImgButton',
   pickerIconDefaults: {
     name: 'showDateRange',
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/productCharacteristicsFilter_ico.png',
     width: 21,
     height: 21,
     showOver: false,
@@ -278,6 +278,7 @@ isc.OBTreeFilterItem.addProperties({
     }
   },
 
+  pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   filterDialogCallback: function (criteria) {
     this.grid.parentElement.setFilterEditorCriteria(criteria);
     this.lastValueFromPopup = this.getValue();
