@@ -34,7 +34,6 @@ public class UpdateMTransactionCostingStatus extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
       // If the preference does not exist in the database yet the modulescript must be executed.
       boolean isUpdated = UpdateMTransactionCostingStatusData.isUpdated(cp);
-      log4j.error(isUpdated);
       if (!isUpdated) {
         UpdateMTransactionCostingStatusData.updateCostingStatus(cp);
         UpdateMTransactionCostingStatusData.updateIsProcessed(cp);
