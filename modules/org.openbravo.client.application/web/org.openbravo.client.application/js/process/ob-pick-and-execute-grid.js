@@ -328,7 +328,15 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     if (this._cleaningFilter) {
       // Always refresh when cleaning the filter
+      if (!criteria) {
+        criteria = {
+          _constructor: 'AdvancedCriteria',
+          operator: 'and',
+          criteria: []
+        };
+      }
       criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+      crit = criteria;
     }
 
     this.Super('handleFilterEditorSubmit', [crit, context]);
