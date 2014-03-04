@@ -33,7 +33,7 @@
       <![CDATA[
         SELECT count(*) as existpreference
         FROM ad_preference
-        WHERE attribute = 'IsCustomerBalanceRestored' AND value='Y'        
+        WHERE attribute = 'IsCustomerBalanceRestored' AND to_char(value)='Y'        
       ]]>
     </Sql>
   </SqlMethod>
@@ -42,7 +42,7 @@
     <Sql>
       <![CDATA[
         DELETE FROM ad_preference
-        WHERE attribute = 'IsCustomerBalanceRestored' AND value='Y'        
+        WHERE attribute = 'IsCustomerBalanceRestored' AND to_char(value)='Y'        
       ]]>
     </Sql>
   </SqlMethod>

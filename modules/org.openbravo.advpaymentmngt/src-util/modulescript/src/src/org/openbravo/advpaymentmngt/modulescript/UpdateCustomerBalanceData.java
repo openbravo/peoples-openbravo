@@ -131,7 +131,7 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
     strSql = strSql + 
       "        SELECT count(*) as existpreference" +
       "        FROM ad_preference" +
-      "        WHERE attribute = 'IsCustomerBalanceRestored' AND value='Y'        ";
+      "        WHERE attribute = 'IsCustomerBalanceRestored' AND to_char(value)='Y'        ";
 
     ResultSet result;
     boolean boolReturn = false;
@@ -165,7 +165,7 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
     String strSql = "";
     strSql = strSql + 
       "        DELETE FROM ad_preference" +
-      "        WHERE attribute = 'IsCustomerBalanceRestored' AND value='Y'        ";
+      "        WHERE attribute = 'IsCustomerBalanceRestored' AND to_char(value)='Y'        ";
 
     int updateCount = 0;
     PreparedStatement st = null;
