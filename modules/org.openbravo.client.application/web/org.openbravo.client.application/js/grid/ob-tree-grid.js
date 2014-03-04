@@ -42,11 +42,11 @@ isc.OBTreeGrid.addProperties({
     parentIdField: 'parentId',
     openProperty: 'isOpen'
   },
-  
+
 
   initWidget: function () {
-      this.sorterDefaults = {};
-      this.Super('initWidget', arguments);
+    this.sorterDefaults = {};
+    this.Super('initWidget', arguments);
   },
 
   /**
@@ -126,5 +126,10 @@ isc.OBTreeGrid.addProperties({
       }
     }
     return null;
+  },
+
+  handleFilterEditorSubmit: function (criteria, context, callback) {
+    this.setOpenState('[]');
+    this.Super('handleFilterEditorSubmit', arguments);
   }
 });
