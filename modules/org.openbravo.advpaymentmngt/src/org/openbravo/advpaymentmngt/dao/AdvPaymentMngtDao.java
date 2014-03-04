@@ -1926,15 +1926,14 @@ public class AdvPaymentMngtDao {
       obcPayment.add(Restrictions.in("organization.id", orgIds));
       obcPayment.addOrderBy(FIN_Payment.PROPERTY_PAYMENTDATE, true);
       obcPayment.addOrderBy(FIN_Payment.PROPERTY_DOCUMENTNO, true);
+
       List<FIN_Payment> paymentList = new ArrayList<FIN_Payment>();
       for (FIN_Payment fp : obcPayment.list()) {
-        for (FIN_PaymentDetail fpd : fp.getFINPaymentDetailList()) {
-          for (FIN_PaymentScheduleDetail fpsd : fpd.getFINPaymentScheduleDetailList()) {
-            if (fpsd.isInvoicePaid()) {
-              paymentList.add(fp);
-            }
-          }
+        if ((FIN_Utility.seqnumberpaymentstatus(fp.getStatus())) >= (FIN_Utility
+            .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(fp)))) {
+          paymentList.add(fp);
         }
+
       }
       return paymentList;
     } finally {

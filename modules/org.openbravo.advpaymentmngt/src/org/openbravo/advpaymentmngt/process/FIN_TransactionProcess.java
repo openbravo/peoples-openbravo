@@ -110,6 +110,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
                   if (psd.isInvoicePaid()) {
                     FIN_Utility.updatePaymentAmounts(psd);
                   }
+                  OBDal.getInstance().save(psd);
                 }
               }
             }
