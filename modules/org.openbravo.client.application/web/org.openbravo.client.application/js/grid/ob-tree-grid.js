@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ isc.ClassFactory.defineClass('OBTreeGrid', isc.TreeGrid);
 isc.OBTreeGrid.addProperties({
   showOpenIcons: false,
   showDropIcons: false,
+  openerImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/treegrid/iconTree.png',
   nodeIcon: null,
   folderIcon: null,
   showSortArrow: 'both',
