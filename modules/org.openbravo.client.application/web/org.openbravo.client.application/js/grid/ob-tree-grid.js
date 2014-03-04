@@ -22,9 +22,12 @@
 isc.ClassFactory.defineClass('OBTreeGrid', isc.TreeGrid);
 
 isc.OBTreeGrid.addProperties({
-  showOpenIcons: false,
+  showOpenIcons: true,
   showDropIcons: false,
   openerImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/treegrid/iconTree.png',
+  openerIconSize: 16,
+  showCustomIconOpen: true,
+  checkboxFieldHSpace: 20,
   nodeIcon: null,
   folderIcon: null,
   showSortArrow: 'both',
