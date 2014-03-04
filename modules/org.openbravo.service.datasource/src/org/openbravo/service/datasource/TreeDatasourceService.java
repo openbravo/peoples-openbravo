@@ -303,7 +303,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     try {
       if (jsonCriteria.has("criteria")) {
         JSONArray criteriaArray = (JSONArray) jsonCriteria.get("criteria");
-        if (criteriaArray.length() > 0) {
+        if (criteriaArray.length() == 1) {
           return isSubtabCriteria(entity, criteriaArray.getJSONObject(0));
         } else {
           return false;
@@ -341,7 +341,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     try {
       if (jsonCriteria.has("criteria")) {
         JSONArray criteriaArray = (JSONArray) jsonCriteria.get("criteria");
-        if (criteriaArray.length() > 0) {
+        if (criteriaArray.length() == 1) {
           return isDummyCriteria(criteriaArray.getJSONObject(0));
         } else {
           return false;
@@ -368,7 +368,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     try {
       if (jsonCriteria.has("criteria")) {
         JSONArray criteriaArray = (JSONArray) jsonCriteria.get("criteria");
-        if (criteriaArray.length() > 0) {
+        if (criteriaArray.length() == 1) {
           return isParentIdCriteria(criteriaArray.getJSONObject(0));
         } else {
           return false;
