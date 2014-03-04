@@ -220,6 +220,7 @@ isc.OBTreeItemTree.addProperties({
   height: 200,
   autoFetchData: false,
   visibility: 'hidden',
+  canResizeFields: false,
   init: function () {
     OB.Datasource.get(this.treeItem.dataSourceId, this, null, true);
     this.Super('init', arguments);
