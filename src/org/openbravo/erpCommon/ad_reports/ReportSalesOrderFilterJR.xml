@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2007-2012 Openbravo SLU 
+* All portions are Copyright (C) 2007-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -34,7 +34,6 @@
   <PARAMETER id="C_Project_ID_D" name="projectName" attribute="value"/>
   <PARAMETER id="paramBPartnerId" name="paramBPartnerId" attribute="value"/>
   <PARAMETER id="paramM_PRODUCTCATEGORY_ID" name="mProductCatId" attribute=""/>
-  <PARAMETER id="paramC_REGION_ID" name="cRegionId" attribute=""/>
   <PARAMETER id="paramBPartnerDescription" name="paramBPartnerDescription" attribute="value"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
@@ -52,9 +51,6 @@
   <ARGUMENT name="parameterListSelected" withId="paramC_PROJECT_ID"/></SUBREPORT-->
 <SUBREPORT id="reportC_PRODUCTCATREGORY" name="reportC_PRODUCTCATREGORY" report="org/openbravo/erpCommon/reference/List">
   <ARGUMENT name="parameterListSelected" withId="paramM_PRODUCTCATEGORY_ID"/>
-</SUBREPORT>
-<SUBREPORT id="reportC_REGIONID" name="reportC_REGIONID" report="org/openbravo/erpCommon/reference/List">
-  <ARGUMENT name="parameterListSelected" withId="paramC_REGION_ID"/>
 </SUBREPORT>
 <SUBREPORT id="reportMProductId_IN" name="reportMProductId_IN" report="org/openbravo/erpCommon/reference/List">
   <ARGUMENT name="parameterListSelected" withId="paramVacio"/>

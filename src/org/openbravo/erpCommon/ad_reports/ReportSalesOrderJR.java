@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2007-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2014 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -142,7 +142,6 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
     xmlDocument.setParameter("cProjectId", strcProjectId);
     xmlDocument.setParameter("projectName", OrderEditionData.selectProject(this, strcProjectId));
-    xmlDocument.setParameter("cRegionId", "");
     xmlDocument.setParameter("mProductCatId", "");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID",
@@ -150,18 +149,6 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Client", "SalesOrderFilter"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "SalesOrderFilterJR", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID", "",
-          "C_Region of Country", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "SalesOrderFilterJR"), Utility.getContext(this, vars, "#User_Client",
-              "SalesOrderFilterJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "SalesOrderFilterJR", "");
-      xmlDocument.setData("reportC_REGIONID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
