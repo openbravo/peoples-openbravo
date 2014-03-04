@@ -27,7 +27,7 @@ isc.OBTreeGrid.addProperties({
   openerImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/treegrid/iconTree.png',
   openerIconSize: 16,
   showCustomIconOpen: true,
-  checkboxFieldHSpace: 20,
+  extraIconGap: 5,
   nodeIcon: null,
   folderIcon: null,
   showSortArrow: 'both',
