@@ -28,6 +28,7 @@ isc.OBTreeGrid.addProperties({
   openerIconSize: 16,
   showCustomIconOpen: true,
   extraIconGap: 5,
+  openerIconWidth: 24,
   nodeIcon: null,
   folderIcon: null,
   showSortArrow: 'both',
