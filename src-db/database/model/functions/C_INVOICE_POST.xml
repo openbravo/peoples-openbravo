@@ -513,6 +513,7 @@ IF (NOT FINISH_PROCESS) THEN
         UPDATE C_INVOICELINE
         SET QtyInvoiced=0,
             LineNetAmt=0,
+            line_gross_amount=0,
             Updated=now(),
             UpdatedBy=v_UpdatedBy
         WHERE C_Invoice_ID=v_Record_ID;
