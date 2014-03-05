@@ -469,7 +469,7 @@ public class WindowTree extends HttpSecureAppServlet {
 
       if (adTree != null) {
         TreeID = adTree.getId();
-        TreeType = "NEW";
+        TreeType = adTree.getTable().getTreeType();
       } else {
         WindowTreeData[] data = WindowTreeData.selectTreeID(this,
             Utility.getContext(this, vars, "#User_Client", ""), TreeType);

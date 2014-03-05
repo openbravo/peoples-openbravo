@@ -50,7 +50,9 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.ModelImplementation;
@@ -247,23 +249,34 @@ public class OBViewTab extends BaseTemplateComponent {
       iconButtons.add(auditBtn);
     }
 
-    // Old Tree button
-    if (tab.isTreeIncluded() && tab.getTableTree() == null) {
-      IconButton treeBtn = new IconButton();
-      treeBtn.type = "tree";
-      treeBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Tree", OBContext
-          .getOBContext().getLanguage().getLanguage());
-      treeBtn.action = "OB.ToolbarUtils.showTree(this.view);";
-      iconButtons.add(treeBtn);
+    String useClassicPopupTreeStr = null;
+    try {
+      useClassicPopupTreeStr = Preferences.getPreferenceValue("OBUIAPP_UseClassicTreeView", true,
+          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), tab.getWindow());
+    } catch (PropertyException e) {
+      // The property is not defined, so the classic popup tree should not be used
     }
+    boolean useClassicPopupTree = ("Y".equals(useClassicPopupTreeStr));
 
     if (tab.getTableTree() != null) {
-      IconButton treeBtn = new IconButton();
-      treeBtn.type = "treeGrid";
-      treeBtn.label = Utility.messageBD(new DalConnectionProvider(false),
-          "OBUIAPP_TOGGLE_TREE_BUTTON", OBContext.getOBContext().getLanguage().getLanguage());
-      treeBtn.action = "OB.ToolbarUtils.toggleTreeGridVisibility(this.view);";
-      iconButtons.add(treeBtn);
+      if (useClassicPopupTree) {
+        // Classic Tree button
+        IconButton treeBtn = new IconButton();
+        treeBtn.type = "tree";
+        treeBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Tree", OBContext
+            .getOBContext().getLanguage().getLanguage());
+        treeBtn.action = "OB.ToolbarUtils.showTree(this.view);";
+        iconButtons.add(treeBtn);
+      } else {
+        IconButton treeBtn = new IconButton();
+        treeBtn.type = "treeGrid";
+        treeBtn.label = Utility.messageBD(new DalConnectionProvider(false),
+            "OBUIAPP_TOGGLE_TREE_BUTTON", OBContext.getOBContext().getLanguage().getLanguage());
+        treeBtn.action = "OB.ToolbarUtils.toggleTreeGridVisibility(this.view);";
+        iconButtons.add(treeBtn);
+      }
     }
 
     return iconButtons;
