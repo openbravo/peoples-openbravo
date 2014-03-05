@@ -433,7 +433,12 @@ isc.OBNumberItem.addProperties({
 
     // Make sure the number is rounded using the number of decimal digits specified in the number typeInstance
     if (isc.isA.String(this.getValue())) {
-      value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
+      //if the string is a math expression do not perform rounding yet.
+      if (this.getValue().indexOf('=') === -1) {
+        value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
+      } else {
+        value = this.getValue();
+      }
       this.setValue(OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
       if (this.form.setTextualValue) {
         this.form.setTextualValue(this.name, value, this.typeInstance);
@@ -461,7 +466,8 @@ isc.OBNumberItem.addProperties({
 
       // first check if the number is valid
       if (!isc.isA.String(value)) {
-        // format the value displayed
+        // format the value to be displayed.
+        value = OB.Utilities.Number.OBPlainToOBMasked(this.getValue(), this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
         this.setElementValue(this.mapValueToDisplay(value));
       }
     }
