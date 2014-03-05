@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,6 +74,46 @@ isc.DataSource.addSearchOperator({
   }
 });
 
+isc.Tree.addProperties({
+  _original_getLoadState: isc.Tree.getPrototype().getLoadState,
+  getLoadState: function (node) {
+    if (node._hasChildren === false) {
+      return isc.Tree.LOADED;
+    } else {
+      return this._original_getLoadState(node);
+    }
+  }
+});
+
+isc.ResultTree.addProperties({
+  _original_loadChildrenReply: isc.ResultTree.getPrototype().loadChildrenReply,
+  loadChildrenReply: function (dsResponse, data, request) {
+    var target = window[this.componentId];
+
+    if (dsResponse && dsResponse.error && dsResponse.error.type === 'tooManyNodes') {
+      if (target && target.view) {
+        target.view.messageBar.setMessage('error', null, OB.I18N.getLabel('OBUIAPP_TooManyNodes'));
+      }
+      return;
+    }
+
+    this._original_loadChildrenReply(dsResponse, data, request);
+    if (request && request.params && request.params.selectedRecords) {
+      if (target && target.treeDataArrived) {
+        target.treeDataArrived();
+      }
+    }
+  },
+  _original_indexOf: isc.ResultTree.getPrototype().indexOf,
+  indexOf: function (node, a, b, c, d) {
+    if (!node) {
+      return -1;
+    } else {
+      return this._original_indexOf(node, a, b, c, d);
+    }
+  }
+});
+
 isc.ResultSet.addProperties({
   _original_removeCacheData: isc.ResultSet.getPrototype().removeCacheData,
   removeCacheData: function (updateData) {
@@ -119,7 +159,6 @@ isc.ResultSet.addProperties({
     }
   }
 });
-
 
 isc.Canvas.addProperties({
 

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.ADOrgModule;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
@@ -65,6 +66,8 @@ public class InitialOrgSetup {
   private Client client;
   private User user;
   private Role role;
+
+  private static final String ACCOUNT_TREE_TABLE_ID = "188";
 
   /**
    * 
@@ -411,7 +414,8 @@ public class InitialOrgSetup {
 
     log4j.debug("createAccounting() - Retrieving the account tree");
     try {
-      accountTree = InitialSetupUtility.getTree("EV", client, null);
+      Table accountTreeTable = OBDal.getInstance().get(Table.class, ACCOUNT_TREE_TABLE_ID);
+      accountTree = InitialSetupUtility.getTree(accountTreeTable, client, null);
       if (accountTree == null)
         return logErrorAndRollback("@CreateAccountingFailed@",
             "createAccounting() - couldn't retrieve the account tree for the client", null);
@@ -495,7 +499,8 @@ public class InitialOrgSetup {
 
     log4j.debug("createAccounting() - Retrieving the account tree");
     try {
-      accountTree = InitialSetupUtility.getTree("EV", client, null);
+      Table accountTreeTable = OBDal.getInstance().get(Table.class, ACCOUNT_TREE_TABLE_ID);
+      accountTree = InitialSetupUtility.getTree(accountTreeTable, client, null);
       if (accountTree == null)
         return logErrorAndRollback("@CreateAccountingFailed@",
             "createAccounting() - couldn't retrieve the account tree for the client", null);

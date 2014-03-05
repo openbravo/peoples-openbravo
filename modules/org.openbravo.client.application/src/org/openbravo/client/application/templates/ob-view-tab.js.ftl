@@ -54,6 +54,9 @@
     <#if tabComponent.trlTab>
     isTrlTab: ${tabComponent.trlTab?string},
     </#if> 
+    <#if tabComponent.tree>
+    isTree: ${tabComponent.tree?string},
+    </#if>     
     
     standardProperties:{
 <@compress single_line=true>
@@ -163,6 +166,10 @@
             </#list>
         },
     </#if>
+    
+
+    
+    
     initWidget: function() {
         this.prepareFields();
         this.dataSource = ${tabComponent.dataSourceJavaScript};
@@ -170,6 +177,9 @@
         this.dataSource.potentiallyShared = true;
         this.viewForm = isc.OBViewForm.create(isc.clone(OB.ViewFormProperties), ${tabComponent.viewForm}); 
         this.viewGrid = ${tabComponent.viewGrid};
+    <#if tabComponent.tree>
+        this.treeGrid = ${tabComponent.treeGrid};
+    </#if>
         this.Super('initWidget', arguments);
     }
 </#macro>

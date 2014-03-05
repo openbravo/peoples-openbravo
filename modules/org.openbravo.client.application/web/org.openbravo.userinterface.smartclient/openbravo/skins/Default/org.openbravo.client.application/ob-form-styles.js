@@ -342,6 +342,13 @@ isc.OBNumberItem.addProperties({
   errorOrientation: 'left'
 });
 
+isc.OBTreeItemTree.addProperties({
+  baseStyle: 'OBFormFieldPickListCell',
+  bodyStyleName: 'OBPickListBody',
+  className: 'scrollingMenu',
+  cellHeight: 22
+});
+
 /* =====================================================================
  * Date range filter item and dialog
  =======================================================================*/
