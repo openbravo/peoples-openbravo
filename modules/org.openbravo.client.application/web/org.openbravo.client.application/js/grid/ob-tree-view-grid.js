@@ -104,6 +104,8 @@ isc.OBTreeViewGrid.addProperties({
     ds.transformResponse = function (dsResponse, dsRequest, jsonData) {
       if (jsonData.response.message) {
         me.view.messageBar.setMessage(jsonData.response.message.messageType, null, jsonData.response.message.message);
+      } else if (dsRequest.operationType === 'update') {
+        me.view.messageBar.hide();
       }
       if (jsonData.response.error) {
         dsResponse.error = jsonData.response.error;
