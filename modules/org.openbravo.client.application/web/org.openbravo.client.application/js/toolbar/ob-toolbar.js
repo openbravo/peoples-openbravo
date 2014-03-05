@@ -124,7 +124,7 @@ isc.OBToolbar.addClassProperties({
     updateState: function () {
       var view = this.view,
           selectedRecords = view.viewGrid.getSelectedRecords();
-      this.setDisabled(view.viewGrid.isGrouped || view.isShowingForm || view.readOnly || view.editOrDeleteOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1) || view.isShowingTree);
+      this.setDisabled(view.viewGrid.isGrouped || view.isShowingForm || view.readOnly || view.editOrDeleteOnly || view.singleRecord || !view.hasValidState() || (selectedRecords && selectedRecords.length > 1));
     },
     keyboardShortcutId: 'ToolBar_NewRow'
   },
@@ -503,15 +503,6 @@ isc.OBToolbar.addClassProperties({
         this.setDisabled(disabled);
       },
       keyboardShortcutId: 'ToolBar_Email'
-    },
-    'treeGrid': {
-      updateState: function () {
-        if (this.view) {
-          this.setDisabled(this.view.isShowingForm || this.view.isEditingGrid);
-        } else {
-          this.setDisabled(true);
-        }
-      }
     },
     'tree': {
       updateState: function () {
@@ -1721,24 +1712,6 @@ OB.ToolbarUtils.showTree = function (view) {
   }
 
   view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
-};
-
-OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
-  var treeGrid = view.treeGrid,
-      viewGrid = view.viewGrid;
-  if (view.isShowingTree) {
-    viewGrid.show();
-    treeGrid.hide();
-    view.isShowingTree = false;
-  } else {
-    treeGrid.copyCriteriaFromViewGrid();
-    treeGrid.setData([]); // forcing refresh
-    treeGrid.fetchData(treeGrid.getCriteria());
-    treeGrid.checkShowFilterFunnelIcon(treeGrid.getCriteria());
-    treeGrid.show();
-    viewGrid.hide();
-    view.isShowingTree = true;
-  }
 };
 
 

@@ -170,14 +170,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/calendar/ob-multicalendar.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/grid/ob-grid.js", false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/grid/ob-tree-grid.js", false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/grid/ob-tree-view-grid.js", false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-tree.js", true));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-tree-filter.js", true));
+
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/navbar/ob-quickrun-widget.js", false));
 
@@ -323,10 +316,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
-            + "/org.openbravo.client.application/ob-tree-grid-styles.css", false));
-    globalResources.add(createStyleSheetResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-navigation-bar-styles.css", false));
     globalResources.add(createStyleSheetResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
@@ -378,10 +367,6 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-grid-styles.js", false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
-            + KernelConstants.SKIN_PARAMETER
-            + "/org.openbravo.client.application/ob-tree-grid-styles.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER

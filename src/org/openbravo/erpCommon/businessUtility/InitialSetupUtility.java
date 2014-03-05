@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2013 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,7 +59,6 @@ import org.openbravo.model.ad.ui.MessageTrl;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.ad.utility.Sequence;
-import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.currency.Currency;
@@ -290,14 +289,12 @@ public class InitialSetupUtility {
   }
 
   /**
-   * @Deprecated use tableTreeRelation, because it retrieves all tableTrees, instead of only the
-   *             trees defined in the DA_TreeType type list reference Returns the relation of trees
-   *             defined in the reference list of the application dictionary called AD_TreeType Type
+   * Returns the relation of trees defined in the reference list of the application dictionary
+   * called AD_TreeType Type
    * 
    * @return java.util.List<org.openbravo.model.ad.domain.List>: the relation of AD list elements
    * @throws Exception
    */
-  @Deprecated
   public static List<org.openbravo.model.ad.domain.List> treeRelation() throws Exception {
 
     final OBCriteria<org.openbravo.model.ad.domain.Reference> obcReference = OBDal.getInstance()
@@ -318,20 +315,6 @@ public class InitialSetupUtility {
   }
 
   /**
-   * Returns the relation of trees that use the ADTree tree structure, AD_TABLE_TREE table
-   * 
-   * @return java.util.List<TableTree>: the relation of all the trees that use the ADTree tree
-   *         structure
-   * @throws Exception
-   */
-  public static List<TableTree> tableTreeRelation() throws Exception {
-    final OBCriteria<TableTree> obcTableTree = OBDal.getInstance().createCriteria(TableTree.class);
-    obcTableTree.add(Restrictions.eq(TableTree.PROPERTY_TREESTRUCTURE, "ADTree"));
-    obcTableTree.addOrder(Order.asc(TableTree.PROPERTY_NAME));
-    return obcTableTree.list();
-  }
-
-  /**
    * Returns the tree of the provided type
    * 
    * @param strTreeTypeMenu
@@ -340,10 +323,8 @@ public class InitialSetupUtility {
    * @throws Exception
    */
   public static Tree getSystemMenuTree(String strTreeTypeMenu) throws Exception {
-    final String AD_MENU_ID = "116";
-    Table menuTable = OBDal.getInstance().get(Table.class, AD_MENU_ID);
     final OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
-    obcTree.add(Restrictions.eq(Tree.PROPERTY_TABLE, menuTable));
+    obcTree.add(Restrictions.eq(Tree.PROPERTY_TYPEAREA, strTreeTypeMenu));
     List<Tree> lTrees = obcTree.list();
     if (lTrees.size() != 1)
       return null;
@@ -351,7 +332,7 @@ public class InitialSetupUtility {
   }
 
   /**
-   * @deprecated use new insertTree method where new parameter "table" is added
+   * 
    * @param client
    * @param name
    * @param treeType
@@ -359,21 +340,14 @@ public class InitialSetupUtility {
    * @return object Tree for the new tree
    * @throws Exception
    */
-  @Deprecated
   public static Tree insertTree(Client client, String name, String treeType, Boolean boIsAllNodes)
       throws Exception {
-    return insertTree(client, name, treeType, boIsAllNodes, null);
-  }
-
-  public static Tree insertTree(Client client, String name, String treeType, Boolean boIsAllNodes,
-      Table table) throws Exception {
     final Tree newTree = OBProvider.getInstance().get(Tree.class);
     newTree.setClient(client);
     newTree.setName(name);
     newTree.setDescription(name);
     newTree.setTypeArea(treeType);
     newTree.setAllNodes(boIsAllNodes);
-    newTree.setTable(table);
     OBDal.getInstance().save(newTree);
     OBDal.getInstance().flush();
     return newTree;
@@ -2022,9 +1996,7 @@ public class InitialSetupUtility {
 
   public static Tree getOrgTree(Client client) throws Exception {
     OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
-    final String AD_ORG_TABLE_ID = "155";
-    Table table = OBDal.getInstance().get(Table.class, AD_ORG_TABLE_ID);
-    obcTree.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
+    obcTree.add(Restrictions.eq(Tree.PROPERTY_TYPEAREA, "OO"));
     obcTree.add(Restrictions.eq(Tree.PROPERTY_CLIENT, client));
     return obcTree.list().get(0);
   }
@@ -2140,32 +2112,6 @@ public class InitialSetupUtility {
 
     final OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
     obcTree.add(Restrictions.eq(Tree.PROPERTY_TYPEAREA, strTreeTypeMenu));
-    obcTree.add(Restrictions.eq(Tree.PROPERTY_CLIENT, client));
-    obcTree.add(Restrictions.eq(Tree.PROPERTY_ORGANIZATION, organization));
-    List<Tree> lTrees = obcTree.list();
-    if (lTrees.size() != 1)
-      return null;
-    return lTrees.get(0);
-  }
-
-  /**
-   * Returns the ADTree associated with the given table
-   * 
-   * @param strTreeTypeMenu
-   *          two letters corresponding to the tree type for the menu
-   * @return Tree menu element (defined at system level)
-   * @throws Exception
-   */
-  public static Tree getTree(Table table, Client client, Organization orgProvided) throws Exception {
-    Organization organization;
-    if (orgProvided == null) {
-      if ((organization = getZeroOrg()) == null)
-        return null;
-    } else
-      organization = orgProvided;
-
-    final OBCriteria<Tree> obcTree = OBDal.getInstance().createCriteria(Tree.class);
-    obcTree.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
     obcTree.add(Restrictions.eq(Tree.PROPERTY_CLIENT, client));
     obcTree.add(Restrictions.eq(Tree.PROPERTY_ORGANIZATION, organization));
     List<Tree> lTrees = obcTree.list();

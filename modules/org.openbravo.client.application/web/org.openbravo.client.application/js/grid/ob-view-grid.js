@@ -299,6 +299,19 @@ isc.OBViewGrid.addProperties({
     }
   },
 
+  // To avoid JS error if OBViewGrid doesn't extend OBGrid (for debugging purposes)
+  isGridFiltered: function () {
+    return this.Super('isGridFiltered', arguments);
+  },
+  // To avoid JS error if OBViewGrid doesn't extend OBGrid (for debugging purposes)
+  checkShowFilterFunnelIcon: function () {
+    return this.Super('checkShowFilterFunnelIcon', arguments);
+  },
+  // To avoid JS error if OBViewGrid doesn't extend OBGrid (for debugging purposes)
+  focusInFirstFilterEditor: function () {
+    return this.Super('focusInFirstFilterEditor', arguments);
+  },
+
   initWidget: function () {
     var i, vwState;
 
@@ -1487,11 +1500,7 @@ isc.OBViewGrid.addProperties({
     // do not refresh if the parent is not selected and we have no data
     // anyway
     if (this.view.parentProperty && (!this.data || !this.data.getLength || this.data.getLength() === 0)) {
-      if (this.view.parentView.isShowingTree) {
-        selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
-      } else {
-        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
-      }
+      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       if (selectedValues && !this.isOpenDirectMode && selectedValues.length === 0) {
         if (callback) {
           callback();
@@ -1828,8 +1837,7 @@ isc.OBViewGrid.addProperties({
 
   convertCriteria: function (criteria) {
     var selectedValues, prop, fld, value, i, j, k, criterion, fldName, length, today = new Date(),
-        currentTimeZoneOffsetInMinutes = -today.getTimezoneOffset(),
-        applyParentTabCriteria = true;
+        currentTimeZoneOffsetInMinutes = -today.getTimezoneOffset();
 
     if (!criteria) {
       criteria = {};
@@ -1862,12 +1870,9 @@ isc.OBViewGrid.addProperties({
 
     // note pass in criteria otherwise infinite looping!
     this.resetEmptyMessage(criteria);
+
     if (this.view.parentProperty && !this.isOpenDirectMode) {
-      if (this.view.parentView.isShowingTree) {
-        selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
-      } else {
-        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
-      }
+      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       var parentPropertyFilterValue = -1;
       if (selectedValues) {
         if (selectedValues.length === 0) {
@@ -1949,11 +1954,7 @@ isc.OBViewGrid.addProperties({
       // result in an empty criteria which is ignored not generating the
       // request. Forcing load
       // See issue #22645
-      if (this.view.parentView.isShowingTree) {
-        selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
-      } else {
-        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
-      }
+      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       if (selectedValues.length !== 1) {
         // if there is not a single record selected, always false criterion
         criteria.criteria.push({
@@ -1964,15 +1965,6 @@ isc.OBViewGrid.addProperties({
       } else {
         // with a single record selected, dummy criterion
         criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-      }
-    }
-
-    if (this.view.parentView && this.applyWhereClauseToChildren === false && criteria.criteria.length > 1) {
-      for (i = 0; i < criteria.criteria.length; i++) {
-        criterion = criteria.criteria[i];
-        if (criterion.fieldName === this.view.parentProperty) {
-          criteria.criteria.splice(i, 1);
-        }
       }
     }
 
@@ -2073,7 +2065,7 @@ isc.OBViewGrid.addProperties({
   makeVisible: function () {
     if (this.view.isShowingForm) {
       this.view.switchFormGridVisibility();
-    } else if (!this.view.isShowingTree) {
+    } else {
       this.show();
     }
   },
@@ -2129,11 +2121,7 @@ isc.OBViewGrid.addProperties({
     } else if (this.isGridFiltered(criteria)) {
       // there can be some initial filters, but still no parent selected
       if (this.view.parentView) {
-        if (this.view.parentView.isShowingTree) {
-          selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
-        } else {
-          selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
-        }
+        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
         parentIsNew = this.view.parentView.isShowingForm && this.view.parentView.viewForm.isNew;
         parentIsNew = parentIsNew || (selectedValues.length === 1 && selectedValues[0]._new);
         if (parentIsNew) {
@@ -2155,11 +2143,7 @@ isc.OBViewGrid.addProperties({
     } else if (this.view.isRootView) {
       this.emptyMessage = this.noDataEmptyMessage;
     } else {
-      if (this.view.parentView.isShowingTree) {
-        selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
-      } else {
-        selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
-      }
+      selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
       parentIsNew = this.view.parentView.isShowingForm && this.view.parentView.viewForm.isNew;
       parentIsNew = parentIsNew || (selectedValues.length === 1 && selectedValues[0]._new);
       if (parentIsNew) {

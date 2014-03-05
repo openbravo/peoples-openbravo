@@ -193,8 +193,6 @@ isc.OBStandardView.addProperties({
 
   propertyToColumns: [],
 
-  isShowingTree: false,
-
   initWidget: function (properties) {
     var length, rightMemberButtons = [],
         leftMemberButtons = [],
@@ -506,14 +504,6 @@ isc.OBStandardView.addProperties({
         this.formGridLayout.addMember(this.viewGrid);
       }
 
-      if (this.treeGrid) {
-        this.treeGrid.setWidth('100%');
-        this.treeGrid.setView(this);
-        OB.Datasource.get(this.treeGrid.dataSourceId, this.treeGrid, null, true);
-        this.treeGrid.hide();
-        this.formGridLayout.addMember(this.treeGrid);
-      }
-
       if (this.viewForm) {
         this.viewForm.setWidth('100%');
         this.formGridLayout.addMember(this.viewForm);
@@ -633,10 +623,8 @@ isc.OBStandardView.addProperties({
     url = url + '?tabId=' + this.tabId;
     if (this.isShowingForm && this.viewForm.isNew && this.isRootView) {
       url = url + '&command=NEW';
-    } else if ((this.isShowingForm || !this.isRootView) && !this.isShowingTree && this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
+    } else if ((this.isShowingForm || !this.isRootView) && this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
       url = url + '&recordId=' + this.viewGrid.getSelectedRecord().id;
-    } else if ((this.isShowingForm || !this.isRootView) && this.isShowingTree && this.treeGrid.getSelectedRecords() && this.treeGrid.getSelectedRecords().length === 1) {
-      url = url + '&recordId=' + this.treeGrid.getSelectedRecord().id;
     } else if (!this.isShowingForm && this.isRootView) {
       crit = this.viewGrid.getCriteria();
       if (crit && crit.criteria && crit.criteria.length > 0) {
@@ -723,9 +711,6 @@ isc.OBStandardView.addProperties({
     this.viewForm.readOnly = readOnly;
     if (this.viewGrid && readOnly) {
       this.viewGrid.setReadOnlyMode();
-    }
-    if (this.treeGrid && readOnly) {
-      this.treeGrid.canReorderRecords = false;
     }
   },
 
@@ -989,9 +974,6 @@ isc.OBStandardView.addProperties({
       callback = null;
     }
 
-    if (this.treeGrid && this.isShowingTree) {
-      this.treeGrid.fetchData(this.treeGrid.getCriteria());
-    }
     this.viewGrid.refreshContents(callback);
 
     this.toolBar.updateButtonState(true);
@@ -1103,14 +1085,6 @@ isc.OBStandardView.addProperties({
       if (!this.viewForm.getDataSource()) {
         this.prepareViewForm();
       }
-      if (this.treeGrid) {
-        if (this.isShowingTree) {
-          this.treeGrid.hide();
-          this.changePreviousNextRecordsButtonVisibility(false);
-        } else {
-          this.changePreviousNextRecordsButtonVisibility(true);
-        }
-      }
       this.viewGrid.hide();
       this.statusBarFormLayout.show();
       this.statusBarFormLayout.setHeight('100%');
@@ -1124,11 +1098,7 @@ isc.OBStandardView.addProperties({
       this.viewForm.resetForm();
       this.isShowingForm = false;
       this.viewGrid.markForRedraw('showing');
-      if (this.isShowingTree) {
-        this.treeGrid.show();
-      } else {
-        this.viewGrid.show();
-      }
+      this.viewGrid.show();
       if (this.isActiveView()) {
         if (this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length === 1) {
           this.viewGrid.focus();
@@ -1140,16 +1110,6 @@ isc.OBStandardView.addProperties({
       this.viewGrid.setHeight('100%');
     }
     this.updateTabTitle();
-  },
-
-  changePreviousNextRecordsButtonVisibility: function (show) {
-    if (show) {
-      this.statusBar.previousButton.show();
-      this.statusBar.nextButton.show();
-    } else {
-      this.statusBar.previousButton.hide();
-      this.statusBar.nextButton.hide();
-    }
   },
 
   doHandleClick: function () {
@@ -1218,21 +1178,6 @@ isc.OBStandardView.addProperties({
       rowNum = this.viewGrid.getRecordIndex(record);
       this.viewForm.editRecord(this.viewGrid.getEditedRecord(rowNum), preventFocus, this.viewGrid.recordHasChanges(rowNum), focusFieldName, localTime);
     }
-  },
-
-  // ** {{{ editRecord }}} **
-  // Opens the edit form and selects the record in the grid, will refresh
-  // child views also
-  editRecordFromTreeGrid: function (record, preventFocus, focusFieldName) {
-    var rowNum,
-    // at this point the time fields of the record are formatted in local time
-    localTime = true;
-    this.messageBar.hide();
-
-    if (!this.isShowingForm) {
-      this.switchFormGridVisibility();
-    }
-    this.viewForm.editRecord(record, preventFocus, false, focusFieldName, localTime);
   },
 
   setMaximizeRestoreButtonState: function () {
@@ -1692,12 +1637,7 @@ isc.OBStandardView.addProperties({
       }
     }
     if (!this.isShowingForm) {
-      if (this.isShowingTree) {
-        this.treeGrid.setData([]);
-        this.treeGrid.refreshGrid(refreshCallback);
-      } else {
-        this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);
-      }
+      this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);
     } else {
       if (this.viewForm.hasChanged) {
         callback = function (ok) {
@@ -2117,19 +2057,13 @@ isc.OBStandardView.addProperties({
   //++++++++++++++++++ Reading context ++++++++++++++++++++++++++++++
   getContextInfo: function (onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat) {
     var contextInfo = {},
-        addProperty, rowNum, properties, i, p, grid;
+        addProperty, rowNum, properties, i, p;
     // if classicmode is undefined then both classic and new props are used
     var classicModeUndefined = (typeof classicMode === 'undefined');
     var value, field, record, form, component, propertyObj, type, length;
 
     if (classicModeUndefined) {
       classicMode = true;
-    }
-
-    if (this.isShowingTree) {
-      grid = this.treeGrid;
-    } else {
-      grid = this.viewGrid;
     }
 
     // a special case, the editform has been build but it is not present yet in the
@@ -2163,12 +2097,12 @@ isc.OBStandardView.addProperties({
       component = this.viewForm;
       form = component;
     } else {
-      record = grid.getSelectedRecord();
-      rowNum = grid.getRecordIndex(record);
+      record = this.viewGrid.getSelectedRecord();
+      rowNum = this.viewGrid.getRecordIndex(record);
       if (rowNum || rowNum === 0) {
-        record = isc.addProperties({}, record, grid.getEditValues(rowNum));
+        record = isc.addProperties({}, record, this.viewGrid.getEditValues(rowNum));
       }
-      component = grid;
+      component = this.viewGrid;
     }
 
     properties = this.propertyToColumns;
@@ -2176,9 +2110,9 @@ isc.OBStandardView.addProperties({
     if (record) {
 
       // add the id of the record itself also if not set
-      if (!record[OB.Constants.ID] && grid.getSelectedRecord()) {
+      if (!record[OB.Constants.ID] && this.viewGrid.getSelectedRecord()) {
         // if in edit mode then the grid always has the current record selected
-        record[OB.Constants.ID] = grid.getSelectedRecord()[OB.Constants.ID];
+        record[OB.Constants.ID] = this.viewGrid.getSelectedRecord()[OB.Constants.ID];
       }
 
       // New records in grid have a dummy id (see OBViewGrid.createNewRecordForEditing)

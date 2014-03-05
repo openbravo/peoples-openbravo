@@ -65,7 +65,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class GeneralAccountingReports extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  private static final String C_ELEMENT_VALUE_TABLE_ID = "188";
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
@@ -167,8 +166,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
       AccountTreeData[][] elements = new AccountTreeData[strGroups.length][];
 
-      WindowTreeData[] dataTree = WindowTreeData.selectTreeIDWithTableId(this,
-          Utility.stringList(vars.getClient()), C_ELEMENT_VALUE_TABLE_ID);
+      WindowTreeData[] dataTree = WindowTreeData.selectTreeID(this,
+          Utility.stringList(vars.getClient()), "EV");
       String TreeID = "";
       if (dataTree != null && dataTree.length != 0)
         TreeID = dataTree[0].id;

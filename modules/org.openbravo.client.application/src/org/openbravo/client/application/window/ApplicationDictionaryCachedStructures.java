@@ -39,8 +39,6 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ModelImplementation;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
-import org.openbravo.model.ad.domain.ReferencedTree;
-import org.openbravo.model.ad.domain.ReferencedTreeField;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -218,7 +216,6 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     if (c.getReferenceSearchKey() != null) {
       initializeReference(c.getReferenceSearchKey());
     }
-
   }
 
   private void initializeReference(Reference reference) {
@@ -230,11 +227,6 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     for (Selector s : reference.getOBUISELSelectorList()) {
       initializeDALObject(s);
       SelectorField displayField = s.getDisplayfield();
-      initializeDALObject(displayField);
-    }
-    for (ReferencedTree t : reference.getADReferencedTreeList()) {
-      initializeDALObject(t);
-      ReferencedTreeField displayField = t.getDisplayfield();
       initializeDALObject(displayField);
     }
 

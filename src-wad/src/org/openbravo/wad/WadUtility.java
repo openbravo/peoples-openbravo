@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -807,26 +807,20 @@ public class WadUtility {
       return new WADControl();
     }
 
-    if (classname == null || classname.isEmpty()) {
+    try {
+      Class<?> c = Class.forName(classname);
+      control = (WADControl) c.newInstance();
+      control.setReference(parentRef);
+      control.setSubreference(subRef);
+    } catch (ClassNotFoundException ex) {
+      log4j.warn("Couldn't find class: " + classname);
       control = new WADControl();
-      log4j.debug("Class no defined for reference " + parentRef + " - subreference:" + subRef);
-    } else {
-      try {
-        Class<?> c = Class.forName(classname);
-        control = (WADControl) c.newInstance();
-        control.setReference(parentRef);
-        control.setSubreference(subRef);
-      } catch (ClassNotFoundException ex) {
-        log4j.warn("Couldn't find class: " + classname + " - reference: " + parentRef
-            + " - subreference:" + subRef);
-        control = new WADControl();
-      } catch (InstantiationException e) {
-        log4j.warn("Couldn't instanciate class: " + classname);
-        control = new WADControl();
-      } catch (IllegalAccessException e) {
-        log4j.warn("Illegal access class: " + classname);
-        control = new WADControl();
-      }
+    } catch (InstantiationException e) {
+      log4j.warn("Couldn't instanciate class: " + classname);
+      control = new WADControl();
+    } catch (IllegalAccessException e) {
+      log4j.warn("Illegal access class: " + classname);
+      control = new WADControl();
     }
     return control;
   }

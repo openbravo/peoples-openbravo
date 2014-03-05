@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,7 +56,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   private Map<String, Set<String>> naturalTreesByOrgID = new HashMap<String, Set<String>>();
   private Map<String, String> parentByOrganizationID = new HashMap<String, String>();
   private Map<String, Set<String>> childByOrganizationID = new HashMap<String, Set<String>>();
-  private static final String AD_ORG_TABLE_ID = "155";
   private String clientId;
 
   /**
@@ -77,8 +76,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     }
 
     // read all trees of all clients, bypass DAL to prevent security checks
-    final String qryStr = "select t from " + Tree.class.getName() + " t where table.id='"
-        + AD_ORG_TABLE_ID + "' and client.id='" + getClientId() + "'";
+    final String qryStr = "select t from " + Tree.class.getName()
+        + " t where treetype='OO' and client.id='" + getClientId() + "'";
     final Query qry = SessionHandler.getInstance().createQuery(qryStr);
     @SuppressWarnings("unchecked")
     final List<Tree> ts = qry.list();

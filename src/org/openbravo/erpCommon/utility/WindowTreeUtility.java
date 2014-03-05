@@ -87,8 +87,7 @@ class WindowTreeUtility {
     } else
       TreeType = "";
     if (TreeType.equals(""))
-      log4j.warn("WindowTreeUtility.getTreeID() - Could not map " + keyColumnName
-          + ". It could be a tree that uses the new tree structure");
+      log4j.error("WindowTreeUtility.getTreeID() - Could not map " + keyColumnName);
     return TreeType;
   }
 
