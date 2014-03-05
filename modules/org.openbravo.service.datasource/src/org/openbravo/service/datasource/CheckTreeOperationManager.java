@@ -29,7 +29,7 @@ import java.util.Map;
  * Also this annotations must be added for the class to be used using dependency injection:
  * 
  * @ApplicationScoped
- * @Qualifier("tableName"), tableName being the name of the table associated with the tree
+ * @Qualifier("entityName"), entityName being the name of the DAL entity associated with the tree
  * 
  */
 public abstract class CheckTreeOperationManager {
