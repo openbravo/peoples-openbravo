@@ -338,7 +338,7 @@ ORDER BY f.dateacct, f.created]]>
 			</rectangle>
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isUsingCache="true">
 				<reportElement key="image-1" x="10" y="4" width="205" height="55"/>
-				<imageExpression class="java.net.URL"><![CDATA[new java.net.URL($P{BASE_WEB}+"/../utility/ShowImageLogo?logo=yourcompanydoc&orgId="+$F{organizationid})]]></imageExpression>
+				<imageExpression class="java.awt.Image"><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylegal", $F{organizationid})]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="490" y="48" width="59" height="11"/>
