@@ -56,7 +56,10 @@
   {"id": "ViewGrid_DeleteSelectedRecords", "keyComb": {"key": "Delete"}},
   {"id": "ViewForm_OpenLinkOut", "keyComb": {"ctrl": true, "alt": true, "key": "Enter"}},
   {"id": "Selector_ShowPopup", "keyComb": {"ctrl": true, "key": "Enter"}},
-  {"id": "SelectorLink_ShowPopup", "keyComb": {"ctrl": true, "key": "Enter"}}
+  {"id": "SelectorLink_ShowPopup", "keyComb": {"ctrl": true, "key": "Enter"}},
+  {"id": "TreeItem_ShowPopup", "keyComb": {"ctrl": true, "key": "Enter"}},
+  {"id": "TreeItem_ShowTree", "keyComb": {"alt": true, "key": "Arrow_Down"}},
+  {"id": "TreeItem_MoveToTree", "keyComb": {"alt": false, "key": "Arrow_Down"}}
 ]]]></VALUE>
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <PROPERTY><![CDATA[OBUIAPP_KeyboardShortcuts]]></PROPERTY>
 <!--5EE6D055A7FE4C4DA7EB557F6C61D0EA-->  <ISPROPERTYLIST><![CDATA[Y]]></ISPROPERTYLIST>

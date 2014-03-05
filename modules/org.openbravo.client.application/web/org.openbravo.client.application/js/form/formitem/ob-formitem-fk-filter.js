@@ -48,7 +48,8 @@ isc.OBFKFilterTextItem.addProperties({
   init: function () {
     var me = this,
         grid = this.form.grid.sourceWidget,
-        gridField = grid.getField(this.name);
+        gridField = grid.getField(this.name),
+        dataSource;
 
     // the textMatchStyle is sometimes overridden from the underlying
     // grid, this happens when used within the selector editor.
@@ -116,8 +117,7 @@ isc.OBFKFilterTextItem.addProperties({
         }
       }
     };
-
-    this.setOptionDataSource(OB.Datasource.create({
+    dataSource = OB.Datasource.create({
       dataURL: grid.getDataSource().dataURL,
       requestProperties: {
         params: {
@@ -126,7 +126,11 @@ isc.OBFKFilterTextItem.addProperties({
         }
       },
       fields: this.pickListFields
-    }));
+    });
+    if (grid.Class === 'OBTreeGrid') {
+      dataSource.requestProperties.params.tabId = grid.view.tabId;
+    }
+    this.setOptionDataSource(dataSource);
 
     this.Super('init', arguments);
 

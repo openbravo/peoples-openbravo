@@ -169,6 +169,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_TABLE_TREE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="HQLTREEWHERECLAUSE" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="DISABLE_PARENT_KEY_PROPERTY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
@@ -203,6 +211,9 @@
       <foreign-key foreignTable="AD_TAB" name="AD_TAB_INCLUDED_TAB">
         <reference local="INCLUDED_TAB_ID" foreign="AD_TAB_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_TABLE_TREE" name="AD_TAB_TABLETREE_FK">
+        <reference local="AD_TABLE_TREE_ID" foreign="AD_TABLE_TREE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_TAB">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
@@ -211,6 +222,9 @@
       </foreign-key>
       <index name="AD_TAB_TABLE" unique="false">
         <index-column name="AD_TABLE_ID"/>
+      </index>
+      <index name="AD_TAB_TABLETREE_FK" unique="false">
+        <index-column name="AD_TABLE_TREE_ID"/>
       </index>
       <index name="AD_TAB_WINDOW" unique="false">
         <index-column name="AD_WINDOW_ID"/>

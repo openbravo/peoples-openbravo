@@ -1441,6 +1441,10 @@ OB.ViewFormProperties = {
   },
 
   doClose: function () {
+    if (this.view.isShowingTree) {
+      this.view.treeGrid.refreshRecord(this.getValues());
+    }
+
     this.view.switchFormGridVisibility();
     this.view.messageBar.hide();
     if (this.isNew) {
