@@ -37,6 +37,9 @@ enyo.kind({
     if (!inEvent.status) {
       //exit from discounts
       this.discountsMode = false;
+      if (this.prevdefaultcommand) {
+        this.defaultcommand = this.prevdefaultcommand;
+      }
       if (this.buttons['ticket:discount']) {
         this.buttons['ticket:discount'].removeClass('btnactive');
       }
@@ -46,6 +49,8 @@ enyo.kind({
       });
     } else {
       this.discountsMode = true;
+      this.prevdefaultcommand = this.defaultcommand;
+      this.defaultcommand = 'ticket:discount';
       if (inEvent.writable) {
         //enable keyboard
         this.keyboardDisabled(inSender, {
