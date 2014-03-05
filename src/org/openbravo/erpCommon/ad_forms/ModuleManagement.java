@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
@@ -83,6 +85,7 @@ import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBErrorBuilder;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -1293,6 +1296,37 @@ public class ModuleManagement extends HttpSecureAppServlet {
       } else { // Dependencies not satisfied, do not show continue button
         message = im.getCheckError();
         discard[5] = "discardContinue";
+
+        if (!islocal) {
+          // installing/updating a module from CR. Let's check if local dependencies are OK
+          boolean locallyOk = true;
+          OBError localDepsMsg = new OBError();
+          try {
+            locallyOk = VersionUtility.checkLocal(vars, new Module[0], new Module[0],
+                new Module[0], localDepsMsg);
+          } catch (Exception e) {
+            log4j.error("Error checking local dependencies", e);
+          }
+
+          if (!locallyOk) {
+            if (!StringUtils.isEmpty(localDepsMsg.getMessage())) {
+              String localErrorsMsg = "<br><b>"
+                  + OBMessageUtils.messageBD("ModuleLocalDepErrorsTitle") + "</b><br>"
+                  + OBMessageUtils.messageBD("ModuleLocalDepErrorsExplain") + "<ul>";
+              for (String localError : localDepsMsg.getMessage().split("\\n")) {
+                localErrorsMsg += "<li>" + StringEscapeUtils.escapeHtml(localError);
+              }
+              localErrorsMsg += "</ul>";
+
+              if (message == null || message.getMessage() == null || message.getMessage().isEmpty()) {
+                message = localDepsMsg;
+                message.setMessage(localErrorsMsg);
+              } else {
+                message.setMessage(message.getMessage() + "<br>" + localErrorsMsg);
+              }
+            }
+          }
+        }
 
         if (message == null || message.getMessage() == null || message.getMessage().isEmpty()) {
           // No message: set generic one
