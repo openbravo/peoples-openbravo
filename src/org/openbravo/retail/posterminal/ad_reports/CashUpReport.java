@@ -164,21 +164,18 @@ public class CashUpReport extends HttpSecureAppServlet {
         String hqlStartingCash = "select startingbalance " + "from FIN_Reconciliation recon "
             + "where recon.id = ?";
         Query startingCashQuery = OBDal.getInstance().getSession().createQuery(hqlStartingCash);
-        startingCashQuery.setString(0, ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList()
-            .get(i)).getReconciliation().getId());
+        startingCashQuery.setString(0, ((OBPOSAppCashReconcil) recons.get(i)).getReconciliation()
+            .getId());
         BigDecimal startingbalance = (BigDecimal) startingCashQuery.uniqueResult();
         expected = expected.add(startingbalance);
 
         psData = new HashMap<String, String>();
         psData.put("GROUPFIELD", "STARTING");
         psData.put("SEARCHKEY", "STARTING_"
-            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
-                .getSearchKey());
+            + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
 
         psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_LblStarting", new String[] {})
-            + " "
-            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
-                .getCommercialName());
+            + " " + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getCommercialName());
         psData.put("VALUE",
             startingbalance.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP).toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
@@ -213,8 +210,7 @@ public class CashUpReport extends HttpSecureAppServlet {
             psData = new HashMap<String, String>();
             psData.put("GROUPFIELD", "WITHDRAWAL");
             psData.put("SEARCHKEY", "WITHDRAWAL_"
-                + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-                    .getPaymentType().getSearchKey());
+                + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
             psData.put("LABEL", objdropdeposit[0].toString());
             psData.put("VALUE", drop.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
                 .toString());
@@ -235,8 +231,7 @@ public class CashUpReport extends HttpSecureAppServlet {
             psData = new HashMap<String, String>();
             psData.put("GROUPFIELD", "SALE");
             psData.put("SEARCHKEY", "SALE_"
-                + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-                    .getPaymentType().getSearchKey());
+                + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
             psData.put("LABEL", objdropdeposit[0].toString());
             psData.put("VALUE", deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
                 .toString());
@@ -282,8 +277,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "WITHDRAWAL");
               psData.put("SEARCHKEY", "WITHDRAWAL_"
-                  + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-                      .getPaymentType().getSearchKey());
+                  + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
               psData.put("LABEL", obja[0].toString());
               psData.put("VALUE", drop.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
                   .toString());
@@ -301,8 +295,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "WITHDRAWAL");
               psData.put("SEARCHKEY", "WITHDRAWAL_"
-                  + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-                      .getPaymentType().getSearchKey());
+                  + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
               psData.put("LABEL", obja[0].toString());
               psData.put("VALUE", BigDecimal.ZERO.toString());
               if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
@@ -324,8 +317,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "SALE");
               psData.put("SEARCHKEY", "SALE_"
-                  + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-                      .getPaymentType().getSearchKey());
+                  + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
               psData.put("LABEL", obja[0].toString());
               psData.put("VALUE", deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
                   .toString());
@@ -343,8 +335,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "SALE");
               psData.put("SEARCHKEY", "SALE_"
-                  + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-                      .getPaymentType().getSearchKey());
+                  + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
               psData.put("LABEL", obja[0].toString());
               psData.put("VALUE", BigDecimal.ZERO.toString());
               if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
@@ -364,10 +355,9 @@ public class CashUpReport extends HttpSecureAppServlet {
           psData = new HashMap<String, String>();
           psData.put("GROUPFIELD", "WITHDRAWAL");
           psData.put("SEARCHKEY", "WITHDRAWAL_"
-              + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-                  .getPaymentType().getSearchKey());
-          psData.put("LABEL", ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-              .getPaymentType().getCommercialName().toString());
+              + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
+          psData.put("LABEL", ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType()
+              .getCommercialName().toString());
           psData.put("VALUE", BigDecimal.ZERO.toString());
           if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
             psData.put("FOREIGN_VALUE", BigDecimal.ZERO.toString());
@@ -382,11 +372,10 @@ public class CashUpReport extends HttpSecureAppServlet {
 
           psData = new HashMap<String, String>();
           psData.put("GROUPFIELD", "SALE");
-          psData.put("SEARCHKEY", "SALE_"
-              + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-                  .getPaymentType().getSearchKey());
-          psData.put("LABEL", ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-              .getPaymentType().getCommercialName().toString());
+          psData.put("SEARCHKEY",
+              "SALE_" + (((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey()));
+          psData.put("LABEL", ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType()
+              .getCommercialName().toString());
           psData.put("VALUE", BigDecimal.ZERO.toString());
           if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
             psData.put("FOREIGN_VALUE", BigDecimal.ZERO.toString());
@@ -426,12 +415,9 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData = new HashMap<String, String>();
         psData.put("GROUPFIELD", "COUNTED");
         psData.put("SEARCHKEY", "COUNTED_"
-            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
-                .getSearchKey());
+            + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
         psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_LblCounted", new String[] {})
-            + " "
-            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
-                .getCommercialName());
+            + " " + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getCommercialName());
         psData.put(
             "VALUE",
             (expected.add(differenceDeposit)).multiply(conversionRate)
@@ -450,12 +436,9 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData = new HashMap<String, String>();
         psData.put("GROUPFIELD", "DIFFERENCE");
         psData.put("SEARCHKEY", "DIFFERENCE_"
-            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
-                .getSearchKey());
+            + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
         psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_LblDifference", new String[] {})
-            + " "
-            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
-                .getCommercialName());
+            + " " + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getCommercialName());
         psData.put("VALUE",
             differenceDeposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP).toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
@@ -472,12 +455,9 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData = new HashMap<String, String>();
         psData.put("GROUPFIELD", "EXPECTED");
         psData.put("SEARCHKEY", "EXPECTED_"
-            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
-                .getSearchKey());
+            + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
         psData.put("LABEL", OBMessageUtils.getI18NMessage("OBPOS_LblExpected", new String[] {})
-            + " "
-            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
-                .getCommercialName());
+            + " " + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getCommercialName());
         psData.put("VALUE", expected.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
             .toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
@@ -506,8 +486,7 @@ public class CashUpReport extends HttpSecureAppServlet {
             log.warn("Configuration error: It seems to be more than one events configured with the same GL Item. "
                 + lstCashToDeposit.size()
                 + " Transactions with the same GLItem have been found for the reconciliation "
-                + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-                    .getReconciliation().getIdentifier()
+                + ((OBPOSAppCashReconcil) recons.get(i)).getReconciliation().getIdentifier()
                 + ". This situation could cause wrong results");
           }
           for (BigDecimal itemCashToDeposit : lstCashToDeposit) {
@@ -520,10 +499,9 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData = new HashMap<String, String>();
         psData.put("GROUPFIELD", "TOKEEP");
         psData.put("SEARCHKEY", "TOKEEP_"
-            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
-                .getSearchKey());
-        psData.put("LABEL", ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-            .getPaymentType().getCommercialName());
+            + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
+        psData.put("LABEL", ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType()
+            .getCommercialName());
         psData.put("VALUE",
             (expected.add(differenceDeposit).subtract(cashToDeposit)).multiply(conversionRate)
                 .setScale(2, BigDecimal.ROUND_UP).toString());
@@ -541,11 +519,10 @@ public class CashUpReport extends HttpSecureAppServlet {
 
         psData = new HashMap<String, String>();
         psData.put("SEARCHKEY", "TODEPOSIT_"
-            + ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i)).getPaymentType()
-                .getSearchKey());
+            + ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType().getSearchKey());
         psData.put("GROUPFIELD", "TODEPOSIT");
-        psData.put("LABEL", ((OBPOSAppCashReconcil) cashup.getOBPOSAppCashReconcilList().get(i))
-            .getPaymentType().getCommercialName());
+        psData.put("LABEL", ((OBPOSAppCashReconcil) recons.get(i)).getPaymentType()
+            .getCommercialName());
         psData.put("VALUE", cashToDeposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_UP)
             .toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
