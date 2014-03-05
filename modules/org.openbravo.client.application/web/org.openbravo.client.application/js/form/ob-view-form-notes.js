@@ -289,10 +289,7 @@ isc.OBNoteLayout.addProperties({
             this.readOnly = true;
             this.canEdit = false;
           }
-        },
-        validators: [{
-          type: 'required'
-        }]
+        }
       }]
     });
 
