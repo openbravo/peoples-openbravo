@@ -872,10 +872,14 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   && BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0) {
                 paymentDetail.getFINPaymentScheduleDetailList().remove(psd);
                 OBDal.getInstance().getSession().refresh(paymentDetail);
-                psd.getInvoicePaymentSchedule()
-                    .getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(psd);
-                psd.getOrderPaymentSchedule().getFINPaymentScheduleDetailOrderPaymentScheduleList()
-                    .remove(psd);
+                if (psd.getInvoicePaymentSchedule() != null) {
+                  psd.getInvoicePaymentSchedule()
+                      .getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(psd);
+                }
+                if (psd.getOrderPaymentSchedule() != null) {
+                  psd.getOrderPaymentSchedule()
+                      .getFINPaymentScheduleDetailOrderPaymentScheduleList().remove(psd);
+                }
                 OBDal.getInstance().remove(psd);
               }
             }
