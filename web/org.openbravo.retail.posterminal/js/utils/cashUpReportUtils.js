@@ -200,7 +200,9 @@
           }, null, true);
         }, null, this);
       } else {
-        OB.MobileApp.model.get('terminal').cashUpId = cashUp.at(0).get('id');
+        if (!OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal'))) {
+          OB.MobileApp.model.get('terminal').cashUpId = cashUp.at(0).get('id');
+        }
         if (callback) {
           callback();
         }
