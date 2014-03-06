@@ -314,7 +314,7 @@ enyo.kind({
       symbolAtRight = selectedPayment.currencySymbolAtTheRight;
       isCashType = selectedPayment.paymentMethod.iscash;
     }
-    this.checkEnoughCashAvailable(paymentstatus.getPayementStatus(), selectedPayment);
+    this.checkEnoughCashAvailable(paymentstatus.getPaymentStatus(), selectedPayment);
     if (paymentstatus.get('change')) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
       this.$.change.show();
