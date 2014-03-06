@@ -32,7 +32,7 @@ enyo.kind({
   },
   displayLogic: function () {
     var negativeLines = _.filter(this.model.get('order').get('lines').models, function (line) {
-      return line.get('gross') < 0;
+      return line.get('qty') < 0;
     }).length;
     if (!this.model.get('order').get('isQuotation')) {
       this.show();
@@ -158,7 +158,7 @@ enyo.kind({
     }
     this.inherited(arguments); // Manual dropdown menu closure
     negativeLines = _.find(this.model.get('order').get('lines').models, function (line) {
-      return line.get('gross') < 0;
+      return line.get('qty') < 0;
     });
     if (negativeLines) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));

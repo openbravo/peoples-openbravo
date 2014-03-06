@@ -1119,7 +1119,7 @@
       var me = this;
       if (OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn) {
         var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('gross') < 0;
+          return line.get('qty') < 0;
         }).length;
         if (this.get('lines').length > 0) {
           if (units > 0 && negativeLines > 0) {
@@ -1180,7 +1180,7 @@
       if (OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
         //The value of qty need to be negate because we want to change it
         var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('gross') < 0;
+          return line.get('qty') < 0;
         }).length;
         if (this.get('lines').length > 0) {
           if (-line.get('qty') > 0 && negativeLines > 0) {

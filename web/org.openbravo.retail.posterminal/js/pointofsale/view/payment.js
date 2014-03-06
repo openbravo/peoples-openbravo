@@ -755,7 +755,7 @@ enyo.kind({
         negativeLines;
     if (receipt) {
       negativeLines = _.find(receipt.get('lines').models, function (line) {
-        return line.get('gross') < 0;
+        return line.get('qty') < 0;
       });
       if (negativeLines) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));

@@ -312,7 +312,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       function prepareToSendCallback(order) {
         if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
           var negativeLines = _.filter(order.get('lines').models, function (line) {
-            return line.get('gross') < 0;
+            return line.get('qty') < 0;
           }).length;
           if (negativeLines === order.get('lines').models.length) {
             order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
@@ -423,7 +423,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         var clonedCollection = new Backbone.Collection();
         if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
           var negativeLines = _.filter(receipt.get('lines').models, function (line) {
-            return line.get('gross') < 0;
+            return line.get('qty') < 0;
           }).length;
           if (negativeLines === receipt.get('lines').models.length) {
             receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
@@ -596,7 +596,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       context: this
     }, function (args) {
       var negativeLines = _.filter(me.get('order').get('lines').models, function (line) {
-        return line.get('gross') < 0;
+        return line.get('qty') < 0;
       }).length;
       if (negativeLines > 0 && !OB.POS.modelterminal.get('permissions')['OBPOS_approval.returns']) {
         args.approvals.push('OBPOS_approval.returns');

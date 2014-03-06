@@ -232,7 +232,7 @@ enyo.kind({
           if (iter.get('lines') && iter.get('lines').length > 0) {
             re = new RegExp(me.filters.filterText, 'gi');
             negativeLines = _.find(iter.get('lines').models, function (line) {
-              return line.get('gross') < 0;
+              return line.get('qty') < 0;
             });
             toMatch = iter.get('documentNo').match(re) + iter.get('bp').get('_identifier').match(re);
             if ((me.filters.filterText === "" || toMatch !== 0) && (iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation') && !negativeLines) {
