@@ -162,7 +162,9 @@
             lastCashUpPayments = JSON.parse(lastCashUp.at(0).get('objToSend')).cashCloseInfo;
           }
           uuid = OB.Dal.get_uuid();
-          OB.MobileApp.model.get('terminal').cashUpId = uuid;
+          if (!OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal'))) {
+            OB.MobileApp.model.get('terminal').cashUpId = uuid;
+          }
           OB.Dal.save(new OB.Model.CashUp({
             id: uuid,
             netSales: '0',
