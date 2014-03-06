@@ -168,9 +168,7 @@ public class AttributeSetInstanceValue {
       String description = "", description_first = "";
       if (data[0].islot.equals("Y")) {
         if (!data[0].mLotctlId.equals("") && (strIsSOTrx.equals("N") || strWindow.equals("191"))) {
-          lot = AttributeSetInstanceValueData.selectNextLot(conProv, data[0].mLotctlId);
-          AttributeSetInstanceValueData.updateLotSequence(conn, conProv, vars.getUser(),
-              data[0].mLotctlId);
+          lot = getNextLotNumber(conProv, vars, data[0].mLotctlId, conn);
           description_first += (description_first.equals("") ? "" : "_") + lot;
         } else {
           description_first += (description_first.equals("") ? "" : "_") + "L" + lot;
@@ -178,9 +176,7 @@ public class AttributeSetInstanceValue {
       }
       if (data[0].isserno.equals("Y")) {
         if (!data[0].mSernoctlId.equals("") && (strIsSOTrx.equals("N") || strWindow.equals("191"))) {
-          serno = AttributeSetInstanceValueData.selectNextSerNo(conn, conProv, data[0].mSernoctlId);
-          AttributeSetInstanceValueData.updateSerNoSequence(conn, conProv, vars.getUser(),
-              data[0].mSernoctlId);
+          serno = getNextSerialNumber(conProv, vars, data[0].mSernoctlId, conn);
           description_first += (description_first.equals("") ? "" : "_") + serno;
         } else {
           description_first += (description_first.equals("") ? "" : "_") + "#" + serno;
@@ -267,6 +263,26 @@ public class AttributeSetInstanceValue {
     }
 
     return myMessage;
+  }
+
+  /**
+   * Obtains next serial number and updates its sequence
+   */
+  protected String getNextSerialNumber(ConnectionProvider conProv, VariablesSecureApp vars,
+      String mSernoctlId, Connection conn) throws ServletException {
+    String localSerNo = AttributeSetInstanceValueData.selectNextSerNo(conn, conProv, mSernoctlId);
+    AttributeSetInstanceValueData.updateSerNoSequence(conn, conProv, vars.getUser(), mSernoctlId);
+    return localSerNo;
+  }
+
+  /**
+   * Obtains next lot number and updates its sequence
+   */
+  protected String getNextLotNumber(ConnectionProvider conProv, VariablesSecureApp vars,
+      String lotControlId, Connection conn) throws ServletException {
+    String localLotNo = AttributeSetInstanceValueData.selectNextLot(conProv, lotControlId);
+    AttributeSetInstanceValueData.updateLotSequence(conn, conProv, vars.getUser(), lotControlId);
+    return localLotNo;
   }
 
   /**
