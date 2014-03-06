@@ -156,18 +156,6 @@ isc.OBMultiSelectorItem.addProperties({
     }
   },
 
-
-  redrawn: function () {
-    this.fixWidth();
-    this.Super('redrawn', arguments);
-  },
-  fixWidth: function () {
-    // hack to adapt the whole item width, so it takes the same space as other items
-    var w = this.containerWidget.width / this.containerWidget.numCols - this.iconWidth - 3;
-    if (this.width !== w) {
-      this.setWidth(w);
-    }
-  },
   // resets whole selection to the records passed as parameter
   setSelectedRecords: function (records) {
     var i;
