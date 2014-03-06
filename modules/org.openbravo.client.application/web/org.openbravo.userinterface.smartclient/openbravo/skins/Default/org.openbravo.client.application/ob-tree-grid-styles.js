@@ -63,7 +63,7 @@ isc.OBTreeGrid.changeDefaults('headerButtonDefaults', {
 isc.OBTreeGrid.changeDefaults('headerMenuButtonDefaults', {
   showDown: false,
   showTitle: true
-//  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
+  //  src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/grid/gridHeader_bg.png'
 });
 
 isc.OBTreeGrid.addProperties({
