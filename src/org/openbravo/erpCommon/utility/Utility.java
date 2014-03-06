@@ -845,7 +845,10 @@ public class Utility {
       String C_DocType_ID, boolean onlyDocType, boolean updateNext) {
     if (TableName == null || TableName.length() == 0)
       throw new IllegalArgumentException("Utility.getDocumentNo - required parameter missing");
-    final String AD_Client_ID = getContext(con, vars, "AD_Client_ID", WindowNo);
+    String AD_Client_ID = getContext(con, vars, "AD_Client_ID", WindowNo);
+    if ("".equals(AD_Client_ID)) {
+      AD_Client_ID = vars.getClient();
+    }
 
     final String cDocTypeID = (C_DocTypeTarget_ID.equals("") ? C_DocType_ID : C_DocTypeTarget_ID);
     if (cDocTypeID.equals(""))
