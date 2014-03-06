@@ -287,9 +287,13 @@ public class DataToJsonConverter {
         }
         if (referencingProperty.isDisplayValue()) {
           if (obObject.getEntity().hasProperty("searchKey")) {
-            String value = obObject.get("searchKey", OBContext.getOBContext().getLanguage(),
-                (String) obObject.getId()).toString();
-            identifier = value + " - " + identifier;
+            Object valueObject = obObject.get("searchKey", OBContext.getOBContext().getLanguage(),
+                (String) obObject.getId());
+            if (valueObject != null) {
+              identifier = valueObject.toString() + " - " + identifier;
+            } else {
+              identifier = " - " + identifier;
+            }
           } else {
             log.warn("Entity "
                 + obObject.getEntity().getName()
