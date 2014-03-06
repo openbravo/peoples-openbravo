@@ -74,8 +74,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   private static final String AD_ORG_TABLE_ID = "155";
   private static final String ROOT_ORGANIZATION_ID = "0";
   private static final String SUMMARY_LEVEL_PROPERTY = "summaryLevel";
-  private static final String FOLDER_ICON_SRC = "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/treegrid/iconFolder.png";
-  private static final String LEAF_ICON_SRC = "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/treegrid/iconNode.png";
+  private static final String FOLDER_ICON_SRC = "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/tree-grid/iconFolder.png";
+  private static final String LEAF_ICON_SRC = "../web/org.openbravo.userinterface.smartclient/openbravo/skins/Default/org.openbravo.client.application/images/tree-grid/iconNode.png";
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;

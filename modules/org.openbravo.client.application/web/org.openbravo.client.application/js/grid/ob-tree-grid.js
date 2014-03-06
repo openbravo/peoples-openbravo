@@ -24,7 +24,7 @@ isc.ClassFactory.defineClass('OBTreeGrid', isc.TreeGrid);
 isc.OBTreeGrid.addProperties({
   showOpenIcons: true,
   showDropIcons: false,
-  openerImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/treegrid/iconTree.png',
+  openerImage: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/tree-grid/iconTree.png',
   openerIconSize: 16,
   showCustomIconOpen: true,
   extraIconGap: 5,
