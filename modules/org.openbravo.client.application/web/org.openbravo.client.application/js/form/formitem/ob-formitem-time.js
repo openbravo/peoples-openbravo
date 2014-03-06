@@ -52,7 +52,7 @@ isc.OBTimeItem.addProperties({
 
   mapDisplayToValue: function (value) {
     var newValue = value;
-    if (Object.prototype.toString.call(newValue) === '[object String]') {
+    if (newValue && Object.prototype.toString.call(newValue) === '[object String]') {
       newValue = isc.Time.parseInput(newValue);
       if (this.isAbsoluteTime) {
         // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
