@@ -30,11 +30,19 @@ isc.ClassFactory.mixInInterface('OBTreeItem', 'OBLinkTitleItem');
 
 isc.OBTreeItem.addProperties({
   showPickerIcon: true,
-  pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/comboBoxPicker.png',
   pickerIconHSpace: 0,
   iconHSpace: 0,
   tree: null,
   init: function () {
+    this.pickerIconSrc = OB.Styles.OBFormField.DefaultComboBox.pickerIconSrc;
+    this.icons = [{
+      src: OB.Styles.OBFormField.DefaultSearch.pickerIconSrc,
+      width: OB.Styles.OBFormField.DefaultSearch.pickerIconWidth,
+      height: OB.Styles.OBFormField.DefaultSearch.pickerIconHeight,
+      click: function (form, item, icon) {
+        item.openTreeWindow();
+      }
+    }];
     this.Super('init', arguments);
     this.tree = isc.OBTreeItemTree.create({
       treeItem: this
@@ -100,15 +108,6 @@ isc.OBTreeItem.addProperties({
     }
     return response;
   },
-
-  icons: [{
-    src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
-    width: 21,
-    height: 21,
-    click: function (form, item, icon) {
-      item.openTreeWindow();
-    }
-  }],
 
   openTreeWindow: function () {
     var selectedValue = this.getValue(),
@@ -291,8 +290,19 @@ isc.OBTreeItemTree.addProperties({
     };
 
     ds.transformResponse = function (dsResponse, dsRequest, jsonData) {
+      var i, node;
       if (jsonData.response.error) {
         dsResponse.error = jsonData.response.error;
+      }
+      if (jsonData.response && jsonData.response.data) {
+        for (i = 0; i < jsonData.response.data.length; i++) {
+          node = jsonData.response.data[i];
+          if (node.showDropIcon) {
+            node.icon = OB.Styles.OBTreeGrid.iconFolder;
+          } else {
+            node.icon = OB.Styles.OBTreeGrid.iconNode;
+          }
+        }
       }
       return this.Super('transformResponse', arguments);
     };
@@ -515,8 +525,19 @@ isc.OBTreeItemPopupWindow.addProperties({
         };
 
         ds.transformResponse = function (dsResponse, dsRequest, jsonData) {
+          var i, node;
           if (jsonData.response.error) {
             dsResponse.error = jsonData.response.error;
+          }
+          if (jsonData.response && jsonData.response.data) {
+            for (i = 0; i < jsonData.response.data.length; i++) {
+              node = jsonData.response.data[i];
+              if (node.showDropIcon) {
+                node.icon = OB.Styles.OBTreeGrid.iconFolder;
+              } else {
+                node.icon = OB.Styles.OBTreeGrid.iconNode;
+              }
+            }
           }
           return this.Super('transformResponse', arguments);
         };

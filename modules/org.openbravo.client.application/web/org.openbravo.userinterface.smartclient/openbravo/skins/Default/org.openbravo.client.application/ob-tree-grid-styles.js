@@ -17,6 +17,10 @@
  ************************************************************************
  */
 
+OB.Styles.OBTreeGrid = OB.Styles.OBTreeGrid || {};
+OB.Styles.OBTreeGrid.iconFolder = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/tree-grid/iconFolder.png';
+OB.Styles.OBTreeGrid.iconNode = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/tree-grid/iconNode.png';
+
 isc.OBTreeGrid.addProperties({
   bodyStyleName: 'OBGridBody',
   baseStyle: 'OBTreeGridCell',

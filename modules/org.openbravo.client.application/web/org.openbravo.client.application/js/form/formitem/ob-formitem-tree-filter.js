@@ -133,8 +133,19 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         };
 
         ds.transformResponse = function (dsResponse, dsRequest, jsonData) {
+          var i, node;
           if (jsonData.response.error) {
             dsResponse.error = jsonData.response.error;
+          }
+          if (jsonData.response && jsonData.response.data) {
+            for (i = 0; i < jsonData.response.data.length; i++) {
+              node = jsonData.response.data[i];
+              if (node.showDropIcon) {
+                node.icon = OB.Styles.OBTreeGrid.iconFolder;
+              } else {
+                node.icon = OB.Styles.OBTreeGrid.iconNode;
+              }
+            }
           }
           return this.Super('transformResponse', arguments);
         };
@@ -278,7 +289,6 @@ isc.OBTreeFilterItem.addProperties({
     }
   },
 
-  pickerIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   filterDialogCallback: function (criteria) {
     this.grid.parentElement.setFilterEditorCriteria(criteria);
     this.lastValueFromPopup = this.getValue();
@@ -287,6 +297,7 @@ isc.OBTreeFilterItem.addProperties({
 
   init: function () {
     var field;
+    this.pickerIconSrc = OB.Styles.OBFormField.DefaultSearch.pickerIconSrc;
     this.Super('init', arguments);
     field = this.grid.getField(this.name);
     this.criteriaField = field.displayField;

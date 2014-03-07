@@ -102,6 +102,7 @@ isc.OBTreeViewGrid.addProperties({
     };
 
     ds.transformResponse = function (dsResponse, dsRequest, jsonData) {
+      var i, node;
       if (jsonData.response.message) {
         me.view.messageBar.setMessage(jsonData.response.message.messageType, null, jsonData.response.message.message);
       } else if (dsRequest.operationType === 'update') {
@@ -109,6 +110,16 @@ isc.OBTreeViewGrid.addProperties({
       }
       if (jsonData.response.error) {
         dsResponse.error = jsonData.response.error;
+      }
+      if (jsonData.response && jsonData.response.data) {
+        for (i = 0; i < jsonData.response.data.length; i++) {
+          node = jsonData.response.data[i];
+          if (node.showDropIcon) {
+            node.icon = OB.Styles.OBTreeGrid.iconFolder;
+          } else {
+            node.icon = OB.Styles.OBTreeGrid.iconNode;
+          }
+        }
       }
       return this.Super('transformResponse', arguments);
     };
