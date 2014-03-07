@@ -192,6 +192,7 @@
         where processed = 'Y'
         and posted not in ('Y','D')
         and isreceipt='Y'
+        and status <> 'RPVOID'
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='D1A97202E832470285C9B1EB026D54E2' and ad_client_id=?)
         union all
         select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, paymentdate , 'C_Bpartner', c_bpartner_id as id, amount as GRANDTOTAL, 
@@ -208,6 +209,7 @@
         where processed = 'Y'
         and posted not in ('Y','D')
         and isreceipt='N'
+        and status <> 'RPVOID'
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='D1A97202E832470285C9B1EB026D54E2' and ad_client_id=?)
         union all
         select ad_client_id, 'Line: ' || to_char(line) AS DOCUMENTNO, 
