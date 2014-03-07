@@ -273,7 +273,6 @@ isc.OBMultiSelectorSelectorLayout.addProperties({
   animateMemberTime: 100,
   width: '*',
   initWidget: function () {
-    this.selectorItem.fixWidth();
     this.Super('initWidget', arguments);
   }
 });
