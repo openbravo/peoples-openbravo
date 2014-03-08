@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -57,11 +57,13 @@
   v_origGrossAmt NUMBER;
   v_origLineNetAmt NUMBER;
   v_totalPromotion NUMBER;
+  v_ismultiple CHAR(1);
+  v_multiple NUMBER;
 BEGIN
   select fixed, coalesce(addamt, 0), coalesce(discount, 0),
-         qty_From, qty_To, apply_next
+         qty_From, qty_To, apply_next, ismultiple, multiple
     into v_fixed, v_add, v_discount,
-         v_qty_From, v_qty_To, v_apply_next
+         v_qty_From, v_qty_To, v_apply_next, v_ismultiple, v_multiple
     from m_offer
    where m_offer_id = p_rule_id;
 
@@ -81,7 +83,7 @@ BEGIN
 		where c_invoiceline_id = p_line_id;
   end if;
 
-  if (v_qty_From is not null and v_qty < v_qty_From) or (v_qty_To is not null and v_qty > v_qty_To) then
+  if (v_qty_From is not null and v_qty < v_qty_From) or (v_qty_To is not null and v_qty > v_qty_To) or (v_ismultiple = 'Y' and ((v_multiple is null) or (v_qty % v_multiple <> 0))) then
     return 'Y'; -- rule not applied, apply next one if present
   end if;
    

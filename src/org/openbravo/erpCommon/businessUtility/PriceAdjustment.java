@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,15 +56,22 @@ public class PriceAdjustment {
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
           orderOrInvoice, qty, product, false)) {
         log.debug("promo: " + promo + "- " + promo.getDiscount());
-        if (promo.getFixedPrice() != null) {
+        boolean applyDiscount = true;
+        if (promo.isMultiple() && promo.getMultiple() != null
+            && qty.remainder(promo.getMultiple()).compareTo(BigDecimal.ZERO) != 0) {
+          applyDiscount = false;
+        }
+        if (promo.getFixedPrice() != null && applyDiscount) {
           priceActual = promo.getFixedPrice();
         } else {
-          priceActual = priceActual
-              .subtract(promo.getDiscountAmount())
-              .multiply(
-                  BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100),
-                      precision, BigDecimal.ROUND_HALF_UP)))
-              .setScale(precision, BigDecimal.ROUND_HALF_UP);
+          if (applyDiscount) {
+            priceActual = priceActual
+                .subtract(promo.getDiscountAmount())
+                .multiply(
+                    BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100),
+                        precision, BigDecimal.ROUND_HALF_UP)))
+                .setScale(precision, BigDecimal.ROUND_HALF_UP);
+          }
         }
         if (!promo.isApplyNext()) {
           break;
@@ -92,10 +99,18 @@ public class PriceAdjustment {
           .getPricePrecision().intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
           orderOrInvoice, qty, product, true)) {
+        boolean applyDiscount = true;
+        if (promo.isMultiple() && promo.getMultiple() != null
+            && qty.remainder(promo.getMultiple()).compareTo(BigDecimal.ZERO) != 0) {
+          applyDiscount = false;
+        }
         log.debug("promo: " + promo + "- " + promo.getDiscount());
-        priceStd = priceStd.add(promo.getDiscountAmount()).divide(
-            BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100), precision,
-                BigDecimal.ROUND_HALF_UP)), precision, BigDecimal.ROUND_HALF_UP);
+        if (applyDiscount) {
+          priceStd = priceStd.add(promo.getDiscountAmount()).divide(
+              BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100),
+                  precision, BigDecimal.ROUND_HALF_UP)), precision, BigDecimal.ROUND_HALF_UP);
+        }
+
       }
 
       log.debug("Std:" + priceActual + "->" + priceStd);
