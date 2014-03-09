@@ -102,7 +102,8 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     }
 
     // add a filter on the parent of the entity
-    if (parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER) != null
+    if ((parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER) != null && !"null"
+        .equals(parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER)))
         && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
       final String parentProperty = parameters.get(JsonConstants.FILTERBYPARENTPROPERTY_PARAMETER);
       final BaseOBObject bob = OBDal.getInstance().get(getEntity().getName(),
