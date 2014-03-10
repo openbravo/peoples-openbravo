@@ -1492,6 +1492,12 @@ OB.ViewFormProperties = {
       storedFocusItem = this.getFocusItem();
     }
 
+    if (this.view.viewGrid.isGrouped && this.isNew) {
+      // If a new record is added in a grouped grid, 
+      // the grid has to be refreshed after the record has been actually saved
+      this.refreshGroupedGrid = true;
+    }
+
     // store the value of the current focus item
     if (this.getFocusItem() && this.saveFocusItemChanged !== this.getFocusItem()) {
       this.getFocusItem().blur(this, this.getFocusItem());
@@ -1517,7 +1523,7 @@ OB.ViewFormProperties = {
     callback = function (resp, data, req) {
       var index1, index2, view = form.view,
           localRecord, status = resp.status,
-          sessionProperties, keepSelection;
+          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId;
 
       if (this.hasOwnProperty('previousExplicitOffline')) {
         isc.Offline.explicitOffline = this.previousExplicitOffline;
@@ -1647,6 +1653,20 @@ OB.ViewFormProperties = {
               ROW_ID: this.values.id
             }, null);
           }
+        }
+
+        if (this.refreshGroupedGrid) {
+          // Refresh the grid, open the root node of the new record, select the new recor and scroll it into view
+          theGrid = this.view.viewGrid;
+          theId = this.getValues()[OB.Constants.ID];
+          gridRefreshCallback = function () {
+            var newRecord = theGrid.data.find('id', theId);
+            this.data.openFolder(theGrid.data.getParent(newRecord));
+            theGrid.selectSingleRecord(newRecord);
+            theGrid.scrollToRow(theGrid.getRecordIndex(newRecord));
+          };
+          this.view.viewGrid.refreshGrid(gridRefreshCallback);
+          delete this.refreshGroupedGrid;
         }
 
       } else if (status === isc.RPCResponse.STATUS_VALIDATION_ERROR && resp.errors) {
