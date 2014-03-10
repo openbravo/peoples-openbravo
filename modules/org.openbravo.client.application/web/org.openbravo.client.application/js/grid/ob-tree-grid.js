@@ -131,5 +131,10 @@ isc.OBTreeGrid.addProperties({
   handleFilterEditorSubmit: function (criteria, context, callback) {
     this.setOpenState('[]');
     this.Super('handleFilterEditorSubmit', arguments);
+  },
+
+  // No actions should be triggered when clicking a record with the right button
+  cellContextClick: function (record, rowNum, colNum) {
+    return false;
   }
 });
