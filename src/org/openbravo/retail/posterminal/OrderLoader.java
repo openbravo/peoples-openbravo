@@ -815,7 +815,7 @@ public class OrderLoader extends JSONProcessSimple {
           }
 
           ProcessInstance pInstance = CallProcess.getInstance().callProcess(process, null,
-              parameters);
+              parameters, false);
 
           OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
               StockProposed.class);
