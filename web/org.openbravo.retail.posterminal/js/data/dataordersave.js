@@ -20,7 +20,7 @@
     this.ordersToSend = OB.DEC.Zero;
     this.hasInvLayaways = false;
 
-    this.receipt.on('closed', function () {
+    this.receipt.on('closed', function (eventParams) {
       this.receipt = model.get('order');
       var me = this,
           docno = this.receipt.get('documentNo'),
@@ -53,6 +53,10 @@
       }, function (args) {
         var receipt = args.context.receipt,
             currentDocNo = receipt.get('documentNo') || docno;
+
+        if (eventParams && eventParams.callback) {
+          eventParams.callback();
+        }
 
         receipt.set('json', JSON.stringify(receipt.toJSON()));
 

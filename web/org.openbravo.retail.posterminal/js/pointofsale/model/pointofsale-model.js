@@ -432,18 +432,26 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }));
           }
           receipt.set('change', oldChange);
-          receipt.trigger('closed');
-          receipt.get('payments').reset();
-          clonedCollection.each(function (model) {
-            receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
-              silent: true
-            });
+          receipt.trigger('closed', {
+            callback: function () {
+              receipt.get('payments').reset();
+              clonedCollection.each(function (model) {
+                receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
+                  silent: true
+                });
+              });
+              receipt.trigger('print'); // to guaranty execution order
+              orderList.deleteCurrent(true);
+            }
           });
         } else {
-          receipt.trigger('closed');
+          receipt.trigger('closed', {
+            callback: function () {
+              receipt.trigger('print'); // to guaranty execution order
+              orderList.deleteCurrent(true);
+            }
+          });
         }
-        receipt.trigger('print'); // to guaranty execution order
-        orderList.deleteCurrent();
       });
     }, this);
 
@@ -597,12 +605,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     approvals = order.get('approvals') || [];
 
-    for (i = 0; i < approvals.length; i++) {
-      // reset approvals
-      if (approvals[i].approvalType !== approvalType) {
-        newApprovals.push(approvals[i]);
-      }
-    }
+    _.each(approvals, function (appr) {
+      var results;
+      results = _.find(approvalType, function (apprType) {
+        return apprType === appr.approvalType;
+      });
+
+      if (_.isUndefined(results)) {
+         newApprovals.push(approvals[i]);
+       }
+
+    });
 
     if (approved) {
       date = new Date();

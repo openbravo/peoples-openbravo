@@ -187,8 +187,11 @@ enyo.kind({
     if (receipt.get('isQuotation')) {
       if (receipt.get('hasbeenpaid') !== 'Y') {
         receipt.prepareToSend(function () {
-          receipt.trigger('closed');
-          receipt.trigger('scan');
+          receipt.trigger('closed', {
+            callback: function () {
+              receipt.trigger('scan');
+            }
+          });
         });
       } else {
         receipt.prepareToSend(function () {
