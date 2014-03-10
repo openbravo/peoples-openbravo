@@ -83,7 +83,7 @@ BEGIN
 		where c_invoiceline_id = p_line_id;
   end if;
 
-  if (v_qty_From is not null and v_qty < v_qty_From) or (v_qty_To is not null and v_qty > v_qty_To) or (v_ismultiple = 'Y' and ((v_multiple is null) or (v_qty % v_multiple <> 0))) then
+  if (v_qty_From is not null and v_qty < v_qty_From) or (v_qty_To is not null and v_qty > v_qty_To) or (v_ismultiple = 'Y' and ((v_multiple is null) or (MOD(v_qty, v_multiple) <> 0))) then
     return 'Y'; -- rule not applied, apply next one if present
   end if;
    
