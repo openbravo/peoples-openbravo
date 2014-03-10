@@ -88,7 +88,7 @@ BEGIN
             WHERE M_Locator_ID = :NEW.m_locator_id;
           END IF;
           IF (:NEW.Checkreservedqty='Y') THEN
-          RAISE_APPLICATION_ERROR(-20000, '@CannotTakeOutReservedStock@' || ' @of@' || ' @Product@: ' || v_product_value || ', @AttributeSetInstance@: ' || COALESCE(v_attr_description, '-') || ', @UOM@: ' || v_uom_value || ' @And@'||' @StorageBin@: ' || COALESCE(v_locator_value, '-'));
+          RAISE_APPLICATION_ERROR(-20000, '@CannotTakeOutReservedStock@' || ' @of@' || ' @Product@: ' || v_product_value || ', @AttributeSetInstance@: ' || COALESCE(v_attr_description, '-') || ', @UOM@: ' || COALESCE(v_uom_value, '-') || ' @And@'||' @StorageBin@: ' || COALESCE(v_locator_value, '-'));
           END IF;
         END IF;
       END IF;
