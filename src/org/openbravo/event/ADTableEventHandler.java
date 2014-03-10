@@ -75,6 +75,7 @@ public class ADTableEventHandler extends EntityPersistenceEventObserver {
   private void checkClassNameForDuplicates(EntityPersistenceEvent event) {
     ConnectionProvider conn = new DalConnectionProvider(false);
     String language = OBContext.getOBContext().getLanguage().getLanguage();
+    String tableId = (String) event.getTargetInstance().getId();
     final Entity tableEntity = ModelProvider.getInstance().getEntity(Table.ENTITY_NAME);
     final Property javaClassNameProperty = tableEntity.getProperty(Table.PROPERTY_JAVACLASSNAME);
     Object javaClassName = event.getCurrentState(javaClassNameProperty);
@@ -86,6 +87,7 @@ public class ADTableEventHandler extends EntityPersistenceEventObserver {
       OBCriteria<Table> tableCriteria = OBDal.getInstance().createCriteria(Table.class);
       tableCriteria.add(Restrictions.eq(Table.PROPERTY_JAVACLASSNAME, javaClassName));
       tableCriteria.add(Restrictions.eq(Table.PROPERTY_DATAPACKAGE, packageName));
+      tableCriteria.add(Restrictions.not(Restrictions.eq(Table.PROPERTY_ID, tableId)));
       if (tableCriteria.count() != 0) {
         throw new OBException(Utility.messageBD(conn, "DuplicateJavaClassName", language));
       }
