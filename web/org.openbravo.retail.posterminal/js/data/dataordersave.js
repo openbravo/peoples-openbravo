@@ -58,10 +58,6 @@
             auxReceipt = new OB.Model.Order(),
             currentDocNo = receipt.get('documentNo') || docno;
 
-        if (eventParams && eventParams.callback) {
-          eventParams.callback();
-        }
-
         receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         receipt.set('json', JSON.stringify(receipt.toJSON()));
 
@@ -86,6 +82,9 @@
                 }
               }
               };
+          if (eventParams && eventParams.callback) {
+            eventParams.callback();
+          }
           OB.MobileApp.model.runSyncProcess(model, successCallback);
         }, function () {
           //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
