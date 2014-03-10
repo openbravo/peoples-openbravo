@@ -73,10 +73,14 @@ public class CallProcess {
    *          {@link ProcessInstance#getRecordID()}
    * @param parameters
    *          are translated into process parameters
+   * @param doCommit
+   *          do commit at the end of the procedure only if calledFromApp functionality is supported
+   *          in the procedure, otherwise null should be passed
    * @return the created instance with the result ({@link ProcessInstance#getResult()}) or error (
    *         {@link ProcessInstance#getErrorMsg()})
    */
-  public ProcessInstance call(String processName, String recordID, Map<String, String> parameters) {
+  public ProcessInstance call(String processName, String recordID, Map<String, String> parameters,
+      Boolean doCommit) {
     final OBCriteria<org.openbravo.model.ad.ui.Process> processCriteria = OBDal.getInstance()
         .createCriteria(org.openbravo.model.ad.ui.Process.class);
     processCriteria.add(Restrictions.eq(org.openbravo.model.ad.ui.Process.PROPERTY_PROCEDURE,
@@ -86,7 +90,7 @@ public class CallProcess {
           + processName);
 
     }
-    return call(processCriteria.list().get(0), recordID, parameters);
+    return call(processCriteria.list().get(0), recordID, parameters, doCommit);
   }
 
   /**
@@ -102,12 +106,15 @@ public class CallProcess {
    *          are translated into process parameters, supports only string parameters, for support
    *          of other parameters see the next method:
    *          {@link #callProcess(org.openbravo.model.ad.ui.Process, String, Map)}
+   * @param doCommit
+   *          do commit at the end of the procedure only if calledFromApp functionality is supported
+   *          in the procedure, otherwise null should be passed
    * @return the created instance with the result ({@link ProcessInstance#getResult()}) or error (
    *         {@link ProcessInstance#getErrorMsg()})
    */
   public ProcessInstance call(org.openbravo.model.ad.ui.Process process, String recordID,
-      Map<String, String> parameters) {
-    return callProcess(process, recordID, (Map<String, ?>) parameters);
+      Map<String, String> parameters, Boolean doCommit) {
+    return callProcess(process, recordID, (Map<String, ?>) parameters, doCommit);
   }
 
   /**
@@ -121,11 +128,14 @@ public class CallProcess {
    *          {@link ProcessInstance#getRecordID()}
    * @param parameters
    *          are translated into process parameters
+   * @param doCommit
+   *          do commit at the end of the procedure only if calledFromApp functionality is supported
+   *          in the procedure, otherwise null should be passed
    * @return the created instance with the result ({@link ProcessInstance#getResult()}) or error (
    *         {@link ProcessInstance#getErrorMsg()})
    */
   public ProcessInstance callProcess(org.openbravo.model.ad.ui.Process process, String recordID,
-      Map<String, ?> parameters) {
+      Map<String, ?> parameters, Boolean doCommit) {
     OBContext.setAdminMode();
     try {
       // Create the pInstance
@@ -182,15 +192,24 @@ public class CallProcess {
         // first get a connection
         final Connection connection = OBDal.getInstance().getConnection(false);
 
+        String procedureParameters = "(?)";
+        if (doCommit != null) {
+          procedureParameters = "(?,?)";
+        }
+
         final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
         if (obProps.getProperty("bbdd.rdbms") != null
             && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-          ps = connection.prepareStatement("SELECT * FROM " + process.getProcedure() + "(?)");
+          ps = connection.prepareStatement("SELECT * FROM " + process.getProcedure()
+              + procedureParameters);
         } else {
-          ps = connection.prepareStatement(" CALL " + process.getProcedure() + "(?)");
+          ps = connection.prepareStatement(" CALL " + process.getProcedure() + procedureParameters);
         }
 
         ps.setString(1, pInstance.getId());
+        if (doCommit != null) {
+          ps.setString(2, doCommit ? "Y" : "N");
+        }
         ps.execute();
       } catch (Exception e) {
         throw new IllegalStateException(e);
@@ -207,5 +226,64 @@ public class CallProcess {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * Calls a process with the specified name. The recordID and parameters can be null. Parameters
+   * are translated into {@link Parameter} instances.
+   * 
+   * @param processName
+   *          the name of the stored procedure, must exist in the database, see
+   *          {@link org.openbravo.model.ad.ui.Process#getProcedure()}.
+   * @param recordID
+   *          the recordID will be set in the {@link ProcessInstance}, see
+   *          {@link ProcessInstance#getRecordID()}
+   * @param parameters
+   *          are translated into process parameters
+   * @return the created instance with the result ({@link ProcessInstance#getResult()}) or error (
+   *         {@link ProcessInstance#getErrorMsg()})
+   */
+  public ProcessInstance call(String processName, String recordID, Map<String, String> parameters) {
+    return call(processName, recordID, parameters, null);
+  }
+
+  /**
+   * Calls a process. The recordID and parameters can be null. Parameters are translated into
+   * {@link Parameter} instances.
+   * 
+   * @param process
+   *          the process to execute
+   * @param recordID
+   *          the recordID will be set in the {@link ProcessInstance}, see
+   *          {@link ProcessInstance#getRecordID()}
+   * @param parameters
+   *          are translated into process parameters, supports only string parameters, for support
+   *          of other parameters see the next method:
+   *          {@link #callProcess(org.openbravo.model.ad.ui.Process, String, Map)}
+   * @return the created instance with the result ({@link ProcessInstance#getResult()}) or error (
+   *         {@link ProcessInstance#getErrorMsg()})
+   */
+  public ProcessInstance call(org.openbravo.model.ad.ui.Process process, String recordID,
+      Map<String, String> parameters) {
+    return call(process, recordID, parameters, null);
+  }
+
+  /**
+   * Calls a process. The recordID and parameters can be null. Parameters are translated into
+   * {@link Parameter} instances.
+   * 
+   * @param process
+   *          the process to execute
+   * @param recordID
+   *          the recordID will be set in the {@link ProcessInstance}, see
+   *          {@link ProcessInstance#getRecordID()}
+   * @param parameters
+   *          are translated into process parameters
+   * @return the created instance with the result ({@link ProcessInstance#getResult()}) or error (
+   *         {@link ProcessInstance#getErrorMsg()})
+   */
+  public ProcessInstance callProcess(org.openbravo.model.ad.ui.Process process, String recordID,
+      Map<String, ?> parameters) {
+    return callProcess(process, recordID, parameters, null);
   }
 }
