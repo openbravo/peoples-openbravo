@@ -46,8 +46,7 @@ public abstract class SessionFactoryController {
   private static final String UNIQUE_CONSTRAINT_QUERY_ORACLE = "SELECT UCC.TABLE_NAME,UCC.COLUMN_NAME,UCC.CONSTRAINT_NAME FROM USER_CONS_COLUMNS UCC JOIN USER_CONSTRAINTS UC ON UC.CONSTRAINT_NAME=UCC.CONSTRAINT_NAME WHERE UC.CONSTRAINT_TYPE = 'U' ORDER BY UCC.CONSTRAINT_NAME";
 
   private static final String COLUMN_QUERY_POSTGRES = "SELECT t.tablename, a.attname, a.attnotnull FROM pg_tables t, pg_class c, pg_attribute a "
-      + "WHERE tablename NOT LIKE 'pg%' AND tablename NOT LIKE 'sql%' and "
-      + "c.relname = t.tablename AND a.attnum > 0 AND a.attrelid = c.oid";
+      + "WHERE c.relname = t.tablename AND a.attnum > 0 AND a.attrelid = c.oid";
 
   private static final String COLUMN_QUERY_ORACLE = "SELECT C.TABLE_NAME, C.COLUMN_NAME, C.NULLABLE "
       + "FROM USER_TAB_COLUMNS C  ORDER BY C.TABLE_NAME";
