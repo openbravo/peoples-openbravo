@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OB.UI.RenderCategory',
-  kind: 'OB.UI.SelectButton',
+  kind: 'OB.UI.listItemButton',
   components: [{
     style: 'float: left; width: 25%',
     components: [{
