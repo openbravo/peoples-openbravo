@@ -857,3 +857,7 @@ isc.RecordEditor.addProperties({
     }
   });
 }());
+
+isc.builtinTypes.textArea = {
+  inheritsFrom: "text"
+};
