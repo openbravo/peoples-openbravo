@@ -1067,8 +1067,10 @@ public class DocInvoice extends AcctServer {
         log4j.warn("DocInvoice - Error checking period open.", e);
         e.printStackTrace();
       }
-      period = AccDefUtility.getNextPeriod(period);
-      date = period.getEndingDate();
+      if (i < periodNumber) {
+        period = AccDefUtility.getNextPeriod(period);
+        date = period.getEndingDate();
+      }
       total = total.add(periodAmount);
       i++;
     }
