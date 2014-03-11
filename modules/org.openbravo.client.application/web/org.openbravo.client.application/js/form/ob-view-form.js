@@ -1661,6 +1661,9 @@ OB.ViewFormProperties = {
           theId = this.getValues()[OB.Constants.ID];
           gridRefreshCallback = function () {
             var newRecord = theGrid.data.find('id', theId);
+            if (theGrid.data.getParent) {
+              theGrid.data.openFolder(theGrid.data.getParent(newRecord));
+            }
             theGrid.selectSingleRecord(newRecord);
             theGrid.scrollToRow(theGrid.getRecordIndex(newRecord));
           };
