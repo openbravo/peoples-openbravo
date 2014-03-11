@@ -53,6 +53,7 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
   private static final String strReservationsTableId = "77264B07BB0E4FA483A07FB40C2E0FE0";
   private static final String strResStockTableId = "7BDAC914CA60418795E453BC0E8C89DC";
   private static final String strResStockOrderTableId = "8A36D18D1D164189B7C3AE892F310E11";
+  private static final String strTabResStockOrderTableId = "D6079A4A6C2542678D9A50114367B967";
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -65,7 +66,8 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
       boolean processReservation = false;
 
       Reservation reservation = null;
-      if (strTableId.equals(strReservationsTableId) || strTableId.equals(strResStockTableId)) {
+      if (strTableId.equals(strReservationsTableId) || strTableId.equals(strResStockTableId)
+          || strTableId.equals(strTabResStockOrderTableId)) {
         final String strReservationId = jsonRequest.getString("inpmReservationId");
         reservation = OBDal.getInstance().get(Reservation.class, strReservationId);
       } else if (strTableId.equals(strOrderLineTableId)
