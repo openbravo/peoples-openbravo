@@ -312,12 +312,6 @@ isc.OBViewGrid.addProperties({
     this.groupTreeProperties = {
       grid: this,
 
-      // always return all records
-      getRange: function (start, end) {
-        return this.getOpenList(
-        this.root, this.openDisplayNodeType, null, this.sortDirection, this.openListCriteria, null, true).slice(start, end);
-      },
-
       setSort: function (sortSpecifier) {
         var i, fld, sortSpec = isc.clone(sortSpecifier),
             flds = this.grid.getAllFields(),
