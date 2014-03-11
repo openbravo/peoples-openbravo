@@ -52,6 +52,7 @@
         receipt: model.get('order')
       }, function (args) {
         if (args && args.cancellation && args.cancellation === true) {
+          args.context.receipt.set('isbeingprocessed', 'N');
           return true;
         }
         var receipt = args.context.receipt,
