@@ -1757,6 +1757,10 @@ isc.OBStandardView.addProperties({
         if (me.viewGrid.data.updateCacheData) {
           me.viewGrid.data.updateCacheData(data, req);
         }
+        if (me.viewGrid.isGrouped) {
+          // if the grid is group update its values to show the updated data
+          me.viewGrid.setEditValues(recordIndex, data[0]);
+        }
         me.viewGrid.selectRecord(me.viewGrid.getRecord(recordIndex));
         me.viewGrid.refreshRow(recordIndex);
         me.viewGrid.redraw();
