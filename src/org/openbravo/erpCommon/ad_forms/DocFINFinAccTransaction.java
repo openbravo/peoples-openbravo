@@ -776,13 +776,13 @@ public class DocFINFinAccTransaction extends AcctServer {
         retValue = payment.getAmount();
       }
     }
-    if (usedCredit.compareTo(ZERO) != 0 && generatedCredit.compareTo(ZERO) == 0)
-      retValue = retValue.add(usedCredit);
-    sb.append(retValue);
     if (payment != null) {
+      if (usedCredit.compareTo(ZERO) != 0 && generatedCredit.compareTo(ZERO) == 0)
+        retValue = retValue.add(usedCredit);
       retValue = retValue.add(payment.isReceipt() ? payment.getWriteoffAmount() : payment
           .getWriteoffAmount().negate());
     }
+    sb.append(retValue);
     // - Lines
     OBContext.setAdminMode(false);
     try {
