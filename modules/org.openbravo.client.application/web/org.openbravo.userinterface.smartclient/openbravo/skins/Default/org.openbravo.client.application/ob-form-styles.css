@@ -441,6 +441,11 @@
   background-color: #ffffcc;
 }
 
+.OBFormFieldInput_HeightHack {
+  /* The are some situations where Smartclient library ignores or misinterpret the JS 'height' property. */
+  height: 17px !important;
+}
+
 /*=======================================================================
  * Date Picker 
 =======================================================================*/

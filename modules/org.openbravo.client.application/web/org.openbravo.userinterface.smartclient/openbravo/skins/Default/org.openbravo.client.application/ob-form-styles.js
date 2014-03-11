@@ -227,6 +227,11 @@ OB.Styles.OBFormField.DefaultSearch = {
 
 isc.OBSearchItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultSearch));
 
+isc.OBPAttributeSearchItem.addProperties({
+  // Hack to solve issue: https://issues.openbravo.com/view.php?id=25942
+  textBoxStyle: 'OBFormFieldInput_HeightHack OBFormFieldInput'
+});
+
 isc.OBLinkItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultSearch));
 
 isc.OBLinkButtonItem.addProperties({
@@ -325,6 +330,11 @@ isc.OBTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.Default
 
 isc.OBTimeItem.addProperties({
   height: 25
+});
+
+isc.OBTimeItem.addProperties({
+  // Hack to solve issue: https://issues.openbravo.com/view.php?id=25916
+  textBoxStyle: 'OBFormFieldInput_HeightHack OBFormFieldInput'
 });
 
 isc.OBTimeItemGrid.addProperties({
