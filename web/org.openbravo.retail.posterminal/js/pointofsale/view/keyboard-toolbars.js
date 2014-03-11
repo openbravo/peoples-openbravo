@@ -302,12 +302,14 @@ enyo.kind({
   },
   executeOnShow: function () {
     // build only the first time...
-    enyo.forEach(this.sideButtons, function (sidebutton) {
-      sidebutton.btn.definition.includedInPopUp = true;
-      this.$.body.$.buttonslist.createComponent(sidebutton, {
-        owner: this.args.toolbar
-      });
-    }, this);
+    if (this.$.body.$.buttonslist.children.length === 0) {
+      enyo.forEach(this.sideButtons, function (sidebutton) {
+        sidebutton.btn.definition.includedInPopUp = true;
+        this.$.body.$.buttonslist.createComponent(sidebutton, {
+          owner: this.args.toolbar
+        });
+      }, this);
+    }
     return true;
   },
   init: function (model) {
