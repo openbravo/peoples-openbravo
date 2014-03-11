@@ -1077,7 +1077,7 @@ public class DocInvoice extends AcctServer {
     return plan;
   }
 
-  String createAccDefExpenseFact(Fact fact, DocLine_Invoice line, Account prodExpAccount,
+  public String createAccDefExpenseFact(Fact fact, DocLine_Invoice line, Account prodExpAccount,
       Account prodDefExpAccount, String lineAmount, String strCurrencyId, ConnectionProvider conn) {
     BigDecimal amount = new BigDecimal(lineAmount);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
@@ -1349,7 +1349,7 @@ public class DocInvoice extends AcctServer {
     return "Servlet for the accounting";
   } // end of getServletInfo() method
 
-  private void computeTaxUndeductableLine(ConnectionProvider conn, AcctSchema as, Fact fact,
+  public void computeTaxUndeductableLine(ConnectionProvider conn, AcctSchema as, Fact fact,
       DocLine docLine, String Fact_Acct_Group_ID, String taxId, String strTaxAmount) {
     int invoiceLineTaxCount = 0;
     int totalInvoiceLineTax = getTaxLineCount(conn, taxId);
