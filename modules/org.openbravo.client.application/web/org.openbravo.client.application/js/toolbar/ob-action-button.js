@@ -185,10 +185,6 @@ isc.OBToolbarActionButton.addProperties({
         }
         currentView.refresh(null, autosaveDone, recordsAfterRefresh);
       }
-      if (contextView.viewGrid.isGrouped) {
-        // if the grid is grouped refresh the grid to show the records properly
-        contextView.viewGrid.refreshGrid();
-      }
     };
 
     if (this.autosave) {
