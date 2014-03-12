@@ -219,6 +219,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     boolean isMultiParentTree = tableTree.isHasMultiparentNodes();
 
     StringBuilder whereClause = new StringBuilder();
+    final List<Object> queryParameters = new ArrayList<Object>();
     whereClause.append(" as e where ");
     String actualParentId = new String(parentId);
     if (isMultiParentTree) {
@@ -247,13 +248,12 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
           whereClause.append(".id");
         }
         whereClause.append(" = ? ");
+        queryParameters.add(actualParentId);
       }
     }
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
 
-    final List<Object> queryParameters = new ArrayList<Object>();
-    queryParameters.add(actualParentId);
     query.setParameters(queryParameters);
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
