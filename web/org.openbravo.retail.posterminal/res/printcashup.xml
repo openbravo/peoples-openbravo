@@ -39,7 +39,7 @@
     _.each(cashup.report.get('salesTaxes'),function(tax){
     %>
     <line>
-      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(tax.get('name') + ' * ' + OB.I18N.formatCurrency(cashup.report.get('netSales'))) %></text>
+      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(tax.get('name')) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(tax.get('amount')) %></text>
     </line>
     <%
@@ -59,7 +59,7 @@
     _.each(cashup.report.get('returnsTaxes'), function(tax){
     %>
     <line>
-      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(tax.get('name') + ' * ' + OB.I18N.formatCurrency(cashup.report.get('netReturns'))) %></text>
+      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(tax.get('name')) %></text>
       <text align ="right" length="14"><%= OB.I18N.formatCurrency(tax.get('amount')) %></text>
     </line>
     <%
