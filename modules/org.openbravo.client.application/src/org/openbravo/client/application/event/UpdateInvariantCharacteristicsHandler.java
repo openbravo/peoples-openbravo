@@ -108,6 +108,8 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
           List<CharacteristicValue> values = characteristic.getCharacteristic()
               .getCharacteristicValueList();
           JSONObject productCharValuesValueMap = new JSONObject();
+          // adding empty value to map to allow selecting empty value to delete the characteristic
+          productCharValuesValueMap.put("", "");
           for (CharacteristicValue value : values) {
             productCharValuesValueMap.put(value.getId(), value.getIdentifier());
           }
