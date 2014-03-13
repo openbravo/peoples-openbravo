@@ -281,6 +281,12 @@ isc.OBStandardView.addProperties({
       this.dataSource.destroy();
       this.dataSource = null;
     }
+
+    // destroy notes datasource
+    if (this.notesDataSource) {
+      this.notesDataSource.destroy();
+      this.notesDataSource = null;
+    }
     return this.Super('destroy', arguments);
   },
 
