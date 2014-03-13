@@ -343,7 +343,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   dataArrived: function (startRow, endRow) {
-    var record, i, rows, selectedLen = this.selectedIds.length,
+    var record, i, allRows, selectedLen = this.selectedIds.length,
         len, savedRecord, index, j, fields;
     fields = this.getFields();
     for (i = 0; i < selectedLen; i++) {
@@ -372,11 +372,11 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     if (selectedLen === 0) {
       // push all *selected* rows into selectedIds cache
-      rows = this.data.allRows || this.data.localData || [];
-      len = rows.length;
+      allRows = this.data.allRows || [];
+      len = allRows.length;
       for (i = 0; i < len; i++) {
-        if (rows[i] && rows[i][this.selectionProperty]) {
-          this.selectedIds.push(rows[i][OB.Constants.ID]);
+        if (allRows[i][this.selectionProperty]) {
+          this.selectedIds.push(allRows[i][OB.Constants.ID]);
         }
       }
     }
