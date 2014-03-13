@@ -58,8 +58,8 @@ isc.defineClass('UpdateInvariantCharacteristicsPopup', isc.OBPopup);
 // This popup will show a combo for each of the product invariant
 // characteristics, and OK and Cancel buttons.
 isc.UpdateInvariantCharacteristicsPopup.addProperties({
-  width: 320,
-  height: 200,
+  width: 400,
+  height: 300,
   title: 'Update Characteristics',
   canDragResize: false,
   showMinimizeButton: false,
@@ -144,6 +144,8 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
       defaultLayoutAlign: 'center',
       align: 'center',
       width: '100%',
+      height: 300,
+      overflow: 'auto',
       layoutMargin: 10,
       membersMargin: 6,
       members: [
