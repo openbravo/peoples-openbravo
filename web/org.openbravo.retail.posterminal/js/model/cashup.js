@@ -27,23 +27,23 @@
   }, {
     name: 'netSales',
     column: 'netSales',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'grossSales',
     column: 'grossSales',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'netReturns',
     column: 'netReturns',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'grossReturns',
     column: 'grossReturns',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'totalRetailTransactions',
     column: 'totalRetailTransactions',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'createdDate',
     column: 'createdDate',

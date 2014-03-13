@@ -32,6 +32,10 @@
         this.set('productidentifier', attributes.productidentifier);
         this.set('uOM', attributes.uOM);
         this.set('qty', attributes.qty);
+        if (attributes.qty < 0) {
+          // this line is checked as not selectable to avoid that a discretionary discount is applied in it
+          this.set('notSelectableLine', true);
+        }
         this.set('price', attributes.price);
         this.set('priceList', attributes.priceList);
         this.set('gross', attributes.gross);
@@ -42,6 +46,14 @@
           this.set('grossListPrice', attributes.product.price.standardPrice);
         }
       }
+      this.on('change:qty', function (line) {
+        if (line.get('qty') < 0) {
+          // this line is checked as not selectable to avoid that a discretionary discount is applied in it
+          line.set('notSelectableLine', true);
+        } else if (line.has('notSelectableLine')) {
+          line.set('notSelectableLine', false);
+        }
+      });
     },
 
     getQty: function () {
@@ -352,7 +364,6 @@
             discountPercentage = parseFloat(discountPercentage.setScale(2, BigDecimal.prototype.ROUND_HALF_UP).toString(), 10);
           }
         } else {
-          grossListPrice = line.get('priceList');
           discountPercentage = OB.DEC.Zero;
         }
         line.set({
@@ -543,7 +554,10 @@
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
         'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
         'isReturn': isReturn,
-        'isNegative': this.get('gross') < 0 ? true : false
+        'isNegative': this.get('gross') < 0 ? true : false,
+        'changeAmt': this.getChange(),
+        'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
+        'payments': this.get('payments')
       };
     },
 
@@ -1117,7 +1131,7 @@
       var me = this;
       if (OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn) {
         var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('gross') < 0;
+          return line.get('qty') < 0;
         }).length;
         if (this.get('lines').length > 0) {
           if (units > 0 && negativeLines > 0) {
@@ -1178,7 +1192,7 @@
       if (OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
         //The value of qty need to be negate because we want to change it
         var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('gross') < 0;
+          return line.get('qty') < 0;
         }).length;
         if (this.get('lines').length > 0) {
           if (-line.get('qty') > 0 && negativeLines > 0) {
@@ -1238,31 +1252,31 @@
 
     setOrderType: function (permission, orderType, options) {
       var me = this;
-        if (orderType === OB.DEC.One) {
-          this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
-          _.each(this.get('lines').models, function (line) {
-            if (line.get('qty') > 0) {
-              me.returnLine(line, null, true);
-            }
-          }, this);
-        } else {
-          this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
-        }
-        this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
-        if (orderType !== 3) { //Void this Layaway, do not need to save
-          if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)) {
-            this.save();
+      if (orderType === OB.DEC.One) {
+        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
+        _.each(this.get('lines').models, function (line) {
+          if (line.get('qty') > 0) {
+            me.returnLine(line, null, true);
           }
-        } else {
-          this.set('layawayGross', this.getGross());
-          this.set('gross', this.get('payment'));
-          this.set('payment', OB.DEC.Zero);
-          this.get('payments').reset();
+        }, this);
+      } else {
+        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
+      }
+      this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+      if (orderType !== 3) { //Void this Layaway, do not need to save
+        if (!(options && !OB.UTIL.isNullOrUndefined(options.saveOrder) && options.saveOrder === false)) {
+          this.save();
         }
-        // remove promotions
-        if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)) {
-          OB.Model.Discounts.applyPromotions(this);
-        }
+      } else {
+        this.set('layawayGross', this.getGross());
+        this.set('gross', this.get('payment'));
+        this.set('payment', OB.DEC.Zero);
+        this.get('payments').reset();
+      }
+      // remove promotions
+      if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)) {
+        OB.Model.Discounts.applyPromotions(this);
+      }
     },
 
     // returns the ordertype: 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
@@ -1356,6 +1370,7 @@
       this.set('generateInvoice', OB.POS.modelterminal.get('terminal').terminalType.generateInvoice);
       this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
       this.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
+      this.set('salesRepresentative', OB.POS.modelterminal.get('context').user.id);
       this.set('hasbeenpaid', 'N');
       this.set('isPaid', false);
       this.set('isEditable', true);
@@ -1722,7 +1737,7 @@
             if (order.get('priceIncludesTax')) {
               price = OB.DEC.number(iter.unitPrice);
             } else {
-              price = OB.DEC.number(iter.netPrice);
+              price = OB.DEC.number(iter.baseNetUnitPrice);
             }
 
             OB.Dal.get(OB.Model.Product, iter.id, function (prod) {
@@ -1933,9 +1948,14 @@
         'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
         'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
-        'isReturn': this.get('gross') < 0 ? true : false
+        'isReturn': this.get('gross') < 0 ? true : false,
+        'isNegative': this.get('gross') < 0 ? true : false,
+        'changeAmt': this.getChange(),
+        'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
+        'payments': this.get('payments')
       };
     },
+
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');

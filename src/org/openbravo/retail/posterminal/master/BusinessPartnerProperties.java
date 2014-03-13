@@ -1,11 +1,3 @@
-/*
- ************************************************************************************
- * Copyright (C) 2013-2014 Openbravo S.L.U.
- * Licensed under the Openbravo Commercial License version 1.0
- * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
- * or in the legal folder of this module distribution.
- ************************************************************************************
- */
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
@@ -31,11 +23,14 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bpl.businessPartner.description", "description"));
         add(new HQLProperty("bpl.businessPartner.taxID", "taxID"));
         add(new HQLProperty("bpl.businessPartner.sOBPTaxCategory.id", "taxCategory"));
+        add(new HQLProperty("bpl.businessPartner.priceList.id", "priceList"));
         add(new HQLProperty("bpl.businessPartner.paymentMethod.id", "paymentMethod"));
         add(new HQLProperty("bpl.businessPartner.paymentTerms.id", "paymentTerms"));
         add(new HQLProperty("bpl.businessPartner.invoiceTerms", "invoiceTerms"));
         add(new HQLProperty("bpl.id", "locId"));
-        add(new HQLProperty("max(bpl.locationAddress.addressLine1)", "locName", false));
+        add(new HQLProperty(
+            "max(COALESCE(bpl.locationAddress.addressLine1, bpl.locationAddress.addressLine2, bpl.locationAddress.postalCode, bpl.locationAddress.cityName))",
+            "locName", false));
         add(new HQLProperty("ulist.email", "email"));
         add(new HQLProperty("ulist.id", "contactId"));
         add(new HQLProperty("ulist.phone", "phone"));
@@ -48,6 +43,7 @@ public class BusinessPartnerProperties extends ModelExtension {
             "businessPartnerCategory_name"));
         add(new HQLProperty("bpl.businessPartner.creditLimit", "creditLimit"));
         add(new HQLProperty("bpl.businessPartner.creditUsed", "creditUsed"));
+        add(new HQLProperty("bpl.businessPartner.taxExempt", "taxExempt"));
       }
     };
     return list;

@@ -20,7 +20,7 @@
     this.ordersToSend = OB.DEC.Zero;
     this.hasInvLayaways = false;
 
-    this.receipt.on('closed', function () {
+    this.receipt.on('closed', function (eventParams) {
       this.receipt = model.get('order');
       var me = this,
           docno = this.receipt.get('documentNo'),
@@ -42,7 +42,6 @@
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
       this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
-
       // The order will not be processed if the navigator is offline
       if (OB.POS.modelterminal.get('connectedToERP')) {
         this.receipt.set('isbeingprocessed', 'Y');
@@ -53,11 +52,13 @@
         receipt: model.get('order')
       }, function (args) {
         if (args && args.cancellation && args.cancellation === true) {
+          args.context.receipt.set('isbeingprocessed', 'N');
           return true;
         }
         var receipt = args.context.receipt,
             auxReceipt = new OB.Model.Order(),
             currentDocNo = receipt.get('documentNo') || docno;
+
         receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         receipt.set('json', JSON.stringify(receipt.toJSON()));
 
@@ -82,6 +83,9 @@
                 }
               }
               };
+          if (eventParams && eventParams.callback) {
+            eventParams.callback();
+          }
           OB.MobileApp.model.runSyncProcess(model, successCallback);
         }, function () {
           //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again

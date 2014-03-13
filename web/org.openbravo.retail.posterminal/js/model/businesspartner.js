@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -90,6 +90,7 @@
         this.set('businessPartnerCategory_name', OB.POS.modelterminal.get('terminal').defaultbp_bpcategory_name);
         this.set('paymentTerms', OB.POS.modelterminal.get('terminal').defaultbp_paymentterm);
         this.set('invoiceTerms', OB.POS.modelterminal.get('terminal').defaultbp_invoiceterm);
+        this.set('priceList', OB.POS.modelterminal.get('pricelist').id);
         this.set('country', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry);
         this.set('countryName', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry_name);
         this.set('client', OB.POS.modelterminal.get('terminal').client);
@@ -104,6 +105,7 @@
         this.set('cityName', null);
         this.set('phone', null);
         this.set('email', null);
+        this.set('taxExempt', null);
       } else {
         _.each(_.keys(cusToLoad.attributes), function (key) {
           if (cusToLoad.get(key) !== undf) {
@@ -185,6 +187,10 @@
     column: 'c_paymentterm_id',
     type: 'TEXT'
   }, {
+    name: 'priceList ',
+    column: 'm_pricelist_id',
+    type: 'TEXT '
+  }, {
     name: 'invoiceTerms',
     column: 'invoicerule',
     type: 'TEXT'
@@ -238,6 +244,10 @@
     name: 'creditUsed',
     column: 'creditUsed',
     type: 'NUMERIC'
+  }, {
+    name: 'taxExempt',
+    column: 'taxExempt',
+    type: 'TEXT'
   }]);
 
 

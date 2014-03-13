@@ -219,9 +219,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('brandFilter', []);
 
     function searchCurrentBP() {
-      var errorCallback = function(tx, error) {
-        OB.UTIL.showError("OBDAL error while getting BP info: " + error);
-      };
+      var errorCallback = function (tx, error) {
+          OB.UTIL.showError("OBDAL error while getting BP info: " + error);
+          };
 
       function successCallbackBPs(dataBps) {
         var partnerAddressId = OB.MobileApp.model.get('terminal').partnerAddress,
@@ -229,8 +229,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
         if (dataBps) {
           if (partnerAddressId && dataBps.get('locId') !== partnerAddressId) {
-             // Set default location
-            successCallbackBPLoc = function(bpLoc) {
+            // Set default location
+            successCallbackBPLoc = function (bpLoc) {
               dataBps.set('locId', bpLoc.get('id'));
               dataBps.set('locName', bpLoc.get('name'));
               OB.POS.modelterminal.set('businessPartner', dataBps);
@@ -241,7 +241,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
       }
-
       OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
     }
 
@@ -313,12 +312,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       function prepareToSendCallback(order) {
         if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
           var negativeLines = _.filter(order.get('lines').models, function (line) {
-            return line.get('gross') < 0;
+            return line.get('qty') < 0;
           }).length;
           if (negativeLines === order.get('lines').models.length) {
-            order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {applyPromotions: false, saveOrder: false});
+            order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
+              applyPromotions: false,
+              saveOrder: false
+            });
           } else {
-            order.setOrderType('', OB.DEC.Zero, {applyPromotions: false, saveOrder: false});
+            order.setOrderType('', OB.DEC.Zero, {
+              applyPromotions: false,
+              saveOrder: false
+            });
           }
         }
         me.get('multiOrders').trigger('closed', order);
@@ -418,12 +423,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         var clonedCollection = new Backbone.Collection();
         if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
           var negativeLines = _.filter(receipt.get('lines').models, function (line) {
-            return line.get('gross') < 0;
+            return line.get('qty') < 0;
           }).length;
           if (negativeLines === receipt.get('lines').models.length) {
-            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One, {applyPromotions: false, saveOrder: false});
+            receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
+              applyPromotions: false,
+              saveOrder: false
+            });
           } else {
-            receipt.setOrderType('', OB.DEC.Zero, {applyPromotions: false, saveOrder: false});
+            receipt.setOrderType('', OB.DEC.Zero, {
+              applyPromotions: false,
+              saveOrder: false
+            });
           }
         }
         if (!_.isUndefined(receipt.selectedPayment) && receipt.getChange() > 0) {
@@ -449,18 +460,26 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }));
           }
           receipt.set('change', oldChange);
-          receipt.trigger('closed');
-          receipt.get('payments').reset();
-          clonedCollection.each(function (model) {
-            receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
-              silent: true
-            });
+          receipt.trigger('closed', {
+            callback: function () {
+              receipt.get('payments').reset();
+              clonedCollection.each(function (model) {
+                receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
+                  silent: true
+                });
+              });
+              receipt.trigger('print'); // to guaranty execution order
+              orderList.deleteCurrent(true);
+            }
           });
         } else {
-          receipt.trigger('closed');
+          receipt.trigger('closed', {
+            callback: function () {
+              receipt.trigger('print'); // to guaranty execution order
+              orderList.deleteCurrent(true);
+            }
+          });
         }
-        receipt.trigger('print'); // to guaranty execution order
-        orderList.deleteCurrent(true);
       });
     }, this);
 
@@ -585,7 +604,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       context: this
     }, function (args) {
       var negativeLines = _.filter(me.get('order').get('lines').models, function (line) {
-        return line.get('gross') < 0;
+        return line.get('qty') < 0;
       }).length;
       if (negativeLines > 0 && !OB.POS.modelterminal.get('permissions')['OBPOS_approval.returns']) {
         args.approvals.push('OBPOS_approval.returns');
@@ -620,22 +639,25 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
 
     approvals = order.get('approvals') || [];
+    if (!Array.isArray(approvalType)) {
+      approvalType = [approvalType];
+    }
 
-    for (i = 0; i < approvals.length; i++) {
-      // reset approvals
-      if (_.filter(approvalType, function (approval) {
-        return approval === approvals[i].approvalType
-      }).length === 0) {
+    _.each(approvals, function (appr) {
+      var results;
+      results = _.find(approvalType, function (apprType) {
+        return apprType === appr.approvalType;
+      });
+
+      if (_.isUndefined(results)) {
         newApprovals.push(approvals[i]);
       }
-    }
+
+    });
 
     if (approved) {
       date = new Date();
       date = date.getTime();
-      if (!Array.isArray(approvalType)) {
-        approvalType = [approvalType];
-      }
       for (i = 0; i < approvalType.length; i++) {
         approval = {
           approvalType: approvalType[i],

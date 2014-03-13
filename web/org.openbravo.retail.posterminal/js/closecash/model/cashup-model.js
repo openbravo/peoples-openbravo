@@ -54,7 +54,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       'isbeingprocessed': 'N'
     }, function (cashUp) {
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUp.at(0).get('id')
+        'cashup_id': cashUp.at(0).get('id'),
+        '_orderByClause': 'name asc'
       }, function (payMthds) { //OB.Dal.find success
         _.each(OB.POS.modelterminal.get('payments'), function (payment, index) {
           expected = 0;
@@ -136,7 +137,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         cashUpReport.set('returnsTaxes', taxcashups.models);
       }, this);
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUpReport.get('id')
+        'cashup_id': cashUpReport.get('id'),
+        '_orderByClause': 'name asc'
       }, function (payMthds) { //OB.Dal.find success
         cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
           return OB.DEC.add(accum, trx.get('startingCash'));
@@ -148,7 +150,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport.get('deposits').push(new Backbone.Model({
             origAmount: OB.DEC.add(0, p.get('totalSales')),
             amount: OB.DEC.div(p.get('totalSales'), p.get('rate')),
-            description: OB.I18N.getLabel('OBPOS_Sales', [p.get('name')]),
+            description: p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
@@ -156,7 +158,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport.get('drops').push(new Backbone.Model({
             origAmount: OB.DEC.add(0, p.get('totalReturns')),
             amount: OB.DEC.div(p.get('totalReturns'), p.get('rate')),
-            description: OB.I18N.getLabel('OBPOS_Returns', [p.get('name')]),
+            description: p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
@@ -338,11 +340,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }
       }, 0),
       totalQtyToDepo: _.reduce(this.get('paymentList').models, function (total, model) {
-        if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undf && 
-            model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) {
+        if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undf && model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) {
           return OB.DEC.add(total, OB.DEC.mul(OB.DEC.sub(model.get('foreignCounted'), model.get('qtyToKeep')), model.get('rate')));
-        } else if (model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf)
-          return OB.DEC.add(total, OB.DEC.mul(model.get('foreignCounted'), model.get('rate')));
+        } else if (model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) return OB.DEC.add(total, OB.DEC.mul(model.get('foreignCounted'), model.get('rate')));
         else {
           return total;
         }
@@ -360,8 +360,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     enumConcepts = ['expected', 'counted', 'difference', 'qtyToKeep', 'foreignCounted'];
     enumSecondConcepts = ['foreignExpected', 'foreignCounted', 'foreignDifference', 'qtyToKeep', 'qtyToKeep'];
     for (counter = 0; counter < 5; counter++) {
-      for (i = 0; i < this.get('paymentList').models.length; i++) {
-        model = this.get('paymentList').models[i];
+      var sortedPays = _.sortBy(this.get('paymentList').models, function (p) {
+        return p.get('name');
+      });
+      for (i = 0; i < sortedPays.length; i++) {
+        model = sortedPays[i];
         if (!model.get(enumConcepts[counter])) {
           countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
             name: model.get('name'),
@@ -412,8 +415,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       terminalId: OB.POS.modelterminal.get('terminal').id,
       cashUpId: OB.UTIL.get_UUID(),
       cashCloseInfo: [],
-      cashUpDate: new Date()
-    }, server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
+      cashUpDate: this.get('cashUpReport').at(0).get('time')
+    },
+        server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
         me = this,
         i;
     OB.UTIL.showLoading(true);
@@ -423,7 +427,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       objToSend = new Backbone.Model({
         terminalId: OB.POS.modelterminal.get('terminal').id,
         cashUpId: cashUp.at(0).get('id'),
-        cashCloseInfo: []
+        cashCloseInfo: [],
+        cashUpDate: me.get('cashUpReport').at(0).get('time')
       });
       for (i = 0; i < me.additionalProperties.length; i++) {
         objToSend.set(me.additionalProperties[i], me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0)));

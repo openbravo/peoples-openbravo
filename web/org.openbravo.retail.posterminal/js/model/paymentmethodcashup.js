@@ -39,19 +39,19 @@
   }, {
     name: 'startingCash',
     column: 'startingCash',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'totalSales',
     column: 'totalSales',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'totalReturns',
     column: 'totalReturns',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'rate',
     column: 'rate',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'cashup_id',
     column: 'cashup_id',

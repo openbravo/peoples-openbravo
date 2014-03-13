@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -160,5 +160,6 @@ OB.POS.registerWindow({
   route: 'retail.cashmanagement',
   menuPosition: 10,
   menuI18NLabel: 'OBPOS_LblCashManagement',
-  permission: 'OBPOS_retail.cashmanagement'
+  permission: 'OBPOS_retail.cashmanagement',
+  approvalType: 'OBPOS_approval.cashmgmt'
 });

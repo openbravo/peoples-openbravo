@@ -37,6 +37,9 @@ enyo.kind({
     if (!inEvent.status) {
       //exit from discounts
       this.discountsMode = false;
+      if (this.prevdefaultcommand) {
+        this.defaultcommand = this.prevdefaultcommand;
+      }
       if (this.buttons['ticket:discount']) {
         this.buttons['ticket:discount'].removeClass('btnactive');
       }
@@ -46,6 +49,8 @@ enyo.kind({
       });
     } else {
       this.discountsMode = true;
+      this.prevdefaultcommand = this.defaultcommand;
+      this.defaultcommand = 'ticket:discount';
       if (inEvent.writable) {
         //enable keyboard
         this.keyboardDisabled(inSender, {
@@ -217,6 +222,10 @@ enyo.kind({
           });
           return true;
         }
+        if (OB.MobileApp.model.get('permissions')["OBPOS_retail.discountkeyboard"] === true || keyboard.line.get('notSelectableLine') === true) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBMOBC_LineCanNotBeSelected'));
+          return true;
+        }
         if (keyboard.line) {
           keyboard.receipt.trigger('discount', keyboard.line, OB.I18N.parseNumber(txt));
         }
@@ -271,7 +280,9 @@ enyo.kind({
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
         }
-        value = keyboard.line.get('qty') - qty;
+        if (!_.isUndefined(keyboard.line)) {
+          value = keyboard.line.get('qty') - qty;
+        }
         if (value === 0) { // If final quantity will be 0 then request approval
           OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
             if (approved) {

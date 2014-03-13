@@ -31,6 +31,7 @@ import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.model.common.order.OrderLineOffer;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
@@ -66,17 +67,17 @@ public class PaidReceipts extends JSONProcessSimple {
 
         JSONArray listpaidReceiptsLines = new JSONArray();
 
-      // TODO: make this extensible
-      String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
-          + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.unitPrice as netPrice , ordLine.salesOrder.currency.pricePrecision as pricePrecision, "
-          + "ordLine.warehouse.id as warehouse, ordLine.warehouse.name as warehousename "
-          + "from OrderLine as ordLine where ordLine.salesOrder.id=?";
-      Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
-          .createQuery(hqlPaidReceiptsLines);
-      paidReceiptsLinesQuery.setString(0, orderid);
-      for (Object objLine : paidReceiptsLinesQuery.list()) {
-        Object[] objpaidReceiptsLines = (Object[]) objLine;
-        JSONObject paidReceiptLine = new JSONObject();
+        // TODO: make this extensible
+        String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
+            + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.standardPrice as baseNetUnitPrice , ordLine.salesOrder.currency.pricePrecision as pricePrecision, "
+            + "ordLine.warehouse.id as warehouse, ordLine.warehouse.name as warehousename "
+            + "from OrderLine as ordLine where ordLine.salesOrder.id=?";
+        Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
+            .createQuery(hqlPaidReceiptsLines);
+        paidReceiptsLinesQuery.setString(0, orderid);
+        for (Object objLine : paidReceiptsLinesQuery.list()) {
+          Object[] objpaidReceiptsLines = (Object[]) objLine;
+          JSONObject paidReceiptLine = new JSONObject();
 
           paidReceiptLine.put("id", objpaidReceiptsLines[0]);
           paidReceiptLine.put("name", objpaidReceiptsLines[1]);
@@ -84,10 +85,30 @@ public class PaidReceipts extends JSONProcessSimple {
           paidReceiptLine.put("quantity", objpaidReceiptsLines[3]);
           paidReceiptLine.put("unitPrice", objpaidReceiptsLines[4]);
           paidReceiptLine.put("lineId", objpaidReceiptsLines[6]);
-          paidReceiptLine.put("netPrice", objpaidReceiptsLines[7]);
+          paidReceiptLine.put("baseNetUnitPrice", objpaidReceiptsLines[7]);
           paidReceiptLine.put("priceIncludesTax", paidReceipt.getBoolean("priceIncludesTax"));
-        paidReceiptLine.put("warehouse", objpaidReceiptsLines[9]);
-        paidReceiptLine.put("warehousename", objpaidReceiptsLines[10]);
+          paidReceiptLine.put("warehouse", objpaidReceiptsLines[9]);
+          paidReceiptLine.put("warehousename", objpaidReceiptsLines[10]);
+
+          // get shipmentLines for returns
+          if (jsonsent.has("forReturn") && jsonsent.getBoolean("forReturn")) {
+            OBCriteria<ShipmentInOutLine> shipLinesCri = OBDal.getInstance().createCriteria(
+                ShipmentInOutLine.class);
+            shipLinesCri.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE + ".id",
+                (String) objpaidReceiptsLines[6]));
+            shipLinesCri.addOrder(Order.asc(ShipmentInOutLine.PROPERTY_LINENO));
+            JSONArray shipmentlines = new JSONArray();
+            for (ShipmentInOutLine shipline : shipLinesCri.list()) {
+              JSONObject jsonShipline = new JSONObject();
+              jsonShipline.put("shipLineId", shipline.getId());
+              jsonShipline.put("shipment", shipline.getShipmentReceipt().getDocumentNo());
+              jsonShipline.put("shipmentlineNo", shipline.getLineNo());
+              jsonShipline.put("qty", shipline.getMovementQuantity());
+              shipmentlines.put(jsonShipline);
+              paidReceiptLine.put("shipmentlines", shipmentlines);
+            }
+
+          }
 
           // promotions per line
           OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(
@@ -113,13 +134,6 @@ public class PaidReceipts extends JSONProcessSimple {
             jsonPromo.put("hidden", BigDecimal.ZERO.equals(displayedAmount));
             promotions.put(jsonPromo);
             hasPromotions = true;
-            if (!paidReceipt.getBoolean("priceIncludesTax")) {
-              paidReceiptLine.put("netPrice",
-                  ((BigDecimal) objpaidReceiptsLines[7]).add(displayedAmount.divide(
-                      (BigDecimal) objpaidReceiptsLines[3],
-                      new Integer(String.valueOf(objpaidReceiptsLines[8])).intValue(),
-                      BigDecimal.ROUND_HALF_UP)));
-            }
           }
 
           BigDecimal lineAmount;

@@ -266,11 +266,13 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       });
     }
 
-    line.set({
-      promotions: null,
-      discountedLinePrice: null,
-      promotionCandidates: null
-    });
+    if (!line.get('originalOrderLineId')) {
+      line.set({
+        promotions: null,
+        discountedLinePrice: null,
+        promotionCandidates: null
+      });
+    }
 
     _.forEach(manualPromotions, function (promo) {
       var promotion = {

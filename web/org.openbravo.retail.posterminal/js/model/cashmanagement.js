@@ -32,11 +32,11 @@
   }, {
     name: 'amount',
     column: 'amount',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'origAmount',
     column: 'origAmount',
-    type: 'TEXT'
+    type: 'NUMERIC'
   }, {
     name: 'type',
     column: 'type',
@@ -69,7 +69,7 @@
     name: 'cashup_id',
     column: 'cashup_id',
     type: 'TEXT'
-  },{
+  }, {
     name: 'glItem',
     column: 'glItem',
     type: 'TEXT'

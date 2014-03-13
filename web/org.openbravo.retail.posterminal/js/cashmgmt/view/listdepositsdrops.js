@@ -195,7 +195,7 @@ enyo.kind({
 
     this.$.startingCashPayName.setContent(OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + this.model.get('name'));
     this.$.startingCashAmnt.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, OB.DEC.mul(this.model.get('startingCash'), this.model.get('rate')))));
-    if (OB.DEC.toBigDecimal(this.model.get('startingCash')) > 0 && this.model.get('rate') && this.model.get('rate') !== '1') {
+    if (OB.DEC.toBigDecimal(this.model.get('startingCash')) > 0 && ((this.model.get('rate') && this.model.get('rate') !== 1) || this.model.get('amount') !== this.model.get('origAmount'))) {
       this.$.startingCashForeignAmnt.setContent('(' + OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('startingCash'))) + ' ' + this.model.get('isocode') + ')');
     }
     this.$.tenderedLbl.setContent(OB.I18N.getLabel('OBPOS_LblTotalTendered') + ' ' + this.model.get('name'));
