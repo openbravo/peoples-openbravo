@@ -644,11 +644,10 @@ public class AdvancedQueryBuilder {
       }
     }
 
+    String alias = getTypedParameterAlias();
     if (ignoreCase(property, operator)) {
-      localValue = localValue.toString().toUpperCase();
+      alias = "upper(" + alias + ")";
     }
-
-    final String alias = getTypedParameterAlias();
     String clause;
     if (isLike(operator)) {
       clause = alias + " escape '" + ESCAPE_CHAR + "' ";
@@ -691,12 +690,12 @@ public class AdvancedQueryBuilder {
     if (isLike(operator)) {
       if (operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_ICONTAINS)
           || operator.equals(OPERATOR_CONTAINSFIELD)) {
-        return "%" + escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
+        return "%" + escapeLike(value.toString()).replaceAll(" ", "%") + "%";
       } else if (operator.equals(OPERATOR_NOTCONTAINS) || operator.equals(OPERATOR_CONTAINS)) {
         return "%" + escapeLike(value.toString()).replaceAll(" ", "%") + "%";
       } else if (operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
           || operator.equals(OPERATOR_STARTSWITHFIELD)) {
-        return escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
+        return escapeLike(value.toString()).replaceAll(" ", "%") + "%";
       } else if (operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)) {
         return escapeLike(value.toString()).replaceAll(" ", "%") + "%";
       } else {
