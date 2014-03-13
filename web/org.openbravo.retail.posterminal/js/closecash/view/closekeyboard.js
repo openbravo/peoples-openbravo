@@ -44,12 +44,12 @@ enyo.kind({
       buttons: [{
         command: 'allowvariableamount',
         definition: {
+          holdActive: true,
           action: function (keyboard, amt) {
             me.model.set('otherInput', OB.I18N.parseNumber(amt));
           }
         },
-        label: OB.I18N.getLabel('OBPOS_LblOther'),
-        holdActive: true
+        label: OB.I18N.getLabel('OBPOS_LblOther')
       }]
     });
 
