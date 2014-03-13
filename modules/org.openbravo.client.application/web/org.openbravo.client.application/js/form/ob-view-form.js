@@ -746,6 +746,7 @@ OB.ViewFormProperties = {
     var columnValues = data.columnValues,
         calloutMessages = data.calloutMessages,
         auxInputs = data.auxiliaryInputValues,
+        overwrittenAuxiliaryInputs = data.overwrittenAuxiliaryInputs,
         prop, value, i, j, dynamicCols = data.dynamicCols,
         sessionAttributes = data.sessionAttributes,
         editValues, item, section, retHiddenInputs = data.hiddenInputs;
@@ -814,6 +815,10 @@ OB.ViewFormProperties = {
           this.auxInputs[prop] = value;
         }
       }
+    }
+
+    if (overwrittenAuxiliaryInputs) {
+      this.overwrittenAuxiliaryInputs = overwrittenAuxiliaryInputs;
     }
 
     if (sessionAttributes) {
