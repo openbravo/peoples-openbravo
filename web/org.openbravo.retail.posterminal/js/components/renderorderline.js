@@ -150,7 +150,7 @@ enyo.kind({
 
 
 enyo.kind({
-  kind: 'OB.UI.SelectButton',
+  kind: 'OB.UI.listItemButton',
   name: 'OB.UI.RenderTaxLine',
   classes: 'btnselect-orderline',
   tap: function () {

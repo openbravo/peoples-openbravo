@@ -213,7 +213,8 @@ enyo.kind({
       renderLine: 'OB.UI.RenderTaxLine',
       renderEmpty: 'OB.UI.RenderTaxLineEmpty',
       //defined on redenderorderline.js
-      listStyle: 'nonselectablelist'
+      listStyle: 'nonselectablelist',
+      columns: ['tax', 'base', 'totaltax']
     }, {
       tag: 'li',
       components: [{
