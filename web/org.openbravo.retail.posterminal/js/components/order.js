@@ -162,6 +162,7 @@ enyo.kind({
   components: [{
     kind: 'OB.UI.ScrollableTable',
     name: 'listOrderLines',
+    columns: ['product', 'quantity', 'price', 'gross'],
     scrollAreaMaxHeight: '250px',
     renderLine: 'OB.UI.RenderOrderLine',
     renderEmpty: 'OB.UI.RenderOrderLineEmpty',

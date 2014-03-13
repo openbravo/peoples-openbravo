@@ -10,7 +10,7 @@
 /*global enyo,_ */
 
 enyo.kind({
-  kind: 'OB.UI.SelectButton',
+  kind: 'OB.UI.listItemButton',
   name: 'OB.UI.RenderOrderLine',
   classes: 'btnselect-orderline',
   handlers: {
