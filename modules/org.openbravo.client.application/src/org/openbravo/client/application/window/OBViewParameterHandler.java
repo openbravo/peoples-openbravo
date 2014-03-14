@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -130,18 +130,18 @@ public class OBViewParameterHandler {
 
       // Add spacers to order the field in the column number defined
       if (param.isStartinnewline()) {
-        pos = 0;
+        pos = 1;
       }
       if (pos > NUMBER_COLUMNS) {
         pos = pos - NUMBER_COLUMNS;
       }
 
-      if (param.getNumcolumn() != null) {
+      if (param.getNumColumn() != null) {
         int spaces = 0;
-        if (pos > param.getNumcolumn().intValue()) {
-          spaces = NUMBER_COLUMNS - (pos - param.getNumcolumn().intValue());
+        if (pos > param.getNumColumn().intValue()) {
+          spaces = NUMBER_COLUMNS - (pos - param.getNumColumn().intValue());
         } else {
-          spaces = param.getNumcolumn().intValue() - pos;
+          spaces = param.getNumColumn().intValue() - pos;
         }
         for (int i = 0; i < spaces; i++) {
           final OBViewParamSpacer spacer = new OBViewParamSpacer();

@@ -161,5 +161,6 @@
       <check name="OBUIAPP_PARAMETER_ISFIXED_CHK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_MANDAT_CHK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_NEWLINE_CHK"><![CDATA[STARTINNEWLINE IN ('Y', 'N')]]></check>
+      <check name="OBUIAPP_PARAMETER_NUMCOL_CHK"><![CDATA[(NUMCOLUMN >= 1) AND (NUMCOLUMN <= 4)]]></check>
     </table>
   </database>
