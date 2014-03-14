@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -47,7 +47,7 @@ enyo.kind({
   }],
   initComponents: function () {
     this.inherited(arguments);
-    this.$.identifier.setContent(this.model.get('_identifier'));
+    this.$.identifier.setContent(this.setIdentifierContent());
     if (this.model.get('showchdesc')) {
       this.$.bottonLine.setContent(this.model.get('characteristicDescription'));
     }
@@ -64,5 +64,8 @@ enyo.kind({
     if (this.model.get('isGeneric')) {
       this.$.generic.setContent(OB.I18N.getLabel('OBMOBC_LblGeneric'));
     }
+  },
+  setIdentifierContent: function(){
+	  return this.model.get('_identifier');
   }
 });
