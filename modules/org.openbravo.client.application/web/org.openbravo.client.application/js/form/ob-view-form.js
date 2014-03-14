@@ -1343,6 +1343,9 @@ OB.ViewFormProperties = {
       requestParams.CHANGED_COLUMN = item.inpColumnName;
     }
     allProperties._entityName = this.view.entity;
+    if (this.overwrittenAuxiliaryInputs) {
+      allProperties.overwrittenAuxiliaryInputs = this.overwrittenAuxiliaryInputs;
+    }
 
     // disable with a delay to allow the focus to be moved to a new field
     // before disabling

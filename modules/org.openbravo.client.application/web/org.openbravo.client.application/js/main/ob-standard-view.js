@@ -2275,9 +2275,6 @@ isc.OBStandardView.addProperties({
       isc.addProperties(contextInfo, form.auxInputs);
       isc.addProperties(contextInfo, form.hiddenInputs);
       isc.addProperties(contextInfo, form.sessionAttributes);
-      if (form.overwrittenAuxiliaryInputs) {
-        contextInfo.overwrittenAuxiliaryInputs = form.overwrittenAuxiliaryInputs;
-      }
     }
 
     if (this.parentView) {
