@@ -21,7 +21,6 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
@@ -88,12 +87,8 @@ public class ProcessCashClose extends JSONProcessSimple {
           "There are errors related to non-created customers, orders, or cash management movements pending to be processed. Process them before processing the cash ups");
     }
 
-    if (cashUp == null
-        && RequestContext.get().getSessionAttribute(
-            "cashupTerminalId|" + jsonCashup.getString("terminalId")) == null) {
+    if (cashUp == null) {
       try {
-        RequestContext.get().setSessionAttribute(
-            "cashupTerminalId|" + jsonCashup.getString("terminalId"), true);
         new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
             jsonCashup.getString("terminalId"));
@@ -109,8 +104,6 @@ public class ProcessCashClose extends JSONProcessSimple {
         jsonData.put("next", result.opt("next"));
       } finally {
         TriggerHandler.getInstance().enable();
-        RequestContext.get().removeSessionAttribute(
-            "cashupTerminalId|" + jsonCashup.getString("terminalId"));
       }
     }
     return jsonData;
