@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +32,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
@@ -160,49 +162,56 @@ public class OrderGroupingProcessor {
           log.debug("processed payment");
         }
 
-        InvoiceLine invoiceLine = createInvoiceLine(orderLine);
-        invoiceLine.setLineNo(lineno);
-        lineno += 10;
-        invoiceLine.setInvoice(invoice);
-        OBDal.getInstance().save(invoiceLine);
-        totalNetAmount = totalNetAmount.add(invoiceLine.getLineNetAmount());
+        // the line is split in goods shipment lines
+        OrderLine[] orderLinesSplittedByShipmentLine = splitOrderLineByShipmentLine(orderLine);
+        for (int i = 0; i < orderLinesSplittedByShipmentLine.length; i++) {
+          OrderLine olSplitted = orderLinesSplittedByShipmentLine[i];
+          InvoiceLine invoiceLine = createInvoiceLine(olSplitted, orderLine);
+          invoiceLine.setLineNo(lineno);
+          lineno += 10;
+          invoiceLine.setInvoice(invoice);
+          OBDal.getInstance().save(invoiceLine);
+          totalNetAmount = totalNetAmount.add(invoiceLine.getLineNetAmount());
 
-        List<InvoiceLineTax> lineTaxes = createInvoiceLineTaxes(orderLine);
-        for (InvoiceLineTax tax : lineTaxes) {
-          String taxId = (String) DalUtil.getId(tax.getTax());
-          InvoiceTax invoiceTax = null;
-          if (invoiceTaxes.containsKey(taxId)) {
-            invoiceTax = invoiceTaxes.get(taxId);
-          } else {
-            invoiceTax = OBProvider.getInstance().get(InvoiceTax.class);
-            invoiceTax.setTax(tax.getTax());
-            invoiceTax.setTaxableAmount(BigDecimal.ZERO);
-            invoiceTax.setTaxAmount(BigDecimal.ZERO);
-            invoiceTax.setLineNo(taxLineNo);
-            taxLineNo += 10;
-            invoiceTaxes.put(taxId, invoiceTax);
+          List<InvoiceLineTax> lineTaxes = createInvoiceLineTaxes(olSplitted);
+          for (InvoiceLineTax tax : lineTaxes) {
+            String taxId = (String) DalUtil.getId(tax.getTax());
+            InvoiceTax invoiceTax = null;
+            if (invoiceTaxes.containsKey(taxId)) {
+              invoiceTax = invoiceTaxes.get(taxId);
+            } else {
+              invoiceTax = OBProvider.getInstance().get(InvoiceTax.class);
+              invoiceTax.setTax(tax.getTax());
+              invoiceTax.setTaxableAmount(BigDecimal.ZERO);
+              invoiceTax.setTaxAmount(BigDecimal.ZERO);
+              invoiceTax.setLineNo(taxLineNo);
+              taxLineNo += 10;
+              invoiceTaxes.put(taxId, invoiceTax);
+            }
+            invoiceTax.setTaxableAmount(invoiceTax.getTaxableAmount().add(tax.getTaxableAmount()));
+            invoiceTax.setTaxAmount(invoiceTax.getTaxAmount().add(tax.getTaxAmount()));
+
+            tax.setInvoiceLine(invoiceLine);
+            tax.setInvoice(invoice);
+            invoiceLine.getInvoiceLineTaxList().add(tax);
+            invoice.getInvoiceLineTaxList().add(tax);
+            OBDal.getInstance().save(tax);
+            invoiceLine.setTaxableAmount(invoiceLine.getTaxableAmount() == null ? BigDecimal.ZERO
+                : invoiceLine.getTaxableAmount().add(tax.getTaxableAmount()));
           }
-          invoiceTax.setTaxableAmount(invoiceTax.getTaxableAmount().add(tax.getTaxableAmount()));
-          invoiceTax.setTaxAmount(invoiceTax.getTaxAmount().add(tax.getTaxAmount()));
-
-          tax.setInvoiceLine(invoiceLine);
-          tax.setInvoice(invoice);
-          invoiceLine.getInvoiceLineTaxList().add(tax);
-          invoice.getInvoiceLineTaxList().add(tax);
-          OBDal.getInstance().save(tax);
-          invoiceLine.setTaxableAmount(invoiceLine.getTaxableAmount() == null ? BigDecimal.ZERO
-              : invoiceLine.getTaxableAmount().add(tax.getTaxableAmount()));
-        }
-        log.debug("Line time: " + (System.currentTimeMillis() - t));
-        if (lineno % 500 == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
-          paymentSchedule = OBDal.getInstance().get(FIN_PaymentSchedule.class,
-              paymentSchedule.getId());
-          origPaymentSchedule = OBDal.getInstance().get(Fin_OrigPaymentSchedule.class,
-              origPaymentSchedule.getId());
+          log.debug("Line time: " + (System.currentTimeMillis() - t));
+          if (lineno % 500 == 0) {
+            OBDal.getInstance().flush();
+            OBDal.getInstance().getSession().clear();
+            paymentSchedule = OBDal.getInstance().get(FIN_PaymentSchedule.class,
+                paymentSchedule.getId());
+            origPaymentSchedule = OBDal.getInstance().get(Fin_OrigPaymentSchedule.class,
+                origPaymentSchedule.getId());
+          }
+          OBDal.getInstance().getSession().evict(olSplitted);
         }
       }
+
     } finally {
       orderLines.close();
     }
@@ -313,17 +322,22 @@ public class OrderGroupingProcessor {
     return taxes;
   }
 
-  protected InvoiceLine createInvoiceLine(OrderLine orderLine) {
+  protected InvoiceLine createInvoiceLine(OrderLine orderLine, OrderLine origOrderLine) {
     InvoiceLine invoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
     copyObject(orderLine, invoiceLine);
     invoiceLine.setTaxableAmount(BigDecimal.ZERO);
     invoiceLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
     invoiceLine.setGrossAmount(orderLine.getLineGrossAmount());
+    invoiceLine.setSalesOrderLine(origOrderLine);
+    OBDal.getInstance().refresh(origOrderLine);
+    origOrderLine.setInvoicedQuantity(origOrderLine.getOrderedQuantity());
+    OBDal.getInstance().save(origOrderLine);
 
-    invoiceLine.setSalesOrderLine(orderLine);
-    invoiceLine.setGoodsShipmentLine(getShipmentLine(orderLine));
-
-    orderLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
+    if (orderLine.getGoodsShipmentLine() != null) {
+      invoiceLine.setGoodsShipmentLine(orderLine.getGoodsShipmentLine());
+    } else {
+      invoiceLine.setGoodsShipmentLine(getShipmentLine(orderLine));
+    }
 
     // Promotions. Loading all together as there shoudn't be many promotions per line
     List<OrderLineOffer> promotions = orderLine.getOrderLineOfferList();
@@ -450,17 +464,36 @@ public class OrderGroupingProcessor {
       OBDal.getInstance().save(tax);
       grossamount = grossamount.add(tax.getTaxAmount());
     }
+
+    BigDecimal totalPaid = BigDecimal.ZERO;
+    for (FIN_PaymentScheduleDetail psd : paymentSchedule
+        .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+      totalPaid = totalPaid.add(psd.getAmount());
+    }
+
+    // if the total paid is distinct that grossamount, we should create a new sched detail with the
+    // difference
+    if (grossamount.compareTo(totalPaid) != 0) {
+      FIN_PaymentScheduleDetail newDetail = OBProvider.getInstance().get(
+          FIN_PaymentScheduleDetail.class);
+      newDetail.setAmount(grossamount.subtract(totalPaid));
+      newDetail.setInvoicePaymentSchedule(paymentSchedule);
+      paymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(newDetail);
+      paymentSchedule.setOutstandingAmount(grossamount.subtract(totalPaid));
+
+    }
+
     invoice.setGrandTotalAmount(grossamount);
     invoice.setSummedLineAmount(totalNetAmount);
-    invoice.setPaymentComplete(true);
-    invoice.setTotalPaid(grossamount);
+    invoice.setPaymentComplete(grossamount.compareTo(totalPaid) == 0);
+    invoice.setTotalPaid(totalPaid);
     invoice.setPercentageOverdue(new Long(0));
-    invoice.setFinalSettlementDate(cashUpDate);
+    invoice.setFinalSettlementDate(grossamount.compareTo(totalPaid) == 0 ? cashUpDate : null);
     invoice.setDaysSalesOutstanding(new Long(0));
-    invoice.setOutstandingAmount(BigDecimal.ZERO);
+    invoice.setOutstandingAmount(grossamount.subtract(totalPaid));
 
     paymentSchedule.setAmount(grossamount);
-    paymentSchedule.setPaidAmount(grossamount);
+    paymentSchedule.setPaidAmount(totalPaid);
     origPaymentSchedule.setAmount(grossamount);
 
     // Update customer credit
@@ -474,6 +507,69 @@ public class OrderGroupingProcessor {
 
     OBDal.getInstance().flush();
     log.debug("Finishing invoice: " + (System.currentTimeMillis() - tf));
+  }
+
+  OrderLine[] splitOrderLineByShipmentLine(OrderLine ol) {
+    BigDecimal qtyTotal = ol.getOrderedQuantity();
+    // if qtyOrdered is ZERO then the line can not be splitted
+    if (qtyTotal.equals(BigDecimal.ZERO)) {
+      return new OrderLine[] { ol };
+    }
+
+    String hqlWhereClause = "as line where line.salesOrderLine = :orderLine ";
+    OBQuery<ShipmentInOutLine> query = OBDal.getInstance().createQuery(ShipmentInOutLine.class,
+        hqlWhereClause);
+    query.setNamedParameter("orderLine", ol);
+    List<ShipmentInOutLine> shipmentLines = query.list();
+    int stdPrecision = ol.getSalesOrder().getCurrency().getStandardPrecision().intValue();
+    long lineNo = 0;
+
+    // if there is one or none then only one record is returned with the original orderline
+    if (shipmentLines.size() < 2) {
+      return new OrderLine[] { ol };
+    } else {
+      OrderLine[] arrayOlSplit = new OrderLine[shipmentLines.size()];
+      for (int i = 0; i < shipmentLines.size(); i++) {
+        lineNo += 10;
+        BigDecimal ratio = shipmentLines.get(i).getMovementQuantity()
+            .divide(qtyTotal, 32, RoundingMode.HALF_UP);
+        OrderLine olSplit = OBProvider.getInstance().get(OrderLine.class);
+        olSplit = (OrderLine) DalUtil.copy(ol);
+
+        olSplit.setId(SequenceIdData.getUUID());
+        olSplit.setOrderedQuantity(shipmentLines.get(i).getMovementQuantity());
+        olSplit.setDeliveredQuantity(shipmentLines.get(i).getMovementQuantity());
+        olSplit.setGoodsShipmentLine(shipmentLines.get(i));
+        olSplit.setInvoicedQuantity(shipmentLines.get(i).getMovementQuantity());
+        olSplit.setLineGrossAmount(ol.getGrossUnitPrice().multiply(olSplit.getOrderedQuantity())
+            .setScale(stdPrecision, RoundingMode.HALF_UP));
+        olSplit.setLineNetAmount(ol.getUnitPrice().multiply(olSplit.getOrderedQuantity())
+            .setScale(stdPrecision, RoundingMode.HALF_UP));
+        olSplit.setTaxableAmount(ol.getUnitPrice().multiply(olSplit.getOrderedQuantity())
+            .setScale(stdPrecision, RoundingMode.HALF_UP));
+
+        olSplit.setLineNo(lineNo);
+
+        for (int j = 0; j < olSplit.getOrderLineTaxList().size(); j++) {
+          OrderLineTax olt = olSplit.getOrderLineTaxList().get(j);
+          olt.setTaxAmount(olt.getTaxAmount().multiply(ratio)
+              .setScale(stdPrecision, RoundingMode.HALF_UP));
+          olt.setTaxableAmount(olt.getTaxableAmount().multiply(ratio)
+              .setScale(stdPrecision, RoundingMode.HALF_UP));
+        }
+
+        List<OrderLineOffer> promotions = olSplit.getOrderLineOfferList();
+        for (OrderLineOffer olPromotion : promotions) {
+          olPromotion.setAdjustedPrice(olPromotion.getAdjustedPrice().multiply(ratio));
+          olPromotion.setBaseGrossUnitPrice(olPromotion.getBaseGrossUnitPrice().multiply(ratio));
+          olPromotion.setPriceAdjustmentAmt(olPromotion.getPriceAdjustmentAmt().multiply(ratio));
+          olPromotion.setTotalAmount(olPromotion.getTotalAmount().multiply(ratio));
+        }
+
+        arrayOlSplit[i] = olSplit;
+      }
+      return arrayOlSplit;
+    }
   }
 
 }

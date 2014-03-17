@@ -252,7 +252,7 @@ public class OrderLoader extends JSONProcessSimple {
     OrderLine orderLine = null;
     ShipmentInOut shipment = null;
     Invoice invoice = null;
-    boolean sendEmail = false;
+    boolean sendEmail, createInvoice = false;
     TriggerHandler.getInstance().disable();
     isLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
@@ -277,7 +277,7 @@ public class OrderLoader extends JSONProcessSimple {
           && !isQuotation
           && Math.abs(jsonorder.getDouble("payment")) < Math.abs(new Double(jsonorder
               .getDouble("gross")));
-      boolean createInvoice = wasPaidOnCredit
+      createInvoice = wasPaidOnCredit
           || (!isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway) && (jsonorder
               .has("generateInvoice") && jsonorder.getBoolean("generateInvoice")));
       createShipment = !isQuotation && (!isLayaway && !partialpayLayaway || fullpayLayaway);
@@ -355,6 +355,7 @@ public class OrderLoader extends JSONProcessSimple {
           // Send email
         }
       }
+
       long t4 = System.currentTimeMillis();
 
       log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
@@ -375,6 +376,10 @@ public class OrderLoader extends JSONProcessSimple {
       }
       if (sendEmail) {
         EmailSender emailSender = new EmailSender(order.getId(), jsonorder);
+      }
+
+      if (createInvoice && isMultipleShipmentLine(invoice)) {
+        finishInvoice(invoice);
       }
 
       // Call all OrderProcess injected.
@@ -558,90 +563,151 @@ public class OrderLoader extends JSONProcessSimple {
     return docType;
   }
 
-  protected void createInvoiceLines(Invoice invoice, Order order, JSONObject jsonorder,
-      JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
+  protected void createInvoiceLine(Invoice invoice, Order order, JSONObject jsonorder,
+      JSONArray orderlines, ArrayList<OrderLine> lineReferences, int numIter, int stdPrecision,
+      ShipmentInOutLine inOutLine, int lineNo) throws JSONException {
+
+    BigDecimal movQty = null;
+    if (inOutLine != null && inOutLine.getMovementQuantity() != null) {
+      movQty = inOutLine.getMovementQuantity();
+    } else {
+      movQty = lineReferences.get(numIter).getOrderedQuantity();
+    }
+
+    BigDecimal ratio = movQty.divide(lineReferences.get(numIter).getOrderedQuantity(), 32,
+        RoundingMode.HALF_UP);
+
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
-    int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
+    InvoiceLine line = OBProvider.getInstance().get(InvoiceLine.class);
+    Entity inlineEntity = ModelProvider.getInstance().getEntity(InvoiceLine.class);
+    JSONPropertyToEntity.fillBobFromJSON(inlineEntity, line, orderlines.getJSONObject(numIter),
+        jsonorder.getLong("timezoneOffset"));
+    JSONPropertyToEntity.fillBobFromJSON(ModelProvider.getInstance().getEntity(InvoiceLine.class),
+        line, jsonorder, jsonorder.getLong("timezoneOffset"));
+    line.setLineNo((long) lineNo);
+    line.setDescription(orderlines.getJSONObject(numIter).has("description") ? orderlines
+        .getJSONObject(numIter).getString("description") : "");
+    BigDecimal qty = movQty;
 
-    for (int i = 0; i < orderlines.length(); i++) {
-      InvoiceLine line = OBProvider.getInstance().get(InvoiceLine.class);
-      Entity inlineEntity = ModelProvider.getInstance().getEntity(InvoiceLine.class);
-      JSONPropertyToEntity.fillBobFromJSON(inlineEntity, line, orderlines.getJSONObject(i),
-          jsonorder.getLong("timezoneOffset"));
-      JSONPropertyToEntity.fillBobFromJSON(
-          ModelProvider.getInstance().getEntity(InvoiceLine.class), line, jsonorder,
-          jsonorder.getLong("timezoneOffset"));
-      line.setLineNo((long) ((i + 1) * 10));
-      line.setDescription(orderlines.getJSONObject(i).has("description") ? orderlines
-          .getJSONObject(i).getString("description") : "");
-      line.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(i).getDouble("net"))
+    // if ratio equals to one, then only one shipment line is related to orderline, then lineNetAmt
+    // and gross is populated from JSON
+    if (ratio.compareTo(BigDecimal.ONE) != 0) {
+      line.setLineNetAmount(lineReferences.get(numIter).getUnitPrice().multiply(qty)
           .setScale(stdPrecision, RoundingMode.HALF_UP));
-      BigDecimal qty = lineReferences.get(i).getOrderedQuantity();
-      line.setInvoicedQuantity(qty);
-      lineReferences.get(i).setInvoicedQuantity(qty);
-      line.setInvoice(invoice);
-      line.setSalesOrderLine(lineReferences.get(i));
-      line.setGoodsShipmentLine(lineReferences.get(i).getMaterialMgmtShipmentInOutLineList().get(0));
-      line.setGrossAmount(lineReferences.get(i).getLineGrossAmount()
+      line.setGrossAmount(lineReferences.get(numIter).getGrossUnitPrice().multiply(qty)
           .setScale(stdPrecision, RoundingMode.HALF_UP));
-      invoice.getInvoiceLineList().add(line);
-      OBDal.getInstance().save(line);
+    } else {
+      line.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(numIter).getDouble("net"))
+          .setScale(stdPrecision, RoundingMode.HALF_UP));
+      line.setGrossAmount(lineReferences.get(numIter).getLineGrossAmount()
+          .setScale(stdPrecision, RoundingMode.HALF_UP));
+    }
 
-      JSONObject taxes = orderlines.getJSONObject(i).getJSONObject("taxLines");
-      @SuppressWarnings("unchecked")
-      Iterator<String> itKeys = taxes.keys();
-      int ind = 0;
-      while (itKeys.hasNext()) {
-        String taxId = (String) itKeys.next();
-        JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
-        InvoiceLineTax invoicelinetax = OBProvider.getInstance().get(InvoiceLineTax.class);
-        TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
-            ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
-        invoicelinetax.setTax(tax);
+    line.setInvoicedQuantity(qty);
+    lineReferences.get(numIter).setInvoicedQuantity(
+        (lineReferences.get(numIter).getInvoicedQuantity() != null ? lineReferences.get(numIter)
+            .getInvoicedQuantity().add(qty) : qty));
+    line.setInvoice(invoice);
+    line.setSalesOrderLine(lineReferences.get(numIter));
+    line.setGoodsShipmentLine(inOutLine);
+    invoice.getInvoiceLineList().add(line);
+    OBDal.getInstance().save(line);
+
+    JSONObject taxes = orderlines.getJSONObject(numIter).getJSONObject("taxLines");
+    @SuppressWarnings("unchecked")
+    Iterator<String> itKeys = taxes.keys();
+    BigDecimal totalTaxAmount = BigDecimal.ZERO;
+    int ind = 0;
+    while (itKeys.hasNext()) {
+      String taxId = (String) itKeys.next();
+      JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
+      InvoiceLineTax invoicelinetax = OBProvider.getInstance().get(InvoiceLineTax.class);
+      TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
+          ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+      invoicelinetax.setTax(tax);
+
+      // if ratio equals to one, then only one shipment line is related to orderline, then
+      // lineNetAmt and gross is populated from JSON
+      if (ratio.compareTo(BigDecimal.ONE) != 0) {
+        invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
+            .multiply(ratio).setScale(stdPrecision, RoundingMode.HALF_UP));
+        invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount"))
+            .multiply(ratio).setScale(stdPrecision, RoundingMode.HALF_UP));
+        totalTaxAmount = totalTaxAmount.add(invoicelinetax.getTaxAmount());
+      } else {
         invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
             stdPrecision, RoundingMode.HALF_UP));
         invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")).setScale(
             stdPrecision, RoundingMode.HALF_UP));
-        invoicelinetax.setInvoice(invoice);
-        invoicelinetax.setInvoiceLine(line);
-        invoicelinetax.setRecalculate(true);
-        invoicelinetax.setLineNo((long) ((ind + 1) * 10));
-        ind++;
-        invoice.getInvoiceLineTaxList().add(invoicelinetax);
-        line.getInvoiceLineTaxList().add(invoicelinetax);
-        OBDal.getInstance().save(invoicelinetax);
       }
+      invoicelinetax.setInvoice(invoice);
+      invoicelinetax.setInvoiceLine(line);
+      invoicelinetax.setRecalculate(true);
+      invoicelinetax.setLineNo((long) ((ind + 1) * 10));
+      ind++;
+      invoice.getInvoiceLineTaxList().add(invoicelinetax);
+      line.getInvoiceLineTaxList().add(invoicelinetax);
+      OBDal.getInstance().save(invoicelinetax);
+    }
 
-      // Discounts & Promotions
-      if (orderlines.getJSONObject(i).has("promotions")
-          && !orderlines.getJSONObject(i).isNull("promotions")
-          && !orderlines.getJSONObject(i).getString("promotions").equals("null")) {
-        JSONArray jsonPromotions = orderlines.getJSONObject(i).getJSONArray("promotions");
-        for (int p = 0; p < jsonPromotions.length(); p++) {
-          JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
-          boolean hasActualAmt = jsonPromotion.has("actualAmt");
-          if (hasActualAmt && jsonPromotion.getDouble("actualAmt") == 0) {
-            continue;
-          }
-
-          InvoiceLineOffer promotion = OBProvider.getInstance().get(InvoiceLineOffer.class);
-          JSONPropertyToEntity.fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion,
-              jsonorder.getLong("timezoneOffset"));
-
-          if (hasActualAmt) {
-            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt"))
-                .setScale(stdPrecision, RoundingMode.HALF_UP));
-          } else {
-            promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt")).setScale(
-                stdPrecision, RoundingMode.HALF_UP));
-          }
-          promotion.setLineNo((long) ((p + 1) * 10));
-          promotion.setInvoiceLine(line);
-          line.getInvoiceLineOfferList().add(promotion);
+    // Discounts & Promotions
+    if (orderlines.getJSONObject(numIter).has("promotions")
+        && !orderlines.getJSONObject(numIter).isNull("promotions")
+        && !orderlines.getJSONObject(numIter).getString("promotions").equals("null")) {
+      JSONArray jsonPromotions = orderlines.getJSONObject(numIter).getJSONArray("promotions");
+      for (int p = 0; p < jsonPromotions.length(); p++) {
+        JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
+        boolean hasActualAmt = jsonPromotion.has("actualAmt");
+        if (hasActualAmt && jsonPromotion.getDouble("actualAmt") == 0) {
+          continue;
         }
+
+        InvoiceLineOffer promotion = OBProvider.getInstance().get(InvoiceLineOffer.class);
+        JSONPropertyToEntity.fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion,
+            jsonorder.getLong("timezoneOffset"));
+
+        if (hasActualAmt) {
+          promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt"))
+              .multiply(ratio).setScale(stdPrecision, RoundingMode.HALF_UP));
+        } else {
+          promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt"))
+              .multiply(ratio).setScale(stdPrecision, RoundingMode.HALF_UP));
+        }
+        promotion.setLineNo((long) ((p + 1) * 10));
+        promotion.setInvoiceLine(line);
+        line.getInvoiceLineOfferList().add(promotion);
       }
     }
 
+  }
+
+  protected void createInvoiceLines(Invoice invoice, Order order, JSONObject jsonorder,
+      JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
+    int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
+
+    boolean multipleShipmentsLines = false;
+    int lineNo = 0;
+    for (int i = 0; i < orderlines.length(); i++) {
+      List<ShipmentInOutLine> iolList = lineReferences.get(i)
+          .getMaterialMgmtShipmentInOutLineList();
+      if (iolList.size() > 1) {
+        multipleShipmentsLines = true;
+      }
+      if (iolList.size() == 0) {
+        lineNo = lineNo + 10;
+        createInvoiceLine(invoice, order, jsonorder, orderlines, lineReferences, i, stdPrecision,
+            null, lineNo);
+      } else {
+        for (ShipmentInOutLine iol : iolList) {
+          lineNo = lineNo + 10;
+          createInvoiceLine(invoice, order, jsonorder, orderlines, lineReferences, i, stdPrecision,
+              iol, lineNo);
+        }
+      }
+    }
+    if (multipleShipmentsLines) {
+      updateTaxes(invoice);
+    }
   }
 
   protected void createInvoice(Invoice invoice, Order order, JSONObject jsonorder)
@@ -737,6 +803,84 @@ public class OrderLoader extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  protected void updateTaxes(Invoice invoice) throws JSONException {
+    int stdPrecision = invoice.getCurrency().getStandardPrecision().intValue();
+    for (InvoiceTax taxInv : invoice.getInvoiceTaxList()) {
+      BigDecimal taxAmt = BigDecimal.ZERO;
+      BigDecimal taxableAmt = BigDecimal.ZERO;
+      for (InvoiceLineTax taxLine : invoice.getInvoiceLineTaxList()) {
+        if (taxLine.getTax() == taxInv.getTax()) {
+          taxAmt = taxAmt.add(taxLine.getTaxAmount());
+          taxableAmt = taxableAmt.add(taxLine.getTaxableAmount());
+        }
+      }
+      taxInv.setTaxableAmount(taxableAmt.setScale(stdPrecision, RoundingMode.HALF_UP));
+      taxInv.setTaxAmount(taxAmt.setScale(stdPrecision, RoundingMode.HALF_UP));
+      OBDal.getInstance().save(taxInv);
+    }
+  }
+
+  protected void finishInvoice(Invoice invoice) throws JSONException {
+    int stdPrecision = invoice.getCurrency().getStandardPrecision().intValue();
+    BigDecimal grossAmount = BigDecimal.ZERO;
+    BigDecimal netAmount = BigDecimal.ZERO;
+    BigDecimal totalPaid = BigDecimal.ZERO;
+
+    for (InvoiceLine il : invoice.getInvoiceLineList()) {
+      netAmount = netAmount.add(il.getLineNetAmount());
+    }
+
+    grossAmount = netAmount;
+    for (InvoiceLineTax ilt : invoice.getInvoiceLineTaxList()) {
+      grossAmount = grossAmount.add(ilt.getTaxAmount());
+    }
+
+    for (FIN_PaymentSchedule ps : invoice.getFINPaymentScheduleList()) {
+      totalPaid = totalPaid.add(ps.getPaidAmount());
+    }
+
+    // if the total paid is distinct that grossamount, we should recalculate grandtotal and
+    // lineNetAmt and create a new sched detail with the difference
+    if (grossAmount.compareTo(totalPaid) != 0) {
+      // update invoice header data
+      invoice.setGrandTotalAmount(grossAmount.setScale(stdPrecision, RoundingMode.HALF_UP));
+      invoice.setSummedLineAmount(netAmount.setScale(stdPrecision, RoundingMode.HALF_UP));
+      invoice.setTotalPaid(totalPaid.setScale(stdPrecision, RoundingMode.HALF_UP));
+      invoice.setOutstandingAmount(grossAmount.subtract(totalPaid));
+      invoice.setPaymentComplete(grossAmount.compareTo(totalPaid) == 0);
+      invoice.setFinalSettlementDate(grossAmount.compareTo(totalPaid) == 0 ? invoice
+          .getFinalSettlementDate() : null);
+
+      // update invoice payment data
+      FIN_PaymentScheduleDetail newDetail = OBProvider.getInstance().get(
+          FIN_PaymentScheduleDetail.class);
+      newDetail.setAmount(grossAmount.subtract(totalPaid));
+      if (invoice.getFINPaymentScheduleList().size() > 0) {
+        newDetail.setInvoicePaymentSchedule(invoice.getFINPaymentScheduleList().get(0));
+        invoice.getFINPaymentScheduleList().get(0)
+            .getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(newDetail);
+        invoice.getFINPaymentScheduleList().get(0).setAmount(grossAmount);
+        invoice.getFINPaymentScheduleList().get(0)
+            .setOutstandingAmount(grossAmount.subtract(totalPaid));
+      }
+      OBDal.getInstance().save(newDetail);
+      OBDal.getInstance().save(invoice.getFINPaymentScheduleList().get(0));
+      OBDal.getInstance().save(invoice);
+      // OBDal.getInstance().flush();
+    }
+  }
+
+  protected boolean isMultipleShipmentLine(Invoice invoice) {
+    OrderLine ol = null;
+    for (InvoiceLine il : invoice.getInvoiceLineList()) {
+      if (ol != null && ol.equals(il.getSalesOrderLine())) {
+        return true;
+      }
+      ol = il.getSalesOrderLine();
+    }
+    return false;
   }
 
   public static BigDecimal convertCurrencyInvoice(Invoice invoice) {
@@ -1285,8 +1429,9 @@ public class OrderLoader extends JSONProcessSimple {
           paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
         }
         paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
-
+        invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
         OBDal.getInstance().save(paymentScheduleInvoice);
+        OBDal.getInstance().save(invoice);
       }
 
       BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
@@ -1333,7 +1478,9 @@ public class OrderLoader extends JSONProcessSimple {
         invoice.setPaymentComplete(true);
         paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
         paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount());
+        invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
         OBDal.getInstance().save(paymentScheduleInvoice);
+        OBDal.getInstance().save(invoice);
       }
 
       if (payments.length() == 0 && invoice != null) {
