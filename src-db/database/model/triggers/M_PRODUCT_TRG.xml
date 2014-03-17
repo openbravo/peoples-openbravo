@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2013 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -25,6 +25,7 @@
 
    TYPE RECORD IS REF CURSOR;
    Cur_Defaults RECORD;
+   Cur_Product RECORD;
 
     v_xTree_ID    			           varchar2(32);
     v_xParent_ID  			           varchar2(32);
@@ -46,7 +47,10 @@
     v_Sequence_No			             VARCHAR2(32);
     v_C_AcctSchema_ID			         VARCHAR2(32);
     v_Count 	 	               NUMBER;
-    v_qtyin_hand 	 	       NUMBER;
+    v_QtyOnHand							   NUMBER;
+    v_QtyReserved 						 NUMBER;
+    v_QtyOrdered 							 NUMBER;
+    v_Message                  VARCHAR(2000);
   			
 BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -62,7 +66,9 @@ BEGIN
       OR (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null'))
       OR (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null'))
       OR (:old.isStocked='Y' AND :new.isStocked='N')) THEN
-   SELECT  COALESCE(SUM(QtyOnHand)+SUM(QtyReserved)*.111+SUM(QtyOrdered)*999, 0) INTO v_ControlNo
+   SELECT  COALESCE(SUM(QtyOnHand)+SUM(QtyReserved)*.111+SUM(QtyOrdered)*999, 0) ,
+   COALESCE(sum(QtyOnHand),0), COALESCE(SUM(QtyReserved),0) , COALESCE(SUM(QtyOrdered),0)
+   INTO v_ControlNo, v_QtyOnHand, v_QtyReserved, v_QtyOrdered
    FROM (SELECT QtyOnHand, 0 AS QtyReserved, 0 AS QtyOrdered
    FROM M_Storage_Detail s
    WHERE s.M_Product_ID=:new.M_Product_ID
@@ -70,26 +76,35 @@ BEGIN
    SELECT 0 AS QtyOnHand, QtyReserved, QtyOrdered
    FROM M_Storage_Pending s
    WHERE s.M_Product_ID=:new.M_Product_ID) A;
-   select COALESCE(sum(QtyOnHand),0) Into v_qtyin_hand from (
-   SELECT QtyOnHand
-   FROM M_Storage_Detail s
-   WHERE s.M_Product_ID=:new.M_Product_ID
-   UNION
-   SELECT 0 AS QtyOnHand
-   FROM M_Storage_Pending s
-   WHERE s.M_Product_ID=:new.M_Product_ID )A;
    IF (v_ControlNo <> 0) THEN
-    IF (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null')) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@20633@');
-    ELSIF (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null')) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@20634@');
-    ELSIF (:old.isStocked = 'Y' AND :new.isStocked = 'N') THEN
-      RAISE_APPLICATION_ERROR(-20000, '@StockedProductWithMovements@');
-    ELSIF (v_qtyin_hand=0) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@ActivePoSo@');
-    ELSE
-      RAISE_APPLICATION_ERROR(-20000, '@20400@');
-    END IF;
+		IF (v_QtyOnHand <> 0) THEN
+			IF (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null')) THEN
+				RAISE_APPLICATION_ERROR(-20000, '@20633@');
+			ELSIF (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null')) THEN
+				RAISE_APPLICATION_ERROR(-20000, '@20634@');
+			ELSIF (:old.isStocked = 'Y' AND :new.isStocked = 'N') THEN
+				RAISE_APPLICATION_ERROR(-20000, '@StockedProductWithMovements@');
+			ELSE
+				RAISE_APPLICATION_ERROR(-20000, '@20400@');
+			END IF;
+		END IF;
+		IF(v_QtyOrdered <> 0 OR v_QtyReserved <>0) THEN
+		v_Message:='';
+		FOR Cur_Product IN (
+			SELECT dt.name, o.documentno
+			from c_orderline ol
+			left join c_order o ON o.c_order_id = ol.c_order_id
+			left join c_doctype dt on dt.c_doctype_id = o.c_doctype_id
+			WHERE CASE WHEN o.issotrx = 'N'  THEN ol.qtyordered + ol.qtyreserved <> 0
+			ELSE ol.qtyordered - ol.qtydelivered <> 0 END
+			AND ol.m_product_id = :new.m_product_id
+			AND o.docstatus='CO'
+			AND o.processed='Y')
+		LOOP
+			v_Message:= v_Message || Cur_Product.name ||'-'|| Cur_Product.documentno||',';
+		END LOOP;
+			RAISE_APPLICATION_ERROR(-20000, v_Message||'@ActivePoSo@');
+		END IF;
    END IF;
   END IF;
 
