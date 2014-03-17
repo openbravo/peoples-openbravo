@@ -710,7 +710,9 @@
       options = options || {};
       options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
 
-      if (OB.DEC.isNumber(price)) {
+      if (!OB.UTIL.isNullOrUndefined(line.get('originalOrderLineId'))){
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
+      } else if (OB.DEC.isNumber(price)) {
         var oldprice = line.get('price');
         if (OB.DEC.compare(price) >= 0) {
           var me = this;
