@@ -429,7 +429,7 @@ isc.OBStandardWindow.addProperties({
 
     if (this.targetTabGrid) {
       // in direct navigation for refresh contents after applying personalizations if any 
-      this.views[i].viewGrid.refreshContents();
+      this.targetTabGrid.refreshContents();
     }
     // Field level permissions
     if (data && data.tabs) {
