@@ -14,7 +14,7 @@
   OB = window.OB || {};
   OB.UTILS = window.OB.UTILS || {};
 
-  function findAndSave(cashuptaxes, i) {
+  function findAndSave(cashuptaxes, i, finishCallback) {
 
     if (i < cashuptaxes.length) {
 
@@ -29,28 +29,30 @@
             orderType: cashuptaxes[i].taxOrderType,
             cashup_id: cashuptaxes[i].cashupID
           }), function () {
-            findAndSave(cashuptaxes, i + 1);
+            findAndSave(cashuptaxes, i + 1, finishCallback);
           }, null);
         } else {
           tax.at(0).set('amount', OB.DEC.add(tax.at(0).get('amount'), cashuptaxes[i].taxAmount));
           OB.Dal.save(tax.at(0), function () {
-            findAndSave(cashuptaxes, i + 1);
+            findAndSave(cashuptaxes, i + 1, finishCallback);
           }, null);
         }
       });
+    } else {
+      if (finishCallback) {
+        finishCallback();
+      }
     }
   }
 
-  OB.UTIL.cashUpReport = function (receipt, sucessCallback) {
-    var auxPay, orderType, taxOrderType, taxAmount, gross;
-    OB.Dal.find(OB.Model.CashUp, {
-      'isbeingprocessed': 'N'
-    }, function (cashUp) {
-      var cashuptaxes;
-      orderType = receipt.get('orderType');
+  function updateCashUpInfo(cashUp, receipt, j) {
+    var cashuptaxes, order;
+    if (j < receipt.length) {
+      order = receipt[j];
+      orderType = order.get('orderType');
       if (cashUp.length !== 0) {
-        _.each(receipt.get('lines').models, function (line) {
-          if (receipt.get('priceIncludesTax')) {
+        _.each(order.get('lines').models, function (line) {
+          if (order.get('priceIncludesTax')) {
             gross = line.get('lineGrossAmount');
           } else {
             gross = line.get('discountedGross');
@@ -77,7 +79,7 @@
         cashUp.at(0).set('totalRetailTransactions', OB.DEC.sub(cashUp.at(0).get('grossSales'), cashUp.at(0).get('grossReturns')));
         OB.Dal.save(cashUp.at(0), null, null);
         cashuptaxes = [];
-        _.each(receipt.get('lines').models, function (line) {
+        _.each(order.get('lines').models, function (line) {
           for (var i in line.get('taxLines')) {
             if (orderType === 1 || line.get('qty') < 0) {
               taxOrderType = 1;
@@ -97,26 +99,40 @@
             });
           }
         });
-        findAndSave(cashuptaxes, 0);
 
         OB.Dal.find(OB.Model.PaymentMethodCashUp, {
           'cashup_id': cashUp.at(0).get('id')
         }, function (payMthds) { //OB.Dal.find success
-          _.each(receipt.get('payments').models, function (payment) {
+          _.each(order.get('payments').models, function (payment) {
             auxPay = payMthds.filter(function (payMthd) {
               return payMthd.get('searchKey') === payment.get('kind');
             })[0];
-            if (receipt.getGross() > 0 && (orderType === 0 || orderType === 2)) {
+            if (order.getGross() > 0 && (orderType === 0 || orderType === 2)) {
               auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
-            } else if (receipt.getGross() < 0 || orderType === 1) {
+            } else if (order.getGross() < 0 || orderType === 1) {
               auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), payment.get('amount')));
             } else if (orderType === 3) {
               auxPay.set('totalSales', OB.DEC.sub(auxPay.get('totalSales'), payment.get('amount')));
             }
             OB.Dal.save(auxPay, null, null);
           }, this);
+          findAndSave(cashuptaxes, 0, function () {
+            updateCashUpInfo(cashUp, receipt, j + 1);
+          });
         });
       }
+    }
+  }
+
+  OB.UTIL.cashUpReport = function (receipt, sucessCallback) {
+    var auxPay, orderType, taxOrderType, taxAmount, gross;
+    if (!Array.isArray(receipt)) {
+      receipt = [receipt];
+    }
+    OB.Dal.find(OB.Model.CashUp, {
+      'isbeingprocessed': 'N'
+    }, function (cashUp) {
+      updateCashUpInfo(cashUp, receipt, 0);
     });
   };
 

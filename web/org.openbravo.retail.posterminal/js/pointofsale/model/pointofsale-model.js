@@ -202,10 +202,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   },
   init: function () {
     var receipt = new OB.Model.Order(),
+        auxReceipt = new OB.Model.Order(),
         i, j, k, amtAux, amountToPay, ordersLength, multiOrders = new OB.Model.MultiOrders(),
         me = this,
         iter, isNew = false,
-        discounts, ordersave, customersave, customeraddrsave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction;
+        discounts, ordersave, customersave, customeraddrsave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction, auxReceiptList = [];
 
 
     function success() {
@@ -400,7 +401,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }
 
         iter.prepareToSend(prepareToSendCallback);
+        auxReceipt = new OB.Model.Order();
+        auxReceipt.clearWith(iter);
+        auxReceiptList.push(auxReceipt);
       }
+      OB.UTIL.cashUpReport(auxReceiptList);
     }, this);
 
     customersave = new OB.DATA.CustomerSave(this);
