@@ -8575,6 +8575,11 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--FBE51D267FA543F88F2A301528587343-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FBE51D267FA543F88F2A301528587343-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FBE51D267FA543F88F2A301528587343-->  <NAME><![CDATA[ClientSideValidation]]></NAME>
+<!--FBE51D267FA543F88F2A301528587343-->  <DESCRIPTION><![CDATA[JavaScript function to be executed before invoking the backend Handler.]]></DESCRIPTION>
+<!--FBE51D267FA543F88F2A301528587343-->  <HELP><![CDATA[JavaScript function to be executed before invoking the backend Handler.
+This function (manually coded), can:
+ - Perform validations on the parameters, being possible to prevent execution in case these validations are not satisfied.
+ - Request for additional info to complete the parameter values.]]></HELP>
 <!--FBE51D267FA543F88F2A301528587343-->  <COLUMNNAME><![CDATA[Clientsidevalidation]]></COLUMNNAME>
 <!--FBE51D267FA543F88F2A301528587343-->  <AD_TABLE_ID><![CDATA[FF80818132D7FB620132D8129D1A0028]]></AD_TABLE_ID>
 <!--FBE51D267FA543F88F2A301528587343-->  <AD_REFERENCE_ID><![CDATA[10]]></AD_REFERENCE_ID>
