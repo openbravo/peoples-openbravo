@@ -135,7 +135,7 @@
           args.context.receipt.set('isbeingprocessed', 'N');
           return true;
         }
-        OB.Dal.save(this.receipt, function () {
+        OB.Dal.save(me.receipt, function () {
           if (OB.POS.modelterminal.get('connectedToERP')) {
             OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
               var successCallback, errorCallback;

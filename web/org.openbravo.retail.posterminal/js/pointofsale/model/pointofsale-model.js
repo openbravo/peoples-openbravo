@@ -360,7 +360,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 'allowOpenDrawer': payment.get('allowopendrawer'),
                 'isCash': payment.get('iscash'),
                 'openDrawer': payment.get('openDrawer'),
-                'printtwice': paymentMethod.printtwice
+                'printtwice': payment.get('printtwice')
               }));
               if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
                 iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), payment.get('origAmount')));
@@ -389,7 +389,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 'allowOpenDrawer': payment.get('allowopendrawer'),
                 'isCash': payment.get('iscash'),
                 'openDrawer': payment.get('openDrawer'),
-                'printtwice': paymentMethod.printtwice
+                'printtwice': payment.get('printtwice')
               }));
               if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
                 iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
