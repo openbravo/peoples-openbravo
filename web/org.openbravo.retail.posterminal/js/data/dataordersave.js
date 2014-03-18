@@ -120,45 +120,55 @@
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
       this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
+      this.receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
       this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
 
       // The order will not be processed if the navigator is offline
       if (OB.POS.modelterminal.get('connectedToERP')) {
         this.receipt.set('isbeingprocessed', 'Y');
       }
-
-      OB.Dal.save(this.receipt, function () {
-        if (OB.POS.modelterminal.get('connectedToERP')) {
-          OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
-            var successCallback, errorCallback;
-            successCallback = function () {
-              OB.UTIL.showLoading(false);
-              if (me.hasInvLayaways) {
-                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-                me.hasInvLayaways = false;
-              }
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
-            };
-            errorCallback = function () {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
-            };
-            if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
-              me.hasInvLayaways = true;
-            }
-            model.get('orderList').current = receipt;
-            model.get('orderList').deleteCurrent();
-            me.ordersToSend += 1;
-            if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
-              model.get('multiOrders').resetValues();
-              OB.MobileApp.model.runSyncProcess(model, successCallback);
-              me.ordersToSend = OB.DEC.Zero;
-            }
-
-          }, null);
+      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
+        context: this,
+        receipt: this.receipt
+      }, function (args) {
+        if (args && args.cancellation && args.cancellation === true) {
+          args.context.receipt.set('isbeingprocessed', 'N');
+          return true;
         }
-      }, function () {
-        //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
+        OB.Dal.save(this.receipt, function () {
+          if (OB.POS.modelterminal.get('connectedToERP')) {
+            OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
+              var successCallback, errorCallback;
+              successCallback = function () {
+                OB.UTIL.showLoading(false);
+                if (me.hasInvLayaways) {
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+                  me.hasInvLayaways = false;
+                }
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
+              };
+              errorCallback = function () {
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
+              };
+              if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
+                me.hasInvLayaways = true;
+              }
+              model.get('orderList').current = receipt;
+              model.get('orderList').deleteCurrent();
+              me.ordersToSend += 1;
+              if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
+                model.get('multiOrders').resetValues();
+                OB.MobileApp.model.runSyncProcess(model, successCallback);
+                me.ordersToSend = OB.DEC.Zero;
+              }
+
+            }, null);
+          }
+        }, function () {
+          //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
+        });
       });
+
     }, this);
   };
 }());
