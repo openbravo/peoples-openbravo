@@ -11,17 +11,17 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 /**
-* @fileoverview Contains a function returnReponse that is called upon load 
-* of a callout template (eg. CallOut.html) and fills specified form fields
-* with specified values.
-*/
+ * @fileoverview Contains a function returnReponse that is called upon load
+ * of a callout template (eg. CallOut.html) and fills specified form fields
+ * with specified values.
+ */
 
 var frameDefault = "appFrame";
 
@@ -30,8 +30,13 @@ function displayLogic() {
 }
 
 function setgWaitingCallOut(state, frameName) {
-  if (frameName==null || frameName=="") frameName=frameDefault;
-  objFrame = eval("parent." + frameName);
+  if (frameName == null || frameName == "") frameName = frameDefault;
+  // If there is an active appFrame in the window, pick it
+  if (frameName === 'appFrame' && parent.parent.activeFrame) {
+    objFrame = parent.parent.activeFrame;
+  } else {
+    objFrame = eval("parent." + frameName);
+  }
   if (!objFrame) {
     // working in 3.0 modal window
     objFrame = parent;
@@ -47,9 +52,14 @@ function returnResponse(arrResponse, calloutName, frameName, formName) {
     frameName = 'appFrame';
   }
   setgWaitingCallOut(false, frameName);
-  if (arrResponse==null && (calloutName==null || calloutName=="")) return false;
-  if (frameName==null || frameName=="") frameName=frameDefault;
-  objFrame = eval("parent." + frameName);
+  if (arrResponse == null && (calloutName == null || calloutName == "")) return false;
+  if (frameName == null || frameName == "") frameName = frameDefault;
+  // If there is an active appFrame in the window, pick it
+  if (frameName === 'appFrame' && parent.parent.activeFrame) {
+    objFrame = parent.parent.activeFrame;
+  } else {
+    objFrame = eval("parent." + frameName);
+  }
   if (!objFrame) {
     // working in 3.0 modal window
     objFrame = parent;

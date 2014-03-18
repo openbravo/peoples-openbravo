@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -123,6 +123,8 @@ isc.OBClassicWindow.addMethods({
       }
       this.contentsURL = this.contentsURL + '&hideMenu=true';
     }
+
+    this.setAsActiveIFrame();
 
     this.Super('initWidget', args);
   },
@@ -328,6 +330,31 @@ isc.OBClassicWindow.addMethods({
       } else {
         appFrame.location.href = result.redirect;
       }
+    }
+  },
+
+  // Waits until the iFrame has been loaded, and sets it as activeFrame
+  // See issue https://issues.openbravo.com/view.php?id=25558
+  setAsActiveIFrame: function (nCalls) {
+    var iFrame, me = this,
+        parentFrame;
+    if (!nCalls) {
+      nCalls = 0;
+    } else if (nCalls > 20) {
+      // Prevent infinite recursion
+      return;
+    }
+    iFrame = this.getAppFrameWindow();
+    if (!iFrame) {
+      setTimeout(function () {
+        me.setAsActiveIFrame(nCalls++);
+      }, 500);
+    } else {
+      parentFrame = iFrame.parent;
+      while (parentFrame.name !== '') {
+        parentFrame = parentFrame.parent;
+      }
+      parentFrame.activeFrame = iFrame;
     }
   }
 });
