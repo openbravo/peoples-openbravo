@@ -2002,7 +2002,7 @@ isc.OBViewGrid.addProperties({
 
       // this mode means that no parent is selected but the parent needs to be
       // determined from the target record and the parent property
-      if (this.isOpenDirectMode && this.view.parentView) {
+      if (this.view.parentProperty && this.isOpenDirectMode && this.view.parentView) {
         params._filterByParentProperty = this.view.parentProperty;
       }
 
