@@ -54,9 +54,9 @@ isc.OBTreeGrid.addProperties({
    */
   getCellCSSText: function (record, rowNum, colNum) {
     if (record.notFilterHit) {
-      return 'color:#606060;';
+      return OB.Styles.OBTreeGrid.cellCSSText_notFilterHit;
     } else {
-      return '';
+      return OB.Styles.OBTreeGrid.cellCSSText_filterHit;
     }
   },
 
