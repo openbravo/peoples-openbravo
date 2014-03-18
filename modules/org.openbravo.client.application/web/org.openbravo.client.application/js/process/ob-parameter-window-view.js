@@ -439,7 +439,7 @@ isc.OBParameterWindowView.addProperties({
   doProcess: function (btnValue) {
     var i, tmp, view = this,
         grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
-        selection, len, allRows, params, tab;
+        selection, len, allRows, params, tab, actionHandlerCall;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
     if (this.resultLayout && this.resultLayout.destroy) {
       this.resultLayout.destroy();
@@ -481,12 +481,20 @@ isc.OBParameterWindowView.addProperties({
 
     allProperties._params = this.getContextInfo();
 
-    OB.RemoteCallManager.call(this.actionHandler, allProperties, {
-      processId: this.processId,
-      windowId: this.windowId
-    }, function (rpcResponse, data, rpcRequest) {
-      view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
-    });
+    actionHandlerCall = function (me) {
+      OB.RemoteCallManager.call(me.actionHandler, allProperties, {
+        processId: me.processId,
+        windowId: me.windowId
+      }, function (rpcResponse, data, rpcRequest) {
+        view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
+      });
+    };
+
+    if (this.clientSideValidation) {
+      this.clientSideValidation(this, actionHandlerCall);
+    } else {
+      actionHandlerCall(this);
+    }
   },
 
   handleDefaults: function (defaults) {
