@@ -72,10 +72,12 @@ enyo.kind({
     }]
   }],
   tap: function () {
-    this.doShowPopup({
-      popup: 'modalmultiorderslayaway',
-      args: this.owner.model
-    });
+    if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.layawayReceipt')) {
+      this.doShowPopup({
+        popup: 'modalmultiorderslayaway',
+        args: this.owner.model
+      });
+    }
   },
   changeEditMode: function (inSender, inEvent) {
     this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);
