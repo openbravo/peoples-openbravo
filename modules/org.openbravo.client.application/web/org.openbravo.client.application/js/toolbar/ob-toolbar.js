@@ -1731,6 +1731,8 @@ OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
     treeGrid.hide();
     view.isShowingTree = false;
   } else {
+    // Copy the viewGrid fields to the treeGrid, so that both views always display the same fields
+    treeGrid.setFields(treeGrid.getTreeGridFields(viewGrid.getFields()));
     treeGrid.copyCriteriaFromViewGrid();
     treeGrid.setData([]); // forcing refresh
     treeGrid.fetchData(treeGrid.getCriteria());
