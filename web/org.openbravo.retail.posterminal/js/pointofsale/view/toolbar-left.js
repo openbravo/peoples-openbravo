@@ -249,6 +249,9 @@ enyo.kind({
               auxPay = payMthds.filter(function (payMthd) {
               return payMthd.get('paymentmethod_id') === paymentType.payment.id;
             })[0];
+          if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
+            return;
+          }
           auxPay.set('_id', paymentType.payment.searchKey);
           auxPay.set('isocode', paymentType.isocode);
           auxPay.set('paymentMethod', paymentType.paymentMethod);

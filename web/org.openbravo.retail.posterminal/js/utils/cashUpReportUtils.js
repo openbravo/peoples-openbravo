@@ -107,6 +107,9 @@
             auxPay = payMthds.filter(function (payMthd) {
               return payMthd.get('searchKey') === payment.get('kind');
             })[0];
+            if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
+              return;
+            }
             if (order.getGross() > 0 && (orderType === 0 || orderType === 2)) {
               auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
             } else if (order.getGross() < 0 || orderType === 1) {
@@ -183,11 +186,11 @@
           }
           OB.Dal.save(new OB.Model.CashUp({
             id: uuid,
-            netSales: '0',
-            grossSales: '0',
-            netReturns: '0',
-            grossReturns: '0',
-            totalRetailTransactions: '0',
+            netSales: OB.DEC.Zero,
+            grossSales: OB.DEC.Zero,
+            netReturns: OB.DEC.Zero,
+            grossReturns: OB.DEC.Zero,
+            totalRetailTransactions: OB.DEC.Zero,
             createdDate: new Date(),
             userId: null,
             objToSend: null,
@@ -206,8 +209,8 @@
                 searchKey: payment.payment.searchKey,
                 name: payment.payment._identifier,
                 startingCash: startingCash,
-                totalSales: '0',
-                totalReturns: '0',
+                totalSales: OB.DEC.Zero,
+                totalReturns: OB.DEC.Zero,
                 rate: payment.rate,
                 cashup_id: uuid
               }), null, null, true);

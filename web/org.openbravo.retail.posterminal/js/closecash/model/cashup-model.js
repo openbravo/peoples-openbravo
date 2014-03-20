@@ -62,6 +62,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           var auxPay = payMthds.filter(function (payMthd) {
             return payMthd.get('paymentmethod_id') === payment.payment.id;
           })[0];
+          if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
+            return;
+          }
           auxPay.set('_id', payment.payment.searchKey);
           auxPay.set('isocode', payment.isocode);
           auxPay.set('paymentMethod', payment.paymentMethod);
@@ -147,6 +150,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           var auxPay = OB.POS.modelterminal.get('payments').filter(function (pay) {
             return pay.payment.id === p.get('paymentmethod_id');
           })[0];
+          if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
+            return;
+          }
           cashUpReport.get('deposits').push(new Backbone.Model({
             origAmount: OB.DEC.add(0, p.get('totalSales')),
             amount: OB.DEC.div(p.get('totalSales'), p.get('rate')),
