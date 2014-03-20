@@ -295,7 +295,9 @@ enyo.kind({
           me.finalAction();
           return true;
         }
-      }]);
+      }], {
+        autoDismiss: false
+      });
 
     }, this);
     //finishedWrongly
