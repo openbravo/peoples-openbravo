@@ -39,6 +39,9 @@
     <#if param.redrawOnChange>
       redrawOnChange: true,
     </#if>
+    <#if param.onChangeFunction??>
+        onChangeFunction: ${param.onChangeFunction?js_string},
+    </#if>
     <#if param.showIf != "" >
       showIf: function(item, value, form, currentValues, context) {
         return (${param.showIf});

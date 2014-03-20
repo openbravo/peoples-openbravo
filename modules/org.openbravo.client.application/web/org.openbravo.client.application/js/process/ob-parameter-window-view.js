@@ -199,6 +199,12 @@ isc.OBParameterWindowView.addProperties({
           field.originalShowIf = field.showIf;
           field.showIf = newShowIf;
         }
+        if (field.onChangeFunction) {
+          // the default
+          field.onChangeFunction.sort = 50;
+
+          OB.OnChangeRegistry.register(this.viewId, field.name, field.onChangeFunction, 'default');
+        }
         if (field.isGrid) {
           this.grid = isc.OBPickAndExecuteView.create(field);
         } else {
@@ -222,6 +228,11 @@ isc.OBParameterWindowView.addProperties({
             var affectedParams, i, field;
 
             this.paramWindow.handleReadOnlyLogic();
+            
+            // Execute onChangeFunctions if they exist
+            if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
+                OB.OnChangeRegistry.call(this.paramWindow.viewId, item, this.paramWindow, this, this.paramWindow.viewGrid);
+            }
 
             // Check validation rules (subordinated fields), when value of a
             // parent field is changed, all its subordinated are reset

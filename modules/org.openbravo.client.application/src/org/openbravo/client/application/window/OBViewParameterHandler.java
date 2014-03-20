@@ -344,6 +344,10 @@ public class OBViewParameterHandler {
         return seqno;
       }
     }
+
+    public String getOnChangeFunction() {
+      return parameter.getOnChangeFunction();
+    }
   }
 
   public class OBViewParamGroup extends OBViewParameter {
