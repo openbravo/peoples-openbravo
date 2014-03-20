@@ -224,19 +224,8 @@ OB.Utilities.createLoadingLayout = function (label) {
 // Adds the Required suffix to a base style for a required formitem, to show it yellow in 
 // the forms.
 OB.Utilities.addRequiredSuffixToBaseStyle = function (item) {
-  if (item && item.required) {
-    // apparently this is called many times therefore do not append
-    // if we already did append it
-    if (item.textFieldProperties && item.textFieldProperties.textBoxStyle) {
-      if (!item.textFieldProperties.textBoxStyle.endsWith('Required')) {
-        // make a copy as the textFieldProperties object is shared by many instances
-        // so you can't change it directly
-        item.textFieldProperties = isc.addProperties({}, item.textFieldProperties);
-        item.textFieldProperties.textBoxStyle = item.textFieldProperties.textBoxStyle + 'Required';
-      }
-    } else if (item.textBoxStyle && !item.textBoxStyle.endsWith('Required')) {
-      item.textBoxStyle = item.textBoxStyle + 'Required';
-    }
+  if (item && item.required && item.textBoxStyle && !item.textBoxStyle.endsWith('Required')) {
+    item.textBoxStyle = item.textBoxStyle + 'Required';
   }
 };
 
