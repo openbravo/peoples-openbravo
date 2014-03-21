@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -49,6 +49,7 @@
 
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
         context: this,
+        model: model,
         receipt: model.get('order')
       }, function (args) {
         if (args && args.cancellation && args.cancellation === true) {
@@ -129,6 +130,7 @@
       }
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
         context: this,
+        model: model,
         receipt: this.receipt
       }, function (args) {
         if (args && args.cancellation && args.cancellation === true) {
