@@ -406,9 +406,8 @@ isc.OBSelectorItem.addProperties({
   // still do select on focus initially
   doInitialSelectOnFocus: true,
 
-  // Setting this to false results in the picklist to be shown 
-  // on focus, specific SC logic
-  //  addUnknownValues: false,
+  // if addUnknownValues is set to true, fetch is performed on item blur
+  addUnknownValues: false,
   // ** {{{ selectorGridFields }}} **
   // the definition of the columns in the popup window
   selectorGridFields: [{
