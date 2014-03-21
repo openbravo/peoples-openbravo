@@ -228,10 +228,10 @@ isc.OBParameterWindowView.addProperties({
             var affectedParams, i, field;
 
             this.paramWindow.handleReadOnlyLogic();
-            
+
             // Execute onChangeFunctions if they exist
             if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
-                OB.OnChangeRegistry.call(this.paramWindow.viewId, item, this.paramWindow, this, this.paramWindow.viewGrid);
+              OB.OnChangeRegistry.call(this.paramWindow.viewId, item, this.paramWindow, this, this.paramWindow.viewGrid);
             }
 
             // Check validation rules (subordinated fields), when value of a
