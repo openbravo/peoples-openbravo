@@ -20513,7 +20513,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--7FC9F1E9ABA547F0B15BEBF2C1E56906-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7FC9F1E9ABA547F0B15BEBF2C1E56906-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7FC9F1E9ABA547F0B15BEBF2C1E56906-->  <VALUE><![CDATA[ActivePoSo]]></VALUE>
-<!--7FC9F1E9ABA547F0B15BEBF2C1E56906-->  <MSGTEXT><![CDATA[There are pending document lines associated with product. Reactivate them prior to update product.]]></MSGTEXT>
+<!--7FC9F1E9ABA547F0B15BEBF2C1E56906-->  <MSGTEXT><![CDATA[There is already an active Purchase Order or Sales Order,So you cannot deactivate Product.]]></MSGTEXT>
 <!--7FC9F1E9ABA547F0B15BEBF2C1E56906-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--7FC9F1E9ABA547F0B15BEBF2C1E56906-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7FC9F1E9ABA547F0B15BEBF2C1E56906-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
