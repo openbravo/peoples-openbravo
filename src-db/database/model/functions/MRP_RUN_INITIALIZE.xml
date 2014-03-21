@@ -52,7 +52,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -234,6 +234,7 @@ BEGIN --BODY
               o.issotrx
          FROM c_orderline ol
               JOIN c_order o ON o.c_order_id = ol.c_order_id
+              JOIN c_doctype dt ON o.c_doctypetarget_id = dt.c_doctype_id
               LEFT JOIN (SELECT c_orderline_id, sum(qty) AS qty 
                         FROM m_matchpo
                         WHERE m_inoutline_id IS NOT NULL
@@ -258,7 +259,7 @@ BEGIN --BODY
                                        (CASE o.issotrx WHEN 'Y' THEN 'SO' ELSE 'PO' END),
                                        to_number(COALESCE(ol.datepromised, ol.dateordered, o.dateordered) - p_planningdate), p_timehorizon) <> -1
            AND ((o.issotrx = 'N' AND ol.qtyordered - COALESCE(matchpo.qty,0) > COALESCE(preres.reservedqty, 0))
-               OR (o.issotrx = 'Y' AND ol.qtyordered - COALESCE(ol.qtydelivered, 0) > COALESCE(res.reservedqty,0) - COALESCE(res.releasedqty, 0)))
+               OR (o.issotrx = 'Y' AND (dt.docsubtypeso <> 'OB') AND ol.qtyordered - COALESCE(ol.qtydelivered, 0) > COALESCE(res.reservedqty,0) - COALESCE(res.releasedqty, 0)))
            AND AD_ISORGINCLUDED(o.ad_org_id, p_org_id, p_client_id) > -1
            -- Only orders of warehouses in p_org_id and its childs
            AND AD_ISORGINCLUDED(w.ad_org_id, p_org_id, p_client_id) > -1
