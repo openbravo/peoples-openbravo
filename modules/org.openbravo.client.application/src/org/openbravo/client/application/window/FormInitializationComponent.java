@@ -608,32 +608,56 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (mode.equals("NEW")) {
           // On NEW mode, the values are computed through the UIDefinition (the defaults will be
           // used)
-          if (field.getColumn().isLinkToParentColumn() && parentRecord != null
-              && referencedEntityIsParent(parentRecord, field)) {
-            // If the column is link to the parent tab, we set its value as the parent id
-            RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
-                parentId);
-            value = uiDef.getFieldProperties(field, true);
-          } else if (field.getColumn().getDBColumnName().equalsIgnoreCase("IsActive")) {
-            // The Active column is always set to 'true' on new records
-            RequestContext.get()
-                .setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col), "Y");
-            value = uiDef.getFieldProperties(field, true);
-          } else {
-            // Else, the default is used
-            if (isNotActiveOrVisibleAndNotNeeded(field, visibleProperties)) {
-              // If the column is not currently visible, and its not mandatory, we don't need to
-              // compute the combo.
-              // If a column is mandatory then the combo needs to be computed, because the selected
-              // value can depend on the computation if there is no default value
-              log.debug("Not calculating combo in " + mode + " mode for column " + col);
-              value = uiDef.getFieldPropertiesWithoutCombo(field, false);
-            } else {
-              if (isNotActiveOrVisible(field, visibleProperties)) {
-                log.debug("Only first combo record in " + mode + " mode for column " + col);
-                value = uiDef.getFieldPropertiesFirstRecord(field, false);
+          if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+            // if the column is a property we try to compute the property value, if value is not
+            // found null is passed. Refer issue https://issues.openbravo.com/view.php?id=25754
+            Object propertyValue = DalUtil.getValueFromPath(parentRecord, field.getProperty());
+            if (propertyValue != null) {
+              JSONObject jsonObject = new JSONObject();
+              if (propertyValue instanceof BaseOBObject) {
+                jsonObject.put("value", ((BaseOBObject) propertyValue).getId());
+                jsonObject.put("classicValue", ((BaseOBObject) propertyValue).getId());
+                ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
+                JSONObject entries = new JSONObject();
+                entries.put("id", ((BaseOBObject) propertyValue).getId());
+                entries.put("_identifier", ((BaseOBObject) propertyValue).getIdentifier());
+                comboEntries.add(entries);
+                jsonObject.put("entries", new JSONArray(comboEntries));
               } else {
-                value = uiDef.getFieldProperties(field, false);
+                jsonObject.put("value", propertyValue.toString());
+                jsonObject.put("classicValue", propertyValue.toString());
+              }
+              value = jsonObject.toString();
+            }
+          } else {
+            if (field.getColumn().isLinkToParentColumn() && parentRecord != null
+                && referencedEntityIsParent(parentRecord, field)) {
+              // If the column is link to the parent tab, we set its value as the parent id
+              RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
+                  parentId);
+              value = uiDef.getFieldProperties(field, true);
+            } else if (field.getColumn().getDBColumnName().equalsIgnoreCase("IsActive")) {
+              // The Active column is always set to 'true' on new records
+              RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
+                  "Y");
+              value = uiDef.getFieldProperties(field, true);
+            } else {
+              // Else, the default is used
+              if (isNotActiveOrVisibleAndNotNeeded(field, visibleProperties)) {
+                // If the column is not currently visible, and its not mandatory, we don't need to
+                // compute the combo.
+                // If a column is mandatory then the combo needs to be computed, because the
+                // selected
+                // value can depend on the computation if there is no default value
+                log.debug("Not calculating combo in " + mode + " mode for column " + col);
+                value = uiDef.getFieldPropertiesWithoutCombo(field, false);
+              } else {
+                if (isNotActiveOrVisible(field, visibleProperties)) {
+                  log.debug("Only first combo record in " + mode + " mode for column " + col);
+                  value = uiDef.getFieldPropertiesFirstRecord(field, false);
+                } else {
+                  value = uiDef.getFieldProperties(field, false);
+                }
               }
             }
           }
