@@ -778,7 +778,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     }
     if (payment != null) {
       if (usedCredit.compareTo(ZERO) != 0 && generatedCredit.compareTo(ZERO) == 0)
-        retValue = retValue.add(usedCredit);
+        retValue = retValue.add(payment.isReceipt() ? usedCredit : usedCredit.negate());
       retValue = retValue.add(payment.isReceipt() ? payment.getWriteoffAmount() : payment
           .getWriteoffAmount().negate());
     }
