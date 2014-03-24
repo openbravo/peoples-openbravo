@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,6 @@ import java.net.URL;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.test.base.BaseTest;
 
 /**
  * Test class for reading large xml files from a webservice. Xml is streamed directly to a file.
@@ -40,13 +39,8 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class PerformanceTest extends BaseTest {
-
+public class PerformanceTest extends BaseWSTest {
   private static final Logger log = Logger.getLogger(PerformanceTest.class);
-
-  private static final String OB_URL = "http://localhost:8080/openbravo";
-  private static final String LOGIN = "Openbravo";
-  private static final String PWD = "openbravo";
 
   public void testPerformance() {
     try {
@@ -105,33 +99,4 @@ public class PerformanceTest extends BaseTest {
     hc.setRequestProperty("Content-Type", "text/xml");
     return hc;
   }
-
-  /**
-   * Returns the url of the Openbravo instance. The default value is: {@link #OB_URL}
-   * 
-   * @return the url of the Openbravo instance.
-   */
-  protected String getOpenbravoURL() {
-    return OB_URL;
-  }
-
-  /**
-   * Returns the login used to login for the webservice. The default value is {@link #LOGIN}.
-   * 
-   * @return the login name used to login for the webservice
-   */
-  protected String getLogin() {
-    return LOGIN;
-  }
-
-  /**
-   * Returns the password used to login into the webservice server. The default value is
-   * {@link #PWD}.
-   * 
-   * @return the password used to login into the webservice, the default is {@link #PWD}
-   */
-  protected String getPassword() {
-    return PWD;
-  }
-
 }
