@@ -241,6 +241,10 @@ enyo.kind({
 
     if (opendrawer) {
       OB.POS.hwserver.openDrawer();
+      if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
+        OB.MobileApp.model.set("isDrawerClosed", false);
+        OB.POS.hwserver.isDrawerClosed(false, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount);
+      }
     }
   },
   verifyStep: function (model, callback) {

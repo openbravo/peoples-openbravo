@@ -491,35 +491,70 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       });
     }, this);
 
-    receipt.on('paymentDone', function () {
-
+    receipt.on('paymentDone', function (openDrawer) {
       if (receipt.overpaymentExists()) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           action: function () {
+            if (openDrawer) {
+              receipt.trigger('openDrawer');
+              if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
+                OB.POS.hwserver.isDrawerClosed({
+                  openFirst: false,
+                  receipt: receipt
+                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+              }
+            }
             receipt.trigger('paymentAccepted');
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
       } else {
+        if (openDrawer) {
+          receipt.trigger('openDrawer');
+          if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
+            OB.POS.hwserver.isDrawerClosed({
+              openFirst: true,
+              receipt: receipt
+            }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+          }
+        }
         receipt.trigger('paymentAccepted');
       }
     }, this);
 
-    this.get('multiOrders').on('paymentDone', function () {
+    this.get('multiOrders').on('paymentDone', function (openDrawer) {
       var me = this,
           paymentstatus = this.get('multiOrders');
       if (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) > 0) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           action: function () {
+            if (openDrawer) {
+              receipt.trigger('openDrawer');
+              if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
+                OB.POS.hwserver.isDrawerClosed({
+                  openFirst: false,
+                  receipt: me.get('multiOrders')
+                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+              }
+            }
             me.get('multiOrders').trigger('paymentAccepted');
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
       } else {
+        if (openDrawer) {
+          receipt.trigger('openDrawer');
+          if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
+            OB.POS.hwserver.isDrawerClosed({
+              openFirst: true,
+              receipt: me.get('multiOrders')
+            }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+          }
+        }
         this.get('multiOrders').trigger('paymentAccepted');
       }
     }, this);

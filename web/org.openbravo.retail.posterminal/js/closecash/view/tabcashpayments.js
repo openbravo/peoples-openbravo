@@ -210,7 +210,7 @@ enyo.kind({
               classes: 'row-fluid',
               components: [{
                 classes: 'span12',
-                style: 'border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; height: 70px;',                
+                style: 'border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; height: 70px;',
                 components: [{
                   style: 'float:left; display: table-row;',
                   components: [{
@@ -224,8 +224,9 @@ enyo.kind({
                     components: [{
                       name: 'total',
                       kind: 'OB.OBPOSCashUp.UI.RenderTotal'
-                    }]                               
-                  }]}, {
+                    }]
+                  }]
+                }, {
                   style: 'float:left; display: table-row;',
                   components: [{
                     name: 'countedLbl',
@@ -238,8 +239,9 @@ enyo.kind({
                     components: [{
                       name: 'counted',
                       kind: 'OB.OBPOSCashUp.UI.RenderTotal'
-                    }]                    
-                  }]}, {
+                    }]
+                  }]
+                }, {
                   style: 'float:left; display: table-row;',
                   components: [{
                     name: 'differenceLbl',
@@ -252,9 +254,9 @@ enyo.kind({
                     components: [{
                       name: 'difference',
                       kind: 'OB.OBPOSCashUp.UI.RenderTotal'
-                    }]                    
+                    }]
                   }]
-                }]   
+                }]
               }]
             }]
           }]
@@ -440,6 +442,10 @@ enyo.kind({
     // Open drawer if allow open drawer. Already a cash method.
     if (payment.get('paymentMethod').allowopendrawer) {
       OB.POS.hwserver.openDrawer();
+      if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
+        OB.MobileApp.model.set("isDrawerClosed", false);
+        OB.POS.hwserver.isDrawerClosed(false, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount);
+      }
     }
   }
 });
