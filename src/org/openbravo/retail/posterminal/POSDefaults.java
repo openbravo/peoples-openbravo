@@ -1,8 +1,13 @@
 package org.openbravo.retail.posterminal;
 
+import javax.enterprise.context.ApplicationScoped;
+
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.MobileDefaults;
 import org.openbravo.model.ad.access.User;
 
+@ApplicationScoped
+@Qualifier(POSConstants.APP_NAME)
 public class POSDefaults extends MobileDefaults {
   @Override
   public String getFormId() {
