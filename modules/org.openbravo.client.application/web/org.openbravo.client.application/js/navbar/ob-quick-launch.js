@@ -122,7 +122,7 @@ isc.OBQuickLaunch.addProperties({
         return false;
       }
     }
-    this.Super('click', arguments)
+    this.Super('click', arguments);
   },
 
   // handle the case that someone entered a url in the quick launch
