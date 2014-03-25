@@ -11502,8 +11502,8 @@ The fact of using a given product type does not mean a different accounting. All
 <!--2059-->  <COLUMNNAME><![CDATA[WebSession]]></COLUMNNAME>
 <!--2059-->  <NAME><![CDATA[Web Session]]></NAME>
 <!--2059-->  <PRINTNAME><![CDATA[Web Session]]></PRINTNAME>
-<!--2059-->  <DESCRIPTION><![CDATA[Web Session ID]]></DESCRIPTION>
-<!--2059-->  <HELP><![CDATA[Web Session identifier]]></HELP>
+<!--2059-->  <DESCRIPTION><![CDATA[Tomcat Session ID]]></DESCRIPTION>
+<!--2059-->  <HELP><![CDATA[Identifier assigned to the session by the Servlet Container (Tomcat).]]></HELP>
 <!--2059-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2059-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--2059--></AD_ELEMENT>
