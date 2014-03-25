@@ -97,9 +97,6 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
         }
 
-        if (p.iscash || p.allowopendrawer) {
-          OB.POS.hwserver.openDrawer();
-        }
       }, null, this);
     }, this);
 

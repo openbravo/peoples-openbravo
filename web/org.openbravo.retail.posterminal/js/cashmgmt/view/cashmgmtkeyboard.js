@@ -51,6 +51,17 @@ enyo.kind({
   init: function () {
     var buttons = [];
     this.inherited(arguments);
+    buttons.push({
+      command: 'opendrawer',
+      i18nLabel: 'OBPOS_OpenDrawer',
+      stateless: true,
+      definition: {
+        stateless: true,
+        action: function (keyboard, amt) {
+          OB.POS.hwserver.openDrawer();
+        }
+      }
+    });
     _.bind(this.getPayment, this);
     _.each(OB.POS.modelterminal.get('payments'), function (paymentMethod) {
       var payment = paymentMethod.payment;
