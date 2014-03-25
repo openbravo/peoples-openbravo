@@ -21,7 +21,6 @@
 isc.ClassFactory.defineClass('OBFormContainerLayout', isc.VLayout);
 
 isc.OBFormContainerLayout.addProperties({
-  canFocus: true,
   width: '100%',
   height: '*',
   overflow: 'auto'
