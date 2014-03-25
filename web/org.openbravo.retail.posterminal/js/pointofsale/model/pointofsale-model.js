@@ -658,7 +658,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       });
 
       if (_.isUndefined(results)) {
-        newApprovals.push(approvals[i]);
+        newApprovals.push(appr);
       }
 
     });
