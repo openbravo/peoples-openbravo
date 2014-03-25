@@ -244,6 +244,7 @@ isc.OBParameterWindowView.addProperties({
               field = this.getField(affectedParams[i]);
               if (field && field.setValue) {
                 field.setValue(null);
+                this.itemChanged(field, null);
               }
             }
           }

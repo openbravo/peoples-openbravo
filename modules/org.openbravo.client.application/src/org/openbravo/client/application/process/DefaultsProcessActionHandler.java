@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.application.process;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -63,58 +65,74 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
       }
       final Process processDefinition = OBDal.getInstance().get(Process.class, processId);
       JSONObject defaults = new JSONObject();
+      final List<Parameter> orderedParams = new ArrayList<Parameter>();
 
-      for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
-        if (param.getDefaultValue() != null) {
+      final boolean paramsOrdered = reorderParams(processDefinition, orderedParams);
 
-          Reference reference = param.getReferenceSearchKey();
-          if (reference == null) {
-            reference = param.getReference();
-          }
+      if (paramsOrdered) {
 
-          UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-              reference);
+        for (Parameter param : orderedParams) {
+          if (param.getDefaultValue() != null) {
 
-          String rawDefaultValue = param.getDefaultValue();
-
-          Object defaultValue;
-          if (isSessionDefaultValue(rawDefaultValue) && context != null) {
-            // Transforms the default value from @columnName@ to the column inp name
-            String inpName = "inp"
-                + Sqlc.TransformaNombreColumna(rawDefaultValue.substring(1,
-                    rawDefaultValue.length() - 1));
-            defaultValue = context.get(inpName);
-          } else {
-            defaultValue = ParameterUtils.getJSExpressionResult(fixRequestMap(parameters),
-                (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), rawDefaultValue);
-          }
-
-          DomainType domainType = uiDefinition.getDomainType();
-          if (defaultValue != null && defaultValue instanceof String
-              && domainType instanceof ForeignKeyDomainType) {
-            // default value is ID of a FK, look for the identifier
-            Entity referencedEntity = ((ForeignKeyDomainType) domainType)
-                .getForeignKeyColumn(param.getDBColumnName()).getProperty().getEntity();
-
-            BaseOBObject record = OBDal.getInstance().get(referencedEntity.getName(), defaultValue);
-            if (record != null) {
-              String identifier = record.getIdentifier();
-              JSONObject def = new JSONObject();
-              def.put("value", defaultValue);
-              def.put("identifier", identifier);
-              defaults.put(param.getDBColumnName(), def);
+            Reference reference = param.getReferenceSearchKey();
+            if (reference == null) {
+              reference = param.getReference();
             }
-          } else {
-            if (domainType instanceof BooleanDomainType) {
-              defaultValue = ((BooleanDomainType) domainType)
-                  .createFromString((String) defaultValue);
+
+            UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
+                reference);
+
+            String rawDefaultValue = param.getDefaultValue();
+
+            Object defaultValue;
+            String inpName = null;
+            if (isSessionDefaultValue(rawDefaultValue) && context != null) {
+              // Transforms the default value from @columnName@ to the column inp name
+              inpName = "inp"
+                  + Sqlc.TransformaNombreColumna(rawDefaultValue.substring(1,
+                      rawDefaultValue.length() - 1));
+              defaultValue = context.get(inpName);
+              inpName = "inp" + Sqlc.TransformaNombreColumna(param.getDBColumnName());
+            } else {
+              defaultValue = ParameterUtils.getJSExpressionResult(fixRequestMap(parameters),
+                  (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), rawDefaultValue);
+              if (context == null) {
+                context = new JSONObject();
+              }
+              inpName = "inp" + Sqlc.TransformaNombreColumna(param.getDBColumnName());
             }
-            defaults.put(param.getDBColumnName(), defaultValue);
+            context.put(inpName, defaultValue);
+
+            DomainType domainType = uiDefinition.getDomainType();
+            if (defaultValue != null && defaultValue instanceof String
+                && domainType instanceof ForeignKeyDomainType) {
+              // default value is ID of a FK, look for the identifier
+              Entity referencedEntity = ((ForeignKeyDomainType) domainType)
+                  .getForeignKeyColumn(param.getDBColumnName()).getProperty().getEntity();
+
+              BaseOBObject record = OBDal.getInstance().get(referencedEntity.getName(),
+                  defaultValue);
+              if (record != null) {
+                String identifier = record.getIdentifier();
+                JSONObject def = new JSONObject();
+                def.put("value", defaultValue);
+                def.put("identifier", identifier);
+                defaults.put(param.getDBColumnName(), def);
+              }
+            } else {
+              if (domainType instanceof BooleanDomainType) {
+                defaultValue = ((BooleanDomainType) domainType)
+                    .createFromString((String) defaultValue);
+              }
+              defaults.put(param.getDBColumnName(), defaultValue);
+            }
           }
         }
+        log.debug("Defaults for process " + processDefinition + "\n" + defaults.toString());
+        return defaults;
+      } else {
+        return new JSONObject();
       }
-      log.debug("Defaults for process " + processDefinition + "\n" + defaults.toString());
-      return defaults;
     } catch (Exception e) {
       log.error("Error trying getting defaults for process: " + e.getMessage(), e);
       return new JSONObject();
@@ -132,5 +150,52 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
     } else {
       return false;
     }
+  }
+
+  private boolean reorderParams(Process processDefinition, List<Parameter> orderedParams) {
+    final List<String> paramsAddedToOrderList = new ArrayList<String>();
+    List<Parameter> paramsWithDefaultValue = new ArrayList<Parameter>();
+    String dependentDefaultValue = null;
+    Parameter parameter = null;
+    int i = 0;
+
+    for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
+      if (param.getDefaultValue() != null) {
+        paramsWithDefaultValue.add(param);
+      } else {
+        orderedParams.add(param);
+        paramsAddedToOrderList.add(param.getDBColumnName());
+      }
+    }
+
+    while (!paramsWithDefaultValue.isEmpty()) {
+      if (i == paramsWithDefaultValue.size()) {
+        log.error("Error getting default values for process: " + processDefinition.getName()
+            + ". Default values not properly defined, circle dependencies found");
+        return false;
+      }
+      parameter = paramsWithDefaultValue.get(i);
+      if (!isSessionDefaultValue(parameter.getDefaultValue())) {
+        orderedParams.add(parameter);
+        paramsAddedToOrderList.add(parameter.getDBColumnName());
+        paramsWithDefaultValue.remove(i);
+        i = 0;
+      } else {
+        dependentDefaultValue = dependentDefaultValue(parameter.getDefaultValue());
+        if (paramsAddedToOrderList.contains(dependentDefaultValue)) {
+          orderedParams.add(parameter);
+          paramsAddedToOrderList.add(parameter.getDBColumnName());
+          paramsWithDefaultValue.remove(i);
+          i = 0;
+        } else {
+          i++;
+        }
+      }
+    }
+    return true;
+  }
+
+  private String dependentDefaultValue(String rawDefaultValue) {
+    return rawDefaultValue.substring(1, rawDefaultValue.length() - 1);
   }
 }
