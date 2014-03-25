@@ -153,14 +153,8 @@ isc.OBQuickRun.addProperties({
     if (this.showing) {
       this.doHide();
       return false;
-    } else if (!this.executingAction) {
-      this.setExecutingAction();
-      this.doShow();
     } else {
-      // do nothing: action has just been launched, preventing it to be triggered
-      // twice at the same time
-      // see issue #25910
-      return false;
+      this.doShow();
     }
   },
 
@@ -277,7 +271,6 @@ isc.OBQuickRun.addProperties({
     }
 
     this.focus(); // keeping focus in SC component
-    this.setExecutingAction();
     if (isc.isA.Canvas(this.focusOnHide)) {
       // setting the focus back to a SC component so keyboard shortcuts continue
       // working (they do not if focus is in browser). This is needed to be done

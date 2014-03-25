@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -111,6 +111,20 @@ isc.OBQuickLaunch.addProperties({
     valueField.setElementValue('', null);
   },
 
+  click: function () {
+    if (!this.showing) {
+      if (!this.executingAction) {
+        this.setExecutingAction();
+      } else {
+        // do nothing: action has just been launched, preventing it to be triggered
+        // twice at the same time
+        // see issue #25910
+        return false;
+      }
+    }
+    this.Super('click', arguments)
+  },
+
   // handle the case that someone entered a url in the quick launch
   doHide: function () {
     if (this.members[2].getField('value').getValue() && this.members[2].getField('value').getValue().contains('?')) {
@@ -122,7 +136,7 @@ isc.OBQuickLaunch.addProperties({
     if (this.members[1].getMembers()) {
       this.members[1].destroyAndRemoveMembers(this.members[1].getMembers().duplicate());
     }
-
+    this.setExecutingAction();
     this.Super('doHide', arguments);
   },
 
