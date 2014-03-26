@@ -132,17 +132,17 @@ OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
         OB.info('Error checking the status of the drawer');
         OB.MobileApp.model.set("isDrawerClosed", true);
       } else {
-        if (args.resultData[0] === 1) {
+        if (args.resultData === "Closed") {
           OB.MobileApp.model.set("isDrawerClosed", true);
           errorCounter = 0;
-        } else if (args.resultData[0] === 0) {
+        } else if (args.resultData === "Opened") {
           OB.MobileApp.model.set("isDrawerClosed", false);
           errorCounter = 0;
           if (popup && !popupDrawerOpened.showing) {
             OB.UTIL.showLoading(false);
             popupDrawerOpened.show();
           }
-        } else if (args.resultData[0] === -1 && popup) {
+        } else if (args.resultData === "Error" && popup) {
           errorCounter++;
           if (errorCounter >= 20) {
             OB.MobileApp.model.set("isDrawerClosed", true);
