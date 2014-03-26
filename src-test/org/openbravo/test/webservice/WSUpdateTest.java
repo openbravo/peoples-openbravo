@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,11 +75,24 @@ public class WSUpdateTest extends BaseWSTest {
   }
 
   /**
+   * test case order execution cannot be warrantied, so check if city has already been created
+   * 
+   * @throws Exception
+   */
+  private void initializeCreateCity() throws Exception {
+    if (cityId == null) {
+      testACreateCity();
+    }
+  }
+
+  /**
    * Read the created city using a webservice and make a small change and post it back.
    * 
    * @throws Exception
    */
   public void testReadUpdateCity() throws Exception {
+    initializeCreateCity();
+
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     log.debug(System.currentTimeMillis());
     String newCity;
@@ -103,6 +116,8 @@ public class WSUpdateTest extends BaseWSTest {
    * @throws Exception
    */
   public void testIncorrectRootTag() throws Exception {
+    initializeCreateCity();
+
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     log.debug(city);
     log.debug("---");
@@ -118,16 +133,14 @@ public class WSUpdateTest extends BaseWSTest {
    * @throws Exception
    */
   public void testReadAddDeleteCity() throws Exception {
-    if (cityId == null) {
-      testACreateCity();
-    }
+    initializeCreateCity();
+
     doTestReadAddDeleteCity(false);
   }
 
   public void testReadAddDeleteQueryCity() throws Exception {
-    if (cityId == null) {
-      testACreateCity();
-    }
+    initializeCreateCity();
+
     doTestReadAddDeleteCity(true);
   }
 
@@ -191,10 +204,9 @@ public class WSUpdateTest extends BaseWSTest {
 
     // it should not be there!
     try {
-      doTestGetRequest("/ws/dal/City/" + id, "<error>", 404);
+      doTestGetRequest("/ws/dal/City/" + id, "<error>", 404, true, false);
       fail("City " + id + " was not deleted");
     } catch (final Exception e) {
-      e.printStackTrace(System.err);
       assertTrue(e.getCause() instanceof FileNotFoundException);
     }
   }
@@ -215,6 +227,7 @@ public class WSUpdateTest extends BaseWSTest {
    * @throws Exception
    */
   public void testReadAddCityWrongMethodError() throws Exception {
+    initializeCreateCity();
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     String newCity = city.replaceAll("</name>", (System.currentTimeMillis() + "").substring(6)
         + "</name>");
@@ -231,8 +244,11 @@ public class WSUpdateTest extends BaseWSTest {
   /**
    * Cleans up the database by removing the city. Is run as last therefore the use of the Z
    * character in the name.
+   * 
+   * @throws Exception
    */
-  public void testZRemoveCity() {
+  public void testZRemoveCity() throws Exception {
+    initializeCreateCity();
     doDirectDeleteRequest("/ws/dal/City/" + cityId, 200);
   }
 

@@ -218,6 +218,11 @@ public class BaseWSTest extends BaseTest {
     return doTestGetRequest(wsPart, testContent, responseCode, true);
   }
 
+  protected String doTestGetRequest(String wsPart, String testContent, int responseCode,
+      boolean validate) {
+    return doTestGetRequest(wsPart, testContent, responseCode, validate, true);
+  }
+
   /**
    * Executes a GET request. The content is validated against the XML schema retrieved using the
    * /ws/dal/schema webservice call.
@@ -232,10 +237,13 @@ public class BaseWSTest extends BaseTest {
    *          the expected HTTP response code
    * @param validate
    *          if true then the response content is validated against the Openbravo XML Schema
+   * @param logError
+   *          indicates whether in case of Exception it should be logged, this param should be false
+   *          when Exception is exptected in order not to pollute the log
    * @return the content returned from the GET request
    */
   protected String doTestGetRequest(String wsPart, String testContent, int responseCode,
-      boolean validate) {
+      boolean validate, boolean logException) {
     try {
       final HttpURLConnection hc = createConnection(wsPart, "GET");
       hc.connect();
@@ -266,7 +274,7 @@ public class BaseWSTest extends BaseTest {
         throw e;
       }
     } catch (final Exception e) {
-      throw new OBException("Exception when executing ws: " + wsPart, e);
+      throw new OBException("Exception when executing ws: " + wsPart, e, logException);
     }
   }
 
