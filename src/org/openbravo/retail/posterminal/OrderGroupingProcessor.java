@@ -87,12 +87,14 @@ public class OrderGroupingProcessor {
     HashMap<String, InvoiceTax> invoiceTaxes = null;
     BigDecimal totalNetAmount = BigDecimal.ZERO;
     List<String> processedOrders = new ArrayList<String>();
+    boolean isMultiShipmentLine;
     long lineno = 10;
     long taxLineNo = 0;
     TriggerHandler.getInstance().disable();
     try {
       while (orderLines.next()) {
         long t = System.currentTimeMillis();
+        isMultiShipmentLine = false;
         OrderLine orderLine = (OrderLine) orderLines.get(0);
         log.debug("Line id:" + orderLine.getId());
 
@@ -164,9 +166,12 @@ public class OrderGroupingProcessor {
 
         // the line is split in goods shipment lines
         OrderLine[] orderLinesSplittedByShipmentLine = splitOrderLineByShipmentLine(orderLine);
+        if (orderLinesSplittedByShipmentLine.length > 1) {
+          isMultiShipmentLine = true;
+        }
         for (int i = 0; i < orderLinesSplittedByShipmentLine.length; i++) {
           OrderLine olSplitted = orderLinesSplittedByShipmentLine[i];
-          InvoiceLine invoiceLine = createInvoiceLine(olSplitted, orderLine);
+          InvoiceLine invoiceLine = createInvoiceLine(olSplitted, orderLine, isMultiShipmentLine);
           invoiceLine.setLineNo(lineno);
           lineno += 10;
           invoiceLine.setInvoice(invoice);
@@ -208,14 +213,17 @@ public class OrderGroupingProcessor {
             origPaymentSchedule = OBDal.getInstance().get(Fin_OrigPaymentSchedule.class,
                 origPaymentSchedule.getId());
           }
-          OBDal.getInstance().getSession().evict(olSplitted);
+
+          // if isMultiShipmentLine then the order line ficticious are deleted
+          if (isMultiShipmentLine) {
+            OBDal.getInstance().getSession().evict(olSplitted);
+          }
         }
       }
 
     } finally {
       orderLines.close();
     }
-
     finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule,
         cashUpDate);
     // The commit will be done in ProcessCashClose.java (flush), Transactional process.
@@ -322,7 +330,8 @@ public class OrderGroupingProcessor {
     return taxes;
   }
 
-  protected InvoiceLine createInvoiceLine(OrderLine orderLine, OrderLine origOrderLine) {
+  protected InvoiceLine createInvoiceLine(OrderLine orderLine, OrderLine origOrderLine,
+      boolean isMultiShipmentLine) {
     InvoiceLine invoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
     copyObject(orderLine, invoiceLine);
     invoiceLine.setTaxableAmount(BigDecimal.ZERO);
@@ -332,6 +341,11 @@ public class OrderGroupingProcessor {
     OBDal.getInstance().refresh(origOrderLine);
     origOrderLine.setInvoicedQuantity(origOrderLine.getOrderedQuantity());
     OBDal.getInstance().save(origOrderLine);
+    // if isMultiShipmentLine = true then evict is done to delete fictitious orderLine and
+    // the setInvoiceQuantity is not saved
+    if (isMultiShipmentLine) {
+      OBDal.getInstance().flush();
+    }
 
     if (orderLine.getGoodsShipmentLine() != null) {
       invoiceLine.setGoodsShipmentLine(orderLine.getGoodsShipmentLine());
