@@ -197,11 +197,15 @@
             isbeingprocessed: 'N'
           }), function () {
             _.each(OB.POS.modelterminal.get('payments'), function (payment) {
-              var startingCash = payment.currentBalance;
+              var startingCash = payment.currentBalance,
+                  pAux;
               if (lastCashUpPayments) {
-                startingCash = lastCashUpPayments.filter(function (payMthd) {
+                pAux = lastCashUpPayments.filter(function (payMthd) {
                   return payMthd.paymentTypeId === payment.payment.id;
-                })[0].paymentMethod.amountToKeep;
+                })[0];
+                if (!OB.UTIL.isNullOrUndefined(pAux)) {
+                  startingCash = pAux.paymentMethod.amountToKeep;
+                }
               }
               OB.Dal.save(new OB.Model.PaymentMethodCashUp({
                 id: OB.Dal.get_uuid(),
