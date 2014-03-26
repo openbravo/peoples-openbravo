@@ -453,45 +453,6 @@ public class OrderLoader extends JSONProcessSimple {
   }
 
   protected boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {
-    if (jsonorder.has("isbeingretriggered")
-        && jsonorder.getString("isbeingretriggered").equals("Y")) {
-      // This order has been sent previously. We need to verify if it was saved before, or not.
-      List<Object> parameters = new ArrayList<Object>();
-      parameters.add(jsonorder.getString("documentNo"));
-      parameters.add(jsonorder.getString("posTerminal"));
-      parameters.add(jsonorder.getJSONObject("bp").getString("id"));
-      OBQuery<Order> orders = OBDal.getInstance().createQuery(Order.class,
-          "documentNo=? and obposApplications.id=? and businessPartner.id=?");
-      orders.setParameters(parameters);
-      if (orders.count() > 0) {
-        JSONArray orderlines = jsonorder.getJSONArray("lines");
-        // We've found orders with the same documentno+terminalId+bp
-        // We are going to compare them with the order, and only if one of them
-        // is identical we will not create it
-        for (Order order : orders.list()) {
-          if (order.getOrderLineList().size() == orderlines.length()
-              && order.getGrandTotalAmount()
-                  .compareTo(new BigDecimal(jsonorder.getString("gross"))) == 0) {
-            boolean linesAreIdentical = true;
-            int i = 0;
-            for (OrderLine line : order.getOrderLineList()) {
-              JSONObject jsonline = orderlines.getJSONObject(i);
-              if (line.getOrderedQuantity().compareTo(new BigDecimal(jsonline.getString("qty"))) != 0
-                  || !line.getProduct().getId()
-                      .equals(jsonline.getJSONObject("product").getString("id"))) {
-                linesAreIdentical = false;
-              }
-              i++;
-            }
-            if (linesAreIdentical) {
-              log.error("Detected duplicate order with document number "
-                  + jsonorder.getString("documentNo"));
-              return true;
-            }
-          }
-        }
-      }
-    }
     OBContext.setAdminMode(false);
     try {
       if (jsonorder.has("id") && jsonorder.getString("id") != null
