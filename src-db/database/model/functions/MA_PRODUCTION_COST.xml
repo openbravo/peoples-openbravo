@@ -114,8 +114,8 @@ BEGIN
         , M_PRODUCTIONPLAN pp
       WHERE pr.m_production_id = p_Production_ID
         AND pr.m_production_id = pp.m_production_id
-        AND pp.m_productionplan_id = pl.m_productionplan_id
-        AND pl.calculated = 'N';
+        AND pp.m_productionplan_id = pl.m_productionplan_id;
+      v_costingdate := COALESCE(v_costingdate, v_productiondate);
     ELSE
       -- Costing engine not migrated
       SELECT MAX(pr.ad_client_id), MAX(pr.ad_org_id), MAX(movementdate), MAX(movementdate), COUNT (*), MAX(pr.DOCUMENTNO)
