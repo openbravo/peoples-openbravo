@@ -348,19 +348,19 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       totalQtyToDepo: _.reduce(this.get('paymentList').models, function (total, model) {
         if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undf && model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) {
           return OB.DEC.add(total, OB.DEC.mul(OB.DEC.sub(model.get('foreignCounted'), model.get('qtyToKeep')), model.get('rate')));
-        } else if (model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) return OB.DEC.add(total, OB.DEC.mul(model.get('foreignCounted'), model.get('rate')));
-        else {
+        } else if (model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) {
+          return OB.DEC.add(total, OB.DEC.mul(model.get('foreignCounted'), model.get('rate')));
+        } else {
           return total;
         }
       }, 0)
     };
     //First we fix the qty to keep for non-automated payment methods
-    for (i = 0; i < this.get('paymentList').models.length; i++) {
-      model = this.get('paymentList').models[i];
+    _.each(this.get('paymentList').models, function (model) {
       if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
         model.set('qtyToKeep', model.get('counted'));
       }
-    }
+    });
 
     enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary', 'qtyToKeepSummary', 'qtyToDepoSummary'];
     enumConcepts = ['expected', 'counted', 'difference', 'qtyToKeep', 'foreignCounted'];
@@ -478,13 +478,14 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           });
         } else {
           OB.Dal.save(cashUp.at(0), function () {
-            OB.UTIL.showLoading(false);
-            me.set("finished", true);
             if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
               me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
             }
+            OB.UTIL.initCashUp(function () {
+              OB.UTIL.showLoading(false);
+              me.set("finished", true);
+            });
           }, null);
-
         }
       }, null, null);
     }, null, this);
