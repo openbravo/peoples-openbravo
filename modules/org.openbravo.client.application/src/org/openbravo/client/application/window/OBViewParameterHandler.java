@@ -321,6 +321,10 @@ public class OBViewParameterHandler {
       return parameter.getLength();
     }
 
+    public String getOnChangeFunction() {
+      return parameter.getOnChangeFunction();
+    }
+
     public class ValueMapValue {
       final String key;
       final String value;
@@ -343,10 +347,6 @@ public class OBViewParameterHandler {
       public long getSeqno() {
         return seqno;
       }
-    }
-
-    public String getOnChangeFunction() {
-      return parameter.getOnChangeFunction();
     }
   }
 

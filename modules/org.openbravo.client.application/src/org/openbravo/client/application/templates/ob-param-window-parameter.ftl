@@ -39,7 +39,7 @@
     <#if param.redrawOnChange>
       redrawOnChange: true,
     </#if>
-    <#if param.onChangeFunction != "" >
+    <#if param.onChangeFunction?? && param.onChangeFunction != "" > <#-- TODO: Check why "param.onChangeFunction??" is needed -->
         onChangeFunction: ${param.onChangeFunction?js_string},
     </#if>
     <#if param.showIf != "" >
