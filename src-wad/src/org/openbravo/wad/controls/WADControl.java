@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -372,7 +372,6 @@ public class WADControl {
     if (field == null)
       return "";
     StringBuffer texto = new StringBuffer();
-    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
     int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
     if ("Y".equals(field.istranslated)
         && TableRelationData.existsTableColumn(conn, field.tablename + "_TRL", field.name)) {
@@ -398,6 +397,7 @@ public class WADControl {
         texto.append(WadUtility.applyFormat("(CASE WHEN tableTRL" + itable + "." + field.name
             + " IS NULL THEN TO_CHAR(" + tableName + "." + field.name + ") ELSE TO_CHAR(tableTRL"
             + itable + "." + field.name + ") END)", field.reference, sqlDateFormat));
+        vecCounters.set(0, Integer.toString(++itable));
       }
     } else {
       vecFields.addElement(WadUtility.applyFormat(
@@ -407,8 +407,7 @@ public class WADControl {
           ((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field.name,
           field.reference, sqlDateFormat));
     }
-    vecCounters.set(0, Integer.toString(itable));
-    vecCounters.set(1, Integer.toString(ilist));
+
     return texto.toString();
   }
 
