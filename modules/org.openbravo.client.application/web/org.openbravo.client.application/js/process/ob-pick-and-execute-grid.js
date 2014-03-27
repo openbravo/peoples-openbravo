@@ -131,16 +131,6 @@ isc.OBPickAndExecuteGrid.addProperties({
       view: this.view.buttonOwnerView
     };
 
-    // set properties defined for the grid
-    theGrid = this.view.viewProperties.fields.find('OBPickEditGridItem');
-    if (theGrid) {
-        this.viewProperties = theGrid.viewProperties;
-    } else {
-        window.warn('grid fiel not found!');
-    }
-
-
-
     this.autoFitExpandField = this.getLongestFieldName();
 
     this.Super('initWidget', arguments);
