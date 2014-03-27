@@ -217,6 +217,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
       // Recalculate total properly for all  pendingorders.
       pendingOrderList.each(function (pendingorder) {
+        OB.DATA.OrderTaxes(pendingorder);
         pendingorder.calculateGross();
       });
 
