@@ -1,5 +1,6 @@
 /*
  *************************************************************************
+
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -205,11 +206,8 @@ isc.OBParameterWindowView.addProperties({
 
           OB.OnChangeRegistry.register(this.viewId, field.name, field.onChangeFunction, 'default');
         }
-        if (field.isGrid) {
-          this.grid = isc.OBPickAndExecuteView.create(field);
-        } else {
-          items.push(field);
-        }
+        items.push(field);
+        
       }
 
       if (items.length !== 0) {

@@ -108,8 +108,8 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.sqlFilterClause = this.gridProperties.sqlFilterClause;
     this.lazyFiltering = this.gridProperties.lazyFiltering;
     if ((this.filterClause || this.sqlFilterClause) && this.gridProperties.filterName) {
-      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.gridProperties.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
-      this.view.messageBar.hasFilterMessage = true;
+      this.contentView.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.gridProperties.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
+      this.contentView.messageBar.hasFilterMessage = true;
     }
 
     this.orderByClause = this.gridProperties.orderByClause;
@@ -132,12 +132,14 @@ isc.OBPickAndExecuteGrid.addProperties({
     };
 
     // set properties defined for the grid
-    theGrid = this.view.viewProperties.fields.find(true, 'isGrid');
+    theGrid = this.view.viewProperties.fields.find('OBPickEditGridItem');
     if (theGrid) {
-      this.viewProperties = theGrid.viewProperties;
+        this.viewProperties = theGrid.viewProperties;
     } else {
-      window.warn('grid fiel not found!');
+        window.warn('grid fiel not found!');
     }
+
+
 
     this.autoFitExpandField = this.getLongestFieldName();
 

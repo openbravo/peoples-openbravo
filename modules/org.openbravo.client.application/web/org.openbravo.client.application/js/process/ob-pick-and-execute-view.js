@@ -45,6 +45,8 @@ isc.OBPickAndExecuteView.addProperties({
   addNewButton: null,
 
   gridFields: [],
+  
+  messageBar: null,
 
   initWidget: function () {
     var newButton, i, view = this;
@@ -68,6 +70,7 @@ isc.OBPickAndExecuteView.addProperties({
 
     this.viewGrid = isc.OBPickAndExecuteGrid.create({
       view: this.view,
+      contentView:this,
       fields: this.gridFields,
       height: '*',
       cellHeight: OB.Styles.Process.PickAndExecute.gridCellHeight,
@@ -79,7 +82,8 @@ isc.OBPickAndExecuteView.addProperties({
       saveLocally: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
       autoSaveEdits: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
       neverValidate: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
-      showGridSummary: this.showGridSummary
+      showGridSummary: this.showGridSummary,
+      viewProperties: this.viewProperties
     });
 
 
@@ -117,6 +121,12 @@ isc.OBPickAndExecuteView.addProperties({
     } else {
       this.viewGrid.fetchData();
     }
+    
+    this.messageBar = isc.OBMessageBar.create({
+        visibility: 'hidden',
+        view: this
+      });
+
   },
 
   prepareGridFields: function (fields) {
