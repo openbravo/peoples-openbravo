@@ -430,6 +430,10 @@ public class OBViewParameterHandler {
       return "";
     }
 
+    public String getOnChangeFunction() {
+      return "";
+    }
+
   }
 
   public void setParamWindow(ParameterWindowComponent parameterWindowComponent) {
