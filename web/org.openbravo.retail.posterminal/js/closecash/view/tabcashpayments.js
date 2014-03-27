@@ -103,7 +103,7 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
-    this.$.coin.setContent(this.model.get('coinValue'));
+    this.$.coin.setContent(OB.I18N.formatCurrency(this.model.get('coinValue')));
     var style = 'float: left; width: 15%; text-align: center;';
     if (this.model.get('bordercolor')) {
       style += ' border:10px solid ' + this.model.get('bordercolor') + ';';
