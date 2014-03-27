@@ -60,6 +60,11 @@ isc.OBPickAndExecuteView.addProperties({
     if (this.viewProperties.allowDelete) {
       this._addDeleteField();
     }
+    this.messageBar = isc.OBMessageBar.create({
+        visibility: 'hidden',
+        view: this
+      });
+    this.addMember(this.messageBar);
 
     this.dataSource = this.viewProperties.dataSource;
     this.dataSource.view = this;
@@ -121,11 +126,6 @@ isc.OBPickAndExecuteView.addProperties({
     } else {
       this.viewGrid.fetchData();
     }
-    
-    this.messageBar = isc.OBMessageBar.create({
-        visibility: 'hidden',
-        view: this
-      });
 
   },
 
