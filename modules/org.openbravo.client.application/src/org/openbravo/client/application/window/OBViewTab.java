@@ -467,10 +467,13 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public String getDataSourceId() {
     String dataSourceId = null;
-    if (ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
+    String dataOriginType = tab.getTable().getDataOriginType();
+    if (ApplicationConstants.TABLEBASEDTABLE.equals(dataOriginType)) {
       dataSourceId = tab.getTable().getName();
-    } else {
+    } else if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(dataOriginType)) {
       dataSourceId = tab.getTable().getObserdsDatasource().getId();
+    } else if (ApplicationConstants.HQLBASEDTABLE.equals(dataOriginType)) {
+      dataSourceId = ApplicationConstants.HQL_TABLE_DATASOURCE_ID;
     }
     return dataSourceId;
   }
