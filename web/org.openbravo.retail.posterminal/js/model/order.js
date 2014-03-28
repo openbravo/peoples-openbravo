@@ -919,7 +919,7 @@
     /**
      * Splits a line from the ticket keeping in the line the qtyToKeep quantity,
      * the rest is moved to another line with the same product and no packs, or
-     * to a new one if there's no other line.
+     * to a new one if there's no other line. In case a new is created it is returned.
      */
     splitLine: function (line, qtyToKeep) {
       var originalQty = line.get('qty'),
@@ -947,6 +947,7 @@
         });
         this.get('lines').add(newLine);
         this.setUnit(newLine, qtyToMove, null, true);
+        return newLine;
       } else {
         this.setUnit(newLine, newLine.get('qty') + qtyToMove, null, true);
       }
@@ -990,7 +991,8 @@
           matches, otherPromos, found, compareRule;
 
       compareRule = function (p) {
-        return p.ruleId === line.get('promotions')[k].ruleId;
+        var basep = line.get('promotions')[k];
+        return p.ruleId === basep.ruleId && ((!p.family && !basep.family) || (p.family && basep.family && p.family === basep.family));
       };
 
       for (i = 0; i < lines.length; i++) {
@@ -1059,6 +1061,10 @@
 
       if (discount.percentage) {
         disc.percentage = discount.percentage;
+      }
+
+      if (discount.family) {
+        disc.family = discount.family;
       }
 
       if (typeof discount.applyNext !== 'undefined') {
