@@ -67,6 +67,8 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
       JSONObject defaults = new JSONObject();
       final List<Parameter> orderedParams = new ArrayList<Parameter>();
 
+      // Reorder params in a list in order to compute in order based on the dependencies of default
+      // values
       final boolean paramsOrdered = reorderParams(processDefinition, orderedParams);
 
       if (paramsOrdered) {
@@ -152,6 +154,9 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
     }
   }
 
+  // Returns true if it orders all the params in a list taking into account the dependencies of the
+  // defaults. It returns false of is not able to order all the params because of dependencies in
+  // circle
   private boolean reorderParams(Process processDefinition, List<Parameter> orderedParams) {
     final List<String> paramsAddedToOrderList = new ArrayList<String>();
     List<Parameter> paramsWithDefaultValue = new ArrayList<Parameter>();
