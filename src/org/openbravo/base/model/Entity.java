@@ -37,6 +37,7 @@ import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.validation.AccessLevelChecker;
 import org.openbravo.base.validation.EntityValidator;
 import org.openbravo.base.validation.PropertyValidator;
+import org.openbravo.client.application.ApplicationConstants;
 
 /**
  * Models the business object type. The Entity is the main concept in the in-memory model. An entity
@@ -84,6 +85,7 @@ public class Entity {
   private boolean isDeletable;
   private boolean isView;
   private boolean isDataSourceBased;
+  private boolean isHQLBased;
   private boolean isVirtualEntity = false;
 
   private EntityValidator entityValidator;
@@ -93,8 +95,6 @@ public class Entity {
   private Module module;
 
   private String treeType;
-
-  private static final String DATASOURCEBASEDTABLE = "Datasource";
   public static final String COMPUTED_COLUMNS_PROXY_PROPERTY = "_computedColumns";
   public static final String COMPUTED_COLUMNS_CLASS_APPENDIX = "_ComputedColumns";
 
@@ -124,7 +124,8 @@ public class Entity {
     setInActive(!table.isActive());
     setView(table.isView());
     setTreeType(table.getTreeType());
-    setDataSourceBased(DATASOURCEBASEDTABLE.equals(table.getDataOrigin()));
+    setDataSourceBased(ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOrigin()));
+    setHQLBased(ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOrigin()));
 
     properties = new ArrayList<Property>();
     idProperties = new ArrayList<Property>();
@@ -818,6 +819,14 @@ public class Entity {
 
   public void setDataSourceBased(boolean isDataSourceBased) {
     this.isDataSourceBased = isDataSourceBased;
+  }
+
+  public boolean isHQLBased() {
+    return isHQLBased;
+  }
+
+  public void setHQLBased(boolean isHQLBased) {
+    this.isHQLBased = isHQLBased;
   }
 
   List<String> getJavaImportsInternal() {
