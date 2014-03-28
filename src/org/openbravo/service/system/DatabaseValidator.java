@@ -195,7 +195,7 @@ public class DatabaseValidator implements SystemValidator {
     for (Table adTable : adTables) {
 
       // Do not validate the table if it is based on a datasource
-      if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(adTable.getDataOriginType())) {
+      if (!ApplicationConstants.TABLEBASEDTABLE.equals(adTable.getDataOriginType())) {
         continue;
       }
 
