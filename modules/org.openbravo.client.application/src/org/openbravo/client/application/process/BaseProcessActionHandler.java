@@ -89,6 +89,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       SessionInfo.setProcessId(processId);
       SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(false));
 
+      // Compatibility to legacy grids
       Process process = OBDal.getInstance().get(Process.class, processId);
       if (process.isGridlegacy()) {
         JSONObject jsonRequest = new JSONObject(content);
