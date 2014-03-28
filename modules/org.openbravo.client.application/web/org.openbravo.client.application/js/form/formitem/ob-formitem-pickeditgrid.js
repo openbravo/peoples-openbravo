@@ -30,13 +30,15 @@ isc.OBPickEditGridItem.addProperties({
       this.canvas = isc.OBPickAndExecuteView.create({
         viewProperties: this.viewProperties,
         view: this.view,
+        parameterName: this.name,
         height: this.view.height - 315,
         width: this.view.width - 155
       });
     } else {
       this.canvas = isc.OBPickAndExecuteView.create({
         viewProperties: this.viewProperties,
-        view: this.view
+        view: this.view,
+        parameterName: this.name
       });
     }
     this.Super('init', arguments);

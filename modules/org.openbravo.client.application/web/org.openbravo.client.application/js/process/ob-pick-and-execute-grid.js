@@ -101,6 +101,12 @@ isc.OBPickAndExecuteGrid.addProperties({
     // useful when working with custom field validators
     for (i = 0; i < len; i++) {
       this.fields[i].grid = this;
+      if (this.fields[i].onChangeFunction) {
+        // the default
+        this.fields[i].onChangeFunction.sort = 50;
+
+        OB.OnChangeRegistry.register(this.view.viewId, this.parameterName + OB.Constants.FIELDSEPARATOR + this.fields[i].name, this.fields[i].onChangeFunction, 'default');
+      }
     }
 
     // required to show the funnel icon and to work
@@ -239,9 +245,15 @@ isc.OBPickAndExecuteGrid.addProperties({
         colNum = this.getEditCol(),
         editField = this.getEditField(colNum),
         undef;
+
+    // Execute onChangeFunctions if they exist
+    if (this && OB.OnChangeRegistry.hasOnChange(this.view.viewId, editField)) {
+      OB.OnChangeRegistry.call(this.view.viewId, editField, this.view, this.view.theForm, this);
+    }
+
     if (editField.required) {
       if (newValue === null || newValue === undef) {
-        this.setFieldError(rowNum, editField.name, "Invalid Value");
+        this.setFieldError(rowNum, editField.name, 'Invalid Value');
       } else {
         this.clearFieldError(rowNum, editField.name);
       }
