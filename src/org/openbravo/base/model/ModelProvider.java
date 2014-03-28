@@ -287,7 +287,7 @@ public class ModelProvider implements OBSingleton {
             // don't do mandatory value setting for views, computed columns or datasource based
             // tables
             if (!e.isView() && p.getColumnName() != null && !e.isDataSourceBased()
-                && !e.isVirtualEntity()) {
+                && !e.isHQLBased() && !e.isVirtualEntity()) {
               final Boolean mandatory = colMandatories.get(createColumnMandatoryKey(
                   e.getTableName(), p.getColumnName()));
               if (mandatory != null) {
