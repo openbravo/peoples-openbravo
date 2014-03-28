@@ -145,7 +145,7 @@ public class FKSelectorUIDefinition extends ForeignKeyUIDefinition {
     final String tableId = field.getColumn().getTable().getId();
 
     Property property = null;
-    if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(field.getColumn().getTable()
+    if (!ApplicationConstants.TABLEBASEDTABLE.equals(field.getColumn().getTable()
         .getDataOriginType())) {
       property = DalUtil.getPropertyByTableId(tableId, columnName);
     } else {
