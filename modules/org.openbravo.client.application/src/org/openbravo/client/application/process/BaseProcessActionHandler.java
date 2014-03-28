@@ -84,12 +84,22 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
           }
         }
       }
-
       // Set information for audit trail
       SessionInfo.setProcessType("PD");
       SessionInfo.setProcessId(processId);
       SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(false));
 
+      Process process = OBDal.getInstance().get(Process.class, processId);
+      if (process.isGridlegacy()) {
+        JSONObject jsonRequest = new JSONObject(content);
+        if (!jsonRequest.isNull("_params")) {
+          JSONObject jsonparams = jsonRequest.getJSONObject("_params");
+          JSONObject jsongrid = jsonparams.getJSONObject("grid");
+          jsonRequest.put("_selection", jsongrid.getJSONArray("_selection"));
+          jsonRequest.put("_allRows", jsongrid.getJSONArray("_allRows"));
+          content = jsonRequest.toString();
+        }
+      }
       return doExecute(parameters, content);
 
     } catch (Exception e) {
