@@ -18,8 +18,16 @@
  */
 package org.openbravo.service.datasource;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.hibernate.Query;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.ui.Tab;
 
 public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
@@ -31,7 +39,29 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   @Override
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
-    return null;
+
+    String tabId = parameters.get("tabId");
+    Tab tab = null;
+    if (tabId != null) {
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+    }
+    Table table = tab.getTable();
+
+    List<Column> columns = table.getADColumnList();
+    String hqlQuery = table.getHqlQuery();
+    Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
+    List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+    for (Object row : query.list()) {
+      Map<String, Object> record = new HashMap<String, Object>();
+      Object[] properties = (Object[]) row;
+      int i = 0;
+      for (Column column : columns) {
+        record.put(column.getName(), properties[i]);
+        i++;
+      }
+      data.add(record);
+    }
+    return data;
   }
 
 }
