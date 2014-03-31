@@ -481,7 +481,6 @@ isc.OBStandardView.addProperties({
 
       this.activeBar = isc.HLayout.create({
         height: '100%',
-        canFocus: true,
         // to set active view when it gets clicked
         contents: '&nbsp;',
         width: OB.Styles.ActiveBar.width,
@@ -554,7 +553,6 @@ isc.OBStandardView.addProperties({
 
       // wrap the messagebar and the formgridlayout in a VLayout
       this.gridFormMessageLayout = isc.VLayout.create({
-        canFocus: true,
         height: '100%',
         width: '100%',
         overflow: 'auto'
