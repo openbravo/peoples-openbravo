@@ -935,13 +935,13 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private void setValuesInRequest(String mode, Tab tab, BaseOBObject row, JSONObject jsContent) {
 
-    boolean dataSourceBasedTable = ApplicationConstants.DATASOURCEBASEDTABLE.equals(tab.getTable()
+    boolean tableBasedTable = ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable()
         .getDataOriginType());
 
     List<Field> fields = getADFieldList(tab.getId());
     // If the table is based on a datasource it is not possible to initialize the values from the
     // database
-    if (mode.equals("EDIT") && !dataSourceBasedTable) {
+    if (mode.equals("EDIT") && tableBasedTable) {
       // In EDIT mode we initialize them from the database
       List<Column> columns = getADColumnList(tab.getTable().getId());
 
