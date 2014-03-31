@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
@@ -50,22 +51,36 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
     Table table = tab.getTable();
 
-    List<Column> columns = table.getADColumnList();
     String hqlQuery = table.getHqlQuery();
-    String orderByClause = getSortByClause(parameters);
 
-    if (!orderByClause.isEmpty()) {
-      hqlQuery = hqlQuery + orderByClause;
+    String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
+    if (distinct != null) {
+      final String from = "from ";
+      String formClause = hqlQuery.substring(hqlQuery.toLowerCase().indexOf(from));
+      hqlQuery = "select distinct e." + distinct + " " + formClause;
+    } else {
+      String orderByClause = getSortByClause(parameters);
+      if (!orderByClause.isEmpty()) {
+        hqlQuery = hqlQuery + orderByClause;
+      }
     }
+
     Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
+    List<Column> columns = table.getADColumnList();
     List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
     for (Object row : query.list()) {
       Map<String, Object> record = new HashMap<String, Object>();
-      Object[] properties = (Object[]) row;
       int i = 0;
-      for (Column column : columns) {
-        record.put(column.getName(), properties[i]);
-        i++;
+      if (distinct != null) {
+        BaseOBObject bob = (BaseOBObject) row;
+        record.put(JsonConstants.ID, bob.getId());
+        record.put(JsonConstants.IDENTIFIER, bob.getIdentifier());
+      } else {
+        Object[] properties = (Object[]) row;
+        for (Column column : columns) {
+          record.put(column.getName(), properties[i]);
+          i++;
+        }
       }
       data.add(record);
     }
@@ -95,7 +110,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       direction = " desc ";
     }
     if (!orderByClause.isEmpty()) {
-      orderByClause = ORDERBY + orderByClause + direction;
+      orderByClause = ORDERBY + "e." + orderByClause + direction;
     }
     return orderByClause;
   }
