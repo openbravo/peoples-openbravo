@@ -32,10 +32,6 @@
         this.set('productidentifier', attributes.productidentifier);
         this.set('uOM', attributes.uOM);
         this.set('qty', attributes.qty);
-        if (attributes.qty < 0) {
-          // this line is checked as not selectable to avoid that a discretionary discount is applied in it
-          this.set('notSelectableLine', true);
-        }
         this.set('price', attributes.price);
         this.set('priceList', attributes.priceList);
         this.set('gross', attributes.gross);
@@ -46,14 +42,6 @@
           this.set('grossListPrice', attributes.product.price.standardPrice);
         }
       }
-      this.on('change:qty', function (line) {
-        if (line.get('qty') < 0) {
-          // this line is checked as not selectable to avoid that a discretionary discount is applied in it
-          line.set('notSelectableLine', true);
-        } else if (line.has('notSelectableLine')) {
-          line.set('notSelectableLine', false);
-        }
-      });
     },
 
     getQty: function () {

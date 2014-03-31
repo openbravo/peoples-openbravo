@@ -167,7 +167,13 @@ enyo.kind({
     renderLine: 'OB.UI.RenderOrderLine',
     renderEmpty: 'OB.UI.RenderOrderLineEmpty',
     //defined on redenderorderline.js
-    listStyle: 'edit'
+    listStyle: 'edit',
+    isSelectableLine: function(model){
+      if (!OB.UTIL.isNullOrUndefined(model) && !OB.UTIL.isNullOrUndefined(model.attributes) && model.attributes.qty<0) {
+        return false;
+      }
+      return true;
+    }
   }, {
     tag: 'ul',
     classes: 'unstyled',
