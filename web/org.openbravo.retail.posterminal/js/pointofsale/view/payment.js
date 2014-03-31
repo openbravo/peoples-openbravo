@@ -383,7 +383,7 @@ enyo.kind({
       currentCash = selectedPayment.currentCash || OB.DEC.Zero;
     }
 
-    if (!selectedPayment.paymentMethod.iscash) {
+    if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
       requiredCash = OB.DEC.Zero;
     } else if (paymentstatus.isNegative) {
       requiredCash = paymentstatus.pendingAmt;
