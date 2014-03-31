@@ -96,7 +96,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         hqlUser += "and exists (from ADPreference as p" + //
             " where property = '" + iter + //
             "'   and active = true" + //
-            "   and searchKey = 'Y'" + //
+            "   and to_char(searchKey) = 'Y'" + //
             "   and (userContact = user" + //
             "        or exists (from ADUserRoles r" + //
             "                  where r.role = p.visibleAtRole" + //
