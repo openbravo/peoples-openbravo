@@ -2589,6 +2589,10 @@ isc.OBStandardView.addProperties({
       fld.prompt = fld.title;
       fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProps));
       //issue 20192: 2nd parameter is true because fld.editorProperties is a grid property.
+      if (fld.editorProperties.width) {
+        //Issue 26092: Avoid input icons be cropped
+        delete fld.editorProperties.width;
+      }
       this.setFieldFormProperties(fld.editorProperties, true);
       if (fld.disabled) {
         fld.editorProperties.disabled = true;
