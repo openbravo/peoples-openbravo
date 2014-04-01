@@ -164,7 +164,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       direction = " desc ";
     }
     if (!orderByClause.isEmpty()) {
-      orderByClause = ORDERBY + "e." + orderByClause + direction;
+      orderByClause = ORDERBY + "e." + orderByClause + direction + ", e.id";
     }
     return orderByClause;
   }
