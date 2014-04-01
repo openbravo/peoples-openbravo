@@ -110,6 +110,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     if (distinct != null) {
       final String from = "from ";
       String formClause = hqlQuery.substring(hqlQuery.toLowerCase().indexOf(from));
+      // TODO: Improve distinct query like this: https://issues.openbravo.com/view.php?id=25182
       hqlQuery = "select distinct e." + distinct + " " + formClause;
     } else {
       String orderByClause = getSortByClause(parameters);
