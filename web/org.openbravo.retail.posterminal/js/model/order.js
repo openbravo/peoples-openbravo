@@ -698,7 +698,7 @@
       options = options || {};
       options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
 
-      if (!OB.UTIL.isNullOrUndefined(line.get('originalOrderLineId'))){
+      if (!OB.UTIL.isNullOrUndefined(line.get('originalOrderLineId'))) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
       } else if (OB.DEC.isNumber(price)) {
         var oldprice = line.get('price');
@@ -991,7 +991,8 @@
             continue;
           }
 
-          if (!line.get('promotions') && !otherLine.get('promotions')) {
+          if ((!line.get('promotions') || line.get('promotions').length === 0) //
+          && (!otherLine.get('promotions') || otherLine.get('promotions').length === 0)) {
             line.set('qty', line.get('qty') + otherLine.get('qty'));
             line.calculateGross();
             toRemove.push(otherLine);
