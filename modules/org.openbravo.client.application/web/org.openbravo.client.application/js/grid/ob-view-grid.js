@@ -886,7 +886,11 @@ isc.OBViewGrid.addProperties({
         func = this.getGridSummaryFunction(fld),
         isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
     if (!fld.clientClass && rowNum === this.getEditRow()) {
-      return 'center';
+      if (fld.editorType === 'OBCheckboxItem') {
+        return isRTL ? isc.Canvas.RIGHT : isc.Canvas.LEFT;
+      } else {
+        return isc.Canvas.CENTER;
+      }
     }
 
     if (isSummary && func === 'count') {
