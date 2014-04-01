@@ -22,18 +22,71 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Query;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.kernel.reference.EnumUIDefinition;
+import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
+import org.openbravo.client.kernel.reference.IDUIDefinition;
+import org.openbravo.client.kernel.reference.NumberUIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.client.kernel.reference.YesNoUIDefinition;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.json.JsonConstants;
 
 public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
   private static final String ORDERBY = " order by ";
+
+  @Override
+  // Returns the datasource properties, based on the columns of the table that is going to use the
+  // datasource
+  // This is needed to support client side filtering
+  public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
+    List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
+    String tableId = (String) parameters.get("tableId");
+    if (tableId != null) {
+      Table table = OBDal.getInstance().get(Table.class, tableId);
+      for (Column column : table.getADColumnList()) {
+        final DataSourceProperty dsProperty = new DataSourceProperty();
+        dsProperty.setName(column.getName());
+        dsProperty.setMandatory(column.isMandatory());
+        dsProperty.setUpdatable(column.isUpdatable());
+        Reference reference = column.getReference();
+        final UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
+            reference);
+        if (uiDefinition instanceof IDUIDefinition) {
+          dsProperty.setId(true);
+        } else {
+          dsProperty.setId(false);
+        }
+        dsProperty.setBoolean(uiDefinition instanceof YesNoUIDefinition);
+        dsProperty.setPrimitive(!(uiDefinition instanceof ForeignKeyUIDefinition));
+        dsProperty.setUIDefinition(uiDefinition);
+        if (dsProperty.isPrimitive()) {
+          dsProperty.setPrimitiveObjectType(((PrimitiveDomainType) uiDefinition.getDomainType())
+              .getPrimitiveType());
+          dsProperty.setNumericType(uiDefinition instanceof NumberUIDefinition);
+          if (uiDefinition instanceof EnumUIDefinition) {
+            Set<String> allowedValues = DataSourceProperty.getAllowedValues(column
+                .getReferenceSearchKey());
+            dsProperty.setAllowedValues(allowedValues);
+            dsProperty.setValueMap(DataSourceProperty.createValueMap(allowedValues, column
+                .getReferenceSearchKey().getId()));
+          }
+        }
+        dataSourceProperties.add(dsProperty);
+      }
+    }
+    return dataSourceProperties;
+  }
 
   @Override
   protected int getCount(Map<String, String> parameters) {

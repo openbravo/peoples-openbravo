@@ -129,6 +129,11 @@ public class OBViewTab extends BaseTemplateComponent {
     if (sb.length() > 0) {
       dsParameters.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, sb.toString());
     }
+    // If the tab is based on a hql table, then the tableId must be passed to the datasource so that
+    // it can build the datasource properties based on the columns of the table
+    if (ApplicationConstants.HQLBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
+      dsParameters.put("tableId", tab.getTable().getId());
+    }
     final Component component = dsComponentProvider.getComponent(dsId, dsParameters);
     return component.generate();
   }
