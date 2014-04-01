@@ -120,6 +120,12 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
 
     Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
+    if (startRow > 0) {
+      query.setFirstResult(startRow);
+    }
+    if (endRow > startRow) {
+      query.setMaxResults(endRow - startRow + 1);
+    }
     List<Column> columns = table.getADColumnList();
     List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
     for (Object row : query.list()) {
