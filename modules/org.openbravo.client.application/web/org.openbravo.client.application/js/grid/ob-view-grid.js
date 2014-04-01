@@ -3321,8 +3321,6 @@ isc.OBViewGrid.addProperties({
 
     this.view.isEditingGrid = true;
 
-    record[this.recordBaseStyleProperty] = this.baseStyleEdit;
-
     // also called in case of new
     var form = this.getEditForm();
 
