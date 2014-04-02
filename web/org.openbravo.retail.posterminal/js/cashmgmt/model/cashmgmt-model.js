@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone */
+/*global OB, Backbone, _ */
 
 OB.OBPOSCashMgmt = OB.OBPOSCashMgmt || {};
 OB.OBPOSCashMgmt.Model = OB.OBPOSCashMgmt.Model || {};
@@ -35,7 +35,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           criteria = {
             'paymentMethodId': pay.get('paymentmethod_id'),
             'cashup_id': cashUp.at(0).get('id')
-          }
+          };
           paymentMth = OB.POS.modelterminal.get('payments').filter(function (payment) {
             return payment.payment.id === pay.get('paymentmethod_id');
           })[0].paymentMethod;
@@ -132,8 +132,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
             me.printCashMgmt.print(me.depsdropstosave.toJSON());
           }
         }
-
-      };
+      }
+      
       runSyncProcessCM = _.after(this.depsdropstosave.models.length, runSync);
       // Sending drops/deposits to backend
       _.each(this.depsdropstosave.models, function (depdrop, index) {

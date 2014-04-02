@@ -366,10 +366,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary', 'qtyToKeepSummary', 'qtyToDepoSummary'];
     enumConcepts = ['expected', 'counted', 'difference', 'qtyToKeep', 'foreignCounted'];
     enumSecondConcepts = ['foreignExpected', 'foreignCounted', 'foreignDifference', 'qtyToKeep', 'qtyToKeep'];
+    var sortedPays = _.sortBy(this.get('paymentList').models, function (p) {
+      return p.get('name');
+    });
     for (counter = 0; counter < 5; counter++) {
-      var sortedPays = _.sortBy(this.get('paymentList').models, function (p) {
-        return p.get('name');
-      });
       for (i = 0; i < sortedPays.length; i++) {
         model = sortedPays[i];
         if (!model.get(enumConcepts[counter])) {

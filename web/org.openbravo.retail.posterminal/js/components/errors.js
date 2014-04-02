@@ -93,13 +93,13 @@
         };
 
     if (customerIds.length > 0) {
-      var requestBPParams = {
+      requestBPParams = {
         recordIds: customerIds
       };
       //callback will process orders
       OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveCustomerActionHandler', customerIds, requestBPParams, callbackBP);
     } else if (orderIds.length > 0) {
-      var requestOrderParams = {
+      requestOrderParams = {
         recordIds: orderIds
       };
       OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveOrderActionHandler', orderIds, requestOrderParams, callbackOrders);

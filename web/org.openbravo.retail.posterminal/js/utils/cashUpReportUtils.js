@@ -46,7 +46,7 @@
   }
 
   function updateCashUpInfo(cashUp, receipt, j) {
-    var cashuptaxes, order;
+    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay;
     if (j < receipt.length) {
       order = receipt[j];
       orderType = order.get('orderType');
@@ -80,7 +80,7 @@
         OB.Dal.save(cashUp.at(0), null, null);
         cashuptaxes = [];
         _.each(order.get('lines').models, function (line) {
-          for (var i in line.get('taxLines')) {
+          for (i = 0; i < line.get('taxLines').length; i++) {
             if (orderType === 1 || line.get('qty') < 0) {
               taxOrderType = 1;
             } else {

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, $ */
+/*global enyo, Backbone, $, _ */
 
 OB.MobileApp.model.hookManager.registerHook('OBMOBC_PreWindowOpen', function (args, callbacks) {
   var context = args.context,

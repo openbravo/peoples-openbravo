@@ -24,14 +24,14 @@ enyo.kind({
     this.addCommand('+', {
       stateless: true,
       action: function (keyboard, txt) {
-        t = keyboard.$.editbox.getContent();
+        var t = keyboard.$.editbox.getContent();
         keyboard.$.editbox.setContent(t + '+');
       }
     });
     this.addCommand('-', {
       stateless: true,
       action: function (keyboard, txt) {
-        t = keyboard.$.editbox.getContent();
+        var t = keyboard.$.editbox.getContent();
         keyboard.$.editbox.setContent(t + '-');
       }
     });

@@ -116,6 +116,7 @@
           var me = this;
           me.updatedLastDocNumber = false;
           orders.each(function (order) {
+            var numSequence;
             if (model) {
               model.get('orderList').remove(order);
             }
@@ -124,13 +125,13 @@
             });
             // update the terminal info with the last document number sent to backoffice
             if (!order.get('isQuotation')) {
-              var numSequence = OB.UTIL.getNumberOfSequence(order.get('documentNo'), false);
+              numSequence = OB.UTIL.getNumberOfSequence(order.get('documentNo'), false);
               if (!OB.UTIL.isNullOrUndefined(numSequence) && OB.MobileApp.model.get('terminal').lastDocumentNumber < numSequence) {
                 OB.MobileApp.model.get('terminal').lastDocumentNumber = numSequence;
                 me.updatedLastDocNumber = true;
               }
             } else {
-              var numSequence = OB.UTIL.getNumberOfSequence(order.get('documentNo'), true);
+              numSequence = OB.UTIL.getNumberOfSequence(order.get('documentNo'), true);
               if (!OB.UTIL.isNullOrUndefined(numSequence) && OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber < numSequence) {
                 OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber = numSequence;
                 me.updatedLastDocNumber = true;
