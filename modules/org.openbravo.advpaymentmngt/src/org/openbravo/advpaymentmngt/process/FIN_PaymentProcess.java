@@ -687,7 +687,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         }
 
         // Do not restore paid amounts if the payment is awaiting execution.
-        boolean restorePaidAmounts = (FIN_Utility.seqnumberpaymentstatus(payment.getStatus())) <= (FIN_Utility
+        boolean restorePaidAmounts = (FIN_Utility.seqnumberpaymentstatus(payment.getStatus())) == (FIN_Utility
             .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));
         // Initialize amounts
         payment.setProcessed(false);
@@ -741,7 +741,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
                 .getFINPaymentScheduleDetailList()) {
               Boolean invoicePaidold = paymentScheduleDetail.isInvoicePaid();
-              if (invoicePaidold) {
+              if (invoicePaidold | paymentScheduleDetail.getInvoicePaymentSchedule() == null) {
                 BigDecimal psdWriteoffAmount = paymentScheduleDetail.getWriteoffAmount();
                 BigDecimal psdAmount = paymentScheduleDetail.getAmount();
                 BigDecimal amount = psdAmount.add(psdWriteoffAmount);
@@ -827,38 +827,22 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                       paymentScheduleDetail.getOrderPaymentSchedule(), psdAmount.negate(),
                       psdWriteoffAmount.negate());
                 }
-
-                // when generating credit for a BP SO_CreditUsed is also updated
-                if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
-                    && paymentScheduleDetail.getOrderPaymentSchedule() == null
-                    && paymentScheduleDetail.getPaymentDetails().getGLItem() == null
-                    && restorePaidAmounts && !paymentDetail.isRefund()) {
-                  // BP SO_CreditUsed
-                  if (isReceipt) {
-                    increaseCustomerCredit(businessPartner, amount);
-                  } else {
-                    decreaseCustomerCredit(businessPartner, amount);
-                  }
-                }
-
-                if (paymentScheduleDetail.getOrderPaymentSchedule() != null && restorePaidAmounts) {
-                  FIN_AddPayment.updatePaymentScheduleAmounts(
-                      paymentScheduleDetail.getOrderPaymentSchedule(), psdAmount.negate(),
-                      psdWriteoffAmount.negate());
-                }
-                // when generating credit for a BP SO_CreditUsed is also updated
-                if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
-                    && paymentScheduleDetail.getOrderPaymentSchedule() == null
-                    && paymentScheduleDetail.getPaymentDetails().getGLItem() == null
-                    && restorePaidAmounts && !paymentDetail.isRefund()) {
-                  // BP SO_CreditUsed
-                  if (isReceipt) {
-                    increaseCustomerCredit(businessPartner, amount);
-                  } else {
-                    decreaseCustomerCredit(businessPartner, amount);
+                if (restorePaidAmounts) {
+                  // when generating credit for a BP SO_CreditUsed is also updated
+                  if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
+                      && paymentScheduleDetail.getOrderPaymentSchedule() == null
+                      && paymentScheduleDetail.getPaymentDetails().getGLItem() == null
+                      && restorePaidAmounts && !paymentDetail.isRefund()) {
+                    // BP SO_CreditUsed
+                    if (isReceipt) {
+                      increaseCustomerCredit(businessPartner, amount);
+                    } else {
+                      decreaseCustomerCredit(businessPartner, amount);
+                    }
                   }
                 }
               }
+
               if (strAction.equals("R")
                   || (strAction.equals("RE")
                       && paymentScheduleDetail.getInvoicePaymentSchedule() == null
@@ -1034,7 +1018,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               for (final FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
                   .getFINPaymentScheduleDetailList()) {
                 Boolean invoicePaidold = paymentScheduleDetail.isInvoicePaid();
-                if (invoicePaidold) {
+                if (invoicePaidold | paymentScheduleDetail.getInvoicePaymentSchedule() == null) {
                   paymentScheduleDetail.setInvoicePaid(false);
                 }
                 BigDecimal outStandingAmt = BigDecimal.ZERO;

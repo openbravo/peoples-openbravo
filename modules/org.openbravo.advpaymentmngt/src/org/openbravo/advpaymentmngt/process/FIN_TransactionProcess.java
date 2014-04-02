@@ -179,9 +179,8 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
               for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
                 invoicePaidold = psd.isInvoicePaid();
                 if (invoicePaidold) {
-                  boolean restore = (FIN_Utility.seqnumberpaymentstatus(payment.isReceipt() ? "RPR"
-                      : "PPM")) < (FIN_Utility.seqnumberpaymentstatus(FIN_Utility
-                      .invoicePaymentStatus(payment)));
+                  boolean restore = (FIN_Utility.seqnumberpaymentstatus(payment.getStatus())) == (FIN_Utility
+                      .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));
                   if (restore) {
                     FIN_Utility.restorePaidAmounts(psd);
                   }
