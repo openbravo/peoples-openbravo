@@ -472,7 +472,6 @@ isc.OBStandardView.addProperties({
         completeFieldsWithoutImages, fieldsWithoutImages;
     if (this.tabId && this.tabId.length > 0) {
       this.formGridLayout = isc.HLayout.create({
-        canFocus: true,
         width: '100%',
         height: '*',
         overflow: 'visible',
@@ -535,7 +534,6 @@ isc.OBStandardView.addProperties({
       // in ob-view-form-linked-items is still called on the correct
       // object 
       this.statusBarFormLayout = isc.VLayout.create({
-        canFocus: true,
         width: '100%',
         height: '*',
         visibility: 'hidden',
@@ -562,7 +560,6 @@ isc.OBStandardView.addProperties({
 
       // and place the active bar to the left of the form/grid/messagebar
       this.activeGridFormMessageLayout = isc.HLayout.create({
-        canFocus: true,
         height: (this.hasChildTabs ? '50%' : '100%'),
         width: '100%',
         overflow: 'hidden'
