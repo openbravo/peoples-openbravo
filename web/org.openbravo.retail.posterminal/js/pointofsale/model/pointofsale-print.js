@@ -13,6 +13,24 @@
 
   var PrintReceipt = function (model) {
       var terminal = OB.POS.modelterminal.get('terminal');
+      function dumyFunction () {}
+      function extendHWResource(resource, template) {
+        if (terminal[template + "IsPdf"] === 'true') {
+          resource.ispdf = true;
+          resource.printer = terminal[template + "Printer"];
+          var i = 0,
+              subreports = [];
+
+          while (terminal.hasOwnProperty(template + "Subrep" + i)) {
+            subreports[i] = new OB.DS.HWResource(terminal[template + "Subrep" + i]);
+            subreports[i].getData(dumyFunction);
+            i++;
+          }
+          resource.subreports = subreports;
+          resource.getData(function () {});
+        }
+      }
+
       this.receipt = model.get('order');
       this.multiOrders = model.get('multiOrders');
       this.multiOrders.on('print', function (order, forcePrint) {
@@ -42,21 +60,6 @@
       this.templatecashup = new OB.DS.HWResource(terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate);
       extendHWResource(this.templatecashup, "printCashUpTemplate");
 
-      function extendHWResource(resource, template) {
-        if (terminal[template + "IsPdf"] === 'true') {
-          resource.ispdf = true;
-          resource.printer = terminal[template + "Printer"];
-          var i = 0,
-              subreports = [];
-          while (terminal.hasOwnProperty(template + "Subrep" + i)) {
-            subreports[i] = new OB.DS.HWResource(terminal[template + "Subrep" + i]);
-            subreports[i].getData(function () {});
-            i++;
-          }
-          resource.subreports = subreports;
-          resource.getData(function () {});
-        }
-      }
       };
 
   PrintReceipt.prototype.print = function (order, forcePrint) {
@@ -71,6 +74,29 @@
       order: order,
       template: template
     }, function (args) {
+      function printPDF(receipt, args) {
+        OB.POS.hwserver._printPDF({
+          param: receipt.serializeToJSON(),
+          mainReport: args.template,
+          subReports: args.template.subreports
+        }, function (result) {
+          var otherMe = me;
+          var myreceipt = receipt;
+          if (result && result.exception) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              action: function () {
+                var otherOtherMe = otherMe;
+                otherOtherMe.print();
+                return true;
+              }
+            }, {
+              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+            }]);
+          }
+        });
+      }
+      
       if (args.cancelOperation && args.cancelOperation === true) {
         return true;
       }
@@ -155,29 +181,6 @@
             }
           });
         }
-      }
-
-      function printPDF(receipt, args) {
-        OB.POS.hwserver._printPDF({
-          param: receipt.serializeToJSON(),
-          mainReport: args.template,
-          subReports: args.template.subreports
-        }, function (result) {
-          var otherMe = me;
-          var myreceipt = receipt;
-          if (result && result.exception) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-              action: function () {
-                var otherOtherMe = otherMe;
-                otherOtherMe.print();
-                return true;
-              }
-            }, {
-              label: OB.I18N.getLabel('OBMOBC_LblCancel')
-            }]);
-          }
-        });
       }
     });
   };
