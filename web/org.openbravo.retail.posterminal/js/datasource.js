@@ -100,6 +100,12 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
         }
       },
       fail: function (inSender, inResponse) {
+        // prevent more than one entry.
+        if (this.failed) {
+          return;
+        }
+        this.failed = true;
+
         if (callback) {
           callback({
             exception: {
@@ -132,6 +138,12 @@ OB.DS.HWServer.prototype._printPDF = function (params, callback) {
         }
       },
       fail: function (inSender, inResponse) {
+        // prevent more than one entry.
+        if (this.failed) {
+          return;
+        }
+        this.failed = true;
+
         if (callback) {
           callback({
             exception: {
