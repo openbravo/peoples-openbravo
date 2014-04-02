@@ -84,13 +84,15 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
         }
       } else {
         count = jsonObjects.size() + startRow;
-        int endRow = Integer.parseInt(endRowStr);
-        // computedMaxResults is one too much, if we got one to much then correct
-        // the result and up the count so that the grid knows that there are more
-        int computedMaxResults = endRow - startRow + 1;
-        if (jsonObjects.size() == computedMaxResults) {
-          jsonObjects = jsonObjects.subList(0, jsonObjects.size() - 1);
-          count++;
+        if (endRowStr != null) {
+          int endRow = Integer.parseInt(endRowStr);
+          // computedMaxResults is one too much, if we got one to much then correct
+          // the result and up the count so that the grid knows that there are more
+          int computedMaxResults = endRow - startRow + 1;
+          if (jsonObjects.size() == computedMaxResults) {
+            jsonObjects = jsonObjects.subList(0, jsonObjects.size() - 1);
+            count++;
+          }
         }
       }
       jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
