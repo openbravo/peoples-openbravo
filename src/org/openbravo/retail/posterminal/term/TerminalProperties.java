@@ -19,6 +19,7 @@ import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.PrintTemplate;
+import org.openbravo.retail.posterminal.PrintTemplateSubrep;
 import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,6 +99,15 @@ public class TerminalProperties extends ModelExtension {
           .getCurrentOrganization(), propertyName);
       if (value != null) {
         list.add(new HQLProperty("'" + value.getTemplatePath() + "'", alias));
+        list.add(new HQLProperty("'" + value.isPdf() + "'", alias + "IsPdf"));
+        if (value.isPdf()) {
+          list.add(new HQLProperty("'" + value.getPrinter() + "'", alias + "Printer"));
+        }
+        int i = 0;
+        for (PrintTemplateSubrep subrep : value.getOBPOSPrintTemplateSubrepList()) {
+          list.add(new HQLProperty("'" + subrep.getTemplatePath() + "'", alias + "Subrep" + i));
+          i++;
+        }
       }
     } catch (Exception e) {
       log.error("Error getting property " + propertyName, e);

@@ -114,3 +114,35 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
     ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
   }
 };
+
+OB.DS.HWServer.prototype._printPDF = function (params, callback) {
+  if (this.url) {
+    var me = this;
+    var ajaxRequest = new enyo.Ajax({
+      url: me.url + 'pdf',
+      cacheBust: false,
+      method: 'POST',
+      handleAs: 'json',
+      timeout: 3000,
+      contentType: 'application/json;charset=utf-8',
+      data: JSON.stringify(params),
+      success: function (inSender, inResponse) {
+        if (callback) {
+          callback(inResponse);
+        }
+      },
+      fail: function (inSender, inResponse) {
+        if (callback) {
+          callback({
+            exception: {
+              message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+            }
+          });
+        } else {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+        }
+      }
+    });
+    ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
+  }
+};

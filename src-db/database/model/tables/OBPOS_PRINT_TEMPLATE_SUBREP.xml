@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <database name="TABLE OBPOS_PRINT_TEMPLATE">
-    <table name="OBPOS_PRINT_TEMPLATE" primaryKey="OBPOS_PRINTTEMPLATE_PK">
-      <column name="OBPOS_PRINT_TEMPLATE_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE OBPOS_PRINT_TEMPLATE_SUBREP">
+    <table name="OBPOS_PRINT_TEMPLATE_SUBREP" primaryKey="OBPOS_PRINTTEMPLATE_SUBREP_PK">
+      <column name="OBPOS_PRINT_TEMPLATE_SUBREP_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -33,6 +33,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="OBPOS_PRINT_TEMPLATE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="AD_MODULE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -41,30 +45,21 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TEMPLATE_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="TEMPLATE_PATH" primaryKey="false" required="true" type="VARCHAR" size="500" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISPDF" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="PRINTER" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <foreign-key foreignTable="AD_CLIENT" name="OBPOS_PRINTTEMPLATE_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="OBPOS_PRINTTEMPLATE_SUBREP_CLI">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="OBPOS_PRINTTEMPLATE_MODULE">
+      <foreign-key foreignTable="AD_MODULE" name="OBPOS_PRINTTEMPLATE_SUBREP_MOD">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="OBPOS_PRINTTEMPLATE_ORG">
+      <foreign-key foreignTable="AD_ORG" name="OBPOS_PRINTTEMPLATE_SUBREP_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="OBPOS_PRINTTEMPLATE_SUBREP_TMP">
+        <reference local="OBPOS_PRINT_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
       <check name="OBPOS_PRINTTEMPLATE_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

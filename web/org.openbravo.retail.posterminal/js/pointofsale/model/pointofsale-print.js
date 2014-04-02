@@ -28,12 +28,35 @@
       }, this);
 
       this.templatereceipt = new OB.DS.HWResource(terminal.printTicketTemplate || OB.OBPOSPointOfSale.Print.ReceiptTemplate);
+      extendHWResource(this.templatereceipt, "printTicketTemplate");
       this.templateclosedreceipt = new OB.DS.HWResource(terminal.printClosedReceiptTemplate || OB.OBPOSPointOfSale.Print.ReceiptClosedTemplate);
+      extendHWResource(this.templateclosedreceipt, "printClosedReceiptTemplate");
       this.templateinvoice = new OB.DS.HWResource(terminal.printInvoiceTemplate || OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice);
+      extendHWResource(this.templateinvoice, "printInvoiceTemplate");
       this.templatereturn = new OB.DS.HWResource(terminal.printReturnTemplate || OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn);
+      extendHWResource(this.templatereturn, "printReturnTemplate");
       this.templatereturninvoice = new OB.DS.HWResource(terminal.printReturnInvoiceTemplate || OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice);
+      extendHWResource(this.templatereturninvoice, "printReturnInvoiceTemplate");
       this.templatelayaway = new OB.DS.HWResource(terminal.printLayawayTemplate || OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway);
+      extendHWResource(this.templatelayaway, "printLayawayTemplate");
       this.templatecashup = new OB.DS.HWResource(terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate);
+      extendHWResource(this.templatecashup, "printCashUpTemplate");
+
+      function extendHWResource(resource, template) {
+        if (terminal[template + "IsPdf"] === 'true') {
+          resource.ispdf = true;
+          resource.printer = terminal[template + "Printer"];
+          var i = 0,
+              subreports = [];
+          while (terminal.hasOwnProperty(template + "Subrep" + i)) {
+            subreports[i] = new OB.DS.HWResource(terminal[template + "Subrep" + i]);
+            subreports[i].getData(function () {});
+            i++;
+          }
+          resource.subreports = subreports;
+          resource.getData(function () {});
+        }
+      }
       };
 
   PrintReceipt.prototype.print = function (order, forcePrint) {
@@ -81,30 +104,13 @@
           }
         }
       }
-      OB.POS.hwserver.print(args.template, {
-        order: receipt
-      }, function (result) {
-        var otherMe = me;
-        var myreceipt = receipt;
-        if (result && result.exception) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            action: function () {
-              var otherOtherMe = otherMe;
-              otherOtherMe.print();
-              return true;
-            }
-          }, {
-            label: OB.I18N.getLabel('OBMOBC_LblCancel')
-          }]);
+      if (args.template.ispdf) {
+        args.template.dateFormat = OB.Format.date;
+        printPDF(receipt, args);
+        if (receipt.get('orderType') === 1 && !OB.POS.modelterminal.hasPermission('OBPOS_print.once')) {
+          printPDF(receipt, args);
         }
-      });
-      //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
-      if ((receipt.get('orderType') === 1 && !OB.POS.modelterminal.hasPermission('OBPOS_print.once')) || _.filter(receipt.get('payments').models, function (iter) {
-        if (iter.get('printtwice')) {
-          return iter;
-        }
-      }).length > 0) {
+      } else {
         OB.POS.hwserver.print(args.template, {
           order: receipt
         }, function (result) {
@@ -123,13 +129,56 @@
             }]);
           }
         });
+        //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
+        if ((receipt.get('orderType') === 1 && !OB.POS.modelterminal.hasPermission('OBPOS_print.once')) || _.filter(receipt.get('payments').models, function (iter) {
+          if (iter.get('printtwice')) {
+            return iter;
+          }
+        }).length > 0) {
+          OB.POS.hwserver.print(args.template, {
+            order: receipt
+          }, function (result) {
+            var otherMe = me;
+            var myreceipt = receipt;
+            if (result && result.exception) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                action: function () {
+                  var otherOtherMe = otherMe;
+                  otherOtherMe.print();
+                  return true;
+                }
+              }, {
+                label: OB.I18N.getLabel('OBMOBC_LblCancel')
+              }]);
+            }
+          });
+        }
+      }
+
+      function printPDF(receipt, args) {
+        OB.POS.hwserver._printPDF({
+          param: receipt.serializeToJSON(),
+          mainReport: args.template,
+          subReports: args.template.subreports
+        }, function (result) {
+          var otherMe = me;
+          var myreceipt = receipt;
+          if (result && result.exception) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              action: function () {
+                var otherOtherMe = otherMe;
+                otherOtherMe.print();
+                return true;
+              }
+            }, {
+              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+            }]);
+          }
+        });
       }
     });
-
-
-
-
-
   };
 
   PrintReceipt.prototype.displayTotal = function () {
