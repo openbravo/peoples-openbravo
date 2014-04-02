@@ -141,6 +141,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ENTITY_ALIAS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBSERDS_DATASOURCE" name="AD_COLUMN_DATASOURCE">
         <reference local="OBSERDS_DATASOURCE_ID" foreign="OBSERDS_DATASOURCE_ID"/>
       </foreign-key>
