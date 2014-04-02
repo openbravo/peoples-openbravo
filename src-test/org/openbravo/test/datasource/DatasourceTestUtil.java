@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * @author alostale
  * 
  */
-public class DatasourceTestUtil {
+class DatasourceTestUtil {
   private static final Logger log = LoggerFactory.getLogger(DatasourceTestUtil.class);
   private static final String CONTEXT_PROPERTY = "context.url";
 
