@@ -52,5 +52,15 @@ isc.OBPickEditGridItem.addProperties({
     allProperties._allRows = this.canvas.viewGrid.data.allRows || this.canvas.viewGrid.data.localData || this.canvas.viewGrid.data;
     allProperties._selection = this.canvas.viewGrid.getSelectedRecords();
     return (allProperties);
+  },
+
+  setDisabled: function (newState) {
+    this.Super('setDisabled', arguments);
+    if (newState === true) {
+      this.setDisabled(false);
+      this.canvas.viewGrid.setCanEdit(false);
+    } else {
+      this.canvas.viewGrid.setCanEdit(true);
+    }
   }
 });

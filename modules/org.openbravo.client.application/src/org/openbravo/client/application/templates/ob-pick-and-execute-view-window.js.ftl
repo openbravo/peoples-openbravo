@@ -38,19 +38,7 @@ isc.ClassFactory.defineClass('<#if !data.popup>processDefinition</#if>${data.win
     viewProperties: {
       fields: [
     <#list data.paramHandler.parameters as param>
-      <#if param.grid>
-      {
-        type:'OBPickEditGridItem',
-        name: '${param.name?js_string}',
-        viewProperties: {
-          ${param.tabView}
-        }
-
-      }
-      <#if param_has_next>,</#if>
-      <#else>
       <@createParameter param/><#if param_has_next>,</#if>
-      </#if>
     </#list>    
      ]
     },
