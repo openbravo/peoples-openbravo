@@ -383,6 +383,11 @@ public class DatabaseValidator implements SystemValidator {
       // can happen with mismatches
       return;
     }
+    if (entity.getTableName().equalsIgnoreCase("Ad_Module_Install")) {
+      // We shouldn't check the foreign keys of the Ad_Module_Install table, as this one is special,
+      // and doesn't need fks
+      return;
+    }
     for (Property property : entity.getProperties()) {
 
       // ignore computed columns
