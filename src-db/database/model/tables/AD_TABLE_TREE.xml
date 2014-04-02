@@ -100,6 +100,9 @@
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLETREE_AD_TABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="OBSERDS_DATASOURCE" name="AD_TABLETREE_DATASOURCE">
+        <reference local="OBSERDS_DATASOURCE_ID" foreign="OBSERDS_DATASOURCE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_MODULE" name="AD_TABLTREE_AD_MODULE">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
