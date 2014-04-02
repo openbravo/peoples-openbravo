@@ -47,6 +47,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -54,6 +55,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentPropDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.scheduling.ProcessBundle;
@@ -61,6 +63,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
   private static AdvPaymentMngtDao dao;
+
+  public BigDecimal ZERO = BigDecimal.ZERO;
 
   public void execute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();
@@ -154,10 +158,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
 
         boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(payment.TABLE_NAME,
             payment.getId(), payment.TABLE_NAME + "_ID", "LE");
-        if (!FIN_Utility.isPeriodOpen(payment.getClient().getId(), payment.getDocumentType()
-            .getDocumentCategory(), payment.getOrganization().getId(), OBDateUtils
-            .formatDate(payment.getPaymentDate()))
-            && orgLegalWithAccounting) {
+        boolean documentEnabled = getDocumentConfirmation(conProvider, payment.getId());
+        if (documentEnabled
+            && !FIN_Utility.isPeriodOpen(payment.getClient().getId(), payment.getDocumentType()
+                .getDocumentCategory(), payment.getOrganization().getId(), OBDateUtils
+                .formatDate(payment.getPaymentDate())) && orgLegalWithAccounting) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
           msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
@@ -1347,6 +1352,59 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     new FIN_TransactionProcess().execute(pb);
     myMessage = (OBError) pb.getResult();
     return myMessage;
+  }
+
+  public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
+    // Checks if this step is configured to generate accounting for the selected financial account
+    boolean confirmation = false;
+    OBContext.setAdminMode();
+    try {
+      FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strRecordId);
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+          payment.getPaymentMethod()));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
+      List<FinAccPaymentMethod> lines = obCriteria.list();
+      List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
+          .getFINFinancialAccountAcctList();
+      for (FIN_FinancialAccountAccounting account : accounts) {
+        if (confirmation)
+          return confirmation;
+        if (payment.isReceipt()) {
+          if (("INT").equals(lines.get(0).getUponReceiptUse())
+              && account.getInTransitPaymentAccountIN() != null)
+            confirmation = true;
+          else if (("DEP").equals(lines.get(0).getUponReceiptUse())
+              && account.getDepositAccount() != null)
+            confirmation = true;
+          else if (("CLE").equals(lines.get(0).getUponReceiptUse())
+              && account.getClearedPaymentAccount() != null)
+            confirmation = true;
+        } else {
+          if (("INT").equals(lines.get(0).getUponPaymentUse())
+              && account.getFINOutIntransitAcct() != null)
+            confirmation = true;
+          else if (("WIT").equals(lines.get(0).getUponPaymentUse())
+              && account.getWithdrawalAccount() != null)
+            confirmation = true;
+          else if (("CLE").equals(lines.get(0).getUponPaymentUse())
+              && account.getClearedPaymentAccountOUT() != null)
+            confirmation = true;
+        }
+        // For payments with Amount ZERO always create an entry as no transaction will be created
+        if (payment.getAmount().compareTo(ZERO) == 0) {
+          confirmation = true;
+        }
+      }
+    } catch (Exception e) {
+      return confirmation;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return confirmation;
   }
 
 }
