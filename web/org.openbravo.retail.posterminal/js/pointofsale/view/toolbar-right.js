@@ -438,10 +438,10 @@ enyo.kind({
   },
   components: [{
     kind: 'OB.UI.SearchProductCharacteristic',
-    name: 'searchCharacteristic'
+    name: 'searchCharacteristicTabContent'
   }],
   receiptChanged: function () {
-    this.$.searchCharacteristic.setReceipt(this.receipt);
+    this.$.searchCharacteristicTabContent.setReceipt(this.receipt);
   }
 });
 
@@ -449,7 +449,8 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabBrowse',
   kind: 'OB.UI.TabPane',
   components: [{
-    kind: 'OB.UI.ProductBrowser'
+    kind: 'OB.UI.ProductBrowser',
+    name: 'catalogTabContent'
   }]
 });
 
@@ -461,10 +462,10 @@ enyo.kind({
   },
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.Scan',
-    name: 'scan'
+    name: 'scanTabContent'
   }],
   receiptChanged: function () {
-    this.$.scan.setReceipt(this.receipt);
+    this.$.scanTabContent.setReceipt(this.receipt);
   }
 });
 
@@ -476,10 +477,10 @@ enyo.kind({
   },
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.EditLine',
-    name: 'edit'
+    name: 'editTabContent'
   }],
   receiptChanged: function () {
-    this.$.edit.setReceipt(this.receipt);
+    this.$.editTabContent.setReceipt(this.receipt);
   }
 });
 
@@ -491,10 +492,10 @@ enyo.kind({
   },
   components: [{
     kind: 'OB.OBPOSPointOfSale.UI.Payment',
-    name: 'payment'
+    name: 'paymentTabContent'
   }],
   receiptChanged: function () {
-    this.$.payment.setReceipt(this.receipt);
+    this.$.paymentTabContent.setReceipt(this.receipt);
   },
   executeOnShow: function (options) {
     var me = this;

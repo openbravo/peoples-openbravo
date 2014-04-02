@@ -11,6 +11,7 @@
 
 enyo.kind({
   name: 'OB.UI.ModalReceiptLinesProperties',
+  id: 'org.openbravo.ModalReceiptLinesProperties',
   kind: 'OB.UI.ModalAction',
   handlers: {
     onApplyChanges: 'applyChanges'
@@ -44,9 +45,13 @@ enyo.kind({
   },
   bodyButtons: {
     components: [{
-      kind: 'OB.UI.ReceiptPropertiesDialogApply'
+      kind: 'OB.UI.ReceiptPropertiesDialogApply',
+      name: 'receiptLinePropertiesApplyBtn',
+      id: 'org.openbravo.receiptLinePropertiesApplyBtn'
     }, {
-      kind: 'OB.UI.ReceiptPropertiesDialogCancel'
+      kind: 'OB.UI.ReceiptPropertiesDialogCancel',
+      name: 'receiptLinePropertiesCancelBtn',
+      id: 'org.openbravo.receiptLinePropertiesCancelBtn'
     }]
   },
   loadValue: function (mProperty, component) {
@@ -120,6 +125,7 @@ enyo.kind({
   newAttributes: [{
     kind: 'OB.UI.renderTextProperty',
     name: 'receiptLineDescription',
+    id: 'org.openbravo.receiptLineDescription',
     modelProperty: 'description',
     i18nLabel: 'OBPOS_LblDescription'
   }]

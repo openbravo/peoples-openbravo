@@ -36,6 +36,7 @@ enyo.kind({
 });
 enyo.kind({
   name: 'OB.UI.TotalReceiptLine',
+  id: 'org.openbravo.totalReceiptLineContainer',
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
   },
@@ -45,9 +46,11 @@ enyo.kind({
     style: 'float: left; width: 40%;'
   }, {
     name: 'totalqty',
+    id: 'org.openbravo.orderLineListTotalUnits',
     style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
   }, {
     name: 'totalgross',
+    id: 'org.openbravo.orderLineListTotalAmount',
     style: 'float: left; width: 40%; text-align:right; font-weight:bold;'
   }, {
     style: 'clear: both;'
@@ -86,6 +89,7 @@ enyo.kind({
     style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
   }, {
     name: 'totaltax',
+    id: 'org.openbravo.orderTotalTaxLineTotalTax',
     style: 'float: left; width: 60%; text-align:right; font-weight:bold;'
   }, {
     style: 'clear: both;'
@@ -193,9 +197,11 @@ enyo.kind({
         components: [{
           kind: 'btninvoice',
           name: 'divbtninvoice',
+          id: 'org.openbravo.invoiceOrderButton',
           showing: false
         }, {
           name: 'divText',
+          id: 'org.openbravo.orderTypeLabel',
           style: 'float: right; text-align: right; font-weight:bold; font-size: 30px;',
           showing: false,
           content: ''
@@ -215,6 +221,7 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ScrollableTable',
       name: 'listTaxLines',
+      id: 'org.openbravo.orderTaxLinesList',
       scrollAreaMaxHeight: '250px',
       renderLine: 'OB.UI.RenderTaxLine',
       renderEmpty: 'OB.UI.RenderTaxLineEmpty',

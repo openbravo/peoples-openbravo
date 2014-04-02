@@ -66,6 +66,7 @@
                 OB.UTIL.showLoading(false);
                 OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel(data.exception.message), [{
                   label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  isConfirmButton: true,
                   action: function () {
                     terminalModel.logout();
                     OB.UTIL.showLoading(true);
@@ -79,6 +80,7 @@
               } else {
                 OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal'), [{
                   label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  isConfirmButton: true,
                   action: function () {
                     OB.UTIL.showLoading(true);
                     terminalModel.logout();

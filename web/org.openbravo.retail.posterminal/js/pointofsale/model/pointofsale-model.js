@@ -498,6 +498,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (receipt.overpaymentExists()) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
           action: function () {
             receipt.trigger('paymentAccepted');
           }
@@ -515,6 +516,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) > 0) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
           action: function () {
             me.get('multiOrders').trigger('paymentAccepted');
           }

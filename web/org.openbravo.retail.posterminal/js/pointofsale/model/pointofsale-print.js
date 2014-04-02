@@ -119,6 +119,7 @@
           if (result && result.exception) {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              isConfirmButton: true,
               action: function () {
                 var otherOtherMe = otherMe;
                 otherOtherMe.print();

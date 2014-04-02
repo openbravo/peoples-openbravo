@@ -138,6 +138,7 @@ enyo.kind({
 
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblDone'), OB.I18N.getLabel('OBPOS_FinishCashMgmtDialog'), [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        isConfirmButton: true,
         action: function () {
           OB.POS.navigate('retail.pointofsale');
         }
@@ -147,6 +148,7 @@ enyo.kind({
     this.model.on('change:finishedWrongly', function () {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashMgmtWronglyHeader'), OB.I18N.getLabel('OBPOS_CashMgmtWrongly'), [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        isConfirmButton: true,
         action: function () {
           OB.POS.navigate('retail.pointofsale');
         }

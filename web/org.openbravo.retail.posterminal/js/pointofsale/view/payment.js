@@ -17,6 +17,12 @@ enyo.kind({
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged'
   },
+  getSelectedPayment: function () {
+    if (this.receipt && this.receipt.selectedPayment) {
+      return this.receipt.selectedPayment;
+    }
+    return null;
+  },
   buttonStatusChanged: function (inSender, inEvent) {
     var payment, amt, change, pending, isMultiOrders, paymentstatus;
     payment = inEvent.value.payment || OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];

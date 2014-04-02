@@ -253,7 +253,7 @@ enyo.kind({
     name: 'totalPrinter'
   }],
   getLabel: function () {
-    return this.$.totalPrinter.content;
+    return this.$.totalPrinter.getContent();
   },
   initComponents: function () {
     this.inherited(arguments);

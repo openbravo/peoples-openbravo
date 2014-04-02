@@ -19,6 +19,7 @@ enyo.kind({
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
+        name:'OBKEY_legacy_A1',
         classButton: 'btnkeyboard-num',
         label: '/',
         command: '/'
@@ -28,6 +29,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
+        name:'OBKEY_legacy_B1',
         label: '*',
         command: '*'
       }]
@@ -36,6 +38,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
+        name:'OBKEY_legacy_C1',
         label: '%',
         command: '%'
       }]
@@ -47,6 +50,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.PaymentButton',
         paymenttype: 'OBPOS_payment.cash',
+        name: 'OBKEY_OBPOS_payment.cash_A2',
         amount: 10,
         background: '#e9b7c3'
       }]
@@ -55,6 +59,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.PaymentButton',
         paymenttype: 'OBPOS_payment.cash',
+        name: 'OBKEY_OBPOS_payment.cash_B2',
         amount: 20,
         background: '#bac3de'
       }]
@@ -63,6 +68,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.PaymentButton',
         paymenttype: 'OBPOS_payment.cash',
+        name: 'OBKEY_OBPOS_payment.cash_C2',
         amount: 50,
         background: '#f9bb92'
       }]
@@ -74,6 +80,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.PaymentButton',
         paymenttype: 'OBPOS_payment.cash',
+        name: 'OBKEY_OBPOS_payment.cash_A3',
         amount: 1,
         background: '#e4e0e3',
         bordercolor: '#f9e487'
@@ -83,6 +90,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.PaymentButton',
         paymenttype: 'OBPOS_payment.cash',
+        name: 'OBKEY_OBPOS_payment.cash_B3',
         amount: 2,
         background: '#f9e487',
         bordercolor: '#e4e0e3'
@@ -92,6 +100,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.PaymentButton',
         paymenttype: 'OBPOS_payment.cash',
+        name: 'OBKEY_OBPOS_payment.cash_C3',
         amount: 5,
         background: '#bccdc5'
       }]
@@ -103,6 +112,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.PaymentButton',
         paymenttype: 'OBPOS_payment.cash',
+        name: 'OBKEY_OBPOS_payment.cash_A4',
         amount: 0.10,
         background: '#f9e487'
       }]
@@ -111,6 +121,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.PaymentButton',
         paymenttype: 'OBPOS_payment.cash',
+        name: 'OBKEY_OBPOS_payment.cash_B4',
         amount: 0.20,
         background: '#f9e487'
       }]
@@ -119,6 +130,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.PaymentButton',
         paymenttype: 'OBPOS_payment.cash',
+        name: 'OBKEY_OBPOS_payment.cash_C4',
         amount: 0.50,
         background: '#f9e487'
       }]
@@ -130,6 +142,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.PaymentButton',
         paymenttype: 'OBPOS_payment.cash',
+        name: 'OBKEY_OBPOS_payment.cash_A5',
         amount: 0.01,
         background: '#f3bc9e'
       }]
@@ -138,6 +151,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.PaymentButton',
         paymenttype: 'OBPOS_payment.cash',
+        name: 'OBKEY_OBPOS_payment.cash_B5',
         amount: 0.02,
         background: '#f3bc9e'
       }]
@@ -145,6 +159,7 @@ enyo.kind({
       classes: 'span4',
       components: [{
         kind: 'OB.UI.PaymentButton',
+        name: 'OBKEY_OBPOS_payment.cash_C5',
         paymenttype: 'OBPOS_payment.cash',
         amount: 0.05,
         background: '#f3bc9e'

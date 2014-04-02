@@ -291,6 +291,7 @@ enyo.kind({
 
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        isConfirmButton: true,
         action: function () {
           me.finalAction();
           return true;
@@ -315,6 +316,7 @@ enyo.kind({
         model.set("finishedWrongly", false);
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message, [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
           action: function () {
             me.waterfall('onEnableNextButton');
             return true;
@@ -323,6 +325,7 @@ enyo.kind({
       } else {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message, [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
           action: function () {
             OB.POS.navigate('retail.pointofsale');
             return true;
