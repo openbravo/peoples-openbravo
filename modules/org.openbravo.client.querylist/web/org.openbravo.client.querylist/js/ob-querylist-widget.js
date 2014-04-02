@@ -177,7 +177,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       parameters: this.parameters,
       menuItems: this.menuItems,
       fieldDefinitions: this.fieldDefinitions,
-      aboutFieldDefinitions: this.aboutFieldDefinitions      
+      aboutFieldDefinitions: this.aboutFieldDefinitions
     });
   },
 
