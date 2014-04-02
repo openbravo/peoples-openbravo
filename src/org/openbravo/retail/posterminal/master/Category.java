@@ -105,8 +105,17 @@ public class Category extends ProcessHQLQuery {
         + "                 and (p.endingDate is null or p.endingDate >= TO_DATE('"
         + format.format(now.getTime())
         + "','yyyy/MM/dd'))" //
-        + "                 and p.startingDate <= TO_DATE('" + format.format(now.getTime())
-        + "', 'yyyy/MM/dd'))");
+        + "                 and p.startingDate <= TO_DATE('"
+        + format.format(now.getTime())
+        + "', 'yyyy/MM/dd')"
+        // organization
+        + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
+        + "         from PricingAdjustmentOrganization o" + "        where active = true"
+        + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
+        + "')) " + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
+        + "         from PricingAdjustmentOrganization o" + "        where active = true"
+        + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
+        + "')) " + "    ) " + ")");
 
     return hqlQueries;
   }
