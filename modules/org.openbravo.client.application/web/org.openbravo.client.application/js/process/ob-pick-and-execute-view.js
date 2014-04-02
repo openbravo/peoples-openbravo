@@ -120,14 +120,6 @@ isc.OBPickAndExecuteView.addProperties({
     this.Super('initWidget', arguments);
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.popup', this);
 
-    if (this.viewGrid.saveLocally) {
-      // Using "disconnected" data to avoid update/remove/add operations to the back-end
-      // http://www.smartclient.com/docs/8.1/a/b/c/go.html#method..DataSource.fetchData
-      this.dataSource.fetchData(this.viewGrid.getFetchRequestParams(), this.viewGrid.ID + ".setData(data)");
-    } else {
-      this.viewGrid.fetchData();
-    }
-
   },
 
   prepareGridFields: function (fields) {

@@ -207,7 +207,7 @@ isc.OBParameterWindowView.addProperties({
           OB.OnChangeRegistry.register(this.viewId, field.name, field.onChangeFunction, 'default');
         }
         items.push(field);
-        
+
       }
 
       if (items.length !== 0) {
@@ -507,8 +507,10 @@ isc.OBParameterWindowView.addProperties({
     }
   },
 
-  handleDefaults: function (defaults) {
-    var i, field, def;
+  handleDefaults: function (result) {
+    var i, field, def, defaults = result.defaults,
+        filterExpressions = result.filterExpressions,
+        defaultFilter = {};
     if (!this.theForm) {
       return;
     }
@@ -528,6 +530,17 @@ isc.OBParameterWindowView.addProperties({
             field.setValue(def);
           }
         }
+      }
+    }
+
+    for (i in filterExpressions) {
+      if (filterExpressions.hasOwnProperty(i)) {
+        field = this.theForm.getItem(i);
+        defaultFilter = {};
+        isc.addProperties(defaultFilter, filterExpressions[i]);
+        this.defaultFilter = defaultFilter;
+        field.canvas.viewGrid.setFilterEditorCriteria(this.defaultFilter);
+        field.canvas.viewGrid.filterByEditor();
       }
     }
 

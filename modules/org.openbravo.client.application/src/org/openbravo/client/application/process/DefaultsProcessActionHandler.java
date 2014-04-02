@@ -27,6 +27,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
@@ -35,12 +37,17 @@ import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.Window;
 
 /**
  * This ActionHandler is invoked when opening a Process Definition window. It is in charge of
@@ -51,6 +58,7 @@ import org.openbravo.model.ad.domain.Reference;
 public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
 
   private static final Logger log = Logger.getLogger(DefaultsProcessActionHandler.class);
+  private static final String WINDOW_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
 
   @Override
   protected final JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -65,6 +73,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
       }
       final Process processDefinition = OBDal.getInstance().get(Process.class, processId);
       JSONObject defaults = new JSONObject();
+      JSONObject filterExpressions = new JSONObject();
       final List<Parameter> orderedParams = new ArrayList<Parameter>();
 
       // Reorder params in a list in order to compute in order based on the dependencies of default
@@ -129,14 +138,73 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
               defaults.put(param.getDBColumnName(), defaultValue);
             }
           }
+          if (WINDOW_REFERENCE_ID.equals(param.getReference().getId())) {
+            if (param.getReferenceSearchKey().getOBUIAPPRefWindowList().size() > 0) {
+              final Window window = param.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0)
+                  .getWindow();
+              final Tab tab = window.getADTabList().get(0);
+              final String entityName = tab.getTable().getName();
+              final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+              JSONObject gridJson = new JSONObject();
+
+              for (Field field : tab.getADFieldList()) {
+                if (field.getObuiappDefaultExpression() != null) {
+                  String rawDefaultExpression = field.getObuiappDefaultExpression();
+                  Object defaultExpression;
+                  defaultExpression = ParameterUtils.getJSExpressionResult(
+                      fixRequestMap(parameters),
+                      (HttpSession) parameters.get(KernelConstants.HTTP_SESSION),
+                      rawDefaultExpression);
+
+                  if (defaultExpression != null && !defaultExpression.equals("")
+                      && !defaultExpression.equals("''")) {
+                    Property property = null;
+                    if (field.getColumn() != null) {
+                      property = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
+                    } else if (field.getProperty() != null) {
+                      property = DalUtil.getPropertyFromPath(entity, field.getProperty());
+                    }
+                    if (property != null && property.getTargetEntity() != null
+                        && !property.isOneToMany()) {
+                      final BaseOBObject bob = OBDal.getInstance().get(
+                          property.getTargetEntity().getName(), defaultExpression);
+                      defaultExpression = bob.getIdentifier();
+                    }
+                  }
+
+                  if (defaultExpression != null && !defaultExpression.equals("")
+                      && !defaultExpression.equals("''")) {
+                    String fieldName = field.getProperty();
+                    if (fieldName != null) {
+                      gridJson.put(fieldName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
+                          defaultExpression);
+                    } else {
+                      gridJson.put(
+                          entity.getPropertyByColumnName(field.getColumn().getDBColumnName())
+                              .getName().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
+                          defaultExpression);
+                    }
+                  }
+                }
+              }
+              log.debug("Implicit Filters for process " + processDefinition + ", grid: "
+                  + param.getDBColumnName() + "\n" + gridJson.toString());
+              filterExpressions.put(param.getDBColumnName(), gridJson);
+            }
+          }
         }
         log.debug("Defaults for process " + processDefinition + "\n" + defaults.toString());
-        return defaults;
+
+        JSONObject results = new JSONObject();
+        results.put("defaults", defaults);
+        results.put("filterExpressions", filterExpressions);
+        return results;
       } else {
         return new JSONObject();
       }
     } catch (Exception e) {
-      log.error("Error trying getting defaults for process: " + e.getMessage(), e);
+      log.error(
+          "Error trying getting defaults and Filter Expressions for process: " + e.getMessage(), e);
       return new JSONObject();
     } finally {
       OBContext.restorePreviousMode();

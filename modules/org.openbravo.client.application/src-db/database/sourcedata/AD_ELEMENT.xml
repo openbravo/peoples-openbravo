@@ -680,6 +680,30 @@ This function (manually coded), can:
 <!--F39469FBB4F041BFBC730BB9E0691F29-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--F39469FBB4F041BFBC730BB9E0691F29--></AD_ELEMENT>
 
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3--><AD_ELEMENT>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <AD_ELEMENT_ID><![CDATA[FAF5CE55DE8E4B26A9DC0610CFB30AC3]]></AD_ELEMENT_ID>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <COLUMNNAME><![CDATA[EM_Obuiapp_Default_Expression]]></COLUMNNAME>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <NAME><![CDATA[Default Expression]]></NAME>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <PRINTNAME><![CDATA[Default Expression]]></PRINTNAME>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <DESCRIPTION><![CDATA[Defines a expression used to filter the property]]></DESCRIPTION>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <HELP><![CDATA[Defines a JavaScript expression that will be evaluated in the server side and used as default value for the property. You can use any type of variable but it must match the property type, examples:
+
+true - the property associated is boolean
+"Hello" - the propery associated is string
+5.3 - the property associated is numeric
+
+You can also access the Openbravo API through the OB object and do some more complex expressions, e.g.
+
+OB.getSession().getAttribute("SESSIONVAR");
+
+This will retrieve the session variable SESSIONVAR and use it as default value for the selector field]]></HELP>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3--></AD_ELEMENT>
+
 <!--FC093F3F9DD64F81828FE06AB2CC4FEB--><AD_ELEMENT>
 <!--FC093F3F9DD64F81828FE06AB2CC4FEB-->  <AD_ELEMENT_ID><![CDATA[FC093F3F9DD64F81828FE06AB2CC4FEB]]></AD_ELEMENT_ID>
 <!--FC093F3F9DD64F81828FE06AB2CC4FEB-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
