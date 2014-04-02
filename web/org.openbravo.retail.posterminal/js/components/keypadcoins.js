@@ -19,7 +19,7 @@ enyo.kind({
       classes: 'span4',
       components: [{
         kind: 'OB.UI.ButtonKey',
-        name:'OBKEY_legacy_A1',
+        name: 'OBKEY_legacy_A1',
         classButton: 'btnkeyboard-num',
         label: '/',
         command: '/'
@@ -29,7 +29,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        name:'OBKEY_legacy_B1',
+        name: 'OBKEY_legacy_B1',
         label: '*',
         command: '*'
       }]
@@ -38,7 +38,7 @@ enyo.kind({
       components: [{
         kind: 'OB.UI.ButtonKey',
         classButton: 'btnkeyboard-num',
-        name:'OBKEY_legacy_C1',
+        name: 'OBKEY_legacy_C1',
         label: '%',
         command: '%'
       }]

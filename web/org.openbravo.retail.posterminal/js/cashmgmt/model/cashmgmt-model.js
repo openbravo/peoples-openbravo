@@ -133,7 +133,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           }
         }
       }
-      
+
       runSyncProcessCM = _.after(this.depsdropstosave.models.length, runSync);
       // Sending drops/deposits to backend
       _.each(this.depsdropstosave.models, function (depdrop, index) {

@@ -55,7 +55,7 @@ enyo.kind({
   tap: function () {
     if (this.leftSubWindow.product) {
       var line = null;
-      if (this.leftSubWindow && this.leftSubWindow.line){
+      if (this.leftSubWindow && this.leftSubWindow.line) {
         line = this.leftSubWindow.line;
       }
       this.doAddProduct({

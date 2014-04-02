@@ -13,7 +13,9 @@
 
   var PrintReceipt = function (model) {
       var terminal = OB.POS.modelterminal.get('terminal');
-      function dumyFunction () {}
+
+      function dumyFunction() {}
+
       function extendHWResource(resource, template) {
         if (terminal[template + "IsPdf"] === 'true') {
           resource.ispdf = true;
@@ -96,7 +98,7 @@
           }
         });
       }
-      
+
       if (args.cancelOperation && args.cancelOperation === true) {
         return true;
       }

@@ -220,7 +220,8 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this,
         toMatch = 0,
-        re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader'), negativeLines;
+        re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader'),
+        negativeLines;
     me.filters = inEvent.filters;
     this.clearAction();
     processHeader.exec({

@@ -65,7 +65,7 @@ enyo.kind({
       this.$.generic.setContent(OB.I18N.getLabel('OBMOBC_LblGeneric'));
     }
   },
-  setIdentifierContent: function(){
-	  return this.model.get('_identifier');
+  setIdentifierContent: function () {
+    return this.model.get('_identifier');
   }
 });

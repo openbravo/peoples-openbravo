@@ -181,7 +181,7 @@ enyo.kind({
           },
           renderBody: function (modelToDraw) {
             var paymentMethod = modelToDraw.get('paymentMethod');
-            if (!paymentMethod.automatemovementtoother){
+            if (!paymentMethod.automatemovementtoother) {
               return true;
             }
             this.disableControls();
