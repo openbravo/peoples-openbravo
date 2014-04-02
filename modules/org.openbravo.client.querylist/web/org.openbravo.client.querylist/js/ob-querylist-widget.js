@@ -176,7 +176,8 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       gridDataSource: this.gridDataSource,
       parameters: this.parameters,
       menuItems: this.menuItems,
-      fieldDefinitions: this.fieldDefinitions
+      fieldDefinitions: this.fieldDefinitions,
+      aboutFieldDefinitions: this.aboutFieldDefinitions      
     });
   },
 

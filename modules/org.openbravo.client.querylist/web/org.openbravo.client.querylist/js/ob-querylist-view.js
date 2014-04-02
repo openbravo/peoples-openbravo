@@ -52,6 +52,7 @@ isc.OBQueryListView.addProperties({
       menuItems: args.menuItems,
       parameters: args.parameters,
       fieldDefinitions: args.fieldDefinitions,
+      aboutFieldDefinitions: args.aboutFieldDefinitions,
       canDelete: false
     }));
     this.addPortlet(widgetInstance);
