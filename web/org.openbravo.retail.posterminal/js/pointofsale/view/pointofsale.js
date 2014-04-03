@@ -856,6 +856,9 @@ enyo.kind({
     receiptList = this.model.get('orderList');
     OB.MobileApp.view.scanningFocus(true);
 
+    // Try to print the pending receipts.
+    OB.Model.OfflinePrinter.printPendingJobs();
+
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
       if (changedModel.isMultiOrder()) {
         this.rightToolbarDisabled({}, {

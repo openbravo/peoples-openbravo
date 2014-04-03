@@ -73,6 +73,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="PRINTOFFLINE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -102,6 +106,7 @@
         <unique-column name="VALUE"/>
       </unique>
       <check name="OBPOS_APP_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APP_PRINTOFFLINE_CHK"><![CDATA[PRINTOFFLINE IN ('Y', 'N')]]></check>
       <check name="OBPOS_LOCATION_CHECK"><![CDATA[NOT ((OBPOS_C_BPARTNER_LOC_ID IS NULL) AND (C_BPARTNER_ID IS NOT NULL))]]></check>
     </table>
   </database>

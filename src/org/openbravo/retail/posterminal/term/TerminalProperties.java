@@ -67,6 +67,7 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.obposTerminaltype.allowpayoncredit", "allowpayoncredit"));
     list.add(new HQLProperty("pos.defaultwebpostab", "defaultwebpostab"));
     list.add(new HQLProperty("postype", "terminalType"));
+    list.add(new HQLProperty("pos.printoffline", "printoffline"));
 
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSTICKETTEMPLATE, "printTicketTemplate", list);

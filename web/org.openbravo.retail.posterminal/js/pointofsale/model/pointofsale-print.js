@@ -98,7 +98,7 @@
               label: OB.I18N.getLabel('OBMOBC_LblCancel')
             }], {
               onHideFunction: function (dialog) {
-                if (printargs.offline) {
+                if (printargs.offline && OB.POS.modelterminal.get('terminal').printoffline) {
                   OB.Dal.save(new OB.Model.OfflinePrinter({
                     data: result.data,
                     sendfunction: '_sendPDF'
@@ -106,6 +106,9 @@
                 }
               }
             });
+          } else {
+            // Success. Try to print the pending receipts.
+            OB.Model.OfflinePrinter.printPendingJobs();
           }
         });
       }
@@ -166,7 +169,7 @@
               label: OB.I18N.getLabel('OBMOBC_LblCancel')
             }], {
               onHideFunction: function (dialog) {
-                if (printargs.offline) {
+                if (printargs.offline && OB.POS.modelterminal.get('terminal').printoffline) {
                   OB.Dal.save(new OB.Model.OfflinePrinter({
                     data: result.data,
                     sendfunction: '_send'
@@ -174,6 +177,9 @@
                 }
               }
             });
+          } else {
+            // Success. Try to print the pending receipts.
+            OB.Model.OfflinePrinter.printPendingJobs();
           }
         });
         //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
@@ -197,7 +203,7 @@
                 label: OB.I18N.getLabel('OBMOBC_LblCancel')
               }], {
                 onHideFunction: function (dialog) {
-                  if (printargs.offline) {
+                  if (printargs.offline && OB.POS.modelterminal.get('terminal').printoffline) {
                     OB.Dal.save(new OB.Model.OfflinePrinter({
                       data: result.data,
                       sendfunction: '_send'
@@ -205,6 +211,9 @@
                   }
                 }
               });
+            } else {
+              // Success. Try to print the pending receipts.
+              OB.Model.OfflinePrinter.printPendingJobs();
             }
           });
         }
