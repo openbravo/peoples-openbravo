@@ -109,12 +109,13 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
                   }
                   if (psd.isInvoicePaid()) {
                     FIN_Utility.updatePaymentAmounts(psd);
+                    FIN_Utility.updateBusinessPartnerCredit(payment);
                   }
                   OBDal.getInstance().save(psd);
                 }
               }
             }
-            FIN_Utility.updateBusinessPartnerCredit(payment);
+
           } else {
             transaction.setStatus(transaction.getDepositAmount().compareTo(
                 transaction.getPaymentAmount()) > 0 ? "RDNC" : "PWNC");
