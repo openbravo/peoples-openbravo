@@ -469,8 +469,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument,
               strcAcctSchemaId, strOrgFamily, strCheck, data[0].dateacct, data[0].identifier);
       } else {
-        data = ReportGeneralLedgerJournalData.selectDirect(this,
-            Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+        data = ReportGeneralLedgerJournalData.selectDirect(this, "Y".equals(strShowDescription) ? "'Y'"
+                : "'N'", Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
             strRecord, strcAcctSchemaId, vars.getLanguage(), initRecordNumber,
             intRecordRangePredefined);
@@ -482,8 +482,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               strTable, strRecord, strFactAcctGroupId, data[0].dateacct, data[0].identifier);
       }
     } else if (vars.commandIn("DIRECT")) {
-      data = ReportGeneralLedgerJournalData.selectDirect(this,
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+      data = ReportGeneralLedgerJournalData.selectDirect(this, "Y".equals(strShowDescription) ? "'Y'"
+              : "'N'", Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
           strRecord, strcAcctSchemaId, vars.getLanguage());
       if (data != null && data.length > 0)
@@ -660,8 +660,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocument, strcAcctSchemaId,
           strOrgFamily, strCheck, vars.getLanguage());
     } else
-      data = ReportGeneralLedgerJournalData.selectDirect(this,
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+      data = ReportGeneralLedgerJournalData.selectDirect(this, "Y".equals(strShowDescription) ? "'Y'"
+              : "'N'", Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
           strRecord, strcAcctSchemaId, vars.getLanguage());
 
