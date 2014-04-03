@@ -586,7 +586,47 @@
 
     hasPayment: function (key) {
       return this.paymentnames[key];
-    }
+    },
+
+    isSafeToResetDatabase: function (callbackIsSafe, callbackIsNotSafe) {
+
+      OB.Dal.find(OB.Model.Order, {
+        hasbeenpaid: 'Y'
+      }, function (models) {
+        if (models.length > 0) {
+          callbackIsNotSafe();
+          return;
+        }
+        OB.Dal.find(OB.Model.CashManagement, {
+          'isbeingprocessed': 'N'
+        }, function (models) {
+          if (models.length > 0) {
+            callbackIsNotSafe();
+            return;
+          }
+          OB.Dal.find(OB.Model.CashUp, {
+            isbeingprocessed: 'Y'
+          }, function (models) {
+            if (models.length > 0) {
+              callbackIsNotSafe();
+              return;
+            }
+
+            OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (models) {
+              if (models.length > 0) {
+                callbackIsNotSafe();
+                return;
+              }
+              callbackIsSafe();
+            }, callbackIsSafe);
+          }, callbackIsSafe);
+        }, callbackIsSafe);
+      }, callbackIsSafe);
+    },
+
+    databaseCannotBeResetAction: function () {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ResetNeededNotSafeTitle'), OB.I18N.getLabel('OBPOS_ResetNeededNotSafeMessage', [window.localStorage.getItem('terminalName')]));
+    },
   });
 
   // var modelterminal= ;
