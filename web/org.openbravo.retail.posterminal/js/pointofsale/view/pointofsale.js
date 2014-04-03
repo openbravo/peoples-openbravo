@@ -278,19 +278,25 @@ enyo.kind({
             if (args && args.cancelOperation && args.cancelOperation === true) {
               return;
             }
-            receipt.trigger('print', null, true);
+            receipt.trigger('print', null, {
+              force: true
+            });
           });
 
           return;
         }
         receipt.calculateTaxes(function () {
-          receipt.trigger('print', null, true);
+          receipt.trigger('print', null, {
+            force: true
+          });
         });
         return;
       }
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
         _.each(this.model.get('multiOrders').get('multiOrdersList').models, function (order) {
-          this.model.get('multiOrders').trigger('print', order, true);
+          this.model.get('multiOrders').trigger('print', order, {
+            force: true
+          });
         }, this);
       }
     }

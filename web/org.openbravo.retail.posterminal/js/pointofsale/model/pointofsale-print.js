@@ -35,11 +35,12 @@
 
       this.receipt = model.get('order');
       this.multiOrders = model.get('multiOrders');
-      this.multiOrders.on('print', function (order, forcePrint) {
-        this.print(order, forcePrint);
+      this.multiOrders.on('print', function (order, args) {
+
+        this.print(order, args);
       }, this);
-      this.receipt.on('print', function (order, forcePrint) {
-        this.print(null, forcePrint);
+      this.receipt.on('print', function (order, args) {
+        this.print(null, args);
       }, this);
 
       this.receipt.on('displayTotal', this.displayTotal, this);
@@ -64,7 +65,9 @@
 
       };
 
-  PrintReceipt.prototype.print = function (order, forcePrint) {
+  PrintReceipt.prototype.print = function (order, printargs) {
+
+    printargs = printargs || {};
 
     // Clone the receipt
     var receipt = new OB.Model.Order(),
@@ -72,7 +75,8 @@
         template;
 
     OB.MobileApp.model.hookManager.executeHooks('OBPRINT_PrePrint', {
-      forcePrint: forcePrint,
+      forcePrint: printargs.forcePrint,
+      offline: printargs.offline,
       order: order,
       template: template
     }, function (args) {
@@ -82,19 +86,26 @@
           mainReport: args.template,
           subReports: args.template.subreports
         }, function (result) {
-          var otherMe = me;
           var myreceipt = receipt;
           if (result && result.exception) {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               action: function () {
-                var otherOtherMe = otherMe;
-                otherOtherMe.print();
+                me.print(receipt, printargs);
                 return true;
               }
             }, {
               label: OB.I18N.getLabel('OBMOBC_LblCancel')
-            }]);
+            }], {
+              onHideFunction: function (dialog) {
+                if (printargs.offline) {
+                  OB.Dal.save(new OB.Model.OfflinePrinter({
+                    data: result.data,
+                    sendfunction: '_sendPDF'
+                  }));
+                }
+              }
+            });
           }
         });
       }
@@ -142,20 +153,27 @@
         OB.POS.hwserver.print(args.template, {
           order: receipt
         }, function (result) {
-          var otherMe = me;
           var myreceipt = receipt;
           if (result && result.exception) {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               isConfirmButton: true,
               action: function () {
-                var otherOtherMe = otherMe;
-                otherOtherMe.print();
+                me.print(receipt, printargs);
                 return true;
               }
             }, {
               label: OB.I18N.getLabel('OBMOBC_LblCancel')
-            }]);
+            }], {
+              onHideFunction: function (dialog) {
+                if (printargs.offline) {
+                  OB.Dal.save(new OB.Model.OfflinePrinter({
+                    data: result.data,
+                    sendfunction: '_send'
+                  }));
+                }
+              }
+            });
           }
         });
         //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
@@ -167,19 +185,26 @@
           OB.POS.hwserver.print(args.template, {
             order: receipt
           }, function (result) {
-            var otherMe = me;
             var myreceipt = receipt;
             if (result && result.exception) {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
                 action: function () {
-                  var otherOtherMe = otherMe;
-                  otherOtherMe.print();
+                  me.print(receipt, printargs);
                   return true;
                 }
               }, {
                 label: OB.I18N.getLabel('OBMOBC_LblCancel')
-              }]);
+              }], {
+                onHideFunction: function (dialog) {
+                  if (printargs.offline) {
+                    OB.Dal.save(new OB.Model.OfflinePrinter({
+                      data: result.data,
+                      sendfunction: '_send'
+                    }));
+                  }
+                }
+              });
             }
           });
         }

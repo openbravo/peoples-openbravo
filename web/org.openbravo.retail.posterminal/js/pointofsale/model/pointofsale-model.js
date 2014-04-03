@@ -42,7 +42,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterRole'
   },
-  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.PaymentMethodCashUp, OB.Model.TaxCashUp],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.ProductCharacteristic, OB.Model.Brand, OB.Model.ProductChValue, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.OfflinePrinter, OB.Model.PaymentMethodCashUp, OB.Model.TaxCashUp],
 
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
@@ -333,7 +333,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
         me.get('multiOrders').trigger('closed', order);
-        me.get('multiOrders').trigger('print', order); // to guaranty execution order
+        me.get('multiOrders').trigger('print', order, {
+          offline: true
+        }); // to guaranty execution order
         SyncReadyToSendFunction();
       }
 
@@ -478,14 +480,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   silent: true
                 });
               });
-              receipt.trigger('print'); // to guaranty execution order
+              receipt.trigger('print', null, {
+                offline: true
+              }); // to guaranty execution order
               orderList.deleteCurrent(true);
             }
           });
         } else {
           receipt.trigger('closed', {
             callback: function () {
-              receipt.trigger('print'); // to guaranty execution order
+              receipt.trigger('print', null, {
+                offline: true
+              }); // to guaranty execution order
               orderList.deleteCurrent(true);
             }
           });

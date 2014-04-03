@@ -84,6 +84,14 @@ OB.DS.HWServer.prototype.print = function (template, params, callback) {
 };
 
 OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
+  this._send(this._template(templatedata, params), callback);
+};
+
+OB.DS.HWServer.prototype._template = function (templatedata, params) {
+  return params ? _.template(templatedata, params) : templatedata;
+};
+
+OB.DS.HWServer.prototype._send = function (data, callback) {
   if (this.url) {
     var me = this;
     var ajaxRequest = new enyo.Ajax({
@@ -93,7 +101,7 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
       handleAs: 'json',
       timeout: 6000,
       contentType: 'application/xml;charset=utf-8',
-      data: params ? _.template(templatedata, params) : templatedata,
+      data: data,
       success: function (inSender, inResponse) {
         if (callback) {
           callback(inResponse);
@@ -108,6 +116,7 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
 
         if (callback) {
           callback({
+            data: data,
             exception: {
               message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
             }
@@ -122,6 +131,10 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
 };
 
 OB.DS.HWServer.prototype._printPDF = function (params, callback) {
+  this._sendPDF(JSON.stringify(params), callback);
+};
+
+OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
   if (this.url) {
     var me = this;
     var ajaxRequest = new enyo.Ajax({
@@ -131,7 +144,7 @@ OB.DS.HWServer.prototype._printPDF = function (params, callback) {
       handleAs: 'json',
       timeout: 3000,
       contentType: 'application/json;charset=utf-8',
-      data: JSON.stringify(params),
+      data: data,
       success: function (inSender, inResponse) {
         if (callback) {
           callback(inResponse);
@@ -147,6 +160,7 @@ OB.DS.HWServer.prototype._printPDF = function (params, callback) {
         if (callback) {
           callback({
             exception: {
+              data: data,
               message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
             }
           });
