@@ -324,13 +324,13 @@ public class POSUtils {
     query.setString(0, searchKey);
     query.setString(1, searchKey);
     int maxDocNo;
-    List result = query.list();
-    if (result.size() == 0 || result.get(0) == null) {
+    Object result = query.uniqueResult();
+    if (result == null) {
       maxDocNo = 0;
     } else if (curDbms.equals("POSTGRE")) {
-      maxDocNo = ((BigDecimal) result.get(0)).intValue();
+      maxDocNo = ((BigDecimal) result).intValue();
     } else if (curDbms.equals("ORACLE")) {
-      maxDocNo = ((Long) result.get(0)).intValue();
+      maxDocNo = ((Long) result).intValue();
     } else {
       maxDocNo = 0;
     }
@@ -450,8 +450,6 @@ public class POSUtils {
   /**
    * This method returns a Date which corresponds to the current date, without hours, minutes, or
    * seconds
-   * 
-   * @return
    */
   public static Date getCurrentDate() {
     Calendar cal = Calendar.getInstance();

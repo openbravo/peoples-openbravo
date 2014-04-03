@@ -48,7 +48,6 @@ import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -72,13 +71,13 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
     try {
 
       Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-      
+
       for (Iterator<VoidLayawayHook> layawayhookiter = layawayhooks.iterator(); layawayhookiter
           .hasNext();) {
         VoidLayawayHook layawayhook = layawayhookiter.next();
         layawayhook.exec(jsonorder, order);
       }
-      
+
       TriggerHandler.getInstance().disable();
       OBContext.setAdminMode(true);
 
@@ -86,29 +85,28 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
       order.setGrandTotalAmount(BigDecimal.ZERO);
       order.setSummedLineAmount(BigDecimal.ZERO);
       for (int i = 0; i < order.getOrderLineList().size(); i++) {
-        OrderLine orderLine = ((OrderLine) order.getOrderLineList().get(i));
+        OrderLine orderLine = (order.getOrderLineList().get(i));
         orderLine.setOrderedQuantity(BigDecimal.ZERO);
         orderLine.setLineNetAmount(BigDecimal.ZERO);
         orderLine.setLineGrossAmount(BigDecimal.ZERO);
         for (int j = 0; j < orderLine.getOrderLineOfferList().size(); j++) {
-          OrderLineOffer offer = ((OrderLineOffer) orderLine.getOrderLineOfferList().get(j));
+          OrderLineOffer offer = (orderLine.getOrderLineOfferList().get(j));
           offer.setTotalAmount(BigDecimal.ZERO);
           offer.setDisplayedTotalAmount(BigDecimal.ZERO);
           offer.setPriceAdjustmentAmt(BigDecimal.ZERO);
         }
       }
       for (int i = 0; i < order.getOrderLineTaxList().size(); i++) {
-        OrderLineTax orderLineTax = ((OrderLineTax) order.getOrderLineTaxList().get(i));
+        OrderLineTax orderLineTax = (order.getOrderLineTaxList().get(i));
         orderLineTax.setTaxableAmount(BigDecimal.ZERO);
         orderLineTax.setTaxAmount(BigDecimal.ZERO);
       }
       for (int i = 0; i < order.getOrderTaxList().size(); i++) {
-        OrderTax orderLineTax = ((OrderTax) order.getOrderTaxList().get(i));
+        OrderTax orderLineTax = (order.getOrderTaxList().get(i));
         orderLineTax.setTaxableAmount(BigDecimal.ZERO);
         orderLineTax.setTaxAmount(BigDecimal.ZERO);
       }
-      FIN_PaymentSchedule paymentSchedule = (FIN_PaymentSchedule) order.getFINPaymentScheduleList()
-          .get(0);
+      FIN_PaymentSchedule paymentSchedule = order.getFINPaymentScheduleList().get(0);
       paymentSchedule.setAmount(BigDecimal.ZERO);
       paymentSchedule.setPaidAmount(BigDecimal.ZERO);
       paymentSchedule.setOutstandingAmount(BigDecimal.ZERO);
@@ -120,8 +118,7 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         if (paymentScheduleDetail.getPaymentDetails() != null) {
           FIN_Payment payment = paymentScheduleDetail.getPaymentDetails().getFinPayment();
           for (int j = 0; j < payment.getFINPaymentDetailList().size(); j++) {
-            ((FIN_PaymentDetail) payment.getFINPaymentDetailList().get(j))
-                .setAmount(BigDecimal.ZERO);
+            payment.getFINPaymentDetailList().get(j).setAmount(BigDecimal.ZERO);
           }
         }
       }
@@ -176,8 +173,7 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         finPayment.setProcessed(true);
         finPayment.setAPRMProcessPayment("RE");
         for (int j = 0; j < finPayment.getFINPaymentDetailList().size(); j++) {
-          ((FIN_PaymentDetail) finPayment.getFINPaymentDetailList().get(j))
-              .setAmount(BigDecimal.ZERO);
+          finPayment.getFINPaymentDetailList().get(j).setAmount(BigDecimal.ZERO);
         }
         OBDal.getInstance().save(finPayment);
 
@@ -211,7 +207,6 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
       OBContext.restorePreviousMode();
       TriggerHandler.getInstance().enable();
     }
-    
 
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_DATA, respArray);

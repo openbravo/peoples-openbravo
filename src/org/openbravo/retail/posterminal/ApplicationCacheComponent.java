@@ -135,7 +135,7 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     final Iterator<File> it = FileUtils.iterateFiles(directory, extensions, true);
 
     while (it.hasNext()) {
-      final File f = (File) it.next();
+      final File f = it.next();
       fileList.add(f.getPath());
     }
     return fileList;

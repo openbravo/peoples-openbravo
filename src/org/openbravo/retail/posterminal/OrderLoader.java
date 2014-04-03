@@ -580,7 +580,7 @@ public class OrderLoader extends JSONProcessSimple {
     BigDecimal totalTaxAmount = BigDecimal.ZERO;
     int ind = 0;
     while (itKeys.hasNext()) {
-      String taxId = (String) itKeys.next();
+      String taxId = itKeys.next();
       JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
       InvoiceLineTax invoicelinetax = OBProvider.getInstance().get(InvoiceLineTax.class);
       TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
@@ -731,7 +731,7 @@ public class OrderLoader extends JSONProcessSimple {
     Iterator<String> itKeys = taxes.keys();
     int i = 0;
     while (itKeys.hasNext()) {
-      String taxId = (String) itKeys.next();
+      String taxId = itKeys.next();
       JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
       InvoiceTax invoiceTax = OBProvider.getInstance().get(InvoiceTax.class);
       TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
@@ -890,7 +890,7 @@ public class OrderLoader extends JSONProcessSimple {
         HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
         if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           // The M_GetStock function is used
-          Process process = (Process) OBDal.getInstance().get(Process.class,
+          Process process = OBDal.getInstance().get(Process.class,
               "FF80818132C964E30132C9747257002E");
           Map<String, Object> parameters = new HashMap<String, Object>();
           parameters.put("AD_Client_ID", OBContext.getOBContext().getCurrentClient().getId());
@@ -1100,7 +1100,7 @@ public class OrderLoader extends JSONProcessSimple {
       Iterator<String> itKeys = taxes.keys();
       int ind = 0;
       while (itKeys.hasNext()) {
-        String taxId = (String) itKeys.next();
+        String taxId = itKeys.next();
         JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
         OrderLineTax orderlinetax = OBProvider.getInstance().get(OrderLineTax.class);
         TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
@@ -1192,7 +1192,7 @@ public class OrderLoader extends JSONProcessSimple {
     Iterator<String> itKeys = taxes.keys();
     int i = 0;
     while (itKeys.hasNext()) {
-      String taxId = (String) itKeys.next();
+      String taxId = itKeys.next();
       JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
       OrderTax orderTax = OBProvider.getInstance().get(OrderTax.class);
       TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
@@ -1425,11 +1425,9 @@ public class OrderLoader extends JSONProcessSimple {
       if (invoice != null && fullpayLayaway) {
         for (int j = 0; j < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
             .size(); j++) {
-          if (((FIN_PaymentScheduleDetail) paymentSchedule
-              .getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j))
+          if (paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
               .getInvoicePaymentSchedule() == null) {
-            ((FIN_PaymentScheduleDetail) paymentSchedule
-                .getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j))
+            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
                 .setInvoicePaymentSchedule(paymentScheduleInvoice);
           }
         }
