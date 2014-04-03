@@ -185,6 +185,10 @@ isc.OBParameterWindowView.addProperties({
       } catch (_exception) {
         isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
       }
+      if (originalShowIfValue && item.defaultFilter !== null && item.getType() === 'OBPickEditGridItem') {
+        item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
+        item.canvas.viewGrid.filterByEditor();
+      }
       return originalShowIfValue;
     };
 
@@ -538,9 +542,11 @@ isc.OBParameterWindowView.addProperties({
         field = this.theForm.getItem(i);
         defaultFilter = {};
         isc.addProperties(defaultFilter, filterExpressions[i]);
-        this.defaultFilter = defaultFilter;
-        field.canvas.viewGrid.setFilterEditorCriteria(this.defaultFilter);
-        field.canvas.viewGrid.filterByEditor();
+        field.setDefaultFilter(defaultFilter);
+        if (field.isVisible() && !field.showIf) {
+          field.canvas.viewGrid.setFilterEditorCriteria(this.defaultFilter);
+          field.canvas.viewGrid.filterByEditor();
+        }
       }
     }
 

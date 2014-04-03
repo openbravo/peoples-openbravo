@@ -24,6 +24,7 @@ isc.ClassFactory.defineClass('OBPickEditGridItem', isc.CanvasItem);
 isc.OBPickEditGridItem.addProperties({
   rowSpan: 4,
   colSpan: 4,
+  defaultFilter: null,
 
   init: function () {
     if (this.view.popup) {
@@ -62,5 +63,9 @@ isc.OBPickEditGridItem.addProperties({
     } else {
       this.canvas.viewGrid.setCanEdit(true);
     }
+  },
+
+  setDefaultFilter: function (defaultFilter) {
+    this.defaultFilter = defaultFilter;
   }
 });
