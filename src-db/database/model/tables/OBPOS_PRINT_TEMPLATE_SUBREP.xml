@@ -61,6 +61,6 @@
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="OBPOS_PRINTTEMPLATE_SUBREP_TMP">
         <reference local="OBPOS_PRINT_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
-      <check name="OBPOS_PRINTTEMPLATE_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBPOS_PRINT_SUBREP_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
