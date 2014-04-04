@@ -213,10 +213,17 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       } else {
         // if the property is a FK, then the name of the identifier property of the referenced
         // entity has to be appended
-        Entity refEntity = property.getReferencedProperty().getEntity();
-        String identifierPropertyName = refEntity.getIdentifierProperties().get(0).getName();
-        propertyNameBefore = property.getName() + "." + identifierPropertyName;
-        propertyNameAfter = column.getEntityAlias() + "." + identifierPropertyName;
+
+        if (column.isLinkToParentColumn()) {
+          propertyNameBefore = property.getName() + "." + JsonConstants.ID;
+          propertyNameAfter = column.getEntityAlias() + "." + JsonConstants.ID;
+        } else {
+          Entity refEntity = property.getReferencedProperty().getEntity();
+          String identifierPropertyName = refEntity.getIdentifierProperties().get(0).getName();
+          propertyNameBefore = property.getName() + "." + identifierPropertyName;
+          propertyNameAfter = column.getEntityAlias() + "." + identifierPropertyName;
+        }
+
       }
       replacementMap.put(" " + propertyNameBefore + " ", " " + propertyNameAfter + " ");
       replacementMap.put("(" + propertyNameBefore + ")", "(" + propertyNameAfter + ")");
