@@ -152,6 +152,15 @@ public class ApplicationUtils {
       }
     }
 
+    // handle a special case: the data origin type of the parentTab is not a table and there is only
+    // one linkToParent property in the subtab
+    if (returnProperty == null) {
+      if (!ApplicationConstants.TABLEBASEDTABLE.equals(parentTab.getTable().getDataOriginType())
+          && thisEntity.getParentProperties().size() == 1) {
+        returnProperty = thisEntity.getParentProperties().get(0);
+      }
+    }
+
     return (returnProperty != null ? returnProperty.getName() : "");
   }
 
