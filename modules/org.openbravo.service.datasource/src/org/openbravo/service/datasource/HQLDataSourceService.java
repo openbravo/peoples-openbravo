@@ -18,13 +18,19 @@
  */
 package org.openbravo.service.datasource;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
@@ -34,16 +40,22 @@ import org.openbravo.client.kernel.reference.NumberUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.YesNoUIDefinition;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.service.json.JsonUtils;
 
 public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
-  private static final String ORDERBY = " order by ";
+  private static final String AND = " AND ";
+  private static final String WHERE = " WHERE ";
+  private static final String ORDERBY = " ORDER BY ";
+  private static final String ADDITIONAL_FILTERS = "@additional_filters@";
 
   @Override
   // Returns the datasource properties, based on the columns of the table that is going to use the
@@ -106,26 +118,52 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
     String hqlQuery = table.getHqlQuery();
 
+    // obtains the where clause from the criteria, using the AdvancedQueryBuilder
+    JSONObject criteria = JsonUtils.buildCriteria(parameters);
+    AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
+    queryBuilder.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
+    queryBuilder.setCriteria(criteria);
+    String whereClause = queryBuilder.getWhereClause();
+
+    // replace the property names with the column alias
+    whereClause = replaceParametersWithAlias(table, whereClause);
+
     String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
     if (distinct != null) {
       final String from = "from ";
       String formClause = hqlQuery.substring(hqlQuery.toLowerCase().indexOf(from));
       // TODO: Improve distinct query like this: https://issues.openbravo.com/view.php?id=25182
       hqlQuery = "select distinct e." + distinct + " " + formClause;
-    } else {
-      String orderByClause = getSortByClause(parameters);
-      if (!orderByClause.isEmpty()) {
-        hqlQuery = hqlQuery + orderByClause;
-      }
+    }
+
+    // adds the additional filters (client, organization and criteria) to the query
+    hqlQuery = addAdditionalFilters(table, hqlQuery, whereClause, parameters);
+
+    // adds the order by clause
+    String orderByClause = getSortByClause(parameters);
+    if (!orderByClause.isEmpty()) {
+      hqlQuery = hqlQuery + orderByClause;
     }
 
     Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
+
+    // sets the parameters of the query
+    Map<String, Object> hqlParameters = queryBuilder.getNamedParameters();
+    for (String key : hqlParameters.keySet()) {
+      if (hqlParameters.get(key) instanceof BigDecimal) {
+        // TODO: find a better way to avoid the cast exception from BigDecimal to Long
+        hqlParameters.put(key, ((BigDecimal) hqlParameters.get(key)).longValue());
+      }
+      query.setParameter(key, hqlParameters.get(key));
+    }
+
     if (startRow > 0) {
       query.setFirstResult(startRow);
     }
     if (endRow > startRow) {
       query.setMaxResults(endRow - startRow + 1);
     }
+
     List<Column> columns = table.getADColumnList();
     List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
     for (Object row : query.list()) {
@@ -145,6 +183,110 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       data.add(record);
     }
     return data;
+  }
+
+  /**
+   * This method replace the column names with their alias
+   * 
+   * @param table
+   *          the table being filtered
+   * @param whereClause
+   *          the filter criteria
+   * @return an updated filter criteria that uses the alias of the columns instead of their names
+   */
+  private String replaceParametersWithAlias(Table table, String whereClause) {
+    if (whereClause.trim().isEmpty()) {
+      return whereClause;
+    }
+    String updatedWhereClause = whereClause.toString();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    for (Column column : table.getADColumnList()) {
+      // look for the property name, replace it with the column alias
+      Property property = entity.getPropertyByColumnName(column.getDBColumnName());
+      Map<String, String> replacementMap = new HashMap<String, String>();
+      String propertyNameBefore = null;
+      String propertyNameAfter = null;
+      if (property.isPrimitive()) {
+        // if the property is a primitive, just replace the property name with the column alias
+        propertyNameBefore = property.getName();
+        propertyNameAfter = column.getEntityAlias();
+      } else {
+        // if the property is a FK, then the name of the identifier property of the referenced
+        // entity has to be appended
+        Entity refEntity = property.getReferencedProperty().getEntity();
+        String identifierPropertyName = refEntity.getIdentifierProperties().get(0).getName();
+        propertyNameBefore = property.getName() + "." + identifierPropertyName;
+        propertyNameAfter = column.getEntityAlias() + "." + identifierPropertyName;
+      }
+      replacementMap.put(" " + propertyNameBefore + " ", " " + propertyNameAfter + " ");
+      replacementMap.put("(" + propertyNameBefore + ")", "(" + propertyNameAfter + ")");
+      for (String toBeReplaced : replacementMap.keySet()) {
+        if (updatedWhereClause.contains(toBeReplaced)) {
+          updatedWhereClause = updatedWhereClause.replace(toBeReplaced,
+              replacementMap.get(toBeReplaced));
+        }
+      }
+    }
+    return updatedWhereClause;
+  }
+
+  /**
+   * Adds the additional filters to the hql query. The additional filters include the client filter,
+   * the organization filter and the filter created from the grid criteria
+   * 
+   * @param table
+   *          table being fetched
+   * @param hqlQuery
+   *          hql query without the additional filters
+   * @param filterWhereClause
+   *          filter created from the grid criteria
+   * @param parameters
+   *          parameters used for this request
+   * @return
+   */
+  private String addAdditionalFilters(Table table, String hqlQuery, String filterWhereClause,
+      Map<String, String> parameters) {
+    StringBuffer additionalFilter = new StringBuffer();
+    final String entityAlias = table.getEntityAlias();
+
+    // replace the carriage returns and the tabulations with blanks
+    String hqlQueryWithFilters = hqlQuery.replace("\n", " ").replace("\r", " ");
+
+    // client filter
+    additionalFilter.append(entityAlias + ".client.id in ('0', '")
+        .append(OBContext.getOBContext().getCurrentClient().getId()).append("')");
+
+    // organization filter
+    final String orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
+    if (StringUtils.isNotEmpty(orgs)) {
+      additionalFilter.append(AND);
+      additionalFilter.append(entityAlias + ".organization in (" + orgs + ")");
+    }
+
+    if (!filterWhereClause.trim().isEmpty()) {
+      // if the filter where clause contains the string 'where', get rid of it
+      String whereClause = filterWhereClause.replaceAll("(?i)" + WHERE, " ");
+      additionalFilter.append(AND + whereClause);
+    }
+
+    if (hqlQueryWithFilters.contains(ADDITIONAL_FILTERS)) {
+      // replace @additional_filters@ with the actual hql filters
+      hqlQueryWithFilters = hqlQueryWithFilters.replace(ADDITIONAL_FILTERS,
+          additionalFilter.toString());
+    } else {
+      // adds the hql filters in the proper place at the end of the query
+      String separator = null;
+      // TODO: only the WHERE of the outer query should
+      if (StringUtils.containsIgnoreCase(hqlQueryWithFilters, WHERE)) {
+        // if there is already a where clause, append with 'AND'
+        separator = AND;
+      } else {
+        // otherwise, append with 'where'
+        separator = WHERE;
+      }
+      hqlQueryWithFilters = hqlQueryWithFilters + separator + additionalFilter.toString();
+    }
+    return hqlQueryWithFilters;
   }
 
   /**
