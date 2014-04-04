@@ -269,6 +269,13 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       additionalFilter.append(AND + whereClause);
     }
 
+    // the _where parameter contains the filter clause and the where clause defined at tab level
+    String whereClauseParameter = parameters.get(JsonConstants.WHERE_PARAMETER);
+    if (whereClauseParameter != null && !whereClauseParameter.trim().isEmpty()
+        && !"null".equals(whereClauseParameter)) {
+      additionalFilter.append(AND + whereClauseParameter);
+    }
+
     if (hqlQueryWithFilters.contains(ADDITIONAL_FILTERS)) {
       // replace @additional_filters@ with the actual hql filters
       hqlQueryWithFilters = hqlQueryWithFilters.replace(ADDITIONAL_FILTERS,
