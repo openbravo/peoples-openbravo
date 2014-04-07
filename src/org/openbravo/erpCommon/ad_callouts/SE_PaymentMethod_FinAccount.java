@@ -65,9 +65,8 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
       obc.add(Restrictions.in("organization.id", OBContext.getOBContext()
           .getOrganizationStructureProvider().getNaturalTree(strOrgId)));
 
-      if (obc.count() > 0) {
-        FinAccPaymentMethod selectedAccPaymentMethod = obc.list().get(0);
-
+      FinAccPaymentMethod selectedAccPaymentMethod = (FinAccPaymentMethod) obc.uniqueResult();
+      if (selectedAccPaymentMethod != null) {
         if (isPaymentOut) {
           isMultiCurrencyEnabled = selectedAccPaymentMethod.isPayoutAllow()
               && selectedAccPaymentMethod.isPayoutIsMulticurrency();
