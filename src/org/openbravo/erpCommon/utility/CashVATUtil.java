@@ -376,12 +376,16 @@ public class CashVATUtil {
                   cCurrencyID, taxAmt.toString(), "", Fact_Acct_Group_ID,
                   nextSeqNo(factLine1.m_SeqNo), documentType, conn);
             } else {
-              final FactLine factLine1 = fact.createLine(line,
-                  m_tax.getAccount(DocTax.ACCTTYPE_TaxDue_Trans, as, conn), cCurrencyID,
-                  taxAmt.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), documentType, conn);
-              factLine2 = fact.createLine(line, m_tax.getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
-                  cCurrencyID, "", taxAmt.toString(), Fact_Acct_Group_ID,
-                  nextSeqNo(factLine1.m_SeqNo), documentType, conn);
+              if (taxAmt.compareTo(BigDecimal.ZERO) != 0) {
+                final FactLine factLine1 = fact
+                    .createLine(line, m_tax.getAccount(DocTax.ACCTTYPE_TaxDue_Trans, as, conn),
+                        cCurrencyID, taxAmt.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                        documentType, conn);
+                factLine2 = fact.createLine(line,
+                    m_tax.getAccount(DocTax.ACCTTYPE_TaxDue, as, conn), cCurrencyID, "",
+                    taxAmt.toString(), Fact_Acct_Group_ID, nextSeqNo(factLine1.m_SeqNo),
+                    documentType, conn);
+              }
             }
           }// ARC
           else if (invoicedocumentType.equals(AcctServer.DOCTYPE_ARCredit)) {
