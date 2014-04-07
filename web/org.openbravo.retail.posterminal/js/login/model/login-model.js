@@ -383,7 +383,7 @@
       // sets the default payment method
       this.set('paymentcash', paymentcashcurrency || paymentcash || paymentlegacy);
 
-      OB.UTIL.initCashUp();
+      OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash);
       OB.MobileApp.model.on('window:ready', function () {
         //MASTER DATA REFRESH
         var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;

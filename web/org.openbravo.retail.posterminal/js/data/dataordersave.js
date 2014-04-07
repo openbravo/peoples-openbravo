@@ -64,7 +64,7 @@
         receipt.set('json', JSON.stringify(receipt.toJSON()));
 
         auxReceipt.clearWith(receipt);
-        OB.UTIL.cashUpReport(auxReceipt);
+        OB.UTIL.cashUpReport(auxReceipt, OB.UTIL.calculateCurrentCash);
 
         OB.Dal.save(receipt, function () {
           var successCallback = function (model) {
