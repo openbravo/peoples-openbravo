@@ -25,6 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
@@ -46,16 +50,26 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.service.datasource.hql.HQLInjectionQualifier;
+import org.openbravo.service.datasource.hql.HqlInjector;
 import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HQLDataSourceService extends ReadOnlyDataSourceService {
-
+  private static final Logger log = LoggerFactory.getLogger(HQLDataSourceService.class);
   private static final String AND = " AND ";
   private static final String WHERE = " WHERE ";
   private static final String ORDERBY = " ORDER BY ";
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
+  private static final String INJECTION_POINT_GENERIC_ID = "@injection_point_#@";
+  private static final String INJECTION_POINT_INDEX_PLACEHOLDER = "#";
+  private static final String DUMMY_INJECTION_POINT_REPLACEMENT = " 1 = 1 ";
+  @Inject
+  @Any
+  private Instance<HqlInjector> hqlInjectors;
 
   @Override
   // Returns the datasource properties, based on the columns of the table that is going to use the
@@ -145,16 +159,23 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       hqlQuery = hqlQuery + orderByClause;
     }
 
+    Map<String, Object> queryNamedParameters = new HashMap<String, Object>();
+
+    // replaces the injection points with injected code or with dummy comparisons
+    // if the injected code includes named parameters for the query, they are stored in the
+    // queryNamedParameters parameter
+    hqlQuery = fillInInjectionPoints(hqlQuery, queryNamedParameters, parameters);
+
     Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
 
     // sets the parameters of the query
-    Map<String, Object> hqlParameters = queryBuilder.getNamedParameters();
-    for (String key : hqlParameters.keySet()) {
-      if (hqlParameters.get(key) instanceof BigDecimal) {
+    queryNamedParameters.putAll(queryBuilder.getNamedParameters());
+    for (String key : queryNamedParameters.keySet()) {
+      if (queryNamedParameters.get(key) instanceof BigDecimal) {
         // TODO: find a better way to avoid the cast exception from BigDecimal to Long
-        hqlParameters.put(key, ((BigDecimal) hqlParameters.get(key)).longValue());
+        queryNamedParameters.put(key, ((BigDecimal) queryNamedParameters.get(key)).longValue());
       }
-      query.setParameter(key, hqlParameters.get(key));
+      query.setParameter(key, queryNamedParameters.get(key));
     }
 
     if (startRow > 0) {
@@ -183,6 +204,86 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       data.add(record);
     }
     return data;
+  }
+
+  /**
+   * If the hql query has injection points, resolve them using dependency injection. If some
+   * injection points are defined in the query but its definition is not injected, replace them with
+   * dummy comparisons
+   * 
+   * @param hqlQuery
+   *          hql query that might contain injection points
+   * @param queryNamedParameters
+   *          array with the named paremeters that will be set to the query. At this point it is
+   *          empty, is can be filled in by the injection point implementators
+   * @param parameters
+   *          parameters of this request
+   * @return the updated hql query. Also, hqlParameters can contain the named parameters used in the
+   *         injection points
+   */
+  private String fillInInjectionPoints(String hqlQuery, Map<String, Object> queryNamedParameters,
+      Map<String, String> parameters) {
+    String updatedHqlQuery = hqlQuery;
+    int index = 0;
+    while (existsInjectionPoint(hqlQuery, index)) {
+      HqlInjector injector = getInjector(index, parameters);
+      String injectedCode = null;
+      if (injector != null) {
+        injectedCode = injector.injectHql(parameters, queryNamedParameters);
+      }
+      if (injectedCode == null) {
+        injectedCode = DUMMY_INJECTION_POINT_REPLACEMENT;
+      }
+      String injectionPointId = INJECTION_POINT_GENERIC_ID.replace(
+          INJECTION_POINT_INDEX_PLACEHOLDER, Integer.toString(index));
+      updatedHqlQuery = updatedHqlQuery.replace(injectionPointId, injectedCode);
+      index++;
+    }
+    return updatedHqlQuery;
+  }
+
+  /**
+   * Returns, if defined, an injector for the injection point with index it
+   * 
+   * @param index
+   *          the index of the injection point
+   * @param parameters
+   *          the parameters of the request
+   * @return the injector with the lowest priority for the injection point @injection_point_<index>@
+   */
+  private HqlInjector getInjector(int index, Map<String, String> parameters) {
+    HqlInjector injector = null;
+    String tableId = parameters.get("tableId");
+    for (HqlInjector inj : hqlInjectors.select(new HQLInjectionQualifier.Selector(tableId, Integer
+        .toString(index)))) {
+      if (injector == null) {
+        injector = inj;
+      } else if (inj.getPriority(parameters) < injector.getPriority(parameters)) {
+        injector = inj;
+      } else if (inj.getPriority(parameters) == injector.getPriority(parameters)) {
+        log.warn(
+            "Trying to get hql injector for the injection point {} of the table with id {}, there are more than one instance with same priority",
+            INJECTION_POINT_GENERIC_ID.replace(INJECTION_POINT_INDEX_PLACEHOLDER,
+                Integer.toString(index)), tableId);
+      }
+    }
+    return injector;
+  }
+
+  /**
+   * Checks if the injection point with id index exists in the provided hql query
+   * 
+   * @param hqlQuery
+   *          hql query that can contain injection points
+   * @param index
+   *          index of the injection point
+   * @return true if the hql query contains an injection point with the provided index, false
+   *         otherwise
+   */
+  private boolean existsInjectionPoint(String hqlQuery, int index) {
+    String injectionPointId = INJECTION_POINT_GENERIC_ID.replace(INJECTION_POINT_INDEX_PLACEHOLDER,
+        Integer.toString(index));
+    return hqlQuery.contains(injectionPointId);
   }
 
   /**
