@@ -414,6 +414,7 @@
     },
 
     preLogoutActions: function () {
+      OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
       this.cleanSessionInfo();
     },
 

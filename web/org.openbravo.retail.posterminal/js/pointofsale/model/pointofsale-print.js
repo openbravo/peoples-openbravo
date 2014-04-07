@@ -63,6 +63,10 @@
       this.templatecashup = new OB.DS.HWResource(terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate);
       extendHWResource(this.templatecashup, "printCashUpTemplate");
 
+      this.templategoodbye = new OB.DS.HWResource(terminal.printGoodByeTemplate || OB.OBPOSPointOfSale.Print.GoodByeTemplate);
+      extendHWResource(this.templategoodbye, "printGoodByeTemplate");
+      this.templatewelcome = new OB.DS.HWResource(terminal.printWelcomeTemplate || OB.OBPOSPointOfSale.Print.WelcomeTemplate);
+      extendHWResource(this.templatewelcome, "printWelcomeTemplate");
       };
 
   PrintReceipt.prototype.print = function (order, printargs) {
@@ -285,5 +289,7 @@
   OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway = 'res/printlayaway.xml';
   OB.OBPOSPointOfSale.Print.DisplayTotal = 'res/displaytotal.xml';
   OB.OBPOSPointOfSale.Print.CashUpTemplate = 'res/printcashup.xml';
+  OB.OBPOSPointOfSale.Print.GoodByeTemplate = 'res/goodbye.xml';
+  OB.OBPOSPointOfSale.Print.WelcomeTemplate = 'res/welcome.xml';
 
 }());

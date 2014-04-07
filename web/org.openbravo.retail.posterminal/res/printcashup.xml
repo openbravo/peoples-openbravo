@@ -276,4 +276,12 @@
     <line>
     </line>
   </ticket>
+  <display>
+        <line>
+            <text length="20"></text>
+        </line>
+        <line>
+            <text length="20"></text>
+        </line>
+  </display>
 </output>

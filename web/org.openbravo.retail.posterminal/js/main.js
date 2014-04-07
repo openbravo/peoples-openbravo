@@ -72,6 +72,7 @@
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
     }
 
+    OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {});
   });
 
   modelterminal.on('loginsuccess', function () {
