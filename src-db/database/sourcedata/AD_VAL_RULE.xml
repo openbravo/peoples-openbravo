@@ -1628,7 +1628,7 @@ or (@AD_Module_ID@ is not null and AD_Client_ID =  '0')]]></CODE>
 <!--6910516E0A54432CA2E6A0C058346F92-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6910516E0A54432CA2E6A0C058346F92-->  <NAME><![CDATA[Fin_FinancialAccountofPaymentMethod]]></NAME>
 <!--6910516E0A54432CA2E6A0C058346F92-->  <TYPE><![CDATA[S]]></TYPE>
-<!--6910516E0A54432CA2E6A0C058346F92-->  <CODE><![CDATA[Fin_Financial_Account_ID IN (SELECT Fin_Financial_Account_ID FROM Fin_Finacc_Paymentmethod WHERE Fin_Paymentmethod_ID=@Fin_Paymentmethod_ID@ AND CASE WHEN @IsReceipt@='Y' THEN Payin_Allow='Y' ELSE Payout_Allow='Y' END)]]></CODE>
+<!--6910516E0A54432CA2E6A0C058346F92-->  <CODE><![CDATA[Fin_Financial_Account_ID IN (SELECT Fin_Financial_Account_ID FROM Fin_Finacc_Paymentmethod WHERE Fin_Paymentmethod_ID=@Fin_Paymentmethod_ID@ AND (CASE WHEN @IsReceipt@='Y' THEN Payin_Allow  ELSE Payout_Allow END)='Y')]]></CODE>
 <!--6910516E0A54432CA2E6A0C058346F92-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6910516E0A54432CA2E6A0C058346F92--></AD_VAL_RULE>
 
