@@ -45,7 +45,7 @@
     }
   }
 
-  function updateCashUpInfo(cashUp, receipt, j) {
+  function updateCashUpInfo(cashUp, receipt, j, callback) {
     var cashuptaxes, order;
     if (j < receipt.length) {
       order = receipt[j];
@@ -120,14 +120,16 @@
             OB.Dal.save(auxPay, null, null);
           }, this);
           findAndSave(cashuptaxes, 0, function () {
-            updateCashUpInfo(cashUp, receipt, j + 1);
+            updateCashUpInfo(cashUp, receipt, j + 1, callback);
           });
         });
       }
+    } else if (typeof callback === 'function') {
+      callback();
     }
   }
 
-  OB.UTIL.cashUpReport = function (receipt, sucessCallback) {
+  OB.UTIL.cashUpReport = function (receipt, callback) {
     var auxPay, orderType, taxOrderType, taxAmount, gross;
     if (!Array.isArray(receipt)) {
       receipt = [receipt];
@@ -135,7 +137,7 @@
     OB.Dal.find(OB.Model.CashUp, {
       'isbeingprocessed': 'N'
     }, function (cashUp) {
-      updateCashUpInfo(cashUp, receipt, 0);
+      updateCashUpInfo(cashUp, receipt, 0, callback);
     });
   };
 
@@ -235,4 +237,55 @@
     });
   };
 
+  OB.UTIL.calculateCurrentCash = function (callback) {
+    var me = this;
+    OB.Dal.find(OB.Model.CashUp, {
+      'isbeingprocessed': 'N'
+    }, function (cashUp) {
+      OB.Dal.find(OB.Model.PaymentMethodCashUp, {
+        'cashup_id': cashUp.at(0).get('id')
+      }, function (payMthds) { //OB.Dal.find success
+        var payMthdsCash;
+        _.each(OB.POS.modelterminal.get('payments'), function (paymentType, index) {
+          var cash = 0,
+              auxPay = payMthds.filter(function (payMthd) {
+              return payMthd.get('paymentmethod_id') === paymentType.payment.id;
+            })[0];
+          if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
+            return;
+          }
+          auxPay.set('_id', paymentType.payment.searchKey);
+          auxPay.set('isocode', paymentType.isocode);
+          auxPay.set('paymentMethod', paymentType.paymentMethod);
+          auxPay.set('id', paymentType.payment.id);
+          OB.Dal.find(OB.Model.CashManagement, {
+            'cashup_id': cashUp.at(0).get('id'),
+            'paymentMethodId': paymentType.payment.id
+          }, function (cashMgmts, args) {
+            var startingCash = auxPay.get('startingCash'),
+                rate = auxPay.get('rate'),
+                totalSales = auxPay.get('totalSales'),
+                totalReturns = auxPay.get('totalReturns'),
+                cashMgmt = _.reduce(cashMgmts.models, function (accum, trx) {
+                if (trx.get('type') === 'deposit') {
+                  return OB.DEC.add(accum, trx.get('origAmount'));
+                } else {
+                  return OB.DEC.sub(accum, trx.get('origAmount'));
+                }
+                checkEnoughCashAvailable
+              }, 0);
+            cash = OB.DEC.add(OB.DEC.add(OB.DEC.mul(startingCash, rate), OB.DEC.sub(totalSales, totalReturns)), cashMgmt);
+            OB.POS.terminal.terminal.paymentnames[paymentType.payment.searchKey].currentCash = cash;
+            OB.POS.terminal.terminal.paymentnames[paymentType.payment.searchKey].foreignCash = OB.DEC.div(cash, rate);
+
+            if (typeof callback === 'function') {
+              callback();
+            }
+          }, null, {
+            me: me
+          });
+        }, this);
+      });
+    });
+  };
 }());

@@ -138,6 +138,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       // Sending drops/deposits to backend
       _.each(this.depsdropstosave.models, function (depdrop, index) {
         OB.Dal.save(depdrop, function () {
+          OB.UTIL.calculateCurrentCash();
           runSyncProcessCM();
         }, function (error) {
           OB.UTIL.showLoading(false);
