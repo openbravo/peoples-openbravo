@@ -438,6 +438,18 @@ isc.OBSelectorItem.addProperties({
     }
   },
 
+  filterComplete: function () {
+    var ret;
+
+    // Prevents validation of this item while filtering because real value is
+    // not yet set. This also caused form item to be redrawn removing typed 
+    // text for filtering (see issue #26189)
+    this.preventValidation = true;
+    ret = this.Super('filterComplete', arguments);
+    delete this.preventValidation;
+    return ret;
+  },
+
   hidePickListOnBlur: function () {
     // when the form gets redrawn the focus may not be in
     // the item but it is still the item which gets the focus
