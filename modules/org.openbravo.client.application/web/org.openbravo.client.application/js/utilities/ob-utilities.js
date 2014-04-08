@@ -1232,3 +1232,19 @@ OB.Utilities.enumSortNormalizer = function (item, field, context) {
   }
   return ' ' + value;
 };
+
+//** {{{ OB.Utilities.getTabNumber }}} **
+//
+// Returns the position of a window in the main tab bar
+// Parameters:
+//  * {{{tabId}}} The if of the tab to search
+OB.Utilities.getTabNumberById = function (tabId) {
+  var i = 0,
+      len = OB.MainView.TabSet.paneContainer.members.length;
+  for (i; i < len; i++) {
+    if (tabId === OB.MainView.TabSet.getTabObject(i).id || tabId === OB.MainView.TabSet.getTabObject(i).pane.targetTabId) {
+      return i;
+    }
+  }
+  return -1;
+};
