@@ -12,7 +12,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.Iterator;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
@@ -38,6 +42,10 @@ public class CustomerLoader extends JSONProcessSimple {
   private static final Logger log = Logger.getLogger(CustomerLoader.class);
 
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
+
+  @Inject
+  @Any
+  private Instance<CustomerLoaderHook> customerCreations;
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -131,6 +139,9 @@ public class CustomerLoader extends JSONProcessSimple {
     } else {
       customer = editBPartner(customer, jsoncustomer);
     }
+
+    // Call all customerCreations injected.
+    executeHooks(customerCreations, jsoncustomer, customer);
 
     editLocation(customer, jsoncustomer);
     editBPartnerContact(customer, jsoncustomer);
@@ -382,5 +393,13 @@ public class CustomerLoader extends JSONProcessSimple {
   @Override
   protected String getProperty() {
     return "OBPOS_receipt.customers";
+  }
+
+  private void executeHooks(Instance<CustomerLoaderHook> hooks, JSONObject jsonCustomer,
+      BusinessPartner customer) throws Exception {
+    for (Iterator<CustomerLoaderHook> procIter = hooks.iterator(); procIter.hasNext();) {
+      CustomerLoaderHook proc = procIter.next();
+      proc.exec(jsonCustomer, customer);
+    }
   }
 }
