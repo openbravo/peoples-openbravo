@@ -19,16 +19,19 @@ enyo.kind({
   components: [{
     classes: 'span12',
     kind: 'OB.UI.OrderDetails',
-    name: 'orderdetails'
+    name: 'orderdetails',
+    id: 'org.openbravo.documentNoLabel'
   }, {
     classes: 'span12',
     style: 'float: left;',
     components: [{
       kind: 'OB.UI.BusinessPartner',
-      name: 'bpbutton'
+      name: 'bpbutton',
+      id: 'org.openbravo.orderBpBtn'
     }, {
       kind: 'OB.UI.BPLocation',
-      name: 'bplocbutton'
+      name: 'bplocbutton',
+      id: 'org.openbravo.orderBpLocationBtn'
     }]
   }],
   orderChanged: function (oldValue) {
