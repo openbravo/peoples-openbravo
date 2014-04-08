@@ -474,6 +474,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
           }
           OB.MobileApp.model.runSyncProcess(null, null, null, function () {
+            OB.UTIL.calculateCurrentCash();
             OB.UTIL.showLoading(false);
             me.set("finished", true);
           });
@@ -483,6 +484,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
               me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
             }
             OB.UTIL.initCashUp(function () {
+              OB.UTIL.calculateCurrentCash();
               OB.UTIL.showLoading(false);
               me.set("finished", true);
             });
