@@ -169,7 +169,7 @@ enyo.kind({
     //defined on redenderorderline.js
     listStyle: 'edit',
     isSelectableLine: function(model){
-      if (!OB.UTIL.isNullOrUndefined(model) && !OB.UTIL.isNullOrUndefined(model.attributes) && model.attributes.qty<0) {
+      if (!OB.UTIL.isNullOrUndefined(model) && !OB.UTIL.isNullOrUndefined(model.attributes) && !OB.UTIL.isNullOrUndefined(model.attributes.originalOrderLineId)) {
         return false;
       }
       return true;
