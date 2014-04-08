@@ -778,6 +778,7 @@
     },
     //Attrs is an object of attributes that will be set in order 
     _addProduct: function (p, qty, options, attrs) {
+      var me = this;
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
@@ -801,7 +802,7 @@
           } else if (data.result === 0) {
             alert(OB.I18N.getLabel('OBPOS_WeightZero'));
           } else {
-            this.createLine(p, data.result, options, attrs);
+            me.createLine(p, data.result, options, attrs);
           }
         });
       } else {
