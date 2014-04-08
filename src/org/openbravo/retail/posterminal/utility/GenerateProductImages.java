@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.ConfigParameters;
@@ -20,6 +21,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.MimeTypeUtil;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
 import org.openbravo.model.pricing.priceadjustment.PromotionType;
@@ -29,6 +31,8 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class GenerateProductImages extends DalBaseProcess {
+
+  private static final Logger log4j = Logger.getLogger(GenerateProductImages.class);
 
   public void doExecute(ProcessBundle bundle) throws Exception {
     try {
@@ -50,6 +54,9 @@ public class GenerateProductImages extends DalBaseProcess {
         imagesDir.mkdirs();
       }
 
+      final StringBuilder errors = new StringBuilder();
+      int errorCounter = 0;
+
       OBCriteria<OBRETCOProlProduct> prolProductCrit = OBDal.getInstance().createCriteria(
           OBRETCOProlProduct.class);
       prolProductCrit.add(Restrictions.eq(OBRETCOProlProduct.PROPERTY_OBRETCOPRODUCTLIST,
@@ -58,8 +65,22 @@ public class GenerateProductImages extends DalBaseProcess {
       while (prolProductScroll.next()) {
         OBRETCOProlProduct prolProduct = (OBRETCOProlProduct) prolProductScroll.get(0);
         if (prolProduct.getProduct().getImage() != null) {
-          generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct().getImage()
-              .getId(), imagesDir);
+          try {
+            generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct().getImage()
+                .getId(), imagesDir);
+          } catch (Exception ex) {
+            if (errorCounter < 30) {
+              String error = OBMessageUtils.getI18NMessage("OBPOS_ProductCanNotBeResized",
+                  new String[] { prolProduct.getProduct().getIdentifier() })
+                  + " - "
+                  + ex.getMessage();
+              errors.append(error + "<br/>");
+              log4j.error(error, ex);
+            } else if (errorCounter == 30) {
+              errors.append(OBMessageUtils.getI18NMessage("OBPOS_AndMore", null));
+            }
+            errorCounter++;
+          }
         }
         OBDal.getInstance().getSession().clear();
       }
@@ -69,12 +90,27 @@ public class GenerateProductImages extends DalBaseProcess {
           OBDal.getInstance().get(PromotionType.class, "BE5D42E554644B6AA262CCB097753951")));
       packs.add(Restrictions.isNotNull(PriceAdjustment.PROPERTY_OBDISCIMAGE));
       for (PriceAdjustment pack : packs.list()) {
-        generateImageFile(pack.getId(), pack.getObdiscImage().getId(), imagesDir);
+        try {
+          generateImageFile(pack.getId(), pack.getObdiscImage().getId(), imagesDir);
+        } catch (Exception ex) {
+          if (errorCounter < 30) {
+            String error = OBMessageUtils.getI18NMessage("OBPOS_ProductCanNotBeResized",
+                new String[] { pack.getIdentifier() }) + " - " + ex.getMessage();
+            errors.append(error + "<br/>");
+            log4j.error(error, ex);
+          } else if (errorCounter == 30) {
+            errors.append(OBMessageUtils.getI18NMessage("OBPOS_AndMore", null));
+          }
+          errorCounter++;
+        }
       }
 
       // Show a result
       final StringBuilder sb = new StringBuilder();
-      sb.append("Product Image Files successfully created!<br/>");
+      sb.append(OBMessageUtils.getI18NMessage("OBPOS_ProductImageCreated", null) + "<br/>");
+      if (errors != null && !errors.equals("")) {
+        sb.append(errors);
+      }
 
       // OBError is also used for successful results
       final OBError msg = new OBError();
@@ -97,8 +133,8 @@ public class GenerateProductImages extends DalBaseProcess {
   private void generateImageFile(String id, String imageId, File imagesDir) throws Exception {
 
     byte[] img = Utility.getImage(imageId);
-    img = Utility.resizeImageByte(img, 160, 0, true, true);
 
+    img = Utility.resizeImageByte(img, 160, 0, true, true);
     img = resizeImageByteToSquare(img);
 
     if (img != null) {
