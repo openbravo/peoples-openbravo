@@ -26,26 +26,8 @@ enyo.kind({
       }, {
         style: 'padding: 5px;',
         components: [{
-          classes: 'row-fluid span12',
-          style: 'border-bottom: 1px solid #cccccc;',
-          components: [{
-            classes: 'span12',
-            kind: 'OB.UI.OrderDetails',
-            name: 'orderdetails',
-            id: 'org.openbravo.documentNoLabel'
-          }, {
-            classes: 'span12',
-            style: 'float: left;',
-            components: [{
-              kind: 'OB.UI.BusinessPartner',
-              name: 'bpbutton',
-              id: 'org.openbravo.orderBpBtn'
-            }, {
-              kind: 'OB.UI.BPLocation',
-              name: 'bplocbutton',
-              id: 'org.openbravo.orderBpLocationBtn'
-            }]
-          }]
+          kind: 'OB.UI.OrderHeader',
+          name: 'receiptheader'
         }, {
           classes: 'row-fluid',
           style: 'max-height: 536px;',
@@ -61,9 +43,7 @@ enyo.kind({
     }]
   }],
   orderChanged: function (oldValue) {
-    this.$.bpbutton.setOrder(this.order);
-    this.$.bplocbutton.setOrder(this.order);
-    this.$.orderdetails.setOrder(this.order);
+    this.$.receiptheader.setOrder(this.order);
     this.$.orderview.setOrder(this.order);
   },
   orderListChanged: function (oldValue) {

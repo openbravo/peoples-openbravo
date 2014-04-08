@@ -8,6 +8,36 @@
  */
 
 /*global enyo, Backbone, _ */
+
+enyo.kind({
+  name: 'OB.UI.OrderHeader',
+  classes: 'row-fluid span12',
+  published: {
+    order: null
+  },
+  style: 'border-bottom: 1px solid #cccccc;',
+  components: [{
+    classes: 'span12',
+    kind: 'OB.UI.OrderDetails',
+    name: 'orderdetails'
+  }, {
+    classes: 'span12',
+    style: 'float: left;',
+    components: [{
+      kind: 'OB.UI.BusinessPartner',
+      name: 'bpbutton'
+    }, {
+      kind: 'OB.UI.BPLocation',
+      name: 'bplocbutton'
+    }]
+  }],
+  orderChanged: function (oldValue) {
+    this.$.bpbutton.setOrder(this.order);
+    this.$.bplocbutton.setOrder(this.order);
+    this.$.orderdetails.setOrder(this.order);
+  }
+});
+
 enyo.kind({
   name: 'OB.UI.TotalMultiReceiptLine',
   style: 'position: relative; padding: 10px;',
