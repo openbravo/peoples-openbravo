@@ -142,7 +142,7 @@ isc.OBTreeGrid.addProperties({
   },
 
   applyCellTypeFormatters: function (value, record, field, rowNum, colNum, isMultipleElement) {
-    if ((field.type === '_id_15' || field.type === '_id_16') && value && !isc.isA.Date(value) && isc.isA.Date(Date.parseSchemaDate(value))) {
+    if (field.type === '_id_16' && value && !isc.isA.Date(value) && isc.isA.Date(Date.parseSchemaDate(value))) {
       // applyCellTypeFormatters expects a date as value if the field is a date
       // if the original value is not a date, convert it to date before calling applyCellTypeFormatters
       value = Date.parseSchemaDate(value);
