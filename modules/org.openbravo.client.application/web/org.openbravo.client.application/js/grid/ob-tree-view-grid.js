@@ -383,7 +383,7 @@ isc.OBTreeViewGrid.addProperties({
     var selectedRecordId = this.getSelectedRecord() ? this.getSelectedRecord().id : null,
         length, tabViewPane, i;
     this.view.updateSubtabVisibility();
-    this.view.toolBar.updateButtonState();
+    this.toolBar.updateButtonState();
     // refresh the tabs
     if (this.view.childTabSet) {
       length = this.view.childTabSet.tabs.length;
