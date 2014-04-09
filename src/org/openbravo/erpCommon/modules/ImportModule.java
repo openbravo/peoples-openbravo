@@ -1007,7 +1007,7 @@ public class ImportModule {
         // restore core
         final File core[] = getCore();
         try {
-          log4j.info("Deletig core to restore backup...");
+          log4j.info("Deleting core to restore backup...");
           Utility.deleteDir(core);
           log4j.info("Restoring core " + backupFileName);
           Zip.unzip(backupFileName, obDir);
@@ -1512,7 +1512,7 @@ public class ImportModule {
 
         if (entry.isDirectory() || entryFile.getParent() != null) {
           if (!dir.exists()) {
-            log4j.info("Created dir: " + dir.getAbsolutePath());
+            log4j.debug("Created dir: " + dir.getAbsolutePath());
             dir.mkdirs();
           }
         }
@@ -1553,7 +1553,7 @@ public class ImportModule {
           }
 
           // Unzip the file
-          log4j.info("Installing " + fileName);
+          log4j.debug("Installing " + fileName);
 
           final FileOutputStream fout = new FileOutputStream(entryFile);
 

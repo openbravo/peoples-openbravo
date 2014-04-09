@@ -540,6 +540,11 @@ isc.FormItem.addProperties({
     if (this.form && this.form.grid && this.form.grid._showingEditor) {
       return;
     }
+
+    if (this.preventValidation) {
+      return;
+    }
+
     return this._original_validate();
   },
 

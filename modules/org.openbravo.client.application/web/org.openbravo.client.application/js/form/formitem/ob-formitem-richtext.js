@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -125,6 +125,12 @@ isc.OBRichTextItem.addProperties({
   showFocused: true,
   showTitle: true,
   rowSpan: 2,
+  // smartclient sets this property by default to true
+  // this would not allow to place this component in a column other than the first one
+  startRow: false,
+  // smartclient sets this property by default to fill a whole row
+  // this would not allow to set the colSpan to 1
+  colSpan: 1,
   init: function () {
     if (this.initStyle) {
       this.initStyle();

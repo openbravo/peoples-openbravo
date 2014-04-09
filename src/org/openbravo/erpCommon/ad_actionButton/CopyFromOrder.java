@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.PriceAdjustment;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -233,6 +234,11 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     CopyFromOrderData[] data = CopyFromOrderData.select(this, strBpartner, strmPricelistId,
         dataOrder[0].dateordered, order.getPriceList().isPriceIncludesTax() ? "Y" : "N", strSOTrx,
         dataOrder[0].lastDays.equals("") ? "0" : dataOrder[0].lastDays);
+    for (int i = 0; i < data.length; i++) {
+      Product product = OBDal.getInstance().get(Product.class, data[i].mProductId);
+      data[i].lastpriceso = (PriceAdjustment.calculatePriceActual(order, product, new BigDecimal(
+          data[i].qty), new BigDecimal(data[i].pricestd))).toString();
+    }
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());

@@ -14,7 +14,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2010-2012 Openbravo SLU
+    * All portions are Copyright (C) 2010-2014 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -66,8 +66,10 @@ BEGIN
 
     END LOOP;
   ELSIF (UPDATING) THEN
-    UPDATE fin_financial_account_acct SET AD_ORG_ID = :new.AD_ORG_ID
-    WHERE fin_financial_account_id = :new.fin_financial_account_id;
+		IF (:OLD.AD_ORG_ID <> :NEW.AD_ORG_ID) THEN
+			UPDATE fin_financial_account_acct SET AD_ORG_ID = :new.AD_ORG_ID
+			WHERE fin_financial_account_id = :new.fin_financial_account_id;
+		END IF;
   END IF;
 END FIN_FINANCIAL_ACCOUNT_TRG
 ]]></body>

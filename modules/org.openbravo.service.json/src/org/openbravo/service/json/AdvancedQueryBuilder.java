@@ -644,11 +644,10 @@ public class AdvancedQueryBuilder {
       }
     }
 
+    String alias = getTypedParameterAlias();
     if (ignoreCase(property, operator)) {
-      localValue = localValue.toString().toUpperCase();
+      alias = "upper(" + alias + ")";
     }
-
-    final String alias = getTypedParameterAlias();
     String clause;
     if (isLike(operator)) {
       clause = alias + " escape '" + ESCAPE_CHAR + "' ";
@@ -691,12 +690,12 @@ public class AdvancedQueryBuilder {
     if (isLike(operator)) {
       if (operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_ICONTAINS)
           || operator.equals(OPERATOR_CONTAINSFIELD)) {
-        return "%" + escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
+        return "%" + escapeLike(value.toString()).replaceAll(" ", "%") + "%";
       } else if (operator.equals(OPERATOR_NOTCONTAINS) || operator.equals(OPERATOR_CONTAINS)) {
         return "%" + escapeLike(value.toString()).replaceAll(" ", "%") + "%";
       } else if (operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
           || operator.equals(OPERATOR_STARTSWITHFIELD)) {
-        return escapeLike(value.toString().toUpperCase()).replaceAll(" ", "%") + "%";
+        return escapeLike(value.toString()).replaceAll(" ", "%") + "%";
       } else if (operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_STARTSWITH)) {
         return escapeLike(value.toString()).replaceAll(" ", "%") + "%";
       } else {
@@ -931,15 +930,14 @@ public class AdvancedQueryBuilder {
 
   private boolean ignoreCase(List<Property> properties, String operator) {
     boolean operatorCase = operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
-        || operator.equals(OPERATOR_CONTAINS) || operator.equals(OPERATOR_ENDSWITH)
-        || operator.equals(OPERATOR_STARTSWITH) || operator.equals(OPERATOR_ICONTAINS)
-        || operator.equals(OPERATOR_INOTSTARTSWITH) || operator.equals(OPERATOR_INOTENDSWITH)
-        || operator.equals(OPERATOR_NOTSTARTSWITH) || operator.equals(OPERATOR_NOTCONTAINS)
-        || operator.equals(OPERATOR_INOTCONTAINS) || operator.equals(OPERATOR_NOTENDSWITH)
-        || operator.equals(OPERATOR_IENDSWITH) || operator.equals(OPERATOR_ISTARTSWITH)
-        || operator.equals(OPERATOR_IBETWEEN) || operator.equals(OPERATOR_IGREATEROREQUAL)
-        || operator.equals(OPERATOR_ILESSOREQUAL) || operator.equals(OPERATOR_IGREATERTHAN)
-        || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_IBETWEENINCLUSIVE);
+        || operator.equals(OPERATOR_ICONTAINS) || operator.equals(OPERATOR_INOTSTARTSWITH)
+        || operator.equals(OPERATOR_INOTENDSWITH) || operator.equals(OPERATOR_NOTSTARTSWITH)
+        || operator.equals(OPERATOR_NOTCONTAINS) || operator.equals(OPERATOR_INOTCONTAINS)
+        || operator.equals(OPERATOR_NOTENDSWITH) || operator.equals(OPERATOR_IENDSWITH)
+        || operator.equals(OPERATOR_ISTARTSWITH) || operator.equals(OPERATOR_IBETWEEN)
+        || operator.equals(OPERATOR_IGREATEROREQUAL) || operator.equals(OPERATOR_ILESSOREQUAL)
+        || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_ILESSTHAN)
+        || operator.equals(OPERATOR_IBETWEENINCLUSIVE);
 
     for (Property property : properties) {
       if (!property.isPrimitive()

@@ -244,7 +244,8 @@ OB.ViewFormProperties = {
 
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
-    if (!isNew) {
+    // A non saved row should not be added to recent documents 
+    if (!isNew && !this.isNotSaved()) {
       // If editing a document set to recent documents
       this.view.setRecentDocument(this.getValues());
     }
@@ -258,6 +259,10 @@ OB.ViewFormProperties = {
       this.view.statusBar.mode = 'NEW';
       this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_New');
     }
+  },
+
+  isNotSaved: function () {
+    return this.getValues().id.startsWith('_');
   },
 
   editNewRecord: function (preventFocus) {
@@ -746,6 +751,7 @@ OB.ViewFormProperties = {
     var columnValues = data.columnValues,
         calloutMessages = data.calloutMessages,
         auxInputs = data.auxiliaryInputValues,
+        overwrittenAuxiliaryInputs = data.overwrittenAuxiliaryInputs,
         prop, value, i, j, dynamicCols = data.dynamicCols,
         sessionAttributes = data.sessionAttributes,
         editValues, item, section, retHiddenInputs = data.hiddenInputs;
@@ -814,6 +820,10 @@ OB.ViewFormProperties = {
           this.auxInputs[prop] = value;
         }
       }
+    }
+
+    if (overwrittenAuxiliaryInputs) {
+      this.overwrittenAuxiliaryInputs = overwrittenAuxiliaryInputs;
     }
 
     if (sessionAttributes) {
@@ -1338,6 +1348,9 @@ OB.ViewFormProperties = {
       requestParams.CHANGED_COLUMN = item.inpColumnName;
     }
     allProperties._entityName = this.view.entity;
+    if (this.overwrittenAuxiliaryInputs) {
+      allProperties.overwrittenAuxiliaryInputs = this.overwrittenAuxiliaryInputs;
+    }
 
     // disable with a delay to allow the focus to be moved to a new field
     // before disabling

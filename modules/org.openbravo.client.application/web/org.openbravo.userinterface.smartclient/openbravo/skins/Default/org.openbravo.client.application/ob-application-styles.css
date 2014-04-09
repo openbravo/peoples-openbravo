@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,6 +70,21 @@ body {
 .imgButtonSelectedOver,
 .imgButtonSelectedFocusedOver {
   line-height: 100%; /* To avoid strange effect in some Firefox where the imgButtons are 1px moved down */
+}
+
+.imgHeaderButton,
+.imgHeaderButtonOver,
+.imgHeaderButtonFocused,
+.imgHeaderButtonFocusedOver,
+.imgHeaderButtonDown,
+.imgHeaderButtonFocusedDown,
+.imgHeaderButtonSelected,
+.imgHeaderButtonSelectedFocused,
+.imgHeaderButtonSelectedDown,
+.imgHeaderButtonSelectedFocusedDown,
+.imgHeaderButtonSelectedOver,
+.imgHeaderButtonSelectedFocusedOver {
+  background-size: auto; /* To avoid that the header in a PickList be shown without image in case of being a data-uri */
 }
 
 /* menuMain changes to avoid UI defects due to the CSS3 attributes introduced by SmartClient 8.3d 03-May-2012 */

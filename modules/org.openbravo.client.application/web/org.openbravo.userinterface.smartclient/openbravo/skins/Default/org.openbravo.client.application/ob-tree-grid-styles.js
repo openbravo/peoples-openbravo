@@ -20,6 +20,8 @@
 OB.Styles.OBTreeGrid = OB.Styles.OBTreeGrid || {};
 OB.Styles.OBTreeGrid.iconFolder = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/tree-grid/iconFolder.png';
 OB.Styles.OBTreeGrid.iconNode = OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/tree-grid/iconNode.png';
+OB.Styles.OBTreeGrid.cellCSSText_filterHit = '';
+OB.Styles.OBTreeGrid.cellCSSText_notFilterHit = 'color: #C0C0C0;';
 
 isc.OBTreeGrid.addProperties({
   bodyStyleName: 'OBGridBody',

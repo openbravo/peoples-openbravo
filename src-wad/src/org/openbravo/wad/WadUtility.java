@@ -74,6 +74,10 @@ public class WadUtility {
     if (fields == null)
       return "";
 
+    int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
+    int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
+
+    String retValue;
     if (fields.reference.equals("19") || fields.reference.equals("30")
         || fields.reference.equals("31") || fields.reference.equals("35")
         || fields.reference.equals("25") || fields.reference.equals("800011")) {
@@ -81,9 +85,6 @@ public class WadUtility {
       // Maintain this old code for convenience, rest of code moved to WADControl subclasses
 
       StringBuffer texto = new StringBuffer();
-      int ilist = Integer.valueOf(vecCounters.elementAt(1).toString()).intValue();
-      int itable = Integer.valueOf(vecCounters.elementAt(0).toString()).intValue();
-
       itable++;
       EditionFieldsData[] dataSearchs = null;
       if (fields.reference.equals("30"))
@@ -150,13 +151,14 @@ public class WadUtility {
       }
       vecCounters.set(0, Integer.toString(itable));
       vecCounters.set(1, Integer.toString(ilist));
-      return texto.toString();
+      retValue = texto.toString();
     } else {
       WADControl control = WadUtility.getWadControlClass(conn, fields.reference,
           fields.adReferenceValueId);
-      return control.columnIdentifier(tableName, fields, vecCounters, vecFields, vecTable,
+      retValue = control.columnIdentifier(tableName, fields, vecCounters, vecFields, vecTable,
           vecWhere, vecParameters, vecTableParameters);
     }
+    return retValue;
 
   }
 

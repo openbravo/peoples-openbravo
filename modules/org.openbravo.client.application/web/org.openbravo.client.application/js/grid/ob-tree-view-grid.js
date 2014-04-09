@@ -77,6 +77,7 @@ isc.OBTreeViewGrid.addProperties({
     this.emptyMessage = this.view.viewGrid.emptyMessage;
     this.noDataEmptyMessage = this.view.viewGrid.noDataEmptyMessage;
     this.clearFilter = this.view.viewGrid.clearFilter;
+    this.setSingleRecordFilterMessage = this.view.viewGrid.setSingleRecordFilterMessage;
   },
 
   // Sets the fields of the datasource and extends the transformRequest and transformResponse functions

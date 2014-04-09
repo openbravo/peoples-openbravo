@@ -99,8 +99,7 @@ public class EntityAccessChecker implements OBNotSingleton {
    * 
    * @see ModelProvider
    */
-  public void initialize() {
-
+  public synchronized void initialize() {
     OBContext.setAdminMode();
     try {
       final ModelProvider mp = ModelProvider.getInstance();

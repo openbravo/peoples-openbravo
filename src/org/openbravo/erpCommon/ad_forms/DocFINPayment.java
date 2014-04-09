@@ -489,12 +489,13 @@ public class DocFINPayment extends AcctServer {
       if (new BigDecimal(usedAmount).compareTo(ZERO) != 0
           && new BigDecimal(generatedAmount).compareTo(ZERO) == 0) {
         List<FIN_Payment_Credit> creditPayments = payment.getFINPaymentCreditList();
+        BigDecimal amtDiff = BigDecimal.ZERO;
         for (FIN_Payment_Credit creditPayment : creditPayments) {
           String creditAmountConverted = convertAmount(creditPayment.getAmount(),
               creditPayment.getCreditPaymentUsed().isReceipt(), DateAcct, TABLEID_Payment,
               creditPayment.getCreditPaymentUsed().getId(),
               creditPayment.getCreditPaymentUsed().getCurrency().getId(), as.m_C_Currency_ID, null,
-              as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn).toString();
+              as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
           fact.createLine(
               null,
               getAccountBPartner(C_BPartner_ID, as, creditPayment.getCreditPaymentUsed()
@@ -503,6 +504,18 @@ public class DocFINPayment extends AcctServer {
               (creditPayment.getCreditPaymentUsed().isReceipt() ? creditAmountConverted : ""),
               (creditPayment.getCreditPaymentUsed().isReceipt() ? "" : creditAmountConverted),
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          amtDiff = amtDiff.add(creditPayment.getAmount()).subtract(
+              new BigDecimal(creditAmountConverted));
+        }
+        if (!payment.isReceipt() && amtDiff.compareTo(BigDecimal.ZERO) == 1 || payment.isReceipt()
+            && amtDiff.compareTo(BigDecimal.ZERO) == -1) {
+          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_ConvertGainDefaultAmt, as, conn),
+              payment.getCurrency().getId(), "", amtDiff.abs().toString(), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+        } else {
+          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_ConvertChargeDefaultAmt, as, conn),
+              payment.getCurrency().getId(), amtDiff.abs().toString(), "", Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
         }
         if (creditPayments.isEmpty()) {
           fact.createLine(null,

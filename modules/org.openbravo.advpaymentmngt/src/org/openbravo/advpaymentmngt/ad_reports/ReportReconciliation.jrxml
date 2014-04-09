@@ -177,7 +177,7 @@
 					<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SUBREP_OUTPAYMENT}]]></subreportExpression>
 				</subreport>
 				<staticText>
-					<reportElement key="staticText-11" x="0" y="0" width="169" height="14" isRemoveLineWhenBlank="true"/>
+					<reportElement key="staticText-11" x="0" y="0" width="244" height="14" isRemoveLineWhenBlank="true"/>
 					<box leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -233,7 +233,7 @@
 					<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SUBREP_OUTDEPOSIT}]]></subreportExpression>
 				</subreport>
 				<staticText>
-					<reportElement key="staticText-12" x="0" y="0" width="169" height="14" isRemoveLineWhenBlank="true"/>
+					<reportElement key="staticText-12" x="0" y="0" width="244" height="14" isRemoveLineWhenBlank="true"/>
 					<box leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

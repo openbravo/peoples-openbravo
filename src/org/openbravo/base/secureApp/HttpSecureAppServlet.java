@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Copyright (C) 2001-2014 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -1024,6 +1024,18 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     os.close();
   }
 
+  protected void printPagePopUpDownloadAndRefresh(ServletOutputStream os, String fileName)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: PopUp Download");
+    String href = strDireccion + "/utility/DownloadReport.html?report=" + fileName;
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/base/secureApp/PopUp_DownloadAndRefresh").createXmlDocument();
+    xmlDocument.setParameter("href", href);
+    os.println(xmlDocument.print());
+    os.close();
+  }
+
   private void printPageClosePopUpAndRefresh(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -1195,6 +1207,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     }
   }
 
+  protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
+      String strReportName, String strFileName, String strOutputType,
+      HashMap<String, Object> designParameters, FieldProvider[] data,
+      Map<Object, Object> exportParameters, boolean forceRefresh) throws ServletException {
+    if (data != null) {
+      renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
+          new JRFieldProviderDataSource(data, variables.getJavaDateFormat()), exportParameters,
+          forceRefresh);
+    } else {
+      renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
+          (JRDataSource) null, exportParameters, forceRefresh);
+    }
+  }
+
   /**
    * Render a jrxml based report using a {@link ScrollableFieldProvider} as its datasource.
    * 
@@ -1214,6 +1240,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       String strReportName, String strFileName, String strOutputType,
       HashMap<String, Object> designParameters, JRDataSource data,
       Map<Object, Object> exportParameters) throws ServletException {
+    renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
+        data, exportParameters, false);
+  }
+
+  private void renderJR(VariablesSecureApp variables, HttpServletResponse response,
+      String strReportName, String strFileName, String strOutputType,
+      HashMap<String, Object> designParameters, JRDataSource data,
+      Map<Object, Object> exportParameters, boolean forceRefresh) throws ServletException {
     if (strReportName == null || strReportName.equals(""))
       strReportName = PrintJRData.getReportName(this, classInfo.id);
 
@@ -1337,8 +1371,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         response.setContentType("text/html;charset=UTF-8");
         response.setHeader("Content-disposition", "inline" + "; filename=" + strFileName + "-"
             + (reportId) + ".html");
-        printPagePopUpDownload(response.getOutputStream(), strFileName + "-" + (reportId) + "."
-            + strOutputType);
+        if (forceRefresh) {
+          printPagePopUpDownloadAndRefresh(response.getOutputStream(), strFileName + "-"
+              + (reportId) + "." + strOutputType);
+        } else {
+          printPagePopUpDownload(response.getOutputStream(), strFileName + "-" + (reportId) + "."
+              + strOutputType);
+        }
       } else {
         throw new ServletException("Output format no supported");
       }

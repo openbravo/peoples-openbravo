@@ -174,6 +174,15 @@ public class FormInitializationComponent extends BaseActionHandler {
         gridVisibleProperties = convertJSONArray(jsContent.getJSONArray("_gridVisibleProperties"));
       }
 
+      List<String> overwrittenAuxiliaryInputs = new ArrayList<String>();
+      // The provided overwrittenAuxiliaryInputs only have to be persisted when calling the FIC in
+      // CHANGE mode. In the rest of the modes all auxiliary inputs are computed regardless of
+      // whether a callout have modified them in a previous request
+      if (jsContent.has("overwrittenAuxiliaryInputs") && "CHANGE".equals(mode)) {
+        overwrittenAuxiliaryInputs = convertJSONArray(jsContent
+            .getJSONArray("overwrittenAuxiliaryInputs"));
+      }
+
       // If the table is based in a datasource, don't try to create a BaseOBObject
       if (!dataSourceBasedTable) {
         // create the row from the json content then
@@ -239,7 +248,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Computation of the Auxiliary Input values
       long t4 = System.currentTimeMillis();
-      computeAuxiliaryInputs(mode, tab, columnValues);
+      computeAuxiliaryInputs(mode, tab, columnValues, overwrittenAuxiliaryInputs);
 
       // Computation of Column Values (using UIDefinition, so including combo values and all
       // relevant additional information)
@@ -248,17 +257,19 @@ public class FormInitializationComponent extends BaseActionHandler {
           changedColumn, jsContent, changeEventCols, calloutsToCall, lastfieldChanged,
           visibleProperties, gridVisibleProperties);
 
-      if (mode.equals("NEW")) {
-        // In the case of NEW mode, we compute auxiliary inputs again to take into account that
-        // auxiliary inputs could depend on a default value
-        computeAuxiliaryInputs(mode, tab, columnValues);
-      }
-
       // Execution of callouts
       long t6 = System.currentTimeMillis();
       List<String> changedCols = executeCallouts(mode, tab, columnValues, changedColumn,
           calloutsToCall, lastfieldChanged, calloutMessages, changeEventCols, jsExcuteCode,
-          hiddenInputs);
+          hiddenInputs, overwrittenAuxiliaryInputs);
+
+      // Compute the auxiliary inputs after executing the callout to ensure they use the updated
+      // parameters
+      if (mode.equals("NEW") || mode.equals("CHANGE")) {
+        // In the case of NEW mode, we compute auxiliary inputs again to take into account that
+        // auxiliary inputs could depend on a default value
+        computeAuxiliaryInputs(mode, tab, columnValues, overwrittenAuxiliaryInputs);
+      }
 
       if (changedCols.size() > 0) {
         RequestContext.get().setRequestParameter("donotaddcurrentelement", "true");
@@ -276,7 +287,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       // Construction of the final JSONObject
       long t9 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
-          calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount);
+          calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount,
+          overwrittenAuxiliaryInputs);
       analyzeResponse(tab, columnValues);
       long t10 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
@@ -387,7 +399,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
       BaseOBObject row, List<String> changeEventCols, List<JSONObject> calloutMessages,
       List<JSONObject> attachments, List<String> jsExcuteCode, Map<String, Object> hiddenInputs,
-      int noteCount) {
+      int noteCount, List<String> overwrittenAuxiliaryInputs) {
     JSONObject finalObject = new JSONObject();
     try {
       if (mode.equals("NEW") || mode.equals("CHANGE")) {
@@ -427,6 +439,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             columnValues.get("inp" + Sqlc.TransformaNombreColumna(auxIn.getName())));
       }
       finalObject.put("auxiliaryInputValues", jsonAuxiliaryInputValues);
+      finalObject.put("overwrittenAuxiliaryInputs", new JSONArray(overwrittenAuxiliaryInputs));
 
       if (mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION")) {
         // We also include information related to validation dependencies
@@ -595,32 +608,56 @@ public class FormInitializationComponent extends BaseActionHandler {
         if (mode.equals("NEW")) {
           // On NEW mode, the values are computed through the UIDefinition (the defaults will be
           // used)
-          if (field.getColumn().isLinkToParentColumn() && parentRecord != null
-              && referencedEntityIsParent(parentRecord, field)) {
-            // If the column is link to the parent tab, we set its value as the parent id
-            RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
-                parentId);
-            value = uiDef.getFieldProperties(field, true);
-          } else if (field.getColumn().getDBColumnName().equalsIgnoreCase("IsActive")) {
-            // The Active column is always set to 'true' on new records
-            RequestContext.get()
-                .setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col), "Y");
-            value = uiDef.getFieldProperties(field, true);
-          } else {
-            // Else, the default is used
-            if (isNotActiveOrVisibleAndNotNeeded(field, visibleProperties)) {
-              // If the column is not currently visible, and its not mandatory, we don't need to
-              // compute the combo.
-              // If a column is mandatory then the combo needs to be computed, because the selected
-              // value can depend on the computation if there is no default value
-              log.debug("Not calculating combo in " + mode + " mode for column " + col);
-              value = uiDef.getFieldPropertiesWithoutCombo(field, false);
-            } else {
-              if (isNotActiveOrVisible(field, visibleProperties)) {
-                log.debug("Only first combo record in " + mode + " mode for column " + col);
-                value = uiDef.getFieldPropertiesFirstRecord(field, false);
+          if (field.getProperty() != null && !field.getProperty().isEmpty()) {
+            // if the column is a property we try to compute the property value, if value is not
+            // found null is passed. Refer issue https://issues.openbravo.com/view.php?id=25754
+            Object propertyValue = DalUtil.getValueFromPath(parentRecord, field.getProperty());
+            if (propertyValue != null) {
+              JSONObject jsonObject = new JSONObject();
+              if (propertyValue instanceof BaseOBObject) {
+                jsonObject.put("value", ((BaseOBObject) propertyValue).getId());
+                jsonObject.put("classicValue", ((BaseOBObject) propertyValue).getId());
+                ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
+                JSONObject entries = new JSONObject();
+                entries.put("id", ((BaseOBObject) propertyValue).getId());
+                entries.put("_identifier", ((BaseOBObject) propertyValue).getIdentifier());
+                comboEntries.add(entries);
+                jsonObject.put("entries", new JSONArray(comboEntries));
               } else {
-                value = uiDef.getFieldProperties(field, false);
+                jsonObject.put("value", propertyValue.toString());
+                jsonObject.put("classicValue", propertyValue.toString());
+              }
+              value = jsonObject.toString();
+            }
+          } else {
+            if (field.getColumn().isLinkToParentColumn() && parentRecord != null
+                && referencedEntityIsParent(parentRecord, field)) {
+              // If the column is link to the parent tab, we set its value as the parent id
+              RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
+                  parentId);
+              value = uiDef.getFieldProperties(field, true);
+            } else if (field.getColumn().getDBColumnName().equalsIgnoreCase("IsActive")) {
+              // The Active column is always set to 'true' on new records
+              RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(col),
+                  "Y");
+              value = uiDef.getFieldProperties(field, true);
+            } else {
+              // Else, the default is used
+              if (isNotActiveOrVisibleAndNotNeeded(field, visibleProperties)) {
+                // If the column is not currently visible, and its not mandatory, we don't need to
+                // compute the combo.
+                // If a column is mandatory then the combo needs to be computed, because the
+                // selected
+                // value can depend on the computation if there is no default value
+                log.debug("Not calculating combo in " + mode + " mode for column " + col);
+                value = uiDef.getFieldPropertiesWithoutCombo(field, false);
+              } else {
+                if (isNotActiveOrVisible(field, visibleProperties)) {
+                  log.debug("Only first combo record in " + mode + " mode for column " + col);
+                  value = uiDef.getFieldPropertiesFirstRecord(field, false);
+                } else {
+                  value = uiDef.getFieldProperties(field, false);
+                }
               }
             }
           }
@@ -844,15 +881,15 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   }
 
-  private void computeAuxiliaryInputs(String mode, Tab tab, Map<String, JSONObject> columnValues) {
-    if (mode.equals("CHANGE")) {
-      // Auxiliary Inputs are not computed in CHANGE mode, only in the initial request in NEW or
-      // EDIT mode. This is done to prevent accidental overwriting of auxiliary input values which
-      // have been set by callouts
-      // See issue 17239 for more information
-      return;
-    }
+  private void computeAuxiliaryInputs(String mode, Tab tab, Map<String, JSONObject> columnValues,
+      List<String> overwrittenAuxiliaryInputs) {
     for (AuxiliaryInput auxIn : getAuxiliaryInputList(tab.getId())) {
+      if (mode.equals("CHANGE")) {
+        // Don't compute the auxiliary inputs that have been overwritten by callouts
+        if (overwrittenAuxiliaryInputs.contains(auxIn.getName())) {
+          continue;
+        }
+      }
       Object value = computeAuxiliaryInput(auxIn, tab.getWindow().getId());
       log.debug("Final Computed Value. Name: " + auxIn.getName() + " Value: " + value);
       JSONObject jsonObj = new JSONObject();
@@ -1290,7 +1327,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private List<String> executeCallouts(String mode, Tab tab, Map<String, JSONObject> columnValues,
       String changedColumn, List<String> calloutsToCall, List<String> lastfieldChanged,
       List<JSONObject> messages, List<String> dynamicCols, List<String> jsExecuteCode,
-      Map<String, Object> hiddenInputs) {
+      Map<String, Object> hiddenInputs, List<String> overwrittenAuxiliaryInputs) {
 
     // In CHANGE mode, we will add the initial callout call for the changed column, if there is
     // one
@@ -1312,14 +1349,14 @@ public class FormInitializationComponent extends BaseActionHandler {
       return new ArrayList<String>();
     }
     return runCallouts(columnValues, tab, calledCallouts, calloutsToCall, lastfieldChanged,
-        messages, dynamicCols, jsExecuteCode, hiddenInputs);
+        messages, dynamicCols, jsExecuteCode, hiddenInputs, overwrittenAuxiliaryInputs);
 
   }
 
   private List<String> runCallouts(Map<String, JSONObject> columnValues, Tab tab,
       List<String> calledCallouts, List<String> calloutsToCall, List<String> lastfieldChangedList,
       List<JSONObject> messages, List<String> dynamicCols, List<String> jsExecuteCode,
-      Map<String, Object> hiddenInputs) {
+      Map<String, Object> hiddenInputs, List<String> overwrittenAuxiliaryInputs) {
     HashMap<String, Object> calloutInstances = new HashMap<String, Object>();
 
     // flush&commit to release lock in db which otherwise interfere with callouts which run in their
@@ -1544,6 +1581,11 @@ public class FormInitializationComponent extends BaseActionHandler {
                         obj.put("value", el);
                         obj.put("classicValue", el);
                         columnValues.put(name, obj);
+                        // Add the auxiliary input to the list of auxiliary inputs modified by
+                        // callouts
+                        if (!overwrittenAuxiliaryInputs.contains(aux.getName())) {
+                          overwrittenAuxiliaryInputs.add(aux.getName());
+                        }
                       }
                     }
                     if (!columnValues.containsKey(name)) {

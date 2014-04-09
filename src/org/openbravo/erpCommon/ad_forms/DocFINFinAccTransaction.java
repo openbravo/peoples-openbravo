@@ -640,18 +640,31 @@ public class DocFINFinAccTransaction extends AcctServer {
           && transaction.getFinPayment().getGeneratedCredit().compareTo(ZERO) == 0) {
         List<FIN_Payment_Credit> creditPayments = transaction.getFinPayment()
             .getFINPaymentCreditList();
+        BigDecimal amtDiff = BigDecimal.ZERO;
         for (FIN_Payment_Credit creditPayment : creditPayments) {
           boolean isReceiptPayment = creditPayment.getCreditPaymentUsed().isReceipt();
           String creditAmountConverted = convertAmount(creditPayment.getAmount(), isReceiptPayment,
               DateAcct, TABLEID_Payment, creditPayment.getCreditPaymentUsed().getId(),
               creditPayment.getCreditPaymentUsed().getCurrency().getId(), as.m_C_Currency_ID, null,
-              as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn).toString();
+              as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
           fact.createLine(null,
               getAccountBPartner(C_BPartner_ID, as, isReceiptPayment, true, conn), creditPayment
                   .getCreditPaymentUsed().getCurrency().getId(),
               (isReceiptPayment ? creditAmountConverted : ""), (isReceiptPayment ? ""
                   : creditAmountConverted), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
               conn);
+          amtDiff = amtDiff.add(creditPayment.getAmount()).subtract(
+              new BigDecimal(creditAmountConverted));
+        }
+        if (!transaction.getFinPayment().isReceipt() && amtDiff.compareTo(BigDecimal.ZERO) == 1
+            || transaction.getFinPayment().isReceipt() && amtDiff.compareTo(BigDecimal.ZERO) == -1) {
+          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_ConvertGainDefaultAmt, as, conn),
+              transaction.getCurrency().getId(), "", amtDiff.abs().toString(), Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
+        } else {
+          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_ConvertChargeDefaultAmt, as, conn),
+              transaction.getCurrency().getId(), amtDiff.abs().toString(), "", Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, conn);
         }
         if (creditPayments.isEmpty()) {
           fact.createLine(
@@ -778,7 +791,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     }
     if (payment != null) {
       if (usedCredit.compareTo(ZERO) != 0 && generatedCredit.compareTo(ZERO) == 0)
-        retValue = retValue.add(usedCredit);
+        retValue = retValue.add(payment.isReceipt() ? usedCredit : usedCredit.negate());
       retValue = retValue.add(payment.isReceipt() ? payment.getWriteoffAmount() : payment
           .getWriteoffAmount().negate());
     }

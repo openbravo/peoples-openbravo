@@ -197,7 +197,7 @@ public class CostingBackground extends DalBaseProcess {
         MaterialTransaction.class, where.toString());
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setNamedParameter("orgs", orgsWithRule);
-    trxQry.setFetchSize(1000);
+    trxQry.setFetchSize(10);
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }

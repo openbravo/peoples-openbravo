@@ -21,7 +21,6 @@
 isc.ClassFactory.defineClass('OBFormContainerLayout', isc.VLayout);
 
 isc.OBFormContainerLayout.addProperties({
-  canFocus: true,
   width: '100%',
   height: '*',
   overflow: 'auto'
@@ -281,6 +280,12 @@ isc.OBStandardView.addProperties({
       this.dataSource.destroy();
       this.dataSource = null;
     }
+
+    // destroy notes datasource
+    if (this.notesDataSource) {
+      this.notesDataSource.destroy();
+      this.notesDataSource = null;
+    }
     return this.Super('destroy', arguments);
   },
 
@@ -467,7 +472,6 @@ isc.OBStandardView.addProperties({
         completeFieldsWithoutImages, fieldsWithoutImages;
     if (this.tabId && this.tabId.length > 0) {
       this.formGridLayout = isc.HLayout.create({
-        canFocus: true,
         width: '100%',
         height: '*',
         overflow: 'visible',
@@ -476,7 +480,6 @@ isc.OBStandardView.addProperties({
 
       this.activeBar = isc.HLayout.create({
         height: '100%',
-        canFocus: true,
         // to set active view when it gets clicked
         contents: '&nbsp;',
         width: OB.Styles.ActiveBar.width,
@@ -531,7 +534,6 @@ isc.OBStandardView.addProperties({
       // in ob-view-form-linked-items is still called on the correct
       // object 
       this.statusBarFormLayout = isc.VLayout.create({
-        canFocus: true,
         width: '100%',
         height: '*',
         visibility: 'hidden',
@@ -549,7 +551,6 @@ isc.OBStandardView.addProperties({
 
       // wrap the messagebar and the formgridlayout in a VLayout
       this.gridFormMessageLayout = isc.VLayout.create({
-        canFocus: true,
         height: '100%',
         width: '100%',
         overflow: 'auto'
@@ -559,7 +560,6 @@ isc.OBStandardView.addProperties({
 
       // and place the active bar to the left of the form/grid/messagebar
       this.activeGridFormMessageLayout = isc.HLayout.create({
-        canFocus: true,
         height: (this.hasChildTabs ? '50%' : '100%'),
         width: '100%',
         overflow: 'hidden'
@@ -2586,6 +2586,10 @@ isc.OBStandardView.addProperties({
       fld.prompt = fld.title;
       fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProps));
       //issue 20192: 2nd parameter is true because fld.editorProperties is a grid property.
+      if (fld.editorProperties.width) {
+        //Issue 26092: Avoid input icons be cropped
+        delete fld.editorProperties.width;
+      }
       this.setFieldFormProperties(fld.editorProperties, true);
       if (fld.disabled) {
         fld.editorProperties.disabled = true;

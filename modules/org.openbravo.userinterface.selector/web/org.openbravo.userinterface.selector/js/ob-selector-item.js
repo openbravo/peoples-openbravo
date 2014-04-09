@@ -406,9 +406,8 @@ isc.OBSelectorItem.addProperties({
   // still do select on focus initially
   doInitialSelectOnFocus: true,
 
-  // Setting this to false results in the picklist to be shown 
-  // on focus, specific SC logic
-  //  addUnknownValues: false,
+  // if addUnknownValues is set to true, fetch is performed on item blur
+  addUnknownValues: false,
   // ** {{{ selectorGridFields }}} **
   // the definition of the columns in the popup window
   selectorGridFields: [{
@@ -437,6 +436,18 @@ isc.OBSelectorItem.addProperties({
     dataProperties: {
       useClientFiltering: false
     }
+  },
+
+  filterComplete: function () {
+    var ret;
+
+    // Prevents validation of this item while filtering because real value is
+    // not yet set. This also caused form item to be redrawn removing typed 
+    // text for filtering (see issue #26189)
+    this.preventValidation = true;
+    ret = this.Super('filterComplete', arguments);
+    delete this.preventValidation;
+    return ret;
   },
 
   hidePickListOnBlur: function () {
@@ -715,7 +726,12 @@ isc.OBSelectorItem.addProperties({
               } else {
                 value = null;
               }
-              fields[j].setValue(value);
+              // fields[j].setValue will be used when the selector is used in form view, and grid.setEditValue when it is used in grid view
+              if (fields[j].setValue) {
+                fields[j].setValue(value);
+              } else {
+                grid.setEditValue(grid.getEditRow(), j, value);
+              }
             }
           }
         }

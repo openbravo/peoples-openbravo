@@ -427,6 +427,10 @@ isc.OBStandardWindow.addProperties({
       }
     }
 
+    if (this.targetTabGrid) {
+      // in direct navigation for refresh contents after applying personalizations if any 
+      this.targetTabGrid.refreshContents();
+    }
     // Field level permissions
     if (data && data.tabs) {
 
@@ -1050,9 +1054,11 @@ isc.OBStandardWindow.addProperties({
         if (this.views[i].tabId === this.targetTabId) {
           targetEntity = this.views[i].entity;
           this.views[i].viewGrid.targetRecordId = this.targetRecordId;
+          this.targetTabGrid = this.views[i].viewGrid;
           this.views[i].openDirectTabView(true);
-          this.views[i].viewGrid.refreshContents();
           this.setFocusInView(this.views[i]);
+          // do not refresh yet, data will be fetched after personalization
+          // is applied
           break;
         }
       }

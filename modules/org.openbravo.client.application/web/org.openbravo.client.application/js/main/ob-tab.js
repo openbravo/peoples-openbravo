@@ -77,6 +77,7 @@ isc.OBTabSetMain.addProperties({
   }),
 
   tabSelected: function (tabNum, tabPane, ID, tab) {
+    var appFrame;
     if (navigator.userAgent.indexOf('Trident') !== -1 && navigator.userAgent.indexOf('Trident/5.0') === -1) {
       // To fix a problem with Internet Explorer 10 and classic OB windows: http://forums.smartclient.com/showthread.php?t=27389
       if (tabPane.viewId === 'OBClassicWindow' || tabPane.viewId === 'ClassicOBHelp') {
@@ -89,12 +90,20 @@ isc.OBTabSetMain.addProperties({
     if (tabPane.tabSelected) { //Redirect if tabPane has its own tabSelected handler
       tabPane.tabSelected(tabNum, tabPane, ID, tab);
     }
-
+    // Set the active classic frame as activeFrame
+    // See https://issues.openbravo.com/view.php?id=25558
+    if (tabPane.viewId === 'OBClassicWindow') {
+      appFrame = tabPane.appFrameWindow || tabPane.getAppFrameWindow();
+      if (appFrame && appFrame.parent && appFrame.parent.parent) {
+        appFrame.parent.parent.activeFrame = appFrame;
+      }
+    }
     // update the document title
     document.title = OB.Constants.WINTITLE + ' - ' + tab.title;
   },
 
   tabDeselected: function (tabNum, tabPane, ID, tab, newTab) {
+    var appFrame;
     if (navigator.userAgent.indexOf('Trident') !== -1 && navigator.userAgent.indexOf('Trident/5.0') === -1) {
       // To fix a problem with Internet Explorer 10 and classic OB windows: http://forums.smartclient.com/showthread.php?t=27389
       if (tabPane.viewId === 'OBClassicWindow' || tabPane.viewId === 'ClassicOBHelp') {
@@ -103,6 +112,12 @@ isc.OBTabSetMain.addProperties({
     }
     if (tabPane.tabDeselected) { //Redirect if tabPane has its own tabDeselected handler
       tabPane.tabDeselected(tabNum, tabPane, ID, tab, newTab);
+    }
+    if (tabPane.viewId === 'OBClassicWindow') {
+      appFrame = tabPane.appFrameWindow || tabPane.getAppFrameWindow();
+      if (appFrame && appFrame.parent && appFrame.parent.parent) {
+        delete appFrame.parent.parent.activeFrame;
+      }
     }
   },
 

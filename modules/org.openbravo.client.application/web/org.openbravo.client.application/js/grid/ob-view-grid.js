@@ -886,7 +886,11 @@ isc.OBViewGrid.addProperties({
         func = this.getGridSummaryFunction(fld),
         isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
     if (!fld.clientClass && rowNum === this.getEditRow()) {
-      return 'center';
+      if (fld.editorType === 'OBCheckboxItem') {
+        return isRTL ? isc.Canvas.RIGHT : isc.Canvas.LEFT;
+      } else {
+        return isc.Canvas.CENTER;
+      }
     }
 
     if (isSummary && func === 'count') {
@@ -2002,7 +2006,7 @@ isc.OBViewGrid.addProperties({
 
       // this mode means that no parent is selected but the parent needs to be
       // determined from the target record and the parent property
-      if (this.isOpenDirectMode && this.view.parentView) {
+      if (this.view.parentProperty && this.isOpenDirectMode && this.view.parentView) {
         params._filterByParentProperty = this.view.parentProperty;
       }
 
@@ -3316,8 +3320,6 @@ isc.OBViewGrid.addProperties({
     var record = this.getRecord(rowNum);
 
     this.view.isEditingGrid = true;
-
-    record[this.recordBaseStyleProperty] = this.baseStyleEdit;
 
     // also called in case of new
     var form = this.getEditForm();
