@@ -47,16 +47,17 @@ OB.Utilities.Action.set('showMsgInView', function (paramObj) {
     view.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
   } else { // If the window is not loaded, wait and try again
     var i = 0,
-        messageInterval = setInterval(function () {
-        view = OB.MainView.TabSet.getSelectedTab().pane.activeView;
-        if (view && view.messageBar) {
-          clearInterval(messageInterval);
-          view.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
-        } else if (i === 5) {
-          clearInterval(messageInterval);
-        }
-        i++;
-      }, 500); //Call this action again with a 500ms delay
+        messageInterval;
+    messageInterval = setInterval(function () {
+      view = OB.MainView.TabSet.getSelectedTab().pane.activeView;
+      if (view && view.messageBar) {
+        clearInterval(messageInterval);
+        view.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+      } else if (i === 5) {
+        clearInterval(messageInterval);
+      }
+      i++;
+    }, 500); //Call this action again with a 500ms delay
   }
 });
 
