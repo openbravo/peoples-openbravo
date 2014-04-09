@@ -20,14 +20,12 @@ package org.openbravo.service.datasource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.RequestContext;
@@ -44,20 +42,21 @@ import org.openbravo.service.json.JsonConstants;
 /**
  * The implementation of the combo table reference datasource.
  * 
- * 
  * @author Shankar Balachandran
  */
+
 public class ComboTableDatasourceService extends BaseDataSourceService {
-  private static final long serialVersionUID = 1L;
   private static final Logger log4j = Logger.getLogger(ComboTableDatasourceService.class);
 
-  /**
-   * Retrieve tabledir and table reference values.
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.openbravo.service.datasource.DataSourceService#fetch(java.util.Map)
    */
   @Override
   public String fetch(Map<String, String> parameters) {
-    List<BaseOBObject> bobs = null;
     try {
+      long init = System.currentTimeMillis();
       OBContext.setAdminMode();
       String fieldId = parameters.get("fieldId");
       String startRow = parameters.get("_startRow");
@@ -153,12 +152,13 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         }
       }
       fieldProps.put("entries", new JSONArray(comboEntries));
-      // comboValues.put(fieldIndex, values);
-      // columnValues.put(fieldIndex, fixComboValue(columnValues.get(fieldIndex), fps));
+      log4j.debug("fetch operation for ComboTableDatasourceService took: "
+          + (System.currentTimeMillis() - init));
       return fieldProps.toString();
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
+
       OBContext.restorePreviousMode();
     }
     return null;
@@ -166,19 +166,31 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
 
   @Override
   public String remove(Map<String, String> parameters) {
-    // TODO Auto-generated method stub
+    try {
+      throw new Exception("unimplemented method");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return null;
   }
 
   @Override
   public String add(Map<String, String> parameters, String content) {
-    // TODO Auto-generated method stub
+    try {
+      throw new Exception("unimplemented method");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return null;
   }
 
   @Override
   public String update(Map<String, String> parameters, String content) {
-    // TODO Auto-generated method stub
+    try {
+      throw new Exception("unimplemented method");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return null;
   }
 

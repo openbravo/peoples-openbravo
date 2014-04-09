@@ -1,4 +1,28 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
 package org.openbravo.test.datasource;
+
+/**
+ * Test cases for ComboTableDatasourceService
+ * 
+ * @author Shankar Balachandran 
+ */
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,9 +31,15 @@ import org.codehaus.jettison.json.JSONObject;
 
 public class TestComboDatasource extends BaseDataSourceTestNoDal {
 
-  public void test() throws Exception {
-
-    // Test for organization drop down in Sales order
+  /**
+   * Test to fetch values from ComboTableDatasoureService using set parameters. Based on field
+   * information and current context, the field values are returned as jsonObject. The test case
+   * asserts whether there is a valid response.
+   * 
+   * @throws Exception
+   */
+  public void testFetchComboTableDatasourceValues() throws Exception {
+    // Using values of Organization drop down in Sales order
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "1127");
     params.put("columnValue", "2221");
@@ -20,6 +50,6 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
         params, 200, "POST");
     JSONObject jsonResponse = new JSONObject(response);
-    System.out.println("Response " + jsonResponse.toString());
+    assertTrue(jsonResponse.has("response"));
   }
 }
