@@ -164,6 +164,10 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     return null;
   }
 
+  public String filter(Map<String, String> parameters) {
+    return null;
+  }
+
   @Override
   public String remove(Map<String, String> parameters) {
     try {

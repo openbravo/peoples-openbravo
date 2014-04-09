@@ -849,6 +849,14 @@ public class ComboTableData {
    *          Boolean to indicate if the select clause must have only the key field.
    * @param discard
    *          Array of field groups to remove from the query.
+   * @param recordId
+   *          recordId to be filtered.
+   * @param startRow
+   *          starting index of the records.
+   * @param endRow
+   *          end index of the records.
+   * @param conn
+   *          Connection provider
    * @return String with the query.
    */
   private String getQuery(boolean onlyId, String[] discard, String recordId, String startRow,
@@ -935,7 +943,7 @@ public class ComboTableData {
         text.append("WHERE ").append(txtAux.toString());
       }
       if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
-        text.append(" AND ROWNUM>=" + startRow + " " + " ROWNUM<=" + endRow);
+        text.append(" AND ROWNUM>=" + startRow + " AND " + " ROWNUM<=" + endRow + " ");
       }
     }
 
@@ -961,7 +969,7 @@ public class ComboTableData {
         text.append("AND ");
       text.append(idName).append(" = ? ");
       if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
-        text.append(" AND ROWNUM>=" + startRow + " " + " ROWNUM<=" + endRow);
+        text.append(" AND ROWNUM>=" + startRow + " AND " + " ROWNUM<=" + endRow + " ");
       }
     }
 
