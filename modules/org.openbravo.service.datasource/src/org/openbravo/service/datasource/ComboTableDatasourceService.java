@@ -60,6 +60,8 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     try {
       OBContext.setAdminMode();
       String fieldId = parameters.get("fieldId");
+      String startRow = parameters.get("_startRow");
+      String endRow = parameters.get("_endRow");
       Field field = OBDal.getInstance().get(Field.class, fieldId);
       Boolean getValueFromSession = Boolean.getBoolean(parameters.get("getValueFromSession"));
       String columnValue = parameters.get("columnValue");
@@ -106,7 +108,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
           (getValueFromSession && !comboreload) ? columnValue : "");
 
       FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), newParameters,
-          getValueFromSession && !comboreload);
+          getValueFromSession && !comboreload, startRow, endRow);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();

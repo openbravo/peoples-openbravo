@@ -27,6 +27,7 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -838,10 +839,27 @@ public class ComboTableData {
    * @return String with the query.
    */
   private String getQuery(boolean onlyId, String[] discard, String recordId) {
+    return getQuery(onlyId, discard, recordId, null, null, null);
+  }
+
+  /**
+   * Returns the generated query.
+   * 
+   * @param onlyId
+   *          Boolean to indicate if the select clause must have only the key field.
+   * @param discard
+   *          Array of field groups to remove from the query.
+   * @return String with the query.
+   */
+  private String getQuery(boolean onlyId, String[] discard, String recordId, String startRow,
+      String endRow, ConnectionProvider conn) {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = getSelectFields();
     String idName = "";
     boolean hasWhere = false;
+    boolean applyLimits = startRow != null && endRow != null && StringUtils.isNumeric(startRow)
+        && StringUtils.isNumeric(endRow);
+    String rdbms = conn == null ? "" : conn.getRDBMS();
     if (aux != null) {
       StringBuffer name = new StringBuffer();
       String description = "";
@@ -916,6 +934,9 @@ public class ComboTableData {
         }
         text.append("WHERE ").append(txtAux.toString());
       }
+      if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
+        text.append(" AND ROWNUM>=" + startRow + " " + " ROWNUM<=" + endRow);
+      }
     }
 
     if (!onlyId) {
@@ -939,6 +960,13 @@ public class ComboTableData {
       else
         text.append("AND ");
       text.append(idName).append(" = ? ");
+      if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
+        text.append(" AND ROWNUM>=" + startRow + " " + " ROWNUM<=" + endRow);
+      }
+    }
+
+    if (applyLimits && rdbms.equalsIgnoreCase("POSTGRE")) {
+      text.append(" LIMIT " + endRow + " OFFSET " + endRow);
     }
     return text.toString();
   }
@@ -1053,6 +1081,11 @@ public class ComboTableData {
 
   public FieldProvider[] select(ConnectionProvider conn, Map<String, String> lparameters,
       boolean includeActual) throws Exception {
+    return select(conn, lparameters, includeActual, null, null);
+  }
+
+  public FieldProvider[] select(ConnectionProvider conn, Map<String, String> lparameters,
+      boolean includeActual, String startRow, String endRow) throws Exception {
     String actual = lparameters != null ? lparameters.get("@ACTUAL_VALUE@")
         : getParameter("@ACTUAL_VALUE@");
     if (lparameters != null && lparameters.containsKey("@ONLY_ONE_RECORD@")
@@ -1104,7 +1137,7 @@ public class ComboTableData {
       }
 
     }
-    String strSql = getQuery(false, null);
+    String strSql = getQuery(false, null, null, startRow, endRow, conn);
     if (log4j.isDebugEnabled())
       log4j.debug("SQL: " + strSql);
     PreparedStatement st = conn.getPreparedStatement(strSql);

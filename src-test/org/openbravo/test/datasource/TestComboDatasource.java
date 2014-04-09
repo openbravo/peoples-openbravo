@@ -11,10 +11,10 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
 
     // Test for organization drop down in Sales order
     Map<String, String> params = new HashMap<String, String>();
-    params.put("fieldId", "1079");
-    params.put("columnValue", "2162");
+    params.put("fieldId", "1127");
+    params.put("columnValue", "2221");
     params.put("_operationType", "fetch");
-    params.put("_startRow", "0");
+    params.put("_startRow", "1");
     params.put("_endRow", "2");
 
     String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
