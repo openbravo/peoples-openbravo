@@ -1726,6 +1726,11 @@ isc.OBStandardView.addProperties({
       return;
     }
 
+    // Summary Functions are refreshed when data gets refreshed
+    if (this.viewGrid.showGridSummary) {
+      this.viewGrid.getSummaryRow();
+    }
+
     record = this.viewGrid.getSelectedRecord();
 
     criteria = {
