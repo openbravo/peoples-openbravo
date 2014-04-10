@@ -3207,6 +3207,10 @@ isc.OBViewGrid.addProperties({
     isc.Offline.explicitOffline = previousExplicitOffline;
     // commented out as it removes an autosave action which is done in the edit complete method
     //    this.view.standardWindow.setDirtyEditForm(null);
+    // Summary Functions are refreshed when data gets refreshed
+    if (this.showGridSummary) {
+      this.getSummaryRow();
+    }
   },
 
   autoSave: function () {

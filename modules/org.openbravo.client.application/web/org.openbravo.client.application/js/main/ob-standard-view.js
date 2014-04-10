@@ -1726,6 +1726,11 @@ isc.OBStandardView.addProperties({
       return;
     }
 
+    // Summary Functions are refreshed when data gets refreshed
+    if (this.viewGrid.showGridSummary) {
+      this.viewGrid.getSummaryRow();
+    }
+
     record = this.viewGrid.getSelectedRecord();
 
     criteria = {
@@ -2089,6 +2094,8 @@ isc.OBStandardView.addProperties({
     var ret;
     if (this.isShowingForm) {
       ret = this.viewForm.getValues();
+    } else if (this.isShowingTree) {
+      ret = this.treeGrid.getSelectedRecord();
     } else if (this.isEditingGrid) {
       ret = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditForm().getValues());
     } else {

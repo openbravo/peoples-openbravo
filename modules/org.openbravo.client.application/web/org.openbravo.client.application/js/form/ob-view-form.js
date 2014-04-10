@@ -1703,6 +1703,11 @@ OB.ViewFormProperties = {
         }, 10);
       }
 
+      // Summary Functions are refreshed when data gets refreshed
+      if (view.viewGrid.showGridSummary) {
+        view.viewGrid.getSummaryRow();
+      }
+
       return false;
     };
 
