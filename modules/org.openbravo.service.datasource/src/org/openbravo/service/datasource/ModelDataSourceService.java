@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,7 +67,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
 
     final Entity baseEntity = getBaseEntity(parameters);
     String propertyPath = parameters.get(PROPERTY_FIELD);
-    if (propertyPath == null) {
+    if ("null".equals(propertyPath) || propertyPath == null) {
       HashMap<String, String> criteria = getCriteria(parameters);
       if (criteria != null && criteria.containsKey(DATASOURCE_FIELD)) {
         propertyPath = criteria.get(DATASOURCE_FIELD);
