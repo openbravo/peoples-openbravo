@@ -866,7 +866,7 @@ public class ComboTableData {
     String idName = "";
     boolean hasWhere = false;
     boolean applyLimits = startRow != null && endRow != null && StringUtils.isNumeric(startRow)
-        && StringUtils.isNumeric(endRow);
+        && StringUtils.isNumeric(endRow) && StringUtils.isEmpty(recordId);
     String rdbms = conn == null ? "" : conn.getRDBMS();
     if (aux != null) {
       StringBuffer name = new StringBuffer();
@@ -974,7 +974,8 @@ public class ComboTableData {
     }
 
     if (applyLimits && rdbms.equalsIgnoreCase("POSTGRE")) {
-      text.append(" LIMIT " + endRow + " OFFSET " + endRow);
+      int numberOfRows = (Integer.parseInt(endRow) - Integer.parseInt(startRow)) + 1;
+      text.append(" LIMIT " + numberOfRows + " OFFSET " + startRow);
     }
     return text.toString();
   }

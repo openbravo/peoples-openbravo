@@ -61,6 +61,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       String fieldId = parameters.get("fieldId");
       String startRow = parameters.get("_startRow");
       String endRow = parameters.get("_endRow");
+      String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
       Field field = OBDal.getInstance().get(Field.class, fieldId);
       Boolean getValueFromSession = Boolean.getBoolean(parameters.get("getValueFromSession"));
       String columnValue = parameters.get("columnValue");
@@ -105,7 +106,10 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
           vars, tabData, field.getTab().getWindow().getId(),
           (getValueFromSession && !comboreload) ? columnValue : "");
-
+      if (singleRecord != null) {
+        newParameters.put("@ONLY_ONE_RECORD@", singleRecord);
+        newParameters.put("@ACTUAL_VALUE@", singleRecord);
+      }
       FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), newParameters,
           getValueFromSession && !comboreload, startRow, endRow);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
