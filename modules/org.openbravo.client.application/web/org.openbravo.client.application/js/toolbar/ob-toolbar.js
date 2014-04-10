@@ -1339,6 +1339,12 @@ isc.OBToolbar.addProperties({
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
         var attachmentExists = data.attachmentExists;
         me.view.attachmentExists = attachmentExists;
+
+        // Added sessionAttributes to updateSubtabVisibility 
+        me.view.viewForm.sessionAttributes = data.sessionAttributes;
+        me.view.viewForm.auxInputs = data.auxiliaryInputValues;
+        me.view.updateSubtabVisibility();
+
         //Call to refresh the buttons. As its called with noSetSession=true, it will not cause an infinite recursive loop
         me.updateButtonState(true);
       });
