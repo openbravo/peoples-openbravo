@@ -1527,6 +1527,7 @@ isc.OBStandardView.addProperties({
   },
 
   getParentRecord: function () {
+    var grid = null;
     if (!this.parentView || !this.parentView.viewGrid.getSelectedRecords() || this.parentView.viewGrid.getSelectedRecords().length !== 1) {
       return null;
     }
@@ -1535,8 +1536,12 @@ isc.OBStandardView.addProperties({
     if (this.parentView.viewGrid.getSelectedRecord()._new) {
       return null;
     }
-
-    return this.parentView.viewGrid.getSelectedRecord();
+    if (this.isShowingTree) {
+      grid = this.parentView.treeGrid;
+    } else {
+      grid = this.parentView.viewGrid;
+    }
+    return grid.getSelectedRecord();
   },
 
   updateTabTitle: function () {
