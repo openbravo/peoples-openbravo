@@ -1536,7 +1536,7 @@ isc.OBStandardView.addProperties({
     if (this.parentView.viewGrid.getSelectedRecord()._new) {
       return null;
     }
-    if (this.parentView.isShowingTree) {
+    if (this.isShowingTree) {
       grid = this.parentView.treeGrid;
     } else {
       grid = this.parentView.viewGrid;
