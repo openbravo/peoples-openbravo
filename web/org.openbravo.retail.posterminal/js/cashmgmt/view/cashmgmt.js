@@ -60,63 +60,69 @@ enyo.kind({
     onShowPopup: ''
   },
   components: [{
-    kind: 'OB.UI.MultiColumn',
-    name: 'cashupMultiColumn',
-    leftToolbar: {
-      kind: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
-      name: 'leftToolbar',
-      showMenu: false,
-      showWindowsMenu: false
-    },
-    rightToolbar: {
-      kind: 'OB.OBPOSCashMgmt.UI.RightToolbarImpl',
-      name: 'rightToolbar',
-      showMenu: false,
-      showWindowsMenu: false
-    },
-    leftPanel: {
-      name: 'cashmgmtLeftPanel',
-      components: [{
-        classes: 'row',
-        components: [
-        // 1st column: list of deposits/drops done or in process
-        {
-          classes: 'span12',
-          components: [{
-            kind: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops'
-          }]
-        }]
-      }]
-    },
-    rightPanel: {
-      name: 'cashmgmtRightPanel',
-      components: [
-
-      //2nd column
-      {
-        classes: 'span12',
+      kind: 'OB.UI.MultiColumn',
+      name: 'cashupMultiColumn',
+      leftToolbar: {
+        kind: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
+        name: 'leftToolbar',
+        showMenu: false,
+        showWindowsMenu: false
+      },
+      rightToolbar: {
+        kind: 'OB.OBPOSCashMgmt.UI.RightToolbarImpl',
+        name: 'rightToolbar',
+        showMenu: false,
+        showWindowsMenu: false
+      },
+      leftPanel: {
+        name: 'cashmgmtLeftPanel',
         components: [{
-          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo'
-        }, {
-          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard'
+          classes: 'row',
+          components: [
+            // 1st column: list of deposits/drops done or in process
+            {
+              classes: 'span12',
+              components: [{
+                kind: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops'
+              }]
+            }
+          ]
         }]
+      },
+      rightPanel: {
+        name: 'cashmgmtRightPanel',
+        components: [
+
+          //2nd column
+          {
+            classes: 'span12',
+            components: [{
+              kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo',
+              id: "OB.UI.id.CashMgmtInfo"
+            }, {
+              kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard',
+              id: "OB.UI.id.CashMgmtKeyboard"
+            }]
+          }
+        ]
+      }
+    }, //hidden stuff
+    {
+      components: [{
+        kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
+        i18nHeader: 'OBPOS_SelectDepositDestinations',
+        name: 'modaldepositevents',
+        id: 'OB.UI.id.modalDepositEvents',
+        type: 'cashMgmtDepositEvents'
+      }, {
+        kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
+        i18nHeader: 'OBPOS_SelectDropDestinations',
+        name: 'modaldropevents',
+        id: 'OB.UI.id.modalDropEvents',
+        type: 'cashMgmtDropEvents'
       }]
     }
-  }, //hidden stuff
-  {
-    components: [{
-      kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
-      i18nHeader: 'OBPOS_SelectDepositDestinations',
-      name: 'modaldepositevents',
-      type: 'cashMgmtDepositEvents'
-    }, {
-      kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
-      i18nHeader: 'OBPOS_SelectDropDestinations',
-      name: 'modaldropevents',
-      type: 'cashMgmtDropEvents'
-    }]
-  }],
-
+  ],
 
   init: function () {
     this.inherited(arguments);
