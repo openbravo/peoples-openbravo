@@ -1,5 +1,6 @@
 /*
  *************************************************************************
+
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -184,6 +185,10 @@ isc.OBParameterWindowView.addProperties({
       } catch (_exception) {
         isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
       }
+      if (originalShowIfValue && item.defaultFilter !== null && item.getType() === 'OBPickEditGridItem') {
+        item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
+        item.canvas.viewGrid.filterByEditor();
+      }
       return originalShowIfValue;
     };
 
@@ -199,11 +204,14 @@ isc.OBParameterWindowView.addProperties({
           field.originalShowIf = field.showIf;
           field.showIf = newShowIf;
         }
-        if (field.isGrid) {
-          this.grid = isc.OBPickAndExecuteView.create(field);
-        } else {
-          items.push(field);
+        if (field.onChangeFunction) {
+          // the default
+          field.onChangeFunction.sort = 50;
+
+          OB.OnChangeRegistry.register(this.viewId, field.name, field.onChangeFunction, 'default');
         }
+        items.push(field);
+
       }
 
       if (items.length !== 0) {
@@ -223,6 +231,11 @@ isc.OBParameterWindowView.addProperties({
 
             this.paramWindow.handleReadOnlyLogic();
 
+            // Execute onChangeFunctions if they exist
+            if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
+              OB.OnChangeRegistry.call(this.paramWindow.viewId, item, this.paramWindow, this, this.paramWindow.viewGrid);
+            }
+
             // Check validation rules (subordinated fields), when value of a
             // parent field is changed, all its subordinated are reset
             affectedParams = this.paramWindow.dynamicColumns[item.name];
@@ -233,6 +246,7 @@ isc.OBParameterWindowView.addProperties({
               field = this.getField(affectedParams[i]);
               if (field && field.setValue) {
                 field.setValue(null);
+                this.itemChanged(field, null);
               }
             }
           }
@@ -439,7 +453,7 @@ isc.OBParameterWindowView.addProperties({
   doProcess: function (btnValue) {
     var i, tmp, view = this,
         grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
-        selection, len, allRows, params, tab;
+        selection, len, allRows, params, tab, actionHandlerCall;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
     if (this.resultLayout && this.resultLayout.destroy) {
       this.resultLayout.destroy();
@@ -481,16 +495,26 @@ isc.OBParameterWindowView.addProperties({
 
     allProperties._params = this.getContextInfo();
 
-    OB.RemoteCallManager.call(this.actionHandler, allProperties, {
-      processId: this.processId,
-      windowId: this.windowId
-    }, function (rpcResponse, data, rpcRequest) {
-      view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
-    });
+    actionHandlerCall = function (me) {
+      OB.RemoteCallManager.call(me.actionHandler, allProperties, {
+        processId: me.processId,
+        windowId: me.windowId
+      }, function (rpcResponse, data, rpcRequest) {
+        view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
+      });
+    };
+
+    if (this.clientSideValidation) {
+      this.clientSideValidation(this, actionHandlerCall);
+    } else {
+      actionHandlerCall(this);
+    }
   },
 
-  handleDefaults: function (defaults) {
-    var i, field, def;
+  handleDefaults: function (result) {
+    var i, field, def, defaults = result.defaults,
+        filterExpressions = result.filterExpressions,
+        defaultFilter = {};
     if (!this.theForm) {
       return;
     }
@@ -509,6 +533,19 @@ isc.OBParameterWindowView.addProperties({
           } else {
             field.setValue(def);
           }
+        }
+      }
+    }
+
+    for (i in filterExpressions) {
+      if (filterExpressions.hasOwnProperty(i)) {
+        field = this.theForm.getItem(i);
+        defaultFilter = {};
+        isc.addProperties(defaultFilter, filterExpressions[i]);
+        field.setDefaultFilter(defaultFilter);
+        if (field.isVisible() && !field.showIf) {
+          field.canvas.viewGrid.setFilterEditorCriteria(this.defaultFilter);
+          field.canvas.viewGrid.filterByEditor();
         }
       }
     }

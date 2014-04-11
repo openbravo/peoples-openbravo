@@ -25,8 +25,10 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -48,22 +50,27 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class Reconciliation extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private AdvPaymentMngtDao dao;
+  Set<FIN_FinaccTransaction> transactionsToBePosted = new HashSet<FIN_FinaccTransaction>();
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -200,6 +207,7 @@ public class Reconciliation extends HttpSecureAppServlet {
       if (process) { // Validations
         String strMessage = "";
         boolean raiseException = false;
+
         if (new BigDecimal(strDifference).compareTo(BigDecimal.ZERO) != 0) {
           strMessage = "@APRM_ReconciliationDiscrepancy@" + " " + strDifference;
           raiseException = true;
@@ -236,10 +244,11 @@ public class Reconciliation extends HttpSecureAppServlet {
 
         boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(reconciliation.TABLE_NAME,
             reconciliation.getId(), reconciliation.TABLE_NAME + "_ID", "LE");
-        if (!FIN_Utility.isPeriodOpen(reconciliation.getClient().getId(),
-            AcctServer.DOCTYPE_Reconciliation, reconciliation.getOrganization().getId(),
-            strStatementDate)
-            && orgLegalWithAccounting) {
+        boolean documentEnabled = getDocumentConfirmation(this, reconciliation.getId());
+        if (documentEnabled
+            && !FIN_Utility.isPeriodOpen(reconciliation.getClient().getId(),
+                AcctServer.DOCTYPE_Reconciliation, reconciliation.getOrganization().getId(),
+                strStatementDate) && orgLegalWithAccounting) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
           msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
@@ -250,7 +259,7 @@ public class Reconciliation extends HttpSecureAppServlet {
           return;
         }
 
-        if (orgLegalWithAccounting) {
+        if (documentEnabled && orgLegalWithAccounting) {
           String identifier = linesInNotAvailablePeriod(reconciliation.getId());
           if (!identifier.equalsIgnoreCase("")) {
             msg.setType("Error");
@@ -550,6 +559,102 @@ public class Reconciliation extends HttpSecureAppServlet {
       return obqRLlist.get(0).getIdentifier();
     }
 
+  }
+
+  public List<FIN_FinaccTransaction> getTransactionList(FIN_Reconciliation reconciliation) {
+    OBContext.setAdminMode();
+    List<FIN_FinaccTransaction> transactions = null;
+    try {
+      OBCriteria<FIN_FinaccTransaction> trans = OBDal.getInstance().createCriteria(
+          FIN_FinaccTransaction.class);
+      trans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_RECONCILIATION, reconciliation));
+      trans.setFilterOnReadableClients(false);
+      trans.setFilterOnReadableOrganization(false);
+      transactions = trans.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return transactions;
+  }
+
+  /*
+   * Checks if this step (Reconciliation) is configured to generate accounting for the selected
+   * financial account
+   */
+  public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
+    OBContext.setAdminMode();
+    try {
+      FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
+          strRecordId);
+      List<FIN_FinaccTransaction> transactions = getTransactionList(reconciliation);
+      List<FIN_FinancialAccountAccounting> accounts = reconciliation.getAccount()
+          .getFINFinancialAccountAcctList();
+      for (FIN_FinaccTransaction transaction : transactions) {
+        FIN_Payment payment = transaction.getFinPayment();
+        // If payment exists, check Payment Method + financial Account Configuration
+        if (payment != null) {
+          OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+              FinAccPaymentMethod.class);
+          obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
+              reconciliation.getAccount()));
+          obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+              payment.getPaymentMethod()));
+          obCriteria.setFilterOnReadableClients(false);
+          obCriteria.setFilterOnReadableOrganization(false);
+          List<FinAccPaymentMethod> lines = obCriteria.list();
+          for (FIN_FinancialAccountAccounting account : accounts) {
+            if (payment.isReceipt()) {
+              if (("INT").equals(lines.get(0).getINUponClearingUse())
+                  && account.getInTransitPaymentAccountIN() != null) {
+                transactionsToBePosted.add(transaction);
+              } else if (("DEP").equals(lines.get(0).getINUponClearingUse())
+                  && account.getDepositAccount() != null) {
+                transactionsToBePosted.add(transaction);
+              } else if (("CLE").equals(lines.get(0).getINUponClearingUse())
+                  && account.getClearedPaymentAccount() != null) {
+                transactionsToBePosted.add(transaction);
+              }
+            } else {
+              if (("INT").equals(lines.get(0).getOUTUponClearingUse())
+                  && account.getFINOutIntransitAcct() != null) {
+                transactionsToBePosted.add(transaction);
+              } else if (("WIT").equals(lines.get(0).getOUTUponClearingUse())
+                  && account.getWithdrawalAccount() != null) {
+                transactionsToBePosted.add(transaction);
+              } else if (("CLE").equals(lines.get(0).getOUTUponClearingUse())
+                  && account.getClearedPaymentAccountOUT() != null) {
+                transactionsToBePosted.add(transaction);
+              }
+            }
+          }
+        } else if (transaction.getGLItem() != null) {
+          for (FIN_FinancialAccountAccounting account : accounts) {
+            if ("BPD".equals(transaction.getTransactionType())
+                && account.getClearedPaymentAccount() != null) {
+              transactionsToBePosted.add(transaction);
+            } else if ("BPW".equals(transaction.getTransactionType())
+                && account.getClearedPaymentAccountOUT() != null) {
+              transactionsToBePosted.add(transaction);
+            }
+          }
+        } else {
+          for (FIN_FinancialAccountAccounting account : accounts) {
+            if ("BF".equals(transaction.getTransactionType())
+                && account.getClearedPaymentAccountOUT() != null) {
+              transactionsToBePosted.add(transaction);
+            }
+          }
+        }
+      }
+    } catch (Exception e) {
+      return false;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    if (transactionsToBePosted.size() == 0) {
+      return false;
+    }
+    return true;
   }
 
 }

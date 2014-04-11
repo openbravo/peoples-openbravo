@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,6 +42,7 @@ import org.openbravo.model.ad.ui.Window;
 public class OBViewParameterHandler {
   private static final Logger log = Logger.getLogger(OBViewParameterHandler.class);
   private static final String WINDOW_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
+  private static final int NUMBER_COLUMNS = 4;
   private Process process;
   private ParameterWindowComponent paramWindow;
 
@@ -88,7 +89,9 @@ public class OBViewParameterHandler {
     List<OBViewParameter> params = new ArrayList<OBViewParameterHandler.OBViewParameter>();
     OBViewParamGroup currentGroup = null;
     FieldGroup currentADFieldGroup = null;
+    int pos = 1;
     for (Parameter param : process.getOBUIAPPParameterList()) {
+
       if (!(param.isActive()
           && (!param.isFixed() || param.getReference().getId().equals(WINDOW_REFERENCE_ID)) && (!param
           .getReference().getId().equals(ParameterWindowComponent.BUTTON_LIST_REFERENCE_ID)))) {
@@ -125,7 +128,31 @@ public class OBViewParameterHandler {
         parameter.addListReferenceValues(param.getReferenceSearchKey());
       }
 
+      // Add spacers to order the field in the column number defined
+      if (param.isStartinnewline()) {
+        pos = 1;
+      }
+      if (pos > NUMBER_COLUMNS) {
+        pos = pos - NUMBER_COLUMNS;
+      }
+
+      if (param.getNumColumn() != null) {
+        int spaces = 0;
+        if (pos > param.getNumColumn().intValue()) {
+          spaces = NUMBER_COLUMNS - (pos - param.getNumColumn().intValue());
+        } else {
+          spaces = param.getNumColumn().intValue() - pos;
+        }
+        for (int i = 0; i < spaces; i++) {
+          final OBViewParamSpacer spacer = new OBViewParamSpacer();
+          params.add(spacer);
+          pos++;
+        }
+
+      }
       params.add(parameter);
+      pos++;
+
     }
     return params;
   }
@@ -294,6 +321,10 @@ public class OBViewParameterHandler {
       return parameter.getLength();
     }
 
+    public String getOnChangeFunction() {
+      return parameter.getOnChangeFunction();
+    }
+
     public class ValueMapValue {
       final String key;
       final String value;
@@ -358,6 +389,51 @@ public class OBViewParameterHandler {
     public boolean isExpanded() {
       return !(fieldGroup.isCollapsed() == null ? false : fieldGroup.isCollapsed());
     }
+  }
+
+  public class OBViewParamSpacer extends OBViewParameter {
+    @Override
+    public String getType() {
+      return "spacer";
+    }
+
+    public String getName() {
+      return "";
+    }
+
+    public boolean getPersonalizable() {
+      return false;
+
+    }
+
+    public boolean isGrid() {
+      return false;
+    }
+
+    public String getTitle() {
+      return "";
+    }
+
+    public String getId() {
+      return "";
+    }
+
+    public String getWidth() {
+      return "";
+    }
+
+    public boolean isRequired() {
+      return false;
+    }
+
+    public String getParameterProperties() {
+      return "";
+    }
+
+    public String getOnChangeFunction() {
+      return "";
+    }
+
   }
 
   public void setParamWindow(ParameterWindowComponent parameterWindowComponent) {

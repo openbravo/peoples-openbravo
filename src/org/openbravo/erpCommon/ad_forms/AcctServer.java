@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -2279,6 +2279,8 @@ public abstract class AcctServer {
       String curFrom_ID, String curTo_ID) {
     OBCriteria<ConversionRateDoc> docRateCriteria = OBDal.getInstance().createCriteria(
         ConversionRateDoc.class);
+    docRateCriteria.setFilterOnReadableClients(false);
+    docRateCriteria.setFilterOnReadableOrganization(false);
     docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, OBDal.getInstance()
         .get(Currency.class, curTo_ID)));
     docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, OBDal.getInstance()

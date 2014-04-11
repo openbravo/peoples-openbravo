@@ -45,6 +45,19 @@ OB.Utilities.Action.set('showMsgInView', function (paramObj) {
   var view = OB.MainView.TabSet.getSelectedTab().pane.activeView;
   if (view && view.messageBar) {
     view.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+  } else { // If the window is not loaded, wait and try again
+    var i = 0,
+        messageInterval;
+    messageInterval = setInterval(function () {
+      view = OB.MainView.TabSet.getSelectedTab().pane.activeView;
+      if (view && view.messageBar) {
+        clearInterval(messageInterval);
+        view.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+      } else if (i === 5) {
+        clearInterval(messageInterval);
+      }
+      i++;
+    }, 500); //Call this action again with a 500ms delay
   }
 });
 
@@ -73,15 +86,20 @@ OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
 // * {{{command}}}: The command with which the view to be opened
 // * {{{wait}}}: If true, the thread in which this action was called (if there is any) will be paused until the view be opened.
 OB.Utilities.Action.set('openDirectTab', function (paramObj) {
-  var processIndex;
+  var processIndex, tabPosition;
   if (!paramObj.newTabPosition) {
-    processIndex = OB.Utilities.getProcessTabBarPosition(paramObj._processView);
-    if (processIndex === -1) {
-      // If the process is not found in the main tab bar, add the new window in the last position
-      paramObj.newTabPosition = OB.MainView.TabSet.paneContainer.members.length;
+    tabPosition = OB.Utilities.getTabNumberById(paramObj.tabId); // Search if the tab has been opened before
+    if (tabPosition !== -1) {
+      paramObj.newTabPosition = tabPosition;
     } else {
-      // If the process is foudn in the main tab bar, add the new window in its next position
-      paramObj.newTabPosition = processIndex + 1;
+      processIndex = OB.Utilities.getProcessTabBarPosition(paramObj._processView);
+      if (processIndex === -1) {
+        // If the process is not found in the main tab bar, add the new window in the last position
+        paramObj.newTabPosition = OB.MainView.TabSet.paneContainer.members.length;
+      } else {
+        // If the process is found in the main tab bar, add the new window in its next position
+        paramObj.newTabPosition = processIndex + 1;
+      }
     }
   }
   if (!paramObj.isOpening) {
@@ -93,7 +111,7 @@ OB.Utilities.Action.set('openDirectTab', function (paramObj) {
       paramObj.isOpening = true;
       OB.Utilities.Action.execute('openDirectTab', paramObj, 100); //Call this action again with a 100ms delay
     } else {
-      OB.Utilities.Action.resumeThread(paramObj.threadId, 1500); //Call this action again with a 1000ms delay
+      OB.Utilities.Action.resumeThread(paramObj.threadId, 1500); //Call this action again with a 1500ms delay
     }
   }
 });

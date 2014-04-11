@@ -52,12 +52,17 @@ OB.Utilities.Number.roundJSNumber = function (num, dec) {
 OB.Utilities.Number.OBMaskedToOBPlain = function (number, decSeparator, groupSeparator) {
   number = number.toString();
   var plainNumber = number,
-      decimalNotation = (number.indexOf('E') !== -1);
+      decimalNotation = (number.indexOf('E') === -1 && number.indexOf('e') === -1);
 
   // Remove group separators
   if (groupSeparator) {
     var groupRegExp = new RegExp('\\' + groupSeparator, 'g');
     plainNumber = plainNumber.replace(groupRegExp, '');
+  }
+
+  //Check if the number is not on decimal notation
+  if (!decimalNotation) {
+    plainNumber = OB.Utilities.Number.ScientificToDecimal(number, decSeparator);
   }
 
   // Catch sign
@@ -70,8 +75,8 @@ OB.Utilities.Number.OBMaskedToOBPlain = function (number, decSeparator, groupSep
     plainNumber = plainNumber.substring(1, number.length);
   }
 
-  // Remove ending decimal '0' if the number is not expressed in decimal notation
-  if (plainNumber.indexOf(decSeparator) !== -1 && !decimalNotation) {
+  // Remove ending decimal '0'
+  if (plainNumber.indexOf(decSeparator) !== -1) {
     while (plainNumber.substring(plainNumber.length - 1, plainNumber.length) === '0') {
       plainNumber = plainNumber.substring(0, plainNumber.length - 1);
     }
@@ -166,6 +171,11 @@ OB.Utilities.Number.OBPlainToOBMasked = function (number, maskNumeric, decSepara
     decNumber = '0.' + decNumber;
     decNumber = OB.Utilities.Number.roundJSNumber(decNumber, decMask.length);
     decNumber = decNumber.toString();
+
+    // Check if the number is on Scientific notation
+    if (decNumber.indexOf('e') !== -1 || decNumber.indexOf('E') !== -1) {
+      decNumber = OB.Utilities.Number.ScientificToDecimal(decNumber, decSeparator);
+    }
     if (decNumber.substring(0, 1) === '1') {
       intNumber = parseFloat(intNumber);
       intNumber = intNumber + 1;
@@ -392,4 +402,64 @@ OB.Utilities.Number.Grouping = {
         multiplier = this.getGroupingMultiplier(groupingMode);
     return groupValue + ' - ' + (groupValue + multiplier);
   }
+};
+
+//** {{{ OB.Utilities.Number.ScientificToDecimal }}} **
+//
+// Convert a number from Scientific notation to decimal notation
+//
+// Parameters:
+// * {{{number}}}: the number on scientific notation
+// * {{{decSeparator}}}: the decimal separator of the OB number
+// Return:
+// * The OB number on decimal notation 
+OB.Utilities.Number.ScientificToDecimal = function (number, decSeparator) {
+
+  number = number.toString();
+  var coeficient, exponent, numberOfZeros, zeros = '',
+      i, split, index;
+
+  // Look for 'e' or 'E' 
+  if (number.indexOf('e') !== -1) {
+    index = number.indexOf('e');
+  } else if (number.indexOf('E') !== -1) {
+    index = number.indexOf('E');
+  } else { // Number is not expressed in scientific notation
+    return number;
+  }
+
+  // Set the number before and after e
+  coeficient = number.substring(0, index);
+  exponent = number.substring(index + 1, number.length);
+
+  //Remove the decimal separator
+  if (coeficient.indexOf(decSeparator) !== -1) {
+    split = coeficient.split(decSeparator);
+    coeficient = split[0] + split[1];
+  }
+
+  if (exponent.indexOf('-') !== -1) { // Case the number is smaller than 1
+    numberOfZeros = exponent.substring(1, exponent.length);
+
+    //Create the string of zeros
+    for (i = 1; i < numberOfZeros; i++) {
+      zeros = zeros + '0';
+    }
+    //Create the final number
+    number = '0.' + zeros + coeficient;
+  } else if (exponent.indexOf('+') !== -1) { // Case the number is bigger than 1
+    numberOfZeros = exponent.substring(1, exponent.length);
+    if (split) {
+      numberOfZeros = numberOfZeros - split[1].length;
+    }
+
+    //Create the string of zeros
+    for (i = 0; i < numberOfZeros; i++) {
+      zeros = zeros + '0';
+    }
+    //Create the final number
+    number = coeficient + zeros;
+  }
+
+  return number;
 };

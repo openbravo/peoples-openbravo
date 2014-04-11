@@ -121,6 +121,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="NUMCOLUMN" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ONCHANGEFUNCTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_VAL_RULE" name="OBUIAPP_PARAM_AD_VALRULE">
         <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
       </foreign-key>
@@ -157,5 +165,6 @@
       <check name="OBUIAPP_PARAMETER_ISFIXED_CHK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_MANDAT_CHK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_NEWLINE_CHK"><![CDATA[STARTINNEWLINE IN ('Y', 'N')]]></check>
+      <check name="OBUIAPP_PARAMETER_NUMCOL_CHK"><![CDATA[(NUMCOLUMN >= 1) AND (NUMCOLUMN <= 4)]]></check>
     </table>
   </database>

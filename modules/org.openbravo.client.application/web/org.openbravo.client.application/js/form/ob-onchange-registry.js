@@ -68,7 +68,12 @@ OB.OnChangeRegistry = {
   },
 
   getFieldEntry: function (tabId, item) {
-    var tabEntry, field = item.name;
+    var tabEntry, field;
+    if (item.grid && item.grid.parameterName) {
+      field = item.grid.parameterName + OB.Constants.FIELDSEPARATOR + item.name;
+    } else {
+      field = item.name;
+    }
     if (!this.registry[tabId]) {
       return;
     }

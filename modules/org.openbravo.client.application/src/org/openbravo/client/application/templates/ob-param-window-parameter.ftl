@@ -22,10 +22,14 @@
 
 <#macro createParameter param>
 {
+  
+  <#if param.grid>
+    type:'OBPickEditGridItem',      
+  <#else>
     type: '${param.type}',
-    title: '${param.title?js_string}',
-    name: '${param.name?js_string}',
-    
+  </#if>
+  title: '${param.title?js_string}',
+  name: '${param.name?js_string}',
   <#if param.type != "OBSectionItem">
     paramId: '${param.id}',
     width: '${param.width?js_string}',
@@ -38,6 +42,9 @@
     </#if>
     <#if param.redrawOnChange>
       redrawOnChange: true,
+    </#if>
+    <#if param.onChangeFunction?? && param.onChangeFunction != "" > <#-- TODO: Check why "param.onChangeFunction??" is needed -->
+        onChangeFunction: ${param.onChangeFunction?js_string},
     </#if>
     <#if param.showIf != "" >
       showIf: function(item, value, form, currentValues, context) {
@@ -63,5 +70,10 @@
     </#list>
     ]
   </#if>
+  <#if param.grid> 
+    ,viewProperties: {
+    ${param.tabView}
+    }
+   </#if>
 }
 </#macro>

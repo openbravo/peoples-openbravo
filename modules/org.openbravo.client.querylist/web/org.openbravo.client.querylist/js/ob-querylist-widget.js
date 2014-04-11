@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -176,7 +176,8 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
       gridDataSource: this.gridDataSource,
       parameters: this.parameters,
       menuItems: this.menuItems,
-      fieldDefinitions: this.fieldDefinitions
+      fieldDefinitions: this.fieldDefinitions,
+      aboutFieldDefinitions: this.aboutFieldDefinitions
     });
   },
 

@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -73,7 +73,7 @@
         AmtSourceDR,AmtSourceCR,AmtAcctDR,AmtAcctCR,
         C_UOM_ID,Qty,M_Locator_ID,M_Product_ID,C_BPartner_ID,AD_OrgTrx_ID,C_LocFrom_ID,C_LocTo_ID,C_SalesRegion_ID,
         C_Project_ID,C_Campaign_ID,C_Activity_ID,User1_ID,User2_ID,Description, Fact_Acct_Group_ID, SeqNo, DocBaseType,
-        Record_ID2, A_ASSET_ID, C_WithHolding_ID, C_DocType_ID, C_Costcenter_ID)
+        Record_ID2, A_ASSET_ID, C_WithHolding_ID, C_DocType_ID, C_Costcenter_ID, FACTACCTTYPE)
         VALUES
           (?, ?, ?,'Y',now(),?,now(),?,
            ?, ?, ?, ?, TO_DATE(?), TO_DATE(?),
@@ -81,7 +81,7 @@
            ?, ?, ?, ?,
            TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
            ?, TO_NUMBER(?), ?,?, ?, ?,?, ?, ?,?, ?, ?,?, ?, ?, ?, TO_NUMBER(?), ?,
-           ?, ?, ?, ?, ?)
+           ?, ?, ?, ?, ?, ?)
      ]]>
      </Sql>
      <Parameter name="m_Fact_Acct_ID"/>
@@ -130,6 +130,7 @@
      <Parameter name="cWithholdingId"/>
      <Parameter name="cDocTypeId"/>
      <Parameter name="cCostcenterId"/>
+     <Parameter name="FactAcctType"/>
    </SqlMethod>
   <SqlMethod name="updateFactAcct" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

@@ -83,7 +83,7 @@ public class GlobalMenu {
     String menuKey = language + tree.getId();
     if (menuOptionsByLangAndTree.get(menuKey) == null) {
       menuOptionsByLangAndTree.put(menuKey, createInitialMenuList(tree, language));
-      log.info("Generating menu took " + (System.currentTimeMillis() - t));
+      log.debug("Generating menu took " + (System.currentTimeMillis() - t));
       t = System.currentTimeMillis();
     } else {
       log.debug("Using cached menu for tree and language");
@@ -105,7 +105,7 @@ public class GlobalMenu {
       menuOption.setParentMenuOption(menuOptionsByMenuId);
     }
 
-    log.debug("Getting a copy of globally cached menu took {} ms", System.currentTimeMillis());
+    log.debug("Getting a copy of globally cached menu took {} ms", System.currentTimeMillis() - t);
     return newOptions;
   }
 
@@ -274,7 +274,7 @@ public class GlobalMenu {
    * Invalidates menu cache. To be invoked when the menu changes.
    */
   public void invalidateCache() {
-    log.info("Invalidating menu cache");
+    log.debug("Invalidating menu cache");
     menuOptionsByLangAndTree = new HashMap<String, List<MenuOption>>();
     cacheTimeStamp = System.currentTimeMillis();
   }

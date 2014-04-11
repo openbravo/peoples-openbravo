@@ -886,7 +886,11 @@ isc.OBViewGrid.addProperties({
         func = this.getGridSummaryFunction(fld),
         isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
     if (!fld.clientClass && rowNum === this.getEditRow()) {
-      return 'center';
+      if (fld.editorType === 'OBCheckboxItem') {
+        return isRTL ? isc.Canvas.RIGHT : isc.Canvas.LEFT;
+      } else {
+        return isc.Canvas.CENTER;
+      }
     }
 
     if (isSummary && func === 'count') {
@@ -3203,6 +3207,10 @@ isc.OBViewGrid.addProperties({
     isc.Offline.explicitOffline = previousExplicitOffline;
     // commented out as it removes an autosave action which is done in the edit complete method
     //    this.view.standardWindow.setDirtyEditForm(null);
+    // Summary Functions are refreshed when data gets refreshed
+    if (this.showGridSummary) {
+      this.getSummaryRow();
+    }
   },
 
   autoSave: function () {
@@ -3316,8 +3324,6 @@ isc.OBViewGrid.addProperties({
     var record = this.getRecord(rowNum);
 
     this.view.isEditingGrid = true;
-
-    record[this.recordBaseStyleProperty] = this.baseStyleEdit;
 
     // also called in case of new
     var form = this.getEditForm();

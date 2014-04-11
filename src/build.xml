@@ -308,7 +308,9 @@ build.war: build a war file in the lib directory.
     <junit printsummary="yes" haltonfailure="yes">
       <classpath refid="project.class.path" />
       <formatter type="plain" usefile="no"/>
-      <test name="org.openbravo.test.AllWebserviceTests" haltonfailure="yes"/>
+      <test name="org.openbravo.test.AllWebserviceTests" haltonfailure="no" outfile="resultws">
+        <formatter type="xml" />
+      </test>
     </junit>
   </target>
 

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,77 +36,46 @@ public class SE_PaymentMethod_FinAccount extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
 
-    String srtPaymentMethodId = info.getStringParameter("inpfinPaymentmethodId",
-        IsIDFilter.instance);
-    String srtPOPaymentMethodId = info.getStringParameter("inppoPaymentmethodId",
-        IsIDFilter.instance);
-
     String tabId = info.getTabId();
     boolean isVendorTab = "224".equals(tabId);
     String finIsReceipt = info.getStringParameter("inpisreceipt", null);
     boolean isPaymentOut = isVendorTab || "N".equals(finIsReceipt);
-    String srtOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+    String strOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+
+    String strSelectedPaymentMethod = info.getStringParameter(isVendorTab ? "inppoPaymentmethodId"
+        : "inpfinPaymentmethodId", IsIDFilter.instance);
 
     FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-        isVendorTab ? srtPOPaymentMethodId : srtPaymentMethodId);
+        strSelectedPaymentMethod);
 
-    info.addSelect(isVendorTab ? "inppoFinancialAccountId" : "inpfinFinancialAccountId");
-    String srtSelectedFinancialAccount = info.getStringParameter(
+    String strSelectedFinancialAccount = info.getStringParameter(
         isVendorTab ? "inppoFinancialAccountId" : "inpfinFinancialAccountId", IsIDFilter.instance);
 
-    boolean isSelected = true;
+    FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+        strSelectedFinancialAccount);
+
     boolean isMultiCurrencyEnabled = false;
 
-    // No Payment Method selected
-    if (srtPaymentMethodId.isEmpty() && srtPOPaymentMethodId.isEmpty()) {
-      OBCriteria<FIN_FinancialAccount> obc = OBDal.getInstance().createCriteria(
-          FIN_FinancialAccount.class);
-      obc.add(Restrictions.in("organization.id", OBContext.getOBContext()
-          .getOrganizationStructureProvider().getNaturalTree(srtOrgId)));
-      obc.setFilterOnReadableOrganization(false);
-      for (FIN_FinancialAccount acc : obc.list()) {
-        info.addSelectResult(acc.getId(), acc.getIdentifier());
-      }
-
-    } else {
+    if (paymentMethod != null && financialAccount != null) {
       OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
+      // (paymentmethod, financial_account) is unique
       obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
+      obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, financialAccount));
       obc.add(Restrictions.in("organization.id", OBContext.getOBContext()
-          .getOrganizationStructureProvider().getNaturalTree(srtOrgId)));
-      if (isPaymentOut) {
-        obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYOUTALLOW, true));
-      } else {
-        obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYINALLOW, true));
-      }
+          .getOrganizationStructureProvider().getNaturalTree(strOrgId)));
 
-      FinAccPaymentMethod selectedPaymentMethod = null;
-      for (FinAccPaymentMethod accPm : obc.list()) {
-        if (accPm.getAccount().isActive()) {
-          if (srtSelectedFinancialAccount.equals(accPm.getAccount().getId())) {
-            isSelected = true;
-          } else if (srtSelectedFinancialAccount.isEmpty()) {
-            srtSelectedFinancialAccount = accPm.getAccount().getIdentifier();
-            isSelected = true;
-          }
-          selectedPaymentMethod = accPm;
-
-          info.addSelectResult(accPm.getAccount().getId(), accPm.getAccount().getIdentifier(),
-              isSelected);
-        }
-        isSelected = false;
-      }
-      if (selectedPaymentMethod != null) {
+      FinAccPaymentMethod selectedAccPaymentMethod = (FinAccPaymentMethod) obc.uniqueResult();
+      if (selectedAccPaymentMethod != null) {
         if (isPaymentOut) {
-          isMultiCurrencyEnabled = selectedPaymentMethod.isPayoutAllow()
-              && selectedPaymentMethod.isPayoutIsMulticurrency();
+          isMultiCurrencyEnabled = selectedAccPaymentMethod.isPayoutAllow()
+              && selectedAccPaymentMethod.isPayoutIsMulticurrency();
         } else {
-          isMultiCurrencyEnabled = selectedPaymentMethod.isPayinAllow()
-              && selectedPaymentMethod.isPayinIsMulticurrency();
+          isMultiCurrencyEnabled = selectedAccPaymentMethod.isPayinAllow()
+              && selectedAccPaymentMethod.isPayinIsMulticurrency();
         }
       }
     }
-    info.endSelect();
     info.addResult("inpismulticurrencyenabled", isMultiCurrencyEnabled ? "Y" : "N");
   }
 }
