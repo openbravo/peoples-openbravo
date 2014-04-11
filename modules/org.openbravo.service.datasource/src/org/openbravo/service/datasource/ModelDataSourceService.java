@@ -66,12 +66,16 @@ public class ModelDataSourceService extends BaseDataSourceService {
   public String fetch(Map<String, String> parameters) {
 
     final Entity baseEntity = getBaseEntity(parameters);
-    String propertyPath = parameters.get(PROPERTY_FIELD);
-    if ("null".equals(propertyPath) || propertyPath == null) {
-      HashMap<String, String> criteria = getCriteria(parameters);
-      if (criteria != null && criteria.containsKey(DATASOURCE_FIELD)) {
-        propertyPath = criteria.get(DATASOURCE_FIELD);
-      } else {
+    String propertyPath;
+
+    // filter based on criteria
+    HashMap<String, String> criteria = getCriteria(parameters);
+    if (criteria != null && criteria.containsKey(DATASOURCE_FIELD)) {
+      propertyPath = criteria.get(DATASOURCE_FIELD);
+    } else {
+      // when there is no criteria present, filter based on field's value
+      propertyPath = parameters.get(PROPERTY_FIELD);
+      if ("null".equals(propertyPath) || propertyPath == null) {
         propertyPath = "";
       }
     }
