@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, _ */
+/*global OB, Backbone, _, TestRegistry */
 
 OB.OBPOSCashMgmt = OB.OBPOSCashMgmt || {};
 OB.OBPOSCashMgmt.Model = OB.OBPOSCashMgmt.Model || {};
@@ -18,8 +18,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
   models: [OB.Model.CashManagement],
   init: function () {
     var payments = new Backbone.Collection(),
-        me = this,
-        paymentMth, criteria, runSyncProcessCM, error, addedCashMgmt, selectedPayment;
+      me = this,
+      paymentMth, criteria, runSyncProcessCM, error, addedCashMgmt, selectedPayment;
     this.set('payments', new Backbone.Collection());
     this.set('cashMgmtDropEvents', new Backbone.Collection(OB.POS.modelterminal.get('cashMgmtDropEvents')));
     this.set('cashMgmtDepositEvents', new Backbone.Collection(OB.POS.modelterminal.get('cashMgmtDepositEvents')));
@@ -106,6 +106,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
     this.depsdropstosave.on('makeDeposits', function () {
       // Done button has been clicked
       me = this;
+      TestRegistry.CashMgmt = TestRegistry.CashMgmt || {};
+      TestRegistry.CashMgmt.isCashDepositPrinted = false;
+
       OB.UTIL.showLoading(true);
 
       if (this.depsdropstosave.length === 0) {
@@ -115,6 +118,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       }
 
       this.printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
+
+      TestRegistry.CashMgmt.isCashDepositPrinted = true;
 
       function runSync() {
         if (OB.MobileApp.model.get('connectedToERP')) {
@@ -138,9 +143,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       // Sending drops/deposits to backend
       _.each(this.depsdropstosave.models, function (depdrop, index) {
         OB.Dal.save(depdrop, function () {
-          if (index === me.depsdropstosave.models.length - 1) {
-            OB.UTIL.calculateCurrentCash();
-          }
+          OB.UTIL.calculateCurrentCash();
           runSyncProcessCM();
         }, function (error) {
           OB.UTIL.showLoading(false);
