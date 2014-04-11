@@ -136,6 +136,7 @@
               }, this);
               if (countApprovals === approvalType.length) {
                 approved = true;
+                this.approvedRequest(approved, supervisor, approvalType, callback);
               } else {
                 countApprovals = 0;
                 OB.Dal.find(OB.Model.User, null, enyo.bind(this, function (users) {
@@ -161,7 +162,6 @@
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_InvalidUserPassword'));
             }
           }
-          this.approvedRequest(approved, supervisor, approvalType, callback);
         }), function () {});
       }
     }
