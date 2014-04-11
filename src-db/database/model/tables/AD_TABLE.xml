@@ -137,7 +137,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="HQLQUERY" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
+      <column name="HQLQUERY" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
