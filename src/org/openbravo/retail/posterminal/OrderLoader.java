@@ -1442,12 +1442,19 @@ public class OrderLoader extends JSONProcessSimple {
         OBDal.getInstance().save(invoice);
       }
 
+      BigDecimal diffPaid = BigDecimal.ZERO;
+      if ((gross.compareTo(BigDecimal.ZERO) > 0) && (gross.compareTo(amt) > 0)) {
+        diffPaid = gross.subtract(amt);
+      } else if ((gross.compareTo(BigDecimal.ZERO) < 0)
+          && (gross.compareTo(amt.multiply(new BigDecimal("-1"))) < 0)) {
+        diffPaid = gross.subtract(amt.multiply(new BigDecimal("-1")));
+      }
       // if (payments.length() == 0 ) or (writeoffAmt<0) means that use credit was used
-      if ((payments.length() == 0 || BigDecimal.ZERO.compareTo(writeoffAmt) > 0) && invoice != null) {
+      if ((payments.length() == 0 || diffPaid.compareTo(BigDecimal.ZERO) != 0) && invoice != null) {
         FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
             FIN_PaymentScheduleDetail.class);
         paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
-        paymentScheduleDetail.setAmount(writeoffAmt.negate());
+        paymentScheduleDetail.setAmount(diffPaid);
         if (paymentScheduleInvoice != null) {
           paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
         }
