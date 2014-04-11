@@ -1442,7 +1442,8 @@ public class OrderLoader extends JSONProcessSimple {
         OBDal.getInstance().save(invoice);
       }
 
-      if (payments.length() == 0 && invoice != null) {
+      // if (payments.length() == 0 ) or (writeoffAmt<0) means that use credit was used
+      if ((payments.length() == 0 || BigDecimal.ZERO.compareTo(writeoffAmt) > 0) && invoice != null) {
         FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
             FIN_PaymentScheduleDetail.class);
         paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
