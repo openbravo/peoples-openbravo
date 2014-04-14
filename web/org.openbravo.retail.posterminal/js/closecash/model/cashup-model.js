@@ -73,7 +73,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             'cashup_id': cashUp.at(0).get('id'),
             'paymentMethodId': payment.payment.id
           }, function (cashMgmts, args) {
-            expected = OB.DEC.add(OB.DEC.add(OB.DEC.mul(auxPay.get('startingCash'), auxPay.get('rate')), OB.DEC.sub(auxPay.get('totalSales'), auxPay.get('totalReturns'))), _.reduce(cashMgmts.models, function (accum, trx) {
+            expected = OB.DEC.add(OB.DEC.add(OB.DEC.mul(auxPay.get('startingCash'), auxPay.get('rate')), OB.DEC.sub(OB.DEC.mul(auxPay.get('totalSales'), auxPay.get('rate')), OB.DEC.mul(auxPay.get('totalReturns'), auxPay.get('rate')))), _.reduce(cashMgmts.models, function (accum, trx) {
               if (trx.get('type') === 'deposit') {
                 return OB.DEC.add(accum, trx.get('origAmount'));
               } else {
@@ -144,7 +144,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         '_orderByClause': 'name asc'
       }, function (payMthds) { //OB.Dal.find success
         cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
-          return OB.DEC.add(accum, trx.get('startingCash'));
+          return OB.DEC.add(accum, OB.DEC.mul(trx.get('startingCash'), trx.get('rate')));
         }, 0));
         _.each(payMthds.models, function (p, index) {
           var auxPay = OB.POS.modelterminal.get('payments').filter(function (pay) {
@@ -154,23 +154,23 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             return;
           }
           cashUpReport.get('deposits').push(new Backbone.Model({
-            origAmount: OB.DEC.add(0, p.get('totalSales')),
-            amount: OB.DEC.div(p.get('totalSales'), p.get('rate')),
+            origAmount: OB.DEC.add(0, OB.DEC.mul(p.get('totalSales'), p.get('rate'))),
+            amount: OB.DEC.add(0, p.get('totalSales')),
             description: p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
-          cashUpReport.set('totalDeposits', OB.DEC.add(cashUpReport.get('totalDeposits'), p.get('totalSales')));
+          cashUpReport.set('totalDeposits', OB.DEC.add(cashUpReport.get('totalDeposits'), OB.DEC.mul(p.get('totalSales'), p.get('rate'))));
           cashUpReport.get('drops').push(new Backbone.Model({
-            origAmount: OB.DEC.add(0, p.get('totalReturns')),
-            amount: OB.DEC.div(p.get('totalReturns'), p.get('rate')),
+            origAmount: OB.DEC.mul(OB.DEC.add(0, p.get('totalReturns')), p.get('rate')),
+            amount: OB.DEC.add(0, p.get('totalReturns')),
             description: p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
-          cashUpReport.set('totalDrops', OB.DEC.add(cashUpReport.get('totalDrops'), p.get('totalReturns')));
+          cashUpReport.set('totalDrops', OB.DEC.add(cashUpReport.get('totalDrops'), OB.DEC.mul(p.get('totalReturns'), p.get('rate'))));
           startings.push(new Backbone.Model({
-            amount: p.get('startingCash'),
+            amount: OB.DEC.mul(p.get('startingCash'), p.get('rate')),
             description: 'Starting ' + p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate'),
