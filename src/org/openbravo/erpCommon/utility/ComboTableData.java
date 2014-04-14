@@ -946,7 +946,8 @@ public class ComboTableData {
           txtAux.append(" AND " + idName + "=(?) ");
         }
         if (nameToCompare != null) {
-          txtAux.append(" AND " + nameToCompare + " like '%" + filterByValue + "%' ");
+          txtAux.append(" AND UPPER(" + nameToCompare + ") like '%" + filterByValue.toUpperCase()
+              + "%' ");
         }
         text.append("WHERE ").append(txtAux.toString());
       }
