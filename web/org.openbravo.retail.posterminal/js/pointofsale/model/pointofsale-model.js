@@ -562,13 +562,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           auxReceipt = new OB.Model.Order();
       if (OB.MobileApp.model.get('connectedToERP')) {
         auxReceipt.clearWith(receipt);
-        OB.UTIL.cashUpReport(auxReceipt);
         process.exec({
           order: receipt
         }, function (data, message) {
           if (data && data.exception) {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
           } else {
+            auxReceipt.calculateTaxes(function () {
+              auxReceipt.adjustPrices();
+              OB.UTIL.cashUpReport(auxReceipt);
+            });
             OB.Dal.remove(receipt, null, function (tx, err) {
               OB.UTIL.showError(err);
             });
