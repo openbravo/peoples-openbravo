@@ -93,14 +93,20 @@ isc.OBTimeItem.addProperties({
       value = isc.Time.parseInput(value);
     }
     if (value && isc.isA.Date(value)) {
+      if (this.isAbsoluteTime) {
+        value = OB.Utilities.Date.addTimezoneOffset(value);
+      }
       this.setTodaysDate(value);
+      if (this.isAbsoluteTime) {
+        value = OB.Utilities.Date.substractTimezoneOffset(value);
+      }
     }
     return this.Super('setValue', arguments);
   },
 
   getValue: function () {
     var value = this.Super('getValue', arguments);
-    if (value && isc.isA.Date(value)) {
+    if (value && isc.isA.Date(value) && !this.isAbsoluteTime) {
       this.setTodaysDate(value);
     }
     return value;
