@@ -58,6 +58,9 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     try {
       long init = System.currentTimeMillis();
       OBContext.setAdminMode();
+      if (parameters.get("FILTER_VALUE") != null) {
+        return filter(parameters);
+      }
       String fieldId = parameters.get("fieldId");
       String startRow = parameters.get("_startRow");
       String endRow = parameters.get("_endRow");
@@ -168,7 +171,123 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     return null;
   }
 
+  /**
+   * Filter combo data based on keyword
+   * 
+   * @param parameters
+   * @return {@link JSONObject}
+   */
   public String filter(Map<String, String> parameters) {
+    try {
+      long init = System.currentTimeMillis();
+      OBContext.setAdminMode();
+      String fieldId = parameters.get("fieldId");
+      String startRow = parameters.get("_startRow");
+      String endRow = parameters.get("_endRow");
+      String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
+      String filterString = parameters.get("FILTER_VALUE");
+      Field field = OBDal.getInstance().get(Field.class, fieldId);
+      Boolean getValueFromSession = Boolean.getBoolean(parameters.get("getValueFromSession"));
+      String columnValue = parameters.get("columnValue");
+      RequestContext rq = RequestContext.get();
+      VariablesSecureApp vars = rq.getVariablesSecureApp();
+      boolean comboreload = rq.getRequestParameter("donotaddcurrentelement") != null
+          && rq.getRequestParameter("donotaddcurrentelement").equals("true");
+      String ref = field.getColumn().getReference().getId();
+      String objectReference = "";
+      if (field.getColumn().getReferenceSearchKey() != null) {
+        objectReference = field.getColumn().getReferenceSearchKey().getId();
+      }
+      String validation = "";
+      if (field.getColumn().getValidation() != null) {
+        validation = field.getColumn().getValidation().getId();
+      }
+
+      String orgList = Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
+      String clientList = Utility.getContext(new DalConnectionProvider(false), vars,
+          "#User_Client", field.getTab().getWindow().getId());
+      if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
+        clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
+            field.getTab().getWindow().getId(),
+            Integer.parseInt(field.getTab().getTable().getDataAccessLevel()));
+        clientList = vars.getSessionValue("#User_Client");
+        orgList = null;
+      }
+      if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
+        orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", field
+            .getTab().getWindow().getId(),
+            Integer.parseInt(field.getTab().getTable().getDataAccessLevel()));
+      }
+
+      ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
+          .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+      ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref, field
+          .getColumn().getDBColumnName(), objectReference, validation, orgList, clientList);
+      Map<String, String> newParameters = null;
+
+      FieldProvider tabData = UIDefinition.generateTabData(field.getTab().getADFieldList(), field,
+          columnValue);
+      newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
+          vars, tabData, field.getTab().getWindow().getId(),
+          (getValueFromSession && !comboreload) ? columnValue : "");
+      if (singleRecord != null) {
+        newParameters.put("@ONLY_ONE_RECORD@", singleRecord);
+        newParameters.put("@ACTUAL_VALUE@", singleRecord);
+      }
+      FieldProvider[] fps = comboTableData.filter(new DalConnectionProvider(false), newParameters,
+          getValueFromSession && !comboreload, startRow, endRow, filterString);
+      ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
+      values.addAll(Arrays.asList(fps));
+      ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
+      ArrayList<String> possibleIds = new ArrayList<String>();
+      // If column is mandatory we add an initial blank value
+      if (!field.getColumn().isMandatory()) {
+        possibleIds.add("");
+        JSONObject entry = new JSONObject();
+        entry.put(JsonConstants.ID, (String) null);
+        entry.put(JsonConstants.IDENTIFIER, (String) null);
+        comboEntries.add(entry);
+      }
+      for (FieldProvider fp : values) {
+        possibleIds.add(fp.getField("ID"));
+        JSONObject entry = new JSONObject();
+        entry.put(JsonConstants.ID, fp.getField("ID"));
+        entry.put(JsonConstants.IDENTIFIER, fp.getField("NAME"));
+        comboEntries.add(entry);
+      }
+      JSONObject fieldProps = new JSONObject();
+      if (getValueFromSession && !comboreload) {
+        fieldProps.put("value", columnValue);
+        fieldProps.put("classicValue", columnValue);
+      } else {
+        if (possibleIds.contains(columnValue)) {
+          fieldProps.put("value", columnValue);
+          fieldProps.put("classicValue", columnValue);
+        } else {
+          // In case the default value doesn't exist in the combo values, we choose the first one
+          if (comboEntries.size() > 0) {
+            if (comboEntries.get(0).has(JsonConstants.ID)) {
+              fieldProps.put("value", comboEntries.get(0).get(JsonConstants.ID));
+              fieldProps.put("classicValue", comboEntries.get(0).get(JsonConstants.ID));
+            } else {
+              fieldProps.put("value", (String) null);
+              fieldProps.put("classicValue", (String) null);
+            }
+          } else {
+            fieldProps.put("value", "");
+            fieldProps.put("classicValue", "");
+          }
+        }
+      }
+      fieldProps.put("entries", new JSONArray(comboEntries));
+      log4j.debug("filter operation for ComboTableDatasourceService took: "
+          + (System.currentTimeMillis() - init));
+      return fieldProps.toString();
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     return null;
   }
 

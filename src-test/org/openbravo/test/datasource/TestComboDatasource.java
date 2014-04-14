@@ -32,13 +32,30 @@ import org.codehaus.jettison.json.JSONObject;
 public class TestComboDatasource extends BaseDataSourceTestNoDal {
 
   /**
-   * Test to fetch paginated values from ComboTableDatasoureService using set parameters. Based on
-   * field information and current context, the field values are returned as jsonObject. The test
-   * case asserts whether there is a valid response.
+   * Test to fetch values from ComboTableDatasoureService using set parameters. Based on field
+   * information and current context, the field values are returned as jsonObject. The test case
+   * asserts whether there is a valid response.
    * 
    * @throws Exception
    */
   public void testFetchComboTableDatasourceValues() throws Exception {
+    // Using values of window dropdown in menu
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("fieldId", "206");
+    params.put("columnValue", "233");
+    params.put("_operationType", "fetch");
+    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
+        params, 200, "POST");
+    JSONObject jsonResponse = new JSONObject(response);
+    assertTrue(jsonResponse.toString() != null);
+  }
+
+  /**
+   * Test to fetch paginated values from ComboTableDatasoureService
+   * 
+   * @throws Exception
+   */
+  public void testPaginatedFetch() throws Exception {
     // Using values of window dropdown in menu
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "206");
@@ -69,6 +86,27 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     // try to fetch F&B Admin user
     params.put("@ONLY_ONE_RECORD@", "A530AAE22C864702B7E1C22D58E7B17B");
     params.put("@ACTUAL_VALUE@", "A530AAE22C864702B7E1C22D58E7B17B");
+
+    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
+        params, 200, "POST");
+    JSONObject jsonResponse = new JSONObject(response);
+    assertTrue(jsonResponse.toString() != null);
+  }
+
+  /**
+   * Test to check limits are not applied when single record is fetched.
+   * 
+   * @throws Exception
+   */
+  public void testSingleRecordFetchWithLimits() throws Exception {
+    // Using values of visible at user in preference
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
+    params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
+    params.put("_operationType", "fetch");
+    // try to fetch F&B Admin user
+    params.put("@ONLY_ONE_RECORD@", "A530AAE22C864702B7E1C22D58E7B17B");
+    params.put("@ACTUAL_VALUE@", "A530AAE22C864702B7E1C22D58E7B17B");
     params.put("_startRow", "1");
     params.put("_endRow", "2");
 
@@ -77,4 +115,49 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     JSONObject jsonResponse = new JSONObject(response);
     assertTrue(jsonResponse.toString() != null);
   }
+
+  /**
+   * Test to check filtering of the record using passed parameter
+   * 
+   * @throws Exception
+   */
+  public void testFilter() throws Exception {
+    // Using values of visible at user in preference
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
+    params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
+    params.put("_operationType", "fetch");
+    // try to filter by string 'Open'
+    params.put("FILTER_VALUE", "Jo");
+
+    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
+        params, 200, "POST");
+    JSONObject jsonResponse = new JSONObject(response);
+    System.out.println("Response with filter " + jsonResponse.toString());
+    assertTrue(jsonResponse.toString() != null);
+  }
+
+  /**
+   * Test to check filtering of the record using passed parameter and return paginated results
+   * 
+   * @throws Exception
+   */
+  public void testFilterWithPagination() throws Exception {
+    // Using values of visible at user in preference
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
+    params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
+    params.put("_operationType", "fetch");
+    // try to filter by string 'Open'
+    params.put("FILTER_VALUE", "Jo");
+    params.put("_startRow", "0");
+    params.put("_endRow", "1");
+
+    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
+        params, 200, "POST");
+    JSONObject jsonResponse = new JSONObject(response);
+    System.out.println("Response without filter " + jsonResponse.toString());
+    assertTrue(jsonResponse.toString() != null);
+  }
+
 }

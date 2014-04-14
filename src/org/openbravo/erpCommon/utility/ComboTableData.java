@@ -839,7 +839,7 @@ public class ComboTableData {
    * @return String with the query.
    */
   private String getQuery(boolean onlyId, String[] discard, String recordId) {
-    return getQuery(onlyId, discard, recordId, null, null, null);
+    return getQuery(onlyId, discard, recordId, null, null, null, null);
   }
 
   /**
@@ -857,13 +857,15 @@ public class ComboTableData {
    *          end index of the records.
    * @param conn
    *          Connection provider
+   * @param filterByValue
+   *          Keyword to be filtered
    * @return String with the query.
    */
   private String getQuery(boolean onlyId, String[] discard, String recordId, String startRow,
-      String endRow, ConnectionProvider conn) {
+      String endRow, ConnectionProvider conn, String filterByValue) {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = getSelectFields();
-    String idName = "";
+    String idName = "", nameToCompare = null;
     boolean hasWhere = false;
     boolean applyLimits = startRow != null && endRow != null && StringUtils.isNumeric(startRow)
         && StringUtils.isNumeric(endRow) && StringUtils.isEmpty(recordId);
@@ -895,6 +897,9 @@ public class ComboTableData {
       }
       text.append(id);
       if (!name.toString().equals("")) {
+        if (filterByValue != null) {
+          nameToCompare = name.toString() + ")";
+        }
         name.append(") AS NAME");
       } else {
         name.append("'>>No Record Identifier<<' AS NAME");
@@ -939,6 +944,9 @@ public class ComboTableData {
       if (hasWhere) {
         if (recordId != null) {
           txtAux.append(" AND " + idName + "=(?) ");
+        }
+        if (nameToCompare != null) {
+          txtAux.append(" AND " + nameToCompare + " like '%" + filterByValue + "%' ");
         }
         text.append("WHERE ").append(txtAux.toString());
       }
@@ -1146,7 +1154,110 @@ public class ComboTableData {
       }
 
     }
-    String strSql = getQuery(false, null, null, startRow, endRow, conn);
+    String strSql = getQuery(false, null, null, startRow, endRow, conn, null);
+    if (log4j.isDebugEnabled())
+      log4j.debug("SQL: " + strSql);
+    PreparedStatement st = conn.getPreparedStatement(strSql);
+    ResultSet result;
+    Vector<Object> vector = new Vector<Object>(0);
+
+    try {
+      int iParameter = 0;
+      iParameter = setSQLParameters(st, lparameters, iParameter, null);
+      boolean idFound = false;
+      result = st.executeQuery();
+      while (result.next()) {
+        SQLReturnObject sqlReturnObject = new SQLReturnObject();
+        sqlReturnObject.setData("ID", UtilSql.getValue(result, "ID"));
+        sqlReturnObject.setData("NAME", UtilSql.getValue(result, "NAME"));
+        sqlReturnObject.setData("DESCRIPTION", UtilSql.getValue(result, "DESCRIPTION"));
+        if (includeActual && actual != null && !actual.equals("")) {
+          if (actual.equals(sqlReturnObject.getData("ID"))) {
+            if (!idFound) {
+              vector.addElement(sqlReturnObject);
+              idFound = true;
+            }
+          } else {
+            vector.addElement(sqlReturnObject);
+          }
+        } else
+          vector.addElement(sqlReturnObject);
+        if (lparameters != null && lparameters.containsKey("#ONLY_ONE_RECORD#")) {
+          FieldProvider objectListData[] = new FieldProvider[vector.size()];
+          vector.copyInto(objectListData);
+          return (objectListData);
+        }
+      }
+      result.close();
+
+      if (includeActual && actual != null && !actual.equals("") && !idFound) {
+        conn.releasePreparedStatement(st);
+        String[] discard = { "filter", "orderBy", "CLIENT_LIST", "ORG_LIST" };
+        strSql = getQuery(true, discard);
+        if (log4j.isDebugEnabled())
+          log4j.debug("SQL Actual ID: " + strSql);
+        st = conn.getPreparedStatement(strSql);
+        iParameter = setSQLParameters(st, lparameters, 0, discard);
+        UtilSql.setValue(st, ++iParameter, 12, null, actual);
+        result = st.executeQuery();
+        while (result.next()) {
+          SQLReturnObject sqlReturnObject = new SQLReturnObject();
+          sqlReturnObject.setData("ID", UtilSql.getValue(result, "ID"));
+          String strName = UtilSql.getValue(result, "NAME");
+          if (!strName.startsWith(INACTIVE_DATA))
+            strName = INACTIVE_DATA + strName;
+          sqlReturnObject.setData("NAME", strName);
+          vector.addElement(sqlReturnObject);
+          idFound = true;
+        }
+        result.close();
+        if (!idFound) {
+          SQLReturnObject sqlReturnObject = new SQLReturnObject();
+          sqlReturnObject.setData("ID", actual);
+          sqlReturnObject.setData(
+              "NAME",
+              INACTIVE_DATA
+                  + Utility.messageBD(conn, "NotFound",
+                      lparameters != null ? lparameters.get("#AD_LANGUAGE")
+                          : getParameter("#AD_LANGUAGE")));
+
+          vector.addElement(sqlReturnObject);
+        }
+      }
+    } catch (SQLException e) {
+      log4j.error("Error of SQL in query: " + strSql + "Exception:" + e);
+      throw new Exception("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } finally {
+      conn.releasePreparedStatement(st);
+    }
+    FieldProvider objectListData[] = new FieldProvider[vector.size()];
+    vector.copyInto(objectListData);
+    return (objectListData);
+  }
+
+  /**
+   * Method to filter the combo data based on the keyword provided
+   * 
+   * @param conn
+   *          Connection Provider
+   * @param lparameters
+   *          Request Parameters
+   * @param includeActual
+   *          Include all results
+   * @param startRow
+   *          Start row of the result
+   * @param endRow
+   *          End row of the result
+   * @param filterValue
+   *          Keyword to filtered
+   * @return {@link FieldProvider}
+   * @throws Exception
+   */
+  public FieldProvider[] filter(ConnectionProvider conn, Map<String, String> lparameters,
+      boolean includeActual, String startRow, String endRow, String filterValue) throws Exception {
+    String actual = lparameters != null ? lparameters.get("@ACTUAL_VALUE@")
+        : getParameter("@ACTUAL_VALUE@");
+    String strSql = getQuery(false, null, null, startRow, endRow, conn, filterValue);
     if (log4j.isDebugEnabled())
       log4j.debug("SQL: " + strSql);
     PreparedStatement st = conn.getPreparedStatement(strSql);
