@@ -22,7 +22,7 @@
 
       if (!this.get("name")) {
         OB.UTIL.showWarning('Name is required for BPartner');
-        return;
+        return false;
       }
 
       if (!this.get("locId")) {
@@ -47,13 +47,14 @@
       this.trigger('customerSaved');
       //datacustomersave will catch this event and save this locally with changed = 'Y'
       //Then it will try to send to the backend
+      return true;
     },
     loadById: function (CusId, userCallback) {
       //search data in local DB and load it to this
       var me = this,
-          criteria = {
+        criteria = {
           id: CusId
-          };
+        };
       OB.Dal.find(OB.Model.BusinessPartner, criteria, function (customerCol) { //OB.Dal.find success
         var successCallback, errorCallback;
         if (!customerCol || customerCol.length === 0) {
@@ -77,7 +78,7 @@
     },
     clearModelWith: function (cusToLoad) {
       var me = this,
-          undf;
+        undf;
       if (cusToLoad === null) {
         this.set('id', null);
         this.set('searchKey', null);
@@ -127,7 +128,7 @@
     },
     loadByJSON: function (obj) {
       var me = this,
-          undf;
+        undf;
       _.each(_.keys(me.attributes), function (key) {
         if (obj[key] !== undf) {
           if (obj[key] === null) {
@@ -249,8 +250,6 @@
     column: 'taxExempt',
     type: 'TEXT'
   }]);
-
-
 
   OB.Data.Registry.registerModel(BusinessPartner);
 }());

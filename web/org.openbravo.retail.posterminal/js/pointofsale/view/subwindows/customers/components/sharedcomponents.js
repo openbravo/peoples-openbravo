@@ -109,7 +109,7 @@ enyo.kind({
   },
   dataReadyFunction: function (data, inEvent) {
     var index = 0,
-        result = null;
+      result = null;
     if (data) {
       this.collection.reset(data.models);
     } else {
@@ -177,7 +177,7 @@ enyo.kind({
   },
   saveCustomer: function (inSender, inEvent) {
     var me = this,
-        sw = me.subWindow;
+      sw = me.subWindow;
 
     function getCustomerValues(params) {
       me.waterfall('onSaveChange', {
@@ -214,19 +214,23 @@ enyo.kind({
       this.waterfall('onSaveChange', {
         customer: this.model.get('customer')
       });
-      this.model.get('customer').saveCustomer();
-      goToViewWindow(sw, {
-        customer: this.model.get('customer')
-      });
+      var success = this.model.get('customer').saveCustomer();
+      if (success) {
+        goToViewWindow(sw, {
+          customer: this.model.get('customer')
+        });
+      }
     } else {
       this.model.get('customer').loadById(this.customer.get('id'), function (customer) {
         getCustomerValues({
           customer: customer
         });
-        customer.saveCustomer();
-        goToViewWindow(sw, {
-          customer: customer
-        });
+        var success = customer.saveCustomer();
+        if (success) {
+          goToViewWindow(sw, {
+            customer: customer
+          });
+        }
       });
     }
   },
@@ -238,7 +242,7 @@ enyo.kind({
     this.attributeContainer = this.$.customerAttributes;
     enyo.forEach(this.newAttributes, function (natt) {
       var resultDisplay = true,
-          undf;
+        undf;
       if (natt.displayLogic !== undf && natt.displayLogic !== null) {
         if (enyo.isFunction(natt.displayLogic)) {
           resultDisplay = natt.displayLogic(this);
