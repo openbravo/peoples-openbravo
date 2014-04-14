@@ -31,7 +31,8 @@ public class SE_InOut_Organization extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     String strIsSOTrx = Utility.getContext(this, info.vars, "isSOTrx", info.getWindowId());
-    String strOrgId = info.vars.getStringParameter("inpadOrgId");
+    String strMWarehouseId = info.vars.getStringParameter("inpmWarehouseId");
+    boolean updateWarehouse = true;
     FieldProvider[] td = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "18", "M_Warehouse_ID",
@@ -46,7 +47,15 @@ public class SE_InOut_Organization extends SimpleCallout {
     }
 
     if (td != null && td.length > 0) {
-      info.addResult("inpmWarehouseId", td[0].getField("id"));
+      for (int i = 0; i < td.length; i++) {
+        if (td[i].getField("id").equals(strMWarehouseId)) {
+          updateWarehouse = false;
+          break;
+        }
+      }
+      if (updateWarehouse) {
+        info.addResult("inpmWarehouseId", td[0].getField("id"));
+      }
     } else {
       info.addResult("inpmWarehouseId", null);
     }
