@@ -544,7 +544,7 @@ isc.OBParameterWindowView.addProperties({
         isc.addProperties(defaultFilter, filterExpressions[i]);
         field.setDefaultFilter(defaultFilter);
         if (field.isVisible() && !field.showIf) {
-          field.canvas.viewGrid.setFilterEditorCriteria(this.defaultFilter);
+          field.canvas.viewGrid.setFilterEditorCriteria(defaultFilter);
           field.canvas.viewGrid.filterByEditor();
         }
       }
