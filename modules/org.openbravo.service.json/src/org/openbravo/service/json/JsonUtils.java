@@ -136,8 +136,9 @@ public class JsonUtils {
    * @return a colon added in the timezone part: 2009-12-06T15:59:34+01:00
    */
   public static String convertToCorrectXSDFormat(String dateValue) {
-    if (dateValue == null || dateValue.length() < 3 || dateValue.indexOf("+") == -1
-        || dateValue.indexOf("-") == -1) {
+    int idxT = dateValue.indexOf("T");
+    if (dateValue == null || dateValue.length() < 3 || idxT == -1
+        || (dateValue.indexOf("+", idxT) == -1 && dateValue.indexOf("-", idxT) == -1)) {
       return dateValue;
     }
     final int length = dateValue.length();
