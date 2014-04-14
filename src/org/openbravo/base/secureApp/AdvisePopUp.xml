@@ -13,6 +13,7 @@
 <REPORT>
 	<template file="AdvisePopUp.html"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default" default="Default"/>
+    <PARAMETER id="popupTitle" name="PopupTitle"/>
 	<PARAMETER id="paramTipo" name="ParamTipo" replace="ERROR" attribute="class" />
 	<PARAMETER id="paramTitulo" name="ParamTitulo"/>
 	<PARAMETER id="messageBoxIDTitle" name="ParamTitulo"/>
