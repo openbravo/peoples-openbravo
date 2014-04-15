@@ -27,9 +27,15 @@ package org.openbravo.test.datasource;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestComboDatasource extends BaseDataSourceTestNoDal {
+
+  private static final Logger log = LoggerFactory.getLogger(TestComboDatasource.class);
 
   /**
    * Test to fetch values from ComboTableDatasoureService using set parameters. Based on field
@@ -44,10 +50,12 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("fieldId", "206");
     params.put("columnValue", "233");
     params.put("_operationType", "fetch");
-    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
-        params, 200, "POST");
-    JSONObject jsonResponse = new JSONObject(response);
-    assertTrue(jsonResponse.toString() != null);
+
+    JSONObject jsonResponse = requestCombo(params);
+    JSONArray data = getData(jsonResponse);
+
+    assertTrue("non paginated combo for window table dir should have more than 100 records",
+        data.length() > 100);
   }
 
   /**
@@ -64,10 +72,10 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("_startRow", "20");
     params.put("_endRow", "40");
 
-    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
-        params, 200, "POST");
-    JSONObject jsonResponse = new JSONObject(response);
-    assertTrue(jsonResponse.toString() != null);
+    JSONObject jsonResponse = requestCombo(params);
+    JSONArray data = getData(jsonResponse);
+
+    assertEquals("paginated combo number of records", 22, data.length()); // TODO: check this
   }
 
   /**
@@ -87,10 +95,15 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("@ONLY_ONE_RECORD@", "A530AAE22C864702B7E1C22D58E7B17B");
     params.put("@ACTUAL_VALUE@", "A530AAE22C864702B7E1C22D58E7B17B");
 
-    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
-        params, 200, "POST");
-    JSONObject jsonResponse = new JSONObject(response);
-    assertTrue(jsonResponse.toString() != null);
+    JSONObject jsonResponse = requestCombo(params);
+    JSONArray data = getData(jsonResponse);
+
+    // 2 records: real + empty
+    assertEquals("number of records", 2, data.length());
+
+    JSONObject record = data.getJSONObject(1);
+    assertEquals("record id", "A530AAE22C864702B7E1C22D58E7B17B", record.getString("id"));
+    assertEquals("record identifier", "F&BAdmin", record.get("_identifier"));
   }
 
   /**
@@ -110,10 +123,15 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("_startRow", "1");
     params.put("_endRow", "2");
 
-    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
-        params, 200, "POST");
-    JSONObject jsonResponse = new JSONObject(response);
-    assertTrue(jsonResponse.toString() != null);
+    JSONObject jsonResponse = requestCombo(params);
+    JSONArray data = getData(jsonResponse);
+
+    // 2 records: real + empty
+    assertEquals("number of records", 2, data.length());
+
+    JSONObject record = data.getJSONObject(1);
+    assertEquals("record id", "A530AAE22C864702B7E1C22D58E7B17B", record.getString("id"));
+    assertEquals("record identifier", "F&BAdmin", record.get("_identifier"));
   }
 
   /**
@@ -130,11 +148,10 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     // try to filter by string 'Open'
     params.put("FILTER_VALUE", "Jo");
 
-    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
-        params, 200, "POST");
-    JSONObject jsonResponse = new JSONObject(response);
-    System.out.println("Response with filter " + jsonResponse.toString());
-    assertTrue(jsonResponse.toString() != null);
+    JSONObject jsonResponse = requestCombo(params);
+    JSONArray data = getData(jsonResponse);
+
+    assertEquals("number of filtered records", 4, data.length());
   }
 
   /**
@@ -153,11 +170,33 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("_startRow", "0");
     params.put("_endRow", "1");
 
+    JSONObject jsonResponse = requestCombo(params);
+    JSONArray data = getData(jsonResponse);
+
+    assertEquals("number of filtered records", 3, data.length()); // TODO: check this
+  }
+
+  private JSONObject requestCombo(Map<String, String> params) throws Exception {
     String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
         params, 200, "POST");
     JSONObject jsonResponse = new JSONObject(response);
-    System.out.println("Response without filter " + jsonResponse.toString());
     assertTrue(jsonResponse.toString() != null);
+
+    if (log.isDebugEnabled() || true) {
+      String paramStr = "";
+      for (String paramKey : params.keySet()) {
+        paramStr += paramStr.isEmpty() ? "" : ", ";
+        paramStr += "{" + paramKey + ":" + params.get(paramKey) + "}";
+      }
+      paramStr = "[" + paramStr + "]";
+      log.info("Combo request:\n  *params:{}\n  *response:{}", paramStr, jsonResponse);
+    }
+    assertNotNull("Combo response shoulnd't be null", jsonResponse.toString());
+    return jsonResponse;
+  }
+
+  private JSONArray getData(JSONObject jsonResponse) throws JSONException {
+    return jsonResponse.getJSONArray("entries");
   }
 
 }
