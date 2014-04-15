@@ -148,5 +148,29 @@ isc.OBTreeGrid.addProperties({
       value = Date.parseSchemaDate(value);
     }
     return this.Super('applyCellTypeFormatters', [value, record, field, rowNum, colNum, isMultipleElement]);
+  },
+
+  
+  // converts the date and datetime fields from string to a js date
+  transformData: function (data) {
+    var dateFields = [],
+        fieldName, i, j, type, record;
+    for (i = 0; i < this.getFields().length; i++) {
+      type = isc.SimpleType.getType(this.getFields()[i].type);
+      if (type.inheritsFrom === 'date' || type.inheritsFrom === 'datetime') {
+        dateFields.add(this.getFields()[i].name);
+      }
+    }
+    if (dateFields.length > 0) {
+      for (i = 0; i < data.length; i++) {
+        record = data[i];
+        for (j = 0; j < dateFields.length; j++) {
+          fieldName = dateFields[j];
+          if (!isc.isA.Date(record[fieldName]) && isc.isA.Date(isc.Date.parseSchemaDate(record[fieldName]))) {
+            record[fieldName] = isc.Date.parseSchemaDate(record[fieldName]);
+          }
+        }
+      }
+    }
   }
 });
