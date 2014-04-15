@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+  <database name="VIEW APRM_ORDER_INVOICE">
+    <view name="APRM_ORDER_INVOICE"><![CDATA[SELECT get_uuid() AS aprm_order_invoice_id, o.ad_client_id, o.ad_org_id, o.isactive, o.created, o.createdby, o.updated, o.updatedby, o.documentno AS order_documentno, c.documentno AS invoice_documentno, cb.fin_paymentmethod_id, pm.name AS payment_method, cb.c_bpartner_id, cb.name, o.datepromised, c.dateinvoiced, c.grandtotal AS invoice_grandtotal, o.grandtotal AS order_grandtotal, c.outstandingamt, c.outstandingamt AS payment FROM c_order o JOIN c_bpartner cb ON o.c_bpartner_id = cb.c_bpartner_id JOIN fin_paymentmethod pm ON cb.fin_paymentmethod_id = pm.fin_paymentmethod_id FULL JOIN c_invoice c ON o.c_order_id = c.c_order_id]]></view>
+  </database>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+  <database name="VIEW APRM_CREDIT_TO_USE">
+    <view name="APRM_CREDIT_TO_USE"><![CDATA[SELECT get_uuid() AS aprm_credit_to_use_id, c_invoice.ad_client_id, c_invoice.ad_org_id, c_invoice.isactive, c_invoice.created, c_invoice.createdby, c_invoice.updated, c_invoice.updatedby, c_invoice.documentno AS credit_payment_no, c_invoice.description, c_invoice.dateinvoiced AS payment_date, c_invoice.outstandingamt AS outstandingamount, c_invoice.outstandingamt AS amount FROM c_invoice]]></view>
+  </database>
