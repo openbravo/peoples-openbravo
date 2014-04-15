@@ -71,7 +71,7 @@ enyo.kind({
 //button of header of the body
 enyo.kind({
   kind: 'OB.UI.Button',
-  name: 'OB.UI.customer.button.save',
+  name: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
   style: 'width: 100px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblSave',
@@ -92,7 +92,7 @@ enyo.kind({
       components: [{
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.UI.customer.button.save',
+          kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
           id: 'OB.UI.id.customer.button.save'
         }]
       }, {
@@ -162,7 +162,7 @@ enyo.kind({
     //function to retrieve the data
     fetchDataFunction: function (args) {
       var me = this,
-        criteria;
+          criteria;
       criteria = {
         _orderByClause: '_identifier asc'
       };
