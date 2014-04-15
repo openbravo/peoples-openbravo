@@ -1935,7 +1935,14 @@ isc.OBStandardView.addProperties({
               view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
             }
             view.viewGrid.updateRowCountDisplay();
-            view.refreshChildViews();
+
+            // Refresh the grid based on Refresh After Deletion preference
+            if (OB.PropertyStore.get("OBUIAPP_RefreshAfterDeletion", view.windowId) === 'Y') {
+              view.viewGrid.refreshGrid();
+            } else {
+              view.refreshChildViews();
+            }
+
             view.refreshParentRecord();
           } else {
             // get the error message from the dataObject 
