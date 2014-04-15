@@ -568,6 +568,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           if (data && data.exception) {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
           } else {
+            auxReceipt.calculateTaxes = receipt.calculateTaxes;
             auxReceipt.calculateTaxes(function () {
               auxReceipt.adjustPrices();
               OB.UTIL.cashUpReport(auxReceipt);
