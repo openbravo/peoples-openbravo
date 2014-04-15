@@ -71,7 +71,7 @@ enyo.kind({
 //button of header of the body
 enyo.kind({
   kind: 'OB.UI.Button',
-  name: 'OB.UI.id.customer.save',
+  name: 'OB.UI.customer.button.save',
   style: 'width: 100px; margin: 0px 5px 8px 19px;',
   classes: 'btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblSave',
@@ -92,7 +92,8 @@ enyo.kind({
       components: [{
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.UI.id.customer.save'
+          kind: 'OB.UI.customer.button.save',
+          id: 'OB.UI.id.customer.button.save'
         }]
       }, {
         style: 'display: table-cell;',
