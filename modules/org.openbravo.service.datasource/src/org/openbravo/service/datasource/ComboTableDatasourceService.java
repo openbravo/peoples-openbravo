@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
@@ -164,7 +165,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
           (System.currentTimeMillis() - init));
       return fieldProps.toString();
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
     } finally {
 
       OBContext.restorePreviousMode();
@@ -285,41 +286,26 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
           (System.currentTimeMillis() - init));
       return fieldProps.toString();
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
+      return e.getMessage();
     } finally {
       OBContext.restorePreviousMode();
     }
-    return null;
   }
 
   @Override
   public String remove(Map<String, String> parameters) {
-    try {
-      throw new Exception("unimplemented method");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
+    throw new OBException("Method not implemented");
   }
 
   @Override
   public String add(Map<String, String> parameters, String content) {
-    try {
-      throw new Exception("unimplemented method");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
+    throw new OBException("Method not implemented");
   }
 
   @Override
   public String update(Map<String, String> parameters, String content) {
-    try {
-      throw new Exception("unimplemented method");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
+    throw new OBException("Method not implemented");
   }
 
 }

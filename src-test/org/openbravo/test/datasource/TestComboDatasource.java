@@ -75,7 +75,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
 
-    assertEquals("paginated combo number of records", 22, data.length()); // TODO: check this
+    assertEquals("paginated combo number of records", 22, data.length());
   }
 
   /**
@@ -173,7 +173,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
 
-    assertEquals("number of filtered records", 3, data.length()); // TODO: check this
+    assertEquals("number of filtered records", 3, data.length());
   }
 
   private JSONObject requestCombo(Map<String, String> params) throws Exception {
