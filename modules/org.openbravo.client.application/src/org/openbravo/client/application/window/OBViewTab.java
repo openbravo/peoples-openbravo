@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -642,6 +642,23 @@ public class OBViewTab extends BaseTemplateComponent {
         }
         preferenceAttributes = preferenceAttributesJSON.toString();
       } catch (JSONException e) {
+      }
+    }
+    return preferenceAttributes;
+  }
+
+  // Returns the preference's names as a string
+  public String getPreferenceAttributesNames() {
+    boolean first = true;
+    String preferenceAttributes = "";
+    if (!preferenceAttributesMap.isEmpty()) {
+      for (String attr : preferenceAttributesMap.keySet()) {
+        if (!first) {
+          preferenceAttributes = preferenceAttributes.concat(",");
+        } else {
+          first = false;
+        }
+        preferenceAttributes = preferenceAttributes.concat("'" + attr + "'");
       }
     }
     return preferenceAttributes;

@@ -233,8 +233,11 @@ isc.OBStandardView.addProperties({
     // If the tab comes with session attributes (preference attributes used in the display
     // logic of the tab, see issue https://issues.openbravo.com/view.php?id=5202), assign them
     // to the form, so they will be retrieved when getContextInfo() is called for the form
-    if (this.sessionAttributes) {
-      this.viewForm.sessionAttributes = this.sessionAttributes;
+    if (this.sessionAttributesNames) {
+      this.viewForm.sessionAttributes = {};
+      for (i = 0; i < this.sessionAttributesNames.length; i++) {
+        this.viewForm.sessionAttributes[this.sessionAttributesNames[i]] = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
+      }
     }
 
     if (this.actionToolbarButtons) {
@@ -1489,9 +1492,9 @@ isc.OBStandardView.addProperties({
     if (this.viewForm && this.viewForm.auxInputs) {
       auxInputs = this.viewForm.auxInputs;
     }
-    for (p in childView.sessionAttributes) {
-      if (childView.sessionAttributes.hasOwnProperty(p) && !auxInputs.hasOwnProperty(p)) {
-        contextInfo[p] = childView.sessionAttributes[p];
+    for (p in childView.viewForm.sessionAttributes) {
+      if (childView.viewForm.sessionAttributes.hasOwnProperty(p) && !auxInputs.hasOwnProperty(p)) {
+        contextInfo[p] = childView.viewForm.sessionAttributes[p];
       }
     }
   },
