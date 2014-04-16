@@ -49,8 +49,7 @@ public class CashCloseProcessor {
 
   public JSONObject processCashClose(OBPOSApplications posTerminal, JSONObject jsonCashup,
       JSONArray cashMgmtIds, Date cashUpDate) throws Exception {
-
-    String cashUpId = jsonCashup.getString("cashUpId");
+    String cashUpId = jsonCashup.getString("id");
     JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
     OBPOSAppCashup cashUp = createCashUp(posTerminal, cashUpId, cashUpDate);
     OBDal.getInstance().save(cashUp);

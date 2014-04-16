@@ -11,16 +11,13 @@ package org.openbravo.retail.posterminal;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.Iterator;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -28,7 +25,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -37,7 +34,8 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.service.json.JsonConstants;
 
-public class CustomerLoader extends JSONProcessSimple {
+@Qualifier("Entity:BusinessPartner")
+public class CustomerLoader extends POSDataSynchronizationProcess {
 
   private static final Logger log = Logger.getLogger(CustomerLoader.class);
 
@@ -47,106 +45,26 @@ public class CustomerLoader extends JSONProcessSimple {
   @Any
   private Instance<CustomerLoaderHook> customerCreations;
 
-  @Override
-  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-
-    Object jsonCustomer = jsonsent.get("customer");
-
-    JSONArray array = null;
-    JSONObject result = new JSONObject();
-    if (jsonCustomer instanceof JSONObject) {
-      array = new JSONArray();
-      array.put(jsonCustomer);
-    } else if (jsonCustomer instanceof String) {
-      JSONObject obj = new JSONObject((String) jsonCustomer);
-      array = new JSONArray();
-      array.put(obj);
-    } else if (jsonCustomer instanceof JSONArray) {
-      array = (JSONArray) jsonCustomer;
-    }
-    result = this.saveCustomer(array, jsonsent.getString("terminalId"));
-    return result;
-  }
-
-  public JSONObject saveCustomer(JSONArray jsonarray, Object terminalId) throws JSONException {
-    boolean error = false;
+  public JSONObject saveRecord(JSONObject jsoncustomer) throws Exception {
+    BusinessPartner customer = null;
     OBContext.setAdminMode(false);
     try {
-      if (RequestContext.get().getSessionAttribute("customerTerminalId|" + terminalId) == null) {
-        RequestContext.get().setSessionAttribute("customerTerminalId|" + terminalId, true);
-        for (int i = 0; i < jsonarray.length(); i++) {
-          JSONObject jsonCustomer = jsonarray.getJSONObject(i);
-          String posTerminalId = jsonCustomer.getString("posTerminal");
-          try {
-            JSONObject result = saveCustomer(jsonCustomer);
-            if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
-                JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
-              log.error("There was an error importing order: " + jsonCustomer.toString());
-              error = true;
-            }
-            if (i % 1 == 0) {
-              OBDal.getInstance().flush();
-              OBDal.getInstance().getConnection().commit();
-              OBDal.getInstance().getSession().clear();
-            }
-          } catch (Exception e) {
-            // Creation of the customer failed. We will now store the customer in the import errors
-            // table
-            log.error("An error happened when processing a customer: ", e);
-            OBDal.getInstance().rollbackAndClose();
-
-            OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
-            errorEntry.setError(getErrorMessage(e));
-            errorEntry.setOrderstatus("N");
-            errorEntry.setJsoninfo(jsonCustomer.toString());
-            errorEntry.setTypeofdata("BP");
-            errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
-                posTerminalId));
-            OBDal.getInstance().save(errorEntry);
-            OBDal.getInstance().flush();
-
-            log.error("Error while loading customer", e);
-            try {
-              OBDal.getInstance().getConnection().commit();
-            } catch (SQLException e1) {
-              // this won't happen
-            }
-          }
-        }
+      customer = getCustomer(jsoncustomer.getString("id"));
+      if (customer.getId() == null) {
+        customer = createBPartner(jsoncustomer);
+      } else {
+        customer = editBPartner(customer, jsoncustomer);
       }
 
+      // Call all customerCreations injected.
+      executeHooks(customerCreations, jsoncustomer, customer);
+
+      editLocation(customer, jsoncustomer);
+      editBPartnerContact(customer, jsoncustomer);
+      OBDal.getInstance().flush();
     } finally {
-      RequestContext.get().removeSessionAttribute("customerTerminalId|" + terminalId);
       OBContext.restorePreviousMode();
     }
-    JSONObject jsonResponse = new JSONObject();
-    if (error) {
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
-      jsonResponse.put("result", "0");
-    } else {
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      jsonResponse.put("result", "0");
-    }
-    return jsonResponse;
-  }
-
-  public JSONObject saveCustomer(JSONObject jsoncustomer) throws Exception {
-    BusinessPartner customer = null;
-
-    customer = getCustomer(jsoncustomer.getString("id"));
-    if (customer.getId() == null) {
-      customer = createBPartner(jsoncustomer);
-    } else {
-      customer = editBPartner(customer, jsoncustomer);
-    }
-
-    // Call all customerCreations injected.
-    executeHooks(customerCreations, jsoncustomer, customer);
-
-    editLocation(customer, jsoncustomer);
-    editBPartnerContact(customer, jsoncustomer);
-    OBDal.getInstance().flush();
-
     final JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     jsonResponse.put("result", "0");

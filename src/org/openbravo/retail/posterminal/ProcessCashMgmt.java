@@ -11,16 +11,12 @@ package org.openbravo.retail.posterminal;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.servlet.ServletException;
-
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -28,11 +24,12 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.retail.config.CashManagementEvents;
 import org.openbravo.service.json.JsonConstants;
 
-public class ProcessCashMgmt extends JSONProcessSimple {
+@Qualifier("Entity:FIN_Finacc_Transaction")
+public class ProcessCashMgmt extends POSDataSynchronizationProcess {
 
   private static final Logger log = Logger.getLogger(ProcessCashMgmt.class);
 
-  public void saveCashMgmt(JSONObject jsonsent) throws Exception {
+  public JSONObject saveRecord(JSONObject jsonsent) throws Exception {
 
     OBPOSAppPayment paymentMethod = OBDal.getInstance().get(OBPOSAppPayment.class,
         jsonsent.getString("paymentMethodId"));
@@ -112,50 +109,10 @@ public class ProcessCashMgmt extends JSONProcessSimple {
       secondTransaction.setStatus("RDNC");
       OBDal.getInstance().save(secondTransaction);
     }
-  }
-
-  @Override
-  public JSONObject exec(JSONObject jsonarray) throws JSONException, ServletException {
-
-    OBContext.setAdminMode(false);
-    try {
-      JSONArray array = jsonarray.getJSONArray("depsdropstosend");
-      for (int i = 0; i < array.length(); i++) {
-        JSONObject jsonsent = array.getJSONObject(i);
-        OBPOSAppPayment paymentMethod = OBDal.getInstance().get(OBPOSAppPayment.class,
-            jsonsent.getString("paymentMethodId"));
-        try {
-          saveCashMgmt(jsonsent);
-          OBDal.getInstance().flush();
-          if (i % 1 == 0) {
-            OBDal.getInstance().getConnection(false).commit();
-            OBDal.getInstance().getSession().clear();
-          }
-        } catch (Exception e) {
-          OBDal.getInstance().rollbackAndClose();
-          if (TriggerHandler.getInstance().isDisabled()) {
-            TriggerHandler.getInstance().enable();
-          }
-          OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
-          errorEntry.setError(OrderLoader.getErrorMessage(e));
-          errorEntry.setOrderstatus("N");
-          errorEntry.setJsoninfo(jsonsent.toString());
-          errorEntry.setTypeofdata("CM");
-          errorEntry.setObposApplications(paymentMethod.getObposApplications());
-          OBDal.getInstance().save(errorEntry);
-          OBDal.getInstance().flush();
-          log.error("Error processing cash management ", e);
-        }
-      }
-      // FIXME: Throw exception adding to Error while processing...window
-    } finally {
-      OBContext.restorePreviousMode();
-    }
 
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return result;
-
   }
 
   @Override

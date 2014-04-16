@@ -8,19 +8,15 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.sql.SQLException;
 import java.util.Date;
-
-import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
@@ -30,15 +26,15 @@ import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
-public class ProcessCashClose extends JSONProcessSimple {
+@Qualifier("Entity:OBPOS_App_Cashup")
+public class ProcessCashClose extends POSDataSynchronizationProcess {
 
   private static final Logger log = Logger.getLogger(ProcessCashClose.class);
   JSONObject jsonResponse = new JSONObject();
 
-  public JSONObject saveCashUp(JSONObject jsonCashup) throws Exception {
-
+  public JSONObject saveRecord(JSONObject jsonCashup) throws Exception {
     JSONObject jsonData = new JSONObject();
-    String cashUpId = jsonCashup.getString("cashUpId");
+    String cashUpId = jsonCashup.getString("id");
     Date cashUpDate = new Date();
 
     try {
@@ -107,53 +103,6 @@ public class ProcessCashClose extends JSONProcessSimple {
       }
     }
     return jsonData;
-  }
-
-  @Override
-  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-    OBContext.setAdminMode(false);
-    JSONArray jsonCashups = jsonsent.getJSONArray("cashups");
-
-    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-    jsonResponse.put("result", "0");
-
-    for (int i = 0; i < jsonCashups.length(); i++) {
-      JSONObject jsonCashup = jsonCashups.getJSONObject(i);
-      try {
-        JSONObject jsonData = saveCashUp(jsonCashup);
-
-        jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
-        if (i % 1 == 0) {
-          OBDal.getInstance().getConnection(false).commit();
-          OBDal.getInstance().getSession().clear();
-        }
-        if (TriggerHandler.getInstance().isDisabled()) {
-          TriggerHandler.getInstance().enable();
-        }
-      } catch (Exception e) {
-        OBDal.getInstance().rollbackAndClose();
-        if (TriggerHandler.getInstance().isDisabled()) {
-          TriggerHandler.getInstance().enable();
-        }
-        OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
-        errorEntry.setError(OrderLoader.getErrorMessage(e));
-        errorEntry.setOrderstatus("N");
-        errorEntry.setJsoninfo(jsonCashup.toString());
-        errorEntry.setTypeofdata("CU");
-        errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
-            jsonCashup.getString("terminalId")));
-        OBDal.getInstance().save(errorEntry);
-        OBDal.getInstance().flush();
-        log.error("Error processing cash close", e);
-        try {
-          OBDal.getInstance().getConnection().commit();
-        } catch (SQLException e1) {
-          // this won't happen
-        }
-      }
-    }
-
-    return jsonResponse;
   }
 
   @Override

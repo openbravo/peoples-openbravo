@@ -26,7 +26,7 @@
       OB.Dal.find(OB.Model.CashManagement, criteria, function (cashmgmts) {
         if (cashmgmts.length > 0) {
           me.proc.exec({
-            depsdropstosend: cashmgmts.toJSON()
+            data: cashmgmts.toJSON()
           }, function (data, message) {
             if (data && data.exception) {
               // The server response is an Error! -> Orders have not been processed

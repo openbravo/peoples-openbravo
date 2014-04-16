@@ -420,7 +420,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   processAndFinishCashUp: function () {
     var objToSend = {
       terminalId: OB.POS.modelterminal.get('terminal').id,
-      cashUpId: OB.UTIL.get_UUID(),
+      id: OB.UTIL.get_UUID(),
       cashCloseInfo: [],
       cashUpDate: this.get('cashUpReport').at(0).get('time')
     },
@@ -433,7 +433,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, function (cashUp) {
       objToSend = new Backbone.Model({
         terminalId: OB.POS.modelterminal.get('terminal').id,
-        cashUpId: cashUp.at(0).get('id'),
+        id: cashUp.at(0).get('id'),
         cashCloseInfo: [],
         cashUpDate: me.get('cashUpReport').at(0).get('time')
       });

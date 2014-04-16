@@ -59,7 +59,7 @@
     this.proc = new OB.DS.Process(OB.UTIL.processOrderClass);
     if (OB.MobileApp.model.get('connectedToERP')) {
       this.proc.exec({
-        order: ordersToJson
+        data: ordersToJson
       }, function (data, message) {
         if (data && data.exception) {
           // Orders have not been processed

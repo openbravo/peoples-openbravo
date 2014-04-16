@@ -28,6 +28,7 @@
           customersListToChange;
 
       bpToSave.set('isbeingprocessed', 'N');
+      this.customer.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
       if (customerId) {
         this.customer.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
         bpToSave.set('json', JSON.stringify(this.customer.serializeToJSON()));

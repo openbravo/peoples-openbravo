@@ -25,7 +25,7 @@
     if (OB.MobileApp.model.get('connectedToERP')) {
       this.proc.exec({
         terminalId: OB.MobileApp.model.get('terminal').id,
-        customer: customersToJson
+        data: customersToJson
       }, function (data, message) {
         if (data && data.exception) {
           // The server response is an Error! -> Orders have not been processed

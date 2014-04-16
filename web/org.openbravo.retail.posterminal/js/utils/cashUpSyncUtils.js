@@ -29,7 +29,7 @@
             cashupsToSend.push(JSON.parse(cashup.get('objToSend')));
           }, this);
           me.proc.exec({
-            cashups: cashupsToSend
+            data: cashupsToSend
           }, function (data, message) {
             if (data && data.exception) {
               // The server response is an Error! -> Orders have not been processed

@@ -8,12 +8,9 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.CallableStatement;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,7 +24,6 @@ import java.util.Map;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -46,6 +42,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -97,7 +94,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
-public class OrderLoader extends JSONProcessSimple {
+@Qualifier("Entity:Order")
+public class OrderLoader extends POSDataSynchronizationProcess {
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
@@ -121,122 +119,7 @@ public class OrderLoader extends JSONProcessSimple {
   private Instance<OrderLoaderPreProcessHook> orderPreProcesses;
 
   @Override
-  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-    Object jsonorder = jsonsent.get("order");
-
-    JSONArray array = null;
-    if (jsonorder instanceof JSONObject) {
-      array = new JSONArray();
-      array.put(jsonorder);
-    } else if (jsonorder instanceof String) {
-      JSONObject obj = new JSONObject((String) jsonorder);
-      array = new JSONArray();
-      array.put(obj);
-    } else if (jsonorder instanceof JSONArray) {
-      array = (JSONArray) jsonorder;
-    }
-
-    long t1 = System.currentTimeMillis();
-    JSONObject result = this.saveOrder(array);
-    log.info("Final total time: " + (System.currentTimeMillis() - t1));
-    return result;
-  }
-
-  public JSONObject saveOrder(JSONArray jsonarray) throws JSONException {
-    boolean error = false;
-    List<String> errorIds = new ArrayList<String>();
-    String currentOrg = (String) RequestContext.get().getSession().getAttribute("#AD_ORG_ID");
-    String currentUser = (String) RequestContext.get().getSession().getAttribute("#AD_USER_ID");
-    String currentRole = (String) RequestContext.get().getSession().getAttribute("#AD_ROLE_ID");
-    OBContext.setAdminMode(true);
-    try {
-      for (int i = 0; i < jsonarray.length(); i++) {
-        long t1 = System.currentTimeMillis();
-        JSONObject jsonorder = jsonarray.getJSONObject(i);
-        String posTerminalId = jsonorder.getString("posTerminal");
-        if (!currentUser.equals(jsonorder.getString("createdBy"))
-            || !currentOrg.equals(jsonorder.getString("organization"))) {
-          OBContext.setOBContext(jsonorder.getString("createdBy"), currentRole,
-              jsonorder.getString("client"), jsonorder.getString("organization"));
-        }
-        try {
-          JSONObject result = saveOrder(jsonorder);
-          if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
-              JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
-            log.error("There was an error importing order: " + jsonorder.toString());
-            error = true;
-            errorIds.add(jsonorder.getString("id"));
-          }
-          if (i % 1 == 0) {
-            OBDal.getInstance().getConnection(false).commit();
-            OBDal.getInstance().getSession().clear();
-          }
-          log.info("Total order time: " + (System.currentTimeMillis() - t1));
-        } catch (Exception e) {
-          OBDal.getInstance().rollbackAndClose();
-          if (TriggerHandler.getInstance().isDisabled()) {
-            TriggerHandler.getInstance().enable();
-          }
-
-          // check if there is a SO with the same id. It means that it is a duplicated order. Then,
-          // this error will not be stored
-          List<Object> parameters = new ArrayList<Object>();
-          parameters.add(jsonorder.getString("id"));
-          OBQuery<Order> orders = OBDal.getInstance().createQuery(Order.class, "id=?");
-          orders.setParameters(parameters);
-          if (orders.count() > 0) {
-            log.warn("Order duplicated with id: " + jsonorder.getString("id")
-                + "  Not error saved.");
-          } else {
-            // Creation of the order failed. We will now store the order in the import errors table
-            log.error("An error happened when processing an order: ", e);
-            OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
-            errorEntry.setError(getErrorMessage(e));
-            errorEntry.setOrderstatus("N");
-            errorEntry.setJsoninfo(jsonorder.toString());
-            errorEntry.setTypeofdata("order");
-            errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
-                posTerminalId));
-            OBDal.getInstance().save(errorEntry);
-            OBDal.getInstance().flush();
-            log.error("Error while loading order", e);
-          }
-          try {
-            OBDal.getInstance().getConnection().commit();
-          } catch (SQLException e1) {
-            error = true;
-            errorIds.add(jsonorder.getString("id"));
-            log.error(
-                "Critical Error: The process to save the order"
-                    + jsonorder.getString("id")
-                    + " has failed and the order cannot be saved as an error. To avoid lose data, please don't remove the browser cache. \n Order: "
-                    + jsonorder.toString() + " \n", e1);
-          }
-        }
-      }
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    JSONObject jsonResponse = new JSONObject();
-    if (!error) {
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      jsonResponse.put("result", "0");
-    } else {
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
-      jsonResponse.put("result", "0");
-      JSONObject errors = new JSONObject();
-      if (errorIds.size() > 0) {
-        jsonResponse.put("errorids", errorIds);
-        errors.put("message", "Orders [" + errorIds.toString() + "] cannot be saved");
-      } else {
-        errors.put("message", "Some orders cannot be saved");
-      }
-      jsonResponse.put("error", errors);
-    }
-    return jsonResponse;
-  }
-
-  public JSONObject saveOrder(JSONObject jsonorder) throws Exception {
+  public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
     executeHooks(orderPreProcesses, jsonorder, null, null, null);
     boolean wasPaidOnCredit = false;
     boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
@@ -245,7 +128,6 @@ public class OrderLoader extends JSONProcessSimple {
         && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId"))) {
       return successMessage(jsonorder);
     }
-
     long t0 = System.currentTimeMillis();
     long t1, t11, t2, t3;
     Order order = null;
@@ -1670,12 +1552,6 @@ public class OrderLoader extends JSONProcessSimple {
     }
   }
 
-  public static String getErrorMessage(Exception e) {
-    StringWriter sb = new StringWriter();
-    e.printStackTrace(new PrintWriter(sb));
-    return sb.toString();
-  }
-
   private static String getEquivalentKey(String key) {
     if (key.equals("bp")) {
       return "businessPartner";
@@ -1704,4 +1580,5 @@ public class OrderLoader extends JSONProcessSimple {
   protected boolean bypassPreferenceCheck() {
     return true;
   }
+
 }
