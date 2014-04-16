@@ -111,6 +111,12 @@ isc.ResultTree.addProperties({
     } else {
       return this._original_indexOf(node, a, b, c, d);
     }
+  },
+
+  dataArrived: function (parentNode) {
+    var children = this.getChildren(),
+        target = window[this.componentId];
+    target.transformData(children);
   }
 });
 

@@ -150,7 +150,7 @@ isc.OBTreeGrid.addProperties({
     return this.Super('applyCellTypeFormatters', [value, record, field, rowNum, colNum, isMultipleElement]);
   },
 
-  
+
   // converts the date and datetime fields from string to a js date
   transformData: function (data) {
     var dateFields = [],
