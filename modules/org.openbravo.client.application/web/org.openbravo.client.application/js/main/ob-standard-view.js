@@ -2234,6 +2234,13 @@ isc.OBStandardView.addProperties({
         propertyObj = properties[i];
         value = record[propertyObj.property];
         field = component.getField(propertyObj.property);
+        if (field && field.editorType //
+        && Object.prototype.toString.call(value) === '[object Date]' //
+        && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteDateTime')()) { //
+          // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
+          // http://forums.smartclient.com/showthread.php?p=116135
+          value = OB.Utilities.Date.addTimezoneOffset(value);
+        }
         addProperty = propertyObj.sessionProperty || !onlySessionProperties;
         if (addProperty) {
           if (classicMode) {
