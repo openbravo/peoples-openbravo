@@ -234,9 +234,9 @@ isc.OBStandardView.addProperties({
     // logic of the tab, see issue https://issues.openbravo.com/view.php?id=5202), assign them
     // to the form, so they will be retrieved when getContextInfo() is called for the form
     if (this.sessionAttributesNames) {
-      this.viewForm.sessionAttributes = {};
+      this.preferenceValues = {};
       for (i = 0; i < this.sessionAttributesNames.length; i++) {
-        this.viewForm.sessionAttributes[this.sessionAttributesNames[i]] = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
+        this.preferenceValues[this.sessionAttributesNames[i]] = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
       }
     }
 
@@ -1441,7 +1441,7 @@ isc.OBStandardView.addProperties({
         // Calling getContextInfo with (false, true, true) in order to obtain also the value of the
         // session attributes of the form
         contextInfo = this.getContextInfo(false, true, true);
-        this.addSessionAttributes(contextInfo, tabViewPane);
+        this.addPreferenceValues(contextInfo, tabViewPane);
         if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(contextInfo))) {
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
@@ -1486,15 +1486,15 @@ isc.OBStandardView.addProperties({
 
   // Adds to contextInfo the session attributes of the childView, 
   // unless the session attribute is an auxiliary input of its parent tab
-  addSessionAttributes: function (contextInfo, childView) {
+  addPreferenceValues: function (contextInfo, childView) {
     var auxInputs = {},
         p;
     if (this.viewForm && this.viewForm.auxInputs) {
       auxInputs = this.viewForm.auxInputs;
     }
-    for (p in childView.viewForm.sessionAttributes) {
-      if (childView.viewForm.sessionAttributes.hasOwnProperty(p) && !auxInputs.hasOwnProperty(p)) {
-        contextInfo[p] = childView.viewForm.sessionAttributes[p];
+    for (p in childView.preferenceValues) {
+      if (childView.preferenceValues.hasOwnProperty(p) && !auxInputs.hasOwnProperty(p)) {
+        contextInfo[p] = childView.preferenceValues[p];
       }
     }
   },
