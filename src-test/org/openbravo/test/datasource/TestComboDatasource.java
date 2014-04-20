@@ -30,6 +30,7 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,8 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
 
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
-
+    assertTrue(getStatus(jsonResponse).equals(
+        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
     assertTrue("non paginated combo for window table dir should have more than 100 records",
         data.length() > 100);
   }
@@ -74,7 +76,8 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
 
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
-
+    assertTrue(getStatus(jsonResponse).equals(
+        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
     assertEquals("paginated combo number of records", 22, data.length());
   }
 
@@ -102,6 +105,8 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     assertEquals("number of records", 2, data.length());
 
     JSONObject record = data.getJSONObject(1);
+    assertTrue(getStatus(jsonResponse).equals(
+        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
     assertEquals("record id", "A530AAE22C864702B7E1C22D58E7B17B", record.getString("id"));
     assertEquals("record identifier", "F&BAdmin", record.get("_identifier"));
   }
@@ -130,6 +135,8 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     assertEquals("number of records", 2, data.length());
 
     JSONObject record = data.getJSONObject(1);
+    assertTrue(getStatus(jsonResponse).equals(
+        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
     assertEquals("record id", "A530AAE22C864702B7E1C22D58E7B17B", record.getString("id"));
     assertEquals("record identifier", "F&BAdmin", record.get("_identifier"));
   }
@@ -150,7 +157,8 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
 
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
-
+    assertTrue(getStatus(jsonResponse).equals(
+        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
     assertEquals("number of filtered records", 4, data.length());
   }
 
@@ -172,7 +180,8 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
 
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
-
+    assertTrue(getStatus(jsonResponse).equals(
+        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
     assertEquals("number of filtered records", 3, data.length());
   }
 
@@ -191,12 +200,31 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
       paramStr = "[" + paramStr + "]";
       log.info("Combo request:\n  *params:{}\n  *response:{}", paramStr, jsonResponse);
     }
+    assertTrue(getStatus(jsonResponse).equals(
+        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
     assertNotNull("Combo response shoulnd't be null", jsonResponse.toString());
     return jsonResponse;
   }
 
+  /**
+   * 
+   * @param jsonResponse
+   * @return data of the json response
+   * @throws JSONException
+   */
   private JSONArray getData(JSONObject jsonResponse) throws JSONException {
-    return jsonResponse.getJSONArray("entries");
+    JSONArray data = jsonResponse.getJSONObject("response").getJSONArray("data");
+    return data;
+  }
+
+  /**
+   * 
+   * @param jsonResponse
+   * @return status of the json response
+   * @throws JSONException
+   */
+  private String getStatus(JSONObject jsonResponse) throws JSONException {
+    return jsonResponse.getJSONObject("response").get("status").toString();
   }
 
 }

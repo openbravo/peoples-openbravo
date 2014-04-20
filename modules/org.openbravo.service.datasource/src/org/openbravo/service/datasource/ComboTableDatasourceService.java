@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -64,8 +65,19 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         return filter(parameters);
       }
       String fieldId = parameters.get("fieldId");
-      String startRow = parameters.get("_startRow");
-      String endRow = parameters.get("_endRow");
+      final String startRow = parameters.get(JsonConstants.STARTROW_PARAMETER);
+      final String endRow = parameters.get(JsonConstants.ENDROW_PARAMETER);
+      int startRowCount = 0;
+      boolean doCount = false;
+      if (startRow != null) {
+        startRowCount = Integer.parseInt(startRow);
+        doCount = true;
+      }
+      if (endRow != null) {
+        doCount = true;
+      }
+      boolean preventCountOperation = "true"
+          .equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
       String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
       Field field = OBDal.getInstance().get(Field.class, fieldId);
       Boolean getValueFromSession = Boolean.getBoolean(parameters.get("getValueFromSession"));
@@ -163,7 +175,40 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       fieldProps.put("entries", new JSONArray(comboEntries));
       log.debug("fetch operation for ComboTableDatasourceService took: {} ms",
           (System.currentTimeMillis() - init));
-      return fieldProps.toString();
+
+      // now jsonfy the data
+      try {
+        final JSONObject jsonResult = new JSONObject();
+        final JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+        jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
+        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, endRow);
+        if (doCount && !preventCountOperation) {
+          int totalRows = Integer.parseInt(endRow) - startRowCount + 1;
+          int num = totalRows;
+          if (num == -1) {
+            int endRowCount = Integer.parseInt(endRow);
+            num = (endRowCount + 2);
+            if ((endRowCount - startRowCount) > totalRows) {
+              num = startRowCount + totalRows;
+            }
+          }
+          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, num);
+        } else {
+          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS,
+              parameters.get(JsonConstants.RESPONSE_TOTALROWS));
+        }
+        jsonResponse.put(JsonConstants.RESPONSE_DATA, fieldProps.get("entries"));
+        jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+
+        // if (jsonObjects.size() > 0) {
+        // System.err.println(jsonObjects.get(0));
+        // }
+        return jsonResult.toString();
+      } catch (JSONException e) {
+        throw new OBException(e);
+      }
+
     } catch (Exception e) {
       log.error(e.getMessage(), e);
     } finally {
@@ -186,6 +231,17 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       String fieldId = parameters.get("fieldId");
       String startRow = parameters.get("_startRow");
       String endRow = parameters.get("_endRow");
+      int startRowCount = 0;
+      boolean doCount = false;
+      if (startRow != null) {
+        startRowCount = Integer.parseInt(startRow);
+        doCount = true;
+      }
+      if (endRow != null) {
+        doCount = true;
+      }
+      boolean preventCountOperation = "true"
+          .equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
       String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
       String filterString = parameters.get("FILTER_VALUE");
       Field field = OBDal.getInstance().get(Field.class, fieldId);
@@ -284,7 +340,40 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       fieldProps.put("entries", new JSONArray(comboEntries));
       log.debug("filter operation for ComboTableDatasourceService took: {} ms",
           (System.currentTimeMillis() - init));
-      return fieldProps.toString();
+
+      // now jsonfy the data
+      try {
+        final JSONObject jsonResult = new JSONObject();
+        final JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+        jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
+        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, endRow);
+        if (doCount && !preventCountOperation) {
+          int totalRows = Integer.parseInt(endRow) - startRowCount + 1;
+          int num = totalRows;
+          if (num == -1) {
+            int endRowCount = Integer.parseInt(endRow);
+            num = (endRowCount + 2);
+            if ((endRowCount - startRowCount) > totalRows) {
+              num = startRowCount + totalRows;
+            }
+          }
+          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, num);
+        } else {
+          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS,
+              parameters.get(JsonConstants.RESPONSE_TOTALROWS));
+        }
+        jsonResponse.put(JsonConstants.RESPONSE_DATA, fieldProps.get("entries"));
+        jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
+
+        // if (jsonObjects.size() > 0) {
+        // System.err.println(jsonObjects.get(0));
+        // }
+        return jsonResult.toString();
+      } catch (JSONException e) {
+        throw new OBException(e);
+      }
+
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       return e.getMessage();
