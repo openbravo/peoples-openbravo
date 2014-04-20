@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -153,8 +153,7 @@ public class PriceListCreateAll extends HttpSecureAppServlet {
     PInstanceProcessData.insertPInstance(this, pinstance, "800040", data.mPricelistVersionId, "N",
         vars.getUser(), vars.getClient(), vars.getOrg());
 
-    PriceListCreateAllData.process(conn, this, pinstance);
-
+    PriceListCreateAllData.process(this, pinstance);
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
     String messageResult = "";
     if (pinstanceData != null && pinstanceData.length > 0) {
