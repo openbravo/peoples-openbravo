@@ -975,7 +975,8 @@
               C_Costcenter_ID, A_Asset_ID,
               DeliveryViaRule, M_Shipper_ID, C_Charge_ID, ChargeAmt,
               PriorityRule, DocStatus, DocAction, Processing,
-              Processed, ISLOGISTIC, salesrep_id, Process_Goods_Java
+              Processed, ISLOGISTIC, salesrep_id, Process_Goods_Java,
+              calculate_freight, m_freightcategory_id, freight_currency_id 
             )
             VALUES
             (
@@ -990,7 +991,8 @@
               Cur_InOut.C_Costcenter_ID, Cur_InOut.A_Asset_ID,
               Cur_InOut.DeliveryViaRule, Cur_InOut.M_Shipper_ID, Cur_InOut.C_Charge_ID, Cur_InOut.ChargeAmt * -1,
               Cur_InOut.PriorityRule, 'DR', 'CO', 'N',
-               'N', Cur_InOut.islogistic, Cur_InOut.salesrep_id, 'CO'
+               'N', Cur_InOut.islogistic, Cur_InOut.salesrep_id, 'CO',
+              Cur_InOut.calculate_freight, Cur_InOut.m_freightcategory_id, Cur_InOut.freight_currency_id 
             )
             ;
           v_ResultStr:='InsertInOutLine';
