@@ -46,10 +46,10 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFetchComboTableDatasourceValues() throws Exception {
-    // Using values of window dropdown in menu
+    // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
-    params.put("fieldId", "206");
-    params.put("columnValue", "233");
+    params.put("fieldId", "876");
+    params.put("columnValue", "1757");
     params.put("_operationType", "fetch");
 
     JSONObject jsonResponse = requestCombo(params);
@@ -66,10 +66,10 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testPaginatedFetch() throws Exception {
-    // Using values of window dropdown in menu
+    // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
-    params.put("fieldId", "206");
-    params.put("columnValue", "233");
+    params.put("fieldId", "876");
+    params.put("columnValue", "1757");
     params.put("_operationType", "fetch");
     params.put("_startRow", "20");
     params.put("_endRow", "40");
@@ -152,7 +152,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
     params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
     params.put("_operationType", "fetch");
-    // try to filter by string 'Open'
+    // try to filter by string 'Jo'
     params.put("FILTER_VALUE", "Jo");
 
     JSONObject jsonResponse = requestCombo(params);
@@ -173,7 +173,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
     params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
     params.put("_operationType", "fetch");
-    // try to filter by string 'Open'
+    // try to filter by string 'Jo'
     params.put("FILTER_VALUE", "Jo");
     params.put("_startRow", "0");
     params.put("_endRow", "1");
@@ -183,6 +183,46 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
     assertEquals("number of filtered records", 3, data.length());
+  }
+
+  /**
+   * Test to check whether data is accessible to unauthorized user.
+   * 
+   * @throws Exception
+   */
+  public void testAccess() throws Exception {
+    // Using values of window dropdown in menu
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("fieldId", "206");
+    params.put("columnValue", "233");
+    params.put("_operationType", "fetch");
+    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
+        params, 200, "POST");
+    JSONObject jsonResponse = new JSONObject(response);
+    // error should be raised
+    assertTrue(getStatus(jsonResponse).equals(
+        String.valueOf(JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR)));
+  }
+
+  /**
+   * Test to check whether filter data is accessible to unauthorized user.
+   * 
+   * @throws Exception
+   */
+  public void testAccessForFilter() throws Exception {
+    // Using values of window dropdown in menu
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("fieldId", "206");
+    params.put("columnValue", "233");
+    params.put("_operationType", "fetch");
+    // try to filter by string 'Me'
+    params.put("FILTER_VALUE", "Me");
+    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
+        params, 200, "POST");
+    JSONObject jsonResponse = new JSONObject(response);
+    // error should be raised
+    assertTrue(getStatus(jsonResponse).equals(
+        String.valueOf(JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR)));
   }
 
   private JSONObject requestCombo(Map<String, String> params) throws Exception {

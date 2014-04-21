@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -35,7 +37,9 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.WindowAccessData;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -58,13 +62,19 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
    */
   @Override
   public String fetch(Map<String, String> parameters) {
+    Field field = null;
+    String fieldId = parameters.get("fieldId");
+    try {
+      checkAccess(fieldId);
+    } catch (ServletException e1) {
+      throw new OBException(e1);
+    }
+    OBContext.setAdminMode();
     try {
       long init = System.currentTimeMillis();
-      OBContext.setAdminMode();
       if (parameters.get("FILTER_VALUE") != null) {
         return filter(parameters);
       }
-      String fieldId = parameters.get("fieldId");
       final String startRow = parameters.get(JsonConstants.STARTROW_PARAMETER);
       final String endRow = parameters.get(JsonConstants.ENDROW_PARAMETER);
       int startRowCount = 0;
@@ -79,7 +89,8 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       boolean preventCountOperation = "true"
           .equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
       String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
-      Field field = OBDal.getInstance().get(Field.class, fieldId);
+
+      field = OBDal.getInstance().get(Field.class, fieldId);
       Boolean getValueFromSession = Boolean.getBoolean(parameters.get("getValueFromSession"));
       String columnValue = parameters.get("columnValue");
       RequestContext rq = RequestContext.get();
@@ -117,7 +128,6 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref, field
           .getColumn().getDBColumnName(), objectReference, validation, orgList, clientList);
       Map<String, String> newParameters = null;
-
       FieldProvider tabData = UIDefinition.generateTabData(field.getTab().getADFieldList(), field,
           columnValue);
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
@@ -201,21 +211,16 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         jsonResponse.put(JsonConstants.RESPONSE_DATA, fieldProps.get("entries"));
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
-        // if (jsonObjects.size() > 0) {
-        // System.err.println(jsonObjects.get(0));
-        // }
         return jsonResult.toString();
       } catch (JSONException e) {
         throw new OBException(e);
       }
-
     } catch (Exception e) {
       log.error(e.getMessage(), e);
+      throw new OBException(e);
     } finally {
-
       OBContext.restorePreviousMode();
     }
-    return null;
   }
 
   /**
@@ -225,10 +230,16 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
    * @return {@link JSONObject}
    */
   public String filter(Map<String, String> parameters) {
+    Field field = null;
+    String fieldId = parameters.get("fieldId");
+    try {
+      checkAccess(fieldId);
+    } catch (ServletException e1) {
+      throw new OBException(e1);
+    }
+    OBContext.setAdminMode();
     try {
       long init = System.currentTimeMillis();
-      OBContext.setAdminMode();
-      String fieldId = parameters.get("fieldId");
       String startRow = parameters.get("_startRow");
       String endRow = parameters.get("_endRow");
       int startRowCount = 0;
@@ -244,7 +255,8 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
           .equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
       String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
       String filterString = parameters.get("FILTER_VALUE");
-      Field field = OBDal.getInstance().get(Field.class, fieldId);
+
+      field = OBDal.getInstance().get(Field.class, fieldId);
       Boolean getValueFromSession = Boolean.getBoolean(parameters.get("getValueFromSession"));
       String columnValue = parameters.get("columnValue");
       RequestContext rq = RequestContext.get();
@@ -365,18 +377,13 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         }
         jsonResponse.put(JsonConstants.RESPONSE_DATA, fieldProps.get("entries"));
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
-
-        // if (jsonObjects.size() > 0) {
-        // System.err.println(jsonObjects.get(0));
-        // }
         return jsonResult.toString();
       } catch (JSONException e) {
         throw new OBException(e);
       }
-
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      return e.getMessage();
+      throw new OBException(e);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -397,4 +404,25 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     throw new OBException("Method not implemented");
   }
 
+  private void checkAccess(String fieldId) throws ServletException {
+    Field field = null;
+    String windowId = null, roleId = null;
+    OBContext.setAdminMode();
+    try {
+      field = OBDal.getInstance().get(Field.class, fieldId);
+      windowId = field != null ? field.getTab().getWindow().getId() : null;
+      roleId = OBContext.getOBContext().getRole().getId();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    // check whether data is accessible
+    boolean hasAccess = WindowAccessData.hasWriteAccess(new DalConnectionProvider(false), windowId,
+        roleId);
+    if (!hasAccess) {
+      String errorMessage = OBMessageUtils.getI18NMessage("OBUIAPP_NoAccess", null);
+      log.error(errorMessage);
+      throw new OBException(errorMessage);
+    }
+  }
 }
