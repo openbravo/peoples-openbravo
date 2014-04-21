@@ -190,7 +190,7 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
 // view state is stored in the standardWindow.getClass().personalization object.
 OB.Personalization.getViewDefinition = function (standardWindow, name, isDefault) {
   var view, persDataByTab, personalizationData = {},
-      i, formData, length = standardWindow.views.length;
+      i, formFields, formData, length = standardWindow.views.length;
 
   // retrieve the viewstate from the server
   for (i = 0; i < length; i++) {
@@ -198,7 +198,15 @@ OB.Personalization.getViewDefinition = function (standardWindow, name, isDefault
     view = standardWindow.views[i];
 
     // get the form personalization information
-    formData = OB.Personalization.getPersonalizationDataFromForm(view.viewForm);
+    if (!view.viewForm.getDataSource()) {
+      // If the datasource is not yet set, view.viewForm.fields it is not set yet.
+      // Get them directly form the view definition.
+      formFields = view.formFields;
+    } else {
+      formFields = null;
+    }
+
+    formData = OB.Personalization.getPersonalizationDataFromForm(view.viewForm, formFields);
     persDataByTab.form = formData.form;
 
     if (view.isShowingTree) {

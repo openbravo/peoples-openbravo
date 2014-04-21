@@ -39,9 +39,12 @@ OB.Personalization = {
 // If an existing personalization data is passed in then that one is
 // used as the basis. This can be used to make sure that the 
 // personalizationData used is up-to-date with the current form fields.
-OB.Personalization.getPersonalizationDataFromForm = function (form) {
+OB.Personalization.getPersonalizationDataFromForm = function (form, formFields) {
   var i, dataFields = [],
       statusBarFields, length, record, origPersonalizationData = form && form.view ? form.view.getFormPersonalization(true) : null;
+  if (typeof formFields === 'undefined' || formFields === null) {
+    formFields = form.getFields();
+  }
 
   // just use the personalization data which was used on the 
   // form, we can not reconstruct it completely from the form fields
@@ -65,7 +68,7 @@ OB.Personalization.getPersonalizationDataFromForm = function (form) {
   // update with the form data, new fields may have been added, titles
   // may have changed etc.
   // the content of dataFields will be updated
-  this.updatePersonalizationDataFromFields(dataFields, form.getFields(), statusBarFields || form.statusBarFields);
+  this.updatePersonalizationDataFromFields(dataFields, formFields, statusBarFields || form.statusBarFields);
 
   // set the first focus field
   if (form.firstFocusedField) {
