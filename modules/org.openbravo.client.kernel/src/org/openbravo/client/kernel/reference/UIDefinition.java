@@ -549,7 +549,7 @@ public abstract class UIDefinition {
         parameters.put("@ONLY_ONE_RECORD@", columnValue);
       }
       FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), parameters,
-          getValueFromSession && !comboreload);
+          getValueFromSession && !comboreload, "0", "0");
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
