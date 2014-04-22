@@ -1136,7 +1136,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       msg.setType("Error");
       msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
-      msg.setMessage(FIN_Utility.getExceptionMessage(e));
+      msg.setMessage(Utility.translateError(bundle.getConnection(), null,
+          bundle.getContext().getLanguage(), FIN_Utility.getExceptionMessage(e)).getMessage());
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
     }
