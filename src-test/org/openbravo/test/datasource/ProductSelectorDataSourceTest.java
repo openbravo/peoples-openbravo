@@ -31,6 +31,7 @@ import org.codehaus.jettison.json.JSONObject;
  * 
  */
 public class ProductSelectorDataSourceTest extends BaseDataSourceTestNoDal {
+  private boolean defaultRoleSet = false;
 
   /**
    * Obtains a list of all warehouses from the selector. Test for issue #26317
@@ -50,6 +51,12 @@ public class ProductSelectorDataSourceTest extends BaseDataSourceTestNoDal {
   }
 
   private JSONObject performRequest(boolean addFilter) throws Exception {
+    if (!defaultRoleSet) {
+      changeProfile("42D0EEB1C66F497A90DD526DC597E6F0", "192", "E443A31992CB4635AFCAEABE7183CE85",
+          "B2D40D8A5D644DD89E329DC297309055");
+      defaultRoleSet = true;
+    }
+
     Map<String, String> params = new HashMap<String, String>();
     params.put("_selectorDefinitionId", "4C8BC3E8E56441F4B8C98C684A0C9212");
     params.put("filterClass", "org.openbravo.userinterface.selector.SelectorDataSourceFilter");
@@ -74,7 +81,6 @@ public class ProductSelectorDataSourceTest extends BaseDataSourceTestNoDal {
 
     String response = doRequest("/org.openbravo.service.datasource/ProductStockView", params, 200,
         "POST");
-    System.out.println(response);
     JSONObject resp = new JSONObject(response).getJSONObject("response");
 
     assertTrue("Response should have data", resp.has("data"));
