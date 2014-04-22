@@ -531,7 +531,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 // If invoice/order not fully paid, update outstanding amount
                 if (openPSDs.size() > 0) {
                   FIN_PaymentScheduleDetail openPSD = openPSDs.get(0);
-                  BigDecimal openAmount = openPSD.getAmount().add(psd.getAmount());
+                  BigDecimal openAmount = openPSD.getAmount().add(
+                      payment.getAmount().add(payment.getWriteoffAmount()));
                   if (openAmount.compareTo(BigDecimal.ZERO) == 0) {
                     OBDal.getInstance().remove(openPSD);
                   } else {
@@ -544,7 +545,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   openPSD.setPaymentDetails(null);
                   // Amounts
                   openPSD.setWriteoffAmount(BigDecimal.ZERO);
-                  openPSD.setAmount(psd.getAmount());
+                  openPSD.setAmount(payment.getAmount().add(payment.getWriteoffAmount()));
 
                   openPSD.setCanceled(false);
                   OBDal.getInstance().save(openPSD);
