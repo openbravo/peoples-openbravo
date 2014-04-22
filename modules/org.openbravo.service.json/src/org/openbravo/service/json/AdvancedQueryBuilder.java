@@ -152,6 +152,7 @@ public class AdvancedQueryBuilder {
   private List<String> additionalProperties = new ArrayList<String>();
   private Entity subEntity;
   private Property distinctProperty;
+  private String distinctPropertyPath;
   private DataEntityQueryService subDataEntityQueryService;
 
   private int aliasOffset = 0;
@@ -228,8 +229,9 @@ public class AdvancedQueryBuilder {
       }
       whereClause += StringUtils.isEmpty(whereClause.trim()) ? "where" : "and";
       whereClause += " exists (select 1 from " + subEntity.getName() + " "
-          + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e." + distinctPropName
-          + " = " + mainAlias + subEntityClientOrg + ") ";
+          + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e."
+          + distinctPropertyPath.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT) + " = " + mainAlias
+          + subEntityClientOrg + ") ";
       typedParameters.addAll(subEntityQueryBuilder.typedParameters);
     }
 
@@ -1692,6 +1694,9 @@ public class AdvancedQueryBuilder {
 
   public void setDistinctProperty(Property distinctProperty) {
     this.distinctProperty = distinctProperty;
+  }
 
+  void setDistinctPropertyPath(String distinctPropertyPath) {
+    this.distinctPropertyPath = distinctPropertyPath;
   }
 }
