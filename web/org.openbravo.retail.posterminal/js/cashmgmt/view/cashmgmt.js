@@ -24,7 +24,8 @@ enyo.kind({
     }
   }, {
     kind: 'OB.UI.ToolbarButton',
-    name: 'btnCancel',
+    name: 'btnDone',
+    id: 'OB.OBPOSCashMgmt.UI.LeftToolbar.btnDone',
     disabled: false,
     i18nLabel: 'OBPOS_LblDone',
     stepCount: 0,
