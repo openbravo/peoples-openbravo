@@ -26,6 +26,11 @@ isc.ClassFactory.mixInInterface('OBFKItem', 'OBLinkTitleItem');
 isc.OBFKItem.addProperties({
   operator: 'iContains',
 
+  fetchMissingValues: false,
+  showOptionsFromDataSource: true,
+  autoFetchData: false,
+  hasPickList: true,
+
   // set the identifier field also, that's what gets displayed in the grid
   changed: function (form, item, value) {
     if (!this._pickedValue && value) {
@@ -47,5 +52,24 @@ isc.OBFKItem.addProperties({
       this._editorEnterValue = null;
     }
     this.Super('setValue', arguments);
+  },
+
+  init: function () {
+    this.displayField = '_identifier';
+    this.optionDataSource = OB.Datasource.create({
+      dataURL: '/openbravo/org.openbravo.service.datasource/ComboTableDatasourceService',
+      fields: [{
+        name: 'id',
+        type: this.type,
+        primaryKey: true
+      }, {
+        name: '_identifier'
+      }],
+      requestProperties: {
+        params: {
+          fieldId: this.id
+        }
+      }
+    });
   }
 });

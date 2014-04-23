@@ -192,7 +192,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         final JSONObject jsonResponse = new JSONObject();
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
         jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, endRow);
+        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, comboEntries.size() - 1);
         if (doCount && !preventCountOperation) {
           int totalRows = Integer.parseInt(endRow) - startRowCount + 1;
           int num = totalRows;
@@ -203,7 +203,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
               num = startRowCount + totalRows;
             }
           }
-          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, num);
+          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, comboEntries.size());
         } else {
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS,
               parameters.get(JsonConstants.RESPONSE_TOTALROWS));

@@ -301,6 +301,7 @@ public class OBViewFieldHandler {
         viewField.setProperty(property);
 
         viewField.setField(field);
+        viewField.setId(field);
         viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field));
         viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
         viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
@@ -540,6 +541,8 @@ public class OBViewFieldHandler {
     public String getLabel();
 
     public String getName();
+
+    public String getId();
 
     public String getType();
 
@@ -847,6 +850,10 @@ public class OBViewFieldHandler {
       return false;
     }
 
+    public String getId() {
+      return null;
+    }
+
   }
 
   public class OBClientClassField implements OBViewFieldDefinition {
@@ -856,6 +863,7 @@ public class OBViewFieldHandler {
     private String showIf = "";
     private String readOnlyIf = "";
     private int gridSort = 0;
+    private String id;
 
     public String getOnChangeFunction() {
       return field.getOnChangeFunction();
@@ -1096,6 +1104,10 @@ public class OBViewFieldHandler {
     public boolean isShowSummary() {
       return false;
     }
+
+    public String getId() {
+      return null;
+    }
   }
 
   public class OBViewField implements OBViewFieldDefinition {
@@ -1108,6 +1120,7 @@ public class OBViewFieldHandler {
     private String showIf = "";
     private String readOnlyIf = "";
     private int gridSort = 0;
+    private String id;
 
     public String getClientClass() {
       return field.getClientclass() == null ? "" : field.getClientclass();
@@ -1351,6 +1364,14 @@ public class OBViewFieldHandler {
 
     public void setField(Field field) {
       this.field = field;
+    }
+
+    public void setId(Field field) {
+      this.id = field.getId();
+    }
+
+    public String getId() {
+      return id;
     }
 
     public boolean getStandardField() {
@@ -1657,6 +1678,10 @@ public class OBViewFieldHandler {
 
     public boolean isDisplayed() {
       return true;
+    }
+
+    public String getId() {
+      return null;
     }
   }
 
@@ -2087,6 +2112,10 @@ public class OBViewFieldHandler {
 
     public boolean isDisplayed() {
       return true;
+    }
+
+    public String getId() {
+      return null;
     }
 
   }
