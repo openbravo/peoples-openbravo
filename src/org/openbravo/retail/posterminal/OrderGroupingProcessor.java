@@ -29,7 +29,6 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -90,7 +89,6 @@ public class OrderGroupingProcessor {
     boolean isMultiShipmentLine;
     long lineno = 10;
     long taxLineNo = 0;
-    TriggerHandler.getInstance().disable();
     try {
       while (orderLines.next()) {
         long t = System.currentTimeMillis();

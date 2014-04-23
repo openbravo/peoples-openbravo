@@ -88,6 +88,7 @@ public class ProcessCashClose extends JSONProcessSimple {
     }
 
     if (cashUp == null) {
+      TriggerHandler.getInstance().disable();
       try {
         new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class,

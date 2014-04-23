@@ -172,7 +172,7 @@ public class OrderLoader extends JSONProcessSimple {
             OBDal.getInstance().getSession().clear();
           }
           log.info("Total order time: " + (System.currentTimeMillis() - t1));
-        } catch (Exception e) {
+        } catch (Throwable t) {
           OBDal.getInstance().rollbackAndClose();
           if (TriggerHandler.getInstance().isDisabled()) {
             TriggerHandler.getInstance().enable();
@@ -189,9 +189,9 @@ public class OrderLoader extends JSONProcessSimple {
                 + "  Not error saved.");
           } else {
             // Creation of the order failed. We will now store the order in the import errors table
-            log.error("An error happened when processing an order: ", e);
+            log.error("An error happened when processing an order: ", t);
             OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
-            errorEntry.setError(getErrorMessage(e));
+            errorEntry.setError(getErrorMessage(t));
             errorEntry.setOrderstatus("N");
             errorEntry.setJsoninfo(jsonorder.toString());
             errorEntry.setTypeofdata("order");
@@ -199,7 +199,7 @@ public class OrderLoader extends JSONProcessSimple {
                 posTerminalId));
             OBDal.getInstance().save(errorEntry);
             OBDal.getInstance().flush();
-            log.error("Error while loading order", e);
+            log.error("Error while loading order", t);
           }
           try {
             OBDal.getInstance().getConnection().commit();
@@ -1529,7 +1529,6 @@ public class OrderLoader extends JSONProcessSimple {
             stdPrecision, RoundingMode.HALF_UP));
 
         OBDal.getInstance().save(origDetail);
-
       }
 
       HashMap<String, BigDecimal> paymentAmount = new HashMap<String, BigDecimal>();
@@ -1680,6 +1679,12 @@ public class OrderLoader extends JSONProcessSimple {
   public static String getErrorMessage(Exception e) {
     StringWriter sb = new StringWriter();
     e.printStackTrace(new PrintWriter(sb));
+    return sb.toString();
+  }
+
+  public static String getErrorMessage(Throwable t) {
+    StringWriter sb = new StringWriter();
+    t.printStackTrace(new PrintWriter(sb));
     return sb.toString();
   }
 
