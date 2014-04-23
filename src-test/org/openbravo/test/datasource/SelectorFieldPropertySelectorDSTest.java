@@ -24,6 +24,8 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests Property selector datasource. Checking issue #26238 is not reproduced anymore.
@@ -32,6 +34,8 @@ import org.codehaus.jettison.json.JSONObject;
  * 
  */
 public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal {
+  private static final Logger log = LoggerFactory
+      .getLogger(SelectorFieldPropertySelectorDSTest.class);
   private boolean sysAdminProfileSet = false;
 
   /**
@@ -39,8 +43,6 @@ public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal
    */
   public void testFullList() throws Exception {
     JSONObject resp = executeDSRequest(false);
-
-    System.out.println(resp.toString(2));
 
     JSONArray data = resp.getJSONArray("data");
 
@@ -59,8 +61,6 @@ public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal
 
     assertEquals("data length", data.length(), 1);
     assertEquals("totalRows", resp.getInt("totalRows"), 1);
-
-    System.out.println(resp.toString(2));
   }
 
   private JSONObject executeDSRequest(boolean filter) throws Exception {
@@ -96,6 +96,7 @@ public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal
     assertTrue("expecting response, got: " + resp, resp.has("response"));
 
     JSONObject r = resp.getJSONObject("response");
+    log.debug("Response: {}", r);
     assertTrue("expecting data in response, got: " + r, r.has("data"));
 
     return r;
