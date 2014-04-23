@@ -26,13 +26,21 @@ enyo.kind({
   executeOnShow: function () {
     var pendingQty = this.args.order.getPending();
     var bpName = this.args.order.get('bp').get('_identifier');
+    var selectedPaymentMethod = this.args.order.selectedPayment;
+    var rate = 1,i;
+    var paymentList = OB.POS.modelterminal.get('payments');
+    for (i = 0; i < paymentList.length; i++) {
+      if (paymentList[i].payment.searchKey === selectedPaymentMethod) {
+        rate = paymentList[i].mulrate;
+      }
+    }
     this.setHeader(OB.I18N.getLabel('OBPOS_enoughCreditHeader'));
     if (this.args.message) {
       this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel(this.args.message));
     } else if (this.args.order.get('orderType') === 1) {
-      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditReturnBody', [OB.I18N.formatCurrency(pendingQty), bpName]));
+      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditReturnBody', [OB.I18N.formatCurrency(pendingQty * rate), bpName]));
     } else {
-      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditBody', [OB.I18N.formatCurrency(pendingQty), bpName]));
+      this.$.bodyContent.$.popupmessage.setContent(OB.I18N.getLabel('OBPOS_enoughCreditBody', [OB.I18N.formatCurrency(pendingQty * rate), bpName]));
     }
   }
 });
