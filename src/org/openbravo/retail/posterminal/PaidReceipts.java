@@ -71,7 +71,7 @@ public class PaidReceipts extends JSONProcessSimple {
         String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
             + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.standardPrice as baseNetUnitPrice , ordLine.salesOrder.currency.pricePrecision as pricePrecision, "
             + "ordLine.warehouse.id as warehouse, ordLine.warehouse.name as warehousename "
-            + "from OrderLine as ordLine where ordLine.salesOrder.id=?";
+            + "from OrderLine as ordLine where ordLine.salesOrder.id=? order by ordLine.lineNo ";
         Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaidReceiptsLines);
         paidReceiptsLinesQuery.setString(0, orderid);
