@@ -414,7 +414,9 @@
     },
 
     preLogoutActions: function () {
-      OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
+      if(OB.POS.hwserver !== undefined) {
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
+      }
       this.cleanSessionInfo();
     },
 
@@ -627,7 +629,7 @@
 
     databaseCannotBeResetAction: function () {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ResetNeededNotSafeTitle'), OB.I18N.getLabel('OBPOS_ResetNeededNotSafeMessage', [window.localStorage.getItem('terminalName')]));
-    },
+    }
   });
 
   // var modelterminal= ;
