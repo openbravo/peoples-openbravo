@@ -116,67 +116,39 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
   @Override
   protected int getCount(Map<String, String> parameters) {
-    return 0;
+    String tableId = parameters.get("tableId");
+    String tabId = parameters.get("tabId");
+    Table table = null;
+    if (tableId != null) {
+      table = OBDal.getInstance().get(Table.class, tableId);
+    } else if (tabId != null) {
+      Tab tab = null;
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+      table = tab.getTable();
+    }
+    boolean justCount = true;
+    Query countQuery = getQuery(table, parameters, justCount);
+    return ((Number) countQuery.uniqueResult()).intValue();
   }
 
   @Override
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
 
+    String tableId = parameters.get("tableId");
     String tabId = parameters.get("tabId");
-    Tab tab = null;
-    if (tabId != null) {
+    Table table = null;
+    if (tableId != null) {
+      table = OBDal.getInstance().get(Table.class, tableId);
+    } else if (tabId != null) {
+      Tab tab = null;
       tab = OBDal.getInstance().get(Tab.class, tabId);
+      table = tab.getTable();
     }
-    Table table = tab.getTable();
 
     OBContext.setAdminMode(true);
-    String hqlQuery = table.getHqlQuery();
-    // obtains the where clause from the criteria, using the AdvancedQueryBuilder
-    JSONObject criteria = JsonUtils.buildCriteria(parameters);
-    AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
-    queryBuilder.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
-    queryBuilder.setCriteria(criteria);
-    String whereClause = queryBuilder.getWhereClause();
-
-    // replace the property names with the column alias
-    whereClause = replaceParametersWithAlias(table, whereClause);
-
-    String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
-    if (distinct != null) {
-      final String from = "from ";
-      String formClause = hqlQuery.substring(hqlQuery.toLowerCase().indexOf(from));
-      // TODO: Improve distinct query like this: https://issues.openbravo.com/view.php?id=25182
-      hqlQuery = "select distinct e." + distinct + " " + formClause;
-    }
-
-    // adds the additional filters (client, organization and criteria) to the query
-    hqlQuery = addAdditionalFilters(table, hqlQuery, whereClause, parameters);
-
-    // adds the order by clause
-    String orderByClause = getSortByClause(parameters);
-    if (!orderByClause.isEmpty()) {
-      hqlQuery = hqlQuery + orderByClause;
-    }
-
-    Map<String, Object> queryNamedParameters = new HashMap<String, Object>();
-
-    // replaces the injection points with injected code or with dummy comparisons
-    // if the injected code includes named parameters for the query, they are stored in the
-    // queryNamedParameters parameter
-    hqlQuery = fillInInjectionPoints(hqlQuery, queryNamedParameters, parameters);
-
-    Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
-
-    // sets the parameters of the query
-    queryNamedParameters.putAll(queryBuilder.getNamedParameters());
-    for (String key : queryNamedParameters.keySet()) {
-      if (queryNamedParameters.get(key) instanceof BigDecimal) {
-        // TODO: find a better way to avoid the cast exception from BigDecimal to Long
-        queryNamedParameters.put(key, ((BigDecimal) queryNamedParameters.get(key)).longValue());
-      }
-      query.setParameter(key, queryNamedParameters.get(key));
-    }
+    boolean justCount = false;
+    Query query = getQuery(table, parameters, justCount);
 
     if (startRow > 0) {
       query.setFirstResult(startRow);
@@ -185,6 +157,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       query.setMaxResults(endRow - startRow + 1);
     }
 
+    String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
     List<Column> columns = table.getADColumnList();
     List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
     for (Object row : query.list()) {
@@ -205,6 +178,79 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
     OBContext.restorePreviousMode();
     return data;
+  }
+
+  /**
+   * Returns a hibernate query object based on the hql query, if the justCount parameter is true,
+   * the query will just return the number of records that fulfill the criteria. If justCount is
+   * false, the query will return all the actual records that fulfill the criteria
+   * 
+   * @param table
+   * @param parameters
+   * @param justCount
+   * @return
+   */
+  private Query getQuery(Table table, Map<String, String> parameters, boolean justCount) {
+    OBContext.setAdminMode(true);
+    String hqlQuery = table.getHqlQuery();
+    // obtains the where clause from the criteria, using the AdvancedQueryBuilder
+    JSONObject criteria = JsonUtils.buildCriteria(parameters);
+    AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
+    queryBuilder.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
+    queryBuilder.setCriteria(criteria);
+    String whereClause = queryBuilder.getWhereClause();
+
+    // replace the property names with the column alias
+    whereClause = replaceParametersWithAlias(table, whereClause);
+
+    String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
+    if (distinct != null) {
+      final String from = "from ";
+      String formClause = hqlQuery.substring(hqlQuery.toLowerCase().indexOf(from));
+      // TODO: Improve distinct query like this: https://issues.openbravo.com/view.php?id=25182
+      if (justCount) {
+        hqlQuery = "select count(distinct e." + distinct + ") " + formClause;
+      } else {
+        hqlQuery = "select distinct e." + distinct + " " + formClause;
+      }
+    }
+
+    // adds the additional filters (client, organization and criteria) to the query
+    hqlQuery = addAdditionalFilters(table, hqlQuery, whereClause, parameters);
+
+    // adds the order by clause
+    String orderByClause = getSortByClause(parameters);
+    if (!orderByClause.isEmpty()) {
+      hqlQuery = hqlQuery + orderByClause;
+    }
+
+    Map<String, Object> queryNamedParameters = new HashMap<String, Object>();
+
+    // replaces the injection points with injected code or with dummy comparisons
+    // if the injected code includes named parameters for the query, they are stored in the
+    // queryNamedParameters parameter
+    hqlQuery = fillInInjectionPoints(hqlQuery, queryNamedParameters, parameters);
+
+    if (distinct == null && justCount) {
+      final String from = "from ";
+      String formClause = hqlQuery.substring(hqlQuery.toLowerCase().indexOf(from));
+      hqlQuery = "select count(*) " + formClause;
+    }
+
+    Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
+
+    // sets the parameters of the query
+    queryNamedParameters.putAll(queryBuilder.getNamedParameters());
+    for (String key : queryNamedParameters.keySet()) {
+      if (queryNamedParameters.get(key) instanceof BigDecimal) {
+        // TODO: find a better way to avoid the cast exception from BigDecimal to Long
+        queryNamedParameters.put(key, ((BigDecimal) queryNamedParameters.get(key)).longValue());
+      }
+      query.setParameter(key, queryNamedParameters.get(key));
+    }
+
+    OBContext.restorePreviousMode();
+    return query;
   }
 
   /**
