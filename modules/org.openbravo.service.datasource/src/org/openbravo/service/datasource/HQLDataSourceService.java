@@ -130,8 +130,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
     Table table = tab.getTable();
 
+    OBContext.setAdminMode(true);
     String hqlQuery = table.getHqlQuery();
-
     // obtains the where clause from the criteria, using the AdvancedQueryBuilder
     JSONObject criteria = JsonUtils.buildCriteria(parameters);
     AdvancedQueryBuilder queryBuilder = new AdvancedQueryBuilder();
@@ -203,6 +203,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       }
       data.add(record);
     }
+    OBContext.restorePreviousMode();
     return data;
   }
 
@@ -354,6 +355,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    */
   private String addAdditionalFilters(Table table, String hqlQuery, String filterWhereClause,
       Map<String, String> parameters) {
+    OBContext.setAdminMode(true);
     StringBuffer additionalFilter = new StringBuffer();
     final String entityAlias = table.getEntityAlias();
 
@@ -401,6 +403,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       }
       hqlQueryWithFilters = hqlQueryWithFilters + separator + additionalFilter.toString();
     }
+    OBContext.restorePreviousMode();
     return hqlQueryWithFilters;
   }
 
