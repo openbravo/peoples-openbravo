@@ -88,17 +88,25 @@
     ORDER BY l.line, l.M_Product_ID, l.M_Warehouse_id, l.c_uom_id, l.m_attributesetinstance_id, 
       l.m_product_uom_id, qtyordered-qtydelivered;
     ol Cur_OrderLine%ROWTYPE;
-    CURSOR Cur_Storage (v_ad_pinstance_id varchar) IS
+    CURSOR Cur_Storage (v_ad_pinstance_id varchar, v_inout_id varchar) IS
       SELECT sd.m_product_id, sd.m_locator_id, sd.m_attributesetinstance_id,
           sd.c_uom_id, sd.m_product_uom_id, u.stdprecision,
-          ms.quantity AS qtyonhand, ms.qtyorder AS qtyorder,
+          ms.quantity - COALESCE(SUM(iol.movementqty), 0) AS qtyonhand, ms.qtyorder AS qtyorder,
           ms.priority
       FROM m_stock_proposed ms 
             LEFT JOIN m_storage_detail sd ON ms.m_storage_detail_id = sd.m_storage_detail_id
             LEFT JOIN m_product_uom pu ON sd.m_product_uom_id = pu.m_product_uom_id
             LEFT JOIN c_uom u ON pu.c_uom_id = u.c_uom_id
             LEFT JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
+            LEFT JOIN m_inoutline iol ON iol.m_product_id = sd.m_product_id
+                                         AND iol.c_uom_id = sd.c_uom_id
+                                         AND COALESCE(iol.m_product_uom_id, '-1') = COALESCE(sd.m_product_uom_id, '-1')
+                                         AND COALESCE(iol.m_attributesetinstance_id, '0') = COALESCE(sd.m_attributesetinstance_id, '0')
+                                         AND iol.m_inout_id = v_inout_id
       WHERE ms.ad_pinstance_id = v_ad_pinstance_id
+      GROUP BY sd.m_product_id, sd.m_locator_id, sd.m_attributesetinstance_id, sd.c_uom_id,
+          sd.m_product_uom_id, u.stdprecision, ms.quantity, ms.qtyorder, ms.priority
+      HAVING ms.quantity - COALESCE(SUM(iol.movementqty), 0) > 0
       ORDER BY ms.priority;
 
     v_storage Cur_Storage%ROWTYPE;
@@ -506,7 +514,7 @@ BEGIN --BODY
                   END IF;
                 END; -- End Call M_GET_STOCK
                 
-                OPEN Cur_Storage(v_pinstance_id) ;
+                OPEN Cur_Storage(v_pinstance_id, p_InOut_ID);
                 Cur_Storage_ISOPEN:=true;
                 FETCH Cur_Storage INTO v_storage;
                 IF (Cur_Storage%NOTFOUND) THEN
@@ -939,8 +947,8 @@ BEGIN --BODY
       END IF;
 
       IF (v_PostResult IS NULL) THEN
-          -- Post Shipment
-          M_INOUT_POST(NULL, p_InOut_ID) ;
+        -- Post Shipment
+        M_INOUT_POST(NULL, p_InOut_ID) ;
       END IF;
 
       --ADDED BY P.SAROBE
