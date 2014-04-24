@@ -1255,9 +1255,9 @@ isc.OBToolbar.addProperties({
         currentContext = buttonContexts[iButtonContext];
 
         if (currentContext.isShowingTree) {
-            selectedRecords = currentContext.treeGrid.getSelectedRecords() || [];
+          selectedRecords = currentContext.treeGrid.getSelectedRecords() || [];
         } else {
-            selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];	
+          selectedRecords = currentContext.viewGrid.getSelectedRecords() || [];
         }
         var numOfSelRecords = 0,
             theForm = this.view.isEditingGrid ? this.view.viewGrid.getEditForm() : this.view.viewForm,
