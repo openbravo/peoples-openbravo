@@ -58,11 +58,11 @@
             gross = line.get('discountedGross');
           }
           //Sales order: Positive line
-          if (line.get('qty') > 0 && orderType !== 3) {
+          if (line.get('qty') > 0 && orderType !== 3 && !order.get('isLayaway')) {
             cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), line.get('net')));
             cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), gross));
             //Return from customer or Sales with return: Negative line
-          } else if (line.get('qty') < 0 && orderType !== 3) {
+          } else if (line.get('qty') < 0 && orderType !== 3 && !order.get('isLayaway')) {
             cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), -line.get('net')));
             cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), -gross));
             //Void Layaway
@@ -105,7 +105,7 @@
         }, function (payMthds) { //OB.Dal.find success
           _.each(order.get('payments').models, function (payment) {
             auxPay = payMthds.filter(function (payMthd) {
-              return payMthd.get('searchKey') === payment.get('kind');
+              return payMthd.get('searchKey') === payment.get('kind') && !payment.get('isPrePayment');
             })[0];
             if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
               return;
