@@ -85,7 +85,7 @@ isc.Tree.addProperties({
   },
 
   dataArrived: function (parentNode) {
-    var children = this.getChildren(),
+    var children = this.getChildren(parentNode),
         target = window[this.componentId];
     target.transformData(children);
   }
