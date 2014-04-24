@@ -175,8 +175,9 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       }
       retval.put(entries.getKey(), entries.getValue().toString());
     }
-    return new HashMap<String, String>();
+    return retval;
   }
 
   protected abstract JSONObject doExecute(Map<String, Object> parameters, String content);
 }
+
