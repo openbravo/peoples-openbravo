@@ -218,6 +218,7 @@
                 totalSales: OB.DEC.Zero,
                 totalReturns: OB.DEC.Zero,
                 rate: payment.rate,
+                isocode: payment.isocode,
                 cashup_id: uuid
               }), null, null, true);
             }, this);
