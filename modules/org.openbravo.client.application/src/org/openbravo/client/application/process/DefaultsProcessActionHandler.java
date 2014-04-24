@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -78,7 +79,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
 
       // Reorder params in a list in order to compute in order based on the dependencies of default
       // values
-      final boolean paramsOrdered = reorderParams(processDefinition, orderedParams);
+      final boolean paramsOrdered = reorderParams(processDefinition, orderedParams, context);
 
       if (paramsOrdered) {
 
@@ -112,8 +113,9 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
               }
               inpName = "inp" + Sqlc.TransformaNombreColumna(param.getDBColumnName());
             }
-            context.put(inpName, defaultValue);
-
+            if (!context.has(inpName)) {
+              context.put(inpName, defaultValue);
+            }
             DomainType domainType = uiDefinition.getDomainType();
             if (defaultValue != null && defaultValue instanceof String
                 && domainType instanceof ForeignKeyDomainType) {
@@ -225,45 +227,54 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
   // Returns true if it orders all the params in a list taking into account the dependencies of the
   // defaults. It returns false of is not able to order all the params because of dependencies in
   // circle
-  private boolean reorderParams(Process processDefinition, List<Parameter> orderedParams) {
+  private boolean reorderParams(Process processDefinition, List<Parameter> orderedParams,
+      JSONObject context) {
     final List<String> paramsAddedToOrderList = new ArrayList<String>();
     List<Parameter> paramsWithDefaultValue = new ArrayList<Parameter>();
     String dependentDefaultValue = null;
     Parameter parameter = null;
     int i = 0;
 
-    for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
-      if (param.getDefaultValue() != null) {
-        paramsWithDefaultValue.add(param);
-      } else {
-        orderedParams.add(param);
-        paramsAddedToOrderList.add(param.getDBColumnName());
-      }
-    }
+    try {
 
-    while (!paramsWithDefaultValue.isEmpty()) {
-      if (i == paramsWithDefaultValue.size()) {
-        log.error("Error getting default values for process: " + processDefinition.getName()
-            + ". Default values not properly defined, circle dependencies found");
-        return false;
+      for (Parameter param : processDefinition.getOBUIAPPParameterList()) {
+        if (param.getDefaultValue() != null) {
+          paramsWithDefaultValue.add(param);
+        } else {
+          orderedParams.add(param);
+          paramsAddedToOrderList.add(param.getDBColumnName());
+        }
       }
-      parameter = paramsWithDefaultValue.get(i);
-      if (!isSessionDefaultValue(parameter.getDefaultValue())) {
-        orderedParams.add(parameter);
-        paramsAddedToOrderList.add(parameter.getDBColumnName());
-        paramsWithDefaultValue.remove(i);
-        i = 0;
-      } else {
-        dependentDefaultValue = dependentDefaultValue(parameter.getDefaultValue());
-        if (paramsAddedToOrderList.contains(dependentDefaultValue)) {
+
+      while (!paramsWithDefaultValue.isEmpty()) {
+        if (i == paramsWithDefaultValue.size()) {
+          log.error("Error getting default values for process: " + processDefinition.getName()
+              + ". Default values not properly defined, circle dependencies found");
+          return false;
+        }
+        parameter = paramsWithDefaultValue.get(i);
+        if (!isSessionDefaultValue(parameter.getDefaultValue())) {
           orderedParams.add(parameter);
           paramsAddedToOrderList.add(parameter.getDBColumnName());
           paramsWithDefaultValue.remove(i);
           i = 0;
         } else {
-          i++;
+          dependentDefaultValue = dependentDefaultValue(parameter.getDefaultValue());
+          String inpName = "inp" + Sqlc.TransformaNombreColumna(dependentDefaultValue);
+          if (paramsAddedToOrderList.contains(dependentDefaultValue)
+              || context.get(inpName) != null) {
+            orderedParams.add(parameter);
+            paramsAddedToOrderList.add(parameter.getDBColumnName());
+            paramsWithDefaultValue.remove(i);
+            i = 0;
+          } else {
+            i++;
+          }
         }
       }
+    } catch (JSONException e) {
+      log.error("Error getting defaults and Filter Expressions for process: " + e.getMessage(), e);
+      return false;
     }
     return true;
   }
@@ -272,3 +283,4 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
     return rawDefaultValue.substring(1, rawDefaultValue.length() - 1);
   }
 }
+
