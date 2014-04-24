@@ -1249,6 +1249,9 @@ public class FormInitializationComponent extends BaseActionHandler {
           RequestContext.get().setRequestParameter(
               "inp" + Sqlc.TransformaNombreColumna(columnName), currentValue.toString());
         }
+      } else {
+    	  RequestContext.get().setRequestParameter(
+                  "inp" + Sqlc.TransformaNombreColumna(columnName), null);
       }
     } catch (Exception e) {
       log.error("Couldn't get the value for column " + columnName, e);
