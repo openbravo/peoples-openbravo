@@ -56,6 +56,10 @@
     name: 'cashup_id',
     column: 'cashup_id',
     type: 'TEXT'
+  }, {
+    name: 'isocode',
+    column: 'isocode',
+    type: 'TEXT'
   }]);
 
 

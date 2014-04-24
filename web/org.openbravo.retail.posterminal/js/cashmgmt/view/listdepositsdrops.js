@@ -69,6 +69,30 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.OBPOSCashMgmt.UI.RenderForeignTotal',
+  tag: 'span',
+  published: {
+    foreignTotal: null,
+    textForeignTotal: ''
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.owner.model.on('change:total', function (model) {
+      this.setForeignTotal(model.get('total'));
+    }, this);
+  },
+  foreignTotalChanged: function (oldValue) {
+    this.setContent(this.textForeignTotal);
+    if (OB.DEC.compare(this.foreignTotal) < 0) {
+      this.applyStyle('color', 'red');
+    } else {
+      this.applyStyle('color', 'black');
+    }
+  }
+});
+
+
+enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.RenderTotal',
   tag: 'span',
   published: {
@@ -136,7 +160,11 @@ enyo.kind({
       style: 'border-bottom: 1px solid #cccccc;',
       components: [{
         name: 'tenderedLbl',
-        style: 'padding: 6px 20px 6px 10px;  float: left; width: 70%'
+        style: 'padding: 6px 20px 6px 10px;  float: left; width: 61%'
+      }, {
+        name: 'tenderedForeignAmnt',
+        style: 'text-align:right; padding: 6px 0px 6px 10px; float: left; width: 15%',
+        content: ''
       }, {
         name: 'tenderedAmnt',
         style: 'text-align:right; padding: 6px 20px 6px 10px; float: right;'
@@ -161,7 +189,14 @@ enyo.kind({
       style: 'border-bottom: 1px solid #cccccc;',
       components: [{
         name: 'availableLbl',
-        style: 'padding: 10px 20px 10px 10px; float: left; width: 70%; font-weight:bold;'
+        style: 'padding: 10px 20px 10px 10px; float: left; width: 61%; font-weight:bold;'
+      }, {
+        style: 'text-align:right; padding:  6px 0px 6px 10px; float: left; width: 15%; font-weight:bold;',
+        components: [{
+          name: 'foreignTotal',
+          kind: 'OB.OBPOSCashMgmt.UI.RenderForeignTotal',
+          style: 'float:right;'
+        }]
       }, {
         style: 'padding: 10px 20px 10px 0px;  float: right;',
         components: [{
@@ -178,7 +213,7 @@ enyo.kind({
         total;
 
     this.inherited(arguments);
-    total = OB.DEC.add(OB.DEC.add(OB.DEC.mul(this.model.get('startingCash'), this.model.get('rate')), OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns'))), _.reduce(transactionsArray, function (accum, trx) {
+    total = OB.DEC.add(OB.DEC.add(OB.DEC.mul(this.model.get('startingCash'), this.model.get('rate')), OB.DEC.mul(OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns')), this.model.get('rate'))), _.reduce(transactionsArray, function (accum, trx) {
       if (trx.get('type') === 'deposit') {
         return OB.DEC.add(accum, trx.get('origAmount'));
       } else {
@@ -190,16 +225,25 @@ enyo.kind({
       silent: true // prevents triggering change event
     });
 
+
     this.$.total.setTotal(total); // explicitly set the total
+    if (OB.DEC.toBigDecimal(OB.DEC.add(0, total)) !== 0 && ((this.model.get('rate') && this.model.get('rate') !== 1))) {
+      this.$.foreignTotal.setTextForeignTotal('(' + OB.I18N.formatCurrency(OB.DEC.add(0, OB.DEC.div(total, this.model.get('rate')))) + ' ' + this.model.get('isocode') + ')');
+      this.$.foreignTotal.setForeignTotal(OB.DEC.add(0, OB.DEC.div(total, this.model.get('rate'))));
+    }
+
     this.$.theList.setCollection(transactionsCollection);
 
     this.$.startingCashPayName.setContent(OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + this.model.get('name'));
     this.$.startingCashAmnt.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, OB.DEC.mul(this.model.get('startingCash'), this.model.get('rate')))));
-    if (OB.DEC.toBigDecimal(this.model.get('startingCash')) > 0 && ((this.model.get('rate') && this.model.get('rate') !== 1) || this.model.get('amount') !== this.model.get('origAmount'))) {
+    if (OB.DEC.toBigDecimal(this.model.get('startingCash')) !== 0 && ((this.model.get('rate') && this.model.get('rate') !== 1) || this.model.get('amount') !== this.model.get('origAmount'))) {
       this.$.startingCashForeignAmnt.setContent('(' + OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('startingCash'))) + ' ' + this.model.get('isocode') + ')');
     }
     this.$.tenderedLbl.setContent(OB.I18N.getLabel('OBPOS_LblTotalTendered') + ' ' + this.model.get('name'));
-    this.$.tenderedAmnt.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns')))));
+    if (OB.DEC.toBigDecimal(OB.DEC.add(0, OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns')))) !== 0 && ((this.model.get('rate') && this.model.get('rate') !== 1))) {
+      this.$.tenderedForeignAmnt.setContent('(' + OB.I18N.formatCurrency(OB.DEC.add(0, OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns')))) + ' ' + this.model.get('isocode') + ')');
+    }
+    this.$.tenderedAmnt.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, OB.DEC.mul(OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns')), this.model.get('rate')))));
     this.$.availableLbl.setContent(OB.I18N.getLabel('OBPOS_LblNewAvailableIn') + ' ' + this.model.get('name'));
   }
 });
