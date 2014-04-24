@@ -759,10 +759,6 @@ public class AdvancedQueryBuilder {
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
 
-        if (hasComeADateTime || property.isDatetime() || property.isDate()) {
-          // Applies the time zone offset difference of the client
-          calendar.add(Calendar.MINUTE, clientUTCMinutesTimeZoneDiff);
-        }
         // move the date to the beginning of the day
         if (isGreaterOperator(operator)) {
           calendar.set(Calendar.HOUR, 0);
@@ -776,10 +772,17 @@ public class AdvancedQueryBuilder {
           calendar.set(Calendar.SECOND, 59);
           calendar.set(Calendar.MILLISECOND, 999);
         }
-        if (property.isDatetime() || property.isDate()) {
+
+        if (hasComeADateTime || property.isDatetime() || property.isDate()) {
+
+          // Applies the time zone offset difference of the client
+          // Just in case the date needs to be changed
+          calendar.add(Calendar.MINUTE, -clientUTCMinutesTimeZoneDiff);
+
           // Applies the time zone offset difference of the server
-          calendar.add(Calendar.MINUTE, -UTCServerMinutesTimeZoneDiff);
+          calendar.add(Calendar.MINUTE, UTCServerMinutesTimeZoneDiff);
         }
+
         return calendar.getTime();
       } catch (Exception e) {
         throw new IllegalArgumentException(e);

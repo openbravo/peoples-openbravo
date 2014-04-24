@@ -565,7 +565,9 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
       };
     }
     var criteria = this.rangeItem ? this.rangeItem.getCriterion() : null;
-    criteria = this.makeLogicalDates(criteria);
+    if (criteria) {
+      criteria = this.makeLogicalDates(criteria);
+    }
     return criteria;
   },
 
