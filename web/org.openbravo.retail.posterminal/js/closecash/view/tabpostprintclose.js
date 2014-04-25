@@ -104,16 +104,13 @@ enyo.kind({
       }]
     }, {
       name: 'itemLbl',
-      style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 35%',
-      content: 'Item Label'
+      style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 35%'
     }, {
       name: 'foreignItemQty',
-      style: 'padding: 5px 0px 0px 0px;  border-top: 1px solid #cccccc; float: left; width: 20%; text-align:right;',
-      content: ''
+      style: 'padding: 5px 0px 0px 0px;  border-top: 1px solid #cccccc; float: left; width: 20%; text-align:right;'
     }, {
       name: 'itemQty',
-      style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; float: left; width: 20%; text-align:right;',
-      content: ''
+      style: 'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; float: left; width: 20%; text-align:right;'
     }, {
       style: 'width: 10%; float: left;',
       components: [{
@@ -184,6 +181,7 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
     name: 'salestaxes',
+    id: 'OB.UI.id.CashUp.PostPrintClose.Details1.SalesTaxes',
     lblProperty: 'name',
     qtyProperty: 'amount'
   }, {
@@ -413,7 +411,6 @@ enyo.kind({
   }
 });
 
-
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.PostPrintClose',
   published: {
@@ -427,6 +424,7 @@ enyo.kind({
       style: 'background-color: #ffffff; color: black; padding: 5px;',
       components: [{
         classes: 'row-fluid',
+        id: 'OB.UI.id.CashUp.PostPrintClose.Header',
         components: [{
           classes: 'span12',
           components: [{
@@ -438,62 +436,72 @@ enyo.kind({
         }]
       }, {
         classes: 'row-fluid',
+        id: 'OB.UI.id.CashUp.PostPrintClose.OrganizationInfo',
         components: [{
           classes: 'span12',
           components: [{
             style: 'padding: 10px; text-align:center;',
             components: [{
               tag: 'img',
-              style: 'padding: 20px 20px 20px 10px;',
+              style: 'padding: 20px;',
               initComponents: function () {
                 this.setAttribute('src', '../../utility/ShowImageLogo?logo=yourcompanydoc&orgId=' + OB.MobileApp.model.get('terminal').organization);
               }
             }, {
-              style: 'padding: 5px; text-align:center;',
-              name: 'store'
+              name: 'store',
+              id: 'OB.UI.id.CashUp.PostPrintClose.OrganizationInfo.store',
+              style: 'padding: 5px; text-align:center;'
             }, {
-              style: 'padding: 5px; text-align:center;',
-              name: 'terminal'
+              name: 'terminal',
+              id: 'OB.UI.id.CashUp.PostPrintClose.OrganizationInfo.terminal',
+              style: 'padding: 5px; text-align:center;'
             }, {
-              style: 'padding: 5px; text-align:center;',
-              name: 'user'
+              name: 'user',
+              id: 'OB.UI.id.CashUp.PostPrintClose.OrganizationInfo.user',
+              style: 'padding: 5px; text-align:center;'
             }, {
               name: 'time',
-              style: 'padding: 5px 5px 15px 5px; text-align:center;'
+              id: 'OB.UI.id.CashUp.PostPrintClose.OrganizationInfo.time',
+              style: 'padding: 5px; text-align:center;'
+            }, {
+              style: 'padding: 0px 0px 10px 0px;'
             }]
           }]
         }]
       },
       //FIXME: Iterate taxes
       {
+        id: 'OB.UI.id.CashUp.PostPrintClose.Details1',
+        classes: 'row-fluid',
         components: [{
-          components: [{}, {
-            tag: 'ul',
-            classes: 'unstyled',
-            style: 'display:block',
+          tag: 'ul',
+          classes: 'unstyled',
+          style: 'display:block',
+          components: [{
+            tag: 'li',
+            classes: 'selected',
             components: [{
-              tag: 'li',
-              classes: 'selected',
-              components: [{
-                components: [{
-                  kind: 'OB.OBPOSCashUp.UI.ppc_salesTable',
-                  name: 'sales'
-                }, {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_returnsTable',
-                  name: 'returns'
-                }, {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_totalTransactionsTable',
-                  name: 'totaltransactions'
-                }]
-              }]
+              kind: 'OB.OBPOSCashUp.UI.ppc_salesTable',
+              name: 'sales',
+              id: 'OB.UI.id.CashUp.PostPrintClose.Details1.Sales'
+            }, {
+              kind: 'OB.OBPOSCashUp.UI.ppc_returnsTable',
+              name: 'returns',
+              id: 'OB.UI.id.CashUp.PostPrintClose.Details1.Returns'
+            }, {
+              kind: 'OB.OBPOSCashUp.UI.ppc_totalTransactionsTable',
+              name: 'totaltransactions',
+              id: 'OB.UI.id.CashUp.PostPrintClose.Details1.Transactions'
             }]
-          }, {
-            style: 'border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(204, 204, 204); padding-top: 15px; padding-right: 15px; padding-bottom: 15px; padding-left: 15px; font-weight: bold; color: rgb(204, 204, 204); display: none;'
-          }, {
-            style: 'display:none;'
           }]
+        }, {
+          style: 'border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(204, 204, 204); padding-top: 15px; padding-right: 15px; padding-bottom: 15px; padding-left: 15px; font-weight: bold; color: rgb(204, 204, 204); display: none;'
+        }, {
+          style: 'display:none;'
         }]
       }, {
+        id: 'OB.UI.id.CashUp.PostPrintClose.Details2',
+        classes: 'row-fluid',
         components: [{
           kind: 'OB.OBPOSCashUp.UI.ppc_startingsTable',
           name: 'startingsTable'
@@ -520,6 +528,7 @@ enyo.kind({
           name: 'qtyToDepoTable'
         }]
       }, {
+        id: 'OB.UI.id.CashUp.PostPrintClose.Footer',
         classes: 'row-fluid',
         components: [{
           classes: 'span12',
@@ -531,8 +540,7 @@ enyo.kind({
               content: '&nbsp;'
             }]
           }, {
-            style: 'padding: 5px 0px 0px 5px; float: left; width: 60%; font-weight:bold;',
-            components: [{}]
+            style: 'padding: 5px 0px 0px 5px; float: left; width: 60%; font-weight:bold;'
           }, {
             style: 'clear:both;'
           }]
@@ -550,11 +558,13 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     this.model.get('cashUpReport').on('add', function (cashUpReport) {
-      this.$.sales.setCollection(cashUpReport.get('salesTaxes'));
+
       this.$.sales.setValue('netsales', cashUpReport.get('netSales'));
+      this.$.sales.setCollection(cashUpReport.get('salesTaxes'));
       this.$.sales.setValue('totalsales', cashUpReport.get('grossSales'));
-      this.$.returns.setCollection(cashUpReport.get('returnsTaxes'));
+
       this.$.returns.setValue('netreturns', cashUpReport.get('netReturns'));
+      this.$.returns.setCollection(cashUpReport.get('returnsTaxes'));
       this.$.returns.setValue('totalreturns', cashUpReport.get('grossReturns'));
 
       this.$.totaltransactions.setValue('totaltransactionsline', cashUpReport.get('totalRetailTransactions'));
@@ -591,12 +601,12 @@ enyo.kind({
   },
   modelChanged: function () {
 
-    this.$.sales.setCollection(this.model.get('salesTaxes'));
     this.$.sales.setValue('netsales', this.model.get('netSales'));
+    this.$.sales.setCollection(this.model.get('salesTaxes'));
     this.$.sales.setValue('totalsales', this.model.get('grossSales'));
 
-    this.$.returns.setCollection(this.model.get('returnsTaxes'));
     this.$.returns.setValue('netreturns', this.model.get('netReturns'));
+    this.$.returns.setCollection(this.model.get('returnsTaxes'));
     this.$.returns.setValue('totalreturns', this.model.get('grossReturns'));
 
     this.$.totaltransactions.setValue('totaltransactionsline', this.model.get('totalRetailTransactions'));
