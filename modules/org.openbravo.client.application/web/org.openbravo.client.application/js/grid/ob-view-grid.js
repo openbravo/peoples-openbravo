@@ -1911,7 +1911,27 @@ isc.OBViewGrid.addProperties({
           shouldRemove = true;
         } else if (isc.isA.emptyString(criterion.value)) {
           shouldRemove = true;
+        } else if (this.view.parentView && !this.view.parentProperty) {
+          // subtabs without an explicit reference to their parent property need to remove unused criterias
+          if (this.view.parentView.isShowingTree) {
+            selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
+          } else {
+            selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+          }
+
+          if (selectedValues.length !== 1) {
+            // if there is not a single record selected, remove dummies
+            if (criterion.fieldName === isc.OBRestDataSource.DUMMY_CRITERION_NAME) {
+              shouldRemove = true;
+            }
+          } else {
+            // with a single record selected, removed false criterion
+            if (criterion.fieldName === 'id' && criterion.operator === 'equals' && criterion.value === '-1') {
+              shouldRemove = true;
+            }
+          }
         }
+
         if (shouldRemove) {
           internalCriteria.removeAt(i);
         } else {
