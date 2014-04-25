@@ -41,6 +41,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.SearchDomainType;
 import org.openbravo.base.model.domaintype.TableDomainType;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.base.util.Check;
 import org.openbravo.client.kernel.RequestContext;
@@ -1077,10 +1078,28 @@ public class AdvancedQueryBuilder {
       }
       String suffix = restOfClause.substring(secondAtIndex + 1);
       String param = restOfClause.substring(0, secondAtIndex);
-      String paramValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-          .getVariablesSecureApp(), param,
-          RequestContext.get().getRequestParameter("windowId") != null ? RequestContext.get()
-              .getRequestParameter("windowId") : "");
+      String paramValue = "";
+
+      // Try to select the value from the request instead of picking it from the context
+      // Look if param is an ID
+      if (param.substring(param.length() - 3).toUpperCase().equals("_ID")) {
+        VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+        Entity paramEntity = ModelProvider.getInstance().getEntityByTableName(
+            param.substring(0, param.length() - 3));
+
+        // If the entity exists, get paramValue from vars
+        if (paramEntity != null) {
+          paramValue = vars.getStringParameter("@" + paramEntity.getName() + ".id@");
+        }
+      }
+
+      // If paramValue has not been brought form the request, select it from context
+      if (paramValue.equals("")) {
+        paramValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+            .getVariablesSecureApp(), param,
+            RequestContext.get().getRequestParameter("windowId") != null ? RequestContext.get()
+                .getRequestParameter("windowId") : "");
+      }
 
       // not found, try to get the parameter directly from the request object
       if (paramValue.equals("") && RequestContext.get().getRequestParameter(param) != null) {
