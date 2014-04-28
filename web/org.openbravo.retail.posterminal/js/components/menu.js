@@ -256,7 +256,8 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.invoice',
   events: {
-    onReceiptToInvoice: ''
+    onReceiptToInvoice: '',
+    onCancelReceiptToInvoice: ''
   },
   i18nLabel: 'OBPOS_LblInvoice',
   tap: function () {
@@ -264,7 +265,18 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    this.doReceiptToInvoice();
+    this.taxIdValidation(this.model.get('order'));
+  },
+  taxIdValidation: function (model) {
+    if (!OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
+      this.doCancelReceiptToInvoice();
+    } else if (OB.POS.modelterminal.hasPermission('OBPOS_retail.restricttaxidinvoice') && !model.get('bp').get('taxID')) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+      this.doCancelReceiptToInvoice();
+    } else {
+      this.doReceiptToInvoice();
+    }
+
   },
   init: function (model) {
     this.model = model;
@@ -275,6 +287,11 @@ enyo.kind({
         me.show();
       } else {
         me.hide();
+      }
+    }, this);
+    receipt.on('change:bp', function (model) {
+      if (model.get('generateInvoice')) {
+        me.taxIdValidation(model);
       }
     }, this);
     receipt.on('change:isEditable', function (newValue) {
