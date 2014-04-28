@@ -339,6 +339,7 @@
           customersChangedNotProcessed.each(function (cus) {
             cus.set('json', enyo.json.parse(cus.get('json')));
           });
+          OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
         });
       });
     },
