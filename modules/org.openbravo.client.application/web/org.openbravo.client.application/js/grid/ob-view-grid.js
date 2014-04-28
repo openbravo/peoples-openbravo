@@ -2900,6 +2900,13 @@ isc.OBViewGrid.addProperties({
     } else {
       this.refreshRow(rowNum);
     }
+
+    // If there is a summary row update its value
+    // Refer issue https://issues.openbravo.com/view.php?id=26363
+    if (this.showGridSummary) {
+      this.getSummaryRow();
+    }
+
   },
 
   undoEditSelectedRows: function () {
