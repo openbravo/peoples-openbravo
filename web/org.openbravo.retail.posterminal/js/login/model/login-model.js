@@ -341,6 +341,7 @@
           customersChangedNotProcessed.each(function (cus) {
             cus.set('json', enyo.json.parse(cus.get('json')));
           });
+          OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
         });
       });
     },
@@ -414,7 +415,7 @@
     },
 
     preLogoutActions: function () {
-      if(OB.POS.hwserver !== undefined) {
+      if (OB.POS.hwserver !== undefined) {
         OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
       }
       this.cleanSessionInfo();
