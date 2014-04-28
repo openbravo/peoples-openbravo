@@ -27,6 +27,9 @@ isc.OBPickEditGridItem.addProperties({
   defaultFilter: null,
 
   init: function () {
+    if (this.view.uiPattern === 'OBUIAPP_PickAndExecute') {
+      this.showTitle = false;
+    }
     if (this.view.popup) {
       this.canvas = isc.OBPickAndExecuteView.create({
         viewProperties: this.viewProperties,
