@@ -124,21 +124,26 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           return OB.DEC.add(accum, trx.get('origAmount'));
         }, 0));
       }, this);
+
       OB.Dal.find(OB.Model.TaxCashUp, {
         'cashup_id': cashUpReport.get('id'),
         'orderType': {
           operator: '!=',
           value: '1'
-        }
+        },
+        '_orderByClause': 'name asc'
       }, function (taxcashups) {
         cashUpReport.set('salesTaxes', taxcashups.models);
       }, this);
+
       OB.Dal.find(OB.Model.TaxCashUp, {
         'cashup_id': cashUpReport.get('id'),
-        'orderType': '1'
+        'orderType': '1',
+        '_orderByClause': 'name asc'
       }, function (taxcashups) {
         cashUpReport.set('returnsTaxes', taxcashups.models);
       }, this);
+
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
         'cashup_id': cashUpReport.get('id'),
         '_orderByClause': 'name asc'

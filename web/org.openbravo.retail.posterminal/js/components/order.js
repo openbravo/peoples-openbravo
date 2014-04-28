@@ -324,6 +324,11 @@ enyo.kind({
     } else {
       this.$.taxBreakdown.show();
     }
+
+    taxList.models = _.sortBy(taxList.models, function (taxLine) {
+      return taxLine.get('name');
+    });
+
     this.$.listTaxLines.setCollection(taxList);
   },
   orderChanged: function (oldValue) {

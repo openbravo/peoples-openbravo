@@ -561,7 +561,7 @@ public class CashUpReport extends HttpSecureAppServlet {
           + reconIds
           + ") "
           + "                                and t.finPayment = d.paymentDetails.finPayment)) ";
-      hqlWhere = "and orderLineTax.salesOrderLine.orderedQuantity > 0 group by orderLineTax.tax.name";
+      hqlWhere = "and orderLineTax.salesOrderLine.orderedQuantity > 0 group by orderLineTax.tax.name order by orderLineTax.tax.name";
       Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes + hqlWhere);
       salesTaxList = salesTaxesQuery.list();
       totalGrossSalesAmount = totalNetSalesAmount;
@@ -574,7 +574,7 @@ public class CashUpReport extends HttpSecureAppServlet {
       parameters.put("SALES_TAXES", dataSource);
 
       // RETURNS TAXES
-      hqlWhere = "and orderLineTax.salesOrderLine.orderedQuantity < 0 group by orderLineTax.tax.name";
+      hqlWhere = "and orderLineTax.salesOrderLine.orderedQuantity < 0 group by orderLineTax.tax.name order by orderLineTax.tax.name";
       Query returnsTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes + hqlWhere);
       returnsTaxList = returnsTaxesQuery.list();
       totalGrossReturnsAmount = totalNetReturnsAmount;
