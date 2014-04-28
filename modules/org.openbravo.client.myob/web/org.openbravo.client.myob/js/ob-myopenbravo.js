@@ -761,7 +761,7 @@ isc.OBMyOpenbravo.addProperties({
       }
     }
 
-    if (OB.MyOB.leftColumnLayout.addWigetSelector) {
+    if (OB.MyOB.lefColumnLayout && OB.MyOB.leftColumnLayout.addWigetSelector) {
       // after updating cache lets reflect it in the drop down list if present
       OB.MyOB.leftColumnLayout.addWigetSelector.refreshAvailableWidgets();
     }
