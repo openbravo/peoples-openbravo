@@ -108,7 +108,7 @@ isc.OBPickAndExecuteView.addProperties({
     }
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.addnew', this.addNewButton);
 
-    this.members = [this.viewGrid, isc.HLayout.create({
+    this.members = [this.messageBar, this.viewGrid, isc.HLayout.create({
       height: 1,
       overflow: 'visible',
       align: OB.Styles.Process.PickAndExecute.addNewButtonAlign,
