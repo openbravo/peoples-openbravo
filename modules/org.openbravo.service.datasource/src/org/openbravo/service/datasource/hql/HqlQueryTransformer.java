@@ -22,13 +22,12 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
- * A HqlInjector is able to inject code at an hql injection point HqlInjectors are instantiated
- * using dependency injection. The HQLInjectionQualifier must be used to associate the HQL with a
- * particular table and injection point
+ * A HqlQueryTransformer is able to transform an HQL query. HqlTransformer are instantiated using
+ * dependency injection.
  */
 
 @ApplicationScoped
-public abstract class HqlInjector extends HqlQueryPriorityHandler {
+public abstract class HqlQueryTransformer extends HqlQueryPriorityHandler {
   /**
    * Returns some code to be injected in a HQL query, and adds query named parameters when needed
    * 
@@ -41,6 +40,20 @@ public abstract class HqlInjector extends HqlQueryPriorityHandler {
    *          map
    * @return the hql code to be injected
    */
-  public abstract String injectHql(Map<String, String> requestParameters,
+
+  /**
+   * Returns the transformed hql query
+   * 
+   * @param hqlQuery
+   *          original hql query
+   * @param requestParameters
+   *          the parameters of the request
+   * @param queryNamedParameters
+   *          the named parameters of the hql query that will be used to fetch the table data. If
+   *          the transformed hql query uses named parameters that did not exist in the original hql
+   *          query, the named parameters must be added to this map
+   * @return the transformed hql query
+   */
+  public abstract String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters);
 }
