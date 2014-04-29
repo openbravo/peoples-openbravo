@@ -294,7 +294,7 @@ isc.OBTreeItemTree.addProperties({
       if (jsonData.response.error) {
         dsResponse.error = jsonData.response.error;
       }
-      if (jsonData.response && jsonData.response.data) {
+      if (jsonData.response && jsonData.response.data && me.showNodeIcons) {
         for (i = 0; i < jsonData.response.data.length; i++) {
           node = jsonData.response.data[i];
           if (node.showDropIcon) {
@@ -529,7 +529,7 @@ isc.OBTreeItemPopupWindow.addProperties({
           if (jsonData.response.error) {
             dsResponse.error = jsonData.response.error;
           }
-          if (jsonData.response && jsonData.response.data) {
+          if (jsonData.response && jsonData.response.data && me.showNodeIcons) {
             for (i = 0; i < jsonData.response.data.length; i++) {
               node = jsonData.response.data[i];
               if (node.showDropIcon) {
