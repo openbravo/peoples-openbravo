@@ -28,7 +28,7 @@ import javax.enterprise.context.ApplicationScoped;
  */
 
 @ApplicationScoped
-public abstract class HqlInjector extends HqlInjectionPriorityHandler {
+public abstract class HqlInjector extends HqlQueryPriorityHandler {
   /**
    * Returns some code to be injected in a HQL query, and adds query named parameters when needed
    * 
