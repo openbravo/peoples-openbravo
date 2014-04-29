@@ -419,7 +419,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   propertyFunctions: [],
   processAndFinishCashUp: function () {
     var objToSend = {
-      terminalId: OB.POS.modelterminal.get('terminal').id,
+      posTerminal: OB.POS.modelterminal.get('terminal').id,
       id: OB.UTIL.get_UUID(),
       cashCloseInfo: [],
       cashUpDate: this.get('cashUpReport').at(0).get('time')
@@ -432,7 +432,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       'isbeingprocessed': 'N'
     }, function (cashUp) {
       objToSend = new Backbone.Model({
-        terminalId: OB.POS.modelterminal.get('terminal').id,
+        posTerminal: OB.POS.modelterminal.get('terminal').id,
         id: cashUp.at(0).get('id'),
         cashCloseInfo: [],
         cashUpDate: me.get('cashUpReport').at(0).get('time')

@@ -50,7 +50,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     }
 
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-        jsonCashup.getString("terminalId"));
+        jsonCashup.getString("posTerminal"));
     OBContext.setOBContext(jsonCashup.getString("userId"), OBContext.getOBContext().getRole()
         .getId(), OBContext.getOBContext().getCurrentClient().getId(), posTerminal
         .getOrganization().getId());
@@ -87,7 +87,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       try {
         new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-            jsonCashup.getString("terminalId"));
+            jsonCashup.getString("posTerminal"));
 
         CashCloseProcessor processor = WeldUtils
             .getInstanceFromStaticBeanManager(CashCloseProcessor.class);
