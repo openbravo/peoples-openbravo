@@ -909,6 +909,8 @@ isc.OBSelectorItem.addClassMethods({
       isc.addProperties(params, selector.form.view.getContextInfo(false, true));
     } else if (selector.view && selector.view.sourceView && selector.view.sourceView.getContextInfo) {
       isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true));
+    } else if (selector.grid && selector.grid.contentView && selector.grid.contentView.getContextInfo) {
+      isc.addProperties(params, selector.grid.contentView.getContextInfo(false, true));
     }
 
     if (selector.form && selector.form.view && selector.form.view.standardWindow) {

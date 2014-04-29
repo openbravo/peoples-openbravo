@@ -108,7 +108,7 @@ isc.OBPickAndExecuteView.addProperties({
     }
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.addnew', this.addNewButton);
 
-    this.members = [this.viewGrid, isc.HLayout.create({
+    this.members = [this.messageBar, this.viewGrid, isc.HLayout.create({
       height: 1,
       overflow: 'visible',
       align: OB.Styles.Process.PickAndExecute.addNewButtonAlign,
@@ -212,6 +212,24 @@ isc.OBPickAndExecuteView.addProperties({
         return this.formatCellValue(arguments);
       }
     });
+  },
+
+  getContextInfo: function () {
+    var contextInfo = {},
+        record, i, fields, field;
+    if (!this.viewGrid.getSelectedRecords() || this.viewGrid.getSelectedRecords().length !== 1) {
+      return contextInfo;
+    }
+    record = this.viewGrid.getSelectedRecord();
+    for (i = 0; i < this.viewGrid.getFields().length; i++) {
+      field = this.viewGrid.getField(i);
+      if (field.inpColumnName) {
+        contextInfo[field.inpColumnName] = record[field.name];
+      }
+    }
+    contextInfo.inpwindowId = this.viewProperties.standardProperties.inpwindowId;
+    contextInfo.inpTabId = this.viewProperties.standardProperties.inpTabId;
+    return contextInfo;
   },
 
   // dummy required by OBStandardView.prepareGridFields

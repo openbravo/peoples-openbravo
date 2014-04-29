@@ -545,6 +545,9 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     for (prop in columnValues) {
       if (columnValues.hasOwnProperty(prop)) {
+        if (columnValues[prop] && columnValues[prop].entries && columnValues[prop].entries.length === 0) {
+          delete columnValues[prop].entries;
+        }
         grid.processColumnValue(rowNum, prop, columnValues[prop]);
       }
     }

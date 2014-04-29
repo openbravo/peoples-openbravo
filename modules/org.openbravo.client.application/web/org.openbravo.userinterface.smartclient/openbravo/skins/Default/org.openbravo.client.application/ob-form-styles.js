@@ -631,3 +631,12 @@ isc.OBImageSelector.addProperties({
   width: 450,
   align: 'center'
 });
+
+/* =====================================================================
+ * Grid FormItem Styles
+ =======================================================================*/
+
+isc.OBPickEditGridItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel'
+});

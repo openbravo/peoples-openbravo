@@ -151,8 +151,13 @@ isc.OBListItem.addProperties({
 
     // not found add/create a new one
     entry[valueField] = id;
-    entries.push(entry);
 
+    if (id && identifier) {
+      entry[OB.Constants.ID] = id;
+      entry[OB.Constants.IDENTIFIER] = identifier;
+    }
+
+    entries.push(entry);
     this.setEntries(entries);
   },
 

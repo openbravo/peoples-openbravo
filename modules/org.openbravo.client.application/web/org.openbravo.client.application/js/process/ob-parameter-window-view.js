@@ -252,6 +252,9 @@ isc.OBParameterWindowView.addProperties({
           }
         });
 
+        if (items && items.length === 1 && items[0].type === 'OBPickEditGridItem' && this.popup) {
+          items[0].showTitle = false;
+        }
         this.theForm.setItems(items);
         this.members.push(this.theForm);
       }
@@ -544,7 +547,7 @@ isc.OBParameterWindowView.addProperties({
         isc.addProperties(defaultFilter, filterExpressions[i]);
         field.setDefaultFilter(defaultFilter);
         if (field.isVisible() && !field.showIf) {
-          field.canvas.viewGrid.setFilterEditorCriteria(this.defaultFilter);
+          field.canvas.viewGrid.setFilterEditorCriteria(defaultFilter);
           field.canvas.viewGrid.filterByEditor();
         }
       }
