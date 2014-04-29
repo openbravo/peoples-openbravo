@@ -37,6 +37,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.client.kernel.reference.IDUIDefinition;
@@ -52,6 +53,7 @@ import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.datasource.hql.HQLInjectionQualifier;
 import org.openbravo.service.datasource.hql.HqlInjector;
+import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -70,6 +72,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   @Inject
   @Any
   private Instance<HqlInjector> hqlInjectors;
+  @Inject
+  @Any
+  private Instance<HqlQueryTransformer> hqlQueryTransformers;
 
   @Override
   // Returns the datasource properties, based on the columns of the table that is going to use the
@@ -145,7 +150,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       tab = OBDal.getInstance().get(Tab.class, tabId);
       table = tab.getTable();
     }
-
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
     OBContext.setAdminMode(true);
     boolean justCount = false;
     Query query = getQuery(table, parameters, justCount);
@@ -170,7 +175,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       } else {
         Object[] properties = (Object[]) row;
         for (Column column : columns) {
-          record.put(column.getName(), properties[i]);
+          Property property = entity.getPropertyByColumnName(column.getDBColumnName());
+          record.put(property.getName(), properties[i]);
           i++;
         }
       }
@@ -225,6 +231,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
 
     Map<String, Object> queryNamedParameters = new HashMap<String, Object>();
+
+    // if the is any HQL Query transformer defined for this table, use it to transform the query
+    hqlQuery = transFormQuery(hqlQuery, queryNamedParameters, parameters);
 
     // replaces the injection points with injected code or with dummy comparisons
     // if the injected code includes named parameters for the query, they are stored in the
@@ -287,6 +296,55 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       index++;
     }
     return updatedHqlQuery;
+  }
+
+  /**
+   * If there is any HQL Query Transformer defined, uses its transformHqlQuery to transform the
+   * query
+   * 
+   * @param hqlQuery
+   *          the original HQL query
+   * @param queryNamedParameters
+   *          the named parameters that will be used in the query
+   * @param parameters
+   *          the parameters of the request
+   * @return the transformed query
+   */
+  private String transFormQuery(String hqlQuery, Map<String, Object> queryNamedParameters,
+      Map<String, String> parameters) {
+    String transformedHqlQuery = hqlQuery;
+    HqlQueryTransformer hqlQueryTransformer = getTransformer(parameters);
+    if (hqlQueryTransformer != null) {
+      transformedHqlQuery = hqlQueryTransformer.transformHqlQuery(transformedHqlQuery, parameters,
+          queryNamedParameters);
+    }
+    return transformedHqlQuery;
+  }
+
+  /**
+   * Returns, if defined, an HQL Query Transformer for this table. If the are several transformers
+   * defined, the one with the lowest priority will be chosen
+   * 
+   * @param parameters
+   *          the parameters of the request
+   * @return the HQL Query transformer that will be used to transform the query
+   */
+  private HqlQueryTransformer getTransformer(Map<String, String> parameters) {
+    HqlQueryTransformer transformer = null;
+    String tableId = parameters.get("tableId");
+    for (HqlQueryTransformer nextTransformer : hqlQueryTransformers
+        .select(new ComponentProvider.Selector(tableId))) {
+      if (transformer == null) {
+        transformer = nextTransformer;
+      } else if (nextTransformer.getPriority(parameters) < transformer.getPriority(parameters)) {
+        transformer = nextTransformer;
+      } else if (nextTransformer.getPriority(parameters) == transformer.getPriority(parameters)) {
+        log.warn(
+            "Trying to get hql query transformer injector for the table with id {}, there are more than one instance with same priority",
+            tableId);
+      }
+    }
+    return transformer;
   }
 
   /**
