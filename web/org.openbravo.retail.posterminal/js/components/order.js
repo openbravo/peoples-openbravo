@@ -17,13 +17,10 @@ enyo.kind({
   },
   style: 'border-bottom: 1px solid #cccccc;',
   components: [{
-    classes: 'span12',
     kind: 'OB.UI.OrderDetails',
     name: 'orderdetails',
     id: 'org.openbravo.documentNoLabel'
   }, {
-    classes: 'span12',
-    style: 'float: left;',
     components: [{
       kind: 'OB.UI.BusinessPartner',
       name: 'bpbutton',
