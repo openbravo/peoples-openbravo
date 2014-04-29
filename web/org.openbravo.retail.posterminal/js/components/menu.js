@@ -600,7 +600,7 @@ enyo.kind({
     }
   },
   updateVisibility: function (model) {
-    if (OB.POS.modelterminal.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
+    if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
       this.show();
     } else {
       this.hide();
