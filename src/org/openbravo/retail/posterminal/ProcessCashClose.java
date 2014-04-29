@@ -76,13 +76,12 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     }
 
     OBCriteria<OBPOSErrors> errorsQuery = OBDal.getInstance().createCriteria(OBPOSErrors.class);
-    errorsQuery.add(Restrictions.ne(OBPOSErrors.PROPERTY_TYPEOFDATA, "CU"));
+    errorsQuery.add(Restrictions.ne(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
     errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
     if (errorsQuery.count() > 0) {
       throw new OBException(
           "There are errors related to non-created customers, orders, or cash management movements pending to be processed. Process them before processing the cash ups");
     }
-
     if (cashUp == null) {
       try {
         new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
@@ -98,9 +97,14 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
         // add the messages returned by processCashClose...
         jsonData.put("messages", result.opt("messages"));
         jsonData.put("next", result.opt("next"));
+        jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       } finally {
         TriggerHandler.getInstance().enable();
       }
+    } else {
+      // This cashup has already been saved. Nothing needs to be done
+      jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+
     }
     return jsonData;
   }
