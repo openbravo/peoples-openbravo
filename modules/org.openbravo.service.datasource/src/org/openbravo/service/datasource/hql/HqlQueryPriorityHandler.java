@@ -28,7 +28,7 @@ import org.openbravo.service.datasource.HQLDataSourceService;
  * 
  */
 
-public abstract class HqlInjectionPriorityHandler {
+public abstract class HqlQueryPriorityHandler {
   /**
    * Returns the priority of this handler based on the parameters of the request
    * 
