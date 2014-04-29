@@ -509,11 +509,13 @@ public abstract class UIDefinition {
   protected String getValueInComboReference(Field field, boolean getValueFromSession,
       String columnValue, boolean onlyFirstRecord) {
     try {
+      FieldProvider[] fps = null;
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
       boolean comboreload = rq.getRequestParameter("donotaddcurrentelement") != null
           && rq.getRequestParameter("donotaddcurrentelement").equals("true");
       String ref = field.getColumn().getReference().getId();
+      boolean isListReference = "17".equals(ref);
       String objectReference = "";
       if (field.getColumn().getReferenceSearchKey() != null) {
         objectReference = field.getColumn().getReferenceSearchKey().getId();
@@ -545,11 +547,17 @@ public abstract class UIDefinition {
       Map<String, String> parameters = comboTableData.fillSQLParametersIntoMap(
           new DalConnectionProvider(false), vars, tabData, field.getTab().getWindow().getId(),
           (getValueFromSession && !comboreload) ? columnValue : "");
-      if (onlyFirstRecord || columnValue != null) {
+      if ((onlyFirstRecord || columnValue != null) && !isListReference) {
         parameters.put("@ONLY_ONE_RECORD@", columnValue);
       }
-      FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), parameters,
-          getValueFromSession && !comboreload, "0", "0");
+
+      if (!isListReference) {
+        fps = comboTableData.select(new DalConnectionProvider(false), parameters,
+            getValueFromSession && !comboreload, "0", "0");
+      } else {
+        fps = comboTableData.select(new DalConnectionProvider(false), parameters,
+            getValueFromSession && !comboreload);
+      }
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
