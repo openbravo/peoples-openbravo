@@ -214,6 +214,24 @@ isc.OBPickAndExecuteView.addProperties({
     });
   },
 
+  getContextInfo: function () {
+    var contextInfo = {},
+        record, i, fields, field;
+    if (!this.viewGrid.getSelectedRecords() || this.viewGrid.getSelectedRecords().length !== 1) {
+      return contextInfo;
+    }
+    record = this.viewGrid.getSelectedRecord();
+    for (i = 0; i < this.viewGrid.getFields().length; i++) {
+      field = this.viewGrid.getField(i);
+      if (field.inpColumnName) {
+        contextInfo[field.inpColumnName] = record[field.name];
+      }
+    }
+    contextInfo.inpwindowId = this.viewProperties.standardProperties.inpwindowId;
+    contextInfo.inpTabId = this.viewProperties.standardProperties.inpTabId;
+    return contextInfo;
+  },
+
   // dummy required by OBStandardView.prepareGridFields
   setFieldFormProperties: function () {}
 });
