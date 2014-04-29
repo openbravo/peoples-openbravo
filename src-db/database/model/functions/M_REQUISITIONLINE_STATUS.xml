@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008 Openbravo SLU
+* All portions are Copyright (C) 2008-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -61,6 +61,14 @@ BEGIN
       v_Record_ID:=p_RequisitionLine_ID;
       v_User_ID := p_User_ID;
     END IF;
+    -- Reset requisition status to CO in case it is closed.
+    UPDATE M_Requisition
+    SET DocStatus = 'CO',
+    Updated = now(),
+    UpdatedBy = v_User_ID
+    WHERE M_Requisition_ID = (SELECT M_Requisition_ID FROM M_RequisitionLine WHERE M_RequisitionLine_ID = v_Record_ID)
+      AND docstatus = 'CL';
+
     v_ResultStr := 'Updating reqstatus';
     UPDATE M_RequisitionLine
     SET ReqStatus = (CASE ReqStatus
