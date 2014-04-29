@@ -545,7 +545,7 @@ public abstract class UIDefinition {
       Map<String, String> parameters = comboTableData.fillSQLParametersIntoMap(
           new DalConnectionProvider(false), vars, tabData, field.getTab().getWindow().getId(),
           (getValueFromSession && !comboreload) ? columnValue : "");
-      if (onlyFirstRecord) {
+      if (onlyFirstRecord || columnValue != null) {
         parameters.put("@ONLY_ONE_RECORD@", columnValue);
       }
       FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), parameters,
