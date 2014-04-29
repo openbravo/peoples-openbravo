@@ -165,19 +165,22 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
     List<Column> columns = table.getADColumnList();
     List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+    String[] returnAliases = query.getReturnAliases();
+    boolean checkIsNotNull = false;
     for (Object row : query.list()) {
       Map<String, Object> record = new HashMap<String, Object>();
-      int i = 0;
       if (distinct != null) {
         BaseOBObject bob = (BaseOBObject) row;
         record.put(JsonConstants.ID, bob.getId());
         record.put(JsonConstants.IDENTIFIER, bob.getIdentifier());
       } else {
         Object[] properties = (Object[]) row;
-        for (Column column : columns) {
-          Property property = entity.getPropertyByColumnName(column.getDBColumnName());
+        for (int i = 0; i < returnAliases.length; i++) {
+          Property property = entity.getPropertyByColumnName(returnAliases[i], checkIsNotNull);
+          if (property == null) {
+            property = entity.getPropertyByColumnName(columns.get(i).getDBColumnName());
+          }
           record.put(property.getName(), properties[i]);
-          i++;
         }
       }
       data.add(record);
