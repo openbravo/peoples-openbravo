@@ -22,19 +22,23 @@
 isc.ClassFactory.defineClass('OBPickEditGridItem', isc.CanvasItem);
 
 isc.OBPickEditGridItem.addProperties({
-  rowSpan: 4,
+  rowSpan: 1,
   colSpan: 4,
   defaultFilter: null,
 
   init: function () {
+    var me = this;
     if (this.view.popup) {
       this.canvas = isc.OBPickAndExecuteView.create({
         viewProperties: this.viewProperties,
         view: this.view,
-        parameterName: this.name,
-        height: this.view.height - 315,
-        width: this.view.width - 155
+        parameterName: this.name
       });
+      this.view.resized = function () {
+        me.canvas.setHeight(me.view.height - 100);
+        me.canvas.setWidth(me.view.width - 20);
+        me.canvas.redraw();
+      };
     } else {
       this.canvas = isc.OBPickAndExecuteView.create({
         viewProperties: this.viewProperties,
