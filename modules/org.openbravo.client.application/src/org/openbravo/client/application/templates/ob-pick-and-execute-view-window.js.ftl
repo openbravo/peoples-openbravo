@@ -31,6 +31,9 @@ isc.ClassFactory.defineClass('<#if !data.popup>processDefinition</#if>${data.win
     <#if data.clientSideValidation??>
         clientSideValidation: ${data.clientSideValidation?js_string},
     </#if>
+    <#if data.onLoadFunction??>
+        onLoadFunction: ${data.onLoadFunction?js_string},
+    </#if>
     <#list data.buttonList as button>
     <#if button_index == 0>buttons:{</#if>
     '${button.searchKey?js_string}':'${button.name?js_string}'<#if button_has_next>,<#else>},</#if>

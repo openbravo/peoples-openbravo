@@ -517,7 +517,8 @@ isc.OBParameterWindowView.addProperties({
   handleDefaults: function (result) {
     var i, field, def, defaults = result.defaults,
         filterExpressions = result.filterExpressions,
-        defaultFilter = {};
+        defaultFilter = {},
+        gridsToBeFiltered = [];
     if (!this.theForm) {
       return;
     }
@@ -539,7 +540,6 @@ isc.OBParameterWindowView.addProperties({
         }
       }
     }
-
     for (i in filterExpressions) {
       if (filterExpressions.hasOwnProperty(i)) {
         field = this.theForm.getItem(i);
@@ -548,9 +548,20 @@ isc.OBParameterWindowView.addProperties({
         field.setDefaultFilter(defaultFilter);
         if (field.isVisible() && !field.showIf) {
           field.canvas.viewGrid.setFilterEditorCriteria(defaultFilter);
-          field.canvas.viewGrid.filterByEditor();
+          gridsToBeFiltered.push(field.canvas.viewGrid);
         }
       }
+    }
+
+
+    if (this.onLoadFunction) {
+      this.onLoadFunction(this);
+    }
+
+    // filter after applying the onLoadFunction, just in case it has modified the filter editor criteria of a grid.
+    // this way it a double requests for these grids is avoided
+    for (i = 0; i < gridsToBeFiltered.length; i++) {
+      gridsToBeFiltered[i].filterByEditor();
     }
 
     this.handleReadOnlyLogic();
