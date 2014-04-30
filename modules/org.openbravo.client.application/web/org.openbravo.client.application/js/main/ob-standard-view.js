@@ -1940,7 +1940,7 @@ isc.OBStandardView.addProperties({
             view.viewGrid.updateRowCountDisplay();
 
             // Refresh the grid based on Refresh After Deletion preference
-            if (OB.PropertyStore.get("OBUIAPP_RefreshAfterDeletion", view.windowId) === 'Y') {
+            if (OB.PropertyStore.get("OBUIAPP_RefreshAfterDeletion", view.standardWindow.windowId) === 'Y') {
               view.viewGrid.refreshGrid();
             } else {
               view.refreshChildViews();
