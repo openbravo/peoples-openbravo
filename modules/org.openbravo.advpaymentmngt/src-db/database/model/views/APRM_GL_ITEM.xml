@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-  <database name="VIEW APRM_GL_ITEM">
-    <view name="APRM_GL_ITEM"><![CDATA[SELECT get_uuid() AS aprm_gl_item_id, get_uuid() AS ad_client_id, get_uuid() AS ad_org_id, get_uuid() AS isactive, now() AS created, get_uuid() AS createdby, now() AS updated, get_uuid() AS updatedby, get_uuid() AS gl_item, get_uuid() AS business_partner, get_uuid() AS product, get_uuid() AS project, get_uuid() AS cost_center, get_uuid() AS first_dimension, get_uuid() AS second_dimension, get_uuid() AS received_in, get_uuid() AS paid_out FROM dual]]></view>
-  </database>
