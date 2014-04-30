@@ -67,5 +67,10 @@ isc.OBPickEditGridItem.addProperties({
 
   setDefaultFilter: function (defaultFilter) {
     this.defaultFilter = defaultFilter;
+  },
+
+  destroy: function () {
+    this.canvas.destroy();
+    this.Super('destroy', arguments);
   }
 });
