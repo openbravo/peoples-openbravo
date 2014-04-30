@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,6 +82,7 @@ public class ModelProvider implements OBSingleton {
   private HashMap<String, Reference> referencesById = null;
   // a list because for small numbers a list is faster than a hashmap
   private List<Entity> entitiesWithTreeType = null;
+  private List<Entity> entitiesWithImage = null;
   private List<Module> modules;
   private Session initsession;
 
@@ -227,6 +228,7 @@ public class ModelProvider implements OBSingleton {
       entitiesByTableName = new HashMap<String, Entity>();
       entitiesByTableId = new HashMap<String, Entity>();
       entitiesWithTreeType = new ArrayList<Entity>();
+      entitiesWithImage = new ArrayList<Entity>();
       for (final Table t : tables) {
         log.debug("Building model for table " + t.getName());
 
@@ -834,6 +836,11 @@ public class ModelProvider implements OBSingleton {
     newProp.setOneToMany(true);
     newProp.setChild(childProperty.isParent());
     parentEntity.addProperty(newProp);
+
+    // If the property references to AD_Image_id, add its entity to entitiesWithImage
+    if (childProperty.getColumnName().toUpperCase().equals("AD_IMAGE_ID")) {
+      entitiesWithImage.add(childProperty.getEntity());
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -1082,6 +1089,15 @@ public class ModelProvider implements OBSingleton {
       log.warn("No entity for tree type " + treeType);
     }
     return null;
+  }
+
+  /**
+   * Returns the entities that have images
+   * 
+   * @return Entity list
+   */
+  public List<Entity> getEntityWithImage() {
+    return entitiesWithImage;
   }
 
   /**
