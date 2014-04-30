@@ -134,8 +134,16 @@ public class ModelDataSourceService extends BaseDataSourceService {
         currentDepth++;
 
         boolean propNotFound = true;
-
-        final List<Property> currentEntityProperties = getEntityProperties(currentEntity);
+        final List<Property> currentEntityProperties;
+        if (currentProperty != null
+            && Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(currentProperty.getName())) {
+          // for computed columns get computed properties
+          currentEntity = currentProperty.getEntity();
+          currentEntityProperties = currentEntity.getComputedColumnProperties();
+        } else {
+          // other case get properties from entity
+          currentEntityProperties = getEntityProperties(currentEntity);
+        }
 
         for (Property prop : currentEntityProperties) {
           boolean tryProperty = false;
@@ -165,12 +173,23 @@ public class ModelDataSourceService extends BaseDataSourceService {
         }
 
         foundProperty = currentProperty;
-        currentEntity = foundProperty.getTargetEntity();
+        List<Property> computedColProperties = null;
+        if (getAllProperties
+            && Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(currentProperty.getName())) {
+          computedColProperties = currentEntity.getComputedColumnProperties();
+        } else {
+          currentEntity = foundProperty.getTargetEntity();
+        }
 
-        if (currentDepth == pathDepth && getAllProperties && currentEntity != null) {
+        if (currentDepth == pathDepth && getAllProperties
+            && (currentEntity != null || computedColProperties != null)) {
           // User just pressed a final dot (.) key - getting all properties
           // of current Entity
-          return getJSONResponse(getEntityProperties(currentEntity), propertyPath, 0);
+          if (Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(currentProperty.getName())) {
+            return getJSONResponse(computedColProperties, propertyPath, 0);
+          } else if (currentEntity != null) {
+            return getJSONResponse(getEntityProperties(currentEntity), propertyPath, 0);
+          }
         }
         index++;
       }
