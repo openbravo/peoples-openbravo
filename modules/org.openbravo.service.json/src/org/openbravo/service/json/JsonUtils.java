@@ -314,7 +314,11 @@ public class JsonUtils {
         return properties;
       }
       result = currentEntity.getProperty(part);
-      properties.add(result);
+      if (true || !result.isProxy()) {
+        // do not add explicit join to _computedColumns
+        properties.add(result);
+      }
+
       if (result.getTargetEntity() != null) {
         currentEntity = result.getTargetEntity();
       }
