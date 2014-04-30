@@ -146,6 +146,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuLayaway',
   kind: 'OB.UI.MenuAction',
+  id: 'OB.UI.id.Menu.Layaway.LayawayReceipt',
   permission: 'OBPOS_receipt.layawayReceipt',
   events: {
     onShowDivText: ''
@@ -169,42 +170,51 @@ enyo.kind({
       orderType: 2
     });
   },
+  updateVisibility: function (isVisible) {
+    if (!OB.POS.modelterminal.hasPermission(this.permission)) {
+      this.hide();
+      return;
+    }
+    if (!isVisible) {
+      this.hide();
+      return;
+    }
+    this.show();
+  },
   init: function (model) {
     this.model = model;
     var receipt = model.get('order'),
         me = this;
     receipt.on('change:isQuotation', function (model) {
       if (!model.get('isQuotation')) {
-        me.show();
+        me.updateVisibility(true);
       } else {
-        me.hide();
+        me.updateVisibility(false);
       }
     }, this);
     receipt.on('change:isEditable', function (newValue) {
       if (newValue) {
         if (newValue.get('isEditable') === false) {
-          this.setShowing(false);
+          me.updateVisibility(false);
           return;
         }
       }
-      this.setShowing(true);
+      me.updateVisibility(true);
     }, this);
 
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
       if (changedModel.isOrder()) {
         if (model.get('order').get('isEditable') && !this.model.get('order').get('isQuotation')) {
-          this.show();
-          this.adjustVisibilityBasedOnPermissions();
+          me.updateVisibility(true);
         } else {
-          this.hide();
+          me.updateVisibility(false);
         }
         return;
       }
       if (changedModel.isMultiOrder()) {
-        this.hide();
+        me.updateVisibility(false);
       }
     }, this);
-
   }
 });
 
