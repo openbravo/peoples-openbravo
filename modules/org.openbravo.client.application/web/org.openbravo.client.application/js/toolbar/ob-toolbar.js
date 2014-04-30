@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -1733,14 +1733,11 @@ OB.ToolbarUtils.showTree = function (view) {
   view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
 };
 
-OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
+OB.ToolbarUtils.showTreeGrid = function (view) {
   var treeGrid = view.treeGrid,
       viewGrid = view.viewGrid;
-  if (view.isShowingTree) {
-    viewGrid.show();
-    treeGrid.hide();
-    view.isShowingTree = false;
-  } else {
+
+  if (viewGrid && treeGrid) {
     // Copy the viewGrid fields to the treeGrid, so that both views always display the same fields
     treeGrid.setFields(treeGrid.getTreeGridFields(viewGrid.getFields()));
     treeGrid.copyCriteriaFromViewGrid();
@@ -1749,7 +1746,26 @@ OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
     treeGrid.checkShowFilterFunnelIcon(treeGrid.getCriteria());
     treeGrid.show();
     viewGrid.hide();
-    view.isShowingTree = true;
+  }
+  view.isShowingTree = true;
+};
+
+OB.ToolbarUtils.hideTreeGrid = function (view) {
+  var treeGrid = view.treeGrid,
+      viewGrid = view.viewGrid;
+
+  if (viewGrid && treeGrid) {
+    viewGrid.show();
+    treeGrid.hide();
+  }
+  view.isShowingTree = false;
+};
+
+OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
+  if (view.isShowingTree) {
+    OB.ToolbarUtils.hideTreeGrid(view);
+  } else {
+    OB.ToolbarUtils.showTreeGrid(view);
   }
 };
 
