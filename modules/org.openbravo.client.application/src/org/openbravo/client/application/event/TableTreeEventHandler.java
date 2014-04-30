@@ -86,7 +86,7 @@ public class TableTreeEventHandler extends EntityPersistenceEventObserver {
       OBCriteria<TableTree> obq = OBDal.getInstance().createCriteria(TableTree.class);
       obq.add(Restrictions.eq(TableTree.PROPERTY_TABLE, table));
       obq.add(Restrictions.eq(TableTree.PROPERTY_TREESTRUCTURE, treeStructure));
-      if (obq.count() > 0) {
+      if (obq.count() > 1) {
         String language = OBContext.getOBContext().getLanguage().getLanguage();
         ConnectionProvider conn = new DalConnectionProvider(false);
         throw new OBException(Utility.messageBD(conn, "OBUIAPP_OneADTreePerTable", language));
