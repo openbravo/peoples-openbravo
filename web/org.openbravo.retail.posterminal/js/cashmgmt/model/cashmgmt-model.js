@@ -123,7 +123,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
 
       function runSync() {
         if (OB.MobileApp.model.get('connectedToERP')) {
-          OB.MobileApp.model.runSyncProcess(null, null, function () {
+          OB.MobileApp.model.runSyncProcess(function () {
             OB.UTIL.showLoading(false);
             me.set("finished", true);
             if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashmanagement')) {

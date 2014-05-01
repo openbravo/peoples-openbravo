@@ -473,7 +473,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
             me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
           }
-          OB.MobileApp.model.runSyncProcess(null, null, null, function () {
+          OB.MobileApp.model.runSyncProcess(function () {
             OB.UTIL.calculateCurrentCash();
             OB.UTIL.showLoading(false);
             me.set("finished", true);

@@ -75,6 +75,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     final String cssPrefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/css/";
 
     final String[] resourceDependency = {
+        "model/changedbusinesspartners",
+        "model/order",
+        "model/cashup",
+        "model/cashmanagement",
         "login/model/login-model",
 
         // Common components
@@ -96,13 +100,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/productcharacteristic",
         "model/productchvalue",
         "model/brand",
-        "model/changedbusinesspartners",
         "model/changedbplocation",
         "model/returnreasons",
         "model/executor",
         "model/terminal-model",
-        "model/cashmanagement",
-        "model/cashup",
         "model/paymentmethodcashup",
         "model/taxcashup",
         "model/returnreasons",
@@ -157,7 +158,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalproductbrand",
 
         // Point of sale models
-        "model/order",
         "model/product-category",
         "model/product",
         "model/businesspartner",

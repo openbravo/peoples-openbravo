@@ -279,6 +279,43 @@
         }
       });
 
+      this.get('dataSyncModels').push({
+        model: OB.Model.ChangedBusinessPartners,
+        class: 'org.openbravo.retail.posterminal.CustomerLoader',
+        criteria: {}
+      });
+
+
+      this.get('dataSyncModels').push({
+        model: OB.Model.Order,
+        class: 'org.openbravo.retail.posterminal.OrderLoader',
+        criteria: {
+          hasbeenpaid: 'Y'
+        }
+      });
+
+      this.get('dataSyncModels').push({
+        model: OB.Model.CashManagement,
+        class: 'org.openbravo.retail.posterminal.ProcessCashMgmt',
+        criteria: {
+          'isbeingprocessed': 'N'
+        }
+      });
+
+      this.get('dataSyncModels').push({
+        model: OB.Model.CashUp,
+        class: 'org.openbravo.retail.posterminal.ProcessCashClose',
+        criteria: {
+          isbeingprocessed: 'Y'
+        },
+        postProcessingFunction: function (callback) {
+          OB.UTIL.initCashUp(function () {
+            OB.UTIL.deleteCashUps(cashups.models);
+            callback();
+          });
+        }
+      });
+
       OB.Model.Terminal.prototype.initialize.call(this);
 
       var me = this;
@@ -302,46 +339,9 @@
       });
     },
 
-    runSyncProcess: function (model, orderSuccessCallback, cashMgmtSuccessCallback, cashUpSuccessCallback) {
-      model = model || null;
+    runSyncProcess: function (successCallback, errorCallback) {
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
-        OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (customersChangedNotProcessed) { //OB.Dal.find success
-          var successCallback, errorCallback;
-          if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
-            OB.UTIL.processPaidOrders(model, function () {
-              if (orderSuccessCallback) {
-                orderSuccessCallback(model);
-              }
-              OB.UTIL.processCashMgmt(function () {
-                if (cashMgmtSuccessCallback) {
-                  cashMgmtSuccessCallback();
-                }
-                OB.UTIL.processCashUp(cashUpSuccessCallback);
-              });
-            });
-            return;
-          }
-          successCallback = function () {
-            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomersProcessed'));
-            OB.UTIL.processPaidOrders(model, function () {
-              if (orderSuccessCallback) {
-                orderSuccessCallback(model);
-              }
-              OB.UTIL.processCashMgmt(function () {
-                if (cashMgmtSuccessCallback) {
-                  cashMgmtSuccessCallback();
-                }
-                OB.UTIL.processCashUp(cashUpSuccessCallback);
-              });
-            });
-          };
-          errorCallback = function () {
-            //nothing to show
-          };
-          customersChangedNotProcessed.each(function (cus) {
-            cus.set('json', enyo.json.parse(cus.get('json')));
-          });
-        });
+        OB.MobileApp.model.syncAllModels(successCallback, errorCallback);
       });
     },
 
