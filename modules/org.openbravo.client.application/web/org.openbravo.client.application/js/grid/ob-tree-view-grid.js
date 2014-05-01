@@ -82,7 +82,7 @@ isc.OBTreeViewGrid.addProperties({
 
   // Sets the fields of the datasource and extends the transformRequest and transformResponse functions
   setDataSource: function (ds, fields) {
-    var me = this;
+    var ret, me = this;
     ds.transformRequest = function (dsRequest) {
       dsRequest.params = dsRequest.params || {};
       dsRequest.params._startRow = 0;
@@ -152,7 +152,11 @@ isc.OBTreeViewGrid.addProperties({
     ds.primaryKeys = {
       id: 'id'
     };
-    return this.Super('setDataSource', [ds, fields]);
+    ret = this.Super('setDataSource', [ds, fields]);
+    if (isc.isA.Function(this.view.executeWhenTreeGridDSReady)) {
+      this.view.executeWhenTreeGridDSReady();
+    }
+    return ret;
   },
 
   // Used to copy the fields from the OBViewGrid to the OBTreeViewGrid.
