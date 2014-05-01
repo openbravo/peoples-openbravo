@@ -341,7 +341,11 @@
 
     runSyncProcess: function (successCallback, errorCallback) {
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
-        OB.MobileApp.model.syncAllModels(successCallback, errorCallback);
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_SynchronizingDataMessage'));
+        OB.MobileApp.model.syncAllModels(function () {
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SynchronizationWasSuccessfullMessage'));
+          successCallback();
+        }, errorCallback);
       });
     },
 

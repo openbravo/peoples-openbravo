@@ -425,7 +425,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     taxes = new OB.DATA.OrderTaxes(receipt);
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
-    OB.MobileApp.model.syncAllModels();
+    //OB.MobileApp.model.syncAllModels();
+    this.processChangedCustomers();
     this.processChangedCustomerAddress();
 
     receipt.on('paymentAccepted', function () {
