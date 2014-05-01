@@ -83,7 +83,6 @@ enyo.kind({
   }
 });
 
-
 //Header of body
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.subwindowNewCustomer_bodyheader',
@@ -93,7 +92,8 @@ enyo.kind({
       components: [{
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave'
+          kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
+          id: 'OB.UI.id.customer.button.save'
         }]
       }, {
         style: 'display: table-cell;',
@@ -130,7 +130,6 @@ enyo.kind({
     }]
   }]
 });
-
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl',

@@ -15,7 +15,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BPLocation',
   classes: 'btnlink btnlink-small btnlink-gray',
-  style: 'float: right; width: 250px; text-overflow:ellipsis; white-space: nowrap; overflow: hidden;',
+  style: 'float: right; text-overflow:ellipsis; white-space: nowrap; overflow: hidden; margin: 5px 0px 5px 2px; padding: 5px',
   published: {
     order: null
   },

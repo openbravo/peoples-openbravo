@@ -48,7 +48,7 @@ public class BusinessPartner extends ProcessHQLQuery {
                 + "bpl.$readableClientCriteria AND "
                 + "bpl.$naturalOrgCriteria AND"
                 + "(bpl.$incrementalUpdateCriteria or bpl.businessPartner.$incrementalUpdateCriteria or bpl.locationAddress.$incrementalUpdateCriteria or ulist.$incrementalUpdateCriteria) AND bpl.businessPartner.active=true"
-                + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.$readableClientCriteria AND "
+                + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.invoiceToAddress = true and bpls.$readableClientCriteria AND "
                 + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
                 + " and (not exists (select 1 from ADUser usr where usr.businessPartner = bpl.businessPartner)) "
                 + " GROUP BY " + regularBusinessPartnerHQLProperties.getHqlGroupBy()
@@ -63,7 +63,7 @@ public class BusinessPartner extends ProcessHQLQuery {
                 + "bpl.$readableClientCriteria AND "
                 + "bpl.$naturalOrgCriteria AND"
                 + " (bpl.$incrementalUpdateCriteria or bpl.businessPartner.$incrementalUpdateCriteria or bpl.locationAddress.$incrementalUpdateCriteria or ulist.$incrementalUpdateCriteria) AND bpl.businessPartner.active=true"
-                + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.$readableClientCriteria AND "
+                + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.invoiceToAddress = true and bpls.$readableClientCriteria AND "
                 + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
                 + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner is not null group by ulist2.businessPartner))"
                 + " GROUP BY " + regularBusinessPartnerHQLProperties.getHqlGroupBy()

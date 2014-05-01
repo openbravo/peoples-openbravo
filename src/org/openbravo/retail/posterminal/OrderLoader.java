@@ -120,6 +120,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
 
   @Override
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
+
     executeHooks(orderPreProcesses, jsonorder, null, null, null);
     boolean wasPaidOnCredit = false;
     boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
@@ -1278,7 +1279,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       }
 
       BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
-      BigDecimal writeoffAmt = amt.subtract(gross);
+      BigDecimal writeoffAmt = amt.subtract(gross.abs());
 
       for (int i = 0; i < payments.length(); i++) {
         JSONObject payment = payments.getJSONObject(i);
@@ -1324,12 +1325,19 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         OBDal.getInstance().save(invoice);
       }
 
+      BigDecimal diffPaid = BigDecimal.ZERO;
+      if ((gross.compareTo(BigDecimal.ZERO) > 0) && (gross.compareTo(amt) > 0)) {
+        diffPaid = gross.subtract(amt);
+      } else if ((gross.compareTo(BigDecimal.ZERO) < 0)
+          && (gross.compareTo(amt.multiply(new BigDecimal("-1"))) < 0)) {
+        diffPaid = gross.subtract(amt.multiply(new BigDecimal("-1")));
+      }
       // if (payments.length() == 0 ) or (writeoffAmt<0) means that use credit was used
-      if ((payments.length() == 0 || BigDecimal.ZERO.compareTo(writeoffAmt) > 0) && invoice != null) {
+      if ((payments.length() == 0 || diffPaid.compareTo(BigDecimal.ZERO) != 0) && invoice != null) {
         FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
             FIN_PaymentScheduleDetail.class);
         paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
-        paymentScheduleDetail.setAmount(writeoffAmt.negate());
+        paymentScheduleDetail.setAmount(diffPaid);
         if (paymentScheduleInvoice != null) {
           paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
         }
@@ -1365,10 +1373,14 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       if (amount.signum() == 0) {
         return;
       }
-      if ((writeoffAmt.signum() == 1 && (!totalIsNegative || isLayaway))
-          || (writeoffAmt.signum() == -1 && totalIsNegative)) {
+      if (writeoffAmt.signum() == 1) {
         // there was an overpayment, we need to take into account the writeoffamt
-        amount = amount.subtract(writeoffAmt).setScale(stdPrecision, RoundingMode.HALF_UP);
+        if (totalIsNegative) {
+          amount = amount.subtract(writeoffAmt.negate()).setScale(stdPrecision,
+              RoundingMode.HALF_UP);
+        } else {
+          amount = amount.subtract(writeoffAmt.abs()).setScale(stdPrecision, RoundingMode.HALF_UP);
+        }
       }
 
       FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
@@ -1404,7 +1416,6 @@ public class OrderLoader extends POSDataSynchronizationProcess {
             stdPrecision, RoundingMode.HALF_UP));
 
         OBDal.getInstance().save(origDetail);
-
       }
 
       HashMap<String, BigDecimal> paymentAmount = new HashMap<String, BigDecimal>();
@@ -1431,10 +1442,14 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), calculatedDate, order.getOrganization(), null, detail, paymentAmount,
           false, false, order.getCurrency(), mulrate, origAmount);
-      if ((writeoffAmt.signum() == 1 && (!totalIsNegative || isLayaway))
-          || (writeoffAmt.signum() == -1 && totalIsNegative)) {
-        FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
-            .getGlitemWriteoff());
+      if (writeoffAmt.signum() == 1) {
+        if (totalIsNegative) {
+          FIN_AddPayment.saveGLItem(finPayment, writeoffAmt.negate(), paymentType
+              .getPaymentMethod().getGlitemWriteoff());
+        } else {
+          FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
+              .getGlitemWriteoff());
+        }
         // Update Payment In amount after adding GLItem
         finPayment.setAmount(origAmount.setScale(stdPrecision, RoundingMode.HALF_UP));
       }

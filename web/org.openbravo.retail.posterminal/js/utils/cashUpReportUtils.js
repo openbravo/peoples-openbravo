@@ -58,11 +58,11 @@
             gross = line.get('discountedGross');
           }
           //Sales order: Positive line
-          if (line.get('qty') > 0 && orderType !== 3) {
+          if (line.get('qty') > 0 && orderType !== 3 && !order.get('isLayaway')) {
             cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), line.get('net')));
             cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), gross));
             //Return from customer or Sales with return: Negative line
-          } else if (line.get('qty') < 0 && orderType !== 3) {
+          } else if (line.get('qty') < 0 && orderType !== 3 && !order.get('isLayaway')) {
             cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), -line.get('net')));
             cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), -gross));
             //Void Layaway
@@ -78,26 +78,31 @@
         });
         cashUp.at(0).set('totalRetailTransactions', OB.DEC.sub(cashUp.at(0).get('grossSales'), cashUp.at(0).get('grossReturns')));
         OB.Dal.save(cashUp.at(0), null, null);
+
+        // group and sum the taxes
         cashuptaxes = [];
-        _.each(order.get('lines').models, function (line) {
-          for (i = 0; i < line.get('taxLines').length; i++) {
-            if (orderType === 1 || line.get('qty') < 0) {
-              taxOrderType = 1;
-            } else {
-              taxOrderType = 0;
-            }
+        order.get('lines').each(function (line, taxIndex) {
+          var taxLines, taxLine;
+          taxLines = line.get('taxLines');
+          if (orderType === 1 || line.get('qty') < 0) {
+            taxOrderType = 1;
+          } else {
+            taxOrderType = 0;
+          }
+
+          _.each(taxLines, function (taxLine) {
             if (line.get('qty') > 0 && orderType !== 3) {
-              taxAmount = line.get('taxLines')[i].amount;
+              taxAmount = taxLine.amount;
             } else {
-              taxAmount = -line.get('taxLines')[i].amount;
+              taxAmount = -taxLine.amount;
             }
             cashuptaxes.push({
-              taxName: line.get('taxLines')[i].name,
+              taxName: taxLine.name,
               taxAmount: taxAmount,
               taxOrderType: taxOrderType.toString(),
               cashupID: cashUp.at(0).get('id')
             });
-          }
+          });
         });
 
         OB.Dal.find(OB.Model.PaymentMethodCashUp, {
@@ -105,7 +110,7 @@
         }, function (payMthds) { //OB.Dal.find success
           _.each(order.get('payments').models, function (payment) {
             auxPay = payMthds.filter(function (payMthd) {
-              return payMthd.get('searchKey') === payment.get('kind');
+              return payMthd.get('searchKey') === payment.get('kind') && !payment.get('isPrePayment');
             })[0];
             if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
               return;
@@ -218,6 +223,7 @@
                 totalSales: OB.DEC.Zero,
                 totalReturns: OB.DEC.Zero,
                 rate: payment.rate,
+                isocode: payment.isocode,
                 cashup_id: uuid
               }), null, null, true);
             }, this);
@@ -272,7 +278,7 @@
                 } else {
                   return OB.DEC.sub(accum, trx.get('origAmount'));
                 }
-                checkEnoughCashAvailable
+                // checkEnoughCashAvailable
               }, 0);
             cash = OB.DEC.add(OB.DEC.add(OB.DEC.mul(startingCash, rate), OB.DEC.sub(totalSales, totalReturns)), cashMgmt);
             OB.POS.terminal.terminal.paymentnames[paymentType.payment.searchKey].currentCash = cash;

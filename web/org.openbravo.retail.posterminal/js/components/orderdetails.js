@@ -15,7 +15,7 @@ enyo.kind({
     order: null
   },
   attributes: {
-    style: 'float: left; padding: 10px 10px 0px 10px; font-weight: bold; color: #6CB33F;'
+    style: 'padding: 13px 50px 15px 10px; font-weight: bold; color: #6CB33F;'
   },
   initComponents: function () {},
   renderData: function (docNo) {

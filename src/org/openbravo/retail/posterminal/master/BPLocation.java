@@ -56,7 +56,6 @@ public class BPLocation extends ProcessHQLQuery {
             + "WHERE "
             + "bp.customer = true AND "
             + "bp.priceList IS NOT NULL AND "
-            + "(bp.$incrementalUpdateCriteria)  AND "
             + "bploc.businessPartner.id = bp.id) AND "
             + "(bploc.$incrementalUpdateCriteria  OR bploc.locationAddress.$incrementalUpdateCriteria) AND "
             + "bploc.$readableClientCriteria AND " + "bploc.$naturalOrgCriteria "

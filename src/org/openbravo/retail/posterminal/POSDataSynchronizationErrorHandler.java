@@ -27,7 +27,7 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
   private static final Logger log = Logger.getLogger(DataSynchronizationProcess.class);
 
   @Override
-  public void handleError(Exception e, Entity entity, JSONObject result, JSONObject jsonRecord) {
+  public void handleError(Throwable t, Entity entity, JSONObject result, JSONObject jsonRecord) {
 
     // Creation of the order failed. We will now store the order in the import errors table
     String posTerminalId = null;
@@ -36,7 +36,7 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     } catch (JSONException e1) {
       // won't happen
     }
-    log.error("An error happened when processing a record: ", e);
+    log.error("An error happened when processing a record: ", t);
     OBPOSErrors errorEntry = null;
     if (jsonRecord.has("posErrorId")) {
       try {
@@ -47,7 +47,7 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     } else {
       errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
     }
-    errorEntry.setError(getErrorMessage(e));
+    errorEntry.setError(getErrorMessage(t));
     errorEntry.setOrderstatus("N");
     errorEntry.setJsoninfo(jsonRecord.toString());
     errorEntry.setTypeofdata(entity.getName());
@@ -55,7 +55,7 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
         .setObposApplications(OBDal.getInstance().get(OBPOSApplications.class, posTerminalId));
     OBDal.getInstance().save(errorEntry);
     OBDal.getInstance().flush();
-    log.error("Error while loading order", e);
+    log.error("Error while loading order", t);
 
   }
 

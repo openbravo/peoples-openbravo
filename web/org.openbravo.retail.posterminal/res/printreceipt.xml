@@ -190,6 +190,9 @@
     <%
       var totAmount = 0;
       var taxes = order.get('taxes');
+      taxes = _.sortBy(taxes, function(tax){
+          return tax.name;
+      });
       for (var t in taxes) {
         totAmount += taxes[t].amount;
     %>
