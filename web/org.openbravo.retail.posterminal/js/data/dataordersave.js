@@ -160,7 +160,7 @@
               me.ordersToSend += 1;
               if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
                 model.get('multiOrders').resetValues();
-                OB.MobileApp.model.runSyncProcess(model, successCallback);
+                OB.MobileApp.model.runSyncProcess(successCallback);
                 me.ordersToSend = OB.DEC.Zero;
               }
 
