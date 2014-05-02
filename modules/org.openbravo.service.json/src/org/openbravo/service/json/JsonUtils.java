@@ -300,7 +300,7 @@ public class JsonUtils {
         return properties;
       }
       result = currentEntity.getProperty(part);
-      if (true || !result.isProxy()) {
+      if (!result.isProxy()) {
         // do not add explicit join to _computedColumns
         properties.add(result);
       }
