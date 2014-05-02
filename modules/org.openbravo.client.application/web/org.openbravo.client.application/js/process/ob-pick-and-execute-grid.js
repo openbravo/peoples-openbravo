@@ -678,5 +678,12 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('removeRecord', arguments);
 
     this.validateRows();
+  },
+
+  destroy: function () {
+    if (this.dataSource) {
+      this.dataSource.destroy();
+    }
+    this.Super('destroy', arguments);
   }
 });
