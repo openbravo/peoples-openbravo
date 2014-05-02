@@ -97,7 +97,7 @@
               taxAmount = -taxLine.amount;
             }
             cashuptaxes.push({
-              taxName: taxLine.name
+              taxName: taxLine.name,
               taxAmount: taxAmount,
               taxOrderType: taxOrderType.toString(),
               cashupID: cashUp.at(0).get('id')
