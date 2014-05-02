@@ -41,6 +41,8 @@ isc.OBPickEditGridItem.addProperties({
       };
     } else {
       this.canvas = isc.OBPickAndExecuteView.create({
+        // height = filter height + title height + (cell_height * number_of_cells) 
+        height: 45 + OB.Styles.Process.PickAndExecute.gridCellHeight * this.displayedRowsNumber,
         viewProperties: this.viewProperties,
         view: this.view,
         parameterName: this.name
