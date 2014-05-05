@@ -47,7 +47,7 @@ isc.OBParameterWindowView.addProperties({
 
   gridFields: [],
   members: [],
-  
+
   initWidget: function () {
     var i, field, items = [],
         buttonLayout = [],
@@ -168,7 +168,7 @@ isc.OBParameterWindowView.addProperties({
       view: this
     });
     this.members.push(this.messageBar);
-    
+
     newShowIf = function (item, value, form, values) {
       var currentValues = isc.shallowClone(values || form.view.getCurrentValues()),
           originalShowIfValue = false;
@@ -578,7 +578,7 @@ isc.OBParameterWindowView.addProperties({
     for (i = 0; i < fields.length; i++) {
       field = form.getField(i);
       if (field.readOnlyIf && field.setDisabled) {
-        field.setDisabled(field.readOnlyIf(form.getValues(),this.sourceView.getContextInfo(false, true, true, true)));
+        field.setDisabled(field.readOnlyIf(form.getValues(), this.sourceView.getContextInfo(false, true, true, true)));
       }
     }
   },
