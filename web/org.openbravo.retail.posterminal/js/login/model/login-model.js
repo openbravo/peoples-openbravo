@@ -349,7 +349,7 @@
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_SynchronizingDataMessage'));
         OB.MobileApp.model.syncAllModels(function () {
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SynchronizationWasSuccessfullMessage'));
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SynchronizationWasSuccessfulMessage'));
           if (successCallback) {
             successCallback();
           }
