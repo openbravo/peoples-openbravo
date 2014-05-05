@@ -48,8 +48,13 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
-    Property imageProperty = event.getTargetInstance().getEntity()
-        .getPropertyByColumnName("AD_Image_id");
+    String propertyName = getPropertyName(event.getTargetInstance().getEntity());
+    Property imageProperty = event
+        .getTargetInstance()
+        .getEntity()
+        .getProperty(
+            propertyName.substring(0, propertyName.length()
+                - event.getTargetInstance().getEntityName().length()));
     if (event.getCurrentState(imageProperty) != null) {
 
       if (event.getCurrentState(imageProperty) instanceof Image) {
@@ -73,8 +78,13 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
-    Property imageProperty = event.getTargetInstance().getEntity()
-        .getPropertyByColumnName("AD_Image_id");
+    String propertyName = getPropertyName(event.getTargetInstance().getEntity());
+    Property imageProperty = event
+        .getTargetInstance()
+        .getEntity()
+        .getProperty(
+            propertyName.substring(0, propertyName.length()
+                - event.getTargetInstance().getEntityName().length()));
 
     if (event.getPreviousState(imageProperty) != null
         && event.getCurrentState(imageProperty) != event.getPreviousState(imageProperty)) {
@@ -96,9 +106,20 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] getImageEntities() {
     ArrayList<Entity> entityArray = new ArrayList<Entity>();
-    for (Entity entity : ModelProvider.getInstance().getEntityWithImage()) {
+    for (Entity entity : ModelProvider.getInstance().getEntityWithImage().values()) {
       entityArray.add(entity);
     }
     return (Entity[]) entityArray.toArray(new Entity[entityArray.size()]);
+  }
+
+  private static String getPropertyName(Entity entity) {
+    String property = new String();
+    for (String key : ModelProvider.getInstance().getEntityWithImage().keySet()) {
+      if (ModelProvider.getInstance().getEntityWithImage().get(key).equals(entity)) {
+        property = key;
+        break;
+      }
+    }
+    return property;
   }
 }

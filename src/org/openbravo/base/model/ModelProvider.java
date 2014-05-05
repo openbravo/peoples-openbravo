@@ -82,7 +82,7 @@ public class ModelProvider implements OBSingleton {
   private HashMap<String, Reference> referencesById = null;
   // a list because for small numbers a list is faster than a hashmap
   private List<Entity> entitiesWithTreeType = null;
-  private List<Entity> entitiesWithImage = null;
+  private HashMap<String, Entity> entitiesWithImage = null;
   private List<Module> modules;
   private Session initsession;
 
@@ -228,7 +228,7 @@ public class ModelProvider implements OBSingleton {
       entitiesByTableName = new HashMap<String, Entity>();
       entitiesByTableId = new HashMap<String, Entity>();
       entitiesWithTreeType = new ArrayList<Entity>();
-      entitiesWithImage = new ArrayList<Entity>();
+      entitiesWithImage = new HashMap<String, Entity>();
       for (final Table t : tables) {
         log.debug("Building model for table " + t.getName());
 
@@ -837,9 +837,12 @@ public class ModelProvider implements OBSingleton {
     newProp.setChild(childProperty.isParent());
     parentEntity.addProperty(newProp);
 
-    // If the property references to AD_Image_id, add its entity to entitiesWithImage
-    if (childProperty.getColumnName().toUpperCase().equals("AD_IMAGE_ID")) {
-      entitiesWithImage.add(childProperty.getEntity());
+    // If the Entity is ADImage, add its entity to entitiesWithImage
+    if (parentEntity.getName().equals("ADImage")) {
+      entitiesWithImage.put(childProperty.getName() + childProperty.getEntity(),
+          childProperty.getEntity());
+      System.out.println("Entity " + childProperty.getEntity());
+      System.out.println("Property " + childProperty.getName());
     }
   }
 
@@ -1096,7 +1099,7 @@ public class ModelProvider implements OBSingleton {
    * 
    * @return Entity list
    */
-  public List<Entity> getEntityWithImage() {
+  public HashMap<String, Entity> getEntityWithImage() {
     return entitiesWithImage;
   }
 
