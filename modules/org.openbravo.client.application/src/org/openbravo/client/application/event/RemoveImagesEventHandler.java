@@ -20,6 +20,7 @@
 package org.openbravo.client.application.event;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.enterprise.event.Observes;
 
@@ -48,24 +49,22 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
-    String propertyName = getPropertyName(event.getTargetInstance().getEntity());
-    Property imageProperty = event
-        .getTargetInstance()
-        .getEntity()
-        .getProperty(
-            propertyName.substring(0, propertyName.length()
-                - event.getTargetInstance().getEntityName().length()));
-    if (event.getCurrentState(imageProperty) != null) {
+    for (String property : getImageProperties(event.getTargetInstance().getEntity())) {
 
-      if (event.getCurrentState(imageProperty) instanceof Image) {
-        Image bob = (Image) event.getCurrentState(imageProperty);
+      Property imageProperty = event.getTargetInstance().getEntity().getProperty(property);
 
-        if (bob != null) {
-          OBContext.setAdminMode(true);
-          try {
-            OBDal.getInstance().remove(bob);
-          } finally {
-            OBContext.restorePreviousMode();
+      if (event.getCurrentState(imageProperty) != null) {
+
+        if (event.getCurrentState(imageProperty) instanceof Image) {
+          Image bob = (Image) event.getCurrentState(imageProperty);
+
+          if (bob != null) {
+            OBContext.setAdminMode(true);
+            try {
+              OBDal.getInstance().remove(bob);
+            } finally {
+              OBContext.restorePreviousMode();
+            }
           }
         }
       }
@@ -78,26 +77,23 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
-    String propertyName = getPropertyName(event.getTargetInstance().getEntity());
-    Property imageProperty = event
-        .getTargetInstance()
-        .getEntity()
-        .getProperty(
-            propertyName.substring(0, propertyName.length()
-                - event.getTargetInstance().getEntityName().length()));
+    for (String property : getImageProperties(event.getTargetInstance().getEntity())) {
 
-    if (event.getPreviousState(imageProperty) != null
-        && event.getCurrentState(imageProperty) != event.getPreviousState(imageProperty)) {
+      Property imageProperty = event.getTargetInstance().getEntity().getProperty(property);
 
-      if (event.getPreviousState(imageProperty) instanceof Image) {
-        Image bob = (Image) event.getPreviousState(imageProperty);
+      if (event.getPreviousState(imageProperty) != null
+          && event.getCurrentState(imageProperty) != event.getPreviousState(imageProperty)) {
 
-        if (bob != null) {
-          OBContext.setAdminMode(true);
-          try {
-            OBDal.getInstance().remove(bob);
-          } finally {
-            OBContext.restorePreviousMode();
+        if (event.getPreviousState(imageProperty) instanceof Image) {
+          Image bob = (Image) event.getPreviousState(imageProperty);
+
+          if (bob != null) {
+            OBContext.setAdminMode(true);
+            try {
+              OBDal.getInstance().remove(bob);
+            } finally {
+              OBContext.restorePreviousMode();
+            }
           }
         }
       }
@@ -106,20 +102,13 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] getImageEntities() {
     ArrayList<Entity> entityArray = new ArrayList<Entity>();
-    for (Entity entity : ModelProvider.getInstance().getEntityWithImage().values()) {
+    for (Entity entity : ModelProvider.getInstance().getEntityWithImage().keySet()) {
       entityArray.add(entity);
     }
     return (Entity[]) entityArray.toArray(new Entity[entityArray.size()]);
   }
 
-  private static String getPropertyName(Entity entity) {
-    String property = new String();
-    for (String key : ModelProvider.getInstance().getEntityWithImage().keySet()) {
-      if (ModelProvider.getInstance().getEntityWithImage().get(key).equals(entity)) {
-        property = key;
-        break;
-      }
-    }
-    return property;
+  private static List<String> getImageProperties(Entity entity) {
+    return ModelProvider.getInstance().getEntityWithImage().get(entity);
   }
 }
