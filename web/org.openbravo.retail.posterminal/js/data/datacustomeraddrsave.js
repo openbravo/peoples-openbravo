@@ -27,6 +27,8 @@
           customerAddrListToChange;
 
       bpLocToSave.set('isbeingprocessed', 'N');
+      this.customerAddr.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
+      bpLocToSave.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
       if (customerAddrId) {
         this.customerAddr.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
         bpLocToSave.set('json', JSON.stringify(this.customerAddr.serializeToJSON()));
@@ -80,7 +82,7 @@
             };
             customerAddrListToChange = new OB.Collection.ChangedBPlocationList();
             customerAddrListToChange.add(bpLocToSave);
-            OB.UTIL.processCustomerAddr(customerAddrListToChange, successCallback, null);
+            OB.MobileApp.model.runSyncProcess(successCallback);
           }
         }, function () {
           //error saving BP changes with changes in changedbusinesspartners

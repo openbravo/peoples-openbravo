@@ -285,6 +285,12 @@
         criteria: {}
       });
 
+      this.get('dataSyncModels').push({
+        model: OB.Model.ChangedBPlocation,
+        class: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
+        criteria: {}
+      });
+
 
       this.get('dataSyncModels').push({
         model: OB.Model.Order,

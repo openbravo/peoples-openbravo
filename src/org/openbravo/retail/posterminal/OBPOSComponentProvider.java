@@ -76,6 +76,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] resourceDependency = {
         "model/changedbusinesspartners",
+        "model/changedbplocation",
         "model/order",
         "model/cashup",
         "model/cashmanagement",
@@ -100,7 +101,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/productcharacteristic",
         "model/productchvalue",
         "model/brand",
-        "model/changedbplocation",
         "model/returnreasons",
         "model/executor",
         "model/terminal-model",

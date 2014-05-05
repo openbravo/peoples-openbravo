@@ -10,129 +10,48 @@ package org.openbravo.retail.posterminal;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.SQLException;
-
-import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.service.json.JsonConstants;
 
-public class CustomerAddrLoader extends JSONProcessSimple {
+@DataSynchronization(entity = "BusinessPartnerLocation")
+public class CustomerAddrLoader extends POSDataSynchronizationProcess {
 
   private static final Logger log = Logger.getLogger(CustomerAddrLoader.class);
 
   @Override
-  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
-
-    Object jsonCustomerAddr = jsonsent.get("customerAddr");
-    JSONArray array = null;
-    JSONObject result = new JSONObject();
-    if (jsonCustomerAddr instanceof JSONObject) {
-      array = new JSONArray();
-      array.put(jsonCustomerAddr);
-    } else if (jsonCustomerAddr instanceof String) {
-      JSONObject obj = new JSONObject((String) jsonCustomerAddr);
-      array = new JSONArray();
-      array.put(obj);
-    } else if (jsonCustomerAddr instanceof JSONArray) {
-      array = (JSONArray) jsonCustomerAddr;
-    }
-    result = this.saveCustomerAddr(array, jsonsent.getString("terminalId"));
-    return result;
-  }
-
-  public JSONObject saveCustomerAddr(JSONArray jsonarray, Object terminalId) throws JSONException {
-    boolean error = false;
+  public JSONObject saveRecord(JSONObject jsonCustomerAddr) throws Exception {
     OBContext.setAdminMode(false);
     try {
-      if (RequestContext.get().getSessionAttribute("customerTerminalId|" + terminalId) == null) {
-        RequestContext.get().setSessionAttribute("customerTerminalId|" + terminalId, true);
-        for (int i = 0; i < jsonarray.length(); i++) {
-          JSONObject jsonCustomerAddr = jsonarray.getJSONObject(i);
-          String posTerminalId = jsonCustomerAddr.getString("posTerminal");
-          try {
-            JSONObject result = saveCustomerAddr(jsonCustomerAddr);
-            if (!result.get(JsonConstants.RESPONSE_STATUS).equals(
-                JsonConstants.RPCREQUEST_STATUS_SUCCESS)) {
-              log.error("There was an error importing order: " + jsonCustomerAddr.toString());
-              error = true;
-            }
-            if (i % 1 == 0) {
-              OBDal.getInstance().flush();
-              OBDal.getInstance().getConnection().commit();
-              OBDal.getInstance().getSession().clear();
-            }
-          } catch (Exception e) {
-            // Creation of the customer failed. We will now store
-            // the customer in the import errors
-            // table
-            log.error("An error happened when processing a customer: ", e);
-            OBDal.getInstance().rollbackAndClose();
+      Location location = null;
 
-            OBPOSErrors errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
-            errorEntry.setError(getErrorMessage(e));
-            errorEntry.setOrderstatus("N");
-            errorEntry.setJsoninfo(jsonCustomerAddr.toString());
-            errorEntry.setTypeofdata("BP");
-            errorEntry.setObposApplications(OBDal.getInstance().get(OBPOSApplications.class,
-                posTerminalId));
-            OBDal.getInstance().save(errorEntry);
-            OBDal.getInstance().flush();
+      BusinessPartner customer = OBDal.getInstance().get(BusinessPartner.class,
+          jsonCustomerAddr.getString("bpartner"));
+      location = getCustomerAddress(jsonCustomerAddr.getString("id"));
 
-            log.error("Error while loading customer", e);
-            try {
-              OBDal.getInstance().getConnection().commit();
-            } catch (SQLException e1) {
-              // this won't happen
-            }
-          }
-        }
+      if (location.getId() == null) {
+        location = createBPartnerAddr(customer, jsonCustomerAddr);
+      } else {
+        location = editBPartnerAddr(customer, location, jsonCustomerAddr);
       }
 
+      OBDal.getInstance().flush();
     } finally {
-      RequestContext.get().removeSessionAttribute("customerTerminalId|" + terminalId);
       OBContext.restorePreviousMode();
     }
-    JSONObject jsonResponse = new JSONObject();
-    if (error) {
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
-      jsonResponse.put("result", "0");
-    } else {
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      jsonResponse.put("result", "0");
-    }
-    return jsonResponse;
-  }
-
-  public JSONObject saveCustomerAddr(JSONObject jsonCustomerAddr) throws Exception {
-    Location location = null;
-
-    BusinessPartner customer = OBDal.getInstance().get(BusinessPartner.class,
-        jsonCustomerAddr.getString("bpartner"));
-    location = getCustomerAddress(jsonCustomerAddr.getString("id"));
-
-    if (location.getId() == null) {
-      location = createBPartnerAddr(customer, jsonCustomerAddr);
-    } else {
-      location = editBPartnerAddr(customer, location, jsonCustomerAddr);
-    }
-
-    OBDal.getInstance().flush();
-
     final JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     jsonResponse.put("result", "0");
