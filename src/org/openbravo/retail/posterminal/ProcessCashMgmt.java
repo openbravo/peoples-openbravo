@@ -15,16 +15,16 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.retail.config.CashManagementEvents;
 import org.openbravo.service.json.JsonConstants;
 
-@Qualifier("Entity:FIN_Finacc_Transaction")
+@DataSynchronization(entity = "FIN_Finacc_Transaction")
 public class ProcessCashMgmt extends POSDataSynchronizationProcess {
 
   private static final Logger log = Logger.getLogger(ProcessCashMgmt.class);

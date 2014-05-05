@@ -25,16 +25,16 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.service.json.JsonConstants;
 
-@Qualifier("Entity:BusinessPartner")
+@DataSynchronization(entity = "BusinessPartner")
 public class CustomerLoader extends POSDataSynchronizationProcess {
 
   private static final Logger log = Logger.getLogger(CustomerLoader.class);

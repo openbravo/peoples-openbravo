@@ -16,17 +16,17 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
-@Qualifier("Entity:OBPOS_App_Cashup")
+@DataSynchronization(entity = "OBPOS_App_Cashup")
 public class ProcessCashClose extends POSDataSynchronizationProcess {
 
   private static final Logger log = Logger.getLogger(ProcessCashClose.class);

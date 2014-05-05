@@ -42,7 +42,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -54,6 +53,7 @@ import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
@@ -94,7 +94,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
 
-@Qualifier("Entity:Order")
+@DataSynchronization(entity = "Order")
 public class OrderLoader extends POSDataSynchronizationProcess {
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
