@@ -308,9 +308,9 @@
         criteria: {
           isbeingprocessed: 'Y'
         },
-        postProcessingFunction: function (callback) {
+        postProcessingFunction: function (data, callback) {
           OB.UTIL.initCashUp(function () {
-            OB.UTIL.deleteCashUps(cashups.models);
+            OB.UTIL.deleteCashUps(data);
             callback();
           });
         }
@@ -344,7 +344,9 @@
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_SynchronizingDataMessage'));
         OB.MobileApp.model.syncAllModels(function () {
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SynchronizationWasSuccessfullMessage'));
-          successCallback();
+          if (successCallback) {
+            successCallback();
+          }
         }, errorCallback);
       });
     },
