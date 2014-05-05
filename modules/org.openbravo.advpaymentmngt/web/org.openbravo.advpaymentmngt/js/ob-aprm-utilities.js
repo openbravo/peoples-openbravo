@@ -219,25 +219,6 @@ OB.APRM.selectDoubtfulDebtPickAndEdit = function (grid, record, state) {
 OB.APRM.addNewGLItem = function (grid) {
   var selectedRecord = grid.view.parentWindow.views[0].getParentRecord();
   var returnObject = isc.addProperties({}, grid.data[0]);
-  var indRow, allRows = grid.data,
-      row, totalOutstanding = new BigDecimal("0");
-  for (indRow = 0; indRow < allRows.length; indRow++) {
-    row = allRows[indRow];
-    totalOutstanding = totalOutstanding.add(new BigDecimal(String(row.outstanding)));
-  }
-  returnObject.outstanding = Number(new BigDecimal(String(selectedRecord.outstandingAmount)).subtract(totalOutstanding));
-  returnObject.received = 0;
-  returnObject.expected = 0;
-  returnObject.awaitingExecutionAmount = 0;
-  returnObject.id = '';
-  returnObject.paymentMethod = selectedRecord.paymentMethod;
-  returnObject['paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER] = selectedRecord['paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
-  returnObject.currency = selectedRecord.currency;
-  returnObject['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER] = selectedRecord['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
-  returnObject.duedate = selectedRecord.invoiceDate;
-  //General properties
   returnObject.organization = selectedRecord.organization;
-  returnObject.client = selectedRecord.client;
-  returnObject.invoice = selectedRecord.id;
   return returnObject;
 };
