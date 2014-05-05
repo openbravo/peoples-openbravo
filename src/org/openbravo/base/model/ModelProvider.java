@@ -841,8 +841,6 @@ public class ModelProvider implements OBSingleton {
     if (parentEntity.getName().equals("ADImage")) {
       entitiesWithImage.put(childProperty.getName() + childProperty.getEntity(),
           childProperty.getEntity());
-      System.out.println("Entity " + childProperty.getEntity());
-      System.out.println("Property " + childProperty.getName());
     }
   }
 
