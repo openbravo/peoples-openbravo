@@ -52,7 +52,7 @@
       },
     </#if>
     <#if param.readOnlyIf != "" >
-      readOnlyIf: function(currentValues) {
+      readOnlyIf: function(currentValues,context) {
         return (${param.readOnlyIf});
       },
     </#if>
