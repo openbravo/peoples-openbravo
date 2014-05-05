@@ -118,12 +118,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/obpos-approval",
         "main",
         // Web POS window
-        "utils/ordersSyncUtils",
-        "utils/customersSyncUtils",
-        "utils/customerAddrSyncUtils",
-        "utils/cashMgmtSyncUtils",
         "utils/cashUpReportUtils",
-        "utils/cashUpSyncUtils",
         "components/keypadcoins",
         "data/dataordersave",
         "data/dataordertaxes",
