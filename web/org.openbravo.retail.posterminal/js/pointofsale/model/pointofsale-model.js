@@ -96,65 +96,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       //OB.Dal.find error
     });
   },
-  processChangedCustomers: function () {
-    // Processes the customers who has been changed
-    var me = this;
-
-    if (OB.POS.modelterminal.get('connectedToERP')) {
-      OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (customersChangedNotProcessed) { //OB.Dal.find success
-        var successCallback, errorCallback;
-        if (!customersChangedNotProcessed || customersChangedNotProcessed.length === 0) {
-          OB.UTIL.processPaidOrders(me);
-          me.loadUnpaidOrders();
-          me.loadCheckedMultiorders();
-          return;
-        }
-        successCallback = function () {
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomersProcessed'));
-
-          OB.UTIL.processPaidOrders(me);
-          me.loadUnpaidOrders();
-          me.loadCheckedMultiorders();
-        };
-        errorCallback = function () {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomersPendingData'));
-          // we will not process pending orders in case there was an order while syncing customers
-          me.loadUnpaidOrders();
-          me.loadCheckedMultiorders();
-        };
-        customersChangedNotProcessed.each(function (cus) {
-          cus.set('json', enyo.json.parse(cus.get('json')));
-        });
-        OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
-      });
-    } else {
-      //We are offline. We continue the normal flow
-      me.loadUnpaidOrders();
-      me.loadCheckedMultiorders();
-    }
-  },
-  processChangedCustomerAddress: function () {
-    // Processes the customers address who has been changed
-    var me = this;
-    if (OB.POS.modelterminal.get('connectedToERP')) {
-      OB.Dal.find(OB.Model.ChangedBPlocation, null, function (customerAddrChangedNotProcessed) { //OB.Dal.find success
-        var successCallback, errorCallback;
-        if (!customerAddrChangedNotProcessed || customerAddrChangedNotProcessed.length === 0) {
-          return;
-        }
-        successCallback = function () {
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_pendigDataOfCustomerAddrProcessed'));
-        };
-        errorCallback = function () {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorProcessingCustomerAddrPendingData'));
-        };
-        customerAddrChangedNotProcessed.each(function (cusAddr) {
-          cusAddr.set('json', enyo.json.parse(cusAddr.get('json')));
-        });
-        OB.UTIL.processCustomerAddr(customerAddrChangedNotProcessed, successCallback, errorCallback);
-      });
-    }
-  },
   isValidMultiOrderState: function () {
     if (this.get('leftColumnViewManager') && this.get('multiOrders')) {
       return this.get('leftColumnViewManager').isMultiOrder() && this.get('multiOrders').hasDataInList();
@@ -425,9 +366,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     taxes = new OB.DATA.OrderTaxes(receipt);
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
-    //OB.MobileApp.model.syncAllModels();
-    this.processChangedCustomers();
-    this.processChangedCustomerAddress();
+    OB.MobileApp.model.runSyncProcess(function () {
+      me.loadUnpaidOrders();
+      me.loadCheckedMultiorders();
+    }, function () {
+      me.loadUnpaidOrders();
+      me.loadCheckedMultiorders();
+    });
 
     receipt.on('paymentAccepted', function () {
       receipt.prepareToSend(function () {
