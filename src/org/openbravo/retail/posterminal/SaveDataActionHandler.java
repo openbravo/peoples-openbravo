@@ -20,21 +20,23 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
-import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.mobile.core.process.DataSynchronizationProcess;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 @ApplicationScoped
 public class SaveDataActionHandler extends BaseActionHandler {
+  private static final Logger log = Logger.getLogger(SaveDataActionHandler.class);
 
   @Inject
   @Any
@@ -61,7 +63,7 @@ public class SaveDataActionHandler extends BaseActionHandler {
         String type = error.getTypeofdata();
 
         POSDataSynchronizationProcess syncProcess = null;
-        syncProcess = syncProcesses.select(new ComponentProvider.Selector("Entity:" + type)).get();
+        syncProcess = syncProcesses.select(new DataSynchronizationProcess.Selector(type)).get();
         JSONObject record = new JSONObject(error.getJsoninfo());
         record.put("posErrorId", errorId);
         JSONObject data = new JSONObject();
@@ -105,6 +107,7 @@ public class SaveDataActionHandler extends BaseActionHandler {
         return result;
       }
     } catch (Exception e) {// won't' happen
+      log.error("Error while processing the record", e);
     }
     return null;
   }
