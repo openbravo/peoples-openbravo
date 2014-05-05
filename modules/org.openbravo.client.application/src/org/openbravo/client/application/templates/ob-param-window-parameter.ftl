@@ -72,6 +72,7 @@
   </#if>
   <#if param.grid> 
     , displayedRowsNumber: ${param.numberOfDisplayedRows}
+    , showTitle: ${param.showTitle?string}
     ,viewProperties: {
     ${param.tabView}
     }
