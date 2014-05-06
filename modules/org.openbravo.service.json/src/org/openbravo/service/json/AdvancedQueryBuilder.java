@@ -1104,7 +1104,7 @@ public class AdvancedQueryBuilder {
             Property prop = tabEntity.getPropertyByColumnName(param);
             paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
           }
-          ancestorTab = KernelUtils.getInstance().getParentTab(tab);
+          ancestorTab = KernelUtils.getInstance().getParentTab(ancestorTab);
         }
       }
 
