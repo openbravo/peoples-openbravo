@@ -378,9 +378,9 @@ isc.ClassFactory.defineClass('OBTabBarButtonChild', isc.OBTabBarButton);
 isc.OBTabBarButtonChild.addProperties({
   // Needed to replicate the "click" behavior in automated tests
   virtualClick: function () {
-    this.getParentCanvas().getParentCanvas().selectTab(this);
     this.getParentCanvas().getParentCanvas().doHandleClick();
     this.focus();
+    this.getParentCanvas().getParentCanvas().selectTab(this);
   },
   // when a tab is drawn the first time it steals the focus 
   // from the active view, prevent this
@@ -613,9 +613,7 @@ isc.OBTabSetChild.addProperties({
         tab = this.tabs[i];
         this.makeTabVisible(tab);
         pane = this.getTabPane(tab);
-        if (typeof pane.setTopMaximum === 'function') {
-          pane.setTopMaximum();
-        }
+        pane.setTopMaximum();
       }
 
     } else if (newState === isc.OBStandardView.STATE_MIN) {
@@ -640,9 +638,7 @@ isc.OBTabSetChild.addProperties({
         tab = this.tabs[i];
         this.makeTabVisible(tab);
         pane = this.getTabPane(tab);
-        if (typeof pane.setBottomMaximum === 'function') {
-          pane.setBottomMaximum();
-        }
+        pane.setBottomMaximum();
       }
     } else if (newState === isc.OBStandardView.STATE_IN_MID) {
       this.state = newState;
@@ -671,9 +667,7 @@ isc.OBTabSetChild.addProperties({
         tab = this.tabs[i];
         pane = this.getTabPane(tab);
         this.makeTabVisible(tab);
-        if (typeof pane.setHalfSplit === 'function') {
-          pane.setHalfSplit();
-        }
+        pane.setHalfSplit();
       }
     }
 
@@ -681,9 +675,7 @@ isc.OBTabSetChild.addProperties({
 
     for (i = 0; i < length; i++) {
       tab = this.tabs[i];
-      if (typeof tab.pane.setMaximizeRestoreButtonState === 'function') {
-        tab.pane.setMaximizeRestoreButtonState();
-      }
+      tab.pane.setMaximizeRestoreButtonState();
     }
   },
 
@@ -707,13 +699,7 @@ isc.OBTabSetChild.addProperties({
   },
 
   tabSelected: function (tabNum, tabPane, ID, tab) {
-    var event = isc.EventHandler.getLastEvent(),
-        tabSet = tabPane.getParentCanvas().getParentCanvas();
-    if (typeof tabPane.paneActionOnSelect === 'function') {
-      tabPane.paneActionOnSelect();
-      // tabPane should be set again because 'paneActionOnSelect' could have modified the pane content
-      tabPane = tabSet.getTabPane(tabNum);
-    }
+    var event = isc.EventHandler.getLastEvent();
     if (tabPane.refreshContents) {
       tabPane.doRefreshContents(true, true);
     }
