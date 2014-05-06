@@ -62,7 +62,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   initWidget: function () {
     var i, len = this.fields.length,
-        theGrid;
+        theGrid, me = this;
 
     this.selectedIds = [];
     this.deselectedIds = [];
@@ -147,6 +147,17 @@ isc.OBPickAndExecuteGrid.addProperties({
     };
 
     this.autoFitExpandField = this.getLongestFieldName();
+
+
+    this.dataSource.transformRequest = function (dsRequest) {
+      dsRequest.params = dsRequest.params || {};
+      if (me.view && me.view.theForm) {
+        // include in the request the values of the parameters of the parameter window
+        isc.addProperties(dsRequest.params, me.view.theForm.getValues());
+      }
+      return this.Super('transformRequest', arguments);
+    };
+
 
     this.Super('initWidget', arguments);
   },
