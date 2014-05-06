@@ -72,7 +72,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     OBContext.setAdminMode();
     try {
       long init = System.currentTimeMillis();
-      if (parameters.get("FILTER_VALUE") != null) {
+      if (parameters.get("_identifier") != null) {
         return filter(parameters);
       }
       final String startRow = parameters.get(JsonConstants.STARTROW_PARAMETER);
@@ -254,7 +254,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       long init = System.currentTimeMillis();
       String startRow = parameters.get("_startRow");
       String endRow = parameters.get("_endRow");
-      int startRowCount = 0;
+      int startRowCount = 0, countValue = 0;
       boolean doCount = false;
       if (startRow != null) {
         startRowCount = Integer.parseInt(startRow);
@@ -266,7 +266,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       boolean preventCountOperation = "true"
           .equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
       String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
-      String filterString = parameters.get("FILTER_VALUE");
+      String filterString = parameters.get("_identifier");
 
       field = OBDal.getInstance().get(Field.class, fieldId);
       Boolean getValueFromSession = Boolean.getBoolean(parameters.get("getValueFromSession"));
@@ -315,6 +315,10 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       if (singleRecord != null) {
         newParameters.put("@ONLY_ONE_RECORD@", singleRecord);
         newParameters.put("@ACTUAL_VALUE@", singleRecord);
+      }
+      if (doCount && !preventCountOperation) {
+        countValue = comboTableData.getCount(new DalConnectionProvider(false), newParameters,
+            getValueFromSession && !comboreload, null, null);
       }
       FieldProvider[] fps = comboTableData.filter(new DalConnectionProvider(false), newParameters,
           getValueFromSession && !comboreload, startRow, endRow, filterString);
@@ -374,13 +378,21 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         jsonResponse.put(JsonConstants.RESPONSE_ENDROW, endRow);
         if (doCount && !preventCountOperation) {
           int totalRows = Integer.parseInt(endRow) - startRowCount + 1;
+          int endRowCount = Integer.parseInt(endRow);
           int num = totalRows;
           if (num == -1) {
-            int endRowCount = Integer.parseInt(endRow);
             num = (endRowCount + 2);
             if ((endRowCount - startRowCount) > totalRows) {
               num = startRowCount + totalRows;
             }
+          }
+          if (endRowCount < (endRowCount - startRowCount + 2)) {
+            num = countValue - (endRowCount - startRowCount) + 2;
+          } else {
+            num = countValue;
+          }
+          if (num < 0 && countValue > 0) {
+            num = countValue;
           }
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, num);
         } else {

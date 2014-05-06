@@ -1339,6 +1339,11 @@ public class ComboTableData {
     return (objectListData);
   }
 
+  public int getCount(ConnectionProvider conn, Map<String, String> lparameters,
+      boolean includeActual, String startRow, String endRow) throws Exception {
+    return select(conn, lparameters, includeActual, startRow, endRow).length;
+  }
+
   /**
    * Special fill parameters function to be used from the search popup (servlet).
    * 
