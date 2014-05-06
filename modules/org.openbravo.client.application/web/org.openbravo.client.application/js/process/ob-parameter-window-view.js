@@ -168,7 +168,7 @@ isc.OBParameterWindowView.addProperties({
       view: this
     });
     this.members.push(this.messageBar);
-
+    
     newShowIf = function (item, value, form, values) {
       var currentValues = isc.shallowClone(values || form.view.getCurrentValues()),
           originalShowIfValue = false;
@@ -250,6 +250,10 @@ isc.OBParameterWindowView.addProperties({
             }
           }
         });
+
+        if (items && items.length === 1 && items[0].type === 'OBPickEditGridItem' && this.popup) {
+          items[0].showTitle = false;
+        }
         this.theForm.setItems(items);
         this.members.push(this.theForm);
       }
@@ -567,18 +571,23 @@ isc.OBParameterWindowView.addProperties({
 
   // Checks params with readonly logic enabling or disabling them based on it
   handleReadOnlyLogic: function () {
-    var form, fields, i, field;
+    var form, fields, i, field, parentContext;
 
     form = this.theForm;
     if (!form) {
       return;
+    }
+    if (this.sourceView) {
+      parentContext = this.sourceView.getContextInfo(false, true, true, true);
+    } else {
+      parentContext = {};
     }
 
     fields = form.getFields();
     for (i = 0; i < fields.length; i++) {
       field = form.getField(i);
       if (field.readOnlyIf && field.setDisabled) {
-        field.setDisabled(field.readOnlyIf(form.getValues(), this.sourceView.getContextInfo(false, true, true, true)));
+        field.setDisabled(field.readOnlyIf(form.getValues(), parentContext));
       }
     }
   },
