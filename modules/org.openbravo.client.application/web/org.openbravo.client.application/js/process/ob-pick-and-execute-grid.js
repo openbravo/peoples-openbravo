@@ -67,6 +67,15 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.selectedIds = [];
     this.deselectedIds = [];
 
+    // the getValuesAsCriteria function of the edit form of the filter editor should always be called with 
+    // advanced = true to guarantee that the returned criteria will have the proper format
+    this.filterEditorDefaults.editFormDefaults = this.filterEditorDefaults.editFormDefaults || {};
+    this.filterEditorDefaults.editFormDefaults.originalGetValuesAsCriteria = isc.DynamicForm.getPrototype().getValuesAsCriteria;
+    this.filterEditorDefaults.editFormDefaults.getValuesAsCriteria = function (advanced, textMatchStyle, returnNulls) {
+      var useAdvancedCriteria = true;
+      return this.originalGetValuesAsCriteria(useAdvancedCriteria, textMatchStyle, returnNulls);
+    };
+
     // the origSetValuesAsCriteria member is added as 'class' level
     // we only need to do it once
     if (!this.filterEditorProperties.origSetValuesAsCriteria) {
