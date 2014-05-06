@@ -174,10 +174,16 @@ isc.OBParameterWindowView.addProperties({
           originalShowIfValue = false;
 
       OB.Utilities.fixNull250(currentValues);
+      var parentContext;
+      if (this.view.sourceView) {
+        parentContext = this.view.sourceView.getContextInfo();
+      } else {
+        parentContext = {};
+      }
 
       try {
         if (isc.isA.Function(this.originalShowIf)) {
-          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, this.view.sourceView.getContextInfo());
+          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, parentContext);
         } else {
           originalShowIfValue = isc.JSON.decode(this.originalShowIf);
         }
@@ -567,18 +573,23 @@ isc.OBParameterWindowView.addProperties({
 
   // Checks params with readonly logic enabling or disabling them based on it
   handleReadOnlyLogic: function () {
-    var form, fields, i, field;
+    var form, fields, i, field, parentContext;
 
     form = this.theForm;
     if (!form) {
       return;
+    }
+    if (this.sourceView) {
+      parentContext = this.sourceView.getContextInfo(false, true, true, true);
+    } else {
+      parentContext = {};
     }
 
     fields = form.getFields();
     for (i = 0; i < fields.length; i++) {
       field = form.getField(i);
       if (field.readOnlyIf && field.setDisabled) {
-        field.setDisabled(field.readOnlyIf(form.getValues(), this.sourceView.getContextInfo(false, true, true, true)));
+        field.setDisabled(field.readOnlyIf(form.getValues(), parentContext));
       }
     }
   },
