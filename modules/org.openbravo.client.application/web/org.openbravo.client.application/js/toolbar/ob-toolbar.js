@@ -1337,12 +1337,22 @@ isc.OBToolbar.addProperties({
       }
       allProperties = this.view.getContextInfo(false, true, false, true);
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
-        var attachmentExists = data.attachmentExists;
+        var attachmentExists = data.attachmentExists,
+            auxInputs = data.auxiliaryInputValues, prop;
         me.view.attachmentExists = attachmentExists;
 
         // Added sessionAttributes to updateSubtabVisibility 
         me.view.viewForm.sessionAttributes = data.sessionAttributes;
-        me.view.viewForm.auxInputs = data.auxiliaryInputValues;
+        if (auxInputs) {
+          this.auxInputs = {};
+          for (prop in auxInputs) {
+            if (auxInputs.hasOwnProperty(prop)) {
+              me.view.viewForm.setValue(prop, auxInputs[prop].value);
+              me.view.viewForm.auxInputs[prop] = auxInputs[prop].value;
+            }
+          }
+        }
+        me.view.handleDefaultTreeView();
         me.view.updateSubtabVisibility();
 
         //Call to refresh the buttons. As its called with noSetSession=true, it will not cause an infinite recursive loop
