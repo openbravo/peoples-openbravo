@@ -77,7 +77,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       }
       final String startRow = parameters.get(JsonConstants.STARTROW_PARAMETER);
       final String endRow = parameters.get(JsonConstants.ENDROW_PARAMETER);
-      int startRowCount = 0;
+      int startRowCount = 0, countValue = 0;
       boolean doCount = false;
       if (startRow != null) {
         startRowCount = Integer.parseInt(startRow);
@@ -137,6 +137,10 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         newParameters.put("@ONLY_ONE_RECORD@", singleRecord);
         newParameters.put("@ACTUAL_VALUE@", singleRecord);
       }
+      if (doCount && !preventCountOperation) {
+        countValue = comboTableData.getCount(new DalConnectionProvider(false), newParameters,
+            getValueFromSession && !comboreload, null, null);
+      }
       FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), newParameters,
           getValueFromSession && !comboreload, startRow, endRow);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
@@ -192,18 +196,26 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         final JSONObject jsonResponse = new JSONObject();
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
         jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, comboEntries.size() - 1);
+        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, comboEntries.size() + startRowCount - 1);
         if (doCount && !preventCountOperation) {
           int totalRows = Integer.parseInt(endRow) - startRowCount + 1;
+          int endRowCount = Integer.parseInt(endRow);
           int num = totalRows;
           if (num == -1) {
-            int endRowCount = Integer.parseInt(endRow);
             num = (endRowCount + 2);
             if ((endRowCount - startRowCount) > totalRows) {
               num = startRowCount + totalRows;
             }
           }
-          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, comboEntries.size());
+          if (endRowCount < (endRowCount - startRowCount + 2)) {
+            num = countValue - (endRowCount - startRowCount) + 2;
+          } else {
+            num = countValue;
+          }
+          if (num < 0 && countValue > 0) {
+            num = countValue;
+          }
+          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, num);
         } else {
           jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS,
               parameters.get(JsonConstants.RESPONSE_TOTALROWS));
