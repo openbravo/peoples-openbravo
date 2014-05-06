@@ -96,15 +96,15 @@ public class CashCloseProcessor {
               .getDouble("amountToKeep"));
           reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
         }
+        if (reconciliationTotal.compareTo(BigDecimal.ZERO) != 0) {
+          FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
+              posTerminal, reconciliation, paymentType, reconciliationTotal, cashUpDate);
+          OBDal.getInstance().save(paymentTransaction);
 
-        FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(
-            posTerminal, reconciliation, paymentType, reconciliationTotal, cashUpDate);
-        OBDal.getInstance().save(paymentTransaction);
-
-        FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
-            posTerminal, reconciliation, paymentType, reconciliationTotal, cashUpDate);
-        OBDal.getInstance().save(depositTransaction);
-
+          FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(
+              posTerminal, reconciliation, paymentType, reconciliationTotal, cashUpDate);
+          OBDal.getInstance().save(depositTransaction);
+        }
       }
 
       associateTransactions(paymentType, reconciliation, cashUpId, cashMgmtIds);
