@@ -861,14 +861,13 @@ public class ComboTableData {
    *          Keyword to be filtered
    * @return String with the query.
    */
-  private String getQuery(boolean onlyId, String[] discard, String recordId, String startRow,
-      String endRow, ConnectionProvider conn, String filterByValue) {
+  private String getQuery(boolean onlyId, String[] discard, String recordId, Integer startRow,
+      Integer endRow, ConnectionProvider conn, String filterByValue) {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = getSelectFields();
     String idName = "", nameToCompare = null;
     boolean hasWhere = false;
-    boolean applyLimits = startRow != null && endRow != null && StringUtils.isNumeric(startRow)
-        && StringUtils.isNumeric(endRow) && StringUtils.isEmpty(recordId);
+    boolean applyLimits = startRow != null && endRow != null && StringUtils.isEmpty(recordId);
     String rdbms = conn == null ? "" : conn.getRDBMS();
     if (aux != null) {
       StringBuffer name = new StringBuffer();
@@ -983,7 +982,7 @@ public class ComboTableData {
     }
 
     if (applyLimits && rdbms.equalsIgnoreCase("POSTGRE")) {
-      int numberOfRows = (Integer.parseInt(endRow) - Integer.parseInt(startRow)) + 1;
+      int numberOfRows = endRow - startRow + 1;
       text.append(" LIMIT " + numberOfRows + " OFFSET " + startRow);
     }
     return text.toString();
@@ -1103,7 +1102,7 @@ public class ComboTableData {
   }
 
   public FieldProvider[] select(ConnectionProvider conn, Map<String, String> lparameters,
-      boolean includeActual, String startRow, String endRow) throws Exception {
+      boolean includeActual, Integer startRow, Integer endRow) throws Exception {
     String actual = lparameters != null ? lparameters.get("@ACTUAL_VALUE@")
         : getParameter("@ACTUAL_VALUE@");
     if (lparameters != null && lparameters.containsKey("@ONLY_ONE_RECORD@")
@@ -1255,7 +1254,7 @@ public class ComboTableData {
    * @throws Exception
    */
   public FieldProvider[] filter(ConnectionProvider conn, Map<String, String> lparameters,
-      boolean includeActual, String startRow, String endRow, String filterValue) throws Exception {
+      boolean includeActual, Integer startRow, Integer endRow, String filterValue) throws Exception {
     String actual = lparameters != null ? lparameters.get("@ACTUAL_VALUE@")
         : getParameter("@ACTUAL_VALUE@");
     String strSql = getQuery(false, null, null, startRow, endRow, conn, filterValue);
@@ -1337,11 +1336,6 @@ public class ComboTableData {
     FieldProvider objectListData[] = new FieldProvider[vector.size()];
     vector.copyInto(objectListData);
     return (objectListData);
-  }
-
-  public int getCount(ConnectionProvider conn, Map<String, String> lparameters,
-      boolean includeActual, String startRow, String endRow) throws Exception {
-    return select(conn, lparameters, includeActual, startRow, endRow).length;
   }
 
   /**

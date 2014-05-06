@@ -553,7 +553,7 @@ public abstract class UIDefinition {
 
       if (!isListReference) {
         fps = comboTableData.select(new DalConnectionProvider(false), parameters,
-            getValueFromSession && !comboreload, "0", "0");
+            getValueFromSession && !comboreload, 0, 0);
       } else {
         fps = comboTableData.select(new DalConnectionProvider(false), parameters,
             getValueFromSession && !comboreload);

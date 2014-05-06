@@ -132,8 +132,8 @@ isc.OBFKItem.addProperties({
 
   dataArrived: function (startRow, endRow, data) {
     var i, allRows;
-    if (data && data.allRows) {
-      allRows = data.allRows;
+    if (data && data.localData) {
+      allRows = data.localData || data.allRows;
       for (i = 0; i < allRows.length; i++) {
         this.valueMap[allRows[i].id] = allRows[i]._identifier;
       }
@@ -142,7 +142,7 @@ isc.OBFKItem.addProperties({
 
   setValue: function (val) {
     var i, displayedVal;
-
+    val = this.mapDisplayToValue(val);
     if (val && this.valueMap) {
       displayedVal = this.valueMap[val];
       for (i in this.valueMap) {
@@ -209,79 +209,6 @@ isc.OBFKItem.addProperties({
     } else {
       this.setElementValue(newValue);
     }
-  },
-
-  filterDataBoundPickList: function (requestProperties, dropCache) {
-    requestProperties = requestProperties || {};
-    requestProperties.params = requestProperties.params || {};
-
-    // do not prevent the count operation
-    requestProperties.params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
-
-    if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
-      this.setElementValue(this.savedEnteredValue);
-      delete this.savedEnteredValue;
-    } else if (this.form && this.form.view && this.form.view.isShowingForm && this.savedEnteredValue) {
-      if (this.getEnteredValue() !== '') {
-        this.setElementValue(this.savedEnteredValue + this.getEnteredValue());
-      } else {
-        this.setElementValue(this.savedEnteredValue);
-      }
-      delete this.savedEnteredValue;
-    }
-
-    var criteria = this.getPickListFilterCriteria(),
-        i;
-    for (i = 0; i < criteria.criteria.length; i++) {
-      if (criteria.criteria[i].fieldName === this.displayField) {
-        // for the suggestion box it is one big or
-        requestProperties.params[OB.Constants.OR_EXPRESSION] = 'true';
-      }
-    }
-
-    return this.Super('filterDataBoundPickList', [requestProperties, dropCache]);
-  },
-
-  getPickListFilterCriteria: function () {
-    var crit = this.Super('getPickListFilterCriteria', arguments),
-        operator;
-    this.pickList.data.useClientFiltering = false;
-    var criteria = {
-      operator: 'or',
-      _constructor: 'AdvancedCriteria',
-      criteria: []
-    };
-
-    // add a dummy criteria to force a fetch
-    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-
-    // only filter if the display field is also passed
-    // the displayField filter is not passed when the user clicks the drop-down button
-    // display field is passed on the criteria.
-    var displayFieldValue = null,
-        i;
-    if (crit.criteria) {
-      for (i = 0; i < crit.criteria.length; i++) {
-        if (crit.criteria[i].fieldName === this.displayField) {
-          displayFieldValue = crit.criteria[i].value;
-        }
-      }
-    } else if (crit[this.displayField]) {
-      displayFieldValue = crit[this.displayField];
-    }
-    if (displayFieldValue !== null) {
-      if (this.textMatchStyle === 'substring') {
-        operator = 'iContains';
-      } else {
-        operator = 'iStartsWith';
-      }
-      criteria.criteria.push({
-        fieldName: this.displayField,
-        operator: operator,
-        value: displayFieldValue
-      });
-    }
-    return criteria;
   },
 
   init: function () {

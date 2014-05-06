@@ -63,6 +63,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
   @Override
   public String fetch(Map<String, String> parameters) {
     Field field = null;
+    FieldProvider[] fps = null;
     String fieldId = parameters.get("fieldId");
     try {
       checkAccess(fieldId);
@@ -72,22 +73,9 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     OBContext.setAdminMode();
     try {
       long init = System.currentTimeMillis();
-      if (parameters.get("_identifier") != null) {
-        return filter(parameters);
-      }
-      final String startRow = parameters.get(JsonConstants.STARTROW_PARAMETER);
-      final String endRow = parameters.get(JsonConstants.ENDROW_PARAMETER);
-      int startRowCount = 0, countValue = 0;
-      boolean doCount = false;
-      if (startRow != null) {
-        startRowCount = Integer.parseInt(startRow);
-        doCount = true;
-      }
-      if (endRow != null) {
-        doCount = true;
-      }
-      boolean preventCountOperation = "true"
-          .equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
+      String filterString = parameters.get("_identifier");
+      final int startRow = Integer.parseInt(parameters.get(JsonConstants.STARTROW_PARAMETER));
+      final int endRow = Integer.parseInt(parameters.get(JsonConstants.ENDROW_PARAMETER));
       String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
 
       field = OBDal.getInstance().get(Field.class, fieldId);
@@ -137,12 +125,13 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         newParameters.put("@ONLY_ONE_RECORD@", singleRecord);
         newParameters.put("@ACTUAL_VALUE@", singleRecord);
       }
-      if (doCount && !preventCountOperation) {
-        countValue = comboTableData.getCount(new DalConnectionProvider(false), newParameters,
-            getValueFromSession && !comboreload, null, null);
+      if (filterString == null) {
+        fps = comboTableData.select(new DalConnectionProvider(false), newParameters,
+            getValueFromSession && !comboreload, startRow, endRow + 1);
+      } else {
+        fps = comboTableData.filter(new DalConnectionProvider(false), newParameters,
+            getValueFromSession && !comboreload, startRow, endRow + 1, filterString);
       }
-      FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), newParameters,
-          getValueFromSession && !comboreload, startRow, endRow);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
@@ -155,7 +144,13 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         entry.put(JsonConstants.IDENTIFIER, (String) null);
         comboEntries.add(entry);
       }
+      int maxRows = endRow - startRow + 1;
+      boolean hasMoreRows = false;
       for (FieldProvider fp : values) {
+        if (comboEntries.size() > maxRows) {
+          hasMoreRows = true;
+          break;
+        }
         possibleIds.add(fp.getField("ID"));
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, fp.getField("ID"));
@@ -196,211 +191,14 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         final JSONObject jsonResponse = new JSONObject();
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
         jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, comboEntries.size() + startRowCount - 1);
-        if (doCount && !preventCountOperation) {
-          int totalRows = Integer.parseInt(endRow) - startRowCount + 1;
-          int endRowCount = Integer.parseInt(endRow);
-          int num = totalRows;
-          if (num == -1) {
-            num = (endRowCount + 2);
-            if ((endRowCount - startRowCount) > totalRows) {
-              num = startRowCount + totalRows;
-            }
-          }
-          if (endRowCount < (endRowCount - startRowCount + 2)) {
-            num = countValue - (endRowCount - startRowCount) + 2;
-          } else {
-            num = countValue;
-          }
-          if (num < 0 && countValue > 0) {
-            num = countValue;
-          }
-          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, num);
-        } else {
-          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS,
-              parameters.get(JsonConstants.RESPONSE_TOTALROWS));
-        }
+        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, comboEntries.size() + startRow - 1);
+
+        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, comboEntries.size() + startRow
+            + (hasMoreRows ? 1 : 0));
+
         jsonResponse.put(JsonConstants.RESPONSE_DATA, fieldProps.get("entries"));
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
-        return jsonResult.toString();
-      } catch (JSONException e) {
-        throw new OBException(e);
-      }
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
-      throw new OBException(e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  /**
-   * Filter combo data based on keyword
-   * 
-   * @param parameters
-   * @return {@link JSONObject}
-   */
-  public String filter(Map<String, String> parameters) {
-    Field field = null;
-    String fieldId = parameters.get("fieldId");
-    try {
-      checkAccess(fieldId);
-    } catch (ServletException e1) {
-      throw new OBException(e1);
-    }
-    OBContext.setAdminMode();
-    try {
-      long init = System.currentTimeMillis();
-      String startRow = parameters.get("_startRow");
-      String endRow = parameters.get("_endRow");
-      int startRowCount = 0, countValue = 0;
-      boolean doCount = false;
-      if (startRow != null) {
-        startRowCount = Integer.parseInt(startRow);
-        doCount = true;
-      }
-      if (endRow != null) {
-        doCount = true;
-      }
-      boolean preventCountOperation = "true"
-          .equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
-      String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
-      String filterString = parameters.get("_identifier");
-
-      field = OBDal.getInstance().get(Field.class, fieldId);
-      Boolean getValueFromSession = Boolean.getBoolean(parameters.get("getValueFromSession"));
-      String columnValue = parameters.get("columnValue");
-      RequestContext rq = RequestContext.get();
-      VariablesSecureApp vars = rq.getVariablesSecureApp();
-      boolean comboreload = rq.getRequestParameter("donotaddcurrentelement") != null
-          && rq.getRequestParameter("donotaddcurrentelement").equals("true");
-      String ref = field.getColumn().getReference().getId();
-      String objectReference = "";
-      if (field.getColumn().getReferenceSearchKey() != null) {
-        objectReference = field.getColumn().getReferenceSearchKey().getId();
-      }
-      String validation = "";
-      if (field.getColumn().getValidation() != null) {
-        validation = field.getColumn().getValidation().getId();
-      }
-
-      String orgList = Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
-      String clientList = Utility.getContext(new DalConnectionProvider(false), vars,
-          "#User_Client", field.getTab().getWindow().getId());
-      if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
-        clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
-            field.getTab().getWindow().getId(),
-            Integer.parseInt(field.getTab().getTable().getDataAccessLevel()));
-        clientList = vars.getSessionValue("#User_Client");
-        orgList = null;
-      }
-      if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
-        orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", field
-            .getTab().getWindow().getId(),
-            Integer.parseInt(field.getTab().getTable().getDataAccessLevel()));
-      }
-
-      ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
-          .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-      ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref, field
-          .getColumn().getDBColumnName(), objectReference, validation, orgList, clientList);
-      Map<String, String> newParameters = null;
-
-      FieldProvider tabData = UIDefinition.generateTabData(field.getTab().getADFieldList(), field,
-          columnValue);
-      newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
-          vars, tabData, field.getTab().getWindow().getId(),
-          (getValueFromSession && !comboreload) ? columnValue : "");
-      if (singleRecord != null) {
-        newParameters.put("@ONLY_ONE_RECORD@", singleRecord);
-        newParameters.put("@ACTUAL_VALUE@", singleRecord);
-      }
-      if (doCount && !preventCountOperation) {
-        countValue = comboTableData.getCount(new DalConnectionProvider(false), newParameters,
-            getValueFromSession && !comboreload, null, null);
-      }
-      FieldProvider[] fps = comboTableData.filter(new DalConnectionProvider(false), newParameters,
-          getValueFromSession && !comboreload, startRow, endRow, filterString);
-      ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
-      values.addAll(Arrays.asList(fps));
-      ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
-      ArrayList<String> possibleIds = new ArrayList<String>();
-      // If column is mandatory we add an initial blank value
-      if (!field.getColumn().isMandatory()) {
-        possibleIds.add("");
-        JSONObject entry = new JSONObject();
-        entry.put(JsonConstants.ID, (String) null);
-        entry.put(JsonConstants.IDENTIFIER, (String) null);
-        comboEntries.add(entry);
-      }
-      for (FieldProvider fp : values) {
-        possibleIds.add(fp.getField("ID"));
-        JSONObject entry = new JSONObject();
-        entry.put(JsonConstants.ID, fp.getField("ID"));
-        entry.put(JsonConstants.IDENTIFIER, fp.getField("NAME"));
-        comboEntries.add(entry);
-      }
-      JSONObject fieldProps = new JSONObject();
-      if (getValueFromSession && !comboreload) {
-        fieldProps.put("value", columnValue);
-        fieldProps.put("classicValue", columnValue);
-      } else {
-        if (possibleIds.contains(columnValue)) {
-          fieldProps.put("value", columnValue);
-          fieldProps.put("classicValue", columnValue);
-        } else {
-          // In case the default value doesn't exist in the combo values, we choose the first one
-          if (comboEntries.size() > 0) {
-            if (comboEntries.get(0).has(JsonConstants.ID)) {
-              fieldProps.put("value", comboEntries.get(0).get(JsonConstants.ID));
-              fieldProps.put("classicValue", comboEntries.get(0).get(JsonConstants.ID));
-            } else {
-              fieldProps.put("value", (String) null);
-              fieldProps.put("classicValue", (String) null);
-            }
-          } else {
-            fieldProps.put("value", "");
-            fieldProps.put("classicValue", "");
-          }
-        }
-      }
-      fieldProps.put("entries", new JSONArray(comboEntries));
-      log.debug("filter operation for ComboTableDatasourceService took: {} ms",
-          (System.currentTimeMillis() - init));
-
-      // now jsonfy the data
-      try {
-        final JSONObject jsonResult = new JSONObject();
-        final JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-        jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-        jsonResponse.put(JsonConstants.RESPONSE_ENDROW, endRow);
-        if (doCount && !preventCountOperation) {
-          int totalRows = Integer.parseInt(endRow) - startRowCount + 1;
-          int endRowCount = Integer.parseInt(endRow);
-          int num = totalRows;
-          if (num == -1) {
-            num = (endRowCount + 2);
-            if ((endRowCount - startRowCount) > totalRows) {
-              num = startRowCount + totalRows;
-            }
-          }
-          if (endRowCount < (endRowCount - startRowCount + 2)) {
-            num = countValue - (endRowCount - startRowCount) + 2;
-          } else {
-            num = countValue;
-          }
-          if (num < 0 && countValue > 0) {
-            num = countValue;
-          }
-          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, num);
-        } else {
-          jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS,
-              parameters.get(JsonConstants.RESPONSE_TOTALROWS));
-        }
-        jsonResponse.put(JsonConstants.RESPONSE_DATA, fieldProps.get("entries"));
-        jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
         return jsonResult.toString();
       } catch (JSONException e) {
         throw new OBException(e);
