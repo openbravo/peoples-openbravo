@@ -287,7 +287,7 @@ isc.OBFKItem.addProperties({
   init: function () {
     this.displayField = '_identifier';
     this.optionDataSource = OB.Datasource.create({
-      dataURL: '/openbravo/org.openbravo.service.datasource/ComboTableDatasourceService',
+      dataURL: OB.Application.contextUrl + 'org.openbravo.service.datasource/ComboTableDatasourceService',
       fields: [{
         name: 'id',
         type: this.type,
