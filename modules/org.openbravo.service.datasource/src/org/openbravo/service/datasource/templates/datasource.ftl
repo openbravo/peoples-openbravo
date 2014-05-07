@@ -33,7 +33,10 @@ although the same is done by the compressor
 </#if>
 
 <#macro generateDataSource data>
-    OB.Datasource.create({
+  <#if data.includeCreationCode>
+    OB.Datasource.create(
+  </#if>
+    {
         createClassName: '${data.dataSourceClassName?js_string}',
 <#if data.getParameter("_onlyGenerateCreateStatement") == "" || data.getParameter("_create") != "">
         ID:'${data.id}',
@@ -52,7 +55,10 @@ although the same is done by the compressor
 <#list data.dataSourceProperties as property>
     <@generateField property=property /><#if property_has_next>,</#if>
 </#list>
-    ]})
+    ]}
+  <#if data.includeCreationCode>
+    )
+  </#if>    
 </#macro>
 
 <#macro generateField property>

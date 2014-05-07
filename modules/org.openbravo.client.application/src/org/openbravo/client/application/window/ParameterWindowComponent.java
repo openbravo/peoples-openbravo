@@ -129,6 +129,10 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
     return process.getClientSideValidation();
   }
 
+  public String getOnLoadFunction() {
+    return process.getLoadFunction();
+  }
+
   public List<org.openbravo.model.ad.domain.List> getButtonList() {
     for (Parameter p : process.getOBUIAPPParameterList()) {
       if (p.isActive() && p.getReference().getId().equals(BUTTON_LIST_REFERENCE_ID)) {

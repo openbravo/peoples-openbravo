@@ -61,6 +61,7 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
+import org.openbravo.service.datasource.DataSourceComponent;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -134,7 +135,11 @@ public class OBViewTab extends BaseTemplateComponent {
     if (ApplicationConstants.HQLBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
       dsParameters.put("tableId", tab.getTable().getId());
     }
-    final Component component = dsComponentProvider.getComponent(dsId, dsParameters);
+    DataSourceComponent component = (DataSourceComponent) dsComponentProvider.getComponent(dsId,
+        dsParameters);
+    if ("OBUIAPP_PickAndExecute".equals(tab.getWindow().getWindowType())) {
+      component.setIncludeCreationCode(false);
+    }
     return component.generate();
   }
 

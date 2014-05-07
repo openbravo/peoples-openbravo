@@ -325,6 +325,14 @@ public class OBViewParameterHandler {
       return parameter.getOnChangeFunction();
     }
 
+    public Long getNumberOfDisplayedRows() {
+      return parameter.getDisplayedRows() != null ? parameter.getDisplayedRows() : 8;
+    }
+
+    public boolean getShowTitle() {
+      return parameter.isDisplayTitle();
+    }
+
     public class ValueMapValue {
       final String key;
       final String value;

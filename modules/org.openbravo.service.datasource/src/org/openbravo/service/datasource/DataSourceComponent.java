@@ -31,6 +31,7 @@ import org.openbravo.client.kernel.Template;
 public class DataSourceComponent extends BaseTemplateComponent {
 
   private DataSourceService dataSourceService;
+  private boolean includeCreationCode = true;
 
   @Override
   protected Template getComponentTemplate() {
@@ -76,5 +77,13 @@ public class DataSourceComponent extends BaseTemplateComponent {
 
   public List<DataSourceProperty> getDataSourceProperties() {
     return dataSourceService.getDataSourceProperties(getParameters());
+  }
+
+  public void setIncludeCreationCode(boolean includeCreationCode) {
+    this.includeCreationCode = includeCreationCode;
+  }
+
+  public boolean getIncludeCreationCode() {
+    return this.includeCreationCode;
   }
 }

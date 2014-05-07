@@ -62,10 +62,19 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   initWidget: function () {
     var i, len = this.fields.length,
-        theGrid;
+        theGrid, me = this;
 
     this.selectedIds = [];
     this.deselectedIds = [];
+
+    // the getValuesAsCriteria function of the edit form of the filter editor should always be called with 
+    // advanced = true to guarantee that the returned criteria will have the proper format
+    this.filterEditorDefaults.editFormDefaults = this.filterEditorDefaults.editFormDefaults || {};
+    this.filterEditorDefaults.editFormDefaults.originalGetValuesAsCriteria = isc.DynamicForm.getPrototype().getValuesAsCriteria;
+    this.filterEditorDefaults.editFormDefaults.getValuesAsCriteria = function (advanced, textMatchStyle, returnNulls) {
+      var useAdvancedCriteria = true;
+      return this.originalGetValuesAsCriteria(useAdvancedCriteria, textMatchStyle, returnNulls);
+    };
 
     // the origSetValuesAsCriteria member is added as 'class' level
     // we only need to do it once
@@ -138,6 +147,17 @@ isc.OBPickAndExecuteGrid.addProperties({
     };
 
     this.autoFitExpandField = this.getLongestFieldName();
+
+
+    this.dataSource.transformRequest = function (dsRequest) {
+      dsRequest.params = dsRequest.params || {};
+      if (me.view && me.view.theForm) {
+        // include in the request the values of the parameters of the parameter window
+        isc.addProperties(dsRequest.params, me.view.theForm.getValues());
+      }
+      return this.Super('transformRequest', arguments);
+    };
+
 
     this.Super('initWidget', arguments);
   },
@@ -678,5 +698,12 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('removeRecord', arguments);
 
     this.validateRows();
+  },
+
+  destroy: function () {
+    if (this.dataSource) {
+      this.dataSource.destroy();
+    }
+    this.Super('destroy', arguments);
   }
 });

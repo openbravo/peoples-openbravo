@@ -171,14 +171,19 @@ isc.OBParameterWindowView.addProperties({
 
     newShowIf = function (item, value, form, values) {
       var currentValues = isc.shallowClone(values || form.view.getCurrentValues()),
-          context = {},
           originalShowIfValue = false;
 
       OB.Utilities.fixNull250(currentValues);
+      var parentContext;
+      if (this.view.sourceView) {
+        parentContext = this.view.sourceView.getContextInfo();
+      } else {
+        parentContext = {};
+      }
 
       try {
         if (isc.isA.Function(this.originalShowIf)) {
-          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, context);
+          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, parentContext);
         } else {
           originalShowIfValue = isc.JSON.decode(this.originalShowIf);
         }
@@ -251,10 +256,6 @@ isc.OBParameterWindowView.addProperties({
             }
           }
         });
-
-        if (items && items.length === 1 && items[0].type === 'OBPickEditGridItem' && this.popup) {
-          items[0].showTitle = false;
-        }
         this.theForm.setItems(items);
         this.members.push(this.theForm);
       }
@@ -517,7 +518,8 @@ isc.OBParameterWindowView.addProperties({
   handleDefaults: function (result) {
     var i, field, def, defaults = result.defaults,
         filterExpressions = result.filterExpressions,
-        defaultFilter = {};
+        defaultFilter = {},
+        gridsToBeFiltered = [];
     if (!this.theForm) {
       return;
     }
@@ -539,7 +541,6 @@ isc.OBParameterWindowView.addProperties({
         }
       }
     }
-
     for (i in filterExpressions) {
       if (filterExpressions.hasOwnProperty(i)) {
         field = this.theForm.getItem(i);
@@ -548,9 +549,20 @@ isc.OBParameterWindowView.addProperties({
         field.setDefaultFilter(defaultFilter);
         if (field.isVisible() && !field.showIf) {
           field.canvas.viewGrid.setFilterEditorCriteria(defaultFilter);
-          field.canvas.viewGrid.filterByEditor();
+          gridsToBeFiltered.push(field.canvas.viewGrid);
         }
       }
+    }
+
+
+    if (this.onLoadFunction) {
+      this.onLoadFunction(this);
+    }
+
+    // filter after applying the onLoadFunction, just in case it has modified the filter editor criteria of a grid.
+    // this way it a double requests for these grids is avoided
+    for (i = 0; i < gridsToBeFiltered.length; i++) {
+      gridsToBeFiltered[i].filterByEditor();
     }
 
     this.handleReadOnlyLogic();
@@ -561,18 +573,23 @@ isc.OBParameterWindowView.addProperties({
 
   // Checks params with readonly logic enabling or disabling them based on it
   handleReadOnlyLogic: function () {
-    var form, fields, i, field;
+    var form, fields, i, field, parentContext;
 
     form = this.theForm;
     if (!form) {
       return;
+    }
+    if (this.sourceView) {
+      parentContext = this.sourceView.getContextInfo(false, true, true, true);
+    } else {
+      parentContext = {};
     }
 
     fields = form.getFields();
     for (i = 0; i < fields.length; i++) {
       field = form.getField(i);
       if (field.readOnlyIf && field.setDisabled) {
-        field.setDisabled(field.readOnlyIf(form.getValues()));
+        field.setDisabled(field.readOnlyIf(form.getValues(), parentContext));
       }
     }
   },

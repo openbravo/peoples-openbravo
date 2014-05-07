@@ -52,7 +52,7 @@
       },
     </#if>
     <#if param.readOnlyIf != "" >
-      readOnlyIf: function(currentValues) {
+      readOnlyIf: function(currentValues,context) {
         return (${param.readOnlyIf});
       },
     </#if>
@@ -71,6 +71,8 @@
     ]
   </#if>
   <#if param.grid> 
+    , displayedRowsNumber: ${param.numberOfDisplayedRows}
+    , showTitle: ${param.showTitle?string}
     ,viewProperties: {
     ${param.tabView}
     }

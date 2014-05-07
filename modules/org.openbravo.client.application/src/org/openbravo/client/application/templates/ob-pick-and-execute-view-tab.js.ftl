@@ -102,6 +102,6 @@
       </#if>
     </#list>
     },
-
-    dataSource: ${tabComponent.dataSourceJavaScript}
+    
+    dataSourceProperties: ${tabComponent.dataSourceJavaScript}
 </#macro>

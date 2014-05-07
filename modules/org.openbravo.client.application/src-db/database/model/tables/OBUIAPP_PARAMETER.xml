@@ -129,6 +129,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="DISPLAYEDROWS" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA['5']]></onCreateDefault>
+      </column>
+      <column name="DISPLAYTITLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_VAL_RULE" name="OBUIAPP_PARAM_AD_VALRULE">
         <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
       </foreign-key>
@@ -159,6 +167,7 @@
       <index name="OBUIAPP_PARAMETER_PROCESS" unique="false">
         <index-column name="OBUIAPP_PROCESS_ID"/>
       </index>
+      <check name="OBUIAPP_PARAM_SHOWTITLE_CHK"><![CDATA[DISPLAYTITLE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_CENTR_CHK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_EVFIXVAL_CHK"><![CDATA[EVALUATEFIXEDVALUE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PARAMETER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

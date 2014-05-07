@@ -66,12 +66,12 @@ isc.OBPickAndExecuteView.addProperties({
     });
     this.addMember(this.messageBar);
 
-    this.dataSource = this.viewProperties.dataSource;
-    this.dataSource.view = this;
+    this.dataSourceProperties = this.viewProperties.dataSourceProperties;
+    this.dataSourceProperties.view = this;
     this.title = this.windowTitle;
 
     // the datasource object is defined on viewProperties, do not destroy it
-    this.dataSource.potentiallyShared = true;
+    this.dataSourceProperties.potentiallyShared = true;
 
     this.viewGrid = isc.OBPickAndExecuteGrid.create({
       view: this.view,
@@ -79,7 +79,7 @@ isc.OBPickAndExecuteView.addProperties({
       fields: this.gridFields,
       height: '*',
       cellHeight: OB.Styles.Process.PickAndExecute.gridCellHeight,
-      dataSource: this.dataSource,
+      dataSource: OB.Datasource.create(this.dataSourceProperties),
       gridProperties: this.viewProperties.gridProperties,
       selectionAppearance: (this.viewProperties.showSelect ? 'checkbox' : 'rowStyle'),
       selectionType: 'simple',
