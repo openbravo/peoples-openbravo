@@ -67,7 +67,7 @@
 <!--58AF4D3E594B421A9A7307480736F03E-->  <AD_PACKAGE_ID><![CDATA[AC33B2262748414A816510545755435A]]></AD_PACKAGE_ID>
 <!--58AF4D3E594B421A9A7307480736F03E-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--58AF4D3E594B421A9A7307480736F03E-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--58AF4D3E594B421A9A7307480736F03E-->  <HQLQUERY><![CDATA[select psd.id as paymentScheduleDetail, ord.documentNo as salesOrderNo, inv.documentNo as invoiceNo, inv.paymentMethod.id as paymentMethod, inv.businessPartner.id as businessPartner, inv.invoiceDate as transactionDate, ips.expectedDate as expectedDate, psd.invoicePaymentSchedule.invoice.grandTotalAmount, psd.invoicePaymentSchedule.amount as invoicedAmount, psd.amount, psd.doubtfulDebtAmount
+<!--58AF4D3E594B421A9A7307480736F03E-->  <HQLQUERY><![CDATA[select @selectClause@
 from FIN_Payment_ScheduleDetail as psd
 left outer join psd.orderPaymentSchedule as ops  
 left outer join ops.order as ord 
@@ -77,14 +77,10 @@ left outer join ips.invoice as inv
 left outer join ips.fINPaymentPriority as ipriority 
 left outer join psd.organization as org 
 left outer join org.organizationInformationList as oinfo 
-where psd.paymentDetails is null 
-and (oinfo is null or oinfo.active = true) 
-and ( (inv is not null 
-	and inv.businessPartner.id = '9E6850C866BD4921AD0EB7F7796CE2C7' 
-	and inv.paymentMethod.id = 'A97CFD2AFC234B59BB0A72189BD8FC2A' 
-	and inv.salesTransaction = true 
-	and inv.currency.id = '102')) 
-and @additional_filters@]]></HQLQUERY>
+where @whereClause@
+and @additional_filters@
+group by @groupByClause@
+@havingClause@]]></HQLQUERY>
 <!--58AF4D3E594B421A9A7307480736F03E-->  <ENTITY_ALIAS><![CDATA[psd]]></ENTITY_ALIAS>
 <!--58AF4D3E594B421A9A7307480736F03E--></AD_TABLE>
 

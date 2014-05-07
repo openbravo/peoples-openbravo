@@ -43,9 +43,9 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       jsonRequest = new JSONObject(content);
       log.debug(jsonRequest);
       JSONObject jsonparams = jsonRequest.getJSONObject("_params");
-      JSONObject childJSONObject = jsonparams.getJSONObject("glitem");
-      String selection = childJSONObject.getString("_selection");
-      String allrows = childJSONObject.getString("_allRows");
+      JSONObject orderInvoiceGrid = jsonparams.getJSONObject("order_invoice");
+      String selection = orderInvoiceGrid.getString("_selection");
+      String allrows = orderInvoiceGrid.getString("_allRows");
       System.out.println(selection);
 
     } catch (Exception e) {
