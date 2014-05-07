@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -46,6 +47,7 @@ import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.YesNoUIDefinition;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
@@ -65,6 +67,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private static final String AND = " AND ";
   private static final String WHERE = " WHERE ";
   private static final String ORDERBY = " ORDER BY ";
+  private static final String GROUPBY = "GROUP BY";
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
   private static final String INJECTION_POINT_GENERIC_ID = "@injection_point_#@";
   private static final String INJECTION_POINT_INDEX_PLACEHOLDER = "#";
@@ -133,7 +136,15 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
     boolean justCount = true;
     Query countQuery = getQuery(table, parameters, justCount);
-    return ((Number) countQuery.uniqueResult()).intValue();
+    String hqlQuery = countQuery.getQueryString();
+    int nRows = -1;
+    if (hqlQuery.contains(GROUPBY)) {
+      // No risk in using list, the request is done always paginated
+      nRows = countQuery.list().size();
+    } else {
+      nRows = ((Number) countQuery.uniqueResult()).intValue();
+    }
+    return nRows;
   }
 
   @Override
@@ -227,8 +238,14 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     // adds the additional filters (client, organization and criteria) to the query
     hqlQuery = addAdditionalFilters(table, hqlQuery, whereClause, parameters);
 
+    boolean includeMainEntityID = true;
+    if (hqlQuery.toUpperCase().contains(GROUPBY)) {
+      // If the HQL Query contains a GROUP BY clause, the ID of the main entity should not be
+      // included in the order by clause
+      includeMainEntityID = false;
+    }
     // adds the order by clause
-    String orderByClause = getSortByClause(parameters);
+    String orderByClause = getSortByClause(parameters, includeMainEntityID);
     if (!orderByClause.isEmpty()) {
       hqlQuery = hqlQuery + orderByClause;
     }
@@ -520,10 +537,17 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    * @param parameters
    *          parameters sent in the request. They can contain useful info like the property being
    *          sorted, its table, etc
+   * @param includeMainEntityID
+   *          boolean that specifies if the id of the main entity should be included in the sort
+   *          clause. This parameter will be false when the HQL Query includes a GROUP BY clause,
+   *          for instance
    * @return an HQL sort by clause or an empty string if the grid is not being filtered
    */
-  private String getSortByClause(Map<String, String> parameters) {
+  private String getSortByClause(Map<String, String> parameters, boolean includeMainEntityID) {
     String orderByClause = "";
+    final String tableId = parameters.get("tableId");
+    final Table table = OBDal.getInstance().get(Table.class, tableId);
+
     final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
     if (sortBy != null) {
       orderByClause = sortBy;
@@ -536,8 +560,15 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       orderByClause = orderByClause.substring(1);
       direction = " desc ";
     }
+    OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
+    columnCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, table));
+    columnCriteria.add(Restrictions.eq(Column.PROPERTY_NAME, orderByClause));
+    Column column = (Column) columnCriteria.uniqueResult();
     if (!orderByClause.isEmpty()) {
-      orderByClause = ORDERBY + "e." + orderByClause + direction + ", e.id";
+      orderByClause = ORDERBY + column.getEntityAlias() + direction;
+      if (includeMainEntityID) {
+        orderByClause = orderByClause + ", " + table.getEntityAlias() + ".id";
+      }
     }
     return orderByClause;
   }
