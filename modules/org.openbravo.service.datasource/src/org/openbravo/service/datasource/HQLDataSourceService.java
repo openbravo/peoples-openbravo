@@ -244,10 +244,13 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       // included in the order by clause
       includeMainEntityID = false;
     }
-    // adds the order by clause
-    String orderByClause = getSortByClause(parameters, includeMainEntityID);
-    if (!orderByClause.isEmpty()) {
-      hqlQuery = hqlQuery + orderByClause;
+
+    if (!justCount) {
+      // adds the order by clause unless only the number of rows is needed
+      String orderByClause = getSortByClause(parameters, includeMainEntityID);
+      if (!orderByClause.isEmpty()) {
+        hqlQuery = hqlQuery + orderByClause;
+      }
     }
 
     Map<String, Object> queryNamedParameters = new HashMap<String, Object>();
