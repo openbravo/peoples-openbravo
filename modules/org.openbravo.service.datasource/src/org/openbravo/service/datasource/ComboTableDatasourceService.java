@@ -123,7 +123,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref, field
           .getColumn().getDBColumnName(), objectReference, validation, orgList, clientList);
       Map<String, String> newParameters = null;
-      if("Y".equals(onChange) && StringUtils.isNotEmpty(filterString)){
+      if ("Y".equals(onChange) && StringUtils.isNotEmpty(filterString)) {
         columnValue = filterString;
       }
       FieldProvider tabData = UIDefinition.generateTabData(field.getTab().getADFieldList(), field,
@@ -146,8 +146,8 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
       ArrayList<String> possibleIds = new ArrayList<String>();
-      // If column is mandatory we add an initial blank value
-      if (!field.getColumn().isMandatory()) {
+      // If column is mandatory we add an initial blank value in the first page if not filtered
+      if (!field.getColumn().isMandatory() && startRow == 0 && StringUtils.isEmpty(filterString)) {
         possibleIds.add("");
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, (String) null);
