@@ -65,6 +65,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     Field field = null;
     FieldProvider[] fps = null;
     String fieldId = parameters.get("fieldId");
+    int startRow = -1, endRow = 1;
     try {
       checkAccess(fieldId);
     } catch (ServletException e1) {
@@ -74,8 +75,12 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     try {
       long init = System.currentTimeMillis();
       String filterString = parameters.get("_identifier");
-      final int startRow = Integer.parseInt(parameters.get(JsonConstants.STARTROW_PARAMETER));
-      final int endRow = Integer.parseInt(parameters.get(JsonConstants.ENDROW_PARAMETER));
+      if (parameters.get(JsonConstants.STARTROW_PARAMETER) != null) {
+        startRow = Integer.parseInt(parameters.get(JsonConstants.STARTROW_PARAMETER));
+      }
+      if (parameters.get(JsonConstants.ENDROW_PARAMETER) != null) {
+        endRow = Integer.parseInt(parameters.get(JsonConstants.ENDROW_PARAMETER));
+      }
       String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
 
       field = OBDal.getInstance().get(Field.class, fieldId);

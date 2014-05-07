@@ -867,7 +867,8 @@ public class ComboTableData {
     Vector<QueryFieldStructure> aux = getSelectFields();
     String idName = "", nameToCompare = null;
     boolean hasWhere = false;
-    boolean applyLimits = startRow != null && endRow != null && StringUtils.isEmpty(recordId);
+    boolean applyLimits = (startRow != null && startRow != -1) && (endRow != null && endRow != -1)
+        && StringUtils.isEmpty(recordId);
     String rdbms = conn == null ? "" : conn.getRDBMS();
     if (aux != null) {
       StringBuffer name = new StringBuffer();
