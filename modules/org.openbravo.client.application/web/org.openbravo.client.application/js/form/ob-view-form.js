@@ -859,7 +859,7 @@ OB.ViewFormProperties = {
 
     length = this.getFields().length;
 
-    this.handleDefaultTreeView();
+    this.view.handleDefaultTreeView();
     //Updates the visibility of the tabs before they are shown to the client
     this.view.updateSubtabVisibility();
 
