@@ -135,7 +135,9 @@ isc.OBFKItem.addProperties({
     if (data && data.localData) {
       allRows = data.localData || data.allRows;
       for (i = 0; i < allRows.length; i++) {
-        this.valueMap[allRows[i].id] = allRows[i]._identifier;
+        if (allRows[i] && allRows[i].id && allRows[i]._identifier) {
+          this.valueMap[allRows[i].id] = allRows[i]._identifier;
+        }
       }
     }
   },
