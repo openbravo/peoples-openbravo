@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -75,6 +76,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     try {
       long init = System.currentTimeMillis();
       String filterString = parameters.get("_identifier");
+      String onChange = parameters.get("onchange");
       if (parameters.get(JsonConstants.STARTROW_PARAMETER) != null) {
         startRow = Integer.parseInt(parameters.get(JsonConstants.STARTROW_PARAMETER));
       }
@@ -121,16 +123,19 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref, field
           .getColumn().getDBColumnName(), objectReference, validation, orgList, clientList);
       Map<String, String> newParameters = null;
+      if("Y".equals(onChange) && StringUtils.isNotEmpty(filterString)){
+        columnValue = filterString;
+      }
       FieldProvider tabData = UIDefinition.generateTabData(field.getTab().getADFieldList(), field,
           columnValue);
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
           vars, tabData, field.getTab().getWindow().getId(),
           (getValueFromSession && !comboreload) ? columnValue : "");
-      if (singleRecord != null) {
+      if (singleRecord != null && !"Y".equals(onChange)) {
         newParameters.put("@ONLY_ONE_RECORD@", singleRecord);
         newParameters.put("@ACTUAL_VALUE@", singleRecord);
       }
-      if (filterString == null) {
+      if (StringUtils.isEmpty(filterString) || "Y".equals(onChange)) {
         fps = comboTableData.select(new DalConnectionProvider(false), newParameters,
             getValueFromSession && !comboreload, startRow, endRow + 1);
       } else {
@@ -202,6 +207,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
             + (hasMoreRows ? 1 : 0));
 
         jsonResponse.put(JsonConstants.RESPONSE_DATA, fieldProps.get("entries"));
+        jsonResponse.put("comboEntries", fieldProps.toString());
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
         return jsonResult.toString();

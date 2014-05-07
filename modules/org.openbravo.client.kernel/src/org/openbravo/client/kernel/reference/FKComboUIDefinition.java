@@ -18,17 +18,21 @@
  */
 package org.openbravo.client.kernel.reference;
 
+import java.util.Map;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.KernelUtils;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.service.datasource.ComboTableDatasourceService;
 
 /**
  * Implementation of the foreign key ui definition which uses a combo box for its input/filter
@@ -93,12 +97,29 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
     return false;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public String getFieldProperties(Field field, boolean getValueFromSession) {
     JSONObject value;
+    String valueInComboReference = "";
     try {
+      String mode = RequestContext.get().getRequest().getParameter("MODE");
       value = new JSONObject(super.getFieldProperties(field, getValueFromSession));
-      return getValueInComboReference(field, getValueFromSession, value.getString("classicValue"));
+      if (("CHANGE").equals(mode.toUpperCase())) {
+        Map<String, String> parameterMap = RequestContext.get().getRequest().getParameterMap();
+        parameterMap.put("fieldId", field.getId());
+        parameterMap.put("_identifier", value.getString("classicValue"));
+        parameterMap.put("onchange", "Y");
+        ComboTableDatasourceService ctds = new ComboTableDatasourceService();
+        String response = ctds.fetch(parameterMap);
+        JSONObject jsonResponse = new JSONObject(response);
+        String data = (String) jsonResponse.getJSONObject("response").get("comboEntries");
+        valueInComboReference = data.toString();
+      } else {
+        valueInComboReference = getValueInComboReference(field, getValueFromSession,
+            value.getString("classicValue"));
+      }
+      return valueInComboReference;
     } catch (JSONException e) {
       throw new OBException("Error while computing combo data", e);
     }

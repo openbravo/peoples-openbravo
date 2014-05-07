@@ -153,7 +153,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
     params.put("_operationType", "fetch");
     // try to filter by string 'Jo'
-    params.put("FILTER_VALUE", "Jo");
+    params.put("_identifier", "Jo");
 
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
@@ -174,7 +174,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
     params.put("_operationType", "fetch");
     // try to filter by string 'Jo'
-    params.put("FILTER_VALUE", "Jo");
+    params.put("_identifier", "Jo");
     params.put("_startRow", "0");
     params.put("_endRow", "1");
 
@@ -216,7 +216,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("columnValue", "233");
     params.put("_operationType", "fetch");
     // try to filter by string 'Me'
-    params.put("FILTER_VALUE", "Me");
+    params.put("_identifier", "Me");
     String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
         params, 200, "POST");
     JSONObject jsonResponse = new JSONObject(response);
