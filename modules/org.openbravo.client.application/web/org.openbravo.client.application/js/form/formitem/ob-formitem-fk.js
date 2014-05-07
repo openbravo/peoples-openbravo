@@ -213,6 +213,58 @@ isc.OBFKItem.addProperties({
     }
   },
 
+  filterDataBoundPickList: function (requestProperties, dropCache) {
+    requestProperties = requestProperties || {};
+    requestProperties.params = requestProperties.params || {};
+
+    this.prepareDSRequest(requestProperties.params, this);
+
+    requestProperties.params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
+
+    if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
+      this.setElementValue(this.savedEnteredValue);
+      delete this.savedEnteredValue;
+    } else if (this.form && this.form.view && this.form.view.isShowingForm && this.savedEnteredValue) {
+      if (this.getEnteredValue() !== '') {
+        this.setElementValue(this.savedEnteredValue + this.getEnteredValue());
+      } else {
+        this.setElementValue(this.savedEnteredValue);
+      }
+      delete this.savedEnteredValue;
+    }
+
+    return this.Super('filterDataBoundPickList', [requestProperties, dropCache]);
+  },
+
+  prepareDSRequest: function (params, field) {
+    // on purpose not passing the third boolean param
+    if (field.form && field.form.view && field.form.view.getContextInfo) {
+      isc.addProperties(params, field.form.view.getContextInfo(false, true));
+    } else if (field.view && field.view.sourceView && field.view.sourceView.getContextInfo) {
+      isc.addProperties(params, field.view.sourceView.getContextInfo(false, true));
+    }
+
+    if (field.form && field.form.view && field.form.view.standardWindow) {
+      isc.addProperties(params, {
+        windowId: field.form.view.standardWindow.windowId,
+        tabId: field.form.view.tabId,
+        moduleId: field.form.view.moduleId
+      });
+    }
+
+    // Include the windowId in the params if possible
+    if (field.form && field.form.view && field.form.view.standardProperties && field.form.view.standardProperties.inpwindowId) {
+      params.windowId = field.form.view.standardProperties.inpwindowId;
+    }
+
+    // also add the special ORG parameter
+    if (params.inpadOrgId) {
+      params[OB.Constants.ORG_PARAMETER] = params.inpadOrgId;
+    }
+
+
+  },
+
   init: function () {
     this.displayField = '_identifier';
     this.optionDataSource = OB.Datasource.create({
