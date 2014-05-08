@@ -154,7 +154,8 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         entry.put(JsonConstants.IDENTIFIER, (String) null);
         comboEntries.add(entry);
       }
-      int maxRows = endRow - startRow + 1;
+      int maxRows = endRow - startRow;
+
       boolean hasMoreRows = false;
       for (FieldProvider fp : values) {
         if (comboEntries.size() > maxRows) {
