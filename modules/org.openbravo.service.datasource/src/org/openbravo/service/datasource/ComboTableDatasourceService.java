@@ -33,11 +33,11 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.WindowAccessData;
@@ -141,10 +141,9 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       if ("Y".equals(onChange) && StringUtils.isNotEmpty(filterString)) {
         columnValue = filterString;
       }
-      FieldProvider tabData = UIDefinition.generateTabData(field.getTab().getADFieldList(), field,
-          columnValue);
+
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
-          vars, tabData, field.getTab().getWindow().getId(),
+          vars, new FieldProviderFactory(parameters), field.getTab().getWindow().getId(),
           (getValueFromSession && !comboreload) ? columnValue : "");
       if (singleRecord != null && !"Y".equals(onChange)) {
         newParameters.put("@ONLY_ONE_RECORD@", singleRecord);

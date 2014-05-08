@@ -626,8 +626,7 @@ public abstract class UIDefinition {
     }
   }
 
-  public static FieldProvider generateTabData(List<Field> fields, Field currentField,
-      String currentValue) {
+  private FieldProvider generateTabData(List<Field> fields, Field currentField, String currentValue) {
     HashMap<String, Object> noinpDataMap = new HashMap<String, Object>();
     for (Field field : fields) {
       if (field.getColumn() == null) {
