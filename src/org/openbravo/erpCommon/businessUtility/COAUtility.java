@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -750,6 +750,10 @@ public class COAUtility {
       } else {
         log4j.debug("insertElementValuesInDB() - Inserting element value in database");
         ElementValue elementValue = null;
+        if ("".equals(data[i].getAccountName()) || data[i].getAccountName() == null) {
+          return logError("@CreateAccountingFailed@" + " Account found without name in COA ",
+              " insertElementValuesInDB() - Account found without name in COA ");
+        }
         try {
           elementValue = InitialSetupUtility.insertElementValue(element, organization,
               data[i].getAccountName(), data[i].getAccountValue(), data[i].getAccountDescription(),

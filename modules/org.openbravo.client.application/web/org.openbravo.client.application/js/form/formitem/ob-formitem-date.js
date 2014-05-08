@@ -328,20 +328,27 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   },
 
   getPickerData: function () {
-    var date = this.getValue();
+    var date = this.getValue(),
+        utcDate, utcMonth, utcFullYear, utcHours, utcMinutes, utcSeconds;
     // To visualize in the calendar the displayed value instead of internal value, since due to the GMT difference it can be in a different day
     if (this.isAbsoluteDateTime && isc.isA.Date(date)) {
+      utcDate = date.getUTCDate();
+      utcMonth = date.getUTCMonth();
+      utcFullYear = date.getUTCFullYear();
+      utcHours = date.getUTCHours();
+      utcMinutes = date.getUTCMinutes();
+      utcSeconds = date.getUTCSeconds();
       // Set the month initially to January to prevent error like this
       // provided date: 15/02/2014
       // today: 31/03/2014
       // date.setDate(today.getDate()) would result in Mon Mar 02 2014 18:00:00 GMT+0100 (CET), because February does not have 31 days
       date.setMonth(0);
-      date.setDate(date.getUTCDate());
-      date.setMonth(date.getUTCMonth());
-      date.setFullYear(date.getUTCFullYear());
-      date.setHours(date.getUTCHours());
-      date.setMinutes(date.getUTCMinutes());
-      date.setSeconds(date.getUTCSeconds());
+      date.setDate(utcDate);
+      date.setMonth(utcMonth);
+      date.setFullYear(utcFullYear);
+      date.setHours(utcHours);
+      date.setMinutes(utcMinutes);
+      date.setSeconds(utcSeconds);
     }
     if (isc.isA.Date(date)) {
       return date;

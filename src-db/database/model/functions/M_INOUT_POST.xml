@@ -109,7 +109,12 @@
     v_DocAction VARCHAR2(60);
     v_voiddoccount NUMBER:=0;
 
+    v_penqty NUMBER;
+    v_qtysumorders NUMBER;
+    v_released  NUMBER;
+
   BEGIN
+  
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -476,7 +481,8 @@
                 SELECT count(*), max(m_reservation_id)
                   INTO v_aux, v_reservation_id
                 FROM m_reservation
-                WHERE c_orderline_id = cur_inoutline.c_orderline_id;
+                WHERE c_orderline_id = cur_inoutline.c_orderline_id
+                AND res_status NOT IN ('DR', 'CL');
                 IF (v_aux > 1) THEN
                   RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
                 ELSIF (v_aux = 1) THEN
@@ -492,7 +498,8 @@
                   SELECT count(*), max(m_reservation_id)
                     INTO v_aux, v_reservation_id
                   FROM m_reservation
-                  WHERE c_orderline_id = cur_inoutline.c_orderline_id;
+                  WHERE c_orderline_id = cur_inoutline.c_orderline_id
+                  AND res_status NOT IN ('DR', 'CL');
                   IF (v_aux > 1) THEN
                     RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
                   ELSIF (v_aux = 1) THEN
@@ -538,7 +545,7 @@
                     WHERE c_orderline_id = cur_inoutline.c_orderline_id
                       AND m_locator_id = cur_inoutline.m_locator_id
                       AND m_reservation_id = cur_reserve_stock.m_reservation_id
-                      AND isallocated = 'Y'
+                      AND isallocated = cur_reserve_stock.isallocated
                       AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(Cur_InOutLine.M_AttributeSetInstance_ID, '0');
                     -- Update existing prereserved stock to decrease reserved qty
                     UPDATE m_reservation_stock
@@ -559,7 +566,7 @@
                         get_uuid(), cur_reserve_stock.ad_client_id, cur_reserve_stock.ad_org_id, 'Y',
                         now(), v_user, now(), v_user,
                         cur_reserve_stock.m_reservation_id, cur_inoutline.m_attributesetinstance_id, cur_inoutline.m_locator_id, cur_inoutline.c_orderline_id,
-                        v_qtyaux, 0, 'Y'
+                        v_qtyaux, 0, cur_reserve_stock.isallocated
                       );
                     END IF;
                     v_pendingqty := v_pendingqty - v_qtyaux;
@@ -574,6 +581,21 @@
                 END;
               ELSIF (cur_inout.issotrx = 'N' AND cur_inoutline.canceled_inoutline_id IS NOT NULL AND v_qty < 0) THEN
                 -- Revert to pre-reservations
+
+                  select  sum(iol.movementqty)
+                  into v_qtysumorders
+                  from m_inoutline iol
+                  WHERE  iol.c_orderline_id=cur_inoutline.c_orderline_id
+                  and iol.m_locator_id=cur_inoutline.m_locator_id;
+
+                  select rs.quantity
+                  into v_released
+                  from m_reservation_stock rs
+                  where c_orderline_id=cur_inoutline.c_orderline_id
+                  and rs.m_locator_id=cur_inoutline.m_locator_id;
+
+                  v_penqty := -v_qty - ((v_qtysumorders+(-cur_inoutline.movementqty))-v_released);
+
                 DECLARE
                   cur_reserve_stock     RECORD;
                   v_pendingqty          NUMBER;
@@ -581,10 +603,10 @@
                   v_res_stock_id        VARCHAR2(32);
                   v_aux_released NUMBER:= 0;
                 BEGIN
-                  v_pendingqty := -v_qty;
+                  v_pendingqty:=v_penqty;
                   FOR cur_reserve_stock IN (
                       SELECT rs.quantity, COALESCE(rs.releasedqty,0) AS releasedqty, rs.m_reservation_stock_id, rs.m_reservation_id,
-                          rs.ad_org_id, rs.ad_client_id
+                          rs.ad_org_id, rs.ad_client_id, rs.isallocated
                       FROM m_reservation_stock rs JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
                       WHERE rs.c_orderline_id = cur_inoutline.c_orderline_id
                         AND rs.m_locator_id = cur_inoutline.m_locator_id
@@ -600,6 +622,7 @@
                         AND m_locator_id IS NULL
                         AND m_reservation_id = cur_reserve_stock.m_reservation_id;
                       -- Update existing prereserved stock to decrease reserved qty
+
                       UPDATE m_reservation_stock
                       SET quantity = quantity - v_qtyaux
                       WHERE m_reservation_stock_id = cur_reserve_stock.m_reservation_stock_id;
@@ -618,7 +641,7 @@
                           get_uuid(), cur_reserve_stock.ad_client_id, cur_reserve_stock.ad_org_id, 'Y',
                           now(), v_user, now(), v_user,
                           cur_reserve_stock.m_reservation_id, '0', NULL, cur_inoutline.c_orderline_id,
-                          v_qtyaux, 0, 'Y'
+                          v_qtyaux, 0, cur_reserve_stock.isallocated
                         );
                       END IF;
                       v_pendingqty := v_pendingqty - v_qtyaux;
@@ -636,8 +659,9 @@
                     AND quantity = 0
                     AND COALESCE(releasedqty, 0) = 0;
                 END;
+
               END IF;
-              
+
               v_ResultStr:='CreateTransaction';
               Ad_Sequence_Next('M_Transaction', Cur_InOutLine.AD_Org_ID, v_NextNo) ;
               INSERT
@@ -951,7 +975,8 @@
               C_Costcenter_ID, A_Asset_ID,
               DeliveryViaRule, M_Shipper_ID, C_Charge_ID, ChargeAmt,
               PriorityRule, DocStatus, DocAction, Processing,
-              Processed, ISLOGISTIC, salesrep_id, Process_Goods_Java
+              Processed, ISLOGISTIC, salesrep_id, Process_Goods_Java,
+              calculate_freight, m_freightcategory_id, freight_currency_id 
             )
             VALUES
             (
@@ -966,7 +991,8 @@
               Cur_InOut.C_Costcenter_ID, Cur_InOut.A_Asset_ID,
               Cur_InOut.DeliveryViaRule, Cur_InOut.M_Shipper_ID, Cur_InOut.C_Charge_ID, Cur_InOut.ChargeAmt * -1,
               Cur_InOut.PriorityRule, 'DR', 'CO', 'N',
-               'N', Cur_InOut.islogistic, Cur_InOut.salesrep_id, 'CO'
+               'N', Cur_InOut.islogistic, Cur_InOut.salesrep_id, 'CO',
+              Cur_InOut.calculate_freight, Cur_InOut.m_freightcategory_id, Cur_InOut.freight_currency_id 
             )
             ;
           v_ResultStr:='InsertInOutLine';

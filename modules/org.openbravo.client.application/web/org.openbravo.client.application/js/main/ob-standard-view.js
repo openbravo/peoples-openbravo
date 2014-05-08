@@ -233,8 +233,11 @@ isc.OBStandardView.addProperties({
     // If the tab comes with session attributes (preference attributes used in the display
     // logic of the tab, see issue https://issues.openbravo.com/view.php?id=5202), assign them
     // to the form, so they will be retrieved when getContextInfo() is called for the form
-    if (this.sessionAttributes) {
-      this.viewForm.sessionAttributes = this.sessionAttributes;
+    if (this.sessionAttributesNames) {
+      this.preferenceValues = {};
+      for (i = 0; i < this.sessionAttributesNames.length; i++) {
+        this.preferenceValues[this.sessionAttributesNames[i]] = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
+      }
     }
 
     if (this.actionToolbarButtons) {
@@ -1438,7 +1441,7 @@ isc.OBStandardView.addProperties({
         // Calling getContextInfo with (false, true, true) in order to obtain also the value of the
         // session attributes of the form
         contextInfo = this.getContextInfo(false, true, true);
-        this.addSessionAttributes(contextInfo, tabViewPane);
+        this.addPreferenceValues(contextInfo, tabViewPane);
         if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(contextInfo))) {
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
@@ -1483,15 +1486,15 @@ isc.OBStandardView.addProperties({
 
   // Adds to contextInfo the session attributes of the childView, 
   // unless the session attribute is an auxiliary input of its parent tab
-  addSessionAttributes: function (contextInfo, childView) {
+  addPreferenceValues: function (contextInfo, childView) {
     var auxInputs = {},
         p;
     if (this.viewForm && this.viewForm.auxInputs) {
       auxInputs = this.viewForm.auxInputs;
     }
-    for (p in childView.sessionAttributes) {
-      if (childView.sessionAttributes.hasOwnProperty(p) && !auxInputs.hasOwnProperty(p)) {
-        contextInfo[p] = childView.sessionAttributes[p];
+    for (p in childView.preferenceValues) {
+      if (childView.preferenceValues.hasOwnProperty(p) && !auxInputs.hasOwnProperty(p)) {
+        contextInfo[p] = childView.preferenceValues[p];
       }
     }
   },
@@ -1527,6 +1530,7 @@ isc.OBStandardView.addProperties({
   },
 
   getParentRecord: function () {
+    var grid = null;
     if (!this.parentView || !this.parentView.viewGrid.getSelectedRecords() || this.parentView.viewGrid.getSelectedRecords().length !== 1) {
       return null;
     }
@@ -1535,8 +1539,12 @@ isc.OBStandardView.addProperties({
     if (this.parentView.viewGrid.getSelectedRecord()._new) {
       return null;
     }
-
-    return this.parentView.viewGrid.getSelectedRecord();
+    if (this.parentView.isShowingTree) {
+      grid = this.parentView.treeGrid;
+    } else {
+      grid = this.parentView.viewGrid;
+    }
+    return grid.getSelectedRecord();
   },
 
   updateTabTitle: function () {
@@ -1930,7 +1938,14 @@ isc.OBStandardView.addProperties({
               view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
             }
             view.viewGrid.updateRowCountDisplay();
-            view.refreshChildViews();
+
+            // Refresh the grid based on Refresh After Deletion preference
+            if (OB.PropertyStore.get("OBUIAPP_RefreshAfterDeletion", view.standardWindow.windowId) === 'Y') {
+              view.viewGrid.refreshGrid();
+            } else {
+              view.refreshChildViews();
+            }
+
             view.refreshParentRecord();
           } else {
             // get the error message from the dataObject 
@@ -2094,6 +2109,8 @@ isc.OBStandardView.addProperties({
     var ret;
     if (this.isShowingForm) {
       ret = this.viewForm.getValues();
+    } else if (this.isShowingTree) {
+      ret = this.treeGrid.getSelectedRecord();
     } else if (this.isEditingGrid) {
       ret = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditForm().getValues());
     } else {
@@ -2232,6 +2249,13 @@ isc.OBStandardView.addProperties({
         propertyObj = properties[i];
         value = record[propertyObj.property];
         field = component.getField(propertyObj.property);
+        if (field && field.editorType //
+        && Object.prototype.toString.call(value) === '[object Date]' //
+        && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteDateTime')()) { //
+          // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
+          // http://forums.smartclient.com/showthread.php?p=116135
+          value = OB.Utilities.Date.addTimezoneOffset(value);
+        }
         addProperty = propertyObj.sessionProperty || !onlySessionProperties;
         if (addProperty) {
           if (classicMode) {

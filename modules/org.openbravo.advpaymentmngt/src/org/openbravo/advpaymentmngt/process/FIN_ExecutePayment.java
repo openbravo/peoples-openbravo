@@ -20,7 +20,9 @@ package org.openbravo.advpaymentmngt.process;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
@@ -70,7 +72,8 @@ public class FIN_ExecutePayment {
     else
       this.parameters = _parameters;
     this.paymentRun = dao.getNewPaymentRun(sourceType, executionProcess, organization);
-    for (FIN_Payment payment : payments)
+    Set<FIN_Payment> paymentSet = new HashSet<FIN_Payment>(payments);
+    for (FIN_Payment payment : paymentSet)
       dao.getNewPaymentRunPayment(paymentRun, payment);
     final List<PaymentExecutionProcessParameter> allParameters = executionProcess
         .getFinancialMgmtPaymentExecutionProcessParameterList();
@@ -181,6 +184,7 @@ public class FIN_ExecutePayment {
             }
             paymentRunPayment.getPayment().setPosted("N");
             try {
+              OBContext.setAdminMode(true);
               for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
                 for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
                   if (psd.isInvoicePaid()

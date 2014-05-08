@@ -285,8 +285,9 @@ public class DefaultJsonDataService implements JsonDataService {
       // this is the main entity of a 'contains' (used in FK drop down lists), it will create also
       // info for subentity
 
+      final String distinctPropertyPath = parameters.get(JsonConstants.DISTINCT_PARAMETER);
       final Property distinctProperty = DalUtil.getPropertyFromPath(ModelProvider.getInstance()
-          .getEntity(entityName), parameters.get(JsonConstants.DISTINCT_PARAMETER));
+          .getEntity(entityName), distinctPropertyPath);
       final Entity distinctEntity = distinctProperty.getTargetEntity();
 
       // criteria needs to be split in two parts:
@@ -301,7 +302,7 @@ public class DefaultJsonDataService implements JsonDataService {
           try {
             JSONObject jsonCriterion = new JSONObject(criterion);
             if (jsonCriterion.getString("fieldName").equals(
-                distinctProperty.getName() + "$" + JsonConstants.IDENTIFIER)) {
+                distinctPropertyPath + "$" + JsonConstants.IDENTIFIER)) {
               jsonCriterion.put("fieldName", JsonConstants.IDENTIFIER);
               baseCriteria = jsonCriterion.toString();
             } else {
@@ -346,7 +347,8 @@ public class DefaultJsonDataService implements JsonDataService {
 
       // create now subentity
       queryService.setSubEntity(entityName,
-          createSetQueryService(paramSubCriteria, forCountOperation, true), distinctProperty);
+          createSetQueryService(paramSubCriteria, forCountOperation, true), distinctProperty,
+          distinctPropertyPath);
     } else {
       queryService.setEntityName(entityName);
       if (parameters.containsKey(JsonConstants.USE_ALIAS)) {

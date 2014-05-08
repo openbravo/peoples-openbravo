@@ -1606,7 +1606,7 @@ public class CreateFrom extends HttpSecureAppServlet {
               }
 
               CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
-                  strOrg2, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
+                  data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
                   data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
                   priceActual, priceLimit, lineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
                   data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,

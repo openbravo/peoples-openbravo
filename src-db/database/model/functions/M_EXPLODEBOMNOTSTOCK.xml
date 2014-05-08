@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2013 Openbravo SLU
+* All portions are Copyright (C) 2013-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -39,6 +39,14 @@
   v_Line NUMBER:=0;
   v_ResultStr VARCHAR2(2000):='';
   v_result NUMBER:= 1;  
+  v_Precision NUMBER;
+  v_gross_unit_price NUMBER;
+  v_line_gross_amount NUMBER;
+  v_price_actual NUMBER;
+  v_gross_price_list NUMBER;
+  v_line_net_amt NUMBER;
+  v_istaxincluded CHAR(1);
+  
   BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -79,9 +87,11 @@
 
     -- Get Price List Version
     FOR Cur_MPriceListVersion IN
-      (SELECT v.M_PriceList_Version_ID AS PriceList_Version_ID, o.M_PriceList_ID
-       FROM M_PRICELIST_VERSION v, C_ORDER o
+      (SELECT v.M_PriceList_Version_ID AS PriceList_Version_ID, o.M_PriceList_ID,
+      p.IsTaxIncluded
+       FROM M_PRICELIST_VERSION v, C_ORDER o, M_PriceList p
        WHERE v.M_PriceList_ID=o.M_PriceList_ID
+         AND v.M_PriceList_ID = p.M_PriceList_ID
          AND v.ValidFrom<=o.DateOrdered
          AND v.IsActive='Y'
          AND o.C_Order_ID=v_orderID
@@ -89,6 +99,7 @@
       )
     LOOP
       v_PriceList_Version_ID:=Cur_MPriceListVersion.PriceList_Version_ID;
+      v_IsTaxIncluded:=Cur_MPriceListVersion.IsTaxIncluded;
       EXIT;
     END LOOP;
     -- Replace Lines
@@ -124,6 +135,23 @@
         Cur_Bom_Line.Ad_Org_Id, Cur_Bom_Line.Ord_M_Warehouse_Id, Cur_Bom_Line.Ord_C_Bpartner_Location_Id, 
         CUR_BOM_Line.ord_C_BPartner_Location_ID, null, CUR_BOM_Line.issotrx) ;
 
+        SELECT PricePrecision INTO v_Precision FROM C_Currency WHERE
+        C_Currency_ID = CUR_BOM_Line.C_Currency_ID;
+
+        IF(v_IsTaxIncluded='Y') THEN
+					v_gross_unit_price:=M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID);
+					v_gross_price_list:=M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceList(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID);
+					v_line_gross_amount:=ROUND(CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty*v_gross_unit_price, v_Precision);
+					v_price_actual:=ROUND(C_GET_NET_PRICE_FROM_GROSS(V_C_Tax_Id,  M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID), 0, v_Precision, 1),v_Precision);
+					v_line_net_amt:=ROUND(CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty*v_price_actual, v_Precision);
+				ELSE
+					v_gross_unit_price:=0;
+					v_line_gross_amount:=0;
+					v_gross_price_list:=0;
+					v_price_actual:=M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID);
+					v_line_net_amt:=ROUND(CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty*v_gross_unit_price, v_Precision);
+				END IF;
+
         v_Line:=v_Line + 1;
         INSERT
         INTO C_ORDERLINE
@@ -140,7 +168,8 @@
             FreightAmt, C_Charge_ID, ChargeAmt, C_Tax_ID,
             QuantityOrder, M_Product_Uom_ID, PriceStd,
             c_project_id, a_asset_id, c_costcenter_id,
-            user1_id, user2_id, bom_parent_id
+            user1_id, user2_id, bom_parent_id,
+            gross_unit_price, grosspricelist, line_gross_amount
           )
         VALUES
           (
@@ -152,12 +181,13 @@
             CUR_BOM.C_UOM_ID, CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty, CUR_BOM_Line.QtyReserved*CUR_BOM.BOMQty, CUR_BOM_Line.QtyDelivered*CUR_BOM.BOMQty,
             CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, CUR_BOM_Line.M_Shipper_ID, CUR_BOM_Line.C_Currency_ID,
             M_BOM_PriceList(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
-            M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID), M_BOM_PriceLimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
-            M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID) * CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty, CUR_BOM_Line.Discount,
+            v_price_actual, M_BOM_PriceLimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
+            v_line_net_amt, CUR_BOM_Line.Discount,
             CUR_BOM_Line.FreightAmt, CUR_BOM_Line.C_Charge_ID, CUR_BOM_Line.ChargeAmt, coalesce(v_C_Tax_ID,CUR_BOM_Line.c_tax_id),
             CUR_BOM_Line.QuantityOrder, CUR_BOM_Line.M_Product_UOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
             CUR_BOM_Line.c_project_id, CUR_BOM_Line.a_asset_id, CUR_BOM_Line.c_costcenter_id,
-            CUR_BOM_Line.user1_id, CUR_BOM_Line.user2_id, v_Record_ID
+            CUR_BOM_Line.user1_id, CUR_BOM_Line.user2_id, v_Record_ID,
+            v_gross_unit_price, v_gross_price_list, v_line_gross_amount
           );
       END LOOP; -- Create New Lines
     END LOOP; -- Replace Lines
