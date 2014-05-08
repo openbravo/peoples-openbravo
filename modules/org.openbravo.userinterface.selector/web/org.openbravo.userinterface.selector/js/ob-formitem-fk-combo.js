@@ -30,6 +30,7 @@ isc.OBFKComboItem.addProperties({
   }],
   showSelectorGrid: false,
   selectorGridFields: [],
+  extraSearchFields: [],
   displayField: '_identifier',
 
   init: function () {
