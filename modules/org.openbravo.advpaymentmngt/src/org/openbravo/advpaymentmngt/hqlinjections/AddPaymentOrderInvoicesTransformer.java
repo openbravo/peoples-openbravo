@@ -229,6 +229,11 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
           hqlQuery = hqlQuery.replace("group by", "");
         }
+        // Remove alias @@ from Order By clause
+        if (requestParameters.containsKey("_sortBy")) {
+          String sortBy = requestParameters.get("_sortBy");
+          hqlQuery = hqlQuery.replace("@" + sortBy + "@", sortBy);
+        }
         transformedHql = hqlQuery.replace("@selectClause@ ", selectClause.toString());
         transformedHql = transformedHql.replace("@whereClause@ ", whereClause.toString());
         transformedHql = transformedHql.replace("@groupByClause@", groupByClause.toString());
