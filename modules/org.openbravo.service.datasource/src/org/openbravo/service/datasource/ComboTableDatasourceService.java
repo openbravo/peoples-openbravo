@@ -75,7 +75,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     OBContext.setAdminMode();
     try {
       long init = System.currentTimeMillis();
-      String filterString = parameters.get("_identifier");
+      String filterString = null;
 
       if (!StringUtils.isEmpty(parameters.get("criteria"))) {
         String criteria = parameters.get("criteria");
