@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -578,32 +577,12 @@ public abstract class UIDefinition {
         comboEntries.add(entry);
       }
       JSONObject fieldProps = new JSONObject();
-      if (getValueFromSession && !comboreload) {
+      if (comboEntries.size() > 0) {
         fieldProps.put("value", columnValue);
         fieldProps.put("classicValue", columnValue);
-      } else {
-        if (possibleIds.contains(columnValue)) {
-          fieldProps.put("value", columnValue);
-          fieldProps.put("classicValue", columnValue);
-        } else {
-          // In case the default value doesn't exist in the combo values, we choose the first one
-          if (comboEntries.size() > 0) {
-            if (comboEntries.get(0).has(JsonConstants.ID)) {
-              fieldProps.put("value", comboEntries.get(0).get(JsonConstants.ID));
-              fieldProps.put("classicValue", comboEntries.get(0).get(JsonConstants.ID));
-            } else {
-              fieldProps.put("value", (String) null);
-              fieldProps.put("classicValue", (String) null);
-            }
-          } else {
-            fieldProps.put("value", "");
-            fieldProps.put("classicValue", "");
-          }
-        }
+        fieldProps.put("identifier", comboEntries.get(0).get(JsonConstants.IDENTIFIER));
       }
-      fieldProps.put("entries", new JSONArray(comboEntries));
-      // comboValues.put(fieldIndex, values);
-      // columnValues.put(fieldIndex, fixComboValue(columnValues.get(fieldIndex), fps));
+
       return fieldProps.toString();
     } catch (Exception e) {
       throw new OBException("Error while computing combo data", e);
