@@ -1,6 +1,5 @@
 package org.openbravo.common.datasource;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,7 +62,7 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
       qry = OBDal.getInstance().getSession().createSQLQuery(getSQLCountQuery(parameters));
     }
     OBDal.getInstance().getSession().createSQLQuery(getSQLCountQuery(parameters));
-    BigInteger count = (BigInteger) qry.uniqueResult();
+    Number count = (Number) qry.uniqueResult();
     return count.intValue();
   }
 
@@ -96,12 +95,13 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
     SQLQuery qry = null;
     if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
       fetchType = (String) parameters.get(JsonConstants.DISTINCT_PARAMETER);
-      qry = OBDal.getInstance().getSession()
-          .createSQLQuery(getDistinctProductQuery(parameters, offset, nRows));
+      qry = OBDal.getInstance().getSession().createSQLQuery(getDistinctProductQuery(parameters));
     } else {
       fetchType = "grid";
-      qry = OBDal.getInstance().getSession().createSQLQuery(getSQLQuery(parameters, offset, nRows));
+      qry = OBDal.getInstance().getSession().createSQLQuery(getSQLQuery(parameters));
     }
+    qry.setFirstResult(offset);
+    qry.setMaxResults(nRows);
 
     for (Object o : qry.list()) {
       Map<String, Object> row = createRow(o, fetchType);
@@ -132,11 +132,11 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
     return queryBuilder.toString();
   }
 
-  private String getSQLQuery(Map<String, String> parameters, int offset, int nRows) {
+  private String getSQLQuery(Map<String, String> parameters) {
     String sortClause = getSortClause(parameters);
     StringBuilder queryBuilder = new StringBuilder();
     queryBuilder
-        .append("SELECT COALESCE(il.m_inoutline_id, rol.c_orderline_id) AS c_rm_order_pick_edit_lines_id,");
+        .append("SELECT COALESCE(il.m_inoutline_id, rol.c_orderline_id) AS c_rm_order_pick_edit_ls_id,");
     queryBuilder
         .append("       COALESCE(rol.ad_client_id,il.ad_client_id) AS ad_client_id, COALESCE(rol.ad_org_id, il.ad_org_id) AS ad_org_id,");
     queryBuilder
@@ -157,7 +157,7 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
     queryBuilder
         .append("       COALESCE(rol.m_attributesetinstance_id, il.m_attributesetinstance_id) AS m_attributesetinstance_id,");
     queryBuilder
-        .append("       COALESCE(rol.m_attributesetinstance_identifier, iat.description) AS m_attributesetinstance_identifier,");
+        .append("       COALESCE(rol.m_attributesetinstance_iden, iat.description) AS m_attributesetinstance_iden,");
     queryBuilder
         .append("       il.movementqty, COALESCE(rol.c_uom_id, il.c_uom_id) AS c_uom_id, COALESCE(rol.c_uom_identifier,iuom.name) AS c_uom_identifier,");
     queryBuilder.append("       (-1) * rol.qtyordered AS returned,");
@@ -179,8 +179,6 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
     if (sortClause != null && !sortClause.isEmpty()) {
       queryBuilder.append(sortClause);
     }
-    queryBuilder
-        .append(" OFFSET " + Integer.toString(offset) + " LIMIT " + Integer.toString(nRows));
     return queryBuilder.toString();
   }
 
@@ -191,7 +189,7 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
     return queryBuilder.toString();
   }
 
-  private String getDistinctProductQuery(Map<String, String> parameters, int offset, int nRows) {
+  private String getDistinctProductQuery(Map<String, String> parameters) {
     StringBuilder queryBuilder = new StringBuilder();
     queryBuilder
         .append("SELECT distinct COALESCE(rol.m_product_id,il.m_product_id) AS m_product_id,");
@@ -199,8 +197,6 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
         .append("       COALESCE(rol.m_product_identifier,ip.name) AS m_product_identifier");
     queryBuilder.append(getSQLMainBody(parameters));
     queryBuilder.append(" ORDER BY COALESCE(rol.m_product_identifier, ip.name) ");
-    queryBuilder
-        .append(" OFFSET " + Integer.toString(offset) + " LIMIT " + Integer.toString(nRows));
     return queryBuilder.toString();
   }
 
@@ -241,7 +237,7 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
     queryBuilder
         .append("                    ol2.c_uom_id, roluom.name as c_uom_identifier, ol2.c_tax_id, pl2.istaxincluded, ol2.gross_unit_price,");
     queryBuilder
-        .append("                    rolat.description as m_attributesetinstance_identifier, rolreas.name as c_return_reason_identifier");
+        .append("                    rolat.description as m_attributesetinstance_iden, rolreas.name as c_return_reason_identifier");
     queryBuilder.append("             FROM c_orderline ol2");
     queryBuilder.append("             JOIN c_order o2 ON ol2.c_order_id = o2.c_order_id");
     queryBuilder.append("                             AND o2.processed = 'N' ");
