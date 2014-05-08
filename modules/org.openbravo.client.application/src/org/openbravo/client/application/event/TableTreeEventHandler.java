@@ -66,7 +66,7 @@ public class TableTreeEventHandler extends EntityPersistenceEventObserver {
     Property tableProperty = entities[0].getProperty(TableTree.PROPERTY_TABLE);
     String treeStructureValue = (String) event.getCurrentState(treeStructureProperty);
     Table tableValue = (Table) event.getCurrentState(tableProperty);
-    checkTreeStructure(tableValue, treeStructureValue);
+    checkTreeStructure(tableValue, treeStructureValue, null);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -76,16 +76,26 @@ public class TableTreeEventHandler extends EntityPersistenceEventObserver {
     Property treeStructureProperty = entities[0].getProperty(TableTree.PROPERTY_TREESTRUCTURE);
     Property tableProperty = entities[0].getProperty(TableTree.PROPERTY_TABLE);
     String treeStructureValue = (String) event.getCurrentState(treeStructureProperty);
+    String recordId = event.getId();
     Table tableValue = (Table) event.getCurrentState(tableProperty);
-    checkTreeStructure(tableValue, treeStructureValue);
+    checkTreeStructure(tableValue, treeStructureValue, recordId);
   }
 
-  private void checkTreeStructure(Table table, String treeStructure) {
+  /**
+   * Checks that no other ADTree structured tree exists for this table, throws an exception if this occurs
+   * @param table table being checked
+   * @param treeStructure treestructure of the added/updated tree
+   * @param recordId null if a new record is being created or id of the record being modified
+   */
+  private void checkTreeStructure(Table table, String treeStructure, String recordId) {
     if (ADTREE_STRUCTURE.equals(treeStructure)) {
       // Check that there is no other ADTree Defined for this table
       OBCriteria<TableTree> obq = OBDal.getInstance().createCriteria(TableTree.class);
       obq.add(Restrictions.eq(TableTree.PROPERTY_TABLE, table));
       obq.add(Restrictions.eq(TableTree.PROPERTY_TREESTRUCTURE, treeStructure));
+      if (recordId != null) {
+          obq.add(Restrictions.ne(TableTree.PROPERTY_ID, recordId));
+      }
       if (obq.count() > 0) {
         String language = OBContext.getOBContext().getLanguage().getLanguage();
         ConnectionProvider conn = new DalConnectionProvider(false);
