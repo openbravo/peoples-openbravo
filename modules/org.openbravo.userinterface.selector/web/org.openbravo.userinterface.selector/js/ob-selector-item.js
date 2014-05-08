@@ -910,9 +910,10 @@ isc.OBSelectorItem.addClassMethods({
   prepareDSRequest: function (params, selector) {
     // on purpose not passing the third boolean param
     if (selector.form && selector.form.view && selector.form.view.getContextInfo) {
-      isc.addProperties(params, selector.form.view.getContextInfo(false, true));
+      // for table and table dir reference values needs to be transformed to classic (ex.: true -> Y)
+      isc.addProperties(params, selector.form.view.getContextInfo(false, true, null, selector.isComboReference));
     } else if (selector.view && selector.view.sourceView && selector.view.sourceView.getContextInfo) {
-      isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true));
+      isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true, null, selector.isComboReference));
     }
 
     if (selector.form && selector.form.view && selector.form.view.standardWindow) {
