@@ -76,6 +76,21 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     try {
       long init = System.currentTimeMillis();
       String filterString = parameters.get("_identifier");
+
+      if (!StringUtils.isEmpty(parameters.get("criteria"))) {
+        String criteria = parameters.get("criteria");
+        for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
+          try {
+            JSONObject jsonCriterion = new JSONObject(criterion);
+            if (jsonCriterion.getString("fieldName").equals(JsonConstants.IDENTIFIER)) {
+              filterString = jsonCriterion.getString("value");
+            }
+          } catch (JSONException e) {
+            log.error("Error obtaining 'distint' criterion for " + criterion, e);
+          }
+        }
+      }
+
       String onChange = parameters.get("onchange");
       if (parameters.get(JsonConstants.STARTROW_PARAMETER) != null) {
         startRow = Integer.parseInt(parameters.get(JsonConstants.STARTROW_PARAMETER));
