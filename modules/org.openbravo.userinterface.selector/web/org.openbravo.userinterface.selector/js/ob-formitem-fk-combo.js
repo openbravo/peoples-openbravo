@@ -33,6 +33,9 @@ isc.OBFKComboItem.addProperties({
   extraSearchFields: [],
   displayField: '_identifier',
 
+  // flag for table and tableDir references
+  isComboReference: true,
+
   init: function () {
     this.optionDataSource = OB.Datasource.create({
       dataURL: OB.Application.contextUrl + 'org.openbravo.service.datasource/ComboTableDatasourceService',

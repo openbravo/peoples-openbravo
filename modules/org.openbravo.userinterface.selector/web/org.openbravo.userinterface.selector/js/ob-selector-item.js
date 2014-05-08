@@ -936,8 +936,10 @@ isc.OBSelectorItem.addClassMethods({
     // adds the selector id to filter used to get filter information
     params._selectorDefinitionId = selector.selectorDefinitionId;
 
-    // add field's default filter expressions
-    params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
+    if (!selector.isComboReference) {
+      // add field's default filter expressions
+      params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
+    }
 
     // the additional where clause
     params[OB.Constants.WHERE_PARAMETER] = selector.whereClause;
