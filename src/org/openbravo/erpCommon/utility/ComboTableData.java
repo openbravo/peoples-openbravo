@@ -839,7 +839,7 @@ public class ComboTableData {
    * @return String with the query.
    */
   private String getQuery(boolean onlyId, String[] discard, String recordId) {
-    return getQuery(onlyId, discard, recordId, null, null, null, null);
+    return getQuery(onlyId, discard, recordId, null, null, null);
   }
 
   /**
@@ -862,7 +862,7 @@ public class ComboTableData {
    * @return String with the query.
    */
   private String getQuery(boolean onlyId, String[] discard, String recordId, Integer startRow,
-      Integer endRow, ConnectionProvider conn, String filterByValue) {
+      Integer endRow, ConnectionProvider conn) {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = getSelectFields();
     String idName = "", nameToCompare = null;
@@ -897,9 +897,7 @@ public class ComboTableData {
       }
       text.append(id);
       if (!name.toString().equals("")) {
-        if (filterByValue != null) {
-          nameToCompare = name.toString() + ")";
-        }
+        nameToCompare = name.toString() + ")";
         name.append(") AS NAME");
       } else {
         name.append("'>>No Record Identifier<<' AS NAME");
@@ -938,16 +936,13 @@ public class ComboTableData {
           hasWhere = true;
           if (!txtAux.toString().equals(""))
             txtAux.append("AND ");
-          txtAux.append(auxStructure.toString()).append(" \n");
+          txtAux.append(auxStructure.toString().replace("_COMBO_IDENTIFIER_", nameToCompare))
+              .append(" \n");
         }
       }
       if (hasWhere) {
         if (recordId != null) {
           txtAux.append(" AND " + idName + "=(?) ");
-        }
-        if (nameToCompare != null) {
-          txtAux.append(" AND UPPER(" + nameToCompare + ") like '%" + filterByValue.toUpperCase()
-              + "%' ");
         }
         text.append("WHERE ").append(txtAux.toString());
       }
@@ -1155,7 +1150,7 @@ public class ComboTableData {
       }
 
     }
-    String strSql = getQuery(false, null, null, startRow, endRow, conn, null);
+    String strSql = getQuery(false, null, null, startRow, endRow, conn);
     if (log4j.isDebugEnabled())
       log4j.debug("SQL: " + strSql);
     PreparedStatement st = conn.getPreparedStatement(strSql);
@@ -1258,7 +1253,15 @@ public class ComboTableData {
       boolean includeActual, Integer startRow, Integer endRow, String filterValue) throws Exception {
     String actual = lparameters != null ? lparameters.get("@ACTUAL_VALUE@")
         : getParameter("@ACTUAL_VALUE@");
-    String strSql = getQuery(false, null, null, startRow, endRow, conn, filterValue);
+
+    if (!StringUtils.isEmpty(filterValue)) {
+      // adding filter expression for identifier
+      addWhereField("UPPER(_COMBO_IDENTIFIER_) like UPPER(?)", "__COMBO_FILTER");
+      addWhereParameter("__COMBO_FILTER", "__COMBO_FILTER", "__COMBO_FILTER");
+      lparameters.put("__COMBO_FILTER", "%" + filterValue + "%");
+    }
+
+    String strSql = getQuery(false, null, null, startRow, endRow, conn);
     if (log4j.isDebugEnabled())
       log4j.debug("SQL: " + strSql);
     PreparedStatement st = conn.getPreparedStatement(strSql);
