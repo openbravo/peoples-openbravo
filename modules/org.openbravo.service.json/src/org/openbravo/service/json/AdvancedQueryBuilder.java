@@ -1397,8 +1397,34 @@ public class AdvancedQueryBuilder {
       } else {
         final List<Property> newIdentifierProperties = prop.getReferencedProperty().getEntity()
             .getIdentifierProperties();
-        sb.append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName()
-            + DalUtil.DOT));
+
+        String newPrefix = prefix + prop.getName();
+
+        if (prop.allowNullValues()) {
+
+          boolean addJoin = true;
+
+          // Look if the property has been joined
+          for (JoinDefinition joinableDefinition : joinDefinitions) {
+            if (joinableDefinition.property == prop) {
+              addJoin = false;
+
+              // Update newPrefix with the alias of the joinDefinition
+              newPrefix = joinableDefinition.joinAlias;
+              break;
+            }
+          }
+
+          if (addJoin) {
+            // Add join if this property allows null values
+            final JoinDefinition joinDefinition = new JoinDefinition();
+            joinDefinition.setOwnerAlias(prefix.substring(0, prefix.length() - 1));
+            joinDefinition.setProperty(prop);
+            joinDefinitions.add(joinDefinition);
+          }
+        }
+
+        sb.append(createIdentifierLeftClause(newIdentifierProperties, newPrefix + DalUtil.DOT));
       }
     }
 
