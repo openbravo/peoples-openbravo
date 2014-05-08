@@ -641,6 +641,10 @@ isc.OBSelectorItem.addProperties({
       this.storeValue(record[this.valueField]);
       this.form.setValue(this.name + OB.Constants.FIELDSEPARATOR + this.displayField, record[this.displayField]);
       this.form.setValue(identifierFieldName, record[OB.Constants.IDENTIFIER]);
+      // make sure the identifier is not null in the grid. See issue https://issues.openbravo.com/view.php?id=25727
+      if (this.form.grid && this.form.grid.getEditValues(0) && !this.form.grid.getEditValues(0)[this.name + OB.Constants.FIELDSEPARATOR + this.displayField]) {
+        this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name + OB.Constants.FIELDSEPARATOR + this.displayField, record[OB.Constants.IDENTIFIER]);
+      }
       if (!this.valueMap) {
         this.valueMap = {};
       }
@@ -874,7 +878,7 @@ isc.OBSelectorItem.addProperties({
     if (value && value !== '' && ret === '' && !OB.Utilities.isUUID(value)) {
       this.savedEnteredValue = value;
     }
-    return ret.unescapeHTML();
+    return ret;
   },
 
   mapDisplayToValue: function (value) {
