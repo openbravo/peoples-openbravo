@@ -45,6 +45,11 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
   private static final String TABLE_AD_REFERENCE_ID = "18";
 
   @Override
+  public String getFormEditorType() {
+    return "OBFKComboItem";
+  }
+
+  @Override
   public String getParentType() {
     // ensures that the field will have a oneOf validator
     return "enum";
