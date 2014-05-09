@@ -138,7 +138,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     Query countQuery = getQuery(table, parameters, justCount);
     String hqlQuery = countQuery.getQueryString();
     int nRows = -1;
-    if (hqlQuery.contains(GROUPBY)) {
+    if (hqlQuery.toUpperCase().contains(GROUPBY)) {
       // No risk in using list, the request is done always paginated
       nRows = countQuery.list().size();
     } else {
