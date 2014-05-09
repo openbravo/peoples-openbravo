@@ -36,7 +36,7 @@
          and not exists (select 1 from fin_payment_detail fpd
          left join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
          where fin_payment_scheduledetail.fin_payment_detail_id = fpd.fin_payment_detail_id
-         and fp.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC'));
+         and fp.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC'))
       ]]>
     </Sql>
     </SqlMethod>
