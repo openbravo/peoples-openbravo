@@ -31,14 +31,12 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
      <![CDATA[ 
-        update fin_payment_scheduledetail set isinvoicepaid=(select CASE WHEN fpsd.fin_payment_detail_id is null then 'N'
-        WHEN 
-       fp.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC') THEN 'Y' ELSE 'N' END
-        from fin_payment_scheduledetail fpsd
-         left join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+         update fin_payment_scheduledetail set isinvoicepaid= 'N'
+         where fin_payment_schedule_invoice is not null
+         and not exists (select 1 from fin_payment_detail fpd
          left join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
-         and fin_payment_schedule_invoice is not null
-         where fin_payment_scheduledetail.fin_payment_scheduledetail_id=fpsd.fin_payment_scheduledetail_id)
+         where fin_payment_scheduledetail.fin_payment_detail_id = fpd.fin_payment_detail_id
+         and fp.status IN ('PPM', 'RPR', 'PWNC', 'RDNC', 'RPPC'));
       ]]>
     </Sql>
     </SqlMethod>
