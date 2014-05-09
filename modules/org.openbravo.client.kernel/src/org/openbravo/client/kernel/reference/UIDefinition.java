@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -563,7 +564,7 @@ public abstract class UIDefinition {
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
       ArrayList<String> possibleIds = new ArrayList<String>();
       // If column is mandatory we add an initial blank value
-      if (!field.getColumn().isMandatory() && isListReference) {
+      if (!field.getColumn().isMandatory() && StringUtils.isEmpty(columnValue)) {
         possibleIds.add("");
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, (String) null);
