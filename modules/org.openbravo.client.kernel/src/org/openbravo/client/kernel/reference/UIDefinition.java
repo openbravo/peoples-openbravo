@@ -510,13 +510,23 @@ public abstract class UIDefinition {
   protected String getValueInComboReference(Field field, boolean getValueFromSession,
       String columnValue, boolean onlyFirstRecord) {
     try {
+      String ref = field.getColumn().getReference().getId();
+      boolean isListReference = "17".equals(ref);
+      if (!isListReference && !field.getColumn().isMandatory() && StringUtils.isEmpty(columnValue)) {
+        // non mandatory without value nor default, should only return empty value, prevent
+        // everything else
+        JSONObject entry = new JSONObject();
+        entry.put(JsonConstants.ID, (String) null);
+        entry.put(JsonConstants.IDENTIFIER, (String) null);
+        return entry.toString();
+      }
+
       FieldProvider[] fps = null;
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
       boolean comboreload = rq.getRequestParameter("donotaddcurrentelement") != null
           && rq.getRequestParameter("donotaddcurrentelement").equals("true");
-      String ref = field.getColumn().getReference().getId();
-      boolean isListReference = "17".equals(ref);
+
       String objectReference = "";
       if (field.getColumn().getReferenceSearchKey() != null) {
         objectReference = field.getColumn().getReferenceSearchKey().getId();
