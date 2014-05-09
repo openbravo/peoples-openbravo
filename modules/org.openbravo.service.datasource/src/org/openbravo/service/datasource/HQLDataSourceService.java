@@ -37,7 +37,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
@@ -181,9 +180,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     for (Object row : query.list()) {
       Map<String, Object> record = new HashMap<String, Object>();
       if (distinct != null) {
-        BaseOBObject bob = (BaseOBObject) row;
-        record.put(JsonConstants.ID, bob.getId());
-        record.put(JsonConstants.IDENTIFIER, bob.getIdentifier());
+        // TODO: Find a better way to do this, use the proper id
+        record.put(JsonConstants.ID, row);
+        record.put(JsonConstants.IDENTIFIER, row);
       } else {
         Object[] properties = (Object[]) row;
         for (int i = 0; i < returnAliases.length; i++) {
@@ -227,11 +226,15 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     if (distinct != null) {
       final String from = "from ";
       String formClause = hqlQuery.substring(hqlQuery.toLowerCase().indexOf(from));
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+      Property property = entity.getProperty(distinct);
       // TODO: Improve distinct query like this: https://issues.openbravo.com/view.php?id=25182
       if (justCount) {
-        hqlQuery = "select count(distinct e." + distinct + ") " + formClause;
+        hqlQuery = "select count(distinct " + table.getEntityAlias() + "." + distinct + "."
+            + getNameOfFirstIdentifierProperty(property.getTargetEntity()) + ") " + formClause;
       } else {
-        hqlQuery = "select distinct e." + distinct + " " + formClause;
+        hqlQuery = "select distinct " + table.getEntityAlias() + "." + distinct + "."
+            + getNameOfFirstIdentifierProperty(property.getTargetEntity()) + " " + formClause;
       }
     }
 
@@ -355,8 +358,17 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private HqlQueryTransformer getTransformer(Map<String, String> parameters) {
     HqlQueryTransformer transformer = null;
     String tableId = parameters.get("tableId");
+    String tabId = parameters.get("tabId");
+    Table table = null;
+    if (tableId != null) {
+      table = OBDal.getInstance().get(Table.class, tableId);
+    } else if (tabId != null) {
+      Tab tab = null;
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+      table = tab.getTable();
+    }
     for (HqlQueryTransformer nextTransformer : hqlQueryTransformers
-        .select(new ComponentProvider.Selector(tableId))) {
+        .select(new ComponentProvider.Selector(table.getId()))) {
       if (transformer == null) {
         transformer = nextTransformer;
       } else if (nextTransformer.getPriority(parameters) < transformer.getPriority(parameters)) {
@@ -382,8 +394,17 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private HqlInjector getInjector(int index, Map<String, String> parameters) {
     HqlInjector injector = null;
     String tableId = parameters.get("tableId");
-    for (HqlInjector inj : hqlInjectors.select(new HQLInjectionQualifier.Selector(tableId, Integer
-        .toString(index)))) {
+    String tabId = parameters.get("tabId");
+    Table table = null;
+    if (tableId != null) {
+      table = OBDal.getInstance().get(Table.class, tableId);
+    } else if (tabId != null) {
+      Tab tab = null;
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+      table = tab.getTable();
+    }
+    for (HqlInjector inj : hqlInjectors.select(new HQLInjectionQualifier.Selector(table.getId(),
+        Integer.toString(index)))) {
       if (injector == null) {
         injector = inj;
       } else if (inj.getPriority(parameters) < injector.getPriority(parameters)) {
@@ -392,7 +413,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         log.warn(
             "Trying to get hql injector for the injection point {} of the table with id {}, there are more than one instance with same priority",
             INJECTION_POINT_GENERIC_ID.replace(INJECTION_POINT_INDEX_PLACEHOLDER,
-                Integer.toString(index)), tableId);
+                Integer.toString(index)), table.getId());
       }
     }
     return injector;
@@ -548,31 +569,74 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    */
   private String getSortByClause(Map<String, String> parameters, boolean includeMainEntityID) {
     String orderByClause = "";
-    final String tableId = parameters.get("tableId");
-    final Table table = OBDal.getInstance().get(Table.class, tableId);
+    String tableId = parameters.get("tableId");
+    String tabId = parameters.get("tabId");
+    Table table = null;
+    if (tableId != null) {
+      table = OBDal.getInstance().get(Table.class, tableId);
+    } else if (tabId != null) {
+      Tab tab = null;
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+      table = tab.getTable();
+    }
 
+    boolean isDistinctQuery = false;
     final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
     if (sortBy != null) {
       orderByClause = sortBy;
     } else if (parameters.get(JsonConstants.ORDERBY_PARAMETER) != null) {
       orderByClause = parameters.get(JsonConstants.ORDERBY_PARAMETER);
+    } else if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
+      orderByClause = parameters.get(JsonConstants.DISTINCT_PARAMETER);
+      isDistinctQuery = true;
+    } else {
+      return "";
     }
+
     final boolean asc = !orderByClause.startsWith("-");
     String direction = "";
     if (!asc) {
       orderByClause = orderByClause.substring(1);
       direction = " desc ";
     }
+    String propertyName = null;
+    if (orderByClause.endsWith("$_identifier")) {
+      propertyName = orderByClause.substring(0, orderByClause.length()
+          - ("$identifier".length() + 1));
+    } else {
+      propertyName = orderByClause;
+    }
+
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+    Property property = entity.getProperty(propertyName);
     OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
     columnCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, table));
-    columnCriteria.add(Restrictions.eq(Column.PROPERTY_NAME, orderByClause));
+    columnCriteria.add(Restrictions.eq(Column.PROPERTY_NAME, property.getColumnName()));
     Column column = (Column) columnCriteria.uniqueResult();
     if (!orderByClause.isEmpty()) {
-      orderByClause = ORDERBY + column.getEntityAlias() + direction;
-      if (includeMainEntityID) {
+      orderByClause = ORDERBY + column.getEntityAlias();
+      if (property.getTargetEntity() != null) {
+        orderByClause = orderByClause + "."
+            + getNameOfFirstIdentifierProperty(property.getTargetEntity());
+      }
+      orderByClause = orderByClause + direction;
+      if (includeMainEntityID && !isDistinctQuery) {
         orderByClause = orderByClause + ", " + table.getEntityAlias() + ".id";
       }
     }
     return orderByClause;
+  }
+
+  /**
+   * @param entity
+   *          entity whose first identifier property name will be returned
+   * @return the name of the first identifier property of an entity
+   */
+  private String getNameOfFirstIdentifierProperty(Entity entity) {
+    String propertyName = "";
+    if (!entity.getIdentifierProperties().isEmpty()) {
+      propertyName = entity.getIdentifierProperties().get(0).getName();
+    }
+    return propertyName;
   }
 }
