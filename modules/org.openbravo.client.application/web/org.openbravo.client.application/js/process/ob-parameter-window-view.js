@@ -173,7 +173,7 @@ isc.OBParameterWindowView.addProperties({
       var currentValues,
           originalShowIfValue = false;
 
-      currentValues = isc.shallowClone(values);
+      currentValues = isc.shallowClone(values) || {};
       if (!currentValues && form && form.view) {
           currentValues = isc.shallowClone(form.view.getCurrentValues());
       }
@@ -260,6 +260,10 @@ isc.OBParameterWindowView.addProperties({
             }
           }
         });
+        // If there is only one paremeter, it is a grid and the window is opened in a popup, then the window is a P&E window
+        if (items && items.length === 1 && items[0].type === 'OBPickEditGridItem' && this.popup) {
+          this.isPickAndExecuteWindow = true;
+        }
         this.theForm.setItems(items);
         this.members.push(this.theForm);
       }
