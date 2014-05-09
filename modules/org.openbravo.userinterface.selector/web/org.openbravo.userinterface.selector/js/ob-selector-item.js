@@ -649,7 +649,10 @@ isc.OBSelectorItem.addProperties({
         this.valueMap = {};
       }
 
-      this.valueMap[record[this.valueField]] = record[this.displayField].replace(/[\n\r]/g, '');
+      if (record[this.valueField]) { // it can be undefined in case of empty (null) entry
+        this.valueMap[record[this.valueField]] = record[this.displayField].replace(/[\n\r]/g, '');
+      }
+
       this.updateValueMap();
     }
 
