@@ -119,7 +119,8 @@
           OB.info('Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({
-            terminal: OB.MobileApp.model.get('terminalName')
+            terminal: OB.MobileApp.model.get('terminalName'),
+            ignoreForConnectionStatus: true
           }, function (data) {
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
@@ -281,20 +282,20 @@
 
       this.get('dataSyncModels').push({
         model: OB.Model.ChangedBusinessPartners,
-        class: 'org.openbravo.retail.posterminal.CustomerLoader',
+        className: 'org.openbravo.retail.posterminal.CustomerLoader',
         criteria: {}
       });
 
       this.get('dataSyncModels').push({
         model: OB.Model.ChangedBPlocation,
-        class: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
+        className: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
         criteria: {}
       });
 
 
       this.get('dataSyncModels').push({
         model: OB.Model.Order,
-        class: 'org.openbravo.retail.posterminal.OrderLoader',
+        className: 'org.openbravo.retail.posterminal.OrderLoader',
         criteria: {
           hasbeenpaid: 'Y'
         }
@@ -302,7 +303,7 @@
 
       this.get('dataSyncModels').push({
         model: OB.Model.CashManagement,
-        class: 'org.openbravo.retail.posterminal.ProcessCashMgmt',
+        className: 'org.openbravo.retail.posterminal.ProcessCashMgmt',
         criteria: {
           'isbeingprocessed': 'N'
         }
@@ -310,7 +311,7 @@
 
       this.get('dataSyncModels').push({
         model: OB.Model.CashUp,
-        class: 'org.openbravo.retail.posterminal.ProcessCashClose',
+        className: 'org.openbravo.retail.posterminal.ProcessCashClose',
         criteria: {
           isbeingprocessed: 'Y'
         },
@@ -329,7 +330,9 @@
         if (!_.isNull(me.get('context'))) {
           OB.UTIL.showLoading(true);
           if (OB.MobileApp.model.get('connectedToERP')) {
-            new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({}, function (inResponse) {
+            new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({
+              ignoreForConnectionStatus: true
+            }, function (inResponse) {
               if (inResponse && !inResponse.exception) {
                 me.navigate('retail.pointofsale');
               } else {
