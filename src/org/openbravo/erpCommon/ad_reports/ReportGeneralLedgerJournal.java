@@ -686,7 +686,6 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
             + (Utility.messageBD(this, "OBUIAPP_To", vars.getLanguage()) + ": ")
             + ((!"".equals(strDateTo)) ? javaSDF.format(sqlSDF.parse(strDateTo)) : "") + "\n";
       } catch (ParseException e) {
-        // TODO Auto-generated catch block
         log4j.error("Error when parsing dates", e);
       }
 
