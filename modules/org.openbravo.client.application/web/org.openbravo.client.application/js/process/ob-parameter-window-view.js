@@ -170,9 +170,13 @@ isc.OBParameterWindowView.addProperties({
     this.members.push(this.messageBar);
 
     newShowIf = function (item, value, form, values) {
-      var currentValues = isc.shallowClone(values || form.view.getCurrentValues()),
+      var currentValues,
           originalShowIfValue = false;
 
+      currentValues = isc.shallowClone(values) || {};
+      if (!currentValues && form && form.view) {
+          currentValues = isc.shallowClone(form.view.getCurrentValues());
+      }
       OB.Utilities.fixNull250(currentValues);
       var parentContext;
       if (this.view.sourceView) {
@@ -256,6 +260,10 @@ isc.OBParameterWindowView.addProperties({
             }
           }
         });
+        // If there is only one paremeter, it is a grid and the window is opened in a popup, then the window is a P&E window
+        if (items && items.length === 1 && items[0].type === 'OBPickEditGridItem' && this.popup) {
+          this.isPickAndExecuteWindow = true;
+        }
         this.theForm.setItems(items);
         this.members.push(this.theForm);
       }

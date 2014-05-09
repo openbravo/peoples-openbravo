@@ -27,27 +27,21 @@ isc.OBPickEditGridItem.addProperties({
   defaultFilter: null,
 
   init: function () {
-    var me = this;
-    if (this.view.popup) {
-      this.canvas = isc.OBPickAndExecuteView.create({
-        viewProperties: this.viewProperties,
-        view: this.view,
-        parameterName: this.name
-      });
+    var me = this,
+        pickAndExecuteViewProperties = {};
+    pickAndExecuteViewProperties.viewProperties = this.viewProperties;
+    pickAndExecuteViewProperties.view = this.view;
+    pickAndExecuteViewProperties.parameterName = this.parameterName;
+    if (this.view.isPickAndExecuteWindow) {
       this.view.resized = function () {
         me.canvas.setHeight(me.view.height - 100);
-        me.canvas.setWidth(me.view.width - 20);
+        me.canvas.setWidth(me.view.width - 35);
         me.canvas.redraw();
       };
     } else {
-      this.canvas = isc.OBPickAndExecuteView.create({
-        // height = filter height + title height + (cell_height * number_of_cells) 
-        height: 45 + OB.Styles.Process.PickAndExecute.gridCellHeight * this.displayedRowsNumber,
-        viewProperties: this.viewProperties,
-        view: this.view,
-        parameterName: this.name
-      });
+      pickAndExecuteViewProperties.height = 45 + OB.Styles.Process.PickAndExecute.gridCellHeight * this.displayedRowsNumber;
     }
+    this.canvas = isc.OBPickAndExecuteView.create(pickAndExecuteViewProperties);
     this.Super('init', arguments);
     this.selectionLayout = this.canvas;
   },
