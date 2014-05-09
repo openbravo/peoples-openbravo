@@ -240,7 +240,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     _.each(this.get('paymentList').models, function (model) {
       if (model.get('paymentMethod').automatemovementtoother === false) {
         model.set('qtyToKeep', 0);
-        model.set('foreignCounted', 0);
         if (result !== false) {
           result = true;
         }
@@ -349,8 +348,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       totalQtyToDepo: _.reduce(this.get('paymentList').models, function (total, model) {
         if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undf && model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) {
           return OB.DEC.add(total, OB.DEC.mul(OB.DEC.sub(model.get('foreignCounted'), model.get('qtyToKeep')), model.get('rate')));
-        } else if (model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) {
-          return OB.DEC.add(total, OB.DEC.mul(model.get('foreignCounted'), model.get('rate')));
         } else {
           return total;
         }
