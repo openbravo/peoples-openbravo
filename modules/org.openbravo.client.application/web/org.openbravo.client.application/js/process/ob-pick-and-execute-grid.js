@@ -291,7 +291,9 @@ isc.OBPickAndExecuteGrid.addProperties({
       return;
     }
     form = this.getEditForm();
-    this.viewProperties.handleReadOnlyLogic(form.getValues(), this.getContextInfo(), form);
+    if (form) {
+      this.viewProperties.handleReadOnlyLogic(form.getValues(), this.getContextInfo(), form);
+    }
   },
 
   handleFilterEditorSubmit: function (criteria, context) {
@@ -650,7 +652,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   validateRows: function () {
-    var i, row, field, errors, editRowIndexes, editRowIDs, rowIndexID;
+    var i, row, field, errors, editRowIndexes, editRowIDs, rowIndexID, data = this.data.allRows || this.data.localData;
 
     if (!this.neverValidate) {
       return;
@@ -665,8 +667,8 @@ isc.OBPickAndExecuteGrid.addProperties({
       if (!field.validationFn) {
         continue;
       }
-      for (row = 0; row < this.data.length; row++) {
-        errors = this.validateCellValue(row, i, this.data[row][field.name]);
+      for (row = 0; row < data.length; row++) {
+        errors = this.validateCellValue(row, i, data[row][field.name]);
         if (!errors || isc.isA.emptyArray(errors)) {
           if (editRowIndexes.indexOf(row) !== -1) {
             rowIndexID = editRowIDs[editRowIndexes.indexOf(row)];
