@@ -122,9 +122,14 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.filterClause = this.gridProperties.filterClause;
     this.sqlFilterClause = this.gridProperties.sqlFilterClause;
     this.lazyFiltering = this.gridProperties.lazyFiltering;
-    if ((this.filterClause || this.sqlFilterClause) && this.gridProperties.filterName) {
-      this.contentView.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.gridProperties.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
-      this.contentView.messageBar.hasFilterMessage = true;
+    this.filterName = this.gridProperties.filterName;
+
+    // in P&E windows, the message is shown in the message bar of OBParameterWindowView, no need to show it in the message bar of the OBPickAndExecuteView
+    if (!this.view.isPickAndExecuteWindow) {
+      if ((this.filterClause || this.sqlFilterClause) && this.gridProperties.filterName) {
+        this.contentView.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
+        this.contentView.messageBar.hasFilterMessage = true;
+      }
     }
 
     this.orderByClause = this.gridProperties.orderByClause;
