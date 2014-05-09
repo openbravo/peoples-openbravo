@@ -1287,6 +1287,12 @@
       return this.get('orderType') !== 1;
     },
 
+    hasOneLineToIgnoreDiscounts: function () {
+      return _.some(this.get('lines').models, function (line) {
+        return line.get('product').get('ignorePromotions');
+      });
+    },
+
     setOrderInvoice: function () {
       if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', true);
