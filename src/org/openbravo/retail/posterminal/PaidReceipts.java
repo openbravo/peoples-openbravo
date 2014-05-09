@@ -27,6 +27,7 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -36,11 +37,16 @@ import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
   public static final String paidReceiptsPropertyExtension = "PRExtension";
+  public static final String paidReceiptsLinesPropertyExtension = "PRExtensionLines";
 
   @Inject
   @Any
   @Qualifier(paidReceiptsPropertyExtension)
   private Instance<ModelExtension> extensions;
+  @Inject
+  @Any
+  @Qualifier(paidReceiptsLinesPropertyExtension)
+  private Instance<ModelExtension> extensionsLines;
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -48,18 +54,19 @@ public class PaidReceipts extends JSONProcessSimple {
     OBContext.setAdminMode(true);
     try {
       JSONArray respArray = new JSONArray();
+
       String orderid = jsonsent.getString("orderid");
 
+      // get the orderId
       HQLPropertyList hqlProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
-
       String hqlPaidReceipts = "select " + hqlProperties.getHqlSelect() + //
           " from Order as ord " + //
           "where ord.id = :orderId " + //
           "  and ord.obposApplications is not null";
-
       Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
       paidReceiptsQuery.setString("orderId", orderid);
 
+      // cycle through the lines of the selected order
       for (Object obj : paidReceiptsQuery.list()) {
         Object[] objpaidReceipts = (Object[]) obj;
         JSONObject paidReceipt = hqlProperties.getJSONObjectRow(objpaidReceipts);
@@ -67,28 +74,28 @@ public class PaidReceipts extends JSONProcessSimple {
 
         JSONArray listpaidReceiptsLines = new JSONArray();
 
-        // TODO: make this extensible
-        String hqlPaidReceiptsLines = "select ordLine.product.id as id, ordLine.product.name as name, ordLine.product.uOM.id as uOM, ordLine.orderedQuantity as quantity, "
-            + "ordLine.baseGrossUnitPrice as unitPrice, ordLine.lineGrossAmount as linegrossamount, ordLine.id as lineId, ordLine.standardPrice as baseNetUnitPrice , ordLine.salesOrder.currency.pricePrecision as pricePrecision, "
-            + "ordLine.warehouse.id as warehouse, ordLine.warehouse.name as warehousename "
-            + "from OrderLine as ordLine where ordLine.salesOrder.id=? order by ordLine.lineNo ";
+        // get the details of each line
+        HQLPropertyList hqlPropertiesLines = ModelExtensionUtils
+            .getPropertyExtensions(extensionsLines);
+        String hqlPaidReceiptsLines = "select " + hqlPropertiesLines.getHqlSelect() + //
+            "  from OrderLine as ordLine " + //
+            " where ordLine.salesOrder.id=? " + //
+            " order by ordLine.lineNo";
         Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaidReceiptsLines);
         paidReceiptsLinesQuery.setString(0, orderid);
+
         for (Object objLine : paidReceiptsLinesQuery.list()) {
           Object[] objpaidReceiptsLines = (Object[]) objLine;
           JSONObject paidReceiptLine = new JSONObject();
 
-          paidReceiptLine.put("id", objpaidReceiptsLines[0]);
-          paidReceiptLine.put("name", objpaidReceiptsLines[1]);
-          paidReceiptLine.put("uOM", objpaidReceiptsLines[2]);
-          paidReceiptLine.put("quantity", objpaidReceiptsLines[3]);
-          paidReceiptLine.put("unitPrice", objpaidReceiptsLines[4]);
-          paidReceiptLine.put("lineId", objpaidReceiptsLines[6]);
-          paidReceiptLine.put("baseNetUnitPrice", objpaidReceiptsLines[7]);
+          // add the received database information into the working object (paidReceiptLine)
+          int i = 0;
+          for (HQLProperty property : hqlPropertiesLines.getProperties()) {
+            paidReceiptLine.put(property.getJsonName(), objpaidReceiptsLines[i]);
+            i++;
+          }
           paidReceiptLine.put("priceIncludesTax", paidReceipt.getBoolean("priceIncludesTax"));
-          paidReceiptLine.put("warehouse", objpaidReceiptsLines[9]);
-          paidReceiptLine.put("warehousename", objpaidReceiptsLines[10]);
 
           // get shipmentLines for returns
           if (jsonsent.has("forReturn") && jsonsent.getBoolean("forReturn")) {
@@ -107,7 +114,6 @@ public class PaidReceipts extends JSONProcessSimple {
               shipmentlines.put(jsonShipline);
               paidReceiptLine.put("shipmentlines", shipmentlines);
             }
-
           }
 
           // promotions per line
@@ -153,6 +159,8 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceipt.put("receiptLines", listpaidReceiptsLines);
 
         JSONArray listPaymentsIn = new JSONArray();
+
+        // TODO: make this extensible
         String hqlPaymentsIn = "select scheduleDetail.paymentDetails.finPayment.amount, scheduleDetail.paymentDetails.finPayment.account.id, scheduleDetail.paymentDetails.finPayment.paymentDate "
             + "from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=?";
         Query paymentsInQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsIn);
@@ -170,8 +178,9 @@ public class PaidReceipts extends JSONProcessSimple {
         }
 
         JSONArray listpaidReceiptsPayments = new JSONArray();
-
         JSONArray listPaymentsType = new JSONArray();
+
+        // TODO: make this extensible
         String hqlPaymentsType = "select p.commercialName as name, p.financialAccount.id as account, p.searchKey as searchKey, "
             + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, "
             + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
@@ -218,6 +227,7 @@ public class PaidReceipts extends JSONProcessSimple {
 
         paidReceipt.put("receiptPayments", listpaidReceiptsPayments);
 
+        // TODO: make this extensible
         String hqlReceiptTaxes = "select orderTax.tax.id as taxId, orderTax.tax.rate as rate, orderTax.taxableAmount as taxableamount, orderTax.taxAmount as taxamount, orderTax.tax.name as name from OrderTax as orderTax where orderTax.salesOrder.id=?";
         Query ReceiptTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlReceiptTaxes);
         ReceiptTaxesQuery.setString(0, orderid);
