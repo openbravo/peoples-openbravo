@@ -281,20 +281,20 @@
 
       this.get('dataSyncModels').push({
         model: OB.Model.ChangedBusinessPartners,
-        class: 'org.openbravo.retail.posterminal.CustomerLoader',
+        className: 'org.openbravo.retail.posterminal.CustomerLoader',
         criteria: {}
       });
 
       this.get('dataSyncModels').push({
         model: OB.Model.ChangedBPlocation,
-        class: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
+        className: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
         criteria: {}
       });
 
 
       this.get('dataSyncModels').push({
         model: OB.Model.Order,
-        class: 'org.openbravo.retail.posterminal.OrderLoader',
+        className: 'org.openbravo.retail.posterminal.OrderLoader',
         criteria: {
           hasbeenpaid: 'Y'
         }
@@ -302,7 +302,7 @@
 
       this.get('dataSyncModels').push({
         model: OB.Model.CashManagement,
-        class: 'org.openbravo.retail.posterminal.ProcessCashMgmt',
+        className: 'org.openbravo.retail.posterminal.ProcessCashMgmt',
         criteria: {
           'isbeingprocessed': 'N'
         }
@@ -310,7 +310,7 @@
 
       this.get('dataSyncModels').push({
         model: OB.Model.CashUp,
-        class: 'org.openbravo.retail.posterminal.ProcessCashClose',
+        className: 'org.openbravo.retail.posterminal.ProcessCashClose',
         criteria: {
           isbeingprocessed: 'Y'
         },
