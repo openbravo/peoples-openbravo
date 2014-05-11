@@ -78,7 +78,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     JSONArray data = getData(jsonResponse);
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
-    assertEquals("paginated combo number of records", 22, data.length());
+    assertEquals("paginated combo number of records", 21, data.length());
   }
 
   /**
@@ -101,10 +101,9 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
 
-    // 2 records: real + empty
-    assertEquals("number of records", 2, data.length());
+    assertEquals("number of records", 1, data.length());
 
-    JSONObject record = data.getJSONObject(1);
+    JSONObject record = data.getJSONObject(0);
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
     assertEquals("record id", "A530AAE22C864702B7E1C22D58E7B17B", record.getString("id"));
@@ -131,10 +130,9 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
 
-    // 2 records: real + empty
-    assertEquals("number of records", 2, data.length());
+    assertEquals("number of records", 1, data.length());
 
-    JSONObject record = data.getJSONObject(1);
+    JSONObject record = data.getJSONObject(0);
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
     assertEquals("record id", "A530AAE22C864702B7E1C22D58E7B17B", record.getString("id"));
@@ -153,13 +151,14 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
     params.put("_operationType", "fetch");
     // try to filter by string 'Jo'
-    params.put("_identifier", "Jo");
+    params.put("criteria",
+        "{\"fieldName\":\"_identifier\",\"operator\":\"iStartsWith\",\"value\":\"Jo\"}");
 
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
-    assertEquals("number of filtered records", 4, data.length());
+    assertEquals("number of filtered records", 3, data.length());
   }
 
   /**
@@ -174,7 +173,8 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
     params.put("_operationType", "fetch");
     // try to filter by string 'Jo'
-    params.put("_identifier", "Jo");
+    params.put("criteria",
+        "{\"fieldName\":\"_identifier\",\"operator\":\"iStartsWith\",\"value\":\"Jo\"}");
     params.put("_startRow", "0");
     params.put("_endRow", "1");
 
@@ -182,7 +182,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     JSONArray data = getData(jsonResponse);
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
-    assertEquals("number of filtered records", 3, data.length());
+    assertEquals("number of filtered records", 2, data.length());
   }
 
   /**
