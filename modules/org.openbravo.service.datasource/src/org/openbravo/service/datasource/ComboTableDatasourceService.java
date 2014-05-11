@@ -66,7 +66,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     Field field = null;
     FieldProvider[] fps = null;
     String fieldId = parameters.get("fieldId");
-    int startRow = -1, endRow = 1;
+    int startRow = -1, endRow = -1;
     try {
       checkAccess(fieldId);
     } catch (ServletException e1) {
@@ -98,6 +98,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       if (parameters.get(JsonConstants.ENDROW_PARAMETER) != null) {
         endRow = Integer.parseInt(parameters.get(JsonConstants.ENDROW_PARAMETER));
       }
+      boolean applyLimits = startRow != -1 && endRow != -1;
       String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
 
       field = OBDal.getInstance().get(Field.class, fieldId);
@@ -151,7 +152,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       }
       if (StringUtils.isEmpty(filterString) || "Y".equals(onChange)) {
         fps = comboTableData.select(new DalConnectionProvider(false), newParameters,
-            getValueFromSession && !comboreload, startRow, endRow + 1);
+            getValueFromSession && !comboreload, startRow, endRow != -1 ? endRow + 1 : endRow);
       } else {
         fps = comboTableData.filter(new DalConnectionProvider(false), newParameters,
             getValueFromSession && !comboreload, startRow, endRow + 1, filterString);
@@ -170,7 +171,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
 
       boolean hasMoreRows = false;
       for (FieldProvider fp : values) {
-        if (comboEntries.size() > maxRows) {
+        if (comboEntries.size() > maxRows && applyLimits) {
           hasMoreRows = true;
           break;
         }
