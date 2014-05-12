@@ -91,7 +91,7 @@ isc.OBToolbarActionButton.addProperties({
           paramWindow: true,
           processId: me.processId,
           windowId: me.windowId,
-          windowTitle: me.windowTitle,
+          windowTitle: me.windowTitle || me.title,
           actionHandler: me.command,
           button: me,
           buttons: me.labelValue,
