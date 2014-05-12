@@ -872,3 +872,10 @@ isc.RecordEditor.addProperties({
 isc.builtinTypes.textArea = {
   inheritsFrom: "text"
 };
+
+//delete the wildCard to avoid strange behaviour when filtering '*'
+//see issue 25808
+delete isc.DataSource.getSearchOperators().equals.wildCard;
+delete isc.DataSource.getSearchOperators().iEquals.wildCard;
+delete isc.DataSource.getSearchOperators().notEqual.wildCard;
+delete isc.DataSource.getSearchOperators().iNotEqual.wildCard;
