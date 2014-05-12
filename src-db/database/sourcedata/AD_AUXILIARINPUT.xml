@@ -2505,10 +2505,10 @@ where ord.c_order_id = @c_order_id@]]></CODE>
 <!--9E5EF28335254D948E30BAF9BF41B3A7-->  <NAME><![CDATA[showAddPayment]]></NAME>
 <!--9E5EF28335254D948E30BAF9BF41B3A7-->  <CODE><![CDATA[@SQL=select case when sum(fpsd.amount)=ci.GrandTotal then 'N' else 'Y' end 
           from fin_payment_scheduledetail fpsd
-              left join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
-               left join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
-                left join fin_payment_schedule ps ON ps.fin_payment_schedule_id = fpsd.fin_payment_schedule_invoice
-                left join c_invoice ci on ci.c_invoice_id=ps.c_invoice_id
+                 join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+                join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
+                join fin_payment_schedule ps ON ps.fin_payment_schedule_id = fpsd.fin_payment_schedule_invoice
+                join c_invoice ci on ci.c_invoice_id=ps.c_invoice_id
                 WHERE ps.c_invoice_id =@c_invoice_id@
                 and to_number(aprm_seqnumberpaymentstatus(fp.status)) >= 40
                 group by ci.GrandTotal]]></CODE>
@@ -3918,10 +3918,10 @@ AND EXISTS (SELECT 1 FROM C_CONVERSION_RATE_DOCUMENT WHERE C_INVOICE_ID = (SELEC
 <!--FFA925AAC4BB49D5A67C05DAD16EFA32-->  <NAME><![CDATA[showAddPayment]]></NAME>
 <!--FFA925AAC4BB49D5A67C05DAD16EFA32-->  <CODE><![CDATA[@SQL=select case when sum(fpsd.amount)=ci.GrandTotal then 'N' else 'Y' end 
           from fin_payment_scheduledetail fpsd
-              left join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
-               left join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
-                left join fin_payment_schedule ps ON ps.fin_payment_schedule_id = fpsd.fin_payment_schedule_invoice
-                left join c_invoice ci on ci.c_invoice_id=ps.c_invoice_id
+              join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+              join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
+              join fin_payment_schedule ps ON ps.fin_payment_schedule_id = fpsd.fin_payment_schedule_invoice
+              join c_invoice ci on ci.c_invoice_id=ps.c_invoice_id
                 WHERE ps.c_invoice_id =@c_invoice_id@
                 and to_number(aprm_seqnumberpaymentstatus(fp.status)) >= 40
                 group by ci.GrandTotal]]></CODE>
