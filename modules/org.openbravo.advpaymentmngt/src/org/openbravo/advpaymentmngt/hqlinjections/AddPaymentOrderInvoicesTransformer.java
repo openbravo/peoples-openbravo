@@ -8,9 +8,11 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
+import org.openbravo.service.db.DalConnectionProvider;
 
 @ComponentProvider.Qualifier("58AF4D3E594B421A9A7307480736F03E")
 public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
+  final static String RDBMS = new DalConnectionProvider(false).getRDBMS();
 
   @Override
   public String transformHqlQuery(String _hqlQuery, Map<String, String> requestParameters,
@@ -35,8 +37,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       if ("I".equals(transactionType)) {
 
         // Create Select Clause
-        selectClause.append(" array_to_string(array_agg(psd.id), ',') as paymentScheduleDetail, ");
-        selectClause.append(" array_to_string(array_agg(ord.documentNo), ',') as salesOrderNo, ");
+        selectClause.append(getAggregatorFunction("psd.id") + " as paymentScheduleDetail, ");
+        selectClause.append(getAggregatorFunction("ord.documentNo") + " as salesOrderNo, ");
         selectClause.append(" inv.documentNo as invoiceNo, ");
         selectClause
             .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
@@ -85,9 +87,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       } else if ("O".equals(transactionType)) {
 
         // Create Select Clause
-        selectClause.append(" array_to_string(array_agg(psd.id), ',') as paymentScheduleDetail, ");
+        selectClause.append(getAggregatorFunction("psd.id") + " as paymentScheduleDetail, ");
         selectClause.append(" ord.documentNo as salesOrderNo, ");
-        selectClause.append(" array_to_string(array_agg(inv.documentNo), ',') as invoiceNo, ");
+        selectClause.append(getAggregatorFunction("inv.documentNo") + " as invoiceNo, ");
         selectClause
             .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
         selectClause
@@ -230,7 +232,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
             }
             String strToReplace = "@" + fieldName + "@";
             String strToReplaceBeginning = "upper(@salesOrderNo@)";
-            String strToReplaceWith = "array_to_string(array_agg(ord.documentNo), ',')";
+            String strToReplaceWith = getAggregatorFunction("ord.documentNo");
             String strToRemoveFromQuery = replaceHavingClause(hqlQuery, strToReplace,
                 strToReplaceBeginning, strToReplaceWith, havingClause);
             if (strToRemoveFromQuery.toLowerCase().contains(" and")) {
@@ -295,7 +297,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
             }
             String strToReplace = "@" + fieldName + "@";
             String strToReplaceBeginning = "upper(@invoiceNo@)";
-            String strToReplaceWith = "array_to_string(array_agg(inv.documentNo), ',')";
+            String strToReplaceWith = getAggregatorFunction("inv.documentNo");
             String strToRemoveFromQuery = replaceHavingClause(hqlQuery, strToReplace,
                 strToReplaceBeginning, strToReplaceWith, havingClause);
             if (strToRemoveFromQuery.toLowerCase().contains(" and")) {
@@ -401,5 +403,12 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     }
     strReplaced = hqlQuery.substring(beginIndex, endIndex);
     return strReplaced;
+  }
+
+  private String getAggregatorFunction(String expression) {
+    if (RDBMS.equals("ORACLE")) {
+      return " stragg(" + expression + ")";
+    }
+    return " array_to_string(array_agg(" + expression + "), ',')";
   }
 }

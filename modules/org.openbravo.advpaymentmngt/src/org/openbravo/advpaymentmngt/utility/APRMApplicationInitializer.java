@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -19,17 +19,34 @@
 
 package org.openbravo.advpaymentmngt.utility;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 import org.openbravo.client.kernel.ApplicationInitializer;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.service.db.DalConnectionProvider;
 
+@ApplicationScoped
 public class APRMApplicationInitializer implements ApplicationInitializer {
+  final static String RDBMS = new DalConnectionProvider(false).getRDBMS();
 
   @Override
   public void initialize() {
     OBDal.getInstance().registerSQLFunction("ad_message_get2",
         new StandardSQLFunction("ad_message_get2", StandardBasicTypes.STRING));
+
+    if ("ORACLE".equals(RDBMS)) {
+      OBDal.getInstance().registerSQLFunction("stragg",
+          new StandardSQLFunction("stragg", StandardBasicTypes.STRING));
+    } else {
+      OBDal.getInstance().registerSQLFunction("array_to_string",
+          new StandardSQLFunction("array_to_string", StandardBasicTypes.STRING));
+      OBDal.getInstance().registerSQLFunction("array_agg",
+          new StandardSQLFunction("array_agg", StandardBasicTypes.STRING));
+    }
+    OBDal.getInstance().registerSQLFunction("get_uuid",
+        new StandardSQLFunction("get_uuid", StandardBasicTypes.STRING));
   }
 
 }
