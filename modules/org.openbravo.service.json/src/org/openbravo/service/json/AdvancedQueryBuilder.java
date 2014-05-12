@@ -231,10 +231,20 @@ public class AdvancedQueryBuilder {
         distinctPropName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + distinctPropName;
       }
       whereClause += StringUtils.isEmpty(whereClause.trim()) ? "where" : "and";
-      whereClause += " exists (select 1 from " + subEntity.getName() + " "
-          + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e."
-          + distinctPropertyPath.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT) + " = " + mainAlias
-          + subEntityClientOrg + ") ";
+
+      // if the property allows null values, use a left join instead an inner join
+      if (subEntity.getProperty(distinctPropertyPath).allowNullValues()) {
+        whereClause += " exists (select 1 from " + subEntity.getName() + " "
+            + subEntityQueryBuilder.getJoinClause() + " left join "
+            + subEntityQueryBuilder.getMainAlias() + DalUtil.DOT + distinctPropertyPath + " as i "
+            + subentityWhere + " i = " + mainAlias + subEntityClientOrg + ") ";
+      } else {
+        whereClause += " exists (select 1 from " + subEntity.getName() + " "
+            + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e."
+            + distinctPropertyPath.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT) + " = " + mainAlias
+            + subEntityClientOrg + ") ";
+      }
+
       typedParameters.addAll(subEntityQueryBuilder.typedParameters);
     }
 
