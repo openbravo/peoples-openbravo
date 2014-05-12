@@ -49,22 +49,22 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
+    // Iterate image properties of the entity
     for (String property : getImageProperties(event.getTargetInstance().getEntity())) {
 
       Property imageProperty = event.getTargetInstance().getEntity().getProperty(property);
 
+      // Remove image if it exists
       if (event.getCurrentState(imageProperty) != null) {
 
-        if (event.getCurrentState(imageProperty) instanceof Image) {
-          Image bob = (Image) event.getCurrentState(imageProperty);
+        Image bob = (Image) event.getCurrentState(imageProperty);
 
-          if (bob != null) {
-            OBContext.setAdminMode(true);
-            try {
-              OBDal.getInstance().remove(bob);
-            } finally {
-              OBContext.restorePreviousMode();
-            }
+        if (bob != null) {
+          OBContext.setAdminMode(true);
+          try {
+            OBDal.getInstance().remove(bob);
+          } finally {
+            OBContext.restorePreviousMode();
           }
         }
       }
@@ -77,23 +77,23 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
+    // Iterate image properties of the entity
     for (String property : getImageProperties(event.getTargetInstance().getEntity())) {
 
       Property imageProperty = event.getTargetInstance().getEntity().getProperty(property);
 
+      // If the old image is different than the new one remove the old image if exists
       if (event.getPreviousState(imageProperty) != null
           && event.getCurrentState(imageProperty) != event.getPreviousState(imageProperty)) {
 
-        if (event.getPreviousState(imageProperty) instanceof Image) {
-          Image bob = (Image) event.getPreviousState(imageProperty);
+        Image bob = (Image) event.getPreviousState(imageProperty);
 
-          if (bob != null) {
-            OBContext.setAdminMode(true);
-            try {
-              OBDal.getInstance().remove(bob);
-            } finally {
-              OBContext.restorePreviousMode();
-            }
+        if (bob != null) {
+          OBContext.setAdminMode(true);
+          try {
+            OBDal.getInstance().remove(bob);
+          } finally {
+            OBContext.restorePreviousMode();
           }
         }
       }
@@ -102,6 +102,8 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] getImageEntities() {
     ArrayList<Entity> entityArray = new ArrayList<Entity>();
+
+    // Create the observed entities from ModelProvider
     for (Entity entity : ModelProvider.getInstance().getEntityWithImage().keySet()) {
       entityArray.add(entity);
     }
@@ -109,6 +111,7 @@ public class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
   }
 
   private static List<String> getImageProperties(Entity entity) {
+    // Get EntitiesWithImages from ModelProvider
     return ModelProvider.getInstance().getEntityWithImage().get(entity);
   }
 }
