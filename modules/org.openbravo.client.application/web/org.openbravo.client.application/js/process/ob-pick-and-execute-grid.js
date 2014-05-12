@@ -62,7 +62,8 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   initWidget: function () {
     var i, len = this.fields.length,
-        theGrid, me = this;
+        theGrid, me = this,
+        filterableProperties, canFilter;
 
     this.selectedIds = [];
     this.deselectedIds = [];
@@ -163,8 +164,25 @@ isc.OBPickAndExecuteGrid.addProperties({
       return this.Super('transformRequest', arguments);
     };
 
-
+    this.setFields(this.fields);
+    filterableProperties = this.getFields().findAll('canFilter', true);
+    canFilter = false;
+    if (filterableProperties) {
+      for (i = 0; i < filterableProperties.length; i++) {
+        // when looking for filterable columns do not take into account the columns whose name starts with '_' (checkbox, delete button, etc) 
+        if (!filterableProperties[i].name.startsWith('_')) {
+          canFilter = true;
+          break;
+        }
+      }
+    }
+    // If there are no filterable columns, hide the filter editor
+    if (!canFilter) {
+      this.filterEditorProperties.visibility = 'hidden';
+    }
     this.Super('initWidget', arguments);
+    // Reset the value of the filter editor visibility, as it is reused for future grids
+    this.filterEditorProperties.visibility = 'inherit';
   },
 
   getLongestFieldName: function () {
