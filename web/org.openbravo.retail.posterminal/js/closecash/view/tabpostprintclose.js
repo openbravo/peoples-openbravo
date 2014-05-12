@@ -132,13 +132,13 @@ enyo.kind({
     }
     this.$.itemQty.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.value)));
 
-    if (this.second && this.second !== this.value && this.convertedValues.indexOf(this.type) !== -1) {
-      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.second) + ' ' + this.isocode + ')');
-    } else if (this.origAmount && this.value !== this.origAmount && this.valuestoConvert.indexOf(this.type) !== -1) {
+    if (this.convertedValue && this.convertedValue !== this.value && this.convertedValues.indexOf(this.type) !== -1) {
+      this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.convertedValue) + ' ' + this.isocode + ')');
+    } else if (this.valueToConvert && this.value !== this.valueToConvert && this.valuestoConvert.indexOf(this.type) !== -1) {
       if (this.value) {
         this.$.foreignItemQty.setContent('(' + OB.I18N.formatCurrency(this.value) + ' ' + this.isocode + ')');
       }
-      this.$.itemQty.setContent(OB.I18N.formatCurrency(this.origAmount));
+      this.$.itemQty.setContent(OB.I18N.formatCurrency(this.valueToConvert));
     } else {
       this.$.foreignItemQty.setContent('');
     }
@@ -149,10 +149,19 @@ enyo.kind({
       this.label = this.model.get(this.lblProperty);
       this.value = this.model.get(this.qtyProperty);
       this.type = this.owner.typeProperty;
-      this.second = this.model.get('second'); //FIXME: Foreign amount
+      this.valueToConvert = this.model.get('origAmount');
+      this.convertedValue = this.model.get('second');
       this.rate = this.model.get('rate');
-      this.origAmount = this.model.get('origAmount');
       this.isocode = this.model.get('isocode');
+
+      // DEVELOPER: This two rules must be followed if you want this kind to keep data meaningfulness
+      //            Each type is related to either convertedValues or valuestoConvert
+      if (this.convertedValue && this.convertedValues.indexOf(this.type) === -1) {
+       OB.warn("DEVELOPER: the type '" + this.type + "' is being incorrectly implemented.");
+      }
+      if (this.valueToConvert && this.valuestoConvert.indexOf(this.type) === -1){
+        OB.warn("DEVELOPER: the type '" + this.type + "' is being incorrectly implemented.");
+      }
     }
   }
 });

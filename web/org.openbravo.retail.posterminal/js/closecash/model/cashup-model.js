@@ -175,7 +175,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           }));
           cashUpReport.set('totalDrops', OB.DEC.add(cashUpReport.get('totalDrops'), OB.DEC.mul(p.get('totalReturns'), p.get('rate'))));
           startings.push(new Backbone.Model({
-            amount: OB.DEC.mul(p.get('startingCash'), p.get('rate')),
+            origAmount: OB.DEC.mul(OB.DEC.add(0, p.get('startingCash')), p.get('rate')),
+            amount: OB.DEC.add(0, p.get('startingCash')),
             description: 'Starting ' + p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate'),
