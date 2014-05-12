@@ -514,35 +514,33 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     receipt.on('voidLayaway', function () {
       var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway'),
           auxReceipt = new OB.Model.Order();
-      if (OB.MobileApp.model.get('connectedToERP')) {
-        auxReceipt.clearWith(receipt);
-        process.exec({
-          order: receipt
-        }, function (data, message) {
-          if (data && data.exception) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
-          } else {
-            auxReceipt.calculateTaxes = receipt.calculateTaxes;
-            auxReceipt.calculateTaxes(function () {
-              auxReceipt.adjustPrices();
-              OB.UTIL.cashUpReport(auxReceipt);
-            });
-            OB.Dal.remove(receipt, null, function (tx, err) {
-              OB.UTIL.showError(err);
-            });
-            receipt.trigger('print');
-            if (receipt.get('layawayGross')) {
-              receipt.set('layawayGross', null);
-            }
-            orderList.deleteCurrent();
-            receipt.trigger('change:gross', receipt);
-
-            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
+      auxReceipt.clearWith(receipt);
+      process.exec({
+        order: receipt
+      }, function (data, message) {
+        if (data && data.exception) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
+        } else {
+          auxReceipt.calculateTaxes = receipt.calculateTaxes;
+          auxReceipt.calculateTaxes(function () {
+            auxReceipt.adjustPrices();
+            OB.UTIL.cashUpReport(auxReceipt);
+          });
+          OB.Dal.remove(receipt, null, function (tx, err) {
+            OB.UTIL.showError(err);
+          });
+          receipt.trigger('print');
+          if (receipt.get('layawayGross')) {
+            receipt.set('layawayGross', null);
           }
-        });
-      } else {
+          orderList.deleteCurrent();
+          receipt.trigger('change:gross', receipt);
+
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
+        }
+      }, function () {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-      }
+      });
     }, this);
   },
 

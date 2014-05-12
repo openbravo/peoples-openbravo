@@ -27,7 +27,8 @@ enyo.kind({
     var pendingQty = this.args.order.getPending();
     var bpName = this.args.order.get('bp').get('_identifier');
     var selectedPaymentMethod = this.args.order.selectedPayment;
-    var rate = 1,i;
+    var rate = 1,
+        i;
     var paymentList = OB.POS.modelterminal.get('payments');
     for (i = 0; i < paymentList.length; i++) {
       if (paymentList[i].payment.searchKey === selectedPaymentMethod) {
@@ -75,18 +76,16 @@ enyo.kind({
     if (this.allowOpenDrawer) {
       this.model.get('order').trigger('openDrawer');
     }
-    if (!OB.POS.modelterminal.get('connectedToERP')) {
-      var bp = this.model.get('order').get('bp');
-      var bpCreditUsed = this.model.get('order').get('bp').get('creditUsed');
-      var totalPending = this.model.get('order').getPending();
+    var bp = this.model.get('order').get('bp');
+    var bpCreditUsed = this.model.get('order').get('bp').get('creditUsed');
+    var totalPending = this.model.get('order').getPending();
 
-      if (this.parent.parent.parent.parent.args.order.get('gross') < 0) {
-        bp.set('creditUsed', bpCreditUsed - totalPending);
-      } else {
-        bp.set('creditUsed', bpCreditUsed + totalPending);
-      }
-      OB.Dal.save(bp, null, error);
+    if (this.parent.parent.parent.parent.args.order.get('gross') < 0) {
+      bp.set('creditUsed', bpCreditUsed - totalPending);
+    } else {
+      bp.set('creditUsed', bpCreditUsed + totalPending);
     }
+    OB.Dal.save(bp, null, error);
   }
 });
 

@@ -138,34 +138,32 @@
           return true;
         }
         OB.Dal.save(me.receipt, function () {
-          if (OB.POS.modelterminal.get('connectedToERP')) {
-            OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
-              var successCallback, errorCallback;
-              successCallback = function () {
-                OB.UTIL.showLoading(false);
-                if (me.hasInvLayaways) {
-                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-                  me.hasInvLayaways = false;
-                }
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
-              };
-              errorCallback = function () {
-                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
-              };
-              if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
-                me.hasInvLayaways = true;
+          OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
+            var successCallback, errorCallback;
+            successCallback = function () {
+              OB.UTIL.showLoading(false);
+              if (me.hasInvLayaways) {
+                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+                me.hasInvLayaways = false;
               }
-              model.get('orderList').current = receipt;
-              model.get('orderList').deleteCurrent();
-              me.ordersToSend += 1;
-              if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
-                model.get('multiOrders').resetValues();
-                OB.MobileApp.model.runSyncProcess(successCallback);
-                me.ordersToSend = OB.DEC.Zero;
-              }
+              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
+            };
+            errorCallback = function () {
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
+            };
+            if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
+              me.hasInvLayaways = true;
+            }
+            model.get('orderList').current = receipt;
+            model.get('orderList').deleteCurrent();
+            me.ordersToSend += 1;
+            if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
+              model.get('multiOrders').resetValues();
+              OB.MobileApp.model.runSyncProcess(successCallback);
+              me.ordersToSend = OB.DEC.Zero;
+            }
 
-            }, null);
-          }
+          }, null);
         }, function () {
           //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
         });
