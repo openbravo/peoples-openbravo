@@ -118,6 +118,9 @@ isc.OBPickAndExecuteGrid.addProperties({
         OB.OnChangeRegistry.register(this.view.viewId, this.parameterName + OB.Constants.FIELDSEPARATOR + this.fields[i].name, this.fields[i].onChangeFunction, 'default');
       }
     }
+    this.setFields(this.fields);
+    // Display logic for grid column
+    this.evaluateDisplayLogicForGridColumns();
 
     // required to show the funnel icon and to work
     this.filterClause = this.gridProperties.filterClause;
@@ -183,6 +186,24 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('initWidget', arguments);
     // Reset the value of the filter editor visibility, as it is reused for future grids
     this.filterEditorProperties.visibility = 'inherit';
+  },
+
+  evaluateDisplayLogicForGridColumns: function () {
+    var currentValues = (this.contentView.view.theForm && this.contentView.view.theForm.getValues()) || {},
+        contextInfo = (this.view.buttonOwnerView && this.view.buttonOwnerView.getContextInfo(false, true, true, true)) || {};
+    var i;
+    // TODO: parse currentValues properly 
+    isc.addProperties(contextInfo, currentValues);
+    for (i = 0; i < this.completeFields.length; i) {
+      if (this.completeFields[i].displayLogicGrid && isc.isA.Function(this.completeFields[i].displayLogicGrid)) {
+        var fieldVisibility = this.completeFields[i].displayLogicGrid(currentValues, contextInfo);
+        if (fieldVisibility) {
+          this.showFields(this.completeFields[i].name);
+        } else {
+          this.hideFields(this.completeFields[i].name);
+        }
+      }
+    }
   },
 
   getLongestFieldName: function () {

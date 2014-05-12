@@ -170,20 +170,15 @@ isc.OBParameterWindowView.addProperties({
     this.members.push(this.messageBar);
 
     newShowIf = function (item, value, form, values) {
-      var currentValues,
-          originalShowIfValue = false;
+      var currentValues, originalShowIfValue = false;
 
       currentValues = isc.shallowClone(values) || {};
       if (!currentValues && form && form.view) {
-          currentValues = isc.shallowClone(form.view.getCurrentValues());
+        currentValues = isc.shallowClone(form.view.getCurrentValues());
       }
       OB.Utilities.fixNull250(currentValues);
-      var parentContext;
-      if (this.view.sourceView) {
-        parentContext = this.view.sourceView.getContextInfo();
-      } else {
-        parentContext = {};
-      }
+
+      var parentContext = (this.view.sourceView && this.view.sourceView.getContextInfo(false, true, true, true)) || {};
 
       try {
         if (isc.isA.Function(this.originalShowIf)) {
@@ -239,6 +234,7 @@ isc.OBParameterWindowView.addProperties({
             var affectedParams, i, field;
 
             this.paramWindow.handleReadOnlyLogic();
+            this.paramWindow.handleDisplayLogicForGridColumns();
 
             // Execute onChangeFunctions if they exist
             if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
@@ -577,6 +573,8 @@ isc.OBParameterWindowView.addProperties({
 
     // redraw to execute display logic
     this.theForm.markForRedraw();
+
+    this.handleDisplayLogicForGridColumns();
   },
 
   // Checks params with readonly logic enabling or disabling them based on it
@@ -587,17 +585,32 @@ isc.OBParameterWindowView.addProperties({
     if (!form) {
       return;
     }
-    if (this.sourceView) {
-      parentContext = this.sourceView.getContextInfo(false, true, true, true);
-    } else {
-      parentContext = {};
-    }
+    parentContext = (this.sourceView && this.sourceView.getContextInfo(false, true, true, true)) || {};
 
     fields = form.getFields();
     for (i = 0; i < fields.length; i++) {
       field = form.getField(i);
       if (field.readOnlyIf && field.setDisabled) {
         field.setDisabled(field.readOnlyIf(form.getValues(), parentContext));
+      }
+    }
+  },
+
+  handleDisplayLogicForGridColumns: function () {
+    var form, fields, i, field;
+
+    form = this.theForm;
+    if (!form) {
+      return;
+    }
+
+    fields = form.getFields();
+    for (i = 0; i < fields.length; i++) {
+      field = form.getField(i);
+      if (field.canvas) {
+        if (field.canvas.viewGrid) {
+          field.canvas.viewGrid.evaluateDisplayLogicForGridColumns();
+        }
       }
     }
   },
