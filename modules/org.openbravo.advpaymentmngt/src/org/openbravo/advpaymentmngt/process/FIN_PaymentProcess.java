@@ -138,9 +138,13 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         boolean isRefund = false;
         OBContext.setAdminMode(false);
         try {
-          if (payment.getFINPaymentDetailList().size() > 0
-              && payment.getFINPaymentDetailList().get(0).isRefund()) {
-            isRefund = true;
+          if (payment.getFINPaymentDetailList().size() > 0) {
+            for (FIN_PaymentDetail det : payment.getFINPaymentDetailList()) {
+              if (det.isRefund()) {
+                isRefund = true;
+                break;
+              }
+            }
           }
         } finally {
           OBContext.restorePreviousMode();

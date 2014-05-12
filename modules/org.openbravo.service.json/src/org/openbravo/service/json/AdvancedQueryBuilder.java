@@ -44,6 +44,7 @@ import org.openbravo.base.model.domaintype.TableDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.base.util.Check;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -53,6 +54,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -1087,9 +1089,22 @@ public class AdvancedQueryBuilder {
         Entity paramEntity = ModelProvider.getInstance().getEntityByTableName(
             param.substring(0, param.length() - 3));
 
-        // If the entity exists, get paramValue from vars
-        if (paramEntity != null) {
-          paramValue = vars.getStringParameter("@" + paramEntity.getName() + ".id@");
+        Tab tab = OBDal.getInstance().get(Tab.class,
+            RequestContext.get().getRequestParameter("tabId"));
+        Tab ancestorTab = KernelUtils.getInstance().getParentTab(tab);
+
+        while (ancestorTab != null && paramValue.equals("")) {
+
+          Entity tabEntity = ModelProvider.getInstance().getEntityByTableName(
+              ancestorTab.getTable().getDBTableName());
+
+          if (tabEntity.equals(paramEntity)) {
+            paramValue = vars.getStringParameter("@" + paramEntity.getName() + ".id@");
+          } else {
+            Property prop = tabEntity.getPropertyByColumnName(param);
+            paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
+          }
+          ancestorTab = KernelUtils.getInstance().getParentTab(ancestorTab);
         }
       }
 
@@ -1382,8 +1397,34 @@ public class AdvancedQueryBuilder {
       } else {
         final List<Property> newIdentifierProperties = prop.getReferencedProperty().getEntity()
             .getIdentifierProperties();
-        sb.append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName()
-            + DalUtil.DOT));
+
+        String newPrefix = prefix + prop.getName();
+
+        if (prop.allowNullValues()) {
+
+          boolean addJoin = true;
+
+          // Look if the property has been joined
+          for (JoinDefinition joinableDefinition : joinDefinitions) {
+            if (joinableDefinition.property == prop) {
+              addJoin = false;
+
+              // Update newPrefix with the alias of the joinDefinition
+              newPrefix = joinableDefinition.joinAlias;
+              break;
+            }
+          }
+
+          if (addJoin) {
+            // Add join if this property allows null values
+            final JoinDefinition joinDefinition = new JoinDefinition();
+            joinDefinition.setOwnerAlias(prefix.substring(0, prefix.length() - 1));
+            joinDefinition.setProperty(prop);
+            joinDefinitions.add(joinDefinition);
+          }
+        }
+
+        sb.append(createIdentifierLeftClause(newIdentifierProperties, newPrefix + DalUtil.DOT));
       }
     }
 

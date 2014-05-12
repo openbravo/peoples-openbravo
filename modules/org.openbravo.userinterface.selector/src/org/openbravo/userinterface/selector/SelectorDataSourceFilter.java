@@ -264,7 +264,9 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         dynamicWhere = result.toString();
       }
     } catch (Exception e) {
-      log.error("Error evaluating filter expression: " + e.getMessage(), e);
+      log.error(
+          "Error evaluating filter expression: " + filterExpression + " Selector id: "
+              + sel.getId() + " " + e.getMessage(), e);
     }
 
     return dynamicWhere;

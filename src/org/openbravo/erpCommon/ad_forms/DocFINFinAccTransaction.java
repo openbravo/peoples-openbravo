@@ -1278,7 +1278,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     return account;
   }
 
-  private Account getAccountWriteOffBPartner(String AcctType, String strBPartnerId, AcctSchema as,
+  public Account getAccountWriteOffBPartner(String AcctType, String strBPartnerId, AcctSchema as,
       ConnectionProvider conn) {
     AcctServerData[] data = null;
     try {

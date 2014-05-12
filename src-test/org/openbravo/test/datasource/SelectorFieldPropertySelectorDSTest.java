@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +39,17 @@ public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal
       .getLogger(SelectorFieldPropertySelectorDSTest.class);
   private boolean sysAdminProfileSet = false;
 
+  private static final String PRODUCT_SELECTOR_ID = "1F051395F1CC4A40ADFE5C440EBCAA7F";
+  private static final String SHIPMENT_TABLE_ID = "319";
+
   /**
    * Performs a request for properties without filtering
    */
   public void testFullList() throws Exception {
-    JSONObject resp = executeDSRequest(false);
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("inpobuiselSelectorId", PRODUCT_SELECTOR_ID);
+
+    JSONObject resp = executeDSRequest(params);
 
     JSONArray data = resp.getJSONArray("data");
 
@@ -55,7 +62,11 @@ public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal
    * Performs a request for properties filtering by property "id"
    */
   public void testFilter() throws Exception {
-    JSONObject resp = executeDSRequest(true);
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("inpobuiselSelectorId", PRODUCT_SELECTOR_ID);
+    params.putAll(getFilter("id"));
+
+    JSONObject resp = executeDSRequest(params);
 
     JSONArray data = resp.getJSONArray("data");
 
@@ -63,13 +74,73 @@ public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal
     assertEquals("totalRows", resp.getInt("totalRows"), 1);
   }
 
-  private JSONObject executeDSRequest(boolean filter) throws Exception {
+  /**
+   * Testing issue #26432: in M_Inout table, filtering properties by salesOrder._Com should return
+   * _Computed column proxy property
+   * 
+   */
+  public void testPropertyFieldComputedColumn1() throws Exception {
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("inpadTableId", SHIPMENT_TABLE_ID);
+    params.putAll(getFilter("salesOrder._Com"));
+
+    JSONObject resp = executeDSRequest(params);
+
+    JSONArray data = resp.getJSONArray("data");
+
+    assertEquals("data length", 1, data.length());
+    assertEquals("totalRows", 1, resp.getInt("totalRows"));
+    assertEquals("salesOrder._computedColumns", data.getJSONObject(0).getString("property"));
+  }
+
+  /**
+   * Testing issue #26432: in M_Inout table, filtering properties by salesOrder._ComputedColumns.
+   * should return a list of all computed columns defined in C_Order table
+   * 
+   */
+  public void testPropertyFieldComputedColumn2() throws Exception {
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("inpadTableId", SHIPMENT_TABLE_ID);
+    params.putAll(getFilter("salesOrder._ComputedColumns."));
+
+    JSONObject resp = executeDSRequest(params);
+
+    JSONArray data = resp.getJSONArray("data");
+
+    assertTrue("data should contain all computed columns", data.length() > 1);
+    checkJSONcontains(data, "salesOrder._ComputedColumns.invoiceStatus");
+  }
+
+  private void checkJSONcontains(JSONArray data, String value) throws JSONException {
+    for (int i = 0; i < data.length(); i++) {
+      if (value.equals(data.getJSONObject(i).getString("property"))) {
+        return;
+      }
+    }
+    fail("Expecting value <" + value + "> in array but found:" + data.toString(1));
+
+  }
+
+  private Map<? extends String, ? extends String> getFilter(String value) throws JSONException {
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("operator", "or");
+    params.put("_constructor", "AdvancedCriteria");
+    JSONObject criteria = new JSONObject();
+    criteria.put("fieldName", "property");
+    criteria.put("operator", "iContains");
+    criteria.put("value", value);
+    params.put("criteria", criteria.toString());
+    return params;
+  }
+
+  private JSONObject executeDSRequest(Map<String, String> extraParams) throws Exception {
     if (!sysAdminProfileSet) {
       changeProfile("0", "192", "0", null);
       sysAdminProfileSet = true;
     }
 
     Map<String, String> params = new HashMap<String, String>();
+    params.putAll(extraParams);
 
     // this is how value is sent when in new, regardless typed filter
     params.put("inpproperty", "null");
@@ -77,18 +148,6 @@ public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal
     params.put("_operationType", "fetch");
     params.put("filterClass", "org.openbravo.userinterface.selector.SelectorDataSourceFilter");
     params.put("_sortBy", "property");
-
-    params.put("inpobuiselSelectorId", "1F051395F1CC4A40ADFE5C440EBCAA7F");
-
-    if (filter) {
-      params.put("operator", "or");
-      params.put("_constructor", "AdvancedCriteria");
-      JSONObject criteria = new JSONObject();
-      criteria.put("fieldName", "property");
-      criteria.put("operator", "iContains");
-      criteria.put("value", "id");
-      params.put("criteria", criteria.toString());
-    }
 
     JSONObject resp = new JSONObject(doRequest(
         "/org.openbravo.service.datasource/83B60C4C19AE4A9EBA947B948C5BA04D", params, 200, "POST"));
