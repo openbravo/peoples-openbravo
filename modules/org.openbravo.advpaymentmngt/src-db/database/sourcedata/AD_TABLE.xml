@@ -71,10 +71,14 @@
 from FIN_Payment_ScheduleDetail as psd
 left outer join psd.orderPaymentSchedule as ops  
 left outer join ops.order as ord 
+left outer join ord.businessPartner as ordbp
 left outer join ops.fINPaymentPriority as opriority 
+left outer join ops.finPaymentmethod opsfp
 left outer join psd.invoicePaymentSchedule as ips  
-left outer join ips.invoice as inv 
+left outer join ips.invoice as inv
+left outer join inv.businessPartner as invbp
 left outer join ips.fINPaymentPriority as ipriority 
+left outer join ips.finPaymentmethod as ipsfp
 left outer join psd.organization as org 
 left outer join org.organizationInformationList as oinfo 
 where @whereClause@

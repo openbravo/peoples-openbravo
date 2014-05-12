@@ -16,6 +16,7 @@
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
+
 package org.openbravo.advpaymentmngt.hqlinjections;
 
 import java.util.Map;
@@ -23,8 +24,6 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -38,188 +37,185 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     String hqlQuery = _hqlQuery;
     // Retrieve Parameters
     String transactionType = requestParameters.get("transaction_type");
-    final String strInvoiceId = requestParameters.get("@Invoice.id@");
-    // Initialize Variables
-    boolean isSalesTransaction = "true".equals(requestParameters.get("@Invoice.salesTransaction@")) ? true
-        : false;
+    String strBusinessPartnerId = requestParameters.get("received_from");
+    String strCurrencyId = requestParameters.get("c_currency_id");
+    String strFinPaymentMethodId = requestParameters.get("fin_paymentmethod_id");
+    boolean isSalesTransaction = "true".equals(requestParameters.get("issotrx")) ? true : false;
+
     String transformedHql = null;
     StringBuffer selectClause = new StringBuffer();
     StringBuffer whereClause = new StringBuffer();
     StringBuffer groupByClause = new StringBuffer();
 
-    if (strInvoiceId != null) {
+    if ("I".equals(transactionType)) {
 
-      final Invoice invoice = OBDal.getInstance().get(Invoice.class, strInvoiceId);
-      isSalesTransaction = invoice.isSalesTransaction();
-
-      if ("I".equals(transactionType)) {
-
-        // Create Select Clause
+      // Create Select Clause
         selectClause.append(getAggregatorFunction("psd.id") + " as paymentScheduleDetail, ");
         selectClause.append(getAggregatorFunction("ord.documentNo") + " as salesOrderNo, ");
-        selectClause.append(" inv.documentNo as invoiceNo, ");
-        selectClause
-            .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
-        selectClause
-            .append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id) as businessPartner, ");
-        selectClause.append(" COALESCE(inv.invoiceDate, ord.orderDate) as transactionDate, ");
-        selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
-        selectClause.append(" COALESCE(ips.amount, ops.amount) as expectedAmount, ");
-        selectClause
-            .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
-        selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
-        selectClause.append(" 0 as amount ");
+      selectClause.append(" inv.documentNo as invoiceNo, ");
+      selectClause
+          .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
+      selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
+      selectClause
+          .append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id) as businessPartner, ");
+      selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
+      selectClause.append(" COALESCE(inv.invoiceDate, ord.orderDate) as transactionDate, ");
+      selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
+      selectClause.append(" COALESCE(ips.amount, ops.amount) as expectedAmount, ");
+      selectClause
+          .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
+      selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
+      selectClause.append(" 0 as amount ");
 
-        // Create WhereClause
-        whereClause.append(" psd.paymentDetails is null ");
-        whereClause.append(" and (oinfo is null or oinfo.active = true) ");
-        whereClause.append(" and ((inv is not null ");
-        if (invoice.getBusinessPartner() != null) {
-          whereClause.append(" and inv.businessPartner.id = '"
-              + invoice.getBusinessPartner().getId() + "'");
-        }
-        if (invoice.getPaymentMethod() != null) {
-          whereClause.append(" and inv.paymentMethod.id = '" + invoice.getPaymentMethod().getId()
-              + "'");
-        }
-        whereClause.append(" and inv.salesTransaction = " + isSalesTransaction);
-        whereClause.append(" and inv.currency.id = '" + invoice.getCurrency().getId() + "' )) ");
+      // Create WhereClause
+      whereClause.append(" psd.paymentDetails is null ");
+      whereClause.append(" and (oinfo is null or oinfo.active = true) ");
+      whereClause.append(" and ((inv is not null ");
+      if (strBusinessPartnerId != null) {
+        whereClause.append(" and inv.businessPartner.id = '" + strBusinessPartnerId + "'");
+      }
+      if (strFinPaymentMethodId != null) {
+        whereClause.append(" and ips.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
+      }
+      whereClause.append(" and inv.salesTransaction = " + isSalesTransaction);
+      whereClause.append(" and inv.currency.id = '" + strCurrencyId + "' )) ");
 
-        // Create GroupBy Clause
-        groupByClause.append(" inv.documentNo, ");
-        groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
-        groupByClause.append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id), ");
-        groupByClause.append(" COALESCE(inv.invoiceDate, ord.orderDate), ");
-        groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
-        groupByClause.append(" COALESCE(ips.amount, ops.amount), ");
-        groupByClause.append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) ");
+      // Create GroupBy Clause
+      groupByClause.append(" inv.documentNo, ");
+      groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
+      groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
+      groupByClause.append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id), ");
+      groupByClause.append(" COALESCE(invbp.name, ordbp.name), ");
+      groupByClause.append(" COALESCE(inv.invoiceDate, ord.orderDate), ");
+      groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
+      groupByClause.append(" COALESCE(ips.amount, ops.amount), ");
+      groupByClause.append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) ");
 
-        // Replace where filters and having count clause
-        if (requestParameters.containsKey("criteria")) {
-          String criteria = requestParameters.get("criteria");
-          hqlQuery = replaceFiltersAndHavingClause(hqlQuery, criteria, transactionType);
-        } else {
-          hqlQuery = hqlQuery.replace("@havingClause@", "");
-        }
-
-      } else if ("O".equals(transactionType)) {
-
-        // Create Select Clause
-        selectClause.append(getAggregatorFunction("psd.id") + " as paymentScheduleDetail, ");
-        selectClause.append(" ord.documentNo as salesOrderNo, ");
-        selectClause.append(getAggregatorFunction("inv.documentNo") + " as invoiceNo, ");
-        selectClause
-            .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
-        selectClause
-            .append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id) as businessPartner, ");
-        selectClause.append(" COALESCE(inv.invoiceDate, ord.orderDate) as transactionDate, ");
-        selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
-        selectClause.append(" COALESCE(ips.amount, ops.amount) as expectedAmount, ");
-        selectClause
-            .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
-        selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
-        selectClause.append(" 0 as amount ");
-
-        // Create WhereClause
-        whereClause.append(" psd.paymentDetails is null ");
-        whereClause.append(" and (oinfo is null or oinfo.active = true) ");
-        whereClause.append(" and ((ord is not null ");
-        if (invoice.getBusinessPartner() != null) {
-          whereClause.append(" and ord.businessPartner.id = '"
-              + invoice.getBusinessPartner().getId() + "'");
-        }
-        if (invoice.getPaymentMethod() != null) {
-          whereClause.append(" and ord.paymentMethod.id = '" + invoice.getPaymentMethod().getId()
-              + "'");
-        }
-        whereClause.append(" and ord.salesTransaction = " + isSalesTransaction);
-        whereClause.append(" and ord.currency.id = '" + invoice.getCurrency().getId() + "' )) ");
-
-        // Create GroupBy Clause
-        groupByClause.append(" ord.documentNo, ");
-        groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
-        groupByClause.append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id), ");
-        groupByClause.append(" COALESCE(inv.invoiceDate, ord.orderDate), ");
-        groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
-        groupByClause.append(" COALESCE(ips.amount, ops.amount), ");
-        groupByClause.append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) ");
-
-        // Replace where filters and having count clause
-        if (requestParameters.containsKey("criteria")) {
-          String criteria = requestParameters.get("criteria");
-          hqlQuery = replaceFiltersAndHavingClause(hqlQuery, criteria, transactionType);
-        } else {
-          hqlQuery = hqlQuery.replace("@havingClause@", "");
-        }
-
+      // Replace where filters and having count clause
+      if (requestParameters.containsKey("criteria")) {
+        String criteria = requestParameters.get("criteria");
+        hqlQuery = replaceFiltersAndHavingClause(hqlQuery, criteria, transactionType);
       } else {
-        // Create Select Clause
-        selectClause.append(" psd.id as paymentScheduleDetail, ");
-        selectClause.append(" ord.documentNo as salesOrderNo, ");
-        selectClause.append(" inv.documentNo as invoiceNo, ");
-        selectClause
-            .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
-        selectClause
-            .append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id) as businessPartner, ");
-        selectClause.append(" COALESCE(inv.invoiceDate, ord.orderDate) as transactionDate, ");
-        selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
-        selectClause.append(" COALESCE(ips.amount, ops.amount) as expectedAmount, ");
-        selectClause
-            .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
-        selectClause.append(" psd.amount as outstandingAmount, ");
-        selectClause.append(" 0 as amount ");
-
-        // Create WhereClause
-        whereClause.append(" psd.paymentDetails is null ");
-        whereClause.append(" and (oinfo is null or oinfo.active = true) ");
-        whereClause.append(" and ((inv is not null ");
-        if (invoice.getBusinessPartner() != null) {
-          whereClause.append(" and inv.businessPartner.id = '"
-              + invoice.getBusinessPartner().getId() + "'");
-        }
-        if (invoice.getPaymentMethod() != null) {
-          whereClause.append(" and inv.paymentMethod.id = '" + invoice.getPaymentMethod().getId()
-              + "'");
-        }
-        whereClause.append(" and inv.salesTransaction = " + isSalesTransaction);
-        whereClause.append(" and inv.currency.id = '" + invoice.getCurrency().getId() + "' ) ");
-        whereClause.append(" or (ord is not null ");
-        if (invoice.getBusinessPartner() != null) {
-          whereClause.append(" and ord.businessPartner.id = '"
-              + invoice.getBusinessPartner().getId() + "'");
-        }
-        if (invoice.getPaymentMethod() != null) {
-          whereClause.append(" and ord.paymentMethod.id = '" + invoice.getPaymentMethod().getId()
-              + "'");
-        }
-        whereClause.append(" and ord.salesTransaction = " + isSalesTransaction);
-        whereClause.append(" and ord.currency.id = '" + invoice.getCurrency().getId() + "' )) ");
-
-        // There is no Group By Clause
-        hqlQuery = hqlQuery.replace("group by", "");
-
-        // Replace where filters and having count clause
-        if (requestParameters.containsKey("criteria")) {
-          String criteria = requestParameters.get("criteria");
-          hqlQuery = replaceFiltersAndHavingClause(hqlQuery, criteria, transactionType);
-        } else {
-          hqlQuery = hqlQuery.replace("@havingClause@", "");
-        }
+        hqlQuery = hqlQuery.replace("@havingClause@", "");
       }
 
-      // Remove alias @@ from Order By clause
-      if (requestParameters.containsKey("_sortBy")) {
-        String sortBy = requestParameters.get("_sortBy");
-        if (sortBy.startsWith("-")) {
-          sortBy = sortBy.substring(1);
-        }
-        hqlQuery = hqlQuery.replace("@" + sortBy + "@", sortBy);
+    } else if ("O".equals(transactionType)) {
+
+      // Create Select Clause
+        selectClause.append(getAggregatorFunction("psd.id") + " as paymentScheduleDetail, ");
+      selectClause.append(" ord.documentNo as salesOrderNo, ");
+        selectClause.append(getAggregatorFunction("inv.documentNo") + " as invoiceNo, ");
+      selectClause
+          .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
+      selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
+      selectClause
+          .append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id) as businessPartner, ");
+      selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
+      selectClause.append(" COALESCE(inv.invoiceDate, ord.orderDate) as transactionDate, ");
+      selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
+      selectClause.append(" COALESCE(ips.amount, ops.amount) as expectedAmount, ");
+      selectClause
+          .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
+      selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
+      selectClause.append(" 0 as amount ");
+
+      // Create WhereClause
+      whereClause.append(" psd.paymentDetails is null ");
+      whereClause.append(" and (oinfo is null or oinfo.active = true) ");
+      whereClause.append(" and ((ord is not null ");
+      if (strBusinessPartnerId != null) {
+        whereClause.append(" and ord.businessPartner.id = '" + strBusinessPartnerId + "'");
+      }
+      if (strFinPaymentMethodId != null) {
+        whereClause.append(" and ops.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
+      }
+      whereClause.append(" and ord.salesTransaction = " + isSalesTransaction);
+      whereClause.append(" and ord.currency.id = '" + strCurrencyId + "' )) ");
+
+      // Create GroupBy Clause
+      groupByClause.append(" ord.documentNo, ");
+      groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
+      groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
+      groupByClause.append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id), ");
+      groupByClause.append(" COALESCE(invbp.name, ordbp.name), ");
+      groupByClause.append(" COALESCE(inv.invoiceDate, ord.orderDate), ");
+      groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
+      groupByClause.append(" COALESCE(ips.amount, ops.amount), ");
+      groupByClause.append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) ");
+
+      // Replace where filters and having count clause
+      if (requestParameters.containsKey("criteria")) {
+        String criteria = requestParameters.get("criteria");
+        hqlQuery = replaceFiltersAndHavingClause(hqlQuery, criteria, transactionType);
+      } else {
+        hqlQuery = hqlQuery.replace("@havingClause@", "");
       }
 
-      transformedHql = hqlQuery.replace("@selectClause@ ", selectClause.toString());
-      transformedHql = transformedHql.replace("@whereClause@ ", whereClause.toString());
-      transformedHql = transformedHql.replace("@groupByClause@", groupByClause.toString());
+    } else {
+      // Create Select Clause
+      selectClause.append(" psd.id as paymentScheduleDetail, ");
+      selectClause.append(" ord.documentNo as salesOrderNo, ");
+      selectClause.append(" inv.documentNo as invoiceNo, ");
+      selectClause
+          .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
+      selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
+      selectClause
+          .append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id) as businessPartner, ");
+      selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
+      selectClause.append(" COALESCE(inv.invoiceDate, ord.orderDate) as transactionDate, ");
+      selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
+      selectClause.append(" COALESCE(ips.amount, ops.amount) as expectedAmount, ");
+      selectClause
+          .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
+      selectClause.append(" psd.amount as outstandingAmount, ");
+      selectClause.append(" 0 as amount ");
+
+      // Create WhereClause
+      whereClause.append(" psd.paymentDetails is null ");
+      whereClause.append(" and (oinfo is null or oinfo.active = true) ");
+      whereClause.append(" and ((inv is not null ");
+      if (strBusinessPartnerId != null) {
+        whereClause.append(" and inv.businessPartner.id = '" + strBusinessPartnerId + "'");
+      }
+      if (strFinPaymentMethodId != null) {
+        whereClause.append(" and ips.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
+      }
+      whereClause.append(" and inv.salesTransaction = " + isSalesTransaction);
+      whereClause.append(" and inv.currency.id = '" + strCurrencyId + "' ) ");
+      whereClause.append(" or (ord is not null ");
+      if (strBusinessPartnerId != null) {
+        whereClause.append(" and ord.businessPartner.id = '" + strBusinessPartnerId + "'");
+      }
+      if (strFinPaymentMethodId != null) {
+        whereClause.append(" and ops.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
+      }
+      whereClause.append(" and ord.salesTransaction = " + isSalesTransaction);
+      whereClause.append(" and ord.currency.id = '" + strCurrencyId + "' )) ");
+
+      // There is no Group By Clause
+      hqlQuery = hqlQuery.replace("group by", "");
+
+      // Replace where filters and having count clause
+      if (requestParameters.containsKey("criteria")) {
+        String criteria = requestParameters.get("criteria");
+        hqlQuery = replaceFiltersAndHavingClause(hqlQuery, criteria, transactionType);
+      } else {
+        hqlQuery = hqlQuery.replace("@havingClause@", "");
+      }
     }
+
+    // Remove alias @@ from Order By clause
+    if (requestParameters.containsKey("_sortBy")) {
+      String sortBy = requestParameters.get("_sortBy");
+      if (sortBy.startsWith("-")) {
+        sortBy = sortBy.substring(1);
+      }
+      hqlQuery = hqlQuery.replace("@" + sortBy + "@", sortBy);
+    }
+
+    transformedHql = hqlQuery.replace("@selectClause@ ", selectClause.toString());
+    transformedHql = transformedHql.replace("@whereClause@ ", whereClause.toString());
+    transformedHql = transformedHql.replace("@groupByClause@", groupByClause.toString());
 
     return transformedHql;
   }
@@ -267,16 +263,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
           } else if ("invoiceNo".equals(fieldName)) {
             hqlQuery = hqlQuery.replace("@invoiceNo@", "inv.documentNo");
-          } else if ("paymentMethod".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@paymentMethod@", "ips.finPaymentmethod.id");
-          } else if ("businessPartner".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@businessPartner@", "inv.businessPartner.id");
-          } else if ("transactionDate".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@transactionDate@", "inv.invoiceDate");
-          } else if ("expectedAmount".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@expectedAmount@", "ips.amount");
-          } else if ("invoicedAmount".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@invoicedAmount@", "inv.grandTotalAmount");
           } else if ("outstandingAmount".equals(fieldName)) {
             // Remove the aggregate function from where clause and put in having clause
             if (havingClause.length() <= 0) {
@@ -329,16 +315,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
               strReplaced = strReplaced.substring(0, strReplaced.indexOf(" and"));
             }
             havingClause.append(strReplaced);
-          } else if ("paymentMethod".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@paymentMethod@", "ops.finPaymentmethod.id");
-          } else if ("businessPartner".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@businessPartner@", "ord.businessPartner.id");
-          } else if ("transactionDate".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@transactionDate@", "ord.orderDate");
-          } else if ("expectedAmount".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@expectedAmount@", "ops.amount");
-          } else if ("invoicedAmount".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@invoicedAmount@", "ord.grandTotalAmount");
           } else if ("outstandingAmount".equals(fieldName)) {
             // Remove the aggregate function from where clause and put in having clause
             if (havingClause.length() <= 0) {
@@ -373,16 +349,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
             hqlQuery = hqlQuery.replace("@salesOrderNo@", "ord.documentNo");
           } else if ("invoiceNo".equals(fieldName)) {
             hqlQuery = hqlQuery.replace("@invoiceNo@", "inv.documentNo");
-          } else if ("paymentMethod".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@paymentMethod@", "ops.finPaymentmethod.id");
-          } else if ("businessPartner".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@businessPartner@", "ord.businessPartner.id");
-          } else if ("transactionDate".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@transactionDate@", "ord.orderDate");
-          } else if ("expectedAmount".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@expectedAmount@", "ops.amount");
-          } else if ("invoicedAmount".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@invoicedAmount@", "ord.grandTotalAmount");
           } else if ("outstandingAmount".equals(fieldName)) {
             hqlQuery = hqlQuery.replace("@outstandingAmount@", "psd.amount");
           }
@@ -406,8 +372,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
    * @param havingClause
    * @return
    */
-  private String replaceHavingClause(String hqlQuery, String strToReplace,
+  private String replaceHavingClause(String _hqlQuery, String strToReplace,
       String strToReplaceBeginning, String strToReplaceWith, StringBuffer havingClause) {
+    String hqlQuery = _hqlQuery;
     String strReplaced = null;
     int beginIndex = hqlQuery.indexOf(strToReplaceBeginning);
     int endIndexParenthesis = hqlQuery.indexOf(" ) ", beginIndex);
