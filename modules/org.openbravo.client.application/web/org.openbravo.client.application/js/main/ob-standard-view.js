@@ -680,8 +680,13 @@ isc.OBStandardView.addProperties({
     this.standardWindow.addView(childView);
 
     if (this.childTabSet.tabs.length > 0) {
+      // If it is a child tab that is not in the first position, load a basic child view
+      // to ensure a lazy inizialitazion of the contents.
+      // Once the tab be selected, the proper content will be loaded.
       this.prepareBasicChildView(childView);
     } else {
+      // If the child tab is in first position, the content needs to be displayed immediately
+      // once the parent view is loaded.
       this.prepareFullChildView(childView);
     }
 
@@ -692,6 +697,11 @@ isc.OBStandardView.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + '_' + childView.tabId, childView.tab);
   },
 
+  // ** {{{ prepareBasicChildView }}} **
+  // It adds a tab with a basic layout. Once the tab is selected/set as active
+  // a call to 'prepareFullChildView' is performed. The purpose of this view
+  // is have a lazy initialization of the tab, so the proper content is
+  // loaded only when it is required.
   prepareBasicChildView: function (childView) {
     var me = this;
 
@@ -763,6 +773,9 @@ isc.OBStandardView.addProperties({
     this.childTabSet.addTab(childTabDef);
   },
 
+  // ** {{{ prepareBasicChildView }}} **
+  // It adds a tab with the whole view content based on the provided 'childView'.
+  // If 'tab' parameter is provided, the 'childView' content is loaded inside the provided tab.
   prepareFullChildView: function (childView, tab) {
     var length, i, actionButton, lastCalledSizeFunction;
 
