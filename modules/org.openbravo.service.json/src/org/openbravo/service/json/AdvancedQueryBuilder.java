@@ -230,7 +230,8 @@ public class AdvancedQueryBuilder {
       whereClause += StringUtils.isEmpty(whereClause.trim()) ? "where" : "and";
 
       // if the property allows null values, use a left join instead an inner join
-      if (subEntity.getProperty(distinctPropertyPath).allowNullValues()) {
+      if (!distinctPropertyPath.contains(DalUtil.FIELDSEPARATOR)
+          && subEntity.getProperty(distinctPropertyPath).allowNullValues()) {
         whereClause += " exists (select 1 from " + subEntity.getName() + " "
             + subEntityQueryBuilder.getJoinClause() + " left join "
             + subEntityQueryBuilder.getMainAlias() + DalUtil.DOT + distinctPropertyPath + " as i "
