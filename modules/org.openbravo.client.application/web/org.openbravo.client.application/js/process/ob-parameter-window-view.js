@@ -170,12 +170,13 @@ isc.OBParameterWindowView.addProperties({
     this.members.push(this.messageBar);
 
     newShowIf = function (item, value, form, values) {
-      var currentValues,
-          originalShowIfValue = false;
+      var currentValues, originalShowIfValue = false;
 
       currentValues = isc.shallowClone(values) || {};
-      if (!currentValues && form && form.view) {
-          currentValues = isc.shallowClone(form.view.getCurrentValues());
+      if (isc.isA.emptyObject(currentValues) && form && form.view) {
+        currentValues = isc.shallowClone(form.view.getCurrentValues());
+      } else if (isc.isA.emptyObject(currentValues) && form && form.getValues) {
+        currentValues = isc.shallowClone(form.getValues());
       }
       OB.Utilities.fixNull250(currentValues);
       var parentContext;
@@ -239,6 +240,7 @@ isc.OBParameterWindowView.addProperties({
             var affectedParams, i, field;
 
             this.paramWindow.handleReadOnlyLogic();
+            this.paramWindow.handleDisplayLogicForGridColumns();
 
             // Execute onChangeFunctions if they exist
             if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
@@ -577,6 +579,8 @@ isc.OBParameterWindowView.addProperties({
 
     // redraw to execute display logic
     this.theForm.markForRedraw();
+
+    this.handleDisplayLogicForGridColumns();
   },
 
   // Checks params with readonly logic enabling or disabling them based on it
@@ -598,6 +602,25 @@ isc.OBParameterWindowView.addProperties({
       field = form.getField(i);
       if (field.readOnlyIf && field.setDisabled) {
         field.setDisabled(field.readOnlyIf(form.getValues(), parentContext));
+      }
+    }
+  },
+
+  handleDisplayLogicForGridColumns: function () {
+    var form, fields, i, field;
+
+    form = this.theForm;
+    if (!form) {
+      return;
+    }
+
+    fields = form.getFields();
+    for (i = 0; i < fields.length; i++) {
+      field = form.getField(i);
+      if (field.canvas) {
+        if (field.canvas.viewGrid) {
+          field.canvas.viewGrid.evaluateDisplayLogicForGridColumns();
+        }
       }
     }
   },
