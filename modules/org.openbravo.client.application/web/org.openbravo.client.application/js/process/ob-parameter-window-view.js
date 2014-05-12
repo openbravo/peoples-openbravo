@@ -173,12 +173,18 @@ isc.OBParameterWindowView.addProperties({
       var currentValues, originalShowIfValue = false;
 
       currentValues = isc.shallowClone(values) || {};
-      if (!currentValues && form && form.view) {
+      if (isc.isA.emptyObject(currentValues) && form && form.view) {
         currentValues = isc.shallowClone(form.view.getCurrentValues());
+      } else if (isc.isA.emptyObject(currentValues) && form && form.getValues) {
+        currentValues = isc.shallowClone(form.getValues());
       }
       OB.Utilities.fixNull250(currentValues);
-
-      var parentContext = (this.view.sourceView && this.view.sourceView.getContextInfo(false, true, true, true)) || {};
+      var parentContext;
+      if (this.view.sourceView) {
+        parentContext = this.view.sourceView.getContextInfo();
+      } else {
+        parentContext = {};
+      }
 
       try {
         if (isc.isA.Function(this.originalShowIf)) {
@@ -585,7 +591,11 @@ isc.OBParameterWindowView.addProperties({
     if (!form) {
       return;
     }
-    parentContext = (this.sourceView && this.sourceView.getContextInfo(false, true, true, true)) || {};
+    if (this.sourceView) {
+      parentContext = this.sourceView.getContextInfo(false, true, true, true);
+    } else {
+      parentContext = {};
+    }
 
     fields = form.getFields();
     for (i = 0; i < fields.length; i++) {
