@@ -13,13 +13,15 @@ import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
   @Override
-  public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
+  public String transformHqlQuery(String _hqlQuery, Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
+    String hqlQuery = _hqlQuery;
     // Retrieve Parameters
     String transactionType = requestParameters.get("transaction_type");
     final String strInvoiceId = requestParameters.get("@Invoice.id@");
     // Initialize Variables
-    boolean isSalesTransaction = "true".equals(requestParameters.get("@Invoice.salesTransaction@")) ? true : false;
+    boolean isSalesTransaction = "true".equals(requestParameters.get("@Invoice.salesTransaction@")) ? true
+        : false;
     String transformedHql = null;
     StringBuffer selectClause = new StringBuffer();
     StringBuffer whereClause = new StringBuffer();
@@ -211,8 +213,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
    *          : Invoices, Orders or Both
    * @return
    */
-  private String replaceFiltersAndHavingClause(String hqlQuery, String criteria,
+  private String replaceFiltersAndHavingClause(String _hqlQuery, String criteria,
       String transactionType) {
+    String hqlQuery = _hqlQuery;
     String[] fieldsInCriteria = criteria.split("__;__");
     StringBuffer havingClause = new StringBuffer();
 
