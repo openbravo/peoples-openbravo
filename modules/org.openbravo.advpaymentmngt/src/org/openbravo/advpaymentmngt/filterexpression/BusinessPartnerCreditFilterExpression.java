@@ -49,6 +49,9 @@ public class BusinessPartnerCreditFilterExpression implements FilterExpression {
           && !context.get("inpissotrx").equals("null")) {
         strReceipt = (String) context.get("inpissotrx");
       }
+      if (strBusinessPartnerId == null || strOrgId == null || strReceipt == null) {
+        return null;
+      }
       customerCredit = dao.getCustomerCredit(
           OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId),
           "Y".equals(strReceipt) ? true : false,
