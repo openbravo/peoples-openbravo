@@ -47,11 +47,25 @@ isc.OBPickEditGridItem.addProperties({
   },
 
   getValue: function () {
-    var allProperties = {};
+    var allProperties = {},
+        grid = this.canvas.viewGrid,
+        allRows, len, i, selection, tmp;
+    selection = grid.getSelectedRecords() || [];
+    len = selection.length;
+    allRows = grid.data.allRows || grid.data.localData || grid.data;
     allProperties._selection = [];
     allProperties._allRows = [];
-    allProperties._allRows = this.canvas.viewGrid.data.allRows || this.canvas.viewGrid.data.localData || this.canvas.viewGrid.data;
-    allProperties._selection = this.canvas.viewGrid.getSelectedRecords();
+    for (i = 0; i < len; i++) {
+      tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(grid.getRecordIndex(selection[i])));
+      allProperties._selection.push(tmp);
+    }
+    len = (allRows && allRows.length) || 0;
+    if (!(grid.data.resultSize) || (len < grid.data.resultSize)) {
+      for (i = 0; i < len; i++) {
+        tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(grid.getRecordIndex(allRows[i])));
+        allProperties._allRows.push(tmp);
+      }
+    }
     return (allProperties);
   },
 
