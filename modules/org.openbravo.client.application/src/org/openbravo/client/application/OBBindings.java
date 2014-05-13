@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.util.Check;
-import org.openbravo.base.util.OBClassLoader;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.json.JsonUtils;
@@ -233,12 +233,13 @@ public class OBBindings {
     Check.isNotNull(className, "The class name must not be null");
     FilterExpression expr;
     try {
-      expr = (FilterExpression) OBClassLoader.getInstance().loadClass(className).newInstance();
+      expr = (FilterExpression) WeldUtils
+          .getInstanceFromStaticBeanManager(Class.forName(className));
+      // (FilterExpression) OBClassLoader.getInstance().loadClass(className).newInstance();
       return expr.getExpression(requestMap);
     } catch (Exception e) {
       log.error("Error trying to get filter expression from class: " + className, e);
     }
     return "";
   }
-
 }
