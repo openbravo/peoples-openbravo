@@ -39,6 +39,11 @@
   padding: 0px 0px 20px 0px;
 }
 
+.OBParameterWindowForm {
+  margin: 5px 20px 0px 20px;
+  padding: 0px 0px 20px 0px;
+}
+
 .OBFormContainerLayout {
   outline: none;
   background-color: #FFFFFF;
