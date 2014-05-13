@@ -37,6 +37,14 @@ isc.OBViewForm.addProperties({
   cellPadding: 0
 });
 
+isc.OBParameterWindowForm.addProperties({
+  styleName: 'OBParameterWindowForm',
+  width: '100%',
+  overflow: 'visible',
+//  cellBorder: 1, // debug layout
+  cellPadding: 0
+});
+
 isc.OBFormContainerLayout.addProperties({
   styleName: 'OBFormContainerLayout'
 });
