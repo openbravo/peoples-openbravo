@@ -51,7 +51,7 @@ isc.OBParameterWindowView.addProperties({
   initWidget: function () {
     var i, field, items = [],
         buttonLayout = [],
-        okButton, newButton, cancelButton, view = this,
+        newButton, cancelButton, view = this,
         newShowIf, params;
 
     // Buttons
@@ -97,7 +97,7 @@ isc.OBParameterWindowView.addProperties({
       }
     }
 
-    okButton = isc.OBFormButton.create({
+    this.okButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUIAPP_Done'),
       realTitle: '',
       _buttonValue: 'DONE',
@@ -130,8 +130,8 @@ isc.OBParameterWindowView.addProperties({
         }
       }
     } else {
-      buttonLayout.push(okButton);
-      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', okButton);
+      buttonLayout.push(this.okButton);
+      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', this.okButton);
       if (this.popup) {
         buttonLayout.push(isc.LayoutSpacer.create({
           width: 32
@@ -241,6 +241,7 @@ isc.OBParameterWindowView.addProperties({
 
             this.paramWindow.handleReadOnlyLogic();
             this.paramWindow.handleDisplayLogicForGridColumns();
+            this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
 
             // Execute onChangeFunctions if they exist
             if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
@@ -276,7 +277,7 @@ isc.OBParameterWindowView.addProperties({
 
 
     if (this.popup) {
-      this.firstFocusedItem = okButton;
+      this.firstFocusedItem = this.okButton;
       this.popupButtons = isc.HLayout.create({
         align: 'center',
         width: '100%',
@@ -580,6 +581,8 @@ isc.OBParameterWindowView.addProperties({
     // redraw to execute display logic
     this.theForm.markForRedraw();
 
+    this.okButton.setEnabled(this.allRequiredParametersSet());
+
     this.handleDisplayLogicForGridColumns();
   },
 
@@ -640,5 +643,20 @@ isc.OBParameterWindowView.addProperties({
     }
 
     return result;
+  },
+
+  // returns true if any non-grid required parameter does not have a value
+  allRequiredParametersSet: function () {
+    var i, item, length = this.theForm.getItems().length,
+        value, undef, nullValue = null;
+    for (i = 0; i < length; i++) {
+      item = this.theForm.getItems()[i];
+      value = item.getValue();
+      // do not take into account the grid parameters when looking for required parameters without value
+      if (item.type !== 'OBPickEditGridItem' && item.required && item.isVisible() && value !== false && value !== 0 && !value) {
+        return false;
+      }
+    }
+    return true;
   }
 });
