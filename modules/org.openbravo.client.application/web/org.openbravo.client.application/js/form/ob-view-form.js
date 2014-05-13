@@ -783,7 +783,7 @@ OB.ViewFormProperties = {
     if (columnValues) {
       for (prop in columnValues) {
         if (columnValues.hasOwnProperty(prop)) {
-          this.processColumnValue(prop, columnValues[prop], gridEditInformation);
+          this.processColumnValue(prop, columnValues[prop], gridEditInformation, request.params.MODE);
         }
       }
     }
@@ -957,7 +957,7 @@ OB.ViewFormProperties = {
     this.fetchData(criteria);
   },
 
-  processColumnValue: function (columnName, columnValue, gridEditInformation) {
+  processColumnValue: function (columnName, columnValue, gridEditInformation, mode) {
     // Modifications in this method should go also in setColumnValuesInEditValues because both almost do the same
     var typeInstance;
     var assignValue;
@@ -991,6 +991,18 @@ OB.ViewFormProperties = {
     // don't set the entries    
     if (field.form && entries && field.setEntries) {
       field.setEntries(entries);
+    }
+
+    if (field.editorType === 'OBFKComboItem' && mode === 'CHANGE') {
+      var length = entries.length,
+          i, id, identifier, valueMap = {};
+      for (i = 0; i < length; i++) {
+        id = entries[i][OB.Constants.ID] || '';
+        identifier = entries[i][OB.Constants.IDENTIFIER] || '';
+        valueMap[id] = identifier.asHTML();
+      }
+      field.valueMap = valueMap;
+      field.wholeValueMapSet = true;
     }
 
     if (gridEditInformation && field.valueMap) {

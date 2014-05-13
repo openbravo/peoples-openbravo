@@ -65,7 +65,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
   public String fetch(Map<String, String> parameters) {
     Field field = null;
     FieldProvider[] fps = null;
-    String fieldId = parameters.get("fieldId");
+    String fieldId = parameters.get("fieldId"), value = null, classicValue = null;
     int startRow = -1, endRow = -1;
     try {
       checkAccess(fieldId);
@@ -100,7 +100,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       }
       String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
       boolean applyLimits = startRow != -1 && endRow != -1;
-      if (!applyLimits && StringUtils.isEmpty(singleRecord)) {
+      if (!applyLimits && StringUtils.isEmpty(singleRecord) && !"Y".equals(onChange)) {
         throw new OBException(JsonConstants.STARTROW_PARAMETER + " and "
             + JsonConstants.ENDROW_PARAMETER + " not present");
       } else {
@@ -168,8 +168,10 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
+      ArrayList<String> possibleIds = new ArrayList<String>();
       // If column is mandatory we add an initial blank value in the first page if not filtered
       if (!field.getColumn().isMandatory() && startRow == 0 && StringUtils.isEmpty(filterString)) {
+        possibleIds.add("");
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, (String) null);
         entry.put(JsonConstants.IDENTIFIER, (String) null);
@@ -183,12 +185,35 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
           hasMoreRows = true;
           break;
         }
+        possibleIds.add(fp.getField("ID"));
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, fp.getField("ID"));
         entry.put(JsonConstants.IDENTIFIER, fp.getField("NAME"));
         comboEntries.add(entry);
       }
-
+      if (getValueFromSession && !comboreload) {
+        value = columnValue;
+        classicValue = columnValue;
+      } else {
+        if (possibleIds.contains(columnValue)) {
+          value = columnValue;
+          classicValue = columnValue;
+        } else {
+          // In case the default value doesn't exist in the combo values, we choose the first one
+          if (comboEntries.size() > 0) {
+            if (comboEntries.get(0).has(JsonConstants.ID)) {
+              value = comboEntries.get(0).get(JsonConstants.ID).toString();
+              classicValue = comboEntries.get(0).get(JsonConstants.ID).toString();
+            } else {
+              value = null;
+              classicValue = null;
+            }
+          } else {
+            value = "";
+            classicValue = "";
+          }
+        }
+      }
       log.debug("fetch operation for ComboTableDatasourceService took: {} ms",
           (System.currentTimeMillis() - init));
 
@@ -196,6 +221,8 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       try {
         final JSONObject jsonResult = new JSONObject();
         final JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put("value", value);
+        jsonResponse.put("classicValue", classicValue);
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
         jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
         jsonResponse.put(JsonConstants.RESPONSE_ENDROW, comboEntries.size() + startRow - 1);
