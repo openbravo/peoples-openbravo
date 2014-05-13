@@ -43,46 +43,33 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
 
   @Override
   public String getExpression(Map<String, String> requestMap) {
-    final String strWindowId = getWindowId(requestMap);
+    try {
+      final String strWindowId = getWindowId(requestMap);
 
-    AddPaymentDefaultValuesHandler handler = getHandler(strWindowId,
-        addPaymentFilterExpressionHandlers);
-    if (handler == null) {
-      throw new OBException("No handler found");
-    }
-    final String strCurrentParam = getCurrentParam(requestMap);
-    Parameters param = getParameter(strCurrentParam);
-    switch (param) {
-    case ExpectedPayment:
-      return handler.getDefaultExpectedAmount(requestMap);
-    case ActualPayment:
-      return handler.getDefaultActualPaymentAmount(requestMap);
+      AddPaymentDefaultValuesHandler handler = getHandler(strWindowId);
+      if (handler == null) {
+        throw new OBException("No handler found");
+      }
+      final String strCurrentParam = requestMap.get("currentParam");
+      Parameters param = Parameters.getParameter(strCurrentParam);
+      switch (param) {
+      case ExpectedPayment:
+        return handler.getDefaultExpectedAmount(requestMap);
+      case ActualPayment:
+        return handler.getDefaultActualPaymentAmount(requestMap);
+      }
+    } catch (JSONException ignore) {
     }
     throw new OBException("Unsupported columnname");
   }
 
-  private String getWindowId(Map<String, String> requestMap) {
+  private String getWindowId(Map<String, String> requestMap) throws JSONException {
     final String strContext = requestMap.get("context");
-    try {
-      JSONObject context = new JSONObject(strContext);
-      return context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
-    } catch (JSONException ignore) {
-    }
-    return null;
+    JSONObject context = new JSONObject(strContext);
+    return context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
   }
 
-  private String getCurrentParam(Map<String, String> requestMap) {
-    final String strContext = requestMap.get("context");
-    try {
-      JSONObject context = new JSONObject(strContext);
-      return context.getString("currentParam");
-    } catch (JSONException ignore) {
-    }
-    return null;
-  }
-
-  private static AddPaymentDefaultValuesHandler getHandler(String strWindowId,
-      Instance<AddPaymentDefaultValuesHandler> addPaymentFilterExpressionHandlers) {
+  private AddPaymentDefaultValuesHandler getHandler(String strWindowId) {
     AddPaymentDefaultValuesHandler handler = null;
     for (AddPaymentDefaultValuesHandler nextHandler : addPaymentFilterExpressionHandlers
         .select(new ComponentProvider.Selector(strWindowId))) {
@@ -96,17 +83,27 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
     return handler;
   }
 
-  private Parameters getParameter(String columnname) {
-    if ("actual_payment".equals(columnname)) {
-      return Parameters.ActualPayment;
-    } else if ("expected_payment".equals(columnname)) {
-      return Parameters.ExpectedPayment;
-    }
-    return null;
-  }
-
   private enum Parameters {
-    ActualPayment, ExpectedPayment
+    ActualPayment("actual_payment"), ExpectedPayment("expected_payment");
+
+    private String columnname;
+
+    Parameters(String columnname) {
+      this.columnname = columnname;
+    }
+
+    public String getColumnName() {
+      return this.columnname;
+    }
+
+    static Parameters getParameter(String strColumnName) {
+      for (Parameters parameter : Parameters.values()) {
+        if (strColumnName.equals(parameter.getColumnName())) {
+          return parameter;
+        }
+      }
+      return null;
+    }
   }
 
 }

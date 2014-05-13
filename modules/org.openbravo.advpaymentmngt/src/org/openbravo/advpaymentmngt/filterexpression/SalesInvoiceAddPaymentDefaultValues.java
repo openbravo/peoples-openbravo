@@ -20,6 +20,8 @@ package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 
@@ -27,15 +29,17 @@ import org.openbravo.client.kernel.ComponentProvider;
 public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValuesHandler {
 
   @Override
-  public String getDefaultExpectedAmount(Map<String, String> requestMap) {
+  public String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
     // Expected amount is the outstanding amount of the Sales Invoice
-    return requestMap.get("outstandingAmt");
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    return context.getString("inpoutstandingamt");
   }
 
   @Override
-  String getDefaultActualPaymentAmount(Map<String, String> requestMap) {
+  String getDefaultActualPaymentAmount(Map<String, String> requestMap) throws JSONException {
     // Actual payment amount is the outstanding amount of the Sales Invoice
-    return requestMap.get("outstandingAmt");
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    return context.getString("inpoutstandingamt");
   }
 
 }

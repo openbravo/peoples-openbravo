@@ -22,11 +22,14 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.codehaus.jettison.json.JSONException;
+
 @ApplicationScoped
 abstract class AddPaymentDefaultValuesHandler {
 
-  abstract String getDefaultExpectedAmount(Map<String, String> requestMap);
+  abstract String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException;
 
-  abstract String getDefaultActualPaymentAmount(Map<String, String> requestMap);
+  abstract String getDefaultActualPaymentAmount(Map<String, String> requestMap)
+      throws JSONException;
 
 }
