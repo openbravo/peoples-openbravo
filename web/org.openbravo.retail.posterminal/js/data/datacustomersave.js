@@ -64,21 +64,14 @@
           bpToSave.set('json', JSON.stringify(me.customer.serializeToJSON()));
           bpToSave.set('c_bpartner_id', me.customer.get('id'));
         }
-        if (OB.POS.modelterminal.get('connectedToERP')) {
-          bpToSave.set('isbeingprocessed', 'Y');
-        }
+        bpToSave.set('isbeingprocessed', 'Y');
         OB.Dal.save(bpToSave, function () {
           bpToSave.set('json', me.customer.serializeToJSON());
-          if (OB.POS.modelterminal.get('connectedToERP') === false) {
-            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerChangesSavedSuccessfullyLocally', [me.customer.get('_identifier')]));
-          }
-          if (OB.POS.modelterminal.get('connectedToERP')) {
-            var successCallback, errorCallback, List;
-            successCallback = function () {
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [me.customer.get('_identifier')]));
-            };
-            OB.MobileApp.model.runSyncProcess(successCallback);
-          }
+          var successCallback, errorCallback, List;
+          successCallback = function () {
+            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [me.customer.get('_identifier')]));
+          };
+          OB.MobileApp.model.runSyncProcess(successCallback);
         }, function () {
           //error saving BP changes with changes in changedbusinesspartners
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [me.customer.get('_identifier')]));
