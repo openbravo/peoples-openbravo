@@ -54,6 +54,7 @@ isc.OBParameterWindowView.addProperties({
         newButton, cancelButton, view = this,
         newShowIf, params;
 
+
     // Buttons
 
     function actionClick() {
@@ -268,7 +269,9 @@ isc.OBParameterWindowView.addProperties({
           this.isPickAndExecuteWindow = true;
         }
         this.theForm.setItems(items);
-        this.members.push(this.theForm);
+        this.formContainerLayout = isc.OBFormContainerLayout.create({});
+        this.formContainerLayout.addMember(this.theForm);
+        this.members.push(this.formContainerLayout);
       }
     }
     if (this.grid) {
