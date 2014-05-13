@@ -150,8 +150,8 @@ OB.ViewFormProperties = {
         // if there is a display field or an identifier field accompanying the
         // status bar field and it has a value then always use that
         // one
-        if (item.displayField && this.getValue(item.displayField)) {
-          displayedValue = this.getValue(item.displayField);
+        if (item.displayField && this.getValue(item.name + OB.Constants.FIELDSEPARATOR + item.displayField)) {
+          displayedValue = this.getValue(item.name + OB.Constants.FIELDSEPARATOR + item.displayField);
         } else if (this.getValue(item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
           displayedValue = this.getValue(item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER);
         }
