@@ -41,23 +41,47 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
   /**
    * Test to fetch values from ComboTableDatasoureService using set parameters. Based on field
    * information and current context, the field values are returned as jsonObject. The test case
-   * asserts whether there is a valid response.
+   * asserts the case where startRow and endRow parameters are not present. In this case OBException
+   * is raised
    * 
    * @throws Exception
    */
-  public void testFetchComboTableDatasourceValues() throws Exception {
+  public void testFetchWithoutLimitParameters() throws Exception {
     // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "876");
     params.put("columnValue", "1757");
     params.put("_operationType", "fetch");
 
-    JSONObject jsonResponse = requestCombo(params);
-    JSONArray data = getData(jsonResponse);
-    assertTrue(getStatus(jsonResponse).equals(
+    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
+        params, 200, "POST");
+    JSONObject jsonResponse = new JSONObject(response);
+    assertFalse(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
-    assertTrue("non paginated combo for window table dir should have more than 100 records",
-        data.length() > 100);
+  }
+
+  /**
+   * Test to fetch values from ComboTableDatasoureService using set parameters. Based on field
+   * information and current context, the field values are returned as jsonObject. The test case
+   * asserts the case where more than 500 records are set to be fetched. In this case OBException is
+   * raised.
+   * 
+   * @throws Exception
+   */
+  public void testFetchWithLargeData() throws Exception {
+    // Using values of window dropdown in preference window
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("fieldId", "876");
+    params.put("columnValue", "1757");
+    params.put("_operationType", "fetch");
+    params.put("_startRow", "1");
+    params.put("_endRow", "1000");
+
+    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
+        params, 200, "POST");
+    JSONObject jsonResponse = new JSONObject(response);
+    assertFalse(getStatus(jsonResponse).equals(
+        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
   }
 
   /**
@@ -150,6 +174,8 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
     params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
     params.put("_operationType", "fetch");
+    params.put("_startRow", "0");
+    params.put("_endRow", "10");
     // try to filter by string 'Jo'
     params.put("criteria",
         "{\"fieldName\":\"_identifier\",\"operator\":\"iStartsWith\",\"value\":\"Jo\"}");

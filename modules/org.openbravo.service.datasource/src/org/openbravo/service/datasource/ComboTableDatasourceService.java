@@ -98,8 +98,16 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       if (parameters.get(JsonConstants.ENDROW_PARAMETER) != null) {
         endRow = Integer.parseInt(parameters.get(JsonConstants.ENDROW_PARAMETER));
       }
-      boolean applyLimits = startRow != -1 && endRow != -1;
       String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
+      boolean applyLimits = startRow != -1 && endRow != -1;
+      if (!applyLimits && StringUtils.isEmpty(singleRecord)) {
+        throw new OBException(JsonConstants.STARTROW_PARAMETER + " and "
+            + JsonConstants.ENDROW_PARAMETER + " not present");
+      } else {
+        if (endRow - startRow > 500) {
+          throw new OBException("trying to retrieve more than 500 records");
+        }
+      }
 
       field = OBDal.getInstance().get(Field.class, fieldId);
       Boolean getValueFromSession = Boolean.getBoolean(parameters.get("getValueFromSession"));
