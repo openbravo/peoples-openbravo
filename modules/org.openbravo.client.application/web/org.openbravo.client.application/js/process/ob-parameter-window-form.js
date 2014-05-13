@@ -31,8 +31,6 @@ isc.OBParameterWindowForm.addProperties({
   numCols: 4,
   showErrorIcons: false,
   colWidths: ['*', '*', '*', '*'],
-  leftMargin: 200,
-  layoutLeftMargin: 300,
   itemChanged: function (item, newValue) {
     var affectedParams, i, field;
 
