@@ -106,7 +106,9 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
               defaultValue = context.get(inpName);
               inpName = "inp" + Sqlc.TransformaNombreColumna(param.getDBColumnName());
             } else {
-              defaultValue = ParameterUtils.getJSExpressionResult(fixRequestMap(parameters),
+              Map<String, String> requestMap = fixRequestMap(parameters);
+              requestMap.put("currentParam", param.getDBColumnName());
+              defaultValue = ParameterUtils.getJSExpressionResult(requestMap,
                   (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), rawDefaultValue);
               if (context == null) {
                 context = new JSONObject();
@@ -283,4 +285,3 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
     return rawDefaultValue.substring(1, rawDefaultValue.length() - 1);
   }
 }
-
