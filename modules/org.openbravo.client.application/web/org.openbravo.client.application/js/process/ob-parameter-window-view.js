@@ -227,42 +227,8 @@ isc.OBParameterWindowView.addProperties({
 
       if (items.length !== 0) {
         // create form if there items to include
-        this.theForm = isc.DynamicForm.create({
-          paramWindow: this,
-          width: '99%',
-          titleSuffix: '',
-          requiredTitleSuffix: '',
-          autoFocus: true,
-          titleOrientation: 'top',
-          numCols: 4,
-          showErrorIcons: false,
-          colWidths: ['*', '*', '*', '*'],
-          itemChanged: function (item, newValue) {
-            var affectedParams, i, field;
-
-            this.paramWindow.handleReadOnlyLogic();
-            this.paramWindow.handleDisplayLogicForGridColumns();
-            this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
-
-            // Execute onChangeFunctions if they exist
-            if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
-              OB.OnChangeRegistry.call(this.paramWindow.viewId, item, this.paramWindow, this, this.paramWindow.viewGrid);
-            }
-
-            // Check validation rules (subordinated fields), when value of a
-            // parent field is changed, all its subordinated are reset
-            affectedParams = this.paramWindow.dynamicColumns[item.name];
-            if (!affectedParams) {
-              return;
-            }
-            for (i = 0; i < affectedParams.length; i++) {
-              field = this.getField(affectedParams[i]);
-              if (field && field.setValue) {
-                field.setValue(null);
-                this.itemChanged(field, null);
-              }
-            }
-          }
+        this.theForm = isc.OBParameterWindowForm.create({
+          paramWindow: this
         });
         // If there is only one paremeter, it is a grid and the window is opened in a popup, then the window is a P&E window
         if (items && items.length === 1 && items[0].type === 'OBPickEditGridItem' && this.popup) {
