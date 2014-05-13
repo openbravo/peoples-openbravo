@@ -4,8 +4,6 @@ import java.util.Map;
 
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.service.datasource.hql.HQLInjectionQualifier;
 import org.openbravo.service.datasource.hql.HqlInjector;
 
@@ -15,20 +13,12 @@ public class AddPaymentCreditToUseInjector extends HqlInjector {
   @Override
   public String injectHql(Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
-    final String strPaymentId = requestParameters.get("@FIN_Payment.id@");
-    final String strInvoiceId = requestParameters.get("@Invoice.id@");
-    Invoice invoice = null;
-    BusinessPartner businessPartner = null;
-    if (strPaymentId != null) {
-      final FIN_Payment finPayment = OBDal.getInstance().get(FIN_Payment.class, strPaymentId);
-      businessPartner = finPayment.getBusinessPartner();
-    }
-    if (strInvoiceId != null) {
-      invoice = OBDal.getInstance().get(Invoice.class, strInvoiceId);
-      businessPartner = invoice.getBusinessPartner();
-    }
+    final String strBusinessPartnerId = requestParameters.get("received_from");
+    final BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+        strBusinessPartnerId);
+    boolean isSalesTransaction = "true".equals(requestParameters.get("issotrx")) ? true : false;
     queryNamedParameters.put("bp", businessPartner.getId());
-    queryNamedParameters.put("issotrx", invoice.isSalesTransaction());
+    queryNamedParameters.put("issotrx", isSalesTransaction);
     return "f.businessPartner.id = :bp and f.receipt = :issotrx";
   }
 }
