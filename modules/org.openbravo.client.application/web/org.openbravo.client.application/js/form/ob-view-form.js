@@ -993,16 +993,27 @@ OB.ViewFormProperties = {
       field.setEntries(entries);
     }
 
-    if (field.editorType === 'OBFKComboItem' && mode === 'CHANGE') {
-      var length = entries.length,
-          i, id, identifier, valueMap = {};
-      for (i = 0; i < length; i++) {
-        id = entries[i][OB.Constants.ID] || '';
-        identifier = entries[i][OB.Constants.IDENTIFIER] || '';
-        valueMap[id] = identifier.asHTML();
+    if (field.editorType === 'OBFKComboItem') {
+      if (mode === 'CHANGE') {
+        var length = entries.length,
+            i, id, identifier, valueMap = {},
+            localEntries = [];
+        for (i = 0; i < length; i++) {
+          id = entries[i][OB.Constants.ID] || '';
+          identifier = entries[i][OB.Constants.IDENTIFIER] || '';
+          valueMap[id] = identifier.asHTML();
+          localEntries[i] = {};
+          localEntries[i][id] = id;
+          localEntries[i][OB.Constants.IDENTIFIER] = identifier.asHTML();
+        }
+        field.entries = localEntries;
+        field.valueMap = valueMap;
+        field.wholeValueMapSet = true;
+      } else {
+        delete field.valueMap;
+        delete field.entries;
+        delete field.wholeValueMapSet;
       }
-      field.valueMap = valueMap;
-      field.wholeValueMapSet = true;
     }
 
     if (gridEditInformation && field.valueMap) {
