@@ -581,7 +581,8 @@ public class ReturnToVendorPickAndEditDataSource extends ReadOnlyDataSourceServi
     BigDecimal returnedInOthers = getReturnedQty(inOutLine);
 
     myMap.put("returnQtyOtherRM", returnedInOthers);
-    myMap.put("returned", orderLine == null ? BigDecimal.ZERO : orderLine.getOrderedQuantity());
+    myMap.put("returned", orderLine == null ? BigDecimal.ZERO : orderLine.getOrderedQuantity()
+        .negate());
 
     if (orderLine != null && orderLine.getReturnReason() != null) {
       myMap.put("returnReason", orderLine.getReturnReason().getId());
