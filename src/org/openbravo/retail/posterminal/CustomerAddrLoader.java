@@ -154,11 +154,19 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess {
           } else {
             rootLocation.setAddressLine1(jsonCustomerAddr.getString("name"));
           }
-
         }
         rootLocation.setPostalCode(jsonCustomerAddr.getString("postalCode"));
         rootLocation.setCityName(jsonCustomerAddr.getString("cityName"));
+
+        Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
+            org.openbravo.model.common.geography.Location.class);
+        JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomerAddr);
+
+        Entity bpLocationEntity = ModelProvider.getInstance().getEntity(Location.class);
+        JSONPropertyToEntity.fillBobFromJSON(bpLocationEntity, location, jsonCustomerAddr);
+
         OBDal.getInstance().save(rootLocation);
+        OBDal.getInstance().save(location);
       }
     } catch (final Exception e) {
       log.error("Exception while updating BPartner Address", e);
