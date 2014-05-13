@@ -27,4 +27,6 @@ abstract class AddPaymentDefaultValuesHandler {
 
   abstract String getDefaultExpectedAmount(Map<String, String> requestMap);
 
+  abstract String getDefaultActualPaymentAmount(Map<String, String> requestMap);
+
 }

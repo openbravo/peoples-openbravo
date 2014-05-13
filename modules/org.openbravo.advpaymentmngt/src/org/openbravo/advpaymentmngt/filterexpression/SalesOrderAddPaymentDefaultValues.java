@@ -32,4 +32,10 @@ public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
     return null;
   }
 
+  @Override
+  String getDefaultActualPaymentAmount(Map<String, String> requestMap) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

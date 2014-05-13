@@ -55,9 +55,10 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
     switch (param) {
     case ExpectedPayment:
       return handler.getDefaultExpectedAmount(requestMap);
-    default:
-      throw new OBException("Unsupported columnname");
+    case ActualPayment:
+      return handler.getDefaultActualPaymentAmount(requestMap);
     }
+    throw new OBException("Unsupported columnname");
   }
 
   private String getWindowId(Map<String, String> requestMap) {
@@ -97,13 +98,15 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
 
   private Parameters getParameter(String columnname) {
     if ("actual_payment".equals(columnname)) {
+      return Parameters.ActualPayment;
+    } else if ("expected_payment".equals(columnname)) {
       return Parameters.ExpectedPayment;
     }
     return null;
   }
 
   private enum Parameters {
-    ExpectedPayment
+    ActualPayment, ExpectedPayment
   }
 
 }

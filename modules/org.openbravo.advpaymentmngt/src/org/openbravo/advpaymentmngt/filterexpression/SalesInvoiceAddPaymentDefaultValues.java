@@ -32,4 +32,10 @@ public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValues
     return requestMap.get("outstandingAmt");
   }
 
+  @Override
+  String getDefaultActualPaymentAmount(Map<String, String> requestMap) {
+    // Actual payment amount is the outstanding amount of the Sales Invoice
+    return requestMap.get("outstandingAmt");
+  }
+
 }
