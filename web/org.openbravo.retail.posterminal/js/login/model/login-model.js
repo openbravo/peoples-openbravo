@@ -17,42 +17,45 @@
 
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
     initialize: function () {
-      this.set({
-        appName: 'WebPOS',
-        appModuleId: 'FF808181326CC34901326D53DBCF0018',
-        terminalName: OB.UTIL.getParameterByName("terminal") || "POS-1",
-        supportsOffline: true,
-        loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
-        loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
-        applicationFormatUrl: '../../org.openbravo.client.kernel/OBPOS_Main/ApplicationFormats',
-        logoutUrlParams: {
-          terminal: OB.UTIL.getParameterByName("terminal")
-        },
-        logConfiguration: {
-          deviceIdentifier: OB.UTIL.getParameterByName("terminal"),
-          logPropertiesExtension: [
+      var me = this;
+      this.initActions(function () {
+        me.set({
+          appName: 'WebPOS',
+          appModuleId: 'FF808181326CC34901326D53DBCF0018',
+          terminalName: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
+          supportsOffline: true,
+          loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
+          loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
+          applicationFormatUrl: '../../org.openbravo.client.kernel/OBPOS_Main/ApplicationFormats',
+          logoutUrlParams: window.localStorage.getItem('terminalAuthentication') === 'Y' ? {} : {
+            terminal: OB.UTIL.getParameterByName("terminal")
+          },
+          logConfiguration: {
+            deviceIdentifier: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
+            logPropertiesExtension: [
 
-          function () {
-            return {
-              online: OB.MobileApp.model.get('connectedToERP')
-            };
-          }]
-        },
-        profileOptions: {
-          showOrganization: false,
-          showWarehouse: false,
-          defaultProperties: {
-            role: 'oBPOSDefaultPOSRole'
-          }
-        },
-        localDB: {
-          size: 4 * 1024 * 1024,
-          name: 'WEBPOS',
-          displayName: 'Openbravo Web POS',
-          version: '0.7'
-        },
-        logDBTrxThreshold: 300,
-        logDBStmtThreshold: 1000
+            function () {
+              return {
+                online: OB.MobileApp.model.get('connectedToERP')
+              };
+            }]
+          },
+          profileOptions: {
+            showOrganization: false,
+            showWarehouse: false,
+            defaultProperties: {
+              role: 'oBPOSDefaultPOSRole'
+            }
+          },
+          localDB: {
+            size: 4 * 1024 * 1024,
+            name: 'WEBPOS',
+            displayName: 'Openbravo Web POS',
+            version: '0.7'
+          },
+          logDBTrxThreshold: 300,
+          logDBStmtThreshold: 1000
+        });
       });
 
       this.addPropertiesLoader({
@@ -354,7 +357,7 @@
     },
 
     renderMain: function () {
-      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, loadModelsIncFunc;
+      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, loadModelsIncFunc, me = this;
       if (!OB.UTIL.isSupportedBrowser()) {
         OB.MobileApp.model.renderLogin();
         return false;
@@ -386,6 +389,37 @@
 
       OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash);
       OB.MobileApp.model.on('window:ready', function () {
+        var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckTerminalAuth');
+        process.exec({
+          terminalName: window.localStorage.getItem('terminalName'),
+          terminalKeyIdentifier: window.localStorage.getItem('terminalKeyIdentifier'),
+          terminalAuthentication: window.localStorage.getItem('terminalAuthentication')
+        }, function (data, message) {
+          if (data && data.exception) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_TerminalAuthError'));
+          } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
+            if (data.isLinked === false) {
+              window.localStorage.removeItem('terminalName');
+              window.localStorage.removeItem('terminalKeyIdentifier');
+            }
+            if (data.terminalAuthentication) {
+              window.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
+            }
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              isConfirmButton: true,
+              action: function () {
+                OB.UTIL.showLoading(true);
+                me.logout();
+              }
+            }], {
+              onHideFunction: function () {
+                OB.UTIL.showLoading(true);
+                me.logout();
+              }
+            });
+          }
+        });
         //MASTER DATA REFRESH
         var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
         if (minIncRefresh) {
@@ -630,14 +664,95 @@
 
     databaseCannotBeResetAction: function () {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ResetNeededNotSafeTitle'), OB.I18N.getLabel('OBPOS_ResetNeededNotSafeMessage', [window.localStorage.getItem('terminalName')]));
-    }
+    },
+    dialog: null,
+    preLoadContext: function (callback) {
+      if (!window.localStorage.getItem('terminalKeyIdentifier') && !window.localStorage.getItem('terminalName') && window.localStorage.getItem('terminalAuthentication') === 'Y') {
+        OB.UTIL.showLoading(false);
+        if (OB.UI.ModalSelectTerminal) {
+          this.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
+            kind: 'OB.UI.ModalSelectTerminal',
+            name: 'modalSelectTerminal',
+            callback: callback,
+            context: this
+          });
+          this.dialog.show();
+        }
+      } else {
+        callback();
+      }
+    },
+    linkTerminal: function (terminalData, callback) {
+      var params = this.get('loginUtilsParams') || {},
+          me = this;
+      params.command = 'preLoginActions';
+      params.params = terminalData;
+      new OB.OBPOSLogin.UI.LoginRequest({
+        url: OB.MobileApp.model.get('loginUtilsUrl')
+      }).response(this, function (inSender, inResponse) {
+        if (inResponse.exception) {
+          OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel(inResponse.exception), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true,
+            action: function () {
+              if (OB.UI.ModalSelectTerminal) {
+                me.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
+                  kind: 'OB.UI.ModalSelectTerminal',
+                  name: 'modalSelectTerminal',
+                  callback: callback,
+                  context: me
+                });
+                me.dialog.show();
+              }
+            }
+          }], {
+            onHideFunction: function () {
+              if (OB.UI.ModalSelectTerminal) {
+                me.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
+                  kind: 'OB.UI.ModalSelectTerminal',
+                  name: 'modalSelectTerminal',
+                  callback: callback,
+                  context: me
+                });
+                me.dialog.show();
+              }
+            }
+          });
+        } else {
+          OB.appCaption = inResponse.appCaption;
+          OB.MobileApp.model.set('terminalName', inResponse.terminalName);
+          OB.POS.modelterminal.get('loginUtilsParams').terminalName = OB.MobileApp.model.get('terminalName');
+          //        OB.MobileApp.model.get('loginUtilsParams').terminalName = OB.MobileApp.model.get('terminalName');
+          window.localStorage.setItem('terminalName', OB.MobileApp.model.get('terminalName'));
+          window.localStorage.setItem('terminalKeyIdentifier', inResponse.terminalKeyIdentifier);
+          callback();
+        }
+
+      }).go(params);
+    },
+    initActions: function (callback) {
+      var params = this.get('loginUtilsParams') || {},
+          me = this;
+      params.command = 'initActions';
+      new OB.OBPOSLogin.UI.LoginRequest({
+        url: '../../org.openbravo.retail.posterminal.service.loginutils'
+      }).response(this, function (inSender, inResponse) {
+        window.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
+        OB.MobileApp.model.set('terminalName', window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+        OB.POS.modelterminal.set('loginUtilsParams', {
+          terminalName: OB.MobileApp.model.get('terminalName')
+        });
+        callback();
+      }).go(params);
+      //  
+    },
   });
 
   // var modelterminal= ;
   OB.POS = {
     modelterminal: new OB.Model.POSTerminal(),
     paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
-    paramTerminal: OB.UTIL.getParameterByName("terminal") || "POS-1",
+    paramTerminal: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
     //    terminal: new OB.UI.Terminal({
     //      test:'1',
     //      terminal: this.modelterminal

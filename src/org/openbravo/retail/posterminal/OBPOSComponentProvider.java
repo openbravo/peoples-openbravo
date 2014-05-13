@@ -145,6 +145,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/salesrepresentative",
         "components/listreceiptscounter",
         "components/menu",
+        "components/modalselectterminal",
         // Old Tickets
         "components/modalpaidreceipts",
         "components/modalmultiorders",
