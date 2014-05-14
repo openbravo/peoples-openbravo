@@ -23,6 +23,8 @@ isc.ClassFactory.defineClass('OBFKComboItem', isc.OBSelectorItem);
 
 isc.OBFKComboItem.addProperties({
   valueField: 'id',
+  addDummyCriterion: false,
+  textMatchStyle: 'substring',
   pickListFields: [{
     title: ' ',
     name: '_identifier',

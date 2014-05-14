@@ -401,6 +401,9 @@ isc.OBSelectorItem.addProperties({
   suggestionTextMatchStyle: 'startswith',
   showOptionsFromDataSource: true,
 
+  // forces fetch whenever drop down is opened
+  addDummyCriterion: true,
+
   // https://issues.openbravo.com/view.php?id=18739
   selectOnFocus: false,
   // still do select on focus initially
@@ -774,11 +777,6 @@ isc.OBSelectorItem.addProperties({
   },
 
   filterDataBoundPickList: function (requestProperties, dropCache) {
-    if (this.wholeValueMapSet) {
-      this.pickList.data.useClientFiltering = true;
-      this.pickList.data = this.entries;
-      return;
-    }
     requestProperties = requestProperties || {};
     requestProperties.params = requestProperties.params || {};
 
@@ -819,15 +817,16 @@ isc.OBSelectorItem.addProperties({
   getPickListFilterCriteria: function () {
     var crit = this.Super('getPickListFilterCriteria', arguments),
         operator;
-    this.pickList.data.useClientFiltering = false;
     var criteria = {
       operator: 'or',
       _constructor: 'AdvancedCriteria',
       criteria: []
     };
 
-    // add a dummy criteria to force a fetch
-    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    if (this.addDummyCriterion) {
+      // add a dummy criteria to force a fetch
+      criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    }
 
     // only filter if the display field is also passed
     // the displayField filter is not passed when the user clicks the drop-down button

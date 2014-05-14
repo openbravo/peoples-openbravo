@@ -996,18 +996,19 @@ OB.ViewFormProperties = {
     if (field.editorType === 'OBFKComboItem') {
       if (mode === 'CHANGE') {
         var length = entries.length,
-            i, id, identifier, valueMap = {},
+            ci, cid, cidentifier, cvalueMap = {},
             localEntries = [];
-        for (i = 0; i < length; i++) {
-          id = entries[i][OB.Constants.ID] || '';
-          identifier = entries[i][OB.Constants.IDENTIFIER] || '';
-          valueMap[id] = identifier.asHTML();
-          localEntries[i] = {};
-          localEntries[i][id] = id;
-          localEntries[i][OB.Constants.IDENTIFIER] = identifier.asHTML();
+        for (ci = 0; ci < length; ci++) {
+          cid = entries[ci][OB.Constants.ID] || '';
+          identifier = entries[ci][OB.Constants.IDENTIFIER] || '';
+          cvalueMap[cid] = cidentifier.asHTML();
+          localEntries[ci] = {};
+          localEntries[ci][cid] = cid;
+          localEntries[ci][OB.Constants.IDENTIFIER] = identifier.asHTML();
         }
-        field.entries = localEntries;
-        field.valueMap = valueMap;
+        if (field.setValueMap) {
+          field.setValueMap(cvalueMap);
+        } 
         field.wholeValueMapSet = true;
       } else {
         delete field.valueMap;
