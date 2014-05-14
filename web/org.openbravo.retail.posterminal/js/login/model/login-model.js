@@ -328,7 +328,6 @@
 
       OB.Model.Terminal.prototype.initialize.call(this);
 
-      var me = this;
       this.router.route("login", "login", function () {
         if (!_.isNull(me.get('context'))) {
           OB.UTIL.showLoading(true);
@@ -400,6 +399,7 @@
           }, function (data, message) {
             if (data && data.exception) {
               //ERROR or no connection
+              OB.error(OB.I18N.getLabel('OBPOS_TerminalAuthError'));
             } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
               if (data.isLinked === false) {
                 window.localStorage.removeItem('terminalName');
@@ -753,8 +753,7 @@
       }).error(function (inSender, inResponse) {
         callback();
       }).go(params);
-      //  
-    },
+    }
   });
 
   // var modelterminal= ;
