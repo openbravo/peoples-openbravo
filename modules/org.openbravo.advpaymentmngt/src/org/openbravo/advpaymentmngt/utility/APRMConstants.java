@@ -20,6 +20,8 @@ package org.openbravo.advpaymentmngt.utility;
 
 public class APRMConstants {
   public final static String SALES_ORDER_WINDOW_ID = "143";
+  public final static String PURCHASE_ORDER_WINDOW_ID = "181";
   public final static String SALES_INVOICE_WINDOW_ID = "167";
+  public final static String PURCHASE_INVOICE_WINDOW_ID = "183";
 
 }
