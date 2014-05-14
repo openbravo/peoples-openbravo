@@ -330,7 +330,7 @@ enyo.kind({
 
     _.each(OB.POS.modelterminal.get('payments'), function (payment) {
       // Is cash method if is checked as iscash or is the legacy hardcoded cash method for euros.
-      if ((payment.paymentMethod.iscash || (payment.payment.searchKey === 'OBPOS_payment.cash' && payment.paymentMethod.currency === '102')) && !currenciesManaged[payment.paymentMethod.currency]) {
+      if ((payment.paymentMethod.iscash && payment.paymentMethod.showkeypad) && !currenciesManaged[payment.paymentMethod.currency]) {
         // register that is already built
         currenciesManaged[payment.paymentMethod.currency] = true;
 
