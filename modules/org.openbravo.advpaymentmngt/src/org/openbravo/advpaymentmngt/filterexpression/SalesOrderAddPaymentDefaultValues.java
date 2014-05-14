@@ -33,9 +33,20 @@ public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
   }
 
   @Override
-  String getDefaultActualPaymentAmount(Map<String, String> requestMap) {
+  String getDefaultActualAmount(Map<String, String> requestMap) {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  String getDefaultIsSOTrx(Map<String, String> requestMap) {
+    return "Y";
+  }
+
+  @Override
+  String getDefaultTransactionType(Map<String, String> requestMap) {
+    // TODO Auto-generated method stub
+    return "O";
   }
 
 }

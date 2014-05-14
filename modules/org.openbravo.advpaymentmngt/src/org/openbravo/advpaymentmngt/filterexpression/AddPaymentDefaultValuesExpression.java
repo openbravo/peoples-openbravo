@@ -31,6 +31,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.core.OBContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,24 +44,52 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
 
   @Override
   public String getExpression(Map<String, String> requestMap) {
+    String strCurrentParam = "";
     try {
+      OBContext.setAdminMode(true);
       final String strWindowId = getWindowId(requestMap);
 
       AddPaymentDefaultValuesHandler handler = getHandler(strWindowId);
       if (handler == null) {
         throw new OBException("No handler found");
       }
-      final String strCurrentParam = requestMap.get("currentParam");
+      strCurrentParam = requestMap.get("currentParam");
       Parameters param = Parameters.getParameter(strCurrentParam);
-      switch (param) {
-      case ExpectedPayment:
-        return handler.getDefaultExpectedAmount(requestMap);
-      case ActualPayment:
-        return handler.getDefaultActualPaymentAmount(requestMap);
+      try {
+        switch (param) {
+        case ExpectedPayment:
+          return handler.getDefaultExpectedAmount(requestMap);
+        case ActualPayment:
+          return handler.getDefaultActualAmount(requestMap);
+        case CurrencyTo:
+          return handler.getDefaultCurrencyTo(requestMap);
+        case CustomerCredit:
+          return handler.getDefaultCustomerCredit(requestMap);
+        case DocumentNo:
+          return handler.getDefaultDocumentNo(requestMap);
+        case FinancialAccount:
+          return handler.getDefaultFinancialAccount(requestMap);
+        case IsSOTrx:
+          return handler.getDefaultIsSOTrx(requestMap);
+        case PaymentDate:
+          return handler.getDefaultPaymentDate(requestMap);
+        case PaymentMethod:
+          return handler.getDefaultPaymentMethod(requestMap);
+        case ReceivedFrom:
+          return handler.getDefaultReceivedFrom(requestMap);
+        case TransactionType:
+          return handler.getDefaultTransactionType(requestMap);
+        }
+      } catch (Exception e) {
+        log.error("Error trying to get default value of " + strCurrentParam + e.getMessage(), e);
+        return null;
       }
     } catch (JSONException ignore) {
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    throw new OBException("Unsupported columnname");
+    log.error("No default value found for param: " + strCurrentParam);
+    return null;
   }
 
   private String getWindowId(Map<String, String> requestMap) throws JSONException {
@@ -84,7 +113,11 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
   }
 
   private enum Parameters {
-    ActualPayment("actual_payment"), ExpectedPayment("expected_payment");
+    ActualPayment("actual_payment"), ExpectedPayment("expected_payment"), DocumentNo(
+        "payment_documentno"), CurrencyTo("c_currency_to_id"), ReceivedFrom("received_from"), FinancialAccount(
+        "fin_financial_account_id"), PaymentDate("payment_date"), PaymentMethod(
+        "fin_paymentmethod_id"), TransactionType("transaction_type"), CustomerCredit(
+        "customer_credit"), IsSOTrx("issotrx");
 
     private String columnname;
 

@@ -36,10 +36,20 @@ public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValues
   }
 
   @Override
-  String getDefaultActualPaymentAmount(Map<String, String> requestMap) throws JSONException {
+  String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
     // Actual payment amount is the outstanding amount of the Sales Invoice
     JSONObject context = new JSONObject(requestMap.get("context"));
     return context.getString("inpoutstandingamt");
+  }
+
+  @Override
+  String getDefaultIsSOTrx(Map<String, String> requestMap) {
+    return "Y";
+  }
+
+  @Override
+  String getDefaultTransactionType(Map<String, String> requestMap) {
+    return "I";
   }
 
 }
