@@ -775,6 +775,8 @@ isc.OBSelectorItem.addProperties({
 
   filterDataBoundPickList: function (requestProperties, dropCache) {
     if (this.wholeValueMapSet) {
+      this.pickList.data.useClientFiltering = true;
+      this.pickList.data = this.entries;
       return;
     }
     requestProperties = requestProperties || {};
