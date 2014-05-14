@@ -43,11 +43,11 @@ BEGIN
         INSERT INTO ad_tree (
             ad_tree_id, ad_client_id, ad_org_id, isactive,
             created, createdby, updated, updatedby,
-            name, description, treetype, isallnodes
+            name, description, treetype, isallnodes, ad_table_id
         ) VALUES (
             v_tree_id, :NEW.ad_client_id, '0', :NEW.isactive,
             now(), :NEW.createdby, now(), :NEW.updatedby,
-            'Product Characteristic tree', null, 'CH', 'Y'
+            'Product Characteristic tree', null, 'CH', 'Y', 'E913D17C9B3847CF92235082DBE2EC44'
         );
         :NEW.ad_tree_id := v_tree_id;
       END IF;

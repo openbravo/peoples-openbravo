@@ -1041,6 +1041,11 @@ OB.ViewFormProperties = {
         }
       } else if (isAbsoluteDateTime) {
         jsDateTime = isc.Date.parseStandardDate(columnValue.value);
+        // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
+        // http://forums.smartclient.com/showthread.php?p=116135
+        if (Object.prototype.toString.call(jsDateTime) === '[object Date]') {
+          jsDateTime = OB.Utilities.Date.substractTimezoneOffset(jsDateTime);
+        }
         this.setItemValue(field.name, jsDateTime);
         if (field.textField) {
           delete field.textField._textChanged;
@@ -1536,7 +1541,7 @@ OB.ViewFormProperties = {
     callback = function (resp, data, req) {
       var index1, index2, view = form.view,
           localRecord, status = resp.status,
-          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId;
+          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId, id = form.getValue('id');
 
       if (this.hasOwnProperty('previousExplicitOffline')) {
         isc.Offline.explicitOffline = this.previousExplicitOffline;
@@ -1545,7 +1550,6 @@ OB.ViewFormProperties = {
 
       // if no recordIndex then select explicitly
       if (recordIndex === -1) {
-        var id = form.getValue('id');
         record = view.viewGrid.data.find('id', id);
         recordIndex = view.viewGrid.data.indexOf(record);
       }
@@ -1632,8 +1636,15 @@ OB.ViewFormProperties = {
         // remove any edit info in the grid
         view.viewGrid.discardEdits(recordIndex, null, false, isc.ListGrid.PROGRAMMATIC, true);
 
-        // change some labels
-        form.setNewState(false);
+        // Check if Id has changed 
+        if (id === form.getValue('id')) {
+          // Change some labels, set isNew as false
+          form.setNewState(false);
+        } else {
+          // New record, set isNew as true
+          form.setNewState(true);
+        }
+
 
         view.refreshParentRecord();
 

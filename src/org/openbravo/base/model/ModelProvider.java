@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,6 +82,7 @@ public class ModelProvider implements OBSingleton {
   private HashMap<String, Reference> referencesById = null;
   // a list because for small numbers a list is faster than a hashmap
   private List<Entity> entitiesWithTreeType = null;
+  private HashMap<Entity, List<String>> entitiesWithImage = null;
   private List<Module> modules;
   private Session initsession;
 
@@ -227,6 +228,7 @@ public class ModelProvider implements OBSingleton {
       entitiesByTableName = new HashMap<String, Entity>();
       entitiesByTableId = new HashMap<String, Entity>();
       entitiesWithTreeType = new ArrayList<Entity>();
+      entitiesWithImage = new HashMap<Entity, List<String>>();
       for (final Table t : tables) {
         log.debug("Building model for table " + t.getName());
 
@@ -834,6 +836,17 @@ public class ModelProvider implements OBSingleton {
     newProp.setOneToMany(true);
     newProp.setChild(childProperty.isParent());
     parentEntity.addProperty(newProp);
+
+    // If the Entity is ADImage, add its entity to entitiesWithImage
+    if (parentEntity.getName().equals("ADImage")) {
+      if (entitiesWithImage.containsKey(childProperty.getEntity())) {
+        entitiesWithImage.get(childProperty.getEntity()).add(childProperty.getName());
+      } else {
+        List<String> propertyList = new ArrayList<String>();
+        propertyList.add(childProperty.getName());
+        entitiesWithImage.put(childProperty.getEntity(), propertyList);
+      }
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -1082,6 +1095,15 @@ public class ModelProvider implements OBSingleton {
       log.warn("No entity for tree type " + treeType);
     }
     return null;
+  }
+
+  /**
+   * Returns the entities that have images
+   * 
+   * @return Entity list
+   */
+  public HashMap<Entity, List<String>> getEntityWithImage() {
+    return entitiesWithImage;
   }
 
   /**

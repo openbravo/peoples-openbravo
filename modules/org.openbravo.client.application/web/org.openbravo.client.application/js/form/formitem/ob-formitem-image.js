@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -170,8 +170,17 @@ isc.OBImageCanvas.addProperties({
       buttonType: 'erase',
       imageItem: this.creator,
       deleteFunction: function () {
-        var imageItem = this.imageItem;
+        var imageItem = this.imageItem,
+            imageId = this.imageItem._value,
+            isNewRecord = this.imageItem.form.isNewRecord();
         imageItem.refreshImage();
+
+        // If the record is new and the image is deleted, remove it from the database
+        if (isNewRecord) {
+          OB.RemoteCallManager.call('org.openbravo.client.application.DeleteImageActionHandler', {
+            'img': imageId
+          });
+        }
       },
       click: function (form, item) {
         this.deleteFunction();

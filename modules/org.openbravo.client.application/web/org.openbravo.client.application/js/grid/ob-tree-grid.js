@@ -142,11 +142,35 @@ isc.OBTreeGrid.addProperties({
   },
 
   applyCellTypeFormatters: function (value, record, field, rowNum, colNum, isMultipleElement) {
-    if (field.type === '_id_16' && value && !isc.isA.Date(value) && isc.isA.Date(Date.parseSchemaDate(value))) {
+    if ((field.type === '_id_15' || field.type === '_id_16') && value && !isc.isA.Date(value) && isc.isA.Date(Date.parseSchemaDate(value))) {
       // applyCellTypeFormatters expects a date as value if the field is a date
       // if the original value is not a date, convert it to date before calling applyCellTypeFormatters
       value = Date.parseSchemaDate(value);
     }
     return this.Super('applyCellTypeFormatters', [value, record, field, rowNum, colNum, isMultipleElement]);
+  },
+
+
+  // converts the date and datetime fields from string to a js date
+  transformData: function (data) {
+    var dateFields = [],
+        fieldName, i, j, type, record;
+    for (i = 0; i < this.getFields().length; i++) {
+      type = isc.SimpleType.getType(this.getFields()[i].type);
+      if (type.inheritsFrom === 'date' || type.inheritsFrom === 'datetime') {
+        dateFields.add(this.getFields()[i].name);
+      }
+    }
+    if (dateFields.length > 0) {
+      for (i = 0; i < data.length; i++) {
+        record = data[i];
+        for (j = 0; j < dateFields.length; j++) {
+          fieldName = dateFields[j];
+          if (!isc.isA.Date(record[fieldName]) && isc.isA.Date(isc.Date.parseSchemaDate(record[fieldName]))) {
+            record[fieldName] = isc.Date.parseSchemaDate(record[fieldName]);
+          }
+        }
+      }
+    }
   }
 });

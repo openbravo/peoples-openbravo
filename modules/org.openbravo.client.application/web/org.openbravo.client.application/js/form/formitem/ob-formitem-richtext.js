@@ -67,12 +67,12 @@ isc.OBRichTextItem.addProperties({
         this.previousStyleName = this.styleName;
         this.setStyleName(this.editorStyleName + 'Disabled');
         this.editArea.setStyleName(this.editAreaStyleName + 'Disabled');
-        this.toolbar.hide();
+        this.toolArea.hide();
       } else {
         this.setStyleName(this.previousStyleName || this.editorStyleName);
         delete this.previousStyleName;
         this.editArea.setStyleName(this.editAreaStyleName);
-        this.toolbar.show();
+        this.toolArea.show();
       }
       this.Super('setDisabled', arguments);
     },
@@ -158,6 +158,9 @@ isc.OBRichTextEditor.addProperties({
     this.strikethroughSelectionDefaults.prompt = OB.I18N.getLabel('OBUIAPP_StrikeThroughSelection');
 
     this.Super('initWidget', arguments);
+
+    // Added setDisabled on init to remove the toolArea 
+    this.setDisabled(this.disabled);
   }
 });
 

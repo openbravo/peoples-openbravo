@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2013 Openbravo SLU
+* All portions are Copyright (C) 2008-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -40,7 +40,7 @@ BEGIN
     WHERE M_Requisition_ID = :old.M_Requisition_ID;
   END IF;
 
-  IF (v_DocStatus = 'CL') THEN
+  IF (v_DocStatus = 'CL') THEN 
     RAISE_APPLICATION_ERROR(-20000, '@20527@');
   END IF;
 
@@ -56,7 +56,8 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20000, '@20526@');
   END IF;
 
-  IF (v_ReqStatus <> 'O') THEN
+  IF (v_ReqStatus <> 'O' 
+      AND NOT (UPDATING AND :new.reqstatus = 'O')) THEN
     RAISE_APPLICATION_ERROR(-20000, '@20520@');
   END IF;
 

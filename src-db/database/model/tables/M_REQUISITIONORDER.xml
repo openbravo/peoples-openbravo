@@ -51,12 +51,15 @@
       <foreign-key foreignTable="AD_ORG" name="M_REQUISITIONORDER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDERLINE" name="M_REQUISITIONORDER_C_ORDERLINE">
+      <foreign-key foreignTable="C_ORDERLINE" name="M_REQUISITIONORDER_C_ORDERLINE" onDelete="cascade">
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_REQUISITIONLINE" name="M_REQUISITIONORDER_M_REQUISITI">
         <reference local="M_REQUISITIONLINE_ID" foreign="M_REQUISITIONLINE_ID"/>
       </foreign-key>
+      <index name="M_REQUISITIONORDER_ORDLINE_IDX" unique="false">
+        <index-column name="C_ORDERLINE_ID"/>
+      </index>
       <index name="M_REQUISITIONORDER_REQLINE_IDX" unique="false">
         <index-column name="M_REQUISITIONLINE_ID"/>
       </index>

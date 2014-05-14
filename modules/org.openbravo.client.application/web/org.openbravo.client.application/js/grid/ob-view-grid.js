@@ -1914,7 +1914,27 @@ isc.OBViewGrid.addProperties({
           shouldRemove = true;
         } else if (isc.isA.emptyString(criterion.value)) {
           shouldRemove = true;
+        } else if (this.view.parentView && !this.view.parentProperty) {
+          // subtabs without an explicit reference to their parent property need to remove unused criterias
+          if (this.view.parentView.isShowingTree) {
+            selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
+          } else {
+            selectedValues = this.view.parentView.viewGrid.getSelectedRecords();
+          }
+
+          if (selectedValues.length !== 1) {
+            // if there is not a single record selected, remove dummies
+            if (criterion.fieldName === isc.OBRestDataSource.DUMMY_CRITERION_NAME) {
+              shouldRemove = true;
+            }
+          } else {
+            // with a single record selected, removed false criterion
+            if (criterion.fieldName === 'id' && criterion.operator === 'equals' && criterion.value === '-1') {
+              shouldRemove = true;
+            }
+          }
         }
+
         if (shouldRemove) {
           internalCriteria.removeAt(i);
         } else {
@@ -2873,13 +2893,20 @@ isc.OBViewGrid.addProperties({
     // Update the focus cell value if different from edit form values.
     // To avoid the case where sometimes data updated through trigger is not showing up without refreshing.
     // Refer issue https://issues.openbravo.com/view.php?id=25028
-    this.setEditValue(this.getEditRow(), this.getField(colNum).name, record[this.getField(colNum).name], true, true);
+    this.setEditValue(rowNum, this.getField(colNum).name, record[this.getField(colNum).name], true, true);
 
     if (this.getEditRow() === rowNum) {
       this.getEditForm().markForRedraw();
     } else {
       this.refreshRow(rowNum);
     }
+
+    // If there is a summary row update its value
+    // Refer issue https://issues.openbravo.com/view.php?id=26363
+    if (this.showGridSummary) {
+      this.getSummaryRow();
+    }
+
   },
 
   undoEditSelectedRows: function () {

@@ -41,8 +41,10 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.SearchDomainType;
 import org.openbravo.base.model.domaintype.TableDomainType;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.base.util.Check;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -52,6 +54,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -152,6 +155,7 @@ public class AdvancedQueryBuilder {
   private List<String> additionalProperties = new ArrayList<String>();
   private Entity subEntity;
   private Property distinctProperty;
+  private String distinctPropertyPath;
   private DataEntityQueryService subDataEntityQueryService;
 
   private int aliasOffset = 0;
@@ -227,9 +231,21 @@ public class AdvancedQueryBuilder {
         distinctPropName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + distinctPropName;
       }
       whereClause += StringUtils.isEmpty(whereClause.trim()) ? "where" : "and";
-      whereClause += " exists (select 1 from " + subEntity.getName() + " "
-          + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e." + distinctPropName
-          + " = " + mainAlias + subEntityClientOrg + ") ";
+
+      // if the property allows null values, use a left join instead an inner join
+      if (!distinctPropertyPath.contains(DalUtil.FIELDSEPARATOR)
+          && subEntity.getProperty(distinctPropertyPath).allowNullValues()) {
+        whereClause += " exists (select 1 from " + subEntity.getName() + " "
+            + subEntityQueryBuilder.getJoinClause() + " left join "
+            + subEntityQueryBuilder.getMainAlias() + DalUtil.DOT + distinctPropertyPath + " as i "
+            + subentityWhere + " i = " + mainAlias + subEntityClientOrg + ") ";
+      } else {
+        whereClause += " exists (select 1 from " + subEntity.getName() + " "
+            + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e."
+            + distinctPropertyPath.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT) + " = " + mainAlias
+            + subEntityClientOrg + ") ";
+      }
+
       typedParameters.addAll(subEntityQueryBuilder.typedParameters);
     }
 
@@ -757,10 +773,6 @@ public class AdvancedQueryBuilder {
         final Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
 
-        if (hasComeADateTime || property.isDatetime() || property.isDate()) {
-          // Applies the time zone offset difference of the client
-          calendar.add(Calendar.MINUTE, clientUTCMinutesTimeZoneDiff);
-        }
         // move the date to the beginning of the day
         if (isGreaterOperator(operator)) {
           calendar.set(Calendar.HOUR, 0);
@@ -774,10 +786,17 @@ public class AdvancedQueryBuilder {
           calendar.set(Calendar.SECOND, 59);
           calendar.set(Calendar.MILLISECOND, 999);
         }
-        if (property.isDatetime() || property.isDate()) {
+
+        if (hasComeADateTime || property.isDatetime() || property.isDate()) {
+
+          // Applies the time zone offset difference of the client
+          // Just in case the date needs to be changed
+          calendar.add(Calendar.MINUTE, -clientUTCMinutesTimeZoneDiff);
+
           // Applies the time zone offset difference of the server
-          calendar.add(Calendar.MINUTE, -UTCServerMinutesTimeZoneDiff);
+          calendar.add(Calendar.MINUTE, UTCServerMinutesTimeZoneDiff);
         }
+
         return calendar.getTime();
       } catch (Exception e) {
         throw new IllegalArgumentException(e);
@@ -1072,10 +1091,41 @@ public class AdvancedQueryBuilder {
       }
       String suffix = restOfClause.substring(secondAtIndex + 1);
       String param = restOfClause.substring(0, secondAtIndex);
-      String paramValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-          .getVariablesSecureApp(), param,
-          RequestContext.get().getRequestParameter("windowId") != null ? RequestContext.get()
-              .getRequestParameter("windowId") : "");
+      String paramValue = "";
+
+      // Try to select the value from the request instead of picking it from the context
+      // Look if param is an ID
+      if (param.substring(param.length() - 3).toUpperCase().equals("_ID")) {
+        VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+        Entity paramEntity = ModelProvider.getInstance().getEntityByTableName(
+            param.substring(0, param.length() - 3));
+
+        Tab tab = OBDal.getInstance().get(Tab.class,
+            RequestContext.get().getRequestParameter("tabId"));
+        Tab ancestorTab = KernelUtils.getInstance().getParentTab(tab);
+
+        while (ancestorTab != null && paramValue.equals("")) {
+
+          Entity tabEntity = ModelProvider.getInstance().getEntityByTableName(
+              ancestorTab.getTable().getDBTableName());
+
+          if (tabEntity.equals(paramEntity)) {
+            paramValue = vars.getStringParameter("@" + paramEntity.getName() + ".id@");
+          } else {
+            Property prop = tabEntity.getPropertyByColumnName(param);
+            paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
+          }
+          ancestorTab = KernelUtils.getInstance().getParentTab(ancestorTab);
+        }
+      }
+
+      // If paramValue has not been brought form the request, select it from context
+      if (paramValue.equals("")) {
+        paramValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+            .getVariablesSecureApp(), param,
+            RequestContext.get().getRequestParameter("windowId") != null ? RequestContext.get()
+                .getRequestParameter("windowId") : "");
+      }
 
       // not found, try to get the parameter directly from the request object
       if (paramValue.equals("") && RequestContext.get().getRequestParameter(param) != null) {
@@ -1358,8 +1408,34 @@ public class AdvancedQueryBuilder {
       } else {
         final List<Property> newIdentifierProperties = prop.getReferencedProperty().getEntity()
             .getIdentifierProperties();
-        sb.append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName()
-            + DalUtil.DOT));
+
+        String newPrefix = prefix + prop.getName();
+
+        if (prop.allowNullValues()) {
+
+          boolean addJoin = true;
+
+          // Look if the property has been joined
+          for (JoinDefinition joinableDefinition : joinDefinitions) {
+            if (joinableDefinition.property == prop) {
+              addJoin = false;
+
+              // Update newPrefix with the alias of the joinDefinition
+              newPrefix = joinableDefinition.joinAlias;
+              break;
+            }
+          }
+
+          if (addJoin) {
+            // Add join if this property allows null values
+            final JoinDefinition joinDefinition = new JoinDefinition();
+            joinDefinition.setOwnerAlias(prefix.substring(0, prefix.length() - 1));
+            joinDefinition.setProperty(prop);
+            joinDefinitions.add(joinDefinition);
+          }
+        }
+
+        sb.append(createIdentifierLeftClause(newIdentifierProperties, newPrefix + DalUtil.DOT));
       }
     }
 
@@ -1692,6 +1768,9 @@ public class AdvancedQueryBuilder {
 
   public void setDistinctProperty(Property distinctProperty) {
     this.distinctProperty = distinctProperty;
+  }
 
+  void setDistinctPropertyPath(String distinctPropertyPath) {
+    this.distinctPropertyPath = distinctPropertyPath;
   }
 }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -158,6 +158,10 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     boolean isCustomQuerySelector = sel.getHQL() != null;
     String filteredCriteria = "";
     String fieldName;
+    if (sel.getTable() == null) {
+      // don't do verifications on selectors not based on tables
+      return;
+    }
     Entity entity = ModelProvider.getInstance().getEntityByTableName(
         sel.getTable().getDBTableName());
     Entity cEntity = null;
@@ -260,7 +264,9 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         dynamicWhere = result.toString();
       }
     } catch (Exception e) {
-      log.error("Error evaluating filter expression: " + e.getMessage(), e);
+      log.error(
+          "Error evaluating filter expression: " + filterExpression + " Selector id: "
+              + sel.getId() + " " + e.getMessage(), e);
     }
 
     return dynamicWhere;

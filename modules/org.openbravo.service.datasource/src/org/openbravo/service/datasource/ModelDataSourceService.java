@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,12 +66,16 @@ public class ModelDataSourceService extends BaseDataSourceService {
   public String fetch(Map<String, String> parameters) {
 
     final Entity baseEntity = getBaseEntity(parameters);
-    String propertyPath = parameters.get(PROPERTY_FIELD);
-    if (propertyPath == null) {
-      HashMap<String, String> criteria = getCriteria(parameters);
-      if (criteria != null && criteria.containsKey(DATASOURCE_FIELD)) {
-        propertyPath = criteria.get(DATASOURCE_FIELD);
-      } else {
+    String propertyPath;
+
+    // filter based on criteria
+    HashMap<String, String> criteria = getCriteria(parameters);
+    if (criteria != null && criteria.containsKey(DATASOURCE_FIELD)) {
+      propertyPath = criteria.get(DATASOURCE_FIELD);
+    } else {
+      // when there is no criteria present, filter based on field's value
+      propertyPath = parameters.get(PROPERTY_FIELD);
+      if ("null".equals(propertyPath) || propertyPath == null) {
         propertyPath = "";
       }
     }
@@ -130,8 +134,16 @@ public class ModelDataSourceService extends BaseDataSourceService {
         currentDepth++;
 
         boolean propNotFound = true;
-
-        final List<Property> currentEntityProperties = getEntityProperties(currentEntity);
+        final List<Property> currentEntityProperties;
+        if (currentProperty != null
+            && Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(currentProperty.getName())) {
+          // for computed columns get computed properties
+          currentEntity = currentProperty.getEntity();
+          currentEntityProperties = currentEntity.getComputedColumnProperties();
+        } else {
+          // other case get properties from entity
+          currentEntityProperties = getEntityProperties(currentEntity);
+        }
 
         for (Property prop : currentEntityProperties) {
           boolean tryProperty = false;
@@ -161,12 +173,23 @@ public class ModelDataSourceService extends BaseDataSourceService {
         }
 
         foundProperty = currentProperty;
-        currentEntity = foundProperty.getTargetEntity();
+        List<Property> computedColProperties = null;
+        if (getAllProperties
+            && Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(currentProperty.getName())) {
+          computedColProperties = currentEntity.getComputedColumnProperties();
+        } else {
+          currentEntity = foundProperty.getTargetEntity();
+        }
 
-        if (currentDepth == pathDepth && getAllProperties && currentEntity != null) {
+        if (currentDepth == pathDepth && getAllProperties
+            && (currentEntity != null || computedColProperties != null)) {
           // User just pressed a final dot (.) key - getting all properties
           // of current Entity
-          return getJSONResponse(getEntityProperties(currentEntity), propertyPath, 0);
+          if (Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(currentProperty.getName())) {
+            return getJSONResponse(computedColProperties, propertyPath, 0);
+          } else if (currentEntity != null) {
+            return getJSONResponse(getEntityProperties(currentEntity), propertyPath, 0);
+          }
         }
         index++;
       }

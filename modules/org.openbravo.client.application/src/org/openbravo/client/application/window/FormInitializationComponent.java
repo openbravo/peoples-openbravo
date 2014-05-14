@@ -1249,6 +1249,9 @@ public class FormInitializationComponent extends BaseActionHandler {
           RequestContext.get().setRequestParameter(
               "inp" + Sqlc.TransformaNombreColumna(columnName), currentValue.toString());
         }
+      } else {
+        RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
+            null);
       }
     } catch (Exception e) {
       log.error("Couldn't get the value for column " + columnName, e);
@@ -1826,7 +1829,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       return fvalue;
     } catch (Exception e) {
       log.error("Error while computing auxiliary input parameter: " + auxIn.getName()
-          + " from tab: " + auxIn.getTab().getName(), e);
+          + " from tab: " + auxIn.getTab().getName() + " of window: "
+          + auxIn.getTab().getWindow().getName(), e);
     }
     return null;
   }

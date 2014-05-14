@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -73,7 +73,8 @@
     FROM MRP_RUN_PRODUCTIONLINE
     WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID
       AND INOUTTRXTYPE = 'MP'
-      AND M_REQUISITIONLINE_ID IS NULL;
+      AND M_REQUISITIONLINE_ID IS NULL
+      AND MRP_RUN_PRODUCTIONLINE.QTY <> 0;
     IF (v_Count = 0) THEN
       v_Message := '@NoProposalsWithoutRequisitionLine@';
       RAISE_APPLICATION_ERROR(-20000, v_Message);
@@ -93,7 +94,6 @@
       'Y', now(), v_User_ID, now(), v_User_ID,
       v_Description, v_DocumentNo, v_User_ID
     );
-
     FOR Cur_workproposal IN (
       SELECT MRP_RUN_PRODUCTIONLINE.*, M_PRODUCT.C_UOM_ID
       FROM MRP_RUN_PRODUCTIONLINE, M_PRODUCT
@@ -101,6 +101,7 @@
         AND MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
         AND INOUTTRXTYPE = 'MP'
         AND M_REQUISITIONLINE_ID IS NULL
+        AND MRP_RUN_PRODUCTIONLINE.QTY <> 0
       ORDER BY PLANNEDDATE
       ) LOOP
       v_ResultStr:='Create Requisition';

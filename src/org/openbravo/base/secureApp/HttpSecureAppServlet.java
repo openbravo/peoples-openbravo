@@ -76,6 +76,7 @@ import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.JRScrollableFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -661,6 +662,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     else
       myTheme = "Default";
     xmlDocument.setParameter("theme", myTheme);
+    xmlDocument.setParameter("PopupTitle",
+        OBMessageUtils.getI18NMessage("OBUIAPP_" + strTipo, null));
     xmlDocument.setParameter("ParamTipo", strTipo.toUpperCase());
     xmlDocument.setParameter("ParamTitulo", strTitulo);
     xmlDocument.setParameter("ParamTexto", strTexto);

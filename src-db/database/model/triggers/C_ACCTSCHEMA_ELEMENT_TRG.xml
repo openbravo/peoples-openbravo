@@ -46,8 +46,10 @@ BEGIN
 			IF(INSERTING) THEN
 				v_CreateCombination:=TRUE;
 			END IF;
-			IF(UPDATING AND COALESCE(:NEW.C_Element_ID,'0') <> COALESCE(:OLD.C_Element_ID,'0')) THEN
-				v_CreateCombination:=TRUE;
+			IF(UPDATING) THEN 
+			  IF(COALESCE(:NEW.C_Element_ID,'0') <> COALESCE(:OLD.C_Element_ID,'0')) THEN
+					v_CreateCombination:=TRUE;
+				END IF;
 			END IF;
 		END IF;
   END IF;
