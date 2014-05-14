@@ -994,21 +994,21 @@ OB.ViewFormProperties = {
     }
 
     if (field.editorType === 'OBFKComboItem') {
-      if (mode === 'CHANGE') {
+      if (mode === 'CHANGE' && entries) { //TODO: review case of no entries...
         var length = entries.length,
             ci, cid, cidentifier, cvalueMap = {},
             localEntries = [];
         for (ci = 0; ci < length; ci++) {
           cid = entries[ci][OB.Constants.ID] || '';
-          identifier = entries[ci][OB.Constants.IDENTIFIER] || '';
+          cidentifier = entries[ci][OB.Constants.IDENTIFIER] || '';
           cvalueMap[cid] = cidentifier.asHTML();
           localEntries[ci] = {};
           localEntries[ci][cid] = cid;
-          localEntries[ci][OB.Constants.IDENTIFIER] = identifier.asHTML();
+          localEntries[ci][OB.Constants.IDENTIFIER] = cidentifier.asHTML();
         }
         if (field.setValueMap) {
           field.setValueMap(cvalueMap);
-        } 
+        }
         field.wholeValueMapSet = true;
       } else {
         delete field.valueMap;
