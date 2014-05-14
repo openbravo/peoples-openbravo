@@ -155,15 +155,16 @@ public class OBViewFieldHandler {
         }
       }
     }
-    
+
     // Processing display Logic Grid
     for (Field f : adFields) {
-        if (f.getDisplaylogicgrid() == null || f.getDisplaylogicgrid().equals("") || !f.isActive()
-                 || !(f.isDisplayed() || f.isShowInGridView())) {
-               continue;
-        }
+      if (f.getDisplaylogicgrid() == null || f.getDisplaylogicgrid().equals("") || !f.isActive()
+          || !(f.isDisplayed() || f.isShowInGridView())) {
+        continue;
+      }
 
-      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplaylogicgrid(), tab);
+      final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplaylogicgrid(),
+          tab, f);
       displayLogicGridMap.put(f, parser.getJSExpression());
 
       log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
@@ -174,7 +175,7 @@ public class OBViewFieldHandler {
         }
       }
     }
-    
+
     // Processing dynamic expression (read-only logic)
     for (Field f : adFields) {
       if (f.getColumn() == null || f.getColumn().getReadOnlyLogic() == null
@@ -276,7 +277,8 @@ public class OBViewFieldHandler {
         viewField.setField(field);
         viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field));
         viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
-        viewField.setDisplayLogicGrid(displayLogicGridMap.get(field) != null ? displayLogicGridMap.get(field) : "");
+        viewField.setDisplayLogicGrid(displayLogicGridMap.get(field) != null ? displayLogicGridMap
+            .get(field) : "");
         viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
             : "");
         // Positioning some fields in odd-columns
@@ -324,7 +326,8 @@ public class OBViewFieldHandler {
         viewField.setField(field);
         viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field));
         viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
-        viewField.setDisplayLogicGrid(displayLogicGridMap.get(field) != null ? displayLogicGridMap.get(field) : "");
+        viewField.setDisplayLogicGrid(displayLogicGridMap.get(field) != null ? displayLogicGridMap
+            .get(field) : "");
         viewField.setReadOnlyIf(readOnlyLogicMap.get(field) != null ? readOnlyLogicMap.get(field)
             : "");
         // Positioning some fields in odd-columns
@@ -869,9 +872,9 @@ public class OBViewFieldHandler {
     public boolean isShowSummary() {
       return false;
     }
-    
-    public String getDisplayLogicGrid(){
-    return "";
+
+    public String getDisplayLogicGrid() {
+      return "";
     }
 
   }
@@ -1101,15 +1104,17 @@ public class OBViewFieldHandler {
     public String getReadOnlyIf() {
       return readOnlyIf;
     }
+
     public String getDisplayLogicGrid() {
-        return displaylogicgrid;
-      }
+      return displaylogicgrid;
+    }
+
     public void setDisplayLogicGrid(String displaylogicgridExpression) {
-       if (this.getDisplayLogicGrid()!=null) {
-            this.displaylogicgrid = displaylogicgridExpression;
-          }
+      if (this.getDisplayLogicGrid() != null) {
+        this.displaylogicgrid = displaylogicgridExpression;
       }
- 
+    }
+
     public boolean isDisplayed() {
       return field.isDisplayed() != null && field.isDisplayed();
     }
@@ -1520,17 +1525,17 @@ public class OBViewFieldHandler {
       }
       return "";
     }
-    
-    public String getDisplayLogicGrid() {
-        if (field.getDisplaylogicgrid() != null) {
-               return this.displayLogicGrid;        
-        }
-        return "";
-      }
-    public void setDisplayLogicGrid(String displayLogicGridExpression) {
-        this.displayLogicGrid = displayLogicGridExpression;
-      }
 
+    public String getDisplayLogicGrid() {
+      if (field.getDisplaylogicgrid() != null) {
+        return this.displayLogicGrid;
+      }
+      return "";
+    }
+
+    public void setDisplayLogicGrid(String displayLogicGridExpression) {
+      this.displayLogicGrid = displayLogicGridExpression;
+    }
 
     public boolean isShowSummary() {
       if (field.isOBUIAPPShowSummary() != null || field.getObuiappSummaryfn() != null) {
@@ -1707,9 +1712,10 @@ public class OBViewFieldHandler {
     public boolean isDisplayed() {
       return true;
     }
+
     public String getDisplayLogicGrid() {
-        return "";
-      }
+      return "";
+    }
   }
 
   public class OBViewFieldGroup extends DefaultVirtualField {
@@ -2140,10 +2146,11 @@ public class OBViewFieldHandler {
     public boolean isDisplayed() {
       return true;
     }
+
     public String getDisplayLogicGrid() {
-    
-        return "";
-      }
+
+      return "";
+    }
 
   }
 
