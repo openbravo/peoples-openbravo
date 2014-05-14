@@ -18,24 +18,36 @@
  */
 package org.openbravo.advpaymentmngt.filterexpression;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.order.Order;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 
 @ComponentProvider.Qualifier(APRMConstants.SALES_ORDER_WINDOW_ID)
 public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHandler {
 
   @Override
-  public String getDefaultExpectedAmount(Map<String, String> requestMap) {
+  String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
     // Expected amount is the amount pending to pay on the Sales Order
-    return null;
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    String strOrderId = context.getString("inpcOrderId");
+    BigDecimal pendingAmt = getPendingAmt(strOrderId);
+    return pendingAmt.toPlainString();
   }
 
   @Override
-  String getDefaultActualAmount(Map<String, String> requestMap) {
-    // TODO Auto-generated method stub
-    return null;
+  String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
+    // Expected amount is the amount pending to pay on the Sales Order
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    String strOrderId = context.getString("inpcOrderId");
+    BigDecimal pendingAmt = getPendingAmt(strOrderId);
+    return pendingAmt.toPlainString();
   }
 
   @Override
@@ -45,8 +57,17 @@ public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
 
   @Override
   String getDefaultTransactionType(Map<String, String> requestMap) {
-    // TODO Auto-generated method stub
     return "O";
+  }
+
+  private BigDecimal getPendingAmt(String strOrderId) {
+    // TODO check multicurrency
+    Order order = OBDal.getInstance().get(Order.class, strOrderId);
+    BigDecimal pendingAmt = BigDecimal.ZERO;
+    for (FIN_PaymentSchedule paySchedule : order.getFINPaymentScheduleList()) {
+      pendingAmt = pendingAmt.add(paySchedule.getOutstandingAmount());
+    }
+    return pendingAmt;
   }
 
 }
