@@ -389,37 +389,40 @@
 
       OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash);
       OB.MobileApp.model.on('window:ready', function () {
-        var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckTerminalAuth');
-        process.exec({
-          terminalName: window.localStorage.getItem('terminalName'),
-          terminalKeyIdentifier: window.localStorage.getItem('terminalKeyIdentifier'),
-          terminalAuthentication: window.localStorage.getItem('terminalAuthentication')
-        }, function (data, message) {
-          if (data && data.exception) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_TerminalAuthError'));
-          } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
-            if (data.isLinked === false) {
-              window.localStorage.removeItem('terminalName');
-              window.localStorage.removeItem('terminalKeyIdentifier');
-            }
-            if (data.terminalAuthentication) {
-              window.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
-            }
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-              isConfirmButton: true,
-              action: function () {
-                OB.UTIL.showLoading(true);
-                me.logout();
+        if (window.localStorage.getItem('terminalAuthentication') === 'Y') {
+          var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckTerminalAuth');
+          process.exec({
+            terminalName: window.localStorage.getItem('terminalName'),
+            terminalKeyIdentifier: window.localStorage.getItem('terminalKeyIdentifier'),
+            terminalAuthentication: window.localStorage.getItem('terminalAuthentication')
+          }, function (data, message) {
+            if (data && data.exception) {
+              //ERROR or no connection
+            } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
+              if (data.isLinked === false) {
+                window.localStorage.removeItem('terminalName');
+                window.localStorage.removeItem('terminalKeyIdentifier');
               }
-            }], {
-              onHideFunction: function () {
-                OB.UTIL.showLoading(true);
-                me.logout();
+              if (data.terminalAuthentication) {
+                window.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
               }
-            });
-          }
-        });
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                isConfirmButton: true,
+                action: function () {
+                  OB.UTIL.showLoading(true);
+                  me.logout();
+                }
+              }], {
+                onHideFunction: function () {
+                  OB.UTIL.showLoading(true);
+                  me.logout();
+                }
+              });
+            }
+          });
+        }
+
         //MASTER DATA REFRESH
         var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
         if (minIncRefresh) {
@@ -728,6 +731,8 @@
           callback();
         }
 
+      }).error(function (inSender, inResponse) {
+        callback();
       }).go(params);
     },
     initActions: function (callback) {
@@ -742,6 +747,8 @@
         OB.POS.modelterminal.set('loginUtilsParams', {
           terminalName: OB.MobileApp.model.get('terminalName')
         });
+        callback();
+      }).error(function (inSender, inResponse) {
         callback();
       }).go(params);
       //  
