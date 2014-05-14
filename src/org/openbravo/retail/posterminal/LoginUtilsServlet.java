@@ -8,6 +8,7 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,11 +19,19 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
+import org.openbravo.model.ad.access.FormAccess;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
@@ -169,12 +178,122 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       qApp.setFilterOnReadableOrganization(false);
       qApp.setFilterOnReadableClients(false);
       List<OBPOSApplications> apps = qApp.list();
-      OBPOSApplications terminal = apps.get(0);
-      RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
+      if (apps.size() == 1) {
+        OBPOSApplications terminal = apps.get(0);
+        RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
 
-      result.put("appCaption", terminal.getIdentifier() + " - "
-          + terminal.getOrganization().getIdentifier());
+        result.put("appCaption", terminal.getIdentifier() + " - "
+            + terminal.getOrganization().getIdentifier());
+      }
     }
+    return result;
+  }
+
+  @Override
+  protected JSONObject preLogin(HttpServletRequest request) throws JSONException {
+    String userId = new String();
+    boolean success = false;
+    boolean hasAccess = false;
+    JSONObject result = super.preLogin(request);
+    Object params = request.getParameter("params");
+    JSONObject obj = new JSONObject((String) params);
+    String terminalKeyIdentifier = obj.getString("terminalKeyIdentifier");
+    String username = obj.getString("username");
+    String password = obj.getString("password");
+
+    OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
+        .createCriteria(OBPOSApplications.class);
+    qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_TERMINALKEY, terminalKeyIdentifier));
+    qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_ISLINKED, false));
+    qApp.setFilterOnReadableOrganization(false);
+    qApp.setFilterOnReadableClients(false);
+    List<OBPOSApplications> apps = qApp.list();
+    if (apps.size() == 1) {
+      OBPOSApplications terminal = ((OBPOSApplications) apps.get(0));
+      userId = LoginUtils.checkUserPassword(new DalConnectionProvider(false), username, password);
+      if (userId != null) {
+        // Terminal access will be checked to ensure that the user has access to the terminal
+        OBQuery<TerminalAccess> accessCrit = OBDal.getInstance().createQuery(TerminalAccess.class,
+            "where userContact.id='" + userId + "'");
+        accessCrit.setFilterOnReadableClients(false);
+        accessCrit.setFilterOnReadableOrganization(false);
+        List<TerminalAccess> accessList = accessCrit.list();
+
+        if (accessList.size() != 0) {
+          for (TerminalAccess access : accessList) {
+            if (access.getPOSTerminal().getSearchKey().equals(terminal.getSearchKey())) {
+              hasAccess = true;
+              break;
+            }
+          }
+          if (!hasAccess) {
+            result.put("exception", "OBPOS_USER_NO_ACCESS_TO_TERMINAL_TITLE");
+            return result;
+          }
+        }
+        // OBQuery<User> userQuery = OBDal.getInstance().createQuery(User.class,
+        // "where userContact.id='" + userId + "'");
+        // List<User> userList = userQuery.list();
+        OBCriteria<User> userQ = OBDal.getInstance().createCriteria(User.class);
+        userQ.add(Restrictions.eq(OBPOSApplications.PROPERTY_ID, userId));
+        userQ.setFilterOnReadableOrganization(false);
+        userQ.setFilterOnReadableClients(false);
+        List<User> userList = userQ.list();
+        if (userList.size() == 1) {
+          User user = ((User) userList.get(0));
+          outerloop: for (UserRoles userRole : user.getADUserRolesList()) {
+            for (FormAccess form : userRole.getRole().getADFormAccessList()) {
+              if (form.getSpecialForm().getId().equals(POSUtils.WEB_POS_FORM_ID)) {
+                success = true;
+                break outerloop;
+              }
+            }
+          }
+        }
+        if (success) {
+          RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
+          result.put("terminalName", terminal.getSearchKey());
+          result.put("terminalKeyIdentifier", terminal.getTerminalKey());
+          result.put("appCaption", terminal.getIdentifier() + " - "
+              + terminal.getOrganization().getIdentifier());
+
+          terminal.setLinked(true);
+          OBDal.getInstance().save(terminal);
+          try {
+            OBDal.getInstance().getConnection().commit();
+          } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        } else {
+          result.put("exception", "OBPOS_USERS_ROLE_NO_ACCESS_WEB_POS");
+          return result;
+        }
+
+      } else {
+        result.put("exception", "OBPOS_InvalidUserPassword");
+        return result;
+      }
+    } else {
+      result.put("exception", "OBPOS_WrongTerminalKeyIdentifier");
+      return result;
+    }
+
+    return result;
+  }
+
+  @Override
+  protected JSONObject initActions(HttpServletRequest request) throws JSONException {
+    JSONObject result = super.initActions(request);
+    String value;
+    try {
+      value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
+          null, null, (String) null);
+    } catch (PropertyException e) {
+      result.put("terminalAuthentication", "N");
+      return result;
+    }
+    result.put("terminalAuthentication", value);
     return result;
   }
 
