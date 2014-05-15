@@ -24,7 +24,17 @@ isc.OBQuickLaunchRecentLinkButton.addProperties({
   prefixLabel: null,
   action: function () {
     if (this.recentObject.viewId) {
-      OB.Layout.ViewManager.openView(this.recentObject.viewId, this.recentObject);
+      if (this.recentObject.openLinkInBrowser && this.recentObject.viewId === 'OBExternalPage') {
+        if (this.recentObject.contentsURL.indexOf('://') === -1) {
+          this.recentObject.contentsURL = 'http://' + this.recentObject.contentsURL;
+        }
+        OB.ViewManager.recentManager.addRecent('OBUIAPP_RecentViewList', isc.addProperties({
+          icon: OB.Styles.OBApplicationMenu.Icons.externalLink
+        }, this.recentObject));
+        window.open(this.recentObject.contentsURL);
+      } else {
+        OB.Layout.ViewManager.openView(this.recentObject.viewId, this.recentObject);
+      }
     } else {
       OB.Layout.ViewManager.openView('OBClassicWindow', this.recentObject);
     }
@@ -47,6 +57,8 @@ isc.OBQuickLaunchRecentLinkButton.addProperties({
         this.setIcon(this.nodeIcons.Report);
       } else if (this.recentObject.icon === 'Form') {
         this.setIcon(this.nodeIcons.Form);
+      } else if (this.recentObject.icon === 'ExternalLink') {
+        this.setIcon(this.nodeIcons.ExternalLink);
       } else {
         this.setIcon(this.nodeIcons.Window);
       }
@@ -220,7 +232,8 @@ isc.OBQuickLaunch.addProperties({
             Process: this.nodeIcons.Process,
             Report: this.nodeIcons.Report,
             Form: this.nodeIcons.Form,
-            Window: this.nodeIcons.Window
+            Window: this.nodeIcons.Window,
+            ExternalLink: this.nodeIcons.ExternalLink
           }
         }, {
           name: OB.Constants.IDENTIFIER,
@@ -262,7 +275,7 @@ isc.OBQuickLaunch.addProperties({
               openObject = {
                 viewId: 'OBExternalPage',
                 id: viewValue,
-                contentsUrl: viewValue,
+                contentsURL: viewValue,
                 tabTitle: record[OB.Constants.IDENTIFIER]
               };
             } else if (record.optionType && record.optionType === 'process') {
@@ -317,7 +330,17 @@ isc.OBQuickLaunch.addProperties({
 
             openObject = isc.addProperties({}, record, openObject);
 
-            OB.Layout.ViewManager.openView(openObject.viewId, openObject);
+            if (openObject.openLinkInBrowser && openObject.viewId === 'OBExternalPage') {
+              if (openObject.contentsURL.indexOf('://') === -1) {
+                openObject.contentsURL = 'http://' + openObject.contentsURL;
+              }
+              OB.ViewManager.recentManager.addRecent('OBUIAPP_RecentViewList', isc.addProperties({
+                icon: OB.Styles.OBApplicationMenu.Icons.externalLink
+              }, openObject));
+              window.open(openObject.contentsURL);
+            } else {
+              OB.Layout.ViewManager.openView(openObject.viewId, openObject);
+            }
 
             OB.RecentUtilities.addRecent(this.recentPropertyName, openObject);
 
