@@ -78,6 +78,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     OBCriteria<OBPOSErrors> errorsQuery = OBDal.getInstance().createCriteria(OBPOSErrors.class);
     errorsQuery.add(Restrictions.ne(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
     errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
+    errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, posTerminal));
     if (errorsQuery.count() > 0) {
       throw new OBException(
           "There are errors related to non-created customers, orders, or cash management movements pending to be processed. Process them before processing the cash ups");
