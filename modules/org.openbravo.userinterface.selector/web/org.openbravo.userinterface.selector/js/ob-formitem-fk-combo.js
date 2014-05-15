@@ -45,9 +45,11 @@ isc.OBFKComboItem.addProperties({
       fields: [{
         name: 'id',
         type: 'text',
-        primaryKey: true
+        primaryKey: true,
+        escapeHTML: true
       }, {
-        name: '_identifier'
+        name: '_identifier',
+        escapeHTML: true
       }],
       requestProperties: {
         params: {
