@@ -89,6 +89,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                 return OB.DEC.add(total, model.get('expected'));
               }, 0));
               me.set('totalDifference', OB.DEC.sub(me.get('totalDifference'), me.get('totalExpected')));
+              me.convertExpected();
+              me.setIgnoreStep3();
             }
           }, null, {
             me: me,
@@ -97,9 +99,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }, this);
       });
     }, this);
-
-    this.convertExpected();
-    this.setIgnoreStep3();
 
     this.set('cashUpReport', new Backbone.Collection());
     OB.Dal.find(OB.Model.CashUp, {
