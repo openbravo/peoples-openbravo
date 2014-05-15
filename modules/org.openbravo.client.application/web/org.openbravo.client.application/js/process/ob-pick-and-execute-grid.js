@@ -77,6 +77,8 @@ isc.OBPickAndExecuteGrid.addProperties({
       return this.originalGetValuesAsCriteria(useAdvancedCriteria, textMatchStyle, returnNulls);
     };
 
+    this.filterEditorProperties = isc.shallowClone(this.filterEditorProperties);
+
     // the origSetValuesAsCriteria member is added as 'class' level
     // we only need to do it once
     if (!this.filterEditorProperties.origSetValuesAsCriteria) {
@@ -159,13 +161,19 @@ isc.OBPickAndExecuteGrid.addProperties({
       return this.Super('transformRequest', arguments);
     };
     filterableProperties = this.getFields().findAll('canFilter', true);
-    canFilter = false;
-    if (filterableProperties) {
-      for (i = 0; i < filterableProperties.length; i++) {
-        // when looking for filterable columns do not take into account the columns whose name starts with '_' (checkbox, delete button, etc) 
-        if (!filterableProperties[i].name.startsWith('_')) {
-          canFilter = true;
-          break;
+    if (this.filterClause) {
+      // if there is a filter clause always show the filterEditor, otherwise there would be no funnel
+      // icon and it would not be possible to clear the filter clause
+      canFilter = true;
+    } else {
+      canFilter = false;
+      if (filterableProperties) {
+        for (i = 0; i < filterableProperties.length; i++) {
+          // when looking for filterable columns do not take into account the columns whose name starts with '_' (checkbox, delete button, etc) 
+          if (!filterableProperties[i].name.startsWith('_')) {
+            canFilter = true;
+            break;
+          }
         }
       }
     }
@@ -174,8 +182,6 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.filterEditorProperties.visibility = 'hidden';
     }
     this.Super('initWidget', arguments);
-    // Reset the value of the filter editor visibility, as it is reused for future grids
-    this.filterEditorProperties.visibility = 'inherit';
   },
 
   evaluateDisplayLogicForGridColumns: function () {
