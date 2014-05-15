@@ -749,7 +749,7 @@ public class ComboTableData {
     if (val.indexOf("@") != -1)
       val = parseContext(val, "WHERE");
     if (!val.equals(""))
-      addWhereField(val, "FILTER");
+      addWhereField("(" + val + ")", "FILTER");
     if (log4j.isDebugEnabled())
       log4j.debug("Validation parsed: " + val);
   }
