@@ -62,6 +62,9 @@ OB.Utilities.Date.normalizeDisplayFormat = function (displayFormat) {
   } else if (displayFormat.indexOf(' HH.MI') !== -1) {
     newFormat += ' %H.%M';
   }
+  if (displayFormat.indexOf(' a') !== -1) {
+    newFormat += ' A';
+  }
   return newFormat;
 };
 
@@ -110,15 +113,25 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
   }
 
   // if already a date then return true
-  var isADate = Object.prototype.toString.call(OBDate) === '[object Date]';
+  var isADate = Object.prototype.toString.call(OBDate) === '[object Date]',
+      is24h = true,
+      isPM = false;
   if (isADate) {
     return OBDate;
   }
 
   dateFormat = OB.Utilities.Date.normalizeDisplayFormat(dateFormat);
+  dateFormat = dateFormat.replace(' A', '');
   var dateSeparator = dateFormat.substring(2, 3);
   var timeSeparator = dateFormat.substring(11, 12);
   var isFullYear = (dateFormat.indexOf('%Y') !== -1);
+  if (OBDate.indexOf(isc.Time.PMIndicator) !== 1 || OBDate.indexOf(isc.Time.AMIndicator) !== 1) {
+    is24h = false;
+  }
+  if (!is24h && OBDate.indexOf(isc.Time.PMIndicator) !== -1) {
+    isPM = true;
+  }
+  OBDate = OBDate.replace(isc.Time.AMIndicator, '').replace(isc.Time.PMIndicator, '');
 
   if ((isFullYear ? OBDate.length - 2 : OBDate.length) !== dateFormat.length) {
     return null;
@@ -156,6 +169,15 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
   hours = parseInt(hours, 10);
   minutes = parseInt(minutes, 10);
   seconds = parseInt(seconds, 10);
+
+  if (!is24h) {
+    if (!isPM && hours === 12) {
+      hours = 0;
+    }
+    if (isPM && hours !== 12) {
+      hours = hours + 12;
+    }
+  }
 
   if (day < 1 || day > 31 || month < 1 || month > 12 || year > 99 || fullYear > 9999) {
     return null;
@@ -210,9 +232,14 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
 OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
   dateFormat = OB.Utilities.Date.normalizeDisplayFormat(dateFormat);
 
-  var isADate = Object.prototype.toString.call(JSDate) === '[object Date]';
+  var isADate = Object.prototype.toString.call(JSDate) === '[object Date]',
+      is24h = true,
+      isPM = false;
   if (!isADate) {
     return null;
+  }
+  if (dateFormat.toUpperCase().endsWith(' A')) {
+    is24h = false;
   }
 
   var year = JSDate.getYear().toString();
@@ -233,6 +260,20 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
     } else {
       return null;
     }
+  }
+
+  if (!is24h) {
+    hours = parseInt(hours, 10);
+    if (hours >= 12) {
+      isPM = true;
+    }
+    if (hours > 12) {
+      hours = hours - 12;
+    }
+    if (hours === 0) {
+      hours = 12;
+    }
+    hours = hours.toString();
   }
 
   while (year.length < 2) {
@@ -264,6 +305,14 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
   OBDate = OBDate.replace('%H', hours);
   OBDate = OBDate.replace('%M', minutes);
   OBDate = OBDate.replace('%S', seconds);
+
+  if (!is24h) {
+    if (isPM) {
+      OBDate = OBDate.replace(' A', isc.Time.PMIndicator);
+    } else {
+      OBDate = OBDate.replace(' A', isc.Time.AMIndicator);
+    }
+  }
 
   return OBDate;
 };

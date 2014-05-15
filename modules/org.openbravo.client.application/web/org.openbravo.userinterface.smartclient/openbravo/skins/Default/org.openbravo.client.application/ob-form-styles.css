@@ -156,6 +156,62 @@
   width: 100%;
 }
 
+.OBFormField .OBFormFieldDateInputRequired,
+.OBFormField .OBFormFieldDateInputRequiredFocused,
+.OBFormField .OBFormFieldDateInputRequiredDisabled,
+.OBFormField .OBFormFieldDateInputRequiredError,
+.OBFormField .OBFormFieldDateInputRequiredHint,
+
+.OBFormField .OBFormFieldDateInput,
+.OBFormField .OBFormFieldDateInputDisabled,
+.OBFormField .OBFormFieldDateInputFocused,
+.OBFormField .OBFormFieldDateInputError,
+.OBFormField .OBFormFieldDateInputHint,
+
+.OBFormFieldError .OBFormFieldDateInputRequired,
+.OBFormFieldError .OBFormFieldDateInputRequiredFocused,
+.OBFormFieldError .OBFormFieldDateInputRequiredDisabled,
+.OBFormFieldError .OBFormFieldDateInputRequiredError,
+.OBFormFieldError .OBFormFieldDateInputRequiredHint,
+
+.OBFormFieldError .OBFormFieldDateInput,
+.OBFormFieldError .OBFormFieldDateInputDisabled,
+.OBFormFieldError .OBFormFieldDateInputFocused,
+.OBFormFieldError .OBFormFieldDateInputError,
+.OBFormFieldError .OBFormFieldDateInputHint {
+  /* The date input should have a maximum width to ensure that the datepicker button is not
+     too far from the input */
+  max-width: 137px;
+}
+
+html[data-useragent*='MSIE 7.0'] .OBFormField .OBFormFieldDateInputRequired,
+html[data-useragent*='MSIE 7.0'] .OBFormField .OBFormFieldDateInputRequiredFocused,
+html[data-useragent*='MSIE 7.0'] .OBFormField .OBFormFieldDateInputRequiredDisabled,
+html[data-useragent*='MSIE 7.0'] .OBFormField .OBFormFieldDateInputRequiredError,
+html[data-useragent*='MSIE 7.0'] .OBFormField .OBFormFieldDateInputRequiredHint,
+
+html[data-useragent*='MSIE 7.0'] .OBFormField .OBFormFieldDateInput,
+html[data-useragent*='MSIE 7.0'] .OBFormField .OBFormFieldDateInputDisabled,
+html[data-useragent*='MSIE 7.0'] .OBFormField .OBFormFieldDateInputFocused,
+html[data-useragent*='MSIE 7.0'] .OBFormField .OBFormFieldDateInputError,
+html[data-useragent*='MSIE 7.0'] .OBFormField .OBFormFieldDateInputHint,
+
+html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputRequired,
+html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputRequiredFocused,
+html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputRequiredDisabled,
+html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputRequiredError,
+html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputRequiredHint,
+
+html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInput,
+html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputDisabled,
+html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputFocused,
+html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputError,
+html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
+  /* The previous improvement is not working ok in IE7 or in IE>7 with compatibility mode enabled
+     because the datepicker button is rendered in the corner, as if the input be width: 100% */
+  max-width: none;
+}
+
 .OBFormFieldNumberInput,
 .OBFormFieldNumberInputDisabled,
 .OBFormFieldNumberInputFocused,
