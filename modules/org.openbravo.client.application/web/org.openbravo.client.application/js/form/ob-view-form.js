@@ -996,24 +996,35 @@ OB.ViewFormProperties = {
     if (field.editorType === 'OBFKComboItem') {
       if (mode === 'CHANGE' && entries) { //TODO: review case of no entries...
         var length = entries.length,
-            ci, cid, cidentifier, cvalueMap = {},
-            localEntries = [];
+            ci, cid, cidentifier, cvalueMap = {};
         for (ci = 0; ci < length; ci++) {
           cid = entries[ci][OB.Constants.ID] || '';
           cidentifier = entries[ci][OB.Constants.IDENTIFIER] || '';
           cvalueMap[cid] = cidentifier;
-          localEntries[ci] = {};
-          localEntries[ci][cid] = cid;
-          localEntries[ci][OB.Constants.IDENTIFIER] = cidentifier.asHTML();
+        }
+        //invalidating cache and setting the whole valueMap
+        if (field.invalidateDisplayValueCache) {
+          field.invalidateDisplayValueCache();
         }
         if (field.setValueMap) {
           field.setValueMap(cvalueMap);
         }
-        field.wholeValueMapSet = true;
+        field.addDummyCriterion = false;
       } else {
+        /*
+         * We invalidate the cache and force to fetch data from datasource in the following cases,
+         * for new records, in case the column
+         * has been changed from FIC either through validation rule or from related columns,
+         * but does not contain entries.
+         */
+        if (mode === 'NEW') {
+          if (field.invalidateDisplayValueCache) {
+            field.invalidateDisplayValueCache();
+          }
+        }
+        field.addDummyCriterion = true;
         delete field.valueMap;
         delete field.entries;
-        delete field.wholeValueMapSet;
       }
     }
 
