@@ -1245,6 +1245,7 @@ isc.OBToolbar.addProperties({
           currentContext.viewForm.view.attachmentExists = attachmentExists;
           doRefresh(buttonsByContext[currentContext], currentContext.getCurrentValues() || {}, noneOrMultipleRecordsSelected, noneOrMultipleRecordsSelected, me);
           //compute and apply tab display logic again after fetching auxilary inputs.
+          currentContext.handleDefaultTreeView();
           currentContext.updateSubtabVisibility();
         };
       };
@@ -1338,7 +1339,8 @@ isc.OBToolbar.addProperties({
       allProperties = this.view.getContextInfo(false, true, false, true);
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
         var attachmentExists = data.attachmentExists,
-            auxInputs = data.auxiliaryInputValues, prop;
+            auxInputs = data.auxiliaryInputValues,
+            prop;
         me.view.attachmentExists = attachmentExists;
 
         // Added sessionAttributes to updateSubtabVisibility 
