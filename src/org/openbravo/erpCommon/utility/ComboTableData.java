@@ -1106,6 +1106,7 @@ public class ComboTableData {
     if (lparameters != null && lparameters.containsKey("@ONLY_ONE_RECORD@")
         && !lparameters.get("@ONLY_ONE_RECORD@").isEmpty()) {
       String strSqlSingleRecord = getQuery(false, null, lparameters.get("@ONLY_ONE_RECORD@"));
+      log4j.debug("Query for single record: " + strSqlSingleRecord);
       PreparedStatement stSingleRecord = conn.getPreparedStatement(strSqlSingleRecord);
       try {
         ResultSet result;
