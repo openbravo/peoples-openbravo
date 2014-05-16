@@ -328,10 +328,11 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
   },
 
   getPickerData: function () {
-    var date = this.getValue(),
-        utcDate, utcMonth, utcFullYear, utcHours, utcMinutes, utcSeconds;
+    var dateValue = this.getValue(),
+        date, utcDate, utcMonth, utcFullYear, utcHours, utcMinutes, utcSeconds;
     // To visualize in the calendar the displayed value instead of internal value, since due to the GMT difference it can be in a different day
-    if (this.isAbsoluteDateTime && isc.isA.Date(date)) {
+    if (this.isAbsoluteDateTime && isc.isA.Date(dateValue)) {
+      date = new Date(dateValue);
       utcDate = date.getUTCDate();
       utcMonth = date.getUTCMonth();
       utcFullYear = date.getUTCFullYear();
@@ -349,6 +350,8 @@ isc.OBDateItem.addProperties(OB.DateItemProperties, {
       date.setHours(utcHours);
       date.setMinutes(utcMinutes);
       date.setSeconds(utcSeconds);
+    } else {
+      date = dateValue;
     }
     if (isc.isA.Date(date)) {
       return date;

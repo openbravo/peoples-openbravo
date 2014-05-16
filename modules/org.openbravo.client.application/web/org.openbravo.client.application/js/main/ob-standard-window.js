@@ -347,7 +347,7 @@ isc.OBStandardWindow.addProperties({
   //  - They belong to the entity specified in the 'entity' parameter
   //  - They are not included in the 'excludedTabIds' list
   refreshViewsWithEntity: function (entity, excludedTabIds) {
-    if (this.view) {
+    if (this.view && typeof this.view.refreshMeAndMyChildViewsWithEntity === 'function') {
       this.view.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
     }
   },
@@ -948,6 +948,12 @@ isc.OBStandardWindow.addProperties({
       return false;
     }
 
+    activeTabPane = activeTabSet.getTabPane(previousTabIndex);
+    if (activeTabPane.isRenderedChildView === false && activeTabPane.setAsActiveView) {
+      // If it is a basic child view, set as active first in order to load the full child view
+      activeTabPane.setAsActiveView();
+    }
+
     activeTabSet.selectTab(previousTabIndex);
 
     // after select the new tab, activeTab related variables are updated
@@ -988,6 +994,12 @@ isc.OBStandardWindow.addProperties({
 
     if (!nextTabVisible) {
       return false;
+    }
+
+    activeTabPane = activeTabSet.getTabPane(nextTabIndex);
+    if (activeTabPane.isRenderedChildView === false && activeTabPane.setAsActiveView) {
+      // If it is a basic child view, set as active first in order to load the full child view
+      activeTabPane.setAsActiveView();
     }
 
     activeTabSet.selectTab(nextTabIndex);

@@ -231,10 +231,21 @@ public class AdvancedQueryBuilder {
         distinctPropName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + distinctPropName;
       }
       whereClause += StringUtils.isEmpty(whereClause.trim()) ? "where" : "and";
-      whereClause += " exists (select 1 from " + subEntity.getName() + " "
-          + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e."
-          + distinctPropertyPath.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT) + " = " + mainAlias
-          + subEntityClientOrg + ") ";
+
+      // if the property allows null values, use a left join instead an inner join
+      if (!distinctPropertyPath.contains(DalUtil.FIELDSEPARATOR)
+          && subEntity.getProperty(distinctPropertyPath).allowNullValues()) {
+        whereClause += " exists (select 1 from " + subEntity.getName() + " "
+            + subEntityQueryBuilder.getJoinClause() + " left join "
+            + subEntityQueryBuilder.getMainAlias() + DalUtil.DOT + distinctPropertyPath + " as i "
+            + subentityWhere + " i = " + mainAlias + subEntityClientOrg + ") ";
+      } else {
+        whereClause += " exists (select 1 from " + subEntity.getName() + " "
+            + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e."
+            + distinctPropertyPath.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT) + " = " + mainAlias
+            + subEntityClientOrg + ") ";
+      }
+
       typedParameters.addAll(subEntityQueryBuilder.typedParameters);
     }
 
@@ -1397,8 +1408,34 @@ public class AdvancedQueryBuilder {
       } else {
         final List<Property> newIdentifierProperties = prop.getReferencedProperty().getEntity()
             .getIdentifierProperties();
-        sb.append(createIdentifierLeftClause(newIdentifierProperties, prefix + prop.getName()
-            + DalUtil.DOT));
+
+        String newPrefix = prefix + prop.getName();
+
+        if (prop.allowNullValues()) {
+
+          boolean addJoin = true;
+
+          // Look if the property has been joined
+          for (JoinDefinition joinableDefinition : joinDefinitions) {
+            if (joinableDefinition.property == prop) {
+              addJoin = false;
+
+              // Update newPrefix with the alias of the joinDefinition
+              newPrefix = joinableDefinition.joinAlias;
+              break;
+            }
+          }
+
+          if (addJoin) {
+            // Add join if this property allows null values
+            final JoinDefinition joinDefinition = new JoinDefinition();
+            joinDefinition.setOwnerAlias(prefix.substring(0, prefix.length() - 1));
+            joinDefinition.setProperty(prop);
+            joinDefinitions.add(joinDefinition);
+          }
+        }
+
+        sb.append(createIdentifierLeftClause(newIdentifierProperties, newPrefix + DalUtil.DOT));
       }
     }
 

@@ -32,7 +32,8 @@ import org.openbravo.model.ad.utility.Image;
 import org.openbravo.service.json.JsonUtils;
 
 /**
- * Action handler which can delete images.
+ * Action handler which can delete an image by its id. Used on create a new record, upload an image
+ * and without saving the record, remove the image.
  * 
  * @author GuillermoGil
  */
@@ -42,6 +43,7 @@ public class DeleteImageActionHandler extends BaseActionHandler {
   protected JSONObject execute(Map<String, Object> parameters, String image) {
 
     try {
+      // Get image id and remove the image
       JSONObject dataObject = new JSONObject(image);
       String imageId = dataObject.getString("img");
       Image imageInstance = OBDal.getInstance().get(Image.class, imageId);

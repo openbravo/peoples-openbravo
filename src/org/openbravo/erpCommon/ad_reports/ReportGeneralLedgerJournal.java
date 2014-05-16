@@ -20,6 +20,8 @@ package org.openbravo.erpCommon.ad_reports;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -669,14 +671,23 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         + ReportGeneralLedgerJournalData.selectCompany(this, vars.getClient()) + "\n";
     ;
 
+    SimpleDateFormat javaSDF = new SimpleDateFormat(vars.getJavaDateFormat());
+    SimpleDateFormat sqlSDF = new SimpleDateFormat(vars.getSqlDateFormat().replace('Y', 'y')
+        .replace('D', 'd'));
+
     if (!("0".equals(strOrg)))
       strSubtitle += (Utility.messageBD(this, "OBUIAPP_Organization", vars.getLanguage()) + ": ")
           + ReportGeneralLedgerJournalData.selectOrg(this, strOrg) + "\n";
 
     if (!"".equals(strDateFrom) || !"".equals(strDateTo))
-      strSubtitle += (Utility.messageBD(this, "From", vars.getLanguage()) + ": ") + strDateFrom
-          + "  " + (Utility.messageBD(this, "OBUIAPP_To", vars.getLanguage()) + ": ") + strDateTo
-          + "\n";
+      try {
+        strSubtitle += (Utility.messageBD(this, "From", vars.getLanguage()) + ": ")
+            + ((!"".equals(strDateFrom)) ? javaSDF.format(sqlSDF.parse(strDateFrom)) : "") + "  "
+            + (Utility.messageBD(this, "OBUIAPP_To", vars.getLanguage()) + ": ")
+            + ((!"".equals(strDateTo)) ? javaSDF.format(sqlSDF.parse(strDateTo)) : "") + "\n";
+      } catch (ParseException e) {
+        log4j.error("Error when parsing dates", e);
+      }
 
     if (!"".equals(strcAcctSchemaId)) {
       AcctSchema financialMgmtAcctSchema = OBDal.getInstance().get(AcctSchema.class,
@@ -701,6 +712,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     parameters.put("PageNo", strPageNo);
     parameters.put("InitialEntryNumber", strEntryNo);
     parameters.put("TaxID", ReportGeneralLedgerJournalData.selectOrgTaxID(this, strOrg));
+    parameters.put("strDateFormat", vars.getJavaDateFormat());
     renderJR(vars, response, strReportName, "JournalEntriesReport", strOutput, parameters, data,
         null);
   }

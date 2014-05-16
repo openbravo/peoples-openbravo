@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,6 +52,7 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
   public static final String PROCESS_ID = "processId";
   public static final String WINDOW_ID = "windowId";
   public static final String FORM_ID = "formId";
+  public static final String OPEN_LINK_IN_BROWSER = "openLinkInBrowser";
 
   @Inject
   private MenuManager menuManager;
@@ -116,6 +117,7 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
           data.put(PROCESS_ID, menuOption.getMenu().getProcess().getId());
         } else if (menuOption.isExternal()) {
           data.put(OPTION_TYPE, OPTION_TYPE_EXTERNAL);
+          data.put(OPEN_LINK_IN_BROWSER, menuOption.getMenu().isOpenlinkinbrowser());
         } else if (menuOption.isForm()) {
           data.put(OPTION_TYPE, OPTION_TYPE_URL);
           data.put(FORM_ID, menuOption.getFormId());
@@ -137,6 +139,8 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
         } else if (menuOption.isProcess() || menuOption.isProcessManual()
             || menuOption.isProcessDefinition()) {
           icon = "Process";
+        } else if (menuOption.isExternal()) {
+          icon = "ExternalLink";
         } else {
           icon = "Window";
         }

@@ -150,37 +150,55 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
     view = standardWindow.views[i];
     viewTabDefinition = viewDefinition[view.tabId];
     if (viewTabDefinition) {
-      if (view.childTabSet && viewTabDefinition.selectedTab >= 0) {
+      if (view.childTabSet && viewTabDefinition.selectedTab) {
         view.childTabSet.selectTab(viewTabDefinition.selectedTab);
       }
-
-      // never show the form as this gives unpredictable results 
-      // if there is no record selected etc.
-      if (view.isShowingForm) {
-        view.switchFormGridVisibility();
-      } else if (view.isShowingTree) {
-        if (view.viewGrid && view.treeGrid) {
-          view.viewGrid.show();
-          view.treeGrid.hide();
-        }
-        view.isShowingTree = false;
-      }
-
-      if (viewTabDefinition.grid) {
-        //clear grouping, will be applied later
-        view.viewGrid.clearGroupBy();
-        view.viewGrid.setViewState(viewTabDefinition.grid);
-        if (!view.viewGrid.lazyFiltering && !view.viewGrid.targetRecordId) {
-          // do not refresh contents if:
-          //  -lazy: requires user action to refresh
-          //  -direct navigation: it is done centrally after applying personalizations 
-          view.viewGrid.refreshContents();
-        }
-      }
-      if (viewTabDefinition.form && view.viewForm.getDataSource()) {
-        OB.Personalization.personalizeForm(viewTabDefinition, view.viewForm);
+      if (view.isRootView || view.isRenderedChildView) {
+        OB.Personalization.applyViewDefinitionToView(view, viewTabDefinition);
+      } else {
+        // If the view has not been rendered yet, store the 'initialTabDefinition' to be able
+        // to set the proper view definition as soon as the view be loaded.
+        view.initialTabDefinition = viewTabDefinition;
       }
     }
+  }
+};
+
+// ** {{{OB.Personalization.applyViewDefinitionToView}}} **
+// Apply a passed view definition to a particular view
+OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition) {
+  if (!view || !viewTabDefinition) {
+    return;
+  }
+  if (view.childTabSet && viewTabDefinition.selectedTab) {
+    view.childTabSet.selectTab(viewTabDefinition.selectedTab);
+  }
+
+  // never show the form as this gives unpredictable results
+  // if there is no record selected etc.
+  if (view.isShowingForm) {
+    view.switchFormGridVisibility();
+  } else if (view.isShowingTree) {
+    if (view.viewGrid && view.treeGrid) {
+      view.viewGrid.show();
+      view.treeGrid.hide();
+    }
+    view.isShowingTree = false;
+  }
+
+  if (viewTabDefinition.grid) {
+    //clear grouping, will be applied later
+    view.viewGrid.clearGroupBy();
+    view.viewGrid.setViewState(viewTabDefinition.grid);
+    if (!view.viewGrid.lazyFiltering && !view.viewGrid.targetRecordId) {
+      // do not refresh contents if:
+      //  -lazy: requires user action to refresh
+      //  -direct navigation: it is done centrally after applying personalizations
+      view.viewGrid.refreshContents();
+    }
+  }
+  if (viewTabDefinition.form && view.viewForm.getDataSource()) {
+    OB.Personalization.personalizeForm(viewTabDefinition, view.viewForm);
   }
 };
 
@@ -197,29 +215,34 @@ OB.Personalization.getViewDefinition = function (standardWindow, name, isDefault
     persDataByTab = {};
     view = standardWindow.views[i];
 
-    // get the form personalization information
-    if (!view.viewForm.getDataSource()) {
-      // If the datasource is not yet set, view.viewForm.fields it is not set yet.
-      // Get them directly form the view definition.
-      formFields = view.formFields;
-    } else {
-      formFields = null;
+    if (view.isRootView || view.isRenderedChildView) {
+      // get the form personalization information
+      if (!view.viewForm.getDataSource()) {
+        // If the datasource is not yet set, view.viewForm.fields it is not set yet.
+        // Get them directly form the view definition.
+        formFields = view.formFields;
+      } else {
+        formFields = null;
+      }
+
+      formData = OB.Personalization.getPersonalizationDataFromForm(view.viewForm, formFields);
+      persDataByTab.form = formData.form;
+
+      if (view.isShowingTree) {
+        // Copy the criteria from the tree grid to the view grid
+        view.treeGrid.copyCriteriaToViewGrid();
+      }
+      // ahd the grid state
+      persDataByTab.grid = view.viewGrid.getViewState(false, true);
+
+      if (view.childTabSet && view.childTabSet.getSelectedTabNumber() >= 0) {
+        persDataByTab.selectedTab = view.childTabSet.getSelectedTabNumber();
+      }
+    } else if (view.initialTabDefinition) {
+      // If there it is a non-rendered child view and there is an initial tab definition it means that
+      // the view has not been visited yet so it is not possible that exist any modificiation in it
+      persDataByTab = isc.shallowClone(view.initialTabDefinition);
     }
-
-    formData = OB.Personalization.getPersonalizationDataFromForm(view.viewForm, formFields);
-    persDataByTab.form = formData.form;
-
-    if (view.isShowingTree) {
-      // Copy the criteria from the tree grid to the view grid
-      view.treeGrid.copyCriteriaToViewGrid();
-    }
-    // ahd the grid state
-    persDataByTab.grid = view.viewGrid.getViewState(false, true);
-
-    if (view.childTabSet && view.childTabSet.getSelectedTabNumber() >= 0) {
-      persDataByTab.selectedTab = view.childTabSet.getSelectedTabNumber();
-    }
-
     // and store it in the overall structure
     personalizationData[view.tabId] = persDataByTab;
   }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -179,7 +179,8 @@ isc.OBApplicationMenuTree.addProperties({
         contentsURL: item.externalUrl,
         id: item.externalUrl,
         command: 'DEFAULT',
-        tabTitle: item.title
+        tabTitle: item.title,
+        openLinkInBrowser: item.openLinkInBrowser
       };
     } else if (!item.processDefinitionId) {
       // do nothing for param windows
@@ -195,7 +196,17 @@ isc.OBApplicationMenuTree.addProperties({
     selectedView = isc.addProperties({}, item, selectedView);
 
     OB.RecentUtilities.addRecent('UINAVBA_MenuRecentList', selectedView);
-    OB.Layout.ViewManager.openView(selectedView.viewId, selectedView);
+    if (selectedView.openLinkInBrowser && selectedView.viewId === 'OBExternalPage') {
+      if (selectedView.contentsURL.indexOf('://') === -1) {
+        selectedView.contentsURL = 'http://' + selectedView.contentsURL;
+      }
+      OB.ViewManager.recentManager.addRecent('OBUIAPP_RecentViewList', isc.addProperties({
+        icon: OB.Styles.OBApplicationMenu.Icons.externalLink
+      }, selectedView));
+      window.open(selectedView.contentsURL);
+    } else {
+      OB.Layout.ViewManager.openView(selectedView.viewId, selectedView);
+    }
   }
 });
 

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -37,9 +38,11 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -306,6 +309,12 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       requiredGridProperties.add(storedInSessionProperty);
     }
 
+    // Include the properties used in the auxiliary inputs of this tab
+    List<String> propertiesUsedInAuxiliaryInputs = getPropertiesUsedInAuxiliaryInputs();
+    for (String propertyUsedInAuxiliaryInputs : propertiesUsedInAuxiliaryInputs) {
+      requiredGridProperties.add(propertyUsedInAuxiliaryInputs);
+    }
+
     // Include the Processing and Processed propertes, required by doc action buttons (see
     // https://issues.openbravo.com/view.php?id=25460)
     if (getViewTab().getFieldHandler().hasProcessNowProperty()) {
@@ -316,6 +325,56 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     }
 
     return requiredGridProperties;
+  }
+
+  /**
+   * @return the list of properties that belong to this entity and that are used in auxiliary inputs
+   *         declared for this tab
+   */
+  private List<String> getPropertiesUsedInAuxiliaryInputs() {
+    OBCriteria<AuxiliaryInput> criteria = OBDal.getInstance().createCriteria(AuxiliaryInput.class);
+    criteria.add(Restrictions.eq(AuxiliaryInput.PROPERTY_TAB, tab));
+    List<AuxiliaryInput> auxInputs = criteria.list();
+    boolean throwExceptionIfNotExists = false;
+    List<String> propertiesUsedInAuxiliaryInputs = new ArrayList<String>();
+    for (AuxiliaryInput auxInput : auxInputs) {
+      List<String> possibleColumns = parseAuxInputCode(auxInput.getValidationCode());
+      for (String columnName : possibleColumns) {
+        Property property = entity.getPropertyByColumnName(columnName, throwExceptionIfNotExists);
+        if (property != null) {
+          propertiesUsedInAuxiliaryInputs.add(property.getName());
+        }
+      }
+    }
+    return propertiesUsedInAuxiliaryInputs;
+  }
+
+  /**
+   * Returns the list of tokens that appear between '@' in a validation code
+   * 
+   * @param validationCode
+   *          the validation code where the '@' token '@' substrings will be looked for in
+   * @return the list of tokens that appear between '@' in a validation code
+   */
+  private List<String> parseAuxInputCode(String validationCode) {
+    List<String> possibleProperties = new ArrayList<String>();
+    String token = validationCode;
+    int i = token.indexOf("@");
+    while (i != -1) {
+      token = token.substring(i + 1);
+      if (!token.startsWith("SQL")) {
+        i = token.indexOf("@");
+        if (i != -1) {
+          String strAux = token.substring(0, i);
+          token = token.substring(i + 1);
+          if (!possibleProperties.contains(strAux)) {
+            possibleProperties.add(strAux);
+          }
+        }
+      }
+      i = token.indexOf("@");
+    }
+    return possibleProperties;
   }
 
   private String getLinkToParentPropertyName() {

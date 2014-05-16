@@ -46,6 +46,9 @@
 	</parameter>
 	<parameter name="TaxID" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="ShowDescription" class="java.lang.String"/>
+	<parameter name="strDateFormat" class="java.lang.String" isForPrompting="false">
+	   <defaultValueExpression><![CDATA["dd/MM/yyyy"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT SCHEMA_ID, SCHEMA_NAME, IDENTIFIER, DATEACCT, VALUE, NAME, ID, AD_TABLE_ID, DOCBASETYPE, SEQNO, '' AS TOTAL, '' AS DESCRIPTION,
       (CASE FACTACCTTYPE WHEN 'O' THEN 1 WHEN 'N' THEN 2 WHEN 'R' THEN 3 ELSE 4 END) AS FACTACCTTYPE2,
@@ -157,7 +160,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(new SimpleDateFormat($P{strDateFormat})).format(new Date())]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
