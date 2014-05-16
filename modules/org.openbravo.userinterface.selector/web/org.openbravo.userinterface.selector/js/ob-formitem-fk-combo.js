@@ -23,6 +23,7 @@ isc.ClassFactory.defineClass('OBFKComboItem', isc.OBSelectorItem);
 
 isc.OBFKComboItem.addProperties({
   valueField: 'id',
+  displayField: '_identifier',
 
   // enables adaptive filtering
   addDummyCriterion: false,
@@ -36,7 +37,6 @@ isc.OBFKComboItem.addProperties({
   showSelectorGrid: false,
   selectorGridFields: [],
   extraSearchFields: [],
-  displayField: '_identifier',
 
   // flag for table and tableDir references
   isComboReference: true,

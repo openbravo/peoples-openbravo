@@ -52,7 +52,7 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
   }
 
   public String getGridEditorFieldProperties(Field field) {
-    return "displayField: null, valueField: null";
+    return "displayField: '_identifier', valueField: 'id'";
   }
 
   @Override
