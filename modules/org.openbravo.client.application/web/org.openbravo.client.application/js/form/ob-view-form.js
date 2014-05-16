@@ -994,37 +994,49 @@ OB.ViewFormProperties = {
     }
 
     if (field.editorType === 'OBFKComboItem') {
-      if (mode === 'CHANGE' && entries) { //TODO: review case of no entries...
+      if (field.invalidateDisplayValueCache) {
+        // whenever a value is set cache should be invalidated to force backend
+        // fetch
+        field.invalidateDisplayValueCache();
+        delete field.wholeMapSet;
+        if (!field.pickList && field.makePickList) {
+          field.preventPickListRequest = true;
+          field.addDummyCriterion = true; // to force next request 
+          field.makePickList(false); // make pick list executes fectch, so we prevent it
+        }
+        if (!entries && field.pickList && field.pickList.invalidateCache) {
+          field.pickList.data.localData = null;
+          field.pickList.data.allRows = null;
+          field.pickList.data.allRowsCriteria = null;
+          field.pickList.data.cachedRows = 0;
+        }
+      }
+
+      if (mode === 'CHANGE' && entries) {
+        // callout is setting all the available entries as valueMap, from this point
+        // no requests should be performed to retrieve data as they are in local
         var length = entries.length,
-            ci, cid, cidentifier, cvalueMap = {};
+            ci, cid, cidentifier, cvalueMap = {},
+            valueMapData = [];
         for (ci = 0; ci < length; ci++) {
           cid = entries[ci][OB.Constants.ID] || '';
           cidentifier = entries[ci][OB.Constants.IDENTIFIER] || '';
           cvalueMap[cid] = cidentifier;
-        }
-        //invalidating cache and setting the whole valueMap
-        if (field.invalidateDisplayValueCache) {
-          field.invalidateDisplayValueCache();
+
+          valueMapData.push({
+            _identifier: cidentifier,
+            id: cid
+          });
         }
         if (field.setValueMap) {
+          field.wholeMapSet = true;
+          field.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
           field.setValueMap(cvalueMap);
+          field.pickList.data.localData = valueMapData;
+          field.pickList.data.allRows = valueMapData;
+          field.pickList.data.allRowsCriteria = field.pickList.data.criteria;
+          field.pickList.data.cachedRows = valueMapData.length;
         }
-        field.addDummyCriterion = false;
-      } else {
-        /*
-         * We invalidate the cache and force to fetch data from datasource in the following cases,
-         * for new records, in case the column
-         * has been changed from FIC either through validation rule or from related columns,
-         * but does not contain entries.
-         */
-        if (mode === 'NEW') {
-          if (field.invalidateDisplayValueCache) {
-            field.invalidateDisplayValueCache();
-          }
-        }
-        field.addDummyCriterion = true;
-        delete field.valueMap;
-        delete field.entries;
       }
     }
 

@@ -38,6 +38,51 @@ isc.OBFKComboItem.addProperties({
   // flag for table and tableDir references
   isComboReference: true,
 
+  filterPickList: function () {
+    if (this.preventPickListRequest) {
+      // nothing to filter, prevent DS request in this case
+      delete this.preventPickListRequest;
+      this.addDummyCriterion = false;
+      return;
+    }
+
+    if (this.wholeMapSet) {
+      // Ignore any requestProperties passed in for a client-only filter.
+      var records = this.filterClientPickListData();
+      if (this.pickList.data !== records) {
+        this.pickList.setData(records);
+      }
+
+      // explicitly fire filterComplete() as we have now filtered the data for the 
+      // pickList
+      this.filterComplete();
+      if (!this.isPickListShown()) {
+        this.placePickList();
+        this.pickList.show();
+      }
+      return;
+    }
+    this.Super('filterPickList', arguments);
+  },
+
+  getPickListFilterCriteria: function () {
+    var criteria = this.Super('getPickListFilterCriteria', arguments),
+        simpleCriteria = {},
+        i;
+    if (this.wholeMapSet) {
+      // filterClientPickListData doesn't support advanced criteria, let's transform it
+      // here to make it work
+      if (criteria.criteria) {
+        for (i = 0; i < criteria.criteria.length; i++) {
+          simpleCriteria[criteria.criteria[i].fieldName] = criteria.criteria[i].value;
+        }
+      }
+      return simpleCriteria;
+    }
+
+    return criteria;
+  },
+
   init: function () {
     this.Super('init', arguments);
     this.optionDataSource = OB.Datasource.create({
