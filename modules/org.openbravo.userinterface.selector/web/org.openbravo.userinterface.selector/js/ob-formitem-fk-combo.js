@@ -38,6 +38,47 @@ isc.OBFKComboItem.addProperties({
   // flag for table and tableDir references
   isComboReference: true,
 
+  invalidateLocalValueMapCache: function () {
+    this.invalidateDisplayValueCache();
+    delete this.wholeMapSet;
+    if (!this.pickList && this.makePickList) {
+      this.preventPickListRequest = true;
+      this.addDummyCriterion = true; // to force next request 
+      this.makePickList(false); // make pick list executes fetch, so we prevent it
+    }
+    if (this.pickList && this.pickList.invalidateCache) {
+      this.pickList.data.localData = null;
+      this.pickList.data.allRows = null;
+      this.pickList.data.allRowsCriteria = null;
+      this.pickList.data.cachedRows = 0;
+    }
+  },
+
+  setEntries: function (entries) {
+    var length = entries.length,
+        ci, cid, cidentifier, cvalueMap = {},
+        valueMapData = [];
+    for (ci = 0; ci < length; ci++) {
+      cid = entries[ci][OB.Constants.ID] || '';
+      cidentifier = entries[ci][OB.Constants.IDENTIFIER] || '';
+      cvalueMap[cid] = cidentifier;
+
+      valueMapData.push({
+        _identifier: cidentifier,
+        id: cid
+      });
+    }
+    if (this.setValueMap) {
+      this.wholeMapSet = true;
+      this.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
+      this.setValueMap(cvalueMap);
+      this.pickList.data.localData = valueMapData;
+      this.pickList.data.allRows = valueMapData;
+      this.pickList.data.allRowsCriteria = this.pickList.data.criteria;
+      this.pickList.data.cachedRows = valueMapData.length;
+    }
+  },
+
   filterPickList: function () {
     if (this.preventPickListRequest) {
       // nothing to filter, prevent DS request in this case
