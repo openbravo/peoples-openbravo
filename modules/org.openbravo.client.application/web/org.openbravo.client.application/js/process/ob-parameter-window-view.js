@@ -196,6 +196,9 @@ isc.OBParameterWindowView.addProperties({
         item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
         item.canvas.viewGrid.filterByEditor();
       }
+      if (this.view && this.view.theForm) {
+        this.view.theForm.markForRedraw();
+      }
       return originalShowIfValue;
     };
 
