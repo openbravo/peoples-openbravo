@@ -79,6 +79,12 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
           return handler.getDefaultReceivedFrom(requestMap);
         case TransactionType:
           return handler.getDefaultTransactionType(requestMap);
+        case Invoice:
+          return handler.getDefaultInvoiceType(requestMap);
+        case Order:
+          return handler.getDefaultOrderType(requestMap);
+        case Payment:
+          return handler.getDefaultPaymentType(requestMap);
         }
       } catch (Exception e) {
         log.error("Error trying to get default value of " + strCurrentParam + e.getMessage(), e);
@@ -117,7 +123,8 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
         "payment_documentno"), CurrencyTo("c_currency_to_id"), ReceivedFrom("received_from"), FinancialAccount(
         "fin_financial_account_id"), PaymentDate("payment_date"), PaymentMethod(
         "fin_paymentmethod_id"), TransactionType("transaction_type"), CustomerCredit(
-        "customer_credit"), IsSOTrx("issotrx");
+        "customer_credit"), IsSOTrx("issotrx"), Payment("fin_payment_id"), Invoice("c_invoice_id"), Order(
+        "c_order_id");
 
     private String columnname;
 

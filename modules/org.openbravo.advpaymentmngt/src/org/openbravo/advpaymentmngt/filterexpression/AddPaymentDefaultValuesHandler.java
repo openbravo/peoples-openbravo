@@ -51,9 +51,15 @@ abstract class AddPaymentDefaultValuesHandler {
 
   abstract String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException;
 
-  abstract String getDefaultIsSOTrx(Map<String, String> requestMap);
+  abstract String getDefaultIsSOTrx(Map<String, String> requestMap) throws JSONException;
 
-  abstract String getDefaultTransactionType(Map<String, String> requestMap);
+  abstract String getDefaultTransactionType(Map<String, String> requestMap) throws JSONException;
+
+  abstract String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException;
+
+  abstract String getDefaultOrderType(Map<String, String> requestMap) throws JSONException;
+
+  abstract String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException;
 
   String getDefaultCurrencyTo(Map<String, String> requestMap) throws JSONException {
     String strBPartnerId = getBusinessPartner(requestMap);

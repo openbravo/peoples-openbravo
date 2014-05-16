@@ -70,4 +70,22 @@ public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
     return pendingAmt;
   }
 
+  @Override
+  String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException {
+    return "";
+  }
+
+  @Override
+  String getDefaultOrderType(Map<String, String> requestMap) throws JSONException {
+    // Actual payment amount is the outstanding amount of the Sales Invoice
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    return context.getString("inpcOrderId");
+  }
+
+  @Override
+  String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
+    // TODO Auto-generated method stub
+    return "";
+  }
+
 }
