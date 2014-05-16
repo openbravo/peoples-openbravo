@@ -50,8 +50,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     if ("I".equals(transactionType)) {
 
       // Create Select Clause
-        selectClause.append(getAggregatorFunction("psd.id") + " as paymentScheduleDetail, ");
-        selectClause.append(getAggregatorFunction("ord.documentNo") + " as salesOrderNo, ");
+      selectClause.append(getAggregatorFunction("psd.id") + " as paymentScheduleDetail, ");
+      selectClause.append(getAggregatorFunction("ord.documentNo") + " as salesOrderNo, ");
       selectClause.append(" inv.documentNo as invoiceNo, ");
       selectClause
           .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
@@ -65,7 +65,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause
           .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
       selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
-      selectClause.append(" 0 as amount ");
+      selectClause.append(" 0 as amount, ");
+      selectClause.append(" 'N' as writeoff ");
 
       // Create WhereClause
       whereClause.append(" psd.paymentDetails is null ");
@@ -102,9 +103,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     } else if ("O".equals(transactionType)) {
 
       // Create Select Clause
-        selectClause.append(getAggregatorFunction("psd.id") + " as paymentScheduleDetail, ");
+      selectClause.append(getAggregatorFunction("psd.id") + " as paymentScheduleDetail, ");
       selectClause.append(" ord.documentNo as salesOrderNo, ");
-        selectClause.append(getAggregatorFunction("inv.documentNo") + " as invoiceNo, ");
+      selectClause.append(getAggregatorFunction("inv.documentNo") + " as invoiceNo, ");
       selectClause
           .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
       selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
@@ -117,7 +118,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause
           .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
       selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
-      selectClause.append(" 0 as amount ");
+      selectClause.append(" 0 as amount, ");
+      selectClause.append(" 'N' as writeoff ");
 
       // Create WhereClause
       whereClause.append(" psd.paymentDetails is null ");
@@ -168,7 +170,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause
           .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
       selectClause.append(" psd.amount as outstandingAmount, ");
-      selectClause.append(" 0 as amount ");
+      selectClause.append(" 0 as amount, ");
+      selectClause.append(" 'N' as writeoff ");
 
       // Create WhereClause
       whereClause.append(" psd.paymentDetails is null ");
