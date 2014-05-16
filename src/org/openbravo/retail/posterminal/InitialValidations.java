@@ -39,7 +39,8 @@ public class InitialValidations {
       throw new JSONException("OBPOS_OrgLocationConfigured");
     }
 
-    if (!posTerminal.getOrganization().getId().equals(OBContext.getOBContext().getCurrentOrganization().getId())) {
+    if (!posTerminal.getOrganization().getId()
+        .equals(OBContext.getOBContext().getCurrentOrganization().getId())) {
       throw new JSONException("OBPOS_OrgDesynchronization");
     }
 
@@ -47,7 +48,8 @@ public class InitialValidations {
         + "(select 1 from FinancialMgmtFinAccPaymentMethod as pmacc where "
         + "pmacc.paymentMethod = e.paymentMethod.paymentMethod and pmacc.account = e.financialAccount"
         + ")";
-    OBQuery<OBPOSAppPayment> queryFinAccounts = OBDal.getInstance().createQuery(OBPOSAppPayment.class, whereclausePM);
+    OBQuery<OBPOSAppPayment> queryFinAccounts = OBDal.getInstance().createQuery(
+        OBPOSAppPayment.class, whereclausePM);
     queryFinAccounts.setNamedParameter("terminal", posTerminal);
     if (queryFinAccounts.list().size() > 0) {
       throw new JSONException("OBPOS_PayMethodNotConfiguredInAccount");
@@ -56,7 +58,8 @@ public class InitialValidations {
     String whereclauseCMEV = " as e where e.obposApplications=:terminal and exists "
         + "(select 1 from OBRETCO_CashManagementEvents as cmev where "
         + "cmev.financialAccount = e.financialAccount)";
-    OBQuery<OBPOSAppPayment> queryEventAccounts = OBDal.getInstance().createQuery(OBPOSAppPayment.class, whereclauseCMEV);
+    OBQuery<OBPOSAppPayment> queryEventAccounts = OBDal.getInstance().createQuery(
+        OBPOSAppPayment.class, whereclauseCMEV);
     queryEventAccounts.setNamedParameter("terminal", posTerminal);
     if (queryEventAccounts.list().size() > 0) {
       throw new JSONException("OBPOS_CMEVAccountIsUsedInPayMethod");
