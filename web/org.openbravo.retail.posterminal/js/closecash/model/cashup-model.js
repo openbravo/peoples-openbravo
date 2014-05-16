@@ -89,7 +89,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                 return OB.DEC.add(total, model.get('expected'));
               }, 0));
               me.set('totalDifference', OB.DEC.sub(me.get('totalDifference'), me.get('totalExpected')));
-              me.convertExpected();
               me.setIgnoreStep3();
             }
           }, null, {
@@ -489,11 +488,5 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }
       }, null, null);
     }, null, this);
-  },
-  convertExpected: function () {
-    _.each(this.get('paymentList').models, function (model) {
-      model.set('foreignExpected', model.get('expected'));
-      model.set('expected', OB.DEC.mul(model.get('expected'), model.get('rate')));
-    }, this);
   }
 });
