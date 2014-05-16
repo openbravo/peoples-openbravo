@@ -167,7 +167,7 @@ isc.OBTreeGrid.addProperties({
         record = data[i];
         for (j = 0; j < dateFields.length; j++) {
           fieldName = dateFields[j];
-          if (!isc.isA.Date(record[fieldName]) && isc.isA.Date(isc.Date.parseSchemaDate(record[fieldName]))) {
+          if (record[fieldName] && !isc.isA.Date(record[fieldName]) && isc.isA.Date(isc.Date.parseSchemaDate(record[fieldName]))) {
             record[fieldName] = isc.Date.parseSchemaDate(record[fieldName]);
           }
         }
