@@ -84,12 +84,6 @@
       <index name="AD_SESSION_LOGSTATUS" unique="false">
         <index-column name="LOGIN_STATUS"/>
       </index>
-      <index name="AD_SESSION_USER_IDX" unique="false">
-        <index-column name="USERNAME"/>
-      </index>
-      <index name="AD_SESSION_WEBSESSION_IDX" unique="false">
-        <index-column name="WEBSESSION"/>
-      </index>
       <check name="AD_SESSION_ACTIVE_CHK"><![CDATA[SESSION_ACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
