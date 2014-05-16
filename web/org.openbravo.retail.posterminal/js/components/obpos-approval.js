@@ -42,7 +42,7 @@ enyo.kind({
           callback: callback
         });
 
-        dialog.start();
+        dialog.show();
       }
     }
   },
@@ -126,9 +126,7 @@ enyo.kind({
       msg = msg + ' ' + (OB.I18N.labels[approval] || OB.I18N.getLabel('OBPOS_ApprovalTextHeader'));
     });
     this.$.bodyContent.$.explainApprovalTxt.setContent(msg);
-  },
 
-  start: function () {
     this.postRenderActions();
   },
 
@@ -166,32 +164,17 @@ enyo.kind({
   },
 
   renderUserButtons: function (name, userName, image) {
-
-    if (name.length === 0) {
-      // no supervisors. Show warning.
-      OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-        popup: 'OB_UI_MessageDialog',
-        args: {
-          header: OB.I18N.getLabel('OBPOS_ApprovalRequiredTitle'),
-          message: OB.I18N.getLabel('OBPOS_UserCannotApprove') + ' ' + OB.I18N.getLabel(this.approvalType)
-        }
+    var i, target = this.$.bodyContent.$.loginUserContainer;
+    for (i = 0; i < name.length; i++) {
+      target.createComponent({
+        kind: 'OB.OBPOSLogin.UI.UserButton',
+        user: userName[i],
+        userImage: image[i],
+        showConnectionStatus: false
       });
-    } else {
-      // Show users.
-      var i, target = this.$.bodyContent.$.loginUserContainer;
-      for (i = 0; i < name.length; i++) {
-        target.createComponent({
-          kind: 'OB.OBPOSLogin.UI.UserButton',
-          user: userName[i],
-          userImage: image[i],
-          showConnectionStatus: false
-        });
-      }
-      target.render();
-
-      // Dialog started.
-      this.show();
     }
+    target.render();
+    return true;
   },
 
   postRenderActions: function () {
