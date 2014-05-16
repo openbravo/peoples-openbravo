@@ -23,7 +23,10 @@ isc.ClassFactory.defineClass('OBFKComboItem', isc.OBSelectorItem);
 
 isc.OBFKComboItem.addProperties({
   valueField: 'id',
+
+  // enables adaptive filtering
   addDummyCriterion: false,
+
   textMatchStyle: 'substring',
   pickListFields: [{
     title: ' ',
@@ -38,10 +41,15 @@ isc.OBFKComboItem.addProperties({
   // flag for table and tableDir references
   isComboReference: true,
 
+  // whenever a validation field changes, a new record is created or a different
+  // record is opened, local data requires to be invalidated to force a new DS
+  // request as possible values might change
   invalidateLocalValueMapCache: function () {
     this.invalidateDisplayValueCache();
     delete this.wholeMapSet;
     if (!this.pickList && this.makePickList) {
+      // pick list is not yet created, let's force it now so later we can cache
+      // data locally if needed
       this.preventPickListRequest = true;
       this.addDummyCriterion = true; // to force next request 
       this.makePickList(false); // make pick list executes fetch, so we prevent it
@@ -54,24 +62,36 @@ isc.OBFKComboItem.addProperties({
     }
   },
 
+  // all entries are set at once in client, this happens when a callout
+  // computes all possible values, from this point subsequent filtering
+  // requires to be done in local
   setEntries: function (entries) {
     var length = entries.length,
-        ci, cid, cidentifier, cvalueMap = {},
+        i, id, identifier, valueMap = {},
         valueMapData = [];
-    for (ci = 0; ci < length; ci++) {
-      cid = entries[ci][OB.Constants.ID] || '';
-      cidentifier = entries[ci][OB.Constants.IDENTIFIER] || '';
-      cvalueMap[cid] = cidentifier;
+
+    if (!this.setValueMap) {
+      return;
+    }
+
+    for (i = 0; i < length; i++) {
+      id = entries[i][OB.Constants.ID] || '';
+      identifier = entries[i][OB.Constants.IDENTIFIER] || '';
+      valueMap[id] = identifier;
 
       valueMapData.push({
-        _identifier: cidentifier,
-        id: cid
+        _identifier: identifier,
+        id: id
       });
     }
-    if (this.setValueMap) {
-      this.wholeMapSet = true;
-      this.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
-      this.setValueMap(cvalueMap);
+
+    this.wholeMapSet = true; // flag to use local filtering from now on
+    this.preventPickListRequest = true; // preventing 1st request triggered by setValueMap
+    this.setValueMap(valueMap);
+
+    if (this.pickList) {
+      // there is no a proper way of initializing local data, let's do it editing
+      // picklist.data properties
       this.pickList.data.localData = valueMapData;
       this.pickList.data.allRows = valueMapData;
       this.pickList.data.allRowsCriteria = this.pickList.data.criteria;
@@ -79,6 +99,12 @@ isc.OBFKComboItem.addProperties({
     }
   },
 
+  // two special cases to take into account when filtering:
+  //   1. preventPickListRequest flag is set when pick list creation is forced,
+  //      by default this causes a DS request we want to prevent
+  //   2. wholeMapSet is flagged when a callout sets all the possible values in
+  //      the pick list, when in this situation all filtering needs to be done in
+  //      local
   filterPickList: function () {
     if (this.preventPickListRequest) {
       // nothing to filter, prevent DS request in this case
