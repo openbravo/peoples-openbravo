@@ -278,11 +278,12 @@
                 } else {
                   return OB.DEC.sub(accum, trx.get('origAmount'));
                 }
-                // checkEnoughCashAvailable
               }, 0);
-            cash = OB.DEC.add(OB.DEC.add(OB.DEC.mul(startingCash, rate), OB.DEC.sub(totalSales, totalReturns)), cashMgmt);
-            OB.POS.terminal.terminal.paymentnames[paymentType.payment.searchKey].currentCash = cash;
-            OB.POS.terminal.terminal.paymentnames[paymentType.payment.searchKey].foreignCash = OB.DEC.div(cash, rate);
+
+            var payment = OB.POS.terminal.terminal.paymentnames[paymentType.payment.searchKey];
+            cash = OB.DEC.add(OB.DEC.add(startingCash, OB.DEC.sub(totalSales, totalReturns)), cashMgmt);
+            payment.currentCash = OB.UTIL.currency.toDefaultCurrency(payment.paymentMethod.currency, cash);
+            payment.foreignCash = OB.UTIL.currency.toForeignCurrency(payment.paymentMethod.currency, cash);
 
             if (typeof callback === 'function') {
               callback();

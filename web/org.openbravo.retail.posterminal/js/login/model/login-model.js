@@ -388,6 +388,16 @@
       // sets the default payment method
       this.set('paymentcash', paymentcashcurrency || paymentcash || paymentlegacy);
 
+      // add the currency converters
+      _.each(OB.POS.modelterminal.get('payments'), function (paymentMethod) {
+        var fromCurrencyId = parseInt(OB.POS.modelterminal.get('currency').id, 10);
+        var toCurrencyId = parseInt(paymentMethod.paymentMethod.currency, 10);
+        if (fromCurrencyId !== toCurrencyId) {
+          OB.UTIL.currency.addConversion(toCurrencyId, fromCurrencyId, paymentMethod.rate);
+          OB.UTIL.currency.addConversion(fromCurrencyId, toCurrencyId, paymentMethod.mulrate);
+        }
+      }, this);
+
       OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash);
       OB.MobileApp.model.on('window:ready', function () {
         if (window.localStorage.getItem('terminalAuthentication') === 'Y') {

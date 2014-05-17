@@ -73,15 +73,27 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             'cashup_id': cashUp.at(0).get('id'),
             'paymentMethodId': payment.payment.id
           }, function (cashMgmts, args) {
-            expected = OB.DEC.add(OB.DEC.add(OB.DEC.mul(auxPay.get('startingCash'), auxPay.get('rate')), OB.DEC.sub(OB.DEC.mul(auxPay.get('totalSales'), auxPay.get('rate')), OB.DEC.mul(auxPay.get('totalReturns'), auxPay.get('rate')))), _.reduce(cashMgmts.models, function (accum, trx) {
+
+            var cStartingCash = auxPay.get('startingCash');
+            var cTotalReturns = auxPay.get('totalReturns');
+            var cTotalSales = auxPay.get('totalSales');
+            var cTotalDeposits = _.reduce(cashMgmts.models, function (accum, trx) {
               if (trx.get('type') === 'deposit') {
                 return OB.DEC.add(accum, trx.get('origAmount'));
               } else {
                 return OB.DEC.sub(accum, trx.get('origAmount'));
               }
-            }, 0));
-            auxPay.set('expected', expected);
-            auxPay.set('foreignExpected', OB.DEC.div(expected, auxPay.get('rate')));
+            }, 0);
+            expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, cTotalReturns)), cTotalDeposits);
+
+            var fromCurrencyId = auxPay.get('paymentMethod').currency;
+            auxPay.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
+            if (OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId)) {
+              auxPay.set('foreignExpected', 0);
+            } else {
+              auxPay.set('foreignExpected', expected);
+            }
+
             tempList.add(auxPay);
             if (args.index === OB.POS.modelterminal.get('payments').length - 1) {
               me.get('paymentList').reset(tempList.models);
@@ -98,6 +110,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }, this);
       });
     }, this);
+
+    this.convertExpected();
+    this.setIgnoreStep3();
 
     this.set('cashUpReport', new Backbone.Collection());
     OB.Dal.find(OB.Model.CashUp, {
@@ -147,7 +162,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         '_orderByClause': 'name asc'
       }, function (payMthds) { //OB.Dal.find success
         cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
-          return OB.DEC.add(accum, OB.DEC.mul(trx.get('startingCash'), trx.get('rate')));
+          var fromCurrencyId = OB.POS.terminal.terminal.paymentnames[trx.get('searchKey')].paymentMethod.currency;
+          var cStartingCash = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, trx.get('startingCash'));
+          return OB.DEC.add(accum, cStartingCash);
         }, 0));
         _.each(payMthds.models, function (p, index) {
           var auxPay = OB.POS.modelterminal.get('payments').filter(function (pay) {
@@ -156,24 +173,31 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
             return;
           }
+
+          var fromCurrencyId = auxPay.paymentMethod.currency;
+
           cashUpReport.get('deposits').push(new Backbone.Model({
-            origAmount: OB.DEC.add(0, OB.DEC.mul(p.get('totalSales'), p.get('rate'))),
+            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('totalSales')),
             amount: OB.DEC.add(0, p.get('totalSales')),
             description: p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
-          cashUpReport.set('totalDeposits', OB.DEC.add(cashUpReport.get('totalDeposits'), OB.DEC.mul(p.get('totalSales'), p.get('rate'))));
+          var ccAmount1 = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('totalSales'));
+          cashUpReport.set('totalDeposits', OB.DEC.add(cashUpReport.get('totalDeposits'), ccAmount1));
+
           cashUpReport.get('drops').push(new Backbone.Model({
-            origAmount: OB.DEC.mul(OB.DEC.add(0, p.get('totalReturns')), p.get('rate')),
+            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('totalReturns')),
             amount: OB.DEC.add(0, p.get('totalReturns')),
             description: p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
-          cashUpReport.set('totalDrops', OB.DEC.add(cashUpReport.get('totalDrops'), OB.DEC.mul(p.get('totalReturns'), p.get('rate'))));
+          var ccAmount2 = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('totalReturns'));
+          cashUpReport.set('totalDrops', OB.DEC.add(cashUpReport.get('totalDrops'), ccAmount2));
+
           startings.push(new Backbone.Model({
-            origAmount: OB.DEC.mul(OB.DEC.add(0, p.get('startingCash')), p.get('rate')),
+            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('startingCash')),
             amount: OB.DEC.add(0, p.get('startingCash')),
             description: 'Starting ' + p.get('name'),
             isocode: auxPay.isocode,
@@ -344,14 +368,17 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       totalDifference: this.get('totalDifference'),
       totalQtyToKeep: _.reduce(this.get('paymentList').models, function (total, model) {
         if (model.get('qtyToKeep')) {
-          return OB.DEC.add(total, OB.DEC.mul(model.get('qtyToKeep'), model.get('rate')));
+          var cQtyToKeep = OB.UTIL.currency.toDefaultCurrency(model.get('paymentMethod').currency, model.get('qtyToKeep'));
+          return OB.DEC.add(total, cQtyToKeep);
         } else {
           return total;
         }
       }, 0),
       totalQtyToDepo: _.reduce(this.get('paymentList').models, function (total, model) {
         if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undf && model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) {
-          return OB.DEC.add(total, OB.DEC.mul(OB.DEC.sub(model.get('foreignCounted'), model.get('qtyToKeep')), model.get('rate')));
+          var qtyToDepo = OB.DEC.sub(model.get('foreignCounted'), model.get('qtyToKeep'));
+          var cQtyToDepo = OB.UTIL.currency.toDefaultCurrency(model.get('paymentMethod').currency, qtyToDepo);
+          return OB.DEC.add(total, cQtyToDepo);
         } else {
           return total;
         }
@@ -381,10 +408,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             isocode: ''
           }));
         } else {
+          var fromCurrencyId = model.get('paymentMethod').currency;
           switch (enumSummarys[counter]) {
           case 'qtyToKeepSummary':
             if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
-              value = OB.DEC.mul(model.get(enumConcepts[counter]), model.get('rate'));
+              value = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, model.get(enumConcepts[counter]));
               second = model.get(enumSecondConcepts[counter]);
             }
             break;
@@ -395,7 +423,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
               second = OB.DEC.Zero;
             }
             if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
-              value = OB.DEC.mul(OB.DEC.sub(model.get(enumConcepts[counter]), model.get(enumSecondConcepts[counter])), model.get('rate'));
+              var baseAmount = OB.DEC.sub(model.get(enumConcepts[counter]), model.get(enumSecondConcepts[counter]));
+              value = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, baseAmount);
             } else {
               value = OB.DEC.Zero;
             }
@@ -493,5 +522,12 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }
       }, null, null);
     }, null, this);
+  },
+  convertExpected: function () {
+    _.each(this.get('paymentList').models, function (model) {
+      model.set('foreignExpected', model.get('expected'));
+      var cExpected = OB.UTIL.currency.toDefaultCurrency(model.get('paymentMethod').currency, model.get('expected'));
+      model.set('expected', cExpected);
+    }, this);
   }
 });
