@@ -212,39 +212,56 @@ enyo.kind({
         transactionsCollection = new Backbone.Collection(transactionsArray),
         total;
 
+    var fromCurrencyId = OB.POS.terminal.terminal.paymentnames[this.model.attributes.searchKey].paymentMethod.currency;
+
     this.inherited(arguments);
-    total = OB.DEC.add(OB.DEC.add(OB.DEC.mul(this.model.get('startingCash'), this.model.get('rate')), OB.DEC.mul(OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns')), this.model.get('rate'))), _.reduce(transactionsArray, function (accum, trx) {
+
+    total = OB.DEC.add(0, this.model.get('startingCash'));
+    total = OB.DEC.add(total, this.model.get('totalSales'));
+    total = OB.DEC.sub(total, this.model.get('totalReturns'));
+    var totalDeposits = _.reduce(transactionsArray, function (accum, trx) {
       if (trx.get('type') === 'deposit') {
         return OB.DEC.add(accum, trx.get('origAmount'));
       } else {
         return OB.DEC.sub(accum, trx.get('origAmount'));
       }
-    }, 0));
+    }, 0);
+    total = OB.DEC.add(total, totalDeposits);
 
-    this.model.set('total', total, {
-      silent: true // prevents triggering change event
-    });
-
-
-    this.$.total.setTotal(total); // explicitly set the total
-    if (OB.DEC.toBigDecimal(OB.DEC.add(0, total)) !== 0 && ((this.model.get('rate') && this.model.get('rate') !== 1))) {
-      this.$.foreignTotal.setTextForeignTotal('(' + OB.I18N.formatCurrency(OB.DEC.add(0, OB.DEC.div(total, this.model.get('rate')))) + ' ' + this.model.get('isocode') + ')');
-      this.$.foreignTotal.setForeignTotal(OB.DEC.add(0, OB.DEC.div(total, this.model.get('rate'))));
+    this.$.availableLbl.setContent(OB.I18N.getLabel('OBPOS_LblNewAvailableIn') + ' ' + this.model.get('name'));
+    if (OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId)) {
+      this.model.set('total', total, {
+        silent: true // prevents triggering change event
+      });
+      this.$.total.setTotal(total);
+    } else {
+      var foreignTotal = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, total);
+      this.model.set('total', foreignTotal, {
+        silent: true // prevents triggering change event
+      });
+      this.$.total.setTotal(foreignTotal);
+      if (foreignTotal > 0) {
+        this.$.foreignTotal.setTextForeignTotal('(' + OB.I18N.formatCurrency(total) + ' ' + this.model.get('isocode') + ')');
+        this.$.foreignTotal.setForeignTotal(total);
+      }
     }
 
     this.$.theList.setCollection(transactionsCollection);
 
     this.$.startingCashPayName.setContent(OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + this.model.get('name'));
-    this.$.startingCashAmnt.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, OB.DEC.mul(this.model.get('startingCash'), this.model.get('rate')))));
-    if (OB.DEC.toBigDecimal(this.model.get('startingCash')) !== 0 && ((this.model.get('rate') && this.model.get('rate') !== 1) || this.model.get('amount') !== this.model.get('origAmount'))) {
-      this.$.startingCashForeignAmnt.setContent('(' + OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('startingCash'))) + ' ' + this.model.get('isocode') + ')');
+    var startingCash = OB.DEC.add(0, this.model.get('startingCash'));
+    this.$.startingCashAmnt.setContent(OB.I18N.formatCurrency(OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, startingCash)));
+    if ((OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId) === false) && (startingCash > 0)) {
+      this.$.startingCashForeignAmnt.setContent('(' + OB.I18N.formatCurrency(startingCash) + ' ' + this.model.get('isocode') + ')');
     }
+
     this.$.tenderedLbl.setContent(OB.I18N.getLabel('OBPOS_LblTotalTendered') + ' ' + this.model.get('name'));
-    if (OB.DEC.toBigDecimal(OB.DEC.add(0, OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns')))) !== 0 && ((this.model.get('rate') && this.model.get('rate') !== 1))) {
-      this.$.tenderedForeignAmnt.setContent('(' + OB.I18N.formatCurrency(OB.DEC.add(0, OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns')))) + ' ' + this.model.get('isocode') + ')');
+    var totalSalesReturns = OB.DEC.add(0, OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns')));
+    if ((OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId) === false) && (totalSalesReturns > 0)) {
+      this.$.tenderedForeignAmnt.setContent('(' + OB.I18N.formatCurrency(totalSalesReturns) + ' ' + this.model.get('isocode') + ')');
     }
-    this.$.tenderedAmnt.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, OB.DEC.mul(OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns')), this.model.get('rate')))));
-    this.$.availableLbl.setContent(OB.I18N.getLabel('OBPOS_LblNewAvailableIn') + ' ' + this.model.get('name'));
+    this.$.tenderedAmnt.setContent(OB.I18N.formatCurrency(OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, totalSalesReturns)));
+
   }
 });
 
