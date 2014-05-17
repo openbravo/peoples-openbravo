@@ -344,9 +344,9 @@ enyo.kind({
       coin.set('totalAmount', OB.DEC.mul(coin.get('numberOfCoins'), coin.get('coinValue')));
       totalCounted += coin.get('totalAmount');
     });
-
     this.payment.set('foreignCounted', totalCounted);
-    this.payment.set('counted', OB.DEC.mul(totalCounted, this.payment.get('rate')));
+    var cTotalCounted = OB.UTIL.currency.toDefaultCurrency(this.payment.attributes.paymentMethod.currency, totalCounted);
+    this.payment.set('counted', cTotalCounted);
     this.payment.set('foreignDifference', OB.DEC.sub(totalCounted, this.payment.get('foreignExpected')));
     this.printTotals();
 
