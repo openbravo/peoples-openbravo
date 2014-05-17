@@ -77,6 +77,7 @@ OB.UTIL.currency = {
     return parseInt(OB.POS.modelterminal.get('currency').id, 10);
   },
   isDefaultCurrencyId: function (currencyId) {
+    currencyId = parseInt(currencyId, 10);
     return currencyId === OB.UTIL.currency.webPOSDefaultCurrencyId();
   },
   /**
