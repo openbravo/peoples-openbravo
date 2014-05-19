@@ -842,6 +842,11 @@ public class ComboTableData {
     return getQuery(onlyId, discard, recordId, null, null, null);
   }
 
+  private String getQuery(boolean onlyId, String[] discard, String recordId, Integer startRow,
+      Integer endRow, ConnectionProvider conn) {
+    return getQuery(onlyId, discard, recordId, startRow, endRow, conn, false);
+  }
+
   /**
    * Returns the generated query.
    * 
@@ -862,7 +867,7 @@ public class ComboTableData {
    * @return String with the query.
    */
   private String getQuery(boolean onlyId, String[] discard, String recordId, Integer startRow,
-      Integer endRow, ConnectionProvider conn) {
+      Integer endRow, ConnectionProvider conn, boolean applyFilter) {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = getSelectFields();
     String idName = "", nameToCompare = null;
@@ -936,15 +941,19 @@ public class ComboTableData {
           hasWhere = true;
           if (!txtAux.toString().equals(""))
             txtAux.append("AND ");
-          txtAux.append(auxStructure.toString().replace("_COMBO_IDENTIFIER_", nameToCompare))
-              .append(" \n");
+          txtAux.append(auxStructure.toString()).append(" \n");
         }
       }
       if (hasWhere) {
         if (recordId != null) {
           txtAux.append(" AND " + idName + "=(?) ");
         }
+
         text.append("WHERE ").append(txtAux.toString());
+      }
+      if (applyFilter && !StringUtils.isEmpty(nameToCompare)) {
+        // filtering by value
+        text.append(" AND UPPER(" + nameToCompare + ") like UPPER(?)\n");
       }
       if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
         text.append(" AND ROWNUM>=" + startRow + " AND " + " ROWNUM<=" + endRow + " ");
@@ -1008,6 +1017,11 @@ public class ComboTableData {
     return setSQLParameters(st, lparameters, iParameter, discard, null);
   }
 
+  private int setSQLParameters(PreparedStatement st, Map<String, String> lparameters,
+      int iParameter, String[] discard, String recordId) {
+    return setSQLParameters(st, lparameters, iParameter, discard, recordId, null);
+  }
+
   /**
    * Fills the query parameter's values.
    * 
@@ -1020,7 +1034,7 @@ public class ComboTableData {
    * @return Integer with the next parameter's index.
    */
   private int setSQLParameters(PreparedStatement st, Map<String, String> lparameters,
-      int iParameter, String[] discard, String recordId) {
+      int iParameter, String[] discard, String recordId, String filter) {
     Vector<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
@@ -1062,6 +1076,10 @@ public class ComboTableData {
     }
     if (recordId != null) {
       UtilSql.setValue(st, ++iParameter, 12, null, recordId);
+    }
+    if (!StringUtils.isEmpty(filter)) {
+      // filtering by value
+      UtilSql.setValue(st, ++iParameter, 12, null, "%" + filter + "%");
     }
     vAux = getOrderByParameters();
     if (vAux != null) {
@@ -1153,13 +1171,8 @@ public class ComboTableData {
       }
 
     }
-    if (!StringUtils.isEmpty(filterValue)) {
-      // adding filter expression for identifier
-      addWhereField("UPPER(_COMBO_IDENTIFIER_) like UPPER(?)", "__COMBO_FILTER");
-      addWhereParameter("__COMBO_FILTER", "__COMBO_FILTER", "__COMBO_FILTER");
-      lparameters.put("__COMBO_FILTER", "%" + filterValue + "%");
-    }
-    String strSql = getQuery(false, null, null, startRow, endRow, conn);
+    String strSql = getQuery(false, null, null, startRow, endRow, conn,
+        !StringUtils.isEmpty(filterValue));
     if (log4j.isDebugEnabled())
       log4j.debug("SQL: " + strSql);
     PreparedStatement st = conn.getPreparedStatement(strSql);
@@ -1168,7 +1181,7 @@ public class ComboTableData {
 
     try {
       int iParameter = 0;
-      iParameter = setSQLParameters(st, lparameters, iParameter, null);
+      iParameter = setSQLParameters(st, lparameters, iParameter, null, null, filterValue);
       boolean idFound = false;
       result = st.executeQuery();
       while (result.next()) {
