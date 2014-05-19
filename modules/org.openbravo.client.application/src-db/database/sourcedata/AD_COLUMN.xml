@@ -1899,6 +1899,19 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--3E8FC3621ACE40258A020FE6B0E7A9E0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3E8FC3621ACE40258A020FE6B0E7A9E0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3E8FC3621ACE40258A020FE6B0E7A9E0-->  <NAME><![CDATA[Isgridlegacy]]></NAME>
+<!--3E8FC3621ACE40258A020FE6B0E7A9E0-->  <DESCRIPTION><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.]]></DESCRIPTION>
+<!--3E8FC3621ACE40258A020FE6B0E7A9E0-->  <HELP><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.
+
+The legacy parameter windows could only contain one grid, so the _selection and _allRows properties of the grid were directly accesible in the handler from the params object. I.e:
+
+JSONArray gridRows = jsonparams.getJSONArray(ApplicationConstants.ALL_ROWS_PARAM);
+
+New process definitions should access these value like this:
+JSONObject myGridItem = jsonparams.getJSONObject("myGridItemName");
+JSONArray myGridSelectedRows = myGridItem.getJSONArray("_selection");
+
+The 'Compatibility with Legacy Grids' flag should only be checked if its handler retrieves the grid values in the old way.
+]]></HELP>
 <!--3E8FC3621ACE40258A020FE6B0E7A9E0-->  <COLUMNNAME><![CDATA[Isgridlegacy]]></COLUMNNAME>
 <!--3E8FC3621ACE40258A020FE6B0E7A9E0-->  <AD_TABLE_ID><![CDATA[FF80818132D7FB620132D8129D1A0028]]></AD_TABLE_ID>
 <!--3E8FC3621ACE40258A020FE6B0E7A9E0-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
