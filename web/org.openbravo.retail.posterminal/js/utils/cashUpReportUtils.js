@@ -17,8 +17,8 @@
   function findAndSave(cashuptaxes, i, finishCallback) {
 
     if (i < cashuptaxes.length) {
-
       OB.Dal.find(OB.Model.TaxCashUp, {
+        'cashup_id': cashuptaxes[i].cashupID,
         'name': cashuptaxes[i].taxName,
         'orderType': cashuptaxes[i].taxOrderType
       }, function (tax) {
