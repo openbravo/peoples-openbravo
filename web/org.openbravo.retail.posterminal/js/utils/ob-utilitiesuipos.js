@@ -92,14 +92,14 @@ OB.UTIL.currency = {
     rate = parseFloat(rate, 10);
 
     if (fromCurrencyId === toCurrencyId) {
-      this.showError('DEVELOPER: there is no point in converting a currencyId to itself');
+      OB.error('DEVELOPER: there is no point in converting a currencyId to itself');
       return;
     }
 
     var conversionAlreadyExists = this.findConverter(fromCurrencyId, toCurrencyId);
     if (conversionAlreadyExists) {
       if (conversionAlreadyExists.rate !== rate) {
-        this.showError('DEVELOPER: The rate for a currency is trying to be changed. If you are not trying to change the rate, something needs critical and inmediate fixing. If you really want to change the rate and know what you are doing, clean the OB.UTIL.currency.conversions array and fill it again.');
+        OB.error('DEVELOPER: The rate for a currency is trying to be changed. If you are not trying to change the rate, something needs critical and inmediate fixing. If you really want to change the rate and know what you are doing, clean the OB.UTIL.currency.conversions array and fill it again.');
       }
       return; // the conversor is already present. this is fine, unless a lot of calls are finishing here
     }
@@ -118,7 +118,7 @@ OB.UTIL.currency = {
        */
       getTangibleOf: function (amountToRound) {
         if (this.toCurrencyId === OB.UTIL.currency.webPOSDefaultCurrencyId()) {
-          OB.UTIL.currency.showError('DEVELOPER: You cannot get a tangible of a foreign currency because it has already a value in local currency. If you are trying to get the amount for a financial account, use the getFinancialAmountOf function');
+          OB.error('DEVELOPER: You cannot get a tangible of a foreign currency because it has already a value in local currency. If you are trying to get the amount for a financial account, use the getFinancialAmountOf function');
           return;
         }
         return OB.DEC.mul(amountToRound, rate, OB.UTIL.currency.toCurrencyIdPrecision);
@@ -131,10 +131,10 @@ OB.UTIL.currency = {
        */
       getFinancialAmountOf: function (amount) {
         if (this.fromCurrencyId === OB.UTIL.currency.webPOSDefaultCurrencyId()) {
-          OB.UTIL.currency.showError('DEVELOPER: You are trying to get a financial amount value that is not from a foreign currency');
+          OB.error('DEVELOPER: You are trying to get a financial amount value that is not from a foreign currency');
           return;
         }
-        return OB.DEC.mulFullPrecision(amount, rate);
+        return OB.DEC.mul(amount, rate);
       },
       toString: function () {
         return this.fromCurrencyId + ' -> ' + this.toCurrencyId + '; rate:' + this.rate.toFixed(5);
@@ -168,7 +168,7 @@ OB.UTIL.currency = {
     toCurrencyId = parseInt(toCurrencyId, 10);
     var found = this.findConverter(fromCurrencyId, toCurrencyId);
     if (!found) {
-      this.showError('DEVELOPER: Currency converter not added: ' + fromCurrencyId + ' -> ' + toCurrencyId);
+      OB.error('DEVELOPER: Currency converter not added: ' + fromCurrencyId + ' -> ' + toCurrencyId);
     }
     return found;
   },
@@ -201,7 +201,7 @@ OB.UTIL.currency = {
    */
   toDefaultCurrency: function (fromCurrencyId, amount) {
     if (OB.UTIL.isNullOrUndefined(amount)) {
-      this.showError('DEVELOPER: you are missing one parameter');
+      OB.error('DEVELOPER: you are missing one parameter');
     }
     fromCurrencyId = parseInt(fromCurrencyId, 10);
     if (fromCurrencyId === this.webPOSDefaultCurrencyId()) {
@@ -219,7 +219,7 @@ OB.UTIL.currency = {
    */
   toForeignCurrency: function (toCurrencyId, amount) {
     if (OB.UTIL.isNullOrUndefined(amount)) {
-      this.showError('DEVELOPER: you are missing one parameter');
+      OB.error('DEVELOPER: you are missing one parameter');
     }
     toCurrencyId = parseInt(toCurrencyId, 10);
     if (toCurrencyId === this.webPOSDefaultCurrencyId()) {
@@ -228,8 +228,5 @@ OB.UTIL.currency = {
     var converter = this.getFromLocalConverter(toCurrencyId);
     var foreignAmount = converter.getTangibleOf(amount);
     return foreignAmount;
-  },
-  showError: function (msg) {
-    console.error(msg);
   }
 };
