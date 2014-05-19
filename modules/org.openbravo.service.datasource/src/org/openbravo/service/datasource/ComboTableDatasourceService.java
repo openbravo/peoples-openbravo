@@ -91,16 +91,14 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         }
       }
 
-      String onChange = parameters.get("onchange");
       if (parameters.get(JsonConstants.STARTROW_PARAMETER) != null) {
         startRow = Integer.parseInt(parameters.get(JsonConstants.STARTROW_PARAMETER));
       }
       if (parameters.get(JsonConstants.ENDROW_PARAMETER) != null) {
         endRow = Integer.parseInt(parameters.get(JsonConstants.ENDROW_PARAMETER));
       }
-      String singleRecord = parameters.get("@ONLY_ONE_RECORD@");
       boolean applyLimits = startRow != -1 && endRow != -1;
-      if (!applyLimits && StringUtils.isEmpty(singleRecord) && !"Y".equals(onChange)) {
+      if (!applyLimits) {
         throw new OBException(JsonConstants.STARTROW_PARAMETER + " and "
             + JsonConstants.ENDROW_PARAMETER + " not present");
       } else {
@@ -147,29 +145,23 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref, field
           .getColumn().getDBColumnName(), objectReference, validation, orgList, clientList);
       Map<String, String> newParameters = null;
-      if ("Y".equals(onChange) && StringUtils.isNotEmpty(filterString)) {
+      if (StringUtils.isNotEmpty(filterString)) {
         columnValue = filterString;
       }
 
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
           vars, new FieldProviderFactory(parameters), field.getTab().getWindow().getId(),
           (getValueFromSession && !comboreload) ? columnValue : "");
-      if (singleRecord != null && !"Y".equals(onChange)) {
-        newParameters.put("@ONLY_ONE_RECORD@", singleRecord);
-        newParameters.put("@ACTUAL_VALUE@", singleRecord);
-      }
 
       if (parameters.get("_currentValue") != null) {
         newParameters.put("@ACTUAL_VALUE@", parameters.get("_currentValue"));
       }
 
-      if (StringUtils.isEmpty(filterString) || "Y".equals(onChange)) {
-        fps = comboTableData.select(new DalConnectionProvider(false), newParameters,
-            true && !comboreload, startRow, endRow != -1 ? endRow + 1 : endRow);
-      } else {
-        fps = comboTableData.filter(new DalConnectionProvider(false), newParameters,
-            getValueFromSession && !comboreload, startRow, endRow + 1, filterString);
+      if (!StringUtils.isEmpty(filterString)) {
+        newParameters.put("FILTER_VALUE", filterString);
       }
+      fps = comboTableData.select(new DalConnectionProvider(false), newParameters,
+          true && !comboreload, startRow, endRow);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();

@@ -1233,32 +1233,6 @@ public class ComboTableData {
   }
 
   /**
-   * Method to filter the combo data based on the keyword provided
-   * 
-   * @param conn
-   *          Connection Provider
-   * @param lparameters
-   *          Request Parameters
-   * @param includeActual
-   *          Include all results
-   * @param startRow
-   *          Start row of the result
-   * @param endRow
-   *          End row of the result
-   * @param filterValue
-   *          Keyword to filtered
-   * @return {@link FieldProvider}
-   * @throws Exception
-   */
-  public FieldProvider[] filter(ConnectionProvider conn, Map<String, String> lparameters,
-      boolean includeActual, Integer startRow, Integer endRow, String filterValue) throws Exception {
-    if (!StringUtils.isEmpty(filterValue)) {
-      lparameters.put("FILTER_VALUE", filterValue);
-    }
-    return select(conn, lparameters, includeActual, startRow, endRow);
-  }
-
-  /**
    * Special fill parameters function to be used from the search popup (servlet).
    * 
    * It flags the combo to be used from a search popup changing the logic to get the needed

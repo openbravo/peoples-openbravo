@@ -106,64 +106,6 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
   }
 
   /**
-   * Test to fetch a single combo value from ComboTableDatasoureService using set parameters. Based
-   * on field information, recordId and current context, the field values are returned as
-   * jsonObject. The test case asserts whether there is a valid response.
-   * 
-   * @throws Exception
-   */
-  public void testSingleRecordFetch() throws Exception {
-    // Using values of visible at user in preference
-    Map<String, String> params = new HashMap<String, String>();
-    params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
-    params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
-    params.put("_operationType", "fetch");
-    // try to fetch F&B Admin user
-    params.put("@ONLY_ONE_RECORD@", "A530AAE22C864702B7E1C22D58E7B17B");
-    params.put("@ACTUAL_VALUE@", "A530AAE22C864702B7E1C22D58E7B17B");
-
-    JSONObject jsonResponse = requestCombo(params);
-    JSONArray data = getData(jsonResponse);
-
-    assertEquals("number of records", 1, data.length());
-
-    JSONObject record = data.getJSONObject(0);
-    assertTrue(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
-    assertEquals("record id", "A530AAE22C864702B7E1C22D58E7B17B", record.getString("id"));
-    assertEquals("record identifier", "F&BAdmin", record.get("_identifier"));
-  }
-
-  /**
-   * Test to check limits are not applied when single record is fetched.
-   * 
-   * @throws Exception
-   */
-  public void testSingleRecordFetchWithLimits() throws Exception {
-    // Using values of visible at user in preference
-    Map<String, String> params = new HashMap<String, String>();
-    params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
-    params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
-    params.put("_operationType", "fetch");
-    // try to fetch F&B Admin user
-    params.put("@ONLY_ONE_RECORD@", "A530AAE22C864702B7E1C22D58E7B17B");
-    params.put("@ACTUAL_VALUE@", "A530AAE22C864702B7E1C22D58E7B17B");
-    params.put("_startRow", "1");
-    params.put("_endRow", "2");
-
-    JSONObject jsonResponse = requestCombo(params);
-    JSONArray data = getData(jsonResponse);
-
-    assertEquals("number of records", 1, data.length());
-
-    JSONObject record = data.getJSONObject(0);
-    assertTrue(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
-    assertEquals("record id", "A530AAE22C864702B7E1C22D58E7B17B", record.getString("id"));
-    assertEquals("record identifier", "F&BAdmin", record.get("_identifier"));
-  }
-
-  /**
    * Test to check filtering of the record using passed parameter
    * 
    * @throws Exception
