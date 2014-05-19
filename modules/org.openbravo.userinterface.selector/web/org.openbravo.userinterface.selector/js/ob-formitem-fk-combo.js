@@ -59,6 +59,7 @@ isc.OBFKComboItem.addProperties({
       this.pickList.data.allRows = null;
       this.pickList.data.allRowsCriteria = null;
       this.pickList.data.cachedRows = 0;
+      this.pickList.data.totalRows = 0;
     }
   },
 
