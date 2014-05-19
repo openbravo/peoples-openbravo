@@ -825,28 +825,6 @@ public class ComboTableData {
     canBeCached = uiref.canBeCached();
   }
 
-  private String getQuery(boolean onlyId, String[] discard) {
-    return getQuery(onlyId, discard, null);
-  }
-
-  /**
-   * Returns the generated query.
-   * 
-   * @param onlyId
-   *          Boolean to indicate if the select clause must have only the key field.
-   * @param discard
-   *          Array of field groups to remove from the query.
-   * @return String with the query.
-   */
-  private String getQuery(boolean onlyId, String[] discard, String recordId) {
-    return getQuery(onlyId, discard, recordId, null, null, null);
-  }
-
-  private String getQuery(boolean onlyId, String[] discard, String recordId, Integer startRow,
-      Integer endRow, ConnectionProvider conn) {
-    return getQuery(onlyId, discard, recordId, startRow, endRow, conn, false);
-  }
-
   /**
    * Returns the generated query.
    * 
@@ -1123,7 +1101,8 @@ public class ComboTableData {
         : getParameter("FILTER_VALUE");
     if (lparameters != null && lparameters.containsKey("@ONLY_ONE_RECORD@")
         && !lparameters.get("@ONLY_ONE_RECORD@").isEmpty()) {
-      String strSqlSingleRecord = getQuery(false, null, lparameters.get("@ONLY_ONE_RECORD@"));
+      String strSqlSingleRecord = getQuery(false, null, lparameters.get("@ONLY_ONE_RECORD@"), null,
+          null, null, false);
       log4j.debug("Query for single record: " + strSqlSingleRecord);
       PreparedStatement stSingleRecord = conn.getPreparedStatement(strSqlSingleRecord);
       try {
@@ -1146,7 +1125,7 @@ public class ComboTableData {
 
         if (includeActual && actual != null && !actual.equals("")) {
           String[] discard = { "filter", "orderBy", "CLIENT_LIST", "ORG_LIST" };
-          String strSqlDisc = getQuery(true, discard);
+          String strSqlDisc = getQuery(true, discard, null, null, null, null, false);
           PreparedStatement stInactive = conn.getPreparedStatement(strSqlDisc);
           iParameter = setSQLParameters(stInactive, lparameters, 0, discard);
           UtilSql.setValue(stInactive, ++iParameter, 12, null, actual);
@@ -1211,7 +1190,7 @@ public class ComboTableData {
       if (includeActual && actual != null && !actual.equals("") && !idFound) {
         conn.releasePreparedStatement(st);
         String[] discard = { "filter", "orderBy", "CLIENT_LIST", "ORG_LIST" };
-        strSql = getQuery(true, discard);
+        strSql = getQuery(true, discard, null, null, null, null, false);
         if (log4j.isDebugEnabled())
           log4j.debug("SQL Actual ID: " + strSql);
         st = conn.getPreparedStatement(strSql);
