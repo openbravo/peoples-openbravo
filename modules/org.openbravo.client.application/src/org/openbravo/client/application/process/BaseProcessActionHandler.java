@@ -89,7 +89,9 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       SessionInfo.setProcessId(processId);
       SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(false));
 
-      // Compatibility to legacy grids
+      // Adds compatibility with legacy process definitions
+      // If the handler of the process definition has not been updated, then it expects the
+      // _selection and _allRows properties to be accessible directly from the _params object
       Process process = OBDal.getInstance().get(Process.class, processId);
       if (process.isGridlegacy()) {
         JSONObject jsonRequest = new JSONObject(content);
@@ -180,4 +182,3 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   protected abstract JSONObject doExecute(Map<String, Object> parameters, String content);
 }
-
