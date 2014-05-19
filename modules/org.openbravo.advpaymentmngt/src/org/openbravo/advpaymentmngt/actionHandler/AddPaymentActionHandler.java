@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,13 +20,10 @@
 package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -34,32 +31,33 @@ import java.util.StringTokenizer;
 import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.advpaymentmngt.ad_actionbutton.AddPaymentFromInvoice;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.accounting.Costcenter;
+import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.accounting.UserDimension1;
 import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.gl.GLItem;
@@ -67,66 +65,54 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.model.marketing.Campaign;
 import org.openbravo.model.materialmgmt.cost.ABCActivity;
-import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.project.Project;
-import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
+import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AddPaymentActionHandler extends BaseProcessActionHandler {
   private static Logger log = LoggerFactory.getLogger(AddPaymentActionHandler.class);
-  private AdvPaymentMngtDao dao;
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
     OBContext.setAdminMode();
-    ConnectionProvider conn = new DalConnectionProvider(true);
-    VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     try {
       // Get Params
       jsonRequest = new JSONObject(content);
-      String strAction = null;
-      OBError message = null;
-      dao = new AdvPaymentMngtDao();
-
-      JSONObject jsonparams = jsonRequest.getJSONObject("_params");
-      String strOrgId = jsonRequest.getString("inpadOrgId");
-      String strInvoiceId = jsonRequest.getString("inpcInvoiceId");
-      String strTabId = jsonRequest.getString("inpTabId");
-      String strIssotrx = jsonRequest.getString("inpissotrx");
+      final String strOrgId = jsonRequest.getString("inpadOrgId");
+      Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
+      // String strTabId = jsonRequest.getString("inpTabId");
+      final String strIssotrx = jsonRequest.getString("inpissotrx");
       boolean isReceipt = "Y".equals(strIssotrx);
+      JSONObject jsonparams = jsonRequest.getJSONObject("_params");
+
       JSONObject orderInvoiceGrid = jsonparams.getJSONObject("order_invoice");
       JSONObject creditToUseGrid = jsonparams.getJSONObject("credit_to_use");
-      JSONObject strAddedGLItems = jsonparams.getJSONObject("glitem");
+      JSONObject gLItemsGrid = jsonparams.getJSONObject("glitem");
 
-      strAction = (isReceipt ? "PRP" : "PPP");
+      String strAction = (isReceipt ? "PRP" : "PPP");
 
-      String strPaymentDocumentNo = jsonparams.getString("payment_documentno");
-      String strReferenceNo = jsonparams.getString("reference_no");
-      String strCurrencyId = jsonparams.getString("c_currency_id");
-      String strCurrencyToId = jsonparams.getString("c_currency_to_id");
-      String strReceivedFromId = jsonparams.getString("received_from");
-      String strFinancialAccountId = jsonparams.getString("fin_financial_account_id");
+      final String strCurrencyId = jsonparams.getString("c_currency_id");
+      Currency currency = OBDal.getInstance().get(Currency.class, strCurrencyId);
+      final String strBPartnerID = jsonparams.getString("received_from");
+      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+          strBPartnerID);
       String strActualPayment = jsonparams.getString("actual_payment");
-      String strConvertedAmount = jsonparams.getString("converted_amount");
 
       // Format Date
       String strPaymentDate = jsonparams.getString("payment_date");
-      Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(strPaymentDate);
-      String formattedDate = OBDateUtils.formatDate(date);
+      Date paymentDate = JsonUtils.createDateFormat().parse(strPaymentDate);
+      String formattedDate = OBDateUtils.formatDate(paymentDate);
 
       // String formattedDate = new SimpleDateFormat("dd-MM-yyyy",
       // Locale.getDefault()).format(date);
       strPaymentDate = formattedDate;
-
-      String strPaymentMethodId = jsonparams.getString("fin_paymentmethod_id");
-      String strExpectedPayment = jsonparams.getString("expected_payment");
-      String strConversionRate = jsonparams.getString("conversion_rate");
 
       // TODO
       String strDifferenceAction = "";
@@ -139,85 +125,43 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         strSelectedScheduledPaymentDetailIds = getSelectedRowIds(allselection);
       }
 
-      // GL Items
-      JSONArray addedGLITemsArray = strAddedGLItems.getJSONArray("_selection");
-
       BigDecimal exchangeRate = BigDecimal.ZERO;
-      BigDecimal convertedAmount = new BigDecimal(0);
-      if (!"null".equals(strConversionRate)) {
-        exchangeRate = new BigDecimal(strConversionRate);
+      BigDecimal convertedAmount = BigDecimal.ZERO;
+      String strCurrencyToId = jsonparams.getString("c_currency_to_id");
+      if (jsonparams.get("conversion_rate") != JSONObject.NULL) {
+        exchangeRate = new BigDecimal(jsonparams.getString("conversion_rate"));
       }
-      if (!"null".equals(strConvertedAmount)) {
-        convertedAmount = new BigDecimal(strConvertedAmount);
+      if (jsonparams.get("converted_amount") != JSONObject.NULL) {
+        convertedAmount = new BigDecimal(jsonparams.getString("converted_amount"));
       }
-
-      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-          strReceivedFromId);
-      PriceList priceList = isReceipt ? businessPartner.getPriceList() : businessPartner
-          .getPurchasePricelist();
-      FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strFinancialAccountId);
-      FIN_PaymentMethod finPaymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-          strPaymentMethodId);
-      AddPaymentFromInvoice avd = new AddPaymentFromInvoice();
-      boolean paymentDocumentEnabled = avd.getDocumentConfirmation(conn, finAccount,
-          finPaymentMethod, isReceipt, strActualPayment, true);
 
       List<FIN_PaymentScheduleDetail> selectedPaymentDetails = FIN_Utility.getOBObjectList(
           FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
       HashMap<String, BigDecimal> selectedPaymentDetailAmounts = getSelectedPaymentDetailsAndAmount(
           allselection, strSelectedScheduledPaymentDetailIds);
 
-      // get DocumentNo
-      final List<Object> params = new ArrayList<Object>();
-      params.add(vars.getClient());
-      params.add(strOrgId);
-      params.add(isReceipt ? "ARR" : "APP");
-      String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
-          params, null);
-      DocumentType documentType = OBDal.getInstance().get(DocumentType.class, strDocTypeId);
-      boolean documentEnabled = true;
-      String strDocBaseType = documentType.getDocumentCategory();
-      boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(Invoice.TABLE_NAME,
-          strInvoiceId, Invoice.TABLE_NAME + "_ID", "LE");
-
-      if ((strAction.equals("PRD") || strAction.equals("PPW") || FIN_Utility
-          .isAutomaticDepositWithdrawn(finAccount, finPaymentMethod, isReceipt))
-          && new BigDecimal(strActualPayment).compareTo(BigDecimal.ZERO) != 0) {
-        documentEnabled = paymentDocumentEnabled
-            || avd.getDocumentConfirmation(conn, finAccount, finPaymentMethod, isReceipt,
-                strActualPayment, false);
+      FIN_Payment payment = null;
+      if (jsonparams.get("fin_payment_id") != JSONObject.NULL) {
+        // Payment is already created. Load it.
+        final String strFinPaymentID = jsonRequest.getString("finPaymentId");
+        payment = OBDal.getInstance().get(FIN_Payment.class, strFinPaymentID);
       } else {
-        documentEnabled = paymentDocumentEnabled;
+        try {
+          payment = createNewPayment(jsonparams, isReceipt, org, businessPartner, paymentDate,
+              currency, exchangeRate, convertedAmount, strActualPayment);
+        } catch (OBException e) {
+          JSONObject errorMessage = new JSONObject();
+          errorMessage.put("severity", "error");
+          errorMessage.put("text", e.getMessage());
+          jsonRequest.put("message", errorMessage);
+          return errorMessage;
+        }
       }
 
-      if (documentEnabled
-          && !FIN_Utility.isPeriodOpen(vars.getClient(), strDocBaseType, strOrgId, strPaymentDate)
-          && orgLegalWithAccounting) {
-        String messag = OBMessageUtils.translateError(conn, vars, vars.getLanguage(),
-            Utility.messageBD(conn, "PeriodNotAvailable", vars.getLanguage())).getMessage();
-        JSONObject errorMessage = new JSONObject();
-        errorMessage.put("severity", "error");
-        errorMessage.put("text", messag);
-        jsonRequest.put("message", errorMessage);
-        return errorMessage;
-      }
-
-      if (strPaymentDocumentNo.startsWith("<")) {
-        // get DocumentNo
-        strPaymentDocumentNo = Utility.getDocumentNo(conn, vars, "AddPaymentFromInvoice",
-            "FIN_Payment", strDocTypeId, strDocTypeId, false, true);
-      }
-
-      FIN_Payment payment = FIN_AddPayment.savePayment(null, isReceipt,
-          dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo,
-          dao.getObject(BusinessPartner.class, strReceivedFromId),
-          dao.getObject(FIN_PaymentMethod.class, strPaymentMethodId),
-          dao.getObject(FIN_FinancialAccount.class, strFinancialAccountId), strActualPayment,
-          FIN_Utility.getDate(strPaymentDate), dao.getObject(Organization.class, strOrgId),
-          strReferenceNo, selectedPaymentDetails, selectedPaymentDetailAmounts,
-          strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"),
-          dao.getObject(Currency.class, strCurrencyId), exchangeRate, convertedAmount);
+      payment = FIN_AddPayment.savePayment(payment, isReceipt, null, null, null, null, null,
+          strActualPayment, null, null, null, selectedPaymentDetails, selectedPaymentDetailAmounts,
+          strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"), currency,
+          exchangeRate, convertedAmount);
 
       // Credit to Use Grid
       JSONArray selectedCreditLines = creditToUseGrid.getJSONArray("_selection");
@@ -236,8 +180,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           final StringBuffer description = new StringBuffer();
           if (creditPayment.getDescription() != null && !creditPayment.getDescription().equals(""))
             description.append(creditPayment.getDescription()).append("\n");
-          description.append(String.format(
-              Utility.messageBD(conn, "APRM_CreditUsedPayment", vars.getLanguage()),
+          description.append(String.format(OBMessageUtils.messageBD("APRM_CreditUsedPayment"),
               payment.getDocumentNo()));
           String truncateDescription = (description.length() > 255) ? description.substring(0, 251)
               .concat("...").toString() : description.toString();
@@ -250,116 +193,19 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       }
 
       // Add GL Item lines
-      if (addedGLITemsArray.length() > 0) {
-        for (int i = 0; i < addedGLITemsArray.length(); i++) {
-          JSONObject glItem = addedGLITemsArray.getJSONObject(i);
-          BigDecimal glItemOutAmt = BigDecimal.ZERO;
-          BigDecimal glItemInAmt = BigDecimal.ZERO;
-
-          if (glItem.has("paidOut")) {
-            glItemOutAmt = new BigDecimal(glItem.getString("paidOut"));
-          }
-          if (glItem.has("receivedIn")) {
-            glItemInAmt = new BigDecimal(glItem.getString("receivedIn"));
-          }
-
-          BigDecimal glItemAmt = BigDecimal.ZERO;
-          if (isReceipt) {
-            glItemAmt = glItemInAmt.subtract(glItemOutAmt);
-          } else {
-            glItemAmt = glItemOutAmt.subtract(glItemInAmt);
-          }
-          String strGLItemId = null;
-          if (glItem.has("gLItem")) {
-            strGLItemId = glItem.getString("gLItem");
-            checkID(strGLItemId);
-          }
-
-          // Accounting Dimensions
-          BusinessPartner businessPartnerGLItem = null;
-          if (glItem.has("businessPartner")) {
-            final String strElement_BP = glItem.getString("businessPartner");
-            checkID(strElement_BP);
-            businessPartnerGLItem = dao.getObject(BusinessPartner.class, strElement_BP);
-          }
-          Product product = null;
-          if (glItem.has("product")) {
-            final String strElement_PR = glItem.getString("product");
-            checkID(strElement_PR);
-            product = dao.getObject(Product.class, strElement_PR);
-          }
-          Project project = null;
-          if (glItem.has("project")) {
-            final String strElement_PJ = glItem.getString("project");
-            checkID(strElement_PJ);
-            project = dao.getObject(Project.class, strElement_PJ);
-          }
-          ABCActivity activity = null;
-          if (glItem.has("cActivityDim")) {
-            final String strElement_AY = glItem.getString("cActivityDim");
-            checkID(strElement_AY);
-            activity = null;
-          }
-          Costcenter costCenter = null;
-          if (glItem.has("costCenter")) {
-            final String strElement_CC = glItem.getString("costCenter");
-            checkID(strElement_CC);
-            costCenter = dao.getObject(Costcenter.class, strElement_CC);
-          }
-          Campaign campaign = null;
-          if (glItem.has("cCampaignDim")) {
-            final String strElement_MC = glItem.getString("cCampaignDim");
-            checkID(strElement_MC);
-            campaign = null;
-          }
-          UserDimension1 user1 = null;
-          if (glItem.has("stDimension")) {
-            final String strElement_U1 = glItem.getString("stDimension");
-            checkID(strElement_U1);
-            user1 = dao.getObject(UserDimension1.class, strElement_U1);
-          }
-          UserDimension2 user2 = null;
-          if (glItem.has("ndDimension")) {
-            final String strElement_U2 = glItem.getString("ndDimension");
-            checkID(strElement_U2);
-            user2 = dao.getObject(UserDimension2.class, strElement_U2);
-          }
-          FIN_AddPayment
-              .saveGLItem(payment, glItemAmt, dao.getObject(GLItem.class, strGLItemId),
-                  businessPartner, product, project, campaign, activity, null, costCenter, user1,
-                  user2);
-        }
-      }
+      JSONArray addedGLITemsArray = gLItemsGrid.getJSONArray("_selection");
+      addGLItems(payment, addedGLITemsArray);
 
       if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
           || strAction.equals("PPW")) {
 
-        message = FIN_AddPayment.processPayment(vars, conn,
-            (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
-        String strNewPaymentMessage = Utility.parseTranslation(conn, vars, vars.getLanguage(),
-            "@PaymentCreated@" + " " + payment.getDocumentNo()) + ".";
-        if (!"Error".equalsIgnoreCase(message.getType()))
-          message.setMessage(strNewPaymentMessage + " " + message.getMessage());
-        if (strDifferenceAction.equals("refund")) {
-          Boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
-          FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(conn, vars, payment,
-              refundAmount.negate(), exchangeRate);
-          OBError auxMessage = FIN_AddPayment.processPayment(vars, conn,
-              (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
-          if (newPayment && !"Error".equalsIgnoreCase(auxMessage.getType())) {
-            final String strNewRefundPaymentMessage = Utility.parseTranslation(conn, vars,
-                vars.getLanguage(), "@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo())
-                + ".";
-            message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
-            if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
-              payment.setDescription(payment.getDescription() + strNewRefundPaymentMessage + "\n");
-              OBDal.getInstance().save(payment);
-              OBDal.getInstance().flush();
-            }
-          } else {
-            message = auxMessage;
-          }
-        }
+        OBError message = processPayment(payment, strAction, strDifferenceAction, refundAmount,
+            exchangeRate);
+        JSONObject errorMessage = new JSONObject();
+        errorMessage.put("severity", message.getType().toLowerCase());
+        errorMessage.put("title", message.getTitle());
+        errorMessage.put("text", message.getMessage());
+        jsonRequest.put("message", errorMessage);
       }
 
     } catch (Exception e) {
@@ -369,8 +215,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       try {
         jsonRequest = new JSONObject();
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
-        String message = OBMessageUtils.translateError(new DalConnectionProvider(), vars,
-            vars.getLanguage(), ex.getMessage()).getMessage();
+        String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("text", message);
@@ -384,6 +229,182 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       OBContext.restorePreviousMode();
     }
     return jsonRequest;
+  }
+
+  private FIN_Payment createNewPayment(JSONObject jsonparams, boolean isReceipt, Organization org,
+      BusinessPartner bPartner, Date paymentDate, Currency currency, BigDecimal conversionRate,
+      BigDecimal convertedAmt, String strActualPayment) throws OBException, JSONException {
+
+    String strPaymentDocumentNo = jsonparams.getString("payment_documentno");
+    String strReferenceNo = jsonparams.getString("reference_no");
+    String strFinancialAccountId = jsonparams.getString("fin_financial_account_id");
+    FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+        strFinancialAccountId);
+    String strPaymentMethodId = jsonparams.getString("fin_paymentmethod_id");
+    FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
+        strPaymentMethodId);
+
+    DocumentType documentType = FIN_Utility.getDocumentType(org, isReceipt ? "ARR" : "APP");
+    boolean documentEnabled = true;
+    String strDocBaseType = documentType.getDocumentCategory();
+
+    String strAction = (isReceipt ? "PRP" : "PPP");
+
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        OBContext.getOBContext().getCurrentClient().getId());
+    boolean orgLegalWithAccounting = osp.getLegalEntityOrBusinessUnit(org).getOrganizationType()
+        .isLegalEntityWithAccounting();
+
+    boolean paymentDocumentEnabled = getDocumentConfirmation(finAccount, paymentMethod, isReceipt,
+        strActualPayment, true);
+
+    if ((strAction.equals("PRD") || strAction.equals("PPW") || FIN_Utility
+        .isAutomaticDepositWithdrawn(finAccount, paymentMethod, isReceipt))
+        && new BigDecimal(strActualPayment).compareTo(BigDecimal.ZERO) != 0) {
+      documentEnabled = paymentDocumentEnabled
+          || getDocumentConfirmation(finAccount, paymentMethod, isReceipt, strActualPayment, false);
+    } else {
+      documentEnabled = paymentDocumentEnabled;
+    }
+
+    if (documentEnabled
+        && !FIN_Utility.isPeriodOpen(OBContext.getOBContext().getCurrentClient().getId(),
+            strDocBaseType, org.getId(), OBDateUtils.formatDate(paymentDate))
+        && orgLegalWithAccounting) {
+      String messag = OBMessageUtils.translateError(OBMessageUtils.messageBD("PeriodNotAvailable"))
+          .getMessage();
+      throw new OBException(messag);
+    }
+
+    String strPaymentAmount = "0";
+    if (strPaymentDocumentNo.startsWith("<")) {
+      // get DocumentNo
+      strPaymentDocumentNo = FIN_Utility.getDocumentNo(documentType, "FIN_Payment");
+    }
+
+    FIN_Payment payment = (new AdvPaymentMngtDao()).getNewPayment(isReceipt, org, documentType,
+        strPaymentDocumentNo, bPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate,
+        strReferenceNo, currency, conversionRate, convertedAmt);
+    return payment;
+  }
+
+  private void addGLItems(FIN_Payment payment, JSONArray addedGLITemsArray) throws JSONException,
+      ServletException {
+    boolean isReceipt = payment.isReceipt();
+    for (int i = 0; i < addedGLITemsArray.length(); i++) {
+      JSONObject glItem = addedGLITemsArray.getJSONObject(i);
+      BigDecimal glItemOutAmt = BigDecimal.ZERO;
+      BigDecimal glItemInAmt = BigDecimal.ZERO;
+
+      if (glItem.has("paidOut") && glItem.get("paidOut") != JSONObject.NULL) {
+        glItemOutAmt = new BigDecimal(glItem.getString("paidOut"));
+      }
+      if (glItem.has("receivedIn") && glItem.get("receivedIn") != JSONObject.NULL) {
+        glItemInAmt = new BigDecimal(glItem.getString("receivedIn"));
+      }
+
+      BigDecimal glItemAmt = BigDecimal.ZERO;
+      if (isReceipt) {
+        glItemAmt = glItemInAmt.subtract(glItemOutAmt);
+      } else {
+        glItemAmt = glItemOutAmt.subtract(glItemInAmt);
+      }
+      String strGLItemId = null;
+      if (glItem.has("gLItem") && glItem.get("gLItem") != JSONObject.NULL) {
+        strGLItemId = glItem.getString("gLItem");
+        checkID(strGLItemId);
+      }
+
+      // Accounting Dimensions
+      BusinessPartner businessPartnerGLItem = null;
+      if (glItem.has("businessPartner") && glItem.get("businessPartner") != JSONObject.NULL) {
+        final String strElement_BP = glItem.getString("businessPartner");
+        checkID(strElement_BP);
+        businessPartnerGLItem = OBDal.getInstance().get(BusinessPartner.class, strElement_BP);
+      }
+      Product product = null;
+      if (glItem.has("product") && glItem.get("product") != JSONObject.NULL) {
+        final String strElement_PR = glItem.getString("product");
+        checkID(strElement_PR);
+        product = OBDal.getInstance().get(Product.class, strElement_PR);
+      }
+      Project project = null;
+      if (glItem.has("project") && glItem.get("project") != JSONObject.NULL) {
+        final String strElement_PJ = glItem.getString("project");
+        checkID(strElement_PJ);
+        project = OBDal.getInstance().get(Project.class, strElement_PJ);
+      }
+      ABCActivity activity = null;
+      if (glItem.has("cActivityDim") && glItem.get("cActivityDim") != JSONObject.NULL) {
+        final String strElement_AY = glItem.getString("cActivityDim");
+        checkID(strElement_AY);
+        activity = null;
+      }
+      Costcenter costCenter = null;
+      if (glItem.has("costCenter") && glItem.get("costCenter") != JSONObject.NULL) {
+        final String strElement_CC = glItem.getString("costCenter");
+        checkID(strElement_CC);
+        costCenter = OBDal.getInstance().get(Costcenter.class, strElement_CC);
+      }
+      Campaign campaign = null;
+      if (glItem.has("cCampaignDim") && glItem.get("cCampaignDim") != JSONObject.NULL) {
+        final String strElement_MC = glItem.getString("cCampaignDim");
+        checkID(strElement_MC);
+        campaign = null;
+      }
+      UserDimension1 user1 = null;
+      if (glItem.has("stDimension") && glItem.get("stDimension") != JSONObject.NULL) {
+        final String strElement_U1 = glItem.getString("stDimension");
+        checkID(strElement_U1);
+        user1 = OBDal.getInstance().get(UserDimension1.class, strElement_U1);
+      }
+      UserDimension2 user2 = null;
+      if (glItem.has("ndDimension") && glItem.get("ndDimension") != JSONObject.NULL) {
+        final String strElement_U2 = glItem.getString("ndDimension");
+        checkID(strElement_U2);
+        user2 = OBDal.getInstance().get(UserDimension2.class, strElement_U2);
+      }
+      FIN_AddPayment.saveGLItem(payment, glItemAmt,
+          OBDal.getInstance().get(GLItem.class, strGLItemId), businessPartnerGLItem, product,
+          project, campaign, activity, null, costCenter, user1, user2);
+    }
+  }
+
+  private OBError processPayment(FIN_Payment payment, String strAction, String strDifferenceAction,
+      BigDecimal refundAmount, BigDecimal exchangeRate) throws Exception {
+    ConnectionProvider conn = new DalConnectionProvider(true);
+    VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+    OBError message = FIN_AddPayment.processPayment(vars, conn,
+        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
+    String strNewPaymentMessage = OBMessageUtils.parseTranslation("@PaymentCreated@" + " "
+        + payment.getDocumentNo())
+        + ".";
+    if (!"Error".equalsIgnoreCase(message.getType())) {
+      message.setMessage(strNewPaymentMessage + " " + message.getMessage());
+      message.setType(message.getType().toLowerCase());
+    }
+    if (!strDifferenceAction.equals("refund")) {
+      return message;
+    }
+    boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
+    FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(conn, vars, payment,
+        refundAmount.negate(), exchangeRate);
+    OBError auxMessage = FIN_AddPayment.processPayment(vars, conn,
+        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
+    if (newPayment && !"Error".equalsIgnoreCase(auxMessage.getType())) {
+      final String strNewRefundPaymentMessage = OBMessageUtils
+          .parseTranslation("@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo()) + ".";
+      message.setMessage(strNewRefundPaymentMessage + " " + message.getMessage());
+      if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) != 0) {
+        payment.setDescription(payment.getDescription() + strNewRefundPaymentMessage + "\n");
+        OBDal.getInstance().save(payment);
+        OBDal.getInstance().flush();
+      }
+    } else {
+      message = auxMessage;
+    }
+
+    return message;
   }
 
   /**
@@ -456,7 +477,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           return new BigDecimal(selectedRow.getString("amount"));
         }
       }
-      return new BigDecimal(0);
+      return BigDecimal.ZERO;
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error(e.getMessage(), e);
@@ -552,26 +573,88 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
    * @param allselection
    * @param _selectedCreditPayments
    * @return
+   * @throws JSONException
    */
   private HashMap<String, BigDecimal> getSelectedCreditLinesAndAmount(JSONArray allselection,
-      List<FIN_Payment> _selectedCreditPayments) {
+      List<FIN_Payment> _selectedCreditPayments) throws JSONException {
     HashMap<String, BigDecimal> selectedCreditLinesAmounts = new HashMap<String, BigDecimal>();
 
+    for (FIN_Payment creditPayment : _selectedCreditPayments) {
+      for (int i = 0; i < allselection.length(); i++) {
+        JSONObject selectedRow = allselection.getJSONObject(i);
+        if (selectedRow.getString("id").equals(creditPayment.getId())) {
+          selectedCreditLinesAmounts.put(creditPayment.getId(),
+              new BigDecimal(selectedRow.getString("paymentAmount")));
+        }
+      }
+    }
+    return selectedCreditLinesAmounts;
+  }
+
+  private boolean getDocumentConfirmation(FIN_FinancialAccount finAccount,
+      FIN_PaymentMethod finPaymentMethod, boolean isReceipt, String strPaymentAmount,
+      boolean isPayment) {
+    // Checks if this step is configured to generate accounting for the selected financial account
+    boolean confirmation = false;
+    OBContext.setAdminMode();
     try {
-      for (FIN_Payment creditPayment : _selectedCreditPayments) {
-        for (int i = 0; i < allselection.length(); i++) {
-          JSONObject selectedRow = allselection.getJSONObject(i);
-          if (selectedRow.getString("id").equals(creditPayment.getId())) {
-            selectedCreditLinesAmounts.put(creditPayment.getId(),
-                new BigDecimal(selectedRow.getString("paymentAmount")));
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, finAccount));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, finPaymentMethod));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
+      List<FinAccPaymentMethod> lines = obCriteria.list();
+      List<FIN_FinancialAccountAccounting> accounts = finAccount.getFINFinancialAccountAcctList();
+      String uponUse = "";
+      if (isPayment) {
+        if (isReceipt) {
+          uponUse = lines.get(0).getUponReceiptUse();
+        } else {
+          uponUse = lines.get(0).getUponPaymentUse();
+        }
+      } else {
+        if (isReceipt) {
+          uponUse = lines.get(0).getUponDepositUse();
+        } else {
+          uponUse = lines.get(0).getUponWithdrawalUse();
+        }
+      }
+      for (FIN_FinancialAccountAccounting account : accounts) {
+        if (confirmation) {
+          return confirmation;
+        }
+        if (isReceipt) {
+          if (("INT").equals(uponUse) && account.getInTransitPaymentAccountIN() != null) {
+            confirmation = true;
+          } else if (("DEP").equals(uponUse) && account.getDepositAccount() != null) {
+            confirmation = true;
+          } else if (("CLE").equals(uponUse) && account.getClearedPaymentAccount() != null) {
+            confirmation = true;
+          }
+        } else {
+          if (("INT").equals(uponUse) && account.getFINOutIntransitAcct() != null) {
+            confirmation = true;
+          } else if (("WIT").equals(uponUse) && account.getWithdrawalAccount() != null) {
+            confirmation = true;
+          } else if (("CLE").equals(uponUse) && account.getClearedPaymentAccountOUT() != null) {
+            confirmation = true;
+          }
+        }
+        // For payments with Amount ZERO always create an entry as no transaction will be created
+        if (isPayment) {
+          BigDecimal amount = new BigDecimal(strPaymentAmount);
+          if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            confirmation = true;
           }
         }
       }
     } catch (Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      log.error(e.getMessage(), e);
-      return null;
+      return confirmation;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return selectedCreditLinesAmounts;
+    return confirmation;
   }
+
 }
