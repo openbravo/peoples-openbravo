@@ -21,8 +21,6 @@ package org.openbravo.advpaymentmngt.hqlinjections;
 
 import java.util.Map;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -94,8 +92,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
       // Replace where filters and having count clause
       if (requestParameters.containsKey("criteria")) {
-        String criteria = requestParameters.get("criteria");
-        hqlQuery = replaceFiltersAndHavingClause(hqlQuery, criteria, transactionType);
+        hqlQuery = replaceFiltersAndHavingClause(hqlQuery, transactionType);
       } else {
         hqlQuery = hqlQuery.replace("@havingClause@", "");
       }
@@ -147,8 +144,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
       // Replace where filters and having count clause
       if (requestParameters.containsKey("criteria")) {
-        String criteria = requestParameters.get("criteria");
-        hqlQuery = replaceFiltersAndHavingClause(hqlQuery, criteria, transactionType);
+        hqlQuery = replaceFiltersAndHavingClause(hqlQuery, transactionType);
       } else {
         hqlQuery = hqlQuery.replace("@havingClause@", "");
       }
@@ -200,8 +196,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
       // Replace where filters and having count clause
       if (requestParameters.containsKey("criteria")) {
-        String criteria = requestParameters.get("criteria");
-        hqlQuery = replaceFiltersAndHavingClause(hqlQuery, criteria, transactionType);
+        hqlQuery = replaceFiltersAndHavingClause(hqlQuery, transactionType);
       } else {
         hqlQuery = hqlQuery.replace("@havingClause@", "");
       }
@@ -223,176 +218,79 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return transformedHql;
   }
 
-  /**
-   * @param hqlQuery
-   *          : original hql query
-   * @param criteria
-   *          : filters of the query
-   * @param transactionType
-   *          : Invoices, Orders or Both
-   * @return
-   */
-  private String replaceFiltersAndHavingClause(String _hqlQuery, String criteria,
-      String transactionType) {
+  private String replaceFiltersAndHavingClause(String _hqlQuery, String transactionType) {
     String hqlQuery = _hqlQuery;
-    String[] fieldsInCriteria = criteria.split("__;__");
     StringBuffer havingClause = new StringBuffer();
 
-    try {
-      if ("I".equals(transactionType)) {
-        for (int i = 0; i < fieldsInCriteria.length; i++) {
-          JSONObject jsonCriteria = new JSONObject(fieldsInCriteria[i]);
-          String fieldName = jsonCriteria.getString("fieldName");
-          if ("salesOrderNo".equals(fieldName)) {
-            if (havingClause.length() <= 0) {
-              havingClause.append(" having (");
-            }
-            String strToReplace = "@" + fieldName + "@";
-            String strToReplaceBeginning = "upper(@salesOrderNo@)";
-            String strToReplaceWith = getAggregatorFunction("ord.documentNo");
-            String strToRemoveFromQuery = replaceHavingClause(hqlQuery, strToReplace,
-                strToReplaceBeginning, strToReplaceWith, havingClause);
-            if (strToRemoveFromQuery.toLowerCase().contains(" and")) {
-              hqlQuery = hqlQuery.replace(strToRemoveFromQuery, " 1=1 and ");
-            } else {
-              hqlQuery = hqlQuery.replace(strToRemoveFromQuery, " 1=1 ");
-            }
-            String strReplaced = strToRemoveFromQuery.replace(strToReplace, strToReplaceWith);
-            // Remove and from having count
-            if (strReplaced.toLowerCase().contains(" and")) {
-              strReplaced = strReplaced.substring(0, strReplaced.indexOf(" and"));
-            }
-            havingClause.append(strReplaced);
+    // Get the substring of grid filter inside where clause, if transaction type is "Orders" or
+    // "Invoices", put in the having clause
+    int whereIndex = hqlQuery.indexOf(" where ");
+    int orgFilterIndex = hqlQuery.indexOf(" psd.organization in ", whereIndex);
+    int beginIndex = hqlQuery.indexOf(" AND ", orgFilterIndex);
+    int endIndex = hqlQuery.indexOf("and @whereClause@");
+    String gridFilters = hqlQuery.substring(beginIndex, endIndex);
+    String havingGridFilters = gridFilters.substring(4, gridFilters.length());
 
-          } else if ("invoiceNo".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@invoiceNo@", "inv.documentNo");
-          } else if ("outstandingAmount".equals(fieldName)) {
-            // Remove the aggregate function from where clause and put in having clause
-            if (havingClause.length() <= 0) {
-              havingClause.append(" having (");
-            } else {
-              havingClause.append(" and ");
-            }
-            String strToReplace = "@" + fieldName + "@";
-            String strToReplaceBeginning = "@outstandingAmount@";
-            String strToReplaceWith = "SUM(psd.amount)";
-            String strToRemoveFromQuery = replaceHavingClause(hqlQuery, strToReplace,
-                strToReplaceBeginning, strToReplaceWith, havingClause);
-            if (strToRemoveFromQuery.toLowerCase().contains(" and")) {
-              hqlQuery = hqlQuery.replace(strToRemoveFromQuery, " 2=2 and ");
-            } else {
-              hqlQuery = hqlQuery.replace(strToRemoveFromQuery, " 2=2 ");
-            }
-            hqlQuery = hqlQuery.replace(strToRemoveFromQuery, "");
-            String strReplaced = strToRemoveFromQuery.replace(strToReplace, strToReplaceWith);
-            // Remove and
-            if (strReplaced.toLowerCase().contains(" and")) {
-              strReplaced = strReplaced.substring(0, strReplaced.indexOf(" and"));
-            }
-            havingClause.append(strReplaced);
-          }
-        }
-      } else if ("O".equals(transactionType)) {
-        for (int i = 0; i < fieldsInCriteria.length; i++) {
-          JSONObject jsonCriteria = new JSONObject(fieldsInCriteria[i]);
-          String fieldName = jsonCriteria.getString("fieldName");
-          if ("salesOrderNo".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@salesOrderNo@", "ord.documentNo");
-          } else if ("invoiceNo".equals(fieldName)) {
-            if (havingClause.length() <= 0) {
-              havingClause.append(" having (");
-            }
-            String strToReplace = "@" + fieldName + "@";
-            String strToReplaceBeginning = "upper(@invoiceNo@)";
-            String strToReplaceWith = getAggregatorFunction("inv.documentNo");
-            String strToRemoveFromQuery = replaceHavingClause(hqlQuery, strToReplace,
-                strToReplaceBeginning, strToReplaceWith, havingClause);
-            if (strToRemoveFromQuery.toLowerCase().contains(" and")) {
-              hqlQuery = hqlQuery.replace(strToRemoveFromQuery, " 1=1 and ");
-            } else {
-              hqlQuery = hqlQuery.replace(strToRemoveFromQuery, " 1=1 ");
-            }
-            String strReplaced = strToRemoveFromQuery.replace(strToReplace, strToReplaceWith);
-            // Remove and from having count
-            if (strReplaced.toLowerCase().contains(" and")) {
-              strReplaced = strReplaced.substring(0, strReplaced.indexOf(" and"));
-            }
-            havingClause.append(strReplaced);
-          } else if ("outstandingAmount".equals(fieldName)) {
-            // Remove the aggregate function from where clause and put in having clause
-            if (havingClause.length() <= 0) {
-              havingClause.append(" having (");
-            } else {
-              havingClause.append(" and ");
-            }
-            String strToReplace = "@" + fieldName + "@";
-            String strToReplaceBeginning = "@outstandingAmount@";
-            String strToReplaceWith = "SUM(psd.amount)";
-            String strToRemoveFromQuery = replaceHavingClause(hqlQuery, strToReplace,
-                strToReplaceBeginning, strToReplaceWith, havingClause);
-            if (strToRemoveFromQuery.toLowerCase().contains(" and")) {
-              hqlQuery = hqlQuery.replace(strToRemoveFromQuery, " 2=2 and ");
-            } else {
-              hqlQuery = hqlQuery.replace(strToRemoveFromQuery, " 2=2 ");
-            }
-            hqlQuery = hqlQuery.replace(strToRemoveFromQuery, "");
-            String strReplaced = strToRemoveFromQuery.replace(strToReplace, strToReplaceWith);
-            // Remove and
-            if (strReplaced.toLowerCase().contains(" and")) {
-              strReplaced = strReplaced.substring(0, strReplaced.indexOf(" and"));
-            }
-            havingClause.append(strReplaced);
-          }
-        }
-      } else {
-        for (int i = 0; i < fieldsInCriteria.length; i++) {
-          JSONObject jsonCriteria = new JSONObject(fieldsInCriteria[i]);
-          String fieldName = jsonCriteria.getString("fieldName");
-          if ("salesOrderNo".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@salesOrderNo@", "ord.documentNo");
-          } else if ("invoiceNo".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@invoiceNo@", "inv.documentNo");
-          } else if ("outstandingAmount".equals(fieldName)) {
-            hqlQuery = hqlQuery.replace("@outstandingAmount@", "psd.amount");
-          }
-        }
+    if ("I".equals(transactionType)) {
+      hqlQuery = hqlQuery.replace(gridFilters, " ");
+
+      if (havingGridFilters.contains("@paymentScheduleDetail@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@paymentScheduleDetail@",
+            getAggregatorFunction("psd.id"));
       }
-      havingClause.append(" )");
+      if (havingGridFilters.contains("@salesOrderNo@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@salesOrderNo@",
+            getAggregatorFunction("ord.documentNo"));
+      }
+      if (havingGridFilters.contains("@invoiceNo@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@", "inv.documentNo");
+      }
+      if (havingGridFilters.contains("@outstandingAmount@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@outstandingAmount@", "SUM(psd.amount)");
+      }
+      havingClause.append(" having ( " + havingGridFilters + " )");
       hqlQuery = hqlQuery.replace("@havingClause@", havingClause.toString());
-      return hqlQuery;
-    } catch (JSONException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-      return null;
+    } else if ("O".equals(transactionType)) {
+      hqlQuery = hqlQuery.replace(gridFilters, " ");
+
+      if (havingGridFilters.contains("@paymentScheduleDetail@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@paymentScheduleDetail@",
+            getAggregatorFunction("psd.id"));
+      }
+      if (havingGridFilters.contains("@salesOrderNo@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@salesOrderNo@", "ord.documentNo");
+      }
+      if (havingGridFilters.contains("@invoiceNo@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@",
+            getAggregatorFunction("inv.documentNo"));
+      }
+      if (havingGridFilters.contains("@outstandingAmount@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@outstandingAmount@", "SUM(psd.amount)");
+      }
+      havingClause.append(" having ( " + havingGridFilters + " )");
+      hqlQuery = hqlQuery.replace("@havingClause@", havingClause.toString());
+    } else {
+      if (havingGridFilters.contains("@paymentScheduleDetail@")) {
+        hqlQuery = hqlQuery.replaceAll("@paymentScheduleDetail@", "psd.id");
+      }
+      if (havingGridFilters.contains("@salesOrderNo@")) {
+        hqlQuery = hqlQuery.replaceAll("@salesOrderNo@", "ord.documentNo");
+      }
+      if (havingGridFilters.contains("@invoiceNo@")) {
+        hqlQuery = hqlQuery.replaceAll("@invoiceNo@", "inv.documentNo");
+      }
+      if (havingGridFilters.contains("@outstandingAmount@")) {
+        hqlQuery = hqlQuery.replaceAll("@outstandingAmount@", "psd.amount");
+      }
+      hqlQuery = hqlQuery.replace("@havingClause@", "");
     }
+    return hqlQuery;
   }
 
   /**
-   * @param hqlQuery
-   * @param strToReplace
-   * @param strToReplaceBeginning
-   * @param strToReplaceWith
-   * @param havingClause
+   * @param expression
    * @return
    */
-  private String replaceHavingClause(String _hqlQuery, String strToReplace,
-      String strToReplaceBeginning, String strToReplaceWith, StringBuffer havingClause) {
-    String hqlQuery = _hqlQuery;
-    String strReplaced = null;
-    int beginIndex = hqlQuery.indexOf(strToReplaceBeginning);
-    int endIndexParenthesis = hqlQuery.indexOf(" ) ", beginIndex);
-    int endIndexAnd = hqlQuery.indexOf(" and ", beginIndex);
-    int endIndex = 0;
-    if (endIndexParenthesis < endIndexAnd || endIndexAnd == -1) {
-      endIndex = endIndexParenthesis;
-    } else {
-      // + 4 to remove and sentence
-      endIndex = endIndexAnd + 4;
-    }
-    strReplaced = hqlQuery.substring(beginIndex, endIndex);
-    return strReplaced;
-  }
-
   private String getAggregatorFunction(String expression) {
     if (RDBMS.equals("ORACLE")) {
       return " stragg(" + expression + ")";
