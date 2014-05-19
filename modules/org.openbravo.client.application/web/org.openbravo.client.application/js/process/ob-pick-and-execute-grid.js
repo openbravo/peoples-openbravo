@@ -752,5 +752,12 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   checkShowFilterFunnelIcon: function (criteria) {
     this.Super('checkShowFilterFunnelIcon', [criteria, this.contentView.messageBar]);
+  },
+
+  removeRecordClick: function (rowNum, colNum) {
+    this.Super('removeRecordClick', arguments);
+    // prevents the deleted line from being partially displayed
+    this.markForRedraw();
   }
+
 });
