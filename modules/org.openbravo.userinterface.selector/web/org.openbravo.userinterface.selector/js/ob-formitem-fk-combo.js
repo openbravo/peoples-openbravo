@@ -169,5 +169,18 @@ isc.OBFKComboItem.addProperties({
         }
       }
     });
+  },
+
+  destroy: function () {
+    var p;
+    if (this.pickList && isc.isA.Array(this.pickList.gridComponents)) {
+      for (p = 0; p < this.pickList.gridComponents.length; p++) {
+        if (this.pickList.gridComponents[p].destroy) {
+          // Preventing leaks: these components are not automatically destroyed
+          this.pickList.gridComponents[p].destroy();
+        }
+      }
+    }
+    this.Super('destroy', arguments);
   }
 });
