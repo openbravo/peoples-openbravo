@@ -945,7 +945,11 @@ isc.OBSelectorItem.addClassMethods({
     params._selectorDefinitionId = selector.selectorDefinitionId;
 
     if (selector.isComboReference) {
-      params._currentValue = selector.getValue();
+      if (selector.getValue && selector.getValue()) {
+        // sending current value only if set (not null) to be able
+        // to include it even validation is not matched
+        params._currentValue = selector.getValue();
+      }
     } else {
       // add field's default filter expressions
       params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
