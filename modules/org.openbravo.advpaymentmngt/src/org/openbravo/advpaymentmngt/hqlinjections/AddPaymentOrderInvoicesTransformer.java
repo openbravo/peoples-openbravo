@@ -293,7 +293,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
    */
   private String getAggregatorFunction(String expression) {
     if (RDBMS.equals("ORACLE")) {
-      return " stragg(" + expression + ")";
+      return " stragg(to_char(" + expression + "))";
     }
     return " array_to_string(array_agg(" + expression + "), ',')";
   }
