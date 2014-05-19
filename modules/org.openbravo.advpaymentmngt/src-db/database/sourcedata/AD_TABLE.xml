@@ -81,8 +81,8 @@ left outer join ips.fINPaymentPriority as ipriority
 left outer join ips.finPaymentmethod as ipsfp
 left outer join psd.organization as org 
 left outer join org.organizationInformationList as oinfo 
-where @whereClause@
-and @additional_filters@
+where @additional_filters@
+and @whereClause@
 group by @groupByClause@
 @havingClause@]]></HQLQUERY>
 <!--58AF4D3E594B421A9A7307480736F03E-->  <ENTITY_ALIAS><![CDATA[psd]]></ENTITY_ALIAS>
