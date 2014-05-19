@@ -782,7 +782,9 @@ isc.OBGrid.addProperties({
       return;
     }
     // if no message bar is provided, use the message bar of the view 
-    messageBar = messageBar || this.view.messageBar;
+    if (!messageBar && this.view && this.view.messageBar) {
+      messageBar = this.view.messageBar;
+    }
     var gridIsFiltered = this.isGridFiltered(criteria);
     var noParentOrParentSelected = !this.view || !this.view.parentView || (this.view.parentView.viewGrid.getSelectedRecords() && this.view.parentView.viewGrid.getSelectedRecords().length > 0);
 
