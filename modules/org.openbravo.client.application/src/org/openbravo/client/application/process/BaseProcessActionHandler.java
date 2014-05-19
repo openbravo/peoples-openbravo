@@ -98,7 +98,8 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
         JSONObject jsonRequest = new JSONObject(content);
         if (!jsonRequest.isNull("_params")) {
           JSONObject jsonparams = jsonRequest.getJSONObject("_params");
-          JSONObject jsongrid = jsonparams.getJSONObject("grid");
+          String gridParamName = jsonparams.names().getString(0);
+          JSONObject jsongrid = jsonparams.getJSONObject(gridParamName);
           jsonRequest.put("_selection", jsongrid.getJSONArray("_selection"));
           jsonRequest.put("_allRows", jsongrid.getJSONArray("_allRows"));
           updatedContent = jsonRequest.toString();
