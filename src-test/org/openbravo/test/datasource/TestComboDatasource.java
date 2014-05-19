@@ -126,7 +126,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     JSONArray data = getData(jsonResponse);
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
-    assertEquals("number of filtered records", 3, data.length());
+    assertEquals("number of filtered records", 4, data.length());
   }
 
   /**
