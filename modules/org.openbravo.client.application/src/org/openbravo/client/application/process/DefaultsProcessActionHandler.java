@@ -101,8 +101,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
             if (isSessionDefaultValue(rawDefaultValue) && context != null) {
               // Transforms the default value from @columnName@ to the column inp name
               inpName = "inp"
-                  + Sqlc.TransformaNombreColumna(rawDefaultValue.substring(1,
-                      rawDefaultValue.length() - 1));
+                  + Sqlc.TransformaNombreColumna(dependentDefaultValue(rawDefaultValue));
               defaultValue = context.get(inpName);
               inpName = "inp" + Sqlc.TransformaNombreColumna(param.getDBColumnName());
             } else {
@@ -279,8 +278,14 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
     return true;
   }
 
+  /**
+   * Removes the leading and preceding '@' from a default value
+   * 
+   * @param rawDefaultValue
+   *          defaultValue surrounded by '@', i.e. '@AD_USER_ID@'
+   * @return the rawDefaultValue, after removing the first and the last caracters
+   */
   private String dependentDefaultValue(String rawDefaultValue) {
     return rawDefaultValue.substring(1, rawDefaultValue.length() - 1);
   }
 }
-
