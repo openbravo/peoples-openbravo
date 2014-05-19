@@ -101,7 +101,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
             if (isSessionDefaultValue(rawDefaultValue) && context != null) {
               // Transforms the default value from @columnName@ to the column inp name
               inpName = "inp"
-                  + Sqlc.TransformaNombreColumna(dependentDefaultValue(rawDefaultValue));
+                  + Sqlc.TransformaNombreColumna(getDependentDefaultValue(rawDefaultValue));
               defaultValue = context.get(inpName);
               inpName = "inp" + Sqlc.TransformaNombreColumna(param.getDBColumnName());
             } else {
@@ -258,7 +258,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
           paramsWithDefaultValue.remove(i);
           i = 0;
         } else {
-          dependentDefaultValue = dependentDefaultValue(parameter.getDefaultValue());
+          dependentDefaultValue = getDependentDefaultValue(parameter.getDefaultValue());
           String inpName = "inp" + Sqlc.TransformaNombreColumna(dependentDefaultValue);
           if (paramsAddedToOrderList.contains(dependentDefaultValue)
               || context.get(inpName) != null) {
@@ -285,7 +285,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
    *          defaultValue surrounded by '@', i.e. '@AD_USER_ID@'
    * @return the rawDefaultValue, after removing the first and the last caracters
    */
-  private String dependentDefaultValue(String rawDefaultValue) {
+  private String getDependentDefaultValue(String rawDefaultValue) {
     return rawDefaultValue.substring(1, rawDefaultValue.length() - 1);
   }
 }
