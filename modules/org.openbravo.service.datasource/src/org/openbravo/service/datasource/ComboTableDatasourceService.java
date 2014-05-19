@@ -158,9 +158,14 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         newParameters.put("@ONLY_ONE_RECORD@", singleRecord);
         newParameters.put("@ACTUAL_VALUE@", singleRecord);
       }
+
+      if (parameters.get("_currentValue") != null) {
+        newParameters.put("@ACTUAL_VALUE@", parameters.get("_currentValue"));
+      }
+
       if (StringUtils.isEmpty(filterString) || "Y".equals(onChange)) {
         fps = comboTableData.select(new DalConnectionProvider(false), newParameters,
-            getValueFromSession && !comboreload, startRow, endRow != -1 ? endRow + 1 : endRow);
+            true && !comboreload, startRow, endRow != -1 ? endRow + 1 : endRow);
       } else {
         fps = comboTableData.filter(new DalConnectionProvider(false), newParameters,
             getValueFromSession && !comboreload, startRow, endRow + 1, filterString);

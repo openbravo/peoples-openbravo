@@ -944,7 +944,9 @@ isc.OBSelectorItem.addClassMethods({
     // adds the selector id to filter used to get filter information
     params._selectorDefinitionId = selector.selectorDefinitionId;
 
-    if (!selector.isComboReference) {
+    if (selector.isComboReference) {
+      params._currentValue = selector.getValue();
+    } else {
       // add field's default filter expressions
       params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
     }
