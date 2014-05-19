@@ -65,7 +65,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
   public String fetch(Map<String, String> parameters) {
     Field field = null;
     FieldProvider[] fps = null;
-    String fieldId = parameters.get("fieldId"), value = null, classicValue = null;
+    String fieldId = parameters.get("fieldId");
     int startRow = -1, endRow = -1;
     try {
       checkAccess(fieldId);
@@ -108,12 +108,9 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       }
 
       field = OBDal.getInstance().get(Field.class, fieldId);
-      Boolean getValueFromSession = Boolean.getBoolean(parameters.get("getValueFromSession"));
       String columnValue = parameters.get("columnValue");
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
-      boolean comboreload = rq.getRequestParameter("donotaddcurrentelement") != null
-          && rq.getRequestParameter("donotaddcurrentelement").equals("true");
       String ref = field.getColumn().getReference().getId();
       String objectReference = "";
       if (field.getColumn().getReferenceSearchKey() != null) {
@@ -151,7 +148,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
 
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
           vars, new FieldProviderFactory(parameters), field.getTab().getWindow().getId(),
-          (getValueFromSession && !comboreload) ? columnValue : "");
+          columnValue);
 
       if (parameters.get("_currentValue") != null) {
         newParameters.put("@ACTUAL_VALUE@", parameters.get("_currentValue"));
@@ -160,8 +157,8 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       if (!StringUtils.isEmpty(filterString)) {
         newParameters.put("FILTER_VALUE", filterString);
       }
-      fps = comboTableData.select(new DalConnectionProvider(false), newParameters,
-          true && !comboreload, startRow, endRow);
+      fps = comboTableData.select(new DalConnectionProvider(false), newParameters, true, startRow,
+          endRow);
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
@@ -188,29 +185,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         entry.put(JsonConstants.IDENTIFIER, fp.getField("NAME"));
         comboEntries.add(entry);
       }
-      if (getValueFromSession && !comboreload) {
-        value = columnValue;
-        classicValue = columnValue;
-      } else {
-        if (possibleIds.contains(columnValue)) {
-          value = columnValue;
-          classicValue = columnValue;
-        } else {
-          // In case the default value doesn't exist in the combo values, we choose the first one
-          if (comboEntries.size() > 0) {
-            if (comboEntries.get(0).has(JsonConstants.ID)) {
-              value = comboEntries.get(0).get(JsonConstants.ID).toString();
-              classicValue = comboEntries.get(0).get(JsonConstants.ID).toString();
-            } else {
-              value = null;
-              classicValue = null;
-            }
-          } else {
-            value = "";
-            classicValue = "";
-          }
-        }
-      }
+
       log.debug("fetch operation for ComboTableDatasourceService took: {} ms",
           (System.currentTimeMillis() - init));
 
@@ -218,8 +193,6 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       try {
         final JSONObject jsonResult = new JSONObject();
         final JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put("value", value);
-        jsonResponse.put("classicValue", classicValue);
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
         jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
         jsonResponse.put(JsonConstants.RESPONSE_ENDROW, comboEntries.size() + startRow - 1);
