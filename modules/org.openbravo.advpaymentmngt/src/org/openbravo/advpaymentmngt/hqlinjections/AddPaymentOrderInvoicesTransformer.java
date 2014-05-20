@@ -64,7 +64,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
           .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
       selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
       selectClause.append(" 0 as amount, ");
-      selectClause.append(" 'N' as writeoff ");
+      selectClause.append(" 'N' as writeoff, ");
+      selectClause.append(" 'N' as OB_Selected ");
 
       // Create WhereClause
       whereClause.append(" psd.paymentDetails is null ");
@@ -116,7 +117,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
           .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
       selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
       selectClause.append(" 0 as amount, ");
-      selectClause.append(" 'N' as writeoff ");
+      selectClause.append(" 'N' as writeoff, ");
+      selectClause.append(" 'N' as OB_Selected ");
 
       // Create WhereClause
       whereClause.append(" psd.paymentDetails is null ");
@@ -167,7 +169,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
           .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
       selectClause.append(" psd.amount as outstandingAmount, ");
       selectClause.append(" 0 as amount, ");
-      selectClause.append(" 'N' as writeoff ");
+      selectClause.append(" 'N' as writeoff, ");
+      selectClause.append(" 'N' as OB_Selected ");
 
       // Create WhereClause
       whereClause.append(" psd.paymentDetails is null ");
