@@ -48,11 +48,10 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFetchWithoutLimitParameters() throws Exception {
-    setContext("100");
+    setOBContext("100");
     // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "876");
-    params.put("columnValue", "1757");
     params.put("_operationType", "fetch");
 
     String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
@@ -75,7 +74,6 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "876");
-    params.put("columnValue", "1757");
     params.put("_operationType", "fetch");
     params.put("_startRow", "1");
     params.put("_endRow", "1000");
@@ -93,11 +91,10 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testPaginatedFetch() throws Exception {
-    setContext("100");
+    setOBContext("100");
     // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "876");
-    params.put("columnValue", "1757");
     params.put("_operationType", "fetch");
     params.put("_startRow", "20");
     params.put("_endRow", "40");
@@ -115,11 +112,10 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFilter() throws Exception {
-    setContext("100");
+    setOBContext("100");
     // Using values of visible at user in preference
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
-    params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
     params.put("_operationType", "fetch");
     params.put("_startRow", "0");
     params.put("_endRow", "10");
@@ -131,7 +127,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     JSONArray data = getData(jsonResponse);
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
-    assertEquals("number of filtered records", 4, data.length());
+    assertEquals("number of filtered records", 3, data.length());
   }
 
   /**
@@ -140,11 +136,10 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFilterWithPagination() throws Exception {
-    setContext("100");
+    setOBContext("100");
     // Using values of visible at user in preference
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
-    params.put("columnValue", "927D156047B06E92E040A8C0CF071D3D");
     params.put("_operationType", "fetch");
     // try to filter by string 'Jo'
     params.put("criteria",
@@ -165,7 +160,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testAccess() throws Exception {
-    setContext("100");
+    setOBContext("100");
     // Using values of window dropdown in menu
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "206");
@@ -185,7 +180,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testAccessForFilter() throws Exception {
-    setContext("100");
+    setOBContext("100");
     // Using values of window dropdown in menu
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "206");
@@ -243,7 +238,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     return jsonResponse.getJSONObject("response").get("status").toString();
   }
 
-  private void setContext(String user) {
+  private void setOBContext(String user) {
     OBContext.setOBContext("100");
   }
 

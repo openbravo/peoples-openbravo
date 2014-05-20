@@ -963,7 +963,10 @@ public class ComboTableData {
       text.append(" LIMIT " + numberOfRows + " OFFSET " + startRow);
     }
     if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
-      if (endRow == 0) {
+      if (startRow == 0) {
+        startRow++;
+        endRow++;
+      } else if (endRow == 0) {
         endRow++;
       }
       String oraQuery = "select * from ( select a.*, ROWNUM rnum from ( " + text.toString()

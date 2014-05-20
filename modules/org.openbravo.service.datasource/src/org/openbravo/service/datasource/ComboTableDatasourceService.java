@@ -71,7 +71,8 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     Entity targetEntity = null;
     String filterString = null;
 
-    int startRow = -1, endRow = -1;
+    int startRow = -1, endRow = -1, num = 0;
+    ;
     try {
       field = OBDal.getInstance().get(Field.class, fieldId);
       column = field.getColumn();
@@ -114,7 +115,6 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         }
       }
 
-      String columnValue = parameters.get("columnValue");
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
       String ref = (String) DalUtil.getId(column.getReference());
@@ -135,7 +135,9 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       if (column.getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
         clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
             windowId, accessLevel);
-        clientList = vars.getSessionValue("#User_Client");
+        if (clientList != null) {
+          clientList = vars.getSessionValue("#User_Client");
+        }
         orgList = null;
       }
 
@@ -149,12 +151,9 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref,
           column.getDBColumnName(), objectReference, validation, orgList, clientList);
       Map<String, String> newParameters = null;
-      if (StringUtils.isNotEmpty(filterString)) {
-        columnValue = filterString;
-      }
 
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
-          vars, new FieldProviderFactory(parameters), windowId, columnValue);
+          vars, new FieldProviderFactory(parameters), windowId, null);
 
       if (parameters.get("_currentValue") != null) {
         newParameters.put("@ACTUAL_VALUE@", parameters.get("_currentValue"));
@@ -173,6 +172,11 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         entry.put(JsonConstants.ID, (String) null);
         entry.put(JsonConstants.IDENTIFIER, (String) null);
         comboEntries.add(entry);
+        // if we are fetching 76 records,with the additional null entry to it becomes 77.
+        // so increasing it by 3 to force additional fetch
+        num = (endRow + 3);
+      } else {
+        num = (endRow + 2);
       }
       for (FieldProvider fp : fps) {
         JSONObject entry = new JSONObject();
@@ -188,8 +192,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
         jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
         jsonResponse.put(JsonConstants.RESPONSE_ENDROW, comboEntries.size() + startRow - 1);
-        int num = 0;
-        num = (endRow + 2);
+
         if ((endRow - startRow) > comboEntries.size()) {
           num = startRow + comboEntries.size();
         }
