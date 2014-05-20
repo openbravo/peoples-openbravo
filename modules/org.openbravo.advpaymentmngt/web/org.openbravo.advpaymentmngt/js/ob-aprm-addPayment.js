@@ -18,78 +18,94 @@
  */
 OB.APRM.AddPayment = {};
 
-OB.APRM.AddPayment.onLoad = function(view) {
-    OB.APRM.paymentMethodOnLoadFunction(view);
+OB.APRM.AddPayment.onLoad = function (view) {
+  OB.APRM.AddPayment.paymentMethodMulticurrency(null, view, null, null);
 };
 
-OB.APRM.AddPayment.addNewGLItem = function(grid) {
-    var selectedRecord = grid.view.parentWindow.views[0].getParentRecord();
-    var returnObject = isc.addProperties({}, grid.data[0]);
-    returnObject.organization = selectedRecord.organization;
-    return returnObject;
+OB.APRM.AddPayment.addNewGLItem = function (grid) {
+  var selectedRecord = grid.view.parentWindow.views[0].getParentRecord();
+  var returnObject = isc.addProperties({}, grid.data[0]);
+  returnObject.organization = selectedRecord.organization;
+  return returnObject;
 };
 
-OB.APRM.AddPayment.paymentMethodOnChangeFunction = function(item, view, form, grid) {
-    var paymentMethodId = item.getValue(),
-        callback, isPayinIsMulticurrency;
-    callback = function(response, data, request) {
-        isPayinIsMulticurrency = data.isPayinIsMulticurrency;
-        if (isPayinIsMulticurrency) {
-            form.getItem('c_currency_to_id').visible = true;
-            form.redraw();
-        } else {
-            form.getItem('c_currency_to_id').visible = false;
-            form.getItem('c_currency_to_id').setValue(form.getItem('c_currency_id').getValue());
-            form.redraw();
-        }
-    };
-    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
-        paymentMethodId: paymentMethodId
-    }, {}, callback);
-};
+OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, form, grid) {
+  var paymentMethodId, callback, isPayinIsMulticurrency;
+  if (item) {
+    paymentMethodId = item.getValue();
+  } else {
+    paymentMethodId = view.theForm.getItem('fin_paymentmethod_id').getValue();
+  }
 
-OB.APRM.AddPayment.paymentMethodOnLoadFunction = function(view) {
-    var paymentMethodId = view.theForm.getItem('fin_paymentmethod_id').getValue(),
-        callback, isPayinIsMulticurrency;
-    callback = function(response, data, request) {
-        isPayinIsMulticurrency = data.isPayinIsMulticurrency;
-        if (isPayinIsMulticurrency) {
-            view.theForm.getItem('c_currency_to_id').visible = true;
-            view.theForm.redraw();
-        } else {
-            view.theForm.getItem('c_currency_to_id').visible = false;
-            view.theForm.redraw();
-        }
-    };
-    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
-        paymentMethodId: paymentMethodId
-    }, {}, callback);
-};
+  callback = function (response, data, request) {
+    isPayinIsMulticurrency = data.isPayinIsMulticurrency;
+    if (isPayinIsMulticurrency) {
+      if (form) {
+        form.getItem('c_currency_to_id').visible = true;
+        form.redraw();
+      } else {
+        view.theForm.getItem('c_currency_to_id').visible = true;
+        view.theForm.redraw();
+      }
+    } else {
+      if (form) {
+        form.getItem('c_currency_to_id').visible = false;
+        form.getItem('c_currency_to_id').setValue(form.getItem('c_currency_id').getValue());
+        form.redraw();
+      } else {
+        view.theForm.getItem('c_currency_to_id').visible = false;
+        view.theForm.redraw();
+      }
 
-OB.APRM.AddPayment.transactionTypeOnChangeFunction = function(item, view, form, grid) {
-    form.getItem('order_invoice').canvas.viewGrid.invalidateCache();
-    form.getItem('order_invoice').canvas.viewGrid.fetchData(form.getItem('order_invoice').canvas.viewGrid.getCriteria());
-    form.redraw();
-};
-
-OB.APRM.AddPayment.distributeAmount = function(view) {
-    var actualPayment = view.theForm.getItem('actual_payment').getValue(),
-        distributedAmount = 0,
-        keepSelection = false,
-        chk=view.theForm.getItem('order_invoice').canvas.viewGrid.selectedIds, scheduledPaymentDetailId, outstandingAmount, j, i,
-        isGLItemEnabled=view.theForm.getItem('glitem').canvas.viewGrid.isVisible() ;
-    if (isGLItemEnabled) {
-        actualPayment = actualPayment - view.theForm.getItem('amount_gl_items').getValue();
     }
-    
-    
-    
-    OB.APRM.AddPayment.updateTotal();
-    return true;
+  };
+  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
+    paymentMethodId: paymentMethodId
+  }, {}, callback);
+};
+
+OB.APRM.AddPayment.paymentMethodOnLoadFunction = function (view) {
+  var paymentMethodId = view.theForm.getItem('fin_paymentmethod_id').getValue(),
+      callback, isPayinIsMulticurrency;
+  callback = function (response, data, request) {
+    isPayinIsMulticurrency = data.isPayinIsMulticurrency;
+    if (isPayinIsMulticurrency) {
+      view.theForm.getItem('c_currency_to_id').visible = true;
+      view.theForm.redraw();
+    } else {
+      view.theForm.getItem('c_currency_to_id').visible = false;
+      view.theForm.redraw();
+    }
+  };
+  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
+    paymentMethodId: paymentMethodId
+  }, {}, callback);
+};
+
+OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form, grid) {
+  form.getItem('order_invoice').canvas.viewGrid.invalidateCache();
+  form.getItem('order_invoice').canvas.viewGrid.fetchData(form.getItem('order_invoice').canvas.viewGrid.getCriteria());
+  form.redraw();
+};
+
+OB.APRM.AddPayment.distributeAmount = function (view) {
+  var actualPayment = view.theForm.getItem('actual_payment').getValue(),
+      distributedAmount = 0,
+      keepSelection = false,
+      chk = view.theForm.getItem('order_invoice').canvas.viewGrid.selectedIds,
+      scheduledPaymentDetailId, outstandingAmount, j, i, isGLItemEnabled = view.theForm.getItem('glitem').canvas.viewGrid.isVisible();
+  if (isGLItemEnabled) {
+    actualPayment = actualPayment - view.theForm.getItem('amount_gl_items').getValue();
+  }
+
+
+
+  OB.APRM.AddPayment.updateTotal();
+  return true;
 
 };
 
 
-OB.APRM.AddPayment.updateTotal = function() {
-	
+OB.APRM.AddPayment.updateTotal = function () {
+
 };
