@@ -56,16 +56,14 @@ public class ADTableEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     checkClassNameForDuplicates(event);
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -83,7 +81,7 @@ public class ADTableEventHandler extends EntityPersistenceEventObserver {
     Object packageName = event.getCurrentState(packageNameProperty);
     final Property dataOriginTypeProperty = tableEntity.getProperty(Table.PROPERTY_DATAORIGINTYPE);
     Object dataOriginType = event.getCurrentState(dataOriginTypeProperty);
-    if (!ApplicationConstants.DATASOURCEBASEDTABLE.equals(dataOriginType) && javaClassName != null) {
+    if (ApplicationConstants.TABLEBASEDTABLE.equals(dataOriginType) && javaClassName != null) {
       OBCriteria<Table> tableCriteria = OBDal.getInstance().createCriteria(Table.class);
       tableCriteria.add(Restrictions.eq(Table.PROPERTY_JAVACLASSNAME, javaClassName));
       tableCriteria.add(Restrictions.eq(Table.PROPERTY_DATAPACKAGE, packageName));

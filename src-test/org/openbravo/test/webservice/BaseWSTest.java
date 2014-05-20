@@ -30,6 +30,7 @@ import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.util.Properties;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -38,10 +39,13 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBConfigFileProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.test.base.BaseTest;
 import org.xml.sax.ErrorHandler;
@@ -59,10 +63,10 @@ import org.xml.sax.XMLReader;
 public class BaseWSTest extends BaseTest {
 
   private static final Logger log = Logger.getLogger(BaseWSTest.class);
-
-  private static final String OB_URL = "http://localhost:8081/openbravo";
-  private static final String LOGIN = "Openbravo";
-  private static final String PWD = "openbravo";
+  private static final String CONTEXT_PROPERTY = "context.url";
+  private static String OB_URL = null;
+  protected static final String LOGIN = "Openbravo";
+  protected static final String PWD = "openbravo";
 
   private String xmlSchema = null;
 
@@ -214,6 +218,11 @@ public class BaseWSTest extends BaseTest {
     return doTestGetRequest(wsPart, testContent, responseCode, true);
   }
 
+  protected String doTestGetRequest(String wsPart, String testContent, int responseCode,
+      boolean validate) {
+    return doTestGetRequest(wsPart, testContent, responseCode, validate, true);
+  }
+
   /**
    * Executes a GET request. The content is validated against the XML schema retrieved using the
    * /ws/dal/schema webservice call.
@@ -228,10 +237,13 @@ public class BaseWSTest extends BaseTest {
    *          the expected HTTP response code
    * @param validate
    *          if true then the response content is validated against the Openbravo XML Schema
+   * @param logError
+   *          indicates whether in case of Exception it should be logged, this param should be false
+   *          when Exception is exptected in order not to pollute the log
    * @return the content returned from the GET request
    */
   protected String doTestGetRequest(String wsPart, String testContent, int responseCode,
-      boolean validate) {
+      boolean validate, boolean logException) {
     try {
       final HttpURLConnection hc = createConnection(wsPart, "GET");
       hc.connect();
@@ -262,7 +274,7 @@ public class BaseWSTest extends BaseTest {
         throw e;
       }
     } catch (final Exception e) {
-      throw new OBException("Exception when executing ws: " + wsPart, e);
+      throw new OBException("Exception when executing ws: " + wsPart, e, logException);
     }
   }
 
@@ -302,6 +314,17 @@ public class BaseWSTest extends BaseTest {
    * @return the url of the Openbravo instance.
    */
   protected String getOpenbravoURL() {
+    if (OB_URL != null) {
+      return OB_URL;
+    }
+    Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+    System.out.println(OBConfigFileProvider.getInstance().getFileLocation());
+    OB_URL = props.getProperty(CONTEXT_PROPERTY);
+    if (StringUtils.isEmpty(OB_URL)) {
+      throw new OBException(CONTEXT_PROPERTY + " is not set in Openbravo.properties");
+    }
+    log.debug("got OB context: " + OB_URL);
+
     return OB_URL;
   }
 

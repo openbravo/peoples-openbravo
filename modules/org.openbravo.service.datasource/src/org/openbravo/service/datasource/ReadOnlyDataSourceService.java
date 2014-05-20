@@ -65,29 +65,39 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     }
     boolean preventCountOperation = "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
 
-    final List<JSONObject> jsonObjects = fetchJSONObject(parameters);
+    List<JSONObject> jsonObjects = fetchJSONObject(parameters);
 
     // now jsonfy the data
     try {
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-      jsonResponse.put(JsonConstants.RESPONSE_ENDROW, jsonObjects.size() + startRow - 1);
+      int count = -1;
       if (doCount && !preventCountOperation) {
-        int num = getCount(parameters);
-        if (num == -1) {
+        count = getCount(parameters);
+        if (count == -1) {
           int endRow = Integer.parseInt(endRowStr);
-          num = (endRow + 2);
+          count = (endRow + 2);
           if ((endRow - startRow) > jsonObjects.size()) {
-            num = startRow + jsonObjects.size();
+            count = startRow + jsonObjects.size();
           }
         }
-        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, num);
       } else {
-        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS,
-            parameters.get(JsonConstants.RESPONSE_TOTALROWS));
+        count = jsonObjects.size() + startRow;
+        if (endRowStr != null) {
+          int endRow = Integer.parseInt(endRowStr);
+          // computedMaxResults is one too much, if we got one to much then correct
+          // the result and up the count so that the grid knows that there are more
+          int computedMaxResults = endRow - startRow + 1;
+          if (jsonObjects.size() == computedMaxResults) {
+            jsonObjects = jsonObjects.subList(0, jsonObjects.size() - 1);
+            count++;
+          }
+        }
       }
+      jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
+      jsonResponse.put(JsonConstants.RESPONSE_ENDROW, jsonObjects.size() + startRow - 1);
+      jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, count);
       jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(jsonObjects));
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 

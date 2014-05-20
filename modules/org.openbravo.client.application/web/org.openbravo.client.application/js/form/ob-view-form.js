@@ -746,6 +746,7 @@ OB.ViewFormProperties = {
     var columnValues = data.columnValues,
         calloutMessages = data.calloutMessages,
         auxInputs = data.auxiliaryInputValues,
+        overwrittenAuxiliaryInputs = data.overwrittenAuxiliaryInputs,
         prop, value, i, j, dynamicCols = data.dynamicCols,
         sessionAttributes = data.sessionAttributes,
         editValues, item, section, retHiddenInputs = data.hiddenInputs;
@@ -814,6 +815,10 @@ OB.ViewFormProperties = {
           this.auxInputs[prop] = value;
         }
       }
+    }
+
+    if (overwrittenAuxiliaryInputs) {
+      this.overwrittenAuxiliaryInputs = overwrittenAuxiliaryInputs;
     }
 
     if (sessionAttributes) {
@@ -1338,6 +1343,9 @@ OB.ViewFormProperties = {
       requestParams.CHANGED_COLUMN = item.inpColumnName;
     }
     allProperties._entityName = this.view.entity;
+    if (this.overwrittenAuxiliaryInputs) {
+      allProperties.overwrittenAuxiliaryInputs = this.overwrittenAuxiliaryInputs;
+    }
 
     // disable with a delay to allow the focus to be moved to a new field
     // before disabling

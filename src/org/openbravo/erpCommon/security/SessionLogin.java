@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
@@ -101,6 +102,10 @@ public class SessionLogin {
   private void defaultParameters(HttpServletRequest request) {
     setRemoteAddr(request.getRemoteAddr());
     setRemoteHost(request.getRemoteHost());
+    HttpSession requestSession = request.getSession(false);
+    if (requestSession != null) {
+      setWebSession(requestSession.getId());
+    }
     if (log4j.isDebugEnabled())
       log4j.debug("SessionLogin.defaultParameters(request) - Remote Address: " + getRemoteAddr()
           + " - Remote Host: " + getRemoteHost());

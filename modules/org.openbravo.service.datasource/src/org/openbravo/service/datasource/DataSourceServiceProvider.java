@@ -82,6 +82,9 @@ public class DataSourceServiceProvider {
             if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
               dataSource = table.getObserdsDatasource();
               ds.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
+            } else if (ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType())) {
+              dataSource = OBDal.getInstance().get(DataSource.class,
+                  ApplicationConstants.HQL_TABLE_DATASOURCE_ID);
             }
           }
           if (dataSource == null) {

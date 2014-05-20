@@ -310,15 +310,10 @@ isc.OBDateChooser.addProperties({
 OB.Styles.OBFormField.DefaultDateInput = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput',
+  textBoxStyle: 'OBFormFieldDateInput',
   errorOrientation: 'left',
 
   pickerIconHSpace: '0',
-
-  textFieldProperties: {
-    type: 'OBTextField',
-    textBoxStyle: 'OBFormFieldDateInput'
-  },
 
   height: 21,
 

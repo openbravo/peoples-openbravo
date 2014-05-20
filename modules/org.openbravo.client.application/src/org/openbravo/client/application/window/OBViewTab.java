@@ -130,6 +130,11 @@ public class OBViewTab extends BaseTemplateComponent {
     if (sb.length() > 0) {
       dsParameters.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, sb.toString());
     }
+    // If the tab is based on a hql table, then the tableId must be passed to the datasource so that
+    // it can build the datasource properties based on the columns of the table
+    if (ApplicationConstants.HQLBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
+      dsParameters.put("tableId", tab.getTable().getId());
+    }
     DataSourceComponent component = (DataSourceComponent) dsComponentProvider.getComponent(dsId,
         dsParameters);
     if ("OBUIAPP_PickAndExecute".equals(tab.getWindow().getWindowType())) {
@@ -472,10 +477,13 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public String getDataSourceId() {
     String dataSourceId = null;
-    if (ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
+    String dataOriginType = tab.getTable().getDataOriginType();
+    if (ApplicationConstants.TABLEBASEDTABLE.equals(dataOriginType)) {
       dataSourceId = tab.getTable().getName();
-    } else {
+    } else if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(dataOriginType)) {
       dataSourceId = tab.getTable().getObserdsDatasource().getId();
+    } else if (ApplicationConstants.HQLBASEDTABLE.equals(dataOriginType)) {
+      dataSourceId = ApplicationConstants.HQL_TABLE_DATASOURCE_ID;
     }
     return dataSourceId;
   }

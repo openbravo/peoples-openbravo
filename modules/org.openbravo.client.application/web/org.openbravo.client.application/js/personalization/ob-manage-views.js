@@ -170,7 +170,10 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
         //clear grouping, will be applied later
         view.viewGrid.clearGroupBy();
         view.viewGrid.setViewState(viewTabDefinition.grid);
-        if (!view.viewGrid.lazyFiltering) {
+        if (!view.viewGrid.lazyFiltering && !view.viewGrid.targetRecordId) {
+          // do not refresh contents if:
+          //  -lazy: requires user action to refresh
+          //  -direct navigation: it is done centrally after applying personalizations 
           view.viewGrid.refreshContents();
         }
       }

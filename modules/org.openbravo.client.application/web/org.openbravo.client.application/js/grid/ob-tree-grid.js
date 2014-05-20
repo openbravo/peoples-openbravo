@@ -54,9 +54,9 @@ isc.OBTreeGrid.addProperties({
    */
   getCellCSSText: function (record, rowNum, colNum) {
     if (record.notFilterHit) {
-      return 'color:#606060;';
+      return OB.Styles.OBTreeGrid.cellCSSText_notFilterHit;
     } else {
-      return '';
+      return OB.Styles.OBTreeGrid.cellCSSText_filterHit;
     }
   },
 
@@ -129,7 +129,10 @@ isc.OBTreeGrid.addProperties({
   },
 
   handleFilterEditorSubmit: function (criteria, context, callback) {
-    this.setOpenState('[]');
+    if (isc.isA.Tree(this.data)) {
+      // Only reset the open state if the tree already has data
+      this.setOpenState('[]');
+    }
     this.Super('handleFilterEditorSubmit', arguments);
   },
 

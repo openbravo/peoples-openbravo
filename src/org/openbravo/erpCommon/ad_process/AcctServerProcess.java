@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2013 Openbravo SLU
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,7 +83,6 @@ public class AcctServerProcess extends DalBaseProcess {
   private void processClient(VariablesSecureApp vars, ProcessBundle bundle) throws ServletException {
     final String processId = bundle.getProcessId();
     final String pinstanceId = bundle.getPinstanceId();
-
     final ProcessContext ctx = bundle.getContext();
     isDirect = bundle.getChannel() == Channel.DIRECT;
 
@@ -142,6 +141,11 @@ public class AcctServerProcess extends DalBaseProcess {
       strOrg = AcctServerProcessData.selectOrg(connection, pinstanceId);
       strDateFrom = AcctServerProcessData.selectDateFrom(connection, pinstanceId);
       strDateTo = AcctServerProcessData.selectDateTo(connection, pinstanceId);
+    }
+    // If UseRequestOrganizationExecutingRequestProcess preference exists
+    // use process Organization
+    if (AcctServerProcessData.useRequestProcessOrg(connection)) {
+      strOrg = vars.getOrg();
     }
     if (!strTable.equals("")) {
       tables = new String[1];

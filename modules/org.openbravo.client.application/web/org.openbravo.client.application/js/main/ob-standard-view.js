@@ -21,7 +21,6 @@
 isc.ClassFactory.defineClass('OBFormContainerLayout', isc.VLayout);
 
 isc.OBFormContainerLayout.addProperties({
-  canFocus: true,
   width: '100%',
   height: '*',
   overflow: 'auto'
@@ -280,6 +279,12 @@ isc.OBStandardView.addProperties({
     if (this.dataSource) {
       this.dataSource.destroy();
       this.dataSource = null;
+    }
+
+    // destroy notes datasource
+    if (this.notesDataSource) {
+      this.notesDataSource.destroy();
+      this.notesDataSource = null;
     }
     return this.Super('destroy', arguments);
   },

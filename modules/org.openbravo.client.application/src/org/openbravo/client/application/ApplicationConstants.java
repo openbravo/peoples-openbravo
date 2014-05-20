@@ -42,6 +42,7 @@ public class ApplicationConstants {
   public static final String MAIN_LAYOUT_ID = "Application";
   public static final String MAIN_LAYOUT_VIEW_COMPONENT_ID = "View";
   public static final String MAIN_LAYOUT_TEMPLATE_ID = "9E97FF309FE44C61A761F50801F79349";
+  public static final String HQL_TABLE_DATASOURCE_ID = "3C1148C0AB604DE1B51B7EA4112C325F";
 
   public static final String PROPERTIES_TEMPLATE_ID = "DA488BBACB294198AA36A93F03F9561B";
   public static final String PROPERTIES_COMPONENT_ID = "Properties";
@@ -62,6 +63,7 @@ public class ApplicationConstants {
 
   public static final String DATASOURCEBASEDTABLE = "Datasource";
   public static final String TABLEBASEDTABLE = "Table";
+  public static final String HQLBASEDTABLE = "HQL";
 
   static {
     try {

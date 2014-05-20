@@ -149,6 +149,7 @@ isc.OBQuickRun.addProperties({
   // ** {{{ click }}} **
   // clicking the button shows or hides the layout.
   click: function () {
+    var me;
     if (this.showing) {
       this.doHide();
       return false;
@@ -187,6 +188,10 @@ isc.OBQuickRun.addProperties({
     // }
     // }
     var left = this.getLeftPosition();
+
+    // keep current focus element to reset it after closing the widget
+    this.focusOnHide = isc.EH.getFocusCanvas();
+
     if (isc.Page.isRTL()) {
       left = left - this.layout.getVisibleWidth() + this.getVisibleWidth() + 1;
     }
@@ -234,9 +239,21 @@ isc.OBQuickRun.addProperties({
   // is called.
   beforeShow: function () {},
 
+  //** {{{ setExecutingAction }}} **
+  // We are opening the quick run or hiding it, remember it during 100ms not
+  // to try to open it again at the same time
+  setExecutingAction: function () {
+    var me = this;
+    this.executingAction = true;
+    setTimeout(function () {
+      delete me.executingAction;
+    }, 100);
+  },
+
   // ** {{{ doHide }}} **
   // Hide the expanded layout.
   doHide: function () {
+    var me = this;
     this.hideClickMask();
     this.layout.hide();
 
@@ -251,6 +268,17 @@ isc.OBQuickRun.addProperties({
     this.showing = false;
     if (isc.OBQuickRun.currentQuickRun === this) {
       isc.OBQuickRun.currentQuickRun = null;
+    }
+
+    this.focus(); // keeping focus in SC component
+    if (isc.isA.Canvas(this.focusOnHide)) {
+      // setting the focus back to a SC component so keyboard shortcuts continue
+      // working (they do not if focus is in browser). This is needed to be done
+      // with some delay in order to prevent enter key on drop down to be triggered
+      // on this new element (see issue #25910)
+      setTimeout(function () {
+        me.focusOnHide.focus();
+      }, 50);
     }
 
     if (typeof OB.MainView.TabSet.getSelectedTab().pane.tabSelected === 'function') {
