@@ -258,6 +258,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         hqlQuery = hqlQuery + orderByClause;
       }
     }
+    parameters.put("_justCount", String.valueOf(justCount));
 
     Map<String, Object> queryNamedParameters = new HashMap<String, Object>();
 
