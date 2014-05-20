@@ -78,20 +78,17 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
-    JSONObject jsonRequest = null;
+    JSONObject jsonResponse = new JSONObject();
     OBContext.setAdminMode();
     try {
       // Get Params
-      jsonRequest = new JSONObject(content);
+      JSONObject jsonRequest = new JSONObject(content);
+      JSONObject jsonparams = jsonRequest.getJSONObject("_params");
+
       final String strOrgId = jsonRequest.getString("inpadOrgId");
       Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
       // String strTabId = jsonRequest.getString("inpTabId");
-      final String strIssotrx = jsonRequest.getString("inpissotrx");
-      boolean isReceipt = "Y".equals(strIssotrx);
-      JSONObject jsonparams = jsonRequest.getJSONObject("_params");
-
-      JSONObject creditToUseGrid = jsonparams.getJSONObject("credit_to_use");
-      JSONObject gLItemsGrid = jsonparams.getJSONObject("glitem");
+      boolean isReceipt = jsonparams.getBoolean("issotrx");
 
       String strAction = (isReceipt ? "PRP" : "PPP");
 
@@ -105,11 +102,6 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       // Format Date
       String strPaymentDate = jsonparams.getString("payment_date");
       Date paymentDate = JsonUtils.createDateFormat().parse(strPaymentDate);
-      String formattedDate = OBDateUtils.formatDate(paymentDate);
-
-      // String formattedDate = new SimpleDateFormat("dd-MM-yyyy",
-      // Locale.getDefault()).format(date);
-      strPaymentDate = formattedDate;
 
       // TODO
       String strDifferenceAction = "";
@@ -128,7 +120,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       FIN_Payment payment = null;
       if (jsonparams.get("fin_payment_id") != JSONObject.NULL) {
         // Payment is already created. Load it.
-        final String strFinPaymentID = jsonRequest.getString("finPaymentId");
+        final String strFinPaymentID = jsonparams.getString("fin_payment_id");
         payment = OBDal.getInstance().get(FIN_Payment.class, strFinPaymentID);
       } else {
         try {
@@ -138,45 +130,16 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           JSONObject errorMessage = new JSONObject();
           errorMessage.put("severity", "error");
           errorMessage.put("text", e.getMessage());
-          jsonRequest.put("message", errorMessage);
+          jsonResponse.put("message", errorMessage);
           return errorMessage;
         }
       }
+      payment.setAmount(new BigDecimal(strActualPayment));
+      OBDal.getInstance().save(payment);
 
-      addSelectedPSDs(jsonparams, payment);
-
-      // Credit to Use Grid
-      JSONArray selectedCreditLines = creditToUseGrid.getJSONArray("_selection");
-      String strSelectedCreditLinesIds = null;
-      if (selectedCreditLines.length() > 0) {
-        strSelectedCreditLinesIds = getSelectedCreditLinesIds(selectedCreditLines);
-        List<FIN_Payment> selectedCreditPayment = FIN_Utility.getOBObjectList(FIN_Payment.class,
-            strSelectedCreditLinesIds);
-        HashMap<String, BigDecimal> selectedCreditPaymentAmounts = getSelectedCreditLinesAndAmount(
-            selectedCreditLines, selectedCreditPayment);
-
-        // BigDecimal totalUsedCreditAmt = BigDecimal.ZERO;
-        for (final FIN_Payment creditPayment : selectedCreditPayment) {
-          // TODO: Añadir en la descripcion del payment de credito usado en que payment se usa
-          final BigDecimal usedCreditAmt = selectedCreditPaymentAmounts.get(creditPayment.getId());
-          final StringBuffer description = new StringBuffer();
-          if (creditPayment.getDescription() != null && !creditPayment.getDescription().equals(""))
-            description.append(creditPayment.getDescription()).append("\n");
-          description.append(String.format(OBMessageUtils.messageBD("APRM_CreditUsedPayment"),
-              payment.getDocumentNo()));
-          String truncateDescription = (description.length() > 255) ? description.substring(0, 251)
-              .concat("...").toString() : description.toString();
-          creditPayment.setDescription(truncateDescription);
-          // Set Used Credit = Amount + Previous used credit introduced by the user
-          creditPayment.setUsedCredit(usedCreditAmt.add(creditPayment.getUsedCredit()));
-          FIN_PaymentProcess.linkCreditPayment(payment, usedCreditAmt, creditPayment);
-          OBDal.getInstance().save(creditPayment);
-        }
-      }
-
-      // Add GL Item lines
-      JSONArray addedGLITemsArray = gLItemsGrid.getJSONArray("_selection");
-      addGLItems(payment, addedGLITemsArray);
+      addSelectedPSDs(payment, jsonparams);
+      addCredit(payment, jsonparams);
+      addGLItems(payment, jsonparams);
 
       if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
           || strAction.equals("PPW")) {
@@ -187,7 +150,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         errorMessage.put("severity", message.getType().toLowerCase());
         errorMessage.put("title", message.getTitle());
         errorMessage.put("text", message.getMessage());
-        jsonRequest.put("message", errorMessage);
+        jsonResponse.put("message", errorMessage);
       }
 
     } catch (Exception e) {
@@ -195,13 +158,13 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       log.error(e.getMessage(), e);
 
       try {
-        jsonRequest = new JSONObject();
+        jsonResponse = new JSONObject();
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("text", message);
-        jsonRequest.put("message", errorMessage);
+        jsonResponse.put("message", errorMessage);
 
       } catch (Exception e2) {
         log.error(e.getMessage(), e2);
@@ -210,7 +173,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     } finally {
       OBContext.restorePreviousMode();
     }
-    return jsonRequest;
+    return jsonResponse;
   }
 
   private FIN_Payment createNewPayment(JSONObject jsonparams, boolean isReceipt, Organization org,
@@ -267,7 +230,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     return payment;
   }
 
-  private void addSelectedPSDs(JSONObject jsonparams, FIN_Payment payment) throws JSONException {
+  private void addSelectedPSDs(FIN_Payment payment, JSONObject jsonparams) throws JSONException {
     JSONObject orderInvoiceGrid = jsonparams.getJSONObject("order_invoice");
     JSONArray selectedPSDs = orderInvoiceGrid.getJSONArray("_selection");
     for (int i = 0; i < selectedPSDs.length(); i++) {
@@ -313,8 +276,44 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
   }
 
-  private void addGLItems(FIN_Payment payment, JSONArray addedGLITemsArray) throws JSONException,
+  private void addCredit(FIN_Payment payment, JSONObject jsonparams) throws JSONException {
+    // Credit to Use Grid
+    JSONObject creditToUseGrid = jsonparams.getJSONObject("credit_to_use");
+    JSONArray selectedCreditLines = creditToUseGrid.getJSONArray("_selection");
+    String strSelectedCreditLinesIds = null;
+    if (selectedCreditLines.length() > 0) {
+      strSelectedCreditLinesIds = getSelectedCreditLinesIds(selectedCreditLines);
+      List<FIN_Payment> selectedCreditPayment = FIN_Utility.getOBObjectList(FIN_Payment.class,
+          strSelectedCreditLinesIds);
+      HashMap<String, BigDecimal> selectedCreditPaymentAmounts = getSelectedCreditLinesAndAmount(
+          selectedCreditLines, selectedCreditPayment);
+
+      // BigDecimal totalUsedCreditAmt = BigDecimal.ZERO;
+      for (final FIN_Payment creditPayment : selectedCreditPayment) {
+        // TODO: Añadir en la descripcion del payment de credito usado en que payment se usa
+        final BigDecimal usedCreditAmt = selectedCreditPaymentAmounts.get(creditPayment.getId());
+        final StringBuffer description = new StringBuffer();
+        if (creditPayment.getDescription() != null && !creditPayment.getDescription().equals(""))
+          description.append(creditPayment.getDescription()).append("\n");
+        description.append(String.format(OBMessageUtils.messageBD("APRM_CreditUsedPayment"),
+            payment.getDocumentNo()));
+        String truncateDescription = (description.length() > 255) ? description.substring(0, 251)
+            .concat("...").toString() : description.toString();
+        creditPayment.setDescription(truncateDescription);
+        // Set Used Credit = Amount + Previous used credit introduced by the user
+        creditPayment.setUsedCredit(usedCreditAmt.add(creditPayment.getUsedCredit()));
+        FIN_PaymentProcess.linkCreditPayment(payment, usedCreditAmt, creditPayment);
+        OBDal.getInstance().save(creditPayment);
+      }
+    }
+
+  }
+
+  private void addGLItems(FIN_Payment payment, JSONObject jsonparams) throws JSONException,
       ServletException {
+    // Add GL Item lines
+    JSONObject gLItemsGrid = jsonparams.getJSONObject("glitem");
+    JSONArray addedGLITemsArray = gLItemsGrid.getJSONArray("_selection");
     boolean isReceipt = payment.isReceipt();
     for (int i = 0; i < addedGLITemsArray.length(); i++) {
       JSONObject glItem = addedGLITemsArray.getJSONObject(i);
