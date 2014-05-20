@@ -69,6 +69,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     String fieldId = parameters.get("fieldId");
     String windowId = parameters.get("windowId");
     Entity targetEntity = null;
+    String filterString = null;
 
     int startRow = -1, endRow = -1;
     try {
@@ -82,8 +83,6 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     }
     OBContext.setAdminMode();
     try {
-      String filterString = null;
-
       if (!StringUtils.isEmpty(parameters.get("criteria"))) {
         String criteria = parameters.get("criteria");
         for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
@@ -93,7 +92,8 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
               filterString = jsonCriterion.getString("value");
             }
           } catch (JSONException e) {
-            log.error("Error obtaining 'distint' criterion for " + criterion, e);
+            log.error("Error getting criteria for ComboTableDataSoruce - field: " + fieldId
+                + " - criteria: " + criteria, e);
           }
         }
       }
@@ -191,9 +191,6 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         comboEntries.add(entry);
       }
 
-      log.debug("fetch operation for ComboTableDatasourceService took: {} ms",
-          (System.currentTimeMillis() - init));
-
       // now jsonfy the data
       try {
         final JSONObject jsonResult = new JSONObject();
@@ -213,9 +210,11 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         throw new OBException(e);
       }
     } catch (Exception e) {
-      log.error(e.getMessage(), e);
+      log.error("Error in DS for combos - Field: " + fieldId + " - Filter: " + filterString, e);
       throw new OBException(e);
     } finally {
+      log.debug("fetch ComboTableDatasourceService took: {} ms. Field: {}, filter: {}",
+          new Object[] { (System.currentTimeMillis() - init), fieldId, filterString });
       OBContext.restorePreviousMode();
     }
   }
