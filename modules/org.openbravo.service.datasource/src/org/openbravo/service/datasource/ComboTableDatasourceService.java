@@ -19,7 +19,6 @@
 package org.openbravo.service.datasource;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -166,8 +165,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       }
       fps = comboTableData.select(new DalConnectionProvider(false), newParameters, true, startRow,
           endRow);
-      ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
-      values.addAll(Arrays.asList(fps));
+
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
       ArrayList<String> possibleIds = new ArrayList<String>();
       // If column is mandatory we add an initial blank value in the first page if not filtered
@@ -181,7 +179,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       int maxRows = endRow - startRow;
 
       boolean hasMoreRows = false;
-      for (FieldProvider fp : values) {
+      for (FieldProvider fp : fps) {
         if (comboEntries.size() > maxRows && applyLimits) {
           hasMoreRows = true;
           break;
