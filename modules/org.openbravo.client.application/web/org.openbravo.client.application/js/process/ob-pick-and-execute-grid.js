@@ -752,5 +752,21 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   checkShowFilterFunnelIcon: function (criteria) {
     this.Super('checkShowFilterFunnelIcon', [criteria, this.contentView.messageBar]);
+  },
+
+  removeRecordClick: function (rowNum, colNum) {
+    this.Super('removeRecordClick', arguments);
+    // prevents the deleted line from being partially displayed
+    this.markForRedraw();
+  },
+
+  getMinFieldWidth: function (field, ignoreFieldWidth) {
+	// items like _checkbox, _pin and _delete can have a width smaller than the min field width defined for the grid
+    if (field && field.name && field.name.startsWith('_')) {
+      return field.width;
+    } else {
+      this.Super('getMinFieldWidth', arguments);
+    }
   }
+
 });

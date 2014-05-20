@@ -89,19 +89,23 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       SessionInfo.setProcessId(processId);
       SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(false));
 
-      // Compatibility to legacy grids
+      // Adds compatibility with legacy process definitions
+      // If the handler of the process definition has not been updated, then it expects the
+      // _selection and _allRows properties to be accessible directly from the _params object
       Process process = OBDal.getInstance().get(Process.class, processId);
+      String updatedContent = content;
       if (process.isGridlegacy()) {
         JSONObject jsonRequest = new JSONObject(content);
         if (!jsonRequest.isNull("_params")) {
           JSONObject jsonparams = jsonRequest.getJSONObject("_params");
-          JSONObject jsongrid = jsonparams.getJSONObject("grid");
+          String gridParamName = jsonparams.names().getString(0);
+          JSONObject jsongrid = jsonparams.getJSONObject(gridParamName);
           jsonRequest.put("_selection", jsongrid.getJSONArray("_selection"));
           jsonRequest.put("_allRows", jsongrid.getJSONArray("_allRows"));
-          content = jsonRequest.toString();
+          updatedContent = jsonRequest.toString();
         }
       }
-      return doExecute(parameters, content);
+      return doExecute(parameters, updatedContent);
 
     } catch (Exception e) {
       log.error("Error trying to execute process request: " + e.getMessage(), e);
@@ -180,4 +184,3 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   protected abstract JSONObject doExecute(Map<String, Object> parameters, String content);
 }
-

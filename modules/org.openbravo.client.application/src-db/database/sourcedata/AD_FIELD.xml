@@ -1110,15 +1110,15 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--2FF944B417B544C8A8F8757F1C9F3E35-->  <DESCRIPTION><![CDATA[Defines a expression used to filter the property]]></DESCRIPTION>
 <!--2FF944B417B544C8A8F8757F1C9F3E35-->  <HELP><![CDATA[Defines a JavaScript expression that will be evaluated in the server side and used as default value for the property. You can use any type of variable but it must match the property type, examples:
 
-true - the property associated is boolean
-"Hello" - the propery associated is string
-5.3 - the property associated is numeric
+true - the property associated is a  boolean
+"Hello" - the property associated is a string
+5.3 - the property associated is a number
 
 You can also access the Openbravo API through the OB object and do some more complex expressions, e.g.
 
 OB.getSession().getAttribute("SESSIONVAR");
 
-This will retrieve the session variable SESSIONVAR and use it as default value for the selector field]]></HELP>
+This will retrieve the session variable SESSIONVAR and use it as default value for the filter of this field.]]></HELP>
 <!--2FF944B417B544C8A8F8757F1C9F3E35-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--2FF944B417B544C8A8F8757F1C9F3E35-->  <AD_TAB_ID><![CDATA[107]]></AD_TAB_ID>
 <!--2FF944B417B544C8A8F8757F1C9F3E35-->  <AD_COLUMN_ID><![CDATA[AF57BA1162E94EA49127C3B88B543601]]></AD_COLUMN_ID>
@@ -2396,7 +2396,20 @@ Usually, company's internal identifiers for various records (products, customers
 <!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <NAME><![CDATA[Compatibility to legacy grids]]></NAME>
+<!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <NAME><![CDATA[Compatibility with Legacy Grids]]></NAME>
+<!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <DESCRIPTION><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.]]></DESCRIPTION>
+<!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <HELP><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.
+
+The legacy parameter windows could only contain one grid, so the _selection and _allRows properties of the grid were directly accesible in the handler from the params object. I.e:
+
+JSONArray gridRows = jsonparams.getJSONArray(ApplicationConstants.ALL_ROWS_PARAM);
+
+New process definitions should access these value like this:
+JSONObject myGridItem = jsonparams.getJSONObject("myGridItemName");
+JSONArray myGridSelectedRows = myGridItem.getJSONArray("_selection");
+
+The 'Compatibility with Legacy Grids' flag should only be checked if its handler retrieves the grid values in the old way.
+]]></HELP>
 <!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <AD_TAB_ID><![CDATA[FF80818132D7FB620132D819C1720046]]></AD_TAB_ID>
 <!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <AD_COLUMN_ID><![CDATA[3E8FC3621ACE40258A020FE6B0E7A9E0]]></AD_COLUMN_ID>
