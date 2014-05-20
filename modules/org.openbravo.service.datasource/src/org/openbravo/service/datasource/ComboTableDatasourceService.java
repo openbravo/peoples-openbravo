@@ -22,25 +22,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.erpCommon.utility.WindowAccessData;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -63,18 +63,26 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
    */
   @Override
   public String fetch(Map<String, String> parameters) {
+    long init = System.currentTimeMillis();
     Field field = null;
+    Column column = null;
     FieldProvider[] fps = null;
     String fieldId = parameters.get("fieldId");
+    String windowId = parameters.get("windowId");
+    Entity targetEntity = null;
+
     int startRow = -1, endRow = -1;
     try {
-      checkAccess(fieldId);
-    } catch (ServletException e1) {
+      field = OBDal.getInstance().get(Field.class, fieldId);
+      column = field.getColumn();
+      targetEntity = ModelProvider.getInstance().getEntityByTableId(
+          (String) DalUtil.getId(column.getTable()));
+      OBContext.getOBContext().getEntityAccessChecker().checkReadable(targetEntity);
+    } catch (Exception e1) {
       throw new OBException(e1);
     }
     OBContext.setAdminMode();
     try {
-      long init = System.currentTimeMillis();
       String filterString = null;
 
       if (!StringUtils.isEmpty(parameters.get("criteria"))) {
@@ -107,48 +115,47 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         }
       }
 
-      field = OBDal.getInstance().get(Field.class, fieldId);
       String columnValue = parameters.get("columnValue");
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
-      String ref = field.getColumn().getReference().getId();
+      String ref = (String) DalUtil.getId(column.getReference());
       String objectReference = "";
-      if (field.getColumn().getReferenceSearchKey() != null) {
-        objectReference = field.getColumn().getReferenceSearchKey().getId();
+
+      if (column.getReferenceSearchKey() != null) {
+        objectReference = (String) DalUtil.getId(column.getReferenceSearchKey());
       }
       String validation = "";
-      if (field.getColumn().getValidation() != null) {
-        validation = field.getColumn().getValidation().getId();
+      if (column.getValidation() != null) {
+        validation = (String) DalUtil.getId(column.getValidation());
       }
 
       String orgList = Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
       String clientList = Utility.getContext(new DalConnectionProvider(false), vars,
-          "#User_Client", field.getTab().getWindow().getId());
-      if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
+          "#User_Client", windowId);
+      int accessLevel = targetEntity.getAccessLevel().getDbValue();
+      if (column.getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
         clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
-            field.getTab().getWindow().getId(),
-            Integer.parseInt(field.getTab().getTable().getDataAccessLevel()));
+            windowId, accessLevel);
         clientList = vars.getSessionValue("#User_Client");
         orgList = null;
       }
-      if (field.getColumn().getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
-        orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", field
-            .getTab().getWindow().getId(),
-            Integer.parseInt(field.getTab().getTable().getDataAccessLevel()));
+
+      if (column.getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
+        orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", windowId,
+            accessLevel);
       }
 
       ApplicationDictionaryCachedStructures cachedStructures = WeldUtils
           .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-      ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref, field
-          .getColumn().getDBColumnName(), objectReference, validation, orgList, clientList);
+      ComboTableData comboTableData = cachedStructures.getComboTableData(vars, ref,
+          column.getDBColumnName(), objectReference, validation, orgList, clientList);
       Map<String, String> newParameters = null;
       if (StringUtils.isNotEmpty(filterString)) {
         columnValue = filterString;
       }
 
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
-          vars, new FieldProviderFactory(parameters), field.getTab().getWindow().getId(),
-          columnValue);
+          vars, new FieldProviderFactory(parameters), windowId, columnValue);
 
       if (parameters.get("_currentValue") != null) {
         newParameters.put("@ACTUAL_VALUE@", parameters.get("_currentValue"));
@@ -164,7 +171,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
       ArrayList<String> possibleIds = new ArrayList<String>();
       // If column is mandatory we add an initial blank value in the first page if not filtered
-      if (!field.getColumn().isMandatory() && startRow == 0 && StringUtils.isEmpty(filterString)) {
+      if (!column.isMandatory() && startRow == 0 && StringUtils.isEmpty(filterString)) {
         possibleIds.add("");
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, (String) null);
@@ -228,27 +235,5 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
   @Override
   public String update(Map<String, String> parameters, String content) {
     throw new OBException("Method not implemented");
-  }
-
-  private void checkAccess(String fieldId) throws ServletException {
-    Field field = null;
-    String windowId = null, roleId = null;
-    OBContext.setAdminMode();
-    try {
-      field = OBDal.getInstance().get(Field.class, fieldId);
-      windowId = field != null ? field.getTab().getWindow().getId() : null;
-      roleId = OBContext.getOBContext().getRole().getId();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-    // check whether data is accessible
-    boolean hasAccess = WindowAccessData.hasWriteAccess(new DalConnectionProvider(false), windowId,
-        roleId);
-    if (!hasAccess) {
-      String errorMessage = OBMessageUtils.getI18NMessage("OBUIAPP_NoAccess", null);
-      log.error(errorMessage);
-      throw new OBException(errorMessage);
-    }
   }
 }
