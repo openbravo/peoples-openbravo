@@ -167,24 +167,14 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
           endRow);
 
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
-      ArrayList<String> possibleIds = new ArrayList<String>();
       // If column is mandatory we add an initial blank value in the first page if not filtered
       if (!column.isMandatory() && startRow == 0 && StringUtils.isEmpty(filterString)) {
-        possibleIds.add("");
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, (String) null);
         entry.put(JsonConstants.IDENTIFIER, (String) null);
         comboEntries.add(entry);
       }
-      int maxRows = endRow - startRow;
-
-      boolean hasMoreRows = false;
       for (FieldProvider fp : fps) {
-        if (comboEntries.size() > maxRows && applyLimits) {
-          hasMoreRows = true;
-          break;
-        }
-        possibleIds.add(fp.getField("ID"));
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, fp.getField("ID"));
         entry.put(JsonConstants.IDENTIFIER, fp.getField("NAME"));
@@ -198,10 +188,12 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
         jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
         jsonResponse.put(JsonConstants.RESPONSE_ENDROW, comboEntries.size() + startRow - 1);
-
-        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, comboEntries.size() + startRow
-            + (hasMoreRows ? 1 : 0));
-
+        int num = 0;
+        num = (endRow + 2);
+        if ((endRow - startRow) > comboEntries.size()) {
+          num = startRow + comboEntries.size();
+        }
+        jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, num);
         jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(comboEntries));
         jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
