@@ -48,7 +48,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFetchWithoutLimitParameters() throws Exception {
-    OBContext.setOBContext("100");
+    setContext("100");
     // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "876");
@@ -71,7 +71,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFetchWithLargeData() throws Exception {
-    OBContext.setOBContext("100");
+    // setContext("100");
     // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "876");
@@ -93,7 +93,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testPaginatedFetch() throws Exception {
-    OBContext.setOBContext("100");
+    setContext("100");
     // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "876");
@@ -115,7 +115,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFilter() throws Exception {
-    OBContext.setOBContext("100");
+    setContext("100");
     // Using values of visible at user in preference
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
@@ -140,7 +140,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFilterWithPagination() throws Exception {
-    OBContext.setOBContext("100");
+    setContext("100");
     // Using values of visible at user in preference
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
@@ -165,7 +165,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testAccess() throws Exception {
-    OBContext.setOBContext("100");
+    setContext("100");
     // Using values of window dropdown in menu
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "206");
@@ -185,7 +185,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testAccessForFilter() throws Exception {
-    OBContext.setOBContext("100");
+    setContext("100");
     // Using values of window dropdown in menu
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "206");
@@ -241,6 +241,10 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    */
   private String getStatus(JSONObject jsonResponse) throws JSONException {
     return jsonResponse.getJSONObject("response").get("status").toString();
+  }
+
+  private void setContext(String user) {
+    OBContext.setOBContext("100");
   }
 
 }

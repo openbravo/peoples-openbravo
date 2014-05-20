@@ -510,7 +510,6 @@ public abstract class UIDefinition {
   protected String getValueInComboReference(Field field, boolean getValueFromSession,
       String columnValue, boolean onlyFirstRecord) {
     try {
-      String rdbms = new DalConnectionProvider(false).getRDBMS();
       String ref = field.getColumn().getReference().getId();
       boolean isListReference = "17".equals(ref);
       if (!isListReference && !field.getColumn().isMandatory() && StringUtils.isEmpty(columnValue)) {
@@ -564,13 +563,8 @@ public abstract class UIDefinition {
       }
 
       if (!isListReference) {
-        if ("ORACLE".equals(rdbms)) {
-          fps = comboTableData.select(new DalConnectionProvider(false), parameters,
-              getValueFromSession && !comboreload, 0, 1);
-        } else {
-          fps = comboTableData.select(new DalConnectionProvider(false), parameters,
-              getValueFromSession && !comboreload, 0, 0);
-        }
+        fps = comboTableData.select(new DalConnectionProvider(false), parameters,
+            getValueFromSession && !comboreload, 0, 0);
       } else {
         fps = comboTableData.select(new DalConnectionProvider(false), parameters,
             getValueFromSession && !comboreload);

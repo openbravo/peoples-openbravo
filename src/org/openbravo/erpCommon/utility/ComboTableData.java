@@ -933,9 +933,6 @@ public class ComboTableData {
         // filtering by value
         text.append(" AND UPPER(" + nameToCompare + ") like UPPER(?)\n");
       }
-      if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
-        text.append(" AND ROWNUM>=" + startRow + " AND " + " ROWNUM<=" + endRow + " ");
-      }
     }
 
     if (!onlyId) {
@@ -959,14 +956,19 @@ public class ComboTableData {
       else
         text.append("AND ");
       text.append(idName).append(" = ? ");
-      if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
-        text.append(" AND ROWNUM>=" + startRow + " AND " + " ROWNUM<=" + endRow + " ");
-      }
     }
 
     if (applyLimits && rdbms.equalsIgnoreCase("POSTGRE")) {
       int numberOfRows = endRow - startRow + 1;
       text.append(" LIMIT " + numberOfRows + " OFFSET " + startRow);
+    }
+    if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
+      if (endRow == 0) {
+        endRow++;
+      }
+      String oraQuery = "select * from ( select a.*, ROWNUM rnum from ( " + text.toString()
+          + ") a where rownum <= " + endRow + " ) where rnum >= " + startRow + "";
+      return oraQuery;
     }
     return text.toString();
   }
