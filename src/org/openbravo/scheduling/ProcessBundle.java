@@ -66,6 +66,11 @@ public class ProcessBundle {
    */
   public static final String CONFIG_PARAMS = "process.param.configParams";
 
+  /**
+   * String constant id for the Process Group process.
+   */
+  public static final String processGroupId = "5BD4D2B3313E4C708F0AE29095AF16AD";
+
   private String processId;
 
   private String processRequestId;
@@ -213,6 +218,19 @@ public class ProcessBundle {
   public String getParamsDeflated() {
     final XStream xstream = new XStream(new JettisonMappedXmlDriver());
     return xstream.toXML(getParams());
+  }
+
+  /**
+   * Returns true if the process is a group
+   * 
+   * @return true if the process is a group
+   */
+  public boolean isGroup() {
+    if (this.processId.equals(processGroupId)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public void setParams(Map<String, Object> params) {
@@ -367,8 +385,14 @@ public class ProcessBundle {
   public static final ProcessBundle request(String requestId, VariablesSecureApp vars,
       ConnectionProvider conn) throws ServletException {
     final ProcessRequestData data = ProcessRequestData.select(conn, requestId);
+    String processId = "";
 
-    final String processId = data.processId;
+    if (data.isgroup.equals("Y")) {
+      processId = processGroupId;
+    } else {
+      processId = data.processId;
+    }
+
     final boolean isRoleSecurity = data.isrolesecurity != null && data.isrolesecurity.equals("Y");
     final ProcessBundle bundle = new ProcessBundle(processId, requestId, vars, Channel.SCHEDULED,
         data.client, data.organization, isRoleSecurity).init(conn);

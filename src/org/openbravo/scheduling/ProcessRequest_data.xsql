@@ -24,7 +24,8 @@
       <Sql><![CDATA[
       	SELECT AD_Process_Request_ID AS Id, AD_Process_ID AS Process_Id,
       	AD_Client_ID AS Client, AD_Org_Id AS Organization, AD_User_ID AS UserId,
-      	IsRoleSecurity, Status, Channel, Ob_Context, Params, AD_Process_Set_Id	 
+      	IsRoleSecurity, Status, Channel, Ob_Context, Params, AD_Process_Set_Id,
+      	IsGroup, AD_Process_Group_ID	 
       	FROM AD_Process_Request
       	WHERE AD_Process_Request_ID = ?
     ]]></Sql>

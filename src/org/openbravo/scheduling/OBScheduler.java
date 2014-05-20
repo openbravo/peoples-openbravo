@@ -357,7 +357,14 @@ public class OBScheduler {
      */
     private static Trigger newInstance(String name, ProcessBundle bundle, ConnectionProvider conn)
         throws ServletException {
-      final TriggerData data = TriggerData.select(conn, name);
+
+      TriggerData data = new TriggerData();
+
+      if (bundle.isGroup()) {
+        data = TriggerData.selectGroup(conn, name, ProcessBundle.processGroupId);
+      } else {
+        data = TriggerData.select(conn, name);
+      }
 
       Trigger trigger = null;
 
@@ -490,7 +497,7 @@ public class OBScheduler {
       } catch (final ParseException e) {
         final String msg = Utility.messageBD(conn, "TRIG_INVALID_DATA", bundle.getContext()
             .getLanguage());
-        log.error("Error scheduling process {}", data.processName, e);
+        log.error("Error scheduling process {}", data.processName + " " + data.processGroupName, e);
         throw new ServletException(msg + " " + e.getMessage());
       }
 
@@ -500,9 +507,16 @@ public class OBScheduler {
         trigger.setGroup(OB_GROUP);
 
       trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
-      trigger.getJobDataMap().put(Process.PREVENT_CONCURRENT_EXECUTIONS,
-          "Y".equals(data.preventconcurrent));
-      trigger.getJobDataMap().put(Process.PROCESS_NAME, data.processName);
+      // TODO - CONCURRECT EXECUTIONS ON GROUPS ¿Support or no support?
+      if (bundle.isGroup()) {
+        trigger.getJobDataMap().put(Process.PREVENT_CONCURRENT_EXECUTIONS, false);
+      } else {
+        trigger.getJobDataMap().put(Process.PREVENT_CONCURRENT_EXECUTIONS,
+            "Y".equals(data.preventconcurrent));
+      }
+
+      trigger.getJobDataMap().put(Process.PROCESS_NAME,
+          data.processName + " " + data.processGroupName);
 
       trigger.getJobDataMap().put(Process.PROCESS_ID, data.adProcessId);
 
@@ -513,7 +527,8 @@ public class OBScheduler {
         trigger.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
       }
 
-      log.debug("Scheduled process {}. Start time:{}.", data.processName, trigger.getStartTime());
+      log.debug("Scheduled process {}. Start time:{}.", data.processName + " "
+          + data.processGroupName, trigger.getStartTime());
 
       return trigger;
     }
