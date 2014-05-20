@@ -159,7 +159,7 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
         view.childTabSet.selectTab(viewTabDefinition.selectedTab);
       }
       if (view.isRootView || view.isRenderedChildView) {
-        OB.Personalization.applyViewDefinitionToView(view, viewTabDefinition);
+        OB.Personalization.applyViewDefinitionToView(view, viewTabDefinition, showTreeGrid);
       } else {
         // If the view has not been rendered yet, store the 'initialTabDefinition' to be able
         // to set the proper view definition as soon as the view be loaded.
@@ -171,7 +171,7 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
 
 // ** {{{OB.Personalization.applyViewDefinitionToView}}} **
 // Apply a passed view definition to a particular view
-OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition) {
+OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition, showTreeGrid) {
   if (!view || !viewTabDefinition) {
     return;
   }
