@@ -22,11 +22,8 @@ package org.openbravo.advpaymentmngt.actionHandler;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 
@@ -34,6 +31,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.aprm_orderinvoice;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
@@ -92,7 +90,6 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       boolean isReceipt = "Y".equals(strIssotrx);
       JSONObject jsonparams = jsonRequest.getJSONObject("_params");
 
-      JSONObject orderInvoiceGrid = jsonparams.getJSONObject("order_invoice");
       JSONObject creditToUseGrid = jsonparams.getJSONObject("credit_to_use");
       JSONObject gLItemsGrid = jsonparams.getJSONObject("glitem");
 
@@ -118,27 +115,15 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       String strDifferenceAction = "";
       BigDecimal refundAmount = BigDecimal.ZERO;
 
-      // Orders Invoices Grid
-      JSONArray allselection = orderInvoiceGrid.getJSONArray("_selection");
-      String strSelectedScheduledPaymentDetailIds = null;
-      if (allselection.length() > 0) {
-        strSelectedScheduledPaymentDetailIds = getSelectedRowIds(allselection);
-      }
-
       BigDecimal exchangeRate = BigDecimal.ZERO;
       BigDecimal convertedAmount = BigDecimal.ZERO;
-      String strCurrencyToId = jsonparams.getString("c_currency_to_id");
+      // String strCurrencyToId = jsonparams.getString("c_currency_to_id");
       if (jsonparams.get("conversion_rate") != JSONObject.NULL) {
         exchangeRate = new BigDecimal(jsonparams.getString("conversion_rate"));
       }
       if (jsonparams.get("converted_amount") != JSONObject.NULL) {
         convertedAmount = new BigDecimal(jsonparams.getString("converted_amount"));
       }
-
-      List<FIN_PaymentScheduleDetail> selectedPaymentDetails = FIN_Utility.getOBObjectList(
-          FIN_PaymentScheduleDetail.class, strSelectedScheduledPaymentDetailIds);
-      HashMap<String, BigDecimal> selectedPaymentDetailAmounts = getSelectedPaymentDetailsAndAmount(
-          allselection, strSelectedScheduledPaymentDetailIds);
 
       FIN_Payment payment = null;
       if (jsonparams.get("fin_payment_id") != JSONObject.NULL) {
@@ -158,10 +143,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         }
       }
 
-      payment = FIN_AddPayment.savePayment(payment, isReceipt, null, null, null, null, null,
-          strActualPayment, null, null, null, selectedPaymentDetails, selectedPaymentDetailAmounts,
-          strDifferenceAction.equals("writeoff"), strDifferenceAction.equals("refund"), currency,
-          exchangeRate, convertedAmount);
+      addSelectedPSDs(jsonparams, payment);
 
       // Credit to Use Grid
       JSONArray selectedCreditLines = creditToUseGrid.getJSONArray("_selection");
@@ -173,7 +155,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         HashMap<String, BigDecimal> selectedCreditPaymentAmounts = getSelectedCreditLinesAndAmount(
             selectedCreditLines, selectedCreditPayment);
 
-        BigDecimal totalUsedCreditAmt = BigDecimal.ZERO;
+        // BigDecimal totalUsedCreditAmt = BigDecimal.ZERO;
         for (final FIN_Payment creditPayment : selectedCreditPayment) {
           // TODO: Añadir en la descripcion del payment de credito usado en que payment se usa
           final BigDecimal usedCreditAmt = selectedCreditPaymentAmounts.get(creditPayment.getId());
@@ -244,29 +226,26 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
         strPaymentMethodId);
 
-    DocumentType documentType = FIN_Utility.getDocumentType(org, isReceipt ? "ARR" : "APP");
-    boolean documentEnabled = true;
-    String strDocBaseType = documentType.getDocumentCategory();
-
-    String strAction = (isReceipt ? "PRP" : "PPP");
-
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        OBContext.getOBContext().getCurrentClient().getId());
-    boolean orgLegalWithAccounting = osp.getLegalEntityOrBusinessUnit(org).getOrganizationType()
-        .isLegalEntityWithAccounting();
-
     boolean paymentDocumentEnabled = getDocumentConfirmation(finAccount, paymentMethod, isReceipt,
         strActualPayment, true);
-
+    String strAction = (isReceipt ? "PRP" : "PPP");
+    boolean documentEnabled = true;
     if ((strAction.equals("PRD") || strAction.equals("PPW") || FIN_Utility
         .isAutomaticDepositWithdrawn(finAccount, paymentMethod, isReceipt))
-        && new BigDecimal(strActualPayment).compareTo(BigDecimal.ZERO) != 0) {
+        && new BigDecimal(strActualPayment).signum() != 0) {
       documentEnabled = paymentDocumentEnabled
           || getDocumentConfirmation(finAccount, paymentMethod, isReceipt, strActualPayment, false);
     } else {
       documentEnabled = paymentDocumentEnabled;
     }
 
+    DocumentType documentType = FIN_Utility.getDocumentType(org, isReceipt ? "ARR" : "APP");
+    String strDocBaseType = documentType.getDocumentCategory();
+
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        OBContext.getOBContext().getCurrentClient().getId());
+    boolean orgLegalWithAccounting = osp.getLegalEntityOrBusinessUnit(org).getOrganizationType()
+        .isLegalEntityWithAccounting();
     if (documentEnabled
         && !FIN_Utility.isPeriodOpen(OBContext.getOBContext().getCurrentClient().getId(),
             strDocBaseType, org.getId(), OBDateUtils.formatDate(paymentDate))
@@ -286,6 +265,52 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         strPaymentDocumentNo, bPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate,
         strReferenceNo, currency, conversionRate, convertedAmt);
     return payment;
+  }
+
+  private void addSelectedPSDs(JSONObject jsonparams, FIN_Payment payment) throws JSONException {
+    JSONObject orderInvoiceGrid = jsonparams.getJSONObject("order_invoice");
+    JSONArray selectedPSDs = orderInvoiceGrid.getJSONArray("_selection");
+    for (int i = 0; i < selectedPSDs.length(); i++) {
+      JSONObject psdRow = selectedPSDs.getJSONObject(i);
+      String strPSDIds = psdRow.getString(aprm_orderinvoice.PROPERTY_ID);
+      String strPaidAmount = psdRow.getString(aprm_orderinvoice.PROPERTY_AMOUNT);
+      BigDecimal paidAmount = new BigDecimal(strPaidAmount);
+
+      boolean isWriteOff = psdRow.getBoolean(aprm_orderinvoice.PROPERTY_WRITEOFF);
+      // psdIds can be grouped
+      String[] psdIds = strPSDIds.replace(" ", "").split(",");
+      List<FIN_PaymentScheduleDetail> psds = getOrderedPaymentScheduleDetails(psdIds);
+      BigDecimal outstandingAmount = BigDecimal.ZERO;
+      BigDecimal remainingAmount = paidAmount;
+      for (FIN_PaymentScheduleDetail psd : psds) {
+        BigDecimal assignAmount = BigDecimal.ZERO;
+
+        if (psd.getPaymentDetails() != null) {
+          // This schedule detail comes from an edited payment so outstanding amount needs to be
+          // properly calculated
+          List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment.getOutstandingPSDs(psd);
+          if (outStandingPSDs.size() > 0) {
+            outstandingAmount = psd.getAmount().add(outStandingPSDs.get(0).getAmount());
+          } else {
+            outstandingAmount = psd.getAmount();
+          }
+        } else {
+          outstandingAmount = psd.getAmount();
+        }
+        // Manage negative amounts
+        if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0 && remainingAmount
+            .compareTo(outstandingAmount) >= 0)
+            || ((remainingAmount.compareTo(BigDecimal.ZERO) == -1 && outstandingAmount
+                .compareTo(BigDecimal.ZERO) == -1) && (remainingAmount.compareTo(outstandingAmount) <= 0))) {
+          assignAmount = outstandingAmount;
+          remainingAmount = remainingAmount.subtract(outstandingAmount);
+        } else {
+          assignAmount = remainingAmount;
+          remainingAmount = BigDecimal.ZERO;
+        }
+        FIN_AddPayment.updatePaymentDetail(psd, payment, assignAmount, isWriteOff);
+      }
+    }
   }
 
   private void addGLItems(FIN_Payment payment, JSONArray addedGLITemsArray) throws JSONException,
@@ -407,132 +432,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     return message;
   }
 
-  /**
-   * @param allselection
-   *          : Selected Rows in Order Invoice grid
-   * @return
-   */
-  private String getSelectedRowIds(JSONArray allselection) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("(");
-    try {
-      for (int i = 0; i < allselection.length(); i++) {
-        JSONObject selectedRow = allselection.getJSONObject(i);
-        sb.append("'" + selectedRow.getString("id") + "', ");
-      }
-      sb.replace(sb.lastIndexOf(","), sb.lastIndexOf(",") + 2, ")");
-      return sb.toString();
-    } catch (Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      log.error(e.getMessage(), e);
-      return null;
-    }
-  }
-
-  /**
-   * @param allselection
-   *          : Selected Rows in Order Invoice grid
-   * @return
-   */
-  private HashMap<String, BigDecimal> getSelectedPaymentDetailsAndAmount(JSONArray allselection,
-      String _strSelectedScheduledPaymentDetailIds) {
-    String strSelectedScheduledPaymentDetailIds = _strSelectedScheduledPaymentDetailIds;
-    // Remove "(" ")"
-    strSelectedScheduledPaymentDetailIds = strSelectedScheduledPaymentDetailIds.replace("(", "");
-    strSelectedScheduledPaymentDetailIds = strSelectedScheduledPaymentDetailIds.replace(")", "");
-    HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts = new HashMap<String, BigDecimal>();
-    // As selected items may contain records with multiple IDs we as well need the records list as
-    // amounts are related to records
-    StringTokenizer records = new StringTokenizer(strSelectedScheduledPaymentDetailIds, "'");
-    Set<String> recordSet = new LinkedHashSet<String>();
-    while (records.hasMoreTokens()) {
-      recordSet.add(records.nextToken());
-    }
-    for (String record : recordSet) {
-      if (", ".equals(record)) {
-        continue;
-      }
-      Set<String> psdSet = new LinkedHashSet<String>();
-      StringTokenizer psds = new StringTokenizer(record, ",");
-      while (psds.hasMoreTokens()) {
-        psdSet.add(psds.nextToken());
-      }
-      BigDecimal recordAmount = getAmountOfRow(allselection, record);
-      HashMap<String, BigDecimal> recordsAmounts = calculateAmounts(recordAmount, psdSet);
-      selectedPaymentScheduleDetailsAmounts.putAll(recordsAmounts);
-    }
-    return selectedPaymentScheduleDetailsAmounts;
-  }
-
-  /**
-   * @param allselection
-   * @param record
-   * @return
-   */
-  private BigDecimal getAmountOfRow(JSONArray allselection, String record) {
-    try {
-      for (int i = 0; i < allselection.length(); i++) {
-        JSONObject selectedRow = allselection.getJSONObject(i);
-        if (record.equals(selectedRow.getString("id"))) {
-          return new BigDecimal(selectedRow.getString("amount"));
-        }
-      }
-      return BigDecimal.ZERO;
-    } catch (Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      log.error(e.getMessage(), e);
-      return null;
-    }
-  }
-
-  /**
-   * This method returns a HashMap with pairs of UUID of payment schedule details and amounts
-   * related to those ones.
-   * 
-   * @param recordAmount
-   *          : amount to split among the set
-   * @param psdSet
-   *          : set of payment schedule details where to allocate the amount
-   * @return
-   */
-  private HashMap<String, BigDecimal> calculateAmounts(BigDecimal recordAmount, Set<String> psdSet) {
-    BigDecimal remainingAmount = recordAmount;
-    HashMap<String, BigDecimal> recordsAmounts = new HashMap<String, BigDecimal>();
-    // PSD needs to be properly ordered to ensure negative amounts are processed first
-    List<FIN_PaymentScheduleDetail> psds = getOrderedPaymentScheduleDetails(psdSet);
-    BigDecimal outstandingAmount = BigDecimal.ZERO;
-    for (FIN_PaymentScheduleDetail paymentScheduleDetail : psds) {
-      if (paymentScheduleDetail.getPaymentDetails() != null) {
-        // This schedule detail comes from an edited payment so outstanding amount needs to be
-        // properly calculated
-        List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment
-            .getOutstandingPSDs(paymentScheduleDetail);
-        if (outStandingPSDs.size() > 0) {
-          outstandingAmount = paymentScheduleDetail.getAmount().add(
-              outStandingPSDs.get(0).getAmount());
-        } else {
-          outstandingAmount = paymentScheduleDetail.getAmount();
-        }
-      } else {
-        outstandingAmount = paymentScheduleDetail.getAmount();
-      }
-      // Manage negative amounts
-      if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0 && remainingAmount
-          .compareTo(outstandingAmount) >= 0)
-          || ((remainingAmount.compareTo(BigDecimal.ZERO) == -1 && outstandingAmount
-              .compareTo(BigDecimal.ZERO) == -1) && (remainingAmount.compareTo(outstandingAmount) <= 0))) {
-        recordsAmounts.put(paymentScheduleDetail.getId(), outstandingAmount);
-        remainingAmount = remainingAmount.subtract(outstandingAmount);
-      } else {
-        recordsAmounts.put(paymentScheduleDetail.getId(), remainingAmount);
-        remainingAmount = BigDecimal.ZERO;
-      }
-
-    }
-    return recordsAmounts;
-  }
-
-  private List<FIN_PaymentScheduleDetail> getOrderedPaymentScheduleDetails(Set<String> psdSet) {
+  private List<FIN_PaymentScheduleDetail> getOrderedPaymentScheduleDetails(String[] psdSet) {
     OBCriteria<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance().createCriteria(
         FIN_PaymentScheduleDetail.class);
     orderedPSDs.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_ID, psdSet));
