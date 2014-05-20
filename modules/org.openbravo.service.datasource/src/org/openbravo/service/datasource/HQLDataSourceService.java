@@ -18,7 +18,6 @@
  */
 package org.openbravo.service.datasource;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -277,10 +276,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     // sets the parameters of the query
     queryNamedParameters.putAll(queryBuilder.getNamedParameters());
     for (String key : queryNamedParameters.keySet()) {
-      if (queryNamedParameters.get(key) instanceof BigDecimal) {
-        // TODO: find a better way to avoid the cast exception from BigDecimal to Long
-        queryNamedParameters.put(key, ((BigDecimal) queryNamedParameters.get(key)).longValue());
-      }
       query.setParameter(key, queryNamedParameters.get(key));
     }
 
