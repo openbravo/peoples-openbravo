@@ -30,6 +30,7 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFetchWithoutLimitParameters() throws Exception {
+    OBContext.setOBContext("100");
     // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "876");
@@ -69,6 +71,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFetchWithLargeData() throws Exception {
+    OBContext.setOBContext("100");
     // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "876");
@@ -90,6 +93,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testPaginatedFetch() throws Exception {
+    OBContext.setOBContext("100");
     // Using values of window dropdown in preference window
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "876");
@@ -111,6 +115,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFilter() throws Exception {
+    OBContext.setOBContext("100");
     // Using values of visible at user in preference
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
@@ -135,6 +140,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testFilterWithPagination() throws Exception {
+    OBContext.setOBContext("100");
     // Using values of visible at user in preference
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
@@ -159,6 +165,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testAccess() throws Exception {
+    OBContext.setOBContext("100");
     // Using values of window dropdown in menu
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "206");
@@ -178,6 +185,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
    * @throws Exception
    */
   public void testAccessForFilter() throws Exception {
+    OBContext.setOBContext("100");
     // Using values of window dropdown in menu
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "206");
