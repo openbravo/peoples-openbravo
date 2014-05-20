@@ -19,31 +19,24 @@
 package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.service.db.CallStoredProcedure;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ApplicationScoped
+@RequestScoped
 abstract class AddPaymentDefaultValuesHandler {
   private static final Logger log = LoggerFactory.getLogger(AddPaymentDefaultValuesHandler.class);
 
@@ -80,7 +73,7 @@ abstract class AddPaymentDefaultValuesHandler {
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strOrgId = context.getString("inpadOrgId");
     String strReceipt = getDefaultIsSOTrx(requestMap);
-    if (StringUtils.isEmpty(strBusinessPartnerId) || strOrgId == null || strReceipt == null) {
+    if (StringUtils.isEmpty(strBusinessPartnerId) || strReceipt == null) {
       return null;
     }
     BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class, strBusinessPartnerId);
@@ -92,28 +85,20 @@ abstract class AddPaymentDefaultValuesHandler {
   }
 
   String getDefaultDocumentNo(Map<String, String> requestMap) throws JSONException {
-    ConnectionProvider conn = new DalConnectionProvider(false);
-    VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     JSONObject context = new JSONObject(requestMap.get("context"));
 
-    // get DocumentNo
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(vars.getClient());
-    parameters.add(context.get("inpadOrgId"));
-    parameters.add("Y".equals(getDefaultIsSOTrx(requestMap)) ? "ARR" : "APP");
-    String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
-        parameters, null);
+    Organization org = OBDal.getInstance().get(Organization.class, context.get("inpadOrgId"));
+    boolean isReceipt = "Y".equals(getDefaultIsSOTrx(requestMap));
 
-    // Last parameter false to not to update database yet, in action handler should be true
-    String strDocNo = Utility.getDocumentNo(conn, vars, "AddPaymentFromInvoice", "FIN_Payment",
-        strDocTypeId, strDocTypeId, false, false);
+    String strDocNo = FIN_Utility.getDocumentNo(org, isReceipt ? "ARR" : "APP", "FIN_Payment",
+        false);
 
     return "<" + strDocNo + ">";
   }
 
   private String getBusinessPartner(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("inpcBpartnerId") && context.get("inpcBpartnerId") != null) {
+    if (context.has("inpcBpartnerId") && context.get("inpcBpartnerId") != JSONObject.NULL) {
       return context.getString("inpcBpartnerId");
     }
     return "";
@@ -121,7 +106,8 @@ abstract class AddPaymentDefaultValuesHandler {
 
   public String getDefaultFinancialAccount(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("inpfinFinancialAccountId") && context.get("inpfinFinancialAccountId") != null
+    if (context.has("inpfinFinancialAccountId")
+        && context.get("inpfinFinancialAccountId") != JSONObject.NULL
         && StringUtils.isNotEmpty(context.getString("inpfinFinancialAccountId"))) {
       return context.getString("inpfinFinancialAccountId");
     }
