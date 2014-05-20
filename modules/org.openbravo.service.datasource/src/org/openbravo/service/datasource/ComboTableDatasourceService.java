@@ -135,7 +135,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       if (column.getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
         clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
             windowId, accessLevel);
-        if (clientList != null) {
+        if (clientList == null) {
           clientList = vars.getSessionValue("#User_Client");
         }
         orgList = null;
