@@ -536,7 +536,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     } else {
       // adds the hql filters in the proper place at the end of the query
       String separator = null;
-      // TODO: only the WHERE of the outer query should
       if (StringUtils.containsIgnoreCase(hqlQueryWithFilters, WHERE)) {
         // if there is already a where clause, append with 'AND'
         separator = AND;
