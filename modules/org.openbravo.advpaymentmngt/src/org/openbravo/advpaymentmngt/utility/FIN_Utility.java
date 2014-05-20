@@ -323,10 +323,31 @@ public class FIN_Utility {
    * 
    * @param docType
    *          Document type of the document
+   * @param tableName
+   *          the name of the table from which the sequence will be taken if the Document Type does
+   *          not have any sequence associated.
    * @return the next sequence number of the Document Type defined for the Organization and document
    *         category. Null if no sequence is found.
    */
   public static String getDocumentNo(DocumentType docType, String tableName) {
+    return getDocumentNo(docType, tableName, true);
+  }
+
+  /**
+   * Returns the next sequence number of the Document Type defined for the Organization and document
+   * category.
+   * 
+   * @param docType
+   *          Document type of the document
+   * @param tableName
+   *          the name of the table from which the sequence will be taken if the Document Type does
+   *          not have any sequence associated.
+   * @param updateNext
+   *          Flag to update the current number of the sequence
+   * @return the next sequence number of the Document Type defined for the Organization and document
+   *         category. Null if no sequence is found.
+   */
+  public static String getDocumentNo(DocumentType docType, String tableName, boolean updateNext) {
     String nextDocNumber = "";
     if (docType != null) {
       Sequence seq = docType.getDocumentSequence();
@@ -344,9 +365,11 @@ public class FIN_Utility {
         nextDocNumber += seq.getNextAssignedNumber().toString();
         if (seq.getSuffix() != null)
           nextDocNumber += seq.getSuffix();
-        seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
-        OBDal.getInstance().save(seq);
-        // OBDal.getInstance().flush();
+        if (updateNext) {
+          seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
+          OBDal.getInstance().save(seq);
+          // OBDal.getInstance().flush();
+        }
       }
     }
 
@@ -365,12 +388,35 @@ public class FIN_Utility {
    * @param tableName
    *          the name of the table from which the sequence will be taken if the Document Type does
    *          not have any sequence associated.
+   * @param updateNext
+   *          Flag to update the current number of the sequence
    * @return the next sequence number of the Document Type defined for the Organization and document
    *         category. Null if no sequence is found.
    */
   public static String getDocumentNo(Organization org, String docCategory, String tableName) {
     DocumentType outDocType = getDocumentType(org, docCategory);
-    return getDocumentNo(outDocType, tableName);
+    return getDocumentNo(outDocType, tableName, true);
+  }
+
+  /**
+   * Returns the next sequence number of the Document Type defined for the Organization and document
+   * category.
+   * 
+   * @param org
+   *          the Organization for which the Document Type is defined. The Document Type can belong
+   *          to the parent organization tree of the specified Organization.
+   * @param docCategory
+   *          the document category of the Document Type.
+   * @param tableName
+   *          the name of the table from which the sequence will be taken if the Document Type does
+   *          not have any sequence associated.
+   * @return the next sequence number of the Document Type defined for the Organization and document
+   *         category. Null if no sequence is found.
+   */
+  public static String getDocumentNo(Organization org, String docCategory, String tableName,
+      boolean updateNext) {
+    DocumentType outDocType = getDocumentType(org, docCategory);
+    return getDocumentNo(outDocType, tableName, updateNext);
   }
 
   /**
