@@ -358,7 +358,7 @@
     },
 
     renderMain: function () {
-      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, loadModelsIncFunc, me = this;
+      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, me = this;
       if (!OB.UTIL.isSupportedBrowser()) {
         OB.MobileApp.model.renderLogin();
         return false;
@@ -435,17 +435,6 @@
           });
         }
 
-        //MASTER DATA REFRESH
-        var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
-        if (minIncRefresh) {
-          if (!OB.MobileApp.model.get('FullRefreshWasDone')) {
-            OB.MobileApp.model.loadModels(null, true);
-          }
-          loadModelsIncFunc = function () {
-            OB.MobileApp.model.loadModels(null, true);
-          };
-          setInterval(loadModelsIncFunc, minIncRefresh);
-        }
       });
 
       this.on('seqNoReady', function () {
@@ -453,6 +442,25 @@
       }, this);
 
       this.setDocumentSequence();
+    },
+
+    postLoginActions: function () {
+      var me = this, loadModelsIncFunc;
+      //MASTER DATA REFRESH
+      var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
+      if (minIncRefresh) {
+        setTimeout(function () {
+          OB.MobileApp.model.loadModels(null, true);
+          if (me.get('loggedUsingCache')) {
+            me.set('loggedUsingCache', false);
+            me.renderTerminalMain();
+          }
+        }, this.get('loggedUsingCache') ? 3000 : 1);
+        loadModelsIncFunc = function () {
+          OB.MobileApp.model.loadModels(null, true);
+        };
+        setInterval(loadModelsIncFunc, minIncRefresh);
+      }
     },
 
     cleanSessionInfo: function () {
