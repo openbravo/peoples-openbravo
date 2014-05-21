@@ -146,6 +146,11 @@ public class OBScheduler {
         context.getUser(), context.getUser(), requestId, processId, context.getUser(), SCHEDULED,
         channel.toString(), context.toString(), bundle.getParamsDeflated(), null, null, null, null);
 
+    if (bundle.getGroupInfo() != null) {
+      // Is Part of a Group, update the info
+      ProcessRequestData.updateGroup(getConnection(), bundle.getGroupInfo().getRequest().getId(),
+          requestId);
+    }
     schedule(requestId, bundle, jobClass);
   }
 

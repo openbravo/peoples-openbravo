@@ -95,6 +95,8 @@ public class ProcessBundle {
 
   private Channel channel;
 
+  private GroupInfo groupInfo;
+
   static Logger log = Logger.getLogger(ProcessBundle.class);
 
   /**
@@ -151,6 +153,31 @@ public class ProcessBundle {
       Channel channel, String client, String organization, boolean roleSecurity) {
     this(processId, vars, channel, client, organization, roleSecurity);
     this.processRequestId = processRequestId;
+  }
+
+  /**
+   * Creates a new ProcessBundle object with the given parameters.
+   * 
+   * @param processId
+   *          the process id
+   * @param vars
+   *          clients security/application context variables
+   * @param channel
+   *          the channel through which this process was scheduled/executed
+   * @param client
+   *          the client that scheduled/executed this process
+   * @param organization
+   *          the organization under which this process will run
+   * @param groupInfo
+   *          the information of the process group which the process belongs to
+   */
+  public ProcessBundle(String processId, VariablesSecureApp vars, Channel channel, String client,
+      String organization, boolean roleSecurity, GroupInfo groupInfo) {
+    this.processId = processId;
+    this.context = new ProcessContext(vars, client, organization, roleSecurity);
+    this.channel = channel;
+    this.closeConnection = true;
+    this.groupInfo = groupInfo;
   }
 
   /**
@@ -231,6 +258,15 @@ public class ProcessBundle {
     } else {
       return false;
     }
+  }
+
+  /**
+   * Returns the info of the group
+   * 
+   * @return the info of the group
+   */
+  public GroupInfo getGroupInfo() {
+    return this.groupInfo;
   }
 
   public void setParams(Map<String, Object> params) {

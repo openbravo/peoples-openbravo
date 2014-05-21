@@ -139,7 +139,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
   public void jobWasExecuted(JobExecutionContext jec, JobExecutionException jee) {
     final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
-    if (bundle == null) {
+    if (bundle == null || bundle.isGroup()) {
       return;
     }
     try {
@@ -161,7 +161,12 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
             getDuration(jec.getJobRunTime()), executionLog, executionId);
       }
 
-    } catch (final ServletException e) {
+      // Manage Group
+      if (bundle.getGroupInfo() != null) {
+        bundle.getGroupInfo().executeNextProcess();
+      }
+
+    } catch (Exception e) {
       log.error(e.getMessage(), e);
     } finally {
       // return connection to pool and remove it from current thread
