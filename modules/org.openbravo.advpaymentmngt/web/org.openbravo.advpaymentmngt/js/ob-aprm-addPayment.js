@@ -94,7 +94,6 @@ OB.APRM.AddPayment.actualPaymentOnChange = function (item, view, form, grid) {
   if (issotrx) {
     OB.APRM.AddPayment.distributeAmount(view, form);
   }
-
 };
 
 OB.APRM.AddPayment.actualPaymentOnLoad = function (view) {
@@ -113,6 +112,22 @@ OB.APRM.AddPayment.actualPaymentOnLoad = function (view) {
   }
 
 };
+
+OB.APRM.AddPayment.orderInvoiceAmountOnChange = function (item, view, form, grid) {
+  OB.APRM.AddPayment.updateInvOrderTotal(form, grid);
+  return true;
+};
+
+OB.APRM.AddPayment.orderInvoiceTotalAmountOnChange = function (item, view, form, grid) {
+  OB.APRM.AddPayment.updateTotal(form);
+  return true;
+};
+
+OB.APRM.AddPayment.glItemTotalAmountOnChange = function (item, view, form, grid) {
+  OB.APRM.AddPayment.updateTotal(form);
+  return true;
+};
+
 OB.APRM.AddPayment.distributeAmount = function (view, form) {
   var amount = form.getItem('actual_payment').getValue(),
       distributedAmount = 0,
@@ -154,7 +169,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form) {
       }
     }
     if (amount === 0) {
-      orderInvoice.setEditValue((i), 'amount', "");
+      orderInvoice.setEditValue((i), 'amount', '');
       orderInvoice.deselectRecord(i);
 
     } else {
@@ -164,17 +179,39 @@ OB.APRM.AddPayment.distributeAmount = function (view, form) {
     }
 
   }
-  OB.APRM.AddPayment.updateTotal();
   return true;
 
 };
 
 
-OB.APRM.AddPayment.updateTotal = function () {
+OB.APRM.AddPayment.updateTotal = function (form) {
+  var invOrdTotalItem = form.getItem('amount_inv_ords'),
+      glItemsTotalItem = form.getItem('amount_gl_items'),
+      totalItem = form.getItem('total'),
+      totalAmt;
+  
+  totalAmt = invOrdTotalItem.getValue() || 0;
+  totalAmt += glItemsTotalItem.getValue() || 0;
 
+  totalItem.setValue(totalAmt);
+};
+
+OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
+  var amt, i, bdAmt,
+      totalAmt = BigDecimal.prototype.ZERO,
+      amountField = grid.getFieldByColumnName('amount'),
+      selectedRecords = grid.getSelectedRecords(),
+      invOrdTotalItem = form.getItem('amount_inv_ords');
+  
+  for (i = 0; i < selectedRecords.length; i++) {
+    amt = grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), amountField);
+    bdAmt = new BigDecimal(String(amt));
+    totalAmt = totalAmt.add(bdAmt);
+  }
+  invOrdTotalItem.setValue(totalAmt.toString());
+  return true;
 };
 
 OB.APRM.AddPayment.updateData = function (key, mark, drivenByGrid, all) {
-
 
 };
