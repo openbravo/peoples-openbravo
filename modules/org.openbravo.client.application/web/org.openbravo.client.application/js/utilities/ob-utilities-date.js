@@ -80,7 +80,7 @@ OB.Utilities.getTimeFormatDefinition = function () {
 
   timeFormat = OB.Format.dateTime.substring(OB.Format.dateTime.indexOf(' ') + 1);
 
-  if (timeFormat && timeFormat.toLowerCase().endsWith('a')) {
+  if (timeFormat && timeFormat.toUpperCase().lastIndexOf(' A') !== -1 && timeFormat.toUpperCase().lastIndexOf(' A') === timeFormat.length - 2) {
     is24h = false;
   }
 
@@ -238,7 +238,7 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
   if (!isADate) {
     return null;
   }
-  if (dateFormat.toUpperCase().endsWith(' A')) {
+  if (dateFormat.toUpperCase().lastIndexOf(' A') !== -1 && dateFormat.toUpperCase().lastIndexOf(' A') === dateFormat.length - 2) {
     is24h = false;
   }
 

@@ -137,7 +137,7 @@ isc.OBDateTimeItem.addProperties({
     } else {
       this.showPickerTimeItem = false;
     }
-    if (OB.Format.dateTime.toUpperCase().endsWith(' A')) {
+    if (OB.Format.dateTime.toUpperCase().lastIndexOf(' A') !== -1 && OB.Format.dateTime.toUpperCase().lastIndexOf(' A') === OB.Format.dateTime.length - 2) {
       this.use24HourTime = false;
     } else {
       this.use24HourTime = true;
