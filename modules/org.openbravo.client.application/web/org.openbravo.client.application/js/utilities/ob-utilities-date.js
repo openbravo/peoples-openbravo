@@ -114,10 +114,19 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
 
   // if already a date then return true
   var isADate = Object.prototype.toString.call(OBDate) === '[object Date]',
+      PMIndicator = ' PM',
+      AMIndicator = ' AM',
       is24h = true,
       isPM = false;
   if (isADate) {
     return OBDate;
+  }
+
+  if (isc && isc.Time && isc.Time.PMIndicator) {
+    PMIndicator = isc.Time.PMIndicator;
+  }
+  if (isc && isc.Time && isc.Time.AMIndicator) {
+    AMIndicator = isc.Time.AMIndicator;
   }
 
   dateFormat = OB.Utilities.Date.normalizeDisplayFormat(dateFormat);
@@ -125,13 +134,13 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
   var dateSeparator = dateFormat.substring(2, 3);
   var timeSeparator = dateFormat.substring(11, 12);
   var isFullYear = (dateFormat.indexOf('%Y') !== -1);
-  if (OBDate.indexOf(isc.Time.PMIndicator) !== 1 || OBDate.indexOf(isc.Time.AMIndicator) !== 1) {
+  if (OBDate.indexOf(PMIndicator) !== 1 || OBDate.indexOf(AMIndicator) !== 1) {
     is24h = false;
   }
-  if (!is24h && OBDate.indexOf(isc.Time.PMIndicator) !== -1) {
+  if (!is24h && OBDate.indexOf(PMIndicator) !== -1) {
     isPM = true;
   }
-  OBDate = OBDate.replace(isc.Time.AMIndicator, '').replace(isc.Time.PMIndicator, '');
+  OBDate = OBDate.replace(AMIndicator, '').replace(PMIndicator, '');
 
   if ((isFullYear ? OBDate.length - 2 : OBDate.length) !== dateFormat.length) {
     return null;
@@ -233,10 +242,19 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
   dateFormat = OB.Utilities.Date.normalizeDisplayFormat(dateFormat);
 
   var isADate = Object.prototype.toString.call(JSDate) === '[object Date]',
+      PMIndicator = ' PM',
+      AMIndicator = ' AM',
       is24h = true,
       isPM = false;
   if (!isADate) {
     return null;
+  }
+
+  if (isc && isc.Time && isc.Time.PMIndicator) {
+    PMIndicator = isc.Time.PMIndicator;
+  }
+  if (isc && isc.Time && isc.Time.AMIndicator) {
+    AMIndicator = isc.Time.AMIndicator;
   }
   if (dateFormat.toUpperCase().lastIndexOf(' A') !== -1 && dateFormat.toUpperCase().lastIndexOf(' A') === dateFormat.length - 2) {
     is24h = false;
@@ -308,9 +326,9 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
 
   if (!is24h) {
     if (isPM) {
-      OBDate = OBDate.replace(' A', isc.Time.PMIndicator);
+      OBDate = OBDate.replace(' A', PMIndicator);
     } else {
-      OBDate = OBDate.replace(' A', isc.Time.AMIndicator);
+      OBDate = OBDate.replace(' A', AMIndicator);
     }
   }
 
