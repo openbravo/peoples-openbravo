@@ -122,10 +122,10 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
     return OBDate;
   }
 
-  if (isc && isc.Time && isc.Time.PMIndicator) {
+  if (window.isc && isc.Time && isc.Time.PMIndicator) {
     PMIndicator = isc.Time.PMIndicator;
   }
-  if (isc && isc.Time && isc.Time.AMIndicator) {
+  if (window.isc && isc.Time && isc.Time.AMIndicator) {
     AMIndicator = isc.Time.AMIndicator;
   }
 
@@ -250,10 +250,10 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
     return null;
   }
 
-  if (isc && isc.Time && isc.Time.PMIndicator) {
+  if (window.isc && isc.Time && isc.Time.PMIndicator) {
     PMIndicator = isc.Time.PMIndicator;
   }
-  if (isc && isc.Time && isc.Time.AMIndicator) {
+  if (window.isc && isc.Time && isc.Time.AMIndicator) {
     AMIndicator = isc.Time.AMIndicator;
   }
   if (dateFormat.toUpperCase().lastIndexOf(' A') !== -1 && dateFormat.toUpperCase().lastIndexOf(' A') === dateFormat.length - 2) {
