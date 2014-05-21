@@ -1149,6 +1149,13 @@ OB.ViewFormProperties = {
       return;
     }
 
+    // combos for table and tableDir require cache to be invalidated whenever
+    // value is set in order to force DS request when pickList is opened because
+    // validation might have been changed in this situation
+    if (field && field.invalidateLocalValueMapCache) {
+      field.invalidateLocalValueMapCache();
+    }
+
     if (entries) {
       length = entries.length;
       for (i = 0; i < length; i++) {
