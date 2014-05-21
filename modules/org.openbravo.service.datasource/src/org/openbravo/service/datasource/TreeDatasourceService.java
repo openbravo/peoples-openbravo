@@ -154,7 +154,11 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    * Classes that extend TreeDatasourceService this method must implement this method to handle the
    * check if a node has children in a tree table
    */
-  protected abstract boolean nodeHasChildren(Entity entity, String nodeId, String hqlWhereClause);
+  protected boolean nodeHasChildren(Entity entity, String nodeId, String hqlWhereClause) {
+    // By default it returns true, so if the 'Don't allow to delete node if they have children'
+    // delete policy is selected, a node will be deletable only if this method is overwritten
+    return true;
+  }
 
   /**
    * Fetches some tree nodes Two operation modes:
