@@ -47,6 +47,8 @@ isc.OBPickAndExecuteGrid.addProperties({
   autoFitFieldsFillViewport: true,
   confirmDiscardEdits: false,
   animateRemoveRecord: false,
+  // this attribute helps to set an attribute only if the edit form has not been initialized
+  editFormInitialized: false,
   removeFieldProperties: {
     width: 32
   },
@@ -117,7 +119,7 @@ isc.OBPickAndExecuteGrid.addProperties({
         // the default
         this.fields[i].onChangeFunction.sort = 50;
 
-        OB.OnChangeRegistry.register(this.view.viewId, this.parameterName + OB.Constants.FIELDSEPARATOR + this.fields[i].name, this.fields[i].onChangeFunction, 'default');
+        OB.OnChangeRegistry.register(this.ID, this.parameterName + OB.Constants.FIELDSEPARATOR + this.fields[i].name, this.fields[i].onChangeFunction, 'default');
       }
     }
     this.setFields(this.fields);
@@ -308,7 +310,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // Execute onChangeFunctions if they exist
     if (this && OB.OnChangeRegistry.hasOnChange(this.view.viewId, editField)) {
-      OB.OnChangeRegistry.call(this.view.viewId, editField, this.view, this.view.theForm, this);
+      OB.OnChangeRegistry.call(this.ID, editField, this.view, this.view.theForm, this);
     }
 
     if (editField.required) {
@@ -674,6 +676,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   showInlineEditor: function (rowNum, colNum, newCell, newRow, suppressFocus) {
+    var editForm, items, i, updatedBlur;
     // retrieve the initial values only if a new row has been selected
     // see issue https://issues.openbravo.com/view.php?id=20653
     if (newRow) {
@@ -684,6 +687,28 @@ isc.OBPickAndExecuteGrid.addProperties({
       }
     }
     this.Super('showInlineEditor', arguments);
+
+    // update the blur function of the formitems, so that the OnChangeRegistry functions are called
+    // when the item loses the focus
+    if (!this.editFormInitialized) {
+      // the editForm is created the first time the inline editor is shown
+      this.editFormInitialized = true;
+      editForm = this.getEditForm();
+      if (editForm) {
+        items = editForm.getItems();
+        updatedBlur = function (form, item) {
+            this.original_blur(form, item);
+            // Execute onChangeFunctions if they exist
+            if (this && OB.OnChangeRegistry.hasOnChange(form.grid.ID, item)) {
+              OB.OnChangeRegistry.call(form.grid.ID, item, form.grid.view, form.grid.view.theForm, form.grid);
+            }
+          };
+        for (i = 0; i < items.length; i++) {
+          items[i].original_blur = items[i].blur;
+          items[i].blur = updatedBlur;
+        }
+      }
+    }
   },
 
   hideInlineEditor: function (focusInBody, suppressCMHide) {
@@ -761,7 +786,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getMinFieldWidth: function (field, ignoreFieldWidth) {
-	// items like _checkbox, _pin and _delete can have a width smaller than the min field width defined for the grid
+    // items like _checkbox, _pin and _delete can have a width smaller than the min field width defined for the grid
     if (field && field.name && field.name.startsWith('_')) {
       return field.width;
     } else {

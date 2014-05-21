@@ -31,7 +31,7 @@ isc.OBPickEditGridItem.addProperties({
         pickAndExecuteViewProperties = {};
     pickAndExecuteViewProperties.viewProperties = this.viewProperties;
     pickAndExecuteViewProperties.view = this.view;
-    pickAndExecuteViewProperties.parameterName = this.parameterName;
+    pickAndExecuteViewProperties.parameterName = this.name;
     if (this.view.isPickAndExecuteWindow) {
       this.view.resized = function () {
         me.canvas.setHeight(me.view.height - 95);
