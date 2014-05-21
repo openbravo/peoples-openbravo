@@ -339,15 +339,61 @@
     },
 
     runSyncProcess: function (successCallback, errorCallback) {
-      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_SynchronizingDataMessage'));
-        OB.MobileApp.model.syncAllModels(function () {
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SynchronizationWasSuccessfulMessage'));
-          if (successCallback) {
-            successCallback();
+      var me = this;
+      if (window.localStorage.getItem('terminalAuthentication') === 'Y') {
+        var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckTerminalAuth');
+        process.exec({
+          terminalName: window.localStorage.getItem('terminalName'),
+          terminalKeyIdentifier: window.localStorage.getItem('terminalKeyIdentifier'),
+          terminalAuthentication: window.localStorage.getItem('terminalAuthentication')
+        }, function (data, message) {
+          if (data && data.exception) {
+            //ERROR or no connection
+            OB.error(OB.I18N.getLabel('OBPOS_TerminalAuthError'));
+          } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
+            if (data.isLinked === false) {
+              window.localStorage.removeItem('terminalName');
+              window.localStorage.removeItem('terminalKeyIdentifier');
+            }
+            if (data.terminalAuthentication) {
+              window.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
+            }
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              isConfirmButton: true,
+              action: function () {
+                OB.UTIL.showLoading(true);
+                me.logout();
+              }
+            }], {
+              onHideFunction: function () {
+                OB.UTIL.showLoading(true);
+                me.logout();
+              }
+            });
+          } else {
+            OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
+              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_SynchronizingDataMessage'));
+              OB.MobileApp.model.syncAllModels(function () {
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SynchronizationWasSuccessfulMessage'));
+                if (successCallback) {
+                  successCallback();
+                }
+              }, errorCallback);
+            });
           }
-        }, errorCallback);
-      });
+        });
+      } else {
+        OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_SynchronizingDataMessage'));
+          OB.MobileApp.model.syncAllModels(function () {
+            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SynchronizationWasSuccessfulMessage'));
+            if (successCallback) {
+              successCallback();
+            }
+          }, errorCallback);
+        });
+      }
     },
 
     returnToOnline: function () {
