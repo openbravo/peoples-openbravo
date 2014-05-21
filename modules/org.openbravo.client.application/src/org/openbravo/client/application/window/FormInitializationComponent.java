@@ -228,9 +228,6 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
       }
 
-      // Clear session to prevent slow flush
-       OBDal.getInstance().getSession().clear();
-
       // First the parent record is retrieved and the session variables for the parent records are
       // set
       long t1 = System.currentTimeMillis();
@@ -308,6 +305,10 @@ public class FormInitializationComponent extends BaseActionHandler {
         log.error("Error while generating the error JSON object: " + jsonString, e);
       }
     } finally {
+
+      // Clear session to prevent slow flush
+      OBDal.getInstance().getSession().clear();
+
       OBContext.restorePreviousMode();
     }
     return null;
