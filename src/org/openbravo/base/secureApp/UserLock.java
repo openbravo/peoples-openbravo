@@ -199,7 +199,13 @@ public class UserLock {
   }
 
   public boolean isLockedUser() {
-    return user != null && user.isLocked();
+    // User does not need to check org and client access
+    OBContext.setAdminMode(false);
+    try {
+      return user != null && user.isLocked();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**

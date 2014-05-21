@@ -24,7 +24,9 @@ isc.ClassFactory.defineClass('OBClientClassCanvasItem', isc.CanvasItem);
 
 isc.OBClientClassCanvasItem.addProperties({
   autoDestroy: true,
-
+  // See issue https://issues.openbravo.com/view.php?id=26555
+  // http://www.smartclient.com/docs/9.1/a/b/c/go.html#attr..CanvasItem.shouldSaveValue
+  shouldSaveValue: true,
   // if the canvas is used somewhere else (in the statusbar) then
   // don't do placeCanvas.
   placeCanvas: function () {

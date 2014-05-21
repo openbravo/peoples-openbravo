@@ -113,6 +113,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
     PriceList currentPriceList = OBDal.getInstance().get(PriceList.class, data[0].mPricelistId);
     boolean isTaxIncludedPriceList = currentPriceList.isPriceIncludesTax();
     boolean isGrossUnitPriceChanged = strChanged.equals("inpgrossUnitPrice");
+    boolean calcDiscount = true;
     boolean forceSetPriceStd = false;
     if (data1 != null && data1.length > 0) {
       strStockSecurity = data1[0].stock;
@@ -220,6 +221,17 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
       log4j.debug("priceActual:" + priceActual.toString());
       if (!cancelPriceAd) {
         priceStd = PriceAdjustment.calculatePriceStd(order, product, qtyOrdered, priceActual);
+        if (PriceAdjustment.calculatePriceActual(
+            order,
+            product,
+            qtyOrdered,
+            (strPriceStd.equals("") ? ZERO : (new BigDecimal(strPriceStd))).setScale(
+                pricePrecision, BigDecimal.ROUND_HALF_UP)).compareTo(ZERO) == 0
+            && priceActual.compareTo(ZERO) == 0) {
+          calcDiscount = false;
+        } else {
+          calcDiscount = true;
+        }
       } else {
         priceStd = priceActual;
       }
@@ -259,7 +271,6 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
           pricePrecision, taxBaseAmt, qtyOrdered);
 
       priceActual = netUnitPrice;
-
       if (cancelPriceAd) {
         grossBaseUnitPrice = grossUnitPrice;
         priceStd = netUnitPrice;
@@ -270,6 +281,18 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
             RoundingMode.HALF_UP);
         priceStd = FinancialUtils.calculateNetFromGross(strTaxId, baseGrossAmount, pricePrecision,
             taxBaseAmt, qtyOrdered);
+        if (PriceAdjustment.calculatePriceActual(
+            order,
+            product,
+            qtyOrdered,
+            (strGrossUnitPrice.equals("") ? ZERO : (new BigDecimal(strGrossUnitPrice))).setScale(
+                pricePrecision, BigDecimal.ROUND_HALF_UP)).compareTo(ZERO) == 0
+            && grossUnitPrice.compareTo(ZERO) == 0) {
+          calcDiscount = false;
+        } else {
+          calcDiscount = true;
+        }
+
       }
 
       resultado.append("new Array(\"inpgrosspricestd\", " + grossBaseUnitPrice.toString() + "),");
@@ -295,7 +318,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         priceList = netPriceList;
         unitPrice = priceStd;
       }
-      if (priceList.compareTo(BigDecimal.ZERO) == 0) {
+      if (priceList.compareTo(BigDecimal.ZERO) == 0 || !calcDiscount) {
         discount = ZERO;
       } else {
         log4j.debug("pricelist:" + priceList.toString());
@@ -303,6 +326,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         discount = priceList.subtract(unitPrice).multiply(new BigDecimal("100"))
             .divide(priceList, stdPrecision, BigDecimal.ROUND_HALF_EVEN);
       }
+
       log4j.debug("Discount rounded: " + discount.toString());
       resultado.append("new Array(\"inpdiscount\", " + discount.toString() + "),");
 

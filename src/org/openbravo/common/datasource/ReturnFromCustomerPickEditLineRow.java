@@ -55,7 +55,11 @@ public class ReturnFromCustomerPickEditLineRow {
     this.updatedBy = (String) values[7];
     this.created = (Date) values[8];
     this.updated = (Date) values[9];
-    this.obSelected = (String) values[10];
+    if (values[10] instanceof java.lang.Character) {
+      this.obSelected = ((java.lang.Character) values[10]).toString();
+    } else {
+      this.obSelected = (String) values[10];
+    }
     this.mInOutLineId = (String) values[11];
     this.returnOrderid = (String) values[12];
     this.inOutNo = (String) values[13];

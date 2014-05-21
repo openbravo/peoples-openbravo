@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,6 +56,7 @@ isc.OBApplicationMenuButton.create({
     <#elseif menuOption.external>
         , type: 'external'
         , externalUrl: '${menuOption.id?js_string}'
+        , openLinkInBrowser: ${menuOption.menu.openlinkinbrowser?string}
     <#elseif menuOption.view>
         , type: 'view'
         , viewId: '${menuOption.id?js_string}'

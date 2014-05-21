@@ -103,7 +103,7 @@ isc.OBTabSetMain.addProperties({
   },
 
   tabDeselected: function (tabNum, tabPane, ID, tab, newTab) {
-	var appFrame;
+    var appFrame;
     if (navigator.userAgent.indexOf('Trident') !== -1 && navigator.userAgent.indexOf('Trident/5.0') === -1) {
       // To fix a problem with Internet Explorer 10 and classic OB windows: http://forums.smartclient.com/showthread.php?t=27389
       if (tabPane.viewId === 'OBClassicWindow' || tabPane.viewId === 'ClassicOBHelp') {
@@ -378,9 +378,9 @@ isc.ClassFactory.defineClass('OBTabBarButtonChild', isc.OBTabBarButton);
 isc.OBTabBarButtonChild.addProperties({
   // Needed to replicate the "click" behavior in automated tests
   virtualClick: function () {
+    this.getParentCanvas().getParentCanvas().selectTab(this);
     this.getParentCanvas().getParentCanvas().doHandleClick();
     this.focus();
-    this.getParentCanvas().getParentCanvas().selectTab(this);
   },
   // when a tab is drawn the first time it steals the focus 
   // from the active view, prevent this
@@ -613,7 +613,9 @@ isc.OBTabSetChild.addProperties({
         tab = this.tabs[i];
         this.makeTabVisible(tab);
         pane = this.getTabPane(tab);
-        pane.setTopMaximum();
+        if (typeof pane.setTopMaximum === 'function') {
+          pane.setTopMaximum();
+        }
       }
 
     } else if (newState === isc.OBStandardView.STATE_MIN) {
@@ -638,7 +640,9 @@ isc.OBTabSetChild.addProperties({
         tab = this.tabs[i];
         this.makeTabVisible(tab);
         pane = this.getTabPane(tab);
-        pane.setBottomMaximum();
+        if (typeof pane.setBottomMaximum === 'function') {
+          pane.setBottomMaximum();
+        }
       }
     } else if (newState === isc.OBStandardView.STATE_IN_MID) {
       this.state = newState;
@@ -667,7 +671,9 @@ isc.OBTabSetChild.addProperties({
         tab = this.tabs[i];
         pane = this.getTabPane(tab);
         this.makeTabVisible(tab);
-        pane.setHalfSplit();
+        if (typeof pane.setHalfSplit === 'function') {
+          pane.setHalfSplit();
+        }
       }
     }
 
@@ -675,7 +681,9 @@ isc.OBTabSetChild.addProperties({
 
     for (i = 0; i < length; i++) {
       tab = this.tabs[i];
-      tab.pane.setMaximizeRestoreButtonState();
+      if (typeof tab.pane.setMaximizeRestoreButtonState === 'function') {
+        tab.pane.setMaximizeRestoreButtonState();
+      }
     }
   },
 
@@ -699,7 +707,13 @@ isc.OBTabSetChild.addProperties({
   },
 
   tabSelected: function (tabNum, tabPane, ID, tab) {
-    var event = isc.EventHandler.getLastEvent();
+    var event = isc.EventHandler.getLastEvent(),
+        tabSet = tabPane.getParentCanvas().getParentCanvas();
+    if (typeof tabPane.paneActionOnSelect === 'function') {
+      tabPane.paneActionOnSelect();
+      // tabPane should be set again because 'paneActionOnSelect' could have modified the pane content
+      tabPane = tabSet.getTabPane(tabNum);
+    }
     if (tabPane.refreshContents) {
       tabPane.doRefreshContents(true, true);
     }

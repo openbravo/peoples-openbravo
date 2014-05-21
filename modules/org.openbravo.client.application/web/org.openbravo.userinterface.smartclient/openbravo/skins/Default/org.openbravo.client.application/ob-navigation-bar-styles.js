@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,7 +71,8 @@ isc.OBQuickLaunch.addProperties({
     Window: OB.Styles.OBApplicationMenu.Icons.window,
     Process: OB.Styles.OBApplicationMenu.Icons.process,
     Report: OB.Styles.OBApplicationMenu.Icons.report,
-    Form: OB.Styles.OBApplicationMenu.Icons.form
+    Form: OB.Styles.OBApplicationMenu.Icons.form,
+    ExternalLink: OB.Styles.OBApplicationMenu.Icons.externalLink
   },
 
   createNew_src: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/navbar/iconCreateNew.png',

@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -168,6 +170,7 @@ public class ExecutePayments extends HttpSecureAppServlet {
       }
 
       List<FIN_Payment> payments = FIN_Utility.getOBObjectList(FIN_Payment.class, strPayments);
+      Set<FIN_Payment> paymentSet = new HashSet<FIN_Payment>(payments);
       FIN_ExecutePayment executePayment = new FIN_ExecutePayment();
       executePayment.init(getSource(strWindowId), executionProcess, payments, parameters,
           organization);
@@ -175,7 +178,7 @@ public class ExecutePayments extends HttpSecureAppServlet {
       String paymentsDocNo = "";
       if ("Success".equals(result.getType())) {
         int i = 0;
-        Iterator<FIN_Payment> iterator = payments.iterator();
+        Iterator<FIN_Payment> iterator = paymentSet.iterator();
         while (iterator.hasNext()) {
           FIN_Payment payment = iterator.next();
           if (i == 0) {

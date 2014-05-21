@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -117,37 +117,41 @@ class ImageUtils {
       } else {
         img = Utility.getImageObject(vars.getStringParameter("id"));
       }
-      String imageID = "IMGTAG" + img.getUpdated().toString();
 
-      if (ImageUtils.isImageResponseRequired(req, resp, imageID)) {
+      if (img != null) {
+        String imageID = "IMGTAG" + img.getUpdated().toString();
 
-        // read the image data
-        byte[] imgByte = img.getBindaryData();
+        if (ImageUtils.isImageResponseRequired(req, resp, imageID)) {
 
-        // write the mimetype
-        String mimeType = img.getMimetype();// write the mimetype
-        if (mimeType == null) {
-          mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img.getBindaryData());
-          if (img != null) {
-            // If there is an OBContext, we attempt to save the MIME type of the image
-            updateMimeType(img.getId(), mimeType);
+          // read the image data
+          byte[] imgByte = img.getBindaryData();
+
+          // write the mimetype
+          String mimeType = img.getMimetype();// write the mimetype
+          if (mimeType == null) {
+            mimeType = MimeTypeUtil.getInstance().getMimeTypeName(img.getBindaryData());
+            if (img != null) {
+              // If there is an OBContext, we attempt to save the MIME type of the image
+              updateMimeType(img.getId(), mimeType);
+            }
           }
+
+          if (!mimeType.equals("")) {
+            resp.setContentType(mimeType);
+          }
+
+          // write the image
+          OutputStream out = resp.getOutputStream();
+          resp.setContentLength(imgByte.length);
+          out.write(imgByte);
+          out.close();
+
+        } else {
+          resp.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+          resp.setDateHeader(RESPONSE_HEADER_LASTMODIFIED,
+              req.getDateHeader(REQUEST_HEADER_IFMODIFIEDSINCE));
+
         }
-
-        if (!mimeType.equals("")) {
-          resp.setContentType(mimeType);
-        }
-
-        // write the image
-        OutputStream out = resp.getOutputStream();
-        resp.setContentLength(imgByte.length);
-        out.write(imgByte);
-        out.close();
-
-      } else {
-        resp.sendError(HttpServletResponse.SC_NOT_MODIFIED);
-        resp.setDateHeader(RESPONSE_HEADER_LASTMODIFIED,
-            req.getDateHeader(REQUEST_HEADER_IFMODIFIEDSINCE));
 
       }
     } finally {

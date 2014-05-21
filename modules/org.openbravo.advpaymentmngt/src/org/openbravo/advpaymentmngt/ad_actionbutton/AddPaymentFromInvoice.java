@@ -46,6 +46,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
@@ -58,6 +59,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
@@ -201,6 +203,12 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
           strReceivedFromId);
       PriceList priceList = isReceipt ? businessPartner.getPriceList() : businessPartner
           .getPurchasePricelist();
+      FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+          strFinancialAccountId);
+      FIN_PaymentMethod finPaymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
+          strPaymentMethodId);
+      boolean paymentDocumentEnabled = getDocumentConfirmation(this, finAccount, finPaymentMethod,
+          isReceipt, strPaymentAmount, true);
       OBError message = null;
       // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
       // removed when new security implementation is done
@@ -231,12 +239,24 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
           // parameters.add(null);
           String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
               parameters, null);
+          boolean documentEnabled = true;
           String strDocBaseType = parameters.get(2).toString();
           boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(Invoice.TABLE_NAME,
               strInvoiceId, Invoice.TABLE_NAME + "_ID", "LE");
 
-          if (!FIN_Utility.isPeriodOpen(vars.getClient(), strDocBaseType, strOrgId, strPaymentDate)
-              && orgLegalWithAccounting) {
+          if ((strAction.equals("PRD") || strAction.equals("PPW") || FIN_Utility
+              .isAutomaticDepositWithdrawn(finAccount, finPaymentMethod, isReceipt))
+              && new BigDecimal(strPaymentAmount).compareTo(BigDecimal.ZERO) != 0) {
+            documentEnabled = paymentDocumentEnabled
+                || getDocumentConfirmation(this, finAccount, finPaymentMethod, isReceipt,
+                    strPaymentAmount, false);
+          } else {
+            documentEnabled = paymentDocumentEnabled;
+          }
+
+          if (documentEnabled
+              && !FIN_Utility.isPeriodOpen(vars.getClient(), strDocBaseType, strOrgId,
+                  strPaymentDate) && orgLegalWithAccounting) {
             final OBError myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                 Utility.messageBD(this, "PeriodNotAvailable", vars.getLanguage()));
             vars.setMessage(strTabId, myMessage);
@@ -318,6 +338,69 @@ public class AddPaymentFromInvoice extends HttpSecureAppServlet {
           isReceipt);
     }
 
+  }
+
+  public boolean getDocumentConfirmation(ConnectionProvider conn, FIN_FinancialAccount finAccount,
+      FIN_PaymentMethod finPaymentMethod, boolean isReceipt, String strPaymentAmount,
+      boolean isPayment) {
+    // Checks if this step is configured to generate accounting for the selected financial account
+    boolean confirmation = false;
+    OBContext.setAdminMode();
+    try {
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, finAccount));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, finPaymentMethod));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
+      List<FinAccPaymentMethod> lines = obCriteria.list();
+      List<FIN_FinancialAccountAccounting> accounts = finAccount.getFINFinancialAccountAcctList();
+      String uponUse = "";
+      if (isPayment) {
+        if (isReceipt) {
+          uponUse = lines.get(0).getUponReceiptUse();
+        } else {
+          uponUse = lines.get(0).getUponPaymentUse();
+        }
+      } else {
+        if (isReceipt) {
+          uponUse = lines.get(0).getUponDepositUse();
+        } else {
+          uponUse = lines.get(0).getUponWithdrawalUse();
+        }
+      }
+      for (FIN_FinancialAccountAccounting account : accounts) {
+        if (confirmation)
+          return confirmation;
+        if (isReceipt) {
+          if (("INT").equals(uponUse) && account.getInTransitPaymentAccountIN() != null)
+            confirmation = true;
+          else if (("DEP").equals(uponUse) && account.getDepositAccount() != null)
+            confirmation = true;
+          else if (("CLE").equals(uponUse) && account.getClearedPaymentAccount() != null)
+            confirmation = true;
+        } else {
+          if (("INT").equals(uponUse) && account.getFINOutIntransitAcct() != null)
+            confirmation = true;
+          else if (("WIT").equals(uponUse) && account.getWithdrawalAccount() != null)
+            confirmation = true;
+          else if (("CLE").equals(uponUse) && account.getClearedPaymentAccountOUT() != null)
+            confirmation = true;
+        }
+        // For payments with Amount ZERO always create an entry as no transaction will be created
+        if (isPayment) {
+          BigDecimal amount = new BigDecimal(strPaymentAmount);
+          if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            confirmation = true;
+          }
+        }
+      }
+    } catch (Exception e) {
+      return confirmation;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return confirmation;
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,

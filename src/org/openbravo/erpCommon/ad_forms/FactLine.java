@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -821,11 +821,11 @@ public class FactLine {
             m_Fact_Acct_Group_ID, m_SeqNo, m_DocBaseType, Record_ID2,
             (m_docLine != null) ? m_docLine.m_A_Asset_ID : "",
             (m_docLine != null) ? m_docLine.m_C_WithHolding_ID : "", m_docVO.C_DocType_ID,
-            C_Costcenter_ID);
+            C_Costcenter_ID, (m_docVO.m_IsOpening.equals("Y")) ? "O" : "N");
         log4jFactLine.debug("FactLine - After insertFactAct");
       }
-      if (m_docVO.m_IsOpening.equals("Y"))
-        FactLineData.updateFactAcct(con, conn, m_AD_Table_ID, m_Record_ID);
+      // if (m_docVO.m_IsOpening.equals("Y"))
+      // FactLineData.updateFactAcct(con, conn, m_AD_Table_ID, m_Record_ID);
     } catch (ServletException e) {
       log4jFactLine.warn(e);
     }

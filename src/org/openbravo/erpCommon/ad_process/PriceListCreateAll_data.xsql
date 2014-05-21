@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,7 +55,7 @@
     <Parameter name="clientOrg" optional="true" type="replace" after="AND AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="clientUser" optional="true" type="replace" after="AND AD_CLIENT_ID IN (" text="'1'"/>
   </SqlMethod>
-  <SqlMethod name="process" type="callableStatement" connection="true" return="object" object="PriceListCreateAllData">
+  <SqlMethod name="process" type="callableStatement" return="object" object="PriceListCreateAllData">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
         CALL M_PriceList_Create(?)

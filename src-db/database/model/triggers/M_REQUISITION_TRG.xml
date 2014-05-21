@@ -14,11 +14,12 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2012 Openbravo SLU
+* All portions are Copyright (C) 2008-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_DocStatus VARCHAR(60);
+  v_OldDocStatus VARCHAR(60) := '-1';
+  v_NewDocStatus VARCHAR(60) := '-1';
       
 BEGIN
     
@@ -26,18 +27,20 @@ BEGIN
     END IF;
 
 
-  IF INSERTING THEN
-    v_DocStatus := :new.DocStatus;
-  ELSE
-    v_DocStatus := :old.DocStatus;
+  IF INSERTING OR UPDATING THEN
+    v_NewDocStatus := :new.DocStatus;
+  END IF;
+  IF UPDATING OR DELETING THEN
+    v_OldDocStatus := :old.DocStatus;
   END IF;
 
-  IF ((v_DocStatus = 'CL')
-      OR ((v_DocStatus = 'CO') AND NOT UPDATING)) THEN
+  IF ((INSERTING AND v_NewDocStatus IN ('CL', 'CO'))
+      OR (UPDATING AND v_olddocstatus = 'CL' AND v_newdocstatus != 'CO')
+      OR (DELETING AND v_olddocstatus IN ('CL', 'CO')))THEN
     RAISE_APPLICATION_ERROR(-20000, '@20501@');
   END IF;
 
-  IF (v_DocStatus = 'CO' AND UPDATING) THEN
+  IF (v_newDocStatus = 'CO' AND UPDATING) THEN
     IF ((COALESCE(:old.DocumentNo, '.') <> COALESCE(:new.DocumentNo,'.'))
        OR (COALESCE(:old.C_BPartner_ID, '0') <> COALESCE(:new.C_BPartner_ID, '0'))
        OR (COALESCE(:old.M_PriceList_ID, '0') <> COALESCE(:new.M_PriceList_ID, '0'))

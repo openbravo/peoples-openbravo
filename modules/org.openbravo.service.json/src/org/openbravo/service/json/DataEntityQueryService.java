@@ -365,11 +365,19 @@ public class DataEntityQueryService {
    * only organizations with that criteria will be shown
    * </ul>
    */
-  public void setSubEntity(String subEntityName, DataEntityQueryService dataEntityQueryService,
-      Property distinctProperty) {
+  void setSubEntity(String subEntityName, DataEntityQueryService dataEntityQueryService,
+      Property distinctProperty, String distinctPropertyPath) {
     queryBuilder.setSubEntityName(subEntityName);
     queryBuilder.setSubDataEntityQueryService(dataEntityQueryService);
     queryBuilder.setDistinctProperty(distinctProperty);
+    queryBuilder.setDistinctPropertyPath(distinctPropertyPath);
+  }
+
+  @Deprecated
+  public void setSubEntity(String subEntityName, DataEntityQueryService dataEntityQueryService,
+      Property distinctProperty) {
+    setSubEntity(subEntityName, dataEntityQueryService, distinctProperty,
+        distinctProperty.getName());
   }
 
 }

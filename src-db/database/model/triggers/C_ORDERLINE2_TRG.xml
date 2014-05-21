@@ -18,7 +18,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -31,6 +31,7 @@
   v_isSOTrx            CHAR(1);
   v_QtyReservedPO      NUMBER;
   v_QtyOrderReservedPO NUMBER;
+  v_count              NUMBER;
 
 BEGIN
     
@@ -126,6 +127,87 @@ BEGIN
       IF V_STOCKED > 0 THEN
         M_UPDATE_STORAGE_PENDING(:new.AD_Client_ID, :new.AD_Org_ID, :new.UpdatedBy, :new.M_Product_ID, :new.M_Warehouse_ID, :new.M_AttributeSetInstance_ID, :new.C_UOM_ID, :new.M_Product_UOM_ID, v_QtyReserved, v_QtyOrderReserved, v_QtyReservedPO, v_QtyOrderReservedPO);
       END IF;
+    END IF;
+  END IF;
+  
+  IF (UPDATING) THEN
+    -- Update Requisition ordered quantity when needed.
+    SELECT count(*) INTO v_count
+    FROM DUAL
+    WHERE EXISTS (SELECT 1 FROM m_requisitionorder WHERE c_orderline_id = :old.c_orderline_id);
+    IF (v_count > 0 AND :old.qtyordered > :new.qtyordered) THEN
+      -- Quantity order decrease. Remove quantity from requisitions.
+      DECLARE
+        TYPE RECORD IS REF CURSOR;
+        cur_requisitions      RECORD;
+
+        v_requisitionqty      NUMBER;
+        v_qtypendingtoremove  NUMBER;
+        v_qtytoremove         NUMBER;
+      BEGIN
+        SELECT sum(qty) INTO v_requisitionqty
+        FROM m_requisitionorder
+        WHERE c_orderline_id = :OLD.c_orderline_id;
+        IF (v_requisitionqty > :NEW.qtyordered) THEN
+          v_qtypendingtoremove := v_requisitionqty - :new.qtyordered;
+          FOR cur_requisitions IN (
+            SELECT ro.m_requisitionorder_id, ro.qty
+            FROM m_requisitionorder ro
+                JOIN m_requisitionline rl ON ro.m_requisitionline_id = rl.m_requisitionline_id
+            WHERE ro.c_orderline_id = :old.c_orderline_id
+            ORDER BY CASE rl.reqstatus WHEN 'O' THEN 0 ELSE 1 END, rl.needbydate DESC, rl.created DESC
+          ) LOOP
+            v_qtytoremove := LEAST(v_qtypendingtoremove, cur_requisitions.qty);
+            -- Do not remove if quantity is set to zero to keep relation
+            UPDATE m_requisitionorder
+            SET qty = qty - v_qtytoremove
+            WHERE m_requisitionorder_id = cur_requisitions.m_requisitionorder_id;
+            v_qtypendingtoremove := v_qtypendingtoremove - v_qtytoremove;
+            IF (v_qtypendingtoremove = 0) THEN
+              EXIT;
+            END IF;
+          END LOOP;
+        END IF;
+      END;
+    ELSIF (v_count > 0 AND :old.qtyordered < :new.qtyordered) THEN
+      -- Quantity order increase. Add quantity to requisitions.
+      DECLARE
+        TYPE RECORD IS REF CURSOR;
+        cur_requisitions          RECORD;
+
+        v_requisitionpendingqty   NUMBER;
+        v_qtypendingtoadd         NUMBER;
+        v_qtytoadd                NUMBER;
+      BEGIN
+        SELECT sum(rl.qty - rl.orderedqty) INTO v_requisitionpendingqty
+        FROM m_requisitionline rl 
+        WHERE rl.m_requisitionline_id IN (SELECT ro.m_requisitionline_id 
+                                          FROM m_requisitionorder ro
+                                          WHERE c_orderline_id = :old.c_orderline_id)
+          AND rl.qty > rl.orderedqty;
+        IF (v_requisitionpendingqty > 0) THEN
+          v_qtypendingtoadd := LEAST(v_requisitionpendingqty, :new.qtyordered - :old.qtyordered);
+          FOR cur_requisitions IN (
+            SELECT MAX(m_requisitionorder_id) AS m_requisitionorder_id, rl.qty - rl.orderedqty AS pendingqty
+            FROM m_requisitionorder ro
+                JOIN m_requisitionline rl ON ro.m_requisitionline_id = rl.m_requisitionline_id
+            WHERE ro.c_orderline_id = :old.c_orderline_id
+              AND rl.qty > rl.orderedqty
+              AND rl.reqstatus = 'O'
+            GROUP BY rl.m_requisitionline_id, rl.needbydate, rl.created, rl.qty, rl.orderedqty, rl.reqstatus
+            ORDER BY rl.needbydate ASC, rl.created ASC
+          ) LOOP
+            v_qtytoadd := LEAST(v_qtypendingtoadd, cur_requisitions.pendingqty);
+            UPDATE m_requisitionorder
+            SET qty = qty + v_qtytoadd
+            WHERE m_requisitionorder_id = cur_requisitions.m_requisitionorder_id;
+            v_qtypendingtoadd := v_qtypendingtoadd - v_qtytoadd;
+            IF (v_qtypendingtoadd = 0) THEN
+              EXIT;
+            END IF;
+          END LOOP;
+        END IF;
+      END;
     END IF;
   END IF;
 

@@ -11,6 +11,7 @@
 <!--102-->  <ACTION><![CDATA[W]]></ACTION>
 <!--102-->  <AD_WINDOW_ID><![CDATA[115]]></AD_WINDOW_ID>
 <!--102-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--102-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--102--></AD_MENU>
 
 <!--103--><AD_MENU>
@@ -24,6 +25,7 @@
 <!--103-->  <ACTION><![CDATA[W]]></ACTION>
 <!--103-->  <AD_WINDOW_ID><![CDATA[116]]></AD_WINDOW_ID>
 <!--103-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--103-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--103--></AD_MENU>
 
 <!--104--><AD_MENU>
@@ -37,6 +39,7 @@
 <!--104-->  <ACTION><![CDATA[W]]></ACTION>
 <!--104-->  <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
 <!--104-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--104-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--104--></AD_MENU>
 
 <!--105--><AD_MENU>
@@ -50,6 +53,7 @@
 <!--105-->  <ACTION><![CDATA[W]]></ACTION>
 <!--105-->  <AD_WINDOW_ID><![CDATA[118]]></AD_WINDOW_ID>
 <!--105-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--105-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--105--></AD_MENU>
 
 <!--106--><AD_MENU>
@@ -63,6 +67,7 @@
 <!--106-->  <ACTION><![CDATA[W]]></ACTION>
 <!--106-->  <AD_WINDOW_ID><![CDATA[153]]></AD_WINDOW_ID>
 <!--106-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--106-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--106--></AD_MENU>
 
 <!--107--><AD_MENU>
@@ -76,6 +81,7 @@
 <!--107-->  <ACTION><![CDATA[W]]></ACTION>
 <!--107-->  <AD_WINDOW_ID><![CDATA[120]]></AD_WINDOW_ID>
 <!--107-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--107-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--107--></AD_MENU>
 
 <!--108--><AD_MENU>
@@ -89,6 +95,7 @@
 <!--108-->  <ACTION><![CDATA[W]]></ACTION>
 <!--108-->  <AD_WINDOW_ID><![CDATA[121]]></AD_WINDOW_ID>
 <!--108-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--108-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--108--></AD_MENU>
 
 <!--109--><AD_MENU>
@@ -102,6 +109,7 @@
 <!--109-->  <ACTION><![CDATA[W]]></ACTION>
 <!--109-->  <AD_WINDOW_ID><![CDATA[122]]></AD_WINDOW_ID>
 <!--109-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--109-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--109--></AD_MENU>
 
 <!--110--><AD_MENU>
@@ -115,6 +123,7 @@
 <!--110-->  <ACTION><![CDATA[W]]></ACTION>
 <!--110-->  <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
 <!--110-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--110-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--110--></AD_MENU>
 
 <!--111--><AD_MENU>
@@ -128,6 +137,7 @@
 <!--111-->  <ACTION><![CDATA[W]]></ACTION>
 <!--111-->  <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
 <!--111-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--111-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--111--></AD_MENU>
 
 <!--115--><AD_MENU>
@@ -141,6 +151,7 @@
 <!--115-->  <ACTION><![CDATA[W]]></ACTION>
 <!--115-->  <AD_WINDOW_ID><![CDATA[129]]></AD_WINDOW_ID>
 <!--115-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--115-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--115--></AD_MENU>
 
 <!--116--><AD_MENU>
@@ -154,6 +165,7 @@
 <!--116-->  <ACTION><![CDATA[W]]></ACTION>
 <!--116-->  <AD_WINDOW_ID><![CDATA[130]]></AD_WINDOW_ID>
 <!--116-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--116-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--116--></AD_MENU>
 
 <!--117--><AD_MENU>
@@ -167,6 +179,7 @@
 <!--117-->  <ACTION><![CDATA[W]]></ACTION>
 <!--117-->  <AD_WINDOW_ID><![CDATA[131]]></AD_WINDOW_ID>
 <!--117-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--117-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--117--></AD_MENU>
 
 <!--118--><AD_MENU>
@@ -180,6 +193,7 @@
 <!--118-->  <ACTION><![CDATA[W]]></ACTION>
 <!--118-->  <AD_WINDOW_ID><![CDATA[132]]></AD_WINDOW_ID>
 <!--118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--118-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--118--></AD_MENU>
 
 <!--120--><AD_MENU>
@@ -193,6 +207,7 @@
 <!--120-->  <ACTION><![CDATA[W]]></ACTION>
 <!--120-->  <AD_WINDOW_ID><![CDATA[134]]></AD_WINDOW_ID>
 <!--120-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--120-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--120--></AD_MENU>
 
 <!--121--><AD_MENU>
@@ -206,6 +221,7 @@
 <!--121-->  <ACTION><![CDATA[W]]></ACTION>
 <!--121-->  <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
 <!--121-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--121-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--121--></AD_MENU>
 
 <!--123--><AD_MENU>
@@ -219,6 +235,7 @@
 <!--123-->  <ACTION><![CDATA[W]]></ACTION>
 <!--123-->  <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
 <!--123-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--123-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--123--></AD_MENU>
 
 <!--124--><AD_MENU>
@@ -232,6 +249,7 @@
 <!--124-->  <ACTION><![CDATA[W]]></ACTION>
 <!--124-->  <AD_WINDOW_ID><![CDATA[138]]></AD_WINDOW_ID>
 <!--124-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--124-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--124--></AD_MENU>
 
 <!--125--><AD_MENU>
@@ -245,6 +263,7 @@
 <!--125-->  <ACTION><![CDATA[W]]></ACTION>
 <!--125-->  <AD_WINDOW_ID><![CDATA[139]]></AD_WINDOW_ID>
 <!--125-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--125-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--125--></AD_MENU>
 
 <!--126--><AD_MENU>
@@ -258,6 +277,7 @@
 <!--126-->  <ACTION><![CDATA[W]]></ACTION>
 <!--126-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--126-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--126-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--126--></AD_MENU>
 
 <!--127--><AD_MENU>
@@ -271,6 +291,7 @@
 <!--127-->  <ACTION><![CDATA[W]]></ACTION>
 <!--127-->  <AD_WINDOW_ID><![CDATA[141]]></AD_WINDOW_ID>
 <!--127-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--127-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--127--></AD_MENU>
 
 <!--128--><AD_MENU>
@@ -284,6 +305,7 @@
 <!--128-->  <ACTION><![CDATA[W]]></ACTION>
 <!--128-->  <AD_WINDOW_ID><![CDATA[142]]></AD_WINDOW_ID>
 <!--128-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--128-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--128--></AD_MENU>
 
 <!--129--><AD_MENU>
@@ -297,6 +319,7 @@
 <!--129-->  <ACTION><![CDATA[W]]></ACTION>
 <!--129-->  <AD_WINDOW_ID><![CDATA[143]]></AD_WINDOW_ID>
 <!--129-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--129-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--129--></AD_MENU>
 
 <!--130--><AD_MENU>
@@ -310,6 +333,7 @@
 <!--130-->  <ACTION><![CDATA[W]]></ACTION>
 <!--130-->  <AD_WINDOW_ID><![CDATA[144]]></AD_WINDOW_ID>
 <!--130-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--130-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--130--></AD_MENU>
 
 <!--132--><AD_MENU>
@@ -323,6 +347,7 @@
 <!--132-->  <ACTION><![CDATA[W]]></ACTION>
 <!--132-->  <AD_WINDOW_ID><![CDATA[146]]></AD_WINDOW_ID>
 <!--132-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--132-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--132--></AD_MENU>
 
 <!--133--><AD_MENU>
@@ -336,6 +361,7 @@
 <!--133-->  <ACTION><![CDATA[W]]></ACTION>
 <!--133-->  <AD_WINDOW_ID><![CDATA[147]]></AD_WINDOW_ID>
 <!--133-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--133-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--133--></AD_MENU>
 
 <!--134--><AD_MENU>
@@ -349,6 +375,7 @@
 <!--134-->  <ACTION><![CDATA[W]]></ACTION>
 <!--134-->  <AD_WINDOW_ID><![CDATA[149]]></AD_WINDOW_ID>
 <!--134-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--134-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--134--></AD_MENU>
 
 <!--136--><AD_MENU>
@@ -362,6 +389,7 @@
 <!--136-->  <ACTION><![CDATA[W]]></ACTION>
 <!--136-->  <AD_WINDOW_ID><![CDATA[150]]></AD_WINDOW_ID>
 <!--136-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--136-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--136--></AD_MENU>
 
 <!--137--><AD_MENU>
@@ -375,6 +403,7 @@
 <!--137-->  <ACTION><![CDATA[W]]></ACTION>
 <!--137-->  <AD_WINDOW_ID><![CDATA[152]]></AD_WINDOW_ID>
 <!--137-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--137-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--137--></AD_MENU>
 
 <!--138--><AD_MENU>
@@ -388,6 +417,7 @@
 <!--138-->  <ACTION><![CDATA[W]]></ACTION>
 <!--138-->  <AD_WINDOW_ID><![CDATA[151]]></AD_WINDOW_ID>
 <!--138-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--138-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--138--></AD_MENU>
 
 <!--139--><AD_MENU>
@@ -401,6 +431,7 @@
 <!--139-->  <ACTION><![CDATA[W]]></ACTION>
 <!--139-->  <AD_WINDOW_ID><![CDATA[100]]></AD_WINDOW_ID>
 <!--139-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--139-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--139--></AD_MENU>
 
 <!--140--><AD_MENU>
@@ -414,6 +445,7 @@
 <!--140-->  <ACTION><![CDATA[W]]></ACTION>
 <!--140-->  <AD_WINDOW_ID><![CDATA[101]]></AD_WINDOW_ID>
 <!--140-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--140-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--140--></AD_MENU>
 
 <!--141--><AD_MENU>
@@ -427,6 +459,7 @@
 <!--141-->  <ACTION><![CDATA[W]]></ACTION>
 <!--141-->  <AD_WINDOW_ID><![CDATA[102]]></AD_WINDOW_ID>
 <!--141-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--141-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--141--></AD_MENU>
 
 <!--142--><AD_MENU>
@@ -440,6 +473,7 @@
 <!--142-->  <ACTION><![CDATA[W]]></ACTION>
 <!--142-->  <AD_WINDOW_ID><![CDATA[103]]></AD_WINDOW_ID>
 <!--142-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--142-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--142--></AD_MENU>
 
 <!--143--><AD_MENU>
@@ -453,6 +487,7 @@
 <!--143-->  <ACTION><![CDATA[W]]></ACTION>
 <!--143-->  <AD_WINDOW_ID><![CDATA[104]]></AD_WINDOW_ID>
 <!--143-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--143-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--143--></AD_MENU>
 
 <!--144--><AD_MENU>
@@ -466,6 +501,7 @@
 <!--144-->  <ACTION><![CDATA[W]]></ACTION>
 <!--144-->  <AD_WINDOW_ID><![CDATA[105]]></AD_WINDOW_ID>
 <!--144-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--144-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--144--></AD_MENU>
 
 <!--145--><AD_MENU>
@@ -479,6 +515,7 @@
 <!--145-->  <ACTION><![CDATA[W]]></ACTION>
 <!--145-->  <AD_WINDOW_ID><![CDATA[106]]></AD_WINDOW_ID>
 <!--145-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--145-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--145--></AD_MENU>
 
 <!--147--><AD_MENU>
@@ -492,6 +529,7 @@
 <!--147-->  <ACTION><![CDATA[W]]></ACTION>
 <!--147-->  <AD_WINDOW_ID><![CDATA[108]]></AD_WINDOW_ID>
 <!--147-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--147-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--147--></AD_MENU>
 
 <!--148--><AD_MENU>
@@ -505,6 +543,7 @@
 <!--148-->  <ACTION><![CDATA[W]]></ACTION>
 <!--148-->  <AD_WINDOW_ID><![CDATA[109]]></AD_WINDOW_ID>
 <!--148-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--148-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--148--></AD_MENU>
 
 <!--149--><AD_MENU>
@@ -518,6 +557,7 @@
 <!--149-->  <ACTION><![CDATA[W]]></ACTION>
 <!--149-->  <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
 <!--149-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--149-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--149--></AD_MENU>
 
 <!--150--><AD_MENU>
@@ -531,6 +571,7 @@
 <!--150-->  <ACTION><![CDATA[W]]></ACTION>
 <!--150-->  <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
 <!--150-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--150-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--150--></AD_MENU>
 
 <!--151--><AD_MENU>
@@ -544,6 +585,7 @@
 <!--151-->  <ACTION><![CDATA[W]]></ACTION>
 <!--151-->  <AD_WINDOW_ID><![CDATA[112]]></AD_WINDOW_ID>
 <!--151-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--151-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--151--></AD_MENU>
 
 <!--153--><AD_MENU>
@@ -555,6 +597,7 @@
 <!--153-->  <DESCRIPTION><![CDATA[Open a folder where you can customize, modify, and adapt the application to your needs.]]></DESCRIPTION>
 <!--153-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--153-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--153-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--153--></AD_MENU>
 
 <!--155--><AD_MENU>
@@ -566,6 +609,7 @@
 <!--155-->  <DESCRIPTION><![CDATA[General Setup is the place where to configure basic Openbravo settings such as the enterprise model, users and roles  as well as other more advance setting such as alerts, preferences and processes.]]></DESCRIPTION>
 <!--155-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--155-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--155-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--155--></AD_MENU>
 
 <!--156--><AD_MENU>
@@ -577,6 +621,7 @@
 <!--156-->  <DESCRIPTION><![CDATA[Client folder collects client configuration as well as the role of the client to be assigned to those Openbravo users do not linked to a Google account.]]></DESCRIPTION>
 <!--156-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--156-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--156-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--156--></AD_MENU>
 
 <!--157--><AD_MENU>
@@ -588,6 +633,7 @@
 <!--157-->  <DESCRIPTION><![CDATA[Open a folder where you can import data and edit functionalities.]]></DESCRIPTION>
 <!--157-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--157-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--157-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--157--></AD_MENU>
 
 <!--158--><AD_MENU>
@@ -598,6 +644,7 @@
 <!--158-->  <NAME><![CDATA[Performance Measurement]]></NAME>
 <!--158-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--158-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--158-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--158--></AD_MENU>
 
 <!--159--><AD_MENU>
@@ -609,6 +656,7 @@
 <!--159-->  <DESCRIPTION><![CDATA[Open a folder where you can edit some additional application features.]]></DESCRIPTION>
 <!--159-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--159-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--159-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--159--></AD_MENU>
 
 <!--160--><AD_MENU>
@@ -620,6 +668,7 @@
 <!--160-->  <DESCRIPTION><![CDATA[Project and Services Management addresses services and multiphase projects and helps on analyzing project related reports.]]></DESCRIPTION>
 <!--160-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--160-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--160--></AD_MENU>
 
 <!--161--><AD_MENU>
@@ -631,6 +680,7 @@
 <!--161-->  <DESCRIPTION><![CDATA[Application folder gathers multi-data settings, attributes values or specific properties settings at different levels as well as alerts configuration. ]]></DESCRIPTION>
 <!--161-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--161-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--161--></AD_MENU>
 
 <!--164--><AD_MENU>
@@ -642,6 +692,7 @@
 <!--164-->  <DESCRIPTION><![CDATA[Open a folder where you can define all information to be used in this module.]]></DESCRIPTION>
 <!--164-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--164-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--164-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--164--></AD_MENU>
 
 <!--165--><AD_MENU>
@@ -652,6 +703,7 @@
 <!--165-->  <NAME><![CDATA[Business Partner Rules]]></NAME>
 <!--165-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--165-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--165-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--165--></AD_MENU>
 
 <!--166--><AD_MENU>
@@ -663,6 +715,7 @@
 <!--166-->  <DESCRIPTION><![CDATA[Sales Management  addresses the life-cycle of a sales process and besides provides the tools to analyze sales related information.]]></DESCRIPTION>
 <!--166-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--166-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--166-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--166--></AD_MENU>
 
 <!--167--><AD_MENU>
@@ -674,6 +727,7 @@
 <!--167-->  <DESCRIPTION><![CDATA[Open a folder where you can define all information to be used in this module.]]></DESCRIPTION>
 <!--167-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--167-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--167-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--167--></AD_MENU>
 
 <!--169--><AD_MENU>
@@ -687,6 +741,7 @@
 <!--169-->  <ACTION><![CDATA[W]]></ACTION>
 <!--169-->  <AD_WINDOW_ID><![CDATA[162]]></AD_WINDOW_ID>
 <!--169-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--169-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--169--></AD_MENU>
 
 <!--170--><AD_MENU>
@@ -700,6 +755,7 @@
 <!--170-->  <ACTION><![CDATA[W]]></ACTION>
 <!--170-->  <AD_WINDOW_ID><![CDATA[163]]></AD_WINDOW_ID>
 <!--170-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--170-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--170--></AD_MENU>
 
 <!--171--><AD_MENU>
@@ -713,6 +769,7 @@
 <!--171-->  <ACTION><![CDATA[W]]></ACTION>
 <!--171-->  <AD_WINDOW_ID><![CDATA[158]]></AD_WINDOW_ID>
 <!--171-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--171-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--171--></AD_MENU>
 
 <!--175--><AD_MENU>
@@ -724,6 +781,7 @@
 <!--175-->  <DESCRIPTION><![CDATA[Open a folder where you can create and edit enterprise items such as organizations.]]></DESCRIPTION>
 <!--175-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--175-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--175-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--175--></AD_MENU>
 
 <!--176--><AD_MENU>
@@ -737,6 +795,7 @@
 <!--176-->  <ACTION><![CDATA[W]]></ACTION>
 <!--176-->  <AD_WINDOW_ID><![CDATA[165]]></AD_WINDOW_ID>
 <!--176-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--176-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--176--></AD_MENU>
 
 <!--178--><AD_MENU>
@@ -750,6 +809,7 @@
 <!--178-->  <ACTION><![CDATA[W]]></ACTION>
 <!--178-->  <AD_WINDOW_ID><![CDATA[167]]></AD_WINDOW_ID>
 <!--178-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--178-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--178--></AD_MENU>
 
 <!--179--><AD_MENU>
@@ -763,6 +823,7 @@
 <!--179-->  <ACTION><![CDATA[W]]></ACTION>
 <!--179-->  <AD_WINDOW_ID><![CDATA[168]]></AD_WINDOW_ID>
 <!--179-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--179-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--179--></AD_MENU>
 
 <!--180--><AD_MENU>
@@ -776,6 +837,7 @@
 <!--180-->  <ACTION><![CDATA[W]]></ACTION>
 <!--180-->  <AD_WINDOW_ID><![CDATA[169]]></AD_WINDOW_ID>
 <!--180-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--180-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--180--></AD_MENU>
 
 <!--181--><AD_MENU>
@@ -789,6 +851,7 @@
 <!--181-->  <ACTION><![CDATA[W]]></ACTION>
 <!--181-->  <AD_WINDOW_ID><![CDATA[170]]></AD_WINDOW_ID>
 <!--181-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--181-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--181--></AD_MENU>
 
 <!--183--><AD_MENU>
@@ -799,6 +862,7 @@
 <!--183-->  <NAME><![CDATA[Product Management]]></NAME>
 <!--183-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--183-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--183-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--183--></AD_MENU>
 
 <!--190--><AD_MENU>
@@ -812,6 +876,7 @@
 <!--190-->  <ACTION><![CDATA[W]]></ACTION>
 <!--190-->  <AD_WINDOW_ID><![CDATA[178]]></AD_WINDOW_ID>
 <!--190-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--190-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--190--></AD_MENU>
 
 <!--192--><AD_MENU>
@@ -825,6 +890,7 @@
 <!--192-->  <ACTION><![CDATA[P]]></ACTION>
 <!--192-->  <AD_PROCESS_ID><![CDATA[119]]></AD_PROCESS_ID>
 <!--192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--192-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--192--></AD_MENU>
 
 <!--193--><AD_MENU>
@@ -838,6 +904,7 @@
 <!--193-->  <ACTION><![CDATA[P]]></ACTION>
 <!--193-->  <AD_PROCESS_ID><![CDATA[118]]></AD_PROCESS_ID>
 <!--193-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--193-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--193--></AD_MENU>
 
 <!--194--><AD_MENU>
@@ -851,6 +918,7 @@
 <!--194-->  <ACTION><![CDATA[R]]></ACTION>
 <!--194-->  <AD_PROCESS_ID><![CDATA[120]]></AD_PROCESS_ID>
 <!--194-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--194-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--194--></AD_MENU>
 
 <!--195--><AD_MENU>
@@ -864,6 +932,7 @@
 <!--195-->  <ACTION><![CDATA[R]]></ACTION>
 <!--195-->  <AD_PROCESS_ID><![CDATA[121]]></AD_PROCESS_ID>
 <!--195-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--195-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--195--></AD_MENU>
 
 <!--197--><AD_MENU>
@@ -877,6 +946,7 @@
 <!--197-->  <ACTION><![CDATA[R]]></ACTION>
 <!--197-->  <AD_PROCESS_ID><![CDATA[124]]></AD_PROCESS_ID>
 <!--197-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--197-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--197--></AD_MENU>
 
 <!--202--><AD_MENU>
@@ -890,6 +960,7 @@
 <!--202-->  <ACTION><![CDATA[R]]></ACTION>
 <!--202-->  <AD_PROCESS_ID><![CDATA[127]]></AD_PROCESS_ID>
 <!--202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--202-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--202--></AD_MENU>
 
 <!--203--><AD_MENU>
@@ -901,6 +972,7 @@
 <!--203-->  <DESCRIPTION><![CDATA[Procurement Management supports the management of the orders, goods receipts and purchase invoices as well as the analysis of purchase related data.]]></DESCRIPTION>
 <!--203-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--203-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--203--></AD_MENU>
 
 <!--204--><AD_MENU>
@@ -914,6 +986,7 @@
 <!--204-->  <ACTION><![CDATA[W]]></ACTION>
 <!--204-->  <AD_WINDOW_ID><![CDATA[184]]></AD_WINDOW_ID>
 <!--204-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--204-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--204--></AD_MENU>
 
 <!--205--><AD_MENU>
@@ -927,6 +1000,7 @@
 <!--205-->  <ACTION><![CDATA[W]]></ACTION>
 <!--205-->  <AD_WINDOW_ID><![CDATA[181]]></AD_WINDOW_ID>
 <!--205-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--205-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--205--></AD_MENU>
 
 <!--206--><AD_MENU>
@@ -940,6 +1014,7 @@
 <!--206-->  <ACTION><![CDATA[W]]></ACTION>
 <!--206-->  <AD_WINDOW_ID><![CDATA[183]]></AD_WINDOW_ID>
 <!--206-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--206-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--206--></AD_MENU>
 
 <!--210--><AD_MENU>
@@ -953,6 +1028,7 @@
 <!--210-->  <ACTION><![CDATA[R]]></ACTION>
 <!--210-->  <AD_PROCESS_ID><![CDATA[128]]></AD_PROCESS_ID>
 <!--210-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--210-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--210--></AD_MENU>
 
 <!--211--><AD_MENU>
@@ -966,6 +1042,7 @@
 <!--211-->  <ACTION><![CDATA[R]]></ACTION>
 <!--211-->  <AD_PROCESS_ID><![CDATA[129]]></AD_PROCESS_ID>
 <!--211-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--211-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--211--></AD_MENU>
 
 <!--212--><AD_MENU>
@@ -979,6 +1056,7 @@
 <!--212-->  <ACTION><![CDATA[R]]></ACTION>
 <!--212-->  <AD_PROCESS_ID><![CDATA[132]]></AD_PROCESS_ID>
 <!--212-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--212-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--212--></AD_MENU>
 
 <!--213--><AD_MENU>
@@ -992,6 +1070,7 @@
 <!--213-->  <ACTION><![CDATA[R]]></ACTION>
 <!--213-->  <AD_PROCESS_ID><![CDATA[131]]></AD_PROCESS_ID>
 <!--213-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--213-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--213--></AD_MENU>
 
 <!--214--><AD_MENU>
@@ -1005,6 +1084,7 @@
 <!--214-->  <ACTION><![CDATA[R]]></ACTION>
 <!--214-->  <AD_PROCESS_ID><![CDATA[133]]></AD_PROCESS_ID>
 <!--214-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--214-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--214--></AD_MENU>
 
 <!--215--><AD_MENU>
@@ -1018,6 +1098,7 @@
 <!--215-->  <ACTION><![CDATA[R]]></ACTION>
 <!--215-->  <AD_PROCESS_ID><![CDATA[130]]></AD_PROCESS_ID>
 <!--215-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--215-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--215--></AD_MENU>
 
 <!--216--><AD_MENU>
@@ -1031,6 +1112,7 @@
 <!--216-->  <ACTION><![CDATA[W]]></ACTION>
 <!--216-->  <AD_WINDOW_ID><![CDATA[187]]></AD_WINDOW_ID>
 <!--216-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--216-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--216--></AD_MENU>
 
 <!--217--><AD_MENU>
@@ -1044,6 +1126,7 @@
 <!--217-->  <ACTION><![CDATA[X]]></ACTION>
 <!--217-->  <AD_FORM_ID><![CDATA[100]]></AD_FORM_ID>
 <!--217-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--217-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--217--></AD_MENU>
 
 <!--218--><AD_MENU>
@@ -1054,6 +1137,7 @@
 <!--218-->  <NAME><![CDATA[System Admin]]></NAME>
 <!--218-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--218-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--218-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--218--></AD_MENU>
 
 <!--225--><AD_MENU>
@@ -1067,6 +1151,7 @@
 <!--225-->  <ACTION><![CDATA[X]]></ACTION>
 <!--225-->  <AD_FORM_ID><![CDATA[102]]></AD_FORM_ID>
 <!--225-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--225-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--225--></AD_MENU>
 
 <!--227--><AD_MENU>
@@ -1080,6 +1165,7 @@
 <!--227-->  <ACTION><![CDATA[R]]></ACTION>
 <!--227-->  <AD_PROCESS_ID><![CDATA[115]]></AD_PROCESS_ID>
 <!--227-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--227-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--227--></AD_MENU>
 
 <!--228--><AD_MENU>
@@ -1093,6 +1179,7 @@
 <!--228-->  <ACTION><![CDATA[W]]></ACTION>
 <!--228-->  <AD_WINDOW_ID><![CDATA[191]]></AD_WINDOW_ID>
 <!--228-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--228-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--228--></AD_MENU>
 
 <!--230--><AD_MENU>
@@ -1106,6 +1193,7 @@
 <!--230-->  <ACTION><![CDATA[R]]></ACTION>
 <!--230-->  <AD_PROCESS_ID><![CDATA[138]]></AD_PROCESS_ID>
 <!--230-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--230-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--230--></AD_MENU>
 
 <!--231--><AD_MENU>
@@ -1119,6 +1207,7 @@
 <!--231-->  <ACTION><![CDATA[R]]></ACTION>
 <!--231-->  <AD_PROCESS_ID><![CDATA[139]]></AD_PROCESS_ID>
 <!--231-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--231-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--231--></AD_MENU>
 
 <!--232--><AD_MENU>
@@ -1132,6 +1221,7 @@
 <!--232-->  <ACTION><![CDATA[W]]></ACTION>
 <!--232-->  <AD_WINDOW_ID><![CDATA[192]]></AD_WINDOW_ID>
 <!--232-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--232-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--232--></AD_MENU>
 
 <!--234--><AD_MENU>
@@ -1145,6 +1235,7 @@
 <!--234-->  <ACTION><![CDATA[W]]></ACTION>
 <!--234-->  <AD_WINDOW_ID><![CDATA[194]]></AD_WINDOW_ID>
 <!--234-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--234-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--234--></AD_MENU>
 
 <!--236--><AD_MENU>
@@ -1156,6 +1247,7 @@
 <!--236-->  <DESCRIPTION><![CDATA[Open a folder where you can create and edit settlements, debt payments, bank operations, remittances, and analyze reports.]]></DESCRIPTION>
 <!--236-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--236-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--236-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--236--></AD_MENU>
 
 <!--240--><AD_MENU>
@@ -1169,6 +1261,7 @@
 <!--240-->  <ACTION><![CDATA[W]]></ACTION>
 <!--240-->  <AD_WINDOW_ID><![CDATA[197]]></AD_WINDOW_ID>
 <!--240-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--240-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--240--></AD_MENU>
 
 <!--241--><AD_MENU>
@@ -1182,6 +1275,7 @@
 <!--241-->  <ACTION><![CDATA[W]]></ACTION>
 <!--241-->  <AD_WINDOW_ID><![CDATA[198]]></AD_WINDOW_ID>
 <!--241-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--241-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--241--></AD_MENU>
 
 <!--249--><AD_MENU>
@@ -1195,6 +1289,7 @@
 <!--249-->  <ACTION><![CDATA[W]]></ACTION>
 <!--249-->  <AD_WINDOW_ID><![CDATA[200]]></AD_WINDOW_ID>
 <!--249-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--249-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--249--></AD_MENU>
 
 <!--252--><AD_MENU>
@@ -1208,6 +1303,7 @@
 <!--252-->  <ACTION><![CDATA[R]]></ACTION>
 <!--252-->  <AD_PROCESS_ID><![CDATA[151]]></AD_PROCESS_ID>
 <!--252-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--252-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--252--></AD_MENU>
 
 <!--256--><AD_MENU>
@@ -1221,6 +1317,7 @@
 <!--256-->  <ACTION><![CDATA[R]]></ACTION>
 <!--256-->  <AD_PROCESS_ID><![CDATA[161]]></AD_PROCESS_ID>
 <!--256-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--256-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--256--></AD_MENU>
 
 <!--257--><AD_MENU>
@@ -1234,6 +1331,7 @@
 <!--257-->  <ACTION><![CDATA[W]]></ACTION>
 <!--257-->  <AD_WINDOW_ID><![CDATA[207]]></AD_WINDOW_ID>
 <!--257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--257-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--257--></AD_MENU>
 
 <!--260--><AD_MENU>
@@ -1247,6 +1345,7 @@
 <!--260-->  <ACTION><![CDATA[R]]></ACTION>
 <!--260-->  <AD_PROCESS_ID><![CDATA[162]]></AD_PROCESS_ID>
 <!--260-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--260-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--260--></AD_MENU>
 
 <!--263--><AD_MENU>
@@ -1258,6 +1357,7 @@
 <!--263-->  <DESCRIPTION><![CDATA[Customer Relations and Partner Management]]></DESCRIPTION>
 <!--263-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--263-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--263-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--263--></AD_MENU>
 
 <!--264--><AD_MENU>
@@ -1271,6 +1371,7 @@
 <!--264-->  <ACTION><![CDATA[W]]></ACTION>
 <!--264-->  <AD_WINDOW_ID><![CDATA[210]]></AD_WINDOW_ID>
 <!--264-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--264-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--264--></AD_MENU>
 
 <!--271--><AD_MENU>
@@ -1282,6 +1383,7 @@
 <!--271-->  <DESCRIPTION><![CDATA[Service Management]]></DESCRIPTION>
 <!--271-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--271-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--271-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--271--></AD_MENU>
 
 <!--272--><AD_MENU>
@@ -1293,6 +1395,7 @@
 <!--272-->  <DESCRIPTION><![CDATA[Open a folder where you can define all information to be used in this module.]]></DESCRIPTION>
 <!--272-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--272-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--272-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--272--></AD_MENU>
 
 <!--278--><AD_MENU>
@@ -1304,6 +1407,7 @@
 <!--278-->  <DESCRIPTION><![CDATA[The "Financial Management" area supports daily accounting activities such as payable and receivable accounts management, assets amortization as well as the opening and closing of the accounting year.]]></DESCRIPTION>
 <!--278-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--278-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--278-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--278--></AD_MENU>
 
 <!--280--><AD_MENU>
@@ -1315,6 +1419,7 @@
 <!--280-->  <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--280-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--280-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--280-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--280--></AD_MENU>
 
 <!--292--><AD_MENU>
@@ -1328,6 +1433,7 @@
 <!--292-->  <ACTION><![CDATA[W]]></ACTION>
 <!--292-->  <AD_WINDOW_ID><![CDATA[223]]></AD_WINDOW_ID>
 <!--292-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--292-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--292--></AD_MENU>
 
 <!--296--><AD_MENU>
@@ -1341,6 +1447,7 @@
 <!--296-->  <ACTION><![CDATA[W]]></ACTION>
 <!--296-->  <AD_WINDOW_ID><![CDATA[227]]></AD_WINDOW_ID>
 <!--296-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--296-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--296--></AD_MENU>
 
 <!--303--><AD_MENU>
@@ -1354,6 +1461,7 @@
 <!--303-->  <ACTION><![CDATA[P]]></ACTION>
 <!--303-->  <AD_PROCESS_ID><![CDATA[172]]></AD_PROCESS_ID>
 <!--303-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--303-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--303--></AD_MENU>
 
 <!--306--><AD_MENU>
@@ -1367,6 +1475,7 @@
 <!--306-->  <ACTION><![CDATA[P]]></ACTION>
 <!--306-->  <AD_PROCESS_ID><![CDATA[175]]></AD_PROCESS_ID>
 <!--306-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--306-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--306--></AD_MENU>
 
 <!--307--><AD_MENU>
@@ -1380,6 +1489,7 @@
 <!--307-->  <ACTION><![CDATA[P]]></ACTION>
 <!--307-->  <AD_PROCESS_ID><![CDATA[176]]></AD_PROCESS_ID>
 <!--307-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--307-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--307--></AD_MENU>
 
 <!--310--><AD_MENU>
@@ -1393,6 +1503,7 @@
 <!--310-->  <ACTION><![CDATA[W]]></ACTION>
 <!--310-->  <AD_WINDOW_ID><![CDATA[233]]></AD_WINDOW_ID>
 <!--310-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--310-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--310--></AD_MENU>
 
 <!--315--><AD_MENU>
@@ -1406,6 +1517,7 @@
 <!--315-->  <ACTION><![CDATA[W]]></ACTION>
 <!--315-->  <AD_WINDOW_ID><![CDATA[107]]></AD_WINDOW_ID>
 <!--315-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--315-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--315--></AD_MENU>
 
 <!--316--><AD_MENU>
@@ -1419,6 +1531,7 @@
 <!--316-->  <ACTION><![CDATA[W]]></ACTION>
 <!--316-->  <AD_WINDOW_ID><![CDATA[228]]></AD_WINDOW_ID>
 <!--316-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--316-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--316--></AD_MENU>
 
 <!--317--><AD_MENU>
@@ -1432,6 +1545,7 @@
 <!--317-->  <ACTION><![CDATA[W]]></ACTION>
 <!--317-->  <AD_WINDOW_ID><![CDATA[234]]></AD_WINDOW_ID>
 <!--317-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--317-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--317--></AD_MENU>
 
 <!--318--><AD_MENU>
@@ -1445,6 +1559,7 @@
 <!--318-->  <ACTION><![CDATA[W]]></ACTION>
 <!--318-->  <AD_WINDOW_ID><![CDATA[235]]></AD_WINDOW_ID>
 <!--318-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--318-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--318--></AD_MENU>
 
 <!--319--><AD_MENU>
@@ -1458,6 +1573,7 @@
 <!--319-->  <ACTION><![CDATA[W]]></ACTION>
 <!--319-->  <AD_WINDOW_ID><![CDATA[236]]></AD_WINDOW_ID>
 <!--319-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--319-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--319--></AD_MENU>
 
 <!--320--><AD_MENU>
@@ -1471,6 +1587,7 @@
 <!--320-->  <ACTION><![CDATA[W]]></ACTION>
 <!--320-->  <AD_WINDOW_ID><![CDATA[237]]></AD_WINDOW_ID>
 <!--320-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--320-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--320--></AD_MENU>
 
 <!--321--><AD_MENU>
@@ -1484,6 +1601,7 @@
 <!--321-->  <ACTION><![CDATA[P]]></ACTION>
 <!--321-->  <AD_PROCESS_ID><![CDATA[185]]></AD_PROCESS_ID>
 <!--321-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--321-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--321--></AD_MENU>
 
 <!--326--><AD_MENU>
@@ -1495,6 +1613,7 @@
 <!--326-->  <DESCRIPTION><![CDATA[Open a folder where you can define printing formats .]]></DESCRIPTION>
 <!--326-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--326-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--326-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--326--></AD_MENU>
 
 <!--327--><AD_MENU>
@@ -1508,6 +1627,7 @@
 <!--327-->  <ACTION><![CDATA[W]]></ACTION>
 <!--327-->  <AD_WINDOW_ID><![CDATA[242]]></AD_WINDOW_ID>
 <!--327-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--327-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--327--></AD_MENU>
 
 <!--328--><AD_MENU>
@@ -1521,6 +1641,7 @@
 <!--328-->  <ACTION><![CDATA[P]]></ACTION>
 <!--328-->  <AD_PROCESS_ID><![CDATA[186]]></AD_PROCESS_ID>
 <!--328-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--328-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--328--></AD_MENU>
 
 <!--329--><AD_MENU>
@@ -1534,6 +1655,7 @@
 <!--329-->  <ACTION><![CDATA[P]]></ACTION>
 <!--329-->  <AD_PROCESS_ID><![CDATA[187]]></AD_PROCESS_ID>
 <!--329-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--329-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--329--></AD_MENU>
 
 <!--334--><AD_MENU>
@@ -1547,6 +1669,7 @@
 <!--334-->  <ACTION><![CDATA[W]]></ACTION>
 <!--334-->  <AD_WINDOW_ID><![CDATA[246]]></AD_WINDOW_ID>
 <!--334-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--334-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--334--></AD_MENU>
 
 <!--335--><AD_MENU>
@@ -1560,6 +1683,7 @@
 <!--335-->  <ACTION><![CDATA[P]]></ACTION>
 <!--335-->  <AD_PROCESS_ID><![CDATA[193]]></AD_PROCESS_ID>
 <!--335-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--335-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--335--></AD_MENU>
 
 <!--343--><AD_MENU>
@@ -1573,6 +1697,7 @@
 <!--343-->  <ACTION><![CDATA[W]]></ACTION>
 <!--343-->  <AD_WINDOW_ID><![CDATA[252]]></AD_WINDOW_ID>
 <!--343-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--343-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--343--></AD_MENU>
 
 <!--345--><AD_MENU>
@@ -1584,6 +1709,7 @@
 <!--345-->  <DESCRIPTION><![CDATA[Open a folder where you can create and edit the value and accounting of items and property.]]></DESCRIPTION>
 <!--345-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--345-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--345-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--345--></AD_MENU>
 
 <!--346--><AD_MENU>
@@ -1597,6 +1723,7 @@
 <!--346-->  <ACTION><![CDATA[X]]></ACTION>
 <!--346-->  <AD_FORM_ID><![CDATA[110]]></AD_FORM_ID>
 <!--346-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--346-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--346--></AD_MENU>
 
 <!--347--><AD_MENU>
@@ -1610,6 +1737,7 @@
 <!--347-->  <ACTION><![CDATA[P]]></ACTION>
 <!--347-->  <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
 <!--347-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--347-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--347--></AD_MENU>
 
 <!--349--><AD_MENU>
@@ -1623,6 +1751,7 @@
 <!--349-->  <ACTION><![CDATA[W]]></ACTION>
 <!--349-->  <AD_WINDOW_ID><![CDATA[254]]></AD_WINDOW_ID>
 <!--349-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--349-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--349--></AD_MENU>
 
 <!--350--><AD_MENU>
@@ -1636,6 +1765,7 @@
 <!--350-->  <ACTION><![CDATA[R]]></ACTION>
 <!--350-->  <AD_PROCESS_ID><![CDATA[204]]></AD_PROCESS_ID>
 <!--350-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--350-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--350--></AD_MENU>
 
 <!--353--><AD_MENU>
@@ -1649,6 +1779,7 @@
 <!--353-->  <ACTION><![CDATA[W]]></ACTION>
 <!--353-->  <AD_WINDOW_ID><![CDATA[256]]></AD_WINDOW_ID>
 <!--353-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--353-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--353--></AD_MENU>
 
 <!--354--><AD_MENU>
@@ -1662,6 +1793,7 @@
 <!--354-->  <ACTION><![CDATA[W]]></ACTION>
 <!--354-->  <AD_WINDOW_ID><![CDATA[259]]></AD_WINDOW_ID>
 <!--354-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--354-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--354--></AD_MENU>
 
 <!--355--><AD_MENU>
@@ -1675,6 +1807,7 @@
 <!--355-->  <ACTION><![CDATA[W]]></ACTION>
 <!--355-->  <AD_WINDOW_ID><![CDATA[258]]></AD_WINDOW_ID>
 <!--355-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--355-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--355--></AD_MENU>
 
 <!--356--><AD_MENU>
@@ -1688,6 +1821,7 @@
 <!--356-->  <ACTION><![CDATA[W]]></ACTION>
 <!--356-->  <AD_WINDOW_ID><![CDATA[257]]></AD_WINDOW_ID>
 <!--356-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--356-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--356--></AD_MENU>
 
 <!--357--><AD_MENU>
@@ -1699,6 +1833,7 @@
 <!--357-->  <DESCRIPTION><![CDATA[Open a folder where you can define product attributes, and create and edit products lots and serial numbers.]]></DESCRIPTION>
 <!--357-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--357-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--357-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--357--></AD_MENU>
 
 <!--359--><AD_MENU>
@@ -1712,6 +1847,7 @@
 <!--359-->  <ACTION><![CDATA[W]]></ACTION>
 <!--359-->  <AD_WINDOW_ID><![CDATA[260]]></AD_WINDOW_ID>
 <!--359-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--359-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--359--></AD_MENU>
 
 <!--362--><AD_MENU>
@@ -1725,6 +1861,7 @@
 <!--362-->  <ACTION><![CDATA[W]]></ACTION>
 <!--362-->  <AD_WINDOW_ID><![CDATA[268]]></AD_WINDOW_ID>
 <!--362-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--362-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--362--></AD_MENU>
 
 <!--364--><AD_MENU>
@@ -1738,6 +1875,7 @@
 <!--364-->  <ACTION><![CDATA[W]]></ACTION>
 <!--364-->  <AD_WINDOW_ID><![CDATA[265]]></AD_WINDOW_ID>
 <!--364-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--364-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--364--></AD_MENU>
 
 <!--366--><AD_MENU>
@@ -1751,6 +1889,7 @@
 <!--366-->  <ACTION><![CDATA[W]]></ACTION>
 <!--366-->  <AD_WINDOW_ID><![CDATA[264]]></AD_WINDOW_ID>
 <!--366-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--366-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--366--></AD_MENU>
 
 <!--367--><AD_MENU>
@@ -1762,6 +1901,7 @@
 <!--367-->  <DESCRIPTION><![CDATA[Open a folder where you can see session logs and monitor modifications made by each user.]]></DESCRIPTION>
 <!--367-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--367-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--367-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--367--></AD_MENU>
 
 <!--372--><AD_MENU>
@@ -1772,6 +1912,7 @@
 <!--372-->  <NAME><![CDATA[Web]]></NAME>
 <!--372-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--372-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--372-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--372--></AD_MENU>
 
 <!--381--><AD_MENU>
@@ -1785,6 +1926,7 @@
 <!--381-->  <ACTION><![CDATA[W]]></ACTION>
 <!--381-->  <AD_WINDOW_ID><![CDATA[282]]></AD_WINDOW_ID>
 <!--381-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--381-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--381--></AD_MENU>
 
 <!--383--><AD_MENU>
@@ -1798,6 +1940,7 @@
 <!--383-->  <ACTION><![CDATA[P]]></ACTION>
 <!--383-->  <AD_PROCESS_ID><![CDATA[205]]></AD_PROCESS_ID>
 <!--383-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--383-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--383--></AD_MENU>
 
 <!--384--><AD_MENU>
@@ -1811,6 +1954,7 @@
 <!--384-->  <ACTION><![CDATA[W]]></ACTION>
 <!--384-->  <AD_WINDOW_ID><![CDATA[283]]></AD_WINDOW_ID>
 <!--384-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--384-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--384--></AD_MENU>
 
 <!--392--><AD_MENU>
@@ -1821,6 +1965,7 @@
 <!--392-->  <NAME><![CDATA[Knowledge]]></NAME>
 <!--392-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--392-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--392-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--392--></AD_MENU>
 
 <!--393--><AD_MENU>
@@ -1834,6 +1979,7 @@
 <!--393-->  <ACTION><![CDATA[P]]></ACTION>
 <!--393-->  <AD_PROCESS_ID><![CDATA[203]]></AD_PROCESS_ID>
 <!--393-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--393-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--393--></AD_MENU>
 
 <!--394--><AD_MENU>
@@ -1847,6 +1993,7 @@
 <!--394-->  <ACTION><![CDATA[W]]></ACTION>
 <!--394-->  <AD_WINDOW_ID><![CDATA[291]]></AD_WINDOW_ID>
 <!--394-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--394-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--394--></AD_MENU>
 
 <!--398--><AD_MENU>
@@ -1860,6 +2007,7 @@
 <!--398-->  <ACTION><![CDATA[R]]></ACTION>
 <!--398-->  <AD_PROCESS_ID><![CDATA[218]]></AD_PROCESS_ID>
 <!--398-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--398-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--398--></AD_MENU>
 
 <!--399--><AD_MENU>
@@ -1873,6 +2021,7 @@
 <!--399-->  <ACTION><![CDATA[R]]></ACTION>
 <!--399-->  <AD_PROCESS_ID><![CDATA[222]]></AD_PROCESS_ID>
 <!--399-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--399-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--399--></AD_MENU>
 
 <!--400--><AD_MENU>
@@ -1886,6 +2035,7 @@
 <!--400-->  <ACTION><![CDATA[R]]></ACTION>
 <!--400-->  <AD_PROCESS_ID><![CDATA[223]]></AD_PROCESS_ID>
 <!--400-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--400-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--400--></AD_MENU>
 
 <!--401--><AD_MENU>
@@ -1899,6 +2049,7 @@
 <!--401-->  <ACTION><![CDATA[P]]></ACTION>
 <!--401-->  <AD_PROCESS_ID><![CDATA[224]]></AD_PROCESS_ID>
 <!--401-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--401-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--401--></AD_MENU>
 
 <!--402--><AD_MENU>
@@ -1912,6 +2063,7 @@
 <!--402-->  <ACTION><![CDATA[P]]></ACTION>
 <!--402-->  <AD_PROCESS_ID><![CDATA[225]]></AD_PROCESS_ID>
 <!--402-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--402-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--402--></AD_MENU>
 
 <!--403--><AD_MENU>
@@ -1925,6 +2077,7 @@
 <!--403-->  <ACTION><![CDATA[R]]></ACTION>
 <!--403-->  <AD_PROCESS_ID><![CDATA[226]]></AD_PROCESS_ID>
 <!--403-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--403-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--403--></AD_MENU>
 
 <!--404--><AD_MENU>
@@ -1938,6 +2091,7 @@
 <!--404-->  <ACTION><![CDATA[R]]></ACTION>
 <!--404-->  <AD_PROCESS_ID><![CDATA[228]]></AD_PROCESS_ID>
 <!--404-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--404-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--404--></AD_MENU>
 
 <!--405--><AD_MENU>
@@ -1951,6 +2105,7 @@
 <!--405-->  <ACTION><![CDATA[R]]></ACTION>
 <!--405-->  <AD_PROCESS_ID><![CDATA[229]]></AD_PROCESS_ID>
 <!--405-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--405-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--405--></AD_MENU>
 
 <!--800002--><AD_MENU>
@@ -1964,6 +2119,7 @@
 <!--800002-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800002-->  <AD_WINDOW_ID><![CDATA[800000]]></AD_WINDOW_ID>
 <!--800002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800002-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800002--></AD_MENU>
 
 <!--800005--><AD_MENU>
@@ -1977,6 +2133,7 @@
 <!--800005-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800005-->  <AD_PROCESS_ID><![CDATA[800000]]></AD_PROCESS_ID>
 <!--800005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800005-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800005--></AD_MENU>
 
 <!--800006--><AD_MENU>
@@ -1990,6 +2147,7 @@
 <!--800006-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800006-->  <AD_PROCESS_ID><![CDATA[800001]]></AD_PROCESS_ID>
 <!--800006-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800006-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800006--></AD_MENU>
 
 <!--800007--><AD_MENU>
@@ -2003,6 +2161,7 @@
 <!--800007-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800007-->  <AD_WINDOW_ID><![CDATA[800001]]></AD_WINDOW_ID>
 <!--800007-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800007-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800007--></AD_MENU>
 
 <!--800008--><AD_MENU>
@@ -2016,6 +2175,7 @@
 <!--800008-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800008-->  <AD_WINDOW_ID><![CDATA[800002]]></AD_WINDOW_ID>
 <!--800008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800008-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800008--></AD_MENU>
 
 <!--800010--><AD_MENU>
@@ -2029,6 +2189,7 @@
 <!--800010-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800010-->  <AD_PROCESS_ID><![CDATA[800200]]></AD_PROCESS_ID>
 <!--800010-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800010-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800010--></AD_MENU>
 
 <!--800011--><AD_MENU>
@@ -2042,6 +2203,7 @@
 <!--800011-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800011-->  <AD_PROCESS_ID><![CDATA[800191]]></AD_PROCESS_ID>
 <!--800011-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800011-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800011--></AD_MENU>
 
 <!--800015--><AD_MENU>
@@ -2055,6 +2217,7 @@
 <!--800015-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800015-->  <AD_PROCESS_ID><![CDATA[800189]]></AD_PROCESS_ID>
 <!--800015-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800015-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800015--></AD_MENU>
 
 <!--800020--><AD_MENU>
@@ -2068,6 +2231,7 @@
 <!--800020-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800020-->  <AD_PROCESS_ID><![CDATA[800018]]></AD_PROCESS_ID>
 <!--800020-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800020-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800020--></AD_MENU>
 
 <!--800023--><AD_MENU>
@@ -2081,6 +2245,7 @@
 <!--800023-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800023-->  <AD_PROCESS_ID><![CDATA[800020]]></AD_PROCESS_ID>
 <!--800023-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800023-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800023--></AD_MENU>
 
 <!--800024--><AD_MENU>
@@ -2094,6 +2259,7 @@
 <!--800024-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800024-->  <AD_WINDOW_ID><![CDATA[800003]]></AD_WINDOW_ID>
 <!--800024-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800024-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800024--></AD_MENU>
 
 <!--800025--><AD_MENU>
@@ -2107,6 +2273,7 @@
 <!--800025-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800025-->  <AD_PROCESS_ID><![CDATA[800021]]></AD_PROCESS_ID>
 <!--800025-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800025-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800025--></AD_MENU>
 
 <!--800027--><AD_MENU>
@@ -2120,6 +2287,7 @@
 <!--800027-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800027-->  <AD_WINDOW_ID><![CDATA[800005]]></AD_WINDOW_ID>
 <!--800027-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800027-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800027--></AD_MENU>
 
 <!--800028--><AD_MENU>
@@ -2133,6 +2301,7 @@
 <!--800028-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800028-->  <AD_PROCESS_ID><![CDATA[800023]]></AD_PROCESS_ID>
 <!--800028-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800028-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800028--></AD_MENU>
 
 <!--800029--><AD_MENU>
@@ -2146,6 +2315,7 @@
 <!--800029-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800029-->  <AD_PROCESS_ID><![CDATA[800026]]></AD_PROCESS_ID>
 <!--800029-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800029-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800029--></AD_MENU>
 
 <!--800031--><AD_MENU>
@@ -2159,6 +2329,7 @@
 <!--800031-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800031-->  <AD_PROCESS_ID><![CDATA[800192]]></AD_PROCESS_ID>
 <!--800031-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800031-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800031--></AD_MENU>
 
 <!--800032--><AD_MENU>
@@ -2172,6 +2343,7 @@
 <!--800032-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800032-->  <AD_PROCESS_ID><![CDATA[800030]]></AD_PROCESS_ID>
 <!--800032-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800032-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800032--></AD_MENU>
 
 <!--800033--><AD_MENU>
@@ -2185,6 +2357,7 @@
 <!--800033-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800033-->  <AD_WINDOW_ID><![CDATA[800006]]></AD_WINDOW_ID>
 <!--800033-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800033-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800033--></AD_MENU>
 
 <!--800034--><AD_MENU>
@@ -2198,6 +2371,7 @@
 <!--800034-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800034-->  <AD_WINDOW_ID><![CDATA[800007]]></AD_WINDOW_ID>
 <!--800034-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800034-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800034--></AD_MENU>
 
 <!--800037--><AD_MENU>
@@ -2211,6 +2385,7 @@
 <!--800037-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800037-->  <AD_WINDOW_ID><![CDATA[800008]]></AD_WINDOW_ID>
 <!--800037-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800037-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800037--></AD_MENU>
 
 <!--800038--><AD_MENU>
@@ -2224,6 +2399,7 @@
 <!--800038-->  <ACTION><![CDATA[X]]></ACTION>
 <!--800038-->  <AD_FORM_ID><![CDATA[800003]]></AD_FORM_ID>
 <!--800038-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800038-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800038--></AD_MENU>
 
 <!--800039--><AD_MENU>
@@ -2237,6 +2413,7 @@
 <!--800039-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800039-->  <AD_PROCESS_ID><![CDATA[800032]]></AD_PROCESS_ID>
 <!--800039-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800039-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800039--></AD_MENU>
 
 <!--800040--><AD_MENU>
@@ -2250,6 +2427,7 @@
 <!--800040-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800040-->  <AD_PROCESS_ID><![CDATA[800033]]></AD_PROCESS_ID>
 <!--800040-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800040-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800040--></AD_MENU>
 
 <!--800042--><AD_MENU>
@@ -2263,6 +2441,7 @@
 <!--800042-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800042-->  <AD_PROCESS_ID><![CDATA[800039]]></AD_PROCESS_ID>
 <!--800042-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800042-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800042--></AD_MENU>
 
 <!--800043--><AD_MENU>
@@ -2276,6 +2455,7 @@
 <!--800043-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800043-->  <AD_PROCESS_ID><![CDATA[800040]]></AD_PROCESS_ID>
 <!--800043-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800043-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800043--></AD_MENU>
 
 <!--800052--><AD_MENU>
@@ -2289,6 +2469,7 @@
 <!--800052-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800052-->  <AD_PROCESS_ID><![CDATA[800046]]></AD_PROCESS_ID>
 <!--800052-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800052-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800052--></AD_MENU>
 
 <!--800060--><AD_MENU>
@@ -2302,6 +2483,7 @@
 <!--800060-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800060-->  <AD_PROCESS_ID><![CDATA[800205]]></AD_PROCESS_ID>
 <!--800060-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800060-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800060--></AD_MENU>
 
 <!--800062--><AD_MENU>
@@ -2315,6 +2497,7 @@
 <!--800062-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800062-->  <AD_WINDOW_ID><![CDATA[800013]]></AD_WINDOW_ID>
 <!--800062-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800062-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800062--></AD_MENU>
 
 <!--800063--><AD_MENU>
@@ -2328,6 +2511,7 @@
 <!--800063-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800063-->  <AD_WINDOW_ID><![CDATA[800014]]></AD_WINDOW_ID>
 <!--800063-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800063-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800063--></AD_MENU>
 
 <!--800067--><AD_MENU>
@@ -2341,6 +2525,7 @@
 <!--800067-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800067-->  <AD_PROCESS_ID><![CDATA[800058]]></AD_PROCESS_ID>
 <!--800067-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800067-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800067--></AD_MENU>
 
 <!--800069--><AD_MENU>
@@ -2354,6 +2539,7 @@
 <!--800069-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800069-->  <AD_PROCESS_ID><![CDATA[800190]]></AD_PROCESS_ID>
 <!--800069-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800069-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800069--></AD_MENU>
 
 <!--800070--><AD_MENU>
@@ -2367,6 +2553,7 @@
 <!--800070-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800070-->  <AD_PROCESS_ID><![CDATA[800061]]></AD_PROCESS_ID>
 <!--800070-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800070-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800070--></AD_MENU>
 
 <!--800071--><AD_MENU>
@@ -2380,6 +2567,7 @@
 <!--800071-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800071-->  <AD_WINDOW_ID><![CDATA[800015]]></AD_WINDOW_ID>
 <!--800071-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800071-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800071--></AD_MENU>
 
 <!--800074--><AD_MENU>
@@ -2393,6 +2581,7 @@
 <!--800074-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800074-->  <AD_PROCESS_ID><![CDATA[800067]]></AD_PROCESS_ID>
 <!--800074-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800074-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800074--></AD_MENU>
 
 <!--800075--><AD_MENU>
@@ -2404,6 +2593,7 @@
 <!--800075-->  <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800075-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800075-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800075-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800075--></AD_MENU>
 
 <!--800076--><AD_MENU>
@@ -2415,6 +2605,7 @@
 <!--800076-->  <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800076-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800076-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800076-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800076--></AD_MENU>
 
 <!--800077--><AD_MENU>
@@ -2426,6 +2617,7 @@
 <!--800077-->  <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800077-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800077-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800077-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800077--></AD_MENU>
 
 <!--800078--><AD_MENU>
@@ -2437,6 +2629,7 @@
 <!--800078-->  <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800078-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800078-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800078-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800078--></AD_MENU>
 
 <!--800079--><AD_MENU>
@@ -2448,6 +2641,7 @@
 <!--800079-->  <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800079-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800079-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800079-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800079--></AD_MENU>
 
 <!--800080--><AD_MENU>
@@ -2458,6 +2652,7 @@
 <!--800080-->  <NAME><![CDATA[Reports]]></NAME>
 <!--800080-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800080-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800080-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800080--></AD_MENU>
 
 <!--800081--><AD_MENU>
@@ -2469,6 +2664,7 @@
 <!--800081-->  <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800081-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800081-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800081-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800081--></AD_MENU>
 
 <!--800084--><AD_MENU>
@@ -2482,6 +2678,7 @@
 <!--800084-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800084-->  <AD_PROCESS_ID><![CDATA[800073]]></AD_PROCESS_ID>
 <!--800084-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800084-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800084--></AD_MENU>
 
 <!--800085--><AD_MENU>
@@ -2495,6 +2692,7 @@
 <!--800085-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800085-->  <AD_PROCESS_ID><![CDATA[800074]]></AD_PROCESS_ID>
 <!--800085-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800085-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800085--></AD_MENU>
 
 <!--800086--><AD_MENU>
@@ -2508,6 +2706,7 @@
 <!--800086-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800086-->  <AD_PROCESS_ID><![CDATA[800075]]></AD_PROCESS_ID>
 <!--800086-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800086-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800086--></AD_MENU>
 
 <!--800087--><AD_MENU>
@@ -2521,6 +2720,7 @@
 <!--800087-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800087-->  <AD_PROCESS_ID><![CDATA[800076]]></AD_PROCESS_ID>
 <!--800087-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800087-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800087--></AD_MENU>
 
 <!--800089--><AD_MENU>
@@ -2534,6 +2734,7 @@
 <!--800089-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800089-->  <AD_PROCESS_ID><![CDATA[800079]]></AD_PROCESS_ID>
 <!--800089-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800089-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800089--></AD_MENU>
 
 <!--800091--><AD_MENU>
@@ -2547,6 +2748,7 @@
 <!--800091-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800091-->  <AD_PROCESS_ID><![CDATA[800081]]></AD_PROCESS_ID>
 <!--800091-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800091-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800091--></AD_MENU>
 
 <!--800093--><AD_MENU>
@@ -2560,6 +2762,7 @@
 <!--800093-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800093-->  <AD_PROCESS_ID><![CDATA[800082]]></AD_PROCESS_ID>
 <!--800093-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800093-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800093--></AD_MENU>
 
 <!--800095--><AD_MENU>
@@ -2573,6 +2776,7 @@
 <!--800095-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800095-->  <AD_PROCESS_ID><![CDATA[800085]]></AD_PROCESS_ID>
 <!--800095-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800095-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800095--></AD_MENU>
 
 <!--800096--><AD_MENU>
@@ -2586,6 +2790,7 @@
 <!--800096-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800096-->  <AD_WINDOW_ID><![CDATA[800017]]></AD_WINDOW_ID>
 <!--800096-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800096-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800096--></AD_MENU>
 
 <!--800097--><AD_MENU>
@@ -2599,6 +2804,7 @@
 <!--800097-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800097-->  <AD_WINDOW_ID><![CDATA[800018]]></AD_WINDOW_ID>
 <!--800097-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800097-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800097--></AD_MENU>
 
 <!--800099--><AD_MENU>
@@ -2612,6 +2818,7 @@
 <!--800099-->  <ACTION><![CDATA[X]]></ACTION>
 <!--800099-->  <AD_FORM_ID><![CDATA[800009]]></AD_FORM_ID>
 <!--800099-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800099-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800099--></AD_MENU>
 
 <!--800100--><AD_MENU>
@@ -2625,6 +2832,7 @@
 <!--800100-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800100-->  <AD_PROCESS_ID><![CDATA[800087]]></AD_PROCESS_ID>
 <!--800100-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800100-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800100--></AD_MENU>
 
 <!--800101--><AD_MENU>
@@ -2638,6 +2846,7 @@
 <!--800101-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800101-->  <AD_PROCESS_ID><![CDATA[800088]]></AD_PROCESS_ID>
 <!--800101-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800101-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800101--></AD_MENU>
 
 <!--800103--><AD_MENU>
@@ -2651,6 +2860,7 @@
 <!--800103-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800103-->  <AD_PROCESS_ID><![CDATA[800092]]></AD_PROCESS_ID>
 <!--800103-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800103-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800103--></AD_MENU>
 
 <!--800105--><AD_MENU>
@@ -2664,6 +2874,7 @@
 <!--800105-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800105-->  <AD_WINDOW_ID><![CDATA[800019]]></AD_WINDOW_ID>
 <!--800105-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800105-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800105--></AD_MENU>
 
 <!--800106--><AD_MENU>
@@ -2677,6 +2888,7 @@
 <!--800106-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800106-->  <AD_WINDOW_ID><![CDATA[800020]]></AD_WINDOW_ID>
 <!--800106-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800106-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800106--></AD_MENU>
 
 <!--800108--><AD_MENU>
@@ -2688,6 +2900,7 @@
 <!--800108-->  <DESCRIPTION><![CDATA[Open a folder where you can define information related to business partners, prices, and products.]]></DESCRIPTION>
 <!--800108-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800108-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800108-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800108--></AD_MENU>
 
 <!--800113--><AD_MENU>
@@ -2701,6 +2914,7 @@
 <!--800113-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800113-->  <AD_PROCESS_ID><![CDATA[800098]]></AD_PROCESS_ID>
 <!--800113-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800113-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800113--></AD_MENU>
 
 <!--800114--><AD_MENU>
@@ -2714,6 +2928,7 @@
 <!--800114-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800114-->  <AD_WINDOW_ID><![CDATA[800027]]></AD_WINDOW_ID>
 <!--800114-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800114-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800114--></AD_MENU>
 
 <!--800115--><AD_MENU>
@@ -2727,6 +2942,7 @@
 <!--800115-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800115-->  <AD_WINDOW_ID><![CDATA[800026]]></AD_WINDOW_ID>
 <!--800115-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800115-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800115--></AD_MENU>
 
 <!--800117--><AD_MENU>
@@ -2740,6 +2956,7 @@
 <!--800117-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800117-->  <AD_WINDOW_ID><![CDATA[800028]]></AD_WINDOW_ID>
 <!--800117-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800117-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800117--></AD_MENU>
 
 <!--800118--><AD_MENU>
@@ -2753,6 +2970,7 @@
 <!--800118-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800118-->  <AD_PROCESS_ID><![CDATA[800100]]></AD_PROCESS_ID>
 <!--800118-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800118-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800118--></AD_MENU>
 
 <!--800119--><AD_MENU>
@@ -2766,6 +2984,7 @@
 <!--800119-->  <ACTION><![CDATA[X]]></ACTION>
 <!--800119-->  <AD_FORM_ID><![CDATA[800011]]></AD_FORM_ID>
 <!--800119-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800119-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800119--></AD_MENU>
 
 <!--800121--><AD_MENU>
@@ -2777,6 +2996,7 @@
 <!--800121-->  <DESCRIPTION><![CDATA[Production Management monitors the production processes and activities as well as support the analysis of production related data.]]></DESCRIPTION>
 <!--800121-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800121-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800121-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800121--></AD_MENU>
 
 <!--800123--><AD_MENU>
@@ -2790,6 +3010,7 @@
 <!--800123-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800123-->  <AD_WINDOW_ID><![CDATA[800029]]></AD_WINDOW_ID>
 <!--800123-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800123-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800123--></AD_MENU>
 
 <!--800124--><AD_MENU>
@@ -2803,6 +3024,7 @@
 <!--800124-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800124-->  <AD_WINDOW_ID><![CDATA[800030]]></AD_WINDOW_ID>
 <!--800124-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800124-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800124--></AD_MENU>
 
 <!--800125--><AD_MENU>
@@ -2816,6 +3038,7 @@
 <!--800125-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800125-->  <AD_WINDOW_ID><![CDATA[800031]]></AD_WINDOW_ID>
 <!--800125-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800125-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800125--></AD_MENU>
 
 <!--800126--><AD_MENU>
@@ -2829,6 +3052,7 @@
 <!--800126-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800126-->  <AD_WINDOW_ID><![CDATA[800032]]></AD_WINDOW_ID>
 <!--800126-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800126-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800126--></AD_MENU>
 
 <!--800128--><AD_MENU>
@@ -2842,6 +3066,7 @@
 <!--800128-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800128-->  <AD_WINDOW_ID><![CDATA[800035]]></AD_WINDOW_ID>
 <!--800128-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800128-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800128--></AD_MENU>
 
 <!--800133--><AD_MENU>
@@ -2855,6 +3080,7 @@
 <!--800133-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800133-->  <AD_WINDOW_ID><![CDATA[800048]]></AD_WINDOW_ID>
 <!--800133-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800133-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800133--></AD_MENU>
 
 <!--800137--><AD_MENU>
@@ -2868,6 +3094,7 @@
 <!--800137-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800137-->  <AD_WINDOW_ID><![CDATA[800051]]></AD_WINDOW_ID>
 <!--800137-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800137-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800137--></AD_MENU>
 
 <!--800138--><AD_MENU>
@@ -2881,6 +3108,7 @@
 <!--800138-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800138-->  <AD_WINDOW_ID><![CDATA[800052]]></AD_WINDOW_ID>
 <!--800138-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800138-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800138--></AD_MENU>
 
 <!--800139--><AD_MENU>
@@ -2894,6 +3122,7 @@
 <!--800139-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800139-->  <AD_WINDOW_ID><![CDATA[800053]]></AD_WINDOW_ID>
 <!--800139-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800139-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800139--></AD_MENU>
 
 <!--800141--><AD_MENU>
@@ -2905,6 +3134,7 @@
 <!--800141-->  <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800141-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800141-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800141-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800141--></AD_MENU>
 
 <!--800159--><AD_MENU>
@@ -2918,6 +3148,7 @@
 <!--800159-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800159-->  <AD_WINDOW_ID><![CDATA[800060]]></AD_WINDOW_ID>
 <!--800159-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800159-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800159--></AD_MENU>
 
 <!--800160--><AD_MENU>
@@ -2931,6 +3162,7 @@
 <!--800160-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800160-->  <AD_PROCESS_ID><![CDATA[800109]]></AD_PROCESS_ID>
 <!--800160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800160-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800160--></AD_MENU>
 
 <!--800168--><AD_MENU>
@@ -2944,6 +3176,7 @@
 <!--800168-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800168-->  <AD_WINDOW_ID><![CDATA[800063]]></AD_WINDOW_ID>
 <!--800168-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800168-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800168--></AD_MENU>
 
 <!--800169--><AD_MENU>
@@ -2957,6 +3190,7 @@
 <!--800169-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800169-->  <AD_WINDOW_ID><![CDATA[800064]]></AD_WINDOW_ID>
 <!--800169-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800169-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800169--></AD_MENU>
 
 <!--800172--><AD_MENU>
@@ -2970,6 +3204,7 @@
 <!--800172-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800172-->  <AD_WINDOW_ID><![CDATA[800066]]></AD_WINDOW_ID>
 <!--800172-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800172-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800172--></AD_MENU>
 
 <!--800173--><AD_MENU>
@@ -2983,6 +3218,7 @@
 <!--800173-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800173-->  <AD_WINDOW_ID><![CDATA[800067]]></AD_WINDOW_ID>
 <!--800173-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800173-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800173--></AD_MENU>
 
 <!--800177--><AD_MENU>
@@ -2996,6 +3232,7 @@
 <!--800177-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800177-->  <AD_PROCESS_ID><![CDATA[800123]]></AD_PROCESS_ID>
 <!--800177-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800177-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800177--></AD_MENU>
 
 <!--800178--><AD_MENU>
@@ -3009,6 +3246,7 @@
 <!--800178-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800178-->  <AD_PROCESS_ID><![CDATA[800124]]></AD_PROCESS_ID>
 <!--800178-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800178-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800178--></AD_MENU>
 
 <!--800179--><AD_MENU>
@@ -3022,6 +3260,7 @@
 <!--800179-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800179-->  <AD_WINDOW_ID><![CDATA[800068]]></AD_WINDOW_ID>
 <!--800179-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800179-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800179--></AD_MENU>
 
 <!--800180--><AD_MENU>
@@ -3035,6 +3274,7 @@
 <!--800180-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800180-->  <AD_WINDOW_ID><![CDATA[800070]]></AD_WINDOW_ID>
 <!--800180-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800180-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800180--></AD_MENU>
 
 <!--800181--><AD_MENU>
@@ -3048,6 +3288,7 @@
 <!--800181-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800181-->  <AD_WINDOW_ID><![CDATA[800069]]></AD_WINDOW_ID>
 <!--800181-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800181-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800181--></AD_MENU>
 
 <!--800182--><AD_MENU>
@@ -3061,6 +3302,7 @@
 <!--800182-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800182-->  <AD_WINDOW_ID><![CDATA[800071]]></AD_WINDOW_ID>
 <!--800182-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800182-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800182--></AD_MENU>
 
 <!--800183--><AD_MENU>
@@ -3074,6 +3316,7 @@
 <!--800183-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800183-->  <AD_WINDOW_ID><![CDATA[800072]]></AD_WINDOW_ID>
 <!--800183-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800183-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800183--></AD_MENU>
 
 <!--800184--><AD_MENU>
@@ -3087,6 +3330,7 @@
 <!--800184-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800184-->  <AD_WINDOW_ID><![CDATA[800074]]></AD_WINDOW_ID>
 <!--800184-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800184-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800184--></AD_MENU>
 
 <!--800185--><AD_MENU>
@@ -3100,6 +3344,7 @@
 <!--800185-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800185-->  <AD_WINDOW_ID><![CDATA[800075]]></AD_WINDOW_ID>
 <!--800185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800185-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800185--></AD_MENU>
 
 <!--800186--><AD_MENU>
@@ -3113,6 +3358,7 @@
 <!--800186-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800186-->  <AD_PROCESS_ID><![CDATA[800130]]></AD_PROCESS_ID>
 <!--800186-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800186-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800186--></AD_MENU>
 
 <!--800188--><AD_MENU>
@@ -3126,6 +3372,7 @@
 <!--800188-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800188-->  <AD_WINDOW_ID><![CDATA[800076]]></AD_WINDOW_ID>
 <!--800188-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800188-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800188--></AD_MENU>
 
 <!--800189--><AD_MENU>
@@ -3137,6 +3384,7 @@
 <!--800189-->  <DESCRIPTION><![CDATA[Open a folder where you can define all information to be used in this module.]]></DESCRIPTION>
 <!--800189-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800189-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800189-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800189--></AD_MENU>
 
 <!--800190--><AD_MENU>
@@ -3150,6 +3398,7 @@
 <!--800190-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800190-->  <AD_WINDOW_ID><![CDATA[800077]]></AD_WINDOW_ID>
 <!--800190-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800190-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800190--></AD_MENU>
 
 <!--800191--><AD_MENU>
@@ -3163,6 +3412,7 @@
 <!--800191-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800191-->  <AD_PROCESS_ID><![CDATA[800137]]></AD_PROCESS_ID>
 <!--800191-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800191-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800191--></AD_MENU>
 
 <!--800193--><AD_MENU>
@@ -3176,6 +3426,7 @@
 <!--800193-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800193-->  <AD_WINDOW_ID><![CDATA[800080]]></AD_WINDOW_ID>
 <!--800193-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800193-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800193--></AD_MENU>
 
 <!--800194--><AD_MENU>
@@ -3189,6 +3440,7 @@
 <!--800194-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800194-->  <AD_WINDOW_ID><![CDATA[800081]]></AD_WINDOW_ID>
 <!--800194-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800194-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800194--></AD_MENU>
 
 <!--800195--><AD_MENU>
@@ -3202,6 +3454,7 @@
 <!--800195-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800195-->  <AD_WINDOW_ID><![CDATA[800082]]></AD_WINDOW_ID>
 <!--800195-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800195-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800195--></AD_MENU>
 
 <!--800197--><AD_MENU>
@@ -3215,6 +3468,7 @@
 <!--800197-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800197-->  <AD_PROCESS_ID><![CDATA[800143]]></AD_PROCESS_ID>
 <!--800197-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800197-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800197--></AD_MENU>
 
 <!--800198--><AD_MENU>
@@ -3228,6 +3482,7 @@
 <!--800198-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800198-->  <AD_PROCESS_ID><![CDATA[800144]]></AD_PROCESS_ID>
 <!--800198-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800198-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800198--></AD_MENU>
 
 <!--800199--><AD_MENU>
@@ -3241,6 +3496,7 @@
 <!--800199-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800199-->  <AD_WINDOW_ID><![CDATA[800083]]></AD_WINDOW_ID>
 <!--800199-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800199-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800199--></AD_MENU>
 
 <!--800200--><AD_MENU>
@@ -3254,6 +3510,7 @@
 <!--800200-->  <ACTION><![CDATA[X]]></ACTION>
 <!--800200-->  <AD_FORM_ID><![CDATA[800014]]></AD_FORM_ID>
 <!--800200-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800200-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800200--></AD_MENU>
 
 <!--800201--><AD_MENU>
@@ -3267,6 +3524,7 @@
 <!--800201-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800201-->  <AD_PROCESS_ID><![CDATA[800147]]></AD_PROCESS_ID>
 <!--800201-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800201-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800201--></AD_MENU>
 
 <!--800202--><AD_MENU>
@@ -3280,6 +3538,7 @@
 <!--800202-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800202-->  <AD_PROCESS_ID><![CDATA[800148]]></AD_PROCESS_ID>
 <!--800202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800202-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800202--></AD_MENU>
 
 <!--800203--><AD_MENU>
@@ -3293,6 +3552,7 @@
 <!--800203-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800203-->  <AD_WINDOW_ID><![CDATA[800084]]></AD_WINDOW_ID>
 <!--800203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800203-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800203--></AD_MENU>
 
 <!--800204--><AD_MENU>
@@ -3306,6 +3566,7 @@
 <!--800204-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800204-->  <AD_WINDOW_ID><![CDATA[800085]]></AD_WINDOW_ID>
 <!--800204-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800204-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800204--></AD_MENU>
 
 <!--800205--><AD_MENU>
@@ -3319,6 +3580,7 @@
 <!--800205-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800205-->  <AD_PROCESS_ID><![CDATA[800151]]></AD_PROCESS_ID>
 <!--800205-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800205-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800205--></AD_MENU>
 
 <!--800206--><AD_MENU>
@@ -3332,6 +3594,7 @@
 <!--800206-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800206-->  <AD_WINDOW_ID><![CDATA[800086]]></AD_WINDOW_ID>
 <!--800206-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800206-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800206--></AD_MENU>
 
 <!--800207--><AD_MENU>
@@ -3345,6 +3608,7 @@
 <!--800207-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800207-->  <AD_PROCESS_ID><![CDATA[800153]]></AD_PROCESS_ID>
 <!--800207-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800207-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800207--></AD_MENU>
 
 <!--800208--><AD_MENU>
@@ -3358,6 +3622,7 @@
 <!--800208-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800208-->  <AD_PROCESS_ID><![CDATA[800199]]></AD_PROCESS_ID>
 <!--800208-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800208-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800208--></AD_MENU>
 
 <!--800210--><AD_MENU>
@@ -3371,6 +3636,7 @@
 <!--800210-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800210-->  <AD_PROCESS_ID><![CDATA[800155]]></AD_PROCESS_ID>
 <!--800210-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800210-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800210--></AD_MENU>
 
 <!--800212--><AD_MENU>
@@ -3382,6 +3648,7 @@
 <!--800212-->  <DESCRIPTION><![CDATA[MRP provides the tools to plan and monitor purchase and production planning by tracking several inputs such as sales forecast and current stock levels.]]></DESCRIPTION>
 <!--800212-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800212-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800212-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800212--></AD_MENU>
 
 <!--800213--><AD_MENU>
@@ -3395,6 +3662,7 @@
 <!--800213-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800213-->  <AD_WINDOW_ID><![CDATA[800088]]></AD_WINDOW_ID>
 <!--800213-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800213-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800213--></AD_MENU>
 
 <!--800214--><AD_MENU>
@@ -3408,6 +3676,7 @@
 <!--800214-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800214-->  <AD_WINDOW_ID><![CDATA[800090]]></AD_WINDOW_ID>
 <!--800214-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800214-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800214--></AD_MENU>
 
 <!--800216--><AD_MENU>
@@ -3421,6 +3690,7 @@
 <!--800216-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800216-->  <AD_WINDOW_ID><![CDATA[800092]]></AD_WINDOW_ID>
 <!--800216-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800216-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800216--></AD_MENU>
 
 <!--800218--><AD_MENU>
@@ -3434,6 +3704,7 @@
 <!--800218-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800218-->  <AD_WINDOW_ID><![CDATA[800094]]></AD_WINDOW_ID>
 <!--800218-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800218-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800218--></AD_MENU>
 
 <!--800220--><AD_MENU>
@@ -3447,6 +3718,7 @@
 <!--800220-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800220-->  <AD_WINDOW_ID><![CDATA[800096]]></AD_WINDOW_ID>
 <!--800220-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800220-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800220--></AD_MENU>
 
 <!--800221--><AD_MENU>
@@ -3460,6 +3732,7 @@
 <!--800221-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800221-->  <AD_WINDOW_ID><![CDATA[800097]]></AD_WINDOW_ID>
 <!--800221-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800221-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800221--></AD_MENU>
 
 <!--800224--><AD_MENU>
@@ -3473,6 +3746,7 @@
 <!--800224-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800224-->  <AD_WINDOW_ID><![CDATA[800099]]></AD_WINDOW_ID>
 <!--800224-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800224-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800224--></AD_MENU>
 
 <!--800225--><AD_MENU>
@@ -3486,6 +3760,7 @@
 <!--800225-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800225-->  <AD_PROCESS_ID><![CDATA[800168]]></AD_PROCESS_ID>
 <!--800225-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800225-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800225--></AD_MENU>
 
 <!--800226--><AD_MENU>
@@ -3499,6 +3774,7 @@
 <!--800226-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800226-->  <AD_WINDOW_ID><![CDATA[800100]]></AD_WINDOW_ID>
 <!--800226-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800226-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800226--></AD_MENU>
 
 <!--800227--><AD_MENU>
@@ -3512,6 +3788,7 @@
 <!--800227-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800227-->  <AD_PROCESS_ID><![CDATA[800169]]></AD_PROCESS_ID>
 <!--800227-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800227-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800227--></AD_MENU>
 
 <!--800228--><AD_MENU>
@@ -3525,6 +3802,7 @@
 <!--800228-->  <ACTION><![CDATA[W]]></ACTION>
 <!--800228-->  <AD_WINDOW_ID><![CDATA[276]]></AD_WINDOW_ID>
 <!--800228-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800228-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800228--></AD_MENU>
 
 <!--800229--><AD_MENU>
@@ -3538,6 +3816,7 @@
 <!--800229-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800229-->  <AD_PROCESS_ID><![CDATA[800171]]></AD_PROCESS_ID>
 <!--800229-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800229-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800229--></AD_MENU>
 
 <!--800230--><AD_MENU>
@@ -3551,6 +3830,7 @@
 <!--800230-->  <ACTION><![CDATA[X]]></ACTION>
 <!--800230-->  <AD_FORM_ID><![CDATA[800016]]></AD_FORM_ID>
 <!--800230-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800230-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800230--></AD_MENU>
 
 <!--800231--><AD_MENU>
@@ -3564,6 +3844,7 @@
 <!--800231-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800231-->  <AD_PROCESS_ID><![CDATA[800172]]></AD_PROCESS_ID>
 <!--800231-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800231-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800231--></AD_MENU>
 
 <!--800233--><AD_MENU>
@@ -3575,6 +3856,7 @@
 <!--800233-->  <DESCRIPTION><![CDATA[Open a folder where you can define all information to be used in this module.]]></DESCRIPTION>
 <!--800233-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800233-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800233-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800233--></AD_MENU>
 
 <!--800234--><AD_MENU>
@@ -3585,6 +3867,7 @@
 <!--800234-->  <NAME><![CDATA[Maintenance]]></NAME>
 <!--800234-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800234-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800234-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800234--></AD_MENU>
 
 <!--800237--><AD_MENU>
@@ -3596,6 +3879,7 @@
 <!--800237-->  <DESCRIPTION><![CDATA[Mater Data is a central repository of data where  key information such as business partners and products can be created, configured and therefore shared accross other Openbravo application areas.]]></DESCRIPTION>
 <!--800237-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800237-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800237-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800237--></AD_MENU>
 
 <!--800238--><AD_MENU>
@@ -3607,6 +3891,7 @@
 <!--800238-->  <DESCRIPTION><![CDATA[Open a folder where you can define all information to be used in this module.]]></DESCRIPTION>
 <!--800238-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800238-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800238-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800238--></AD_MENU>
 
 <!--800239--><AD_MENU>
@@ -3617,6 +3902,7 @@
 <!--800239-->  <NAME><![CDATA[Product Setup]]></NAME>
 <!--800239-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800239-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800239-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800239--></AD_MENU>
 
 <!--800240--><AD_MENU>
@@ -3628,6 +3914,7 @@
 <!--800240-->  <DESCRIPTION><![CDATA[Open a folder where you can edit prices related to your products.]]></DESCRIPTION>
 <!--800240-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800240-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800240-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800240--></AD_MENU>
 
 <!--800242--><AD_MENU>
@@ -3639,6 +3926,7 @@
 <!--800242-->  <DESCRIPTION><![CDATA[Open a folder where you can create, edit, and add data to be used to complete a given transaction.]]></DESCRIPTION>
 <!--800242-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800242-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800242-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800242--></AD_MENU>
 
 <!--800243--><AD_MENU>
@@ -3650,6 +3938,7 @@
 <!--800243-->  <DESCRIPTION><![CDATA[Warehouses and storage bins can be created and manage in this application area, as well as inventory count and inventory valuation.]]></DESCRIPTION>
 <!--800243-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800243-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800243-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800243--></AD_MENU>
 
 <!--800244--><AD_MENU>
@@ -3661,6 +3950,7 @@
 <!--800244-->  <DESCRIPTION><![CDATA[Open a folder where you can create, edit, and add data to be used to complete a given transaction.]]></DESCRIPTION>
 <!--800244-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800244-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800244-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800244--></AD_MENU>
 
 <!--800245--><AD_MENU>
@@ -3672,6 +3962,7 @@
 <!--800245-->  <DESCRIPTION><![CDATA[Open a folder where you can create, edit, and add data to be used to complete a given transaction.]]></DESCRIPTION>
 <!--800245-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800245-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800245-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800245--></AD_MENU>
 
 <!--800247--><AD_MENU>
@@ -3683,6 +3974,7 @@
 <!--800247-->  <DESCRIPTION><![CDATA[Open a folder where you can create, edit, and add data to be used to complete a given transaction.]]></DESCRIPTION>
 <!--800247-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800247-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800247-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800247--></AD_MENU>
 
 <!--800248--><AD_MENU>
@@ -3694,6 +3986,7 @@
 <!--800248-->  <DESCRIPTION><![CDATA[Open a folder where you can define all information to be used in this module.]]></DESCRIPTION>
 <!--800248-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800248-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800248-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800248--></AD_MENU>
 
 <!--800249--><AD_MENU>
@@ -3705,6 +3998,7 @@
 <!--800249-->  <DESCRIPTION><![CDATA[Open a folder where you can create, edit, and add data to be used to complete a given transaction.]]></DESCRIPTION>
 <!--800249-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800249-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800249-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800249--></AD_MENU>
 
 <!--800250--><AD_MENU>
@@ -3716,6 +4010,7 @@
 <!--800250-->  <DESCRIPTION><![CDATA[Open a folder where you can create, edit, and add data to be used to complete a given transaction.]]></DESCRIPTION>
 <!--800250-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800250-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800250-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800250--></AD_MENU>
 
 <!--800251--><AD_MENU>
@@ -3727,6 +4022,7 @@
 <!--800251-->  <DESCRIPTION><![CDATA[Open a folder where you can define all information to be used in this module.]]></DESCRIPTION>
 <!--800251-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800251-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800251-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800251--></AD_MENU>
 
 <!--800252--><AD_MENU>
@@ -3738,6 +4034,7 @@
 <!--800252-->  <DESCRIPTION><![CDATA[Open a folder where you can define accounting settings such as the fiscal calendar, account elements, accounting schemas, and document types.]]></DESCRIPTION>
 <!--800252-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800252-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800252-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800252--></AD_MENU>
 
 <!--800253--><AD_MENU>
@@ -3749,6 +4046,7 @@
 <!--800253-->  <DESCRIPTION><![CDATA[Open a folder where you can create, edit, and add data to be used to complete a given transaction.]]></DESCRIPTION>
 <!--800253-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800253-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800253-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800253--></AD_MENU>
 
 <!--800254--><AD_MENU>
@@ -3760,6 +4058,7 @@
 <!--800254-->  <DESCRIPTION><![CDATA[Open a folder where you can create, edit, and add data to be used to complete a given transaction.]]></DESCRIPTION>
 <!--800254-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800254-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800254-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800254--></AD_MENU>
 
 <!--800255--><AD_MENU>
@@ -3771,6 +4070,7 @@
 <!--800255-->  <DESCRIPTION><![CDATA[Open a folder where you can define all information to be used in this module.]]></DESCRIPTION>
 <!--800255-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800255-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800255-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800255--></AD_MENU>
 
 <!--800256--><AD_MENU>
@@ -3782,6 +4082,7 @@
 <!--800256-->  <DESCRIPTION><![CDATA[Open a folder where you can define all information to be used in this module.]]></DESCRIPTION>
 <!--800256-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800256-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800256-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800256--></AD_MENU>
 
 <!--800257--><AD_MENU>
@@ -3793,6 +4094,7 @@
 <!--800257-->  <DESCRIPTION><![CDATA[Open a folder where you can find reports , windows, forms that are going to be deprecated]]></DESCRIPTION>
 <!--800257-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800257-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800257--></AD_MENU>
 
 <!--800258--><AD_MENU>
@@ -3806,6 +4108,7 @@
 <!--800258-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800258-->  <AD_PROCESS_ID><![CDATA[800173]]></AD_PROCESS_ID>
 <!--800258-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800258-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800258--></AD_MENU>
 
 <!--800259--><AD_MENU>
@@ -3819,6 +4122,7 @@
 <!--800259-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800259-->  <AD_PROCESS_ID><![CDATA[800174]]></AD_PROCESS_ID>
 <!--800259-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800259-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800259--></AD_MENU>
 
 <!--800260--><AD_MENU>
@@ -3832,6 +4136,7 @@
 <!--800260-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800260-->  <AD_PROCESS_ID><![CDATA[800175]]></AD_PROCESS_ID>
 <!--800260-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800260-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800260--></AD_MENU>
 
 <!--800261--><AD_MENU>
@@ -3845,6 +4150,7 @@
 <!--800261-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800261-->  <AD_PROCESS_ID><![CDATA[800176]]></AD_PROCESS_ID>
 <!--800261-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800261-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800261--></AD_MENU>
 
 <!--800262--><AD_MENU>
@@ -3858,6 +4164,7 @@
 <!--800262-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800262-->  <AD_PROCESS_ID><![CDATA[800177]]></AD_PROCESS_ID>
 <!--800262-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800262-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800262--></AD_MENU>
 
 <!--800263--><AD_MENU>
@@ -3871,6 +4178,7 @@
 <!--800263-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800263-->  <AD_PROCESS_ID><![CDATA[800178]]></AD_PROCESS_ID>
 <!--800263-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800263-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800263--></AD_MENU>
 
 <!--800264--><AD_MENU>
@@ -3884,6 +4192,7 @@
 <!--800264-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800264-->  <AD_PROCESS_ID><![CDATA[800179]]></AD_PROCESS_ID>
 <!--800264-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800264-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800264--></AD_MENU>
 
 <!--800265--><AD_MENU>
@@ -3897,6 +4206,7 @@
 <!--800265-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800265-->  <AD_PROCESS_ID><![CDATA[800180]]></AD_PROCESS_ID>
 <!--800265-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800265-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800265--></AD_MENU>
 
 <!--800266--><AD_MENU>
@@ -3910,6 +4220,7 @@
 <!--800266-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800266-->  <AD_PROCESS_ID><![CDATA[800181]]></AD_PROCESS_ID>
 <!--800266-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800266-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800266--></AD_MENU>
 
 <!--800267--><AD_MENU>
@@ -3923,6 +4234,7 @@
 <!--800267-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800267-->  <AD_PROCESS_ID><![CDATA[800182]]></AD_PROCESS_ID>
 <!--800267-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800267-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800267--></AD_MENU>
 
 <!--800268--><AD_MENU>
@@ -3936,6 +4248,7 @@
 <!--800268-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800268-->  <AD_PROCESS_ID><![CDATA[800183]]></AD_PROCESS_ID>
 <!--800268-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800268-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800268--></AD_MENU>
 
 <!--800269--><AD_MENU>
@@ -3949,6 +4262,7 @@
 <!--800269-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800269-->  <AD_PROCESS_ID><![CDATA[800184]]></AD_PROCESS_ID>
 <!--800269-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800269-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800269--></AD_MENU>
 
 <!--800270--><AD_MENU>
@@ -3962,6 +4276,7 @@
 <!--800270-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800270-->  <AD_PROCESS_ID><![CDATA[800185]]></AD_PROCESS_ID>
 <!--800270-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800270-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800270--></AD_MENU>
 
 <!--800279--><AD_MENU>
@@ -3975,6 +4290,7 @@
 <!--800279-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800279-->  <AD_PROCESS_ID><![CDATA[800196]]></AD_PROCESS_ID>
 <!--800279-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800279-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800279--></AD_MENU>
 
 <!--800281--><AD_MENU>
@@ -3988,6 +4304,7 @@
 <!--800281-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800281-->  <AD_PROCESS_ID><![CDATA[800197]]></AD_PROCESS_ID>
 <!--800281-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800281-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800281--></AD_MENU>
 
 <!--800282--><AD_MENU>
@@ -4001,6 +4318,7 @@
 <!--800282-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800282-->  <AD_PROCESS_ID><![CDATA[800198]]></AD_PROCESS_ID>
 <!--800282-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800282-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800282--></AD_MENU>
 
 <!--800285--><AD_MENU>
@@ -4014,6 +4332,7 @@
 <!--800285-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800285-->  <AD_PROCESS_ID><![CDATA[800201]]></AD_PROCESS_ID>
 <!--800285-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800285-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800285--></AD_MENU>
 
 <!--800287--><AD_MENU>
@@ -4027,6 +4346,7 @@
 <!--800287-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800287-->  <AD_PROCESS_ID><![CDATA[800204]]></AD_PROCESS_ID>
 <!--800287-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800287-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800287--></AD_MENU>
 
 <!--800288--><AD_MENU>
@@ -4040,6 +4360,7 @@
 <!--800288-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800288-->  <AD_PROCESS_ID><![CDATA[800195]]></AD_PROCESS_ID>
 <!--800288-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800288-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800288--></AD_MENU>
 
 <!--800289--><AD_MENU>
@@ -4053,6 +4374,7 @@
 <!--800289-->  <ACTION><![CDATA[R]]></ACTION>
 <!--800289-->  <AD_PROCESS_ID><![CDATA[800206]]></AD_PROCESS_ID>
 <!--800289-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800289-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800289--></AD_MENU>
 
 <!--800290--><AD_MENU>
@@ -4066,6 +4388,7 @@
 <!--800290-->  <ACTION><![CDATA[P]]></ACTION>
 <!--800290-->  <AD_PROCESS_ID><![CDATA[800207]]></AD_PROCESS_ID>
 <!--800290-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800290-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--800290--></AD_MENU>
 
 <!--1000001--><AD_MENU>
@@ -4079,6 +4402,7 @@
 <!--1000001-->  <ACTION><![CDATA[L]]></ACTION>
 <!--1000001-->  <URL><![CDATA[http://www.openbravo.com]]></URL>
 <!--1000001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000001-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1000001--></AD_MENU>
 
 <!--1000500000--><AD_MENU>
@@ -4092,6 +4416,7 @@
 <!--1000500000-->  <ACTION><![CDATA[R]]></ACTION>
 <!--1000500000-->  <AD_PROCESS_ID><![CDATA[1000500000]]></AD_PROCESS_ID>
 <!--1000500000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500000-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1000500000--></AD_MENU>
 
 <!--1002100000--><AD_MENU>
@@ -4105,6 +4430,7 @@
 <!--1002100000-->  <ACTION><![CDATA[W]]></ACTION>
 <!--1002100000-->  <AD_WINDOW_ID><![CDATA[1002100000]]></AD_WINDOW_ID>
 <!--1002100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100000-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1002100000--></AD_MENU>
 
 <!--1002100003--><AD_MENU>
@@ -4118,6 +4444,7 @@
 <!--1002100003-->  <ACTION><![CDATA[W]]></ACTION>
 <!--1002100003-->  <AD_WINDOW_ID><![CDATA[1002100003]]></AD_WINDOW_ID>
 <!--1002100003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100003-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1002100003--></AD_MENU>
 
 <!--1002100004--><AD_MENU>
@@ -4131,6 +4458,7 @@
 <!--1002100004-->  <ACTION><![CDATA[W]]></ACTION>
 <!--1002100004-->  <AD_WINDOW_ID><![CDATA[1002100004]]></AD_WINDOW_ID>
 <!--1002100004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100004-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1002100004--></AD_MENU>
 
 <!--1002100006--><AD_MENU>
@@ -4144,6 +4472,7 @@
 <!--1002100006-->  <ACTION><![CDATA[R]]></ACTION>
 <!--1002100006-->  <AD_PROCESS_ID><![CDATA[1002100003]]></AD_PROCESS_ID>
 <!--1002100006-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1002100006-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1002100006--></AD_MENU>
 
 <!--1003100000--><AD_MENU>
@@ -4157,6 +4486,7 @@
 <!--1003100000-->  <ACTION><![CDATA[X]]></ACTION>
 <!--1003100000-->  <AD_FORM_ID><![CDATA[1003100000]]></AD_FORM_ID>
 <!--1003100000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1003100000-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1003100000--></AD_MENU>
 
 <!--1003100001--><AD_MENU>
@@ -4170,6 +4500,7 @@
 <!--1003100001-->  <ACTION><![CDATA[X]]></ACTION>
 <!--1003100001-->  <AD_FORM_ID><![CDATA[1003100002]]></AD_FORM_ID>
 <!--1003100001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1003100001-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1003100001--></AD_MENU>
 
 <!--1004400000--><AD_MENU>
@@ -4182,6 +4513,7 @@
 <!--1004400000-->  <ACTION><![CDATA[W]]></ACTION>
 <!--1004400000-->  <AD_WINDOW_ID><![CDATA[1004400000]]></AD_WINDOW_ID>
 <!--1004400000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1004400000-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1004400000--></AD_MENU>
 
 <!--1004400001--><AD_MENU>
@@ -4195,6 +4527,7 @@
 <!--1004400001-->  <ACTION><![CDATA[X]]></ACTION>
 <!--1004400001-->  <AD_FORM_ID><![CDATA[1004400000]]></AD_FORM_ID>
 <!--1004400001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1004400001-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1004400001--></AD_MENU>
 
 <!--1004400006--><AD_MENU>
@@ -4205,6 +4538,7 @@
 <!--1004400006-->  <NAME><![CDATA[Business Intelligence]]></NAME>
 <!--1004400006-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--1004400006-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1004400006-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1004400006--></AD_MENU>
 
 <!--1005400001--><AD_MENU>
@@ -4218,6 +4552,7 @@
 <!--1005400001-->  <ACTION><![CDATA[W]]></ACTION>
 <!--1005400001-->  <AD_WINDOW_ID><![CDATA[1005400002]]></AD_WINDOW_ID>
 <!--1005400001-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1005400001-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1005400001--></AD_MENU>
 
 <!--1005500000--><AD_MENU>
@@ -4231,6 +4566,7 @@
 <!--1005500000-->  <ACTION><![CDATA[R]]></ACTION>
 <!--1005500000-->  <AD_PROCESS_ID><![CDATA[1005500000]]></AD_PROCESS_ID>
 <!--1005500000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1005500000-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1005500000--></AD_MENU>
 
 <!--04B49FB13913462C8ACE2E3906440E3F--><AD_MENU>
@@ -4244,6 +4580,7 @@
 <!--04B49FB13913462C8ACE2E3906440E3F-->  <ACTION><![CDATA[W]]></ACTION>
 <!--04B49FB13913462C8ACE2E3906440E3F-->  <AD_WINDOW_ID><![CDATA[D586192D06C14EC182B44CAD34CA4295]]></AD_WINDOW_ID>
 <!--04B49FB13913462C8ACE2E3906440E3F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--04B49FB13913462C8ACE2E3906440E3F-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--04B49FB13913462C8ACE2E3906440E3F--></AD_MENU>
 
 <!--08B67705E5B44C5DB2196B9A1CD1ABD7--><AD_MENU>
@@ -4257,6 +4594,7 @@
 <!--08B67705E5B44C5DB2196B9A1CD1ABD7-->  <ACTION><![CDATA[W]]></ACTION>
 <!--08B67705E5B44C5DB2196B9A1CD1ABD7-->  <AD_WINDOW_ID><![CDATA[6CB90FC76E2E4CD3A6AF472E39C042B6]]></AD_WINDOW_ID>
 <!--08B67705E5B44C5DB2196B9A1CD1ABD7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--08B67705E5B44C5DB2196B9A1CD1ABD7-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--08B67705E5B44C5DB2196B9A1CD1ABD7--></AD_MENU>
 
 <!--1230E15C39394C2DBBB745EF282479F0--><AD_MENU>
@@ -4269,6 +4607,7 @@
 <!--1230E15C39394C2DBBB745EF282479F0-->  <ACTION><![CDATA[W]]></ACTION>
 <!--1230E15C39394C2DBBB745EF282479F0-->  <AD_WINDOW_ID><![CDATA[44C2799AA0644D9BB8C018933BF83F16]]></AD_WINDOW_ID>
 <!--1230E15C39394C2DBBB745EF282479F0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1230E15C39394C2DBBB745EF282479F0-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1230E15C39394C2DBBB745EF282479F0--></AD_MENU>
 
 <!--134C41C58C8945FAB0C18D88B33C08FE--><AD_MENU>
@@ -4282,6 +4621,7 @@
 <!--134C41C58C8945FAB0C18D88B33C08FE-->  <ACTION><![CDATA[W]]></ACTION>
 <!--134C41C58C8945FAB0C18D88B33C08FE-->  <AD_WINDOW_ID><![CDATA[11E11FE8445B4621A9989DD406C1B374]]></AD_WINDOW_ID>
 <!--134C41C58C8945FAB0C18D88B33C08FE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--134C41C58C8945FAB0C18D88B33C08FE-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--134C41C58C8945FAB0C18D88B33C08FE--></AD_MENU>
 
 <!--1C00140BAFA946E3A63F1AD557A35F45--><AD_MENU>
@@ -4295,6 +4635,7 @@
 <!--1C00140BAFA946E3A63F1AD557A35F45-->  <ACTION><![CDATA[W]]></ACTION>
 <!--1C00140BAFA946E3A63F1AD557A35F45-->  <AD_WINDOW_ID><![CDATA[E56E701CCBA14B8BA480CBDE37C50D7A]]></AD_WINDOW_ID>
 <!--1C00140BAFA946E3A63F1AD557A35F45-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1C00140BAFA946E3A63F1AD557A35F45-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1C00140BAFA946E3A63F1AD557A35F45--></AD_MENU>
 
 <!--1E5FB50EFD5D43BDA4AB1879707D9003--><AD_MENU>
@@ -4308,6 +4649,7 @@
 <!--1E5FB50EFD5D43BDA4AB1879707D9003-->  <ACTION><![CDATA[P]]></ACTION>
 <!--1E5FB50EFD5D43BDA4AB1879707D9003-->  <AD_PROCESS_ID><![CDATA[970EAD9B846648A7AB1F0CCA5058356C]]></AD_PROCESS_ID>
 <!--1E5FB50EFD5D43BDA4AB1879707D9003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1E5FB50EFD5D43BDA4AB1879707D9003-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--1E5FB50EFD5D43BDA4AB1879707D9003--></AD_MENU>
 
 <!--20C210B5BE7846819385A70F23F5118C--><AD_MENU>
@@ -4321,6 +4663,7 @@
 <!--20C210B5BE7846819385A70F23F5118C-->  <ACTION><![CDATA[W]]></ACTION>
 <!--20C210B5BE7846819385A70F23F5118C-->  <AD_WINDOW_ID><![CDATA[A9FD6A5AED3546EC83DB567882646D2E]]></AD_WINDOW_ID>
 <!--20C210B5BE7846819385A70F23F5118C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--20C210B5BE7846819385A70F23F5118C-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--20C210B5BE7846819385A70F23F5118C--></AD_MENU>
 
 <!--20FCC3606573406A9242358C3E4A3585--><AD_MENU>
@@ -4334,6 +4677,7 @@
 <!--20FCC3606573406A9242358C3E4A3585-->  <ACTION><![CDATA[W]]></ACTION>
 <!--20FCC3606573406A9242358C3E4A3585-->  <AD_WINDOW_ID><![CDATA[0CFFACC0F91C4DFDA429CCF80EBF4BC4]]></AD_WINDOW_ID>
 <!--20FCC3606573406A9242358C3E4A3585-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--20FCC3606573406A9242358C3E4A3585-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--20FCC3606573406A9242358C3E4A3585--></AD_MENU>
 
 <!--2345D54C6D044A999C7FDD5C504008A6--><AD_MENU>
@@ -4347,6 +4691,7 @@
 <!--2345D54C6D044A999C7FDD5C504008A6-->  <ACTION><![CDATA[P]]></ACTION>
 <!--2345D54C6D044A999C7FDD5C504008A6-->  <AD_PROCESS_ID><![CDATA[58763832F5F3485CAD33B8B9FCD6C640]]></AD_PROCESS_ID>
 <!--2345D54C6D044A999C7FDD5C504008A6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--2345D54C6D044A999C7FDD5C504008A6-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--2345D54C6D044A999C7FDD5C504008A6--></AD_MENU>
 
 <!--241C75FEC4C243BC8E71A4F358157F2D--><AD_MENU>
@@ -4359,6 +4704,7 @@
 <!--241C75FEC4C243BC8E71A4F358157F2D-->  <ACTION><![CDATA[X]]></ACTION>
 <!--241C75FEC4C243BC8E71A4F358157F2D-->  <AD_FORM_ID><![CDATA[DE2329ABCAA84D5F99B59043CFFFE454]]></AD_FORM_ID>
 <!--241C75FEC4C243BC8E71A4F358157F2D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--241C75FEC4C243BC8E71A4F358157F2D-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--241C75FEC4C243BC8E71A4F358157F2D--></AD_MENU>
 
 <!--26BF4F6D476E4D0CAF5E62EBC63E440E--><AD_MENU>
@@ -4372,6 +4718,7 @@
 <!--26BF4F6D476E4D0CAF5E62EBC63E440E-->  <ACTION><![CDATA[R]]></ACTION>
 <!--26BF4F6D476E4D0CAF5E62EBC63E440E-->  <AD_PROCESS_ID><![CDATA[6D3B1C36BF594A51878281B505F6CECF]]></AD_PROCESS_ID>
 <!--26BF4F6D476E4D0CAF5E62EBC63E440E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--26BF4F6D476E4D0CAF5E62EBC63E440E-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--26BF4F6D476E4D0CAF5E62EBC63E440E--></AD_MENU>
 
 <!--31D7EC462DD7401EA90200C393B3EB9B--><AD_MENU>
@@ -4385,6 +4732,7 @@
 <!--31D7EC462DD7401EA90200C393B3EB9B-->  <ACTION><![CDATA[W]]></ACTION>
 <!--31D7EC462DD7401EA90200C393B3EB9B-->  <AD_WINDOW_ID><![CDATA[9153155013C843839F88E9940B976148]]></AD_WINDOW_ID>
 <!--31D7EC462DD7401EA90200C393B3EB9B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--31D7EC462DD7401EA90200C393B3EB9B-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--31D7EC462DD7401EA90200C393B3EB9B--></AD_MENU>
 
 <!--383A3256E1CD4839A8AE36B3077FF071--><AD_MENU>
@@ -4397,6 +4745,7 @@
 <!--383A3256E1CD4839A8AE36B3077FF071-->  <ACTION><![CDATA[W]]></ACTION>
 <!--383A3256E1CD4839A8AE36B3077FF071-->  <AD_WINDOW_ID><![CDATA[C85110C9334B4C26BA29BB3B91000689]]></AD_WINDOW_ID>
 <!--383A3256E1CD4839A8AE36B3077FF071-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--383A3256E1CD4839A8AE36B3077FF071-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--383A3256E1CD4839A8AE36B3077FF071--></AD_MENU>
 
 <!--392A7B0601FA42F9AFC41FD8E576610D--><AD_MENU>
@@ -4410,6 +4759,7 @@
 <!--392A7B0601FA42F9AFC41FD8E576610D-->  <ACTION><![CDATA[R]]></ACTION>
 <!--392A7B0601FA42F9AFC41FD8E576610D-->  <AD_PROCESS_ID><![CDATA[462033447A1548F09BBFB0683FA976CC]]></AD_PROCESS_ID>
 <!--392A7B0601FA42F9AFC41FD8E576610D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--392A7B0601FA42F9AFC41FD8E576610D-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--392A7B0601FA42F9AFC41FD8E576610D--></AD_MENU>
 
 <!--3942B34C83C74EFF8A9CC51AC3B003D3--><AD_MENU>
@@ -4422,6 +4772,7 @@
 <!--3942B34C83C74EFF8A9CC51AC3B003D3-->  <ACTION><![CDATA[P]]></ACTION>
 <!--3942B34C83C74EFF8A9CC51AC3B003D3-->  <AD_PROCESS_ID><![CDATA[64B3FF29AC174F4B94538BD0A3CE1CD3]]></AD_PROCESS_ID>
 <!--3942B34C83C74EFF8A9CC51AC3B003D3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--3942B34C83C74EFF8A9CC51AC3B003D3-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--3942B34C83C74EFF8A9CC51AC3B003D3--></AD_MENU>
 
 <!--3BADF832BEAE46DBAE7A2C370353050D--><AD_MENU>
@@ -4435,6 +4786,7 @@
 <!--3BADF832BEAE46DBAE7A2C370353050D-->  <ACTION><![CDATA[W]]></ACTION>
 <!--3BADF832BEAE46DBAE7A2C370353050D-->  <AD_WINDOW_ID><![CDATA[FEB8679CAA0D47E5978F10E22566FCEA]]></AD_WINDOW_ID>
 <!--3BADF832BEAE46DBAE7A2C370353050D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--3BADF832BEAE46DBAE7A2C370353050D-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--3BADF832BEAE46DBAE7A2C370353050D--></AD_MENU>
 
 <!--3CC69F84B2524A69B53D1BD90FC7D0B9--><AD_MENU>
@@ -4448,6 +4800,7 @@
 <!--3CC69F84B2524A69B53D1BD90FC7D0B9-->  <ACTION><![CDATA[W]]></ACTION>
 <!--3CC69F84B2524A69B53D1BD90FC7D0B9-->  <AD_WINDOW_ID><![CDATA[9F13F7F5BA604C01911589C7E44FAD82]]></AD_WINDOW_ID>
 <!--3CC69F84B2524A69B53D1BD90FC7D0B9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--3CC69F84B2524A69B53D1BD90FC7D0B9-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--3CC69F84B2524A69B53D1BD90FC7D0B9--></AD_MENU>
 
 <!--4ACC59DA7DAB48FFAEB9128B7D803A15--><AD_MENU>
@@ -4461,6 +4814,7 @@
 <!--4ACC59DA7DAB48FFAEB9128B7D803A15-->  <ACTION><![CDATA[W]]></ACTION>
 <!--4ACC59DA7DAB48FFAEB9128B7D803A15-->  <AD_WINDOW_ID><![CDATA[929DA14E43E94D4E97863133D930D769]]></AD_WINDOW_ID>
 <!--4ACC59DA7DAB48FFAEB9128B7D803A15-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--4ACC59DA7DAB48FFAEB9128B7D803A15-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--4ACC59DA7DAB48FFAEB9128B7D803A15--></AD_MENU>
 
 <!--53C26F9057764F6DA861E00B14758E53--><AD_MENU>
@@ -4474,6 +4828,7 @@
 <!--53C26F9057764F6DA861E00B14758E53-->  <ACTION><![CDATA[W]]></ACTION>
 <!--53C26F9057764F6DA861E00B14758E53-->  <AD_WINDOW_ID><![CDATA[123271B9AD60469BAE8A924841456B63]]></AD_WINDOW_ID>
 <!--53C26F9057764F6DA861E00B14758E53-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--53C26F9057764F6DA861E00B14758E53-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--53C26F9057764F6DA861E00B14758E53--></AD_MENU>
 
 <!--564E152A45684CFC82BFB5B132C8F828--><AD_MENU>
@@ -4487,6 +4842,7 @@
 <!--564E152A45684CFC82BFB5B132C8F828-->  <ACTION><![CDATA[W]]></ACTION>
 <!--564E152A45684CFC82BFB5B132C8F828-->  <AD_WINDOW_ID><![CDATA[1163E0338E154F41BE0BA413D49821CF]]></AD_WINDOW_ID>
 <!--564E152A45684CFC82BFB5B132C8F828-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--564E152A45684CFC82BFB5B132C8F828-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--564E152A45684CFC82BFB5B132C8F828--></AD_MENU>
 
 <!--5DFCDFE962144B12A6279E9A1E9DC0AC--><AD_MENU>
@@ -4499,6 +4855,7 @@
 <!--5DFCDFE962144B12A6279E9A1E9DC0AC-->  <ACTION><![CDATA[X]]></ACTION>
 <!--5DFCDFE962144B12A6279E9A1E9DC0AC-->  <AD_FORM_ID><![CDATA[C09B000F160B47BE938A77FDE3207643]]></AD_FORM_ID>
 <!--5DFCDFE962144B12A6279E9A1E9DC0AC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--5DFCDFE962144B12A6279E9A1E9DC0AC-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--5DFCDFE962144B12A6279E9A1E9DC0AC--></AD_MENU>
 
 <!--648F02DE454D41CB90BBE4F66F5813A2--><AD_MENU>
@@ -4511,6 +4868,7 @@
 <!--648F02DE454D41CB90BBE4F66F5813A2-->  <ACTION><![CDATA[W]]></ACTION>
 <!--648F02DE454D41CB90BBE4F66F5813A2-->  <AD_WINDOW_ID><![CDATA[6FAD464D6C5C487F956B49E8B5EFC761]]></AD_WINDOW_ID>
 <!--648F02DE454D41CB90BBE4F66F5813A2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--648F02DE454D41CB90BBE4F66F5813A2-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--648F02DE454D41CB90BBE4F66F5813A2--></AD_MENU>
 
 <!--6787A809DB364371B797ECED5E9262BF--><AD_MENU>
@@ -4523,6 +4881,7 @@
 <!--6787A809DB364371B797ECED5E9262BF-->  <ACTION><![CDATA[W]]></ACTION>
 <!--6787A809DB364371B797ECED5E9262BF-->  <AD_WINDOW_ID><![CDATA[AB30B4B4C94540849D221C4BC31A9816]]></AD_WINDOW_ID>
 <!--6787A809DB364371B797ECED5E9262BF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--6787A809DB364371B797ECED5E9262BF-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--6787A809DB364371B797ECED5E9262BF--></AD_MENU>
 
 <!--75B726735EA7497C9DB06E35B1CBFD86--><AD_MENU>
@@ -4536,6 +4895,7 @@
 <!--75B726735EA7497C9DB06E35B1CBFD86-->  <ACTION><![CDATA[W]]></ACTION>
 <!--75B726735EA7497C9DB06E35B1CBFD86-->  <AD_WINDOW_ID><![CDATA[E66E701CCBA14B8BA480CBDE37C50D7A]]></AD_WINDOW_ID>
 <!--75B726735EA7497C9DB06E35B1CBFD86-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--75B726735EA7497C9DB06E35B1CBFD86-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--75B726735EA7497C9DB06E35B1CBFD86--></AD_MENU>
 
 <!--8521FBEB13094CE1B80F1F9326C847E8--><AD_MENU>
@@ -4549,6 +4909,7 @@
 <!--8521FBEB13094CE1B80F1F9326C847E8-->  <ACTION><![CDATA[R]]></ACTION>
 <!--8521FBEB13094CE1B80F1F9326C847E8-->  <AD_PROCESS_ID><![CDATA[75F83D534E764C7C8781FFA6C08E87ED]]></AD_PROCESS_ID>
 <!--8521FBEB13094CE1B80F1F9326C847E8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--8521FBEB13094CE1B80F1F9326C847E8-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--8521FBEB13094CE1B80F1F9326C847E8--></AD_MENU>
 
 <!--8BA14A552EA84AB19A33F3F2C3002790--><AD_MENU>
@@ -4562,6 +4923,7 @@
 <!--8BA14A552EA84AB19A33F3F2C3002790-->  <ACTION><![CDATA[P]]></ACTION>
 <!--8BA14A552EA84AB19A33F3F2C3002790-->  <AD_PROCESS_ID><![CDATA[D85D5B5E368A49B1A6293BA4AE15F0F9]]></AD_PROCESS_ID>
 <!--8BA14A552EA84AB19A33F3F2C3002790-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--8BA14A552EA84AB19A33F3F2C3002790-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--8BA14A552EA84AB19A33F3F2C3002790--></AD_MENU>
 
 <!--8BA9DEA4CA5F4AFE84A60C9EB5BF1A66--><AD_MENU>
@@ -4575,6 +4937,7 @@
 <!--8BA9DEA4CA5F4AFE84A60C9EB5BF1A66-->  <ACTION><![CDATA[R]]></ACTION>
 <!--8BA9DEA4CA5F4AFE84A60C9EB5BF1A66-->  <AD_PROCESS_ID><![CDATA[E5BE98DCF4514A18B571F21183B397DD]]></AD_PROCESS_ID>
 <!--8BA9DEA4CA5F4AFE84A60C9EB5BF1A66-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--8BA9DEA4CA5F4AFE84A60C9EB5BF1A66-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--8BA9DEA4CA5F4AFE84A60C9EB5BF1A66--></AD_MENU>
 
 <!--A519EEB1C1994CCF8208E5B73B5A04C6--><AD_MENU>
@@ -4588,6 +4951,7 @@
 <!--A519EEB1C1994CCF8208E5B73B5A04C6-->  <ACTION><![CDATA[W]]></ACTION>
 <!--A519EEB1C1994CCF8208E5B73B5A04C6-->  <AD_WINDOW_ID><![CDATA[3E945A9102144C16BD211D211089C2DF]]></AD_WINDOW_ID>
 <!--A519EEB1C1994CCF8208E5B73B5A04C6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--A519EEB1C1994CCF8208E5B73B5A04C6-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--A519EEB1C1994CCF8208E5B73B5A04C6--></AD_MENU>
 
 <!--A5A76D4C0D084A80AFB9A2A8F4A0A8AE--><AD_MENU>
@@ -4601,6 +4965,7 @@
 <!--A5A76D4C0D084A80AFB9A2A8F4A0A8AE-->  <ACTION><![CDATA[W]]></ACTION>
 <!--A5A76D4C0D084A80AFB9A2A8F4A0A8AE-->  <AD_WINDOW_ID><![CDATA[273673D2ED914C399A6C51DB758BE0F9]]></AD_WINDOW_ID>
 <!--A5A76D4C0D084A80AFB9A2A8F4A0A8AE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--A5A76D4C0D084A80AFB9A2A8F4A0A8AE-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--A5A76D4C0D084A80AFB9A2A8F4A0A8AE--></AD_MENU>
 
 <!--A89F0CBA7D174B0C83F51F2ED9801383--><AD_MENU>
@@ -4613,6 +4978,7 @@
 <!--A89F0CBA7D174B0C83F51F2ED9801383-->  <ACTION><![CDATA[W]]></ACTION>
 <!--A89F0CBA7D174B0C83F51F2ED9801383-->  <AD_WINDOW_ID><![CDATA[11A2976F05D841EFAE654A8B83EB4204]]></AD_WINDOW_ID>
 <!--A89F0CBA7D174B0C83F51F2ED9801383-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--A89F0CBA7D174B0C83F51F2ED9801383-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--A89F0CBA7D174B0C83F51F2ED9801383--></AD_MENU>
 
 <!--AA912A0ED1EB4967B6A220291C7C118A--><AD_MENU>
@@ -4626,6 +4992,7 @@
 <!--AA912A0ED1EB4967B6A220291C7C118A-->  <ACTION><![CDATA[X]]></ACTION>
 <!--AA912A0ED1EB4967B6A220291C7C118A-->  <AD_FORM_ID><![CDATA[8D6282279F464B1696B0EE3E23023B65]]></AD_FORM_ID>
 <!--AA912A0ED1EB4967B6A220291C7C118A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--AA912A0ED1EB4967B6A220291C7C118A-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--AA912A0ED1EB4967B6A220291C7C118A--></AD_MENU>
 
 <!--B73A1BE38C6F4F4BB17A3B6FA8C3293E--><AD_MENU>
@@ -4639,6 +5006,7 @@
 <!--B73A1BE38C6F4F4BB17A3B6FA8C3293E-->  <ACTION><![CDATA[X]]></ACTION>
 <!--B73A1BE38C6F4F4BB17A3B6FA8C3293E-->  <AD_FORM_ID><![CDATA[25C886DA08E947F29AAC1D30D8B753A1]]></AD_FORM_ID>
 <!--B73A1BE38C6F4F4BB17A3B6FA8C3293E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--B73A1BE38C6F4F4BB17A3B6FA8C3293E-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--B73A1BE38C6F4F4BB17A3B6FA8C3293E--></AD_MENU>
 
 <!--B902D95D3F654C7096C428F50381E38A--><AD_MENU>
@@ -4652,6 +5020,7 @@
 <!--B902D95D3F654C7096C428F50381E38A-->  <ACTION><![CDATA[W]]></ACTION>
 <!--B902D95D3F654C7096C428F50381E38A-->  <AD_WINDOW_ID><![CDATA[EF3E837705944F4DBF398D683D36ACE0]]></AD_WINDOW_ID>
 <!--B902D95D3F654C7096C428F50381E38A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--B902D95D3F654C7096C428F50381E38A-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--B902D95D3F654C7096C428F50381E38A--></AD_MENU>
 
 <!--B98CC98DABEE409DB43A0A224CA140EA--><AD_MENU>
@@ -4664,6 +5033,7 @@
 <!--B98CC98DABEE409DB43A0A224CA140EA-->  <ACTION><![CDATA[W]]></ACTION>
 <!--B98CC98DABEE409DB43A0A224CA140EA-->  <AD_WINDOW_ID><![CDATA[B5673F73F613496C8BEA22FB55E4E1E4]]></AD_WINDOW_ID>
 <!--B98CC98DABEE409DB43A0A224CA140EA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--B98CC98DABEE409DB43A0A224CA140EA-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--B98CC98DABEE409DB43A0A224CA140EA--></AD_MENU>
 
 <!--BC399BACA2F34B968C54555D79ED66A7--><AD_MENU>
@@ -4676,6 +5046,7 @@
 <!--BC399BACA2F34B968C54555D79ED66A7-->  <ACTION><![CDATA[W]]></ACTION>
 <!--BC399BACA2F34B968C54555D79ED66A7-->  <AD_WINDOW_ID><![CDATA[FC404D2406A9491CBD905D0D38F04846]]></AD_WINDOW_ID>
 <!--BC399BACA2F34B968C54555D79ED66A7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--BC399BACA2F34B968C54555D79ED66A7-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--BC399BACA2F34B968C54555D79ED66A7--></AD_MENU>
 
 <!--BE86736DF4AB4568A316A3922E6D6B7B--><AD_MENU>
@@ -4689,6 +5060,7 @@
 <!--BE86736DF4AB4568A316A3922E6D6B7B-->  <ACTION><![CDATA[W]]></ACTION>
 <!--BE86736DF4AB4568A316A3922E6D6B7B-->  <AD_WINDOW_ID><![CDATA[48E7EDE7D1104A59B46FC7449D9FB267]]></AD_WINDOW_ID>
 <!--BE86736DF4AB4568A316A3922E6D6B7B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--BE86736DF4AB4568A316A3922E6D6B7B-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--BE86736DF4AB4568A316A3922E6D6B7B--></AD_MENU>
 
 <!--BECE8640090B45A7B92AA8329742FB6B--><AD_MENU>
@@ -4701,6 +5073,7 @@
 <!--BECE8640090B45A7B92AA8329742FB6B-->  <ACTION><![CDATA[P]]></ACTION>
 <!--BECE8640090B45A7B92AA8329742FB6B-->  <AD_PROCESS_ID><![CDATA[58591E3E0F7648E4A09058E037CE49FC]]></AD_PROCESS_ID>
 <!--BECE8640090B45A7B92AA8329742FB6B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--BECE8640090B45A7B92AA8329742FB6B-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--BECE8640090B45A7B92AA8329742FB6B--></AD_MENU>
 
 <!--C073633F0AFF4A93B17C13F239DE9613--><AD_MENU>
@@ -4714,6 +5087,7 @@
 <!--C073633F0AFF4A93B17C13F239DE9613-->  <ACTION><![CDATA[P]]></ACTION>
 <!--C073633F0AFF4A93B17C13F239DE9613-->  <AD_PROCESS_ID><![CDATA[D234AE084F7040DCB66E281A4237FF99]]></AD_PROCESS_ID>
 <!--C073633F0AFF4A93B17C13F239DE9613-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--C073633F0AFF4A93B17C13F239DE9613-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--C073633F0AFF4A93B17C13F239DE9613--></AD_MENU>
 
 <!--C14426B2503546788BE2BAEBA2BE81DC--><AD_MENU>
@@ -4727,6 +5101,7 @@
 <!--C14426B2503546788BE2BAEBA2BE81DC-->  <ACTION><![CDATA[W]]></ACTION>
 <!--C14426B2503546788BE2BAEBA2BE81DC-->  <AD_WINDOW_ID><![CDATA[B15DDE526F724EBCB11439BDDB483FA6]]></AD_WINDOW_ID>
 <!--C14426B2503546788BE2BAEBA2BE81DC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--C14426B2503546788BE2BAEBA2BE81DC-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--C14426B2503546788BE2BAEBA2BE81DC--></AD_MENU>
 
 <!--C62EBC52C8DF463B9B720D52F250A8CF--><AD_MENU>
@@ -4740,6 +5115,7 @@
 <!--C62EBC52C8DF463B9B720D52F250A8CF-->  <ACTION><![CDATA[W]]></ACTION>
 <!--C62EBC52C8DF463B9B720D52F250A8CF-->  <AD_WINDOW_ID><![CDATA[B43A89704D864A6995BD5AC32201DBD9]]></AD_WINDOW_ID>
 <!--C62EBC52C8DF463B9B720D52F250A8CF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--C62EBC52C8DF463B9B720D52F250A8CF-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--C62EBC52C8DF463B9B720D52F250A8CF--></AD_MENU>
 
 <!--CC8E287A0B0743D69C53D8F678F9AD41--><AD_MENU>
@@ -4753,6 +5129,7 @@
 <!--CC8E287A0B0743D69C53D8F678F9AD41-->  <ACTION><![CDATA[P]]></ACTION>
 <!--CC8E287A0B0743D69C53D8F678F9AD41-->  <AD_PROCESS_ID><![CDATA[E264309FF8244A94936502BF51829109]]></AD_PROCESS_ID>
 <!--CC8E287A0B0743D69C53D8F678F9AD41-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--CC8E287A0B0743D69C53D8F678F9AD41-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--CC8E287A0B0743D69C53D8F678F9AD41--></AD_MENU>
 
 <!--D13B4DBDCBF747BB9A91B17CBC6D1AA5--><AD_MENU>
@@ -4763,6 +5140,7 @@
 <!--D13B4DBDCBF747BB9A91B17CBC6D1AA5-->  <NAME><![CDATA[Process Scheduling]]></NAME>
 <!--D13B4DBDCBF747BB9A91B17CBC6D1AA5-->  <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--D13B4DBDCBF747BB9A91B17CBC6D1AA5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--D13B4DBDCBF747BB9A91B17CBC6D1AA5-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--D13B4DBDCBF747BB9A91B17CBC6D1AA5--></AD_MENU>
 
 <!--D4A88451E7F64130A1998567B5E0C68F--><AD_MENU>
@@ -4776,6 +5154,7 @@
 <!--D4A88451E7F64130A1998567B5E0C68F-->  <ACTION><![CDATA[R]]></ACTION>
 <!--D4A88451E7F64130A1998567B5E0C68F-->  <AD_PROCESS_ID><![CDATA[1005900000]]></AD_PROCESS_ID>
 <!--D4A88451E7F64130A1998567B5E0C68F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--D4A88451E7F64130A1998567B5E0C68F-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--D4A88451E7F64130A1998567B5E0C68F--></AD_MENU>
 
 <!--DF55818A579B448AAF0CE64736E20E45--><AD_MENU>
@@ -4789,6 +5168,7 @@
 <!--DF55818A579B448AAF0CE64736E20E45-->  <ACTION><![CDATA[W]]></ACTION>
 <!--DF55818A579B448AAF0CE64736E20E45-->  <AD_WINDOW_ID><![CDATA[2CC1DC1EDEA2454F987E7F2BBF48A4AE]]></AD_WINDOW_ID>
 <!--DF55818A579B448AAF0CE64736E20E45-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--DF55818A579B448AAF0CE64736E20E45-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--DF55818A579B448AAF0CE64736E20E45--></AD_MENU>
 
 <!--EEC07584F29040388C9BAA388BC4C2D0--><AD_MENU>
@@ -4802,6 +5182,7 @@
 <!--EEC07584F29040388C9BAA388BC4C2D0-->  <ACTION><![CDATA[W]]></ACTION>
 <!--EEC07584F29040388C9BAA388BC4C2D0-->  <AD_WINDOW_ID><![CDATA[578DD45CF2BF4D3CA27E4C0EEEF5E5E6]]></AD_WINDOW_ID>
 <!--EEC07584F29040388C9BAA388BC4C2D0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--EEC07584F29040388C9BAA388BC4C2D0-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--EEC07584F29040388C9BAA388BC4C2D0--></AD_MENU>
 
 <!--EFC616EE0EA04A9ABB47E793A0D8F671--><AD_MENU>
@@ -4814,6 +5195,7 @@
 <!--EFC616EE0EA04A9ABB47E793A0D8F671-->  <ACTION><![CDATA[W]]></ACTION>
 <!--EFC616EE0EA04A9ABB47E793A0D8F671-->  <AD_WINDOW_ID><![CDATA[6CB5B67ED33F47DFA334079D3EA2340E]]></AD_WINDOW_ID>
 <!--EFC616EE0EA04A9ABB47E793A0D8F671-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--EFC616EE0EA04A9ABB47E793A0D8F671-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--EFC616EE0EA04A9ABB47E793A0D8F671--></AD_MENU>
 
 <!--F2F2F35AF85A456A98B59EAD137C1DB6--><AD_MENU>
@@ -4827,6 +5209,7 @@
 <!--F2F2F35AF85A456A98B59EAD137C1DB6-->  <ACTION><![CDATA[W]]></ACTION>
 <!--F2F2F35AF85A456A98B59EAD137C1DB6-->  <AD_WINDOW_ID><![CDATA[79FC23AB84F04384B4B7CCCADCDD2942]]></AD_WINDOW_ID>
 <!--F2F2F35AF85A456A98B59EAD137C1DB6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--F2F2F35AF85A456A98B59EAD137C1DB6-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--F2F2F35AF85A456A98B59EAD137C1DB6--></AD_MENU>
 
 <!--F5C274DEAE9048DCAD48473D2F622CEC--><AD_MENU>
@@ -4840,6 +5223,7 @@
 <!--F5C274DEAE9048DCAD48473D2F622CEC-->  <ACTION><![CDATA[W]]></ACTION>
 <!--F5C274DEAE9048DCAD48473D2F622CEC-->  <AD_WINDOW_ID><![CDATA[C50A8AEE6F044825B5EF54FAAE76826F]]></AD_WINDOW_ID>
 <!--F5C274DEAE9048DCAD48473D2F622CEC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--F5C274DEAE9048DCAD48473D2F622CEC-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--F5C274DEAE9048DCAD48473D2F622CEC--></AD_MENU>
 
 <!--FC127CE8582944C0AA664A35C890AAD5--><AD_MENU>
@@ -4853,6 +5237,7 @@
 <!--FC127CE8582944C0AA664A35C890AAD5-->  <ACTION><![CDATA[W]]></ACTION>
 <!--FC127CE8582944C0AA664A35C890AAD5-->  <AD_WINDOW_ID><![CDATA[08F09D2A7C774585B014C06C0F44F591]]></AD_WINDOW_ID>
 <!--FC127CE8582944C0AA664A35C890AAD5-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--FC127CE8582944C0AA664A35C890AAD5-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--FC127CE8582944C0AA664A35C890AAD5--></AD_MENU>
 
 <!--FF8080813302598D0133026072770003--><AD_MENU>
@@ -4865,6 +5250,7 @@
 <!--FF8080813302598D0133026072770003-->  <ACTION><![CDATA[W]]></ACTION>
 <!--FF8080813302598D0133026072770003-->  <AD_WINDOW_ID><![CDATA[FF808081330213E60133021822E40007]]></AD_WINDOW_ID>
 <!--FF8080813302598D0133026072770003-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--FF8080813302598D0133026072770003-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--FF8080813302598D0133026072770003--></AD_MENU>
 
 <!--FF808181323E504701323E5E20F10063--><AD_MENU>
@@ -4878,6 +5264,7 @@
 <!--FF808181323E504701323E5E20F10063-->  <ACTION><![CDATA[W]]></ACTION>
 <!--FF808181323E504701323E5E20F10063-->  <AD_WINDOW_ID><![CDATA[FF808181323E504701323E57E08D0017]]></AD_WINDOW_ID>
 <!--FF808181323E504701323E5E20F10063-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--FF808181323E504701323E5E20F10063-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--FF808181323E504701323E5E20F10063--></AD_MENU>
 
 </data>

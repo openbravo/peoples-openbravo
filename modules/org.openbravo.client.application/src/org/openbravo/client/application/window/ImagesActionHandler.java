@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,27 +82,30 @@ public class ImagesActionHandler extends BaseActionHandler implements PortalAcce
         Image image = OBDal.getInstance().get(Image.class, imageID);
         Long width;
         Long height;
-        if (image.getHeight() == null || image.getWidth() == null) {
-          Long[] size = Utility.computeImageSize(image.getBindaryData());
-          width = size[0];
-          height = size[1];
-          image.setWidth(width);
-          image.setHeight(height);
-          OBDal.getInstance().save(image);
-          OBDal.getInstance().flush();
-        } else {
-          width = image.getWidth();
-          height = image.getHeight();
+        if (image != null) {
+          if (image.getHeight() == null || image.getWidth() == null) {
+            Long[] size = Utility.computeImageSize(image.getBindaryData());
+            width = size[0];
+            height = size[1];
+            image.setWidth(width);
+            image.setHeight(height);
+            OBDal.getInstance().save(image);
+            OBDal.getInstance().flush();
+          } else {
+            width = image.getWidth();
+            height = image.getHeight();
+          }
+          if (image.getMimetype() == null) {
+            image.setMimetype(MimeTypeUtil.getInstance().getMimeTypeName(image.getBindaryData()));
+            OBDal.getInstance().save(image);
+            OBDal.getInstance().flush();
+          }
+          JSONObject obj = new JSONObject();
+          obj.put("width", width);
+          obj.put("height", height);
+          return obj;
         }
-        if (image.getMimetype() == null) {
-          image.setMimetype(MimeTypeUtil.getInstance().getMimeTypeName(image.getBindaryData()));
-          OBDal.getInstance().save(image);
-          OBDal.getInstance().flush();
-        }
-        JSONObject obj = new JSONObject();
-        obj.put("width", width);
-        obj.put("height", height);
-        return obj;
+        return new JSONObject();
       } catch (Exception e) {
         log.error("Error while calculating image size", e);
         return new JSONObject();

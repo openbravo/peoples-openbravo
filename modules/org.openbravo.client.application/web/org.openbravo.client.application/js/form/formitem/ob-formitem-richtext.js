@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,12 +67,12 @@ isc.OBRichTextItem.addProperties({
         this.previousStyleName = this.styleName;
         this.setStyleName(this.editorStyleName + 'Disabled');
         this.editArea.setStyleName(this.editAreaStyleName + 'Disabled');
-        this.toolbar.hide();
+        this.toolArea.hide();
       } else {
         this.setStyleName(this.previousStyleName || this.editorStyleName);
         delete this.previousStyleName;
         this.editArea.setStyleName(this.editAreaStyleName);
-        this.toolbar.show();
+        this.toolArea.show();
       }
       this.Super('setDisabled', arguments);
     },
@@ -125,6 +125,12 @@ isc.OBRichTextItem.addProperties({
   showFocused: true,
   showTitle: true,
   rowSpan: 2,
+  // smartclient sets this property by default to true
+  // this would not allow to place this component in a column other than the first one
+  startRow: false,
+  // smartclient sets this property by default to fill a whole row
+  // this would not allow to set the colSpan to 1
+  colSpan: 1,
   init: function () {
     if (this.initStyle) {
       this.initStyle();
@@ -152,6 +158,9 @@ isc.OBRichTextEditor.addProperties({
     this.strikethroughSelectionDefaults.prompt = OB.I18N.getLabel('OBUIAPP_StrikeThroughSelection');
 
     this.Super('initWidget', arguments);
+
+    // Added setDisabled on init to remove the toolArea 
+    this.setDisabled(this.disabled);
   }
 });
 

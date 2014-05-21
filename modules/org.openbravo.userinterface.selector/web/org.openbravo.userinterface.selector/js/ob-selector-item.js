@@ -438,6 +438,18 @@ isc.OBSelectorItem.addProperties({
     }
   },
 
+  filterComplete: function () {
+    var ret;
+
+    // Prevents validation of this item while filtering because real value is
+    // not yet set. This also caused form item to be redrawn removing typed 
+    // text for filtering (see issue #26189)
+    this.preventValidation = true;
+    ret = this.Super('filterComplete', arguments);
+    delete this.preventValidation;
+    return ret;
+  },
+
   hidePickListOnBlur: function () {
     // when the form gets redrawn the focus may not be in
     // the item but it is still the item which gets the focus
@@ -629,6 +641,10 @@ isc.OBSelectorItem.addProperties({
       this.storeValue(record[this.valueField]);
       this.form.setValue(this.name + OB.Constants.FIELDSEPARATOR + this.displayField, record[this.displayField]);
       this.form.setValue(identifierFieldName, record[OB.Constants.IDENTIFIER]);
+      // make sure the identifier is not null in the grid. See issue https://issues.openbravo.com/view.php?id=25727
+      if (this.form.grid && this.form.grid.getEditValues(0) && !this.form.grid.getEditValues(0)[this.name + OB.Constants.FIELDSEPARATOR + this.displayField]) {
+        this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name + OB.Constants.FIELDSEPARATOR + this.displayField, record[OB.Constants.IDENTIFIER]);
+      }
       if (!this.valueMap) {
         this.valueMap = {};
       }

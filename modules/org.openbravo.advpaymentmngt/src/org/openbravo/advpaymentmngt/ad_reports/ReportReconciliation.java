@@ -30,10 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -45,6 +42,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -109,18 +107,18 @@ public class ReportReconciliation extends HttpSecureAppServlet {
     JasperReport subReportOutstandingDeposit;
     JasperReport subReportUnreconciledBankStatementLines;
     try {
-      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
-          + "/org/openbravo/advpaymentmngt/ad_reports/OutstandingPayment.jrxml");
-      subReportOutstandingPayment = JasperCompileManager.compileReport(jasperDesignLines);
+      subReportOutstandingPayment = Utility.getTranslatedJasperReport(this, strBaseDesign
+          + "/org/openbravo/advpaymentmngt/ad_reports/OutstandingPayment.jrxml",
+          vars.getLanguage(), strBaseDesign);
 
-      jasperDesignLines = JRXmlLoader.load(strBaseDesign
-          + "/org/openbravo/advpaymentmngt/ad_reports/OutstandingDeposit.jrxml");
-      subReportOutstandingDeposit = JasperCompileManager.compileReport(jasperDesignLines);
+      subReportOutstandingDeposit = Utility.getTranslatedJasperReport(this, strBaseDesign
+          + "/org/openbravo/advpaymentmngt/ad_reports/OutstandingDeposit.jrxml",
+          vars.getLanguage(), strBaseDesign);
 
-      jasperDesignLines = JRXmlLoader.load(strBaseDesign
-          + "/org/openbravo/advpaymentmngt/ad_reports/UnreconciledBankStatement.jrxml");
-      subReportUnreconciledBankStatementLines = JasperCompileManager
-          .compileReport(jasperDesignLines);
+      subReportUnreconciledBankStatementLines = Utility.getTranslatedJasperReport(this,
+          strBaseDesign
+              + "/org/openbravo/advpaymentmngt/ad_reports/UnreconciledBankStatement.jrxml",
+          vars.getLanguage(), strBaseDesign);
 
     } catch (JRException e) {
       throw new ServletException(e.getMessage());

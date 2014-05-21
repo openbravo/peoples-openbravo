@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Customer Statement" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Customer Statement" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.2100000000000006"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -214,7 +214,7 @@ ORDER BY f.dateacct, f.created]]>
 					<reportElement x="331" y="70" width="225" height="1"/>
 				</line>
 				<staticText>
-					<reportElement x="0" y="7" width="178" height="20" forecolor="#595959">
+					<reportElement x="0" y="7" width="330" height="20" forecolor="#595959">
 						<printWhenExpression><![CDATA[$P{reportType}.equals("both") && $F{issotrx}.equals("Y")]]></printWhenExpression>
 					</reportElement>
 					<textElement>
@@ -223,42 +223,42 @@ ORDER BY f.dateacct, f.created]]>
 					<text><![CDATA[Customer Statement]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="128" y="36" width="202" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement x="128" y="36" width="202" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top">
 						<font fontName="DejaVu Sans" size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Description]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="0" y="36" width="47" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement x="0" y="36" width="47" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement verticalAlignment="Top">
 						<font fontName="DejaVu Sans" size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="47" y="36" width="81" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement x="47" y="36" width="81" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Left" verticalAlignment="Top">
 						<font fontName="DejaVu Sans" size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Document Type]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="330" y="36" width="75" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement x="330" y="36" width="75" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font fontName="DejaVu Sans" size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Debit]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="405" y="36" width="75" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement x="405" y="36" width="75" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font fontName="DejaVu Sans" size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Credit]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="480" y="36" width="75" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement x="480" y="36" width="75" height="13" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Top">
 						<font fontName="DejaVu Sans" size="8" isBold="true"/>
 					</textElement>
@@ -268,7 +268,7 @@ ORDER BY f.dateacct, f.created]]>
 					<reportElement x="0" y="49" width="555" height="1"/>
 				</line>
 				<staticText>
-					<reportElement x="0" y="7" width="178" height="20" forecolor="#595959">
+					<reportElement x="1" y="7" width="330" height="20" forecolor="#595959">
 						<printWhenExpression><![CDATA[$P{reportType}.equals("both") && $F{issotrx}.equals("N")]]></printWhenExpression>
 					</reportElement>
 					<textElement>
@@ -300,7 +300,7 @@ ORDER BY f.dateacct, f.created]]>
 					<textFieldExpression class="java.lang.String"><![CDATA[$V{customerBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{customerBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{customerBalance})]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" mode="Opaque" x="330" y="12" width="115" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+					<reportElement positionType="Float" mode="Opaque" x="330" y="12" width="115" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					</textElement>
@@ -349,7 +349,7 @@ ORDER BY f.dateacct, f.created]]>
         $P{LOCALE}).format(new Date())]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="101" width="235" height="12"/>
+				<reportElement x="0" y="101" width="371" height="12"/>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
@@ -363,7 +363,7 @@ ORDER BY f.dateacct, f.created]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{org_address} + " " + $F{org_postal}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="371" y="4" width="178" height="20" forecolor="#595959">
+				<reportElement x="236" y="4" width="313" height="20" forecolor="#595959">
 					<printWhenExpression><![CDATA[$P{reportType}.equals("cus") && $F{issotrx}.equals("Y")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -372,7 +372,7 @@ ORDER BY f.dateacct, f.created]]>
 				<text><![CDATA[Customer Statement]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="371" y="48" width="119" height="11" forecolor="#595959"/>
+				<reportElement x="371" y="48" width="119" height="11" isPrintWhenDetailOverflows="true" forecolor="#595959"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans" size="9"/>
 				</textElement>
@@ -386,7 +386,7 @@ ORDER BY f.dateacct, f.created]]>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="483" y="101" width="32" height="12"/>
+				<reportElement x="483" y="101" width="32" height="12" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
@@ -435,7 +435,7 @@ ORDER BY f.dateacct, f.created]]>
 				<text><![CDATA[to]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="371" y="4" width="178" height="20" forecolor="#595959">
+				<reportElement x="235" y="4" width="314" height="20" isPrintWhenDetailOverflows="true" forecolor="#595959">
 					<printWhenExpression><![CDATA[$P{reportType}.equals("ven") && $F{issotrx}.equals("N")]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -505,7 +505,7 @@ ORDER BY f.dateacct, f.created]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$V{totalInitialBalance}.compareTo(BigDecimal.ZERO) < 0 ? "(" + $P{NUMBERFORMAT}.format($V{totalInitialBalance}.abs()) + ")" : $P{NUMBERFORMAT}.format($V{totalInitialBalance})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="235" y="13" width="210" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement x="235" y="13" width="210" height="14" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
@@ -515,7 +515,7 @@ ORDER BY f.dateacct, f.created]]>
 				<reportElement x="235" y="27" width="320" height="1"/>
 			</line>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="235" y="42" width="210" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement positionType="Float" mode="Opaque" x="235" y="42" width="210" height="15" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 				</textElement>

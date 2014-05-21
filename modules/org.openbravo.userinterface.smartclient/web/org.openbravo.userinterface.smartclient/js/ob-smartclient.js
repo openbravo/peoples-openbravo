@@ -35,7 +35,7 @@ isc.DataSource.addProperties({
   compareDates: function (date1, date2, fieldName, otherFieldName) {
     var field = this.getField(fieldName),
         otherField = otherFieldName ? this.getField(otherFieldName) : null;
-    if ((field && (field.type === "datetime" || field.type === "_id_24" || field.type === "_id_16")) || (otherField && (otherField.type === "datetime" || otherField.type === "_id_24" || otherField.type === "_id_16"))) {
+    if ((field && (field.type === "datetime" || field.type === "_id_24")) || (otherField && (otherField.type === "datetime" || otherField.type === "_id_24"))) {
       return Date.compareDates(date1, date2);
     } else {
       return Date.compareLogicalDates(date1, date2);
@@ -111,6 +111,12 @@ isc.ResultTree.addProperties({
     } else {
       return this._original_indexOf(node, a, b, c, d);
     }
+  },
+
+  dataArrived: function (parentNode) {
+    var children = this.getChildren(parentNode),
+        target = window[this.componentId];
+    target.transformData(children);
   }
 });
 
@@ -540,6 +546,11 @@ isc.FormItem.addProperties({
     if (this.form && this.form.grid && this.form.grid._showingEditor) {
       return;
     }
+
+    if (this.preventValidation) {
+      return;
+    }
+
     return this._original_validate();
   },
 
@@ -861,3 +872,10 @@ isc.RecordEditor.addProperties({
 isc.builtinTypes.textArea = {
   inheritsFrom: "text"
 };
+
+//delete the wildCard to avoid strange behaviour when filtering '*'
+//see issue 25808
+delete isc.DataSource.getSearchOperators().equals.wildCard;
+delete isc.DataSource.getSearchOperators().iEquals.wildCard;
+delete isc.DataSource.getSearchOperators().notEqual.wildCard;
+delete isc.DataSource.getSearchOperators().iNotEqual.wildCard;

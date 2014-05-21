@@ -368,8 +368,8 @@ public class ResetAccounting {
     String myQuery = "select distinct p from FinancialMgmtPeriodControl e left join e.period p left join p.year y left join y.calendar c where c.id = :calendarId and e.client.id = :clientId and e.documentCategory = :docbasetype and e.periodStatus = 'O' and e.organization.id = :orgPeriodControl";
 
     if (!("".equals(datefrom)) && !("".equals(dateto))) {
-      myQuery = myQuery + " and p.startingDate <= :dateFrom";
-      myQuery = myQuery + " and p.endingDate >= :dateTo";
+      myQuery = myQuery + " and p.startingDate <= :dateTo";
+      myQuery = myQuery + " and p.endingDate >= :dateFrom";
     } else if (!("".equals(datefrom)) && ("".equals(dateto))) {
       myQuery = myQuery + " and p.endingDate >= :dateFrom";
     } else if (("".equals(datefrom)) && !("".equals(dateto))) {

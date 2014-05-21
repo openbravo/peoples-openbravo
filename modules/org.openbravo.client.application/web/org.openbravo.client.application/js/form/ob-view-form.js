@@ -244,7 +244,8 @@ OB.ViewFormProperties = {
 
     // focus is done automatically, prevent the focus event if needed
     // the focus event will set the active view
-    if (!isNew) {
+    // A non saved row should not be added to recent documents 
+    if (!isNew && !this.isNotSaved()) {
       // If editing a document set to recent documents
       this.view.setRecentDocument(this.getValues());
     }
@@ -258,6 +259,10 @@ OB.ViewFormProperties = {
       this.view.statusBar.mode = 'NEW';
       this.view.statusBar.setContentLabel(this.view.statusBar.newIcon, 'OBUIAPP_New');
     }
+  },
+
+  isNotSaved: function () {
+    return this.getValues().id.startsWith('_');
   },
 
   editNewRecord: function (preventFocus) {
@@ -1036,6 +1041,11 @@ OB.ViewFormProperties = {
         }
       } else if (isAbsoluteDateTime) {
         jsDateTime = isc.Date.parseStandardDate(columnValue.value);
+        // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
+        // http://forums.smartclient.com/showthread.php?p=116135
+        if (Object.prototype.toString.call(jsDateTime) === '[object Date]') {
+          jsDateTime = OB.Utilities.Date.substractTimezoneOffset(jsDateTime);
+        }
         this.setItemValue(field.name, jsDateTime);
         if (field.textField) {
           delete field.textField._textChanged;
@@ -1531,7 +1541,7 @@ OB.ViewFormProperties = {
     callback = function (resp, data, req) {
       var index1, index2, view = form.view,
           localRecord, status = resp.status,
-          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId;
+          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId, id = form.getValue('id');
 
       if (this.hasOwnProperty('previousExplicitOffline')) {
         isc.Offline.explicitOffline = this.previousExplicitOffline;
@@ -1540,7 +1550,6 @@ OB.ViewFormProperties = {
 
       // if no recordIndex then select explicitly
       if (recordIndex === -1) {
-        var id = form.getValue('id');
         record = view.viewGrid.data.find('id', id);
         recordIndex = view.viewGrid.data.indexOf(record);
       }
@@ -1627,8 +1636,15 @@ OB.ViewFormProperties = {
         // remove any edit info in the grid
         view.viewGrid.discardEdits(recordIndex, null, false, isc.ListGrid.PROGRAMMATIC, true);
 
-        // change some labels
-        form.setNewState(false);
+        // Check if Id has changed 
+        if (id === form.getValue('id')) {
+          // Change some labels, set isNew as false
+          form.setNewState(false);
+        } else {
+          // New record, set isNew as true
+          form.setNewState(true);
+        }
+
 
         view.refreshParentRecord();
 
@@ -1696,6 +1712,11 @@ OB.ViewFormProperties = {
           form.setFocusItem(storedFocusItem);
           form.setFocusInForm();
         }, 10);
+      }
+
+      // Summary Functions are refreshed when data gets refreshed
+      if (view.viewGrid.showGridSummary) {
+        view.viewGrid.getSummaryRow();
       }
 
       return false;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -484,6 +484,8 @@ public class OBContext implements OBNotSingleton {
 
   private boolean isPortalRole = false;
 
+  private boolean isWebServiceEnabled = false;
+
   private Set<String> additionalWritableOrganizations = new HashSet<String>();
 
   // support storing the context in a persistent tomcat session
@@ -952,6 +954,7 @@ public class OBContext implements OBNotSingleton {
   public void setRole(Role role) {
     isAdministrator = ((String) DalUtil.getId(role)).equals("0");
     isPortalRole = role.isForPortalUsers();
+    isWebServiceEnabled = role.isWebServiceEnabled();
     setUserLevel(role.getUserLevel());
     entityAccessChecker = null;
     writableOrganizations = null;
@@ -1132,6 +1135,10 @@ public class OBContext implements OBNotSingleton {
 
   public boolean isPortalRole() {
     return isPortalRole;
+  }
+
+  public boolean isWebServiceEnabled() {
+    return isWebServiceEnabled;
   }
 
   public void setRTL(boolean isRTL) {

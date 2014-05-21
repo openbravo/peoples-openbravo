@@ -354,6 +354,10 @@ isc.OBFKFilterTextItem.addProperties({
       value = this.buildValueExpressions(criterion);
       this.setValue(value);
     }
+    // if iBetweenInclusive operator is used, delete the ZZZZZZZZZZ
+    if (this.getValue().toString().indexOf('...') !== -1 && this.getValue().toString().indexOf('ZZZZZZZZZZ') !== -1) {
+      this.setValue(this.getValue().toString().substring(0, this.getValue().toString().length - 10));
+    }
   },
 
   // make sure that the correct field name is used to filter the main grid

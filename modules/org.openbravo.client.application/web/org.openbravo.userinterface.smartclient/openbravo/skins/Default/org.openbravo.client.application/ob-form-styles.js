@@ -213,7 +213,8 @@ isc.OBCheckboxItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.Def
 OB.Styles.OBFormField.DefaultSearch = {
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel',
-  textBoxStyle: 'OBFormFieldInput',
+  // Hack to solve issues 25942 and 26190
+  textBoxStyle: 'OBFormFieldInput_HeightHack OBFormFieldInput',
   pickerIconHeight: 21,
   pickerIconWidth: 21,
   height: 21,
@@ -234,11 +235,6 @@ OB.Styles.OBFormField.DefaultSearch = {
 };
 
 isc.OBSearchItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultSearch));
-
-isc.OBPAttributeSearchItem.addProperties({
-  // Hack to solve issue: https://issues.openbravo.com/view.php?id=25942
-  textBoxStyle: 'OBFormFieldInput_HeightHack OBFormFieldInput'
-});
 
 isc.OBLinkItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultSearch));
 

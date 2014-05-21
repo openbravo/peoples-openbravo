@@ -47,6 +47,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -54,6 +55,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentPropDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.scheduling.ProcessBundle;
@@ -61,6 +63,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
   private static AdvPaymentMngtDao dao;
+
+  public BigDecimal ZERO = BigDecimal.ZERO;
 
   public void execute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();
@@ -134,9 +138,13 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         boolean isRefund = false;
         OBContext.setAdminMode(false);
         try {
-          if (payment.getFINPaymentDetailList().size() > 0
-              && payment.getFINPaymentDetailList().get(0).isRefund()) {
-            isRefund = true;
+          if (payment.getFINPaymentDetailList().size() > 0) {
+            for (FIN_PaymentDetail det : payment.getFINPaymentDetailList()) {
+              if (det.isRefund()) {
+                isRefund = true;
+                break;
+              }
+            }
           }
         } finally {
           OBContext.restorePreviousMode();
@@ -154,10 +162,11 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
 
         boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(payment.TABLE_NAME,
             payment.getId(), payment.TABLE_NAME + "_ID", "LE");
-        if (!FIN_Utility.isPeriodOpen(payment.getClient().getId(), payment.getDocumentType()
-            .getDocumentCategory(), payment.getOrganization().getId(), OBDateUtils
-            .formatDate(payment.getPaymentDate()))
-            && orgLegalWithAccounting) {
+        boolean documentEnabled = getDocumentConfirmation(conProvider, payment.getId());
+        if (documentEnabled
+            && !FIN_Utility.isPeriodOpen(payment.getClient().getId(), payment.getDocumentType()
+                .getDocumentCategory(), payment.getOrganization().getId(), OBDateUtils
+                .formatDate(payment.getPaymentDate())) && orgLegalWithAccounting) {
           msg.setType("Error");
           msg.setTitle(Utility.messageBD(conProvider, "Error", language));
           msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
@@ -429,8 +438,15 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             payment.setStatus(isReceipt ? "RPR" : "PPM");
 
             if ((strAction.equals("D") || FIN_Utility.isAutomaticDepositWithdrawn(payment))
-                && payment.getAmount().compareTo(BigDecimal.ZERO) != 0)
-              triggerAutomaticFinancialAccountTransaction(vars, conProvider, payment);
+                && payment.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+              OBError result = triggerAutomaticFinancialAccountTransaction(vars, conProvider,
+                  payment);
+              if ("Error".equals(result.getType())) {
+                OBDal.getInstance().rollbackAndClose();
+                bundle.setResult(result);
+                return;
+              }
+            }
           }
           if (!payment.getAccount().getCurrency().equals(payment.getCurrency())
               && getConversionRateDocument(payment).size() == 0) {
@@ -519,7 +535,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 // If invoice/order not fully paid, update outstanding amount
                 if (openPSDs.size() > 0) {
                   FIN_PaymentScheduleDetail openPSD = openPSDs.get(0);
-                  BigDecimal openAmount = openPSD.getAmount().add(psd.getAmount());
+                  BigDecimal openAmount = openPSD.getAmount().add(
+                      payment.getAmount().add(payment.getWriteoffAmount()));
                   if (openAmount.compareTo(BigDecimal.ZERO) == 0) {
                     OBDal.getInstance().remove(openPSD);
                   } else {
@@ -532,7 +549,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   openPSD.setPaymentDetails(null);
                   // Amounts
                   openPSD.setWriteoffAmount(BigDecimal.ZERO);
-                  openPSD.setAmount(psd.getAmount());
+                  openPSD.setAmount(payment.getAmount().add(payment.getWriteoffAmount()));
 
                   openPSD.setCanceled(false);
                   OBDal.getInstance().save(openPSD);
@@ -680,7 +697,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         }
 
         // Do not restore paid amounts if the payment is awaiting execution.
-        boolean restorePaidAmounts = (FIN_Utility.seqnumberpaymentstatus(payment.getStatus())) <= (FIN_Utility
+        boolean restorePaidAmounts = (FIN_Utility.seqnumberpaymentstatus(payment.getStatus())) == (FIN_Utility
             .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));
         // Initialize amounts
         payment.setProcessed(false);
@@ -734,7 +751,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
                 .getFINPaymentScheduleDetailList()) {
               Boolean invoicePaidold = paymentScheduleDetail.isInvoicePaid();
-              if (invoicePaidold) {
+              if (invoicePaidold | paymentScheduleDetail.getInvoicePaymentSchedule() == null) {
                 BigDecimal psdWriteoffAmount = paymentScheduleDetail.getWriteoffAmount();
                 BigDecimal psdAmount = paymentScheduleDetail.getAmount();
                 BigDecimal amount = psdAmount.add(psdWriteoffAmount);
@@ -820,38 +837,22 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                       paymentScheduleDetail.getOrderPaymentSchedule(), psdAmount.negate(),
                       psdWriteoffAmount.negate());
                 }
-
-                // when generating credit for a BP SO_CreditUsed is also updated
-                if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
-                    && paymentScheduleDetail.getOrderPaymentSchedule() == null
-                    && paymentScheduleDetail.getPaymentDetails().getGLItem() == null
-                    && restorePaidAmounts && !paymentDetail.isRefund()) {
-                  // BP SO_CreditUsed
-                  if (isReceipt) {
-                    increaseCustomerCredit(businessPartner, amount);
-                  } else {
-                    decreaseCustomerCredit(businessPartner, amount);
-                  }
-                }
-
-                if (paymentScheduleDetail.getOrderPaymentSchedule() != null && restorePaidAmounts) {
-                  FIN_AddPayment.updatePaymentScheduleAmounts(
-                      paymentScheduleDetail.getOrderPaymentSchedule(), psdAmount.negate(),
-                      psdWriteoffAmount.negate());
-                }
-                // when generating credit for a BP SO_CreditUsed is also updated
-                if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
-                    && paymentScheduleDetail.getOrderPaymentSchedule() == null
-                    && paymentScheduleDetail.getPaymentDetails().getGLItem() == null
-                    && restorePaidAmounts && !paymentDetail.isRefund()) {
-                  // BP SO_CreditUsed
-                  if (isReceipt) {
-                    increaseCustomerCredit(businessPartner, amount);
-                  } else {
-                    decreaseCustomerCredit(businessPartner, amount);
+                if (restorePaidAmounts) {
+                  // when generating credit for a BP SO_CreditUsed is also updated
+                  if (paymentScheduleDetail.getInvoicePaymentSchedule() == null
+                      && paymentScheduleDetail.getOrderPaymentSchedule() == null
+                      && paymentScheduleDetail.getPaymentDetails().getGLItem() == null
+                      && restorePaidAmounts && !paymentDetail.isRefund()) {
+                    // BP SO_CreditUsed
+                    if (isReceipt) {
+                      increaseCustomerCredit(businessPartner, amount);
+                    } else {
+                      decreaseCustomerCredit(businessPartner, amount);
+                    }
                   }
                 }
               }
+
               if (strAction.equals("R")
                   || (strAction.equals("RE")
                       && paymentScheduleDetail.getInvoicePaymentSchedule() == null
@@ -1027,7 +1028,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
               for (final FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail
                   .getFINPaymentScheduleDetailList()) {
                 Boolean invoicePaidold = paymentScheduleDetail.isInvoicePaid();
-                if (invoicePaidold) {
+                if (invoicePaidold | paymentScheduleDetail.getInvoicePaymentSchedule() == null) {
                   paymentScheduleDetail.setInvoicePaid(false);
                 }
                 BigDecimal outStandingAmt = BigDecimal.ZERO;
@@ -1139,7 +1140,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       msg.setType("Error");
       msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
-      msg.setMessage(FIN_Utility.getExceptionMessage(e));
+      msg.setMessage(Utility.translateError(bundle.getConnection(), null,
+          bundle.getContext().getLanguage(), FIN_Utility.getExceptionMessage(e)).getMessage());
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
     }
@@ -1172,16 +1174,21 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     updateCustomerCredit(businessPartner, amount, false);
   }
 
-  private void triggerAutomaticFinancialAccountTransaction(VariablesSecureApp vars,
+  private OBError triggerAutomaticFinancialAccountTransaction(VariablesSecureApp vars,
       ConnectionProvider connectionProvider, FIN_Payment payment) {
     FIN_FinaccTransaction transaction = TransactionsDao.createFinAccTransaction(payment);
     try {
-      processTransaction(vars, connectionProvider, "P", transaction);
+      return processTransaction(vars, connectionProvider, "P", transaction);
+
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       e.printStackTrace(System.err);
+      OBError msg = new OBError();
+      msg.setType("Error");
+      msg.setMessage(e.getMessage());
+      msg.setTitle(e.getMessage());
+      return msg;
     }
-    return;
   }
 
   private static boolean hasTransaction(FIN_Payment payment) {
@@ -1335,6 +1342,59 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     new FIN_TransactionProcess().execute(pb);
     myMessage = (OBError) pb.getResult();
     return myMessage;
+  }
+
+  public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
+    // Checks if this step is configured to generate accounting for the selected financial account
+    boolean confirmation = false;
+    OBContext.setAdminMode();
+    try {
+      FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strRecordId);
+      OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
+      obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+          payment.getPaymentMethod()));
+      obCriteria.setFilterOnReadableClients(false);
+      obCriteria.setFilterOnReadableOrganization(false);
+      List<FinAccPaymentMethod> lines = obCriteria.list();
+      List<FIN_FinancialAccountAccounting> accounts = payment.getAccount()
+          .getFINFinancialAccountAcctList();
+      for (FIN_FinancialAccountAccounting account : accounts) {
+        if (confirmation)
+          return confirmation;
+        if (payment.isReceipt()) {
+          if (("INT").equals(lines.get(0).getUponReceiptUse())
+              && account.getInTransitPaymentAccountIN() != null)
+            confirmation = true;
+          else if (("DEP").equals(lines.get(0).getUponReceiptUse())
+              && account.getDepositAccount() != null)
+            confirmation = true;
+          else if (("CLE").equals(lines.get(0).getUponReceiptUse())
+              && account.getClearedPaymentAccount() != null)
+            confirmation = true;
+        } else {
+          if (("INT").equals(lines.get(0).getUponPaymentUse())
+              && account.getFINOutIntransitAcct() != null)
+            confirmation = true;
+          else if (("WIT").equals(lines.get(0).getUponPaymentUse())
+              && account.getWithdrawalAccount() != null)
+            confirmation = true;
+          else if (("CLE").equals(lines.get(0).getUponPaymentUse())
+              && account.getClearedPaymentAccountOUT() != null)
+            confirmation = true;
+        }
+        // For payments with Amount ZERO always create an entry as no transaction will be created
+        if (payment.getAmount().compareTo(ZERO) == 0) {
+          confirmation = true;
+        }
+      }
+    } catch (Exception e) {
+      return confirmation;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return confirmation;
   }
 
 }

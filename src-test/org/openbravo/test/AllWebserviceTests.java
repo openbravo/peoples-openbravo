@@ -22,6 +22,9 @@ package org.openbravo.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.openbravo.test.datasource.ProductSelectorDataSourceTest;
+import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
+import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.webservice.PerformanceTest;
 import org.openbravo.test.webservice.WSAddRecordWithComputedColumns;
 import org.openbravo.test.webservice.WSReadTest;
@@ -42,6 +45,9 @@ public class AllWebserviceTests {
     suite.addTestSuite(WSUpdateTest.class);
     suite.addTestSuite(PerformanceTest.class);
     suite.addTestSuite(WSAddRecordWithComputedColumns.class);
+    suite.addTestSuite(TestCSVEncoding.class);
+    suite.addTestSuite(SelectorFieldPropertySelectorDSTest.class);
+    suite.addTestSuite(ProductSelectorDataSourceTest.class);
 
     // $JUnit-END$
     return suite;

@@ -44,7 +44,6 @@ import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.test.base.BaseTest;
@@ -318,7 +317,6 @@ public class BaseWSTest extends BaseTest {
       return OB_URL;
     }
     Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-    System.out.println(OBConfigFileProvider.getInstance().getFileLocation());
     OB_URL = props.getProperty(CONTEXT_PROPERTY);
     if (StringUtils.isEmpty(OB_URL)) {
       throw new OBException(CONTEXT_PROPERTY + " is not set in Openbravo.properties");

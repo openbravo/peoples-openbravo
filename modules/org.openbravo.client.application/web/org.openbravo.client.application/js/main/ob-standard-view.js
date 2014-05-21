@@ -199,11 +199,6 @@ isc.OBStandardView.addProperties({
         leftMemberButtons = [],
         i, actionButton;
 
-    this.messageBar = isc.OBMessageBar.create({
-      visibility: 'hidden',
-      view: this
-    });
-
     if (this.isRootView) {
       this.buildStructure();
     }
@@ -233,8 +228,11 @@ isc.OBStandardView.addProperties({
     // If the tab comes with session attributes (preference attributes used in the display
     // logic of the tab, see issue https://issues.openbravo.com/view.php?id=5202), assign them
     // to the form, so they will be retrieved when getContextInfo() is called for the form
-    if (this.sessionAttributes) {
-      this.viewForm.sessionAttributes = this.sessionAttributes;
+    if (this.sessionAttributesNames) {
+      this.preferenceValues = {};
+      for (i = 0; i < this.sessionAttributesNames.length; i++) {
+        this.preferenceValues[this.sessionAttributesNames[i]] = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
+      }
     }
 
     if (this.actionToolbarButtons) {
@@ -285,6 +283,18 @@ isc.OBStandardView.addProperties({
     if (this.notesDataSource) {
       this.notesDataSource.destroy();
       this.notesDataSource = null;
+    }
+
+    // destroy view form
+    if (this.viewForm) {
+      this.viewForm.destroy();
+      this.viewForm = null;
+    }
+
+    // destroy view grid
+    if (this.viewGrid) {
+      this.viewGrid.destroy();
+      this.viewGrid = null;
     }
     return this.Super('destroy', arguments);
   },
@@ -471,8 +481,12 @@ isc.OBStandardView.addProperties({
     var me = this,
         completeFieldsWithoutImages, fieldsWithoutImages;
     if (this.tabId && this.tabId.length > 0) {
+      this.messageBar = isc.OBMessageBar.create({
+        visibility: 'hidden',
+        view: this
+      });
+
       this.formGridLayout = isc.HLayout.create({
-        canFocus: true,
         width: '100%',
         height: '*',
         overflow: 'visible',
@@ -481,7 +495,6 @@ isc.OBStandardView.addProperties({
 
       this.activeBar = isc.HLayout.create({
         height: '100%',
-        canFocus: true,
         // to set active view when it gets clicked
         contents: '&nbsp;',
         width: OB.Styles.ActiveBar.width,
@@ -536,7 +549,6 @@ isc.OBStandardView.addProperties({
       // in ob-view-form-linked-items is still called on the correct
       // object 
       this.statusBarFormLayout = isc.VLayout.create({
-        canFocus: true,
         width: '100%',
         height: '*',
         visibility: 'hidden',
@@ -554,7 +566,6 @@ isc.OBStandardView.addProperties({
 
       // wrap the messagebar and the formgridlayout in a VLayout
       this.gridFormMessageLayout = isc.VLayout.create({
-        canFocus: true,
         height: '100%',
         width: '100%',
         overflow: 'auto'
@@ -564,7 +575,6 @@ isc.OBStandardView.addProperties({
 
       // and place the active bar to the left of the form/grid/messagebar
       this.activeGridFormMessageLayout = isc.HLayout.create({
-        canFocus: true,
         height: (this.hasChildTabs ? '50%' : '100%'),
         width: '100%',
         overflow: 'hidden'
@@ -660,13 +670,114 @@ isc.OBStandardView.addProperties({
   // this
   // parent.
   addChildView: function (childView) {
-    var length, i, actionButton;
-
     if ((childView.isTrlTab && OB.PropertyStore.get('ShowTrl', this.windowId) !== 'Y') || (childView.isAcctTab && OB.PropertyStore.get('ShowAcct', this.windowId) !== 'Y')) {
       return;
     }
 
+    childView.parentView = this;
+    childView.parentTabSet = this.childTabSet;
+
     this.standardWindow.addView(childView);
+
+    if (this.childTabSet.tabs.length > 0) {
+      // If it is a child tab that is not in the first position, load a basic child view
+      // to ensure a lazy inizialitazion of the contents.
+      // Once the tab be selected, the proper content will be loaded.
+      this.prepareBasicChildView(childView);
+    } else {
+      // If the child tab is in first position, the content needs to be displayed immediately
+      // once the parent view is loaded.
+      this.prepareFullChildView(childView);
+    }
+
+
+    childView.tab = this.childTabSet.getTab(this.childTabSet.tabs.length - 1);
+    childView.tab.setCustomState(isc.OBStandardView.MODE_INACTIVE);
+
+    OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + '_' + childView.tabId, childView.tab);
+  },
+
+  // ** {{{ prepareBasicChildView }}} **
+  // It adds a tab with a basic layout. Once the tab is selected/set as active
+  // a call to 'prepareFullChildView' is performed. The purpose of this view
+  // is have a lazy initialization of the tab, so the proper content is
+  // loaded only when it is required.
+  prepareBasicChildView: function (childView) {
+    var me = this;
+
+    childView.isRenderedChildView = false;
+
+    var childTabDef = {
+      title: childView.tabTitle
+    };
+
+    childTabDef.pane = isc.VLayout.create({
+      isRenderedChildView: false,
+      lastCalledSizeFunction: null,
+      updateSubtabVisibility: function () {
+        return null;
+      },
+      doRefreshContents: function () {
+        return null;
+      },
+      setTopMaximum: function () {
+        this.lastCalledSizeFunction = 'setTopMaximum';
+        return null;
+      },
+      setBottomMaximum: function () {
+        this.lastCalledSizeFunction = 'setBottomMaximum';
+        return null;
+      },
+      setHalfSplit: function () {
+        this.lastCalledSizeFunction = 'setHalfSplit';
+        return null;
+      },
+      toolBar: {
+        updateButtonState: function () {
+          return null;
+        }
+      },
+
+      members: [isc.VLayout.create({})]
+    });
+
+    if (childView.showTabIf) {
+      childTabDef.pane.showTabIf = childView.showTabIf;
+      if (childView.originalShowTabIf) {
+        childTabDef.pane.originalShowTabIf = childView.originalShowTabIf;
+      }
+    }
+
+    childTabDef.pane.setAsActiveView = function () {
+      me.prepareFullChildView(childView, childTabDef);
+    };
+
+    childTabDef.pane.paneActionOnSelect = function () {
+      // If the initial load of the window makes that a child tab different from the first one be selected,
+      // the logic doesn't pass through the 'setAsActiveView' so the 'prepareFullChildView' should be done
+      // on the tab selection instead.
+      me.prepareFullChildView(childView, childTabDef);
+      childTabDef.pane.parentTabSet.doHandleClick();
+    };
+
+    childTabDef.pane.destroy = function () {
+      if (childView.members.length === 0) {
+        // That means that there is nothing still loaded in the basic view
+        // so if the pane is destroyed, its childView can be destroyed too.
+        // In the other case, the full child view will handle the childView destruction.
+        childView.destroy();
+      }
+      return this.Super('destroy', arguments);
+    };
+
+    this.childTabSet.addTab(childTabDef);
+  },
+
+  // ** {{{ prepareBasicChildView }}} **
+  // It adds a tab with the whole view content based on the provided 'childView'.
+  // If 'tab' parameter is provided, the 'childView' content is loaded inside the provided tab.
+  prepareFullChildView: function (childView, tab) {
+    var length, i, actionButton, lastCalledSizeFunction;
 
     // Add buttons in parent to child. Note that currently it is only added one level.
     if (this.actionToolbarButtons && this.actionToolbarButtons.length > 0 && childView.showParentButtons) {
@@ -703,9 +814,6 @@ isc.OBStandardView.addProperties({
       }
     }
 
-    childView.parentView = this;
-    childView.parentTabSet = this.childTabSet;
-
     // build the structure of the children
     childView.buildStructure();
 
@@ -713,14 +821,47 @@ isc.OBStandardView.addProperties({
       title: childView.tabTitle,
       pane: childView
     };
+    if (!tab) {
+      this.childTabSet.addTab(childTabDef);
+    } else {
+      lastCalledSizeFunction = tab.pane.lastCalledSizeFunction;
+      delete tab.pane.lastCalledSizeFunction;
 
-    this.childTabSet.addTab(childTabDef);
+      // Destroy the old basic child view pane since it is not needed anymore
+      tab.pane.destroy();
 
-    childView.tab = this.childTabSet.getTab(this.childTabSet.tabs.length - 1);
-    // start inactive
-    childView.tab.setCustomState(isc.OBStandardView.MODE_INACTIVE);
+      this.childTabSet.setTabPane(tab, childTabDef.pane);
 
-    OB.TestRegistry.register('org.openbravo.client.application.ChildTab_' + this.tabId + '_' + childView.tabId, childView.tab);
+      if (this.state === isc.OBStandardView.STATE_IN_MID || this.state === isc.OBStandardView.STATE_MID || this.state === isc.OBStandardView.STATE_TOP_MAX) {
+        // If the view is in the middle or maximized, set the child view (if exists) minimized
+        childView.setHeight('100%');
+        if (childView.members[1]) {
+          childView.members[1].setState(isc.OBStandardView.STATE_MIN);
+        } else {
+          childView.members[0].setHeight('100%');
+        }
+      } else if (lastCalledSizeFunction) {
+        // If 'setTopMaximum' or 'setBottomMaximum' or 'setHalfSplit' has been called in an unrendered tab,
+        // call it again now that the tab has been rendered to set the proper child view status
+        if (lastCalledSizeFunction === 'setTopMaximum') {
+          childView.setTopMaximum();
+        } else if (lastCalledSizeFunction === 'setBottomMaximum') {
+          childView.setBottomMaximum();
+        } else if (lastCalledSizeFunction === 'setHalfSplit') {
+          childView.setHalfSplit();
+        }
+      }
+    }
+
+    childView.isRenderedChildView = true;
+
+    if (childView.initialTabDefinition) {
+      // If there is an initial tab definition it means that there is a process that have set it there
+      // but since the window was not loaded yet, it has not been applied. Apply this tab definition now
+      // and delete the initialTabDefinition variable since it has been already applied.
+      OB.Personalization.applyViewDefinitionToView(childView, childView.initialTabDefinition);
+      delete childView.initialTabDefinition;
+    }
   },
 
   setReadOnly: function (readOnly) {
@@ -876,8 +1017,12 @@ isc.OBStandardView.addProperties({
   setActiveViewProps: function (state) {
     if (state) {
       this.toolBar.show();
-      this.statusBar.setActive(true);
-      this.activeBar.setActive(true);
+      if (this.statusBar) {
+        this.statusBar.setActive(true);
+      }
+      if (this.activeBar) {
+        this.activeBar.setActive(true);
+      }
       this.setViewFocus();
       this.viewGrid.setActive(true);
       this.viewGrid.markForRedraw();
@@ -892,8 +1037,12 @@ isc.OBStandardView.addProperties({
       this.viewGrid.closeAnyOpenEditor();
 
       this.toolBar.hide();
-      this.statusBar.setActive(false);
-      this.activeBar.setActive(false);
+      if (this.statusBar) {
+        this.statusBar.setActive(false);
+      }
+      if (this.activeBar) {
+        this.activeBar.setActive(false);
+      }
       this.viewGrid.setActive(false);
       this.viewGrid.markForRedraw();
       // note we can not check on viewForm visibility as 
@@ -1034,8 +1183,10 @@ isc.OBStandardView.addProperties({
       length = this.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
-        tabViewPane.viewGrid.setData([]);
-        tabViewPane.viewGrid.resetEmptyMessage();
+        if (tabViewPane.viewGrid) {
+          tabViewPane.viewGrid.setData([]);
+          tabViewPane.viewGrid.resetEmptyMessage();
+        }
       }
     }
   },
@@ -1065,7 +1216,9 @@ isc.OBStandardView.addProperties({
         length = this.childTabSet.tabs.length;
         for (i = 0; i < length; i++) {
           tabViewPane = this.childTabSet.tabs[i].pane;
-          tabViewPane.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
+          if (typeof tabViewPane.refreshMeAndMyChildViewsWithEntity === 'function') {
+            tabViewPane.refreshMeAndMyChildViewsWithEntity(entity, excludedTabIds);
+          }
         }
       }
     }
@@ -1242,7 +1395,7 @@ isc.OBStandardView.addProperties({
 
   setMaximizeRestoreButtonState: function () {
     // single view, no maximize or restore
-    if (!this.hasChildTabs && this.isRootView) {
+    if ((!this.hasChildTabs && this.isRootView) || !this.statusBar) {
       return;
     }
     // different cases:
@@ -1443,7 +1596,7 @@ isc.OBStandardView.addProperties({
         // Calling getContextInfo with (false, true, true) in order to obtain also the value of the
         // session attributes of the form
         contextInfo = this.getContextInfo(false, true, true);
-        this.addSessionAttributes(contextInfo, tabViewPane);
+        this.addPreferenceValues(contextInfo, tabViewPane);
         if (tabViewPane.showTabIf && !(tabViewPane.showTabIf(contextInfo))) {
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
@@ -1488,15 +1641,15 @@ isc.OBStandardView.addProperties({
 
   // Adds to contextInfo the session attributes of the childView, 
   // unless the session attribute is an auxiliary input of its parent tab
-  addSessionAttributes: function (contextInfo, childView) {
+  addPreferenceValues: function (contextInfo, childView) {
     var auxInputs = {},
         p;
     if (this.viewForm && this.viewForm.auxInputs) {
       auxInputs = this.viewForm.auxInputs;
     }
-    for (p in childView.sessionAttributes) {
-      if (childView.sessionAttributes.hasOwnProperty(p) && !auxInputs.hasOwnProperty(p)) {
-        contextInfo[p] = childView.sessionAttributes[p];
+    for (p in childView.preferenceValues) {
+      if (childView.preferenceValues.hasOwnProperty(p) && !auxInputs.hasOwnProperty(p)) {
+        contextInfo[p] = childView.preferenceValues[p];
       }
     }
   },
@@ -1532,6 +1685,7 @@ isc.OBStandardView.addProperties({
   },
 
   getParentRecord: function () {
+    var grid = null;
     if (!this.parentView || !this.parentView.viewGrid.getSelectedRecords() || this.parentView.viewGrid.getSelectedRecords().length !== 1) {
       return null;
     }
@@ -1540,8 +1694,12 @@ isc.OBStandardView.addProperties({
     if (this.parentView.viewGrid.getSelectedRecord()._new) {
       return null;
     }
-
-    return this.parentView.viewGrid.getSelectedRecord();
+    if (this.parentView.isShowingTree) {
+      grid = this.parentView.treeGrid;
+    } else {
+      grid = this.parentView.viewGrid;
+    }
+    return grid.getSelectedRecord();
   },
 
   updateTabTitle: function () {
@@ -1729,6 +1887,11 @@ isc.OBStandardView.addProperties({
 
     if (!this.viewGrid.getSelectedRecord()) {
       return;
+    }
+
+    // Summary Functions are refreshed when data gets refreshed
+    if (this.viewGrid.showGridSummary) {
+      this.viewGrid.getSummaryRow();
     }
 
     record = this.viewGrid.getSelectedRecord();
@@ -1930,7 +2093,14 @@ isc.OBStandardView.addProperties({
               view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
             }
             view.viewGrid.updateRowCountDisplay();
-            view.refreshChildViews();
+
+            // Refresh the grid based on Refresh After Deletion preference
+            if (OB.PropertyStore.get("OBUIAPP_RefreshAfterDeletion", view.standardWindow.windowId) === 'Y') {
+              view.viewGrid.refreshGrid();
+            } else {
+              view.refreshChildViews();
+            }
+
             view.refreshParentRecord();
           } else {
             // get the error message from the dataObject 
@@ -2094,6 +2264,8 @@ isc.OBStandardView.addProperties({
     var ret;
     if (this.isShowingForm) {
       ret = this.viewForm.getValues();
+    } else if (this.isShowingTree) {
+      ret = this.treeGrid.getSelectedRecord();
     } else if (this.isEditingGrid) {
       ret = isc.addProperties({}, this.viewGrid.getSelectedRecord(), this.viewGrid.getEditForm().getValues());
     } else {
@@ -2232,6 +2404,13 @@ isc.OBStandardView.addProperties({
         propertyObj = properties[i];
         value = record[propertyObj.property];
         field = component.getField(propertyObj.property);
+        if (field && field.editorType //
+        && Object.prototype.toString.call(value) === '[object Date]' //
+        && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteDateTime')()) { //
+          // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
+          // http://forums.smartclient.com/showthread.php?p=116135
+          value = OB.Utilities.Date.addTimezoneOffset(value);
+        }
         addProperty = propertyObj.sessionProperty || !onlySessionProperties;
         if (addProperty) {
           if (classicMode) {
@@ -2591,6 +2770,10 @@ isc.OBStandardView.addProperties({
       fld.prompt = fld.title;
       fld.editorProperties = isc.addProperties({}, fld, isc.shallowClone(fld.editorProps));
       //issue 20192: 2nd parameter is true because fld.editorProperties is a grid property.
+      if (fld.editorProperties.width) {
+        //Issue 26092: Avoid input icons be cropped
+        delete fld.editorProperties.width;
+      }
       this.setFieldFormProperties(fld.editorProperties, true);
       if (fld.disabled) {
         fld.editorProperties.disabled = true;
