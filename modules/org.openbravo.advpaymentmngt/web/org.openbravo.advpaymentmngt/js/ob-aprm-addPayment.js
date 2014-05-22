@@ -179,6 +179,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form) {
     }
 
   }
+  OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
   return true;
 
 };
@@ -191,7 +192,7 @@ OB.APRM.AddPayment.updateTotal = function (form) {
       totalAmt;
   
   totalAmt = invOrdTotalItem.getValue() || 0;
-  totalAmt += glItemsTotalItem.getValue() || 0;
+  totalAmt += glItemsTotalItem.getValue() || Number(0);
 
   totalItem.setValue(totalAmt);
 };
@@ -209,6 +210,7 @@ OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
     totalAmt = totalAmt.add(bdAmt);
   }
   invOrdTotalItem.setValue(totalAmt.toString());
+  OB.APRM.AddPayment.updateTotal(form);
   return true;
 };
 
