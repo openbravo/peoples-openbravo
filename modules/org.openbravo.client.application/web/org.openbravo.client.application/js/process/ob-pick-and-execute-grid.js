@@ -697,12 +697,12 @@ isc.OBPickAndExecuteGrid.addProperties({
       if (editForm) {
         items = editForm.getItems();
         updatedBlur = function (form, item) {
-            this.original_blur(form, item);
-            // Execute onChangeFunctions if they exist
-            if (this && OB.OnChangeRegistry.hasOnChange(form.grid.ID, item)) {
-              OB.OnChangeRegistry.call(form.grid.ID, item, form.grid.view, form.grid.view.theForm, form.grid);
-            }
-          };
+          this.original_blur(form, item);
+          // Execute onChangeFunctions if they exist
+          if (this && OB.OnChangeRegistry.hasOnChange(form.grid.ID, item)) {
+            OB.OnChangeRegistry.call(form.grid.ID, item, form.grid.view, form.grid.view.theForm, form.grid);
+          }
+        };
         for (i = 0; i < items.length; i++) {
           items[i].original_blur = items[i].blur;
           items[i].blur = updatedBlur;
