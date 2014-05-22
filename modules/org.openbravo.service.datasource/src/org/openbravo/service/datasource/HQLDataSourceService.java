@@ -78,10 +78,10 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private Instance<HqlQueryTransformer> hqlQueryTransformers;
 
   @Override
-  // Returns the datasource properties, based on the columns of the table that is going to use the
-  // datasource
-  // This is needed to support client side filtering
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
+    // Returns the datasource properties, based on the columns of the table that is going to use the
+    // datasource
+    // This is needed to support client side filtering
     List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
     String tableId = (String) parameters.get("tableId");
     if (tableId != null) {
