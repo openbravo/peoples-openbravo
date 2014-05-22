@@ -221,7 +221,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     queryBuilder.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
     queryBuilder.setCriteria(criteria);
     String whereClause = queryBuilder.getWhereClause();
-
     // replace the property names with the column alias
     whereClause = replaceParametersWithAlias(table, whereClause);
 
