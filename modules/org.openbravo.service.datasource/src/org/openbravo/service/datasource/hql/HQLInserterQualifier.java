@@ -32,7 +32,7 @@ import javax.enterprise.util.AnnotationLiteral;
  * 
  * - injectionId: the ID of the injection point in the HQL table
  */
-public class HQLInjectionQualifier {
+public class HQLInserterQualifier {
 
   @javax.inject.Qualifier
   @Retention(RetentionPolicy.RUNTIME)
@@ -48,8 +48,8 @@ public class HQLInjectionQualifier {
    * id. For instance, the id of the injection point @injection_point_0@ is 0
    */
   @SuppressWarnings("all")
-  public static class Selector extends AnnotationLiteral<HQLInjectionQualifier.Qualifier> implements
-      HQLInjectionQualifier.Qualifier {
+  public static class Selector extends AnnotationLiteral<HQLInserterQualifier.Qualifier> implements
+      HQLInserterQualifier.Qualifier {
     private static final long serialVersionUID = 1L;
 
     final String tableId;

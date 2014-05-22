@@ -22,25 +22,25 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
- * A HqlInjector is able to inject code at an hql injection point HqlInjectors are instantiated
- * using dependency injection. The HQLInjectionQualifier must be used to associate the HQL with a
- * particular table and injection point
+ * A HqlInserter is able to insert code at an hql insertion point. HqlInserters are instantiated
+ * using dependency injection. The HQLInserterQualifier must be used to associate the HQL with a
+ * particular table and insertion point
  */
 
 @ApplicationScoped
-public abstract class HqlInjector extends HqlQueryPriorityHandler {
+public abstract class HqlInserter extends HqlQueryPriorityHandler {
   /**
-   * Returns some code to be injected in a HQL query, and adds query named parameters when needed
+   * Returns some code to be inserted in a HQL query, and adds query named parameters when needed
    * 
    * @param requestParameters
-   *          the parameters of the request. The injected code may vary depending on these
+   *          the parameters of the request. The inserted code may vary depending on these
    *          parameters
    * @param queryNamedParameters
    *          the named parameters of the hql query that will be used to fetch the table data. If
-   *          the injected code uses named parameters, the named parameters must be added to this
+   *          the inserted code uses named parameters, the named parameters must be added to this
    *          map
-   * @return the hql code to be injected
+   * @return the hql code to be inserted
    */
-  public abstract String injectHql(Map<String, String> requestParameters,
+  public abstract String insertHql(Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters);
 }
