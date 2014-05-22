@@ -84,10 +84,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       // If opened from Payment Window, add payment details lines
       if (strFinPaymentId != null) {
         whereClause.append(" or fp.id = '" + strFinPaymentId + "'");
-      } else if (strInvoiceId != null) {
-        whereClause.append(" or inv.id = '" + strInvoiceId + "'");
-      } else if (strOrderId != null) {
-        whereClause.append(" or ord.id = '" + strOrderId + "'");
       }
       whereClause.append(") ");
 
@@ -163,10 +159,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       // If opened from Payment Window, add payment details lines
       if (strFinPaymentId != null) {
         whereClause.append(" or fp.id = '" + strFinPaymentId + "'");
-      } else if (strInvoiceId != null) {
-        whereClause.append(" or inv.id = '" + strInvoiceId + "'");
-      } else if (strOrderId != null) {
-        whereClause.append(" or ord.id = '" + strOrderId + "'");
       }
       whereClause.append(") ");
       whereClause.append(" and (oinfo is null or oinfo.active = true) ");
@@ -240,10 +232,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       // If opened from Payment Window, add payment details lines
       if (strFinPaymentId != null) {
         whereClause.append(" or fp.id = '" + strFinPaymentId + "'");
-      } else if (strInvoiceId != null) {
-        whereClause.append(" or inv.id = '" + strInvoiceId + "'");
-      } else if (strOrderId != null) {
-        whereClause.append(" or ord.id = '" + strOrderId + "'");
       }
       whereClause.append(") ");
       whereClause.append(" and (oinfo is null or oinfo.active = true) ");
