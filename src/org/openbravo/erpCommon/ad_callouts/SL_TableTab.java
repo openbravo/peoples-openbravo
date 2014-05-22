@@ -24,7 +24,11 @@ import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
 
-// This Callout is executed when a table is picked for a tab *
+/**
+ * This callout is executed when a table is picked for a tab If the selected table is a HQL table,
+ * then the uipattern of the tab will be set to read only
+ * 
+ */
 public class SL_TableTab extends SimpleCallout {
   private static final long serialVersionUID = 1L;
   private static final String READ_ONLY_UIPATTERN = "RO";
