@@ -52,7 +52,7 @@ isc.OBParameterWindowView.addProperties({
     var i, field, items = [],
         buttonLayout = [],
         newButton, cancelButton, view = this,
-        newShowIf, params;
+        newShowIf, params, updatedExpandSection;
 
 
     // Buttons
@@ -212,6 +212,19 @@ isc.OBParameterWindowView.addProperties({
       return originalShowIfValue;
     };
 
+    // this function is only used in OBSectionItems that are collapsed originally
+    // this is done to force the data fetch of its stored OBPickEditGridItems
+    updatedExpandSection = function () {
+      var i, itemName, item;
+      this.originalExpandSection();
+      for (i = 0; i < this.itemIds.length; i++) {
+        itemName = this.itemIds[i];
+        item = this.form.getItem(itemName);
+        if (item.type === 'OBPickEditGridItem' && !isc.isA.ResultSet(item.canvas.viewGrid.data)) {
+          item.canvas.viewGrid.fetchData(item.canvas.viewGrid.getCriteria());
+        }
+      }
+    };
     // Parameters
     if (this.viewProperties.fields) {
       for (i = 0; i < this.viewProperties.fields.length; i++) {
@@ -229,6 +242,13 @@ isc.OBParameterWindowView.addProperties({
           field.onChangeFunction.sort = 50;
 
           OB.OnChangeRegistry.register(this.viewId, field.name, field.onChangeFunction, 'default');
+        }
+
+        if (field.type === 'OBSectionItem' && !field.sectionExpanded) {
+          // modifies the expandSection function of OBSectionItems collapsed originally to avoid having 
+          // unloaded grids when a section is expanded for the first time
+          field.originalExpandSection = isc.OBSectionItem.getPrototype().expandSection;
+          field.expandSection = updatedExpandSection;
         }
         items.push(field);
 
