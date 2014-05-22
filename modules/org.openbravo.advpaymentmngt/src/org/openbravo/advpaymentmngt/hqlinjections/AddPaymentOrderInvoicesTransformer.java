@@ -39,11 +39,18 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     String strCurrencyId = requestParameters.get("c_currency_id");
     String strFinPaymentMethodId = requestParameters.get("fin_paymentmethod_id");
     boolean isSalesTransaction = "true".equals(requestParameters.get("issotrx")) ? true : false;
+    String strFinPaymentId = requestParameters.get("fin_payment_id");
+    String strInvoiceId = requestParameters.get("c_invoice_id");
+    String strOrderId = requestParameters.get("c_order_id");
+    String strJustCount = requestParameters.get("_justCount");
+    boolean justCount = strJustCount.equalsIgnoreCase("true");
 
     String transformedHql = null;
     StringBuffer selectClause = new StringBuffer();
     StringBuffer whereClause = new StringBuffer();
     StringBuffer groupByClause = new StringBuffer();
+    StringBuffer orderByClause = new StringBuffer();
+    StringBuffer joinClause = new StringBuffer();
 
     if ("I".equals(transactionType)) {
 
@@ -65,10 +72,25 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
       selectClause.append(" 0 as amount, ");
       selectClause.append(" case when 0 < 1 then false else true end as writeoff, ");
-      selectClause.append(" case when 0 < 1 then false else true end as OB_Selected ");
+      if (strFinPaymentId != null) {
+        selectClause.append(" case when COALESCE(fp.id, ips.invoice.id, ops.order.id) = '"
+            + strFinPaymentId + "' then true else false end as OB_Selected ");
+      } else {
+        selectClause.append(" case when 0 < 1 then false else true end as OB_Selected ");
+      }
 
       // Create WhereClause
-      whereClause.append(" psd.paymentDetails is null ");
+      whereClause.append(" (psd.paymentDetails is null");
+      // If opened from Payment Window, add payment details lines
+      if (strFinPaymentId != null) {
+        whereClause.append(" or fp.id = '" + strFinPaymentId + "'");
+      } else if (strInvoiceId != null) {
+        whereClause.append(" or inv.id = '" + strInvoiceId + "'");
+      } else if (strOrderId != null) {
+        whereClause.append(" or ord.id = '" + strOrderId + "'");
+      }
+      whereClause.append(") ");
+
       whereClause.append(" and (oinfo is null or oinfo.active = true) ");
       whereClause.append(" and ((inv is not null ");
       if (strBusinessPartnerId != null) {
@@ -89,7 +111,14 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       groupByClause.append(" COALESCE(inv.invoiceDate, ord.orderDate), ");
       groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
       groupByClause.append(" COALESCE(ips.amount, ops.amount), ");
-      groupByClause.append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) ");
+      groupByClause.append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount), ");
+      if (strInvoiceId != null) {
+        groupByClause.append(" COALESCE(ips.invoice.id, ops.order.id) ");
+      } else if (strOrderId != null) {
+        groupByClause.append(" COALESCE(ops.order.id, ips.invoice.id) ");
+      } else if (strFinPaymentId != null) {
+        groupByClause.append(" COALESCE(fp.id, ips.invoice.id, ops.order.id) ");
+      }
 
       // Replace where filters and having count clause
       if (requestParameters.containsKey("criteria")) {
@@ -98,6 +127,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         hqlQuery = hqlQuery.replace("@havingClause@", "");
       }
 
+      if (!justCount) {
+        // Create OrderBy Clause based on parent window (Invoice, Order, Payment)
+        orderByClause = createOrderByClause(strInvoiceId, strFinPaymentId, strOrderId);
+      }
     } else if ("O".equals(transactionType)) {
 
       // Create Select Clause
@@ -118,10 +151,24 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
       selectClause.append(" 0 as amount, ");
       selectClause.append(" case when 0 < 1 then false else true end as writeoff, ");
-      selectClause.append(" case when 0 < 1 then false else true end as OB_Selected ");
+      if (strFinPaymentId != null) {
+        selectClause.append(" case when COALESCE(fp.id, ips.invoice.id, ops.order.id) = '"
+            + strFinPaymentId + "' then true else false end as OB_Selected ");
+      } else {
+        selectClause.append(" case when 0 < 1 then false else true end as OB_Selected ");
+      }
 
       // Create WhereClause
-      whereClause.append(" psd.paymentDetails is null ");
+      whereClause.append(" (psd.paymentDetails is null");
+      // If opened from Payment Window, add payment details lines
+      if (strFinPaymentId != null) {
+        whereClause.append(" or fp.id = '" + strFinPaymentId + "'");
+      } else if (strInvoiceId != null) {
+        whereClause.append(" or inv.id = '" + strInvoiceId + "'");
+      } else if (strOrderId != null) {
+        whereClause.append(" or ord.id = '" + strOrderId + "'");
+      }
+      whereClause.append(") ");
       whereClause.append(" and (oinfo is null or oinfo.active = true) ");
       whereClause.append(" and ((ord is not null ");
       if (strBusinessPartnerId != null) {
@@ -142,7 +189,14 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       groupByClause.append(" COALESCE(inv.invoiceDate, ord.orderDate), ");
       groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
       groupByClause.append(" COALESCE(ips.amount, ops.amount), ");
-      groupByClause.append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) ");
+      groupByClause.append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount), ");
+      if (strInvoiceId != null) {
+        groupByClause.append(" COALESCE(ips.invoice.id, ops.order.id) ");
+      } else if (strOrderId != null) {
+        groupByClause.append(" COALESCE(ops.order.id, ips.invoice.id) ");
+      } else if (strFinPaymentId != null) {
+        groupByClause.append(" COALESCE(fp.id, ops.order.id, ips.invoice.id) ");
+      }
 
       // Replace where filters and having count clause
       if (requestParameters.containsKey("criteria")) {
@@ -151,6 +205,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         hqlQuery = hqlQuery.replace("@havingClause@", "");
       }
 
+      if (!justCount) {
+        // Create OrderBy Clause based on parent window (Invoice, Order, Payment)
+        orderByClause = createOrderByClause(strInvoiceId, strFinPaymentId, strOrderId);
+      }
     } else {
       // Create Select Clause
       selectClause.append(" psd.id as paymentScheduleDetail, ");
@@ -170,10 +228,24 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" psd.amount as outstandingAmount, ");
       selectClause.append(" 0 as amount, ");
       selectClause.append(" case when 0 < 1 then false else true end as writeoff, ");
-      selectClause.append(" case when 0 < 1 then false else true end as OB_Selected ");
+      if (strFinPaymentId != null) {
+        selectClause.append(" case when COALESCE(fp.id, ips.invoice.id, ops.order.id) = '"
+            + strFinPaymentId + "' then true else false end as OB_Selected ");
+      } else {
+        selectClause.append(" case when 0 < 1 then false else true end as OB_Selected ");
+      }
 
       // Create WhereClause
-      whereClause.append(" psd.paymentDetails is null ");
+      whereClause.append(" (psd.paymentDetails is null");
+      // If opened from Payment Window, add payment details lines
+      if (strFinPaymentId != null) {
+        whereClause.append(" or fp.id = '" + strFinPaymentId + "'");
+      } else if (strInvoiceId != null) {
+        whereClause.append(" or inv.id = '" + strInvoiceId + "'");
+      } else if (strOrderId != null) {
+        whereClause.append(" or ord.id = '" + strOrderId + "'");
+      }
+      whereClause.append(") ");
       whereClause.append(" and (oinfo is null or oinfo.active = true) ");
       whereClause.append(" and ((inv is not null ");
       if (strBusinessPartnerId != null) {
@@ -203,6 +275,17 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       } else {
         hqlQuery = hqlQuery.replace("@havingClause@", "");
       }
+
+      if (!justCount) {
+        // Create OrderBy Clause based on parent window (Invoice, Order, Payment)
+        orderByClause = createOrderByClause(strInvoiceId, strFinPaymentId, strOrderId);
+      }
+    }
+
+    // Create Join Clause
+    if (strFinPaymentId != null) {
+      joinClause.append(" left outer join psd.paymentDetails as pd ");
+      joinClause.append(" left outer join pd.finPayment as fp ");
     }
 
     // Remove alias @@ from Order By clause
@@ -215,12 +298,19 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     }
 
     transformedHql = hqlQuery.replace("@selectClause@ ", selectClause.toString());
+    transformedHql = transformedHql.replace("@joinClause@ ", joinClause.toString());
     transformedHql = transformedHql.replace("@whereClause@ ", whereClause.toString());
     transformedHql = transformedHql.replace("@groupByClause@", groupByClause.toString());
+    transformedHql = replaceOrderByClause(transformedHql, orderByClause, justCount);
 
     return transformedHql;
   }
 
+  /**
+   * @param _hqlQuery
+   * @param transactionType
+   * @return
+   */
   private String replaceFiltersAndHavingClause(String _hqlQuery, String transactionType) {
     String hqlQuery = _hqlQuery;
     StringBuffer havingClause = new StringBuffer();
@@ -286,6 +376,60 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         hqlQuery = hqlQuery.replaceAll("@outstandingAmount@", "psd.amount");
       }
       hqlQuery = hqlQuery.replace("@havingClause@", "");
+    }
+    return hqlQuery;
+  }
+
+  /**
+   * @param strInvoiceId
+   * @param strFinPaymentId
+   * @param strOrderId
+   * @return
+   */
+  private StringBuffer createOrderByClause(String strInvoiceId, String strFinPaymentId,
+      String strOrderId) {
+    StringBuffer orderByClause = new StringBuffer();
+    if (strInvoiceId != null) {
+      orderByClause.append(" CASE WHEN ");
+      orderByClause.append(" COALESCE(ips.invoice.id, ops.order.id) = '" + strInvoiceId + "'");
+      orderByClause.append(" THEN 0");
+      orderByClause.append(" ELSE 1");
+      orderByClause.append(" END");
+    } else if (strOrderId != null) {
+      orderByClause.append(" CASE WHEN ");
+      orderByClause.append(" COALESCE(ops.order.id, ips.invoice.id) = '" + strOrderId + "'");
+      orderByClause.append(" THEN 0");
+      orderByClause.append(" ELSE 1");
+      orderByClause.append(" END");
+    } else if (strFinPaymentId != null) {
+      orderByClause.append(" CASE WHEN ");
+      orderByClause.append(" COALESCE(fp.id, ips.invoice.id, ops.order.id) = '" + strFinPaymentId
+          + "'");
+      orderByClause.append(" THEN 0");
+      orderByClause.append(" ELSE 1");
+      orderByClause.append(" END");
+    }
+    return orderByClause;
+  }
+
+  /**
+   * @param _hqlQuery
+   * @param orderByClause
+   * @return
+   */
+  private String replaceOrderByClause(String _hqlQuery, StringBuffer orderByClause,
+      boolean justCount) {
+    String hqlQuery = _hqlQuery;
+    if (justCount) {
+      hqlQuery = hqlQuery.replace("@orderByClause@", "");
+    } else {
+      if (hqlQuery.contains(" ORDER BY ")) {
+        // remove @orderByClause@ from original query
+        hqlQuery = hqlQuery.replace("@orderByClause@", "");
+        hqlQuery = hqlQuery.concat(", " + orderByClause.toString());
+      } else {
+        hqlQuery = hqlQuery.replace("@orderByClause@", " ORDER BY " + orderByClause.toString());
+      }
     }
     return hqlQuery;
   }
