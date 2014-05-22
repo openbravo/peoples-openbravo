@@ -45,12 +45,6 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
     return "OBFKComboItem";
   }
 
-  @Override
-  public String getParentType() {
-    // ensures that the field will have a oneOf validator
-    return "enum";
-  }
-
   public String getGridEditorFieldProperties(Field field) {
     return "displayField: '_identifier', valueField: 'id'";
   }
