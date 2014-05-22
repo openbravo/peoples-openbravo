@@ -20,6 +20,7 @@
 package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
@@ -61,6 +63,7 @@ import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
@@ -117,11 +120,14 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         convertedAmount = new BigDecimal(jsonparams.getString("converted_amount"));
       }
 
+      List<String> pdToRemove = new ArrayList<String>();
       FIN_Payment payment = null;
       if (jsonparams.get("fin_payment_id") != JSONObject.NULL) {
         // Payment is already created. Load it.
         final String strFinPaymentID = jsonparams.getString("fin_payment_id");
         payment = OBDal.getInstance().get(FIN_Payment.class, strFinPaymentID);
+        // Load existing lines to be deleted.
+        pdToRemove = OBDao.getIDListFromOBObject(payment.getFINPaymentDetailList());
       } else {
         try {
           payment = createNewPayment(jsonparams, isReceipt, org, businessPartner, paymentDate,
@@ -137,9 +143,26 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       payment.setAmount(new BigDecimal(strActualPayment));
       OBDal.getInstance().save(payment);
 
-      addSelectedPSDs(payment, jsonparams);
       addCredit(payment, jsonparams);
+      addSelectedPSDs(payment, jsonparams, pdToRemove);
       addGLItems(payment, jsonparams);
+
+      for (String pdId : pdToRemove) {
+        FIN_PaymentDetail pd = OBDal.getInstance().get(FIN_PaymentDetail.class, pdId);
+        boolean hasPSD = pd.getFINPaymentScheduleDetailList().size() > 0;
+        if (hasPSD) {
+          FIN_PaymentScheduleDetail psd = OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
+              pd.getFINPaymentScheduleDetailList().get(0).getId());
+          pd.getFINPaymentScheduleDetailList().remove(psd);
+          OBDal.getInstance().save(pd);
+          OBDal.getInstance().remove(psd);
+        }
+        payment.getFINPaymentDetailList().remove(pd);
+        OBDal.getInstance().save(payment);
+        OBDal.getInstance().remove(pd);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().refresh(payment);
+      }
 
       if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
           || strAction.equals("PPW")) {
@@ -230,7 +253,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     return payment;
   }
 
-  private void addSelectedPSDs(FIN_Payment payment, JSONObject jsonparams) throws JSONException {
+  private void addSelectedPSDs(FIN_Payment payment, JSONObject jsonparams, List<String> pdToRemove)
+      throws JSONException {
     JSONObject orderInvoiceGrid = jsonparams.getJSONObject("order_invoice");
     JSONArray selectedPSDs = orderInvoiceGrid.getJSONArray("_selection");
     for (int i = 0; i < selectedPSDs.length(); i++) {
@@ -257,6 +281,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           } else {
             outstandingAmount = psd.getAmount();
           }
+          pdToRemove.remove(psd.getPaymentDetails().getId());
         } else {
           outstandingAmount = psd.getAmount();
         }
