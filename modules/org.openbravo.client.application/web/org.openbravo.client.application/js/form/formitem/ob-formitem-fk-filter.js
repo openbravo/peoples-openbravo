@@ -68,7 +68,7 @@ isc.OBFKFilterTextItem.addProperties({
       onFetchData: function (criteria, requestProperties) {
         requestProperties = requestProperties || {};
         requestProperties.params = grid.getFetchRequestParams(requestProperties.params) || {};
-        requestProperties.params.tabId = grid.view.tabId;
+        requestProperties.params.tabId = grid.view.tabId || (grid.view.sourceView && grid.view.sourceView.tabId);
         delete me.forceReload;
       },
 
