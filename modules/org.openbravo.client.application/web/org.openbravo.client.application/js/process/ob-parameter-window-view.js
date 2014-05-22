@@ -239,9 +239,6 @@ isc.OBParameterWindowView.addProperties({
         this.members.push(this.formContainerLayout);
       }
     }
-    if (this.grid) {
-      this.members.push(this.grid);
-    }
 
 
     if (this.popup) {
@@ -398,9 +395,6 @@ isc.OBParameterWindowView.addProperties({
       if (this.theForm) {
         this.theForm.hide();
       }
-      if (this.grid) {
-        this.grid.hide();
-      }
       if (this.popupButtons) {
         this.popupButtons.hide();
       }
@@ -417,9 +411,6 @@ isc.OBParameterWindowView.addProperties({
     } else {
       if (this.theForm) {
         this.theForm.show();
-      }
-      if (this.grid) {
-        this.grid.show();
       }
 
       this.loading.hide();
@@ -441,30 +432,6 @@ isc.OBParameterWindowView.addProperties({
     tab = OB.MainView.TabSet.getTab(this.viewTabId);
     if (tab) {
       tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Executing', [this.tabTitle]));
-    }
-
-    if (this.grid) {
-      // TODO: Support for multiple grids
-      grid = this.grid.viewGrid;
-      selection = grid.getSelectedRecords() || [];
-      len = selection.length;
-      allRows = grid.data.allRows || grid.data.localData || grid.data;
-      allProperties._selection = [];
-      allProperties._allRows = [];
-
-      for (i = 0; i < len; i++) {
-        tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(grid.getRecordIndex(selection[i])));
-        allProperties._selection.push(tmp);
-      }
-
-      len = (allRows && allRows.length) || 0;
-      // Only send _allRows if all rows are cached
-      if (!(grid.data.resultSize) || (len < grid.data.resultSize)) {
-        for (i = 0; i < len; i++) {
-          tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(grid.getRecordIndex(allRows[i])));
-          allProperties._allRows.push(tmp);
-        }
-      }
     }
 
     allProperties._buttonValue = btnValue || 'DONE';
