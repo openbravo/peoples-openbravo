@@ -80,8 +80,8 @@ isc.OBListItem.addProperties({
     if (value && referenceType !== 'OBListItem') {
       for (i = 0; i < value.length; i++) {
         //do not append when composite identifiers are present.
-        if (value[i].indexOf(" - ") === -1) {
-          value[i] = "==" + value[i];
+        if (value[i].indexOf(' - ') === -1) {
+          value[i] = '==' + value[i];
         }
       }
     }
