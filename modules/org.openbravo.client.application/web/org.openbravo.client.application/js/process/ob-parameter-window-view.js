@@ -166,7 +166,17 @@ isc.OBParameterWindowView.addProperties({
     // Message bar
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden',
-      view: this
+      view: this,
+      show: function () {
+        var showMessageBar = true;
+        this.Super('show', arguments);
+        view.resized(showMessageBar);
+      },
+      hide: function () {
+        var showMessageBar = false;
+        this.Super('hide', arguments);
+        view.resized(showMessageBar);
+      }
     });
     this.members.push(this.messageBar);
 

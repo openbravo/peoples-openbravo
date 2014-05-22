@@ -42,8 +42,12 @@ isc.OBPickEditGridItem.addProperties({
     pickAndExecuteViewProperties.view = this.view;
     pickAndExecuteViewProperties.parameterName = this.name;
     if (this.view.isPickAndExecuteWindow) {
-      this.view.resized = function () {
-        me.canvas.setHeight(me.view.height - 95);
+      this.view.resized = function (messagebarVisible) {
+        if (messagebarVisible) {
+          me.canvas.setHeight(me.view.height - (95 + me.view.messageBar.height));
+        } else {
+          me.canvas.setHeight(me.view.height - 95);
+        }
         me.canvas.redraw();
       };
     } else {
