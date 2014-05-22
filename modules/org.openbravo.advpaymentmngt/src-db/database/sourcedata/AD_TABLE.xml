@@ -158,9 +158,26 @@ and @injection_point_0@]]></HQLQUERY>
 <!--864A35C8FCD548B0AD1D69C89BBA6118-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--864A35C8FCD548B0AD1D69C89BBA6118-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--864A35C8FCD548B0AD1D69C89BBA6118-->  <AD_PACKAGE_ID><![CDATA[AC33B2262748414A816510545755435A]]></AD_PACKAGE_ID>
-<!--864A35C8FCD548B0AD1D69C89BBA6118-->  <DATAORIGINTYPE><![CDATA[Datasource]]></DATAORIGINTYPE>
-<!--864A35C8FCD548B0AD1D69C89BBA6118-->  <OBSERDS_DATASOURCE_ID><![CDATA[9CF342836AFE4559B796549CC5362BED]]></OBSERDS_DATASOURCE_ID>
+<!--864A35C8FCD548B0AD1D69C89BBA6118-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--864A35C8FCD548B0AD1D69C89BBA6118-->  <ISTREE><![CDATA[N]]></ISTREE>
+<!--864A35C8FCD548B0AD1D69C89BBA6118-->  <HQLQUERY><![CDATA[select psd.id, gl, bp, prod, proj, cc, stDim, ndDim,
+    case p.receipt when 'Y' then psd.amount else 0 end as receivedin,
+    case p.receipt when 'N' then psd.amount else 0 end as paidout,
+    pd.id as fin_payment_detail_id,
+    case when 1 > 0 then true else false end as ob_selected
+from FIN_Payment_ScheduleDetail as psd
+  join psd.paymentDetails as pd
+  join pd.finPayment as p
+  join pd.gLItem as gl
+  left join  psd.businessPartner as bp
+  left join psd.product as prod
+  left join psd.project as proj
+  left join psd.costCenter as cc
+  left join psd.stDimension as stDim
+  left join psd.ndDimension as ndDim
+where @additional_filters@
+and @injection_point_0@]]></HQLQUERY>
+<!--864A35C8FCD548B0AD1D69C89BBA6118-->  <ENTITY_ALIAS><![CDATA[psd]]></ENTITY_ALIAS>
 <!--864A35C8FCD548B0AD1D69C89BBA6118--></AD_TABLE>
 
 <!--DC814AB3BC84486CA5411131724BC95A--><AD_TABLE>

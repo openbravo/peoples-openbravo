@@ -28,7 +28,6 @@ OB.APRM.AddPayment.onLoad = function (view) {
 OB.APRM.AddPayment.addNewGLItem = function (grid) {
   var selectedRecord = grid.view.parentWindow.views[0].getParentRecord();
   var returnObject = isc.addProperties({}, grid.data[0]);
-  returnObject.organization = selectedRecord.organization;
   return returnObject;
 };
 
