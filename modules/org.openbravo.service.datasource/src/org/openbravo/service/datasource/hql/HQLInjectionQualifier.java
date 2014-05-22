@@ -24,11 +24,16 @@ import java.lang.annotation.Target;
 
 import javax.enterprise.util.AnnotationLiteral;
 
+/**
+ * This class allows to define a qualifier used to register a HQL injection component provider. This
+ * qualifier is composed of two attributes:
+ * 
+ * - tableId: the ID of the HQL table to be used in the HQL insertion
+ * 
+ * - injectionId: the ID of the injection point in the HQL table
+ */
 public class HQLInjectionQualifier {
-  /**
-   * Defines the qualifier used to register a HQL injection component provider.
-   * 
-   */
+
   @javax.inject.Qualifier
   @Retention(RetentionPolicy.RUNTIME)
   @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })

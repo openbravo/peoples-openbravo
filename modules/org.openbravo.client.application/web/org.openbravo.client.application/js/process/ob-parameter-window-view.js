@@ -515,7 +515,7 @@ isc.OBParameterWindowView.addProperties({
               field.setValue(def.value);
             }
           } else {
-            field.setValue(def);
+            field.setValue(this.getTypeSafeValue(field.typeInstance, def));
           }
         }
       }
@@ -553,6 +553,23 @@ isc.OBParameterWindowView.addProperties({
 
     this.handleDisplayLogicForGridColumns();
   },
+
+  /**
+   * Given a string value, it returns the proper value according to the provided type
+   */
+  getTypeSafeValue: function (type, stringValue) {
+    var isNumber;
+    if (!type) {
+      return stringValue;
+    }
+    isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');
+    if (isNumber && OB.Utilities.Number.IsValidValueString(type, stringValue)) {
+      return OB.Utilities.Number.OBMaskedToJS(stringValue, type.decSeparator, type.groupSeparator);
+    } else {
+      return stringValue;
+    }
+  },
+
 
   // Checks params with readonly logic enabling or disabling them based on it
   handleReadOnlyLogic: function () {

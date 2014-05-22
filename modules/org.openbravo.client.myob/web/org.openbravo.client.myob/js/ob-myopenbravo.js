@@ -447,7 +447,17 @@ isc.OBMyOpenbravo.addProperties({
 
       handleClickFunction = function () {
         if (this.recent.viewId) {
-          OB.Layout.ViewManager.openView(this.recent.viewId, this.recent);
+          if (this.recent.openLinkInBrowser && this.recent.viewId === 'OBExternalPage') {
+            if (this.recent.contentsURL.indexOf('://') === -1) {
+              this.recent.contentsURL = 'http://' + this.recent.contentsURL;
+            }
+            OB.ViewManager.recentManager.addRecent('OBUIAPP_RecentViewList', isc.addProperties({
+              icon: OB.Styles.OBApplicationMenu.Icons.externalLink
+            }, this.recent));
+            window.open(this.recent.contentsURL);
+          } else {
+            OB.Layout.ViewManager.openView(this.recent.viewId, this.recent);
+          }
         } else {
           OB.Layout.ViewManager.openView('OBClassicWindow', this.recent);
         }
@@ -471,6 +481,8 @@ isc.OBMyOpenbravo.addProperties({
               icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Form;
             } else if (recent.icon === 'Window') {
               icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.Window;
+            } else if (recent.icon === 'ExternalLink') {
+              icon = OB.Styles.OBMyOpenbravo.recentViewsLayout.nodeIcons.ExternalLink;
             } else {
               icon = recent.icon; // icon is already a path
             }

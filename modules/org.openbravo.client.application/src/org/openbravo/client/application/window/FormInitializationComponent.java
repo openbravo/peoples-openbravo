@@ -139,7 +139,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> jsExcuteCode = new ArrayList<String>();
       Map<String, Object> hiddenInputs = new HashMap<String, Object>();
 
-      boolean dBasedTable = ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable()
+      boolean databaseBasedTable = ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable()
           .getDataOriginType());
 
       log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
@@ -154,7 +154,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // If the table is not based in db table there is no BaseOBObject associated to it, don't try
       // to retrieve the row
-      if (dBasedTable && rowId != null && !rowId.equals("null")) {
+      if (databaseBasedTable && rowId != null && !rowId.equals("null")) {
         row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
       }
       JSONObject jsContent = new JSONObject();
@@ -184,7 +184,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
 
       // If the table is not based in a db table, don't try to create a BaseOBObject
-      if (dBasedTable) {
+      if (databaseBasedTable) {
         // create the row from the json content then
         if (row == null) {
           final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
@@ -233,7 +233,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t1 = System.currentTimeMillis();
       // If the table is not based in a db table, don't try to retrieve the parent record (the row
       // is null because tables not based on db tables do not have BaseOBObjects)
-      if (dBasedTable) {
+      if (databaseBasedTable) {
         parentRecord = setSessionVariablesInParent(mode, tab, row, parentId);
       }
 

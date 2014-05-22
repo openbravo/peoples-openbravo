@@ -84,12 +84,12 @@ public class JsonRestServlet extends BaseWebServiceServlet {
               + OBContext.getOBContext().getRole()
               + " is trying to access to non granted web service " + request.getRequestURL());
           throw new OBSecurityException("Web Services are not granted to Portal roles");
-        } else if (!OBContext.getOBContext().getRole().isWebServiceEnabled()) {
+        } else if (!OBContext.getOBContext().isWebServiceEnabled()) {
           log.error("User " + OBContext.getOBContext().getUser() + " with role "
               + OBContext.getOBContext().getRole()
               + " is trying to access to non granted web service " + request.getRequestURL());
           throw new OBSecurityException("Web Services are not granted to "
-              + OBContext.getOBContext().getRole().getName() + " role");
+              + OBContext.getOBContext().getRole() + " role");
         }
       }
       callServiceInSuper(request, response);

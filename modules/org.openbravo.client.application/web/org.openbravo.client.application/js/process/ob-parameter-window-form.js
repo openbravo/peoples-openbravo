@@ -32,17 +32,19 @@ isc.OBParameterWindowForm.addProperties({
   showErrorIcons: false,
   colWidths: ['*', '*', '*', '*'],
   itemChanged: function (item, newValue) {
-    var affectedParams, i, field;
-
     this.paramWindow.handleReadOnlyLogic();
     this.paramWindow.handleDisplayLogicForGridColumns();
     this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
+  },
 
+  // this function is invoked on the blur action of the formitems
+  // this is the proper place to execute the client-side callouts
+  handleItemChange: function (item) {
+    var affectedParams, i, field;
     // Execute onChangeFunctions if they exist
     if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
       OB.OnChangeRegistry.call(this.paramWindow.viewId, item, this.paramWindow, this, this.paramWindow.viewGrid);
     }
-
     // Check validation rules (subordinated fields), when value of a
     // parent field is changed, all its subordinated are reset
     affectedParams = this.paramWindow.dynamicColumns[item.name];

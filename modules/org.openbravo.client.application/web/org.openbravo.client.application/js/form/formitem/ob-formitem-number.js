@@ -548,6 +548,13 @@ isc.OBNumberFilterItem.addProperties({
     }
 
     ret = this.Super('parseValueExpressions', [value, fieldName, operator]);
+
+    // if operator is not supported remove it
+    if (!this.validOperators.contains(ret.operator)) {
+      ret.operator = '';
+      ret.value = '';
+      this.setValue('');
+    }
     if (ret && ret.start) {
       ret.start = this.convertToTypedValue(ret.start);
     }

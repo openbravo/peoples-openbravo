@@ -122,16 +122,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
   @Override
   protected int getCount(Map<String, String> parameters) {
-    String tableId = parameters.get("tableId");
-    String tabId = parameters.get("tabId");
-    Table table = null;
-    if (tableId != null) {
-      table = OBDal.getInstance().get(Table.class, tableId);
-    } else if (tabId != null) {
-      Tab tab = null;
-      tab = OBDal.getInstance().get(Tab.class, tabId);
-      table = tab.getTable();
-    }
+    Table table = getTableFromParameters(parameters);
     boolean justCount = true;
     Query countQuery = getQuery(table, parameters, justCount);
     String hqlQuery = countQuery.getQueryString();
@@ -149,17 +140,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
 
-    String tableId = parameters.get("tableId");
-    String tabId = parameters.get("tabId");
-    Table table = null;
-    if (tableId != null) {
-      table = OBDal.getInstance().get(Table.class, tableId);
-    } else if (tabId != null) {
-      Tab tab = null;
-      tab = OBDal.getInstance().get(Tab.class, tabId);
-      table = tab.getTable();
-    }
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+    Table table = getTableFromParameters(parameters);
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     OBContext.setAdminMode(true);
     boolean justCount = false;
     Query query = getQuery(table, parameters, justCount);
@@ -196,6 +178,28 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
     OBContext.restorePreviousMode();
     return data;
+  }
+
+  /**
+   * Returns the HQL table whose data is being fetched. It will be obtained either using the table
+   * id, or the tab id
+   * 
+   * @param parameters
+   *          the parameters sent in the fetch request
+   * @return the table whose data is being fetched
+   */
+  private Table getTableFromParameters(Map<String, String> parameters) {
+    String tableId = parameters.get("tableId");
+    String tabId = parameters.get("tabId");
+    Table table = null;
+    if (tableId != null) {
+      table = OBDal.getInstance().get(Table.class, tableId);
+    } else if (tabId != null) {
+      Tab tab = null;
+      tab = OBDal.getInstance().get(Tab.class, tabId);
+      table = tab.getTable();
+    }
+    return table;
   }
 
   /**
@@ -254,6 +258,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         hqlQuery = hqlQuery + orderByClause;
       }
     }
+    parameters.put("_justCount", String.valueOf(justCount));
 
     Map<String, Object> queryNamedParameters = new HashMap<String, Object>();
 
@@ -352,16 +357,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    */
   private HqlQueryTransformer getTransformer(Map<String, String> parameters) {
     HqlQueryTransformer transformer = null;
-    String tableId = parameters.get("tableId");
-    String tabId = parameters.get("tabId");
-    Table table = null;
-    if (tableId != null) {
-      table = OBDal.getInstance().get(Table.class, tableId);
-    } else if (tabId != null) {
-      Tab tab = null;
-      tab = OBDal.getInstance().get(Tab.class, tabId);
-      table = tab.getTable();
-    }
+    Table table = getTableFromParameters(parameters);
     for (HqlQueryTransformer nextTransformer : hqlQueryTransformers
         .select(new ComponentProvider.Selector(table.getId()))) {
       if (transformer == null) {
@@ -371,7 +367,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       } else if (nextTransformer.getPriority(parameters) == transformer.getPriority(parameters)) {
         log.warn(
             "Trying to get hql query transformer injector for the table with id {}, there are more than one instance with same priority",
-            tableId);
+            table.getId());
       }
     }
     return transformer;
@@ -388,16 +384,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    */
   private HqlInjector getInjector(int index, Map<String, String> parameters) {
     HqlInjector injector = null;
-    String tableId = parameters.get("tableId");
-    String tabId = parameters.get("tabId");
-    Table table = null;
-    if (tableId != null) {
-      table = OBDal.getInstance().get(Table.class, tableId);
-    } else if (tabId != null) {
-      Tab tab = null;
-      tab = OBDal.getInstance().get(Tab.class, tabId);
-      table = tab.getTable();
-    }
+    Table table = getTableFromParameters(parameters);
     for (HqlInjector inj : hqlInjectors.select(new HQLInjectionQualifier.Selector(table.getId(),
         Integer.toString(index)))) {
       if (injector == null) {
@@ -536,7 +523,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     } else {
       // adds the hql filters in the proper place at the end of the query
       String separator = null;
-      // TODO: only the WHERE of the outer query should
       if (StringUtils.containsIgnoreCase(hqlQueryWithFilters, WHERE)) {
         // if there is already a where clause, append with 'AND'
         separator = AND;
@@ -564,16 +550,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    */
   private String getSortByClause(Map<String, String> parameters, boolean includeMainEntityID) {
     String orderByClause = "";
-    String tableId = parameters.get("tableId");
-    String tabId = parameters.get("tabId");
-    Table table = null;
-    if (tableId != null) {
-      table = OBDal.getInstance().get(Table.class, tableId);
-    } else if (tabId != null) {
-      Tab tab = null;
-      tab = OBDal.getInstance().get(Tab.class, tabId);
-      table = tab.getTable();
-    }
+    Table table = getTableFromParameters(parameters);
 
     boolean isDistinctQuery = false;
     final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
