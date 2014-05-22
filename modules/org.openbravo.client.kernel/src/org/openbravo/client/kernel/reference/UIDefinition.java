@@ -64,6 +64,7 @@ import org.openbravo.service.json.JsonConstants;
  */
 public abstract class UIDefinition {
   private static final String TYPE_NAME_PREFIX = "_id_";
+  private static final String LIST_REF_ID = "17";
 
   private Reference reference;
   private DomainType domainType;
@@ -511,7 +512,7 @@ public abstract class UIDefinition {
       String columnValue, boolean onlyFirstRecord) {
     try {
       String ref = field.getColumn().getReference().getId();
-      boolean isListReference = "17".equals(ref);
+      boolean isListReference = LIST_REF_ID.equals(ref);
       if (!isListReference && !field.getColumn().isMandatory() && StringUtils.isEmpty(columnValue)) {
         // non mandatory without value nor default, should only return empty value, prevent
         // everything else

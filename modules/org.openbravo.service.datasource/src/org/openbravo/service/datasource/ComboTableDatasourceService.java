@@ -82,7 +82,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     } catch (Exception e1) {
       throw new OBException(e1);
     }
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       if (!StringUtils.isEmpty(parameters.get("criteria"))) {
         String criteria = parameters.get("criteria");

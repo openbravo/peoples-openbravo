@@ -963,6 +963,8 @@ public class ComboTableData {
       text.append(" LIMIT " + numberOfRows + " OFFSET " + startRow);
     }
     if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
+      // in oracle rows are defined from 1, so if startRow is 0,
+      // setting it to 1 to retrieve first record
       if (startRow == 0) {
         startRow++;
         endRow++;
