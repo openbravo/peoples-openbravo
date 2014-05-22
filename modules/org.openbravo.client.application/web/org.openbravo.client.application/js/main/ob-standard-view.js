@@ -264,6 +264,14 @@ isc.OBStandardView.addProperties({
 
     this.toolBar.updateButtonState(true, false, true);
 
+    // It will only enter if this is a lazy initialized tab
+    // this.standardWindow.getClass().uiPattern will only exists after setWindowSettings is executed
+    if (this.standardWindow.getClass().uiPattern) {
+      this.setReadOnly(this.standardWindow.getClass().uiPattern[this.tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
+      this.setSingleRecord(this.standardWindow.getClass().uiPattern[this.tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
+      this.setEditOrDeleteOnly(this.standardWindow.getClass().uiPattern[this.tabId] === isc.OBStandardView.UI_PATTERN_EDITORDELETEONLY);
+    }
+
     // Update the subtab visibility before the tabs are shown to the client
     this.handleDefaultTreeView();
     this.updateSubtabVisibility();
