@@ -463,20 +463,6 @@ isc.OBPickAndExecuteGrid.addProperties({
     return this.Super('recordClick', arguments);
   },
 
-
-  // Dummy "createRecordComponent" to fix issue: https://issues.openbravo.com/view.php?id=19879
-  // It seems that if it is not present, Smartclient doesn't perform well the maths to calculate the editing fields width
-  createRecordComponent: function (record, colNum) {
-    var layout = null;
-    if (colNum === 0) {
-      layout = isc.Layout.create({
-        width: 0,
-        height: 0
-      });
-    }
-    return layout;
-  },
-
   getOrgParameter: function () {
     var view = this.view && this.view.buttonOwnerView,
         context, i;

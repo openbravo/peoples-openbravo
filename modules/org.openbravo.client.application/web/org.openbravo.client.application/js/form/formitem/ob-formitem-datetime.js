@@ -137,13 +137,22 @@ isc.OBDateTimeItem.addProperties({
     } else {
       this.showPickerTimeItem = false;
     }
+    if (OB.Format.dateTime.toUpperCase().lastIndexOf(' A') !== -1 && OB.Format.dateTime.toUpperCase().lastIndexOf(' A') === OB.Format.dateTime.length - 2) {
+      this.use24HourTime = false;
+    } else {
+      this.use24HourTime = true;
+    }
     return this.Super('doInit', arguments);
   },
 
   parseValue: function () {
     var parseVal = this.Super('parseValue', arguments);
     if (this.showTime && parseVal.indexOf(' ') === -1) {
-      parseVal = parseVal + ' ' + '00:00:00';
+      if (this.use24HourTime) {
+        parseVal = parseVal + ' ' + '00:00:00';
+      } else {
+        parseVal = parseVal + ' ' + '12:00:00 AM';
+      }
     }
     return parseVal;
   },

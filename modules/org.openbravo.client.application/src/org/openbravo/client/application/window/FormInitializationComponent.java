@@ -305,6 +305,10 @@ public class FormInitializationComponent extends BaseActionHandler {
         log.error("Error while generating the error JSON object: " + jsonString, e);
       }
     } finally {
+
+      // Clear session to prevent slow flush
+      OBDal.getInstance().getSession().clear();
+
       OBContext.restorePreviousMode();
     }
     return null;

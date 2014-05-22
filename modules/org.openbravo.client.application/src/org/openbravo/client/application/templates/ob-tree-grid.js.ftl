@@ -25,6 +25,8 @@ isc.OBTreeViewGrid.create({
     orderedTree:  ${data.orderedTree?string},
     applyWhereClauseToChildren:  ${data.applyWhereClauseToChildren?string},
     dataSourceId:  '${data.dataSourceId}',
+    canReorderRecords: ${data.canReorderRecords?string},
+    showNodeIcons: ${data.showNodeIcons?string},
     treeStructure:  '${data.treeStructure}',
     fields: this.gridFields
 })

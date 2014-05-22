@@ -98,7 +98,7 @@
 // ** {{{OB.Personalization.applyViewDefinition}}} **
 // Apply a selected view definition to a window
 OB.Personalization.applyViewDefinition = function (persId, viewDefinition, standardWindow) {
-  var i, view, viewTabDefinition, length = standardWindow.views.length,
+  var i, view, viewTabDefinition, showTreeGrid, length = standardWindow.views.length,
       windowDefinition = viewDefinition.window;
 
   // delete the current form personalization 
@@ -150,11 +150,16 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
     view = standardWindow.views[i];
     viewTabDefinition = viewDefinition[view.tabId];
     if (viewTabDefinition) {
+      if (viewTabDefinition.viewMode === 'tree' && view.treeGrid) {
+        showTreeGrid = true;
+      } else {
+        showTreeGrid = false;
+      }
       if (view.childTabSet && viewTabDefinition.selectedTab) {
         view.childTabSet.selectTab(viewTabDefinition.selectedTab);
       }
       if (view.isRootView || view.isRenderedChildView) {
-        OB.Personalization.applyViewDefinitionToView(view, viewTabDefinition);
+        OB.Personalization.applyViewDefinitionToView(view, viewTabDefinition, showTreeGrid);
       } else {
         // If the view has not been rendered yet, store the 'initialTabDefinition' to be able
         // to set the proper view definition as soon as the view be loaded.
@@ -166,7 +171,7 @@ OB.Personalization.applyViewDefinition = function (persId, viewDefinition, stand
 
 // ** {{{OB.Personalization.applyViewDefinitionToView}}} **
 // Apply a passed view definition to a particular view
-OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition) {
+OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition, showTreeGrid) {
   if (!view || !viewTabDefinition) {
     return;
   }
@@ -178,12 +183,8 @@ OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition
   // if there is no record selected etc.
   if (view.isShowingForm) {
     view.switchFormGridVisibility();
-  } else if (view.isShowingTree) {
-    if (view.viewGrid && view.treeGrid) {
-      view.viewGrid.show();
-      view.treeGrid.hide();
-    }
-    view.isShowingTree = false;
+  } else if (view.isShowingTree && !showTreeGrid) {
+    OB.ToolbarUtils.hideTreeGrid(view);
   }
 
   if (viewTabDefinition.grid) {
@@ -196,6 +197,12 @@ OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition
       //  -direct navigation: it is done centrally after applying personalizations
       view.viewGrid.refreshContents();
     }
+  }
+  if (showTreeGrid) {
+    // Execute 'OB.ToolbarUtils.showTreeGrid' even if the tree grid is already shown because this function
+    // also copies some configuration (criteria, ...) of the grid to the tree grid. This is needed because
+    // the grid state has changed just before in the line 'view.viewGrid.setViewState(viewTabDefinition.grid)'
+    OB.ToolbarUtils.showTreeGrid(view);
   }
   if (viewTabDefinition.form && view.viewForm.getDataSource()) {
     OB.Personalization.personalizeForm(viewTabDefinition, view.viewForm);
@@ -231,8 +238,9 @@ OB.Personalization.getViewDefinition = function (standardWindow, name, isDefault
       if (view.isShowingTree) {
         // Copy the criteria from the tree grid to the view grid
         view.treeGrid.copyCriteriaToViewGrid();
+        persDataByTab.viewMode = 'tree';
       }
-      // ahd the grid state
+      // and the grid state
       persDataByTab.grid = view.viewGrid.getViewState(false, true);
 
       if (view.childTabSet && view.childTabSet.getSelectedTabNumber() >= 0) {

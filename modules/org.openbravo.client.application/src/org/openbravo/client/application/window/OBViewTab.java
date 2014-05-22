@@ -630,6 +630,24 @@ public class OBViewTab extends BaseTemplateComponent {
     }
   }
 
+  public String getDefaultTreeViewLogicIf() {
+
+    String jsExpression = null;
+    if (tab.getDefaultTreeViewLogic() != null && !tab.getDefaultTreeViewLogic().isEmpty()) {
+      boolean inpColumnNames = true;
+      final DynamicExpressionParser parser = new DynamicExpressionParser(
+          tab.getDefaultTreeViewLogic(), tab, inpColumnNames);
+      jsExpression = parser.getJSExpression();
+      // Retrieves the preference attributes used in the display logic of the tab
+      setPreferenceAttributesFromParserResult(parser, this.getWindowId());
+    }
+    if (jsExpression != null) {
+      return jsExpression;
+    } else {
+      return "";
+    }
+  }
+
   private void setPreferenceAttributesFromParserResult(DynamicExpressionParser parser,
       String windowId) {
     for (String attrName : parser.getSessionAttributes()) {

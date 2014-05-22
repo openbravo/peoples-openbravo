@@ -29,6 +29,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.ui.Field;
@@ -71,7 +72,14 @@ public class AbsoluteTimeUIDefinition extends UIDefinition {
   private SimpleDateFormat getClassicFormat() {
     if (classicFormat == null) {
       String dateTimeFormat = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .get("dateTimeFormat.java");
+          .get(KernelConstants.DATETIME_FORMAT_PROPERTY);
+      if (dateTimeFormat.indexOf(" a") != -1) {
+        // The value of this reference always go to/from the client in the 24h notation, so in case
+        // the dateTimeFormat.java be defined to use the 'AM/PM' notation, it should be modified to
+        // work with this reference
+        dateTimeFormat = dateTimeFormat.replace(" a", "");
+        dateTimeFormat = dateTimeFormat.replace("hh", "HH");
+      }
       if (dateTimeFormat.contains(" ")) {
         dateTimeFormat = dateTimeFormat.substring(dateTimeFormat.indexOf(" ") + 1);
       } else {

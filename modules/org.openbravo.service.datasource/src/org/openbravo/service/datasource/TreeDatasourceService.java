@@ -122,6 +122,14 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       // We can't get the bob from DAL, it has not been saved yet
       JSONObject bobProperties = new JSONObject(parameters.get("jsonBob"));
       Entity theEntity = getEntity();
+      String bobId = bobProperties.getString("id");
+      String entityName = bobProperties.getString("_entity");
+      Entity entity = ModelProvider.getInstance().getEntity(entityName);
+      String nodeDeletionPolicy = this.getNodeDeletionPolicy(entity);
+      if ("DNAIHC".equals(nodeDeletionPolicy) && this.nodeHasChildren(entity, bobId, null)) {
+        // Handle the deletion policy "Do Not Allow If Has Children" if it applies to this entity
+        throw new OBException(OBMessageUtils.messageBD("CannotDeleteNodeBecauseChildren"));
+      }
       if (!hasAccess(theEntity, null, false)) {
         throw new OBException(OBMessageUtils.messageBD("AccessTableNoView"));
       }
@@ -141,6 +149,16 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    * deletion of a node in a tree table
    */
   protected abstract void deleteNode(JSONObject bobProperties);
+
+  /**
+   * Classes that extend TreeDatasourceService this method must implement this method to handle the
+   * check if a node has children in a tree table
+   */
+  protected boolean nodeHasChildren(Entity entity, String nodeId, String hqlWhereClause) {
+    // By default it returns true, so if the 'Don't allow to delete node if they have children'
+    // delete policy is selected, a node will be deletable only if this method is overwritten
+    return true;
+  }
 
   /**
    * Fetches some tree nodes Two operation modes:
@@ -417,6 +435,32 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       hasAccessToTable = qWindowAccess.count() > 0;
     }
     return hasAccessToTable;
+  }
+
+  /**
+   * Obtains the value of the node deletion policy for a particular tree based on the entity
+   * 
+   * @param entity
+   *          Entity whose accessibility is to be determined
+   * @return the value of the node deletion policy
+   */
+  private String getNodeDeletionPolicy(Entity entity) {
+    try {
+      String tableTreeNodeDeletionPolicy = "";
+
+      Table table = OBDal.getInstance().get(Table.class, entity.getTableId());
+      List<TableTree> tableTreeList = table.getADTableTreeList();
+      if (tableTreeList.size() == 0) {
+        throw new OBException("Error while determining the node deletion policy");
+      }
+
+      TableTree tableTree = tableTreeList.get(0);
+      tableTreeNodeDeletionPolicy = tableTree.getNodeDeletionPolicy();
+
+      return tableTreeNodeDeletionPolicy;
+    } catch (Exception e) {
+      throw new OBException("Error while determining the node deletion policy");
+    }
   }
 
   /**

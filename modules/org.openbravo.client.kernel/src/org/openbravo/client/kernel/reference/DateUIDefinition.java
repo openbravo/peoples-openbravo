@@ -25,7 +25,9 @@ import java.util.Date;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.application.Parameter;
+import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.model.ad.ui.Field;
 
@@ -77,10 +79,17 @@ public class DateUIDefinition extends UIDefinition {
     try {
       JSONObject o = new JSONObject(
           fieldProperties != null && fieldProperties.length() > 0 ? fieldProperties : "{}");
-      o.put("width", "50%");
       if (field != null && field.getColumn() != null) {
-        final Long length = field.getColumn().getLength();
+        Long length = field.getColumn().getLength();
         if (length != null) {
+          final String dateTimeFormat = (String) OBPropertiesProvider.getInstance()
+              .getOpenbravoProperties().get(KernelConstants.DATETIME_FORMAT_PROPERTY);
+          if (length.equals(19L) && dateTimeFormat.endsWith(" a")) {
+            // If it is a DateTime (typical length of 19) and there is also the need to show the
+            // " AM" or " PM" text, three characters more need to be added, so the length should be
+            // increased by 3
+            length += 3L;
+          }
           o.put("length", length);
         }
       }

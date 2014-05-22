@@ -769,6 +769,11 @@ public class DefaultJsonDataService implements JsonDataService {
   protected String doPostAction(Map<String, String> parameters, String content,
       DataSourceAction action, String originalObject) {
 
+    // Clear session to prevent slow flush if a fetch is done
+    if (action.name().equals("FETCH")) {
+      OBDal.getInstance().getSession().clear();
+    }
+
     OBDal.getInstance().flush();
 
     try {

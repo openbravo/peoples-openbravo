@@ -717,9 +717,10 @@ isc.OBStandardWindow.addProperties({
         saveCallback;
 
     saveCallback = function (ok) {
+      var dirtyEditForm = me.getDirtyEditForm();
       if (!ok) {
-        if (me.getDirtyEditForm()) {
-          me.getDirtyEditForm().resetForm();
+        if (dirtyEditForm) {
+          dirtyEditForm.resetForm();
         }
         if (action) {
           OB.Utilities.callAction(action);
@@ -727,8 +728,21 @@ isc.OBStandardWindow.addProperties({
         return;
       }
 
+      // If me.getDirtyEditForm() is undefined -> only for new created records that have not been modified
+      // See issue https://issues.openbravo.com/view.php?id=26628
+      if (!dirtyEditForm) {
+        if (me.activeView && !me.activeView.isShowingForm) {
+          // Look if the record is new
+          if (me.activeView.viewGrid.getEditForm() && me.activeView.viewGrid.getEditForm().isNew) {
+            // Set a new dirtyEditForm
+            dirtyEditForm = me.activeView.viewGrid.getEditForm();
+          }
+        }
+      }
+
+
       // if not dirty or we know that the object has errors
-      if (!me.getDirtyEditForm() || (me.getDirtyEditForm() && !me.getDirtyEditForm().validateForm())) {
+      if (!dirtyEditForm || (dirtyEditForm && !dirtyEditForm.validateForm())) {
         // clean up before calling the action, as the action
         // can set dirty form again
         me.cleanUpAutoSaveProperties();
@@ -754,7 +768,7 @@ isc.OBStandardWindow.addProperties({
 
       me.isAutoSaving = true;
       me.forceDialogOnFailure = forceDialogOnFailure;
-      me.getDirtyEditForm().autoSave();
+      dirtyEditForm.autoSave();
     };
 
     if (this.getClass().autoSave && this.getClass().showAutoSaveConfirmation) {
