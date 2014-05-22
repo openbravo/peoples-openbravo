@@ -23,5 +23,7 @@ public class APRMConstants {
   public final static String PURCHASE_ORDER_WINDOW_ID = "181";
   public final static String SALES_INVOICE_WINDOW_ID = "167";
   public final static String PURCHASE_INVOICE_WINDOW_ID = "183";
+  public final static String PAYMENT_IN_WINDOW_ID = "E547CE89D4C04429B6340FFA44E70716";
+  public final static String PAYMENT_OUT_WINDOW_ID = "6F8F913FA60F4CBD93DC1D3AA696E76E";
 
 }

@@ -77,7 +77,6 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
 
   @Override
   String getDefaultOrderType(Map<String, String> requestMap) throws JSONException {
-    // Actual payment amount is the outstanding amount of the Sales Invoice
     JSONObject context = new JSONObject(requestMap.get("context"));
     return context.getString("inpcOrderId");
   }

@@ -64,7 +64,6 @@ public class PurchaseInvoiceAddPaymentDefaultValues extends AddPaymentDefaultVal
 
   @Override
   String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
-    // Actual payment amount is the outstanding amount of the Sales Invoice
     JSONObject context = new JSONObject(requestMap.get("context"));
     return context.getString("inpcInvoiceId");
   }

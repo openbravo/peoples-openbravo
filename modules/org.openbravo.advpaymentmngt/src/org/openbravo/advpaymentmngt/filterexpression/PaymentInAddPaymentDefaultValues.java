@@ -18,28 +18,35 @@
  */
 package org.openbravo.advpaymentmngt.filterexpression;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
-@ComponentProvider.Qualifier(APRMConstants.SALES_INVOICE_WINDOW_ID)
-public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValuesHandler {
+@ComponentProvider.Qualifier(APRMConstants.PAYMENT_IN_WINDOW_ID)
+public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHandler {
 
   @Override
-  public String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
-    // Expected amount is the outstanding amount of the Sales Invoice
+  String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
+    // Expected amount is the amount pending to pay on the Sales Order
     JSONObject context = new JSONObject(requestMap.get("context"));
-    return context.getString("inpoutstandingamt");
+    String strFinPaymentId = context.getString("inpfinPaymentId");
+    BigDecimal pendingAmt = getPaymentAmt(strFinPaymentId);
+    return pendingAmt.toPlainString();
   }
 
   @Override
   String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
-    // Actual payment amount is the outstanding amount of the Sales Invoice
+    // Expected amount is the amount pending to pay on the Sales Order
     JSONObject context = new JSONObject(requestMap.get("context"));
-    return context.getString("inpoutstandingamt");
+    String strFinPaymentId = context.getString("inpfinPaymentId");
+    BigDecimal pendingAmt = getPaymentAmt(strFinPaymentId);
+    return pendingAmt.toPlainString();
   }
 
   @Override
@@ -52,9 +59,16 @@ public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValues
     return "I";
   }
 
+  private BigDecimal getPaymentAmt(String strFinPaymentId) {
+    // TODO check multicurrency
+    FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strFinPaymentId);
+    return payment.getAmount();
+  }
+
   @Override
   String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException {
-    return "";
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    return context.getString("inpfinPaymentId");
   }
 
   @Override
@@ -64,8 +78,7 @@ public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValues
 
   @Override
   String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
-    JSONObject context = new JSONObject(requestMap.get("context"));
-    return context.getString("inpcInvoiceId");
+    return "";
   }
 
 }
