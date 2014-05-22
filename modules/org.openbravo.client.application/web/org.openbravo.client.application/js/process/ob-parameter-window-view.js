@@ -389,13 +389,6 @@ isc.OBParameterWindowView.addProperties({
         return validForm;
       }
     }
-
-    if (this.grid) {
-      viewGrid = this.grid.viewGrid;
-
-      viewGrid.endEditing();
-      return !viewGrid.hasErrors();
-    }
     return true;
   },
 

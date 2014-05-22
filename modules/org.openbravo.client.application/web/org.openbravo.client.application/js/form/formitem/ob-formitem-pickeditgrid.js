@@ -26,6 +26,15 @@ isc.OBPickEditGridItem.addProperties({
   colSpan: 4,
   defaultFilter: null,
 
+  // validator at item level, check grid has no errors
+  validators: {
+    condition: function (item) {
+      var viewGrid = item.canvas.viewGrid;
+      viewGrid.endEditing();
+      return !viewGrid.hasErrors();
+    }
+  },
+
   init: function () {
     var me = this,
         pickAndExecuteViewProperties = {};
