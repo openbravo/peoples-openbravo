@@ -42,6 +42,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -147,22 +148,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       addSelectedPSDs(payment, jsonparams, pdToRemove);
       addGLItems(payment, jsonparams);
 
-      for (String pdId : pdToRemove) {
-        FIN_PaymentDetail pd = OBDal.getInstance().get(FIN_PaymentDetail.class, pdId);
-        boolean hasPSD = pd.getFINPaymentScheduleDetailList().size() > 0;
-        if (hasPSD) {
-          FIN_PaymentScheduleDetail psd = OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
-              pd.getFINPaymentScheduleDetailList().get(0).getId());
-          pd.getFINPaymentScheduleDetailList().remove(psd);
-          OBDal.getInstance().save(pd);
-          OBDal.getInstance().remove(psd);
-        }
-        payment.getFINPaymentDetailList().remove(pd);
-        OBDal.getInstance().save(payment);
-        OBDal.getInstance().remove(pd);
-        OBDal.getInstance().flush();
-        OBDal.getInstance().refresh(payment);
-      }
+      removeNotSelectedPaymentDetails(payment, pdToRemove);
 
       if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
           || strAction.equals("PPW")) {
@@ -417,6 +403,52 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           OBDal.getInstance().get(GLItem.class, strGLItemId), businessPartnerGLItem, product,
           project, campaign, activity, null, costCenter, user1, user2);
     }
+  }
+
+  private void removeNotSelectedPaymentDetails(FIN_Payment payment, List<String> pdToRemove) {
+
+    for (String pdId : pdToRemove) {
+      FIN_PaymentDetail pd = OBDal.getInstance().get(FIN_PaymentDetail.class, pdId);
+
+      List<String> pdsIds = OBDao.getIDListFromOBObject(pd.getFINPaymentScheduleDetailList());
+      for (String strPDSId : pdsIds) {
+        FIN_PaymentScheduleDetail psd = OBDal.getInstance().get(FIN_PaymentScheduleDetail.class,
+            strPDSId);
+
+        if (pd.getGLItem() == null) {
+          List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment.getOutstandingPSDs(psd);
+          if (outStandingPSDs.size() == 0) {
+            FIN_PaymentScheduleDetail newOutstanding = (FIN_PaymentScheduleDetail) DalUtil.copy(
+                psd, false);
+            newOutstanding.setPaymentDetails(null);
+            newOutstanding.setWriteoffAmount(BigDecimal.ZERO);
+            OBDal.getInstance().save(newOutstanding);
+          } else {
+            FIN_PaymentScheduleDetail outStandingPSD = outStandingPSDs.get(0);
+            // First make sure outstanding amount is not equal zero
+            if (outStandingPSD.getAmount().add(psd.getAmount()).signum() == 0) {
+              OBDal.getInstance().remove(outStandingPSD);
+            } else {
+              // update existing PD with difference
+              outStandingPSD.setAmount(outStandingPSD.getAmount().add(psd.getAmount()));
+              outStandingPSD.setDoubtfulDebtAmount(outStandingPSD.getDoubtfulDebtAmount().add(
+                  psd.getDoubtfulDebtAmount()));
+              OBDal.getInstance().save(outStandingPSD);
+            }
+          }
+        }
+
+        pd.getFINPaymentScheduleDetailList().remove(psd);
+        OBDal.getInstance().save(pd);
+        OBDal.getInstance().remove(psd);
+      }
+      payment.getFINPaymentDetailList().remove(pd);
+      OBDal.getInstance().save(payment);
+      OBDal.getInstance().remove(pd);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().refresh(payment);
+    }
+
   }
 
   private OBError processPayment(FIN_Payment payment, String strAction, String strDifferenceAction,
