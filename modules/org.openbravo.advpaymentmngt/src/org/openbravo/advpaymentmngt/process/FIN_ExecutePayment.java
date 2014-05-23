@@ -198,6 +198,7 @@ public class FIN_ExecutePayment {
                     }
                   }
                 }
+                break;
               }
 
             } finally {
@@ -212,6 +213,7 @@ public class FIN_ExecutePayment {
                   updatePaymentAmounts(paymentRunPayment.getPayment());
                 }
               }
+              break;
             }
           } finally {
             OBContext.restorePreviousMode();
