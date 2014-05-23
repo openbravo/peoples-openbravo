@@ -194,7 +194,7 @@ OB.APRM.AddPayment.updateTotal = function (form) {
   totalAmt = new BigDecimal(String(invOrdTotalItem.getValue() || 0));
   totalAmt = totalAmt.add(new BigDecimal(String(glItemsTotalItem.getValue() || 0)));
 
-  totalItem.setValue(totalAmt);
+  totalItem.setValue(totalAmt.toString());
 };
 
 OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
