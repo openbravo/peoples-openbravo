@@ -33,7 +33,7 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
 
   @Override
   String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
-    // Expected amount is the amount pending to pay on the Sales Order
+    // Expected amount is the amount on the editing payment
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strFinPaymentId = context.getString("inpfinPaymentId");
     BigDecimal pendingAmt = getPaymentAmt(strFinPaymentId);
@@ -42,7 +42,7 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
 
   @Override
   String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
-    // Expected amount is the amount pending to pay on the Sales Order
+    // Actual amount is the amount on the editing payment
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strFinPaymentId = context.getString("inpfinPaymentId");
     BigDecimal pendingAmt = getPaymentAmt(strFinPaymentId);

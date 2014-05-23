@@ -43,7 +43,7 @@ public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
 
   @Override
   String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
-    // Expected amount is the amount pending to pay on the Sales Order
+    // Actual amount is the amount pending to pay on the Sales Order
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strOrderId = context.getString("inpcOrderId");
     BigDecimal pendingAmt = getPendingAmt(strOrderId);
@@ -83,7 +83,6 @@ public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
 
   @Override
   String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
-    // TODO Auto-generated method stub
     return "";
   }
 
