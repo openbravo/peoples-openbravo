@@ -320,6 +320,36 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     return responseData;
   }
 
+  @Override
+  /**
+   * Check if a node has children
+   * 
+   * @param entity
+   *          the entity the node belongs to
+   * @param nodeId
+   *          the id (database record id) of the node to be checked
+   * @param hqlWhereClause
+   *          the where clause to be applied to the children
+   * @return
+   */
+  protected boolean nodeHasChildren(Entity entity, String nodeId, String hqlWhereClause) {
+    BaseOBObject bob = OBDal.getInstance().get(entity.getName(), nodeId);
+
+    Table table = OBDal.getInstance().get(Table.class, entity.getTableId());
+    List<TableTree> tableTreeList = table.getADTableTreeList();
+    if (tableTreeList.size() == 0) {
+      throw new OBException("Error while determining if the node has children");
+    }
+    TableTree tableTree = tableTreeList.get(0);
+    Property linkToParentProperty = getLinkToParentProperty(tableTree);
+    Property nodeIdProperty = getNodeIdProperty(tableTree);
+
+    boolean nodeHasChilden = nodeHasChildren(entity, linkToParentProperty, nodeIdProperty, bob,
+        hqlWhereClause);
+
+    return nodeHasChilden;
+  }
+
   /**
    * Check if a node has children that should be shown in the target treegrid
    * 

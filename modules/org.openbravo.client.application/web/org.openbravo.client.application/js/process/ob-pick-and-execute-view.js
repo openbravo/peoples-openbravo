@@ -46,6 +46,8 @@ isc.OBPickAndExecuteView.addProperties({
 
   gridFields: [],
 
+  messageBar: null,
+
   initWidget: function () {
     var newButton, i, view = this;
 
@@ -58,20 +60,26 @@ isc.OBPickAndExecuteView.addProperties({
     if (this.viewProperties.allowDelete) {
       this._addDeleteField();
     }
+    this.messageBar = isc.OBMessageBar.create({
+      visibility: 'hidden',
+      view: this
+    });
+    this.addMember(this.messageBar);
 
-    this.dataSource = this.viewProperties.dataSource;
-    this.dataSource.view = this;
+    this.dataSourceProperties = this.viewProperties.dataSourceProperties;
+    this.dataSourceProperties.view = this;
     this.title = this.windowTitle;
 
     // the datasource object is defined on viewProperties, do not destroy it
-    this.dataSource.potentiallyShared = true;
+    this.dataSourceProperties.potentiallyShared = true;
 
     this.viewGrid = isc.OBPickAndExecuteGrid.create({
       view: this.view,
+      contentView: this,
       fields: this.gridFields,
       height: '*',
       cellHeight: OB.Styles.Process.PickAndExecute.gridCellHeight,
-      dataSource: this.dataSource,
+      dataSource: OB.Datasource.create(this.dataSourceProperties),
       gridProperties: this.viewProperties.gridProperties,
       selectionAppearance: (this.viewProperties.showSelect ? 'checkbox' : 'rowStyle'),
       selectionType: 'simple',
@@ -79,7 +87,9 @@ isc.OBPickAndExecuteView.addProperties({
       saveLocally: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
       autoSaveEdits: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
       neverValidate: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
-      showGridSummary: this.showGridSummary
+      showGridSummary: this.showGridSummary,
+      viewProperties: this.viewProperties,
+      parameterName: this.parameterName
     });
 
 
@@ -98,7 +108,7 @@ isc.OBPickAndExecuteView.addProperties({
     }
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.addnew', this.addNewButton);
 
-    this.members = [this.viewGrid, isc.HLayout.create({
+    this.members = [this.messageBar, this.viewGrid, isc.HLayout.create({
       height: 1,
       overflow: 'visible',
       align: OB.Styles.Process.PickAndExecute.addNewButtonAlign,
@@ -110,13 +120,6 @@ isc.OBPickAndExecuteView.addProperties({
     this.Super('initWidget', arguments);
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.popup', this);
 
-    if (this.viewGrid.saveLocally) {
-      // Using "disconnected" data to avoid update/remove/add operations to the back-end
-      // http://www.smartclient.com/docs/8.1/a/b/c/go.html#method..DataSource.fetchData
-      this.dataSource.fetchData(this.viewGrid.getFetchRequestParams(), this.viewGrid.ID + ".setData(data)");
-    } else {
-      this.viewGrid.fetchData();
-    }
   },
 
   prepareGridFields: function (fields) {
@@ -209,6 +212,24 @@ isc.OBPickAndExecuteView.addProperties({
         return this.formatCellValue(arguments);
       }
     });
+  },
+
+  getContextInfo: function () {
+    var contextInfo = {},
+        record, i, fields, field;
+    if (!this.viewGrid.getSelectedRecords() || this.viewGrid.getSelectedRecords().length !== 1) {
+      return contextInfo;
+    }
+    record = this.viewGrid.getSelectedRecord();
+    for (i = 0; i < this.viewGrid.getFields().length; i++) {
+      field = this.viewGrid.getField(i);
+      if (field.inpColumnName) {
+        contextInfo[field.inpColumnName] = record[field.name];
+      }
+    }
+    contextInfo.inpwindowId = this.viewProperties.standardProperties.inpwindowId;
+    contextInfo.inpTabId = this.viewProperties.standardProperties.inpTabId;
+    return contextInfo;
   },
 
   // dummy required by OBStandardView.prepareGridFields

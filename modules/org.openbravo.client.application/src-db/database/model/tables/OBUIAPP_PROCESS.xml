@@ -77,6 +77,18 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="CLIENTSIDEVALIDATION" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISGRIDLEGACY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
+      <column name="ON_LOAD_FUNCTION" primaryKey="false" required="false" type="VARCHAR" size="200" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_PROC_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -86,6 +98,7 @@
       <foreign-key foreignTable="AD_ORG" name="OBUIAPP_PROC_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="OBUIAPP_PROC_GRIDLEGACY_CHK"><![CDATA[ISGRIDLEGACY IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PROC_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PROC_ISBACKGROUND_CHK"><![CDATA[ISBACKGROUND IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PROC_MULTI_CHK"><![CDATA[ISMULTIRECORD IN ('Y', 'N')]]></check>

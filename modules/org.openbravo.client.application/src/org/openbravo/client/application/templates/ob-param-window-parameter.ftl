@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,10 +22,14 @@
 
 <#macro createParameter param>
 {
+  
+  <#if param.grid>
+    type:'OBPickEditGridItem',      
+  <#else>
     type: '${param.type}',
-    title: '${param.title?js_string}',
-    name: '${param.name?js_string}',
-    
+  </#if>
+  title: '${param.title?js_string}',
+  name: '${param.name?js_string}',
   <#if param.type != "OBSectionItem">
     paramId: '${param.id}',
     width: '${param.width?js_string}',
@@ -39,13 +43,16 @@
     <#if param.redrawOnChange>
       redrawOnChange: true,
     </#if>
+    <#if param.onChangeFunction?? && param.onChangeFunction != "" > <#-- TODO: Check why "param.onChangeFunction??" is needed -->
+        onChangeFunction: ${param.onChangeFunction?js_string},
+    </#if>
     <#if param.showIf != "" >
       showIf: function(item, value, form, currentValues, context) {
         return (${param.showIf});
       },
     </#if>
     <#if param.readOnlyIf != "" >
-      readOnlyIf: function(currentValues) {
+      readOnlyIf: function(currentValues,context) {
         return (${param.readOnlyIf});
       },
     </#if>
@@ -63,5 +70,12 @@
     </#list>
     ]
   </#if>
+  <#if param.grid> 
+    , displayedRowsNumber: ${param.numberOfDisplayedRows}
+    , showTitle: ${param.showTitle?string}
+    ,viewProperties: {
+    ${param.tabView}
+    }
+   </#if>
 }
 </#macro>

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -155,6 +155,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-characteristics.js",
         true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-pickeditgrid.js", true));
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/toolbar/ob-toolbar.js", false));
@@ -286,6 +288,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/process/ob-pick-and-execute-grid.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/process/ob-pick-and-execute-view.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/process/ob-parameter-window-form.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/process/ob-parameter-window-view.js", false));
 

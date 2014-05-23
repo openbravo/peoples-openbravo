@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,7 +33,10 @@ although the same is done by the compressor
 </#if>
 
 <#macro generateDataSource data>
-    OB.Datasource.create({
+  <#if data.includeCreationCode>
+    OB.Datasource.create(
+  </#if>
+    {
         createClassName: '${data.dataSourceClassName?js_string}',
 <#if data.getParameter("_onlyGenerateCreateStatement") == "" || data.getParameter("_create") != "">
         ID:'${data.id}',
@@ -52,7 +55,10 @@ although the same is done by the compressor
 <#list data.dataSourceProperties as property>
     <@generateField property=property /><#if property_has_next>,</#if>
 </#list>
-    ]})
+    ]}
+  <#if data.includeCreationCode>
+    )
+  </#if>    
 </#macro>
 
 <#macro generateField property>

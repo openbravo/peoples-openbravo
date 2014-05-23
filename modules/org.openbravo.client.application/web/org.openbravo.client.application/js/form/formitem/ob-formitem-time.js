@@ -30,12 +30,7 @@ isc.OBTimeItem.addProperties({
   operator: 'equals',
   validateOnExit: true,
   showHint: false,
-  timeFormatter: 'to24HourTime',
-  displayFormat: 'to24HourTime',
-  short24TimeFormat: 'HH:MM:SS',
-  shortTimeFormat: 'HH:MM:SS',
-  long24TimeFormat: 'HH:MM:SS',
-  longTimeFormat: 'HH:MM:SS',
+  timeFormatter: isc.Time.displayFormat,
 
   mapValueToDisplay: function (value) {
     var newValue = value;
@@ -146,7 +141,6 @@ isc.OBTimeItem.addProperties({
   init: function () {
     var oldShowHint, hint, formatDefinition = OB.Utilities.getTimeFormatDefinition();
 
-    this.timeFormatter = formatDefinition.timeFormatter;
     this.timeFormat = formatDefinition.timeFormat;
 
     this.Super('init', arguments);
@@ -573,7 +567,7 @@ isc.OBTimeItemGrid.addProperties({
       this.precission = 'hour';
     }
 
-    if (this.timeFormat.toUpperCase().indexOf('AM') !== -1 || this.timeFormat.toUpperCase().indexOf('PM') !== -1) {
+    if (this.timeFormat.toUpperCase().indexOf(isc.Time.AMIndicator) !== -1 || this.timeFormat.toUpperCase().indexOf(isc.Time.PMIndicator) !== -1) {
       this.is24hTime = false;
     }
 

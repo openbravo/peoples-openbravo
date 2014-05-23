@@ -47,9 +47,14 @@ isc.OBPickAndExecuteGrid.addProperties({
   autoFitFieldsFillViewport: true,
   confirmDiscardEdits: false,
   animateRemoveRecord: false,
+  // this attribute helps to set an attribute only if the edit form has not been initialized
+  editFormInitialized: false,
   removeFieldProperties: {
     width: 32
   },
+
+  // prevents additional requests when loading data
+  drawAllMaxCells: 0,
 
   //The Cell should be validated each time the focus is changed.
   validateByCell: true,
@@ -62,10 +67,22 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   initWidget: function () {
     var i, len = this.fields.length,
-        theGrid;
+        theGrid, me = this,
+        filterableProperties, canFilter;
 
     this.selectedIds = [];
     this.deselectedIds = [];
+
+    // the getValuesAsCriteria function of the edit form of the filter editor should always be called with 
+    // advanced = true to guarantee that the returned criteria will have the proper format
+    this.filterEditorDefaults.editFormDefaults = this.filterEditorDefaults.editFormDefaults || {};
+    this.filterEditorDefaults.editFormDefaults.originalGetValuesAsCriteria = isc.DynamicForm.getPrototype().getValuesAsCriteria;
+    this.filterEditorDefaults.editFormDefaults.getValuesAsCriteria = function (advanced, textMatchStyle, returnNulls) {
+      var useAdvancedCriteria = true;
+      return this.originalGetValuesAsCriteria(useAdvancedCriteria, textMatchStyle, returnNulls);
+    };
+
+    this.filterEditorProperties = isc.shallowClone(this.filterEditorProperties);
 
     // the origSetValuesAsCriteria member is added as 'class' level
     // we only need to do it once
@@ -101,16 +118,22 @@ isc.OBPickAndExecuteGrid.addProperties({
     // useful when working with custom field validators
     for (i = 0; i < len; i++) {
       this.fields[i].grid = this;
+      if (this.fields[i].onChangeFunction) {
+        // the default
+        this.fields[i].onChangeFunction.sort = 50;
+
+        OB.OnChangeRegistry.register(this.ID, this.parameterName + OB.Constants.FIELDSEPARATOR + this.fields[i].name, this.fields[i].onChangeFunction, 'default');
+      }
     }
+    this.setFields(this.fields);
+    // Display logic for grid column
+    this.evaluateDisplayLogicForGridColumns();
 
     // required to show the funnel icon and to work
     this.filterClause = this.gridProperties.filterClause;
     this.sqlFilterClause = this.gridProperties.sqlFilterClause;
     this.lazyFiltering = this.gridProperties.lazyFiltering;
-    if ((this.filterClause || this.sqlFilterClause) && this.gridProperties.filterName) {
-      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + this.gridProperties.filterName + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div></div>', ' ');
-      this.view.messageBar.hasFilterMessage = true;
-    }
+    this.filterName = this.gridProperties.filterName;
 
     this.orderByClause = this.gridProperties.orderByClause;
     this.sqlOrderByClause = this.gridProperties.sqlOrderByClause;
@@ -131,17 +154,57 @@ isc.OBPickAndExecuteGrid.addProperties({
       view: this.view.buttonOwnerView
     };
 
-    // set properties defined for the grid
-    theGrid = this.view.viewProperties.fields.find(true, 'isGrid');
-    if (theGrid) {
-      this.viewProperties = theGrid.viewProperties;
-    } else {
-      window.warn('grid fiel not found!');
-    }
-
     this.autoFitExpandField = this.getLongestFieldName();
 
+
+    this.dataSource.transformRequest = function (dsRequest) {
+      dsRequest.params = dsRequest.params || {};
+      if (me.view && me.view.theForm) {
+        // include in the request the values of the parameters of the parameter window
+        isc.addProperties(dsRequest.params, me.view.theForm.getValues());
+      }
+      return this.Super('transformRequest', arguments);
+    };
+    filterableProperties = this.getFields().findAll('canFilter', true);
+    if (this.filterClause) {
+      // if there is a filter clause always show the filterEditor, otherwise there would be no funnel
+      // icon and it would not be possible to clear the filter clause
+      canFilter = true;
+    } else {
+      canFilter = false;
+      if (filterableProperties) {
+        for (i = 0; i < filterableProperties.length; i++) {
+          // when looking for filterable columns do not take into account the columns whose name starts with '_' (checkbox, delete button, etc) 
+          if (!filterableProperties[i].name.startsWith('_')) {
+            canFilter = true;
+            break;
+          }
+        }
+      }
+    }
+    // If there are no filterable columns, hide the filter editor
+    if (!canFilter) {
+      this.filterEditorProperties.visibility = 'hidden';
+    }
     this.Super('initWidget', arguments);
+  },
+
+  evaluateDisplayLogicForGridColumns: function () {
+    var currentValues = (this.contentView.view.theForm && this.contentView.view.theForm.getValues()) || {},
+        contextInfo = (this.view.buttonOwnerView && this.view.buttonOwnerView.getContextInfo(false, true, true, true)) || {},
+        i, fieldVisibility;
+    // TODO: parse currentValues properly 
+    isc.addProperties(contextInfo, currentValues);
+    for (i = 0; i < this.completeFields.length; i++) {
+      if (this.completeFields[i].displayLogicGrid && isc.isA.Function(this.completeFields[i].displayLogicGrid)) {
+        fieldVisibility = this.completeFields[i].displayLogicGrid(currentValues, contextInfo);
+        if (fieldVisibility) {
+          this.showFields(this.completeFields[i].name);
+        } else {
+          this.hideFields(this.completeFields[i].name);
+        }
+      }
+    }
   },
 
   getLongestFieldName: function () {
@@ -247,9 +310,15 @@ isc.OBPickAndExecuteGrid.addProperties({
         colNum = this.getEditCol(),
         editField = this.getEditField(colNum),
         undef;
+
+    // Execute onChangeFunctions if they exist
+    if (this && OB.OnChangeRegistry.hasOnChange(this.view.viewId, editField)) {
+      OB.OnChangeRegistry.call(this.ID, editField, this.view, this.view.theForm, this);
+    }
+
     if (editField.required) {
       if (newValue === null || newValue === undef) {
-        this.setFieldError(rowNum, editField.name, "Invalid Value");
+        this.setFieldError(rowNum, editField.name, 'Invalid Value');
       } else {
         this.clearFieldError(rowNum, editField.name);
       }
@@ -267,7 +336,9 @@ isc.OBPickAndExecuteGrid.addProperties({
       return;
     }
     form = this.getEditForm();
-    this.viewProperties.handleReadOnlyLogic(form.getValues(), this.getContextInfo(), form);
+    if (form) {
+      this.viewProperties.handleReadOnlyLogic(form.getValues(), this.getContextInfo(), form);
+    }
   },
 
   handleFilterEditorSubmit: function (criteria, context) {
@@ -392,20 +463,6 @@ isc.OBPickAndExecuteGrid.addProperties({
     return this.Super('recordClick', arguments);
   },
 
-
-  // Dummy "createRecordComponent" to fix issue: https://issues.openbravo.com/view.php?id=19879
-  // It seems that if it is not present, Smartclient doesn't perform well the maths to calculate the editing fields width
-  createRecordComponent: function (record, colNum) {
-    var layout = null;
-    if (colNum === 0) {
-      layout = isc.Layout.create({
-        width: 0,
-        height: 0
-      });
-    }
-    return layout;
-  },
-
   getOrgParameter: function () {
     var view = this.view && this.view.buttonOwnerView,
         context, i;
@@ -430,6 +487,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   clearFilter: function () {
     this.filterClause = null;
     this._cleaningFilter = true;
+    this.contentView.messageBar.hide();
     this.Super('clearFilter', arguments);
     delete this._cleaningFilter;
   },
@@ -541,6 +599,9 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     for (prop in columnValues) {
       if (columnValues.hasOwnProperty(prop)) {
+        if (columnValues[prop] && columnValues[prop].entries && columnValues[prop].entries.length === 0) {
+          delete columnValues[prop].entries;
+        }
         grid.processColumnValue(rowNum, prop, columnValues[prop]);
       }
     }
@@ -604,6 +665,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   showInlineEditor: function (rowNum, colNum, newCell, newRow, suppressFocus) {
+    var editForm, items, i, updatedBlur;
     // retrieve the initial values only if a new row has been selected
     // see issue https://issues.openbravo.com/view.php?id=20653
     if (newRow) {
@@ -614,6 +676,28 @@ isc.OBPickAndExecuteGrid.addProperties({
       }
     }
     this.Super('showInlineEditor', arguments);
+
+    // update the blur function of the formitems, so that the OnChangeRegistry functions are called
+    // when the item loses the focus
+    if (!this.editFormInitialized) {
+      // the editForm is created the first time the inline editor is shown
+      this.editFormInitialized = true;
+      editForm = this.getEditForm();
+      if (editForm) {
+        items = editForm.getItems();
+        updatedBlur = function (form, item) {
+          this.original_blur(form, item);
+          // Execute onChangeFunctions if they exist
+          if (this && OB.OnChangeRegistry.hasOnChange(form.grid.ID, item)) {
+            OB.OnChangeRegistry.call(form.grid.ID, item, form.grid.view, form.grid.view.theForm, form.grid);
+          }
+        };
+        for (i = 0; i < items.length; i++) {
+          items[i].original_blur = items[i].blur;
+          items[i].blur = updatedBlur;
+        }
+      }
+    }
   },
 
   hideInlineEditor: function (focusInBody, suppressCMHide) {
@@ -623,7 +707,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   validateRows: function () {
-    var i, row, field, errors, editRowIndexes, editRowIDs, rowIndexID;
+    var i, row, field, errors, editRowIndexes, editRowIDs, rowIndexID, data = this.data.allRows || this.data.localData;
 
     if (!this.neverValidate) {
       return;
@@ -638,8 +722,8 @@ isc.OBPickAndExecuteGrid.addProperties({
       if (!field.validationFn) {
         continue;
       }
-      for (row = 0; row < this.data.length; row++) {
-        errors = this.validateCellValue(row, i, this.data[row][field.name]);
+      for (row = 0; row < data.length; row++) {
+        errors = this.validateCellValue(row, i, data[row][field.name]);
         if (!errors || isc.isA.emptyArray(errors)) {
           if (editRowIndexes.indexOf(row) !== -1) {
             rowIndexID = editRowIDs[editRowIndexes.indexOf(row)];
@@ -671,5 +755,32 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('removeRecord', arguments);
 
     this.validateRows();
+  },
+
+  destroy: function () {
+    if (this.dataSource) {
+      this.dataSource.destroy();
+    }
+    this.Super('destroy', arguments);
+  },
+
+  checkShowFilterFunnelIcon: function (criteria) {
+    this.Super('checkShowFilterFunnelIcon', [criteria, this.contentView.messageBar]);
+  },
+
+  removeRecordClick: function (rowNum, colNum) {
+    this.Super('removeRecordClick', arguments);
+    // prevents the deleted line from being partially displayed
+    this.markForRedraw();
+  },
+
+  getMinFieldWidth: function (field, ignoreFieldWidth) {
+    // items like _checkbox, _pin and _delete can have a width smaller than the min field width defined for the grid
+    if (field && field.name && field.name.startsWith('_')) {
+      return field.width;
+    } else {
+      this.Super('getMinFieldWidth', arguments);
+    }
   }
+
 });

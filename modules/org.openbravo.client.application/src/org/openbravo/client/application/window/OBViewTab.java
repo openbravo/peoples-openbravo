@@ -61,6 +61,7 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TabTrl;
+import org.openbravo.service.datasource.DataSourceComponent;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -129,7 +130,16 @@ public class OBViewTab extends BaseTemplateComponent {
     if (sb.length() > 0) {
       dsParameters.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, sb.toString());
     }
-    final Component component = dsComponentProvider.getComponent(dsId, dsParameters);
+    // If the tab is based on a hql table, then the tableId must be passed to the datasource so that
+    // it can build the datasource properties based on the columns of the table
+    if (ApplicationConstants.HQLBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
+      dsParameters.put("tableId", tab.getTable().getId());
+    }
+    DataSourceComponent component = (DataSourceComponent) dsComponentProvider.getComponent(dsId,
+        dsParameters);
+    if ("OBUIAPP_PickAndExecute".equals(tab.getWindow().getWindowType())) {
+      component.setIncludeCreationCode(false);
+    }
     return component.generate();
   }
 
@@ -467,10 +477,13 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public String getDataSourceId() {
     String dataSourceId = null;
-    if (ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
+    String dataOriginType = tab.getTable().getDataOriginType();
+    if (ApplicationConstants.TABLEBASEDTABLE.equals(dataOriginType)) {
       dataSourceId = tab.getTable().getName();
-    } else {
+    } else if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(dataOriginType)) {
       dataSourceId = tab.getTable().getObserdsDatasource().getId();
+    } else if (ApplicationConstants.HQLBASEDTABLE.equals(dataOriginType)) {
+      dataSourceId = ApplicationConstants.HQL_TABLE_DATASOURCE_ID;
     }
     return dataSourceId;
   }
@@ -606,6 +619,24 @@ public class OBViewTab extends BaseTemplateComponent {
       boolean inpColumnNames = true;
       final DynamicExpressionParser parser = new DynamicExpressionParser(tab.getDisplayLogic(),
           tab, inpColumnNames);
+      jsExpression = parser.getJSExpression();
+      // Retrieves the preference attributes used in the display logic of the tab
+      setPreferenceAttributesFromParserResult(parser, this.getWindowId());
+    }
+    if (jsExpression != null) {
+      return jsExpression;
+    } else {
+      return "";
+    }
+  }
+
+  public String getDefaultTreeViewLogicIf() {
+
+    String jsExpression = null;
+    if (tab.getDefaultTreeViewLogic() != null && !tab.getDefaultTreeViewLogic().isEmpty()) {
+      boolean inpColumnNames = true;
+      final DynamicExpressionParser parser = new DynamicExpressionParser(
+          tab.getDefaultTreeViewLogic(), tab, inpColumnNames);
       jsExpression = parser.getJSExpression();
       // Retrieves the preference attributes used in the display logic of the tab
       setPreferenceAttributesFromParserResult(parser, this.getWindowId());

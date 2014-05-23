@@ -109,6 +109,11 @@ the outputted value is already covered by a default.
         <#if field.validationFunction != "">
             validationFn: ${field.validationFunction},
         </#if>
+        <#if field.displayLogicGrid != "">
+          displayLogicGrid: function(currentValues, context){
+            return (${field.displayLogicGrid});
+          },
+        </#if>         
         <#if field.showSummary>
             showGridSummary: true,
             showGroupSummary: true,

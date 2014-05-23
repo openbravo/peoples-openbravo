@@ -181,6 +181,18 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="ISREADONLYTREE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="ISSHOWTREENODEICONS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
+      <column name="DEFAULTTREEVIEWLOGIC" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_AD_TAB">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
@@ -238,6 +250,8 @@
       <check name="AD_TAB_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_TAB_ISINFOTAB_CHK"><![CDATA[ISINFOTAB IN ('Y', 'N')]]></check>
       <check name="AD_TAB_ISREADONLY_CHK"><![CDATA[ISREADONLY IN ('Y', 'N')]]></check>
+      <check name="AD_TAB_ISREADONLYTREE_CHK"><![CDATA[ISREADONLYTREE IN ('Y', 'N')]]></check>
+      <check name="AD_TAB_ISSHOWTREENODEICONS_CHK"><![CDATA[ISSHOWTREENODEICONS IN ('Y', 'N')]]></check>
       <check name="AD_TAB_ISSINGLEROW_CHK"><![CDATA[ISSINGLEROW IN ('Y', 'N')]]></check>
       <check name="AD_TAB_ISTRANSLATIONTAB_CHK"><![CDATA[ISTRANSLATIONTAB IN ('Y', 'N')]]></check>
       <check name="AD_TAB_NAME_CHK"><![CDATA[INSTR(NAME, TO_CHAR('_')) = 0]]></check>

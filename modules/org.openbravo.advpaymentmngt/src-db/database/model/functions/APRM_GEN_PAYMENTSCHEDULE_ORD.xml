@@ -39,6 +39,7 @@ v_bpartner_id c_order.c_bpartner_id%TYPE;
 v_docSubType c_doctype.docsubtypeso%TYPE;
 v_PaymentPriority VARCHAR(32);
 v_count NUMBER;
+v_Documentno Fin_Payment.DocumentNo%TYPE;
 
 TYPE RECORD IS REF CURSOR;
 Cur_Params RECORD;
@@ -191,6 +192,17 @@ BEGIN
         AND paidamt <> 0;
       IF (v_count <> 0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@APRM_OrderWithPayments@');
+      END IF;
+      SELECT count(*), max(p.DocumentNo)
+        INTO v_count, v_DocumentNo
+      FROM fin_payment_schedule ps, fin_payment_scheduledetail psd,
+      fin_payment_detail pd, fin_payment p
+      WHERE ps.fin_payment_schedule_id = psd.fin_payment_schedule_order
+        AND ps.c_order_id = p_record_id
+        AND psd.fin_payment_detail_id = pd.fin_payment_detail_id
+        AND pd.fin_payment_id = p.fin_payment_id;
+      IF (v_count <> 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@APRM_OrderWithPayments@'||v_DocumentNo);
       END IF;
       v_resultstr:='Update/Delete scheduled payments details';
       FOR Cur_PaymentScheduleDetail IN (

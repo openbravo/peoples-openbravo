@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,12 @@ isc.ClassFactory.defineClass('<#if !data.popup>processDefinition</#if>${data.win
     processId: '${data.processId?js_string}',
     actionHandler: '${data.actionHandler?js_string}',
     popup: ${data.popup?string}, 
+    <#if data.clientSideValidation??>
+        clientSideValidation: ${data.clientSideValidation?js_string},
+    </#if>
+    <#if data.onLoadFunction??>
+        onLoadFunction: ${data.onLoadFunction?js_string},
+    </#if>
     <#list data.buttonList as button>
     <#if button_index == 0>buttons:{</#if>
     '${button.searchKey?js_string}':'${button.name?js_string}'<#if button_has_next>,<#else>},</#if>
@@ -35,17 +41,7 @@ isc.ClassFactory.defineClass('<#if !data.popup>processDefinition</#if>${data.win
     viewProperties: {
       fields: [
     <#list data.paramHandler.parameters as param>
-      <#if param.grid>
-      {
-        isGrid: true,
-        viewProperties: {
-          ${param.tabView}
-        }
-      }
-      <#if param_has_next>,</#if>
-      <#else>
       <@createParameter param/><#if param_has_next>,</#if>
-      </#if>
     </#list>    
      ]
     },

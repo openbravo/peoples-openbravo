@@ -139,8 +139,8 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> jsExcuteCode = new ArrayList<String>();
       Map<String, Object> hiddenInputs = new HashMap<String, Object>();
 
-      boolean dataSourceBasedTable = ApplicationConstants.DATASOURCEBASEDTABLE.equals(tab
-          .getTable().getDataOriginType());
+      boolean databaseBasedTable = ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable()
+          .getDataOriginType());
 
       log.debug("Form Initialization Component Execution. Tab Name: " + tab.getWindow().getName()
           + "." + tab.getName() + " Tab Id:" + tab.getId());
@@ -152,9 +152,9 @@ public class FormInitializationComponent extends BaseActionHandler {
         log.debug("Changed field: " + changedColumn);
       }
 
-      // If the table is based in a datasource there is no BaseOBObject associated to it, don't try
+      // If the table is not based in db table there is no BaseOBObject associated to it, don't try
       // to retrieve the row
-      if (!dataSourceBasedTable && rowId != null && !rowId.equals("null")) {
+      if (databaseBasedTable && rowId != null && !rowId.equals("null")) {
         row = OBDal.getInstance().get(tab.getTable().getName(), rowId);
       }
       JSONObject jsContent = new JSONObject();
@@ -183,8 +183,8 @@ public class FormInitializationComponent extends BaseActionHandler {
             .getJSONArray("overwrittenAuxiliaryInputs"));
       }
 
-      // If the table is based in a datasource, don't try to create a BaseOBObject
-      if (!dataSourceBasedTable) {
+      // If the table is not based in a db table, don't try to create a BaseOBObject
+      if (databaseBasedTable) {
         // create the row from the json content then
         if (row == null) {
           final JsonToDataConverter fromJsonConverter = OBProvider.getInstance().get(
@@ -231,9 +231,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       // First the parent record is retrieved and the session variables for the parent records are
       // set
       long t1 = System.currentTimeMillis();
-      // If the table is based in a datasource, don't try to retrieve the parent record (the row is
-      // null because datasource based tables do not have BaseOBObjects)
-      if (!dataSourceBasedTable) {
+      // If the table is not based in a db table, don't try to retrieve the parent record (the row
+      // is null because tables not based on db tables do not have BaseOBObjects)
+      if (databaseBasedTable) {
         parentRecord = setSessionVariablesInParent(mode, tab, row, parentId);
       }
 
@@ -305,6 +305,10 @@ public class FormInitializationComponent extends BaseActionHandler {
         log.error("Error while generating the error JSON object: " + jsonString, e);
       }
     } finally {
+
+      // Clear session to prevent slow flush
+      OBDal.getInstance().getSession().clear();
+
       OBContext.restorePreviousMode();
     }
     return null;
@@ -935,13 +939,13 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private void setValuesInRequest(String mode, Tab tab, BaseOBObject row, JSONObject jsContent) {
 
-    boolean dataSourceBasedTable = ApplicationConstants.DATASOURCEBASEDTABLE.equals(tab.getTable()
+    boolean tableBasedTable = ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable()
         .getDataOriginType());
 
     List<Field> fields = getADFieldList(tab.getId());
     // If the table is based on a datasource it is not possible to initialize the values from the
     // database
-    if (mode.equals("EDIT") && !dataSourceBasedTable) {
+    if (mode.equals("EDIT") && tableBasedTable) {
       // In EDIT mode we initialize them from the database
       List<Column> columns = getADColumnList(tab.getTable().getId());
 
