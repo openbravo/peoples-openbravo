@@ -34,18 +34,14 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
   @Override
   String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
     // Expected amount is the amount on the editing payment
-    JSONObject context = new JSONObject(requestMap.get("context"));
-    String strFinPaymentId = context.getString("inpfinPaymentId");
-    BigDecimal pendingAmt = getPaymentAmt(strFinPaymentId);
+    BigDecimal pendingAmt = getPayment(requestMap).getAmount();
     return pendingAmt.toPlainString();
   }
 
   @Override
   String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
     // Actual amount is the amount on the editing payment
-    JSONObject context = new JSONObject(requestMap.get("context"));
-    String strFinPaymentId = context.getString("inpfinPaymentId");
-    BigDecimal pendingAmt = getPaymentAmt(strFinPaymentId);
+    BigDecimal pendingAmt = getPayment(requestMap).getAmount();
     return pendingAmt.toPlainString();
   }
 
@@ -57,12 +53,6 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
   @Override
   String getDefaultTransactionType(Map<String, String> requestMap) {
     return "I";
-  }
-
-  private BigDecimal getPaymentAmt(String strFinPaymentId) {
-    // TODO check multicurrency
-    FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strFinPaymentId);
-    return payment.getAmount();
   }
 
   @Override
@@ -79,6 +69,20 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
   @Override
   String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
     return "";
+  }
+
+  @Override
+  String getDefaultDocumentNo(Map<String, String> requestMap) throws JSONException {
+    FIN_Payment payment = getPayment(requestMap);
+
+    return payment.getDocumentNo();
+  }
+
+  private FIN_Payment getPayment(Map<String, String> requestMap) throws JSONException {
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    String strFinPaymentId = context.getString("inpfinPaymentId");
+    FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strFinPaymentId);
+    return payment;
   }
 
 }
