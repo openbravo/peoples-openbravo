@@ -66,9 +66,12 @@ isc.OBFKFilterTextItem.addProperties({
 
       // make sure that we send the same parameters as the grid
       onFetchData: function (criteria, requestProperties) {
+        var gridView = grid.view;
         requestProperties = requestProperties || {};
         requestProperties.params = grid.getFetchRequestParams(requestProperties.params) || {};
-        requestProperties.params.tabId = grid.view.tabId || (grid.view.sourceView && grid.view.sourceView.tabId);
+        if (gridView) {
+          requestProperties.params.tabId = gridView.tabId || (gridView.sourceView && gridView.sourceView.tabId);
+        }
         delete me.forceReload;
       },
 
