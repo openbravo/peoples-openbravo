@@ -558,7 +558,12 @@ isc.OBMyOpenbravo.addProperties({
     if (recentList && recentList.length > 0) {
 
       handleClickFunction = function () {
-        OB.Layout.ViewManager.openView(this.recent.viewId, this.recent);
+        // Add the targetTabId as id for using it as the link for the Direct navigation
+        if (this.recent) {
+          this.recent.id = this.recent.targetTabId;
+        }
+        //Direct set to true in order to open just the record selected
+        OB.Layout.ViewManager.openView(this.recent.viewId, this.recent, null, true);
       };
 
       for (; recentIndex < recentList.length; recentIndex++) {
