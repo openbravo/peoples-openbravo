@@ -164,8 +164,8 @@ public class CashVATUtil {
             calculateAmountsBasedOnPercentage = true;
             final BigDecimal grandTotalAmt = invoice.getGrandTotalAmount();
             final int currencyPrecission = invoice.getCurrency().getStandardPrecision().intValue();
-            percentage = amount.multiply(_100)
-                .divide(grandTotalAmt, currencyPrecission, RoundingMode.HALF_UP).abs();
+            percentage = amount.multiply(_100).divide(grandTotalAmt, currencyPrecission,
+                RoundingMode.HALF_UP);
           }
 
           for (final InvoiceTax invoiceTax : invoice.getInvoiceTaxList()) {
