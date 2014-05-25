@@ -310,6 +310,11 @@ isc.OBParameterWindowView.addProperties({
     OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, params, function (rpcResponse, data, rpcRequest) {
       view.handleDefaults(data);
     });
+
+    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_' + this.processId, this);
+    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_MessageBar_' + this.processId, this.messageBar);
+    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_OK_Button_' + this.processId, this.okButton);
+    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Form_' + this.processId, this.theForm);
   },
 
   handleResponse: function (refresh, message, responseActions, retryExecution, data) {
