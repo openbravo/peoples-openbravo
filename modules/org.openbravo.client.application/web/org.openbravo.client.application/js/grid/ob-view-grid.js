@@ -1626,7 +1626,7 @@ isc.OBViewGrid.addProperties({
 
   refreshGrid: function (callback, newRecordsToBeIncluded) {
     var originalCriteria, criteria = {},
-        newRecordsCriteria, newRecordsLength, i, index, recordSelected;
+        newRecordsCriteria, newRecordsLength, i, index;
 
     //check whether newRecordsToBeIncluded contains records not part of the current grid and remove them.
     if (newRecordsToBeIncluded && newRecordsToBeIncluded.length > 0 && this.data) {
@@ -1646,14 +1646,10 @@ isc.OBViewGrid.addProperties({
       this.notRemoveFilter = true;
     }
     this.actionAfterDataArrived = callback;
-    recordSelected = this.getRecordIndex(this.getSelectedRecord());
     this.invalidateCache();
 
     var context = {
-      showPrompt: false,
-      params: {
-        _recordSelected: recordSelected
-      }
+      showPrompt: false
     };
 
     // Removes the 'or' clause, if there is one

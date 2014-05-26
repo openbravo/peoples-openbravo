@@ -62,7 +62,6 @@ public class JsonConstants {
   public static final String ENDROW_PARAMETER = "_endRow";
   public static final String SORTBY_PARAMETER = "_sortBy";
   public static final String TARGETRECORDID_PARAMETER = "_targetRecordId";
-  public static final String RECORD_SELECTED = "_recordSelected";
   public static final String DATASOURCE_PARAMETER = "_dataSource";
   public static final String TEXTMATCH_PARAMETER = "_textMatchStyle";
   public static final String TEXTMATCH_PARAMETER_OVERRIDE = "_textMatchStyleOverride";
