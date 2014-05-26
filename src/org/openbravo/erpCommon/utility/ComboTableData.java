@@ -963,16 +963,9 @@ public class ComboTableData {
       text.append(" LIMIT " + numberOfRows + " OFFSET " + startRow);
     }
     if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
-      // in oracle rows are defined from 1, so if startRow is 0,
-      // setting it to 1 to retrieve first record
-      if (startRow == 0) {
-        startRow++;
-        endRow++;
-      } else if (endRow == 0) {
-        endRow++;
-      }
+      // in oracle rows are defined from 1, so incrementing startRow and endRow by 1
       String oraQuery = "select * from ( select a.*, ROWNUM rnum from ( " + text.toString()
-          + ") a where rownum <= " + endRow + " ) where rnum >= " + startRow + "";
+          + ") a where rownum <= " + (endRow + 1) + " ) where rnum >= " + (startRow + 1) + "";
       return oraQuery;
     }
     return text.toString();

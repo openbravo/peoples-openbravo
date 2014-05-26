@@ -96,14 +96,14 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "876");
     params.put("_operationType", "fetch");
-    params.put("_startRow", "20");
-    params.put("_endRow", "40");
+    params.put("_startRow", "76");
+    params.put("_endRow", "150");
 
     JSONObject jsonResponse = requestCombo(params);
     JSONArray data = getData(jsonResponse);
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
-    assertEquals("paginated combo number of records", 21, data.length());
+    assertEquals("paginated combo number of records", 75, data.length());
   }
 
   /**
@@ -209,7 +209,7 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
         paramStr += "{" + paramKey + ":" + params.get(paramKey) + "}";
       }
       paramStr = "[" + paramStr + "]";
-      log.info("Combo request:\n  *params:{}\n  *response:{}", paramStr, jsonResponse);
+      log.debug("Combo request:\n  *params:{}\n  *response:{}", paramStr, jsonResponse);
     }
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
