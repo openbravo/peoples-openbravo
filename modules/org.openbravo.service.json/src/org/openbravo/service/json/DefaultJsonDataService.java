@@ -432,7 +432,11 @@ public class DefaultJsonDataService implements JsonDataService {
     if (!forCountOperation && !directNavigation
         && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
       final String targetRecordId = parameters.get(JsonConstants.TARGETRECORDID_PARAMETER);
-      targetRowNumber = queryService.getRowNumber(targetRecordId);
+      if (parameters.containsKey((JsonConstants.RECORD_SELECTED))) {
+        targetRowNumber = Integer.parseInt(parameters.get(JsonConstants.RECORD_SELECTED));
+      } else {
+        targetRowNumber = queryService.getRowNumber(targetRecordId);
+      }
       if (targetRowNumber != -1) {
         startRow = targetRowNumber;
         // if the startrow is really low, then just read from 0
