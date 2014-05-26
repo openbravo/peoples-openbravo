@@ -68,4 +68,14 @@ public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValues
     return context.getString("inpcInvoiceId");
   }
 
+  @Override
+  String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException {
+    return "";
+  }
+
+  @Override
+  String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException {
+    return "";
+  }
+
 }

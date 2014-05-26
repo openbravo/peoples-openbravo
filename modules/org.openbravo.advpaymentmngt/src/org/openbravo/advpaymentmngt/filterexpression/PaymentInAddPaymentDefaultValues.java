@@ -85,4 +85,18 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
     return payment;
   }
 
+  @Override
+  String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException {
+    // Conversion Rate of the current Payment
+    FIN_Payment payment = getPayment(requestMap);
+    return payment.getFinancialTransactionConvertRate().toPlainString();
+  }
+
+  @Override
+  String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException {
+    // Converted Amount of the current Payment
+    FIN_Payment payment = getPayment(requestMap);
+    return payment.getFinancialTransactionAmount().toPlainString();
+  }
+
 }

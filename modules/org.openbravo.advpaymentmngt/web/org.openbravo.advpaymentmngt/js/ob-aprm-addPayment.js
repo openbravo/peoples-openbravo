@@ -18,6 +18,13 @@
  */
 OB.APRM.AddPayment = {};
 
+OB.APRM.AddPayment.SALES_ORDER_WINDOW_ID = '143';
+OB.APRM.AddPayment.PURCHASE_ORDER_WINDOW_ID = '181';
+OB.APRM.AddPayment.SALES_INVOICE_WINDOW_ID = '167';
+OB.APRM.AddPayment.PURCHASE_INVOICE_WINDOW_ID = '183';
+OB.APRM.AddPayment.PAYMENT_IN_WINDOW_ID = 'E547CE89D4C04429B6340FFA44E70716';
+OB.APRM.AddPayment.PAYMENT_OUT_WINDOW_ID = '6F8F913FA60F4CBD93DC1D3AA696E76E';
+
 OB.APRM.AddPayment.onLoad = function (view) {
   var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
       glitemGrid = view.theForm.getItem('glitem').canvas.viewGrid,
@@ -37,56 +44,52 @@ OB.APRM.AddPayment.addNewGLItem = function (grid) {
 };
 
 OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, form, grid) {
-  var paymentMethodId, callback, isPayinIsMulticurrency;
+  var paymentMethodId, callback, isPayinIsMulticurrency, _form;
   if (item) {
     paymentMethodId = item.getValue();
   } else {
     paymentMethodId = view.theForm.getItem('fin_paymentmethod_id').getValue();
   }
 
+  if (!form) {
+    _form = view.theForm;
+  } else {
+    _form = form;
+  }
+
   callback = function (response, data, request) {
     isPayinIsMulticurrency = data.isPayinIsMulticurrency;
     if (isPayinIsMulticurrency) {
-      if (form) {
-        form.getItem('c_currency_to_id').visible = true;
-        form.redraw();
+      if (_form.getItem('c_currency_id').getValue() !== _form.getItem('c_currency_to_id').getValue()) {
+        _form.getItem('conversion_rate').visible = true;
+        _form.getItem('converted_amount').visible = true;
+        _form.getItem('c_currency_id').visible = true;
+        _form.getItem('c_currency_to_id').visible = true;
       } else {
-        view.theForm.getItem('c_currency_to_id').visible = true;
-        view.theForm.redraw();
+        _form.getItem('conversion_rate').visible = false;
+        _form.getItem('converted_amount').visible = false;
+        _form.getItem('c_currency_id').visible = false;
+        _form.getItem('c_currency_to_id').visible = false;
       }
+      _form.redraw();
     } else {
-      if (form) {
-        form.getItem('c_currency_to_id').visible = false;
-        form.getItem('c_currency_to_id').setValue(form.getItem('c_currency_id').getValue());
-        form.redraw();
-      } else {
-        view.theForm.getItem('c_currency_to_id').visible = false;
-        view.theForm.redraw();
-      }
-
+      _form.getItem('c_currency_id').visible = false;
+      _form.getItem('c_currency_to_id').visible = false;
+      _form.getItem('conversion_rate').visible = false;
+      _form.getItem('converted_amount').visible = false;
+      _form.redraw();
     }
   };
-  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
-    paymentMethodId: paymentMethodId
-  }, {}, callback);
-};
-
-OB.APRM.AddPayment.paymentMethodOnLoadFunction = function (view) {
-  var paymentMethodId = view.theForm.getItem('fin_paymentmethod_id').getValue(),
-      callback, isPayinIsMulticurrency;
-  callback = function (response, data, request) {
-    isPayinIsMulticurrency = data.isPayinIsMulticurrency;
-    if (isPayinIsMulticurrency) {
-      view.theForm.getItem('c_currency_to_id').visible = true;
-      view.theForm.redraw();
-    } else {
-      view.theForm.getItem('c_currency_to_id').visible = false;
-      view.theForm.redraw();
-    }
-  };
-  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
-    paymentMethodId: paymentMethodId
-  }, {}, callback);
+  if (view.windowId === OB.APRM.AddPayment.PAYMENT_IN_WINDOW_ID || view.windowId === OB.APRM.AddPayment.PAYMENT_OUT_WINDOW_ID) {
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
+      paymentMethodId: paymentMethodId
+    }, {}, callback);
+  } else {
+    _form.getItem('c_currency_to_id').visible = false;
+    _form.getItem('conversion_rate').visible = false;
+    _form.getItem('converted_amount').visible = false;
+    _form.redraw();
+  }
 };
 
 OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form, grid) {

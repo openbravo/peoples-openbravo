@@ -33,6 +33,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,18 +55,32 @@ abstract class AddPaymentDefaultValuesHandler {
 
   abstract String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException;
 
+  abstract String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException;
+
+  abstract String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException;
+
   String getDefaultCurrencyTo(Map<String, String> requestMap) throws JSONException {
-    String strBPartnerId = getBusinessPartner(requestMap);
-    if (StringUtils.isNotEmpty(strBPartnerId)) {
-      BusinessPartner bPartner = OBDal.getInstance().get(BusinessPartner.class, strBPartnerId);
-      if (bPartner.getAccount() != null) {
-        return bPartner.getAccount().getCurrency().getId();
-      } else {
-        return null;
-      }
-    } else {
-      return null;
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    if (context.has("inpfinFinancialAccountId")
+        && context.get("inpfinFinancialAccountId") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inpfinFinancialAccountId"))) {
+      FIN_FinancialAccount finFinancialAccount = OBDal.getInstance().get(
+          FIN_FinancialAccount.class, context.getString("inpfinFinancialAccountId"));
+      return finFinancialAccount.getCurrency().getId();
     }
+    String strBPartnerId = getBusinessPartner(requestMap);
+
+    if (StringUtils.isNotEmpty(strBPartnerId)) {
+      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+          context.get("inpcBpartnerId"));
+      boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
+      if (isSOTrx && businessPartner.getAccount() != null) {
+        return businessPartner.getAccount().getCurrency().getId();
+      } else if (!isSOTrx && businessPartner.getPOFinancialAccount() != null) {
+        return businessPartner.getPOFinancialAccount().getCurrency().getId();
+      }
+    }
+    return null;
   }
 
   String getDefaultCustomerCredit(Map<String, String> requestMap) throws JSONException {

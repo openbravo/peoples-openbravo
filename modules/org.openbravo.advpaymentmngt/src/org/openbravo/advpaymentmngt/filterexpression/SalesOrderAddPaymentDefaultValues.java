@@ -86,4 +86,14 @@ public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
     return "";
   }
 
+  @Override
+  String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException {
+    return "";
+  }
+
+  @Override
+  String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException {
+    return "";
+  }
+
 }
