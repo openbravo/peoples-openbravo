@@ -689,10 +689,10 @@ public class DocFINReconciliation extends AcctServer {
         detail.m_C_Costcenter_ID = data[i].getField("cCostcenterId");
         detail.setAmount(data[i].getField("Amount"));
         final String finPaymentDetailID = data[i].getField("FIN_Payment_Detail_ID");
-        detail.setInvoiceTaxCashVAT_V(finPaymentDetailID);
         // Cambiar line to reflect BPs
         FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
             finPaymentDetailID);
+        detail.setInvoiceTaxCashVAT_V(paymentDetail.getFinPayment().getId());
         fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID,
             Fact_Acct_Group_ID2);
       }
