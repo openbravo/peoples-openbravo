@@ -20,7 +20,11 @@ enyo.kind({
     stepCount: 0,
     span: 6,
     tap: function () {
-      OB.POS.navigate('retail.pointofsale');
+      if (!OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue || (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue && OB.MobileApp.model.get("isDrawerClosed"))) {
+        OB.POS.navigate('retail.pointofsale');
+      } else {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_drawerOpened'));
+      }
     }
   }, {
     kind: 'OB.UI.ToolbarButton',
@@ -34,7 +38,11 @@ enyo.kind({
       this.model = model;
     },
     tap: function () {
-      this.model.depsdropstosave.trigger('makeDeposits');
+      if (!OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue || (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue && OB.MobileApp.model.get("isDrawerClosed"))) {
+        this.model.depsdropstosave.trigger('makeDeposits');
+      } else {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_drawerOpened'));
+      }
     }
   }]
 });

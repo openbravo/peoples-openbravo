@@ -87,7 +87,15 @@ enyo.kind({
             OB.UTIL.Approval.requestApproval(
             me.model, 'OBPOS_approval.opendrawer.cashup', function (approved, supervisor, approvalType) {
               if (approved) {
-                OB.POS.hwserver.openDrawer();
+                if (!OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
+                  OB.POS.hwserver.openDrawer();
+                } else if (OB.MobileApp.model.get("isDrawerClosed")) {
+                  OB.MobileApp.model.set("isDrawerClosed", false);
+                  OB.POS.hwserver.openDrawer();
+                  OB.POS.hwserver.isDrawerClosed(false, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount);
+                } else {
+                  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_drawerOpened'));
+                }
               }
             });
           }

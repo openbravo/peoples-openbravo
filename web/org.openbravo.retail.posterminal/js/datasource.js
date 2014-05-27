@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $, Backbone, _, enyo */
+/*global B, $, Backbone, _, enyo, Audio */
 
 // HWServer: TODO: this should be implemented in HW Manager module
 OB.DS.HWResource = function (res) {
@@ -70,6 +70,105 @@ OB.DS.HWServer.prototype.openDrawer = function () {
       OB.info('Error opening the drawer');
     }
   });
+};
+
+OB.DS.HWServer.prototype.isDrawerClosedTemplate = 'res/checkdrawerstatus.xml';
+OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
+  var statusChecker, beepTimeout, sound = new Audio('sounds/drawerAlert.mp3'),
+      template = new OB.DS.HWResource(this.isDrawerClosedTemplate),
+      me = this,
+      errorCounter = 0,
+      symbol, symbolAtRight, popupDrawerOpened = OB.MobileApp.view.$.confirmationContainer.$.popupDrawerOpened;
+
+  if (timeout && !isNaN(parseInt(timeout, 10))) {
+
+    beepTimeout = setTimeout(function () {
+      sound.loop = true;
+      sound.play();
+    }, parseInt(timeout, 10));
+  }
+
+  if (popup) {
+
+    if (!popupDrawerOpened) {
+      popupDrawerOpened = OB.MobileApp.view.$.confirmationContainer.createComponent({
+        kind: 'OB.UI.PopupDrawerOpened'
+      });
+    }
+
+    if (popup.receipt) {
+      var paymentStatus = popup.receipt.getPaymentStatus();
+      popupDrawerOpened.$.table.setStyle('position:relative; top: 0px;');
+      if (paymentStatus.isReturn || paymentStatus.isNegative) {
+        popupDrawerOpened.$.bodyContent.$.label.setContent(OB.I18N.getLabel('OBPOS_ToReturn') + ':');
+        _.each(popup.receipt.get('payments').models, function (payment) {
+          if (payment.get('isCash')) {
+            symbol = OB.POS.terminal.terminal.paymentnames[payment.get('kind')].symbol;
+            symbolAtRight = OB.POS.terminal.terminal.paymentnames[payment.get('kind')].currencySymbolAtTheRight;
+            popupDrawerOpened.$.bodyContent.$.label.setContent(popupDrawerOpened.$.bodyContent.$.label.getContent() + ' ' + OB.I18N.formatCurrencyWithSymbol(payment.get('paid'), symbol, symbolAtRight));
+          }
+        });
+      } else {
+        if (!paymentStatus.change) {
+          popupDrawerOpened.$.bodyContent.$.label.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
+        } else {
+          popupDrawerOpened.$.bodyContent.$.label.setContent(OB.I18N.getLabel('OBPOS_ticketChange') + ': ' + OB.MobileApp.model.get('changeReceipt'));
+        }
+      }
+    } else {
+      popupDrawerOpened.$.bodyContent.$.label.setContent('');
+      popupDrawerOpened.$.table.setStyle('position:relative; top: 35px;');
+    }
+
+    if (popup.openFirst) {
+      OB.UTIL.showLoading(false);
+      popupDrawerOpened.show();
+    }
+  }
+
+  statusChecker = setInterval(function () {
+    me.print(template, null, function (args) {
+      if (args && args.exception && args.exception.message) {
+        OB.info('Error checking the status of the drawer');
+        OB.MobileApp.model.set("isDrawerClosed", true);
+      } else {
+        if (args.resultData === "Closed") {
+          OB.MobileApp.model.set("isDrawerClosed", true);
+          errorCounter = 0;
+        } else if (args.resultData === "Opened") {
+          OB.MobileApp.model.set("isDrawerClosed", false);
+          errorCounter = 0;
+          if (popup && !popupDrawerOpened.showing) {
+            OB.UTIL.showLoading(false);
+            popupDrawerOpened.show();
+          }
+        } else if (args.resultData === "Error" && popup) {
+          errorCounter++;
+          if (errorCounter >= 20) {
+            OB.MobileApp.model.set("isDrawerClosed", true);
+            OB.info('Error checking the status of the drawer');
+          } else {
+            OB.MobileApp.model.set("isDrawerClosed", false);
+            if (!popupDrawerOpened.showing) {
+              OB.UTIL.showLoading(false);
+              popupDrawerOpened.show();
+            }
+          }
+        } else {
+          OB.MobileApp.model.set("isDrawerClosed", true);
+          OB.info('Error checking the status of the drawer');
+        }
+      }
+      if (OB.MobileApp.model.get("isDrawerClosed")) {
+        clearTimeout(beepTimeout);
+        sound.pause();
+        clearInterval(statusChecker);
+        if (popup && popupDrawerOpened.showing) {
+          popupDrawerOpened.hide();
+        }
+      }
+    });
+  }, 500);
 };
 
 OB.DS.HWServer.prototype.print = function (template, params, callback) {

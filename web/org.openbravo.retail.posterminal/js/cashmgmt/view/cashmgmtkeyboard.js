@@ -51,6 +51,25 @@ enyo.kind({
   init: function () {
     var buttons = [];
     this.inherited(arguments);
+    buttons.push({
+      command: 'opendrawer',
+      i18nLabel: 'OBPOS_OpenDrawer',
+      stateless: true,
+      definition: {
+        stateless: true,
+        action: function (keyboard, amt) {
+          if (!OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
+            OB.POS.hwserver.openDrawer();
+          } else if (OB.MobileApp.model.get("isDrawerClosed")) {
+            OB.MobileApp.model.set("isDrawerClosed", false);
+            OB.POS.hwserver.openDrawer();
+            OB.POS.hwserver.isDrawerClosed(false, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount);
+          } else {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_drawerOpened'));
+          }
+        }
+      }
+    });
     _.bind(this.getPayment, this);
     _.each(OB.POS.modelterminal.get('payments'), function (paymentMethod) {
       var payment = paymentMethod.payment;
