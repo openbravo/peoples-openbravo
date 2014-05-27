@@ -290,7 +290,7 @@ public class FIN_ExecutePayment {
               psd.getAmount(), psd.getWriteoffAmount());
         }
         if (psd.getOrderPaymentSchedule() != null) {
-          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getOrderPaymentSchedule(),
+          FIN_AddPayment.updatePaymentScheduleAmounts(pDetail, psd.getOrderPaymentSchedule(),
               psd.getAmount(), psd.getWriteoffAmount());
         }
         if (pDetail.isPrepayment() && psd.getOrderPaymentSchedule() == null
