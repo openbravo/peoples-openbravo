@@ -176,10 +176,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               dataBps.set('locId', bpLoc.get('id'));
               dataBps.set('locName', bpLoc.get('name'));
               OB.POS.modelterminal.set('businessPartner', dataBps);
+              me.loadUnpaidOrders();
             };
             OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback);
           } else {
             OB.POS.modelterminal.set('businessPartner', dataBps);
+            me.loadUnpaidOrders();
           }
         }
       }
@@ -367,10 +369,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
     OB.MobileApp.model.runSyncProcess(function () {
-      me.loadUnpaidOrders();
       me.loadCheckedMultiorders();
     }, function () {
-      me.loadUnpaidOrders();
       me.loadCheckedMultiorders();
     });
 
