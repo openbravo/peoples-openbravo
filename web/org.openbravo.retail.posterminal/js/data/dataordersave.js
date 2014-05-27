@@ -84,10 +84,24 @@
                 }
               }
               };
-          if (eventParams && eventParams.callback) {
-            eventParams.callback();
-          }
-          OB.MobileApp.model.runSyncProcess(successCallback);
+          OB.MobileApp.model.runSyncProcess(function () {
+            OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostSyncReceipt', {
+              receipt: model.get('order')
+            }, function (args) {
+              successCallback();
+              if (eventParams && eventParams.callback) {
+                eventParams.callback();
+              }
+            });
+          }, function () {
+            OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostSyncReceipt', {
+              receipt: model.get('order')
+            }, function (args) {
+              if (eventParams && eventParams.callback) {
+                eventParams.callback();
+              }
+            });
+          });
         }, function () {
           //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
         });
