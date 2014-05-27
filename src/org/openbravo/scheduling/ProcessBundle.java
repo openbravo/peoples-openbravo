@@ -66,14 +66,11 @@ public class ProcessBundle {
    */
   public static final String CONFIG_PARAMS = "process.param.configParams";
 
-  /**
-   * String constant id for the Process Group process.
-   */
-  public static final String processGroupId = "5BD4D2B3313E4C708F0AE29095AF16AD";
-
   private String processId;
 
   private String processRequestId;
+
+  private String processRunId;
 
   private boolean closeConnection;
 
@@ -190,6 +187,15 @@ public class ProcessBundle {
   }
 
   /**
+   * Returns the id of the process run.
+   * 
+   * @return Returns the id of the process run
+   */
+  public String getProcessRunId() {
+    return this.processRunId;
+  }
+
+  /**
    * Returns the unique id for the implementation of this process.
    * 
    * @return the process' id
@@ -253,7 +259,7 @@ public class ProcessBundle {
    * @return true if the process is a group
    */
   public boolean isGroup() {
-    if (this.processId.equals(processGroupId)) {
+    if (this.processId.equals(GroupInfo.processGroupId)) {
       return true;
     } else {
       return false;
@@ -267,6 +273,10 @@ public class ProcessBundle {
    */
   public GroupInfo getGroupInfo() {
     return this.groupInfo;
+  }
+
+  public void setProcessRunId(String strProcessRunId) {
+    this.processRunId = strProcessRunId;
   }
 
   public void setParams(Map<String, Object> params) {
@@ -424,7 +434,7 @@ public class ProcessBundle {
     String processId = "";
 
     if (data.isgroup.equals("Y")) {
-      processId = processGroupId;
+      processId = GroupInfo.processGroupId;
     } else {
       processId = data.processId;
     }

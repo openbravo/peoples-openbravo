@@ -65,6 +65,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_PROCESS_RUN_GROUP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_PROCESS_RUN_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -73,6 +77,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_PROCESS_REQUEST" name="AD_PROCESS_RUN_AD_PROCESS_REQU" onDelete="cascade">
         <reference local="AD_PROCESS_REQUEST_ID" foreign="AD_PROCESS_REQUEST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_PROCESS_RUN" name="AD_PROCESS_RUN_GROUP">
+        <reference local="AD_PROCESS_RUN_GROUP_ID" foreign="AD_PROCESS_RUN_ID"/>
       </foreign-key>
       <index name="AD_PROCESS_RUN_STATUS" unique="false">
         <index-column name="STATUS"/>

@@ -57,4 +57,14 @@
     <Parameter name="log"/>
     <Parameter name="id"/>
    </SqlMethod>
+   <SqlMethod name="updateGroup" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        UPDATE AD_Process_Run
+        SET AD_Process_Run_Group_ID = ?
+        WHERE AD_Process_Run_ID = ?
+    ]]></Sql>
+    <Parameter name="group"/>
+    <Parameter name="id"/>
+   </SqlMethod>
 </SqlClass>

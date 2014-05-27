@@ -366,7 +366,7 @@ public class OBScheduler {
       TriggerData data = new TriggerData();
 
       if (bundle.isGroup()) {
-        data = TriggerData.selectGroup(conn, name, ProcessBundle.processGroupId);
+        data = TriggerData.selectGroup(conn, name, GroupInfo.processGroupId);
       } else {
         data = TriggerData.select(conn, name);
       }

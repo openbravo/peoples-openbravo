@@ -127,6 +127,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
           ctx.getUser(), executionId, PROCESSING, null, null, jec.getJobDetail().getName());
 
+      bundle.setProcessRunId(executionId);
       jec.put(EXECUTION_ID, executionId);
       jec.put(ProcessBundle.CONNECTION, getConnection());
       jec.put(ProcessBundle.CONFIG_PARAMS, getConfigParameters());
@@ -163,7 +164,14 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
       // Manage Group
       if (bundle.getGroupInfo() != null) {
-        bundle.getGroupInfo().executeNextProcess();
+        GroupInfo groupInfo = bundle.getGroupInfo();
+        groupInfo.logProcess(jee == null ? SUCCESS : ERROR);
+        ProcessRunData.updateGroup(getConnection(), groupInfo.getProcessRun().getId(), executionId);
+        String result = groupInfo.executeNextProcess();
+        if (result.equals(GroupInfo.END)) {
+          ProcessRunData.update(getConnection(), ctx.getUser(), SUCCESS, getDuration(groupInfo
+              .getDuration()), groupInfo.getLog(), groupInfo.getProcessRun().getId());
+        }
       }
 
     } catch (Exception e) {

@@ -10,6 +10,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.ui.ProcessGroupList;
 import org.openbravo.model.ad.ui.ProcessRequest;
+import org.openbravo.model.ad.ui.ProcessRun;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class ProcessGroup extends DalBaseProcess {
@@ -22,6 +23,8 @@ public class ProcessGroup extends DalBaseProcess {
     final VariablesSecureApp vars = bundle.getContext().toVars();
     final ProcessRequest processRequest = OBDal.getInstance().get(ProcessRequest.class,
         bundle.getProcessRequestId());
+    final ProcessRun processRun = OBDal.getInstance().get(ProcessRun.class,
+        bundle.getProcessRunId());
     final org.openbravo.model.ad.ui.ProcessGroup group = processRequest.getProcessGroup();
     log.logln("Process Group: " + group.getName());
 
@@ -42,7 +45,8 @@ public class ProcessGroup extends DalBaseProcess {
         Hibernate.initialize(prolist.getProcess());
       }
 
-      GroupInfo groupInfo = new GroupInfo(group, processRequest, processList, vars, conn);
+      GroupInfo groupInfo = new GroupInfo(group, processRequest, processRun, processList, vars,
+          conn);
       groupInfo.executeNextProcess();
 
     }
