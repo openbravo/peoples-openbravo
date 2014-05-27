@@ -82,7 +82,8 @@
       forcePrint: printargs.forcePrint,
       offline: printargs.offline,
       order: order,
-      template: template
+      template: template,
+      callback: printargs.callback
     }, function (args) {
       function printPDF(receipt, args) {
         OB.POS.hwserver._printPDF({
@@ -96,6 +97,9 @@
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               action: function () {
                 me.print(receipt, printargs);
+                if (args.callback) {
+                  args.callback();
+                }
                 return true;
               }
             }, {
@@ -113,11 +117,17 @@
           } else {
             // Success. Try to print the pending receipts.
             OB.Model.OfflinePrinter.printPendingJobs();
+            if (args.callback) {
+              args.callback();
+            }
           }
         });
       }
 
       if (args.cancelOperation && args.cancelOperation === true) {
+        if (args.callback) {
+          args.callback();
+        }
         return true;
       }
       if (!_.isUndefined(args.order) && !_.isNull(args.order)) {
@@ -184,8 +194,16 @@
           } else {
             // Success. Try to print the pending receipts.
             OB.Model.OfflinePrinter.printPendingJobs();
+            if (args.callback) {
+              args.callback();
+            }
           }
         });
+        if (!OB.POS.hwserver.url) {
+          if (args.callback) {
+            args.callback();
+          }
+        }
         //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
         if ((receipt.get('orderType') === 1 && !OB.POS.modelterminal.hasPermission('OBPOS_print.once')) || _.filter(receipt.get('payments').models, function (iter) {
           if (iter.get('printtwice')) {

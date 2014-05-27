@@ -427,18 +427,22 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 });
               });
               receipt.trigger('print', null, {
-                offline: true
-              }); // to guaranty execution order
-              orderList.deleteCurrent(true);
+                offline: true,
+                callback: function () {
+                  orderList.deleteCurrent(true);
+                }
+              });
             }
           });
         } else {
           receipt.trigger('closed', {
             callback: function () {
               receipt.trigger('print', null, {
-                offline: true
-              }); // to guaranty execution order
-              orderList.deleteCurrent(true);
+                offline: true,
+                callback: function () {
+                  orderList.deleteCurrent(true);
+                }
+              });
             }
           });
         }
