@@ -40,6 +40,17 @@
     <Parameter name="alertRule"/>
     <Parameter name="client"/>
   </SqlMethod>
+  <SqlMethod name="updateAlertRule" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE AD_AlertRule
+        SET SQL='', TYPE='E' WHERE NAME = ? AND AD_Client_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="name"/>
+    <Parameter name="clientId"/>
+  </SqlMethod>
   <SqlMethod name="existsAlert" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
@@ -88,7 +99,7 @@
       ) VALUES (
         get_uuid(), ?, '0', 'Y',
         now(), '100', now(), '100',
-        ?, ?, '', 'D',
+        ?, ?, '', 'E',
         ?
       )
     ]]></Sql>
