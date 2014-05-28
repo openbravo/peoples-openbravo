@@ -118,8 +118,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     selectClause
         .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
     selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
-    selectClause
-        .append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id) as businessPartner, ");
+    selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
     selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
     selectClause.append(" COALESCE(inv.invoiceDate, ord.orderDate) as transactionDate, ");
     selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
@@ -159,8 +158,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     if ("I".equals(transactionType)) {
 
       whereClause.append(" and ((inv is not null ");
-      if (strBusinessPartnerId != null) {
-        whereClause.append(" and inv.businessPartner.id = '" + strBusinessPartnerId + "'");
+      if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
+        whereClause.append(" and invbp.id = '" + strBusinessPartnerId + "'");
       }
       if (strFinPaymentMethodId != null) {
         whereClause.append(" and ips.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
@@ -170,8 +169,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
 
     } else if ("O".equals(transactionType)) {
       whereClause.append(" and ((ord is not null ");
-      if (strBusinessPartnerId != null) {
-        whereClause.append(" and ord.businessPartner.id = '" + strBusinessPartnerId + "'");
+      if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
+        whereClause.append(" and ordbp.id = '" + strBusinessPartnerId + "'");
       }
       if (strFinPaymentMethodId != null) {
         whereClause.append(" and ops.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
@@ -182,8 +181,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     } else {
 
       whereClause.append(" and ((inv is not null ");
-      if (strBusinessPartnerId != null) {
-        whereClause.append(" and inv.businessPartner.id = '" + strBusinessPartnerId + "'");
+      if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
+        whereClause.append(" and invbp.id = '" + strBusinessPartnerId + "'");
       }
       if (strFinPaymentMethodId != null) {
         whereClause.append(" and ips.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
@@ -191,8 +190,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       whereClause.append(" and inv.salesTransaction = " + isSalesTransaction);
       whereClause.append(" and inv.currency.id = '" + strCurrencyId + "' ) ");
       whereClause.append(" or (ord is not null ");
-      if (strBusinessPartnerId != null) {
-        whereClause.append(" and ord.businessPartner.id = '" + strBusinessPartnerId + "'");
+      if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
+        whereClause.append(" and ordbp.id = '" + strBusinessPartnerId + "'");
       }
       if (strFinPaymentMethodId != null) {
         whereClause.append(" and ops.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
@@ -218,7 +217,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     }
     groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
     groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
-    groupByClause.append(" COALESCE(inv.businessPartner.id, ord.businessPartner.id), ");
+    groupByClause.append(" COALESCE(invbp.id, ordbp.id), ");
     groupByClause.append(" COALESCE(invbp.name, ordbp.name), ");
     groupByClause.append(" COALESCE(inv.invoiceDate, ord.orderDate), ");
     groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
