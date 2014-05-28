@@ -180,7 +180,13 @@
                 return true;
               }
             }, {
-              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+              label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+              action: function () {
+                if (args.callback) {
+                  args.callback();
+                }
+                return true;
+              }
             }], {
               onHideFunction: function (dialog) {
                 if (printargs.offline && OB.POS.modelterminal.get('terminal').printoffline) {
@@ -188,6 +194,9 @@
                     data: result.data,
                     sendfunction: '_send'
                   }));
+                }
+                if (args.callback) {
+                  args.callback();
                 }
               }
             });
