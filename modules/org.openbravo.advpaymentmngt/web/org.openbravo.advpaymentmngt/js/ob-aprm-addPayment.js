@@ -16,7 +16,22 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-OB.APRM.AddPayment = {};
+OB.APRM.AddPayment = {
+    ordInvTransformData: function (newData, dsResponse) {
+      var i, record, data, ids, invno, ordno;
+      data = this.Super('transformData', arguments) || newData;
+      for (i = 0; i < data.length; i++) {
+        record = data[i];
+        ids = OB.APRM.AddPayment.orderAndRemoveDuplicates(record.id);
+        record.id = ids;
+        invno = OB.APRM.AddPayment.orderAndRemoveDuplicates(record.invoiceNo);
+        record.invoiceNo = invno;
+        ordno = OB.APRM.AddPayment.orderAndRemoveDuplicates(record.salesOrderNo);
+        record.salesOrderNo = ordno;
+      }
+      return data;
+    }
+};
 
 OB.APRM.AddPayment.onLoad = function (view) {
   var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
@@ -26,6 +41,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
   OB.APRM.AddPayment.paymentMethodMulticurrency(null, view, null, null);
   OB.APRM.AddPayment.actualPaymentOnLoad(view);
   orderInvoiceGrid.selectionChanged = OB.APRM.AddPayment.selectionChanged;
+  orderInvoiceGrid.dataProperties.transformData = OB.APRM.AddPayment.ordInvTransformData;
   glitemGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedGlitem;
   creditUseGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedCredit;
 };
@@ -197,13 +213,19 @@ OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
   var amt, i, bdAmt, totalAmt = BigDecimal.prototype.ZERO,
       amountField = grid.getFieldByColumnName('amount'),
       selectedRecords = grid.getSelectedRecords(),
-      invOrdTotalItem = form.getItem('amount_inv_ords');
+      invOrdTotalItem = form.getItem('amount_inv_ords'),
+      selectedRecordAmounts = [],
+      recordAmount = {};
 
   for (i = 0; i < selectedRecords.length; i++) {
     amt = grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), amountField);
     bdAmt = new BigDecimal(String(amt));
+    recordAmount.amount = bdAmt;
+    recordAmount.ids = selectedRecords[i].id.split(",");
+    selectedRecordAmounts.push(recordAmount);
     totalAmt = totalAmt.add(bdAmt);
   }
+  grid.selectedRecordAmounts = selectedRecordAmounts;
   invOrdTotalItem.setValue(totalAmt.toString());
   OB.APRM.AddPayment.updateTotal(form);
   return true;
@@ -387,4 +409,18 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
       }
     }
   }
+};
+/*
+ * Retrieves a string of comma separated values and returns it ordered and with the duplicates removed.
+ */
+OB.APRM.AddPayment.orderAndRemoveDuplicates = function (val) {
+  var valArray = val.replaceAll(' ', '').split(',').sort(),
+    retVal, length;
+  
+  valArray = valArray.filter(function(elem, pos, self) {
+    return self.indexOf(elem) === pos;
+  });
+  
+  retVal = valArray.toString().replaceAll(',', ', ');
+  return retVal;
 };
