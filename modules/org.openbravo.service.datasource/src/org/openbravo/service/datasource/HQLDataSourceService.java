@@ -260,7 +260,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
     parameters.put("_justCount", String.valueOf(justCount));
 
-    Map<String, Object> queryNamedParameters = new HashMap<String, Object>();
+    Map<String, Object> queryNamedParameters = queryBuilder.getNamedParameters();
 
     // if the is any HQL Query transformer defined for this table, use it to transform the query
     hqlQuery = transFormQuery(hqlQuery, queryNamedParameters, parameters);
@@ -279,9 +279,12 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
 
     // sets the parameters of the query
-    queryNamedParameters.putAll(queryBuilder.getNamedParameters());
     for (String key : queryNamedParameters.keySet()) {
-      query.setParameter(key, queryNamedParameters.get(key));
+      // Injection and transforms might have modified the query removing named parameters. Check
+      // that key is still in the query.
+      if (hqlQuery.contains(key)) {
+        query.setParameter(key, queryNamedParameters.get(key));
+      }
     }
 
     OBContext.restorePreviousMode();
