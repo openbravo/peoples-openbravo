@@ -18,13 +18,6 @@
  */
 OB.APRM.AddPayment = {};
 
-OB.APRM.AddPayment.SALES_ORDER_WINDOW_ID = '143';
-OB.APRM.AddPayment.PURCHASE_ORDER_WINDOW_ID = '181';
-OB.APRM.AddPayment.SALES_INVOICE_WINDOW_ID = '167';
-OB.APRM.AddPayment.PURCHASE_INVOICE_WINDOW_ID = '183';
-OB.APRM.AddPayment.PAYMENT_IN_WINDOW_ID = 'E547CE89D4C04429B6340FFA44E70716';
-OB.APRM.AddPayment.PAYMENT_OUT_WINDOW_ID = '6F8F913FA60F4CBD93DC1D3AA696E76E';
-
 OB.APRM.AddPayment.onLoad = function (view) {
   var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
       glitemGrid = view.theForm.getItem('glitem').canvas.viewGrid,
@@ -80,7 +73,7 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, form, grid
       _form.redraw();
     }
   };
-  if (view.windowId === OB.APRM.AddPayment.PAYMENT_IN_WINDOW_ID || view.windowId === OB.APRM.AddPayment.PAYMENT_OUT_WINDOW_ID) {
+  if (_form.getItem('fin_payment_id').getValue() !== null && _form.getItem('fin_payment_id').getValue() !== undefined && _form.getItem('fin_payment_id').getValue() !== '') {
     OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
       paymentMethodId: paymentMethodId
     }, {}, callback);
@@ -102,6 +95,7 @@ OB.APRM.AddPayment.actualPaymentOnChange = function (item, view, form, grid) {
   var issotrx = form.getItem('issotrx').getValue();
   if (issotrx) {
     OB.APRM.AddPayment.distributeAmount(view, form);
+    OB.APRM.AddPayment.updateConvertedAmount(view, form, false);
   }
 };
 
@@ -342,4 +336,47 @@ OB.APRM.AddPayment.selectionChangedCredit = function (record, state) {
 
 OB.APRM.AddPayment.doSelectionChangedCredit = function (record, state, view) {
   OB.APRM.AddPayment.updateCreditTotal(view.theForm);
+};
+
+OB.APRM.AddPayment.conversionRateOnChange = function (item, view, form, grid) {
+  OB.APRM.AddPayment.updateConvertedAmount(view, form, false);
+};
+
+OB.APRM.AddPayment.convertedAmountOnChange = function (item, view, form, grid) {
+  OB.APRM.AddPayment.updateConvertedAmount(view, form, true);
+};
+
+OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeRate) {
+  if (form.getItem('fin_payment_id').getValue() !== null && form.getItem('fin_payment_id').getValue() !== undefined && form.getItem('fin_payment_id').getValue() !== '') {
+    var exchangeRate = new BigDecimal(String(form.getItem('conversion_rate').getValue() || 1)),
+        expectedConverted = new BigDecimal(String(form.getItem('converted_amount').getValue() || 0)),
+        actualConverted = new BigDecimal(String(form.getItem('converted_amount').getValue() || 0)),
+        expectedPayment = new BigDecimal(String(form.getItem('expected_payment').getValue() || 0)),
+        actualPayment = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
+        actualConvertedItem = form.getItem('converted_amount'),
+        exchangeRateItem = form.getItem('conversion_rate'),
+        newConvertedAmount = BigDecimal.prototype.ZERO,
+        newExchangeRate = BigDecimal.prototype.ONE,
+        currencyPrecision = form.getItem('StdPrecision').getValue();
+
+    if (actualConverted && exchangeRate) {
+      if (recalcExchangeRate) {
+        if (actualConverted && actualPayment) {
+          if (actualPayment.compareTo(newConvertedAmount) !== 0) {
+            newExchangeRate = actualConverted.divide(actualPayment, currencyPrecision, 2);
+            exchangeRateItem.setValue(newExchangeRate.toString());
+          }
+        } else {
+          exchangeRateItem.setValue(newExchangeRate.toString);
+        }
+      } else {
+        if (exchangeRate) {
+          newConvertedAmount = actualPayment.multiply(exchangeRate).setScale(currencyPrecision, BigDecimal.prototype.ROUND_HALF_UP);
+          actualConvertedItem.setValue(newConvertedAmount.toString());
+        } else {
+          actualConvertedItem.setValue(actualConverted.toString());
+        }
+      }
+    }
+  }
 };

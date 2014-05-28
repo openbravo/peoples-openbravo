@@ -32,6 +32,7 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.slf4j.Logger;
@@ -167,6 +168,12 @@ abstract class AddPaymentDefaultValuesHandler {
 
   String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
     return getBusinessPartner(requestMap);
+  }
+
+  String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    Currency currency = OBDal.getInstance().get(Currency.class, context.get("inpcCurrencyId"));
+    return currency.getStandardPrecision().toString();
   }
 
 }
