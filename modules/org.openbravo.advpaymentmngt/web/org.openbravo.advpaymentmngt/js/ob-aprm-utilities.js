@@ -152,10 +152,10 @@ OB.APRM.validatePaymentProposalPickAndEdit = function (item, validator, value, r
 };
 
 OB.APRM.addNew = function (grid) {
-  var selectedRecord = grid.view.parentWindow.views[0].getParentRecord(), allRows = grid.data.allRows || grid.data.localData;
+  var selectedRecord = grid.view.parentWindow.views[0].getParentRecord(),
+      allRows = grid.data.allRows || grid.data.localData;
   var returnObject = isc.addProperties({}, allRows[0]);
-  var indRow,
-      row, totalOutstanding = new BigDecimal("0");
+  var indRow, row, totalOutstanding = new BigDecimal("0");
   for (indRow = 0; indRow < allRows.length; indRow++) {
     row = allRows[indRow];
     totalOutstanding = totalOutstanding.add(new BigDecimal(String(row.outstanding)));
