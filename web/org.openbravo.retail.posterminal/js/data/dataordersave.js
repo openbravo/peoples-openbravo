@@ -84,31 +84,42 @@
                 }
               }
               };
-          OB.MobileApp.model.runSyncProcess(function () {
-            OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostSyncReceipt', {
-              receipt: model.get('order')
-            }, function (args) {
+          if (OB.MobileApp.model.hookManager.get('OBPOS_PostSyncReceipt')) {
+            //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
+            //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
+            OB.MobileApp.model.runSyncProcess(function () {
+              OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostSyncReceipt', {
+                receipt: auxReceipt
+              }, function (args) {
+                successCallback();
+                if (eventParams && eventParams.callback) {
+                  eventParams.callback();
+                }
+              });
+            }, function () {
+              OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostSyncReceipt', {
+                receipt: auxReceipt
+              }, function (args) {
+                if (eventParams && eventParams.callback) {
+                  eventParams.callback();
+                }
+              });
+            });
+          } else {
+            //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
+            OB.MobileApp.model.runSyncProcess(function () {
               successCallback();
-              if (eventParams && eventParams.callback) {
-                eventParams.callback();
-              }
             });
-          }, function () {
-            OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostSyncReceipt', {
-              receipt: model.get('order')
-            }, function (args) {
-              if (eventParams && eventParams.callback) {
-                eventParams.callback();
-              }
-            });
-          });
+            if (eventParams && eventParams.callback) {
+              eventParams.callback();
+            }
+          }
+
         }, function () {
           //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
         });
       });
     }, this);
-
-
 
     this.context.get('multiOrders').on('closed', function (receipt) {
       if (!_.isUndefined(receipt)) {
