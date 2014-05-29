@@ -150,7 +150,7 @@ isc.OBParameterWindowView.addProperties({
       });
       buttonLayout.push(cancelButton);
       buttonLayout.push(isc.LayoutSpacer.create({}));
-      OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Cancel_Button_' + this.processId, this.okButton);
+      OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Cancel_Button_' + this.processId, cancelButton);
       // TODO: check if this is used, and remove as it is already registered
       OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', cancelButton);
     }
