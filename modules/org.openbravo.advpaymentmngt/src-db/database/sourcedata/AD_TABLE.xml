@@ -115,7 +115,7 @@ from FIN_Payment f
 where f.generatedCredit != '0'
 and f.generatedCredit != f.usedCredit
 and @additional_filters@
-and @injection_point_0@]]></HQLQUERY>
+and @insertion_point_0@]]></HQLQUERY>
 <!--59ED9B23854A4B048CBBAE38436B99C2-->  <ENTITY_ALIAS><![CDATA[f]]></ENTITY_ALIAS>
 <!--59ED9B23854A4B048CBBAE38436B99C2--></AD_TABLE>
 
@@ -177,7 +177,7 @@ from FIN_Payment_ScheduleDetail as psd
   left join psd.stDimension as stDim
   left join psd.ndDimension as ndDim
 where @additional_filters@
-and @injection_point_0@]]></HQLQUERY>
+and @insertion_point_0@]]></HQLQUERY>
 <!--864A35C8FCD548B0AD1D69C89BBA6118-->  <ENTITY_ALIAS><![CDATA[psd]]></ENTITY_ALIAS>
 <!--864A35C8FCD548B0AD1D69C89BBA6118--></AD_TABLE>
 
