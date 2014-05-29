@@ -62,7 +62,7 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
     return count;
   }
 
-  private List<JSONObject> fetchJSONObject(Map<String, String> parameters) throws JSONException {
+  private List<JSONObject> fetchJSONObject(Map<String, String> parameters) {
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
     final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
     int startRow = -1;
@@ -78,10 +78,11 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
         DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
     return toJsonConverter.convertToJsonObjects(data);
+
   }
 
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
-      int endRow) throws JSONException {
+      int endRow) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     count = 0;
     String fetchType = null;
@@ -93,20 +94,22 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
       fetchType = "grid";
       qry = OBDal.getInstance().getSession().createSQLQuery(getSQLQuery(parameters));
     }
-
-    ScrollableResults scrollresult = qry.scroll(ScrollMode.FORWARD_ONLY);
-    boolean addValue;
-    while (scrollresult.next()) {
-      Object resultLine = (Object) scrollresult.get();
-      Map<String, Object> row = createRow(resultLine, fetchType);
-      if (StringUtils.isNotEmpty(parameters.get("criteria"))) {
-        addValue = new ResultMapCriteriaUtils(row, parameters).applyFilter();
-        if (addValue) {
-          result.add(row);
-          count++;
+    try {
+      ScrollableResults scrollresult = qry.scroll(ScrollMode.FORWARD_ONLY);
+      boolean addValue;
+      while (scrollresult.next()) {
+        Object resultLine = (Object) scrollresult.get();
+        Map<String, Object> row = createRow(resultLine, fetchType);
+        if (StringUtils.isNotEmpty(parameters.get("criteria"))) {
+          addValue = new ResultMapCriteriaUtils(row, parameters).applyFilter();
+          if (addValue) {
+            result.add(row);
+            count++;
+          }
         }
-      }
 
+      }
+    } catch (JSONException e) {
     }
     return result;
   }
