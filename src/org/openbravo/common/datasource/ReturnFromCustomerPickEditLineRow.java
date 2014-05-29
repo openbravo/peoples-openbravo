@@ -45,7 +45,9 @@ public class ReturnFromCustomerPickEditLineRow {
   private final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
 
   public ReturnFromCustomerPickEditLineRow(Object[] values) {
+
     this.c_rm_order_pick_edit_lines_id = (String) values[0];
+
     this.ad_client_id = (String) values[1];
     this.ad_org_id = (String) values[2];
     this.ad_client_identifier = (String) values[3];
@@ -87,12 +89,14 @@ public class ReturnFromCustomerPickEditLineRow {
     if (this.cOrderLineId != null && this.cOrderLineId.isEmpty()) {
       this.cOrderLineId = null;
     }
+
   }
 
   public Map<String, Object> toMap() {
     Map<String, Object> row = new LinkedHashMap<String, Object>();
 
     row.put("_identifier", this.c_rm_order_pick_edit_lines_id);
+    row.put("id", this.c_rm_order_pick_edit_lines_id);
     row.put("entityName", "ReturnMaterialOrderPickEditLines");
     row.put("client", this.ad_client_id);
     row.put("client$_identifier", this.ad_client_identifier);
