@@ -72,17 +72,14 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, form, grid
       if (_form.getItem('c_currency_id').getValue() !== _form.getItem('c_currency_to_id').getValue()) {
         _form.getItem('conversion_rate').visible = true;
         _form.getItem('converted_amount').visible = true;
-        _form.getItem('c_currency_id').visible = true;
         _form.getItem('c_currency_to_id').visible = true;
       } else {
         _form.getItem('conversion_rate').visible = false;
         _form.getItem('converted_amount').visible = false;
-        _form.getItem('c_currency_id').visible = false;
         _form.getItem('c_currency_to_id').visible = false;
       }
       _form.redraw();
     } else {
-      _form.getItem('c_currency_id').visible = false;
       _form.getItem('c_currency_to_id').visible = false;
       _form.getItem('conversion_rate').visible = false;
       _form.getItem('converted_amount').visible = false;
