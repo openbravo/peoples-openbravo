@@ -163,7 +163,7 @@ isc.OBFKFilterTextItem.addProperties({
     var value = this.getValue(),
         performFetch = false,
         rows,i;
-    if (this.pickListProperties && this.pickList.data && (this.pickList.data.allRows || this.pickList.data.localData)) {
+    if (this.pickList && this.pickList.data && (this.pickList.data.allRows || this.pickList.data.localData)) {
       rows = this.pickList.data.allRows || this.pickList.data.localData;
     }
     if (value && isc.isA.Array(value) && value.length > 0 && rows) {
