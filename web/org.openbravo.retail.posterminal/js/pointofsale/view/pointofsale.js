@@ -71,7 +71,8 @@ enyo.kind({
     onSelectCharacteristicValue: 'selectCharacteristicValue',
     onSelectBrand: 'selectBrand',
     onShowLeftHeader: 'doShowLeftHeader',
-    onWarehouseSelected: 'warehouseSelected'
+    onWarehouseSelected: 'warehouseSelected',
+    onClearKeypad: 'clearKeypad'
   },
   events: {
     onShowPopup: '',
@@ -848,6 +849,9 @@ enyo.kind({
   },
   doShowLeftHeader: function (inSender, inEvent) {
     this.waterfall('onLeftHeaderShow', inEvent);
+  },
+  clearKeypad: function (inSender, inEvent) {
+    this.waterfall('onClearEditBox', inEvent);
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;
