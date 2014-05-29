@@ -177,6 +177,16 @@ public class DocInventory extends AcctServer {
     if (p_lines.length == 0) {
       setStatus(STATUS_DocumentDisabled);
     }
+    int countInvLinesWithTrnCostZero = 0;
+    for (int i = 0; i < p_lines.length; i++) {
+      DocLine_Material line = (DocLine_Material) p_lines[i];
+      if (line.transaction.getTransactionCost().compareTo(ZERO) == 0) {
+        countInvLinesWithTrnCostZero++;
+      }
+    }
+    if (p_lines.length == countInvLinesWithTrnCostZero) {
+      setStatus(STATUS_DocumentDisabled);
+    }
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
 
