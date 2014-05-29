@@ -71,7 +71,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     StringBuffer groupByClause = getGroupByClause(transactionType);
     StringBuffer orderByClause = new StringBuffer();
     if (!justCount) {
-      orderByClause = getOrderByClause(transactionType, selectedPSDs);
+      orderByClause = getOrderByClause(transactionType, selectedPSDs, requestParameters);
     }
 
     // grid filters need to be removed from where clause and added as a having criteria.
@@ -233,10 +233,19 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
    * @param transactionType
    * @return
    */
-  private StringBuffer getOrderByClause(String transactionType, List<String> selectedPSDs) {
+  private StringBuffer getOrderByClause(String transactionType, List<String> selectedPSDs,
+      Map<String, String> requestParameters) {
     StringBuffer orderByClause = new StringBuffer();
     if (selectedPSDs.size() == 0) {
-      orderByClause.append(" CASE WHEN MAX(fp.id) IS NOT NULL THEN 0 ELSE 1 END ");
+      String strInvoiceId = requestParameters.get("c_invoice_id");
+      String strOrderId = requestParameters.get("c_order_id");
+      if (strInvoiceId != null) {
+        orderByClause.append(" CASE WHEN MAX(inv.id) = '" + strInvoiceId + "' THEN 0 ELSE 1 END ");
+      } else if (strOrderId != null) {
+        orderByClause.append(" CASE WHEN MAX(ord.id) = '" + strOrderId + "' THEN 0 ELSE 1 END ");
+      } else {
+        orderByClause.append(" CASE WHEN MAX(fp.id) IS NOT NULL THEN 0 ELSE 1 END ");
+      }
     } else {
       String strAggId = getAggregatorFunction("psd.id");
       orderByClause.append(" CASE WHEN ");
