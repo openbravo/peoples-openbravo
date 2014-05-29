@@ -424,3 +424,69 @@ OB.APRM.AddPayment.orderAndRemoveDuplicates = function (val) {
   retVal = valArray.toString().replaceAll(',', ', ');
   return retVal;
 };
+
+OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
+  var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
+      receivedFrom = view.theForm.getItem('received_from').getValue(),
+      issotrx = view.theForm.getItem('issotrx').getValue(),
+      finFinancialAccount = view.theForm.getItem('fin_financial_account_id').getValue(),
+      amountInvOrds = new BigDecimal(String(view.theForm.getItem('amount_inv_ords').getValue() || 0)),
+      actualPayment = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0)),
+      overpaymentAction = view.theForm.getItem('overpayment_action').getValue(),
+      creditTotalItem = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
+      amountField = orderInvoiceGrid.getFieldByColumnName('amount'),
+      writeoffField = orderInvoiceGrid.getFieldByColumnName('writeoff'),
+      selectedRecords = orderInvoiceGrid.getSelectedRecords(),
+      writeOffLimitPreference = OB.PropertyStore.get('WriteOffLimitPreference', view.windowId),
+      totalWriteOffAmount = BigDecimal.prototype.ZERO,
+      writeOffLineAmount = BigDecimal.prototype.ZERO,
+      totalOustandingAmount = BigDecimal.prototype.ZERO,
+      amount, outstandingAmount;
+
+  // Check if there is pending amount to distribute that could be distributed
+  for (i = 0; i < selectedRecords.length; i++) {
+    amount = new BigDecimal(String(orderInvoiceGrid.getEditedCell(orderInvoiceGrid.getRecordIndex(selectedRecords[i]), amountField)));
+    outstandingAmount = new BigDecimal(String(orderInvoiceGrid.getRecord(i).outstandingAmount));
+    totalOustandingAmount = totalOustandingAmount.add(outstandingAmount);
+    if (orderInvoiceGrid.getEditedCell(orderInvoiceGrid.getRecordIndex(selectedRecords[i]), writeoffField)) {
+      writeOffLineAmount = outstandingAmount.subtract(amount);
+      totalWriteOffAmount = totalWriteOffAmount.add(writeOffLineAmount);
+    }
+  }
+
+  // If there is Overpayment check it exists a business partner
+  if (overpaymentAction !== null && receivedFrom == null) {
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_CreditWithoutBPartner'));
+    return false;
+  }
+
+  actualPayment = actualPayment.add(creditTotalItem);
+  if (actualPayment.compareTo(amountInvOrds) > 0 && totalOustandingAmount.compareTo(amountInvOrds) > 0) {
+    // Not all the payment amount has been allocated
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_JSNOTALLAMOUTALLOCATED'));
+    return false;
+  }
+
+  callbackOnProcessActionHandler = function (response, data, request) {
+    //Check if there are blocked Business Partners
+    if (data.message.severity === 'error') {
+      view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
+      return false;
+    }
+    // Check if the write off limit has been exceeded
+    if (writeOffLimitPreference === 'Y') {
+      if (totalWriteOffAmount > data.writeofflimit) {
+        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_NotAllowWriteOff'));
+        return false;
+      }
+    }
+    actionHandlerCall(view);
+  }
+
+  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentOnProcessActionHandler', {
+    issotrx: issotrx,
+    receivedFrom: receivedFrom,
+    selectedRecords: selectedRecords,
+    finFinancialAccount: finFinancialAccount
+  }, {}, callbackOnProcessActionHandler);
+};
