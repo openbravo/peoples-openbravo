@@ -17,9 +17,38 @@
  ************************************************************************
  */
 OB.APRM.AddPayment = {
+    ordInvDataArrived: function (startRow, endRow) {
+      var i,
+        selectedRecords = this.getSelectedRecords();
+      this.Super('dataArrived', arguments);
+      for (i = 0; i < selectedRecords; i++) {
+        this.setEditValues(this.getRecordIndex(selectedRecords[i]), selectedRecords[i]);
+      }
+    },
     ordInvTransformData: function (newData, dsResponse) {
-      var i, record, data, ids, invno, ordno;
+      var i, j, record, data, ids, invno, ordno, grid, idsArray,
+        editedRecord, isSelected, selectedRecord,
+        curAmount, curOutstandingAmt, curPending, availableAmt,
+        checkContainsAny = function (arrayBase, arrayCompare) {
+        var i;
+        for (i = 0; i < arrayCompare.length; i++) {
+          if (arrayBase.contains(arrayCompare[i].trim())) {
+            return true;
+          }
+        }
+        return false;
+      };
+
       data = this.Super('transformData', arguments) || newData;
+      if (this.dataSource.view.parameterName !== 'order_invoice') {
+        return data;
+      }
+      grid = this.dataSource.view.viewGrid;
+      if (grid.changedTrxType) {
+        grid.selectedIds = [];
+        grid.deselectedIds = [];
+        //grid.data.savedData = [];
+      }
       for (i = 0; i < data.length; i++) {
         record = data[i];
         ids = OB.APRM.AddPayment.orderAndRemoveDuplicates(record.id);
@@ -28,7 +57,42 @@ OB.APRM.AddPayment = {
         record.invoiceNo = invno;
         ordno = OB.APRM.AddPayment.orderAndRemoveDuplicates(record.salesOrderNo);
         record.salesOrderNo = ordno;
+        if (grid.changedTrxType && grid.editedSelectedRecords && grid.editedSelectedRecords.length >= 1) {
+          idsArray = ids.replaceAll(' ','').split(',');
+          isSelected = false;
+          editedRecord = isc.addProperties({}, record);
+          curAmount = new BigDecimal(String(editedRecord.amount));
+          curOutstandingAmt = new BigDecimal(String(editedRecord.outstandingAmount));
+          for (j = 0; j < grid.editedSelectedRecords.length; j ++) {
+            selectedRecord = grid.editedSelectedRecords[j];
+
+            if (checkContainsAny(idsArray, selectedRecord.ids)) {
+              isSelected = true;
+              curPending = curOutstandingAmt.subtract(curAmount);
+              availableAmt = new BigDecimal(String(selectedRecord.amount));
+              if (availableAmt.subtract(curPending).signum() === 1) {
+                curAmount = BigDecimal.prototype.ZERO.add(curOutstandingAmt);
+                selectedRecord.amount = Number(availableAmt.subtract(curPending).toString());
+              } else {
+                curAmount = curAmount.add(availableAmt);
+                selectedRecord.amount = 0;
+              }
+              
+              if (selectedRecord.Writeoff) {
+                record.Writeoff = true;
+              }
+              record.obSelected = true;
+            }
+          }
+          if (isSelected) {
+            record.amount = Number(curAmount.toString());
+            grid.selectedIds.push(record.id);
+            //grid.data.savedData.push(editedRecord);
+            //record = editedRecord;
+          }
+        }
       }
+      grid.changedTrxType = false;
       return data;
     }
 };
@@ -42,6 +106,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
   OB.APRM.AddPayment.actualPaymentOnLoad(view);
   orderInvoiceGrid.selectionChanged = OB.APRM.AddPayment.selectionChanged;
   orderInvoiceGrid.dataProperties.transformData = OB.APRM.AddPayment.ordInvTransformData;
+  orderInvoiceGrid.dataArrived = OB.APRM.AddPayment.ordInvDataArrived;
   glitemGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedGlitem;
   creditUseGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedCredit;
 };
@@ -99,8 +164,26 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, form, grid
 };
 
 OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form, grid) {
-  form.getItem('order_invoice').canvas.viewGrid.invalidateCache();
-  form.getItem('order_invoice').canvas.viewGrid.fetchData(form.getItem('order_invoice').canvas.viewGrid.getCriteria());
+  var ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      selectedRecords = ordinvgrid.getSelectedRecords(),
+      editedRecord, i,
+      editedSelectedRecords = [];
+
+  if (item.getValue() === item.oldSelectedValue) {
+    // only fetch new data if the selected value has changed.
+    return;
+  }
+  item.oldSelectedValue = item.getValue();
+  // Load current selection values to redistribute amounts when new data is loaded.
+  for (i = 0; i < selectedRecords.length; i++) {
+    editedRecord = ordinvgrid.getEditedRecord(ordinvgrid.getRecordIndex(selectedRecords[i]));
+    editedRecord.ids = selectedRecords[i].id.replaceAll(' ', '').split(",");
+    editedSelectedRecords.push(editedRecord);
+  }
+  ordinvgrid.editedSelectedRecords = editedSelectedRecords;
+  ordinvgrid.changedTrxType = true;
+  ordinvgrid.invalidateCache();
+//  ordinvgrid.fetchData(ordinvgrid.getCriteria());
   form.redraw();
 };
 
@@ -211,7 +294,6 @@ OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
       amountField = grid.getFieldByColumnName('amount'),
       selectedRecords = grid.getSelectedRecords(),
       invOrdTotalItem = form.getItem('amount_inv_ords'),
-      selectedRecordAmounts = [],
       recordAmount = {};
 
   for (i = 0; i < selectedRecords.length; i++) {
@@ -219,10 +301,8 @@ OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
     bdAmt = new BigDecimal(String(amt));
     recordAmount.amount = bdAmt;
     recordAmount.ids = selectedRecords[i].id.split(",");
-    selectedRecordAmounts.push(recordAmount);
     totalAmt = totalAmt.add(bdAmt);
   }
-  grid.selectedRecordAmounts = selectedRecordAmounts;
   invOrdTotalItem.setValue(totalAmt.toString());
   OB.APRM.AddPayment.updateTotal(form);
   return true;
@@ -407,6 +487,7 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
     }
   }
 };
+
 /*
  * Retrieves a string of comma separated values and returns it ordered and with the duplicates removed.
  */
@@ -438,7 +519,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       totalWriteOffAmount = BigDecimal.prototype.ZERO,
       writeOffLineAmount = BigDecimal.prototype.ZERO,
       totalOustandingAmount = BigDecimal.prototype.ZERO,
-      amount, outstandingAmount;
+      amount, outstandingAmount, i, callbackOnProcessActionHandler;
 
   // Check if there is pending amount to distribute that could be distributed
   for (i = 0; i < selectedRecords.length; i++) {
@@ -452,7 +533,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   }
 
   // If there is Overpayment check it exists a business partner
-  if (overpaymentAction !== null && receivedFrom == null) {
+  if (overpaymentAction !== null && receivedFrom === null) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_CreditWithoutBPartner'));
     return false;
   }
@@ -478,7 +559,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       }
     }
     actionHandlerCall(view);
-  }
+  };
 
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentOnProcessActionHandler', {
     issotrx: issotrx,
