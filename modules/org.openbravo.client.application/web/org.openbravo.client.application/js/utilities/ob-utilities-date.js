@@ -62,6 +62,9 @@ OB.Utilities.Date.normalizeDisplayFormat = function (displayFormat) {
   } else if (displayFormat.indexOf(' HH.MI') !== -1) {
     newFormat += ' %H.%M';
   }
+  if (displayFormat.indexOf(' a') !== -1) {
+    newFormat += ' A';
+  }
   return newFormat;
 };
 
@@ -77,7 +80,7 @@ OB.Utilities.getTimeFormatDefinition = function () {
 
   timeFormat = OB.Format.dateTime.substring(OB.Format.dateTime.indexOf(' ') + 1);
 
-  if (timeFormat && timeFormat.toLowerCase().endsWith('a')) {
+  if (timeFormat && timeFormat.toUpperCase().lastIndexOf(' A') !== -1 && timeFormat.toUpperCase().lastIndexOf(' A') === timeFormat.length - 2) {
     is24h = false;
   }
 
@@ -110,15 +113,34 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
   }
 
   // if already a date then return true
-  var isADate = Object.prototype.toString.call(OBDate) === '[object Date]';
+  var isADate = Object.prototype.toString.call(OBDate) === '[object Date]',
+      PMIndicator = ' PM',
+      AMIndicator = ' AM',
+      is24h = true,
+      isPM = false;
   if (isADate) {
     return OBDate;
   }
 
+  if (window.isc && isc.Time && isc.Time.PMIndicator) {
+    PMIndicator = isc.Time.PMIndicator;
+  }
+  if (window.isc && isc.Time && isc.Time.AMIndicator) {
+    AMIndicator = isc.Time.AMIndicator;
+  }
+
   dateFormat = OB.Utilities.Date.normalizeDisplayFormat(dateFormat);
+  dateFormat = dateFormat.replace(' A', '');
   var dateSeparator = dateFormat.substring(2, 3);
   var timeSeparator = dateFormat.substring(11, 12);
   var isFullYear = (dateFormat.indexOf('%Y') !== -1);
+  if (OBDate.indexOf(PMIndicator) !== 1 || OBDate.indexOf(AMIndicator) !== 1) {
+    is24h = false;
+  }
+  if (!is24h && OBDate.indexOf(PMIndicator) !== -1) {
+    isPM = true;
+  }
+  OBDate = OBDate.replace(AMIndicator, '').replace(PMIndicator, '');
 
   if ((isFullYear ? OBDate.length - 2 : OBDate.length) !== dateFormat.length) {
     return null;
@@ -156,6 +178,15 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
   hours = parseInt(hours, 10);
   minutes = parseInt(minutes, 10);
   seconds = parseInt(seconds, 10);
+
+  if (!is24h) {
+    if (!isPM && hours === 12) {
+      hours = 0;
+    }
+    if (isPM && hours !== 12) {
+      hours = hours + 12;
+    }
+  }
 
   if (day < 1 || day > 31 || month < 1 || month > 12 || year > 99 || fullYear > 9999) {
     return null;
@@ -210,9 +241,23 @@ OB.Utilities.Date.OBToJS = function (OBDate, dateFormat) {
 OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
   dateFormat = OB.Utilities.Date.normalizeDisplayFormat(dateFormat);
 
-  var isADate = Object.prototype.toString.call(JSDate) === '[object Date]';
+  var isADate = Object.prototype.toString.call(JSDate) === '[object Date]',
+      PMIndicator = ' PM',
+      AMIndicator = ' AM',
+      is24h = true,
+      isPM = false;
   if (!isADate) {
     return null;
+  }
+
+  if (window.isc && isc.Time && isc.Time.PMIndicator) {
+    PMIndicator = isc.Time.PMIndicator;
+  }
+  if (window.isc && isc.Time && isc.Time.AMIndicator) {
+    AMIndicator = isc.Time.AMIndicator;
+  }
+  if (dateFormat.toUpperCase().lastIndexOf(' A') !== -1 && dateFormat.toUpperCase().lastIndexOf(' A') === dateFormat.length - 2) {
+    is24h = false;
   }
 
   var year = JSDate.getYear().toString();
@@ -233,6 +278,20 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
     } else {
       return null;
     }
+  }
+
+  if (!is24h) {
+    hours = parseInt(hours, 10);
+    if (hours >= 12) {
+      isPM = true;
+    }
+    if (hours > 12) {
+      hours = hours - 12;
+    }
+    if (hours === 0) {
+      hours = 12;
+    }
+    hours = hours.toString();
   }
 
   while (year.length < 2) {
@@ -264,6 +323,14 @@ OB.Utilities.Date.JSToOB = function (JSDate, dateFormat) {
   OBDate = OBDate.replace('%H', hours);
   OBDate = OBDate.replace('%M', minutes);
   OBDate = OBDate.replace('%S', seconds);
+
+  if (!is24h) {
+    if (isPM) {
+      OBDate = OBDate.replace(' A', PMIndicator);
+    } else {
+      OBDate = OBDate.replace(' A', AMIndicator);
+    }
+  }
 
   return OBDate;
 };

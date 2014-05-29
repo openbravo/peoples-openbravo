@@ -2872,7 +2872,7 @@ isc.OBViewGrid.addProperties({
     this.view.standardWindow.autoSaveDone(this.view, true);
 
     // if nothing else got selected, select ourselves then
-    if (!this.getSelectedRecord()) {
+    if (!this.getSelectedRecord() || (this.getSelectedRecord().id === record._originalId)) {
       this.selectRecord(record);
       keepSelection = true;
       this.view.refreshChildViews(keepSelection);

@@ -296,7 +296,7 @@ public class DocFINPayment extends AcctServer {
                 && detail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null ? detail
                 .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
                 : null);
-        docLine.setInvoiceTaxCashVAT_V(Line_ID);
+        docLine.setInvoiceTaxCashVAT_V(detail.getFinPayment().getId());
         list.add(docLine);
       } finally {
         OBContext.restorePreviousMode();

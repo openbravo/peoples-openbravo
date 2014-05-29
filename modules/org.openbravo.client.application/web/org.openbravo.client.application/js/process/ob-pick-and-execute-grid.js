@@ -53,6 +53,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     width: 32
   },
 
+  // prevents additional requests when loading data
+  drawAllMaxCells: 0,
+
   //The Cell should be validated each time the focus is changed.
   validateByCell: true,
   // default selection
@@ -460,20 +463,6 @@ isc.OBPickAndExecuteGrid.addProperties({
     return this.Super('recordClick', arguments);
   },
 
-
-  // Dummy "createRecordComponent" to fix issue: https://issues.openbravo.com/view.php?id=19879
-  // It seems that if it is not present, Smartclient doesn't perform well the maths to calculate the editing fields width
-  createRecordComponent: function (record, colNum) {
-    var layout = null;
-    if (colNum === 0) {
-      layout = isc.Layout.create({
-        width: 0,
-        height: 0
-      });
-    }
-    return layout;
-  },
-
   getOrgParameter: function () {
     var view = this.view && this.view.buttonOwnerView,
         context, i;
@@ -697,12 +686,12 @@ isc.OBPickAndExecuteGrid.addProperties({
       if (editForm) {
         items = editForm.getItems();
         updatedBlur = function (form, item) {
-            this.original_blur(form, item);
-            // Execute onChangeFunctions if they exist
-            if (this && OB.OnChangeRegistry.hasOnChange(form.grid.ID, item)) {
-              OB.OnChangeRegistry.call(form.grid.ID, item, form.grid.view, form.grid.view.theForm, form.grid);
-            }
-          };
+          this.original_blur(form, item);
+          // Execute onChangeFunctions if they exist
+          if (this && OB.OnChangeRegistry.hasOnChange(form.grid.ID, item)) {
+            OB.OnChangeRegistry.call(form.grid.ID, item, form.grid.view, form.grid.view.theForm, form.grid);
+          }
+        };
         for (i = 0; i < items.length; i++) {
           items[i].original_blur = items[i].blur;
           items[i].blur = updatedBlur;

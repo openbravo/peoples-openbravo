@@ -264,7 +264,16 @@ isc.OBStandardView.addProperties({
 
     this.toolBar.updateButtonState(true, false, true);
 
+    // It will only enter if this is a lazy initialized tab
+    // this.standardWindow.getClass().uiPattern will only exists after setWindowSettings is executed
+    if (this.standardWindow.getClass().uiPattern) {
+      this.setReadOnly(this.standardWindow.getClass().uiPattern[this.tabId] === isc.OBStandardView.UI_PATTERN_READONLY);
+      this.setSingleRecord(this.standardWindow.getClass().uiPattern[this.tabId] === isc.OBStandardView.UI_PATTERN_SINGLERECORD);
+      this.setEditOrDeleteOnly(this.standardWindow.getClass().uiPattern[this.tabId] === isc.OBStandardView.UI_PATTERN_EDITORDELETEONLY);
+    }
+
     // Update the subtab visibility before the tabs are shown to the client
+    this.handleDefaultTreeView();
     this.updateSubtabVisibility();
   },
 
@@ -378,6 +387,54 @@ isc.OBStandardView.addProperties({
       this.viewGrid.hide();
     }
 
+  },
+
+  handleDefaultTreeView: function (parentContextInfo) {
+    var contextInfo, tabViewPane, length, i, p;
+    contextInfo = this.getContextInfo(false, true, true);
+
+    for (p in parentContextInfo) {
+      // While evaluating the 'defaultTreeViewLogicIf' the parent contextInfo is needed
+      // because based on the parent selected record, the current view will be shown
+      // in tree view or in grid view mode.
+      if (parentContextInfo.hasOwnProperty(p)) {
+        contextInfo[p] = parentContextInfo[p];
+      }
+    }
+
+    if (this.treeGrid && isc.isA.Function(this.defaultTreeViewLogicIf)) {
+      if (this.defaultTreeViewLogicIf(contextInfo)) {
+        if (!this.isShowingTree) {
+          if (this.treeGrid.getDataSource()) {
+            OB.ToolbarUtils.showTreeGrid(this);
+          } else {
+            this.defaultTreeView = true;
+          }
+        }
+      } else if (this.isShowingTree) {
+        OB.ToolbarUtils.hideTreeGrid(this);
+      }
+    }
+
+    if (this.childTabSet) {
+      length = this.childTabSet.tabs.length;
+      for (i = 0; i < length; i++) {
+        tabViewPane = this.childTabSet.tabs[i].pane;
+        if (tabViewPane.handleDefaultTreeView) {
+          this.addPreferenceValues(contextInfo, tabViewPane);
+          tabViewPane.handleDefaultTreeView(contextInfo);
+        }
+      }
+    }
+  },
+
+  executeWhenTreeGridDSReady: function () {
+    if (this.defaultTreeView) {
+      // If the default visualization of the tab is the tree grid, it needs to be shown after
+      // the tree grid datasource has been set. That's why it is handled here.
+      this.handleDefaultTreeView();
+      delete this.defaultTreeView;
+    }
   },
 
   // handles different ways by which an error can be passed from the 
@@ -511,14 +568,13 @@ isc.OBStandardView.addProperties({
         }
       });
 
-      // the grid should not show the image fields
-      // see issue 20049 (https://issues.openbravo.com/view.php?id=20049)
-      completeFieldsWithoutImages = this.removeImageFields(this.viewGrid.completeFields);
-      fieldsWithoutImages = this.removeImageFields(this.viewGrid.fields);
-
-      this.viewGrid.setDataSource(this.dataSource, completeFieldsWithoutImages || fieldsWithoutImages);
-
       if (this.viewGrid) {
+        // the grid should not show the image fields
+        // see issue 20049 (https://issues.openbravo.com/view.php?id=20049)
+        completeFieldsWithoutImages = this.removeImageFields(this.viewGrid.completeFields);
+        fieldsWithoutImages = this.removeImageFields(this.viewGrid.fields);
+
+        this.viewGrid.setDataSource(this.dataSource, completeFieldsWithoutImages || fieldsWithoutImages);
         this.viewGrid.setWidth('100%');
         this.viewGrid.setView(this);
         this.formGridLayout.addMember(this.viewGrid);
@@ -527,6 +583,8 @@ isc.OBStandardView.addProperties({
       if (this.treeGrid) {
         this.treeGrid.setWidth('100%');
         this.treeGrid.setView(this);
+        // The following method sets the tree grid datasource in an asynchronous way.
+        // In order to execute actions once it has been set, use the 'executeWhenTreeGridDSReady' function.
         OB.Datasource.get(this.treeGrid.dataSourceId, this.treeGrid, null, true);
         this.treeGrid.hide();
         this.formGridLayout.addMember(this.treeGrid);
@@ -1529,6 +1587,7 @@ isc.OBStandardView.addProperties({
 
     // Update the tab visibility after a record has been selected and its session
     // attributes have been updated
+    this.handleDefaultTreeView();
     this.updateSubtabVisibility();
 
     // If the record has been automatically selected because was the only record in the header tab,
@@ -1959,6 +2018,7 @@ isc.OBStandardView.addProperties({
             }
             me.viewForm.view.attachmentExists = attachmentExists;
             //compute and apply tab display logic again after fetching auxilary inputs.
+            me.handleDefaultTreeView();
             me.updateSubtabVisibility();
           });
         }

@@ -26,6 +26,9 @@ the outputted value is already covered by a default.
 {
 <@compress single_line=true>
     name: '${field.name?js_string}',
+    <#if field.id??>
+        id: '${field.id?js_string}',
+    </#if>
     <#if field.label != ''>
         title: '${field.label?js_string}',
     </#if>

@@ -61,7 +61,7 @@ public class AlertsForWrongOrders extends ModuleScript {
 	            wrongOrder.adClientId);
 	    if (!AlertsForWrongOrdersData.existsAlert(cp, oldAlertRuleId, wrongOrder.cOrderId)) {
 	    if (!AlertsForWrongOrdersData.existsAlertRule(cp, ALERT_RULE, wrongOrder.adClientId)) {
-	    	AlertsForWrongOrdersData.insertAlertRule(cp, wrongOrder.adClientId, ALERT_RULE, strTabId, ALERT_RULE_SQL);
+	    	AlertsForWrongOrdersData.insertAlertRule(cp, wrongOrder.adClientId, ALERT_RULE, strTabId, "");
 	        AlertsForWrongOrdersData[] roles = AlertsForWrongOrdersData.getRoleId(cp,
 	            WindowOrderId, wrongOrder.adClientId);
 	        for (AlertsForWrongOrdersData role : roles) {
@@ -70,11 +70,15 @@ public class AlertsForWrongOrders extends ModuleScript {
 	              AlertsForWrongOrdersData.getAlertRuleId(cp, ALERT_RULE, wrongOrder.adClientId),
 	              role.adRoleId);
 	        }
+	      } else {
+	        AlertsForWrongOrdersData.updateAlertRule(cp, ALERT_RULE, wrongOrder.adClientId);
 	      }
 	    	String alertRuleId = AlertsForWrongOrdersData.getAlertRuleId(cp, ALERT_RULE,
 	            wrongOrder.adClientId);
 	      AlertsForWrongOrdersData.insertAlert(cp, wrongOrder.adClientId, wrongOrder.adOrgId,
 	          strName, alertRuleId, wrongOrder.orderinfo, wrongOrder.cOrderId);
-	    }
+	    } else {
+              AlertsForWrongOrdersData.updateAlertRule(cp, ALERT_RULE, wrongOrder.adClientId);
+            }
   	}
 }

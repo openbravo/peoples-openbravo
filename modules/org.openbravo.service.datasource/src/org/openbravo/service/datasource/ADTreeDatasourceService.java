@@ -337,6 +337,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return parentRecordId;
   }
 
+  @Override
   /**
    * Check if a node has children
    * 
@@ -348,7 +349,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    *          the where clause to be applied to the children
    * @return
    */
-  private boolean nodeHasChildren(Entity entity, String nodeId, String hqlWhereClause) {
+  protected boolean nodeHasChildren(Entity entity, String nodeId, String hqlWhereClause) {
     StringBuilder joinClause = new StringBuilder();
     joinClause.append(" as tn ");
     joinClause.append(" , " + entity.getName() + " as e ");

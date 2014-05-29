@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -62,6 +62,7 @@ public class JsonConstants {
   public static final String ENDROW_PARAMETER = "_endRow";
   public static final String SORTBY_PARAMETER = "_sortBy";
   public static final String TARGETRECORDID_PARAMETER = "_targetRecordId";
+  public static final String TAB_PARAMETER = "tabId";
   public static final String DATASOURCE_PARAMETER = "_dataSource";
   public static final String TEXTMATCH_PARAMETER = "_textMatchStyle";
   public static final String TEXTMATCH_PARAMETER_OVERRIDE = "_textMatchStyleOverride";

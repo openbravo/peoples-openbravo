@@ -22,7 +22,7 @@
 			<style fontSize="10" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
-			<conditionExpression><![CDATA[new Boolean($F{elementLevel} <= 4)]]></conditionExpression>
+			<conditionExpression><![CDATA[new Boolean($F{elementLevel} >= 4)]]></conditionExpression>
 			<style fontSize="9" isBold="false"/>
 		</conditionalStyle>
 	</style>
@@ -53,6 +53,17 @@
 	<field name="qty" class="java.math.BigDecimal"/>
 	<field name="qtyRef" class="java.math.BigDecimal"/>
 	<field name="elementLevel" class="java.lang.Integer"/>
+	<field name="groupname" class="java.lang.String"/>
+	<field name="pagebreak" class="java.lang.String"/>
+	<group name="group" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{groupname}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -162,13 +173,6 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["Client N-1: "+ $P{companyName}+ " " +$P{agnoRef}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="staticText-7" x="0" y="74" width="112" height="12"/>
-				<textElement markup="none">
-					<font fontName="DejaVu Sans" size="9" isBold="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{principalTitle}]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement key="staticText-7" x="211" y="84" width="112" height="11"/>
 				<textElement markup="none">
 					<font fontName="DejaVu Sans" size="9" isBold="true"/>
@@ -196,19 +200,26 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{columnRef}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement key="staticText-7" x="0" y="74" width="229" height="12"/>
+				<textElement markup="none">
+					<font fontName="DejaVu Sans" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{groupname}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="17" splitType="Stretch">
+		<band height="15" splitType="Stretch">
 			<textField>
 				<reportElement key="staticText-7" style="CustSatIndexMarkup" x="0" y="0" width="376" height="14"/>
 				<textElement markup="none">
 					<font fontName="DejaVu Sans"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{elementLevel}==4 ? "      " + $F{name}: $F{elementLevel}==3 ? "     " + $F{name}: $F{elementLevel}==2 ? "  " + $F{name}:$F{name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{elementLevel}>=4 ? "      " + $F{name}: $F{elementLevel}==3 ? "     " + $F{name}: $F{elementLevel}==2 ? "  " + $F{name}:$F{name}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="staticText-7" x="376" y="0" width="80" height="14"/>

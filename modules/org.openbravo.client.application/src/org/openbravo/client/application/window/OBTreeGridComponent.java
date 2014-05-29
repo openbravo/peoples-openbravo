@@ -75,6 +75,27 @@ public class OBTreeGridComponent extends BaseTemplateComponent {
     }
   }
 
+  public boolean isCanReorderRecords() {
+    String uiPattern = tab.getUIPattern();
+    boolean isReadOnlyTree = tab.isReadOnlyTree();
+    if (uiPattern.equals("RO") || isReadOnlyTree) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  public boolean isShowNodeIcons() {
+    String uiPattern = tab.getUIPattern();
+    boolean isShowTreeNodeIcons = tab.isShowTreeNodeIcons();
+    boolean isReadOnlyTree = tab.isReadOnlyTree();
+    if ((uiPattern.equals("RO") || isReadOnlyTree) && !isShowTreeNodeIcons) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   public boolean isApplyWhereClauseToChildren() {
     TableTree tableTree = tab.getTableTree();
     return tableTree.isApplyWhereClauseToChildNodes();

@@ -793,10 +793,10 @@ isc.OBGrid.addProperties({
       this.filterImage.show(true);
       this.setSingleRecordFilterMessage();
       return;
-    } else if (this.filterClause && gridIsFiltered) {
+    } else if ((this.filterClause || this.sqlFilterClause) && gridIsFiltered) {
       this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterBothToolTip');
       this.filterImage.show(true);
-    } else if (this.filterClause) {
+    } else if (this.filterClause || this.sqlFilterClause) {
       this.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterImplicitToolTip');
       this.filterImage.show(true);
     } else if (gridIsFiltered) {
@@ -810,7 +810,7 @@ isc.OBGrid.addProperties({
       this.filterImage.hide();
     }
 
-    if (this.filterClause && !this.view.isShowingForm && (messageBar && !messageBar.isVisible())) {
+    if ((this.filterClause || this.sqlFilterClause) && !this.view.isShowingForm && (messageBar && !messageBar.isVisible())) {
       var showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowImplicitFilterMsg'),
           showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"' && noParentOrParentSelected);
       if (showMessage) {

@@ -50,20 +50,19 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
     this.invoiceTaxCashVAT_V = invoiceTaxCashVAT_V;
   }
 
-  public void setInvoiceTaxCashVAT_V(String finPaymentDetailID) {
-    if (StringUtils.isBlank(finPaymentDetailID)) {
+  public void setInvoiceTaxCashVAT_V(String finPaymentID) {
+    if (StringUtils.isBlank(finPaymentID)) {
       this.invoiceTaxCashVAT_V = new ArrayList<InvoiceTaxCashVAT_V>();
     } else {
       try {
         OBContext.setAdminMode(true);
         final StringBuffer hql = new StringBuffer();
         hql.append(" as itcv ");
-        hql.append(" where itcv." + InvoiceTaxCashVAT_V.PROPERTY_PAYMENTDETAILS
-            + ".id = :finPaymentDetailID ");
+        hql.append(" where itcv." + InvoiceTaxCashVAT_V.PROPERTY_PAYMENT + ".id = :finPaymentID ");
         hql.append(" and itcv." + InvoiceTaxCashVAT_V.PROPERTY_CANCELED + " = false");
         OBQuery<InvoiceTaxCashVAT_V> obq = OBDal.getInstance().createQuery(
             InvoiceTaxCashVAT_V.class, hql.toString());
-        obq.setNamedParameter("finPaymentDetailID", finPaymentDetailID);
+        obq.setNamedParameter("finPaymentID", finPaymentID);
         obq.setFilterOnReadableClients(false);
         obq.setFilterOnReadableOrganization(false);
 

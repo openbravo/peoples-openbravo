@@ -186,6 +186,9 @@ public class FIN_ExecutePayment {
             try {
               OBContext.setAdminMode(true);
               for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+                if (pd.getGLItem() != null) {
+                  continue;
+                }
                 for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
                   if (psd.isInvoicePaid()
                       && FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
@@ -202,6 +205,7 @@ public class FIN_ExecutePayment {
                     }
                   }
                 }
+                break;
               }
 
             } finally {
@@ -211,11 +215,15 @@ public class FIN_ExecutePayment {
           try {
             OBContext.setAdminMode(true);
             for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
+              if (pd.getGLItem() != null) {
+                continue;
+              }
               for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
                 if (psd.isInvoicePaid()) {
                   updatePaymentAmounts(paymentRunPayment.getPayment());
                 }
               }
+              break;
             }
           } finally {
             OBContext.restorePreviousMode();
@@ -282,7 +290,7 @@ public class FIN_ExecutePayment {
               psd.getAmount(), psd.getWriteoffAmount());
         }
         if (psd.getOrderPaymentSchedule() != null) {
-          FIN_AddPayment.updatePaymentScheduleAmounts(psd.getOrderPaymentSchedule(),
+          FIN_AddPayment.updatePaymentScheduleAmounts(pDetail, psd.getOrderPaymentSchedule(),
               psd.getAmount(), psd.getWriteoffAmount());
         }
         if (pDetail.isPrepayment() && psd.getOrderPaymentSchedule() == null

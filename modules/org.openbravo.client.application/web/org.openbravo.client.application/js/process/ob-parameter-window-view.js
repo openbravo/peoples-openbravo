@@ -1,6 +1,5 @@
 /*
  *************************************************************************
-
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -52,7 +51,7 @@ isc.OBParameterWindowView.addProperties({
     var i, field, items = [],
         buttonLayout = [],
         newButton, cancelButton, view = this,
-        newShowIf, params;
+        newShowIf, params, updatedExpandSection;
 
 
     // Buttons
@@ -166,7 +165,17 @@ isc.OBParameterWindowView.addProperties({
     // Message bar
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden',
-      view: this
+      view: this,
+      show: function () {
+        var showMessageBar = true;
+        this.Super('show', arguments);
+        view.resized(showMessageBar);
+      },
+      hide: function () {
+        var showMessageBar = false;
+        this.Super('hide', arguments);
+        view.resized(showMessageBar);
+      }
     });
     this.members.push(this.messageBar);
 
@@ -202,6 +211,19 @@ isc.OBParameterWindowView.addProperties({
       return originalShowIfValue;
     };
 
+    // this function is only used in OBSectionItems that are collapsed originally
+    // this is done to force the data fetch of its stored OBPickEditGridItems
+    updatedExpandSection = function () {
+      var i, itemName, item;
+      this.originalExpandSection();
+      for (i = 0; i < this.itemIds.length; i++) {
+        itemName = this.itemIds[i];
+        item = this.form.getItem(itemName);
+        if (item.type === 'OBPickEditGridItem' && !isc.isA.ResultSet(item.canvas.viewGrid.data)) {
+          item.canvas.viewGrid.fetchData(item.canvas.viewGrid.getCriteria());
+        }
+      }
+    };
     // Parameters
     if (this.viewProperties.fields) {
       for (i = 0; i < this.viewProperties.fields.length; i++) {
@@ -219,6 +241,13 @@ isc.OBParameterWindowView.addProperties({
           field.onChangeFunction.sort = 50;
 
           OB.OnChangeRegistry.register(this.viewId, field.name, field.onChangeFunction, 'default');
+        }
+
+        if (field.type === 'OBSectionItem' && !field.sectionExpanded) {
+          // modifies the expandSection function of OBSectionItems collapsed originally to avoid having 
+          // unloaded grids when a section is expanded for the first time
+          field.originalExpandSection = isc.OBSectionItem.getPrototype().expandSection;
+          field.expandSection = updatedExpandSection;
         }
         items.push(field);
 
@@ -238,9 +267,6 @@ isc.OBParameterWindowView.addProperties({
         this.formContainerLayout.addMember(this.theForm);
         this.members.push(this.formContainerLayout);
       }
-    }
-    if (this.grid) {
-      this.members.push(this.grid);
     }
 
 
@@ -389,13 +415,6 @@ isc.OBParameterWindowView.addProperties({
         return validForm;
       }
     }
-
-    if (this.grid) {
-      viewGrid = this.grid.viewGrid;
-
-      viewGrid.endEditing();
-      return !viewGrid.hasErrors();
-    }
     return true;
   },
 
@@ -404,9 +423,6 @@ isc.OBParameterWindowView.addProperties({
     if (processing) {
       if (this.theForm) {
         this.theForm.hide();
-      }
-      if (this.grid) {
-        this.grid.hide();
       }
       if (this.popupButtons) {
         this.popupButtons.hide();
@@ -424,9 +440,6 @@ isc.OBParameterWindowView.addProperties({
     } else {
       if (this.theForm) {
         this.theForm.show();
-      }
-      if (this.grid) {
-        this.grid.show();
       }
 
       this.loading.hide();
@@ -448,30 +461,6 @@ isc.OBParameterWindowView.addProperties({
     tab = OB.MainView.TabSet.getTab(this.viewTabId);
     if (tab) {
       tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Executing', [this.tabTitle]));
-    }
-
-    if (this.grid) {
-      // TODO: Support for multiple grids
-      grid = this.grid.viewGrid;
-      selection = grid.getSelectedRecords() || [];
-      len = selection.length;
-      allRows = grid.data.allRows || grid.data.localData || grid.data;
-      allProperties._selection = [];
-      allProperties._allRows = [];
-
-      for (i = 0; i < len; i++) {
-        tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(grid.getRecordIndex(selection[i])));
-        allProperties._selection.push(tmp);
-      }
-
-      len = (allRows && allRows.length) || 0;
-      // Only send _allRows if all rows are cached
-      if (!(grid.data.resultSize) || (len < grid.data.resultSize)) {
-        for (i = 0; i < len; i++) {
-          tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(grid.getRecordIndex(allRows[i])));
-          allProperties._allRows.push(tmp);
-        }
-      }
     }
 
     allProperties._buttonValue = btnValue || 'DONE';

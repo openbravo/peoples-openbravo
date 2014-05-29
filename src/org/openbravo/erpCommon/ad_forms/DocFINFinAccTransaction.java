@@ -384,7 +384,7 @@ public class DocFINFinAccTransaction extends AcctServer {
                   .getInvoice()
                   : null);
           docLine.setDoubtFulDebtAmount(new BigDecimal(data[i].getField("DoubtFulDebtAmount")));
-          docLine.setInvoiceTaxCashVAT_V(paymentDetail_ID);
+          docLine.setInvoiceTaxCashVAT_V(strPaymentId);
         }
         docLine.setIsPrepayment(data[i].getField("isprepayment"));
         docLine.setCGlItemId(data[i].getField("cGlItemId"));

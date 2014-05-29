@@ -51,8 +51,8 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.service.datasource.hql.HQLInjectionQualifier;
-import org.openbravo.service.datasource.hql.HqlInjector;
+import org.openbravo.service.datasource.hql.HQLInserterQualifier;
+import org.openbravo.service.datasource.hql.HqlInserter;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
@@ -67,21 +67,21 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private static final String ORDERBY = " ORDER BY ";
   private static final String GROUPBY = "GROUP BY";
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
-  private static final String INJECTION_POINT_GENERIC_ID = "@injection_point_#@";
-  private static final String INJECTION_POINT_INDEX_PLACEHOLDER = "#";
-  private static final String DUMMY_INJECTION_POINT_REPLACEMENT = " 1 = 1 ";
+  private static final String INSERTION_POINT_GENERIC_ID = "@insertion_point_#@";
+  private static final String INSERTION_POINT_INDEX_PLACEHOLDER = "#";
+  private static final String DUMMY_INSERTION_POINT_REPLACEMENT = " 1 = 1 ";
   @Inject
   @Any
-  private Instance<HqlInjector> hqlInjectors;
+  private Instance<HqlInserter> hqlInserters;
   @Inject
   @Any
   private Instance<HqlQueryTransformer> hqlQueryTransformers;
 
   @Override
-  // Returns the datasource properties, based on the columns of the table that is going to use the
-  // datasource
-  // This is needed to support client side filtering
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
+    // Returns the datasource properties, based on the columns of the table that is going to use the
+    // datasource
+    // This is needed to support client side filtering
     List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
     String tableId = (String) parameters.get("tableId");
     if (tableId != null) {
@@ -221,7 +221,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     queryBuilder.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
     queryBuilder.setCriteria(criteria);
     String whereClause = queryBuilder.getWhereClause();
-
     // replace the property names with the column alias
     whereClause = replaceParametersWithAlias(table, whereClause);
 
@@ -265,10 +264,10 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     // if the is any HQL Query transformer defined for this table, use it to transform the query
     hqlQuery = transFormQuery(hqlQuery, queryNamedParameters, parameters);
 
-    // replaces the injection points with injected code or with dummy comparisons
+    // replaces the insertion points with injected code or with dummy comparisons
     // if the injected code includes named parameters for the query, they are stored in the
     // queryNamedParameters parameter
-    hqlQuery = fillInInjectionPoints(hqlQuery, queryNamedParameters, parameters);
+    hqlQuery = fillInInsertionPoints(hqlQuery, queryNamedParameters, parameters);
 
     if (distinct == null && justCount) {
       final String from = "from ";
@@ -292,36 +291,36 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   }
 
   /**
-   * If the hql query has injection points, resolve them using dependency injection. If some
-   * injection points are defined in the query but its definition is not injected, replace them with
+   * If the hql query has insertion points, resolve them using dependency injection. If some
+   * insertion points are defined in the query but its definition is not injected, replace them with
    * dummy comparisons
    * 
    * @param hqlQuery
-   *          hql query that might contain injection points
+   *          hql query that might contain insertion points
    * @param queryNamedParameters
    *          array with the named paremeters that will be set to the query. At this point it is
-   *          empty, is can be filled in by the injection point implementators
+   *          empty, is can be filled in by the insertion point implementators
    * @param parameters
    *          parameters of this request
    * @return the updated hql query. Also, hqlParameters can contain the named parameters used in the
-   *         injection points
+   *         insertion points
    */
-  private String fillInInjectionPoints(String hqlQuery, Map<String, Object> queryNamedParameters,
+  private String fillInInsertionPoints(String hqlQuery, Map<String, Object> queryNamedParameters,
       Map<String, String> parameters) {
     String updatedHqlQuery = hqlQuery;
     int index = 0;
-    while (existsInjectionPoint(hqlQuery, index)) {
-      HqlInjector injector = getInjector(index, parameters);
-      String injectedCode = null;
-      if (injector != null) {
-        injectedCode = injector.injectHql(parameters, queryNamedParameters);
+    while (existsInsertionPoint(hqlQuery, index)) {
+      HqlInserter inserter = getHqlInserter(index, parameters);
+      String insertedCode = null;
+      if (inserter != null) {
+        insertedCode = inserter.insertHql(parameters, queryNamedParameters);
       }
-      if (injectedCode == null) {
-        injectedCode = DUMMY_INJECTION_POINT_REPLACEMENT;
+      if (insertedCode == null) {
+        insertedCode = DUMMY_INSERTION_POINT_REPLACEMENT;
       }
-      String injectionPointId = INJECTION_POINT_GENERIC_ID.replace(
-          INJECTION_POINT_INDEX_PLACEHOLDER, Integer.toString(index));
-      updatedHqlQuery = updatedHqlQuery.replace(injectionPointId, injectedCode);
+      String insertionPointId = INSERTION_POINT_GENERIC_ID.replace(
+          INSERTION_POINT_INDEX_PLACEHOLDER, Integer.toString(index));
+      updatedHqlQuery = updatedHqlQuery.replace(insertionPointId, insertedCode);
       index++;
     }
     return updatedHqlQuery;
@@ -369,7 +368,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         transformer = nextTransformer;
       } else if (nextTransformer.getPriority(parameters) == transformer.getPriority(parameters)) {
         log.warn(
-            "Trying to get hql query transformer injector for the table with id {}, there are more than one instance with same priority",
+            "Trying to get hql query transformer for the table with id {}, there are more than one instance with same priority",
             table.getId());
       }
     }
@@ -377,47 +376,48 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   }
 
   /**
-   * Returns, if defined, an injector for the injection point with index it
+   * Returns, if defined, an HQL inserter for the insertion point with index id
    * 
    * @param index
-   *          the index of the injection point
+   *          the index of the insertion point
    * @param parameters
    *          the parameters of the request
-   * @return the injector with the lowest priority for the injection point @injection_point_<index>@
+   * @return the HQL inserter with the lowest priority for the insertion point
+   * @insertion_point_<index>@
    */
-  private HqlInjector getInjector(int index, Map<String, String> parameters) {
-    HqlInjector injector = null;
+  private HqlInserter getHqlInserter(int index, Map<String, String> parameters) {
+    HqlInserter inserter = null;
     Table table = getTableFromParameters(parameters);
-    for (HqlInjector inj : hqlInjectors.select(new HQLInjectionQualifier.Selector(table.getId(),
+    for (HqlInserter inj : hqlInserters.select(new HQLInserterQualifier.Selector(table.getId(),
         Integer.toString(index)))) {
-      if (injector == null) {
-        injector = inj;
-      } else if (inj.getPriority(parameters) < injector.getPriority(parameters)) {
-        injector = inj;
-      } else if (inj.getPriority(parameters) == injector.getPriority(parameters)) {
+      if (inserter == null) {
+        inserter = inj;
+      } else if (inj.getPriority(parameters) < inserter.getPriority(parameters)) {
+        inserter = inj;
+      } else if (inj.getPriority(parameters) == inserter.getPriority(parameters)) {
         log.warn(
-            "Trying to get hql injector for the injection point {} of the table with id {}, there are more than one instance with same priority",
-            INJECTION_POINT_GENERIC_ID.replace(INJECTION_POINT_INDEX_PLACEHOLDER,
+            "Trying to get hql inserter for the insertion point {} of the table with id {}, there are more than one instance with same priority",
+            INSERTION_POINT_GENERIC_ID.replace(INSERTION_POINT_INDEX_PLACEHOLDER,
                 Integer.toString(index)), table.getId());
       }
     }
-    return injector;
+    return inserter;
   }
 
   /**
-   * Checks if the injection point with id index exists in the provided hql query
+   * Checks if the insertion point with id index exists in the provided hql query
    * 
    * @param hqlQuery
-   *          hql query that can contain injection points
+   *          hql query that can contain insertion points
    * @param index
-   *          index of the injection point
-   * @return true if the hql query contains an injection point with the provided index, false
+   *          index of the insertion point
+   * @return true if the hql query contains an insertion point with the provided index, false
    *         otherwise
    */
-  private boolean existsInjectionPoint(String hqlQuery, int index) {
-    String injectionPointId = INJECTION_POINT_GENERIC_ID.replace(INJECTION_POINT_INDEX_PLACEHOLDER,
+  private boolean existsInsertionPoint(String hqlQuery, int index) {
+    String insertionPointId = INSERTION_POINT_GENERIC_ID.replace(INSERTION_POINT_INDEX_PLACEHOLDER,
         Integer.toString(index));
-    return hqlQuery.contains(injectionPointId);
+    return hqlQuery.contains(insertionPointId);
   }
 
   /**

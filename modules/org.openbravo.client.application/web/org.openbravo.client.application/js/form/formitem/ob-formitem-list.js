@@ -77,11 +77,13 @@ isc.OBListItem.addProperties({
     //adding double equals to filter the exact value and not all matching sub strings.
     //Refer issue https://issues.openbravo.com/view.php?id=24574.
     referenceType = isc.SimpleType.getType(this.type).editorType;
-    if (value && referenceType !== 'OBListItem') {
+    if (value && isc.isA.Array(value) && referenceType !== 'OBListItem') {
+      // value is an array when picking in a FK selector drop down
+      // add '==' if needed
       for (i = 0; i < value.length; i++) {
         //do not append when composite identifiers are present.
-        if (value[i].indexOf(" - ") === -1) {
-          value[i] = "==" + value[i];
+        if (value[i].indexOf(' - ') === -1) {
+          value[i] = '==' + value[i];
         }
       }
     }

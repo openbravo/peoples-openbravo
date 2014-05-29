@@ -161,6 +161,38 @@ static Logger log4j = Logger.getLogger(AlertsForWrongOrdersData.class);
     return(boolReturn);
   }
 
+  public static int updateAlertRule(ConnectionProvider connectionProvider, String name, String clientId)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "        UPDATE AD_AlertRule" +
+      "        SET SQL='', TYPE='E' WHERE NAME = ? AND AD_Client_ID = ?";
+
+    int updateCount = 0;
+    PreparedStatement st = null;
+
+    int iParameter = 0;
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+      iParameter++; UtilSql.setValue(st, iParameter, 12, null, name);
+      iParameter++; UtilSql.setValue(st, iParameter, 12, null, clientId);
+
+      updateCount = st.executeUpdate();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(updateCount);
+  }
+
   public static boolean existsAlert(ConnectionProvider connectionProvider, String alertRule, String order)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
@@ -312,7 +344,7 @@ static Logger log4j = Logger.getLogger(AlertsForWrongOrdersData.class);
       "      ) VALUES (" +
       "        get_uuid(), ?, '0', 'Y'," +
       "        now(), '100', now(), '100'," +
-      "        ?, ?, '', 'D'," +
+      "        ?, ?, '', 'E'," +
       "        ?" +
       "      )";
 

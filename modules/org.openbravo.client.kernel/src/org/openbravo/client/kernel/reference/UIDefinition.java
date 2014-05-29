@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -63,6 +64,7 @@ import org.openbravo.service.json.JsonConstants;
  */
 public abstract class UIDefinition {
   private static final String TYPE_NAME_PREFIX = "_id_";
+  private static final String LIST_REF_ID = "17";
 
   private Reference reference;
   private DomainType domainType;
@@ -509,11 +511,23 @@ public abstract class UIDefinition {
   protected String getValueInComboReference(Field field, boolean getValueFromSession,
       String columnValue, boolean onlyFirstRecord) {
     try {
+      String ref = field.getColumn().getReference().getId();
+      boolean isListReference = LIST_REF_ID.equals(ref);
+      if (!isListReference && !field.getColumn().isMandatory() && StringUtils.isEmpty(columnValue)) {
+        // non mandatory without value nor default, should only return empty value, prevent
+        // everything else
+        JSONObject entry = new JSONObject();
+        entry.put(JsonConstants.ID, (String) null);
+        entry.put(JsonConstants.IDENTIFIER, (String) null);
+        return entry.toString();
+      }
+
+      FieldProvider[] fps = null;
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
       boolean comboreload = rq.getRequestParameter("donotaddcurrentelement") != null
           && rq.getRequestParameter("donotaddcurrentelement").equals("true");
-      String ref = field.getColumn().getReference().getId();
+
       String objectReference = "";
       if (field.getColumn().getReferenceSearchKey() != null) {
         objectReference = field.getColumn().getReferenceSearchKey().getId();
@@ -545,17 +559,23 @@ public abstract class UIDefinition {
       Map<String, String> parameters = comboTableData.fillSQLParametersIntoMap(
           new DalConnectionProvider(false), vars, tabData, field.getTab().getWindow().getId(),
           (getValueFromSession && !comboreload) ? columnValue : "");
-      if (onlyFirstRecord) {
+      if ((onlyFirstRecord || columnValue != null) && !isListReference) {
         parameters.put("@ONLY_ONE_RECORD@", columnValue);
       }
-      FieldProvider[] fps = comboTableData.select(new DalConnectionProvider(false), parameters,
-          getValueFromSession && !comboreload);
+
+      if (!isListReference) {
+        fps = comboTableData.select(new DalConnectionProvider(false), parameters,
+            getValueFromSession && !comboreload, 0, 0);
+      } else {
+        fps = comboTableData.select(new DalConnectionProvider(false), parameters,
+            getValueFromSession && !comboreload);
+      }
       ArrayList<FieldProvider> values = new ArrayList<FieldProvider>();
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
       ArrayList<String> possibleIds = new ArrayList<String>();
       // If column is mandatory we add an initial blank value
-      if (!field.getColumn().isMandatory()) {
+      if (!field.getColumn().isMandatory() && StringUtils.isEmpty(columnValue)) {
         possibleIds.add("");
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, (String) null);
@@ -570,32 +590,48 @@ public abstract class UIDefinition {
         comboEntries.add(entry);
       }
       JSONObject fieldProps = new JSONObject();
-      if (getValueFromSession && !comboreload) {
-        fieldProps.put("value", columnValue);
-        fieldProps.put("classicValue", columnValue);
+      if (!isListReference) {
+        if (comboEntries.size() > 0) {
+          if (comboEntries.get(0).has(JsonConstants.ID)) {
+            fieldProps.put("value", comboEntries.get(0).get(JsonConstants.ID));
+            fieldProps.put("classicValue", comboEntries.get(0).get(JsonConstants.ID));
+            fieldProps.put("identifier", comboEntries.get(0).get(JsonConstants.IDENTIFIER));
+          } else {
+            fieldProps.put("value", (String) null);
+            fieldProps.put("classicValue", (String) null);
+            fieldProps.put("identifier", (String) null);
+          }
+        } else {
+          fieldProps.put("value", "");
+          fieldProps.put("classicValue", "");
+          fieldProps.put("identifier", "");
+        }
       } else {
-        if (possibleIds.contains(columnValue)) {
+        if (getValueFromSession && !comboreload) {
           fieldProps.put("value", columnValue);
           fieldProps.put("classicValue", columnValue);
         } else {
-          // In case the default value doesn't exist in the combo values, we choose the first one
-          if (comboEntries.size() > 0) {
-            if (comboEntries.get(0).has(JsonConstants.ID)) {
-              fieldProps.put("value", comboEntries.get(0).get(JsonConstants.ID));
-              fieldProps.put("classicValue", comboEntries.get(0).get(JsonConstants.ID));
-            } else {
-              fieldProps.put("value", (String) null);
-              fieldProps.put("classicValue", (String) null);
-            }
+          if (possibleIds.contains(columnValue)) {
+            fieldProps.put("value", columnValue);
+            fieldProps.put("classicValue", columnValue);
           } else {
-            fieldProps.put("value", "");
-            fieldProps.put("classicValue", "");
+            // In case the default value doesn't exist in the combo values, we choose the first one
+            if (comboEntries.size() > 0) {
+              if (comboEntries.get(0).has(JsonConstants.ID)) {
+                fieldProps.put("value", comboEntries.get(0).get(JsonConstants.ID));
+                fieldProps.put("classicValue", comboEntries.get(0).get(JsonConstants.ID));
+              } else {
+                fieldProps.put("value", (String) null);
+                fieldProps.put("classicValue", (String) null);
+              }
+            } else {
+              fieldProps.put("value", "");
+              fieldProps.put("classicValue", "");
+            }
           }
         }
+        fieldProps.put("entries", new JSONArray(comboEntries));
       }
-      fieldProps.put("entries", new JSONArray(comboEntries));
-      // comboValues.put(fieldIndex, values);
-      // columnValues.put(fieldIndex, fixComboValue(columnValues.get(fieldIndex), fps));
       return fieldProps.toString();
     } catch (Exception e) {
       throw new OBException("Error while computing combo data", e);

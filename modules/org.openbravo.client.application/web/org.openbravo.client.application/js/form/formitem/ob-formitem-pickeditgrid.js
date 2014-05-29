@@ -26,6 +26,15 @@ isc.OBPickEditGridItem.addProperties({
   colSpan: 4,
   defaultFilter: null,
 
+  // validator at item level, check grid has no errors
+  validators: {
+    condition: function (item) {
+      var viewGrid = item.canvas.viewGrid;
+      viewGrid.endEditing();
+      return !viewGrid.hasErrors();
+    }
+  },
+
   init: function () {
     var me = this,
         pickAndExecuteViewProperties = {};
@@ -33,8 +42,12 @@ isc.OBPickEditGridItem.addProperties({
     pickAndExecuteViewProperties.view = this.view;
     pickAndExecuteViewProperties.parameterName = this.name;
     if (this.view.isPickAndExecuteWindow) {
-      this.view.resized = function () {
-        me.canvas.setHeight(me.view.height - 95);
+      this.view.resized = function (messagebarVisible) {
+        if (messagebarVisible) {
+          me.canvas.setHeight(me.view.height - (95 + me.view.messageBar.height));
+        } else {
+          me.canvas.setHeight(me.view.height - 95);
+        }
         me.canvas.redraw();
       };
     } else {
