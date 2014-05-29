@@ -476,12 +476,14 @@ enyo.kind({
 
     function successCallbackProducts(dataProducts) {
       if (dataProducts && dataProducts.length > 0) {
+        OB.debug('productfound');
         callback(new Backbone.Model(dataProducts.at(0)));
       } else {
         // 'UPC/EAN code not found'
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [txt]));
       }
     }
+    OB.debug('BarcodeActionHandler - id: ' + txt);
     OB.Dal.query(OB.Model.Product, 'select * from m_product as product ' + this.addWhereFilter(txt), null, successCallbackProducts, errorCallback, this);
   },
 
