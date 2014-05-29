@@ -1357,12 +1357,14 @@ public class OrderLoader extends POSDataSynchronizationProcess {
     OBContext.setAdminMode(true);
     try {
       boolean totalIsNegative = jsonorder.getDouble("gross") < 0;
+      boolean checkPaidOnCreditChecked = (jsonorder.has("paidOnCredit") && jsonorder
+          .getBoolean("paidOnCredit"));
       int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
           stdPrecision, RoundingMode.HALF_UP);
       BigDecimal origAmount = amount;
       BigDecimal mulrate = new BigDecimal(1);
-      // FIXME: Conversion should be only in one direction: (USD-->EUR)
+      // FIXME: Coversion should be only in one direction: (USD-->EUR)
       if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
         mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
         origAmount = amount.multiply(BigDecimal.valueOf(payment.getDouble("mulrate"))).setScale(
@@ -1380,6 +1382,12 @@ public class OrderLoader extends POSDataSynchronizationProcess {
               RoundingMode.HALF_UP);
         } else {
           amount = amount.subtract(writeoffAmt.abs()).setScale(stdPrecision, RoundingMode.HALF_UP);
+        }
+      } else if (writeoffAmt.signum() == -1 && (!isLayaway && !checkPaidOnCreditChecked)) {
+        if (totalIsNegative) {
+          amount = amount.add(writeoffAmt).setScale(stdPrecision, RoundingMode.HALF_UP);
+        } else {
+          amount = amount.add(writeoffAmt.abs()).setScale(stdPrecision, RoundingMode.HALF_UP);
         }
       }
 

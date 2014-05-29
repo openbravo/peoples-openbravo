@@ -461,6 +461,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
+      } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {
+            receipt.trigger('paymentAccepted');
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
       } else {
         receipt.trigger('paymentAccepted');
       }
