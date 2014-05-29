@@ -96,6 +96,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
             reference);
         if (uiDefinition instanceof IDUIDefinition) {
           dsProperty.setId(true);
+          dsProperty.setName("id");
         } else {
           dsProperty.setId(false);
         }
