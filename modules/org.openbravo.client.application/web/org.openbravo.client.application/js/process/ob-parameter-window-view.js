@@ -460,8 +460,6 @@ isc.OBParameterWindowView.addProperties({
       this.resultLayout.destroy();
       delete this.resultLayout;
     }
-    this.showProcessing(true);
-
     // change tab title to show executing...
     tab = OB.MainView.TabSet.getTab(this.viewTabId);
     if (tab) {
@@ -473,6 +471,7 @@ isc.OBParameterWindowView.addProperties({
     allProperties._params = this.getContextInfo();
 
     actionHandlerCall = function (me) {
+      me.showProcessing(true);
       OB.RemoteCallManager.call(me.actionHandler, allProperties, {
         processId: me.processId,
         windowId: me.windowId
