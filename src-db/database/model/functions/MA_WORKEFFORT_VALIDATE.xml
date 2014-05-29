@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2013 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -308,27 +308,30 @@
           --DBMS_OUTPUT.PUT_LINE('Qty=' || ProductQty);
           v_QtyOnHand:=v_ProductQty;
         END IF;
-        -- Create Transaction Entry
-        v_ResultStr:='CreateTransaction';
-        Ad_Sequence_Next('M_Transaction', v_Org_ID, v_NextNo) ;
-        INSERT
-        INTO M_TRANSACTION
-          (
-            M_Transaction_ID, M_ProductionLine_ID, AD_Client_ID, AD_Org_ID,
-            IsActive, Created, CreatedBy, Updated,
-            UpdatedBy, MovementType, M_Locator_ID, M_Product_ID,
-            M_AttributeSetInstance_ID, MovementDate, MovementQty, M_Product_UOM_ID,
-            QuantityOrder, C_UOM_ID
-          )
-          VALUES
-          (
-            v_NextNo, CUR_PL_Post.M_ProductionLine_ID, CUR_PL_Post.AD_Client_ID, CUR_PL_Post.AD_Org_ID,
-             'Y', now(), v_User_ID, now(),
-            v_User_ID, 'P+', CUR_PL_Post.M_Locator_ID, CUR_PL_Post.M_Product_ID,
-            COALESCE(CUR_PL_Post.M_AttributeSetInstance_ID, '0'), -- not distinguishing between assemby/disassembly
-            CUR_PL_Post.MovementDate,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.MovementQty ELSE -CUR_PL_Post.MOVEMENTQTY END), CUR_PL_Post.M_Product_UOM_ID,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.QUANTITYORDER ELSE -CUR_PL_Post.QuantityOrder END), CUR_PL_Post.C_UOM_ID
-          )
-          ;
+        -- Only insert in M_TRANSACTION if MovementQty <> 0
+        IF CUR_PL_Post.MovementQty <> 0 THEN
+          -- Create Transaction Entry        
+           v_ResultStr:='CreateTransaction';
+          Ad_Sequence_Next('M_Transaction', v_Org_ID, v_NextNo) ;
+          INSERT
+          INTO M_TRANSACTION
+            (
+              M_Transaction_ID, M_ProductionLine_ID, AD_Client_ID, AD_Org_ID,
+              IsActive, Created, CreatedBy, Updated,
+              UpdatedBy, MovementType, M_Locator_ID, M_Product_ID,
+              M_AttributeSetInstance_ID, MovementDate, MovementQty, M_Product_UOM_ID,
+              QuantityOrder, C_UOM_ID
+            )
+            VALUES
+            (
+              v_NextNo, CUR_PL_Post.M_ProductionLine_ID, CUR_PL_Post.AD_Client_ID, CUR_PL_Post.AD_Org_ID,
+              'Y', now(), v_User_ID, now(),
+              v_User_ID, 'P+', CUR_PL_Post.M_Locator_ID, CUR_PL_Post.M_Product_ID,
+              COALESCE(CUR_PL_Post.M_AttributeSetInstance_ID, '0'), -- not distinguishing between assemby/disassembly
+              CUR_PL_Post.MovementDate,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.MovementQty ELSE -CUR_PL_Post.MOVEMENTQTY END), CUR_PL_Post.M_Product_UOM_ID,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.QUANTITYORDER ELSE -CUR_PL_Post.QuantityOrder END), CUR_PL_Post.C_UOM_ID
+            )
+            ;
+          END IF;
         IF(CUR_PL_Post.IsStocked<>'N') THEN
           M_Check_Stock(CUR_PL_Post.M_Product_ID, v_Client_ID, v_AD_Org_ID, v_Result, v_Message) ;
           IF (v_Result=0) THEN
