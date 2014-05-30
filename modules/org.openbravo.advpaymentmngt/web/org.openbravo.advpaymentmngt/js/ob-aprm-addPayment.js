@@ -533,6 +533,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       issotrx = view.theForm.getItem('issotrx').getValue(),
       finFinancialAccount = view.theForm.getItem('fin_financial_account_id').getValue(),
       amountInvOrds = new BigDecimal(String(view.theForm.getItem('amount_inv_ords').getValue() || 0)),
+      total = new BigDecimal(String(view.theForm.getItem('total').getValue() || 0)),
       actualPayment = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0)),
       overpaymentAction = view.theForm.getItem('overpayment_action').getValue(),
       creditTotalItem = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
@@ -563,7 +564,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   }
 
   actualPayment = actualPayment.add(creditTotalItem);
-  if (actualPayment.compareTo(amountInvOrds) > 0 && totalOustandingAmount.compareTo(amountInvOrds) > 0) {
+  if (actualPayment.compareTo(total) > 0 && totalOustandingAmount.compareTo(amountInvOrds) > 0) {
     // Not all the payment amount has been allocated
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_JSNOTALLAMOUTALLOCATED'));
     return false;
