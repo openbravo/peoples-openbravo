@@ -20,11 +20,15 @@
 package org.openbravo.advpaymentmngt.utility;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.servlet.ServletException;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 import org.openbravo.client.kernel.ApplicationInitializer;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.service.db.DalConnectionProvider;
 
 @ApplicationScoped
@@ -35,18 +39,53 @@ public class APRMApplicationInitializer implements ApplicationInitializer {
   public void initialize() {
     OBDal.getInstance().registerSQLFunction("ad_message_get2",
         new StandardSQLFunction("ad_message_get2", StandardBasicTypes.STRING));
+    OBDal.getInstance().registerSQLFunction("hqlagg",
+        new SQLFunctionTemplate(StandardBasicTypes.STRING, getAggregationSQL()));
 
-    if ("ORACLE".equals(RDBMS)) {
-      OBDal.getInstance().registerSQLFunction("stragg",
-          new StandardSQLFunction("stragg", StandardBasicTypes.STRING));
-    } else {
-      OBDal.getInstance().registerSQLFunction("array_to_string",
-          new StandardSQLFunction("array_to_string", StandardBasicTypes.STRING));
-      OBDal.getInstance().registerSQLFunction("array_agg",
-          new StandardSQLFunction("array_agg", StandardBasicTypes.STRING));
-    }
     OBDal.getInstance().registerSQLFunction("get_uuid",
         new StandardSQLFunction("get_uuid", StandardBasicTypes.STRING));
   }
 
+  private String getAggregationSQL() {
+    if ("ORACLE".equals(RDBMS)) {
+      if (is11R2orNewer()) {
+        return "listagg(to_char(?1), ',') WITHIN GROUP (ORDER BY ?1)";
+      } else if (existsStrAgg()) {
+        return "stragg(to_char(?1)";
+      } else {
+        return "wm_concat(to_char(?1)";
+      }
+    } else {
+      return "array_to_string(array_agg(?1), ',')";
+    }
+  }
+
+  private boolean existsStrAgg() {
+    try {
+      SQLQuery qry = OBDal.getInstance().getSession().createSQLQuery("select stragg(1) from dual");
+      qry.list();
+    } catch (Exception e) {
+      return false;
+    }
+    return true;
+  }
+
+  private boolean is11R2orNewer() {
+    String dbVersion = SystemInfo.getSystemInfo().getProperty("dbVersion");
+    if (dbVersion == null) {
+      try {
+        SystemInfo.load(new DalConnectionProvider(false));
+        dbVersion = SystemInfo.getSystemInfo().getProperty("dbVersion");
+      } catch (ServletException ignore) {
+      }
+    }
+    if (dbVersion == null) {
+      return false;
+    }
+    int version = Integer.valueOf(dbVersion.replaceAll("\\.", "").substring(0, 3));
+    if (version >= 112) {
+      return true;
+    }
+    return false;
+  }
 }
