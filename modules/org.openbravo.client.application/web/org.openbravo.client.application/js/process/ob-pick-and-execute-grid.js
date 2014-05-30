@@ -147,6 +147,8 @@ isc.OBPickAndExecuteGrid.addProperties({
       filterEditorType: 'StaticTextItem'
     });
 
+
+    // TODO: check if needed, refactor and remove
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.Grid', this);
 
     // FIXME:---
@@ -187,6 +189,8 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.filterEditorProperties.visibility = 'hidden';
     }
     this.Super('initWidget', arguments);
+
+    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Grid_' + this.parameterName + '_' + this.contentView.view.processId, this);
   },
 
   evaluateDisplayLogicForGridColumns: function () {
