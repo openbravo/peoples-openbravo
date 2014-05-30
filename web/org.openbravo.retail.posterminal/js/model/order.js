@@ -1493,7 +1493,7 @@
 
     addPayment: function (payment) {
       var payments, total;
-      var i, max, p;
+      var i, max, p, order;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
@@ -1502,29 +1502,36 @@
 
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
-      if (!payment.get('paymentData')) {
-        // search for an existing payment only if there is not paymentData info.
-        // this avoids to merge for example card payments of different cards.
-        for (i = 0, max = payments.length; i < max; i++) {
-          p = payments.at(i);
-          if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
-            p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
-            if (p.get('rate') && p.get('rate') !== '1') {
-              p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+      order = this;
+      OB.MobileApp.model.hookManager.executeHooks('OBPOS_preAddPayment', {
+        paymentToAdd: payment,
+        payments: payments,
+        receipt: this
+      }, function () {
+        if (!payment.get('paymentData')) {
+          // search for an existing payment only if there is not paymentData info.
+          // this avoids to merge for example card payments of different cards.
+          for (i = 0, max = payments.length; i < max; i++) {
+            p = payments.at(i);
+            if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
+              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+              if (p.get('rate') && p.get('rate') !== '1') {
+                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+              }
+              order.adjustPayment();
+              order.trigger('displayTotal');
+              return;
             }
-            this.adjustPayment();
-            this.trigger('displayTotal');
-            return;
           }
         }
-      }
-      if (payment.get('openDrawer') && (payment.get('allowOpenDrawer') || payment.get('isCash'))) {
-        this.set('openDrawer', payment.get('openDrawer'));
-      }
-      payment.set('date', new Date());
-      payments.add(payment);
-      this.adjustPayment();
-      this.trigger('displayTotal');
+        if (payment.get('openDrawer') && (payment.get('allowOpenDrawer') || payment.get('isCash'))) {
+          order.set('openDrawer', payment.get('openDrawer'));
+        }
+        payment.set('date', new Date());
+        payments.add(payment);
+        order.adjustPayment();
+        order.trigger('displayTotal');
+      }); // call with callback, no args
     },
 
     overpaymentExists: function () {
@@ -2043,7 +2050,7 @@
     },
     addPayment: function (payment) {
       var payments, total;
-      var i, max, p;
+      var i, max, p, order;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         alert(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
@@ -2052,29 +2059,36 @@
 
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
-      if (!payment.get('paymentData')) {
-        // search for an existing payment only if there is not paymentData info.
-        // this avoids to merge for example card payments of different cards.
-        for (i = 0, max = payments.length; i < max; i++) {
-          p = payments.at(i);
-          if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
-            p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
-            if (p.get('rate') && p.get('rate') !== '1') {
-              p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+      order = this;
+      OB.MobileApp.model.hookManager.executeHooks('OBPOS_preAddPayment', {
+        paymentToAdd: payment,
+        payments: payments,
+        receipt: this
+      }, function () {
+        if (!payment.get('paymentData')) {
+          // search for an existing payment only if there is not paymentData info.
+          // this avoids to merge for example card payments of different cards.
+          for (i = 0, max = payments.length; i < max; i++) {
+            p = payments.at(i);
+            if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
+              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+              if (p.get('rate') && p.get('rate') !== '1') {
+                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+              }
+              order.adjustPayment();
+              order.trigger('displayTotal');
+              return;
             }
-            this.adjustPayment();
-            this.trigger('displayTotal');
-            return;
           }
         }
-      }
-      if (payment.get('openDrawer') && (payment.get('allowOpenDrawer') || payment.get('isCash'))) {
-        this.set('openDrawer', payment.get('openDrawer'));
-      }
-      payment.set('date', new Date());
-      payments.add(payment);
-      this.adjustPayment();
-      this.trigger('displayTotal');
+        if (payment.get('openDrawer') && (payment.get('allowOpenDrawer') || payment.get('isCash'))) {
+          order.set('openDrawer', payment.get('openDrawer'));
+        }
+        payment.set('date', new Date());
+        payments.add(payment);
+        order.adjustPayment();
+        order.trigger('displayTotal');
+      });
     },
     removePayment: function (payment) {
       var payments = this.get('payments');
