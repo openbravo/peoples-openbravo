@@ -102,7 +102,6 @@ OB.APRM.AddPayment.onLoad = function (view) {
   OB.APRM.AddPayment.actualPaymentOnLoad(view);
   orderInvoiceGrid.selectionChanged = OB.APRM.AddPayment.selectionChanged;
   orderInvoiceGrid.dataProperties.transformData = OB.APRM.AddPayment.ordInvTransformData;
-  // glitemGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedGlitem;
   glitemGrid.removeRecordClick = OB.APRM.AddPayment.removeRecordClick;
   creditUseGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedCredit;
   orderInvoiceGrid.dataArrived = OB.APRM.AddPayment.ordInvDataArrived;
@@ -208,6 +207,7 @@ OB.APRM.AddPayment.actualPaymentOnLoad = function (view) {
 };
 
 OB.APRM.AddPayment.orderInvoiceAmountOnChange = function (item, view, form, grid) {
+  //OB.APRM.AddPayment.orderInvoiceGridValidation(item, view, form, grid);
   OB.APRM.AddPayment.updateInvOrderTotal(form, grid);
   return true;
 };
@@ -228,11 +228,11 @@ OB.APRM.AddPayment.distributeAmount = function (view, form) {
       orderInvoice = form.getItem('order_invoice').canvas.viewGrid,
       scheduledPaymentDetailId, outstandingAmount, j, i, total, chk, credit, glitem;
 
-  //amounts de gl items
+  // glitems amount
   glitem = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0));
   amount = amount.add(glitem);
 
-  //amount de credito
+  // credit amount
   credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0));
   amount = amount.add(credit);
 
@@ -325,11 +325,11 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
   selectedIds = orderInvoice.selectedIds;
   outstandingAmount = new BigDecimal(String(record.outstandingAmount));
   amount = amount.subtract(distributedAmount);
-  //amounts de gl items
+  // glitems amount
   glitem = new BigDecimal(String(view.theForm.getItem('amount_gl_items').getValue() || 0));
   amount = amount.add(glitem);
 
-  //amount de credito
+  // credit amount
   credit = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0));
   amount = amount.add(credit);
   var issotrx = view.theForm.getItem('issotrx').getValue();
@@ -348,12 +348,12 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
         orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', '');
 
       } else {
-        orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', outstandingAmount.toString());
+        orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
 
       }
     }
   } else {
-    orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', outstandingAmount.toString());
+    orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
     actualPaymentAmount = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0));
     actualPayment = view.theForm.getItem('actual_payment');
     actualPayment.setValue((actualPaymentAmount.add(outstandingAmount)).toString());
@@ -441,20 +441,7 @@ OB.APRM.AddPayment.updateCreditTotal = function (form) {
   OB.APRM.AddPayment.updateTotal(form);
   return true;
 };
-//OB.APRM.AddPayment.selectionChangedGlitem = function (record, state) {
-//  var glitem = this.view.theForm.getItem('glitem').canvas.viewGrid;
-//  if (!glitem.preventDistributingOnSelectionChanged) {
-//    this.fireOnPause('updateButtonState', function () {
-//      OB.APRM.AddPayment.doSelectionChangedGLitem(record, state, this.view);
-//    }, 500);
-//    this.Super('selectionChangedGlitem', record, state);
-//  }
-//
-//};
-//
-//OB.APRM.AddPayment.doSelectionChangedGLitem = function (record, state, view) {
-//  OB.APRM.AddPayment.updateGLItemsTotal(view.theForm);
-//};
+
 OB.APRM.AddPayment.selectionChangedCredit = function (record, state) {
 
   var credit = this.view.theForm.getItem('credit_to_use').canvas.viewGrid;
@@ -466,6 +453,30 @@ OB.APRM.AddPayment.selectionChangedCredit = function (record, state) {
   }
 
 };
+
+
+OB.APRM.AddPayment.orderInvoiceGridValidation = function (item, validator, value, record) {
+  if (!isc.isA.Number(record.amount)) {
+    isc.warn(OB.I18N.getLabel('APRM_NotValidNumber'));
+    return false;
+  }
+  var i, row, allRows = item.grid.data.allRows,
+      outstanding = new BigDecimal(String(record.outstandingAmount)),
+      paidamount = new BigDecimal(String(record.amount));
+
+  if (outstanding.abs().compareTo(paidamount.abs()) < 0) {
+    isc.warn(OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
+    return false;
+  }
+  
+  if ((paidamount.signum() === 0)&& (record.writeoff===false) ){
+	  isc.warn(OB.I18N.getLabel('APRM_JSZEROUNDERPAYMENT'));
+	    return false; 
+  }
+
+};
+
+
 OB.APRM.AddPayment.doSelectionChangedCredit = function (record, state, view) {
   OB.APRM.AddPayment.updateCreditTotal(view.theForm);
 };
