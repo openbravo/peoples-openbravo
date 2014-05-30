@@ -94,7 +94,12 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       // String strTabId = jsonRequest.getString("inpTabId");
       boolean isReceipt = jsonparams.getBoolean("issotrx");
 
-      String strAction = (isReceipt ? "PRP" : "PPP");
+      // Action to do
+      String strActionId = jsonparams.getString("document_action");
+      final org.openbravo.model.ad.domain.List actionList = OBDal.getInstance().get(
+          org.openbravo.model.ad.domain.List.class, strActionId);
+
+      String strAction = actionList.getSearchKey();
 
       final String strCurrencyId = jsonparams.getString("c_currency_id");
       Currency currency = OBDal.getInstance().get(Currency.class, strCurrencyId);
@@ -107,9 +112,19 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       String strPaymentDate = jsonparams.getString("payment_date");
       Date paymentDate = JsonUtils.createDateFormat().parse(strPaymentDate);
 
-      // TODO
+      // OverPayment action
       String strDifferenceAction = "";
-      BigDecimal refundAmount = BigDecimal.ZERO;
+      BigDecimal differenceAmount = BigDecimal.ZERO;
+
+      if (jsonparams.get("difference") != JSONObject.NULL) {
+        differenceAmount = new BigDecimal(jsonparams.getString("difference"));
+        strDifferenceAction = jsonparams.getString("overpayment_action");
+        if ("RE".equals(strDifferenceAction)) {
+          strDifferenceAction = "refund";
+        } else {
+          strDifferenceAction = "credit";
+        }
+      }
 
       BigDecimal exchangeRate = BigDecimal.ZERO;
       BigDecimal convertedAmount = BigDecimal.ZERO;
@@ -153,7 +168,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       if (strAction.equals("PRP") || strAction.equals("PPP") || strAction.equals("PRD")
           || strAction.equals("PPW")) {
 
-        OBError message = processPayment(payment, strAction, strDifferenceAction, refundAmount,
+        OBError message = processPayment(payment, strAction, strDifferenceAction, differenceAmount,
             exchangeRate);
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", message.getType().toLowerCase());
