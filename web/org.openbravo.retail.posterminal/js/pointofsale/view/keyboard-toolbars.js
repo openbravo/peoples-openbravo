@@ -14,7 +14,8 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
   buttons: [{
     command: 'code',
     i18nLabel: 'OBMOBC_KbCode',
-    classButtonActive: 'btnactive-blue'
+    classButtonActive: 'btnactive-blue',
+    idSufix: 'upcean'
   }],
   shown: function () {
     var keyboard = this.owner.owner;

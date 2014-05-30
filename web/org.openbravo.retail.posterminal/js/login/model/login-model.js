@@ -491,7 +491,8 @@
     },
 
     postLoginActions: function () {
-      var me = this, loadModelsIncFunc;
+      var me = this,
+          loadModelsIncFunc;
       //MASTER DATA REFRESH
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
       if (minIncRefresh) {
@@ -506,6 +507,9 @@
           OB.MobileApp.model.loadModels(null, true);
         };
         setInterval(loadModelsIncFunc, minIncRefresh);
+      } else if (me.get('loggedUsingCache')) {
+        me.set('loggedUsingCache', false);
+        me.renderTerminalMain();
       }
     },
 

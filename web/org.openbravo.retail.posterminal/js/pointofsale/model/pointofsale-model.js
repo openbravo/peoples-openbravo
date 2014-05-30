@@ -176,10 +176,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               dataBps.set('locId', bpLoc.get('id'));
               dataBps.set('locName', bpLoc.get('name'));
               OB.POS.modelterminal.set('businessPartner', dataBps);
+              me.loadUnpaidOrders();
             };
             OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback);
           } else {
             OB.POS.modelterminal.set('businessPartner', dataBps);
+            me.loadUnpaidOrders();
           }
         }
       }
@@ -367,10 +369,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     OB.POS.modelterminal.saveDocumentSequenceInDB();
     OB.MobileApp.model.runSyncProcess(function () {
-      me.loadUnpaidOrders();
       me.loadCheckedMultiorders();
     }, function () {
-      me.loadUnpaidOrders();
       me.loadCheckedMultiorders();
     });
 
@@ -427,18 +427,22 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 });
               });
               receipt.trigger('print', null, {
-                offline: true
-              }); // to guaranty execution order
-              orderList.deleteCurrent(true);
+                offline: true,
+                callback: function () {
+                  orderList.deleteCurrent(true);
+                }
+              });
             }
           });
         } else {
           receipt.trigger('closed', {
             callback: function () {
               receipt.trigger('print', null, {
-                offline: true
-              }); // to guaranty execution order
-              orderList.deleteCurrent(true);
+                offline: true,
+                callback: function () {
+                  orderList.deleteCurrent(true);
+                }
+              });
             }
           });
         }
@@ -457,6 +461,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 receipt: receipt
               }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
             }
+            receipt.trigger('paymentAccepted');
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {
             receipt.trigger('paymentAccepted');
           }
         }, {

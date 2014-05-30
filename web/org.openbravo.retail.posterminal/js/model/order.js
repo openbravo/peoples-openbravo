@@ -889,6 +889,7 @@
     },
     //Attrs is an object of attributes that will be set in order 
     addProduct: function (p, qty, options, attrs) {
+      OB.debug('_addProduct');
       var me = this;
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_AddProductToOrder', {
         receipt: this,

@@ -190,7 +190,8 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   events: {
-    onTabChange: ''
+    onTabChange: '',
+    onClearKeypad: ''
   },
 
   showPaymentTab: function () {
@@ -242,6 +243,7 @@ enyo.kind({
         }
       }, this);
       this.model.completePayment();
+      this.doClearKeypad();
     }
   },
   attributes: {
