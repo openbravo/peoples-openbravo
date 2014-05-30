@@ -165,16 +165,25 @@ OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
             OB.UTIL.showLoading(false);
             popupDrawerOpened.show();
           }
-        } else if (args.resultData === "Error" && popup) {
+        } else if (args.resultData === "Error") {
           errorCounter++;
-          if (errorCounter >= 20) {
-            me.drawerClosed = true;
-            OB.info('Error checking the status of the drawer');
+          if (popup) {
+            if (errorCounter >= 15) {
+              me.drawerClosed = true;
+              OB.info('Error checking the status of the drawer');
+            } else {
+              me.drawerClosed = false;
+              if (!popupDrawerOpened.showing) {
+                OB.UTIL.showLoading(false);
+                popupDrawerOpened.show();
+              }
+            }
           } else {
-            me.drawerClosed = false;
-            if (!popupDrawerOpened.showing) {
-              OB.UTIL.showLoading(false);
-              popupDrawerOpened.show();
+            if (errorCounter >= 4) {
+              me.drawerClosed = true;
+              OB.info('Error checking the status of the drawer');
+            } else {
+              me.drawerClosed = false;
             }
           }
         } else {
@@ -191,7 +200,7 @@ OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
         }
       }
     });
-  }, 500);
+  }, 700);
 };
 
 OB.DS.HWServer.prototype.print = function (template, params, callback) {
