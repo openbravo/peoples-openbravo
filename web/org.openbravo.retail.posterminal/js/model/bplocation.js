@@ -147,5 +147,13 @@
     type: 'TEXT'
   }]);
 
+  BPLocation.addIndex([{
+    name: 'bploc_name_idx',
+    columns: [{
+      name: 'name',
+      sort: 'desc'
+    }]
+  }]);
+  
   OB.Data.Registry.registerModel(BPLocation);
 }());

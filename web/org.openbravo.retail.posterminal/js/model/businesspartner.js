@@ -52,9 +52,9 @@
     loadById: function (CusId, userCallback) {
       //search data in local DB and load it to this
       var me = this,
-        criteria = {
+          criteria = {
           id: CusId
-        };
+          };
       OB.Dal.find(OB.Model.BusinessPartner, criteria, function (customerCol) { //OB.Dal.find success
         var successCallback, errorCallback;
         if (!customerCol || customerCol.length === 0) {
@@ -78,7 +78,7 @@
     },
     clearModelWith: function (cusToLoad) {
       var me = this,
-        undf;
+          undf;
       if (cusToLoad === null) {
         this.set('id', null);
         this.set('searchKey', null);
@@ -128,7 +128,7 @@
     },
     loadByJSON: function (obj) {
       var me = this,
-        undf;
+          undf;
       _.each(_.keys(me.attributes), function (key) {
         if (obj[key] !== undf) {
           if (obj[key] === null) {
@@ -249,6 +249,20 @@
     name: 'taxExempt',
     column: 'taxExempt',
     type: 'TEXT'
+  }]);
+
+  BusinessPartner.addIndex([{
+    name: 'bp_filter_idx',
+    columns: [{
+      name: '_filter',
+      sort: 'desc'
+    }]
+  }, {
+    name: 'bp_name_idx',
+    columns: [{
+      name: 'name',
+      sort: 'desc'
+    }]
   }]);
 
   OB.Data.Registry.registerModel(BusinessPartner);

@@ -61,6 +61,9 @@
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="OBPOS_APPCASH_APPLICATIONS">
         <reference local="OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>
+      <index name="OBPOS_APP_CASHUP_TERMINAL_IDX" unique="false">
+        <index-column name="OBPOS_APPLICATIONS_ID"/>
+      </index>
       <check name="OBPOS_APPCASH_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -79,5 +79,15 @@
     type: 'TEXT'
   }]);
 
+  CashManagement.addIndex([{
+    name: 'cashmgmt_idx',
+    columns: [{
+      name: 'cashup_id',
+      sort: 'desc'
+    }, {
+      name: 'paymentMethodId',
+      sort: 'desc'
+    }]
+  }]);
   OB.Data.Registry.registerModel(CashManagement);
 }());

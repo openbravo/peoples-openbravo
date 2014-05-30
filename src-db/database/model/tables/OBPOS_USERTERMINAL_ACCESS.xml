@@ -53,6 +53,9 @@
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="OBPOS_USERTERM_ACC_TERMINAL" onDelete="cascade">
         <reference local="OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>
+      <index name="OBPOS_USERTERM_ACCESS_USER_IDX" unique="false">
+        <index-column name="AD_USER_ID"/>
+      </index>
       <check name="OBPOS_USRTERM_ACC_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
