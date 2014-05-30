@@ -441,11 +441,7 @@ enyo.kind({
 
     // Open drawer if allow open drawer. Already a cash method.
     if (payment.get('paymentMethod').allowopendrawer) {
-      OB.POS.hwserver.openDrawer();
-      if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
-        OB.MobileApp.model.set("isDrawerClosed", false);
-        OB.POS.hwserver.isDrawerClosed(false, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount);
-      }
+      OB.POS.hwserver.openDrawer(false, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount);
     }
   }
 });

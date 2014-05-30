@@ -20,14 +20,12 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
-    if (!OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue || (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue && OB.MobileApp.model.get("isDrawerClosed"))) {
+    return OB.POS.hwserver.checkDrawer(function () {
       if (this.disabled) {
         return true;
       }
       this.doChangeStep();
-    } else {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_drawerOpened'));
-    }
+    }, this);
   },
   initialize: function () {
     if (this.i18nLabel) {
@@ -45,11 +43,9 @@ enyo.kind({
     onCancelCashup: ''
   },
   tap: function () {
-    if (!OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue || (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue && OB.MobileApp.model.get("isDrawerClosed"))) {
+    OB.POS.hwserver.checkDrawer(function () {
       this.doCancelCashup();
-    } else {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_drawerOpened'));
-    }
+    }, this);
   }
 });
 

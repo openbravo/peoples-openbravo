@@ -525,13 +525,10 @@ enyo.kind({
           this.drawerOpened = false;
           this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
         } else {
-          this.owner.receipt.trigger('openDrawer');
-          if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
-            OB.POS.hwserver.isDrawerClosed({
-              openFirst: true,
-              receipt: me.owner.receipt
-            }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-          }
+          OB.POS.hwserver.openDrawer({
+            openFirst: true,
+            receipt: me.owner.receipt
+          }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
           this.drawerOpened = true;
           this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
         }
@@ -551,13 +548,10 @@ enyo.kind({
           this.drawerOpened = false;
           this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
         } else {
-          this.owner.receipt.trigger('openDrawer');
-          if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
-            OB.POS.hwserver.isDrawerClosed({
-              openFirst: true,
-              receipt: me.owner.model.get('multiOrders')
-            }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-          }
+          OB.POS.hwserver.openDrawer({
+            openFirst: true,
+            receipt: me.owner.model.get('multiOrders')
+          }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
           this.drawerOpened = true;
           this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
         }

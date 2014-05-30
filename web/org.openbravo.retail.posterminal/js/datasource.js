@@ -63,13 +63,36 @@ OB.DS.HWServer.prototype.getWeight = function (callback) {
 };
 
 OB.DS.HWServer.prototype.openDrawerTemplate = 'res/opendrawer.xml';
-OB.DS.HWServer.prototype.openDrawer = function () {
+OB.DS.HWServer.prototype.openDrawer = function (popup, timeout) {
   var template = new OB.DS.HWResource(this.openDrawerTemplate);
   this.print(template, null, function (args) {
     if (args && args.exception && args.exception.message) {
       OB.info('Error opening the drawer');
     }
   });
+  if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
+    this.drawerClosed = false;
+    OB.POS.hwserver.isDrawerClosed(popup, timeout);
+  }
+};
+
+OB.DS.HWServer.prototype.openCheckDrawer = function (popup, timeout) {
+  this.checkDrawer(function () {
+    this.openDrawer(popup, timeout);
+  }, this);
+};
+
+OB.DS.HWServer.prototype.checkDrawer = function (callback, context) {
+  if (!OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue || this.drawerClosed) {
+    if (context) {
+      return callback.apply(context);
+    } else {
+      return callback();
+    }
+  } else {
+    OB.UTIL.showError(OB.I18N.getLabel('OBPOS_drawerOpened'));
+    return false;
+  }
 };
 
 OB.DS.HWServer.prototype.isDrawerClosedTemplate = 'res/checkdrawerstatus.xml';
@@ -130,13 +153,13 @@ OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
     me.print(template, null, function (args) {
       if (args && args.exception && args.exception.message) {
         OB.info('Error checking the status of the drawer');
-        OB.MobileApp.model.set("isDrawerClosed", true);
+        me.drawerClosed = true;
       } else {
         if (args.resultData === "Closed") {
-          OB.MobileApp.model.set("isDrawerClosed", true);
+          me.drawerClosed = true;
           errorCounter = 0;
         } else if (args.resultData === "Opened") {
-          OB.MobileApp.model.set("isDrawerClosed", false);
+          me.drawerClosed = false;
           errorCounter = 0;
           if (popup && !popupDrawerOpened.showing) {
             OB.UTIL.showLoading(false);
@@ -145,21 +168,21 @@ OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
         } else if (args.resultData === "Error" && popup) {
           errorCounter++;
           if (errorCounter >= 20) {
-            OB.MobileApp.model.set("isDrawerClosed", true);
+            me.drawerClosed = true;
             OB.info('Error checking the status of the drawer');
           } else {
-            OB.MobileApp.model.set("isDrawerClosed", false);
+            me.drawerClosed = false;
             if (!popupDrawerOpened.showing) {
               OB.UTIL.showLoading(false);
               popupDrawerOpened.show();
             }
           }
         } else {
-          OB.MobileApp.model.set("isDrawerClosed", true);
+          me.drawerClosed = true;
           OB.info('Error checking the status of the drawer');
         }
       }
-      if (OB.MobileApp.model.get("isDrawerClosed")) {
+      if (me.drawerClosed) {
         clearTimeout(beepTimeout);
         sound.pause();
         clearInterval(statusChecker);

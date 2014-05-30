@@ -58,15 +58,7 @@ enyo.kind({
       definition: {
         stateless: true,
         action: function (keyboard, amt) {
-          if (!OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
-            OB.POS.hwserver.openDrawer();
-          } else if (OB.MobileApp.model.get("isDrawerClosed")) {
-            OB.MobileApp.model.set("isDrawerClosed", false);
-            OB.POS.hwserver.openDrawer();
-            OB.POS.hwserver.isDrawerClosed(false, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount);
-          } else {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_drawerOpened'));
-          }
+          OB.POS.hwserver.openCheckDrawer(false, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount);
         }
       }
     });

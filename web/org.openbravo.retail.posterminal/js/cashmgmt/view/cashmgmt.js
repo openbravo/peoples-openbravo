@@ -20,11 +20,9 @@ enyo.kind({
     stepCount: 0,
     span: 6,
     tap: function () {
-      if (!OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue || (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue && OB.MobileApp.model.get("isDrawerClosed"))) {
+      OB.POS.hwserver.checkDrawer(function () {
         OB.POS.navigate('retail.pointofsale');
-      } else {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_drawerOpened'));
-      }
+      });
     }
   }, {
     kind: 'OB.UI.ToolbarButton',
@@ -38,11 +36,9 @@ enyo.kind({
       this.model = model;
     },
     tap: function () {
-      if (!OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue || (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue && OB.MobileApp.model.get("isDrawerClosed"))) {
+      OB.POS.hwserver.checkDrawer(function () {
         this.model.depsdropstosave.trigger('makeDeposits');
-      } else {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_drawerOpened'));
-      }
+      }, this);
     }
   }]
 });
@@ -69,69 +65,66 @@ enyo.kind({
     onShowPopup: ''
   },
   components: [{
-      kind: 'OB.UI.MultiColumn',
-      name: 'cashupMultiColumn',
-      leftToolbar: {
-        kind: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
-        name: 'leftToolbar',
-        showMenu: false,
-        showWindowsMenu: false
-      },
-      rightToolbar: {
-        kind: 'OB.OBPOSCashMgmt.UI.RightToolbarImpl',
-        name: 'rightToolbar',
-        showMenu: false,
-        showWindowsMenu: false
-      },
-      leftPanel: {
-        name: 'cashmgmtLeftPanel',
-        components: [{
-          classes: 'row',
-          components: [
-            // 1st column: list of deposits/drops done or in process
-            {
-              classes: 'span12',
-              components: [{
-                kind: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops'
-              }]
-            }
-          ]
-        }]
-      },
-      rightPanel: {
-        name: 'cashmgmtRightPanel',
-        components: [
-
-          //2nd column
-          {
-            classes: 'span12',
-            components: [{
-              kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo',
-              id: "OB.UI.id.CashMgmtInfo"
-            }, {
-              kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard',
-              id: "OB.UI.id.CashMgmtKeyboard"
-            }]
-          }
-        ]
-      }
-    }, //hidden stuff
-    {
+    kind: 'OB.UI.MultiColumn',
+    name: 'cashupMultiColumn',
+    leftToolbar: {
+      kind: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
+      name: 'leftToolbar',
+      showMenu: false,
+      showWindowsMenu: false
+    },
+    rightToolbar: {
+      kind: 'OB.OBPOSCashMgmt.UI.RightToolbarImpl',
+      name: 'rightToolbar',
+      showMenu: false,
+      showWindowsMenu: false
+    },
+    leftPanel: {
+      name: 'cashmgmtLeftPanel',
       components: [{
-        kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
-        i18nHeader: 'OBPOS_SelectDepositDestinations',
-        name: 'modaldepositevents',
-        id: 'OB.UI.id.modalDepositEvents',
-        type: 'cashMgmtDepositEvents'
-      }, {
-        kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
-        i18nHeader: 'OBPOS_SelectDropDestinations',
-        name: 'modaldropevents',
-        id: 'OB.UI.id.modalDropEvents',
-        type: 'cashMgmtDropEvents'
+        classes: 'row',
+        components: [
+        // 1st column: list of deposits/drops done or in process
+        {
+          classes: 'span12',
+          components: [{
+            kind: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops'
+          }]
+        }]
+      }]
+    },
+    rightPanel: {
+      name: 'cashmgmtRightPanel',
+      components: [
+
+      //2nd column
+      {
+        classes: 'span12',
+        components: [{
+          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo',
+          id: "OB.UI.id.CashMgmtInfo"
+        }, {
+          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard',
+          id: "OB.UI.id.CashMgmtKeyboard"
+        }]
       }]
     }
-  ],
+  }, //hidden stuff
+  {
+    components: [{
+      kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
+      i18nHeader: 'OBPOS_SelectDepositDestinations',
+      name: 'modaldepositevents',
+      id: 'OB.UI.id.modalDepositEvents',
+      type: 'cashMgmtDepositEvents'
+    }, {
+      kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
+      i18nHeader: 'OBPOS_SelectDropDestinations',
+      name: 'modaldropevents',
+      id: 'OB.UI.id.modalDropEvents',
+      type: 'cashMgmtDropEvents'
+    }]
+  }],
 
   init: function () {
     this.inherited(arguments);

@@ -452,13 +452,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           isConfirmButton: true,
           action: function () {
             if (openDrawer) {
-              receipt.trigger('openDrawer');
-              if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
-                OB.POS.hwserver.isDrawerClosed({
-                  openFirst: false,
-                  receipt: receipt
-                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-              }
+              OB.POS.hwserver.openDrawer({
+                openFirst: false,
+                receipt: receipt
+              }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
             }
             receipt.trigger('paymentAccepted');
           }
@@ -467,13 +464,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }]);
       } else {
         if (openDrawer) {
-          receipt.trigger('openDrawer');
-          if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
-            OB.POS.hwserver.isDrawerClosed({
-              openFirst: true,
-              receipt: receipt
-            }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-          }
+          OB.POS.hwserver.openDrawer({
+            openFirst: true,
+            receipt: receipt
+          }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
         }
         receipt.trigger('paymentAccepted');
       }
@@ -488,13 +482,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           isConfirmButton: true,
           action: function () {
             if (openDrawer) {
-              receipt.trigger('openDrawer');
-              if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
-                OB.POS.hwserver.isDrawerClosed({
-                  openFirst: false,
-                  receipt: me.get('multiOrders')
-                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-              }
+              OB.POS.hwserver.openDrawer({
+                openFirst: false,
+                receipt: me.get('multiOrders')
+              }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
             }
             me.get('multiOrders').trigger('paymentAccepted');
           }
@@ -503,19 +494,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }]);
       } else {
         if (openDrawer) {
-          receipt.trigger('openDrawer');
-          if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
-            OB.POS.hwserver.isDrawerClosed({
-              openFirst: true,
-              receipt: me.get('multiOrders')
-            }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-          }
+          OB.POS.hwserver.openDrawer({
+            openFirst: true,
+            receipt: me.get('multiOrders')
+          }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
         }
         this.get('multiOrders').trigger('paymentAccepted');
       }
-    }, this);
-    receipt.on('openDrawer', function () {
-      OB.POS.hwserver.openDrawer();
     }, this);
 
     this.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(this);

@@ -332,12 +332,9 @@ enyo.kind({
     OB.UTIL.Approval.requestApproval(
     me.model, 'OBPOS_approval.opendrawer.menu', function (approved, supervisor, approvalType) {
       if (approved) {
-        OB.POS.hwserver.openDrawer();
-        if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
-          OB.POS.hwserver.isDrawerClosed({
-            openFirst: true
-          }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-        }
+        OB.POS.hwserver.openDrawer({
+          openFirst: true
+        }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
       }
     });
     this.inherited(arguments);

@@ -64,7 +64,6 @@ enyo.kind({
     this.doHideThisPopup();
     this.model.get('order').set('paidOnCredit', true);
     this.model.get('order').trigger('paymentDone');
-    //    this.model.get('order').trigger('openDrawer');
     this.allowOpenDrawer = false;
     var payments = this.model.get('order').get('payments');
     var me = this;
@@ -76,7 +75,10 @@ enyo.kind({
     });
 
     if (this.allowOpenDrawer) {
-      this.model.get('order').trigger('openDrawer');
+      OB.POS.hwserver.openDrawer({
+        openFirst: false,
+        receipt: this.model.get('order')
+      }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
     }
     var bp = this.model.get('order').get('bp');
     var bpCreditUsed = this.model.get('order').get('bp').get('creditUsed');
