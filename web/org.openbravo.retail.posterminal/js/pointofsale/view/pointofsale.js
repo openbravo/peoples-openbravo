@@ -72,7 +72,7 @@ enyo.kind({
     onSelectBrand: 'selectBrand',
     onShowLeftHeader: 'doShowLeftHeader',
     onWarehouseSelected: 'warehouseSelected',
-    onClearKeypad: 'clearKeypad'
+    onClearKeypad: 'clearUserInput'
   },
   events: {
     onShowPopup: '',
@@ -850,7 +850,7 @@ enyo.kind({
   doShowLeftHeader: function (inSender, inEvent) {
     this.waterfall('onLeftHeaderShow', inEvent);
   },
-  clearKeypad: function (inSender, inEvent) {
+  clearUserInput: function (inSender, inEvent) {
     this.waterfall('onClearEditBox', inEvent);
   },
   init: function () {

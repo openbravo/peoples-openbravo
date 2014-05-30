@@ -191,7 +191,7 @@ enyo.kind({
   },
   events: {
     onTabChange: '',
-    onClearKeypad: ''
+    onClearUserInput: ''
   },
 
   showPaymentTab: function () {
@@ -243,7 +243,7 @@ enyo.kind({
         }
       }, this);
       this.model.completePayment();
-      this.doClearKeypad();
+      this.doClearUserInput();
     }
   },
   attributes: {
