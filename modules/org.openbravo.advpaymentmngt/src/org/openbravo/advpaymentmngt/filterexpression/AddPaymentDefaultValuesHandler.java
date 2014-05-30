@@ -20,6 +20,7 @@ package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
@@ -35,6 +36,8 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,4 +179,21 @@ abstract class AddPaymentDefaultValuesHandler {
     return currency.getStandardPrecision().toString();
   }
 
+  BigDecimal getPendingAmt(List<FIN_PaymentSchedule> pslist) {
+    BigDecimal pendingAmt = BigDecimal.ZERO;
+    for (FIN_PaymentSchedule ps : pslist) {
+      List<FIN_PaymentScheduleDetail> psds = null;
+      if (ps.getInvoice() != null) {
+        psds = ps.getFINPaymentScheduleDetailInvoicePaymentScheduleList();
+      } else {
+        psds = ps.getFINPaymentScheduleDetailOrderPaymentScheduleList();
+      }
+      for (FIN_PaymentScheduleDetail psd : psds) {
+        if (psd.getPaymentDetails() == null) {
+          pendingAmt = pendingAmt.add(psd.getAmount());
+        }
+      }
+    }
+    return pendingAmt;
+  }
 }

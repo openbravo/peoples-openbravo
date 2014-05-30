@@ -27,7 +27,6 @@ import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.Order;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 
 @ComponentProvider.Qualifier(APRMConstants.SALES_ORDER_WINDOW_ID)
 public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHandler {
@@ -63,10 +62,7 @@ public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
   private BigDecimal getPendingAmt(String strOrderId) {
     // TODO check multicurrency
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
-    BigDecimal pendingAmt = BigDecimal.ZERO;
-    for (FIN_PaymentSchedule paySchedule : order.getFINPaymentScheduleList()) {
-      pendingAmt = pendingAmt.add(paySchedule.getOutstandingAmount());
-    }
+    BigDecimal pendingAmt = getPendingAmt(order.getFINPaymentScheduleList());
     return pendingAmt;
   }
 

@@ -18,28 +18,35 @@
  */
 package org.openbravo.advpaymentmngt.filterexpression;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.invoice.Invoice;
 
 @ComponentProvider.Qualifier(APRMConstants.SALES_INVOICE_WINDOW_ID)
 public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValuesHandler {
 
   @Override
   public String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
-    // Expected amount is the outstanding amount of the Sales Invoice
-    JSONObject context = new JSONObject(requestMap.get("context"));
-    return context.getString("inpoutstandingamt");
+    BigDecimal pendingAmt = getPendingAmount(requestMap);
+    return pendingAmt.toPlainString();
   }
 
   @Override
   String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
-    // Actual payment amount is the outstanding amount of the Sales Invoice
-    JSONObject context = new JSONObject(requestMap.get("context"));
-    return context.getString("inpoutstandingamt");
+    BigDecimal pendingAmt = getPendingAmount(requestMap);
+    return pendingAmt.toPlainString();
+  }
+
+  private BigDecimal getPendingAmount(Map<String, String> requestMap) throws JSONException {
+    Invoice invoice = OBDal.getInstance().get(Invoice.class, getDefaultInvoiceType(requestMap));
+    BigDecimal pendingAmt = getPendingAmt(invoice.getFINPaymentScheduleList());
+    return pendingAmt;
   }
 
   @Override
