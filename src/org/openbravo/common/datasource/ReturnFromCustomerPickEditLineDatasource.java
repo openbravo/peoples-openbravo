@@ -94,8 +94,8 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
       fetchType = "grid";
       qry = OBDal.getInstance().getSession().createSQLQuery(getSQLQuery(parameters));
     }
+    final ScrollableResults scrollresult = qry.scroll(ScrollMode.FORWARD_ONLY);
     try {
-      ScrollableResults scrollresult = qry.scroll(ScrollMode.FORWARD_ONLY);
       boolean addValue;
       while (scrollresult.next()) {
         Object resultLine = (Object) scrollresult.get();
@@ -110,6 +110,8 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
 
       }
     } catch (JSONException e) {
+    } finally {
+      scrollresult.close();
     }
     return result;
   }
