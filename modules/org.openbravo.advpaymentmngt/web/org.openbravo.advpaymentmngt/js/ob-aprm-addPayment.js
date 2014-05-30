@@ -260,7 +260,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form) {
       orderInvoice.deselectRecord(i);
 
     } else {
-      orderInvoice.setEditValue((i), 'amount', outstandingAmount.toString());
+      orderInvoice.setEditValue((i), 'amount', Number(outstandingAmount.toString()));
       orderInvoice.selectRecord(i);
       amount = amount.subtract(outstandingAmount);
 
