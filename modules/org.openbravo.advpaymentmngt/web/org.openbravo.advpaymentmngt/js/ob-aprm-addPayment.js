@@ -320,7 +320,7 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
   var orderInvoice = view.theForm.getItem('order_invoice').canvas.viewGrid,
       amount = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0)),
       distributedAmount = new BigDecimal(String(view.theForm.getItem('amount_inv_ords').getValue() || 0)),
-      total, outstandingAmount, selectedIds, glitem, credit, actualPayment, expectedPayment, actualPaymentAmount, expectedPaymentAmount;
+      total, outstandingAmount, selectedIds, glitem, credit, actualPayment, expectedPayment, actualPaymentAmount, expectedPaymentAmount, totalAmount,i;
 
   selectedIds = orderInvoice.selectedIds;
   outstandingAmount = new BigDecimal(String(record.outstandingAmount));
@@ -353,17 +353,25 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
       }
     }
   } else {
-    orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
+    totalAmount = BigDecimal.prototype.ZERO;
+    for (i = 0; i < selectedIds.length; i++) {
+      if (selectedIds[i] === record.id) {
+        orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
+      }
+      totalAmount = totalAmount.add(new BigDecimal(String(orderInvoice.getEditedCell(i, 'amount') || 0)));
+    }
+
+
     actualPaymentAmount = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0));
     actualPayment = view.theForm.getItem('actual_payment');
-    actualPayment.setValue((actualPaymentAmount.add(outstandingAmount)).toString());
+    actualPayment.setValue(totalAmount);
 
     expectedPaymentAmount = new BigDecimal(String(view.theForm.getItem('expected_payment').getValue() || 0));
     expectedPayment = view.theForm.getItem('expected_payment');
-    expectedPayment.setValue((actualPaymentAmount.add(outstandingAmount)).toString());
+    expectedPayment.setValue(totalAmount);
 
+    OB.APRM.AddPayment.updateInvOrderTotal(view.theForm, orderInvoice);
   }
-  OB.APRM.AddPayment.updateInvOrderTotal(view.theForm, orderInvoice);
 
 };
 
@@ -468,10 +476,10 @@ OB.APRM.AddPayment.orderInvoiceGridValidation = function (item, validator, value
     isc.warn(OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
     return false;
   }
-  
-  if ((paidamount.signum() === 0)&& (record.writeoff===false) ){
-	  isc.warn(OB.I18N.getLabel('APRM_JSZEROUNDERPAYMENT'));
-	    return false; 
+
+  if ((paidamount.signum() === 0) && (record.writeoff === false)) {
+    isc.warn(OB.I18N.getLabel('APRM_JSZEROUNDERPAYMENT'));
+    return false;
   }
 
 };
