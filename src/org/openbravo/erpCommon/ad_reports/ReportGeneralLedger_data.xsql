@@ -192,6 +192,7 @@
     <Parameter name="accountTo"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="dateBalanced" optional="true" after="AND 1=1"><![CDATA[AND (FACT_ACCT.DATEBALANCED IS NULL OR FACT_ACCT.DATEBALANCED > TO_DATE(?)) ]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[AND FACT_ACCT.C_ACCTSCHEMA_ID = ? ]]></Parameter>
     <Parameter name="parDateFrom2" optional="true" after="AND 1=1"><![CDATA[AND FACT_ACCT.DATEACCT >= TO_DATE(?) ]]></Parameter>
     <Parameter name="parDateTo2" optional="true" after="AND 1=1"><![CDATA[AND FACT_ACCT.DATEACCT < TO_DATE(?) ]]></Parameter>
@@ -503,6 +504,7 @@
     <Parameter name="accountTo"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="dateBalanced" optional="true" after="AND 1=1"><![CDATA[AND (FACT_ACCT.DATEBALANCED IS NULL OR FACT_ACCT.DATEBALANCED > TO_DATE(?)) ]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[AND FACT_ACCT.C_ACCTSCHEMA_ID = ? ]]></Parameter>
     <Parameter name="parDateFrom2" optional="true" after="AND 1=1"><![CDATA[AND FACT_ACCT.DATEACCT >= TO_DATE(?) ]]></Parameter>
     <Parameter name="parDateTo2" optional="true" after="AND 1=1"><![CDATA[AND FACT_ACCT.DATEACCT < TO_DATE(?) ]]></Parameter>

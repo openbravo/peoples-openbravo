@@ -92,11 +92,12 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
           "ReportGeneralLedger|cProjectId", "", IsIDFilter.instance);
       String strGroupBy = vars.getGlobalVariable("inpGroupBy", "ReportGeneralLedger|GroupBy", "");
-
+      String strShowOpenBalances = vars.getGlobalVariable("inpShowOpenBalances",
+          "ReportGeneralLedger|showOpenBalances", "");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strAmtFrom, strAmtTo,
           strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
           strcProjectId, strGroupBy, strcAcctSchemaId, strcelementvaluefromdes,
-          strcelementvaluetodes);
+          strcelementvaluetodes, strShowOpenBalances);
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "ReportGeneralLedger|cAcctSchemaId");
@@ -121,6 +122,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
             strcelementvalueto);
       vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
       vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
+      String strShowOpenBalances = vars.getRequestGlobalVariable("inpShowOpenBalances",
+          "ReportGeneralLedger|showOpenBalances");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportGeneralLedger|cBpartnerId", IsIDFilter.instance);
@@ -138,7 +141,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strAmtFrom, strAmtTo,
           strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
           strcProjectId, strGroupBy, strcAcctSchemaId, strcelementvaluefromdes,
-          strcelementvaluetodes);
+          strcelementvaluetodes, strShowOpenBalances);
     } else if (vars.commandIn("PREVIOUS_RELATION")) {
       String strInitRecord = vars.getSessionValue("ReportGeneralLedger.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRange", "ReportGeneralLedger");
@@ -184,17 +187,19 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           "ReportGeneralLedger|mProductId", "", IsIDFilter.instance);
       String strcProjectId = vars.getInGlobalVariable("inpcProjectId_IN",
           "ReportGeneralLedger|cProjectId", "", IsIDFilter.instance);
+      String strShowOpenBalances = vars.getRequestGlobalVariable("inpShowOpenBalances",
+          "ReportGeneralLedger|showOpenBalances");
       String strGroupBy = vars
           .getRequestGlobalVariable("inpGroupBy", "ReportGeneralLedger|GroupBy");
       String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportGeneralLedger|PageNo", "1");
       if (vars.commandIn("PDF"))
         printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
             strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
-            strcProjectId, strGroupBy, strcAcctSchemaId, strPageNo);
+            strcProjectId, strGroupBy, strcAcctSchemaId, strPageNo, strShowOpenBalances);
       else
         printPageDataXLS(request, response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
             strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
-            strcProjectId, strGroupBy, strcAcctSchemaId);
+            strcProjectId, strGroupBy, strcAcctSchemaId, strShowOpenBalances);
     } else
       pageError(response);
   }
@@ -203,8 +208,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strDateFrom, String strDateTo, String strPageNo, String strAmtFrom, String strAmtTo,
       String strcelementvaluefrom, String strcelementvalueto, String strOrg, String strcBpartnerId,
       String strmProductId, String strcProjectId, String strGroupBy, String strcAcctSchemaId,
-      String strcelementvaluefromdes, String strcelementvaluetodes) throws IOException,
-      ServletException {
+      String strcelementvaluefromdes, String strcelementvaluetodes, String strShowOpenBalances)
+      throws IOException, ServletException {
     String strRecordRange = Utility.getContext(this, vars, "#RecordRange", "ReportGeneralLedger");
     int intRecordRange = (strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange));
     String strInitRecord = vars.getSessionValue("ReportGeneralLedger.initRecordNumber");
@@ -285,9 +290,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
             strAllaccounts, strcelementvaluefrom, strcelementvalueto,
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
-            strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId,
-            strmProductId, strcProjectId, strAmtFrom, strAmtTo, null, null, pgLimit, oraLimit1,
-            oraLimit2, null);
+            "Y".equals(strShowOpenBalances) ? strDateTo : null, strcAcctSchemaId, strDateFrom,
+            toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom,
+            strAmtTo, null, null, pgLimit, oraLimit1, oraLimit2, null);
         Vector<ReportGeneralLedgerData> res = new Vector<ReportGeneralLedgerData>();
         while (scroll.next()) {
           res.add(scroll.get());
@@ -483,6 +488,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("inpElementValueIdTo_DES", strcelementvaluetodes);
     xmlDocument.setParameter("inpElementValueIdFrom_DES", strcelementvaluefromdes);
     xmlDocument.setParameter("groupbyselected", strGroupBy);
+    xmlDocument.setParameter("showOpenBalances", strShowOpenBalances);
     xmlDocument.setData(
         "reportCBPartnerId_IN",
         "liststructure",
@@ -534,7 +540,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strAmtFrom,
       String strAmtTo, String strcelementvaluefrom, String strcelementvalueto, String strOrg,
       String strcBpartnerId, String strmProductId, String strcProjectId, String strGroupBy,
-      String strcAcctSchemaId, String strPageNo) throws IOException, ServletException {
+      String strcAcctSchemaId, String strPageNo, String strShowOpenBalances) throws IOException,
+      ServletException {
     log4j.debug("Output: PDF");
     response.setContentType("text/html; charset=UTF-8");
     ReportGeneralLedgerData[] subreport = null;
@@ -566,9 +573,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       data = ReportGeneralLedgerData.select2(this, "0", strGroupByText, strGroupBy, strAllaccounts,
           strcelementvaluefrom, strcelementvalueto,
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId,
-          strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId,
-          strAmtFrom, strAmtTo, null, null, null, null, null, null);
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+          "Y".equals(strShowOpenBalances) ? strDateTo : null, strcAcctSchemaId, strDateFrom,
+          toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom,
+          strAmtTo, null, null, null, null, null, null);
 
       if (!data.hasData()) {
         advisePopUp(request, response, "WARNING",
@@ -614,7 +622,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strAmtFrom,
       String strAmtTo, String strcelementvaluefrom, String strcelementvalueto, String strOrg,
       String strcBpartnerId, String strmProductId, String strcProjectId, String strGroupBy,
-      String strcAcctSchemaId) throws IOException, ServletException {
+      String strcAcctSchemaId, String strShowOpenBalances) throws IOException, ServletException {
     log4j.debug("Output: XLS");
     response.setContentType("text/html; charset=UTF-8");
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
@@ -642,9 +650,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       data = ReportGeneralLedgerData.selectXLS2(this, strAllaccounts, strcelementvaluefrom,
           strcelementvalueto,
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
-          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId,
-          strDateFrom, toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId,
-          strAmtFrom, strAmtTo);
+          Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
+          "Y".equals(strShowOpenBalances) ? strDateTo : null, strcAcctSchemaId, strDateFrom,
+          toDatePlusOne, strOrgFamily, strcBpartnerId, strmProductId, strcProjectId, strAmtFrom,
+          strAmtTo);
 
       if (!data.hasData()) {
         advisePopUp(request, response, "WARNING",

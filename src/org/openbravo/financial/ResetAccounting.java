@@ -214,6 +214,18 @@ public class ResetAccounting {
     String tableName = "";
     OBContext.setAdminMode(false);
     try {
+      // First undo date balancing for those balanced entries
+      String strUpdateBalanced = "update FinancialMgmtAccountingFact fact set dateBalanced = null "
+          + "where fact.dateBalanced is not null "
+          + "and exists (select 1 from FinancialMgmtAccountingFact f "
+          + "where f.recordID in :transactions " + "and  f.table.id = :tableId "
+          + "and f.client.id=:clientId and f.recordID2=fact.recordID2)";
+      final Query updateBalanced = OBDal.getInstance().getSession().createQuery(strUpdateBalanced);
+      updateBalanced.setString("tableId", tableId);
+      updateBalanced.setParameterList("transactions", transactions);
+      updateBalanced.setString("clientId", client);
+      int balancedUpdated = updateBalanced.executeUpdate();
+      System.out.println("balancedUpdated: " + balancedUpdated);
       Table table = OBDal.getInstance().get(Table.class, tableId);
       tableName = table.getName();
       String strUpdate = "update "
@@ -423,7 +435,7 @@ public class ResetAccounting {
         dates[1] = period.getEndingDate();
         result.add(dates);
       }
-    } catch (Exception e) {
+    } finally {
       OBContext.restorePreviousMode();
     }
     return result;

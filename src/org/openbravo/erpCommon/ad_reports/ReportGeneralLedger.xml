@@ -37,6 +37,8 @@
   <PARAMETER id="paramElementvalueIdFrom" name="paramElementvalueIdFrom" attribute="value"/>
   <PARAMETER id="inpElementValueIdTo_DES" name="inpElementValueIdTo_DES" attribute="value"/>
   <PARAMETER id="inpElementValueIdFrom_DES" name="inpElementValueIdFrom_DES" attribute="value"/>
+  <PARAMETER id="fieldCheck" name="check" default="Y"/>
+  <PARAMETER id="fieldShowOpenBalances" name="showOpenBalances" boolean="checked" withId="fieldCheck"/>
   <PARAMETER id="paramPageNo" name="PageNo" attribute="value"/>
 
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>

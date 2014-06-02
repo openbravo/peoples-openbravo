@@ -564,6 +564,8 @@ public class FactLine {
     String Record_ID2 = "";
     if (m_docLine != null)
       Record_ID2 = m_docLine.m_Record_Id2;
+    if (Record_ID2 == null || Record_ID2.equals(""))
+      Record_ID2 = m_docVO.m_Record_Id2;
     log4jFactLine.debug("FactLine - save - after Record_ID2 = " + Record_ID2);
     String C_Period_ID = "";
     if (m_docLine != null)
@@ -822,6 +824,10 @@ public class FactLine {
             (m_docLine != null) ? m_docLine.m_A_Asset_ID : "",
             (m_docLine != null) ? m_docLine.m_C_WithHolding_ID : "", m_docVO.C_DocType_ID,
             C_Costcenter_ID, (m_docVO.m_IsOpening.equals("Y")) ? "O" : "N");
+        // Update Balancing Date [Open Balances project]
+        if (Record_ID2 != null && !"".equals(Record_ID2)) {
+          FactLineData.updateDateBalanced(con, conn, Record_ID2);
+        }
         log4jFactLine.debug("FactLine - After insertFactAct");
       }
       // if (m_docVO.m_IsOpening.equals("Y"))

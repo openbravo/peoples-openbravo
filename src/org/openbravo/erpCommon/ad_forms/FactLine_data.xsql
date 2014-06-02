@@ -132,6 +132,31 @@
      <Parameter name="cCostcenterId"/>
      <Parameter name="FactAcctType"/>
    </SqlMethod>
+  <SqlMethod name="updateDateBalanced" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      update Fact_Acct set Datebalanced=(select max(financialm1_.DateAcct) 
+                                   from Fact_Acct financialm1_ 
+                                   where financialm1_.Record_ID2=Fact_Acct.Record_ID2 
+                                   and financialm1_.C_AcctSchema_ID=Fact_Acct.C_AcctSchema_ID
+                                   and financialm1_.Account_ID=Fact_Acct.Account_ID
+                                   group by financialm1_.Record_ID2 
+                                   having sum(financialm1_.AmtAcctCr-financialm1_.AmtAcctDr)=0) 
+        where 
+        Record_ID2 = ?
+        and Datebalanced is null 
+        and exists (select 1 
+                       from Fact_Acct financialm2_ 
+                       where financialm2_.Record_ID2=Fact_Acct.Record_ID2
+                       and financialm2_.C_AcctSchema_ID=Fact_Acct.C_AcctSchema_ID 
+                       and financialm2_.Account_ID=Fact_Acct.Account_ID
+                       group by financialm2_.Record_ID2 
+                       having sum(financialm2_.AmtAcctCr-financialm2_.AmtAcctDr)=0)
+     ]]>
+     </Sql>
+     <Parameter name="recordID2"/>
+   </SqlMethod>
   <SqlMethod name="updateFactAcct" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

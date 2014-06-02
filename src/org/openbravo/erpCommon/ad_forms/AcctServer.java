@@ -130,6 +130,8 @@ public abstract class AcctServer {
   protected static final String NO_CURRENCY = "-1";
   // This is just for the initialization of the accounting
   public String m_IsOpening = "N";
+  // To match balances
+  public String m_Record_Id2 = "";
 
   public Fact[] m_fact = null;
   public AcctSchema[] m_as = null;
