@@ -489,6 +489,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
     // See issue #24750
     if (this.grid.parentElement.data) {
       this.grid.parentElement.data.localData = null;
+      this.grid.parentElement.data.allRows = null;
     }
 
     this.internalValue = value;
