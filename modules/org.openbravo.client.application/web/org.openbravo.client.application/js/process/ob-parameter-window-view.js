@@ -69,7 +69,7 @@ isc.OBParameterWindowView.addProperties({
           record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
           for (j = 0; j < fields.length; j++) {
             if (fields[j].required) {
-              if (record[fields[j].name] === null || record[fields[j].name] === "" || record[fields[j] === undef]) {
+              if (record[fields[j].name] === null || record[fields[j].name] === '' || record[fields[j] === undef]) {
                 hasErrors = true;
                 if (lineNumbers === undef) {
                   lineNumbers = grid.getRecordIndex(selection[i]).toString();
