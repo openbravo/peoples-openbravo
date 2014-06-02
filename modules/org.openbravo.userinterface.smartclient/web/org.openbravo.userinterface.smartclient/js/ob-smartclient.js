@@ -116,7 +116,10 @@ isc.ResultTree.addProperties({
   dataArrived: function (parentNode) {
     var children = this.getChildren(parentNode),
         target = window[this.componentId];
-    target.transformData(children);
+    if (target.transformData) {
+      target.transformData(children);
+    }
+    this.Super('dataArrived', arguments);
   }
 });
 
