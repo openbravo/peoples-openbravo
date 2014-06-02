@@ -302,9 +302,6 @@
       <index name="FACT_ACCT_FACT_ACCT_GROUP_ID" unique="false">
         <index-column name="FACT_ACCT_GROUP_ID"/>
       </index>
-      <index name="FACT_ACCT_GROUP" unique="false">
-        <index-column name="FACT_ACCT_GROUP_ID"/>
-      </index>
       <index name="FACT_ACCT_RECORD_ID2" unique="false">
         <index-column name="RECORD_ID2"/>
       </index>
