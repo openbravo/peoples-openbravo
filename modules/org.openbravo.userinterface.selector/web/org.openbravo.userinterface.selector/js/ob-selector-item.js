@@ -73,6 +73,14 @@ isc.OBSelectorPopupWindow.addProperties({
       if (this.selectorGridFields[i].name === OB.Constants.IDENTIFIER) {
         hasIdentifier = true;
       }
+      if (this.selectorGridFields[i].filterEditorProperties.operator) {
+        // if there is an operator defined in the grid configuration, use it
+        this.selectorGridFields[i].operator = operator = this.selectorGridFields[i].filterEditorProperties.operator;
+      } else {
+        // if not, use the operator based on the popupTextMatchStyle
+        this.selectorGridFields[i].operator = operator;
+        this.selectorGridFields[i].filterEditorProperties.operator = operator;
+      }
     }
     if (!this.dataSource.fields || !this.dataSource.fields.length || this.dataSource.fields.length === 0) {
       if (!hasIdentifier && this.selectorGridFields) {
