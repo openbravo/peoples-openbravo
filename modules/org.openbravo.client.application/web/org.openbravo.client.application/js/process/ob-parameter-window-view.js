@@ -91,7 +91,7 @@ isc.OBParameterWindowView.addProperties({
           // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
           if (!view.messageBar.isVisible()) {
             if (view.theForm.errorMessage) {
-              view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorsInGrids') + view.theForm.errorMessage);
+              view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_FillMandatoryFields') + view.theForm.errorMessage);
             } else {
               view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
             }
