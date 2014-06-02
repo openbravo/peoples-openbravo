@@ -334,7 +334,7 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
       distributedAmount = new BigDecimal(String(view.theForm.getItem('amount_inv_ords').getValue() || 0)),
       total, outstandingAmount, selectedIds, glitem, credit, actualPayment = view.theForm.getItem('actual_payment'),
       expectedPayment = view.theForm.getItem('expected_payment'),
-      actualPaymentAmount, expectedPaymentAmount, totalAmount, i, totalAmountoutstanding=BigDecimal.prototype.ZERO;
+      actualPaymentAmount, expectedPaymentAmount, totalAmount, i, totalAmountoutstanding = BigDecimal.prototype.ZERO;
 
   selectedIds = orderInvoice.selectedIds;
   outstandingAmount = new BigDecimal(String(record.outstandingAmount));
@@ -389,9 +389,9 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
     }
     if (selectedIds.length > 0) {
       actualPaymentAmount = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0));
-      actualPayment = actualPayment.setValue(totalAmount);
+      actualPayment = actualPayment.setValue(Number(totalAmount.toString()));
       expectedPaymentAmount = new BigDecimal(String(view.theForm.getItem('expected_payment').getValue() || 0));
-      expectedPayment.setValue(Number(totalAmount));
+      expectedPayment.setValue(Number(totalAmount.toString()));
     } else {
       actualPayment.setValue(Number(new BigDecimal(String(orderInvoice.getEditedCell(0, 'outstandingAmount') || 0))));
       expectedPayment.setValue(Number('0'));
