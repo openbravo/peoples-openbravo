@@ -158,7 +158,7 @@ isc.OBFKFilterTextItem.addProperties({
   handleEditorExit: function () {
     var value = this.getValue(),
         performFetch = false,
-        rows,i;
+        rows, i;
     if (this.pickList && this.pickList.data && (this.pickList.data.allRows || this.pickList.data.localData)) {
       rows = this.pickList.data.allRows || this.pickList.data.localData;
     }
