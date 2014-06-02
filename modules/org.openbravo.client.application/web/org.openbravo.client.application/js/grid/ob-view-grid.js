@@ -1584,11 +1584,16 @@ isc.OBViewGrid.addProperties({
       // ui-pattern: single record/edit mode
       this.view.openDefaultEditView(this.getRecord(startRow));
     } else if (this.data && this.data.getLength() === 1) {
-      // one record select it directly
-      record = this.getRecord(0);
-      // this select method prevents state changing if the record
-      // was already selected
-      this.doSelectSingleRecord(record);
+
+      // Prevent the selection of an old record
+      // See issue https://issues.openbravo.com/view.php?id=26679
+      if (!this.view.viewForm.isNew) {
+        // one record select it directly
+        record = this.getRecord(0);
+        // this select method prevents state changing if the record
+        // was already selected
+        this.doSelectSingleRecord(record);
+      }
 
       // Call to updateButtonState to force a call to the FIC in setsession mode
       // See issue https://issues.openbravo.com/view.php?id=22655
