@@ -22,10 +22,14 @@ package org.openbravo.advpaymentmngt.actionHandler;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
 public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
 
@@ -34,16 +38,31 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
     try {
       final JSONObject jsonData = new JSONObject(data);
       final String paymentMethodId = jsonData.getString("paymentMethodId");
+      final String financialAccountId = jsonData.getString("financialAccountId");
 
       final FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
           paymentMethodId);
 
       JSONObject result = new JSONObject();
       result.put("isPayinIsMulticurrency", paymentMethod.isPayinIsMulticurrency());
-
+      if (!isValidFinancialAccount(paymentMethodId, financialAccountId)) {
+        result.put("isWrongFinancialAccount", true);
+      }
       return result;
     } catch (Exception e) {
       throw new OBException(e);
     }
+  }
+
+  private boolean isValidFinancialAccount(String paymentMethodId, String financialAccountId) {
+    OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
+        FinAccPaymentMethod.class);
+    obc.setFilterOnReadableOrganization(false);
+    obc.setMaxResults(1);
+    obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
+        OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId)));
+    obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+        OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId)));
+    return obc.uniqueResult() != null;
   }
 }
