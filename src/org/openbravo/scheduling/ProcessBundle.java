@@ -165,6 +165,8 @@ public class ProcessBundle {
    *          the client that scheduled/executed this process
    * @param organization
    *          the organization under which this process will run
+   * @param roleSecurity
+   *          is role security
    * @param groupInfo
    *          the information of the process group which the process belongs to
    */

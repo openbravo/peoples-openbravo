@@ -33,7 +33,7 @@ public class GroupInfo {
 
   private List<ProcessGroupList> groupList;
 
-  private int actualposition = 0;
+  private int currentposition;
 
   private VariablesSecureApp vars;
 
@@ -45,49 +45,113 @@ public class GroupInfo {
 
   private Date endGroupTime;
 
+  private String status;
+
+  private boolean stopWhenFails;
+
   Logger log4j = Logger.getLogger(GroupInfo.class);
 
+  /**
+   * Creates a new GroupInfo object with the given parameters
+   * 
+   * @param group
+   *          the process group
+   * @param request
+   *          the process request of the process group
+   * @param processRun
+   *          the process run of the process request of the process group
+   * @param groupList
+   *          the list of processes that are part of the group
+   * @param stopWhenFails
+   *          if true the process group will stop after a process fails
+   * @param vars
+   *          clients security/application context variables
+   * @param conn
+   *          connection provider
+   */
   public GroupInfo(ProcessGroup group, ProcessRequest request, ProcessRun processRun,
-      List<ProcessGroupList> groupList, VariablesSecureApp vars, ConnectionProvider conn) {
+      List<ProcessGroupList> groupList, boolean stopWhenFails, VariablesSecureApp vars,
+      ConnectionProvider conn) {
     super();
     this.group = group;
     this.request = request;
     this.groupList = groupList;
+    this.currentposition = 0;
     this.vars = vars;
     this.conn = conn;
     this.processRun = processRun;
+    this.stopWhenFails = stopWhenFails;
+    this.status = Process.SUCCESS;
   }
 
+  /**
+   * Returns the Process Request of the group
+   * 
+   * @return ProcessRequest of the group
+   */
   public ProcessRequest getRequest() {
     return request;
   }
 
+  /**
+   * Returns the Process Run of the group
+   * 
+   * @return ProcessRun of the group
+   */
   public ProcessRun getProcessRun() {
     return processRun;
   }
 
-  public StringBuilder getLogger() {
-    return groupLog;
+  /**
+   * Returns the status of the group
+   * 
+   * @return String with the status of the group
+   */
+  public String getStatus() {
+    return status;
   }
 
+  /**
+   * Returns the log of the group, this method should be call at the end of all process executions
+   * 
+   * @return String with the log of the group
+   */
   public String getLog() {
     String groupLogMessage = this.groupLog.toString();
     groupLogMessage = groupLogMessage + "\n END Process Group: " + group.getName();
     return groupLogMessage;
   }
 
+  /**
+   * Returns the duration of the group
+   * 
+   * @return Long with the duration in milliseconds
+   */
+  public long getDuration() {
+    return endGroupTime.getTime() - startGroupTime.getTime();
+  }
+
+  /**
+   * Execute the next process of the group
+   * 
+   * @return String with the process id executed or END if there is no more processes to execute
+   */
   public String executeNextProcess() throws SchedulerException, ServletException {
-    if (actualposition == 0) {
+    if (currentposition == 0) {
       groupLog = new StringBuilder();
       groupLog.append(now() + "Process Group: " + group.getName() + " started. \n\n");
       startGroupTime = new Date();
     }
-    if (actualposition < groupList.size()) {
-      ProcessGroupList processList = groupList.get(actualposition);
+    if (currentposition < groupList.size()
+        && (status.equals(Process.SUCCESS) || (status.equals(Process.ERROR) && !stopWhenFails))) {
+
+      ProcessGroupList processList = groupList.get(currentposition);
       String actualProcessId = processList.getProcess().getId();
-      actualposition++;
+      currentposition++;
       groupLog.append(now() + processList.getSequenceNumber() + " Process : "
           + processList.getProcess().getName() + " started succesfully. \n");
+
+      // Execute next process immediately
       final ProcessBundle firstProcessBundle = new ProcessBundle(actualProcessId, vars,
           Channel.SCHEDULED, request.getClient().getId(), request.getOrganization().getId(),
           request.isSecurityBasedOnRole(), this).init(conn);
@@ -99,21 +163,24 @@ public class GroupInfo {
     }
   }
 
+  /**
+   * Log the result of a process in the process group log
+   * 
+   * @param result
+   *          Process.SUCCESS or Process.ERROR
+   */
   public void logProcess(String result) {
     String resultMessage = "";
-    ProcessGroupList processList = groupList.get(actualposition - 1);
+    ProcessGroupList processList = groupList.get(currentposition - 1);
     if (result.equals(Process.SUCCESS)) {
       resultMessage = " processed successfully.";
     } else if (result.equals(Process.ERROR)) {
       resultMessage = " FAILED!!!.";
+      this.status = Process.ERROR;
     }
     groupLog.append(now() + processList.getSequenceNumber() + " Process : "
         + processList.getProcess().getName() + resultMessage + "\n");
     groupLog.append("-------- \n");
-  }
-
-  public long getDuration() {
-    return endGroupTime.getTime() - startGroupTime.getTime();
   }
 
   private String now() {

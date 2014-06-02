@@ -162,15 +162,18 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
             getDuration(jec.getJobRunTime()), executionLog, executionId);
       }
 
-      // Manage Group
+      // Manage Process Group
       if (bundle.getGroupInfo() != null) {
         GroupInfo groupInfo = bundle.getGroupInfo();
         groupInfo.logProcess(jee == null ? SUCCESS : ERROR);
         ProcessRunData.updateGroup(getConnection(), groupInfo.getProcessRun().getId(), executionId);
+        // Execute next process
         String result = groupInfo.executeNextProcess();
         if (result.equals(GroupInfo.END)) {
-          ProcessRunData.update(getConnection(), ctx.getUser(), SUCCESS, getDuration(groupInfo
-              .getDuration()), groupInfo.getLog(), groupInfo.getProcessRun().getId());
+          // End of process group execution
+          ProcessRunData.update(getConnection(), ctx.getUser(), groupInfo.getStatus(),
+              getDuration(groupInfo.getDuration()), groupInfo.getLog(), groupInfo.getProcessRun()
+                  .getId());
         }
       }
 

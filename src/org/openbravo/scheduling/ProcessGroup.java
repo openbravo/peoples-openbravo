@@ -45,8 +45,9 @@ public class ProcessGroup extends DalBaseProcess {
         Hibernate.initialize(prolist.getProcess());
       }
 
-      GroupInfo groupInfo = new GroupInfo(group, processRequest, processRun, processList, vars,
-          conn);
+      GroupInfo groupInfo = new GroupInfo(group, processRequest, processRun, processList,
+          group.isStopTheGroupExecutionWhenAProcessFails(), vars, conn);
+      // Launch the Process Group execution
       groupInfo.executeNextProcess();
 
     }
