@@ -230,7 +230,9 @@ public class OBViewParameterHandler {
     }
 
     public String getTitle() {
-      return OBViewUtil.getLabel(parameter, parameter.getOBUIAPPParameterTrlList());
+      boolean purchaseTrx = paramWindow.parentWindow != null
+          && !paramWindow.parentWindow.isSalesTransaction();
+      return OBViewUtil.getParameterTitle(parameter, purchaseTrx);
     }
 
     public String getName() {
