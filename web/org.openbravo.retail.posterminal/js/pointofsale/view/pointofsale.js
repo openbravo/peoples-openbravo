@@ -72,7 +72,7 @@ enyo.kind({
     onSelectBrand: 'selectBrand',
     onShowLeftHeader: 'doShowLeftHeader',
     onWarehouseSelected: 'warehouseSelected',
-    onClearKeypad: 'clearUserInput'
+    onClearUserInput: 'clearUserInput'
   },
   events: {
     onShowPopup: '',

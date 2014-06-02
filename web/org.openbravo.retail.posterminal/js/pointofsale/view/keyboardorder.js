@@ -81,7 +81,7 @@ enyo.kind({
 
     this.receipt.get('lines').on('selected', function (line) {
       this.line = line;
-      this.clearUserInput();
+      this.clearInput();
     }, this);
   },
   initComponents: function () {
