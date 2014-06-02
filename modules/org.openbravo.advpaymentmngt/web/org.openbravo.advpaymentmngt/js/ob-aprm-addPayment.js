@@ -484,6 +484,11 @@ OB.APRM.AddPayment.updateCreditTotal = function (form) {
   return true;
 };
 
+OB.APRM.AddPayment.updateCreditOnChange = function (item, view, form, grid) {
+  OB.APRM.AddPayment.updateCreditTotal(form);
+  return true;
+};
+
 OB.APRM.AddPayment.selectionChangedCredit = function (record, state) {
 
   var credit = this.view.theForm.getItem('credit_to_use').canvas.viewGrid;
