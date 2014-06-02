@@ -72,7 +72,7 @@ public class Category extends ProcessHQLQuery {
         + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist = '"
         + productList.getId() + "') " + "AND (pplv.id='" + priceListVersion.getId() + "') AND ("
         + "ppp.priceListVersion.id = pplv.id" + ") AND (" + "pli.product.id = ppp.product.id"
-        + ") AND (" + "pli.product.active = true" + ") AND (ppp.$incrementalUpdateCriteria)) "
+        + ") AND (" + "pli.product.active = true" + ")) " + " AND pCat.$incrementalUpdateCriteria"
         + "AND pCat.active = true order by pCat.name");
 
     String promoNameTrl;
