@@ -60,6 +60,7 @@ isc.OBParameterWindowView.addProperties({
       var hasErrors = false,
           grid, fields, selection, len, allRows, lineNumbers, i, j, record, undef;
       view.messageBar.hide();
+      view.theForm.errorMessage = '';
       if (view.grid && view.grid.viewGrid) {
         grid = view.grid.viewGrid;
         fields = grid.getFields();
@@ -89,7 +90,11 @@ isc.OBParameterWindowView.addProperties({
           // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
           // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
           if (!view.messageBar.isVisible()) {
-            view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+            if (view.theForm.errorMessage) {
+              view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorsInGrids') + view.theForm.errorMessage);
+            } else {
+              view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
+            }
           }
         }
       } else {
