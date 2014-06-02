@@ -255,7 +255,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form) {
     // do not distribute again when the selectionChanged method is invoked
     orderInvoice.preventDistributingOnSelectionChanged = true;
     if (amount.signum() === 0) {
-      orderInvoice.setEditValue((i), 'amount', '');
+      orderInvoice.setEditValue((i), 'amount', Number("0"));
       orderInvoice.deselectRecord(i);
 
     } else {
@@ -282,7 +282,7 @@ OB.APRM.AddPayment.updateTotal = function (form) {
   totalAmt = new BigDecimal(String(invOrdTotalItem.getValue() || 0));
   totalAmt = totalAmt.add(new BigDecimal(String(glItemsTotalItem.getValue() || 0)));
 
-  totalItem.setValue(totalAmt.toString());
+  totalItem.setValue(Number(totalAmt.toString()));
   OB.APRM.AddPayment.updateDiffereceOff(form);
 };
 
@@ -310,7 +310,7 @@ OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
     recordAmount.ids = selectedRecords[i].id.split(",");
     totalAmt = totalAmt.add(bdAmt);
   }
-  invOrdTotalItem.setValue(totalAmt.toString());
+  invOrdTotalItem.setValue(Number(totalAmt.toString()));
   OB.APRM.AddPayment.updateTotal(form);
   return true;
 };
@@ -359,7 +359,7 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
         }
       }
       if (amount.signum() === 0) {
-        orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', '');
+        orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number("0"));
 
       } else {
         orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
@@ -444,7 +444,7 @@ OB.APRM.AddPayment.updateGLItemsTotal = function (form, rowNum, remove) {
     totalAmt = BigDecimal.prototype.ZERO;
   }
 
-  glItemTotalItem.setValue(totalAmt.toString());
+  glItemTotalItem.setValue(Number(totalAmt.toString()));
   OB.APRM.AddPayment.updateTotal(form);
   return true;
 };
@@ -479,7 +479,7 @@ OB.APRM.AddPayment.updateCreditTotal = function (form) {
     creditAmt = new BigDecimal(String(grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), amountField)));
     totalAmt = totalAmt.add(creditAmt);
   }
-  creditTotalItem.setValue(totalAmt.toString());
+  creditTotalItem.setValue(Number(totalAmt.toString()));
   OB.APRM.AddPayment.updateTotal(form);
   return true;
 };
@@ -572,17 +572,17 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
         if (actualConverted && actualPayment) {
           if (actualPayment.compareTo(newConvertedAmount) !== 0) {
             newExchangeRate = actualConverted.divide(actualPayment, currencyPrecision, 2);
-            exchangeRateItem.setValue(newExchangeRate.toString());
+            exchangeRateItem.setValue(Number(newExchangeRate.toString()));
           }
         } else {
-          exchangeRateItem.setValue(newExchangeRate.toString);
+          exchangeRateItem.setValue(Number(newExchangeRate.toString));
         }
       } else {
         if (exchangeRate) {
           newConvertedAmount = actualPayment.multiply(exchangeRate).setScale(currencyPrecision, BigDecimal.prototype.ROUND_HALF_UP);
-          actualConvertedItem.setValue(newConvertedAmount.toString());
+          actualConvertedItem.setValue(Number(newConvertedAmount.toString()));
         } else {
-          actualConvertedItem.setValue(actualConverted.toString());
+          actualConvertedItem.setValue(Number(actualConverted.toString()));
         }
       }
     }
