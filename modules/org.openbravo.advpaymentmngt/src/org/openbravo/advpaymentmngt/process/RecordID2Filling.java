@@ -86,8 +86,7 @@ public class RecordID2Filling extends DalBaseProcess {
         .createQuery(hqlPaymentsInTransit.toString());
     int numberPaymentsInTransit = updatePaymentsinTransit.executeUpdate();
 
-    System.out
-        .println("Number of payment entries updated (In Transit): " + numberPaymentsInTransit);
+    logger.logln("Number of payment entries updated (In Transit): " + numberPaymentsInTransit);
     OBDal.getInstance().flush();
 
     final StringBuilder hqlTrxRec = new StringBuilder();
