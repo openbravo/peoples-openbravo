@@ -71,14 +71,12 @@ public class APRMApplicationInitializer implements ApplicationInitializer {
   }
 
   private boolean is11R2orNewer() {
-    String dbVersion = SystemInfo.getSystemInfo().getProperty("dbVersion");
-    if (dbVersion == null) {
-      try {
-        SystemInfo.load(new DalConnectionProvider(false));
-        dbVersion = SystemInfo.getSystemInfo().getProperty("dbVersion");
-      } catch (ServletException ignore) {
-      }
+    String dbVersion = null;
+    try {
+      dbVersion = SystemInfo.getDatabaseVersion(new DalConnectionProvider(false));
+    } catch (ServletException ignore) {
     }
+
     if (dbVersion == null) {
       return false;
     }
