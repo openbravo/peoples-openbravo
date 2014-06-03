@@ -113,7 +113,6 @@ public class OBViewParameterHandler {
       }
 
       OBViewParameter parameter = new OBViewParameter(param);
-      parameter.setRedrawOnChange(parametersInExpression.contains(param));
       if (displayLogicMap.containsKey(param)) {
         parameter.setShowIf(displayLogicMap.get(param));
       }
@@ -162,7 +161,6 @@ public class OBViewParameterHandler {
     Parameter parameter;
     String showIf = "";
     String readOnlyIf = "";
-    boolean redrawOnChange = false;
     List<ValueMapValue> valueMap = new ArrayList<ValueMapValue>();
 
     public OBViewParameter() {
@@ -302,14 +300,6 @@ public class OBViewParameterHandler {
 
     public String getReadOnlyIf() {
       return readOnlyIf;
-    }
-
-    public boolean getRedrawOnChange() {
-      return redrawOnChange;
-    }
-
-    public void setRedrawOnChange(boolean redrawOnChange) {
-      this.redrawOnChange = redrawOnChange;
     }
 
     public String getWidth() {
