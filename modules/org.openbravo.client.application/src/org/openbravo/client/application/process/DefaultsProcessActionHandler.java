@@ -154,6 +154,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
                 if (field.getObuiappDefaultExpression() != null) {
                   String rawDefaultExpression = field.getObuiappDefaultExpression();
                   Object defaultExpression;
+                  parameters.put("filterExpressionColumnName", field.getColumn().getDBColumnName());
                   defaultExpression = ParameterUtils.getJSExpressionResult(
                       fixRequestMap(parameters),
                       (HttpSession) parameters.get(KernelConstants.HTTP_SESSION),
