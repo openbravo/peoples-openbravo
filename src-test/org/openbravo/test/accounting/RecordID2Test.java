@@ -32,6 +32,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.financial.ResetAccounting;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -635,7 +636,7 @@ public class RecordID2Test extends BaseTest {
 
   private void postDocument(String strKey, String strTableId, String strClient, String strOrg)
       throws ServletException {
-    DalConnectionProvider conn = new DalConnectionProvider();
+    ConnectionProvider conn = getConnectionProvider();
 
     Connection con = null;
     try {
