@@ -161,7 +161,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   handlers: {
     onSetCustomer: 'setCustomer',
-    onSaveCustomer: 'saveCustomer'
+    onSaveCustomer: 'preSaveCustomer'
   },
   events: {},
   components: [{
@@ -173,6 +173,24 @@ enyo.kind({
     this.customer = inEvent.customer;
     this.waterfall('onLoadValue', {
       customer: this.customer
+    });
+  },
+  preSaveCustomer: function (inSender, inEvent) {
+    var me = this,
+        inSenderOriginal = inSender,
+        inEventOriginal = inEvent;
+    OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreCustomerSave', {
+      inSender: inSenderOriginal,
+      inEvent: inEventOriginal,
+      passValidation: true,
+      error: '',
+      meObject: me
+    }, function (args) {
+      if (args.passValidation) {
+        args.meObject.saveCustomer(args.inSender, args.inEvent);
+      } else {
+        OB.UTIL.showError(args.error);
+      }
     });
   },
   saveCustomer: function (inSender, inEvent) {
