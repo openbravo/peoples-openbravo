@@ -85,6 +85,15 @@ public class GroupInfo {
   }
 
   /**
+   * Returns the Process Group
+   * 
+   * @return ProcessGroup
+   */
+  public ProcessGroup getGroup() {
+    return group;
+  }
+
+  /**
    * Returns the Process Request of the group
    * 
    * @return ProcessRequest of the group

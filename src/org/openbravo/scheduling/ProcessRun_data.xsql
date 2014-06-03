@@ -67,4 +67,16 @@
     <Parameter name="group"/>
     <Parameter name="id"/>
    </SqlMethod>
+   <SqlMethod name="selectConcurrent" type="preparedStatement" return="String" default="0">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT COUNT(*) AS TOTAL
+        FROM AD_PROCESS_RUN RU
+        JOIN AD_PROCESS_REQUEST PR ON RU.AD_PROCESS_REQUEST_ID = PR.AD_PROCESS_REQUEST_ID
+        JOIN AD_PROCESS_REQUEST MYREQUEST ON PR.AD_PROCESS_GROUP_ID = MYREQUEST.AD_PROCESS_GROUP_ID
+        WHERE MYREQUEST.AD_PROCESS_REQUEST_ID = ?
+        AND RU.STATUS = 'PRC'
+      </Sql>
+      <Parameter name="adProcessRequestId"/>
+  </SqlMethod>
 </SqlClass>
