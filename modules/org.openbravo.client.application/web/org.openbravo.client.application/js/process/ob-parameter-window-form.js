@@ -48,15 +48,16 @@ isc.OBParameterWindowForm.addProperties({
     // Check validation rules (subordinated fields), when value of a
     // parent field is changed, all its subordinated are reset
     affectedParams = this.paramWindow.dynamicColumns[item.name];
-    if (!affectedParams) {
-      return;
-    }
-    for (i = 0; i < affectedParams.length; i++) {
-      field = this.getField(affectedParams[i]);
-      if (field && field.setValue) {
-        field.setValue(null);
-        this.itemChanged(field, null);
+    if (affectedParams) {
+      for (i = 0; i < affectedParams.length; i++) {
+        field = this.getField(affectedParams[i]);
+        if (field && field.setValue) {
+          field.setValue(null);
+          this.itemChanged(field, null);
+        }
       }
     }
+    // force a redraw to reevaluate the display logic of the parameters
+    this.markForRedraw();
   }
 });
