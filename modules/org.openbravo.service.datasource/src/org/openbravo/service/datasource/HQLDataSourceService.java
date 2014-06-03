@@ -86,9 +86,11 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     String tableId = (String) parameters.get("tableId");
     if (tableId != null) {
       Table table = OBDal.getInstance().get(Table.class, tableId);
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
       for (Column column : table.getADColumnList()) {
         final DataSourceProperty dsProperty = new DataSourceProperty();
-        dsProperty.setName(column.getName());
+        Property property = entity.getPropertyByColumnName(column.getDBColumnName());
+        dsProperty.setName(property.getName());
         dsProperty.setMandatory(column.isMandatory());
         dsProperty.setUpdatable(column.isUpdatable());
         Reference reference = column.getReference();
