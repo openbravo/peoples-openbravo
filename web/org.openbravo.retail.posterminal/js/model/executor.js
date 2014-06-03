@@ -64,14 +64,21 @@ OB.Model.Executor = Backbone.Model.extend({
 
     evtQueue.add(event);
   },
-
+  preEvent: function () {
+    // Logic to implement before the event is created
+  },
+  postEvent: function () {
+    // Logic to implement after the event is created
+  },
   nextEvent: function () {
     var evt = this.get('eventQueue').shift(),
         previousEvt = this.get('currentEvent');
     if (previousEvt) {
       previousEvt.trigger('finish');
+      this.postEvent();
     }
     if (evt) {
+      this.preEvent();
       this.set('executing', true);
       this.set('currentEvent', evt);
       evt.set('start', new Date().getTime());
@@ -224,7 +231,12 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       this.nextAction(evt);
     }
   },
-
+  preEvent: function () {
+    OB.MobileApp.view.waterfall('onApplyingDiscount');
+  },
+  postEvent: function () {
+    OB.MobileApp.view.waterfall('onAppliedDiscount');
+  },
   preAction: function (evt) {
     var line = evt.get('line'),
         order = evt.get('receipt'),
