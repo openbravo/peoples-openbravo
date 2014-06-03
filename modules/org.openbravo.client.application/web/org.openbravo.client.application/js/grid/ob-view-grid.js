@@ -1938,6 +1938,8 @@ isc.OBViewGrid.addProperties({
               shouldRemove = true;
             }
           }
+        } else if (criterion.fieldName === this.view.parentProperty + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER && criterion.operator === 'iEquals') {
+          shouldRemove = true;
         }
 
         if (shouldRemove) {
