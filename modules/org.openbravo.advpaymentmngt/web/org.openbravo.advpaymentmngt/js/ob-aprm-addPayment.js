@@ -115,7 +115,7 @@ OB.APRM.AddPayment.addNewGLItem = function (grid) {
 };
 
 OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, form, grid) {
-  var paymentMethodId, callback, isPayinIsMulticurrency, _form;
+  var paymentMethodId, financialAccountId, callback, isPayinIsMulticurrency, isWrongFinancialAccount, _form;
   if (item) {
     paymentMethodId = item.getValue();
   } else {
@@ -127,37 +127,42 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, form, grid
   } else {
     _form = form;
   }
-
+  isWrongFinancialAccount = false;
   callback = function (response, data, request) {
-    isPayinIsMulticurrency = data.isPayinIsMulticurrency;
-    if (isPayinIsMulticurrency) {
-      if (_form.getItem('c_currency_id').getValue() !== _form.getItem('c_currency_to_id').getValue()) {
-        _form.getItem('conversion_rate').visible = true;
-        _form.getItem('converted_amount').visible = true;
-        _form.getItem('c_currency_to_id').visible = true;
-      } else {
+    isWrongFinancialAccount = data.isWrongFinancialAccount;
+    if(isWrongFinancialAccount){
+      _form.getItem('fin_financial_account_id').setValue('');
+    }
+    if (_form.getItem('fin_payment_id').getValue() !== null && _form.getItem('fin_payment_id').getValue() !== undefined && _form.getItem('fin_payment_id').getValue() !== '') {
+	    isPayinIsMulticurrency = data.isPayinIsMulticurrency;
+	    if (isPayinIsMulticurrency) {
+	      if (_form.getItem('c_currency_id').getValue() !== _form.getItem('c_currency_to_id').getValue()) {
+	        _form.getItem('conversion_rate').visible = true;
+	        _form.getItem('converted_amount').visible = true;
+	        _form.getItem('c_currency_to_id').visible = true;
+	      } else {
+	        _form.getItem('conversion_rate').visible = false;
+	        _form.getItem('converted_amount').visible = false;
+	        _form.getItem('c_currency_to_id').visible = false;
+	      }
+	      _form.redraw();
+	    } else {
+	      _form.getItem('c_currency_to_id').visible = false;
+	      _form.getItem('conversion_rate').visible = false;
+	      _form.getItem('converted_amount').visible = false;
+	      _form.redraw();
+	    }
+    } else {
+        _form.getItem('c_currency_to_id').visible = false;
         _form.getItem('conversion_rate').visible = false;
         _form.getItem('converted_amount').visible = false;
-        _form.getItem('c_currency_to_id').visible = false;
-      }
-      _form.redraw();
-    } else {
-      _form.getItem('c_currency_to_id').visible = false;
-      _form.getItem('conversion_rate').visible = false;
-      _form.getItem('converted_amount').visible = false;
-      _form.redraw();
+        _form.redraw();
     }
   };
-  if (_form.getItem('fin_payment_id').getValue() !== null && _form.getItem('fin_payment_id').getValue() !== undefined && _form.getItem('fin_payment_id').getValue() !== '') {
+    financialAccountId = _form.getItem('fin_financial_account_id').getValue();
     OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
-      paymentMethodId: paymentMethodId
+      paymentMethodId: paymentMethodId, financialAccountId: financialAccountId
     }, {}, callback);
-  } else {
-    _form.getItem('c_currency_to_id').visible = false;
-    _form.getItem('conversion_rate').visible = false;
-    _form.getItem('converted_amount').visible = false;
-    _form.redraw();
-  }
 };
 
 OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form, grid) {
