@@ -1956,13 +1956,19 @@ isc.OBViewGrid.addProperties({
           }
 
           for (j = 0; j < this.fields.length; j++) {
-            if (this.fields[j].name === fieldName && isc.SimpleType.getType(this.fields[j].type).inheritsFrom === 'datetime') {
-              if (criteria.criteria[i].criteria) {
-                for (k = 0; k < criteria.criteria[i].criteria.length; k++) {
-                  criteria.criteria[i].criteria[k].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+            if (this.fields[j].name === fieldName) {
+              if (isc.SimpleType.getType(this.fields[j].type).inheritsFrom === 'datetime') {
+                if (criteria.criteria[i].criteria) {
+                  for (k = 0; k < criteria.criteria[i].criteria.length; k++) {
+                    criteria.criteria[i].criteria[k].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+                  }
+                } else {
+                  criteria.criteria[i].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
                 }
-              } else {
-                criteria.criteria[i].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+              } else if (isc.SimpleType.getType(this.fields[j].type).inheritsFrom === 'text' && (criterion.operator === 'iBetweenInclusive' || criterion.operator === 'betweenInclusive') && criterion.end.indexOf('ZZZZZZZZZZ') === -1) {
+                // Fix of iBetweenInclusive criteria
+                // See issue https://issues.openbravo.com/view.php?id=26504
+                criterion.end = criterion.end + 'ZZZZZZZZZZ';
               }
               break;
             }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -140,5 +140,14 @@ isc.OBTextFilterItem.addProperties({
       return ret.replace('undefined', '');
     }
     return ret;
+  },
+
+  // Solve a small bug on iBetweenInclusive criteria
+  // See issue https://issues.openbravo.com/view.php?id=26504
+  setCriterion: function (criterion) {
+    if (criterion && (criterion.operator === 'iBetweenInclusive' || criterion.operator === 'betweenInclusive') && criterion.end.indexOf('ZZZZZZZZZZ') !== -1) {
+      criterion.end = criterion.end.substring(0, criterion.end.length - 10);
+    }
+    this.Super('setCriterion', arguments);
   }
 });
