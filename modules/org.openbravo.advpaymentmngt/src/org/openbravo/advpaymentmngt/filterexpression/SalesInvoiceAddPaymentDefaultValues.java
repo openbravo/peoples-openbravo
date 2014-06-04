@@ -31,6 +31,12 @@ import org.openbravo.model.common.invoice.Invoice;
 @ComponentProvider.Qualifier(APRMConstants.SALES_INVOICE_WINDOW_ID)
 public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValuesHandler {
 
+  private static final long SEQUENCE = 100l;
+
+  protected long getSeq() {
+    return SEQUENCE;
+  }
+
   @Override
   public String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
     BigDecimal pendingAmt = getPendingAmount(requestMap);

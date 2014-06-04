@@ -31,6 +31,12 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 @ComponentProvider.Qualifier(APRMConstants.PAYMENT_IN_WINDOW_ID)
 public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHandler {
 
+  private static final long SEQUENCE = 100l;
+
+  protected long getSeq() {
+    return SEQUENCE;
+  }
+
   @Override
   String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
     // Expected amount is the amount on the editing payment

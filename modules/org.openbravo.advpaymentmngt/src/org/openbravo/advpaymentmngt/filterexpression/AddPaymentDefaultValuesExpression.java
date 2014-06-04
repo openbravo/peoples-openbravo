@@ -116,8 +116,11 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
         .select(new ComponentProvider.Selector(strWindowId))) {
       if (handler == null) {
         handler = nextHandler;
-      } else {
-        log.warn("Trying to get handler for window with id {}, there are more than one instance",
+      } else if (nextHandler.getSeq() < handler.getSeq()) {
+        handler = nextHandler;
+      } else if (nextHandler.getSeq() == handler.getSeq()) {
+        log.warn(
+            "Trying to get handler for window with id {}, there are more than one instance with the same sequence",
             strWindowId);
       }
     }

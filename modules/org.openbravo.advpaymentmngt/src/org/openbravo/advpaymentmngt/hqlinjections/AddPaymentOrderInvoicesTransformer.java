@@ -141,7 +141,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
   private StringBuffer getWhereClause(String transactionType, Map<String, String> requestParameters) {
     String strBusinessPartnerId = requestParameters.get("received_from");
     String strCurrencyId = requestParameters.get("c_currency_id");
-    String strFinPaymentMethodId = requestParameters.get("fin_paymentmethod_id");
     String strFinPaymentId = requestParameters.get("fin_payment_id");
     boolean isSalesTransaction = "true".equals(requestParameters.get("issotrx")) ? true : false;
 
@@ -161,9 +160,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
         whereClause.append(" and invbp.id = '" + strBusinessPartnerId + "'");
       }
-      if (strFinPaymentMethodId != null) {
-        whereClause.append(" and ips.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
-      }
       whereClause.append(" and inv.salesTransaction = " + isSalesTransaction);
       whereClause.append(" and inv.currency.id = '" + strCurrencyId + "' )) ");
 
@@ -171,9 +167,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       whereClause.append(" and ((ord is not null ");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
         whereClause.append(" and ordbp.id = '" + strBusinessPartnerId + "'");
-      }
-      if (strFinPaymentMethodId != null) {
-        whereClause.append(" and ops.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
       }
       whereClause.append(" and ord.salesTransaction = " + isSalesTransaction);
       whereClause.append(" and ord.currency.id = '" + strCurrencyId + "' )) ");
@@ -184,17 +177,11 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
         whereClause.append(" and invbp.id = '" + strBusinessPartnerId + "'");
       }
-      if (strFinPaymentMethodId != null) {
-        whereClause.append(" and ips.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
-      }
       whereClause.append(" and inv.salesTransaction = " + isSalesTransaction);
       whereClause.append(" and inv.currency.id = '" + strCurrencyId + "' ) ");
       whereClause.append(" or (ord is not null ");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
         whereClause.append(" and ordbp.id = '" + strBusinessPartnerId + "'");
-      }
-      if (strFinPaymentMethodId != null) {
-        whereClause.append(" and ops.finPaymentmethod.id = '" + strFinPaymentMethodId + "'");
       }
       whereClause.append(" and ord.salesTransaction = " + isSalesTransaction);
       whereClause.append(" and ord.currency.id = '" + strCurrencyId + "' )) ");

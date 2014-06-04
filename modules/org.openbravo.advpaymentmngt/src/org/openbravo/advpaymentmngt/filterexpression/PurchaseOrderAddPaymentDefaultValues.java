@@ -31,6 +31,12 @@ import org.openbravo.model.common.order.Order;
 @ComponentProvider.Qualifier(APRMConstants.PURCHASE_ORDER_WINDOW_ID)
 public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHandler {
 
+  private static final long SEQUENCE = 100l;
+
+  protected long getSeq() {
+    return SEQUENCE;
+  }
+
   @Override
   String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
     // Expected amount is the amount pending to pay on the Sales Order

@@ -63,6 +63,8 @@ abstract class AddPaymentDefaultValuesHandler {
 
   abstract String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException;
 
+  protected abstract long getSeq();
+
   String getDefaultCurrencyTo(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     if (context.has("inpfinFinancialAccountId")
