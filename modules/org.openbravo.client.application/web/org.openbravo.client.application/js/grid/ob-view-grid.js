@@ -1931,6 +1931,8 @@ isc.OBViewGrid.addProperties({
             }
           }
         } else if (criterion.fieldName === this.view.parentProperty + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER && criterion.operator === 'iEquals') {
+          // Prevent the filtering of a parent column if it is shown on grid
+          // See issue https://issues.openbravo.com/view.php?id=26767
           shouldRemove = true;
         }
 
