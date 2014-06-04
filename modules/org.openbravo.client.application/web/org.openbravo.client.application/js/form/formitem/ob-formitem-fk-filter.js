@@ -168,7 +168,7 @@ isc.OBFKFilterTextItem.addProperties({
     }
     if (value && isc.isA.Array(value) && value.length > 0 && rows) {
       for (i = 0; i < value.length; i++) {
-        if (value[i].indexOf("==") === 0) {
+        if (value[i].indexOf('==') === 0) {
           value[i] = value[i].substring(2, value[i].length);
           if (rows.find('name', value[i]) === undefined) {
             performFetch = true;
