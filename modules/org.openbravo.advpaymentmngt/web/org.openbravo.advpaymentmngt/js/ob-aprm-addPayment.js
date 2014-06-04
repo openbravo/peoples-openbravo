@@ -105,6 +105,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
   glitemGrid.removeRecordClick = OB.APRM.AddPayment.removeRecordClick;
   creditUseGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedCredit;
   orderInvoiceGrid.dataArrived = OB.APRM.AddPayment.ordInvDataArrived;
+  OB.APRM.AddPayment.updateDiffereceOff(view.theForm);
 
 };
 
@@ -206,8 +207,11 @@ OB.APRM.AddPayment.actualPaymentOnLoad = function (view) {
     return;
   }
   var issotrx = view.theForm.getItem('issotrx').getValue(),
+      payment = view.theForm.getItem('fin_payment_id').getValue(),
       form = view.theForm;
-  OB.APRM.AddPayment.distributeAmount(view, form);
+  if (!(!issotrx && payment)) {
+    OB.APRM.AddPayment.distributeAmount(view, form);
+  }
 
 };
 
@@ -295,8 +299,13 @@ OB.APRM.AddPayment.updateDiffereceOff = function (form) {
 
   var total = new BigDecimal(String(form.getItem('total').getValue() || 0)),
       actualPayment = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
-      totalAmt, credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
-      differenceItem = form.getItem('difference');
+      credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
+      differenceItem = form.getItem('difference'),
+      paymentId = form.getItem('fin_payment_id').getValue() || '',
+      receivedFrom = form.getItem('received_from').getValue() || '',
+      totalAmt = actualPayment.subtract(total.add(credit));
+  differenceItem.setValue(Number(totalAmt.toString()));
+
   totalAmt = actualPayment.subtract(total.add(credit));
   differenceItem.setValue(Number(totalAmt.toString()));
 };
@@ -339,7 +348,9 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
       distributedAmount = new BigDecimal(String(view.theForm.getItem('amount_inv_ords').getValue() || 0)),
       total, outstandingAmount, selectedIds, glitem, credit, actualPayment = view.theForm.getItem('actual_payment'),
       expectedPayment = view.theForm.getItem('expected_payment'),
-      actualPaymentAmount, expectedPaymentAmount, totalAmount, i, totalAmountoutstanding = BigDecimal.prototype.ZERO;
+      actualPaymentAmount, expectedPaymentAmount, totalAmount, i, totalAmountoutstanding = BigDecimal.prototype.ZERO,
+      difference = new BigDecimal(String(view.theForm.getItem('difference').getValue() || 0)),
+       payment = view.theForm.getItem('fin_payment_id').getValue();
 
   selectedIds = orderInvoice.selectedIds;
   outstandingAmount = new BigDecimal(String(record.outstandingAmount));
@@ -394,11 +405,15 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
     }
     if (selectedIds.length > 0) {
       actualPaymentAmount = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0));
-      actualPayment = actualPayment.setValue(Number(totalAmount.toString()));
+      actualPayment.setValue(Number((totalAmount.add(difference)).toString()));
       expectedPaymentAmount = new BigDecimal(String(view.theForm.getItem('expected_payment').getValue() || 0));
-      expectedPayment.setValue(Number(totalAmount.toString()));
+      expectedPayment.setValue(Number((totalAmount.add(difference)).toString()));
     } else {
-      actualPayment.setValue(Number(new BigDecimal(String(orderInvoice.getEditedCell(0, 'outstandingAmount') || 0))));
+      if (payment) {
+        actualPayment.setValue(Number(difference));
+      } else {
+        actualPayment.setValue(Number(new BigDecimal(String(orderInvoice.getEditedCell(0, 'outstandingAmount') || 0))));
+      }
       expectedPayment.setValue(Number('0'));
     }
   }

@@ -470,6 +470,20 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       BigDecimal refundAmount, BigDecimal exchangeRate) throws Exception {
     ConnectionProvider conn = new DalConnectionProvider(true);
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+
+    AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
+    BigDecimal assignedAmount = BigDecimal.ZERO;
+    for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
+      assignedAmount = assignedAmount.add(paymentDetail.getAmount());
+    }
+
+    if (assignedAmount.compareTo(payment.getAmount()) == -1) {
+      FIN_PaymentScheduleDetail refundScheduleDetail = dao.getNewPaymentScheduleDetail(
+          payment.getOrganization(), payment.getAmount().subtract(assignedAmount));
+      dao.getNewPaymentDetail(payment, refundScheduleDetail,
+          payment.getAmount().subtract(assignedAmount), BigDecimal.ZERO, false, null);
+    }
+
     OBError message = FIN_AddPayment.processPayment(vars, conn,
         (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
     String strNewPaymentMessage = OBMessageUtils.parseTranslation("@PaymentCreated@" + " "
