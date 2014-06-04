@@ -694,6 +694,7 @@ isc.OBPickAndExecuteGrid.addProperties({
           // Execute onChangeFunctions if they exist
           if (this && OB.OnChangeRegistry.hasOnChange(form.grid.ID, item)) {
             OB.OnChangeRegistry.call(form.grid.ID, item, form.grid.view, form.grid.view.theForm, form.grid);
+            form.grid.view.theForm.redraw();
           }
         };
         for (i = 0; i < items.length; i++) {
