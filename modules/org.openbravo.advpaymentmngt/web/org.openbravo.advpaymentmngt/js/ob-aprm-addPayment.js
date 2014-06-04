@@ -131,39 +131,40 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, form, grid
   isWrongFinancialAccount = false;
   callback = function (response, data, request) {
     isWrongFinancialAccount = data.isWrongFinancialAccount;
-    if(isWrongFinancialAccount){
+    if (isWrongFinancialAccount) {
       _form.getItem('fin_financial_account_id').setValue('');
     }
     if (_form.getItem('fin_payment_id').getValue() !== null && _form.getItem('fin_payment_id').getValue() !== undefined && _form.getItem('fin_payment_id').getValue() !== '') {
-	    isPayinIsMulticurrency = data.isPayinIsMulticurrency;
-	    if (isPayinIsMulticurrency) {
-	      if (_form.getItem('c_currency_id').getValue() !== _form.getItem('c_currency_to_id').getValue()) {
-	        _form.getItem('conversion_rate').visible = true;
-	        _form.getItem('converted_amount').visible = true;
-	        _form.getItem('c_currency_to_id').visible = true;
-	      } else {
-	        _form.getItem('conversion_rate').visible = false;
-	        _form.getItem('converted_amount').visible = false;
-	        _form.getItem('c_currency_to_id').visible = false;
-	      }
-	      _form.redraw();
-	    } else {
-	      _form.getItem('c_currency_to_id').visible = false;
-	      _form.getItem('conversion_rate').visible = false;
-	      _form.getItem('converted_amount').visible = false;
-	      _form.redraw();
-	    }
-    } else {
+      isPayinIsMulticurrency = data.isPayinIsMulticurrency;
+      if (isPayinIsMulticurrency) {
+        if (_form.getItem('c_currency_id').getValue() !== _form.getItem('c_currency_to_id').getValue()) {
+          _form.getItem('conversion_rate').visible = true;
+          _form.getItem('converted_amount').visible = true;
+          _form.getItem('c_currency_to_id').visible = true;
+        } else {
+          _form.getItem('conversion_rate').visible = false;
+          _form.getItem('converted_amount').visible = false;
+          _form.getItem('c_currency_to_id').visible = false;
+        }
+        _form.redraw();
+      } else {
         _form.getItem('c_currency_to_id').visible = false;
         _form.getItem('conversion_rate').visible = false;
         _form.getItem('converted_amount').visible = false;
         _form.redraw();
+      }
+    } else {
+      _form.getItem('c_currency_to_id').visible = false;
+      _form.getItem('conversion_rate').visible = false;
+      _form.getItem('converted_amount').visible = false;
+      _form.redraw();
     }
   };
-    financialAccountId = _form.getItem('fin_financial_account_id').getValue();
-    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
-      paymentMethodId: paymentMethodId, financialAccountId: financialAccountId
-    }, {}, callback);
+  financialAccountId = _form.getItem('fin_financial_account_id').getValue();
+  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
+    paymentMethodId: paymentMethodId,
+    financialAccountId: financialAccountId
+  }, {}, callback);
 };
 
 OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form, grid) {
@@ -350,7 +351,7 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
       expectedPayment = view.theForm.getItem('expected_payment'),
       actualPaymentAmount, expectedPaymentAmount, totalAmount, i, totalAmountoutstanding = BigDecimal.prototype.ZERO,
       difference = new BigDecimal(String(view.theForm.getItem('difference').getValue() || 0)),
-       payment = view.theForm.getItem('fin_payment_id').getValue();
+      payment = view.theForm.getItem('fin_payment_id').getValue();
 
   selectedIds = orderInvoice.selectedIds;
   outstandingAmount = new BigDecimal(String(record.outstandingAmount));
@@ -379,12 +380,9 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
 
       } else {
         orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
-
       }
     }
-
     for (i = 0; i < selectedIds.length; i++) {
-
       outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).outstandingAmount));
       totalAmountoutstanding = totalAmountoutstanding.add(outstandingAmount);
     }
