@@ -277,8 +277,10 @@ public class AlertProcess implements Process {
             alert[i].referencekeyId, alert[i].description, alert[i].adUserId, alert[i].adRoleId);
         insertions++;
 
-        msg.append("\n\nAlert: " + alert[i].description + "\nRecord: " + alert[i].recordId);
-        newMsg.append("\n\nAlert: " + alert[i].description + "\nRecord: " + alert[i].recordId);
+        String messageLine = "\n\nAlert: " + alert[i].description + "\nRecord: "
+            + alert[i].recordId;
+        msg.append(messageLine);
+        newMsg.append(messageLine);
 
         if (messageByOrg.containsKey(alert[i].adOrgId)) {
           messageByOrg.get(alert[i].adOrgId).append(newMsg);
