@@ -67,7 +67,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     boolean justCount = strJustCount.equalsIgnoreCase("true");
 
     StringBuffer selectClause = getSelectClause(transactionType, hasSelectedIds);
-    StringBuffer whereClause = getWhereClause(transactionType, requestParameters);
+    StringBuffer whereClause = getWhereClause(transactionType, requestParameters, selectedPSDs);
     StringBuffer groupByClause = getGroupByClause(transactionType);
     StringBuffer orderByClause = new StringBuffer();
     if (!justCount) {
@@ -126,7 +126,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     selectClause
         .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
     selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
-    selectClause.append(" sum(fp.amount) as amount, ");
+    selectClause.append(" COALESCE(sum(fp.amount), 0) as amount, ");
     selectClause.append(" case when 0 < 1 then false else true end as writeoff, ");
     if (hasSelectedIds) {
       // if there are selected ids selection is done in the client.
@@ -138,7 +138,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return selectClause;
   }
 
-  private StringBuffer getWhereClause(String transactionType, Map<String, String> requestParameters) {
+  private StringBuffer getWhereClause(String transactionType,
+      Map<String, String> requestParameters, List<String> selectedPSDs) {
     String strBusinessPartnerId = requestParameters.get("received_from");
     String strCurrencyId = requestParameters.get("c_currency_id");
     String strFinPaymentId = requestParameters.get("fin_payment_id");
@@ -154,26 +155,49 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     whereClause.append(") ");
 
     whereClause.append(" and (oinfo is null or oinfo.active = true) ");
+    whereClause.append("  and ( ");
+    if (!selectedPSDs.isEmpty()) {
+      whereClause.append(" psd.id in (");
+      boolean isFirst = true;
+      int i = 1;
+      for (String strPSD : selectedPSDs) {
+        if (isFirst) {
+          isFirst = false;
+        } else {
+          whereClause.append(",");
+        }
+        whereClause.append("'" + strPSD + "'");
+
+        i++;
+        if (i % 2000 == 0) {
+          whereClause.append(")");
+          whereClause.append(" or psd.id in (");
+          isFirst = true;
+        }
+      }
+      whereClause.append(")");
+      whereClause.append("  or ");
+    }
     if ("I".equals(transactionType)) {
 
-      whereClause.append(" and ((inv is not null ");
+      whereClause.append(" (inv is not null ");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
         whereClause.append(" and invbp.id = '" + strBusinessPartnerId + "'");
       }
       whereClause.append(" and inv.salesTransaction = " + isSalesTransaction);
-      whereClause.append(" and inv.currency.id = '" + strCurrencyId + "' )) ");
+      whereClause.append(" and inv.currency.id = '" + strCurrencyId + "' ) ");
 
     } else if ("O".equals(transactionType)) {
-      whereClause.append(" and ((ord is not null ");
+      whereClause.append(" (ord is not null ");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
         whereClause.append(" and ordbp.id = '" + strBusinessPartnerId + "'");
       }
       whereClause.append(" and ord.salesTransaction = " + isSalesTransaction);
-      whereClause.append(" and ord.currency.id = '" + strCurrencyId + "' )) ");
+      whereClause.append(" and ord.currency.id = '" + strCurrencyId + "' ) ");
 
     } else {
 
-      whereClause.append(" and ((inv is not null ");
+      whereClause.append(" (inv is not null ");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
         whereClause.append(" and invbp.id = '" + strBusinessPartnerId + "'");
       }
@@ -184,9 +208,11 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         whereClause.append(" and ordbp.id = '" + strBusinessPartnerId + "'");
       }
       whereClause.append(" and ord.salesTransaction = " + isSalesTransaction);
-      whereClause.append(" and ord.currency.id = '" + strCurrencyId + "' )) ");
+      whereClause.append(" and ord.currency.id = '" + strCurrencyId + "' ) ");
 
     }
+
+    whereClause.append(")");
     return whereClause;
 
   }
