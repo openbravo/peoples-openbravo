@@ -57,8 +57,9 @@ OB.APRM.AddPayment = {
         idsArray = ids.replaceAll(' ', '').split(',');
         isSelected = false;
         editedRecord = isc.addProperties({}, record);
-        curAmount = new BigDecimal(String(editedRecord.amount));
-        curOutstandingAmt = new BigDecimal(String(editedRecord.outstandingAmount));
+
+        curAmount = isc.isA.Number(editedRecord.amount) ? new BigDecimal(String(editedRecord.amount)) : new BigDecimal('0');
+        curOutstandingAmt = isc.isA.Number(editedRecord.outstandingAmount) ? new BigDecimal(String(editedRecord.outstandingAmount)) : new BigDecimal('0');
         for (j = 0; j < grid.editedSelectedRecords.length; j++) {
           selectedRecord = grid.editedSelectedRecords[j];
 
