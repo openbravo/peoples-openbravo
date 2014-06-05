@@ -209,6 +209,7 @@ isc.OBPickAndExecuteGrid.addProperties({
         }
       }
     }
+    this.view.markForRedraw();
   },
 
   getLongestFieldName: function () {
