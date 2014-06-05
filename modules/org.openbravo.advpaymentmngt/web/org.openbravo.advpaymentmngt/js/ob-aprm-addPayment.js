@@ -421,7 +421,6 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
   }
   OB.APRM.AddPayment.updateInvOrderTotal(view.theForm, orderInvoice);
   OB.APRM.AddPayment.updateActualExpected(view.theForm);
-  OB.APRM.AddPayment.updateDiffereceOff(view.theForm);
 
 
 };
