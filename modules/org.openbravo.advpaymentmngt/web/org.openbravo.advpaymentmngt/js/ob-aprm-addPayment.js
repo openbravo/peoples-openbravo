@@ -107,7 +107,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
   glitemGrid.removeRecordClick = OB.APRM.AddPayment.removeRecordClick;
   creditUseGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedCredit;
   orderInvoiceGrid.dataArrived = OB.APRM.AddPayment.ordInvDataArrived;
-  
+
   form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
   overpaymentAction.originalValueMap = isc.addProperties({}, overpaymentAction.getValueMap());
 
@@ -445,6 +445,9 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
   if (!issotrx) {
     actualPayment.setValue(Number(totalAmount.add(generateCredit)));
   }
+
+  // force redraw to ensure display logic is properly executed
+  form.redraw();
 };
 
 OB.APRM.AddPayment.removeRecordClick = function (rowNum, record) {
