@@ -705,7 +705,7 @@ isc.OBPickAndExecuteGrid.addProperties({
           }
           // if the grid edit form has been changed after the last validation, validate it again
           if (!isc.objectsAreEqual(form.grid.lastValidatedValues[rowNum], form.grid.getEditValues(rowNum))) {
-            form.grid.cellEditEnd();
+            form.grid.validateCell(form.grid.getEditRow(), form.grid.getEditCol());
           }
         };
         for (i = 0; i < items.length; i++) {
