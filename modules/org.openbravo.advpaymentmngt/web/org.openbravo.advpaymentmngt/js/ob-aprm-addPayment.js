@@ -94,9 +94,11 @@ OB.APRM.AddPayment = {
 };
 
 OB.APRM.AddPayment.onLoad = function (view) {
-  var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
-      glitemGrid = view.theForm.getItem('glitem').canvas.viewGrid,
-      creditUseGrid = view.theForm.getItem('credit_to_use').canvas.viewGrid;
+  var form = view.theForm,
+      orderInvoiceGrid = form.getItem('order_invoice').canvas.viewGrid,
+      glitemGrid = form.getItem('glitem').canvas.viewGrid,
+      creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid,
+      overpaymentAction = form.getItem('overpayment_action');
 
   OB.APRM.AddPayment.paymentMethodMulticurrency(null, view, null, null);
   OB.APRM.AddPayment.actualPaymentOnLoad(view);
@@ -105,6 +107,11 @@ OB.APRM.AddPayment.onLoad = function (view) {
   glitemGrid.removeRecordClick = OB.APRM.AddPayment.removeRecordClick;
   creditUseGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedCredit;
   orderInvoiceGrid.dataArrived = OB.APRM.AddPayment.ordInvDataArrived;
+  
+  form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
+  overpaymentAction.originalValueMap = isc.addProperties({}, overpaymentAction.getValueMap());
+
+  OB.APRM.AddPayment.updateDifference(form);
 
 };
 
@@ -294,21 +301,44 @@ OB.APRM.AddPayment.updateTotal = function (form) {
   totalAmt = totalAmt.add(new BigDecimal(String(glItemsTotalItem.getValue() || 0)));
 
   totalItem.setValue(Number(totalAmt.toString()));
+  OB.APRM.AddPayment.updateDifference(form);
 };
 
-OB.APRM.AddPayment.updateDiffereceOff = function (form) {
-
+OB.APRM.AddPayment.updateDifference = function (form) {
   var total = new BigDecimal(String(form.getItem('total').getValue() || 0)),
       actualPayment = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
       credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
       differenceItem = form.getItem('difference'),
       paymentId = form.getItem('fin_payment_id').getValue() || '',
       receivedFrom = form.getItem('received_from').getValue() || '',
-      totalAmt = actualPayment.subtract(total.add(credit));
-  differenceItem.setValue(Number(totalAmt.toString()));
+      diffAmt = actualPayment.add(credit).subtract(total);
 
-  totalAmt = actualPayment.subtract(total.add(credit));
-  differenceItem.setValue(Number(totalAmt.toString()));
+  differenceItem.setValue(Number(diffAmt.toString()));
+
+  if (diffAmt.signum() !== 0) {
+    OB.APRM.AddPayment.updateDifferenceActions(form);
+  }
+};
+
+OB.APRM.AddPayment.updateDifferenceActions = function (form) {
+  var issotrx = form.getItem('issotrx').getValue(),
+      overpaymentAction = form.getItem('overpayment_action'),
+      actualPayment = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
+      newValueMap = {},
+      defaultValue = '',
+      overpaymentVM;
+  // Update difference action available values.
+  if (form.isCreditAllowed) {
+    newValueMap.CR = overpaymentAction.originalValueMap.CR;
+    if (issotrx || actualPayment.signum() === 0) {
+      // On payment outs allow refund of credit (when actual payment is zero and something is being paid).
+      newValueMap.RE = overpaymentAction.originalValueMap.RE;
+    } else {
+      defaultValue = 'CR';
+    }
+  }
+  overpaymentAction.setValueMap(newValueMap);
+  overpaymentAction.setValue(defaultValue);
 };
 
 OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
@@ -329,8 +359,6 @@ OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
   OB.APRM.AddPayment.updateTotal(form);
   return true;
 };
-
-
 
 OB.APRM.AddPayment.selectionChanged = function (record, state) {
   var orderInvoice = this.view.theForm.getItem('order_invoice').canvas.viewGrid;
