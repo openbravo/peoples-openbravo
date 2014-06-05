@@ -32,7 +32,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.advpaymentmngt.aprm_orderinvoice;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
@@ -260,11 +259,11 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     JSONArray selectedPSDs = orderInvoiceGrid.getJSONArray("_selection");
     for (int i = 0; i < selectedPSDs.length(); i++) {
       JSONObject psdRow = selectedPSDs.getJSONObject(i);
-      String strPSDIds = psdRow.getString(aprm_orderinvoice.PROPERTY_ID);
-      String strPaidAmount = psdRow.getString(aprm_orderinvoice.PROPERTY_AMOUNT);
+      String strPSDIds = psdRow.getString("id");
+      String strPaidAmount = psdRow.getString("amount");
       BigDecimal paidAmount = new BigDecimal(strPaidAmount);
 
-      boolean isWriteOff = psdRow.getBoolean(aprm_orderinvoice.PROPERTY_WRITEOFF);
+      boolean isWriteOff = psdRow.getBoolean("writeoff");
       // psdIds can be grouped
       String[] psdIds = strPSDIds.replace(" ", "").split(",");
       List<FIN_PaymentScheduleDetail> psds = getOrderedPaymentScheduleDetails(psdIds);

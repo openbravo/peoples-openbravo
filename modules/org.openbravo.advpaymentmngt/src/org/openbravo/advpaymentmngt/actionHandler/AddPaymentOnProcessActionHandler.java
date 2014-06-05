@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.advpaymentmngt.aprm_orderinvoice;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -69,7 +68,7 @@ public class AddPaymentOnProcessActionHandler extends BaseActionHandler {
         JSONArray selectedPSDs = jsonData.getJSONArray("selectedRecords");
         for (int i = 0; i < selectedPSDs.length(); i++) {
           JSONObject psdRow = selectedPSDs.getJSONObject(i);
-          strBusinessPartnerId = psdRow.getString(aprm_orderinvoice.PROPERTY_BUSINESSPARTNER);
+          strBusinessPartnerId = psdRow.getString("businessPartner");
           BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
               strBusinessPartnerId);
           if (FIN_Utility.isBlockedBusinessPartner(businessPartner.getId(), isReceipt, 4)) {
