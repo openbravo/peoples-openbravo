@@ -110,9 +110,6 @@ OB.APRM.AddPayment.onLoad = function (view) {
 
   form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
   overpaymentAction.originalValueMap = isc.addProperties({}, overpaymentAction.getValueMap());
-
-  OB.APRM.AddPayment.updateDifference(form);
-
 };
 
 OB.APRM.AddPayment.addNewGLItem = function (grid) {
@@ -220,7 +217,6 @@ OB.APRM.AddPayment.actualPaymentOnLoad = function (view) {
     OB.APRM.AddPayment.distributeAmount(view, form);
   }
   OB.APRM.AddPayment.updateActualExpected(view.theForm);
-  OB.APRM.AddPayment.updateDiffereceOff(view.theForm);
 
 };
 
