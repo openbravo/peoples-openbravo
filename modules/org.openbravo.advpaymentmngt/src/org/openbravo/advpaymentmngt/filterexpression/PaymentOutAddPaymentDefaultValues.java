@@ -54,7 +54,12 @@ public class PaymentOutAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
   @Override
   String getDefaultGeneratedCredit(Map<String, String> requestMap) throws JSONException {
     BigDecimal generateCredit = getPayment(requestMap).getGeneratedCredit();
-    return generateCredit.toPlainString();
+    if (generateCredit == null) {
+      return (BigDecimal.ZERO).toPlainString();
+    } else {
+      return generateCredit.toPlainString();
+    }
+
   }
 
   @Override
