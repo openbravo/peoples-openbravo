@@ -174,7 +174,8 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, form, grid
 OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form, grid) {
   var ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
       selectedRecords = ordinvgrid.getSelectedRecords(),
-      editedRecord, i, editedSelectedRecords = [];
+      editedRecord, i, editedSelectedRecords = [],
+      newCriteria;
 
   if (item.getValue() === item.oldSelectedValue) {
     // only fetch new data if the selected value has changed.
@@ -189,8 +190,15 @@ OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form,
   }
   ordinvgrid.editedSelectedRecords = editedSelectedRecords;
   ordinvgrid.changedTrxType = true;
-  ordinvgrid.invalidateCache();
-  //  ordinvgrid.fetchData(ordinvgrid.getCriteria());
+
+  // fetch data after change trx type, filters should be preserved and ids of
+  // the selected records should be sent
+  newCriteria = ordinvgrid.addSelectedIDsToCriteria(ordinvgrid.getCriteria(), true);
+  newCriteria.criteria = newCriteria.criteria || [];
+  // add dummy criterion to force fetch
+  newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+  ordinvgrid.fetchData(newCriteria);
+
   form.redraw();
 };
 
