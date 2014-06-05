@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -133,8 +133,9 @@ public class GenerateEntitiesTask extends Task {
     // process template & write file for each entity
     List<Entity> entities = ModelProvider.getInstance().getModel();
     for (Entity entity : entities) {
-      // If the entity is associated with a datasource based table, do not generate a Java file
-      if (entity.isDataSourceBased()) {
+      // If the entity is associated with a datasource based table or based on an HQL query, do not
+      // generate a Java file
+      if (entity.isDataSourceBased() || entity.isHQLBased()) {
         continue;
       }
 
