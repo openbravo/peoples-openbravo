@@ -72,6 +72,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.selectedIds = [];
     this.deselectedIds = [];
+    this.lastValidatedValues = [];
 
     // the getValuesAsCriteria function of the edit form of the filter editor should always be called with 
     // advanced = true to guarantee that the returned criteria will have the proper format
@@ -315,7 +316,6 @@ isc.OBPickAndExecuteGrid.addProperties({
         colNum = this.getEditCol(),
         editField = this.getEditField(colNum),
         undef;
-
     // Execute onChangeFunctions if they exist
     if (this && OB.OnChangeRegistry.hasOnChange(this.view.viewId, editField)) {
       OB.OnChangeRegistry.call(this.ID, editField, this.view, this.view.theForm, this);
@@ -332,7 +332,12 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // after editing a field value read only can be affected
     this.handleReadOnlyLogic();
+
+    // store the form values right after validating them
+    this.lastValidatedValues[rowNum] = this.getEditValues(rowNum);
+
   },
+
 
   // disables/enables fields with read only logic
   handleReadOnlyLogic: function () {
@@ -696,6 +701,10 @@ isc.OBPickAndExecuteGrid.addProperties({
           if (this && OB.OnChangeRegistry.hasOnChange(form.grid.ID, item)) {
             OB.OnChangeRegistry.call(form.grid.ID, item, form.grid.view, form.grid.view.theForm, form.grid);
             form.grid.view.theForm.redraw();
+          }
+          // if the grid edit form has been changed after the last validation, validate it again
+          if (!isc.objectsAreEqual(form.grid.lastValidatedValues[rowNum], form.grid.getEditValues(rowNum))) {
+            form.grid.cellEditEnd();
           }
         };
         for (i = 0; i < items.length; i++) {
