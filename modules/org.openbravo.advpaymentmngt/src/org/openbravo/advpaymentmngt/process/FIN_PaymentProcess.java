@@ -942,11 +942,10 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           }
 
           payment.getFINPaymentCreditList().clear();
-
+          if (payment.isReceipt() || strAction.equals("R")) {
+            payment.setGeneratedCredit(BigDecimal.ZERO);
+          }
           if (strAction.equals("R")) {
-            if (payment.isReceipt()) {
-              payment.setGeneratedCredit(BigDecimal.ZERO);
-            }
             payment.setUsedCredit(BigDecimal.ZERO);
             for (FIN_PaymentScheduleDetail psd : removedPDS) {
               List<FIN_PaymentPropDetail> ppds = psd.getFINPaymentPropDetailList();

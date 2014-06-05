@@ -40,15 +40,21 @@ public class PaymentOutAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
   @Override
   String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
     // Expected amount is the amount on the editing payment
-    BigDecimal pendingAmt = getPayment(requestMap).getGeneratedCredit();
+    BigDecimal pendingAmt = getPayment(requestMap).getAmount();
     return pendingAmt.toPlainString();
   }
 
   @Override
   String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
     // Actual amount is the amount on the editing payment
-    BigDecimal pendingAmt = getPayment(requestMap).getGeneratedCredit();
+    BigDecimal pendingAmt = getPayment(requestMap).getAmount();
     return pendingAmt.toPlainString();
+  }
+
+  @Override
+  String getDefaultGeneratedCredit(Map<String, String> requestMap) throws JSONException {
+    BigDecimal generateCredit = getPayment(requestMap).getGeneratedCredit();
+    return generateCredit.toPlainString();
   }
 
   @Override

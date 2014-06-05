@@ -198,4 +198,9 @@ abstract class AddPaymentDefaultValuesHandler {
     }
     return pendingAmt;
   }
+
+  String getDefaultGeneratedCredit(Map<String, String> requestMap) throws JSONException {
+    BigDecimal generateCredit = BigDecimal.ZERO;
+    return generateCredit.toPlainString();
+  }
 }
