@@ -276,6 +276,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.selectionUpdated(record, this.getSelectedRecords());
 
     this.Super('selectionChanged', arguments);
+    this.view.theForm.markForRedraw();
   },
 
   selectionUpdated: function (record, recordList) {
