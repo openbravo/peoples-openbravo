@@ -156,6 +156,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         }
       }
       payment.setAmount(new BigDecimal(strActualPayment));
+      FIN_AddPayment.setFinancialTransactionAmountAndRate(payment, exchangeRate, convertedAmount);
       OBDal.getInstance().save(payment);
 
       addCredit(payment, jsonparams);
