@@ -352,14 +352,24 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
   },
 
-  handleFilterEditorSubmit: function (criteria, context) {
+  addSelectedIDsToCriteria: function (criteria, cleanDummies) {
     var ids = [],
         crit = {},
         len = this.selectedIds.length,
-        i, c, found;
+        i, c, found, criterion;
     //saved Data will be used to retain values after fetch through filters.
     if (len > 0) {
       this.data.savedData = this.data.localData;
+    }
+
+    if (cleanDummies) {
+      criteria.criteria = criteria.criteria || [];
+      for (i = criteria.criteria.length - 1; i >= 0; i--) {
+        criterion = criteria.criteria[i];
+        if (criterion.fieldName && (criterion.fieldName === '_dummy' || (criterion.fieldName === 'id' && criterion.operator === 'equals'))) {
+          criteria.criteria.splice(i, 1);
+        }
+      }
     }
 
     for (i = 0; i < len; i++) {
@@ -417,9 +427,17 @@ isc.OBPickAndExecuteGrid.addProperties({
           criteria: []
         };
       }
+
+
+
       criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
       crit = criteria;
     }
+    return crit;
+  },
+
+  handleFilterEditorSubmit: function (criteria, context) {
+    var crit = this.addSelectedIDsToCriteria(criteria);
 
     this.Super('handleFilterEditorSubmit', [crit, context]);
   },
