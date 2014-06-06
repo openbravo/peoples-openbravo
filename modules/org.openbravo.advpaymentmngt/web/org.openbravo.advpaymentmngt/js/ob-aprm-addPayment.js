@@ -111,7 +111,9 @@ OB.APRM.AddPayment.onLoad = function (view) {
   orderInvoiceGrid.dataArrived = OB.APRM.AddPayment.ordInvDataArrived;
 
   form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
+  OB.APRM.AddPayment.checkSingleActionAvailable(form);
   overpaymentAction.originalValueMap = isc.addProperties({}, overpaymentAction.getValueMap());
+  
 };
 
 OB.APRM.AddPayment.addNewGLItem = function (grid) {
@@ -170,6 +172,25 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, form, grid
     paymentMethodId: paymentMethodId,
     financialAccountId: financialAccountId
   }, {}, callback);
+};
+OB.APRM.AddPayment.checkSingleActionAvailable = function(form) {
+  var documentAction = form.getItem('document_action');
+  documentAction.fetchData(function (item, dsResponse, data, dsRequest) {
+    if (dsResponse.totalRows === 1) {
+      item.setValueFromRecord(data[0]);
+    } else {
+      item.clearValue();
+    }
+  });
+};
+
+OB.APRM.AddPayment.financialAccountOnChange = function (item, view, form, grid) {
+  OB.APRM.AddPayment.checkSingleActionAvailable(form);
+};
+  
+OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
+  OB.APRM.AddPayment.paymentMethodMulticurrency(item, view, form, grid);
+  OB.APRM.AddPayment.checkSingleActionAvailable(form);
 };
 
 OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form, grid) {
