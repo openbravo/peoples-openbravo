@@ -321,6 +321,10 @@ public class OBViewParameterHandler {
       return parameter.getDisplayedRows() != null ? parameter.getDisplayedRows() : 8;
     }
 
+    public String getOnGridLoadFunction() {
+      return parameter.getOnGridLoadFunction();
+    }
+
     public boolean getShowTitle() {
       return parameter.isDisplayTitle();
     }

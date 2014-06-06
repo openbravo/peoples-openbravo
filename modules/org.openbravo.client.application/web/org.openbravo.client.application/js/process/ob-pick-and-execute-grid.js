@@ -484,6 +484,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
 
     this.Super('dataArrived', arguments);
+    if (this.onGridLoadFunction) {
+      this.onGridLoadFunction(this);
+    }
   },
 
   recordClick: function (grid, record, recordNum, field, fieldNum, value, rawValue) {

@@ -70,6 +70,9 @@
   <#if param.grid> 
     , displayedRowsNumber: ${param.numberOfDisplayedRows}
     , showTitle: ${param.showTitle?string}
+    <#if param.onGridLoadFunction?? && param.onGridLoadFunction != "" >
+      ,onGridLoadFunction: ${param.onGridLoadFunction?js_string}
+    </#if>
     ,viewProperties: {
     ${param.tabView}
     }
