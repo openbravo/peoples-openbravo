@@ -227,6 +227,7 @@ OB.APRM.AddPayment.actualPaymentOnLoad = function (view) {
   }
   OB.APRM.AddPayment.updateActualExpected(view.theForm);
 
+
 };
 
 OB.APRM.AddPayment.orderInvoiceAmountOnChange = function (item, view, form, grid) {
@@ -421,8 +422,6 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
   }
   OB.APRM.AddPayment.updateInvOrderTotal(view.theForm, orderInvoice);
   OB.APRM.AddPayment.updateActualExpected(view.theForm);
-
-
 };
 
 OB.APRM.AddPayment.updateActualExpected = function (form) {
@@ -435,6 +434,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       actualPaymentAmt = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
       expectedPayment = form.getItem('expected_payment'),
       generateCredit = new BigDecimal(String(form.getItem('generateCredit').getValue() || 0)),
+      glitemtotal = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       i;
   selectedIds = orderInvoice.selectedIds;
   for (i = 0; i < selectedIds.length; i++) {
@@ -447,7 +447,9 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
     expectedPayment.setValue(Number('0'));
   }
   if (!issotrx) {
-    actualPayment.setValue(Number(totalAmount.add(generateCredit)));
+    actualPayment.setValue(Number(totalAmount.add(glitemtotal).add(generateCredit)));
+    OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
+    OB.APRM.AddPayment.updateGLItemsTotal(form, 0, false);
   }
 
   // force redraw to ensure display logic is properly executed
@@ -500,6 +502,7 @@ OB.APRM.AddPayment.updateGLItemsTotal = function (form, rowNum, remove) {
 
   glItemTotalItem.setValue(Number(totalAmt.toString()));
   OB.APRM.AddPayment.updateTotal(form);
+  OB.APRM.AddPayment.updateActualExpected(form);
   return true;
 };
 
