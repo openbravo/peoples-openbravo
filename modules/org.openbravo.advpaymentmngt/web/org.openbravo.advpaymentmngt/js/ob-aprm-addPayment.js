@@ -102,7 +102,8 @@ OB.APRM.AddPayment.onLoad = function (view) {
       overpaymentAction = form.getItem('overpayment_action');
 
   OB.APRM.AddPayment.paymentMethodMulticurrency(null, view, null, null);
-  OB.APRM.AddPayment.actualPaymentOnLoad(view);
+  glitemGrid.fetchData();
+  creditUseGrid.fetchData();
   orderInvoiceGrid.selectionChanged = OB.APRM.AddPayment.selectionChanged;
   orderInvoiceGrid.dataProperties.transformData = OB.APRM.AddPayment.ordInvTransformData;
   glitemGrid.removeRecordClick = OB.APRM.AddPayment.removeRecordClick;
@@ -210,24 +211,39 @@ OB.APRM.AddPayment.actualPaymentOnChange = function (item, view, form, grid) {
   }
 };
 
-OB.APRM.AddPayment.actualPaymentOnLoad = function (view) {
-
-  var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
-      issotrx = view.theForm.getItem('issotrx').getValue(),
-      payment = view.theForm.getItem('fin_payment_id').getValue(),
-      form = view.theForm;
-  if (!isc.isA.ResultSet(orderInvoiceGrid.data) || !orderInvoiceGrid.data.lengthIsKnown()) {
-    setTimeout(function () {
-      OB.APRM.AddPayment.actualPaymentOnLoad(view);
-    }, 500);
-    return;
-  }
+OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
+  var issotrx = this.view.theForm.getItem('issotrx').getValue(),
+      payment = this.view.theForm.getItem('fin_payment_id').getValue();
+  grid.isReady = true;
   if (!(!issotrx && payment)) {
-    OB.APRM.AddPayment.distributeAmount(view, form);
+    OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm);
+  } else {
+    OB.APRM.AddPayment.updateInvOrderTotal(this.view.theForm, grid);
   }
-  OB.APRM.AddPayment.updateActualExpected(view.theForm);
+  OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
+};
+
+OB.APRM.AddPayment.glitemsOnLoadGrid = function (grid) {
+  grid.isReady = true;
+  OB.APRM.AddPayment.updateGLItemsTotal(this.view.theForm, 0, false);
+  OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
+};
+
+OB.APRM.AddPayment.creditOnLoadGrid = function (grid) {
+  grid.isReady = true;
+  OB.APRM.AddPayment.updateCreditTotal(this.view.theForm);
+  OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
+};
 
 
+OB.APRM.AddPayment.tryToUpdateActualExpected = function (form) {
+  var orderInvoiceGrid = form.getItem('order_invoice').canvas.viewGrid,
+      glitemGrid = form.getItem('glitem').canvas.viewGrid,
+      creditGrid = form.getItem('credit_to_use').canvas.viewGrid;
+
+  if (orderInvoiceGrid.isReady && glitemGrid.isReady && creditGrid.isReady) {
+    OB.APRM.AddPayment.updateActualExpected(form);
+  }
 };
 
 OB.APRM.AddPayment.orderInvoiceAmountOnChange = function (item, view, form, grid) {
@@ -301,12 +317,13 @@ OB.APRM.AddPayment.updateTotal = function (form) {
   var invOrdTotalItem = form.getItem('amount_inv_ords'),
       glItemsTotalItem = form.getItem('amount_gl_items'),
       totalItem = form.getItem('total'),
-      totalAmt;
+      totalAmt,glAmt;
 
   totalAmt = new BigDecimal(String(invOrdTotalItem.getValue() || 0));
+  glAmt = new BigDecimal(String(glItemsTotalItem.getValue() || 0));
   totalAmt = totalAmt.add(new BigDecimal(String(glItemsTotalItem.getValue() || 0)));
 
-  totalItem.setValue(Number(totalAmt.toString()));
+  totalItem.setValue(Number(totalAmt.add(glAmt).toString()));
   OB.APRM.AddPayment.updateDifference(form);
 };
 
@@ -435,6 +452,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       expectedPayment = form.getItem('expected_payment'),
       generateCredit = new BigDecimal(String(form.getItem('generateCredit').getValue() || 0)),
       glitemtotal = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
+      credit = new BigDecimal(String(form.getItem('credit_to_use').getValue() || 0)),
       i;
   selectedIds = orderInvoice.selectedIds;
   for (i = 0; i < selectedIds.length; i++) {
@@ -447,9 +465,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
     expectedPayment.setValue(Number('0'));
   }
   if (!issotrx) {
-    actualPayment.setValue(Number(totalAmount.add(glitemtotal).add(generateCredit)));
-    OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
-    OB.APRM.AddPayment.updateGLItemsTotal(form, 0, false);
+    actualPayment.setValue(Number(totalAmount.add(glitemtotal).add(generateCredit).add(credit).add(difference)));
   }
 
   // force redraw to ensure display logic is properly executed
