@@ -317,7 +317,7 @@ OB.APRM.AddPayment.updateTotal = function (form) {
   var invOrdTotalItem = form.getItem('amount_inv_ords'),
       glItemsTotalItem = form.getItem('amount_gl_items'),
       totalItem = form.getItem('total'),
-      totalAmt,glAmt;
+      totalAmt, glAmt;
 
   totalAmt = new BigDecimal(String(invOrdTotalItem.getValue() || 0));
   glAmt = new BigDecimal(String(glItemsTotalItem.getValue() || 0));
@@ -577,7 +577,7 @@ OB.APRM.AddPayment.selectionChangedCredit = function (record, state) {
 
 OB.APRM.AddPayment.orderInvoiceGridValidation = function (item, validator, value, record) {
   if (!isc.isA.Number(record.amount)) {
-    isc.warn(OB.I18N.getLabel('APRM_NotValidNumber'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_NotValidNumber'));
     return false;
   }
   var i, row, allRows = item.grid.data.allRows,
@@ -585,12 +585,12 @@ OB.APRM.AddPayment.orderInvoiceGridValidation = function (item, validator, value
       paidamount = new BigDecimal(String(record.amount));
 
   if (outstanding.abs().compareTo(paidamount.abs()) < 0) {
-    isc.warn(OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
     return false;
   }
 
   if ((paidamount.signum() === 0) && (record.writeoff === false)) {
-    isc.warn(OB.I18N.getLabel('APRM_JSZEROUNDERPAYMENT'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_JSZEROUNDERPAYMENT'));
     return false;
   }
   return true;
@@ -599,7 +599,8 @@ OB.APRM.AddPayment.orderInvoiceGridValidation = function (item, validator, value
 
 OB.APRM.AddPayment.creditValidation = function (item, validator, value, record) {
   if (!isc.isA.Number(record.paymentAmount)) {
-    isc.warn(OB.I18N.getLabel('APRM_NotValidNumber'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_NotValidNumber'));
+
     return false;
   }
   var i, row, allRows = item.grid.data.allRows,
@@ -607,12 +608,12 @@ OB.APRM.AddPayment.creditValidation = function (item, validator, value, record) 
       paidamount = new BigDecimal(String(record.paymentAmount));
 
   if (outstanding.abs().compareTo(paidamount.abs()) < 0) {
-    isc.warn(OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
     return false;
   }
 
   if (paidamount.signum() === 0) {
-    isc.warn(OB.I18N.getLabel('aprm_biggerthanzero'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('aprm_biggerthanzero'));
     return false;
   }
   return true;
