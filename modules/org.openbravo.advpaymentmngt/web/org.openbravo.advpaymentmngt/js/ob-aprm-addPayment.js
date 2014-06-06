@@ -452,7 +452,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       expectedPayment = form.getItem('expected_payment'),
       generateCredit = new BigDecimal(String(form.getItem('generateCredit').getValue() || 0)),
       glitemtotal = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
-      credit = new BigDecimal(String(form.getItem('credit_to_use').getValue() || 0)),
+      credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
       i;
   selectedIds = orderInvoice.selectedIds;
   for (i = 0; i < selectedIds.length; i++) {
