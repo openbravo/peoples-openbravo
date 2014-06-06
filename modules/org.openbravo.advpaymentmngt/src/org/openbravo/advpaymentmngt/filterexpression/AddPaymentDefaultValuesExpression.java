@@ -93,6 +93,8 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
           return handler.getDefaultStandardPrecision(requestMap);
         case GenerateCredit:
           return handler.getDefaultGeneratedCredit(requestMap);
+        case DocumentCategory:
+          return handler.getDefaultDocumentCategory(requestMap);
         }
       } catch (Exception e) {
         log.error("Error trying to get default value of " + strCurrentParam + e.getMessage(), e);
@@ -136,7 +138,7 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
         "fin_paymentmethod_id"), TransactionType("transaction_type"), CustomerCredit(
         "customer_credit"), IsSOTrx("issotrx"), Payment("fin_payment_id"), Invoice("c_invoice_id"), Order(
         "c_order_id"), ConversionRate("conversion_rate"), ConvertedAmount("converted_amount"), StandardPrecision(
-        "StdPrecision"), GenerateCredit("generateCredit");
+        "StdPrecision"), GenerateCredit("generateCredit"), DocumentCategory("DOCBASETYPE");
 
     private String columnname;
 

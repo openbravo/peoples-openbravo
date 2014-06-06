@@ -203,4 +203,14 @@ abstract class AddPaymentDefaultValuesHandler {
     BigDecimal generateCredit = BigDecimal.ZERO;
     return generateCredit.toPlainString();
   }
+
+  String getDefaultDocumentCategory(Map<String, String> requestMap) throws JSONException {
+    boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
+    if (isSOTrx) {
+      return "ARR";
+    } else if (!isSOTrx) {
+      return "APP";
+    }
+    return null;
+  }
 }
