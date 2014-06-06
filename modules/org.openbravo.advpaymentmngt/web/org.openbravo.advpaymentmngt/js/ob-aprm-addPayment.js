@@ -460,6 +460,7 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
   }
   OB.APRM.AddPayment.updateInvOrderTotal(view.theForm, orderInvoice);
   OB.APRM.AddPayment.updateActualExpected(view.theForm);
+  OB.APRM.AddPayment.updateDifference(view.theForm);
 };
 
 OB.APRM.AddPayment.updateActualExpected = function (form) {
@@ -486,7 +487,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
     expectedPayment.setValue(Number('0'));
   }
   if (!issotrx) {
-    actualPayment.setValue(Number(totalAmount.add(glitemtotal).add(generateCredit).add(credit).add(difference)));
+    actualPayment.setValue(Number(totalAmount.add(glitemtotal).add(generateCredit).add(credit)));
   }
 
   // force redraw to ensure display logic is properly executed
