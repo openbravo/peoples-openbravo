@@ -269,16 +269,19 @@ OB.APRM.AddPayment.tryToUpdateActualExpected = function (form) {
 
 OB.APRM.AddPayment.orderInvoiceAmountOnChange = function (item, view, form, grid) {
   OB.APRM.AddPayment.updateInvOrderTotal(form, grid);
+  OB.APRM.AddPayment.updateActualExpected(form);
   return true;
 };
 
 OB.APRM.AddPayment.orderInvoiceTotalAmountOnChange = function (item, view, form, grid) {
   OB.APRM.AddPayment.updateTotal(form);
+  OB.APRM.AddPayment.updateActualExpected(form);
   return true;
 };
 
 OB.APRM.AddPayment.glItemTotalAmountOnChange = function (item, view, form, grid) {
   OB.APRM.AddPayment.updateTotal(form);
+  OB.APRM.AddPayment.updateActualExpected(form);
   return true;
 };
 
