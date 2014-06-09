@@ -149,7 +149,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         iter, isNew = false,
         discounts, ordersave, customersave, customeraddrsave, taxes, orderList, hwManager, ViewManager, LeftColumnViewManager, LeftColumnCurrentView, SyncReadyToSendFunction, auxReceiptList = [];
 
-
     function success() {
       return true;
     }
@@ -450,6 +449,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     receipt.on('paymentDone', function (openDrawer) {
+      if (receipt.hasIntegrity() !== true) {
+        if (receipt.get('id')) {
+          OB.Dal.remove(this.get('orderList').current, null, null);
+        }
+        this.get('orderList').deleteCurrent();
+
+        OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_ErrorOrderIntegrity'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {}
+        }]);
+        return;
+      }
+
       if (receipt.overpaymentExists()) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
@@ -637,7 +650,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         newApprovals = [],
         approvals, approval, i, date;
 
-
     approvals = order.get('approvals') || [];
     if (!Array.isArray(approvalType)) {
       approvalType = [approvalType];
@@ -668,7 +680,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
       order.set('approvals', newApprovals);
     }
-
 
     this.trigger('approvalChecked', {
       approved: approved

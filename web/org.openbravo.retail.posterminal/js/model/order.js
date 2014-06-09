@@ -75,8 +75,8 @@
     // returns the discount to substract in total
     discountInTotal: function () {
       var disc = OB.DEC.sub(this.get('priceList'), this.get('price'));
-      // if there is a discount no promotion then total is price*qty  
-      // otherwise total is price*qty - discount 
+      // if there is a discount no promotion then total is price*qty
+      // otherwise total is price*qty - discount
       if (OB.DEC.compare(disc) === 0) {
         return this.getTotalAmountOfPromotions();
       } else {
@@ -776,7 +776,7 @@
         this.calculateGross();
       }
     },
-    //Attrs is an object of attributes that will be set in order 
+    //Attrs is an object of attributes that will be set in order
     _addProduct: function (p, qty, options, attrs) {
       var me = this;
       if (enyo.Panels.isScreenNarrow()) {
@@ -887,7 +887,7 @@
         }, this);
       }
     },
-    //Attrs is an object of attributes that will be set in order 
+    //Attrs is an object of attributes that will be set in order
     addProduct: function (p, qty, options, attrs) {
       OB.debug('_addProduct');
       var me = this;
@@ -904,7 +904,6 @@
         }
       });
     },
-
 
     /**
      * Splits a line from the ticket keeping in the line the qtyToKeep quantity,
@@ -993,8 +992,7 @@
             continue;
           }
 
-          if ((!line.get('promotions') || line.get('promotions').length === 0) //
-          && (!otherLine.get('promotions') || otherLine.get('promotions').length === 0)) {
+          if ((!line.get('promotions') || line.get('promotions').length === 0) && (!otherLine.get('promotions') || otherLine.get('promotions').length === 0)) {
             line.set('qty', line.get('qty') + otherLine.get('qty'));
             line.calculateGross();
             toRemove.push(otherLine);
@@ -1347,7 +1345,7 @@
       var documentseq, documentseqstr;
 
       this.get('lines').each(function (line) {
-        //issue 25055 -> If we don't do the following prices and taxes are calculated 
+        //issue 25055 -> If we don't do the following prices and taxes are calculated
         //wrongly because the calculation starts with discountedNet instead of
         //the real net.
         //It only happens if the order is created from quotation just after save the quotation
@@ -1602,7 +1600,26 @@
     setProperty: function (_property, _value) {
       this.set(_property, _value);
       this.save();
+    },
+
+    hasIntegrity: function () {
+      // checks if the sum of the amount of every line is the same as the total gross
+      var gross = this.attributes.gross;
+      var grossOfSummedLines = 0;
+      var countOfLines = 1;
+      _.each(this.get('lines').models, function (line) {
+        var lineGross = line.attributes.gross;
+        grossOfSummedLines = OB.DEC.add(grossOfSummedLines, lineGross);
+        countOfLines += 1;
+      }, this);
+      // allow up to 2 cents of deviation per line
+      if (OB.DEC.abs(gross - grossOfSummedLines) <= (0.01 * countOfLines)) {
+        return true;
+      }
+      OB.error("Receipt " + this.attributes.documentNo + " failed in the integrity test; gross: " + gross + " <> lineGross: " + grossOfSummedLines);
+      return false;
     }
+
   });
 
   var OrderList = Backbone.Collection.extend({
