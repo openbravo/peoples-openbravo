@@ -543,7 +543,6 @@ OB.APRM.AddPayment.updateGLItemsTotal = function (form, rowNum, remove) {
 
   glItemTotalItem.setValue(Number(totalAmt.toString()));
   OB.APRM.AddPayment.updateTotal(form);
-  OB.APRM.AddPayment.updateActualExpected(form);
   return true;
 };
 
