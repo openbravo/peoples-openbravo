@@ -26,31 +26,24 @@ public class ProcessGroup extends DalBaseProcess {
     final ProcessRun processRun = OBDal.getInstance().get(ProcessRun.class,
         bundle.getProcessRunId());
     final org.openbravo.model.ad.ui.ProcessGroup group = processRequest.getProcessGroup();
-    log.logln("Process Group: " + group.getName());
 
-    // Execute first job
-    if (group.getProcessGroupListList().size() == 0) {
-      log.logln("No processes on the group: " + group.getName());
-    } else {
-      OBCriteria<ProcessGroupList> processListcri = OBDal.getInstance().createCriteria(
-          ProcessGroupList.class);
-      processListcri.add(Restrictions.eq(ProcessGroupList.PROPERTY_PROCESSGROUP, group));
-      processListcri.addOrderBy(ProcessGroupList.PROPERTY_SEQUENCENUMBER, true);
-      List<ProcessGroupList> processList = processListcri.list();
+    OBCriteria<ProcessGroupList> processListcri = OBDal.getInstance().createCriteria(
+        ProcessGroupList.class);
+    processListcri.add(Restrictions.eq(ProcessGroupList.PROPERTY_PROCESSGROUP, group));
+    processListcri.addOrderBy(ProcessGroupList.PROPERTY_SEQUENCENUMBER, true);
+    List<ProcessGroupList> processList = processListcri.list();
 
-      // Since Hibernate lazyloads objects and the subprocesses may access these processes as well,
-      // the following is necessary to pre-load the objects and "solidify" them
-      for (ProcessGroupList prolist : processList) {
-        Hibernate.initialize(prolist);
-        Hibernate.initialize(prolist.getProcess());
-      }
-
-      GroupInfo groupInfo = new GroupInfo(group, processRequest, processRun, processList,
-          group.isStopTheGroupExecutionWhenAProcessFails(), vars, conn);
-      // Launch the Process Group execution
-      groupInfo.executeNextProcess();
-
+    // Since Hibernate lazyloads objects and the subprocesses may access these processes as well,
+    // the following is necessary to pre-load the objects and "solidify" them
+    for (ProcessGroupList prolist : processList) {
+      Hibernate.initialize(prolist);
+      Hibernate.initialize(prolist.getProcess());
     }
+
+    GroupInfo groupInfo = new GroupInfo(group, processRequest, processRun, processList,
+        group.isStopTheGroupExecutionWhenAProcessFails(), vars, conn);
+    // Launch the Process Group execution
+    groupInfo.executeNextProcess();
 
   }
 

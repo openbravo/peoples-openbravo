@@ -28,8 +28,10 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 
@@ -61,8 +63,20 @@ public class ScheduleProcess extends HttpSecureAppServlet {
     String message = null;
     final String windowId = vars.getStringParameter("inpwindowId");
     final String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
+    final String group = vars.getStringParameter("inpisgroup");
 
     try {
+      // Avoid launch empty groups
+      if (group.equals("Y")) {
+        String groupId = vars.getStringParameter("inpisgroup");
+        ProcessRequest requestObject = OBDal.getInstance().get(ProcessRequest.class, requestId);
+        if (requestObject.getProcessGroup().getProcessGroupListList().size() == 0) {
+          advisePopUp(request, response, "ERROR", OBMessageUtils.getI18NMessage("Error", null),
+              OBMessageUtils.getI18NMessage("PROGROUP_NoProcess", new String[] { requestObject
+                  .getProcessGroup().getName() }));
+          return;
+        }
+      }
       final ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
       OBScheduler.getInstance().schedule(requestId, bundle);
 

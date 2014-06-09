@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.ProcessGroup;
 import org.openbravo.model.ad.ui.ProcessGroupList;
 import org.openbravo.model.ad.ui.ProcessRequest;
@@ -127,7 +128,8 @@ public class GroupInfo {
    */
   public String getLog() {
     String groupLogMessage = this.groupLog.toString();
-    groupLogMessage = groupLogMessage + "\n END Process Group: " + group.getName();
+    groupLogMessage = groupLogMessage
+        + OBMessageUtils.getI18NMessage("PROGROUP_End", new String[] { group.getName() });
     return groupLogMessage;
   }
 
@@ -148,7 +150,9 @@ public class GroupInfo {
   public String executeNextProcess() throws SchedulerException, ServletException {
     if (currentposition == 0) {
       groupLog = new StringBuilder();
-      groupLog.append(now() + "Process Group: " + group.getName() + " started. \n\n");
+      groupLog.append(now()
+          + OBMessageUtils.getI18NMessage("PROGROUP_Start", new String[] { group.getName() })
+          + "\n\n");
       startGroupTime = new Date();
     }
     if (currentposition < groupList.size()
@@ -157,8 +161,10 @@ public class GroupInfo {
       ProcessGroupList processList = groupList.get(currentposition);
       String actualProcessId = processList.getProcess().getId();
       currentposition++;
-      groupLog.append(now() + processList.getSequenceNumber() + " Process : "
-          + processList.getProcess().getName() + " started succesfully. \n");
+      groupLog.append(now()
+          + processList.getSequenceNumber()
+          + OBMessageUtils.getI18NMessage("PROGROUP_StartSuccess", new String[] { processList
+              .getProcess().getName() }) + "\n");
 
       // Execute next process immediately
       final ProcessBundle firstProcessBundle = new ProcessBundle(actualProcessId, vars,
@@ -182,14 +188,16 @@ public class GroupInfo {
     String resultMessage = "";
     ProcessGroupList processList = groupList.get(currentposition - 1);
     if (result.equals(Process.SUCCESS)) {
-      resultMessage = " processed successfully.";
+      resultMessage = OBMessageUtils.getI18NMessage("PROGROUP_Success", null);
     } else if (result.equals(Process.ERROR)) {
-      resultMessage = " FAILED!!!.";
+      resultMessage = OBMessageUtils.getI18NMessage("PROGROUP_Fail", null);
       this.status = Process.ERROR;
     }
-    groupLog.append(now() + processList.getSequenceNumber() + " Process : "
-        + processList.getProcess().getName() + resultMessage + "\n");
-    groupLog.append("-------- \n");
+    groupLog.append(now()
+        + processList.getSequenceNumber()
+        + OBMessageUtils.getI18NMessage("PROGROUP_Process", new String[] { processList.getProcess()
+            .getName() }) + resultMessage + "\n");
+    groupLog.append(OBMessageUtils.getI18NMessage("PROGROUP_Separator", null) + "\n");
   }
 
   private String now() {
