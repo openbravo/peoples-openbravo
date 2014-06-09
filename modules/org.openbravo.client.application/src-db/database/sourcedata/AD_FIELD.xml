@@ -1106,7 +1106,7 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--2FF944B417B544C8A8F8757F1C9F3E35-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--2FF944B417B544C8A8F8757F1C9F3E35-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2FF944B417B544C8A8F8757F1C9F3E35-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2FF944B417B544C8A8F8757F1C9F3E35-->  <NAME><![CDATA[Default Expression]]></NAME>
+<!--2FF944B417B544C8A8F8757F1C9F3E35-->  <NAME><![CDATA[Default Filter Expression]]></NAME>
 <!--2FF944B417B544C8A8F8757F1C9F3E35-->  <DESCRIPTION><![CDATA[Defines a expression used to filter the property]]></DESCRIPTION>
 <!--2FF944B417B544C8A8F8757F1C9F3E35-->  <HELP><![CDATA[Defines a JavaScript expression that will be evaluated in the server side and used as default value for the property. You can use any type of variable but it must match the property type, examples:
 

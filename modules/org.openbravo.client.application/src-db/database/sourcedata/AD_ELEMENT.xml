@@ -755,8 +755,8 @@ This function (manually coded), can:
 <!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <COLUMNNAME><![CDATA[EM_Obuiapp_Default_Expression]]></COLUMNNAME>
-<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <NAME><![CDATA[Default Expression]]></NAME>
-<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <PRINTNAME><![CDATA[Default Expression]]></PRINTNAME>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <NAME><![CDATA[Default Filter Expression]]></NAME>
+<!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <PRINTNAME><![CDATA[Default Filter Expression]]></PRINTNAME>
 <!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <DESCRIPTION><![CDATA[Defines a expression used to filter the property]]></DESCRIPTION>
 <!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <HELP><![CDATA[Defines a JavaScript expression that will be evaluated in the server side and used as default value for the property. You can use any type of variable but it must match the property type, examples:
 
