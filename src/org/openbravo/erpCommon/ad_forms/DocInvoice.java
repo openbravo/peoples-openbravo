@@ -341,7 +341,7 @@ public class DocInvoice extends AcctServer {
             fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
                 this.C_Currency_ID, m_payments[i].PrepaidAmount, "", Fact_Acct_Group_ID,
                 nextSeqNo(SeqNo), DocumentType, conn);
-          } else {
+          } else if (!m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)) {
             try {
               DocInvoiceData[] prepayments = DocInvoiceData.selectPrepayments(connectionProvider,
                   m_payments[i].Line_ID);
@@ -511,7 +511,7 @@ public class DocInvoice extends AcctServer {
             fact.createLine(m_payments[i], getAccountBPartner(C_BPartner_ID, as, true, true, conn),
                 this.C_Currency_ID, "", prepaidAmount.negate().toString(), Fact_Acct_Group_ID,
                 nextSeqNo(SeqNo), DocumentType, conn);
-          } else {
+          } else if (!m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)) {
             try {
               DocInvoiceData[] prepayments = DocInvoiceData.selectPrepayments(connectionProvider,
                   m_payments[i].Line_ID);
@@ -643,7 +643,7 @@ public class DocInvoice extends AcctServer {
                 getAccountBPartner(C_BPartner_ID, as, false, true, conn), this.C_Currency_ID, "",
                 m_payments[i].PrepaidAmount, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
                 conn);
-          } else {
+          } else if (!m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)) {
             try {
               DocInvoiceData[] prepayments = DocInvoiceData.selectPrepayments(connectionProvider,
                   m_payments[i].Line_ID);
@@ -886,7 +886,7 @@ public class DocInvoice extends AcctServer {
                 getAccountBPartner(C_BPartner_ID, as, false, true, conn), this.C_Currency_ID,
                 prepaidAmount.negate().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
                 DocumentType, conn);
-          } else {
+          } else if (!m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)) {
             try {
               DocInvoiceData[] prepayments = DocInvoiceData.selectPrepayments(connectionProvider,
                   m_payments[i].Line_ID);
