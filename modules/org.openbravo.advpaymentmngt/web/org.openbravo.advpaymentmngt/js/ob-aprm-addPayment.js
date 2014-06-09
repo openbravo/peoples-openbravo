@@ -467,19 +467,19 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       totalAmountoutstanding = BigDecimal.prototype.ZERO,
       difference = new BigDecimal(String(form.getItem('difference').getValue() || 0)),
       totalAmount = BigDecimal.prototype.ZERO,
-      selectedIds, actualPayment = form.getItem('actual_payment'),
+      selectedRecords, actualPayment = form.getItem('actual_payment'),
       actualPaymentAmt = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
       expectedPayment = form.getItem('expected_payment'),
       generateCredit = new BigDecimal(String(form.getItem('generateCredit').getValue() || 0)),
       glitemtotal = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
       i;
-  selectedIds = orderInvoice.selectedIds;
-  for (i = 0; i < selectedIds.length; i++) {
-    totalAmountoutstanding = totalAmountoutstanding.add(new BigDecimal(String(orderInvoice.getEditedCell(i, orderInvoice.getFieldByColumnName('outstandingAmount')))));
-    totalAmount = totalAmount.add(new BigDecimal(String(orderInvoice.getEditedCell(i, orderInvoice.getFieldByColumnName('amount')))));
+  selectedRecords = orderInvoice.getSelectedRecords();
+  for (i = 0; i < selectedRecords.length; i++) {
+    totalAmountoutstanding = totalAmountoutstanding.add(new BigDecimal(String(orderInvoice.getEditedCell(orderInvoice.getRecordIndex(selectedRecords[i]), orderInvoice.getFieldByColumnName('outstandingAmount')))));
+    totalAmount = totalAmount.add(new BigDecimal(String(orderInvoice.getEditedCell(orderInvoice.getRecordIndex(selectedRecords[i]), orderInvoice.getFieldByColumnName('amount')))));
   }
-  if (selectedIds.length > 0) {
+  if (selectedRecords.length > 0) {
     expectedPayment.setValue(Number(totalAmountoutstanding));
   } else {
     expectedPayment.setValue(Number('0'));
