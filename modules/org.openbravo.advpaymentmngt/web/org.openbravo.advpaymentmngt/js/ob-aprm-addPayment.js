@@ -113,7 +113,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
   form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
   overpaymentAction.originalValueMap = isc.addProperties({}, overpaymentAction.getValueMap());
-  
+
 };
 
 OB.APRM.AddPayment.addNewGLItem = function (grid) {
@@ -173,7 +173,7 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, form, grid
     financialAccountId: financialAccountId
   }, {}, callback);
 };
-OB.APRM.AddPayment.checkSingleActionAvailable = function(form) {
+OB.APRM.AddPayment.checkSingleActionAvailable = function (form) {
   var documentAction = form.getItem('document_action');
   documentAction.fetchData(function (item, dsResponse, data, dsRequest) {
     if (dsResponse.totalRows === 1) {
@@ -187,7 +187,7 @@ OB.APRM.AddPayment.checkSingleActionAvailable = function(form) {
 OB.APRM.AddPayment.financialAccountOnChange = function (item, view, form, grid) {
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
 };
-  
+
 OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
   OB.APRM.AddPayment.paymentMethodMulticurrency(item, view, form, grid);
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
@@ -341,10 +341,9 @@ OB.APRM.AddPayment.updateTotal = function (form) {
       totalAmt, glAmt;
 
   totalAmt = new BigDecimal(String(invOrdTotalItem.getValue() || 0));
-  glAmt = new BigDecimal(String(glItemsTotalItem.getValue() || 0));
   totalAmt = totalAmt.add(new BigDecimal(String(glItemsTotalItem.getValue() || 0)));
 
-  totalItem.setValue(Number(totalAmt.add(glAmt).toString()));
+  totalItem.setValue(Number(totalAmt.toString()));
   OB.APRM.AddPayment.updateDifference(form);
 };
 
@@ -356,7 +355,6 @@ OB.APRM.AddPayment.updateDifference = function (form) {
       paymentId = form.getItem('fin_payment_id').getValue() || '',
       receivedFrom = form.getItem('received_from').getValue() || '',
       diffAmt = actualPayment.add(credit).subtract(total);
-
   differenceItem.setValue(Number(diffAmt.toString()));
 
   if (diffAmt.signum() !== 0) {
