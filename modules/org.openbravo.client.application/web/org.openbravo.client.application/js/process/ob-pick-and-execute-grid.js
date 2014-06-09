@@ -317,8 +317,13 @@ isc.OBPickAndExecuteGrid.addProperties({
         colNum = this.getEditCol(),
         editField = this.getEditField(colNum),
         undef;
-    // if not value is provided use the value from the edit form. If it does not exist, use the stored value
-    newValue = newValue || this.getEditValue(rowNum, colNum) || this.getRecord(rowNum)[editField.name];
+    // if no value is provided use the value from the edit form. If it does not exist, use the stored value
+    if (newValue === null || newValue === undefined) {
+      newValue = this.getEditValue(rowNum, colNum);
+    }
+    if (newValue === null || newValue === undefined) {
+      newValue = this.getRecord(rowNum)[editField.name];
+    }
     // Execute onChangeFunctions if they exist
     if (this && OB.OnChangeRegistry.hasOnChange(this.view.viewId, editField)) {
       OB.OnChangeRegistry.call(this.ID, editField, this.view, this.view.theForm, this);
