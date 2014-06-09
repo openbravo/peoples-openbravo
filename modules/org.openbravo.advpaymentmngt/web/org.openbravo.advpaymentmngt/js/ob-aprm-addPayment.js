@@ -329,6 +329,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form) {
 
   }
   OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
+  OB.APRM.AddPayment.updateActualExpected(form);
   return true;
 
 };
