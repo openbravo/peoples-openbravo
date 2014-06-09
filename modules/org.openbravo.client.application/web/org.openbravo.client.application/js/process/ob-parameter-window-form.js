@@ -33,7 +33,6 @@ isc.OBParameterWindowForm.addProperties({
   colWidths: ['*', '*', '*', '*'],
   itemChanged: function (item, newValue) {
     this.paramWindow.handleReadOnlyLogic();
-    this.paramWindow.handleDisplayLogicForGridColumns();
     this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
   },
 
@@ -57,6 +56,8 @@ isc.OBParameterWindowForm.addProperties({
         }
       }
     }
+    // evaluate explicitly the display logic for the grid fields
+    this.paramWindow.handleDisplayLogicForGridColumns();
     // force a redraw to reevaluate the display logic of the parameters
     this.markForRedraw();
   }
