@@ -353,6 +353,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     if (havingGridFilters.contains("@outstandingAmount@")) {
       havingGridFilters = havingGridFilters.replaceAll("@outstandingAmount@", "SUM(psd.amount)");
     }
+    if (havingGridFilters.contains("@amount@")) {
+      havingGridFilters = havingGridFilters.replaceAll("@amount@", "COALESCE(sum(fp.amount), 0)");
+    }
 
     havingClause.append(" having ( " + havingGridFilters + " )");
     hqlQuery = hqlQuery.replace("@havingClause@", havingClause.toString());
