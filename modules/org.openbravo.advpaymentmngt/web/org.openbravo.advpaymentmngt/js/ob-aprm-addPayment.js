@@ -603,7 +603,7 @@ OB.APRM.AddPayment.selectionChangedCredit = function (record, state) {
 
 OB.APRM.AddPayment.orderInvoiceGridValidation = function (item, validator, value, record) {
   if (!isc.isA.Number(record.amount)) {
-    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_NotValidNumber'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_NotValidNumber'));
     return false;
   }
   var i, row, allRows = item.grid.data.allRows,
@@ -611,12 +611,12 @@ OB.APRM.AddPayment.orderInvoiceGridValidation = function (item, validator, value
       paidamount = new BigDecimal(String(record.amount));
 
   if (outstanding.abs().compareTo(paidamount.abs()) < 0) {
-    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
     return false;
   }
 
   if ((paidamount.signum() === 0) && (record.writeoff === false)) {
-    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_JSZEROUNDERPAYMENT'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSZEROUNDERPAYMENT'));
     return false;
   }
   return true;
@@ -625,7 +625,7 @@ OB.APRM.AddPayment.orderInvoiceGridValidation = function (item, validator, value
 
 OB.APRM.AddPayment.creditValidation = function (item, validator, value, record) {
   if (!isc.isA.Number(record.paymentAmount)) {
-    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_NotValidNumber'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_NotValidNumber'));
 
     return false;
   }
@@ -634,12 +634,12 @@ OB.APRM.AddPayment.creditValidation = function (item, validator, value, record) 
       paidamount = new BigDecimal(String(record.paymentAmount));
 
   if (outstanding.abs().compareTo(paidamount.abs()) < 0) {
-    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
     return false;
   }
 
   if (paidamount.signum() === 0) {
-    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('aprm_biggerthanzero'));
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('aprm_biggerthanzero'));
     return false;
   }
   return true;
@@ -740,14 +740,14 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
 
   // If there is Overpayment check it exists a business partner
   if (overpaymentAction !== null && receivedFrom === null) {
-    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_CreditWithoutBPartner'));
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithoutBPartner'));
     return false;
   }
 
   actualPayment = actualPayment.add(creditTotalItem);
   if (actualPayment.compareTo(total) > 0 && totalOustandingAmount.compareTo(amountInvOrds) > 0) {
     // Not all the payment amount has been allocated
-    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_JSNOTALLAMOUTALLOCATED'));
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSNOTALLAMOUTALLOCATED'));
     return false;
   }
 
@@ -760,7 +760,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     // Check if the write off limit has been exceeded
     if (writeOffLimitPreference === 'Y') {
       if (totalWriteOffAmount > data.writeofflimit) {
-        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, "Error", OB.I18N.getLabel('APRM_NotAllowWriteOff'));
+        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_NotAllowWriteOff'));
         return false;
       }
     }
