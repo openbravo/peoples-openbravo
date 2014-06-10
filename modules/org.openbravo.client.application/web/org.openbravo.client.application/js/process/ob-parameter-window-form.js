@@ -59,6 +59,7 @@ isc.OBParameterWindowForm.addProperties({
     // evaluate explicitly the display logic for the grid fields
     this.paramWindow.handleDisplayLogicForGridColumns();
     // force a redraw to reevaluate the display logic of the parameters
-    this.markForRedraw();
+    this.redraw();
+    this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
   }
 });
