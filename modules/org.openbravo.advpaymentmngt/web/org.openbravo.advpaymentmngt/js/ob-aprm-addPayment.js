@@ -560,6 +560,8 @@ OB.APRM.AddPayment.glItemAmountOnChange = function (item, view, form, grid) {
   }
 
   OB.APRM.AddPayment.updateGLItemsTotal(form, item.rowNum, false);
+  OB.APRM.AddPayment.updateActualExpected(form);
+  OB.APRM.AddPayment.updateDifference(form);
   return true;
 };
 
