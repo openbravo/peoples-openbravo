@@ -339,7 +339,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       ServletException {
     // Add GL Item lines
     JSONObject gLItemsGrid = jsonparams.getJSONObject("glitem");
-    JSONArray addedGLITemsArray = gLItemsGrid.getJSONArray("_selection");
+    JSONArray addedGLITemsArray = gLItemsGrid.getJSONArray("_allRows");
     boolean isReceipt = payment.isReceipt();
     for (int i = 0; i < addedGLITemsArray.length(); i++) {
       JSONObject glItem = addedGLITemsArray.getJSONObject(i);
