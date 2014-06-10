@@ -294,7 +294,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form) {
 
   // glitems amount
   glitem = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0));
-  amount = amount.add(glitem);
+  amount = amount.subtract(glitem);
 
   // credit amount
   credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0));
