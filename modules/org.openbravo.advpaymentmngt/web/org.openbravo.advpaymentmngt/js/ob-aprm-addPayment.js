@@ -491,6 +491,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
   }
   if (!issotrx) {
     actualPayment.setValue(Number(totalAmount.add(glitemtotal).add(generateCredit).add(credit)));
+    OB.APRM.AddPayment.updateDifference(form);
   }
 
   // force redraw to ensure display logic is properly executed
