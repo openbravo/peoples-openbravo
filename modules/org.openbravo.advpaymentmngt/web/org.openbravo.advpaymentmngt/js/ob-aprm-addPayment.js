@@ -598,6 +598,8 @@ OB.APRM.AddPayment.updateCreditTotal = function (form) {
 
 OB.APRM.AddPayment.updateCreditOnChange = function (item, view, form, grid) {
   OB.APRM.AddPayment.updateCreditTotal(form);
+  OB.APRM.AddPayment.distributeAmount(view, form);
+  OB.APRM.AddPayment.updateDifference(form);
   return true;
 };
 
