@@ -422,9 +422,9 @@ OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
 OB.APRM.AddPayment.selectionChanged = function (record, state) {
   var orderInvoice = this.view.theForm.getItem('order_invoice').canvas.viewGrid;
   if (!orderInvoice.preventDistributingOnSelectionChanged) {
-    this.fireOnPause('updateButtonState', function () {
+    this.fireOnPause('updateButtonState' + record.id, function () {
       OB.APRM.AddPayment.doSelectionChanged(record, state, this.view);
-    }, 500);
+    }, 200);
     this.Super('selectionChanged', record, state);
   }
 };
