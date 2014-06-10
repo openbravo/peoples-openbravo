@@ -25,10 +25,14 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.service.OBDal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +74,35 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
     JSONObject context = new JSONObject(strContext);
     final String strWindowId = context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
     AddPaymentDefaultValuesHandler handler = getDefaultsHandler(strWindowId);
-    return handler.getDefaultPaymentMethod(requestMap);
+    String paymentMethodId = handler.getDefaultPaymentMethod(requestMap);
+    if (context.has("inpfinPaymentId") && context.get("inpfinPaymentId") != null
+        && StringUtils.isNotBlank((String) context.get("inpfinPaymentId"))) {
+      if (hasDetailsWithDifferentPaymentMethods((String) context.get("inpfinPaymentId"))) {
+        return "";
+      } else {
+        return paymentMethodId;
+      }
+    }
+    return paymentMethodId;
   }
 
+  private boolean hasDetailsWithDifferentPaymentMethods(String paymentId) {
+    final StringBuilder hqlString = new StringBuilder();
+    hqlString.append("select coalesce(ipspm, opspm) as pm");
+    hqlString.append(" from FIN_Payment_ScheduleDetail as psd");
+    hqlString.append(" join psd.paymentDetails as pd");
+    hqlString.append(" left join psd.orderPaymentSchedule as ops");
+    hqlString.append(" left join ops.finPaymentmethod as opspm");
+    hqlString.append(" left join psd.invoicePaymentSchedule as ips");
+    hqlString.append(" left join ips.finPaymentmethod as ipspm");
+    hqlString.append(" where pd.finPayment.id = :paymentId");
+    hqlString.append(" and pd.gLItem is null");
+    hqlString.append(" group by coalesce(ipspm, opspm)");
+
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(hqlString.toString());
+    query.setParameter("paymentId", paymentId);
+
+    return query.list().size() > 1;
+  }
 }

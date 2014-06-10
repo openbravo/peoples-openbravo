@@ -52,8 +52,12 @@ public class AddOrderOrInvoiceFilterExpression implements FilterExpression {
       Columns column = Columns.getColumn(strColumnName);
       switch (column) {
       case PaymentMethod:
-        return OBDal.getInstance()
-            .get(FIN_PaymentMethod.class, handler.getFilterExpression(requestMap)).getIdentifier();
+        String paymentMethodId = handler.getFilterExpression(requestMap);
+        if (!"".equals(paymentMethodId) && paymentMethodId != null) {
+          return OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId).getIdentifier();
+        } else {
+          return "";
+        }
       }
     } catch (Exception e) {
       return "";
