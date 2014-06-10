@@ -141,6 +141,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         // Payment is already created. Load it.
         final String strFinPaymentID = jsonparams.getString("fin_payment_id");
         payment = OBDal.getInstance().get(FIN_Payment.class, strFinPaymentID);
+        String strReferenceNo = jsonparams.getString("reference_no");
+        payment.setReferenceNo("null".equals(strReferenceNo) ? null : strReferenceNo);
         // Load existing lines to be deleted.
         pdToRemove = OBDao.getIDListFromOBObject(payment.getFINPaymentDetailList());
       } else {

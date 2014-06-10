@@ -36,6 +36,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.slf4j.Logger;
@@ -212,5 +213,15 @@ abstract class AddPaymentDefaultValuesHandler {
       return "APP";
     }
     return null;
+  }
+
+  public String getDefaultReferenceNo(Map<String, String> requestMap) throws JSONException {
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    String finPaymentId = context.getString("inpfinPaymentId");
+    if (finPaymentId != null && !"".equals(finPaymentId)) {
+      return OBDal.getInstance().get(FIN_Payment.class, finPaymentId).getReferenceNo();
+    } else {
+      return null;
+    }
   }
 }
