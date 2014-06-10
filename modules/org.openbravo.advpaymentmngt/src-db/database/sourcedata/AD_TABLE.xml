@@ -162,8 +162,8 @@ and @insertion_point_0@]]></HQLQUERY>
 <!--864A35C8FCD548B0AD1D69C89BBA6118-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--864A35C8FCD548B0AD1D69C89BBA6118-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--864A35C8FCD548B0AD1D69C89BBA6118-->  <HQLQUERY><![CDATA[select psd.id, gl, bp, prod, proj, cc, stDim, ndDim,
-    case p.receipt when 'Y' then psd.amount else 0 end as receivedin,
-    case p.receipt when 'N' then psd.amount else 0 end as paidout,
+    case when (p.receipt = 'Y'  and psd.amount > 0  ) or (p.receipt ='N'  and psd.amount < 0  ) then abs(psd.amount) else 0 end as receivedin,
+  case when (p.receipt = 'N'  and psd.amount > 0  ) or (p.receipt = 'Y'  and psd.amount < 0  )  then abs(psd.amount) else 0 end as paidout,
     pd.id as fin_payment_detail_id,
     case when 1 > 0 then true else false end as ob_selected
 from FIN_Payment_ScheduleDetail as psd
