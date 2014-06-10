@@ -1618,8 +1618,336 @@
       }
       OB.error("Receipt " + this.attributes.documentNo + " failed in the integrity test; gross: " + gross + " <> lineGross: " + grossOfSummedLines);
       return false;
-    }
+    },
 
+    groupLinesByProduct: function () {
+      var me = this,
+          lineToMerge, lines = this.get('lines'),
+          auxLines = lines.models.slice(0); //clone
+      _.each(auxLines, function (l) {
+        lineToMerge = _.find(lines.models, function (line) {
+          if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
+            return promo.manual;
+          }) && !_.find(l.get('promotions'), function (promo) {
+            return promo.manual;
+          })) {
+            return line;
+          }
+        });
+        if (lineToMerge) {
+          lineToMerge.set({
+            qty: lineToMerge.get('qty') + l.get('qty')
+          }, {
+            silent: true
+          });
+          lines.remove(l);
+        }
+      });
+    },
+    fillPromotionsWith: function (groupedOrder, isFirstTime) {
+      var me = this,
+          copiedPromo, pendingQtyOffer, undf, linesToMerge, auxPromo, idx, actProm, linesToCreate = [],
+          qtyToReduce, lineToEdit, lineProm, linesToReduce, linesCreated = false,
+          localSkipApplyPromotions;
+
+      localSkipApplyPromotions = this.get('skipApplyPromotions');
+      this.set('skipApplyPromotions', true);
+      //reset pendingQtyOffer value of each promotion
+      groupedOrder.get('lines').forEach(function (l) {
+        _.each(l.get('promotions'), function (promo) {
+          promo.pendingQtyOffer = promo.qtyOffer;
+        });
+        //copy lines from virtual ticket to original ticket when they have promotions which avoid us to merge lines
+        if (_.find(l.get('promotions'), function (promo) {
+          return promo.doNotMerge;
+        })) {
+          //First, try to find lines with the same qty
+          lineToEdit = _.find(me.get('lines').models, function (line) {
+            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') === l.get('qty') && !_.find(line.get('promotions'), function (promo) {
+              return promo.manual;
+            }) && !_.find(line.get('promotions'), function (promo) {
+              return promo.doNotMerge;
+            })) {
+              return line;
+            }
+          });
+          //if we cannot find lines with same qty, find lines with qty > 0
+          if (!lineToEdit) {
+            lineToEdit = _.find(me.get('lines').models, function (line) {
+              if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
+                return promo.manual;
+              })) {
+                return line;
+              }
+            });
+          }
+          //if promotion affects only to few quantities of the line, create a new line with quantities not affected by the promotion
+          if (lineToEdit.get('qty') > l.get('qty')) {
+            linesToCreate.push({
+              product: lineToEdit.get('product'),
+              qty: l.get('qty'),
+              attrs: {
+                promotions: l.get('promotions'),
+                promotionCandidates: l.get('promotionCandidates'),
+                qtyToApplyDiscount: l.get('qtyToApplyDiscount')
+              }
+            });
+            lineToEdit.set('qty', OB.DEC.sub(lineToEdit.get('qty'), l.get('qty')), {
+              silent: true
+            });
+            //if promotion affects to several lines, edit first line with the promotion info and then remove the affected lines
+          } else if (lineToEdit.get('qty') < l.get('qty')) {
+            qtyToReduce = OB.DEC.sub(l.get('qty'), lineToEdit.get('qty'));
+            linesToReduce = _.filter(me.get('lines').models, function (line) {
+              if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
+                return promo.manual || promo.doNotMerge;
+              })) {
+                return line;
+              }
+            });
+            lineProm = linesToReduce.shift();
+            lineProm.set('qty', l.get('qty'));
+            lineProm.set('promotions', l.get('promotions'));
+            lineProm.set('promotionCandidates', l.get('promotionCandidates'));
+            lineProm.set('qtyToApplyDiscount', l.get('qtyToApplyDiscount'));
+            lineProm.trigger('change');
+            _.each(linesToReduce, function (line) {
+              if (line.get('qty') > qtyToReduce) {
+                line.set({
+                  qty: line.get('qty') - qtyToReduce
+                }, {
+                  silent: true
+                });
+                qtyToReduce = OB.DEC.Zero;
+              } else if (line.get('qty') === qtyToReduce) {
+                me.get('lines').remove(line);
+                qtyToReduce = OB.DEC.Zero;
+              } else {
+                qtyToReduce = qtyToReduce - line.get('qty');
+                me.get('lines').remove(line);
+              }
+            });
+            //when qty of the promotion is equal to the line qty, we copy line info.
+          } else {
+            lineToEdit.set('qty', l.get('qty'));
+            lineToEdit.set('promotions', l.get('promotions'));
+            lineToEdit.set('promotionCandidates', l.get('promotionCandidates'));
+            lineToEdit.set('qtyToApplyDiscount', l.get('qtyToApplyDiscount'));
+            lineToEdit.trigger('change');
+          }
+        } else {
+          //Filter lines which can be merged
+          linesToMerge = _.filter(me.get('lines').models, function (line) {
+            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
+              return promo.manual || promo.doNotMerge;
+            })) {
+              return line;
+            }
+          });
+          if (linesToMerge.length > 0) {
+            _.each(linesToMerge, function (line) {
+              line.set('promotionCandidates', l.get('promotionCandidates'));
+              line.set('qtyToApplyDiscount', l.get('qtyToApplyDiscount'));
+              _.each(l.get('promotions'), function (promo) {
+                copiedPromo = JSON.parse(JSON.stringify(promo));
+                //when ditributing the promotion between different lines, we save accumulated amount
+                promo.distributedAmt = promo.distributedAmt ? promo.distributedAmt : OB.DEC.Zero;
+                //pendingQtyOffer is the qty of the promotion which need to be apply (we decrease this qty in each loop)
+                promo.pendingQtyOffer = !_.isUndefined(promo.pendingQtyOffer) ? promo.pendingQtyOffer : promo.qtyOffer;
+                if (promo.pendingQtyOffer && promo.pendingQtyOffer >= line.get('qty')) {
+                  //if _.isUndefined(promo.actualAmt) is true we do not distribute the discount
+                  if (_.isUndefined(promo.actualAmt)) {
+                    if (promo.pendingQtyOffer !== promo.qtyOffer) {
+                      copiedPromo.hidden = true;
+                      copiedPromo.amt = OB.DEC.Zero;
+                    }
+                  } else {
+                    copiedPromo.actualAmt = (promo.fullAmt / promo.qtyOffer) * line.get('qty');
+                    copiedPromo.amt = (promo.fullAmt / promo.qtyOffer) * line.get('qty');
+                    copiedPromo.obdiscQtyoffer = line.get('qty');
+                    promo.distributedAmt = OB.DEC.add(promo.distributedAmt, OB.DEC.toNumber(OB.DEC.toBigDecimal((promo.fullAmt / promo.qtyOffer) * line.get('qty'))));
+                  }
+
+                  if (promo.pendingQtyOffer === line.get('qty')) {
+
+                    if (!_.isUndefined(promo.actualAmt) && promo.actualAmt && promo.actualAmt !== promo.distributedAmt) {
+                      copiedPromo.actualAmt = OB.DEC.add(copiedPromo.actualAmt, OB.DEC.sub(promo.actualAmt, promo.distributedAmt));
+                      copiedPromo.amt = promo.amt ? OB.DEC.add(copiedPromo.amt, OB.DEC.sub(promo.amt, promo.distributedAmt)) : promo.amt;
+                    }
+                    promo.pendingQtyOffer = null;
+                  } else {
+                    promo.pendingQtyOffer = promo.pendingQtyOffer - line.get('qty');
+                  }
+                  if (line.get('promotions')) {
+                    auxPromo = _.find(line.get('promotions'), function (promo) {
+                      return promo.ruleId === copiedPromo.ruleId;
+                    });
+                    if (auxPromo) {
+                      idx = line.get('promotions').indexOf(auxPromo);
+                      line.get('promotions').splice(idx, 1, copiedPromo);
+                    } else {
+                      line.get('promotions').push(copiedPromo);
+                    }
+                  } else {
+                    line.set('promotions', [copiedPromo]);
+                  }
+                } else if (promo.pendingQtyOffer) {
+                  if (_.isUndefined(promo.actualAmt)) {
+                    if (promo.pendingQtyOffer !== promo.qtyOffer) {
+                      copiedPromo.hidden = true;
+                      copiedPromo.amt = OB.DEC.Zero;
+                    }
+                  } else {
+                    copiedPromo.actualAmt = (promo.fullAmt / promo.qtyOffer) * promo.pendingQtyOffer;
+                    copiedPromo.amt = (promo.fullAmt / promo.qtyOffer) * promo.pendingQtyOffer;
+                    copiedPromo.obdiscQtyoffer = promo.pendingQtyOffer;
+                    promo.distributedAmt = OB.DEC.add(promo.distributedAmt, OB.DEC.toNumber(OB.DEC.toBigDecimal((promo.fullAmt / promo.qtyOffer) * promo.pendingQtyOffer)));
+                  }
+                  if (!_.isUndefined(promo.actualAmt) && promo.actualAmt && promo.actualAmt !== promo.distributedAmt) {
+                    copiedPromo.actualAmt = OB.DEC.add(copiedPromo.actualAmt, OB.DEC.sub(promo.actualAmt, promo.distributedAmt));
+                    copiedPromo.amt = promo.amt ? OB.DEC.add(copiedPromo.amt, OB.DEC.sub(promo.amt, promo.distributedAmt)) : promo.amt;
+                  }
+
+                  if (line.get('promotions')) {
+                    auxPromo = _.find(line.get('promotions'), function (promo) {
+                      return promo.ruleId === copiedPromo.ruleId;
+                    });
+                    if (auxPromo) {
+                      idx = line.get('promotions').indexOf(auxPromo);
+                      line.get('promotions').splice(idx, 1, copiedPromo);
+                    } else {
+                      line.get('promotions').push(copiedPromo);
+                    }
+                  } else {
+                    line.set('promotions', [copiedPromo]);
+                  }
+                  promo.pendingQtyOffer = null;
+                  //if it is the first we enter in this method, promotions which are not in the virtual ticket are deleted.
+                } else if (isFirstTime) {
+                  actProm = _.find(line.get('promotions'), function (prom) {
+                    return prom.ruleId === promo.ruleId;
+                  });
+                  if (actProm) {
+                    idx = line.get('promotions').indexOf(actProm);
+                    if (idx > -1) {
+                      line.get('promotions').splice(idx, 1);
+                    }
+                  }
+                }
+              });
+              line.trigger('change');
+            });
+          }
+        }
+      });
+      if (!linesCreated) {
+        _.each(linesToCreate, function (line) {
+          me.createLine(line.product, line.qty, null, line.attrs);
+        });
+        linesCreated = true;
+      }
+      this.get('lines').forEach(function (l) {
+        l.calculateGross();
+      });
+      this.calculateGross();
+      this.trigger('promotionsUpdated');
+      this.set('skipApplyPromotions', localSkipApplyPromotions);
+    },
+
+    // for each line, decrease the qtyOffer of promotions and remove the lines with qty 0
+    removeQtyOffer: function () {
+      var linesPending = new Backbone.Collection();
+      this.get('lines').forEach(function (l) {
+        var promotionsApplyNext  = [], promotionsCascadeApplied = [], qtyReserved = 0,
+            qtyPending;
+        if (l.get('promotions')) {
+          promotionsApplyNext = [];
+          promotionsCascadeApplied = [];
+          l.get('promotions').forEach(function (p) {
+            if (p.qtyOfferReserved > 0) {
+              qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved);
+            }
+            // if it is a promotions with applyNext, the line is related to the promotion, so, when applyPromotions is called again,
+            // if the promotion is similar to this promotion, then no changes have been done, then stop
+            if (p.applyNext) {
+              promotionsApplyNext.push(p);
+              promotionsCascadeApplied.push(p);
+            }
+          });
+        }
+        qtyPending = OB.DEC.sub(l.get('qty'), qtyReserved);
+        l.set('qty', qtyPending);
+        l.set('promotions', promotionsApplyNext);
+        l.set('promotionsCascadeApplied', promotionsCascadeApplied);
+      });
+
+      _.each(this.get('lines').models, function (line) {
+        if (line.get('qty') > 0) {
+          linesPending.push(line);
+        }
+      });
+      this.get('lines').models = linesPending.models;
+    },
+
+    removeLinesWithoutPromotions: function () {
+      var linesPending = new Backbone.Collection();
+      _.each(this.get('lines').models, function (l) {
+        if (l.get('promotions') && l.get('promotions').length > 0) {
+          linesPending.push(l);
+        }
+      });
+      this.set('lines', linesPending);
+    },
+
+    hasPromotions: function () {
+      var hasPromotions = false;
+      this.get('lines').forEach(function (l) {
+        if (l.get('promotions') && l.get('promotions').length > 0) {
+          hasPromotions = true;
+        }
+      });
+      return hasPromotions;
+    },
+
+    isSimilarLine: function (line1, line2) {
+      var equalPromotions = function (x, y) {
+          var isEqual = true;
+          if (x.length !== y.length) {
+            isEqual = false;
+          } else {
+            x.forEach(function (p1, ind) {
+              if (p1.amt !== y[ind].amt || p1.displayedTotalAmount !== y[ind].displayedTotalAmount || p1.qtyOffer !== y[ind].qtyOffer || p1.qtyOfferReserved !== y[ind].qtyOfferReserved || p1.ruleId !== y[ind].ruleId || p1.obdiscQtyoffer !== y[ind].obdiscQtyoffer) {
+                isEqual = false;
+              }
+            });
+          }
+          return isEqual;
+          };
+      if (line1.get('product').get('id') === line2.get('product').get('id') && line1.get('price') === line2.get('price') && line1.get('discountedLinePrice') === line2.get('discountedLinePrice') && line1.get('qty') === line2.get('qty')) {
+        return equalPromotions(line1.get('promotions') || [], line2.get('promotions') || []);
+      } else {
+        return false;
+      }
+    },
+
+    // if there is a promtion of type "applyNext" that it has been applied previously in the line, then It is replaced
+    // by the first promotion applied. Ex:
+    // Ex: prod1 - qty 5 - disc3x2 & discPriceAdj -> priceAdj is applied first to 5 units
+    //     it is called to applyPromotions, with the 2 units frees, and priceAdj is applied again to this 2 units
+    // it is wrong, only to 5 units should be applied priceAdj, no 5 + 2 units
+    removePromotionsCascadeApplied: function () {
+      this.get('lines').forEach(function (l) {
+        if (!OB.UTIL.isNullOrUndefined(l.get('promotions')) && l.get('promotions').length > 0 && !OB.UTIL.isNullOrUndefined(l.get('promotionsCascadeApplied')) && l.get('promotionsCascadeApplied').length > 0) {
+          l.get('promotions').forEach(function (p, ind) {
+            l.get('promotionsCascadeApplied').forEach(function (pc) {
+              if (p.ruleId === pc.ruleId) {
+                l.get('promotions')[ind] = pc;
+              }
+            });
+          });
+        }
+      });
+    }
   });
 
   var OrderList = Backbone.Collection.extend({

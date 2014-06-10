@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone,$ */
+/*global Backbone,$,_ */
 
 (function () {
   // Because of problems with module dependencies, it is possible this object to already
@@ -21,8 +21,110 @@
     executor: new OB.Model.DiscountsExecutor(),
     preventApplyPromotions: false,
     applyPromotions: function (receipt, line) {
-      var lines;
+      if (receipt.get('skipApplyPromotions') || this.preventApplyPromotions) {
+        return;
+      }
 
+      if (OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true)) {
+        var auxReceipt = new OB.Model.Order(),
+            auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true,
+            me = this;
+        auxReceipt.clearWith(receipt);
+        auxReceipt.groupLinesByProduct();
+        auxReceipt.on('discountsApplied', function () {
+          var continueApplyPromotions = true;
+
+          // replace the promotions with applyNext that they were applied previously
+          auxReceipt.removePromotionsCascadeApplied();
+
+          // check if the order lines have changed in the last execution of applyPromotions
+          // if they didn't changed, then stop
+          if (!OB.UTIL.isNullOrUndefined(oldLines) && oldLines.size() > 0) {
+            isFirstExecution = false;
+            oldLines2 = new Backbone.Collection();
+            oldLines.forEach(function (ol) {
+              oldLines2.push(ol);
+            });
+
+            oldLines2.forEach(function (ol) {
+              for (i = 0; i < auxReceipt.get('lines').size(); i++) {
+                if (auxReceipt.isSimilarLine(ol, auxReceipt.get('lines').at(i))) {
+                  oldLines.remove(ol);
+                  break;
+                }
+              }
+            });
+
+            if (oldLines.length === 0) {
+              continueApplyPromotions = false;
+            }
+          } else if (!OB.UTIL.isNullOrUndefined(oldLines) && oldLines.size() === 0 && !isFirstExecution) {
+            continueApplyPromotions = false;
+          }
+
+          if (continueApplyPromotions) {
+            receipt.fillPromotionsWith(auxReceipt, isFirstExecution);
+            if (auxReceipt.hasPromotions()) {
+              auxReceipt.removeQtyOffer();
+              if (auxReceipt.get('lines').length > 0) {
+                oldLines = new Backbone.Collection();
+                auxReceipt.get('lines').forEach(function (l) {
+                  oldLines.push(l.clone());
+                });
+                me.applyPromotionsImp(auxReceipt, undefined, true);
+              }
+            }
+
+          }
+        });
+
+        if (line) {
+          auxLine = _.filter(auxReceipt.get('lines').models, function (l) {
+            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && l.get('qty') === line.get('qty')) {
+              return l;
+            }
+          });
+        }
+
+        // if preventApplyPromotions then the promotions will not be deleted, because they will not be recalculated 
+        if (!this.preventApplyPromotions) {
+          var manualPromotions;
+          _.each(auxReceipt.get('lines').models, function (line) {
+            manualPromotions = _.filter(line.get('promotions'), function (p) {
+              return p.manual === true;
+            }) || [];
+
+            line.set('promotions', []);
+            line.set('promotionCandidates', []);
+            _.forEach(manualPromotions, function (promo) {
+              var promotion = {
+                rule: new Backbone.Model(promo),
+
+                definition: {
+                  userAmt: promo.userAmt,
+                  applyNext: promo.applyNext,
+                  lastApplied: promo.lastApplied
+                },
+                alreadyCalculated: true // to prevent loops
+              };
+              OB.Model.Discounts.addManualPromotion(auxReceipt, [line], promotion);
+            });
+
+          });
+
+          _.each(receipt.get('lines').models, function (line) {
+            line.set('promotions', []);
+            line.set('promotionCandidates', []);
+          });
+        }
+        this.applyPromotionsImp(auxReceipt, null, true);
+      } else {
+        this.applyPromotionsImp(receipt, line, false);
+      }
+    },
+
+    applyPromotionsImp: function (receipt, line, skipSave) {
+      var lines;
       if (this.preventApplyPromotions) {
         return;
       }
@@ -35,7 +137,8 @@
         this.executor.addEvent(new Backbone.Model({
           id: line.cid,
           receipt: receipt,
-          line: line
+          line: line,
+          skipSave: skipSave
         }), true);
       } else {
         lines = receipt.get('lines');
@@ -44,7 +147,9 @@
           receipt.calculateGross();
         } else {
           lines.forEach(function (l) {
-            this.applyPromotions(receipt, l);
+            // with new flow discounts -> skipSave =true
+            // in other case -> false
+            this.applyPromotionsImp(receipt, l, OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true));
           }, this);
         }
       }
@@ -190,6 +295,7 @@
       } else {
         discountedLinePrice = (linePrice - discountRule.get('discountAmount')) * (1 - discountRule.get('discount') / 100);
       }
+      discountRule.set('qtyOffer', qty);
       receipt.addPromotion(line, discountRule, {
         amt: (linePrice - OB.DEC.toNumber(new BigDecimal(String(discountedLinePrice)))) * qty
       });

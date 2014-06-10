@@ -302,11 +302,18 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   },
 
   postAction: function (evt) {
-    evt.get('receipt').calculateGross();
+    // if new flow of discounts, then discountsApplied is triggered
+    if (OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true)) {
+      if (this.get('eventQueue').length === 0) {
+        evt.get('receipt').trigger('discountsApplied');
+      }
+    } else {
+      evt.get('receipt').calculateGross();
+    }
 
     // Forcing local db save. Rule implementations could (should!) do modifications
     // without persisting them improving performance in this manner.
-    if (evt.get('receipt') && evt.get('receipt').get('lines') && evt.get('receipt').get('lines').length > 0) {
+    if (!evt.get('skipSave') && evt.get('receipt') && evt.get('receipt').get('lines') && evt.get('receipt').get('lines').length > 0) {
       evt.get('receipt').save();
     }
   }
