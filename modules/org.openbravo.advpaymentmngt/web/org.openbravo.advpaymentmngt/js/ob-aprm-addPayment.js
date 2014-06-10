@@ -236,10 +236,10 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
   var issotrx = this.view.theForm.getItem('issotrx').getValue(),
       payment = this.view.theForm.getItem('fin_payment_id').getValue();
   grid.isReady = true;
-  if (!(!issotrx && payment)) {
-    OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm);
-  } else {
+  if (!issotrx && payment) {
     OB.APRM.AddPayment.updateInvOrderTotal(this.view.theForm, grid);
+  } else {
+    OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm);
   }
   OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
 };
