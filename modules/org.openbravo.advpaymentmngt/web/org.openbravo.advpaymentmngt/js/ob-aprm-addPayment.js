@@ -740,7 +740,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   }
 
   // If there is Overpayment check it exists a business partner
-  if (overpaymentAction !== null && receivedFrom === null) {
+  if (overpaymentAction && receivedFrom === null) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithoutBPartner'));
     return false;
   }
