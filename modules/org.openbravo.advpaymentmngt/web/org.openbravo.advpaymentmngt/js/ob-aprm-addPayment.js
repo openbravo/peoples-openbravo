@@ -745,10 +745,13 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     return false;
   }
 
-  actualPayment = actualPayment.add(creditTotalItem);
   if (actualPayment.compareTo(total) > 0 && totalOustandingAmount.compareTo(amountInvOrds) > 0) {
     // Not all the payment amount has been allocated
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSNOTALLAMOUTALLOCATED'));
+    return false;
+  } else if (total.compareTo(actualPayment) > 0) {
+    // More than available amount has been distributed
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSMOREAMOUTALLOCATED'));
     return false;
   }
 
