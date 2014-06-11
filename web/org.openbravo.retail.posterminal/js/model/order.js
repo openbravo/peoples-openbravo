@@ -1627,7 +1627,7 @@
           auxLines = lines.models.slice(0); //clone
       _.each(auxLines, function (l) {
         lineToMerge = _.find(lines.models, function (line) {
-          if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
+          if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && l.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
             return promo.manual;
           }) && !_.find(l.get('promotions'), function (promo) {
             return promo.manual;
