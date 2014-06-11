@@ -288,7 +288,7 @@ isc.OBParameterWindowView.addProperties({
     });
   },
 
-  handleResponse: function (refresh, message, responseActions, retryExecution, data) {
+  handleResponse: function (refreshParent, message, responseActions, retryExecution, data) {
     var window = this.parentWindow,
         tab = OB.MainView.TabSet.getTab(this.viewTabId),
         i;
@@ -358,7 +358,7 @@ isc.OBParameterWindowView.addProperties({
     if (this.popup && !retryExecution) {
       this.buttonOwnerView.setAsActiveView();
 
-      if (refresh) {
+      if (refreshParent) {
         window.refresh();
       }
 
@@ -449,7 +449,7 @@ isc.OBParameterWindowView.addProperties({
         processId: me.processId,
         windowId: me.windowId
       }, function (rpcResponse, data, rpcRequest) {
-        view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
+        view.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
       });
     };
 
