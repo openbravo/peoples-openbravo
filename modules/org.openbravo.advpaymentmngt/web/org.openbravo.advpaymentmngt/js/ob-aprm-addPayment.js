@@ -227,7 +227,7 @@ OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form,
 OB.APRM.AddPayment.actualPaymentOnChange = function (item, view, form, grid) {
   var issotrx = form.getItem('issotrx').getValue();
   if (issotrx) {
-    OB.APRM.AddPayment.distributeAmount(view, form);
+    OB.APRM.AddPayment.distributeAmount(view, form, true);
     OB.APRM.AddPayment.updateConvertedAmount(view, form, false);
   }
 };
@@ -239,7 +239,7 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
   if (!issotrx && payment) {
     OB.APRM.AddPayment.updateInvOrderTotal(this.view.theForm, grid);
   } else {
-    OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm);
+    OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm, false);
   }
   OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
 };
@@ -286,13 +286,15 @@ OB.APRM.AddPayment.glItemTotalAmountOnChange = function (item, view, form, grid)
   return true;
 };
 
-OB.APRM.AddPayment.distributeAmount = function (view, form) {
+OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChange) {
   var amount = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
       distributedAmount = new BigDecimal("0"),
       orderInvoice = form.getItem('order_invoice').canvas.viewGrid,
       scheduledPaymentDetailId, outstandingAmount, j, i, total, chk, credit, glitem, difference = new BigDecimal(String(form.getItem('difference').getValue() || 0)),
       writeoff, issotrx = form.getItem('issotrx').getValue(),
-      amt;
+      amt, negativeamt = BigDecimal.prototype.ZERO,
+      differenceamt = BigDecimal.prototype.ZERO,
+      payment = form.getItem('fin_payment_id').getValue();
 
   // glitems amount
   glitem = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0));
@@ -308,6 +310,18 @@ OB.APRM.AddPayment.distributeAmount = function (view, form) {
   if ((amount.compareTo(distributedAmount) > 0) || (amount.equals(distributedAmount))) {
     amount = amount.subtract(distributedAmount);
   }
+
+  for (i = 0; i < total; i++) {
+    outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).outstandingAmount));
+    if (outstandingAmount.signum() < 0) {
+      negativeamt = negativeamt.add(new BigDecimal(Math.abs(outstandingAmount).toString()));
+    }
+  }
+
+  if (amount.compareTo(negativeamt.negate()) > 0 && (onActualPaymentChange || payment)) {
+    amount = amount.add(negativeamt);
+  }
+
   for (i = 0; i < total; i++) {
     writeoff = orderInvoice.getEditValues(i).writeoff;
     amt = new BigDecimal(String(orderInvoice.getEditValues(i).amount || 0));
@@ -322,24 +336,41 @@ OB.APRM.AddPayment.distributeAmount = function (view, form) {
       outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).outstandingAmount));
       if ((outstandingAmount.compareTo(new BigDecimal("0")) < 0) && (amount.compareTo(new BigDecimal("0")) < 0)) {
         if (Math.abs(outstandingAmount) > Math.abs(amount)) {
+          differenceamt = outstandingAmount.subtract(amount);
           outstandingAmount = amount;
+          amount = amount.subtract(differenceamt);
         }
       } else {
-        if (outstandingAmount.compareTo(amount) > 0) {
+        if (outstandingAmount.signum() > -1 && amount.signum() > -1 && outstandingAmount.compareTo(amount) > 0) {
           outstandingAmount = amount;
         }
       }
       // do not distribute again when the selectionChanged method is invoked
       orderInvoice.preventDistributingOnSelectionChanged = true;
       if (amount.signum() === 0) {
-        orderInvoice.setEditValue((i), 'amount', Number("0"));
-        orderInvoice.deselectRecord(i);
-
-      } else {
+        if (outstandingAmount.signum() < 0 && (onActualPaymentChange || payment)) {
+          orderInvoice.setEditValue((i), 'amount', Number(outstandingAmount.toString()));
+          orderInvoice.selectRecord(i);
+        } else {
+          orderInvoice.setEditValue((i), 'amount', Number("0"));
+          orderInvoice.deselectRecord(i);
+        }
+      } else if (amount.signum() === 1) {
         orderInvoice.setEditValue((i), 'amount', Number(outstandingAmount.toString()));
         orderInvoice.selectRecord(i);
-        amount = amount.subtract(outstandingAmount);
+        if (outstandingAmount.signum() < 0 && amount.signum() > 0) {
 
+        } else {
+          amount = amount.subtract(outstandingAmount);
+        }
+      } else {
+        if (outstandingAmount.signum() < 0) {
+          orderInvoice.setEditValue((i), 'amount', Number(outstandingAmount.toString()));
+          orderInvoice.selectRecord(i);
+        } else {
+          orderInvoice.setEditValue((i), 'amount', Number("0"));
+          orderInvoice.deselectRecord(i);
+        }
       }
       delete orderInvoice.preventDistributingOnSelectionChanged;
     }
