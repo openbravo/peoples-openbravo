@@ -124,8 +124,7 @@ OB.APRM.AddPayment.addNewGLItem = function (grid) {
 };
 
 OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConvRate) {
-  var callback,
-      financialAccountId = form.getItem('fin_financial_account_id').getValue(),
+  var callback, financialAccountId = form.getItem('fin_financial_account_id').getValue(),
       paymentMethodId = form.getItem('fin_paymentmethod_id').getValue(),
       isSOTrx = form.getItem('issotrx').getValue(),
       currencyId = form.getItem('c_currency_id').getValue(),
@@ -145,9 +144,9 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
       }
     }
     if (isPayIsMulticurrency && currencyId !== data.currencyToId) {
-        form.getItem('conversion_rate').visible = true;
-        form.getItem('converted_amount').visible = true;
-        form.getItem('c_currency_to_id').visible = true;
+      form.getItem('conversion_rate').visible = true;
+      form.getItem('converted_amount').visible = true;
+      form.getItem('c_currency_to_id').visible = true;
     } else {
       form.getItem('c_currency_to_id').visible = false;
       form.getItem('conversion_rate').visible = false;
@@ -155,7 +154,7 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
     }
     form.redraw();
   };
-  
+
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
     paymentMethodId: paymentMethodId,
     currencyId: currencyId,
@@ -779,15 +778,21 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       totalWriteOffAmount = BigDecimal.prototype.ZERO,
       writeOffLineAmount = BigDecimal.prototype.ZERO,
       totalOustandingAmount = BigDecimal.prototype.ZERO,
-      amount, outstandingAmount, i, callbackOnProcessActionHandler;
+      amount, outstandingAmount, i, callbackOnProcessActionHandler, writeoff;
 
   // Check if there is pending amount to distribute that could be distributed
   for (i = 0; i < selectedRecords.length; i++) {
     amount = new BigDecimal(String(orderInvoiceGrid.getEditedCell(orderInvoiceGrid.getRecordIndex(selectedRecords[i]), amountField)));
     outstandingAmount = new BigDecimal(String(orderInvoiceGrid.getRecord(i).outstandingAmount));
     totalOustandingAmount = totalOustandingAmount.add(outstandingAmount);
-    if (orderInvoiceGrid.getEditedCell(orderInvoiceGrid.getRecordIndex(selectedRecords[i]), writeoffField)) {
-      writeOffLineAmount = outstandingAmount.subtract(amount);
+  }
+  for (i = 0; i < orderInvoiceGrid.data.totalRows; i++) {
+    writeoff = orderInvoiceGrid.getEditValues(i).writeoff;
+    if (writeoff === null || writeoff === undefined) {
+      writeoff = orderInvoiceGrid.getRecord(i).writeoff;
+    }
+    if (writeoff) {
+      writeOffLineAmount = new BigDecimal(String(orderInvoiceGrid.getRecord(i).outstandingAmount || 0)).subtract(new BigDecimal(String(orderInvoiceGrid.getRecord(i).amount || 0)));
       totalWriteOffAmount = totalWriteOffAmount.add(writeOffLineAmount);
     }
   }
