@@ -43,7 +43,7 @@ OB.APRM.AddPayment = {
     if (grid.changedTrxType) {
       grid.selectedIds = [];
       grid.deselectedIds = [];
-      //grid.data.savedData = [];
+      grid.data.savedData = [];
     }
     for (i = 0; i < data.length; i++) {
       record = data[i];
@@ -84,7 +84,7 @@ OB.APRM.AddPayment = {
         if (isSelected) {
           record.amount = Number(curAmount.toString());
           grid.selectedIds.push(record.id);
-          //grid.data.savedData.push(editedRecord);
+          grid.data.savedData.push(editedRecord);
           //record = editedRecord;
         }
       }
