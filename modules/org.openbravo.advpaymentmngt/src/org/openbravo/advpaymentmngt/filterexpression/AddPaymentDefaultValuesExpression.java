@@ -99,7 +99,8 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
           return handler.getDefaultReferenceNo(requestMap);
         }
       } catch (Exception e) {
-        log.error("Error trying to get default value of " + strCurrentParam + e.getMessage(), e);
+        log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(),
+            e);
         return null;
       }
     } catch (JSONException ignore) {
