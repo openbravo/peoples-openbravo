@@ -45,8 +45,12 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
       final FinAccPaymentMethod finAccPaymentMethod = getFinancialAccountPaymentMethod(
           paymentMethodId, financialAccountId);
       JSONObject result = new JSONObject();
-      result.put("isPayIsMulticurrency", isSOTrx ? finAccPaymentMethod.isPayinIsMulticurrency()
-          : finAccPaymentMethod.isPayoutIsMulticurrency());
+      if (finAccPaymentMethod != null) {
+        result.put("isPayIsMulticurrency", isSOTrx ? finAccPaymentMethod.isPayinIsMulticurrency()
+            : finAccPaymentMethod.isPayoutIsMulticurrency());
+      } else {
+        result.put("isPayIsMulticurrency", false);
+      }
       if (!isValidFinancialAccount(finAccPaymentMethod, currencyId, isSOTrx)) {
         result.put("isWrongFinancialAccount", true);
       } else {
