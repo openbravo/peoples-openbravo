@@ -16,7 +16,6 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
 package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
@@ -141,8 +140,11 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         // Payment is already created. Load it.
         final String strFinPaymentID = jsonparams.getString("fin_payment_id");
         payment = OBDal.getInstance().get(FIN_Payment.class, strFinPaymentID);
-        String strReferenceNo = jsonparams.getString("reference_no");
-        payment.setReferenceNo("null".equals(strReferenceNo) ? null : strReferenceNo);
+        String strReferenceNo = "";
+        if (jsonparams.get("reference_no") != JSONObject.NULL) {
+          strReferenceNo = jsonparams.getString("reference_no");
+        }
+        payment.setReferenceNo(strReferenceNo);
         // Load existing lines to be deleted.
         pdToRemove = OBDao.getIDListFromOBObject(payment.getFINPaymentDetailList());
       } else {
@@ -207,7 +209,10 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       BigDecimal convertedAmt, String strActualPayment) throws OBException, JSONException {
 
     String strPaymentDocumentNo = jsonparams.getString("payment_documentno");
-    String strReferenceNo = jsonparams.getString("reference_no");
+    String strReferenceNo = "";
+    if (jsonparams.get("reference_no") != JSONObject.NULL) {
+      strReferenceNo = jsonparams.getString("reference_no");
+    }
     String strFinancialAccountId = jsonparams.getString("fin_financial_account_id");
     FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
         strFinancialAccountId);
