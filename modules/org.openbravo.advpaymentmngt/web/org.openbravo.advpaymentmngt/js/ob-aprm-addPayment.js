@@ -713,35 +713,33 @@ OB.APRM.AddPayment.convertedAmountOnChange = function (item, view, form, grid) {
 };
 
 OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeRate) {
-  if (form.getItem('fin_payment_id').getValue() !== null && form.getItem('fin_payment_id').getValue() !== undefined && form.getItem('fin_payment_id').getValue() !== '') {
-    var exchangeRate = new BigDecimal(String(form.getItem('conversion_rate').getValue() || 1)),
-        expectedConverted = new BigDecimal(String(form.getItem('converted_amount').getValue() || 0)),
-        actualConverted = new BigDecimal(String(form.getItem('converted_amount').getValue() || 0)),
-        expectedPayment = new BigDecimal(String(form.getItem('expected_payment').getValue() || 0)),
-        actualPayment = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
-        actualConvertedItem = form.getItem('converted_amount'),
-        exchangeRateItem = form.getItem('conversion_rate'),
-        newConvertedAmount = BigDecimal.prototype.ZERO,
-        newExchangeRate = BigDecimal.prototype.ONE,
-        currencyPrecision = form.getItem('StdPrecision').getValue();
+  var exchangeRate = new BigDecimal(String(form.getItem('conversion_rate').getValue() || 1)),
+      expectedConverted = new BigDecimal(String(form.getItem('converted_amount').getValue() || 0)),
+      actualConverted = new BigDecimal(String(form.getItem('converted_amount').getValue() || 0)),
+      expectedPayment = new BigDecimal(String(form.getItem('expected_payment').getValue() || 0)),
+      actualPayment = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
+      actualConvertedItem = form.getItem('converted_amount'),
+      exchangeRateItem = form.getItem('conversion_rate'),
+      newConvertedAmount = BigDecimal.prototype.ZERO,
+      newExchangeRate = BigDecimal.prototype.ONE,
+      currencyPrecision = form.getItem('StdPrecision').getValue();
 
-    if (actualConverted && exchangeRate) {
-      if (recalcExchangeRate) {
-        if (actualConverted && actualPayment) {
-          if (actualPayment.compareTo(newConvertedAmount) !== 0) {
-            newExchangeRate = actualConverted.divide(actualPayment, currencyPrecision, 2);
-            exchangeRateItem.setValue(Number(newExchangeRate.toString()));
-          }
-        } else {
-          exchangeRateItem.setValue(Number(newExchangeRate.toString));
+  if (actualConverted && exchangeRate) {
+    if (recalcExchangeRate) {
+      if (actualConverted && actualPayment) {
+        if (actualPayment.compareTo(newConvertedAmount) !== 0) {
+          newExchangeRate = actualConverted.divide(actualPayment, currencyPrecision, 2);
+          exchangeRateItem.setValue(Number(newExchangeRate.toString()));
         }
       } else {
-        if (exchangeRate) {
-          newConvertedAmount = actualPayment.multiply(exchangeRate).setScale(currencyPrecision, BigDecimal.prototype.ROUND_HALF_UP);
-          actualConvertedItem.setValue(Number(newConvertedAmount.toString()));
-        } else {
-          actualConvertedItem.setValue(Number(actualConverted.toString()));
-        }
+        exchangeRateItem.setValue(Number(newExchangeRate.toString));
+      }
+    } else {
+      if (exchangeRate) {
+        newConvertedAmount = actualPayment.multiply(exchangeRate).setScale(currencyPrecision, BigDecimal.prototype.ROUND_HALF_UP);
+        actualConvertedItem.setValue(Number(newConvertedAmount.toString()));
+      } else {
+        actualConvertedItem.setValue(Number(actualConverted.toString()));
       }
     }
   }

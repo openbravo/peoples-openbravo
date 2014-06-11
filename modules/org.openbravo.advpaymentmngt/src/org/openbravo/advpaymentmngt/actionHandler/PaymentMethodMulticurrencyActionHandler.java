@@ -65,21 +65,25 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
       } else {
         result.put("isWrongFinancialAccount", false);
       }
-      if (finAccPaymentMethod.getAccount().getCurrency().getId().equals(currencyId)) {
-        result.put("conversionrate", "1");
-      } else {
-        ConversionRate convRate = FinancialUtils.getConversionRate(paymentDate, OBDal.getInstance()
-            .get(Currency.class, currencyId), finAccPaymentMethod.getAccount().getCurrency(), OBDal
-            .getInstance().get(Organization.class, strOrgId),
-            OBDal.getInstance().get(Organization.class, strOrgId).getClient());
-        if (convRate != null) {
-          result.put("conversionrate", convRate.getMultipleRateBy());
-        } else {
+      if (finAccPaymentMethod != null) {
+        if (finAccPaymentMethod.getAccount().getCurrency().getId().equals(currencyId)) {
           result.put("conversionrate", "1");
+        } else {
+          ConversionRate convRate = FinancialUtils.getConversionRate(paymentDate, OBDal
+              .getInstance().get(Currency.class, currencyId), finAccPaymentMethod.getAccount()
+              .getCurrency(), OBDal.getInstance().get(Organization.class, strOrgId), OBDal
+              .getInstance().get(Organization.class, strOrgId).getClient());
+          if (convRate != null) {
+            result.put("conversionrate", convRate.getMultipleRateBy());
+          } else {
+            result.put("conversionrate", "1");
+          }
         }
+        result.put("currencyToId", finAccPaymentMethod.getAccount().getCurrency().getId());
+      } else {
+        result.put("conversionrate", "1");
+        result.put("currencyToId", currencyId);
       }
-
-      result.put("currencyToId", finAccPaymentMethod.getAccount().getCurrency().getId());
       return result;
     } catch (Exception e) {
       throw new OBException(e);
