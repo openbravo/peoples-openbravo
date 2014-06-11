@@ -619,7 +619,7 @@ OB.APRM.AddPayment.updateCreditOnChange = function (item, view, form, grid) {
   var issotrx = form.getItem('issotrx').getValue();
   OB.APRM.AddPayment.updateCreditTotal(form);
   if (issotrx) {
-    OB.APRM.AddPayment.distributeAmount(view, form);
+    OB.APRM.AddPayment.distributeAmount(view, form, true);
   }
   OB.APRM.AddPayment.updateDifference(form);
   return true;
