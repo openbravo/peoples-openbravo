@@ -100,7 +100,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
       glitemGrid = form.getItem('glitem').canvas.viewGrid,
       creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid,
       overpaymentAction = form.getItem('overpayment_action'),
-      payment = this.view.theForm.getItem('fin_payment_id').getValue();
+      payment = form.getItem('fin_payment_id').getValue();
 
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, view.theForm, !payment);
   glitemGrid.fetchData();
@@ -792,7 +792,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       writeoff = orderInvoiceGrid.getRecord(i).writeoff;
     }
     if (writeoff) {
-      writeOffLineAmount = new BigDecimal(String(orderInvoiceGrid.getRecord(i).outstandingAmount || 0)).subtract(new BigDecimal(String(orderInvoiceGrid.getRecord(i).amount || 0)));
+      writeOffLineAmount = new BigDecimal(String(orderInvoiceGrid.getRecord(i).outstandingAmount || 0)).subtract(new BigDecimal(String(orderInvoiceGrid.getEditedRecord(i).amount || 0)));
       totalWriteOffAmount = totalWriteOffAmount.add(writeOffLineAmount);
     }
   }
