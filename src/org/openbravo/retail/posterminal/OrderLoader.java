@@ -1389,6 +1389,12 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         } else {
           amount = amount.add(writeoffAmt.abs()).setScale(stdPrecision, RoundingMode.HALF_UP);
         }
+        origAmount = amount;
+        if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
+          mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
+          origAmount = amount.multiply(BigDecimal.valueOf(payment.getDouble("mulrate"))).setScale(
+              stdPrecision, RoundingMode.HALF_UP);
+        }
       }
 
       FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
