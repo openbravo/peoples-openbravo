@@ -76,12 +76,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AddPaymentActionHandler extends BaseProcessActionHandler {
-  private static Logger log = LoggerFactory.getLogger(AddPaymentActionHandler.class);
+  final private static Logger log = LoggerFactory.getLogger(AddPaymentActionHandler.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonResponse = new JSONObject();
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       // Get Params
       JSONObject jsonRequest = new JSONObject(content);
@@ -89,15 +89,13 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
       final String strOrgId = jsonRequest.getString("inpadOrgId");
       Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
-      // String strTabId = jsonRequest.getString("inpTabId");
       boolean isReceipt = jsonparams.getBoolean("issotrx");
 
       // Action to do
-      String strActionId = jsonparams.getString("document_action");
+      final String strActionId = jsonparams.getString("document_action");
       final org.openbravo.model.ad.domain.List actionList = OBDal.getInstance().get(
           org.openbravo.model.ad.domain.List.class, strActionId);
-
-      String strAction = actionList.getSearchKey();
+      final String strAction = actionList.getSearchKey();
 
       final String strCurrencyId = jsonparams.getString("c_currency_id");
       Currency currency = OBDal.getInstance().get(Currency.class, strCurrencyId);
@@ -126,7 +124,6 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
       BigDecimal exchangeRate = BigDecimal.ZERO;
       BigDecimal convertedAmount = BigDecimal.ZERO;
-      // String strCurrencyToId = jsonparams.getString("c_currency_to_id");
       if (jsonparams.get("conversion_rate") != JSONObject.NULL) {
         exchangeRate = new BigDecimal(jsonparams.getString("conversion_rate"));
       }
@@ -183,7 +180,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      log.error(e.getMessage(), e);
+      log.error("Exception handling the new payment", e);
 
       try {
         jsonResponse = new JSONObject();
@@ -194,9 +191,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         errorMessage.put("text", message);
         jsonResponse.put("message", errorMessage);
 
-      } catch (Exception e2) {
-        log.error(e.getMessage(), e2);
-        // do nothing, give up
+      } catch (Exception ignore) {
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -244,8 +239,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         && !FIN_Utility.isPeriodOpen(OBContext.getOBContext().getCurrentClient().getId(),
             strDocBaseType, org.getId(), OBDateUtils.formatDate(paymentDate))
         && orgLegalWithAccounting) {
-      String messag = OBMessageUtils.translateError(OBMessageUtils.messageBD("PeriodNotAvailable"))
-          .getMessage();
+      String messag = OBMessageUtils.messageBD("PeriodNotAvailable");
       throw new OBException(messag);
     }
 
@@ -273,7 +267,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
       boolean isWriteOff = psdRow.getBoolean("writeoff");
       // psdIds can be grouped
-      String[] psdIds = strPSDIds.replace(" ", "").split(",");
+      String[] psdIds = strPSDIds.replaceAll(" ", "").split(",");
       List<FIN_PaymentScheduleDetail> psds = getOrderedPaymentScheduleDetails(psdIds);
       BigDecimal outstandingAmount = BigDecimal.ZERO;
       BigDecimal remainingAmount = paidAmount;
@@ -294,10 +288,9 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           outstandingAmount = psd.getAmount();
         }
         // Manage negative amounts
-        if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0 && remainingAmount
-            .compareTo(outstandingAmount) >= 0)
-            || ((remainingAmount.compareTo(BigDecimal.ZERO) == -1 && outstandingAmount
-                .compareTo(BigDecimal.ZERO) == -1) && (remainingAmount.compareTo(outstandingAmount) <= 0))) {
+        if ((remainingAmount.signum() > 0 && remainingAmount.compareTo(outstandingAmount) >= 0)
+            || ((remainingAmount.signum() < 0 && outstandingAmount.signum() < 0) && (remainingAmount
+                .compareTo(outstandingAmount) <= 0))) {
           assignAmount = outstandingAmount;
           remainingAmount = remainingAmount.subtract(outstandingAmount);
         } else {
@@ -321,9 +314,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       HashMap<String, BigDecimal> selectedCreditPaymentAmounts = getSelectedCreditLinesAndAmount(
           selectedCreditLines, selectedCreditPayment);
 
-      // BigDecimal totalUsedCreditAmt = BigDecimal.ZERO;
       for (final FIN_Payment creditPayment : selectedCreditPayment) {
-        // TODO: Añadir en la descripcion del payment de credito usado en que payment se usa
         final BigDecimal usedCreditAmt = selectedCreditPaymentAmounts.get(creditPayment.getId());
         final StringBuffer description = new StringBuffer();
         if (creditPayment.getDescription() != null && !creditPayment.getDescription().equals(""))
@@ -395,7 +386,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       if (glItem.has("cActivityDim") && glItem.get("cActivityDim") != JSONObject.NULL) {
         final String strElement_AY = glItem.getString("cActivityDim");
         checkID(strElement_AY);
-        activity = null;
+        activity = OBDal.getInstance().get(ABCActivity.class, strElement_AY);
       }
       Costcenter costCenter = null;
       if (glItem.has("costCenter") && glItem.get("costCenter") != JSONObject.NULL) {
@@ -407,7 +398,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       if (glItem.has("cCampaignDim") && glItem.get("cCampaignDim") != JSONObject.NULL) {
         final String strElement_MC = glItem.getString("cCampaignDim");
         checkID(strElement_MC);
-        campaign = null;
+        campaign = OBDal.getInstance().get(Campaign.class, strElement_MC);
       }
       UserDimension1 user1 = null;
       if (glItem.has("stDimension") && glItem.get("stDimension") != JSONObject.NULL) {
@@ -428,7 +419,6 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
   }
 
   private void removeNotSelectedPaymentDetails(FIN_Payment payment, List<String> pdToRemove) {
-
     for (String pdId : pdToRemove) {
       FIN_PaymentDetail pd = OBDal.getInstance().get(FIN_PaymentDetail.class, pdId);
 
@@ -470,7 +460,6 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(payment);
     }
-
   }
 
   private OBError processPayment(FIN_Payment payment, String strAction, String strDifferenceAction,
@@ -541,32 +530,20 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
   /**
    * @param allselection
-   *          : Selected Rows in Order Invoice grid
-   * @return
+   *          Selected Rows in Credit to use grid
+   * @return a String with the concatenation of the selected rows ids
    */
-  private String getSelectedCreditLinesIds(JSONArray allselection) {
+  private String getSelectedCreditLinesIds(JSONArray allselection) throws JSONException {
     StringBuilder sb = new StringBuilder();
     sb.append("(");
-    try {
-      for (int i = 0; i < allselection.length(); i++) {
-        JSONObject selectedRow = allselection.getJSONObject(i);
-        sb.append(selectedRow.getString("id") + ",");
-      }
-      sb.replace(sb.lastIndexOf(","), sb.lastIndexOf(",") + 1, ")");
-      return sb.toString();
-    } catch (Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      log.error(e.getMessage(), e);
-      return null;
+    for (int i = 0; i < allselection.length(); i++) {
+      JSONObject selectedRow = allselection.getJSONObject(i);
+      sb.append(selectedRow.getString("id") + ",");
     }
+    sb.replace(sb.lastIndexOf(","), sb.lastIndexOf(",") + 1, ")");
+    return sb.toString();
   }
 
-  /**
-   * @param allselection
-   * @param _selectedCreditPayments
-   * @return
-   * @throws JSONException
-   */
   private HashMap<String, BigDecimal> getSelectedCreditLinesAndAmount(JSONArray allselection,
       List<FIN_Payment> _selectedCreditPayments) throws JSONException {
     HashMap<String, BigDecimal> selectedCreditLinesAmounts = new HashMap<String, BigDecimal>();
@@ -588,7 +565,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       boolean isPayment) {
     // Checks if this step is configured to generate accounting for the selected financial account
     boolean confirmation = false;
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
           FinAccPaymentMethod.class);
@@ -596,47 +573,47 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, finPaymentMethod));
       obCriteria.setFilterOnReadableClients(false);
       obCriteria.setFilterOnReadableOrganization(false);
-      List<FinAccPaymentMethod> lines = obCriteria.list();
-      List<FIN_FinancialAccountAccounting> accounts = finAccount.getFINFinancialAccountAcctList();
+      obCriteria.setMaxResults(1);
+      FinAccPaymentMethod finAccPayMethod = (FinAccPaymentMethod) obCriteria.uniqueResult();
       String uponUse = "";
       if (isPayment) {
         if (isReceipt) {
-          uponUse = lines.get(0).getUponReceiptUse();
+          uponUse = finAccPayMethod.getUponReceiptUse();
         } else {
-          uponUse = lines.get(0).getUponPaymentUse();
+          uponUse = finAccPayMethod.getUponPaymentUse();
         }
       } else {
         if (isReceipt) {
-          uponUse = lines.get(0).getUponDepositUse();
+          uponUse = finAccPayMethod.getUponDepositUse();
         } else {
-          uponUse = lines.get(0).getUponWithdrawalUse();
+          uponUse = finAccPayMethod.getUponWithdrawalUse();
         }
       }
-      for (FIN_FinancialAccountAccounting account : accounts) {
+      for (FIN_FinancialAccountAccounting account : finAccount.getFINFinancialAccountAcctList()) {
         if (confirmation) {
           return confirmation;
         }
         if (isReceipt) {
-          if (("INT").equals(uponUse) && account.getInTransitPaymentAccountIN() != null) {
+          if ("INT".equals(uponUse) && account.getInTransitPaymentAccountIN() != null) {
             confirmation = true;
-          } else if (("DEP").equals(uponUse) && account.getDepositAccount() != null) {
+          } else if ("DEP".equals(uponUse) && account.getDepositAccount() != null) {
             confirmation = true;
-          } else if (("CLE").equals(uponUse) && account.getClearedPaymentAccount() != null) {
+          } else if ("CLE".equals(uponUse) && account.getClearedPaymentAccount() != null) {
             confirmation = true;
           }
         } else {
-          if (("INT").equals(uponUse) && account.getFINOutIntransitAcct() != null) {
+          if ("INT".equals(uponUse) && account.getFINOutIntransitAcct() != null) {
             confirmation = true;
-          } else if (("WIT").equals(uponUse) && account.getWithdrawalAccount() != null) {
+          } else if ("WIT".equals(uponUse) && account.getWithdrawalAccount() != null) {
             confirmation = true;
-          } else if (("CLE").equals(uponUse) && account.getClearedPaymentAccountOUT() != null) {
+          } else if ("CLE".equals(uponUse) && account.getClearedPaymentAccountOUT() != null) {
             confirmation = true;
           }
         }
         // For payments with Amount ZERO always create an entry as no transaction will be created
         if (isPayment) {
           BigDecimal amount = new BigDecimal(strPaymentAmount);
-          if (amount.compareTo(BigDecimal.ZERO) == 0) {
+          if (amount.signum() == 0) {
             confirmation = true;
           }
         }
@@ -648,5 +625,4 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
     return confirmation;
   }
-
 }
