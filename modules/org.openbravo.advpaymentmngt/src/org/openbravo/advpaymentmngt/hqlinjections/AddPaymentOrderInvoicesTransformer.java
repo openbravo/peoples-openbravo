@@ -176,8 +176,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         }
       }
       whereClause.append(")");
-      whereClause.append("  or ");
+    } else {
+      whereClause.append(" fp.id = '" + strFinPaymentId + "'");
     }
+    whereClause.append("  or ");
     if ("I".equals(transactionType)) {
 
       whereClause.append(" (inv is not null ");

@@ -47,6 +47,8 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
       result.put("isPayinIsMulticurrency", paymentMethod.isPayinIsMulticurrency());
       if (!isValidFinancialAccount(paymentMethodId, financialAccountId)) {
         result.put("isWrongFinancialAccount", true);
+      } else {
+        result.put("isWrongFinancialAccount", false);
       }
       return result;
     } catch (Exception e) {
