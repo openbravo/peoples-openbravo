@@ -51,6 +51,7 @@ enyo.kind({
   initComponents: function () {
     this.header = OB.I18N.getLabel('OBPOS_SelectTerminalHeader');
     this.inherited(arguments);
+    this.$.headerCloseButton.hide();
   }
 });
 

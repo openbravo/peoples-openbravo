@@ -59,6 +59,15 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     return result;
   }
 
+  private boolean hasADFormAccess(UserRoles userRole) {
+    for (FormAccess form : userRole.getRole().getADFormAccessList()) {
+      if (form.getSpecialForm().getId().equals(POSUtils.WEB_POS_FORM_ID)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @Override
   protected JSONObject getCompanyLogo(HttpServletRequest request) throws JSONException {
     JSONObject result = new JSONObject();
@@ -191,7 +200,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
   @Override
   protected JSONObject preLogin(HttpServletRequest request) throws JSONException {
-    String userId = new String();
+    String userId = "";
     boolean success = false;
     boolean hasAccess = false;
     JSONObject result = super.preLogin(request);
@@ -204,12 +213,15 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
         .createCriteria(OBPOSApplications.class);
     qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_TERMINALKEY, terminalKeyIdentifier));
-    qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_ISLINKED, false));
     qApp.setFilterOnReadableOrganization(false);
     qApp.setFilterOnReadableClients(false);
     List<OBPOSApplications> apps = qApp.list();
     if (apps.size() == 1) {
       OBPOSApplications terminal = ((OBPOSApplications) apps.get(0));
+      if (terminal.isLinked()) {
+        result.put("exception", "OBPOS_TerminalAlreadyLinked");
+        return result;
+      }
       userId = LoginUtils.checkUserPassword(new DalConnectionProvider(false), username, password);
       if (userId != null) {
         // Terminal access will be checked to ensure that the user has access to the terminal
@@ -231,9 +243,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
             return result;
           }
         }
-        // OBQuery<User> userQuery = OBDal.getInstance().createQuery(User.class,
-        // "where userContact.id='" + userId + "'");
-        // List<User> userList = userQuery.list();
         OBCriteria<User> userQ = OBDal.getInstance().createCriteria(User.class);
         userQ.add(Restrictions.eq(OBPOSApplications.PROPERTY_ID, userId));
         userQ.setFilterOnReadableOrganization(false);
@@ -241,12 +250,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         List<User> userList = userQ.list();
         if (userList.size() == 1) {
           User user = ((User) userList.get(0));
-          outerloop: for (UserRoles userRole : user.getADUserRolesList()) {
-            for (FormAccess form : userRole.getRole().getADFormAccessList()) {
-              if (form.getSpecialForm().getId().equals(POSUtils.WEB_POS_FORM_ID)) {
-                success = true;
-                break outerloop;
-              }
+          for (UserRoles userRole : user.getADUserRolesList()) {
+            if (this.hasADFormAccess(userRole)) {
+              success = true;
+              break;
             }
           }
         }
@@ -262,8 +269,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           try {
             OBDal.getInstance().getConnection().commit();
           } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new JSONException(e);
           }
         } else {
           result.put("exception", "OBPOS_USERS_ROLE_NO_ACCESS_WEB_POS");
