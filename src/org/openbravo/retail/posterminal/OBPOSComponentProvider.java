@@ -235,6 +235,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Hook
         "components/menuhook" };
 
+    // Unlink onLoad in the ERP
+    globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
+        + "utils/unlinkDeviceOnLoad.js", ComponentResource.APP_OB3));
+
     final String[] cssDependency = { "pos-login", "obpos-main" };
 
     for (String resource : resourceDependency) {
