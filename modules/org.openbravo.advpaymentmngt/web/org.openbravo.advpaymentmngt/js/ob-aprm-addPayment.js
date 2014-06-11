@@ -737,6 +737,7 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
     } else {
       if (exchangeRate) {
         newConvertedAmount = actualPayment.multiply(exchangeRate).setScale(currencyPrecision, BigDecimal.prototype.ROUND_HALF_UP);
+        exchangeRateItem.setValue(Number(exchangeRate.toString()));
         actualConvertedItem.setValue(Number(newConvertedAmount.toString()));
       } else {
         actualConvertedItem.setValue(Number(actualConverted.toString()));
