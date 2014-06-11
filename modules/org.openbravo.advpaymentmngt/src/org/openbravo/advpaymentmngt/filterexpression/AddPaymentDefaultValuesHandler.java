@@ -217,8 +217,14 @@ abstract class AddPaymentDefaultValuesHandler {
 
   public String getDefaultReferenceNo(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
+    if (!context.has("inpfinPaymentId")) {
+      return null;
+    }
+    if (context.get("inpfinPaymentId") == JSONObject.NULL) {
+      return null;
+    }
     String finPaymentId = context.getString("inpfinPaymentId");
-    if (finPaymentId != null && !"".equals(finPaymentId)) {
+    if (!"".equals(finPaymentId)) {
       return OBDal.getInstance().get(FIN_Payment.class, finPaymentId).getReferenceNo();
     } else {
       return null;
