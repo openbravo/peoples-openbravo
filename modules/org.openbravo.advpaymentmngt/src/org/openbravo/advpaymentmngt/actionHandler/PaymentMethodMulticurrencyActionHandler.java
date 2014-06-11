@@ -39,13 +39,15 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
       final JSONObject jsonData = new JSONObject(data);
       final String paymentMethodId = jsonData.getString("paymentMethodId");
       final String financialAccountId = jsonData.getString("financialAccountId");
+      final boolean isSOTrx = jsonData.getBoolean("isSOTrx");
+      final String currencyId = jsonData.getString("currencyId");
 
-      final FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-          paymentMethodId);
-
+      final FinAccPaymentMethod finAccPaymentMethod = getFinancialAccountPaymentMethod(
+          paymentMethodId, financialAccountId);
       JSONObject result = new JSONObject();
-      result.put("isPayinIsMulticurrency", paymentMethod.isPayinIsMulticurrency());
-      if (!isValidFinancialAccount(paymentMethodId, financialAccountId)) {
+      result.put("isPayIsMulticurrency", isSOTrx ? finAccPaymentMethod.isPayinIsMulticurrency()
+          : finAccPaymentMethod.isPayoutIsMulticurrency());
+      if (!isValidFinancialAccount(finAccPaymentMethod, currencyId, isSOTrx)) {
         result.put("isWrongFinancialAccount", true);
       } else {
         result.put("isWrongFinancialAccount", false);
@@ -56,7 +58,22 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
     }
   }
 
-  private boolean isValidFinancialAccount(String paymentMethodId, String financialAccountId) {
+  private boolean isValidFinancialAccount(FinAccPaymentMethod finAccPaymentMethod,
+      String currencyId, boolean isSOTrx) {
+    if (finAccPaymentMethod != null) {
+      if (finAccPaymentMethod.getAccount().getCurrency().getId().equals(currencyId)) {
+        return isSOTrx ? finAccPaymentMethod.isPayinAllow() : finAccPaymentMethod.isPayoutAllow();
+      } else {
+        return isSOTrx ? finAccPaymentMethod.isPayinIsMulticurrency() : finAccPaymentMethod
+            .isPayoutIsMulticurrency();
+      }
+    } else {
+      return false;
+    }
+  }
+
+  private FinAccPaymentMethod getFinancialAccountPaymentMethod(String paymentMethodId,
+      String financialAccountId) {
     OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
         FinAccPaymentMethod.class);
     obc.setFilterOnReadableOrganization(false);
@@ -65,6 +82,6 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
         OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId)));
     obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
         OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId)));
-    return obc.uniqueResult() != null;
+    return (FinAccPaymentMethod) obc.uniqueResult();
   }
 }
