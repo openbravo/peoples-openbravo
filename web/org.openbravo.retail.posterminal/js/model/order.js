@@ -1601,6 +1601,9 @@
     },
 
     hasIntegrity: function () {
+      if (!OB.POS.modelterminal.hasPermission('OBPOS_TicketIntegrityCheck', true)) {
+        return true;
+      }
       // checks if the sum of the amount of every line is the same as the total gross
       var gross = this.attributes.gross;
       var grossOfSummedLines = 0;
