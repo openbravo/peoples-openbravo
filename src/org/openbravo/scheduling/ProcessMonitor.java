@@ -326,10 +326,11 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
             ctx.getUser(), ctx.getUser(), executionId, PROCESSING, null, null, trigger.getName());
         ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, getDuration(0),
             "Concurrent attempt to execute", executionId);
-      }
-      if (bundle.getGroupInfo() != null) {
-        // Manage Process Group
-        manageGroup(bundle, Process.ERROR, null);
+
+        if (bundle.getGroupInfo() != null) {
+          // Manage Process Group
+          manageGroup(bundle, Process.ERROR, executionId);
+        }
       }
 
     } catch (Exception e) {
@@ -449,9 +450,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       throws Exception {
     GroupInfo groupInfo = bundle.getGroupInfo();
     groupInfo.logProcess(status);
-    if (executionId != null) {
-      ProcessRunData.updateGroup(getConnection(), groupInfo.getProcessRun().getId(), executionId);
-    }
+    ProcessRunData.updateGroup(getConnection(), groupInfo.getProcessRun().getId(), executionId);
+
     // Execute next process
     String result = groupInfo.executeNextProcess();
     if (result.equals(GroupInfo.END)) {
