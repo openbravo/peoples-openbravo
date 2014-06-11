@@ -1624,7 +1624,12 @@
     groupLinesByProduct: function () {
       var me = this,
           lineToMerge, lines = this.get('lines'),
-          auxLines = lines.models.slice(0); //clone
+          auxLines = lines.models.slice(0),
+           //clone
+          localSkipApplyPromotions;
+
+      localSkipApplyPromotions = this.get('skipApplyPromotions');
+      this.set('skipApplyPromotions', true);
       _.each(auxLines, function (l) {
         lineToMerge = _.find(lines.models, function (line) {
           if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && l.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
@@ -1644,6 +1649,7 @@
           lines.remove(l);
         }
       });
+      this.set('skipApplyPromotions', localSkipApplyPromotions);
     },
     fillPromotionsWith: function (groupedOrder, isFirstTime) {
       var me = this,

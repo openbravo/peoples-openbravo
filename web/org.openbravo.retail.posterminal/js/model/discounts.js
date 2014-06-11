@@ -21,17 +21,24 @@
     executor: new OB.Model.DiscountsExecutor(),
     preventApplyPromotions: false,
     applyPromotions: function (receipt, line) {
+      var me = this;
       if (receipt.get('skipApplyPromotions') || this.preventApplyPromotions) {
         return;
       }
 
       if (OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true)) {
         var auxReceipt = new OB.Model.Order(),
-            auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true,
-            me = this;
+            auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true;
         auxReceipt.clearWith(receipt);
         auxReceipt.groupLinesByProduct();
+        me.auxReceiptInExecution = auxReceipt;
         auxReceipt.on('discountsApplied', function () {
+          // to avoid several calls to applyPromotions, only will be applied the changes to original receipt for the last call done to applyPromotion
+          // so if the auxReceipt is distinct of the last auxReceipt created (last call) then nothing is done
+          if (me.auxReceiptInExecution !== auxReceipt) {
+            return;
+          }
+
           var continueApplyPromotions = true;
 
           // replace the promotions with applyNext that they were applied previously

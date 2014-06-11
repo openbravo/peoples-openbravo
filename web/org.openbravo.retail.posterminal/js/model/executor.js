@@ -304,7 +304,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   postAction: function (evt) {
     // if new flow of discounts, then discountsApplied is triggered
     if (OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true)) {
-      if (this.get('eventQueue').length === 0) {
+      if (this.get('eventQueue').filter(function (p) {
+        return p.get('receipt') === evt.get('receipt');
+      }).length === 0) {
         evt.get('receipt').trigger('discountsApplied');
       }
     } else {
