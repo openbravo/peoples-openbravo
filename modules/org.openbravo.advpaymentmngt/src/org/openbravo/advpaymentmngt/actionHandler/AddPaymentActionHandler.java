@@ -83,6 +83,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     JSONObject jsonResponse = new JSONObject();
     OBContext.setAdminMode(true);
     try {
+      VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
       // Get Params
       JSONObject jsonRequest = new JSONObject(content);
       JSONObject jsonparams = jsonRequest.getJSONObject("_params");
@@ -157,7 +158,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         }
       }
       payment.setAmount(new BigDecimal(strActualPayment));
-      FIN_AddPayment.setFinancialTransactionAmountAndRate(payment, exchangeRate, convertedAmount);
+      FIN_AddPayment.setFinancialTransactionAmountAndRate(vars, payment, exchangeRate,
+          convertedAmount);
       OBDal.getInstance().save(payment);
 
       addCredit(payment, jsonparams);
