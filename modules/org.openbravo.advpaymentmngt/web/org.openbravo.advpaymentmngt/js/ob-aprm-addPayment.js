@@ -99,9 +99,10 @@ OB.APRM.AddPayment.onLoad = function (view) {
       orderInvoiceGrid = form.getItem('order_invoice').canvas.viewGrid,
       glitemGrid = form.getItem('glitem').canvas.viewGrid,
       creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid,
-      overpaymentAction = form.getItem('overpayment_action');
+      overpaymentAction = form.getItem('overpayment_action'),
+      payment = this.view.theForm.getItem('fin_payment_id').getValue();
 
-  OB.APRM.AddPayment.paymentMethodMulticurrency(null, view, null, null);
+  OB.APRM.AddPayment.paymentMethodMulticurrency(view, view.theForm, !payment);
   glitemGrid.fetchData();
   creditUseGrid.fetchData();
   orderInvoiceGrid.selectionChanged = OB.APRM.AddPayment.selectionChanged;
@@ -122,21 +123,28 @@ OB.APRM.AddPayment.addNewGLItem = function (grid) {
   return returnObject;
 };
 
-OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, _form, grid) {
+OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConvRate) {
   var callback,
-      form = _form || view.theForm,
       financialAccountId = form.getItem('fin_financial_account_id').getValue(),
       paymentMethodId = form.getItem('fin_paymentmethod_id').getValue(),
       isSOTrx = form.getItem('issotrx').getValue(),
-      currencyId = form.getItem('c_currency_id').getValue();
+      currencyId = form.getItem('c_currency_id').getValue(),
+      paymentDate = form.getItem('payment_date').getValue(),
+      orgId = form.getItem('ad_org_id').getValue();
 
   callback = function (response, data, request) {
     var isPayIsMulticurrency = data.isPayIsMulticurrency,
         isWrongFinancialAccount = data.isWrongFinancialAccount;
     if (isWrongFinancialAccount) {
       form.getItem('fin_financial_account_id').setValue('');
+    } else {
+      form.getItem('c_currency_to_id').setValue(data.currencyToId);
+      if (recalcConvRate && isc.isA.Number(data.conversionrate)) {
+        form.getItem('conversion_rate').setValue(Number(data.conversionrate));
+        OB.APRM.AddPayment.updateConvertedAmount(view, form, false);
+      }
     }
-    if (isPayIsMulticurrency && form.getItem('c_currency_id').getValue() !== form.getItem('c_currency_to_id').getValue()) {
+    if (isPayIsMulticurrency && currencyId !== data.currencyToId) {
         form.getItem('conversion_rate').visible = true;
         form.getItem('converted_amount').visible = true;
         form.getItem('c_currency_to_id').visible = true;
@@ -149,12 +157,15 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (item, view, _form, gri
   };
   
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentMethodMulticurrencyActionHandler', {
-	    paymentMethodId: paymentMethodId,
-	    currencyId: currencyId,
-	    isSOTrx: isSOTrx,
-    financialAccountId: financialAccountId
+    paymentMethodId: paymentMethodId,
+    currencyId: currencyId,
+    isSOTrx: isSOTrx,
+    financialAccountId: financialAccountId,
+    paymentDate: paymentDate,
+    orgId: orgId
   }, {}, callback);
 };
+
 OB.APRM.AddPayment.checkSingleActionAvailable = function (form) {
   var documentAction = form.getItem('document_action');
   documentAction.fetchData(function (item, dsResponse, data, dsRequest) {
@@ -167,11 +178,12 @@ OB.APRM.AddPayment.checkSingleActionAvailable = function (form) {
 };
 
 OB.APRM.AddPayment.financialAccountOnChange = function (item, view, form, grid) {
+  OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
 };
 
 OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
-  OB.APRM.AddPayment.paymentMethodMulticurrency(item, view, form, grid);
+  OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
 };
 
