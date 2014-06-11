@@ -365,7 +365,7 @@
         _.forEach(line.get('promotions') || [], function (discount) {
           var discountAmt = discount.actualAmt || discount.amt || 0;
           discount.basePrice = base;
-          discount.unitDiscount = OB.DEC.div(discountAmt, line.get('qty'));
+          discount.unitDiscount = OB.DEC.div(discountAmt, line.get('qtyToApplyDisc') || line.get('qty'));
           totalDiscount = OB.DEC.add(totalDiscount, discountAmt);
           base = OB.DEC.sub(base, totalDiscount);
         }, this);
@@ -625,22 +625,7 @@
         // modifications to trigger editable events incorrectly
         this.set('isEditable', _order.get('isEditable'));
       }
-      _.each(_.keys(_order.attributes), function (key) {
-        if (key !== 'isEditable' && _order.get(key) !== undf) {
-          if (_order.get(key) === null) {
-            me.set(key, null);
-          } else if (_order.get(key).at) {
-            //collection
-            me.get(key).reset();
-            _order.get(key).forEach(function (elem) {
-              me.get(key).add(elem);
-            });
-          } else {
-            //property
-            me.set(key, _order.get(key));
-          }
-        }
-      });
+      OB.UTIL.clone(_order, this);
       this.set('isEditable', _order.get('isEditable'));
       this.trigger('calculategross');
       this.trigger('change');
@@ -1032,6 +1017,7 @@
       disc.name = discount.name || rule.get('printName') || rule.get('name');
       disc.ruleId = rule.id || rule.get('ruleId');
       disc.amt = discount.amt;
+      disc.fullAmt = discount.amt ? discount.amt : 0;
       disc.actualAmt = discount.actualAmt;
       disc.pack = discount.pack;
       disc.discountType = rule.get('discountType');
@@ -1039,6 +1025,9 @@
       disc.manual = discount.manual;
       disc.userAmt = discount.userAmt;
       disc.lastApplied = discount.lastApplied;
+      disc.obdiscQtyoffer = (rule.get('qtyOffer') || line.get('qty'));
+      disc.qtyOffer = (rule.get('qtyOffer') || line.get('qty'));
+      disc.doNotMerge = discount.doNotMerge;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
 
@@ -1061,12 +1050,21 @@
       } else {
         disc.applyNext = rule.get('applyNext');
       }
+      if (!disc.applyNext) {
+        disc.qtyOfferReserved = disc.obdiscQtyoffer;
+      } else {
+        disc.qtyOfferReserved = 0;
+      }
       disc._idx = discount._idx || rule.get('_idx');
 
       for (i = 0; i < promotions.length; i++) {
         if (disc._idx !== -1 && disc._idx < promotions[i]._idx) {
           // Trying to apply promotions in incorrect order: recalculate whole line again
-          OB.Model.Discounts.applyPromotions(this, line);
+          if (OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true)) {
+            OB.Model.Discounts.applyPromotionsImp(this, line, true);
+          } else {
+            OB.Model.Discounts.applyPromotionsImp(this, line, false);
+          }
           return;
         }
       }
@@ -1854,11 +1852,14 @@
       this.set('skipApplyPromotions', localSkipApplyPromotions);
     },
 
+
     // for each line, decrease the qtyOffer of promotions and remove the lines with qty 0
     removeQtyOffer: function () {
       var linesPending = new Backbone.Collection();
       this.get('lines').forEach(function (l) {
-        var promotionsApplyNext  = [], promotionsCascadeApplied = [], qtyReserved = 0,
+        var promotionsApplyNext = [],
+            promotionsCascadeApplied = [],
+            qtyReserved = 0,
             qtyPending;
         if (l.get('promotions')) {
           promotionsApplyNext = [];
