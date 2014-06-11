@@ -786,7 +786,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     return false;
   }
 
-  if (actualPayment.compareTo(total) > 0 && totalOustandingAmount.compareTo(amountInvOrds) > 0) {
+  if (actualPayment.compareTo(total) > 0 && totalOustandingAmount.compareTo(amountInvOrds.add(totalWriteOffAmount)) > 0) {
     // Not all the payment amount has been allocated
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSNOTALLAMOUTALLOCATED'));
     return false;
