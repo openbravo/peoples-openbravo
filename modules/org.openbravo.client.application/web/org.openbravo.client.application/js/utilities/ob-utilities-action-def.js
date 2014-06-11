@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,9 +67,13 @@ OB.Utilities.Action.set('showMsgInView', function (paramObj) {
 //* {{{msgType}}}: The message type. It can be 'success', 'error', 'info' or 'warning'
 //* {{{msgTitle}}}: The title of the message.
 //* {{{msgText}}}: The text of the message.
+//* {{{force}}}: If it should force the message to be show in the popup.
+//               Typically it is used in 'error' cases with 'retryExecution' set as 'true'
 OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
   var processView = paramObj._processView;
-  if (processView.popup && processView.buttonOwnerView && processView.buttonOwnerView.messageBar) {
+  if (processView.messageBar && paramObj.force === true) {
+    processView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+  } else if (processView.popup && processView.buttonOwnerView && processView.buttonOwnerView.messageBar) {
     processView.buttonOwnerView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
   } else if (processView.messageBar) {
     processView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
@@ -112,6 +116,26 @@ OB.Utilities.Action.set('openDirectTab', function (paramObj) {
       OB.Utilities.Action.execute('openDirectTab', paramObj, 100); //Call this action again with a 100ms delay
     } else {
       OB.Utilities.Action.resumeThread(paramObj.threadId, 1500); //Call this action again with a 1500ms delay
+    }
+  }
+});
+
+// ** {{{ setCallerFieldValue }}} **
+// It sets a given value in the caller field (if it exists)
+// Parameters:
+// * {{{value}}}: The value to be set
+OB.Utilities.Action.set('setCallerFieldValue', function (paramObj) {
+  var callerField = paramObj._processView.callerField;
+  if (!callerField) {
+    return;
+  }
+  if (typeof callerField.setValue === 'function') {
+    if (typeof callerField.fetchData === 'function') {
+      callerField.fetchData(function () {
+        callerField.setValue(paramObj.value);
+      });
+    } else {
+      callerField.setValue(paramObj.value);
     }
   }
 });

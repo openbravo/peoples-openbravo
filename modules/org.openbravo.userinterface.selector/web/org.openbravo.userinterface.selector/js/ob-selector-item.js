@@ -584,7 +584,7 @@ isc.OBSelectorItem.addProperties({
       caller.openSelectorWindow();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('Selector_ShowPopup', ['OBSelectorItem', 'OBSelectorItem.icon'], ksAction_ShowPopup);
+    OB.KeyboardManager.Shortcuts.set('Selector_ShowPopup', ['OBSelectorItem', 'OBSelectorItem.icon', 'OBSelectorItem.add'], ksAction_ShowPopup);
   },
 
   init: function () {
@@ -604,6 +604,27 @@ isc.OBSelectorItem.addProperties({
       },
       click: function (form, item, icon) {
         item.openSelectorWindow();
+      }
+    }, {
+      selector: this,
+      src: this.addIconSrc,
+      width: this.addIconWidth,
+      height: this.addIconHeight,
+      hspace: this.addIconHspace,
+      showIf: function () {
+        if (this.selector.processId) {
+          return true;
+        }
+      },
+      keyPress: function (keyName, character, form, item, icon) {
+        var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem.add', this.selector);
+        if (response !== false) {
+          response = this.Super('keyPress', arguments);
+        }
+        return response;
+      },
+      click: function (form, item, icon) {
+        item.openProcess();
       }
     }];
 
@@ -767,6 +788,17 @@ isc.OBSelectorItem.addProperties({
       this.selectorWindow.selectorGrid.invalidateCache();
     }
     this.selectorWindow.open();
+  },
+
+  openProcess: function () {
+    var standardWindow = this.form.view.standardWindow;
+    standardWindow.openProcess({
+      callerField: this,
+      paramWindow: true,
+      processId: this.processId,
+      windowId: this.form.view.windowId,
+      windowTitle: OB.I18N.getLabel('OBUISEL_AddNewRecord', [this.title])
+    });
   },
 
   keyPress: function (item, form, keyName, characterValue) {

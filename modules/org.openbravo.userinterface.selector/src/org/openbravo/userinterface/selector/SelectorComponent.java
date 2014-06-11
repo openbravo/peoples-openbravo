@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2013 Openbravo SLU
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -327,6 +327,14 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     // in all other cases use an identifier
     return JsonConstants.IDENTIFIER;
+  }
+
+  public String getProcessDefinition() {
+    if (getSelector().getProcessDefintion() != null) {
+      return getSelector().getProcessDefintion().getId();
+    } else {
+      return "";
+    }
   }
 
   private boolean isBoolean(SelectorField selectorField) {
