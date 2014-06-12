@@ -79,9 +79,15 @@
                   oldLines.push(l.clone());
                 });
                 me.applyPromotionsImp(auxReceipt, undefined, true);
+              }else {
+                receipt.trigger('applyPromotionsFinished');
               }
+            }else {
+              receipt.trigger('applyPromotionsFinished');
             }
 
+          } else {
+            receipt.trigger('applyPromotionsFinished');
           }
         });
 
