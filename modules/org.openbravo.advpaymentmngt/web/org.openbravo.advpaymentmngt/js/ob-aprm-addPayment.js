@@ -534,6 +534,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       }
     }
     OB.APRM.AddPayment.updateDifference(form);
+    OB.APRM.AddPayment.updateConvertedAmount(view, form, false);
   }
 
   // force redraw to ensure display logic is properly executed
