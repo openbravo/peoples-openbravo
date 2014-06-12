@@ -67,7 +67,7 @@ OB.Utilities.Action.set('showMsgInView', function (paramObj) {
 //* {{{msgType}}}: The message type. It can be 'success', 'error', 'info' or 'warning'
 //* {{{msgTitle}}}: The title of the message.
 //* {{{msgText}}}: The text of the message.
-//* {{{force}}}: If it should force the message to be show in the popup.
+//* {{{force}}}: (Optional) If it should force the message to be show in the popup.
 //               Typically it is used in 'error' cases with 'retryExecution' set as 'true'
 OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
   var processView = paramObj._processView;
@@ -124,18 +124,32 @@ OB.Utilities.Action.set('openDirectTab', function (paramObj) {
 // It sets a given value in the caller field (if it exists)
 // Parameters:
 // * {{{value}}}: The value to be set
+// * {{{fetchBeforeSet}}}: (Optional, 'false' by default) If 'true', it does a fetch of the caller field before set the value
+// * {{{map}}}: (Optional) If the caller field is a select/combo (or a derivative), it allows
+//              to define a map for the passed value to be displayed in the select/combo
 OB.Utilities.Action.set('setCallerFieldValue', function (paramObj) {
-  var callerField = paramObj._processView.callerField;
+  var callerField = paramObj._processView.callerField,
+      valueMapObj = {};
   if (!callerField) {
     return;
   }
+  if (paramObj.fetchBeforeSet && typeof callerField.fetchData === 'function') {
+    callerField.fetchData(function () {
+      paramObj.fetchBeforeSet = false;
+      OB.Utilities.Action.execute('setCallerFieldValue', paramObj);
+    });
+    return;
+  }
+  if (paramObj.value && paramObj.map && typeof callerField.setValueMap === 'function') {
+    valueMapObj[paramObj.value] = paramObj.map;
+    callerField.setValueMap(valueMapObj);
+  }
   if (typeof callerField.setValue === 'function') {
-    if (typeof callerField.fetchData === 'function') {
-      callerField.fetchData(function () {
-        callerField.setValue(paramObj.value);
-      });
-    } else {
-      callerField.setValue(paramObj.value);
+    callerField.setValue(paramObj.value);
+    if (typeof callerField.valueChangeActions === 'function') {
+      // The selector-item case has a 'valueChangeActions' function that triggers 'handleItemChange' and focus logic.
+      // It needs to be executed after the value has been set.
+      callerField.valueChangeActions();
     }
   }
 });

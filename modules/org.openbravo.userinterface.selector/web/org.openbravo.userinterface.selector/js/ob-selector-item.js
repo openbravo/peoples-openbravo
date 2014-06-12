@@ -656,8 +656,7 @@ isc.OBSelectorItem.addProperties({
   },
 
   setValueFromRecord: function (record, fromPopup) {
-    var currentValue = this.getValue(),
-        identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
+    var identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
         i;
     this._notUpdatingManually = true;
     if (!record) {
@@ -691,6 +690,13 @@ isc.OBSelectorItem.addProperties({
       this.updateValueMap();
     }
 
+    this.valueChangeActions();
+
+    delete this._notUpdatingManually;
+  },
+
+  valueChangeActions: function () {
+    var currentValue = this.getValue();
     if (this.form && this.form.handleItemChange) {
       this._hasChanged = true;
       this.form.handleItemChange(this);
@@ -702,7 +708,6 @@ isc.OBSelectorItem.addProperties({
     if (currentValue && this.form.focusInNextItem && isc.EH.getKeyName() !== 'Tab') {
       this.form.focusInNextItem(this.name);
     }
-    delete this._notUpdatingManually;
   },
 
   blur: function (form, item) {
