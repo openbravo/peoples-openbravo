@@ -755,39 +755,6 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 BigDecimal psdWriteoffAmount = paymentScheduleDetail.getWriteoffAmount();
                 BigDecimal psdAmount = paymentScheduleDetail.getAmount();
                 BigDecimal amount = psdAmount.add(psdWriteoffAmount);
-                if (psdWriteoffAmount.signum() != 0 && strAction.equals("RE")) {
-                  // Restore write off
-                  List<FIN_PaymentScheduleDetail> outstandingPDSs = FIN_AddPayment
-                      .getOutstandingPSDs(paymentScheduleDetail);
-                  BigDecimal outstandingDebtAmount = BigDecimal.ZERO;
-                  if (outstandingPDSs.size() > 0) {
-                    outstandingPDSs.get(0).setAmount(
-                        outstandingPDSs.get(0).getAmount().add(psdWriteoffAmount));
-                    OBDal.getInstance().save(outstandingPDSs.get(0));
-                  } else {
-                    FIN_PaymentScheduleDetail outstandingPSD = (FIN_PaymentScheduleDetail) DalUtil
-                        .copy(paymentScheduleDetail, false);
-                    outstandingPSD.setAmount(psdWriteoffAmount);
-                    if (paymentScheduleDetail.getDoubtfulDebtAmount().signum() != 0) {
-                      if (psdWriteoffAmount
-                          .compareTo(paymentScheduleDetail.getDoubtfulDebtAmount()) >= 0) {
-                        outstandingDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount();
-                      } else {
-                        outstandingDebtAmount = psdWriteoffAmount;
-                      }
-                    }
-                    outstandingPSD.setDoubtfulDebtAmount(outstandingDebtAmount);
-                    outstandingPSD.setWriteoffAmount(BigDecimal.ZERO);
-                    outstandingPSD.setPaymentDetails(null);
-                    OBDal.getInstance().save(outstandingPSD);
-                  }
-                  paymentScheduleDetail.setWriteoffAmount(BigDecimal.ZERO);
-                  paymentScheduleDetail.setDoubtfulDebtAmount(paymentScheduleDetail
-                      .getDoubtfulDebtAmount().subtract(outstandingDebtAmount));
-                  paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(BigDecimal.ZERO);
-                  OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
-                  OBDal.getInstance().save(paymentScheduleDetail);
-                }
                 if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
                   // Remove invoice description related to the credit payments
                   final Invoice invoice = paymentScheduleDetail.getInvoicePaymentSchedule()

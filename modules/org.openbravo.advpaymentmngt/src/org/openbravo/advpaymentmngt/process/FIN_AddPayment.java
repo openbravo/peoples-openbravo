@@ -242,13 +242,15 @@ public class FIN_AddPayment {
       // Detail for this payment already exists. Payment being edited
       // If amount has changed payment schedule details needs to be updated. Aggregate amount
       // coming from unpaid schedule detail which remains unpaid
-      if (paymentScheduleDetail.getAmount().compareTo(paymentDetailAmount) != 0) {
+      if (paymentScheduleDetail.getAmount().add(paymentScheduleDetail.getWriteoffAmount())
+          .compareTo(paymentDetailAmount) != 0) {
         // update Amounts as they have changed
         assignedAmount = assignedAmount.subtract(paymentScheduleDetail.getPaymentDetails()
             .getAmount());
         // update detail with the new value
         List<FIN_PaymentScheduleDetail> outStandingPSDs = getOutstandingPSDs(paymentScheduleDetail);
-        BigDecimal difference = paymentScheduleDetail.getAmount().subtract(paymentDetailAmount);
+        BigDecimal difference = paymentScheduleDetail.getAmount()
+            .add(paymentScheduleDetail.getWriteoffAmount()).subtract(paymentDetailAmount);
         // Assume doubtful debt is always positive
         BigDecimal doubtFulDebtAmount = BigDecimal.ZERO;
         if (outStandingPSDs.size() == 0) {

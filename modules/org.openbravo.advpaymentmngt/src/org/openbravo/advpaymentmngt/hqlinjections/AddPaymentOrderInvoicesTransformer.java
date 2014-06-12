@@ -125,9 +125,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     selectClause.append(" COALESCE(ips.amount, ops.amount) as expectedAmount, ");
     selectClause
         .append(" COALESCE(inv.grandTotalAmount, ord.grandTotalAmount) as invoicedAmount, ");
-    selectClause.append(" SUM(psd.amount) as outstandingAmount, ");
+    selectClause.append(" SUM(psd.amount + psd.writeoffAmount) as outstandingAmount, ");
     selectClause.append(" COALESCE(sum(pd.amount), 0) as amount, ");
-    selectClause.append(" case when 0 < 1 then false else true end as writeoff, ");
+    selectClause
+        .append(" case when sum(psd.writeoffAmount) <> 0 then true else false end as writeoff, ");
     if (hasSelectedIds) {
       // if there are selected ids selection is done in the client.
       selectClause.append(" case when 1 < 0 then true else false end as OB_Selected ");
