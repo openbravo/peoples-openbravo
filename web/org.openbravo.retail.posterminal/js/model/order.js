@@ -1893,10 +1893,10 @@
 
       _.each(this.get('lines').models, function (line) {
         if (line.get('qty') > 0) {
-          linesPending.push(line);
+          linesPending.add(line);
         }
       });
-      this.get('lines').models = linesPending.models;
+      this.get('lines').reset(linesPending.models);
     },
 
     removeLinesWithoutPromotions: function () {
