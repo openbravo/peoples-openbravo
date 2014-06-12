@@ -395,8 +395,8 @@ OB.APRM.AddPayment.updateDifference = function (form) {
       expectedDifferenceItem = form.getItem('expectedDifference'),
       paymentId = form.getItem('fin_payment_id').getValue() || '',
       receivedFrom = form.getItem('received_from').getValue() || '',
-      diffAmt = actualPayment.add(credit).subtract(total);
-  expectedDiffAmt = expectedPayment.add(credit).subtract(total);
+      diffAmt = actualPayment.add(credit).subtract(total),
+      expectedDiffAmt = expectedPayment.add(credit).subtract(total);
   differenceItem.setValue(Number(diffAmt.toString()));
   expectedDifferenceItem.setValue(Number(expectedDiffAmt.toString()));
 
@@ -538,7 +538,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       }
     }
     OB.APRM.AddPayment.updateDifference(form);
-    OB.APRM.AddPayment.updateConvertedAmount(view, form, false);
+    OB.APRM.AddPayment.updateConvertedAmount(null, form, false);
   }
 
   // force redraw to ensure display logic is properly executed
