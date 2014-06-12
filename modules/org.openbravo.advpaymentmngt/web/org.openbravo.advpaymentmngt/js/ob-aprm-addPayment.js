@@ -733,7 +733,7 @@ OB.APRM.AddPayment.updateConvertedAmount = function (view, form, recalcExchangeR
     if (recalcExchangeRate) {
       if (actualConverted && actualPayment) {
         if (actualPayment.compareTo(newConvertedAmount) !== 0) {
-          newExchangeRate = actualConverted.divide(actualPayment, currencyPrecision, 2);
+          newExchangeRate = actualConverted.divide(actualPayment, 15, 2);
           exchangeRateItem.setValue(Number(newExchangeRate.toString()));
         }
       } else {
