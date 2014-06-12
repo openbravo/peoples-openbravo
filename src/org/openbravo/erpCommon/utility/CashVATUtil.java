@@ -370,30 +370,29 @@ public class CashVATUtil {
                 || invoicedocumentType.equals(AcctServer.DOCTYPE_ARProForma)
                 || invoicedocumentType.equals(AcctServer.DOCTYPE_RMSalesInvoice)) {
               if (isReversal) {
-                final FactLine factLine1 = fact.createLine(line,
-                    m_tax.getAccount(DocTax.ACCTTYPE_TaxDue_Trans, as, conn), cCurrencyID, "",
+                final FactLine factLine1 = fact.createLine(line, m_tax.getAccount(
+                    DocTax.ACCTTYPE_TaxDue_Trans, as, conn), invoice.getCurrency().getId(), "",
                     taxAmt.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), documentType, conn);
-                factLine2 = fact.createLine(line,
-                    m_tax.getAccount(DocTax.ACCTTYPE_TaxDue, as, conn), cCurrencyID,
+                factLine2 = fact.createLine(line, m_tax
+                    .getAccount(DocTax.ACCTTYPE_TaxDue, as, conn), invoice.getCurrency().getId(),
                     taxAmt.toString(), "", Fact_Acct_Group_ID, nextSeqNo(factLine1.m_SeqNo),
                     documentType, conn);
               } else {
-                final FactLine factLine1 = fact
-                    .createLine(line, m_tax.getAccount(DocTax.ACCTTYPE_TaxDue_Trans, as, conn),
-                        cCurrencyID, taxAmt.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                        documentType, conn);
-                factLine2 = fact.createLine(line,
-                    m_tax.getAccount(DocTax.ACCTTYPE_TaxDue, as, conn), cCurrencyID, "",
-                    taxAmt.toString(), Fact_Acct_Group_ID, nextSeqNo(factLine1.m_SeqNo),
+                final FactLine factLine1 = fact.createLine(line, m_tax.getAccount(
+                    DocTax.ACCTTYPE_TaxDue_Trans, as, conn), invoice.getCurrency().getId(), taxAmt
+                    .toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), documentType, conn);
+                factLine2 = fact.createLine(line, m_tax
+                    .getAccount(DocTax.ACCTTYPE_TaxDue, as, conn), invoice.getCurrency().getId(),
+                    "", taxAmt.toString(), Fact_Acct_Group_ID, nextSeqNo(factLine1.m_SeqNo),
                     documentType, conn);
               }
             }// ARC
             else if (invoicedocumentType.equals(AcctServer.DOCTYPE_ARCredit)) {
-              final FactLine factLine1 = fact.createLine(line,
-                  m_tax.getAccount(DocTax.ACCTTYPE_TaxDue_Trans, as, conn), cCurrencyID, "",
+              final FactLine factLine1 = fact.createLine(line, m_tax.getAccount(
+                  DocTax.ACCTTYPE_TaxDue_Trans, as, conn), invoice.getCurrency().getId(), "",
                   taxAmt.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), documentType, conn);
               factLine2 = fact.createLine(line, m_tax.getAccount(DocTax.ACCTTYPE_TaxDue, as, conn),
-                  cCurrencyID, taxAmt.toString(), "", Fact_Acct_Group_ID,
+                  invoice.getCurrency().getId(), taxAmt.toString(), "", Fact_Acct_Group_ID,
                   nextSeqNo(factLine1.m_SeqNo), documentType, conn);
             }
             // API
@@ -401,12 +400,11 @@ public class CashVATUtil {
               if (isReversal) {
                 final FactLine factLine1 = fact
                     .createLine(line, m_tax.getAccount(DocTax.ACCTTYPE_TaxCredit_Trans, as, conn),
-                        cCurrencyID, taxAmt.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                        documentType, conn);
-                factLine2 = fact.createLine(line,
-                    m_tax.getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn), cCurrencyID, "",
-                    taxAmt.toString(), Fact_Acct_Group_ID, nextSeqNo(factLine1.m_SeqNo),
-                    documentType, conn);
+                        invoice.getCurrency().getId(), taxAmt.toString(), "", Fact_Acct_Group_ID,
+                        nextSeqNo(SeqNo), documentType, conn);
+                factLine2 = fact.createLine(line, m_tax.getAccount(DocTax.ACCTTYPE_TaxCredit, as,
+                    conn), invoice.getCurrency().getId(), "", taxAmt.toString(),
+                    Fact_Acct_Group_ID, nextSeqNo(factLine1.m_SeqNo), documentType, conn);
               } else {
                 final FactLine factLine1 = fact.createLine(line,
                     m_tax.getAccount(DocTax.ACCTTYPE_TaxCredit_Trans, as, conn), cCurrencyID, "",
@@ -419,13 +417,12 @@ public class CashVATUtil {
             }
             // APC
             else if (invoicedocumentType.equals(AcctServer.DOCTYPE_APCredit)) {
-              final FactLine factLine1 = fact.createLine(line,
-                  m_tax.getAccount(DocTax.ACCTTYPE_TaxCredit_Trans, as, conn), cCurrencyID,
-                  taxAmt.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), documentType, conn);
-              factLine2 = fact.createLine(line,
-                  m_tax.getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn), cCurrencyID, "",
-                  taxAmt.toString(), Fact_Acct_Group_ID, nextSeqNo(factLine1.m_SeqNo),
-                  documentType, conn);
+              final FactLine factLine1 = fact.createLine(line, m_tax.getAccount(
+                  DocTax.ACCTTYPE_TaxCredit_Trans, as, conn), invoice.getCurrency().getId(), taxAmt
+                  .toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), documentType, conn);
+              factLine2 = fact.createLine(line, m_tax.getAccount(DocTax.ACCTTYPE_TaxCredit, as,
+                  conn), invoice.getCurrency().getId(), "", taxAmt.toString(), Fact_Acct_Group_ID,
+                  nextSeqNo(factLine1.m_SeqNo), documentType, conn);
             }
           }
         }
