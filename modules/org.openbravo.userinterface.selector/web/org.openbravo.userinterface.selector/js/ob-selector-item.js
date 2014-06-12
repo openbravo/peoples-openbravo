@@ -36,7 +36,7 @@ isc.OBSelectorPopupWindow.addProperties({
 
   initWidget: function () {
     var selectorWindow = this,
-        okButton, cancelButton, operator, i, hasIdentifier;
+        okButton, createNewButton, cancelButton, operator, i, hasIdentifier;
 
     this.setFilterEditorProperties(this.selectorGridFields);
 
@@ -44,6 +44,32 @@ isc.OBSelectorPopupWindow.addProperties({
       title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
       click: function () {
         selectorWindow.setValueInField();
+      }
+    });
+    createNewButton = isc.OBFormButton.create({
+      title: OB.I18N.getLabel('UINAVBA_CREATE_NEW'),
+      showIf: function () {
+        if (selectorWindow.selector.processId) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      click: function () {
+        var enteredValues = [],
+            criteria, value, i;
+        if (selectorWindow && selectorWindow.selectorGrid && selectorWindow.selectorGrid.filterEditor && selectorWindow.selectorGrid.filterEditor.getValues()) {
+          criteria = selectorWindow.selectorGrid.filterEditor.getValues().criteria;
+          if (Object.prototype.toString.call(criteria) === '[object Array]') {
+            for (i = 0; i < criteria.length; i++) {
+              value = {};
+              value[criteria[i].fieldName] = criteria[i].value;
+              enteredValues.push(value);
+            }
+          }
+        }
+        selectorWindow.closeClick();
+        selectorWindow.selector.openProcess(enteredValues);
       }
     });
     cancelButton = isc.OBFormButton.create({
@@ -259,6 +285,8 @@ isc.OBSelectorPopupWindow.addProperties({
       height: this.buttonBarHeight,
       defaultLayoutAlign: 'center',
       members: [isc.LayoutSpacer.create({}), okButton, isc.LayoutSpacer.create({
+        width: this.buttonBarSpace
+      }), createNewButton, isc.LayoutSpacer.create({
         width: this.buttonBarSpace
       }), cancelButton, isc.LayoutSpacer.create({})]
     })];
@@ -614,6 +642,8 @@ isc.OBSelectorItem.addProperties({
       showIf: function () {
         if (this.selector.processId) {
           return true;
+        } else {
+          return false;
         }
       },
       keyPress: function (keyName, character, form, item, icon) {
@@ -624,7 +654,9 @@ isc.OBSelectorItem.addProperties({
         return response;
       },
       click: function (form, item, icon) {
-        item.openProcess();
+        var enteredValue = {};
+        enteredValue[item.defaultPopupFilterField] = item.getEnteredValue();
+        item.openProcess([enteredValue]);
       }
     }];
 
@@ -795,10 +827,11 @@ isc.OBSelectorItem.addProperties({
     this.selectorWindow.open();
   },
 
-  openProcess: function () {
+  openProcess: function (enteredValues) {
     var standardWindow = this.form.view.standardWindow;
     standardWindow.openProcess({
       callerField: this,
+      enteredValues: enteredValues,
       paramWindow: true,
       processId: this.processId,
       windowId: this.form.view.windowId,
