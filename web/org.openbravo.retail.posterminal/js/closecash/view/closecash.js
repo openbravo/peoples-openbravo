@@ -89,7 +89,6 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.Button',
     name: 'btnNext',
-    id: 'OB.UI.id.CashUp.NextStep.Button',
     i18nLabel: 'OBPOS_LblNextStep',
     stepCount: 1,
     span: 4,
@@ -185,7 +184,6 @@ enyo.kind({
         classes: 'span12',
         kind: 'OB.OBPOSCashUp.UI.PostPrintClose',
         name: 'postPrintClose',
-        id: 'OB.UI.id.CashUp.PostPrintClose',
         showing: false
       }]
     },

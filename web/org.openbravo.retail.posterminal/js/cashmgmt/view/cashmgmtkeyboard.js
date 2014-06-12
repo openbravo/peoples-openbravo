@@ -86,7 +86,6 @@ enyo.kind({
 
     this.addToolbar({
       name: 'cashMgmtToolbar',
-      id: 'OB.UI.id.CashMgmtToolbar',
       buttons: buttons
     });
     this.showToolbar('cashMgmtToolbar');

@@ -27,7 +27,6 @@ enyo.kind({
   }, {
     kind: 'OB.UI.ToolbarButton',
     name: 'btnDone',
-    id: 'OB.OBPOSCashMgmt.UI.LeftToolbar.btnDone',
     disabled: false,
     i18nLabel: 'OBPOS_LblDone',
     stepCount: 0,
@@ -115,13 +114,11 @@ enyo.kind({
       kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
       i18nHeader: 'OBPOS_SelectDepositDestinations',
       name: 'modaldepositevents',
-      id: 'OB.UI.id.modalDepositEvents',
       type: 'cashMgmtDepositEvents'
     }, {
       kind: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
       i18nHeader: 'OBPOS_SelectDropDestinations',
       name: 'modaldropevents',
-      id: 'OB.UI.id.modalDropEvents',
       type: 'cashMgmtDropEvents'
     }]
   }],

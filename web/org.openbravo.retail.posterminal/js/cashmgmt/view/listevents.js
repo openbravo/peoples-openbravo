@@ -30,7 +30,6 @@ enyo.kind({
         //tableview
         name: 'eventList',
         kind: 'OB.UI.Table',
-        id: 'OB.UI.id.eventsList',
         style: 'overflow: auto; max-height: 600px',
         renderLine: 'OB.OBPOSCashMgmt.UI.ListEventLine',
         renderEmpty: 'OB.UI.RenderEmpty'
@@ -48,7 +47,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ListEventLine',
   kind: 'OB.UI.SelectButton',
-  id: 'OB.UI.id.listEventLine',
   style: 'height: 60px; background-color: #dddddd; border: 1px solid #ffffff;',
   events: {
     onHideThisPopup: ''

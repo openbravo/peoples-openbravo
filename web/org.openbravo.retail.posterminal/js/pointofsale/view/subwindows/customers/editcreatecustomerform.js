@@ -92,8 +92,7 @@ enyo.kind({
       components: [{
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
-          id: 'OB.UI.id.customer.button.save'
+          kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave'
         }]
       }, {
         style: 'display: table-cell;',

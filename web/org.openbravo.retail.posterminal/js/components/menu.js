@@ -146,7 +146,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.MenuLayaway',
   kind: 'OB.UI.MenuAction',
-  id: 'OB.UI.id.Menu.Layaway.LayawayReceipt',
   permission: 'OBPOS_receipt.layawayReceipt',
   events: {
     onShowDivText: ''
