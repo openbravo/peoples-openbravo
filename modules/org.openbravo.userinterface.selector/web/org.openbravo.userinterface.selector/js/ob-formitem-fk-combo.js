@@ -194,7 +194,7 @@ isc.OBFKComboItem.addProperties({
     if (key === 'Enter' && event.itemInfo && event.itemInfo.item && event.itemInfo.item.name && event.itemInfo.item.name !== this.name) {
       return true;
     } else {
-      this.Super('handleKeyPress', arguments);
+      return this.Super('handleKeyPress', arguments);
     }
   }
 });
