@@ -154,8 +154,8 @@ abstract class AddPaymentDefaultValuesHandler {
 
   String getDefaultPaymentMethod(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("inpfinPaymentmethodId") && context.get("inpfinPaymentmethodId") != null
-        && StringUtils.isNotBlank((String) context.get("inpfinPaymentmethodId"))) {
+    if (context.has("inpfinPaymentmethodId") && context.getString("inpfinPaymentmethodId") != null
+        && StringUtils.isNotBlank((String) context.getString("inpfinPaymentmethodId"))) {
       return context.getString("inpfinPaymentmethodId");
     }
     String strBPartnerId = getBusinessPartner(requestMap);
