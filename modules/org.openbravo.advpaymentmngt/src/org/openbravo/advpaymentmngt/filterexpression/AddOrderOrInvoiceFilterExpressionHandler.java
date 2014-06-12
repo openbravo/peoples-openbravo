@@ -33,6 +33,7 @@ import org.hibernate.Session;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +89,7 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
 
   private boolean hasDetailsWithDifferentPaymentMethods(String paymentId) {
     final StringBuilder hqlString = new StringBuilder();
-    hqlString.append("select coalesce(ipspm, opspm) as pm");
+    hqlString.append("select coalesce(ipspm.id, opspm.id) as pm");
     hqlString.append(" from FIN_Payment_ScheduleDetail as psd");
     hqlString.append(" join psd.paymentDetails as pd");
     hqlString.append(" left join psd.orderPaymentSchedule as ops");
@@ -102,7 +103,12 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
     final Session session = OBDal.getInstance().getSession();
     final Query query = session.createQuery(hqlString.toString());
     query.setParameter("paymentId", paymentId);
-
-    return query.list().size() > 1;
+    FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, paymentId);
+    for (Object pmId : query.list()) {
+      if (!payment.getPaymentMethod().getId().equals((String) pmId)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
