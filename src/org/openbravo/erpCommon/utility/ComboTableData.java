@@ -1318,7 +1318,7 @@ public class ComboTableData {
               actual_value, false);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
-          if (value == null || value.equals(""))
+          if (value == null || value.equals("") || "null".equals(value))
             lparameters.remove(strAux.toUpperCase());
           else
             lparameters.put(strAux.toUpperCase(), value);
