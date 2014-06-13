@@ -510,20 +510,13 @@
       //MASTER DATA REFRESH
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
       if (minIncRefresh) {
-        if (this.get('loggedUsingCache')) {
-          setTimeout(function () {
-            OB.MobileApp.model.loadModels(null, true);
-            if (me.get('loggedUsingCache')) {
-              me.set('loggedUsingCache', false);
-              me.renderTerminalMain();
-            }
-          }, 3000);
-        } else {
+        setTimeout(function () {
+          OB.MobileApp.model.loadModels(null, true);
           if (me.get('loggedUsingCache')) {
             me.set('loggedUsingCache', false);
             me.renderTerminalMain();
           }
-        }
+        }, this.get('loggedUsingCache') ? 3000 : 1);
         loadModelsIncFunc = function () {
           OB.MobileApp.model.loadModels(null, true);
         };
