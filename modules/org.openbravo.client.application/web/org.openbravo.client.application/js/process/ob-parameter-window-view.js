@@ -50,53 +50,31 @@ isc.OBParameterWindowView.addProperties({
   initWidget: function () {
     var i, field, items = [],
         buttonLayout = [],
-        okButton, newButton, cancelButton, view = this,
-        newShowIf, params;
+        newButton, cancelButton, view = this,
+        newShowIf, params, updatedExpandSection;
+
 
     // Buttons
 
     function actionClick() {
-      var hasErrors = false,
-          grid, fields, selection, len, allRows, lineNumbers, i, j, record, undef;
       view.messageBar.hide();
-      if (view.grid && view.grid.viewGrid) {
-        grid = view.grid.viewGrid;
-        fields = grid.getFields();
-        selection = grid.getSelectedRecords() || [];
-        len = selection.length;
-        allRows = grid.data.allRows || grid.data.localData || grid.data;
-        for (i = 0; i < len; i++) {
-          record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
-          for (j = 0; j < fields.length; j++) {
-            if (fields[j].required) {
-              if (record[fields[j].name] === null || record[fields[j] === undef]) {
-                hasErrors = true;
-                if (lineNumbers === undef) {
-                  lineNumbers = grid.getRecordIndex(selection[i]).toString();
-                } else {
-                  lineNumbers = lineNumbers + "," + grid.getRecordIndex(selection[i]).toString();
-                }
-              }
-            }
-          }
-        }
-      }
-      if (!hasErrors) {
-        if (view.validate()) {
-          view.doProcess(this._buttonValue);
-        } else {
-          // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
-          // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
-          if (!view.messageBar.isVisible()) {
+      view.theForm.errorMessage = '';
+      if (view.validate()) {
+        view.doProcess(this._buttonValue);
+      } else {
+        // If the messageBar is visible, it means that it has been set due to a custom validation inside view.validate()
+        // so we don't want to overwrite it with the generic OBUIAPP_ErrorInFields message
+        if (!view.messageBar.isVisible()) {
+          if (view.theForm.errorMessage) {
+            view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_FillMandatoryFields') + ' ' + view.theForm.errorMessage);
+          } else {
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_ErrorInFields'));
           }
         }
-      } else {
-        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_FillMandatoryFields') + " " + lineNumbers);
       }
     }
 
-    okButton = isc.OBFormButton.create({
+    this.okButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUIAPP_Done'),
       realTitle: '',
       _buttonValue: 'DONE',
@@ -129,8 +107,8 @@ isc.OBParameterWindowView.addProperties({
         }
       }
     } else {
-      buttonLayout.push(okButton);
-      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', okButton);
+      buttonLayout.push(this.okButton);
+      OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', this.okButton);
       if (this.popup) {
         buttonLayout.push(isc.LayoutSpacer.create({
           width: 32
@@ -164,29 +142,65 @@ isc.OBParameterWindowView.addProperties({
     // Message bar
     this.messageBar = isc.OBMessageBar.create({
       visibility: 'hidden',
-      view: this
+      view: this,
+      show: function () {
+        var showMessageBar = true;
+        this.Super('show', arguments);
+        view.resized(showMessageBar);
+      },
+      hide: function () {
+        var showMessageBar = false;
+        this.Super('hide', arguments);
+        view.resized(showMessageBar);
+      }
     });
     this.members.push(this.messageBar);
 
     newShowIf = function (item, value, form, values) {
-      var currentValues = isc.shallowClone(values || form.view.getCurrentValues()),
-          context = {},
-          originalShowIfValue = false;
+      var currentValues, originalShowIfValue = false,
+          parentContext;
 
+      currentValues = isc.shallowClone(values) || {};
+      if (isc.isA.emptyObject(currentValues) && form && form.view) {
+        currentValues = isc.shallowClone(form.view.getCurrentValues());
+      } else if (isc.isA.emptyObject(currentValues) && form && form.getValues) {
+        currentValues = isc.shallowClone(form.getValues());
+      }
       OB.Utilities.fixNull250(currentValues);
+      parentContext = (this.view.sourceView && this.view.sourceView.getContextInfo(false, true, true, true)) || {};
 
       try {
         if (isc.isA.Function(this.originalShowIf)) {
-          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, context);
+          originalShowIfValue = this.originalShowIf(item, value, form, currentValues, parentContext);
         } else {
           originalShowIfValue = isc.JSON.decode(this.originalShowIf);
         }
       } catch (_exception) {
         isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
       }
+      if (originalShowIfValue && item.defaultFilter !== null && item.getType() === 'OBPickEditGridItem') {
+        item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
+        item.canvas.viewGrid.filterByEditor();
+      }
+      if (this.view && this.view.theForm) {
+        this.view.theForm.markForRedraw();
+      }
       return originalShowIfValue;
     };
 
+    // this function is only used in OBSectionItems that are collapsed originally
+    // this is done to force the data fetch of its stored OBPickEditGridItems
+    updatedExpandSection = function () {
+      var i, itemName, item;
+      this.originalExpandSection();
+      for (i = 0; i < this.itemIds.length; i++) {
+        itemName = this.itemIds[i];
+        item = this.form.getItem(itemName);
+        if (item.type === 'OBPickEditGridItem' && !isc.isA.ResultSet(item.canvas.viewGrid.data)) {
+          item.canvas.viewGrid.fetchData(item.canvas.viewGrid.getCriteria());
+        }
+      }
+    };
     // Parameters
     if (this.viewProperties.fields) {
       for (i = 0; i < this.viewProperties.fields.length; i++) {
@@ -199,56 +213,42 @@ isc.OBParameterWindowView.addProperties({
           field.originalShowIf = field.showIf;
           field.showIf = newShowIf;
         }
-        if (field.isGrid) {
-          this.grid = isc.OBPickAndExecuteView.create(field);
-        } else {
-          items.push(field);
+        if (field.onChangeFunction) {
+          // the default
+          field.onChangeFunction.sort = 50;
+
+          OB.OnChangeRegistry.register(this.viewId, field.name, field.onChangeFunction, 'default');
         }
+
+        if (field.type === 'OBSectionItem' && !field.sectionExpanded) {
+          // modifies the expandSection function of OBSectionItems collapsed originally to avoid having 
+          // unloaded grids when a section is expanded for the first time
+          field.originalExpandSection = isc.OBSectionItem.getPrototype().expandSection;
+          field.expandSection = updatedExpandSection;
+        }
+        items.push(field);
+
       }
 
       if (items.length !== 0) {
         // create form if there items to include
-        this.theForm = isc.DynamicForm.create({
-          paramWindow: this,
-          width: '99%',
-          titleSuffix: '',
-          requiredTitleSuffix: '',
-          autoFocus: true,
-          titleOrientation: 'top',
-          numCols: 4,
-          showErrorIcons: false,
-          colWidths: ['*', '*', '*', '*'],
-          itemChanged: function (item, newValue) {
-            var affectedParams, i, field;
-
-            this.paramWindow.handleReadOnlyLogic();
-
-            // Check validation rules (subordinated fields), when value of a
-            // parent field is changed, all its subordinated are reset
-            affectedParams = this.paramWindow.dynamicColumns[item.name];
-            if (!affectedParams) {
-              return;
-            }
-            for (i = 0; i < affectedParams.length; i++) {
-              field = this.getField(affectedParams[i]);
-              if (field && field.setValue) {
-                field.setValue(null);
-              }
-            }
-          }
+        this.theForm = isc.OBParameterWindowForm.create({
+          paramWindow: this
         });
-
+        // If there is only one paremeter, it is a grid and the window is opened in a popup, then the window is a P&E window
+        if (items && items.length === 1 && items[0].type === 'OBPickEditGridItem' && this.popup) {
+          this.isPickAndExecuteWindow = true;
+        }
         this.theForm.setItems(items);
-        this.members.push(this.theForm);
+        this.formContainerLayout = isc.OBFormContainerLayout.create({});
+        this.formContainerLayout.addMember(this.theForm);
+        this.members.push(this.formContainerLayout);
       }
-    }
-    if (this.grid) {
-      this.members.push(this.grid);
     }
 
 
     if (this.popup) {
-      this.firstFocusedItem = okButton;
+      this.firstFocusedItem = this.okButton;
       this.popupButtons = isc.HLayout.create({
         align: 'center',
         width: '100%',
@@ -392,13 +392,6 @@ isc.OBParameterWindowView.addProperties({
         return validForm;
       }
     }
-
-    if (this.grid) {
-      viewGrid = this.grid.viewGrid;
-
-      viewGrid.endEditing();
-      return !viewGrid.hasErrors();
-    }
     return true;
   },
 
@@ -407,9 +400,6 @@ isc.OBParameterWindowView.addProperties({
     if (processing) {
       if (this.theForm) {
         this.theForm.hide();
-      }
-      if (this.grid) {
-        this.grid.hide();
       }
       if (this.popupButtons) {
         this.popupButtons.hide();
@@ -428,9 +418,6 @@ isc.OBParameterWindowView.addProperties({
       if (this.theForm) {
         this.theForm.show();
       }
-      if (this.grid) {
-        this.grid.show();
-      }
 
       this.loading.hide();
     }
@@ -439,7 +426,7 @@ isc.OBParameterWindowView.addProperties({
   doProcess: function (btnValue) {
     var i, tmp, view = this,
         grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
-        selection, len, allRows, params, tab;
+        selection, len, allRows, params, tab, actionHandlerCall;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
     if (this.resultLayout && this.resultLayout.destroy) {
       this.resultLayout.destroy();
@@ -453,44 +440,31 @@ isc.OBParameterWindowView.addProperties({
       tab.setTitle(OB.I18N.getLabel('OBUIAPP_ProcessTitle_Executing', [this.tabTitle]));
     }
 
-    if (this.grid) {
-      // TODO: Support for multiple grids
-      grid = this.grid.viewGrid;
-      selection = grid.getSelectedRecords() || [];
-      len = selection.length;
-      allRows = grid.data.allRows || grid.data.localData || grid.data;
-      allProperties._selection = [];
-      allProperties._allRows = [];
-
-      for (i = 0; i < len; i++) {
-        tmp = isc.addProperties({}, selection[i], grid.getEditedRecord(grid.getRecordIndex(selection[i])));
-        allProperties._selection.push(tmp);
-      }
-
-      len = (allRows && allRows.length) || 0;
-      // Only send _allRows if all rows are cached
-      if (!(grid.data.resultSize) || (len < grid.data.resultSize)) {
-        for (i = 0; i < len; i++) {
-          tmp = isc.addProperties({}, allRows[i], grid.getEditedRecord(grid.getRecordIndex(allRows[i])));
-          allProperties._allRows.push(tmp);
-        }
-      }
-    }
-
     allProperties._buttonValue = btnValue || 'DONE';
 
     allProperties._params = this.getContextInfo();
 
-    OB.RemoteCallManager.call(this.actionHandler, allProperties, {
-      processId: this.processId,
-      windowId: this.windowId
-    }, function (rpcResponse, data, rpcRequest) {
-      view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
-    });
+    actionHandlerCall = function (me) {
+      OB.RemoteCallManager.call(me.actionHandler, allProperties, {
+        processId: me.processId,
+        windowId: me.windowId
+      }, function (rpcResponse, data, rpcRequest) {
+        view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
+      });
+    };
+
+    if (this.clientSideValidation) {
+      this.clientSideValidation(this, actionHandlerCall);
+    } else {
+      actionHandlerCall(this);
+    }
   },
 
-  handleDefaults: function (defaults) {
-    var i, field, def;
+  handleDefaults: function (result) {
+    var i, field, def, defaults = result.defaults,
+        filterExpressions = result.filterExpressions,
+        defaultFilter = {},
+        gridsToBeFiltered = [];
     if (!this.theForm) {
       return;
     }
@@ -507,20 +481,82 @@ isc.OBParameterWindowView.addProperties({
               field.setValue(def.value);
             }
           } else {
-            field.setValue(def);
+            field.setValue(this.getTypeSafeValue(field.typeInstance, def));
           }
         }
       }
+    }
+    for (i in filterExpressions) {
+      if (filterExpressions.hasOwnProperty(i)) {
+        field = this.theForm.getItem(i);
+        defaultFilter = {};
+        isc.addProperties(defaultFilter, filterExpressions[i]);
+        field.setDefaultFilter(defaultFilter);
+        if (field.isVisible() && !field.showIf) {
+          field.canvas.viewGrid.setFilterEditorCriteria(defaultFilter);
+          gridsToBeFiltered.push(field.canvas.viewGrid);
+        }
+      }
+    }
+
+
+    if (this.onLoadFunction) {
+      this.onLoadFunction(this);
+    }
+
+    // filter after applying the onLoadFunction, just in case it has modified the filter editor criteria of a grid.
+    // this way it a double requests for these grids is avoided
+    for (i = 0; i < gridsToBeFiltered.length; i++) {
+      gridsToBeFiltered[i].filterByEditor();
     }
 
     this.handleReadOnlyLogic();
 
     // redraw to execute display logic
     this.theForm.markForRedraw();
+
+    this.okButton.setEnabled(this.allRequiredParametersSet());
+
+    this.handleDisplayLogicForGridColumns();
   },
+
+  /**
+   * Given a string value, it returns the proper value according to the provided type
+   */
+  getTypeSafeValue: function (type, stringValue) {
+    var isNumber;
+    if (!type) {
+      return stringValue;
+    }
+    isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');
+    if (isNumber && OB.Utilities.Number.IsValidValueString(type, stringValue)) {
+      return OB.Utilities.Number.OBMaskedToJS(stringValue, type.decSeparator, type.groupSeparator);
+    } else {
+      return stringValue;
+    }
+  },
+
 
   // Checks params with readonly logic enabling or disabling them based on it
   handleReadOnlyLogic: function () {
+    var form, fields, i, field, parentContext;
+
+    form = this.theForm;
+    if (!form) {
+      return;
+    }
+    parentContext = (this.sourceView && this.sourceView.getContextInfo(false, true, true, true)) || {};
+
+    fields = form.getFields();
+    for (i = 0; i < fields.length; i++) {
+      field = form.getField(i);
+      if (field.readOnlyIf && field.setDisabled) {
+        field.setDisabled(field.readOnlyIf(form.getValues(), parentContext));
+      }
+    }
+  },
+
+  handleDisplayLogicForGridColumns: function () {
     var form, fields, i, field;
 
     form = this.theForm;
@@ -531,8 +567,10 @@ isc.OBParameterWindowView.addProperties({
     fields = form.getFields();
     for (i = 0; i < fields.length; i++) {
       field = form.getField(i);
-      if (field.readOnlyIf && field.setDisabled) {
-        field.setDisabled(field.readOnlyIf(form.getValues()));
+      if (field.canvas) {
+        if (field.canvas.viewGrid) {
+          field.canvas.viewGrid.evaluateDisplayLogicForGridColumns();
+        }
       }
     }
   },
@@ -552,5 +590,20 @@ isc.OBParameterWindowView.addProperties({
     }
 
     return result;
+  },
+
+  // returns true if any non-grid required parameter does not have a value
+  allRequiredParametersSet: function () {
+    var i, item, length = this.theForm.getItems().length,
+        value, undef, nullValue = null;
+    for (i = 0; i < length; i++) {
+      item = this.theForm.getItems()[i];
+      value = item.getValue();
+      // do not take into account the grid parameters when looking for required parameters without value
+      if (item.type !== 'OBPickEditGridItem' && item.required && item.isVisible() && value !== false && value !== 0 && !value) {
+        return false;
+      }
+    }
+    return true;
   }
 });

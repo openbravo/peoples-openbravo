@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -123,6 +123,14 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
 
   public String getProcessId() {
     return process.getId();
+  }
+
+  public String getClientSideValidation() {
+    return process.getClientSideValidation();
+  }
+
+  public String getOnLoadFunction() {
+    return process.getLoadFunction();
   }
 
   public List<org.openbravo.model.ad.domain.List> getButtonList() {

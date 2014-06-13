@@ -291,25 +291,24 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         parameters.put("pageNo", strPageNo);
 
         AccountTreeData[][] trees = new AccountTreeData[strGroups.length][];
-
         for (int i = 0; i < strGroups.length; i++)
           trees[i] = acct[i].getAccounts();
 
         List<HashMap<String, String>> hashMapList = new ArrayList<HashMap<String, String>>();
 
         for (int i = 0; i < trees.length; i++) {
-
           for (int j = 0; j < trees[i].length; j++) {
             HashMap<String, String> hashMap = new HashMap<String, String>();
             hashMap.put("elementLevel", trees[i][j].elementLevel);
             hashMap.put("name", trees[i][j].name);
             hashMap.put("qty", trees[i][j].qty);
             hashMap.put("qtyRef", trees[i][j].qtyRef);
+            hashMap.put("groupname", strGroups[i].name);
+            hashMap.put("pagebreak", strGroups[i].pagebreak);
+
             hashMapList.add(hashMap);
           }
-
         }
-
         FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(hashMapList);
         renderJR(vars, response, strReportName, "pdf", parameters, data, null);
 

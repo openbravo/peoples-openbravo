@@ -46,7 +46,7 @@ OB.APRM.validateMPPUserWarnedAwaiting = false;
 OB.APRM.validateMPPUserWarnedSign = false;
 
 OB.APRM.validateModifyPaymentPlanAmounts = function (item, validator, value, record) {
-  var indRow, allRows = item.grid.data,
+  var indRow, allRows = item.grid.data.allRows,
       row, allGreen = true,
       totalExpected = new BigDecimal("0"),
       totalReceived = new BigDecimal("0"),
@@ -114,7 +114,7 @@ OB.APRM.validatePaymentProposalPickAndEdit = function (item, validator, value, r
     return false;
   }
 
-  var i, row, allRows = item.grid.data,
+  var i, row, allRows = item.grid.data.allRows,
       outstanding = new BigDecimal(String(record.outstanding)),
       paidamount = new BigDecimal(String(record.payment));
 
@@ -152,10 +152,10 @@ OB.APRM.validatePaymentProposalPickAndEdit = function (item, validator, value, r
 };
 
 OB.APRM.addNew = function (grid) {
-  var selectedRecord = grid.view.parentWindow.views[0].getParentRecord();
-  var returnObject = isc.addProperties({}, grid.data[0]);
-  var indRow, allRows = grid.data,
-      row, totalOutstanding = new BigDecimal("0");
+  var selectedRecord = grid.view.parentWindow.views[0].getParentRecord(),
+      allRows = grid.data.allRows || grid.data.localData;
+  var returnObject = isc.addProperties({}, allRows[0]);
+  var indRow, row, totalOutstanding = new BigDecimal("0");
   for (indRow = 0; indRow < allRows.length; indRow++) {
     row = allRows[indRow];
     totalOutstanding = totalOutstanding.add(new BigDecimal(String(row.outstanding)));

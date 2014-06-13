@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.SQLQuery;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -23,6 +26,7 @@ import org.openbravo.service.json.JsonUtils;
 public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceService {
 
   private static final String AD_TABLE_ID = "A9BC62219E644720867F6402B0C25933";
+  int count = 0;
 
   @Override
   public Entity getEntity() {
@@ -31,17 +35,17 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
 
   @Override
   public String fetch(Map<String, String> parameters) {
+
     int startRow = 0;
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
     if (startRowStr != null) {
       startRow = Integer.parseInt(startRowStr);
     }
 
-    final List<JSONObject> jsonObjects = fetchJSONObject(parameters);
-
     final JSONObject jsonResult = new JSONObject();
     final JSONObject jsonResponse = new JSONObject();
     try {
+      List<JSONObject> jsonObjects = fetchJSONObject(parameters);
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
       jsonResponse.put(JsonConstants.RESPONSE_ENDROW, jsonObjects.size() + startRow - 1);
@@ -54,16 +58,8 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
     return jsonResult.toString();
   }
 
-  private int getCount(Map<String, String> parameters) {
-    SQLQuery qry = null;
-    if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
-      qry = OBDal.getInstance().getSession().createSQLQuery(getCountProductQuery(parameters));
-    } else {
-      qry = OBDal.getInstance().getSession().createSQLQuery(getSQLCountQuery(parameters));
-    }
-    OBDal.getInstance().getSession().createSQLQuery(getSQLCountQuery(parameters));
-    Number count = (Number) qry.uniqueResult();
-    return count.intValue();
+  private int getCount(Map<String, String> parameters) throws JSONException {
+    return count;
   }
 
   private List<JSONObject> fetchJSONObject(Map<String, String> parameters) {
@@ -82,15 +78,13 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
         DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
     return toJsonConverter.convertToJsonObjects(data);
+
   }
 
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-
-    int offset = startRow;
-    int nRows = endRow - startRow + 1;
-
+    count = 0;
     String fetchType = null;
     SQLQuery qry = null;
     if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
@@ -100,14 +94,25 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
       fetchType = "grid";
       qry = OBDal.getInstance().getSession().createSQLQuery(getSQLQuery(parameters));
     }
-    qry.setFirstResult(offset);
-    qry.setMaxResults(nRows);
+    final ScrollableResults scrollresult = qry.scroll(ScrollMode.FORWARD_ONLY);
+    try {
+      boolean addValue;
+      while (scrollresult.next()) {
+        Object resultLine = (Object) scrollresult.get();
+        Map<String, Object> row = createRow(resultLine, fetchType);
+        if (StringUtils.isNotEmpty(parameters.get("criteria"))) {
+          addValue = new ResultMapCriteriaUtils(row, parameters).applyFilter();
+          if (addValue) {
+            result.add(row);
+            count++;
+          }
+        }
 
-    for (Object o : qry.list()) {
-      Map<String, Object> row = createRow(o, fetchType);
-      result.add(row);
+      }
+    } catch (JSONException e) {
+    } finally {
+      scrollresult.close();
     }
-
     return result;
   }
 
@@ -271,11 +276,9 @@ public class ReturnFromCustomerPickEditLineDatasource extends DefaultDataSourceS
     queryBuilder.append(" AND ol.c_order_discount_id IS NULL ");
     queryBuilder.append(" AND COALESCE(rol.ad_client_id,il.ad_client_id) = '" + clientId + "'");
     queryBuilder.append(" AND i.issotrx = 'Y'");
+
     if (sqlWhereClause != null && !sqlWhereClause.isEmpty() && !"null".equals(sqlWhereClause)) {
       queryBuilder.append(" AND (" + sqlWhereClause.toString() + ")");
-    }
-    if (filterClause != null && !filterClause.isEmpty() && !"null".equals(filterClause)) {
-      queryBuilder.append(filterClause.toString());
     }
     if (orgWhereClause != null && !orgWhereClause.isEmpty() && !"null".equals(orgWhereClause)) {
       queryBuilder.append(orgWhereClause.toString());

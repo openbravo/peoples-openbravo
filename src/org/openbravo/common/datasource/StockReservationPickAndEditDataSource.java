@@ -464,11 +464,20 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   private List<Map<String, Object>> getGridData(Map<String, String> parameters) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     Map<String, String> filterCriteria = new HashMap<String, String>();
+    ArrayList<String> selectedIds = new ArrayList<String>();
     try {
       // Builds the criteria based on the fetch parameters
       JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+
       for (int i = 0; i < criterias.length(); i++) {
         final JSONObject criteria = criterias.getJSONObject(i);
+        if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")) {
+          if (criteria.has("value")) {
+            selectedIds.add(criteria.has("value") ? criteria.getString("value") : criteria
+                .toString());
+          }
+        }
+
         // Multiple selection
         if (criteria.has("criteria") && criteria.has("operator")) {
           JSONArray mySon = new JSONArray(criteria.getString("criteria"));
@@ -507,6 +516,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
               criteria.has("value") ? criteria.getString("value") : criteria.toString());
         }
       }
+
     } catch (JSONException e) {
       log4j.error("Error while building the criteria", e);
     }
@@ -566,12 +576,12 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       if (orderLinesFiltered == null || orderLinesFiltered.size() == 0) {
         result.addAll(getStorageDetail(reservation, organizations, warehousesFiltered,
             locatorsFiltered, attributesFiltered, availableQtyFilterCriteria,
-            reservedinothersFilterCriteria, releasedFilterCriteria));
+            reservedinothersFilterCriteria, releasedFilterCriteria, selectedIds));
       }
       if (locatorsFiltered == null || locatorsFiltered.size() == 0) {
         result.addAll(getPurchaseOrderLines(reservation, organizations, warehousesFiltered,
             attributesFiltered, orderLinesFiltered, availableQtyFilterCriteria,
-            reservedinothersFilterCriteria, releasedFilterCriteria));
+            reservedinothersFilterCriteria, releasedFilterCriteria, selectedIds));
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -820,7 +830,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       Set<String> organizations, List<Warehouse> warehousesFiltered,
       List<AttributeSetInstance> attributeSetInstancesFiltered, List<OrderLine> orderLinesFiltered,
       String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
-      String releasedFilterCriteria) {
+      String releasedFilterCriteria, ArrayList<String> selectedIds) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select ol from OrderLine as ol ");
@@ -878,49 +888,81 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       query.setParameterList("orderLinesFiltered", orderLinesFiltered);
     }
     for (Object o : query.list()) {
-      OrderLine orderLine = (OrderLine) o;
       Map<String, Object> myMap = new HashMap<String, Object>();
-      myMap.put("id", orderLine.getId());
-      myMap.put("obSelected", false);
-      myMap.put("reservationStock", null);
-      myMap.put("reservationStock$_identifier", "");
-      myMap.put("storageBin$_identifier", "");
-      myMap.put("storageBin", "");
-      myMap.put("warehouse", (orderLine.getSalesOrder().getWarehouse() != null) ? orderLine
-          .getSalesOrder().getWarehouse().getId() : null);
-      myMap.put("warehouse$_identifier",
-          (orderLine.getSalesOrder().getWarehouse() != null) ? orderLine.getSalesOrder()
-              .getWarehouse().getIdentifier() : "");
-      myMap.put("attributeSetValue", orderLine.getAttributeSetValue() != null ? orderLine
-          .getAttributeSetValue().getId() : null);
-      myMap.put("attributeSetValue$_identifier",
-          orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue()
-              .getIdentifier() : "");
-      myMap.put("purchaseOrderLine", orderLine.getId());
-      myMap.put("purchaseOrderLine$_identifier", orderLine.getIdentifier());
-      // Check Filter Criterias
-      if (availableQtyFilterCriteria != null && !"".equals(availableQtyFilterCriteria)
-          && !isInScope("availableQty", availableQtyFilterCriteria, orderLine.getOrderedQuantity())) {
-        continue;
+      StorageDetail sd = (StorageDetail) o;
+      if (selectedIds.size() > 0) {
+        for (int i = 0; i < selectedIds.size(); i++) {
+          if (!sd.getId().equals(selectedIds.get(i))) {
+
+            // Check Filter Criterias
+            if (availableQtyFilterCriteria != null && !"".equals(availableQtyFilterCriteria)
+                && !isInScope("availableQty", availableQtyFilterCriteria, sd.getQuantityOnHand())) {
+              continue;
+            }
+            BigDecimal reservedinothers = getQtyReserved(reservation, reservation.getProduct(),
+                sd.getAttributeSetValue(), sd.getStorageBin());
+
+            if (reservedinothersFilterCriteria != null
+                && !"".equals(reservedinothersFilterCriteria)
+                && !isInScope("reservedinothers", reservedinothersFilterCriteria, reservedinothers)) {
+              continue;
+            }
+            if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
+                && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
+              continue;
+            }
+            result = tomap(sd, false, result, reservedinothers, reservation);
+          }
+        }
+      } else {
+
+        OrderLine orderLine = (OrderLine) o;
+        myMap.put("id", orderLine.getId());
+        myMap.put("obSelected", false);
+        myMap.put("reservationStock", null);
+        myMap.put("reservationStock$_identifier", "");
+        myMap.put("storageBin$_identifier", "");
+        myMap.put("storageBin", "");
+        myMap.put("warehouse", (orderLine.getSalesOrder().getWarehouse() != null) ? orderLine
+            .getSalesOrder().getWarehouse().getId() : null);
+        myMap.put("warehouse$_identifier",
+            (orderLine.getSalesOrder().getWarehouse() != null) ? orderLine.getSalesOrder()
+                .getWarehouse().getIdentifier() : "");
+        myMap.put("attributeSetValue", orderLine.getAttributeSetValue() != null ? orderLine
+            .getAttributeSetValue().getId() : null);
+        myMap.put("attributeSetValue$_identifier",
+            orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue()
+                .getIdentifier() : "");
+        myMap.put("purchaseOrderLine", orderLine.getId());
+        myMap.put("purchaseOrderLine$_identifier", orderLine.getIdentifier());
+        // Check Filter Criterias
+
+        if (availableQtyFilterCriteria != null
+            && !"".equals(availableQtyFilterCriteria)
+            && !isInScope("availableQty", availableQtyFilterCriteria,
+                orderLine.getOrderedQuantity())) {
+          continue;
+        }
+        BigDecimal reservedinothers = getQtyReserved(reservation, orderLine);
+        if (reservedinothersFilterCriteria != null && !"".equals(reservedinothersFilterCriteria)
+            && !isInScope("reservedinothers", reservedinothersFilterCriteria, reservedinothers)) {
+          continue;
+        }
+        if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
+            && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
+          continue;
+        }
+        myMap.put("availableQty",
+            orderLine.getOrderedQuantity().subtract(getDeliveredQuantity(orderLine)));
+        myMap.put("reservedinothers", reservedinothers);
+        myMap.put("quantity", BigDecimal.ZERO);
+        myMap.put("reservationQuantity", reservation.getQuantity());
+        myMap.put("released", BigDecimal.ZERO);
+        myMap.put("allocated", false);
+        result.add(myMap);
       }
-      BigDecimal reservedinothers = getQtyReserved(reservation, orderLine);
-      if (reservedinothersFilterCriteria != null && !"".equals(reservedinothersFilterCriteria)
-          && !isInScope("reservedinothers", reservedinothersFilterCriteria, reservedinothers)) {
-        continue;
-      }
-      if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
-          && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
-        continue;
-      }
-      myMap.put("availableQty",
-          orderLine.getOrderedQuantity().subtract(getDeliveredQuantity(orderLine)));
-      myMap.put("reservedinothers", reservedinothers);
-      myMap.put("quantity", BigDecimal.ZERO);
-      myMap.put("reservationQuantity", reservation.getQuantity());
-      myMap.put("released", BigDecimal.ZERO);
-      myMap.put("allocated", false);
-      result.add(myMap);
     }
+
     return result;
   }
 
@@ -928,7 +970,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       Set<String> organizations, List<Warehouse> warehousesFiltered,
       List<Locator> locatorsFiltered, List<AttributeSetInstance> attributeSetInstancesFiltered,
       String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
-      String releasedFilterCriteria) {
+      String releasedFilterCriteria, ArrayList<String> selectedIds) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select sd from MaterialMgmtStorageDetail as sd ");
@@ -941,7 +983,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     hqlString.append("select 1 from MaterialMgmtReservationStock as rs ");
     hqlString.append("where rs.reservation = :reservation ");
     hqlString
-        .append("and (rs.attributeSetValue = sd.attributeSetValue or rs.attributeSetValue is null)");
+        .append("and (rs.attributeSetValue = sd.attributeSetValue or rs.attributeSetValue is null) ");
     hqlString.append("and rs.storageBin = sd.storageBin ");
 
     hqlString.append(") ");
@@ -964,16 +1006,19 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     if (warehousesFiltered != null) {
       hqlString.append("and sb.warehouse in :warehousesFiltered ");
     }
+
     // Organization Filter not required as reservation for warehouse on hand is sufficent
     // hqlString.append("and sd.organization.id in :organizations ");
     hqlString.append("and sb.warehouse in :warehouses ");
     hqlString.append("order by sb.warehouse, sd.storageBin.rowX, sd.storageBin.stackY, ");
     hqlString.append("sd.storageBin.levelZ, sd.attributeSetValue.description");
+
     final Session session = OBDal.getInstance().getSession();
     Query query = session.createQuery(hqlString.toString());
     query.setParameter("product", reservation.getProduct());
     query.setParameter("uom", reservation.getUOM());
     query.setParameter("reservation", reservation);
+
     if (reservation.getAttributeSetValue() != null) {
       query.setParameter("attributeSetValue", reservation.getAttributeSetValue());
     }
@@ -992,53 +1037,98 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     if (warehousesFiltered != null) {
       query.setParameterList("warehousesFiltered", warehousesFiltered);
     }
+
     // query.setParameterList("organizations", organizations);
     query.setParameterList("warehouses", getOnHandWarehouses(reservation.getOrganization()));
-    for (Object o : query.list()) {
-      Map<String, Object> myMap = new HashMap<String, Object>();
-      StorageDetail sd = (StorageDetail) o;
-      myMap.put("id", sd.getId());
-      myMap.put("obSelected", false);
-      myMap.put("reservationStock", null);
-      myMap.put("reservationStock$_identifier", "");
-      myMap.put("storageBin", sd.getStorageBin() != null ? sd.getStorageBin().getId() : "");
-      myMap.put("storageBin$_identifier", sd.getStorageBin() != null ? sd.getStorageBin()
-          .getIdentifier() : "");
-      myMap.put("warehouse", (sd.getStorageBin().getWarehouse() != null) ? sd.getStorageBin()
-          .getWarehouse().getId() : null);
-      myMap.put("warehouse$_identifier", (sd.getStorageBin().getWarehouse() != null) ? sd
-          .getStorageBin().getWarehouse().getIdentifier() : "");
-      myMap.put("attributeSetValue", sd.getAttributeSetValue() != null ? sd.getAttributeSetValue()
-          .getId() : null);
-      myMap.put("attributeSetValue$_identifier", sd.getAttributeSetValue() != null ? sd
-          .getAttributeSetValue().getIdentifier() : "");
-      myMap.put("purchaseOrderLine", null);
-      myMap.put("purchaseOrderLine$_identifier", "");
-      // Check Filter Criterias
-      if (availableQtyFilterCriteria != null && !"".equals(availableQtyFilterCriteria)
-          && !isInScope("availableQty", availableQtyFilterCriteria, sd.getQuantityOnHand())) {
-        continue;
-      }
+    for (int i = 0; i < selectedIds.size(); i++) {
+      StorageDetail sd = OBDal.getInstance().get(StorageDetail.class, selectedIds.get(i));
+
       BigDecimal reservedinothers = getQtyReserved(reservation, reservation.getProduct(),
           sd.getAttributeSetValue(), sd.getStorageBin());
 
-      if (reservedinothersFilterCriteria != null && !"".equals(reservedinothersFilterCriteria)
-          && !isInScope("reservedinothers", reservedinothersFilterCriteria, reservedinothers)) {
-        continue;
+      result = tomap(sd, true, result, reservedinothers, reservation);
+    }
+
+    for (Object o : query.list()) {
+      Map<String, Object> myMap = new HashMap<String, Object>();
+      StorageDetail sd = (StorageDetail) o;
+      if (selectedIds.size() > 0) {
+        for (int i = 0; i < selectedIds.size(); i++) {
+          if (!(sd.getId().equals(selectedIds.get(i)))) {
+            // Check Filter Criterias
+            if (availableQtyFilterCriteria != null && !"".equals(availableQtyFilterCriteria)
+                && !isInScope("availableQty", availableQtyFilterCriteria, sd.getQuantityOnHand())) {
+              continue;
+            }
+            BigDecimal reservedinothers = getQtyReserved(reservation, reservation.getProduct(),
+                sd.getAttributeSetValue(), sd.getStorageBin());
+
+            if (reservedinothersFilterCriteria != null
+                && !"".equals(reservedinothersFilterCriteria)
+                && !isInScope("reservedinothers", reservedinothersFilterCriteria, reservedinothers)) {
+              continue;
+            }
+            if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
+                && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
+              continue;
+            }
+            result = tomap(sd, false, result, reservedinothers, reservation);
+          }
+        }
+      } else {
+        // Check Filter Criterias
+        if (availableQtyFilterCriteria != null && !"".equals(availableQtyFilterCriteria)
+            && !isInScope("availableQty", availableQtyFilterCriteria, sd.getQuantityOnHand())) {
+          continue;
+        }
+        BigDecimal reservedinothers = getQtyReserved(reservation, reservation.getProduct(),
+            sd.getAttributeSetValue(), sd.getStorageBin());
+
+        if (reservedinothersFilterCriteria != null && !"".equals(reservedinothersFilterCriteria)
+            && !isInScope("reservedinothers", reservedinothersFilterCriteria, reservedinothers)) {
+          continue;
+        }
+        if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
+            && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
+          continue;
+        }
+        result = tomap(sd, false, result, reservedinothers, reservation);
       }
-      if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
-          && !isInScope("released", releasedFilterCriteria, BigDecimal.ZERO)) {
-        continue;
-      }
-      myMap.put("availableQty", sd.getQuantityOnHand());
-      myMap.put("reservedinothers", reservedinothers);
-      myMap.put("reservationQuantity", reservation.getQuantity());
-      myMap.put("quantity", BigDecimal.ZERO);
-      myMap.put("released", BigDecimal.ZERO);
-      myMap.put("allocated", false);
-      result.add(myMap);
     }
     return result;
+  }
+
+  private List<Map<String, Object>> tomap(StorageDetail sd, boolean obSelected,
+      List<Map<String, Object>> result, BigDecimal reservedinothers, Reservation reservation) {
+    Map<String, Object> myMap = new HashMap<String, Object>();
+    myMap.put("id", sd.getId());
+    myMap.put("obSelected", obSelected);
+    myMap.put("reservationStock", null);
+    myMap.put("reservationStock$_identifier", "");
+    myMap.put("storageBin", sd.getStorageBin() != null ? sd.getStorageBin().getId() : "");
+    myMap.put("storageBin$_identifier", sd.getStorageBin() != null ? sd.getStorageBin()
+        .getIdentifier() : "");
+    myMap.put("warehouse", (sd.getStorageBin().getWarehouse() != null) ? sd.getStorageBin()
+        .getWarehouse().getId() : null);
+    myMap.put("warehouse$_identifier", (sd.getStorageBin().getWarehouse() != null) ? sd
+        .getStorageBin().getWarehouse().getIdentifier() : "");
+    myMap.put("attributeSetValue", sd.getAttributeSetValue() != null ? sd.getAttributeSetValue()
+        .getId() : null);
+    myMap.put("attributeSetValue$_identifier", sd.getAttributeSetValue() != null ? sd
+        .getAttributeSetValue().getIdentifier() : "");
+    myMap.put("purchaseOrderLine", null);
+    myMap.put("purchaseOrderLine$_identifier", "");
+
+    myMap.put("availableQty", sd.getQuantityOnHand());
+    myMap.put("reservedinothers", reservedinothers);
+    myMap.put("reservationQuantity", reservation.getQuantity());
+    myMap.put("quantity", BigDecimal.ZERO);
+    myMap.put("released", BigDecimal.ZERO);
+    myMap.put("allocated", false);
+    result.add(myMap);
+
+    return result;
+
   }
 
   private boolean isInScope(String fieldName, String filterCriteria, BigDecimal amount) {

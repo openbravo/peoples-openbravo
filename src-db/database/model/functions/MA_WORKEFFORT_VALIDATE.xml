@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2013 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -232,6 +232,42 @@
         FINISH_PROCESS:=TRUE;
       END IF;
     END IF; --FINISH_PROCESS
+    --Check negative quantities for P+ and P- in Production Line if its a Work Effort
+    IF(NOT FINISH_PROCESS) THEN
+			v_Message := NULL;
+			v_Count:=0;
+			SELECT COUNT(M_ProductionPlan_ID)
+        INTO v_Count
+        FROM M_ProductionPlan pp
+        WHERE pp.M_Production_ID = v_Record_ID
+        AND EXISTS
+        (SELECT 1 FROM M_ProductionLine
+        WHERE M_ProductionPlan_ID = pp.M_ProductionPlan_ID
+        AND pp.MA_Wrphase_ID IS NOT NULL
+        AND MovementQty < 0);
+			IF (v_Count <> 0) THEN
+				FOR Cur_ProductionPlan IN (
+				SELECT PP.Line AS PPLine, PL.LINE AS PLLine
+				FROM M_ProductionLine PL,
+				M_ProductionPlan PP
+				WHERE PL.M_ProductionPlan_ID = PP.M_ProductionPlan_ID
+				AND PP.M_Production_ID = v_Record_ID
+				AND PL.MovementQty < 0
+				AND PP.MA_WrPhase_ID IS NOT NULL
+				ORDER BY PP.Line, PL.Line
+				)
+				LOOP
+					IF v_Message IS NULL THEN
+						v_Message:=Cur_ProductionPlan.PPLine||'-'||Cur_ProductionPlan.PLLine;
+					ELSE
+						v_Message:=v_Message || ', ' || Cur_ProductionPlan.PPLine||'-'||Cur_ProductionPlan.PLLine;
+					END IF;
+				END LOOP;
+				v_Message:='@NoNegativeMovementQtyInWorkEffortProductLine@'||v_Message;
+				RAISE_APPLICATION_ERROR(-20000, v_Message);
+        FINISH_PROCESS:=TRUE;
+			END IF;
+    END IF;
     --Check if exist any product in a productionplan with the same locator and productiontype P+ and P-
     IF(NOT FINISH_PROCESS) THEN
       SELECT COUNT(*)
@@ -308,27 +344,30 @@
           --DBMS_OUTPUT.PUT_LINE('Qty=' || ProductQty);
           v_QtyOnHand:=v_ProductQty;
         END IF;
-        -- Create Transaction Entry
-        v_ResultStr:='CreateTransaction';
-        Ad_Sequence_Next('M_Transaction', v_Org_ID, v_NextNo) ;
-        INSERT
-        INTO M_TRANSACTION
-          (
-            M_Transaction_ID, M_ProductionLine_ID, AD_Client_ID, AD_Org_ID,
-            IsActive, Created, CreatedBy, Updated,
-            UpdatedBy, MovementType, M_Locator_ID, M_Product_ID,
-            M_AttributeSetInstance_ID, MovementDate, MovementQty, M_Product_UOM_ID,
-            QuantityOrder, C_UOM_ID
-          )
-          VALUES
-          (
-            v_NextNo, CUR_PL_Post.M_ProductionLine_ID, CUR_PL_Post.AD_Client_ID, CUR_PL_Post.AD_Org_ID,
-             'Y', now(), v_User_ID, now(),
-            v_User_ID, 'P+', CUR_PL_Post.M_Locator_ID, CUR_PL_Post.M_Product_ID,
-            COALESCE(CUR_PL_Post.M_AttributeSetInstance_ID, '0'), -- not distinguishing between assemby/disassembly
-            CUR_PL_Post.MovementDate,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.MovementQty ELSE -CUR_PL_Post.MOVEMENTQTY END), CUR_PL_Post.M_Product_UOM_ID,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.QUANTITYORDER ELSE -CUR_PL_Post.QuantityOrder END), CUR_PL_Post.C_UOM_ID
-          )
-          ;
+        -- Only insert in M_TRANSACTION if MovementQty <> 0
+        IF CUR_PL_Post.MovementQty <> 0 THEN
+          -- Create Transaction Entry        
+           v_ResultStr:='CreateTransaction';
+          Ad_Sequence_Next('M_Transaction', v_Org_ID, v_NextNo) ;
+          INSERT
+          INTO M_TRANSACTION
+            (
+              M_Transaction_ID, M_ProductionLine_ID, AD_Client_ID, AD_Org_ID,
+              IsActive, Created, CreatedBy, Updated,
+              UpdatedBy, MovementType, M_Locator_ID, M_Product_ID,
+              M_AttributeSetInstance_ID, MovementDate, MovementQty, M_Product_UOM_ID,
+              QuantityOrder, C_UOM_ID
+            )
+            VALUES
+            (
+              v_NextNo, CUR_PL_Post.M_ProductionLine_ID, CUR_PL_Post.AD_Client_ID, CUR_PL_Post.AD_Org_ID,
+              'Y', now(), v_User_ID, now(),
+              v_User_ID, 'P+', CUR_PL_Post.M_Locator_ID, CUR_PL_Post.M_Product_ID,
+              COALESCE(CUR_PL_Post.M_AttributeSetInstance_ID, '0'), -- not distinguishing between assemby/disassembly
+              CUR_PL_Post.MovementDate,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.MovementQty ELSE -CUR_PL_Post.MOVEMENTQTY END), CUR_PL_Post.M_Product_UOM_ID,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.QUANTITYORDER ELSE -CUR_PL_Post.QuantityOrder END), CUR_PL_Post.C_UOM_ID
+            )
+            ;
+          END IF;
         IF(CUR_PL_Post.IsStocked<>'N') THEN
           M_Check_Stock(CUR_PL_Post.M_Product_ID, v_Client_ID, v_AD_Org_ID, v_Result, v_Message) ;
           IF (v_Result=0) THEN

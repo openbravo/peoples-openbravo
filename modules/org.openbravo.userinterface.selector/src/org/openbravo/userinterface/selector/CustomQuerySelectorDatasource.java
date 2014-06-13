@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -55,6 +54,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.service.datasource.DataSourceUtils;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
@@ -205,7 +205,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         .append(OBContext.getOBContext().getCurrentClient().getId()).append("')");
 
     // Organization filter
-    final String orgs = getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
+    final String orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
     if (StringUtils.isNotEmpty(orgs)) {
       additionalFilter.append(NEW_FILTER_CLAUSE);
       additionalFilter.append(entityAlias
@@ -280,41 +280,6 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     HQL = HQL.replace(ADDITIONAL_FILTERS, additionalFilter.toString());
     return HQL;
-  }
-
-  /**
-   * Returns a comma separated list of organization ids to filter the HQL. If an organization id is
-   * provided its natural tree is returned. If no organization is provided or the given value is
-   * invalid the readable organizations are returned.
-   */
-  private String getOrgs(String orgId) {
-    StringBuffer orgPart = new StringBuffer();
-    if (StringUtils.isNotEmpty(orgId)) {
-      final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
-          .getNaturalTree(orgId);
-      if (orgSet.size() > 0) {
-        boolean addComma = false;
-        for (String org : orgSet) {
-          if (addComma) {
-            orgPart.append(",");
-          }
-          orgPart.append("'" + org + "'");
-          addComma = true;
-        }
-      }
-    }
-    if (orgPart.length() == 0) {
-      String[] orgs = OBContext.getOBContext().getReadableOrganizations();
-      boolean addComma = false;
-      for (int i = 0; i < orgs.length; i++) {
-        if (addComma) {
-          orgPart.append(",");
-        }
-        orgPart.append("'" + orgs[i] + "'");
-        addComma = true;
-      }
-    }
-    return orgPart.toString();
   }
 
   /**

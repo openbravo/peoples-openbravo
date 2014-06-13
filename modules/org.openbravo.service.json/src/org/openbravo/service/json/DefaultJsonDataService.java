@@ -42,6 +42,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
 
 /**
@@ -358,6 +359,28 @@ public class DefaultJsonDataService implements JsonDataService {
 
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
     final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
+    final JSONObject criteria = JsonUtils.buildCriteria(parameters);
+
+    if ((StringUtils.isEmpty(startRowStr) || StringUtils.isEmpty(endRowStr))
+        && !isIDCriteria(criteria) && !parameters.containsKey("exportAs")) {
+      // pagination is not set, this is most likely a bug
+      String paramMsg = "";
+      for (String paramKey : parameters.keySet()) {
+        paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";
+      }
+      log.warn("Fetching data without pagination, this can cause perfomance issues. Parameters: "
+          + paramMsg);
+
+      if (parameters.containsKey(JsonConstants.TAB_PARAMETER)) {
+        // || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)
+        // FIXME: Some selectors working in 2.50 windows are incorrectly unpaged (see issue #26734)
+        // for now we are not preventing unpaged selector requests till this issue is properly fixed
+        // after that they should be prevented again
+
+        // for standard tab and selector datasources pagination is mandatory
+        throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));
+      }
+    }
 
     boolean directNavigation = parameters.containsKey("_directNavigation")
         && "true".equals(parameters.get("_directNavigation"))
@@ -377,7 +400,7 @@ public class DefaultJsonDataService implements JsonDataService {
 
       }
     }
-    queryService.setCriteria(JsonUtils.buildCriteria(parameters));
+    queryService.setCriteria(criteria);
 
     if (parameters.get(JsonConstants.NO_ACTIVE_FILTER) != null
         && parameters.get(JsonConstants.NO_ACTIVE_FILTER).equals("true")) {
@@ -769,6 +792,11 @@ public class DefaultJsonDataService implements JsonDataService {
   protected String doPostAction(Map<String, String> parameters, String content,
       DataSourceAction action, String originalObject) {
 
+    // Clear session to prevent slow flush if a fetch is done
+    if (action.name().equals("FETCH")) {
+      OBDal.getInstance().getSession().clear();
+    }
+
     OBDal.getInstance().flush();
 
     try {
@@ -888,5 +916,31 @@ public class DefaultJsonDataService implements JsonDataService {
 
   protected enum DataSourceAction {
     FETCH, ADD, UPDATE, REMOVE
+  }
+
+  /**
+   * Checks whether a criteria is filtering by ID property
+   * 
+   * @param jsonCriteria
+   *          criteria to check
+   * @return <code>true</code> if the criteria is filtering by ID
+   */
+  private boolean isIDCriteria(JSONObject jsonCriteria) {
+    if (!jsonCriteria.has("criteria")) {
+      return false;
+    }
+
+    try {
+      JSONArray criteria = jsonCriteria.getJSONArray("criteria");
+      for (int i = 0; i < criteria.length(); i++) {
+        JSONObject criterion = criteria.getJSONObject(i);
+        if (criterion.has("fieldName") && JsonConstants.ID.equals(criterion.getString("fieldName"))) {
+          return true;
+        }
+      }
+    } catch (JSONException e) {
+      log.error("Error parsing criteria " + jsonCriteria, e);
+    }
+    return false;
   }
 }

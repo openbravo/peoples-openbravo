@@ -1194,20 +1194,15 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       String strReportName, String strOutputType, HashMap<String, Object> designParameters,
       FieldProvider[] data, Map<Object, Object> exportParameters) throws ServletException {
     renderJR(variables, response, strReportName, null, strOutputType, designParameters, data,
-        exportParameters);
+        exportParameters, false);
   }
 
   protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
       String strReportName, String strFileName, String strOutputType,
       HashMap<String, Object> designParameters, FieldProvider[] data,
       Map<Object, Object> exportParameters) throws ServletException {
-    if (data != null) {
-      renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
-          new JRFieldProviderDataSource(data, variables.getJavaDateFormat()), exportParameters);
-    } else {
-      renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
-          (JRDataSource) null, exportParameters);
-    }
+    renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
+        data, exportParameters, false);
   }
 
   protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
@@ -1236,15 +1231,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       Map<Object, Object> exportParameters) throws ServletException {
     renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
         new JRScrollableFieldProviderDataSource(sfp, variables.getJavaDateFormat()),
-        exportParameters);
-  }
-
-  private void renderJR(VariablesSecureApp variables, HttpServletResponse response,
-      String strReportName, String strFileName, String strOutputType,
-      HashMap<String, Object> designParameters, JRDataSource data,
-      Map<Object, Object> exportParameters) throws ServletException {
-    renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
-        data, exportParameters, false);
+        exportParameters, false);
   }
 
   private void renderJR(VariablesSecureApp variables, HttpServletResponse response,

@@ -27,6 +27,7 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -748,7 +749,7 @@ public class ComboTableData {
     if (val.indexOf("@") != -1)
       val = parseContext(val, "WHERE");
     if (!val.equals(""))
-      addWhereField(val, "FILTER");
+      addWhereField("(" + val + ")", "FILTER");
     if (log4j.isDebugEnabled())
       log4j.debug("Validation parsed: " + val);
   }
@@ -824,10 +825,6 @@ public class ComboTableData {
     canBeCached = uiref.canBeCached();
   }
 
-  private String getQuery(boolean onlyId, String[] discard) {
-    return getQuery(onlyId, discard, null);
-  }
-
   /**
    * Returns the generated query.
    * 
@@ -835,13 +832,27 @@ public class ComboTableData {
    *          Boolean to indicate if the select clause must have only the key field.
    * @param discard
    *          Array of field groups to remove from the query.
+   * @param recordId
+   *          recordId to be filtered.
+   * @param startRow
+   *          starting index of the records.
+   * @param endRow
+   *          end index of the records.
+   * @param conn
+   *          Connection provider
+   * @param filterByValue
+   *          Keyword to be filtered
    * @return String with the query.
    */
-  private String getQuery(boolean onlyId, String[] discard, String recordId) {
+  private String getQuery(boolean onlyId, String[] discard, String recordId, Integer startRow,
+      Integer endRow, ConnectionProvider conn, boolean applyFilter) {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = getSelectFields();
-    String idName = "";
+    String idName = "", nameToCompare = null;
     boolean hasWhere = false;
+    boolean applyLimits = (startRow != null && startRow != -1) && (endRow != null && endRow != -1)
+        && StringUtils.isEmpty(recordId);
+    String rdbms = conn == null ? "" : conn.getRDBMS();
     if (aux != null) {
       StringBuffer name = new StringBuffer();
       String description = "";
@@ -869,6 +880,7 @@ public class ComboTableData {
       }
       text.append(id);
       if (!name.toString().equals("")) {
+        nameToCompare = name.toString() + ")";
         name.append(") AS NAME");
       } else {
         name.append("'>>No Record Identifier<<' AS NAME");
@@ -914,7 +926,12 @@ public class ComboTableData {
         if (recordId != null) {
           txtAux.append(" AND " + idName + "=(?) ");
         }
+
         text.append("WHERE ").append(txtAux.toString());
+      }
+      if (applyFilter && !StringUtils.isEmpty(nameToCompare)) {
+        // filtering by value
+        text.append(" AND UPPER(" + nameToCompare + ") like UPPER(?)\n");
       }
     }
 
@@ -939,6 +956,17 @@ public class ComboTableData {
       else
         text.append("AND ");
       text.append(idName).append(" = ? ");
+    }
+
+    if (applyLimits && rdbms.equalsIgnoreCase("POSTGRE")) {
+      int numberOfRows = endRow - startRow + 1;
+      text.append(" LIMIT " + numberOfRows + " OFFSET " + startRow);
+    }
+    if (applyLimits && rdbms.equalsIgnoreCase("ORACLE")) {
+      // in oracle rows are defined from 1, so incrementing startRow and endRow by 1
+      String oraQuery = "select * from ( select a.*, ROWNUM rnum from ( " + text.toString()
+          + ") a where rownum <= " + (endRow + 1) + " ) where rnum >= " + (startRow + 1) + "";
+      return oraQuery;
     }
     return text.toString();
   }
@@ -967,6 +995,11 @@ public class ComboTableData {
     return setSQLParameters(st, lparameters, iParameter, discard, null);
   }
 
+  private int setSQLParameters(PreparedStatement st, Map<String, String> lparameters,
+      int iParameter, String[] discard, String recordId) {
+    return setSQLParameters(st, lparameters, iParameter, discard, recordId, null);
+  }
+
   /**
    * Fills the query parameter's values.
    * 
@@ -979,7 +1012,7 @@ public class ComboTableData {
    * @return Integer with the next parameter's index.
    */
   private int setSQLParameters(PreparedStatement st, Map<String, String> lparameters,
-      int iParameter, String[] discard, String recordId) {
+      int iParameter, String[] discard, String recordId, String filter) {
     Vector<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
@@ -1022,6 +1055,10 @@ public class ComboTableData {
     if (recordId != null) {
       UtilSql.setValue(st, ++iParameter, 12, null, recordId);
     }
+    if (!StringUtils.isEmpty(filter)) {
+      // filtering by value
+      UtilSql.setValue(st, ++iParameter, 12, null, "%" + filter + "%");
+    }
     vAux = getOrderByParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
@@ -1053,11 +1090,20 @@ public class ComboTableData {
 
   public FieldProvider[] select(ConnectionProvider conn, Map<String, String> lparameters,
       boolean includeActual) throws Exception {
+    return select(conn, lparameters, includeActual, null, null);
+  }
+
+  public FieldProvider[] select(ConnectionProvider conn, Map<String, String> lparameters,
+      boolean includeActual, Integer startRow, Integer endRow) throws Exception {
     String actual = lparameters != null ? lparameters.get("@ACTUAL_VALUE@")
         : getParameter("@ACTUAL_VALUE@");
+    String filterValue = lparameters != null ? lparameters.get("FILTER_VALUE")
+        : getParameter("FILTER_VALUE");
     if (lparameters != null && lparameters.containsKey("@ONLY_ONE_RECORD@")
         && !lparameters.get("@ONLY_ONE_RECORD@").isEmpty()) {
-      String strSqlSingleRecord = getQuery(false, null, lparameters.get("@ONLY_ONE_RECORD@"));
+      String strSqlSingleRecord = getQuery(false, null, lparameters.get("@ONLY_ONE_RECORD@"), null,
+          null, null, false);
+      log4j.debug("Query for single record: " + strSqlSingleRecord);
       PreparedStatement stSingleRecord = conn.getPreparedStatement(strSqlSingleRecord);
       try {
         ResultSet result;
@@ -1079,7 +1125,7 @@ public class ComboTableData {
 
         if (includeActual && actual != null && !actual.equals("")) {
           String[] discard = { "filter", "orderBy", "CLIENT_LIST", "ORG_LIST" };
-          String strSqlDisc = getQuery(true, discard);
+          String strSqlDisc = getQuery(true, discard, null, null, null, null, false);
           PreparedStatement stInactive = conn.getPreparedStatement(strSqlDisc);
           iParameter = setSQLParameters(stInactive, lparameters, 0, discard);
           UtilSql.setValue(stInactive, ++iParameter, 12, null, actual);
@@ -1104,7 +1150,8 @@ public class ComboTableData {
       }
 
     }
-    String strSql = getQuery(false, null);
+    String strSql = getQuery(false, null, null, startRow, endRow, conn,
+        !StringUtils.isEmpty(filterValue));
     if (log4j.isDebugEnabled())
       log4j.debug("SQL: " + strSql);
     PreparedStatement st = conn.getPreparedStatement(strSql);
@@ -1113,7 +1160,7 @@ public class ComboTableData {
 
     try {
       int iParameter = 0;
-      iParameter = setSQLParameters(st, lparameters, iParameter, null);
+      iParameter = setSQLParameters(st, lparameters, iParameter, null, null, filterValue);
       boolean idFound = false;
       result = st.executeQuery();
       while (result.next()) {
@@ -1143,7 +1190,7 @@ public class ComboTableData {
       if (includeActual && actual != null && !actual.equals("") && !idFound) {
         conn.releasePreparedStatement(st);
         String[] discard = { "filter", "orderBy", "CLIENT_LIST", "ORG_LIST" };
-        strSql = getQuery(true, discard);
+        strSql = getQuery(true, discard, null, null, null, null, false);
         if (log4j.isDebugEnabled())
           log4j.debug("SQL Actual ID: " + strSql);
         st = conn.getPreparedStatement(strSql);
@@ -1271,7 +1318,7 @@ public class ComboTableData {
               actual_value, false);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
-          if (value == null || value.equals(""))
+          if (value == null || value.equals("") || "null".equals(value))
             lparameters.remove(strAux.toUpperCase());
           else
             lparameters.put(strAux.toUpperCase(), value);

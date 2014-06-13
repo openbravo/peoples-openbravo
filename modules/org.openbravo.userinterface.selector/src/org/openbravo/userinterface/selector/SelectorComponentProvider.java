@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,6 +68,10 @@ public class SelectorComponentProvider extends BaseComponentProvider {
     resources.add(createStaticResource(
         "web/org.openbravo.userinterface.selector/js/ob-selector-filter-select-item.js", false,
         true));
+
+    // fk combo needs to be defined in this module because it extends selector item
+    resources.add(createStaticResource(
+        "web/org.openbravo.userinterface.selector/js/ob-formitem-fk-combo.js", false, true));
 
     resources.add(createStaticResource(
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"

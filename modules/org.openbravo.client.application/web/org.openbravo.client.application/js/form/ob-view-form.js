@@ -150,8 +150,8 @@ OB.ViewFormProperties = {
         // if there is a display field or an identifier field accompanying the
         // status bar field and it has a value then always use that
         // one
-        if (item.displayField && this.getValue(item.displayField)) {
-          displayedValue = this.getValue(item.displayField);
+        if (item.displayField && this.getValue(item.name + OB.Constants.FIELDSEPARATOR + item.displayField)) {
+          displayedValue = this.getValue(item.name + OB.Constants.FIELDSEPARATOR + item.displayField);
         } else if (this.getValue(item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
           displayedValue = this.getValue(item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER);
         }
@@ -783,7 +783,7 @@ OB.ViewFormProperties = {
     if (columnValues) {
       for (prop in columnValues) {
         if (columnValues.hasOwnProperty(prop)) {
-          this.processColumnValue(prop, columnValues[prop], gridEditInformation);
+          this.processColumnValue(prop, columnValues[prop], gridEditInformation, request.params.MODE);
         }
       }
     }
@@ -859,6 +859,7 @@ OB.ViewFormProperties = {
 
     length = this.getFields().length;
 
+    this.view.handleDefaultTreeView();
     //Updates the visibility of the tabs before they are shown to the client
     this.view.updateSubtabVisibility();
 
@@ -957,7 +958,7 @@ OB.ViewFormProperties = {
     this.fetchData(criteria);
   },
 
-  processColumnValue: function (columnName, columnValue, gridEditInformation) {
+  processColumnValue: function (columnName, columnValue, gridEditInformation, mode) {
     // Modifications in this method should go also in setColumnValuesInEditValues because both almost do the same
     var typeInstance;
     var assignValue;
@@ -985,6 +986,13 @@ OB.ViewFormProperties = {
     // ignore the id
     if (prop === OB.Constants.ID) {
       return;
+    }
+
+    // combos for table and tableDir require cache to be invalidated whenever
+    // value is set in order to force DS request when pickList is opened because
+    // validation might have been changed in this situation
+    if (field.invalidateLocalValueMapCache) {
+      field.invalidateLocalValueMapCache();
     }
 
     // note field can be a datasource field, see above, in that case
@@ -1140,6 +1148,13 @@ OB.ViewFormProperties = {
     // ignore the id
     if (prop === OB.Constants.ID) {
       return;
+    }
+
+    // combos for table and tableDir require cache to be invalidated whenever
+    // value is set in order to force DS request when pickList is opened because
+    // validation might have been changed in this situation
+    if (field && field.invalidateLocalValueMapCache) {
+      field.invalidateLocalValueMapCache();
     }
 
     if (entries) {

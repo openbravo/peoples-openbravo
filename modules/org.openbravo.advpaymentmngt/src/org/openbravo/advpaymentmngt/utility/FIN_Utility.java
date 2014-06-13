@@ -1360,12 +1360,12 @@ public class FIN_Utility {
       creditUsed = creditUsed.subtract(amountWithSign);
       bPartner.setCreditUsed(creditUsed);
       OBDal.getInstance().save(bPartner);
-      FIN_AddPayment.updatePaymentScheduleAmounts(psd.getInvoicePaymentSchedule(), psd.getAmount(),
-          psd.getWriteoffAmount());
+      FIN_AddPayment.updatePaymentScheduleAmounts(psd.getPaymentDetails(),
+          psd.getInvoicePaymentSchedule(), psd.getAmount(), psd.getWriteoffAmount());
     }
     if (psd.getOrderPaymentSchedule() != null) {
-      FIN_AddPayment.updatePaymentScheduleAmounts(psd.getOrderPaymentSchedule(), psd.getAmount(),
-          psd.getWriteoffAmount());
+      FIN_AddPayment.updatePaymentScheduleAmounts(psd.getPaymentDetails(),
+          psd.getOrderPaymentSchedule(), psd.getAmount(), psd.getWriteoffAmount());
     }
     if (psd.getPaymentDetails().isPrepayment() && psd.getOrderPaymentSchedule() == null
         && psd.getInvoicePaymentSchedule() == null) {
@@ -1425,7 +1425,7 @@ public class FIN_Utility {
         .getBusinessPartner();
     if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
 
-      FIN_AddPayment.updatePaymentScheduleAmounts(
+      FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail.getPaymentDetails(),
           paymentScheduleDetail.getInvoicePaymentSchedule(), psdAmount.negate(),
           psdWriteoffAmount.negate());
       // BP SO_CreditUsed
@@ -1439,8 +1439,9 @@ public class FIN_Utility {
 
     }
     if (paymentScheduleDetail.getOrderPaymentSchedule() != null) {
-      FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail.getOrderPaymentSchedule(),
-          psdAmount.negate(), psdWriteoffAmount.negate());
+      FIN_AddPayment.updatePaymentScheduleAmounts(paymentScheduleDetail.getPaymentDetails(),
+          paymentScheduleDetail.getOrderPaymentSchedule(), psdAmount.negate(),
+          psdWriteoffAmount.negate());
     }
     // when generating credit for a BP SO_CreditUsed is also updated
     if (paymentScheduleDetail.getInvoicePaymentSchedule() == null

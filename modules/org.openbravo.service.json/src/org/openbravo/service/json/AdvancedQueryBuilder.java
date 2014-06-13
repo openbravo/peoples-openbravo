@@ -1230,7 +1230,7 @@ public class AdvancedQueryBuilder {
    * 
    * @return a valid order by clause (or an empty string if no sorting)
    */
-  protected String getOrderByClause() {
+  public String getOrderByClause() {
     if (orderByClause != null) {
       return orderByClause;
     }

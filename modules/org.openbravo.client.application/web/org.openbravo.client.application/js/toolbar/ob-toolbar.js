@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -1245,6 +1245,7 @@ isc.OBToolbar.addProperties({
           currentContext.viewForm.view.attachmentExists = attachmentExists;
           doRefresh(buttonsByContext[currentContext], currentContext.getCurrentValues() || {}, noneOrMultipleRecordsSelected, noneOrMultipleRecordsSelected, me);
           //compute and apply tab display logic again after fetching auxilary inputs.
+          currentContext.handleDefaultTreeView();
           currentContext.updateSubtabVisibility();
         };
       };
@@ -1337,12 +1338,23 @@ isc.OBToolbar.addProperties({
       }
       allProperties = this.view.getContextInfo(false, true, false, true);
       OB.RemoteCallManager.call('org.openbravo.client.application.window.FormInitializationComponent', allProperties, requestParams, function (response, data, request) {
-        var attachmentExists = data.attachmentExists;
+        var attachmentExists = data.attachmentExists,
+            auxInputs = data.auxiliaryInputValues,
+            prop;
         me.view.attachmentExists = attachmentExists;
 
         // Added sessionAttributes to updateSubtabVisibility 
         me.view.viewForm.sessionAttributes = data.sessionAttributes;
-        me.view.viewForm.auxInputs = data.auxiliaryInputValues;
+        if (auxInputs) {
+          this.auxInputs = {};
+          for (prop in auxInputs) {
+            if (auxInputs.hasOwnProperty(prop)) {
+              me.view.viewForm.setValue(prop, auxInputs[prop].value);
+              me.view.viewForm.auxInputs[prop] = auxInputs[prop].value;
+            }
+          }
+        }
+        me.view.handleDefaultTreeView();
         me.view.updateSubtabVisibility();
 
         //Call to refresh the buttons. As its called with noSetSession=true, it will not cause an infinite recursive loop
@@ -1733,14 +1745,11 @@ OB.ToolbarUtils.showTree = function (view) {
   view.setContextInfo(view.getContextInfo(true, true, true, true), openPopupTree, true);
 };
 
-OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
+OB.ToolbarUtils.showTreeGrid = function (view) {
   var treeGrid = view.treeGrid,
       viewGrid = view.viewGrid;
-  if (view.isShowingTree) {
-    viewGrid.show();
-    treeGrid.hide();
-    view.isShowingTree = false;
-  } else {
+
+  if (viewGrid && treeGrid) {
     // Copy the viewGrid fields to the treeGrid, so that both views always display the same fields
     treeGrid.setFields(treeGrid.getTreeGridFields(viewGrid.getFields()));
     treeGrid.copyCriteriaFromViewGrid();
@@ -1749,7 +1758,26 @@ OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
     treeGrid.checkShowFilterFunnelIcon(treeGrid.getCriteria());
     treeGrid.show();
     viewGrid.hide();
-    view.isShowingTree = true;
+  }
+  view.isShowingTree = true;
+};
+
+OB.ToolbarUtils.hideTreeGrid = function (view) {
+  var treeGrid = view.treeGrid,
+      viewGrid = view.viewGrid;
+
+  if (viewGrid && treeGrid) {
+    viewGrid.show();
+    treeGrid.hide();
+  }
+  view.isShowingTree = false;
+};
+
+OB.ToolbarUtils.toggleTreeGridVisibility = function (view) {
+  if (view.isShowingTree) {
+    OB.ToolbarUtils.hideTreeGrid(view);
+  } else {
+    OB.ToolbarUtils.showTreeGrid(view);
   }
 };
 

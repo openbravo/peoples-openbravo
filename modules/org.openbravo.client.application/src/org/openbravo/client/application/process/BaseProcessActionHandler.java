@@ -84,13 +84,28 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
           }
         }
       }
-
       // Set information for audit trail
       SessionInfo.setProcessType("PD");
       SessionInfo.setProcessId(processId);
       SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(false));
 
-      return doExecute(parameters, content);
+      // Adds compatibility with legacy process definitions
+      // If the handler of the process definition has not been updated, then it expects the
+      // _selection and _allRows properties to be accessible directly from the _params object
+      Process process = OBDal.getInstance().get(Process.class, processId);
+      String updatedContent = content;
+      if (process.isGridlegacy()) {
+        JSONObject jsonRequest = new JSONObject(content);
+        if (!jsonRequest.isNull("_params")) {
+          JSONObject jsonparams = jsonRequest.getJSONObject("_params");
+          String gridParamName = jsonparams.names().getString(0);
+          JSONObject jsongrid = jsonparams.getJSONObject(gridParamName);
+          jsonRequest.put("_selection", jsongrid.getJSONArray("_selection"));
+          jsonRequest.put("_allRows", jsongrid.getJSONArray("_allRows"));
+          updatedContent = jsonRequest.toString();
+        }
+      }
+      return doExecute(parameters, updatedContent);
 
     } catch (Exception e) {
       log.error("Error trying to execute process request: " + e.getMessage(), e);
@@ -164,7 +179,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       }
       retval.put(entries.getKey(), entries.getValue().toString());
     }
-    return new HashMap<String, String>();
+    return retval;
   }
 
   protected abstract JSONObject doExecute(Map<String, Object> parameters, String content);

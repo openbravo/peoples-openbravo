@@ -380,5 +380,12 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
     protected void executeCodeInBrowser(String value) {
       addResult("JSEXECUTE", value);
     }
+
+    /**
+     * Returns the value of the result variable as a String
+     */
+    public String getResult() {
+      return result.toString();
+    }
   }
 }

@@ -138,6 +138,11 @@ public class SE_Order_BPartner extends SimpleCallout {
       }
 
       for (int i = 0; i < td.length; i++) {
+        // If user's default warehouse [Login Warehouse] is present in the warehouse list, set it as
+        // selected
+        if (td[i].getField("id").equals(info.vars.getWarehouse())) {
+          strMwarehouse = info.vars.getWarehouse();
+        }
         info.addSelectResult(td[i].getField("id"), td[i].getField("name"), td[i].getField("id")
             .equalsIgnoreCase(strMwarehouse));
       }

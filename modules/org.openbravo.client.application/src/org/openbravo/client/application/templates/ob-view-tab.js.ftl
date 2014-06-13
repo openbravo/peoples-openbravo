@@ -39,6 +39,11 @@
                     return (${tabComponent.showIf});
                 },
     </#if>
+    <#if tabComponent.defaultTreeViewLogicIf != "" >
+        defaultTreeViewLogicIf: function(context) {
+                    return (${tabComponent.defaultTreeViewLogicIf});
+                },
+    </#if>
 
      <#if tabComponent.preferenceAttributesNames != "" >
         sessionAttributesNames: [${tabComponent.preferenceAttributesNames}],

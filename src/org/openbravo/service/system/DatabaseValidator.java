@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -195,7 +195,7 @@ public class DatabaseValidator implements SystemValidator {
     for (Table adTable : adTables) {
 
       // Do not validate the table if it is based on a datasource
-      if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(adTable.getDataOriginType())) {
+      if (!ApplicationConstants.TABLEBASEDTABLE.equals(adTable.getDataOriginType())) {
         continue;
       }
 

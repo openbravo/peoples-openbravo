@@ -37,6 +37,14 @@ isc.OBViewForm.addProperties({
   cellPadding: 0
 });
 
+isc.OBParameterWindowForm.addProperties({
+  styleName: 'OBParameterWindowForm',
+  width: '100%',
+  overflow: 'visible',
+  //  cellBorder: 1, // debug layout
+  cellPadding: 0
+});
+
 isc.OBFormContainerLayout.addProperties({
   styleName: 'OBFormContainerLayout'
 });
@@ -630,4 +638,13 @@ isc.OBImageSelector.addProperties({
   height: 50,
   width: 450,
   align: 'center'
+});
+
+/* =====================================================================
+ * Grid FormItem Styles
+ =======================================================================*/
+
+isc.OBPickEditGridItem.addProperties({
+  cellStyle: 'OBFormField',
+  titleStyle: 'OBFormFieldLabel'
 });

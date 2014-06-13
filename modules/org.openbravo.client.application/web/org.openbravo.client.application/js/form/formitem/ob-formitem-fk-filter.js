@@ -66,8 +66,12 @@ isc.OBFKFilterTextItem.addProperties({
 
       // make sure that we send the same parameters as the grid
       onFetchData: function (criteria, requestProperties) {
+        var gridView = grid.view;
         requestProperties = requestProperties || {};
-        requestProperties.params = grid.getFetchRequestParams(requestProperties.params);
+        requestProperties.params = grid.getFetchRequestParams(requestProperties.params) || {};
+        if (gridView) {
+          requestProperties.params.tabId = gridView.tabId || (gridView.sourceView && gridView.sourceView.tabId);
+        }
         delete me.forceReload;
       },
 
@@ -150,6 +154,37 @@ isc.OBFKFilterTextItem.addProperties({
       this.ignore(grid, 'dataArrived');
     }
     return this.Super('destroy', arguments);
+  },
+
+  // When the selected value is part of the pickList the grid is already filtered,
+  // so no additional request is required. But when there is a keyword entered,
+  // the grid has to be filtered. Refer issue, https://issues.openbravo.com/view.php?id=26700.
+  handleEditorExit: function () {
+    var value = this.getValue(),
+        performFetch = false,
+        rows, i;
+    if (this.pickList && this.pickList.data && (this.pickList.data.allRows || this.pickList.data.localData)) {
+      rows = this.pickList.data.allRows || this.pickList.data.localData;
+    }
+    if (value && isc.isA.Array(value) && value.length > 0 && rows) {
+      for (i = 0; i < value.length; i++) {
+        if (value[i].indexOf('==') === 0) {
+          value[i] = value[i].substring(2, value[i].length);
+          if (rows.find('name', value[i]) === undefined) {
+            performFetch = true;
+          }
+        }
+      }
+    } else {
+      if (rows && rows.find('name', value)) {
+        performFetch = true;
+      }
+    }
+    if (performFetch) {
+      this.Super('handleEditorExit', arguments);
+    } else {
+      return value;
+    }
   },
 
   // note: can't override changed as it is used by the filter editor 

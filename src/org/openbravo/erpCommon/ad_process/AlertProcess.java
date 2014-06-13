@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -42,12 +43,14 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
+import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -257,11 +260,13 @@ public class AlertProcess implements Process {
     // Insert
     if (alert != null && alert.length != 0) {
       int insertions = 0;
+      HashMap<String, StringBuilder> messageByOrg = new HashMap<String, StringBuilder>();
       StringBuilder msg = new StringBuilder();
-      ;
 
       for (int i = 0; i < alert.length; i++) {
         String adAlertId = SequenceIdData.getUUID();
+
+        StringBuilder newMsg = new StringBuilder();
 
         logger.log("Inserting alert " + adAlertId + " org:" + alert[i].adOrgId + " client:"
             + alert[i].adClientId + " reference key: " + alert[i].referencekeyId + " created"
@@ -272,7 +277,17 @@ public class AlertProcess implements Process {
             alert[i].referencekeyId, alert[i].description, alert[i].adUserId, alert[i].adRoleId);
         insertions++;
 
-        msg.append("\n\nAlert: " + alert[i].description + "\nRecord: " + alert[i].recordId);
+        String messageLine = "\n\nAlert: " + alert[i].description + "\nRecord: "
+            + alert[i].recordId;
+        msg.append(messageLine);
+        newMsg.append(messageLine);
+
+        if (messageByOrg.containsKey(alert[i].adOrgId)) {
+          messageByOrg.get(alert[i].adOrgId).append(newMsg);
+        } else {
+          messageByOrg.put(alert[i].adOrgId, newMsg);
+        }
+
       }
 
       if (insertions > 0) {
@@ -379,6 +394,20 @@ public class AlertProcess implements Process {
                   continue;
                 }
 
+                // Create alert's message
+                final StringBuilder finalMessage = new StringBuilder();
+                for (String org : messageByOrg.keySet()) {
+                  Organization orgEntity = OBDal.getInstance().get(Organization.class, org);
+                  for (RoleOrganization roleOrganization : currentAlertRecipient.getRole()
+                      .getADRoleOrganizationList()) {
+                    if (OBContext.getOBContext().getOrganizationStructureProvider()
+                        .isInNaturalTree(roleOrganization.getOrganization(), orgEntity)) {
+                      finalMessage.append(messageByOrg.get(org));
+                      break;
+                    }
+                  }
+                }
+
                 // For each 'User', get the email parameters (to, subject, body, ...) and store them
                 // to send the email at the end
                 for (User targetUser : usersList) {
@@ -403,6 +432,12 @@ public class AlertProcess implements Process {
                   if (repeatedEmail) {
                     continue;
                   }
+
+                  // If there is no message for this user, skip it
+                  if (finalMessage.length() == 0) {
+                    continue;
+                  }
+
                   alreadySentToList.add(targetUserEmail);
 
                   final String host = mailConfig.getSmtpServer();
@@ -419,7 +454,7 @@ public class AlertProcess implements Process {
                   final String replyTo = null;
                   final String subject = "[OB Alert] " + alertRule.name;
                   final String content = Utility.messageBD(conn, "AlertMailHead",
-                      targetUserClientLanguage) + "\n" + msg;
+                      targetUserClientLanguage) + "\n" + finalMessage;
                   final String contentType = "text/plain; charset=utf-8";
                   final List<File> attachments = null;
                   final Date sentDate = null;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,6 +82,9 @@ public class DataSourceServiceProvider {
             if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
               dataSource = table.getObserdsDatasource();
               ds.setEntity(ModelProvider.getInstance().getEntityByTableId(table.getId()));
+            } else if (ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType())) {
+              dataSource = OBDal.getInstance().get(DataSource.class,
+                  ApplicationConstants.HQL_TABLE_DATASOURCE_ID);
             }
           }
           if (dataSource == null) {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -149,6 +149,15 @@ public class ApplicationUtils {
             returnProperty = KernelUtils.getInstance().getPropertyFromColumn(childCol);
           }
         }
+      }
+    }
+
+    // handle a special case: the data origin type of the parentTab is not a table and there is only
+    // one linkToParent property in the subtab
+    if (returnProperty == null) {
+      if (!ApplicationConstants.TABLEBASEDTABLE.equals(parentTab.getTable().getDataOriginType())
+          && thisEntity.getParentProperties().size() == 1) {
+        returnProperty = thisEntity.getParentProperties().get(0);
       }
     }
 

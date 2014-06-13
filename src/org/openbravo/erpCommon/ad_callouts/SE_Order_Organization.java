@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,10 @@ import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.CashVATUtil;
+import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.Utility;
 
 public class SE_Order_Organization extends SimpleCallout {
   private static final long serialVersionUID = 1L;
@@ -34,6 +37,9 @@ public class SE_Order_Organization extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     final String strinpissotrx = info.getStringParameter("inpissotrx", filterYesNo);
+    String strMWarehouseId = info.vars.getStringParameter("inpmWarehouseId");
+    boolean updateWarehouse = true;
+    FieldProvider[] td = null;
 
     // Sales flow only (from the organization)
     if (StringUtils.equals("Y", strinpissotrx)) {
@@ -42,6 +48,33 @@ public class SE_Order_Organization extends SimpleCallout {
       if (calculatedIsCashVat != null && filterYesNo.accept(calculatedIsCashVat)) {
         info.addResult("inpiscashvat", calculatedIsCashVat);
       }
+    }
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE",
+          "M_Warehouse_ID", "197", strinpissotrx.equals("Y") ? "C4053C0CD3DC420A9924F24FC1F860A0"
+              : "", Utility.getReferenceableOrg(info.vars,
+              info.vars.getStringParameter("inpadOrgId")), Utility.getContext(this, info.vars,
+              "#User_Client", info.getWindowId()), 0);
+      Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
+      td = comboTableData.select(false);
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    if (td != null && td.length > 0) {
+      for (int i = 0; i < td.length; i++) {
+        if (td[i].getField("id").equals(strMWarehouseId)) {
+          updateWarehouse = false;
+          break;
+        }
+      }
+      if (updateWarehouse) {
+        info.addResult("inpmWarehouseId", td[0].getField("id"));
+      }
+    } else {
+      info.addResult("inpmWarehouseId", null);
     }
 
   }

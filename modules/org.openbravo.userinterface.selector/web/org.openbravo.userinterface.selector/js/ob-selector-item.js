@@ -73,6 +73,17 @@ isc.OBSelectorPopupWindow.addProperties({
       if (this.selectorGridFields[i].name === OB.Constants.IDENTIFIER) {
         hasIdentifier = true;
       }
+      // apply the proper operator for the filter of text fields
+      if (isc.SimpleType.inheritsFrom(this.selectorGridFields[i].type, 'text')) {
+        if (this.selectorGridFields[i].filterEditorProperties.operator) {
+          // if there is an operator defined in the grid configuration, use it
+          this.selectorGridFields[i].operator = operator = this.selectorGridFields[i].filterEditorProperties.operator;
+        } else {
+          // if not, use the operator based on the popupTextMatchStyle
+          this.selectorGridFields[i].operator = operator;
+          this.selectorGridFields[i].filterEditorProperties.operator = operator;
+        }
+      }
     }
     if (!this.dataSource.fields || !this.dataSource.fields.length || this.dataSource.fields.length === 0) {
       if (!hasIdentifier && this.selectorGridFields) {
@@ -401,6 +412,9 @@ isc.OBSelectorItem.addProperties({
   suggestionTextMatchStyle: 'startswith',
   showOptionsFromDataSource: true,
 
+  // forces fetch whenever drop down is opened
+  addDummyCriterion: true,
+
   // https://issues.openbravo.com/view.php?id=18739
   selectOnFocus: false,
   // still do select on focus initially
@@ -649,7 +663,10 @@ isc.OBSelectorItem.addProperties({
         this.valueMap = {};
       }
 
-      this.valueMap[record[this.valueField]] = record[this.displayField].replace(/[\n\r]/g, '');
+      if (record[this.valueField]) { // it can be undefined in case of empty (null) entry
+        this.valueMap[record[this.valueField]] = record[this.displayField].replace(/[\n\r]/g, '');
+      }
+
       this.updateValueMap();
     }
 
@@ -811,15 +828,16 @@ isc.OBSelectorItem.addProperties({
   getPickListFilterCriteria: function () {
     var crit = this.Super('getPickListFilterCriteria', arguments),
         operator;
-    this.pickList.data.useClientFiltering = false;
     var criteria = {
       operator: 'or',
       _constructor: 'AdvancedCriteria',
       criteria: []
     };
 
-    // add a dummy criteria to force a fetch
-    criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    if (this.addDummyCriterion) {
+      // add a dummy criteria to force a fetch
+      criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    }
 
     // only filter if the display field is also passed
     // the displayField filter is not passed when the user clicks the drop-down button
@@ -910,9 +928,12 @@ isc.OBSelectorItem.addClassMethods({
   prepareDSRequest: function (params, selector) {
     // on purpose not passing the third boolean param
     if (selector.form && selector.form.view && selector.form.view.getContextInfo) {
-      isc.addProperties(params, selector.form.view.getContextInfo(false, true));
+      // for table and table dir reference values needs to be transformed to classic (ex.: true -> Y)
+      isc.addProperties(params, selector.form.view.getContextInfo(false, true, null, selector.isComboReference));
     } else if (selector.view && selector.view.sourceView && selector.view.sourceView.getContextInfo) {
-      isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true));
+      isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true, null, selector.isComboReference));
+    } else if (selector.grid && selector.grid.contentView && selector.grid.contentView.getContextInfo) {
+      isc.addProperties(params, selector.grid.contentView.getContextInfo(false, true, null, selector.isComboReference));
     }
 
     if (selector.form && selector.form.view && selector.form.view.standardWindow) {
@@ -936,8 +957,16 @@ isc.OBSelectorItem.addClassMethods({
     // adds the selector id to filter used to get filter information
     params._selectorDefinitionId = selector.selectorDefinitionId;
 
-    // add field's default filter expressions
-    params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
+    if (selector.isComboReference) {
+      if (selector.getValue && selector.getValue()) {
+        // sending current value only if set (not null) to be able
+        // to include it even validation is not matched
+        params._currentValue = selector.getValue();
+      }
+    } else {
+      // add field's default filter expressions
+      params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
+    }
 
     // the additional where clause
     params[OB.Constants.WHERE_PARAMETER] = selector.whereClause;

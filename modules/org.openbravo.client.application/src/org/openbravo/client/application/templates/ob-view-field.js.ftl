@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,9 @@ the outputted value is already covered by a default.
 {
 <@compress single_line=true>
     name: '${field.name?js_string}',
+    <#if field.id??>
+        id: '${field.id?js_string}',
+    </#if>
     <#if field.label != ''>
         title: '${field.label?js_string}',
     </#if>
@@ -106,6 +109,11 @@ the outputted value is already covered by a default.
         <#if field.validationFunction != "">
             validationFn: ${field.validationFunction},
         </#if>
+        <#if field.displayLogicGrid != "">
+          displayLogicGrid: function(currentValues, context){
+            return (${field.displayLogicGrid});
+          },
+        </#if>         
         <#if field.showSummary>
             showGridSummary: true,
             showGroupSummary: true,

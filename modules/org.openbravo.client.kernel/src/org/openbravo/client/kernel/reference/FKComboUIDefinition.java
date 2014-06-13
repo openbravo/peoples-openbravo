@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,13 +41,12 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
   private static final String TABLE_AD_REFERENCE_ID = "18";
 
   @Override
-  public String getParentType() {
-    // ensures that the field will have a oneOf validator
-    return "enum";
+  public String getFormEditorType() {
+    return "OBFKComboItem";
   }
 
   public String getGridEditorFieldProperties(Field field) {
-    return "displayField: null, valueField: null";
+    return "displayField: '_identifier', valueField: 'id'";
   }
 
   @Override
