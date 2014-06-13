@@ -262,9 +262,14 @@ public class FIN_AddPayment {
             FIN_PaymentScheduleDetail outstandingPSD = (FIN_PaymentScheduleDetail) DalUtil.copy(
                 paymentScheduleDetail, false);
             outstandingPSD.setAmount(difference);
+            outstandingPSD.setWriteoffAmount(BigDecimal.ZERO);
             outstandingPSD.setDoubtfulDebtAmount(paymentScheduleDetail.getDoubtfulDebtAmount()
                 .subtract(doubtFulDebtAmount));
             outstandingPSD.setPaymentDetails(null);
+            paymentScheduleDetail.setAmount(paymentScheduleDetail.getAmount().add(
+                paymentScheduleDetail.getWriteoffAmount()));
+            paymentScheduleDetail.setWriteoffAmount(BigDecimal.ZERO);
+            paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(BigDecimal.ZERO);
             OBDal.getInstance().save(outstandingPSD);
           } else {
             // If it is write Off then incorporate all doubtful debt
@@ -296,6 +301,8 @@ public class FIN_AddPayment {
                   paymentScheduleDetail.getDoubtfulDebtAmount().subtract(doubtFulDebtAmount)));
               OBDal.getInstance().save(outstandingPSD);
             }
+            paymentScheduleDetail.setWriteoffAmount(BigDecimal.ZERO);
+            paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(BigDecimal.ZERO);
           } else {
             paymentScheduleDetail.setWriteoffAmount(difference.add(outstandingPSD.getAmount()));
             doubtFulDebtAmount = outstandingPSD.getDoubtfulDebtAmount().add(
