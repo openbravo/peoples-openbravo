@@ -1030,6 +1030,10 @@
       disc.doNotMerge = discount.doNotMerge;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
+      
+      if (OB.UTIL.isNullOrUndefined(discount.actualAmt) && !disc.amt && disc.pack){
+        disc.hidden=true;
+      }
 
       if (disc.hidden) {
         disc.displayedTotalAmount = 0;
