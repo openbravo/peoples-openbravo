@@ -100,11 +100,9 @@ enyo.kind({
       {
         classes: 'span12',
         components: [{
-          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo',
-          id: "OB.UI.id.CashMgmtInfo"
+          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo'
         }, {
-          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard',
-          id: "OB.UI.id.CashMgmtKeyboard"
+          kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard'
         }]
       }]
     }
@@ -126,7 +124,7 @@ enyo.kind({
   init: function () {
     this.inherited(arguments);
 
-    // cashMgmtDepositEvents or cashMgmtDropEvents Collection is shown by OB.UI.Table, when selecting an option 'click' event 
+    // cashMgmtDepositEvents or cashMgmtDropEvents Collection is shown by OB.UI.Table, when selecting an option 'click' event
     // is triggered, propagating this UI event to model here
     this.model.get('cashMgmtDepositEvents').on('click', function (model) {
       this.model.depsdropstosave.trigger('paymentDone', model, this.currentPayment);
