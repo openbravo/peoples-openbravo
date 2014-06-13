@@ -491,6 +491,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.Super('dataArrived', arguments);
     if (this.onGridLoadFunction) {
       this.onGridLoadFunction(this);
+      this.view.okButton.setEnabled(this.view.allRequiredParametersSet());
     }
   },
 
