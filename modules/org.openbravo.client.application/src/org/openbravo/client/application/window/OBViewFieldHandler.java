@@ -1216,6 +1216,10 @@ public class OBViewFieldHandler {
           && field.getTab().getWindow().getWindowType().equals("OBUIAPP_PickAndExecute")) {
         props = props + ", canFilter: false";
       }
+      if (!props.contains("canSort") && field.getTab().isObuiappCanAdd()
+          && field.getTab().getWindow().getWindowType().equals("OBUIAPP_PickAndExecute")) {
+        props = props + ", canSort: false";
+      }
       return props;
     }
 
