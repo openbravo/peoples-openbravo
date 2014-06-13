@@ -238,6 +238,11 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
 };
 
 OB.APRM.AddPayment.glitemsOnLoadGrid = function (grid) {
+  if(!grid.isReady){
+   if(grid.getSelectedRecords() && grid.getSelectedRecords().size()>0){
+     grid.view.theForm.getItem('7B6B5F5475634E35A85CF7023165E50B').expandSection();
+   }
+  }
   grid.isReady = true;
   OB.APRM.AddPayment.updateGLItemsTotal(this.view.theForm, 0, false);
   OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
