@@ -328,7 +328,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
     } else {
       outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).outstandingAmount));
       if (payment && !onActualPaymentChange && orderInvoice.getRecord(i).obSelected) {
-    	  outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).amount));
+        outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).amount));
       } else if ((outstandingAmount.compareTo(new BigDecimal("0")) < 0) && (amount.compareTo(new BigDecimal("0")) < 0)) {
         if (Math.abs(outstandingAmount) > Math.abs(amount)) {
           differenceamt = outstandingAmount.subtract(amount);
@@ -368,8 +368,8 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       delete orderInvoice.preventDistributingOnSelectionChanged;
     }
   }
-  OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
   OB.APRM.AddPayment.updateActualExpected(form);
+  OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
   return true;
 
 };
@@ -397,10 +397,16 @@ OB.APRM.AddPayment.updateDifference = function (form) {
       expectedDifferenceItem = form.getItem('expectedDifference'),
       paymentId = form.getItem('fin_payment_id').getValue() || '',
       receivedFrom = form.getItem('received_from').getValue() || '',
+      totalGLItems = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       diffAmt = actualPayment.add(credit).subtract(total),
-      expectedDiffAmt = expectedPayment.add(credit).subtract(total);
+      expectedDiffAmt = expectedPayment.add(credit).subtract(total).add(totalGLItems);
   differenceItem.setValue(Number(diffAmt.toString()));
-  expectedDifferenceItem.setValue(Number(expectedDiffAmt.toString()));
+  if (expectedDiffAmt.signum() === 0) {
+    expectedDifferenceItem.setValue(Number(diffAmt.toString()));
+  } else {
+    expectedDifferenceItem.setValue(Number(expectedDiffAmt.toString()));
+  }
+
 
   if (diffAmt.signum() !== 0) {
     OB.APRM.AddPayment.updateDifferenceActions(form);
