@@ -32,16 +32,22 @@ public class AddPaymentCreditToUseInjector extends HqlInserter {
   public String insertHql(Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
     final String strBusinessPartnerId = requestParameters.get("received_from");
-    final BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-        strBusinessPartnerId);
     boolean isSalesTransaction = "true".equals(requestParameters.get("issotrx")) ? true : false;
-    if (businessPartner != null) {
-      queryNamedParameters.put("bp", businessPartner.getId());
+    if (strBusinessPartnerId != null) {
+      final BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+          strBusinessPartnerId);
+
+      if (businessPartner != null) {
+        queryNamedParameters.put("bp", businessPartner.getId());
+      } else {
+        // If there is no bp no credit is available
+        queryNamedParameters.put("bp", "-1");
+      }
     } else {
-      // If there is no bp no credit is available
       queryNamedParameters.put("bp", "-1");
     }
     queryNamedParameters.put("issotrx", isSalesTransaction);
+
     return "f.businessPartner.id = :bp and f.receipt = :issotrx";
   }
 }
