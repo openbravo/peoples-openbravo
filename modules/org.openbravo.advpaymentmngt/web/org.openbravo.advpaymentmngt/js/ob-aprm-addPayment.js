@@ -327,7 +327,9 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       continue;
     } else {
       outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).outstandingAmount));
-      if ((outstandingAmount.compareTo(new BigDecimal("0")) < 0) && (amount.compareTo(new BigDecimal("0")) < 0)) {
+      if (payment && !onActualPaymentChange && orderInvoice.getRecord(i).obSelected) {
+    	  outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).amount));
+      } else if ((outstandingAmount.compareTo(new BigDecimal("0")) < 0) && (amount.compareTo(new BigDecimal("0")) < 0)) {
         if (Math.abs(outstandingAmount) > Math.abs(amount)) {
           differenceamt = outstandingAmount.subtract(amount);
           outstandingAmount = amount;
