@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 public class AddOrderOrInvoiceFilterExpression implements FilterExpression {
   private static final Logger log = LoggerFactory
       .getLogger(AddOrderOrInvoiceFilterExpression.class);
-  // TODO: review this
   @Inject
   @Any
   private Instance<AddOrderOrInvoiceFilterExpressionHandler> addOrderOrInvoiceFilterExpressionHandlers;

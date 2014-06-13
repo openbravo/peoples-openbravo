@@ -97,7 +97,12 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@whereClause@", whereClause.toString());
     transformedHql = transformedHql.replace("@groupByClause@", groupByClause.toString());
     transformedHql = appendOrderByClause(transformedHql, orderByClause, justCount);
-
+    // Sets parameters
+    queryNamedParameters.put("currencyId", requestParameters.get("c_currency_id"));
+    queryNamedParameters.put("isSalesTransaction",
+        "true".equals(requestParameters.get("issotrx")) ? true : false);
+    queryNamedParameters.put("businessPartnerId", requestParameters.get("received_from"));
+    queryNamedParameters.put("paymentId", requestParameters.get("fin_payment_id"));
     return transformedHql;
   }
 
@@ -142,16 +147,14 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
   private StringBuffer getWhereClause(String transactionType,
       Map<String, String> requestParameters, List<String> selectedPSDs) {
     String strBusinessPartnerId = requestParameters.get("received_from");
-    String strCurrencyId = requestParameters.get("c_currency_id");
     String strFinPaymentId = requestParameters.get("fin_payment_id");
-    boolean isSalesTransaction = "true".equals(requestParameters.get("issotrx")) ? true : false;
 
     StringBuffer whereClause = new StringBuffer();
     // Create WhereClause
     whereClause.append(" (psd.paymentDetails is null");
     // If opened from Payment Window, add payment details lines
     if (strFinPaymentId != null) {
-      whereClause.append(" or fp.id = '" + strFinPaymentId + "'");
+      whereClause.append(" or fp.id = :paymentId ");
     }
     whereClause.append(") ");
 
@@ -178,40 +181,40 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       }
       whereClause.append(")");
     } else {
-      whereClause.append(" fp.id = '" + strFinPaymentId + "'");
+      whereClause.append(" fp.id = :paymentId ");
     }
     whereClause.append("  or ");
     if ("I".equals(transactionType)) {
 
       whereClause.append(" (inv is not null ");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
-        whereClause.append(" and invbp.id = '" + strBusinessPartnerId + "'");
+        whereClause.append(" and invbp.id = :businessPartnerId ");
       }
-      whereClause.append(" and inv.salesTransaction = " + isSalesTransaction);
-      whereClause.append(" and inv.currency.id = '" + strCurrencyId + "' ) ");
+      whereClause.append(" and inv.salesTransaction = :isSalesTransaction");
+      whereClause.append(" and inv.currency.id = :currencyId ) ");
 
     } else if ("O".equals(transactionType)) {
       whereClause.append(" (ord is not null ");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
-        whereClause.append(" and ordbp.id = '" + strBusinessPartnerId + "'");
+        whereClause.append(" and ordbp.id = :businessPartnerId ");
       }
-      whereClause.append(" and ord.salesTransaction = " + isSalesTransaction);
-      whereClause.append(" and ord.currency.id = '" + strCurrencyId + "' ) ");
+      whereClause.append(" and ord.salesTransaction = :isSalesTransaction");
+      whereClause.append(" and ord.currency.id = :currencyId ) ");
 
     } else {
 
       whereClause.append(" (inv is not null ");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
-        whereClause.append(" and invbp.id = '" + strBusinessPartnerId + "'");
+        whereClause.append(" and invbp.id = :businessPartnerId ");
       }
-      whereClause.append(" and inv.salesTransaction = " + isSalesTransaction);
-      whereClause.append(" and inv.currency.id = '" + strCurrencyId + "' ) ");
+      whereClause.append(" and inv.salesTransaction = :isSalesTransaction");
+      whereClause.append(" and inv.currency.id = :currencyId ) ");
       whereClause.append(" or (ord is not null ");
       if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
-        whereClause.append(" and ordbp.id = '" + strBusinessPartnerId + "'");
+        whereClause.append(" and ordbp.id = :businessPartnerId");
       }
-      whereClause.append(" and ord.salesTransaction = " + isSalesTransaction);
-      whereClause.append(" and ord.currency.id = '" + strCurrencyId + "' ) ");
+      whereClause.append(" and ord.salesTransaction = :isSalesTransaction");
+      whereClause.append(" and ord.currency.id = :currencyId ) ");
 
     }
 
