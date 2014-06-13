@@ -436,15 +436,18 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
                 psd, false);
             newOutstanding.setPaymentDetails(null);
             newOutstanding.setWriteoffAmount(BigDecimal.ZERO);
+            newOutstanding.setAmount(psd.getAmount().add(psd.getWriteoffAmount()));
             OBDal.getInstance().save(newOutstanding);
           } else {
             FIN_PaymentScheduleDetail outStandingPSD = outStandingPSDs.get(0);
             // First make sure outstanding amount is not equal zero
-            if (outStandingPSD.getAmount().add(psd.getAmount()).signum() == 0) {
+            if (outStandingPSD.getAmount().add(psd.getAmount()).add(psd.getWriteoffAmount())
+                .signum() == 0) {
               OBDal.getInstance().remove(outStandingPSD);
             } else {
               // update existing PD with difference
-              outStandingPSD.setAmount(outStandingPSD.getAmount().add(psd.getAmount()));
+              outStandingPSD.setAmount(outStandingPSD.getAmount().add(psd.getAmount())
+                  .add(psd.getWriteoffAmount()));
               outStandingPSD.setDoubtfulDebtAmount(outStandingPSD.getDoubtfulDebtAmount().add(
                   psd.getDoubtfulDebtAmount()));
               OBDal.getInstance().save(outStandingPSD);
