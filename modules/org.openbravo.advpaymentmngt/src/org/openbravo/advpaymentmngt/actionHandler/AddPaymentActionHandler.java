@@ -519,6 +519,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     OBCriteria<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance().createCriteria(
         FIN_PaymentScheduleDetail.class);
     orderedPSDs.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_ID, psdSet));
+    orderedPSDs.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS, true);
     orderedPSDs.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT, true);
     return orderedPSDs.list();
   }
