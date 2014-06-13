@@ -1622,7 +1622,12 @@
       var me = this,
           lineToMerge, lines = this.get('lines'),
           auxLines = lines.models.slice(0),
-           //clone
+          
+          
+          
+          
+          
+          //clone
           localSkipApplyPromotions;
 
       localSkipApplyPromotions = this.get('skipApplyPromotions');
@@ -1742,7 +1747,13 @@
         } else {
           //Filter lines which can be merged
           linesToMerge = _.filter(me.get('lines').models, function (line) {
-            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
+            var qtyReserved = 0;
+            line.get('promotions').forEach(
+
+            function (p) {
+              qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved || 0);
+            });
+            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && OB.DEC.sub(line.get('qty'), qtyReserved) > 0 && !_.find(line.get('promotions'), function (promo) {
               return promo.manual || promo.doNotMerge;
             })) {
               return line;
