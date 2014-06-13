@@ -201,8 +201,10 @@ public class InventoryCountProcess implements Process {
     insert.append(" , " + AttributeSetInstance.ENTITY_NAME + " as asi");
     insert.append(" , " + Product.ENTITY_NAME + " as p");
     insert.append(" \nwhere e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inv");
-    insert.append(" and e." + InventoryCountLine.PROPERTY_QUANTITYCOUNT + " != e."
+    insert.append(" and (e." + InventoryCountLine.PROPERTY_QUANTITYCOUNT + " != e."
         + InventoryCountLine.PROPERTY_BOOKQUANTITY);
+    insert.append(" or e." + InventoryCountLine.PROPERTY_ORDERQUANTITY + " != e."
+        + InventoryCountLine.PROPERTY_QUANTITYORDERBOOK + ")");
     insert.append(" and u.id = :user");
     insert.append(" and asi.id = COALESCE(e." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
         + ".id , '0')");
@@ -263,8 +265,8 @@ public class InventoryCountProcess implements Process {
         + ", '0') = coalesce(icl2." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE + ", '0')");
     where.append("         and coalesce(icl." + InventoryCountLine.PROPERTY_ORDERUOM
         + ", '0') = coalesce(icl2." + InventoryCountLine.PROPERTY_ORDERUOM + ", '0')");
-    where.append(" and coalesce(icl." + InventoryCountLine.PROPERTY_UOM
-        + ", '0') = coalesce(icl2." + InventoryCountLine.PROPERTY_UOM + ", '0')");
+    where.append(" and coalesce(icl." + InventoryCountLine.PROPERTY_UOM + ", '0') = coalesce(icl2."
+        + InventoryCountLine.PROPERTY_UOM + ", '0')");
     where.append("         and icl." + InventoryCountLine.PROPERTY_STORAGEBIN + " = icl2."
         + InventoryCountLine.PROPERTY_STORAGEBIN);
     where.append("         and icl." + InventoryCountLine.PROPERTY_LINENO + " <> icl2."

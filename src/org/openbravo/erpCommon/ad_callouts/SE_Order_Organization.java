@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,9 +52,10 @@ public class SE_Order_Organization extends SimpleCallout {
 
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE",
-          "M_Warehouse_ID", "197", "C4053C0CD3DC420A9924F24FC1F860A0", Utility.getReferenceableOrg(
-              info.vars, info.vars.getStringParameter("inpadOrgId")), Utility.getContext(this,
-              info.vars, "#User_Client", info.getWindowId()), 0);
+          "M_Warehouse_ID", "197", strinpissotrx.equals("Y") ? "C4053C0CD3DC420A9924F24FC1F860A0"
+              : "", Utility.getReferenceableOrg(info.vars,
+              info.vars.getStringParameter("inpadOrgId")), Utility.getContext(this, info.vars,
+              "#User_Client", info.getWindowId()), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       td = comboTableData.select(false);
       comboTableData = null;

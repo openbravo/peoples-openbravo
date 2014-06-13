@@ -23,6 +23,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
+import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
@@ -151,6 +152,9 @@ public class AllAntTaskTests {
     suite.addTestSuite(PreferenceTest.class);
 
     suite.addTestSuite(ClassicSelectorTest.class);
+
+    // Accounting
+    suite.addTestSuite(RecordID2Test.class);
 
     // $JUnit-END$
     return suite;

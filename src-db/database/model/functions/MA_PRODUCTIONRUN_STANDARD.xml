@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -52,6 +52,7 @@
   v_Production_ID VARCHAR2(32);
   v_QtyStorage NUMBER:=0;
   v_Line NUMBER;
+  v_StdPrecision NUMBER:=0;
   v_PlanLine NUMBER;
   v_CostCenterCost NUMBER;
   v_CostCenterUse NUMBER;
@@ -197,6 +198,9 @@
           v_Message:='@ILS_PRODUCT_NAME@ ' ||  Cur_WRPProduct.pname || ' @ProductLocatorNeeded@';
           RAISE_APPLICATION_ERROR(-20000, v_Message);
         END IF;
+        -- Get StdPrecision of Uom of Product to be used in Production Line.
+        SELECT StdPrecision INTO v_StdPrecision
+        FROM C_Uom WHERE C_Uom_ID = Cur_WRPProduct.C_Uom_ID;
         -- Division Group Quantity
         IF (Cur_WRPProduct.Divisiongroupqty IS NOT NULL AND Cur_WRPProduct.Divisiongroupqty <> 0 AND v_NoQty <> 'Y') THEN
           v_PendingQty := Cur_WRPProduct.MovementQty*v_DoneQuantity;
@@ -207,6 +211,8 @@
             ELSE
               v_InsertQty:= v_PendingQty;
             END IF;
+
+            v_InsertQty:= ROUND(v_InsertQty,v_StdPrecision);
 
             Ad_Sequence_Next('M_ProductionLine', v_Client_ID, v_ProductionLine_ID) ;
             v_Line:=v_Line + 10;
@@ -252,7 +258,7 @@
           ) VALUES (
               v_ProductionLine_ID, v_Client_ID, v_PlanOrg_ID, now(),
               v_User_ID, 'Y', v_Record_ID, Cur_WRPProduct.M_Product_ID,
-              Cur_WRPProduct.ProductionType, (CASE v_NoQty WHEN 'Y' THEN 0 ELSE Cur_WRPProduct.MovementQty*v_DoneQuantity END), now(), v_User_ID,
+              Cur_WRPProduct.ProductionType, ROUND((CASE v_NoQty WHEN 'Y' THEN 0 ELSE Cur_WRPProduct.MovementQty*v_DoneQuantity END),v_StdPrecision), now(), v_User_ID,
               Cur_WRPProduct.C_UOM_ID,
               COALESCE(Cur_WRPProduct.M_Locator_ID,
                        (SELECT MIN(M_LOCATOR_ID)
@@ -283,6 +289,9 @@
         )
       LOOP
         v_ResultStr:='CreatingLine Products';
+        -- Get StdPrecision for Uom of product to be used in Production Line
+        SELECT StdPrecision INTO v_StdPrecision
+        FROM C_Uom WHERE C_Uom_ID = Cur_WRPUsed.C_Uom_ID;
         IF (Cur_WRPUsed.IsStocked='Y') THEN
           v_QtyAcumulated:=0;
           IF (NOT Cur_Stock_ISOPEN) OR (v_Product_old<>Cur_WRPUsed.M_Product_ID OR v_UOM_old<>Cur_WRPUsed.C_UOM_ID) THEN
@@ -401,7 +410,7 @@
                       v_ProductionLine_ID, v_Record_ID, v_Line, Cur_WRPUsed.Client_ID,
                       Cur_WRPUsed.Org_ID, 'Y', now(), 0,
                       now(), 0, Cur_WRPUsed.M_Product_ID, Cur_WRPUsed.C_UOM_ID,
-                      (CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_Qty END), '-', v_storage.M_Locator_ID, 
+                      ROUND((CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_Qty END),v_StdPrecision), '-', v_storage.M_Locator_ID, 
                       (CASE WHEN (SELECT ATTRSETVALUETYPE FROM M_PRODUCT WHERE M_PRODUCT_ID=Cur_WRPUsed.M_Product_ID)='F' THEN NULL ELSE v_storage.M_AttributeSetInstance_ID END),
                       v_storage.M_Product_UOM_ID,
                       (CASE v_NoQty
@@ -455,7 +464,7 @@
                 ) VALUES (
                     GET_UUID(), v_Record_ID, v_Line, Cur_WRPUsed.Client_ID,
                     Cur_WRPUsed.Org_ID, 'Y', now(), v_User_ID,
-                    now(), v_User_ID, Cur_WRPUsed.M_Product_ID,( CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_DoneQuantity*Cur_WRPUsed.MovementQty - v_QtyAcumulated END),
+                    now(), v_User_ID, Cur_WRPUsed.M_Product_ID,ROUND(( CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_DoneQuantity*Cur_WRPUsed.MovementQty - v_QtyAcumulated END),v_StdPrecision),
                     '-', Cur_WRPUsed.C_UOM_ID, Cur_WRPUsed.M_Locator_ID, Cur_WRPUsed.M_Product_UOM_ID, Cur_WRPUsed.QuantityOrder,
                     Cur_WRPUsed.MA_WRPhaseProduct_ID
                 );
@@ -502,7 +511,7 @@
             ) VALUES (
                 v_ProductionLine_ID, v_Record_ID, v_Line, Cur_WRPUsed.Client_ID,
                 Cur_WRPUsed.Org_ID, 'Y', now(), '0',
-                now(), '0', Cur_WRPUsed.M_Product_ID,( CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_DoneQuantity*Cur_WRPUsed.MovementQty END),
+                now(), '0', Cur_WRPUsed.M_Product_ID,ROUND(( CASE v_NoQty WHEN 'Y' THEN 0 ELSE v_DoneQuantity*Cur_WRPUsed.MovementQty END),v_StdPrecision),
                 '-', Cur_WRPUsed.C_UOM_ID, Cur_WRPUsed.M_Locator_ID, Cur_WRPUsed.M_Product_UOM_ID, Cur_WRPUsed.QuantityOrder,
                 Cur_WRPUsed.MA_WRPhaseProduct_ID
             );

@@ -1584,11 +1584,16 @@ isc.OBViewGrid.addProperties({
       // ui-pattern: single record/edit mode
       this.view.openDefaultEditView(this.getRecord(startRow));
     } else if (this.data && this.data.getLength() === 1) {
-      // one record select it directly
-      record = this.getRecord(0);
-      // this select method prevents state changing if the record
-      // was already selected
-      this.doSelectSingleRecord(record);
+
+      // Prevent the selection of an old record
+      // See issue https://issues.openbravo.com/view.php?id=26679
+      if (!this.view.viewForm.isNew) {
+        // one record select it directly
+        record = this.getRecord(0);
+        // this select method prevents state changing if the record
+        // was already selected
+        this.doSelectSingleRecord(record);
+      }
 
       // Call to updateButtonState to force a call to the FIC in setsession mode
       // See issue https://issues.openbravo.com/view.php?id=22655
@@ -1933,6 +1938,10 @@ isc.OBViewGrid.addProperties({
               shouldRemove = true;
             }
           }
+        } else if (criterion.fieldName === this.view.parentProperty + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER && criterion.operator === 'iEquals') {
+          // Prevent the filtering of a parent column if it is shown on grid
+          // See issue https://issues.openbravo.com/view.php?id=26767
+          shouldRemove = true;
         }
 
         if (shouldRemove) {
@@ -1947,13 +1956,19 @@ isc.OBViewGrid.addProperties({
           }
 
           for (j = 0; j < this.fields.length; j++) {
-            if (this.fields[j].name === fieldName && isc.SimpleType.getType(this.fields[j].type).inheritsFrom === 'datetime') {
-              if (criteria.criteria[i].criteria) {
-                for (k = 0; k < criteria.criteria[i].criteria.length; k++) {
-                  criteria.criteria[i].criteria[k].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+            if (this.fields[j].name === fieldName) {
+              if (isc.SimpleType.getType(this.fields[j].type).inheritsFrom === 'datetime') {
+                if (criteria.criteria[i].criteria) {
+                  for (k = 0; k < criteria.criteria[i].criteria.length; k++) {
+                    criteria.criteria[i].criteria[k].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+                  }
+                } else {
+                  criteria.criteria[i].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
                 }
-              } else {
-                criteria.criteria[i].minutesTimezoneOffset = currentTimeZoneOffsetInMinutes;
+              } else if (isc.SimpleType.getType(this.fields[j].type).inheritsFrom === 'text' && (criterion.operator === 'iBetweenInclusive' || criterion.operator === 'betweenInclusive') && criterion.end.indexOf('ZZZZZZZZZZ') === -1) {
+                // Fix of iBetweenInclusive criteria
+                // See issue https://issues.openbravo.com/view.php?id=26504
+                criterion.end = criterion.end + 'ZZZZZZZZZZ';
               }
               break;
             }

@@ -362,7 +362,7 @@ public class DefaultJsonDataService implements JsonDataService {
     final JSONObject criteria = JsonUtils.buildCriteria(parameters);
 
     if ((StringUtils.isEmpty(startRowStr) || StringUtils.isEmpty(endRowStr))
-        && !isIDCriteria(criteria)) {
+        && !isIDCriteria(criteria) && !parameters.containsKey("exportAs")) {
       // pagination is not set, this is most likely a bug
       String paramMsg = "";
       for (String paramKey : parameters.keySet()) {
