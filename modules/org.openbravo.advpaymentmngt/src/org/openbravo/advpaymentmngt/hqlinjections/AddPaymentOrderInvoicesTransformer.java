@@ -154,7 +154,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     whereClause.append(" (psd.paymentDetails is null");
     // If opened from Payment Window, add payment details lines
     if (strFinPaymentId != null) {
-      whereClause.append(" or fp.id = :paymentId ");
+      whereClause.append(" or (fp.id = :paymentId and (ips is not null or ops is not null)) ");
     }
     whereClause.append(") ");
 
