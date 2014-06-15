@@ -687,8 +687,10 @@ isc.OBSelectorItem.addProperties({
     return this.Super('init', arguments);
   },
 
-  setValueFromRecord: function (record, fromPopup) {
-    var identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
+  setValueFromRecord: function (record, fromPopup, addToValueMap) {
+    var currentValue = this.getValue(),
+        identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
+        valueMapObj = {},
         i;
     this._notUpdatingManually = true;
     if (!record) {
@@ -703,7 +705,27 @@ isc.OBSelectorItem.addProperties({
         this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name + OB.Constants.FIELDSEPARATOR + this.displayField, '');
       }
     } else {
+      if (OB.Utilities.getObjectSize(record) === 2 && //
+      Object.prototype.toString.call(record.value) === '[object String]' && //
+      Object.prototype.toString.call(record.map) === '[object String]') {
+        // This function admits the record provided as a full record (as it has come from the database with all the columns with their proper names)
+        // or as a simplified record where only the value of the input and its mapping (value to display) are known (but not the DB names of the columns that need to be stored and shown)
+        // In case of have a simplified record, it should come as {value: 'theValueToBeStored', map: 'theDisplayValueToBeShown'}
+        // Here it happens the adaptation of the 'record' object from the 'value' and 'map' nomenclature to the proper one based on DB names
+        if (this.valueField !== 'value') {
+          record[this.valueField] = record.value;
+          delete record.value;
+        }
+        if (this.displayField !== 'map') {
+          record[this.displayField] = record.map;
+          delete record.map;
+        }
+      }
       this.handleOutFields(record);
+      if (addToValueMap) {
+        valueMapObj[record[this.valueField]] = record[this.displayField];
+        this.setValueMap(valueMapObj);
+      }
       this.storeValue(record[this.valueField]);
       this.form.setValue(this.name + OB.Constants.FIELDSEPARATOR + this.displayField, record[this.displayField]);
       this.form.setValue(identifierFieldName, record[OB.Constants.IDENTIFIER]);
@@ -722,13 +744,6 @@ isc.OBSelectorItem.addProperties({
       this.updateValueMap();
     }
 
-    this.valueChangeActions();
-
-    delete this._notUpdatingManually;
-  },
-
-  valueChangeActions: function () {
-    var currentValue = this.getValue();
     if (this.form && this.form.handleItemChange) {
       this._hasChanged = true;
       this.form.handleItemChange(this);
@@ -737,9 +752,10 @@ isc.OBSelectorItem.addProperties({
     // only jump to the next field if the value has really been set
     // do not jump to the next field if the event has been triggered by the Tab key,
     // to prevent a field from being skipped (see https://issues.openbravo.com/view.php?id=21419)
-    if (currentValue && this.form.focusInNextItem && isc.EH.getKeyName() !== 'Tab') {
+    if ((currentValue || fromPopup) && this.form.focusInNextItem && isc.EH.getKeyName() !== 'Tab') {
       this.form.focusInNextItem(this.name);
     }
+    delete this._notUpdatingManually;
   },
 
   blur: function (form, item) {

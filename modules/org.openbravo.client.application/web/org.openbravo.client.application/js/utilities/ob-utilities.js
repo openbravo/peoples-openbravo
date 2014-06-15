@@ -1248,3 +1248,22 @@ OB.Utilities.getTabNumberById = function (tabId) {
   }
   return -1;
 };
+
+//** {{{ OB.Utilities.getObjectSize }}} **
+//
+// Returns the size of an object (only the first level)
+// Parameters:
+//  * {{{object}}} The object to get the size
+OB.Utilities.getObjectSize = function (object) {
+  var size = 0,
+      key;
+  if (Object.prototype.toString.call(object) !== '[object Object]') {
+    return false;
+  }
+  for (key in object) {
+    if (object.hasOwnProperty(key)) {
+      size++;
+    }
+  }
+  return size;
+};

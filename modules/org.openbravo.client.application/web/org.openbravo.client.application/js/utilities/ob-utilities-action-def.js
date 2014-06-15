@@ -120,36 +120,14 @@ OB.Utilities.Action.set('openDirectTab', function (paramObj) {
   }
 });
 
-// ** {{{ setCallerFieldValue }}} **
-// It sets a given value in the caller field (if it exists)
+// ** {{{ setSelectorValueFromRecord }}} **
+// It sets a given value in the selector caller field (if it exists)
 // Parameters:
-// * {{{value}}}: The value to be set
-// * {{{fetchBeforeSet}}}: (Optional, 'false' by default) If 'true', it does a fetch of the caller field before set the value
-// * {{{map}}}: (Optional) If the caller field is a select/combo (or a derivative), it allows
-//              to define a map for the passed value to be displayed in the select/combo
-OB.Utilities.Action.set('setCallerFieldValue', function (paramObj) {
-  var callerField = paramObj._processView.callerField,
-      valueMapObj = {};
+// * {{{record}}}: The record to be set in the selector
+OB.Utilities.Action.set('setSelectorValueFromRecord', function (paramObj) {
+  var callerField = paramObj._processView.callerField;
   if (!callerField) {
     return;
   }
-  if (paramObj.fetchBeforeSet && typeof callerField.fetchData === 'function') {
-    callerField.fetchData(function () {
-      paramObj.fetchBeforeSet = false;
-      OB.Utilities.Action.execute('setCallerFieldValue', paramObj);
-    });
-    return;
-  }
-  if (paramObj.value && paramObj.map && typeof callerField.setValueMap === 'function') {
-    valueMapObj[paramObj.value] = paramObj.map;
-    callerField.setValueMap(valueMapObj);
-  }
-  if (typeof callerField.setValue === 'function') {
-    callerField.setValue(paramObj.value);
-    if (typeof callerField.valueChangeActions === 'function') {
-      // The selector-item case has a 'valueChangeActions' function that triggers 'handleItemChange' and focus logic.
-      // It needs to be executed after the value has been set.
-      callerField.valueChangeActions();
-    }
-  }
+  callerField.setValueFromRecord(paramObj.record, true, true);
 });
