@@ -1112,8 +1112,13 @@ public class AdvancedQueryBuilder {
           if (tabEntity.equals(paramEntity)) {
             paramValue = vars.getStringParameter("@" + paramEntity.getName() + ".id@");
           } else {
-            Property prop = tabEntity.getPropertyByColumnName(param);
-            paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
+            try {
+              Property prop = tabEntity.getPropertyByColumnName(param);
+              paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
+            } catch (Exception ignore) {
+              // ignoring exception as the property might be found from context.
+              // for eg., refer issue https://issues.openbravo.com/view.php?id=26871
+            }
           }
           ancestorTab = KernelUtils.getInstance().getParentTab(ancestorTab);
         }
