@@ -113,16 +113,22 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     if ("I".equals(transactionType)) {
       selectClause.append(getAggregatorFunction("ord.documentNo") + " as salesOrderNo, ");
       selectClause.append(" inv.documentNo as invoiceNo, ");
+      selectClause
+          .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
+      selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
     } else if ("O".equals(transactionType)) {
       selectClause.append(" ord.documentNo as salesOrderNo, ");
       selectClause.append(getAggregatorFunction("inv.documentNo") + " as invoiceNo, ");
+      selectClause
+          .append(" COALESCE(ops.finPaymentmethod.id, ips.finPaymentmethod.id) as paymentMethod, ");
+      selectClause.append(" COALESCE(opsfp.name, ipsfp.name) as paymentMethodName, ");
     } else {
       selectClause.append(" ord.documentNo as salesOrderNo, ");
       selectClause.append(" inv.documentNo as invoiceNo, ");
+      selectClause
+          .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
+      selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
     }
-    selectClause
-        .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
-    selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
     selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
     selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
     selectClause.append(" COALESCE(inv.invoiceDate, ord.orderDate) as transactionDate, ");
@@ -228,14 +234,18 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     // Create GroupBy Clause
     if ("I".equals(transactionType)) {
       groupByClause.append(" inv.documentNo, ");
+      groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
+      groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
     } else if ("O".equals(transactionType)) {
       groupByClause.append(" ord.documentNo, ");
+      groupByClause.append(" COALESCE(ops.finPaymentmethod.id, ips.finPaymentmethod.id), ");
+      groupByClause.append(" COALESCE(opsfp.name, ipsfp.name), ");
     } else {
       groupByClause.append(" inv.documentNo, ");
       groupByClause.append(" ord.documentNo, ");
+      groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
+      groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
     }
-    groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
-    groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
     groupByClause.append(" COALESCE(invbp.id, ordbp.id), ");
     groupByClause.append(" COALESCE(invbp.name, ordbp.name), ");
     groupByClause.append(" COALESCE(inv.invoiceDate, ord.orderDate), ");
@@ -340,6 +350,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       if (havingGridFilters.contains("@invoiceNo@")) {
         havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@", "inv.documentNo");
       }
+      if (havingGridFilters.contains("@paymentMethodName@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@paymentMethodName@",
+            "COALESCE(ipsfp.name, opsfp.name)");
+      }
     } else if ("O".equals(transactionType)) {
       if (havingGridFilters.contains("@salesOrderNo@")) {
         havingGridFilters = havingGridFilters.replaceAll("@salesOrderNo@", "ord.documentNo");
@@ -348,12 +362,20 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@",
             getAggregatorFunction("inv.documentNo"));
       }
+      if (havingGridFilters.contains("@paymentMethodName@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@paymentMethodName@",
+            "COALESCE(opsfp.name, ipsfp.name)");
+      }
     } else {
       if (havingGridFilters.contains("@salesOrderNo@")) {
         havingGridFilters = havingGridFilters.replaceAll("@salesOrderNo@", "ord.documentNo");
       }
       if (havingGridFilters.contains("@invoiceNo@")) {
         havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@", "inv.documentNo");
+      }
+      if (havingGridFilters.contains("@paymentMethodName@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@paymentMethodName@",
+            "COALESCE(ipsfp.name, opsfp.name)");
       }
     }
     if (havingGridFilters.contains("@outstandingAmount@")) {
