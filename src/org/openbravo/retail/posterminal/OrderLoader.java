@@ -1009,7 +1009,8 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         for (int p = 0; p < jsonPromotions.length(); p++) {
           JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
           boolean hasActualAmt = jsonPromotion.has("actualAmt");
-          if (hasActualAmt && jsonPromotion.getDouble("actualAmt") == 0) {
+          if ((hasActualAmt && jsonPromotion.getDouble("actualAmt") == 0)
+              || (!hasActualAmt && jsonPromotion.getDouble("amt") == 0)) {
             continue;
           }
 
