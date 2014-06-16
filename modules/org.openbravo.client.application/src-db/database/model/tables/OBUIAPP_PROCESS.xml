@@ -89,6 +89,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISCANADDRECORDSTOSELECTOR" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_PROC_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -101,6 +105,7 @@
       <check name="OBUIAPP_PROC_GRIDLEGACY_CHK"><![CDATA[ISGRIDLEGACY IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PROC_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PROC_ISBACKGROUND_CHK"><![CDATA[ISBACKGROUND IN ('Y', 'N')]]></check>
+      <check name="OBUIAPP_PROC_ISCANADDR2SEL_CHK"><![CDATA[ISCANADDRECORDSTOSELECTOR IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PROC_MULTI_CHK"><![CDATA[ISMULTIRECORD IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_PROCESS_EXPLICITACC_CK"><![CDATA[IS_EXPLICIT_ACCESS IN ('Y', 'N')]]></check>
     </table>
