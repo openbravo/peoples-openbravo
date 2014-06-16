@@ -47,5 +47,18 @@ isc.OBFKItem.addProperties({
       this._editorEnterValue = null;
     }
     this.Super('setValue', arguments);
+  },
+  
+  /**
+   * handles a corner case where the event of the previous field is called for the current field,
+   * refer issue https://issues.openbravo.com/view.php?id=26817. In this case, the event is not triggered.
+   */
+  handleKeyPress: function (event, eventInfo) {
+    var key = isc.EH.lastEvent.keyName;
+    if (key === 'Enter' && event.itemInfo && event.itemInfo.item && event.itemInfo.item.name && event.itemInfo.item.name !== this.name) {
+      return true;
+    } else {
+      return this.Super('handleKeyPress', arguments);
+    }
   }
 });
