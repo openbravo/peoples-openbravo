@@ -127,8 +127,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" COALESCE(opsfp.name, ipsfp.name) as paymentMethodName, ");
       selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
       selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
-      selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
-      selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
       selectClause.append(" COALESCE(ops.expectedDate, ips.expectedDate) as expectedDate, ");
     } else {
       selectClause.append(" ord.documentNo as salesOrderNo, ");
@@ -136,6 +134,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause
           .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
       selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
+      selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
+      selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
       selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
     }
     selectClause.append(" sum(COALESCE(ips.amount, ops.amount)) as expectedAmount, ");
