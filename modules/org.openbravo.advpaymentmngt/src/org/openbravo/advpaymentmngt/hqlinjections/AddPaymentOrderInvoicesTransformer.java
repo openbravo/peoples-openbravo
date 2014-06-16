@@ -242,17 +242,20 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
       groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
       groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
+      groupByClause.append(" COALESCE(ipriority.priority, opriority.priority), ");
     } else if ("O".equals(transactionType)) {
       groupByClause.append(" ord.documentNo, ");
       groupByClause.append(" COALESCE(ops.finPaymentmethod.id, ips.finPaymentmethod.id), ");
       groupByClause.append(" COALESCE(opsfp.name, ipsfp.name), ");
       groupByClause.append(" COALESCE(ops.expectedDate, ips.expectedDate), ");
+      groupByClause.append(" COALESCE(opriority.priority, ipriority.priority), ");
     } else {
       groupByClause.append(" inv.documentNo, ");
       groupByClause.append(" ord.documentNo, ");
       groupByClause.append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id), ");
       groupByClause.append(" COALESCE(ipsfp.name, opsfp.name), ");
       groupByClause.append(" COALESCE(ips.expectedDate, ops.expectedDate), ");
+      groupByClause.append(" COALESCE(ipriority.priority, opriority.priority), ");
     }
     groupByClause.append(" COALESCE(invbp.id, ordbp.id), ");
     groupByClause.append(" COALESCE(invbp.name, ordbp.name) ");
@@ -293,8 +296,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       orderByClause.append(" THEN 0 ELSE 1 END ");
     }
     if ("O".equals(transactionType)) {
+      orderByClause.append(", COALESCE(opriority.priority, ipriority.priority) ");
       orderByClause.append(", COALESCE(ops.expectedDate, ips.expectedDate) ");
     } else {
+      orderByClause.append(", COALESCE(ipriority.priority, opriority.priority) ");
       orderByClause.append(", COALESCE(ips.expectedDate, ops.expectedDate) ");
     }
     if ("O".equals(transactionType)) {
@@ -358,6 +363,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       if (havingGridFilters.contains("@invoiceNo@")) {
         havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@", "inv.documentNo");
       }
+      if (havingGridFilters.contains("@paymentMethod@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@paymentMethod@",
+            "COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id)");
+      }
       if (havingGridFilters.contains("@paymentMethodName@")) {
         havingGridFilters = havingGridFilters.replaceAll("@paymentMethodName@",
             "COALESCE(ipsfp.name, opsfp.name)");
@@ -374,6 +383,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@",
             getAggregatorFunction("inv.documentNo"));
       }
+      if (havingGridFilters.contains("@paymentMethod@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@paymentMethod@",
+            "COALESCE(ops.finPaymentmethod.id, ips.finPaymentmethod.id)");
+      }
       if (havingGridFilters.contains("@paymentMethodName@")) {
         havingGridFilters = havingGridFilters.replaceAll("@paymentMethodName@",
             "COALESCE(opsfp.name, ipsfp.name)");
@@ -388,6 +401,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       }
       if (havingGridFilters.contains("@invoiceNo@")) {
         havingGridFilters = havingGridFilters.replaceAll("@invoiceNo@", "inv.documentNo");
+      }
+      if (havingGridFilters.contains("@paymentMethod@")) {
+        havingGridFilters = havingGridFilters.replaceAll("@paymentMethod@",
+            "COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id)");
       }
       if (havingGridFilters.contains("@paymentMethodName@")) {
         havingGridFilters = havingGridFilters.replaceAll("@paymentMethodName@",
