@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009-2012 Openbravo SL 
+ * All portions are Copyright (C) 2009-2014 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -427,8 +427,8 @@ public class PaymentReportDao {
       if (!strPaymentMethodId.isEmpty()) {
         hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTMETHOD);
-        hsqlScript.append(", inv.");
-        hsqlScript.append(Invoice.PROPERTY_PAYMENTMETHOD);
+        hsqlScript.append(", invps.");
+        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTMETHOD);
         hsqlScript.append(") = '");
         hsqlScript.append(strPaymentMethodId);
         hsqlScript.append("'");
