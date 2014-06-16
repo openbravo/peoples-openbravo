@@ -1030,9 +1030,9 @@
       disc.doNotMerge = discount.doNotMerge;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
-      
-      if (OB.UTIL.isNullOrUndefined(discount.actualAmt) && !disc.amt && disc.pack){
-        disc.hidden=true;
+
+      if (OB.UTIL.isNullOrUndefined(discount.actualAmt) && !disc.amt && disc.pack) {
+        disc.hidden = true;
       }
 
       if (disc.hidden) {
@@ -1626,12 +1626,7 @@
       var me = this,
           lineToMerge, lines = this.get('lines'),
           auxLines = lines.models.slice(0),
-          
-          
-          
-          
-          
-          //clone
+           //clone
           localSkipApplyPromotions;
 
       localSkipApplyPromotions = this.get('skipApplyPromotions');
@@ -1766,6 +1761,7 @@
           if (linesToMerge.length > 0) {
             _.each(linesToMerge, function (line) {
               line.set('promotionCandidates', l.get('promotionCandidates'));
+              line.set('promotionMessages', me.showMessagesPromotions(line.get('promotionMessages'), l.get('promotionMessages')));
               line.set('qtyToApplyDiscount', l.get('qtyToApplyDiscount'));
               _.each(l.get('promotions'), function (promo) {
                 copiedPromo = JSON.parse(JSON.stringify(promo));
@@ -1969,6 +1965,19 @@
           });
         }
       });
+    },
+
+    showMessagesPromotions: function (arrayMessages1, arrayMessages2) {
+      arrayMessages1 = arrayMessages1 || [];
+      (arrayMessages2 || []).forEach(function (m2) {
+        if (_.filter(arrayMessages1, function (m1) {
+          return m1 === m2;
+        }).length === 0) {
+          arrayMessages1.push(m2);
+          OB.UTIL.showAlert.display(m2);
+        }
+      });
+      return arrayMessages1;
     }
   });
 
