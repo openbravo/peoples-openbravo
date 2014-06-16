@@ -11449,6 +11449,60 @@ You can also select if transactions are allowed or not for this organization typ
 <!--CBF045D2539A4249B091CCE4B1F5EEDB-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--CBF045D2539A4249B091CCE4B1F5EEDB--></AD_TABLE>
 
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390--><AD_TABLE>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <AD_TABLE_ID><![CDATA[CDB9DC9655F24DF8AB41AA0ADBD04390]]></AD_TABLE_ID>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <NAME><![CDATA[C_RM_ReturnToVendorHQL]]></NAME>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <TABLENAME><![CDATA[C_RM_ReturnToVendorHQL]]></TABLENAME>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <AD_WINDOW_ID><![CDATA[C50A8AEE6F044825B5EF54FAAE76826F]]></AD_WINDOW_ID>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D94B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ISTREE><![CDATA[N]]></ISTREE>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <HQLQUERY><![CDATA[select iol.id as id, iol.organization as organization, iol.client as client,  iol.product as product,  
+iol.uOM as uOM, iol.id as goodsShipmentLine, iol.movementQuantity as movementQuantity,
+iol.shipmentReceipt.businessPartner as businessPartner, iol.shipmentReceipt.documentNo as shipmentNumber,
+iol.shipmentReceipt.movementDate as movementDate,  attributeSetValue as attributeSetValue,
+coalesce((select sum(ol.orderedQuantity)
+from OrderLine as ol
+left join ol.salesOrder as o
+where ol.goodsShipmentLine = iol
+and o.processed = true
+and o.documentStatus <> 'VO'), 0) as returnQtyOtherRM,
+(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null then false else true end) as obSelected,
+coalesce((select ol.orderedQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0) as returned,
+(select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) as returnReason,
+coalesce((select ol.tax from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) ,
+(select e.salesOrderLine.tax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) as tax,
+(case when (select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol) = true then
+ coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), 
+          (select e.salesOrderLine.grossUnitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol))
+else 
+ coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), 
+          (select e.salesOrderLine.unitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol))
+end) as unitPrice,
+(select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol) as orderNo
+MAINFROM MaterialMgmtShipmentInOutLine as iol 
+left join  iol.attributeSetValue as attributeSetValue
+join iol.shipmentReceipt as io 
+where io.businessPartner.id = :businessPartnerId 
+and io.processed = true and io.documentStatus <> 'VO' 
+and io.salesTransaction = false 
+and iol.organization in ('E443A31992CB4635AFCAEABE7183CE85') 
+and @additional_filters@]]></HQLQUERY>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ENTITY_ALIAS><![CDATA[iol]]></ENTITY_ALIAS>
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390--></AD_TABLE>
+
 <!--CE9AFF5F51B846AEAB0B6CBF829092CD--><AD_TABLE>
 <!--CE9AFF5F51B846AEAB0B6CBF829092CD-->  <AD_TABLE_ID><![CDATA[CE9AFF5F51B846AEAB0B6CBF829092CD]]></AD_TABLE_ID>
 <!--CE9AFF5F51B846AEAB0B6CBF829092CD-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
