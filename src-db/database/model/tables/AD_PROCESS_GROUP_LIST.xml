@@ -64,6 +64,9 @@
       <foreign-key foreignTable="AD_PROCESS_GROUP" name="AD_PROGROUP_LIST_AD_PROGROUP" onDelete="cascade">
         <reference local="AD_PROCESS_GROUP_ID" foreign="AD_PROCESS_GROUP_ID"/>
       </foreign-key>
+      <index name="AD_PROGROUPLIST_PROGROUP" unique="false">
+        <index-column name="AD_PROCESS_GROUP_ID"/>
+      </index>
       <check name="AD_PROGROUPLIST_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

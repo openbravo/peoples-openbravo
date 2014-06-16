@@ -69,7 +69,7 @@ public class GroupInfo {
 
   private boolean stopWhenFails;
 
-  Logger log4j = Logger.getLogger(GroupInfo.class);
+  private static final Logger log4j = Logger.getLogger(GroupInfo.class);
 
   /**
    * Creates a new GroupInfo object with the given parameters

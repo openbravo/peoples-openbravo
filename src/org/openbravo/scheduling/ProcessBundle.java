@@ -261,11 +261,7 @@ public class ProcessBundle {
    * @return true if the process is a group
    */
   public boolean isGroup() {
-    if (this.processId.equals(GroupInfo.processGroupId)) {
-      return true;
-    } else {
-      return false;
-    }
+    return this.processId.equals(GroupInfo.processGroupId);
   }
 
   /**
