@@ -70,7 +70,7 @@ isc.OBFKFilterTextItem.addProperties({
         requestProperties = requestProperties || {};
         requestProperties.params = grid.getFetchRequestParams(requestProperties.params) || {};
         if (gridView) {
-          requestProperties.params.tabId = gridView.tabId || (gridView.sourceView && gridView.sourceView.tabId);
+          requestProperties.params.tabId = gridView.tabId || (grid.viewProperties && grid.viewProperties.tabId) || (gridView.sourceView && gridView.sourceView.tabId);
         }
         delete me.forceReload;
       },
