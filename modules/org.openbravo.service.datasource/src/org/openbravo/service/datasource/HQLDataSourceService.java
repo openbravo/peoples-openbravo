@@ -66,6 +66,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private static final String WHERE = " WHERE ";
   private static final String ORDERBY = " ORDER BY ";
   private static final String GROUPBY = "GROUP BY";
+  private static final String MAIN_FROM = "MAINFROM";
+  private static final String FROM = "FROM ";
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
   private static final String INSERTION_POINT_GENERIC_ID = "@insertion_point_#@";
   private static final String INSERTION_POINT_INDEX_PLACEHOLDER = "#";
@@ -170,9 +172,11 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       } else {
         Object[] properties = (Object[]) row;
         for (int i = 0; i < returnAliases.length; i++) {
-          Property property = entity.getPropertyByColumnName(returnAliases[i], checkIsNotNull);
+          Property property = entity.getPropertyByColumnName(returnAliases[i].toLowerCase(),
+              checkIsNotNull);
           if (property == null) {
-            property = entity.getPropertyByColumnName(columns.get(i).getDBColumnName());
+            property = entity.getPropertyByColumnName(columns.get(i).getDBColumnName()
+                .toLowerCase());
           }
           record.put(property.getName(), properties[i]);
         }
@@ -229,16 +233,21 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
     String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
     if (distinct != null) {
-      final String from = "from ";
-      String formClause = hqlQuery.substring(hqlQuery.toLowerCase().indexOf(from));
+      String formClause = null;
+      if (hqlQuery.indexOf(MAIN_FROM) != -1) {
+        formClause = hqlQuery.substring(hqlQuery.indexOf(MAIN_FROM));
+      } else {
+        formClause = hqlQuery.substring(hqlQuery.toUpperCase().lastIndexOf(FROM));
+      }
       Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
       Property property = entity.getProperty(distinct);
+      Column distinctColumn = OBDal.getInstance().get(Column.class, property.getColumnId());
       // TODO: Improve distinct query like this: https://issues.openbravo.com/view.php?id=25182
       if (justCount) {
-        hqlQuery = "select count(distinct " + table.getEntityAlias() + "." + distinct + "."
+        hqlQuery = "select count(distinct " + distinctColumn.getEntityAlias() + "."
             + getNameOfFirstIdentifierProperty(property.getTargetEntity()) + ") " + formClause;
       } else {
-        hqlQuery = "select distinct " + table.getEntityAlias() + "." + distinct + "."
+        hqlQuery = "select distinct " + distinctColumn.getEntityAlias() + "."
             + getNameOfFirstIdentifierProperty(property.getTargetEntity()) + " " + formClause;
       }
     }
@@ -273,11 +282,18 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     hqlQuery = fillInInsertionPoints(hqlQuery, queryNamedParameters, parameters);
 
     if (distinct == null && justCount) {
-      final String from = "from ";
-      String formClause = hqlQuery.substring(hqlQuery.toLowerCase().indexOf(from));
+      String formClause = null;
+      if (hqlQuery.indexOf(MAIN_FROM) != -1) {
+        formClause = hqlQuery.substring(hqlQuery.indexOf(MAIN_FROM));
+      } else {
+        formClause = hqlQuery.substring(hqlQuery.toUpperCase().lastIndexOf(FROM));
+      }
       hqlQuery = "select count(*) " + formClause;
     }
 
+    if (hqlQuery.indexOf(MAIN_FROM) != -1) {
+      hqlQuery = hqlQuery.replace(MAIN_FROM, FROM);
+    }
     Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
 
     // sets the parameters of the query
@@ -465,9 +481,11 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       }
       replacementMap.put(" " + propertyNameBefore + " ", " " + propertyNameAfter + " ");
       replacementMap.put("(" + propertyNameBefore + ")", "(" + propertyNameAfter + ")");
+      replacementMap.put("(" + propertyNameBefore + " ", "(" + propertyNameAfter + " ");
+      replacementMap.put(" " + propertyNameBefore + ")", " " + propertyNameAfter + ")");
       for (String toBeReplaced : replacementMap.keySet()) {
         if (updatedWhereClause.contains(toBeReplaced)) {
-          updatedWhereClause = updatedWhereClause.replace(toBeReplaced,
+          updatedWhereClause = updatedWhereClause.replaceAll(toBeReplaced,
               replacementMap.get(toBeReplaced));
         }
       }
@@ -560,13 +578,13 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
     boolean isDistinctQuery = false;
     final String sortBy = parameters.get(JsonConstants.SORTBY_PARAMETER);
-    if (sortBy != null) {
+    if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
+      orderByClause = parameters.get(JsonConstants.DISTINCT_PARAMETER);
+      isDistinctQuery = true;
+    } else if (sortBy != null) {
       orderByClause = sortBy;
     } else if (parameters.get(JsonConstants.ORDERBY_PARAMETER) != null) {
       orderByClause = parameters.get(JsonConstants.ORDERBY_PARAMETER);
-    } else if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
-      orderByClause = parameters.get(JsonConstants.DISTINCT_PARAMETER);
-      isDistinctQuery = true;
     } else {
       return "";
     }
@@ -586,20 +604,25 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
 
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
-    Property property = entity.getProperty(propertyName);
-    OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
-    columnCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, table));
-    columnCriteria.add(Restrictions.eq(Column.PROPERTY_NAME, property.getColumnName()));
-    Column column = (Column) columnCriteria.uniqueResult();
-    if (!orderByClause.isEmpty()) {
-      orderByClause = ORDERBY + column.getEntityAlias();
-      if (property.getTargetEntity() != null) {
-        orderByClause = orderByClause + "."
-            + getNameOfFirstIdentifierProperty(property.getTargetEntity());
-      }
-      orderByClause = orderByClause + direction;
-      if (includeMainEntityID && !isDistinctQuery) {
-        orderByClause = orderByClause + ", " + table.getEntityAlias() + ".id";
+    boolean checkIsNotNull = false;
+    Property property = entity.getProperty(propertyName, checkIsNotNull);
+    if (property == null) {
+      orderByClause = ORDERBY + propertyName;
+    } else {
+      OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
+      columnCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, table));
+      columnCriteria.add(Restrictions.eq(Column.PROPERTY_NAME, property.getColumnName()));
+      Column column = (Column) columnCriteria.uniqueResult();
+      if (!orderByClause.isEmpty()) {
+        orderByClause = ORDERBY + column.getEntityAlias();
+        if (property.getTargetEntity() != null) {
+          orderByClause = orderByClause + "."
+              + getNameOfFirstIdentifierProperty(property.getTargetEntity());
+        }
+        orderByClause = orderByClause + direction;
+        if (includeMainEntityID && !isDistinctQuery) {
+          orderByClause = orderByClause + ", " + table.getEntityAlias() + ".id";
+        }
       }
     }
     return orderByClause;
