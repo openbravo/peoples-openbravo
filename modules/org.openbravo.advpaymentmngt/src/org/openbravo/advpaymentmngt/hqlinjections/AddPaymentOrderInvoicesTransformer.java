@@ -119,6 +119,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
       selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
       selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
+      selectClause.append(" max(ips.amount) as expectedAmount, ");
     } else if ("O".equals(transactionType)) {
       selectClause.append(" ord.documentNo as salesOrderNo, ");
       selectClause.append(getAggregatorFunction("inv.documentNo") + " as invoiceNo, ");
@@ -128,6 +129,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
       selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
       selectClause.append(" COALESCE(ops.expectedDate, ips.expectedDate) as expectedDate, ");
+      selectClause.append(" max(ops.amount) as expectedAmount, ");
     } else {
       selectClause.append(" ord.documentNo as salesOrderNo, ");
       selectClause.append(" inv.documentNo as invoiceNo, ");
@@ -137,10 +139,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
       selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
       selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
+      selectClause.append(" sum(COALESCE(ips.amount, ops.amount)) as expectedAmount, ");
     }
-    selectClause.append(" sum(COALESCE(ips.amount, ops.amount)) as expectedAmount, ");
-    selectClause
-        .append(" sum(COALESCE(inv.grandTotalAmount, ord.grandTotalAmount)) as invoicedAmount, ");
+    selectClause.append(" sum(COALESCE(inv.grandTotalAmount, 0)) as invoicedAmount, ");
     selectClause.append(" SUM(psd.amount + psd.writeoffAmount) as outstandingAmount, ");
     selectClause.append(" COALESCE(sum(pd.amount), 0) as amount, ");
     selectClause
@@ -514,6 +515,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       }
       replacementMap.put(" " + propertyNameBefore + " ", " " + propertyNameAfter + " ");
       replacementMap.put("(" + propertyNameBefore + ")", "(" + propertyNameAfter + ")");
+      replacementMap.put("(" + propertyNameBefore + " ", "(" + propertyNameAfter + " ");
       for (String toBeReplaced : replacementMap.keySet()) {
         if (updatedWhereClause.contains(toBeReplaced)) {
           updatedWhereClause = updatedWhereClause.replace(toBeReplaced,
