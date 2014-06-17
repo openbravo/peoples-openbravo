@@ -1626,7 +1626,6 @@
       var me = this,
           lineToMerge, lines = this.get('lines'),
           auxLines = lines.models.slice(0),
-           //clone
           localSkipApplyPromotions;
 
       localSkipApplyPromotions = this.get('skipApplyPromotions');
@@ -1747,7 +1746,7 @@
           //Filter lines which can be merged
           linesToMerge = _.filter(me.get('lines').models, function (line) {
             var qtyReserved = 0;
-            line.get('promotions').forEach(
+            (line.get('promotions') || []).forEach(
 
             function (p) {
               qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved || 0);
