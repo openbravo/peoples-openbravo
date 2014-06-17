@@ -232,7 +232,9 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
   if (!issotrx && payment) {
     OB.APRM.AddPayment.updateInvOrderTotal(this.view.theForm, grid);
   } else {
-    OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm, false);
+	if(grid.selectedIds.length===0){
+      OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm, false);
+    }
   }
   OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
 };
