@@ -119,7 +119,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
       selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
       selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
-      selectClause.append(" max(ips.amount) as expectedAmount, ");
+      selectClause.append(" max(COALESCE(ips.amount, ops.amount)) as expectedAmount, ");
       selectClause.append(" max(COALESCE(inv.grandTotalAmount, 0)) as invoicedAmount, ");
     } else if ("O".equals(transactionType)) {
       selectClause.append(" ord.documentNo as salesOrderNo, ");
@@ -130,7 +130,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
       selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
       selectClause.append(" COALESCE(ops.expectedDate, ips.expectedDate) as expectedDate, ");
-      selectClause.append(" max(ops.amount) as expectedAmount, ");
+      selectClause.append(" max(COALESCE(ips.amount, ops.amount)) as expectedAmount, ");
       selectClause.append(" sum(COALESCE(inv.grandTotalAmount, 0)) as invoicedAmount, ");
     } else {
       selectClause.append(" ord.documentNo as salesOrderNo, ");
@@ -375,7 +375,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
             "COALESCE(ipsfp.name, opsfp.name)");
       }
       if (havingGridFilters.contains("@expectedAmount@")) {
-        havingGridFilters = havingGridFilters.replaceAll("@expectedAmount@", "max(ips.amount)");
+        havingGridFilters = havingGridFilters.replaceAll("@expectedAmount@",
+            "max(COALESCE(ips.amount, ops.amount))");
       }
       if (havingGridFilters.contains("@expectedDate@")) {
         havingGridFilters = havingGridFilters.replaceAll("@expectedDate@",
@@ -402,7 +403,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
             "COALESCE(opsfp.name, ipsfp.name)");
       }
       if (havingGridFilters.contains("@expectedAmount@")) {
-        havingGridFilters = havingGridFilters.replaceAll("@expectedAmount@", "max(ops.amount)");
+        havingGridFilters = havingGridFilters.replaceAll("@expectedAmount@",
+            "max(COALESCE(ips.amount, ops.amount))");
       }
       if (havingGridFilters.contains("@expectedDate@")) {
         havingGridFilters = havingGridFilters.replaceAll("@expectedDate@",
