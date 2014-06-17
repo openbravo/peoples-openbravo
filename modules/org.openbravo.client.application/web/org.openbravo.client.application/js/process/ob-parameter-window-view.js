@@ -181,7 +181,7 @@ isc.OBParameterWindowView.addProperties({
       } catch (_exception) {
         isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
       }
-      if (originalShowIfValue && item.defaultFilter !== null && item.getType() === 'OBPickEditGridItem') {
+      if (originalShowIfValue && item.defaultFilter !== null && !isc.isA.emptyObject(item.defaultFilter) && item.getType() === 'OBPickEditGridItem') {
         item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
         item.canvas.viewGrid.filterByEditor();
       }
