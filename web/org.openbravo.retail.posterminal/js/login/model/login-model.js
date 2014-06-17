@@ -95,7 +95,11 @@
                   }
                 });
               } else {
-                OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal'), [{
+                var msg = "";
+                if (data.exception.message !== undefined) {
+                  msg = " Error: " + data.exception.message + ".";
+                }
+                OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + msg, [{
                   label: OB.I18N.getLabel('OBMOBC_LblOk'),
                   isConfirmButton: true,
                   action: function () {
