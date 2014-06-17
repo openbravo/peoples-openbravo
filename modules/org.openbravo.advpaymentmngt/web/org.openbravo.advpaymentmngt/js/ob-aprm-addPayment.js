@@ -415,8 +415,6 @@ OB.APRM.AddPayment.updateDifference = function (form) {
   } else {
     expectedDifferenceItem.setValue(Number(expectedDiffAmt.toString()));
   }
-
-
   if (diffAmt.signum() !== 0) {
     OB.APRM.AddPayment.updateDifferenceActions(form);
   }
@@ -655,6 +653,7 @@ OB.APRM.AddPayment.updateCreditOnChange = function (item, view, form, grid) {
     OB.APRM.AddPayment.distributeAmount(view, form, true);
   }
   OB.APRM.AddPayment.updateDifference(form);
+  OB.APRM.AddPayment.updateActualExpected(form);
   return true;
 };
 
@@ -724,6 +723,7 @@ OB.APRM.AddPayment.creditValidation = function (item, validator, value, record) 
 
 OB.APRM.AddPayment.doSelectionChangedCredit = function (record, state, view) {
   OB.APRM.AddPayment.updateCreditTotal(view.theForm);
+  OB.APRM.AddPayment.updateActualExpected(view.theForm);
 };
 
 OB.APRM.AddPayment.conversionRateOnChange = function (item, view, form, grid) {
