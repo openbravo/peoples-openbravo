@@ -233,7 +233,7 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
   if (!issotrx && payment) {
     OB.APRM.AddPayment.updateInvOrderTotal(this.view.theForm, grid);
   } else {
-	if(grid.selectedIds.length===0){
+    if (grid.selectedIds.length === 0) {
       OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm, false);
     }
   }
@@ -241,11 +241,11 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
 };
 
 OB.APRM.AddPayment.glitemsOnLoadGrid = function (grid) {
-  if(!grid.isReady){
-   // If Gl Items Grid contains records when first opened then section is uncollapsed
-   if(grid.getSelectedRecords() && grid.getSelectedRecords().size()>0){
-     grid.view.theForm.getItem('7B6B5F5475634E35A85CF7023165E50B').expandSection();
-   }
+  if (!grid.isReady) {
+    // If Gl Items Grid contains records when first opened then section is uncollapsed
+    if (grid.getSelectedRecords() && grid.getSelectedRecords().size() > 0) {
+      grid.view.theForm.getItem('7B6B5F5475634E35A85CF7023165E50B').expandSection();
+    }
   }
   grid.isReady = true;
   OB.APRM.AddPayment.updateGLItemsTotal(this.view.theForm, 0, false);
@@ -542,7 +542,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
   } else {
     expectedPayment.setValue(Number('0'));
   }
-  if (!issotrx) {
+  if (!issotrx && (credit.signum() !== 0)) {
     actpayment = totalAmount.add(glitemtotal).add(generateCredit);
     actualPayment.setValue(Number(actpayment));
     if (credit.compareTo(BigDecimal.prototype.ZERO) > 0) {
