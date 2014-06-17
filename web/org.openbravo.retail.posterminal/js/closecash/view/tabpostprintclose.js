@@ -452,7 +452,7 @@ enyo.kind({
               style: 'padding: 20px;',
               initComponents: function () {
                 if (OB.MobileApp.model.get('terminal').organizationImage) {
-                  this.setAttribute('src', OB.MobileApp.model.get('terminal').organizationImage);
+                  this.setAttribute('src', 'data:'+OB.MobileApp.model.get('terminal').organizationImageMime+';base64,'+OB.MobileApp.model.get('terminal').organizationImage);
                 }
               }
             }, {

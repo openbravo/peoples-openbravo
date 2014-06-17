@@ -18,11 +18,9 @@ import javax.inject.Inject;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -85,62 +83,30 @@ public class Terminal extends ProcessHQLQuery {
     if (myOrgInfo.getLocationAddress().getCountry() != null) {
       countryId = myOrgInfo.getLocationAddress().getCountry().getId();
     }
-    String orgImage = " ";
+    String selectOrgImage = "";
+    String fromOrgImage = "";
+    String whereOrgImage = "";
     if (myOrgInfo.getYourCompanyDocumentImage() != null) {
-      // Get the image for the current user
-      String hqlImage = "select image.mimetype, image.bindaryData " + "from ADImage image "
-          + "where image.id = :imageId";
-      Query qryImage = OBDal.getInstance().getSession().createQuery(hqlImage);
-      qryImage.setParameter("imageId", myOrgInfo.getYourCompanyDocumentImage().getId());
-      String imageData = "none";
-      for (Object qryImageObject : qryImage.list()) {
-        final Object[] qryImageObjectItem = (Object[]) qryImageObject;
-        imageData = "data:"
-            + qryImageObjectItem[0].toString()
-            + ";base64,"
-            + org.apache.commons.codec.binary.Base64
-                .encodeBase64String((byte[]) qryImageObjectItem[1]);
-      }
-      orgImage = "'" + imageData + "' as organizationImage,";
+
+      selectOrgImage = " image.bindaryData as organizationImage,"
+          + "image.mimetype as organizationImageMime,";
+      fromOrgImage = ", ADImage image ";
+      whereOrgImage = " and image.id ='" + myOrgInfo.getYourCompanyDocumentImage().getId() + "'";
     }
 
-    return Arrays
-        .asList(new String[] { "select " + "'"
-            + pricesList.getId()
-            + "' as priceList, "
-            + "'"
-            + pricesList.getCurrency().getId()
-            + "' as currency, "
-            + "'"
-            + pricesList.getCurrency().getIdentifier()
-            + "' as "
-            + getIdentifierAlias("currency")
-            + ", "
-            + "'"
-            + pricesList.getCurrency().isCurrencySymbolAtTheRight()
-            + "' as currencySymbolAtTheRight, "
-            + "'"
-            + pricesList.getCurrency().getSymbol()
-            + "' as symbol, "
-            + "'"
-            + warehouseId
-            + "' as warehouse, "
-            + lastDocumentNumber
-            + " as lastDocumentNumber, "
-            + lastQuotationDocumentNumber
-            + " as lastQuotationDocumentNumber, "
-            + "'"
-            + regionId
-            + "'"
-            + " as organizationRegionId, "
-            + "'"
-            + countryId
-            + "'"
-            + " as organizationCountryId, "
-            + orgImage
-            + regularTerminalHQLProperties.getHqlSelect()
-            + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype where pos.$readableCriteria and pos.searchKey = '"
-            + pOSTerminal.getSearchKey() + "'" });
+    return Arrays.asList(new String[] { "select " + "'" + pricesList.getId() + "' as priceList, "
+        + "'" + pricesList.getCurrency().getId() + "' as currency, " + "'"
+        + pricesList.getCurrency().getIdentifier() + "' as " + getIdentifierAlias("currency")
+        + ", " + "'" + pricesList.getCurrency().isCurrencySymbolAtTheRight()
+        + "' as currencySymbolAtTheRight, " + "'" + pricesList.getCurrency().getSymbol()
+        + "' as symbol, " + "'" + warehouseId + "' as warehouse, " + lastDocumentNumber
+        + " as lastDocumentNumber, " + lastQuotationDocumentNumber
+        + " as lastQuotationDocumentNumber, " + "'" + regionId + "'" + " as organizationRegionId, "
+        + "'" + countryId + "'" + " as organizationCountryId, " + selectOrgImage
+        + regularTerminalHQLProperties.getHqlSelect()
+        + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype "
+        + fromOrgImage + " where pos.$readableCriteria and pos.searchKey = '"
+        + pOSTerminal.getSearchKey() + "' " + whereOrgImage });
   }
 
   private String getIdentifierAlias(String propertyName) {
