@@ -105,4 +105,24 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
     return payment.getFinancialTransactionAmount().toPlainString();
   }
 
+  @Override
+  String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
+    // Converted Amount of the current Payment
+    FIN_Payment payment = getPayment(requestMap);
+    return payment.getBusinessPartner().getId();
+  }
+
+  @Override
+  String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
+    // Converted Amount of the current Payment
+    FIN_Payment payment = getPayment(requestMap);
+    return payment.getCurrency().getStandardPrecision().toString();
+  }
+
+  @Override
+  String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
+    FIN_Payment payment = getPayment(requestMap);
+    return payment.getCurrency().getId();
+  }
+
 }

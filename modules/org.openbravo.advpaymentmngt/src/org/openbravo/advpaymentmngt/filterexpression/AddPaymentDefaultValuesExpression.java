@@ -97,6 +97,8 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
           return handler.getDefaultDocumentCategory(requestMap);
         case ReferenceNo:
           return handler.getDefaultReferenceNo(requestMap);
+        case Currency:
+          return handler.getDefaultCurrency(requestMap);
         }
       } catch (Exception e) {
         log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(),
@@ -142,7 +144,7 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
         "customer_credit"), IsSOTrx("issotrx"), Payment("fin_payment_id"), Invoice("c_invoice_id"), Order(
         "c_order_id"), ConversionRate("conversion_rate"), ConvertedAmount("converted_amount"), StandardPrecision(
         "StdPrecision"), GenerateCredit("generateCredit"), DocumentCategory("DOCBASETYPE"), ReferenceNo(
-        "reference_no");
+        "reference_no"), Currency("c_currency_id");
 
     private String columnname;
 

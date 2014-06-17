@@ -33,7 +33,6 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -64,6 +63,12 @@ abstract class AddPaymentDefaultValuesHandler {
 
   abstract String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException;
 
+  abstract String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException;
+
+  abstract String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException;
+
+  abstract String getDefaultCurrency(Map<String, String> requestMap) throws JSONException;
+
   protected abstract long getSeq();
 
   String getDefaultCurrencyTo(Map<String, String> requestMap) throws JSONException {
@@ -75,11 +80,11 @@ abstract class AddPaymentDefaultValuesHandler {
           FIN_FinancialAccount.class, context.getString("inpfinFinancialAccountId"));
       return finFinancialAccount.getCurrency().getId();
     }
-    String strBPartnerId = getBusinessPartner(requestMap);
+    String strBPartnerId = getDefaultReceivedFrom(requestMap);
 
     if (StringUtils.isNotEmpty(strBPartnerId)) {
       BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-          context.get("inpcBpartnerId"));
+          strBPartnerId);
       boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
       if (isSOTrx && businessPartner.getAccount() != null) {
         return businessPartner.getAccount().getCurrency().getId();
@@ -91,7 +96,7 @@ abstract class AddPaymentDefaultValuesHandler {
   }
 
   String getDefaultCustomerCredit(Map<String, String> requestMap) throws JSONException {
-    String strBusinessPartnerId = getBusinessPartner(requestMap);
+    String strBusinessPartnerId = getDefaultReceivedFrom(requestMap);
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strOrgId = context.getString("inpadOrgId");
     String strReceipt = getDefaultIsSOTrx(requestMap);
@@ -118,14 +123,6 @@ abstract class AddPaymentDefaultValuesHandler {
     return "<" + strDocNo + ">";
   }
 
-  private String getBusinessPartner(Map<String, String> requestMap) throws JSONException {
-    JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("inpcBpartnerId") && context.get("inpcBpartnerId") != JSONObject.NULL) {
-      return context.getString("inpcBpartnerId");
-    }
-    return "";
-  }
-
   public String getDefaultFinancialAccount(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     if (context.has("inpfinFinancialAccountId")
@@ -133,11 +130,11 @@ abstract class AddPaymentDefaultValuesHandler {
         && StringUtils.isNotEmpty(context.getString("inpfinFinancialAccountId"))) {
       return context.getString("inpfinFinancialAccountId");
     }
-    String strBPartnerId = getBusinessPartner(requestMap);
+    String strBPartnerId = getDefaultReceivedFrom(requestMap);
 
     if (StringUtils.isNotEmpty(strBPartnerId)) {
       BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-          context.get("inpcBpartnerId"));
+          strBPartnerId);
       boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
       if (isSOTrx && businessPartner.getAccount() != null) {
         return businessPartner.getAccount().getId();
@@ -154,14 +151,15 @@ abstract class AddPaymentDefaultValuesHandler {
 
   String getDefaultPaymentMethod(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("inpfinPaymentmethodId") && context.getString("inpfinPaymentmethodId") != null
-        && StringUtils.isNotBlank((String) context.getString("inpfinPaymentmethodId"))) {
+    if (context.has("inpfinPaymentmethodId")
+        && context.get("inpfinPaymentmethodId") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inpfinPaymentmethodId"))) {
       return context.getString("inpfinPaymentmethodId");
     }
-    String strBPartnerId = getBusinessPartner(requestMap);
+    String strBPartnerId = getDefaultReceivedFrom(requestMap);
     if (StringUtils.isNotEmpty(strBPartnerId)) {
       BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-          context.get("inpcBpartnerId"));
+          strBPartnerId);
       boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
       if (isSOTrx && businessPartner.getPaymentMethod() != null) {
         return businessPartner.getPaymentMethod().getId();
@@ -170,16 +168,6 @@ abstract class AddPaymentDefaultValuesHandler {
       }
     }
     return null;
-  }
-
-  String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
-    return getBusinessPartner(requestMap);
-  }
-
-  String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
-    JSONObject context = new JSONObject(requestMap.get("context"));
-    Currency currency = OBDal.getInstance().get(Currency.class, context.get("inpcCurrencyId"));
-    return currency.getStandardPrecision().toString();
   }
 
   BigDecimal getPendingAmt(List<FIN_PaymentSchedule> pslist) {
