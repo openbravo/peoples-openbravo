@@ -138,6 +138,7 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
       form.getItem('fin_financial_account_id').setValue('');
     } else {
       form.getItem('c_currency_to_id').setValue(data.currencyToId);
+      form.getItem('c_currency_to_id').valueMap[data.currencyToId] = data.currencyToIdentifier;
       if (recalcConvRate && isc.isA.Number(data.conversionrate)) {
         form.getItem('conversion_rate').setValue(Number(data.conversionrate));
         OB.APRM.AddPayment.updateConvertedAmount(view, form, false);

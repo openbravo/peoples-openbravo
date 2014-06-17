@@ -80,6 +80,8 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
           }
         }
         result.put("currencyToId", finAccPaymentMethod.getAccount().getCurrency().getId());
+        result.put("currencyToIdentifier", finAccPaymentMethod.getAccount().getCurrency()
+            .getIdentifier());
       } else {
         result.put("conversionrate", "1");
         result.put("currencyToId", currencyId);
