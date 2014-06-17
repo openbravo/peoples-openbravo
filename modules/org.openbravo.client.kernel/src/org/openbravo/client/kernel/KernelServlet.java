@@ -147,7 +147,7 @@ public class KernelServlet extends BaseKernelServlet {
 
         if (count <= 0) {
           session.invalidate();
-          log4j.info("Invalidating session created for bypass authentication elements");
+          log4j.debug("Invalidating session created for bypass authentication elements");
         } else {
           session.setAttribute("forcedSessionsRequestCount", count);
         }
