@@ -137,4 +137,9 @@ public class PaymentOutAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
     return payment.getCurrency().getId();
   }
 
+  @Override
+  String getOrganization(Map<String, String> requestMap) throws JSONException {
+    return getPayment(requestMap).getOrganization().getId();
+  }
+
 }

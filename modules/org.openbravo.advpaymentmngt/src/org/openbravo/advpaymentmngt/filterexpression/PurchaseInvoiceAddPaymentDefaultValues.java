@@ -95,22 +95,31 @@ public class PurchaseInvoiceAddPaymentDefaultValues extends AddPaymentDefaultVal
   String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
     // Converted Amount of the current Payment
     JSONObject context = new JSONObject(requestMap.get("context"));
-    Invoice invoice = OBDal.getInstance().get(Invoice.class, context.getString("inpcInvoiceId"));
+    Invoice invoice = getInvoice(context);
     return invoice.getBusinessPartner().getId();
   }
 
   @Override
   String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    Invoice invoice = OBDal.getInstance().get(Invoice.class, context.getString("inpcInvoiceId"));
+    Invoice invoice = getInvoice(context);
     return invoice.getCurrency().getStandardPrecision().toString();
   }
 
   @Override
   String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    Invoice invoice = OBDal.getInstance().get(Invoice.class, context.getString("inpcInvoiceId"));
+    Invoice invoice = getInvoice(context);
     return invoice.getCurrency().getId();
+  }
+
+  @Override
+  String getOrganization(Map<String, String> requestMap) throws JSONException {
+    return getInvoice(new JSONObject(requestMap.get("context"))).getOrganization().getId();
+  }
+
+  Invoice getInvoice(JSONObject context) throws JSONException {
+    return OBDal.getInstance().get(Invoice.class, context.getString("inpcInvoiceId"));
   }
 
 }

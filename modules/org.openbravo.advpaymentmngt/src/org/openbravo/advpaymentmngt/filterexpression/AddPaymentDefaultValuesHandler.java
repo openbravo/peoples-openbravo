@@ -69,6 +69,8 @@ abstract class AddPaymentDefaultValuesHandler {
 
   abstract String getDefaultCurrency(Map<String, String> requestMap) throws JSONException;
 
+  abstract String getOrganization(Map<String, String> requestMap) throws JSONException;
+
   protected abstract long getSeq();
 
   String getDefaultCurrencyTo(Map<String, String> requestMap) throws JSONException {
@@ -98,7 +100,7 @@ abstract class AddPaymentDefaultValuesHandler {
   String getDefaultCustomerCredit(Map<String, String> requestMap) throws JSONException {
     String strBusinessPartnerId = getDefaultReceivedFrom(requestMap);
     JSONObject context = new JSONObject(requestMap.get("context"));
-    String strOrgId = context.getString("inpadOrgId");
+    String strOrgId = getOrganization(requestMap);
     String strReceipt = getDefaultIsSOTrx(requestMap);
     if (StringUtils.isEmpty(strBusinessPartnerId) || strReceipt == null) {
       return null;

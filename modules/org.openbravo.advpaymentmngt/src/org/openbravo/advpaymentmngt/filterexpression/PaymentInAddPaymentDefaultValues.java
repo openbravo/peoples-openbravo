@@ -86,7 +86,13 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
 
   private FIN_Payment getPayment(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    String strFinPaymentId = context.getString("inpfinPaymentId");
+    String strFinPaymentId = "";
+    if (context.has("inpfinPaymentId") && !context.isNull("inpfinPaymentId")) {
+      strFinPaymentId = context.getString("inpfinPaymentId");
+    }
+    if (context.has("Fin_Payment_ID") && !context.isNull("Fin_Payment_ID")) {
+      strFinPaymentId = context.getString("Fin_Payment_ID");
+    }
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strFinPaymentId);
     return payment;
   }
@@ -123,6 +129,11 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
   String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
     FIN_Payment payment = getPayment(requestMap);
     return payment.getCurrency().getId();
+  }
+
+  @Override
+  String getOrganization(Map<String, String> requestMap) throws JSONException {
+    return getPayment(requestMap).getOrganization().getId();
   }
 
 }

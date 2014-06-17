@@ -102,22 +102,31 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
     // Converted Amount of the current Payment
     JSONObject context = new JSONObject(requestMap.get("context"));
-    Order order = OBDal.getInstance().get(Order.class, context.getString("inpcOrderId"));
+    Order order = getOrder(context);
     return order.getBusinessPartner().getId();
   }
 
   @Override
   String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    Order order = OBDal.getInstance().get(Order.class, context.getString("inpcOrderId"));
+    Order order = getOrder(context);
     return order.getCurrency().getStandardPrecision().toString();
   }
 
   @Override
   String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    Order order = OBDal.getInstance().get(Order.class, context.getString("inpcOrderId"));
+    Order order = getOrder(context);
     return order.getCurrency().getId();
+  }
+
+  @Override
+  String getOrganization(Map<String, String> requestMap) throws JSONException {
+    return getOrder(new JSONObject(requestMap.get("context"))).getOrganization().getId();
+  }
+
+  Order getOrder(JSONObject context) throws JSONException {
+    return OBDal.getInstance().get(Order.class, context.getString("inpcOrderId"));
   }
 
 }
