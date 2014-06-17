@@ -31,7 +31,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -588,9 +587,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property property = entity.getProperty(propertyName);
     OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
-    columnCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, table));
-    columnCriteria.add(Restrictions.eq(Column.PROPERTY_NAME, property.getColumnName()));
-    Column column = (Column) columnCriteria.uniqueResult();
+    Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
     if (!orderByClause.isEmpty()) {
       orderByClause = ORDERBY + column.getEntityAlias();
       if (property.getTargetEntity() != null) {
