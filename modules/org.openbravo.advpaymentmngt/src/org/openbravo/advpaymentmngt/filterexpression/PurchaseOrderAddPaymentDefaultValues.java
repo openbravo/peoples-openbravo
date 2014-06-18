@@ -39,7 +39,7 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
 
   @Override
   String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
-    // Expected amount is the amount pending to pay on the Sales Order
+    // Expected amount is the amount pending to pay on the Purchase Order
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strOrderId = context.getString("inpcOrderId");
     BigDecimal pendingAmt = getPendingAmt(strOrderId);
@@ -48,7 +48,7 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
 
   @Override
   String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
-    // Actual amount is the amount pending to pay on the Sales Order
+    // Actual amount is the amount pending to pay on the Purchase Order
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strOrderId = context.getString("inpcOrderId");
     BigDecimal pendingAmt = getPendingAmt(strOrderId);
@@ -66,7 +66,6 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   private BigDecimal getPendingAmt(String strOrderId) {
-    // TODO check multicurrency
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     BigDecimal pendingAmt = getPendingAmt(order.getFINPaymentScheduleList());
     return pendingAmt;
@@ -100,7 +99,7 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
 
   @Override
   String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
-    // Converted Amount of the current Payment
+    // Business Partner of the current Purchase Order
     JSONObject context = new JSONObject(requestMap.get("context"));
     Order order = getOrder(context);
     return order.getBusinessPartner().getId();
@@ -108,6 +107,7 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
 
   @Override
   String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
+    // Standard Precision of the currency
     JSONObject context = new JSONObject(requestMap.get("context"));
     Order order = getOrder(context);
     return order.getCurrency().getStandardPrecision().toString();
@@ -115,6 +115,7 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
 
   @Override
   String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
+    // Currency of the current Purchase Order
     JSONObject context = new JSONObject(requestMap.get("context"));
     Order order = getOrder(context);
     return order.getCurrency().getId();
@@ -122,6 +123,7 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
 
   @Override
   String getOrganization(Map<String, String> requestMap) throws JSONException {
+    // Organization of the current Purchase Order
     return getOrder(new JSONObject(requestMap.get("context"))).getOrganization().getId();
   }
 

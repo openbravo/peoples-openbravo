@@ -34,9 +34,6 @@ public class PaymentInAddOrderOrInvoiceFilterExpresion extends
     return SEQUENCE;
   }
 
-  /*
-   * The purpose of this class is to demonstrate how to extend this piece of code.
-   */
   @Override
   public String getFilterExpression(Map<String, String> requestMap) throws JSONException {
     return getDefaultPaymentMethod(requestMap);

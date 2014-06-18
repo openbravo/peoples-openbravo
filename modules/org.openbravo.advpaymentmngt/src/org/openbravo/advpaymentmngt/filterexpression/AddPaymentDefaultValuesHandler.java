@@ -38,12 +38,9 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RequestScoped
 abstract class AddPaymentDefaultValuesHandler {
-  private static final Logger log = LoggerFactory.getLogger(AddPaymentDefaultValuesHandler.class);
 
   abstract String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException;
 
@@ -99,7 +96,6 @@ abstract class AddPaymentDefaultValuesHandler {
 
   String getDefaultCustomerCredit(Map<String, String> requestMap) throws JSONException {
     String strBusinessPartnerId = getDefaultReceivedFrom(requestMap);
-    JSONObject context = new JSONObject(requestMap.get("context"));
     String strOrgId = getOrganization(requestMap);
     String strReceipt = getDefaultIsSOTrx(requestMap);
     if (StringUtils.isEmpty(strBusinessPartnerId) || strReceipt == null) {

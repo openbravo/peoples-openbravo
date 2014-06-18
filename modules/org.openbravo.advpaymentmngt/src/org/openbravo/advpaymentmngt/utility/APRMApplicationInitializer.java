@@ -41,7 +41,6 @@ public class APRMApplicationInitializer implements ApplicationInitializer {
         new StandardSQLFunction("ad_message_get2", StandardBasicTypes.STRING));
     OBDal.getInstance().registerSQLFunction("hqlagg",
         new SQLFunctionTemplate(StandardBasicTypes.STRING, getAggregationSQL()));
-
     OBDal.getInstance().registerSQLFunction("get_uuid",
         new StandardSQLFunction("get_uuid", StandardBasicTypes.STRING));
   }
@@ -75,8 +74,8 @@ public class APRMApplicationInitializer implements ApplicationInitializer {
     try {
       dbVersion = SystemInfo.getDatabaseVersion(new DalConnectionProvider(false));
     } catch (ServletException ignore) {
-    }
 
+    }
     if (dbVersion == null) {
       return false;
     }

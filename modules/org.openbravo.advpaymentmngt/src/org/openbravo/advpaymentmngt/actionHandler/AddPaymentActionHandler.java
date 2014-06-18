@@ -319,8 +319,9 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       for (final FIN_Payment creditPayment : selectedCreditPayment) {
         final BigDecimal usedCreditAmt = selectedCreditPaymentAmounts.get(creditPayment.getId());
         final StringBuffer description = new StringBuffer();
-        if (creditPayment.getDescription() != null && !creditPayment.getDescription().equals(""))
+        if (creditPayment.getDescription() != null && !creditPayment.getDescription().equals("")) {
           description.append(creditPayment.getDescription()).append("\n");
+        }
         description.append(String.format(OBMessageUtils.messageBD("APRM_CreditUsedPayment"),
             payment.getDocumentNo()));
         String truncateDescription = (description.length() > 255) ? description.substring(0, 251)
@@ -332,7 +333,6 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         OBDal.getInstance().save(creditPayment);
       }
     }
-
   }
 
   private void addGLItems(FIN_Payment payment, JSONObject jsonparams) throws JSONException,

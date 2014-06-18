@@ -36,7 +36,6 @@ public class AddPaymentCreditToUseInjector extends HqlInserter {
     if (strBusinessPartnerId != null) {
       final BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
           strBusinessPartnerId);
-
       if (businessPartner != null) {
         queryNamedParameters.put("bp", businessPartner.getId());
       } else {
@@ -47,7 +46,6 @@ public class AddPaymentCreditToUseInjector extends HqlInserter {
       queryNamedParameters.put("bp", "-1");
     }
     queryNamedParameters.put("issotrx", isSalesTransaction);
-
     return "f.businessPartner.id = :bp and f.receipt = :issotrx";
   }
 }

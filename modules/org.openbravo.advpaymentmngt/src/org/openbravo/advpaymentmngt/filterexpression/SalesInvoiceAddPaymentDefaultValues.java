@@ -39,12 +39,14 @@ public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValues
 
   @Override
   public String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
+    // Expected amount is the amount on the editing Sales Invoice
     BigDecimal pendingAmt = getPendingAmount(requestMap);
     return pendingAmt.toPlainString();
   }
 
   @Override
   String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
+    // Actual amount is the amount on the editing Sales Invoice
     BigDecimal pendingAmt = getPendingAmount(requestMap);
     return pendingAmt.toPlainString();
   }
@@ -93,7 +95,7 @@ public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValues
 
   @Override
   String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
-    // Converted Amount of the current Payment
+    // Business Partner of the current Sales Invoice
     JSONObject context = new JSONObject(requestMap.get("context"));
     Invoice invoice = getInvoice(context);
     return invoice.getBusinessPartner().getId();
@@ -101,6 +103,7 @@ public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValues
 
   @Override
   String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
+    // Standard Precision of the currency
     JSONObject context = new JSONObject(requestMap.get("context"));
     Invoice invoice = getInvoice(context);
     return invoice.getCurrency().getStandardPrecision().toString();
@@ -108,6 +111,7 @@ public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValues
 
   @Override
   String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
+    // Currency of the current Sales Invoice
     JSONObject context = new JSONObject(requestMap.get("context"));
     Invoice invoice = getInvoice(context);
     return invoice.getCurrency().getId();
@@ -115,6 +119,7 @@ public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValues
 
   @Override
   String getOrganization(Map<String, String> requestMap) throws JSONException {
+    // Currency of the current Sales Invoice
     return getInvoice(new JSONObject(requestMap.get("context"))).getOrganization().getId();
   }
 

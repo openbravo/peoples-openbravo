@@ -79,12 +79,13 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
 
   @Override
   String getDefaultDocumentNo(Map<String, String> requestMap) throws JSONException {
+    // Document Number of the current Payment
     FIN_Payment payment = getPayment(requestMap);
-
     return payment.getDocumentNo();
   }
 
   private FIN_Payment getPayment(Map<String, String> requestMap) throws JSONException {
+    // Current Payment
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strFinPaymentId = "";
     if (context.has("inpfinPaymentId") && !context.isNull("inpfinPaymentId")) {
@@ -113,7 +114,7 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
 
   @Override
   String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
-    // Converted Amount of the current Payment
+    // Business Partner of the current Payment
     FIN_Payment payment = getPayment(requestMap);
     if (payment.getBusinessPartner() != null) {
       return payment.getBusinessPartner().getId();
@@ -124,19 +125,21 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
 
   @Override
   String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
-    // Converted Amount of the current Payment
+    // Standard Precision of the currency
     FIN_Payment payment = getPayment(requestMap);
     return payment.getCurrency().getStandardPrecision().toString();
   }
 
   @Override
   String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
+    // Currency of the current Payment
     FIN_Payment payment = getPayment(requestMap);
     return payment.getCurrency().getId();
   }
 
   @Override
   String getOrganization(Map<String, String> requestMap) throws JSONException {
+    // Organization of the current Payment
     return getPayment(requestMap).getOrganization().getId();
   }
 
