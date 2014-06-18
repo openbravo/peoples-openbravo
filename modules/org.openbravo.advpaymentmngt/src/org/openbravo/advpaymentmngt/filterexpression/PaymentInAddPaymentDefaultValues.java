@@ -115,7 +115,11 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
   String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
     // Converted Amount of the current Payment
     FIN_Payment payment = getPayment(requestMap);
-    return payment.getBusinessPartner().getId();
+    if (payment.getBusinessPartner() != null) {
+      return payment.getBusinessPartner().getId();
+    } else {
+      return "";
+    }
   }
 
   @Override
