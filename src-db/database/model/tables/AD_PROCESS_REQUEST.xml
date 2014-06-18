@@ -227,5 +227,7 @@
       <foreign-key foreignTable="AD_PROCESS_REQUEST" name="AD_PROCESS_REQUEST_GROUP">
         <reference local="AD_PROCESS_REQUEST_GROUP_ID" foreign="AD_PROCESS_REQUEST_ID"/>
       </foreign-key>
+      <check name="AD_PROCESS_REQUEST_GROUP_CHK"><![CDATA[((ISGROUP = 'Y') AND (AD_PROCESS_GROUP_ID IS NOT NULL)) OR ((ISGROUP = 'N') AND (AD_PROCESS_GROUP_ID IS NULL))]]></check>
+      <check name="AD_PROCESS_REQUEST_PROCESS_CHK"><![CDATA[((AD_PROCESS_ID IS NOT NULL) AND (AD_PROCESS_GROUP_ID IS NULL)) OR ((AD_PROCESS_GROUP_ID IS NOT NULL) AND (AD_PROCESS_ID IS NULL))]]></check>
     </table>
   </database>
