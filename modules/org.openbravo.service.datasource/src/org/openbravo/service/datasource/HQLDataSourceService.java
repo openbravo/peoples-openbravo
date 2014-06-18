@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -127,15 +128,13 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     Table table = getTableFromParameters(parameters);
     boolean justCount = true;
     Query countQuery = getQuery(table, parameters, justCount);
-    String hqlQuery = countQuery.getQueryString();
     int nRows = -1;
-    if (hqlQuery.toUpperCase().contains(GROUPBY)) {
-      // No risk in using list, the request is done always paginated
-      nRows = countQuery.list().size();
-    } else {
-      nRows = ((Number) countQuery.uniqueResult()).intValue();
+    ScrollableResults scrollableResults = countQuery.scroll();
+    if (scrollableResults.last()) {
+      nRows = scrollableResults.getRowNumber();
+      scrollableResults.close();
     }
-    return nRows;
+    return nRows + 1;
   }
 
   @Override

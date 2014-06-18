@@ -286,10 +286,13 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
   // add credit amount
   amount = amount.add(creditamt);
 
+  var orderInvoiceData = orderInvoice.data.localData;
   for (i = 0; i < total; i++) {
-    outstandingAmount = new BigDecimal(String(orderInvoice.getRecord(i).outstandingAmount));
-    if (outstandingAmount.signum() < 0) {
-      negativeamt = negativeamt.add(new BigDecimal(Math.abs(outstandingAmount).toString()));
+    if (isc.isA.Object(orderInvoiceData[i]) && !isc.isA.emptyObject(orderInvoiceData[i])) {
+      outstandingAmount = new BigDecimal(String(orderInvoiceData[i].outstandingAmount));
+      if (outstandingAmount.signum() < 0) {
+        negativeamt = negativeamt.add(new BigDecimal(Math.abs(outstandingAmount).toString()));
+      }        
     }
   }
 
@@ -298,6 +301,9 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
   }
 
   for (i = 0; i < total; i++) {
+    if (!isc.isA.Object(orderInvoice.getEditValues(i)) || isc.isA.emptyObject(orderInvoice.getEditValues(i))) {
+      continue;
+    }
     writeoff = orderInvoice.getEditValues(i).writeoff;
     amt = new BigDecimal(String(orderInvoice.getEditValues(i).amount || 0));
     if (writeoff === null || writeoff === undefined) {
@@ -530,7 +536,7 @@ OB.APRM.AddPayment.updateGLItemsTotal = function (form, rowNum, remove) {
       grid = form.getItem('glitem').canvas.viewGrid,
       receivedInField = grid.getFieldByColumnName('received_in'),
       paidOutField = grid.getFieldByColumnName('paid_out'),
-      allRecords = grid.data.allRows.length || 0,
+      allRecords = (grid.data.allRows) ? grid.data.allRows.length : 0,
       glItemTotalItem = form.getItem('amount_gl_items'),
       issotrx = form.getItem('issotrx').getValue(),
       amt, i, bdAmt, receivedInAmt, paidOutAmt;
