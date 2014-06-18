@@ -68,7 +68,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
         SessionLoginData
             .deactivate((ConnectionProvider) event.getServletContext()
                 .getAttribute("openbravoPool"), sessionId);
-        this.context = null;
+        SessionListener.context = null;
         log.info("Deactivated session: " + sessionId);
       } catch (ServletException e1) {
         log.error(e1.getMessage(), e1);
