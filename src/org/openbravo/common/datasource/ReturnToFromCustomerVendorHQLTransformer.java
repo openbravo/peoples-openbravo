@@ -22,6 +22,8 @@ package org.openbravo.common.datasource;
 import java.util.Map;
 
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 
 @ComponentProvider.Qualifier("CDB9DC9655F24DF8AB41AA0ADBD04390")
@@ -34,6 +36,8 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
   private static final String returnReasonLeftClause = " coalesce((select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), '')";
   private static final String returnReasonCountQuery = " select count(distinct e.name) from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId) ";
   private static final String returnReasonDataQuery = " select distinct e.name from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId) ";
+  private static final String unitPriceProperty = "unitPrice";
+  private static final String grossUnitPriceProperty = "grossUnitPrice";
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
@@ -50,6 +54,15 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
     transformedHqlQuery = transformedHqlQuery.replace("@returnedLeftClause@", returnedLeftClause);
     transformedHqlQuery = transformedHqlQuery.replace("@returnedOthersLeftClause@",
         returnedOthersLeftClause);
+
+    Order order = OBDal.getInstance().get(Order.class, salesOrderId);
+    if (order.getPriceList().isPriceIncludesTax()) {
+      transformedHqlQuery = transformedHqlQuery.replaceAll("@unitPriceProperty@",
+          grossUnitPriceProperty);
+    } else {
+      transformedHqlQuery = transformedHqlQuery
+          .replaceAll("@unitPriceProperty@", unitPriceProperty);
+    }
 
     String distinctProperty = requestParameters.get("_distinct");
     if ("returnReason".equals(distinctProperty)) {
