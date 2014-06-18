@@ -37,6 +37,17 @@
     <Parameter name="adSessionId"/>
   </SqlMethod>
   
+  <SqlMethod name="deactivateExpiredSessions" type="preparedStatement" return="rowCount">
+    <Sql><![CDATA[
+        UPDATE AD_Session
+           SET Session_Active = 'N'
+         WHERE Session_Active = 'Y'
+           AND (Last_Session_Ping < to_timestamp(?, 'YYYY-MM-DD HH24:MI:SS')
+             or (Last_Session_Ping is null and created < now() - 1))
+    ]]></Sql>
+    <Parameter name="lastValidPingTime"/>
+  </SqlMethod>
+
    <SqlMethod name="isSessionActive" type="preparedStatement" return="boolean">
     <Sql><![CDATA[
         SELECT COUNT(*) 
