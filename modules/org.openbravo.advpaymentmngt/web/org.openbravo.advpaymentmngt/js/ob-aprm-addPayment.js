@@ -83,7 +83,6 @@ OB.APRM.AddPayment = {
           record.amount = Number(curAmount.toString());
           grid.selectedIds.push(record.id);
           grid.data.savedData.push(editedRecord);
-          //record = editedRecord;
         }
       }
     }
@@ -258,20 +257,16 @@ OB.APRM.AddPayment.tryToUpdateActualExpected = function (form) {
 OB.APRM.AddPayment.orderInvoiceAmountOnChange = function (item, view, form, grid) {
   OB.APRM.AddPayment.updateActualExpected(form, false);
   OB.APRM.AddPayment.updateInvOrderTotal(form, grid);
-  return true;
 };
 
 OB.APRM.AddPayment.orderInvoiceTotalAmountOnChange = function (item, view, form, grid) {
   OB.APRM.AddPayment.updateActualExpected(form, false);
   OB.APRM.AddPayment.updateTotal(form);
-
-  return true;
 };
 
 OB.APRM.AddPayment.glItemTotalAmountOnChange = function (item, view, form, grid) {
   OB.APRM.AddPayment.updateActualExpected(form, false);
   OB.APRM.AddPayment.updateTotal(form);
-  return true;
 };
 
 OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChange) {
@@ -286,9 +281,9 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       total = orderInvoice.data.totalRows,
       writeoff, amt, outstandingAmount, i;
 
-  // glitems amount
+  // subtract glitem amount
   amount = amount.subtract(glitemamt);
-  // credit amount
+  // add credit amount
   amount = amount.add(creditamt);
 
   for (i = 0; i < total; i++) {
@@ -355,8 +350,6 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
   }
   OB.APRM.AddPayment.updateActualExpected(form, false);
   OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
-
-  return true;
 };
 
 OB.APRM.AddPayment.updateTotal = function (form) {
@@ -428,13 +421,12 @@ OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
   }
   invOrdTotalItem.setValue(Number(totalAmt.toString()));
   OB.APRM.AddPayment.updateTotal(form);
-  return true;
 };
 
 OB.APRM.AddPayment.selectionChanged = function (record, state) {
   var orderInvoice = this.view.theForm.getItem('order_invoice').canvas.viewGrid;
   if (!orderInvoice.preventDistributingOnSelectionChanged) {
-    this.fireOnPause('updateButtonState' + record.id, function () {
+    this.fireOnPause('selectionChanged' + record.id, function () {
       OB.APRM.AddPayment.doSelectionChanged(record, state, this.view);
     }, 200);
     this.Super('selectionChanged', record, state);
@@ -453,8 +445,9 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
       i;
 
   amount = amount.subtract(distributedAmount);
-  // glitems amount
+  // subtract glitem amount
   amount = amount.subtract(glitem);
+  // add credit amount
   amount = amount.add(credit);
 
   if (issotrx) {
@@ -619,9 +612,9 @@ OB.APRM.AddPayment.selectionChangedCredit = function (record, state) {
   var creditgrid = this.view.theForm.getItem('credit_to_use').canvas.viewGrid;
 
   if (!creditgrid.preventDistributingOnSelectionChanged) {
-    this.fireOnPause('updateButtonState', function () {
+    this.fireOnPause('selectionChangedCredit' + record.id, function () {
       OB.APRM.AddPayment.doSelectionChangedCredit(record, state, this.view);
-    }, 500);
+    }, 200);
     this.Super('selectionChangedCredit', record, state);
   }
 };
@@ -634,17 +627,14 @@ OB.APRM.AddPayment.orderInvoiceGridValidation = function (item, validator, value
     item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_NotValidNumber'));
     return false;
   }
-
   if (outstanding.abs().compareTo(paidamount.abs()) < 0) {
     item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
     return false;
   }
-
   if ((paidamount.signum() === 0) && (record.writeoff === false)) {
     item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSZEROUNDERPAYMENT'));
     return false;
   }
-
   if ((paidamount.signum() < 0 && outstanding.signum() > 0) || (paidamount.signum() > 0 && outstanding.signum() < 0)) {
     item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_ValueOutOfRange'));
     return false;
@@ -660,12 +650,10 @@ OB.APRM.AddPayment.creditValidation = function (item, validator, value, record) 
     item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_NotValidNumber'));
     return false;
   }
-
   if (outstanding.abs().compareTo(paidamount.abs()) < 0) {
     item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_MoreAmountThanOutstanding'));
     return false;
   }
-
   if (paidamount.signum() === 0) {
     item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('aprm_biggerthanzero'));
     return false;
@@ -748,11 +736,10 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       totalWriteOffAmount = BigDecimal.prototype.ZERO,
       writeOffLineAmount = BigDecimal.prototype.ZERO,
       totalOustandingAmount = BigDecimal.prototype.ZERO,
-      amount, outstandingAmount, i, callbackOnProcessActionHandler, writeoff;
+      outstandingAmount, i, callbackOnProcessActionHandler, writeoff;
 
   // Check if there is pending amount to distribute that could be distributed
   for (i = 0; i < selectedRecords.length; i++) {
-    amount = new BigDecimal(String(orderInvoiceGrid.getEditedCell(orderInvoiceGrid.getRecordIndex(selectedRecords[i]), amountField)));
     outstandingAmount = new BigDecimal(String(orderInvoiceGrid.getRecord(i).outstandingAmount));
     totalOustandingAmount = totalOustandingAmount.add(outstandingAmount);
   }
