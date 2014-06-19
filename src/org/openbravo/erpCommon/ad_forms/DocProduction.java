@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2012 Openbravo SLU
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -166,6 +166,17 @@ public class DocProduction extends AcctServer {
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     log4jDocProduction.debug("createFact - object created");
     // Lines
+    int countProductionlinesWithTrnCostZero = 0;
+    for (int i = 0; i < p_lines.length; i++) {
+      DocLine_Material line = (DocLine_Material) p_lines[i];
+      if (line.transaction.getTransactionCost() != null
+          && line.transaction.getTransactionCost().compareTo(ZERO) == 0) {
+        countProductionlinesWithTrnCostZero++;
+      }
+    }
+    if (p_lines.length == countProductionlinesWithTrnCostZero) {
+      setStatus(STATUS_DocumentDisabled);
+    }
     fact = new Fact(this, as, Fact.POST_Actual);
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];

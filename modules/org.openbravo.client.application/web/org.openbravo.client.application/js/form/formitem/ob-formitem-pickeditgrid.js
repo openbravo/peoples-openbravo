@@ -69,6 +69,7 @@ isc.OBPickEditGridItem.addProperties({
     pickAndExecuteViewProperties.viewProperties = this.viewProperties;
     pickAndExecuteViewProperties.view = this.view;
     pickAndExecuteViewProperties.parameterName = this.name;
+    pickAndExecuteViewProperties.onGridLoadFunction = this.onGridLoadFunction;
     if (this.view.isPickAndExecuteWindow) {
       this.view.resized = function (messagebarVisible) {
         if (messagebarVisible) {

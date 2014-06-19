@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalSessionFactoryController;
@@ -70,6 +72,10 @@ public class HiddenUpdateTest extends BaseTest {
         final PersistentClass pc = (PersistentClass) it.next();
         final String entityName = pc.getEntityName();
 
+        Entity entity = ModelProvider.getInstance().getEntity(entityName);
+        if (entity.isHQLBased() || entity.isDataSourceBased()) {
+          continue;
+        }
         for (final Object o : OBDal.getInstance().createCriteria(entityName).list()) {
           if (o == null) {
             // can occur when reading views which have nullable

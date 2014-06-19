@@ -309,7 +309,7 @@ public class ModelProvider implements OBSingleton {
         // isParent columns
 
         // Support datasource based tables
-        if (!e.isDataSourceBased()) {
+        if (!e.isDataSourceBased() && !e.isHQLBased()) {
           createPropertyInParentEntity(e);
         }
       }

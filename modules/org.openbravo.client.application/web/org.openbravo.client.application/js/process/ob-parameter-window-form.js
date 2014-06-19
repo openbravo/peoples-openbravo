@@ -33,7 +33,6 @@ isc.OBParameterWindowForm.addProperties({
   colWidths: ['*', '*', '*', '*'],
   itemChanged: function (item, newValue) {
     this.paramWindow.handleReadOnlyLogic();
-    this.paramWindow.handleDisplayLogicForGridColumns();
     this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
   },
 
@@ -48,15 +47,19 @@ isc.OBParameterWindowForm.addProperties({
     // Check validation rules (subordinated fields), when value of a
     // parent field is changed, all its subordinated are reset
     affectedParams = this.paramWindow.dynamicColumns[item.name];
-    if (!affectedParams) {
-      return;
-    }
-    for (i = 0; i < affectedParams.length; i++) {
-      field = this.getField(affectedParams[i]);
-      if (field && field.setValue) {
-        field.setValue(null);
-        this.itemChanged(field, null);
+    if (affectedParams) {
+      for (i = 0; i < affectedParams.length; i++) {
+        field = this.getField(affectedParams[i]);
+        if (field && field.setValue) {
+          field.setValue(null);
+          this.itemChanged(field, null);
+        }
       }
     }
+    // evaluate explicitly the display logic for the grid fields
+    this.paramWindow.handleDisplayLogicForGridColumns();
+    // force a redraw to reevaluate the display logic of the parameters
+    this.redraw();
+    this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
   }
 });

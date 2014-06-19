@@ -113,7 +113,6 @@ public class OBViewParameterHandler {
       }
 
       OBViewParameter parameter = new OBViewParameter(param);
-      parameter.setRedrawOnChange(parametersInExpression.contains(param));
       if (displayLogicMap.containsKey(param)) {
         parameter.setShowIf(displayLogicMap.get(param));
       }
@@ -162,7 +161,6 @@ public class OBViewParameterHandler {
     Parameter parameter;
     String showIf = "";
     String readOnlyIf = "";
-    boolean redrawOnChange = false;
     List<ValueMapValue> valueMap = new ArrayList<ValueMapValue>();
 
     public OBViewParameter() {
@@ -230,7 +228,9 @@ public class OBViewParameterHandler {
     }
 
     public String getTitle() {
-      return OBViewUtil.getLabel(parameter, parameter.getOBUIAPPParameterTrlList());
+      boolean purchaseTrx = paramWindow.parentWindow != null
+          && !paramWindow.parentWindow.isSalesTransaction();
+      return OBViewUtil.getParameterTitle(parameter, purchaseTrx);
     }
 
     public String getName() {
@@ -302,14 +302,6 @@ public class OBViewParameterHandler {
       return readOnlyIf;
     }
 
-    public boolean getRedrawOnChange() {
-      return redrawOnChange;
-    }
-
-    public void setRedrawOnChange(boolean redrawOnChange) {
-      this.redrawOnChange = redrawOnChange;
-    }
-
     public String getWidth() {
       return this.uiDefinition.getParameterWidth(this.parameter);
     }
@@ -327,6 +319,10 @@ public class OBViewParameterHandler {
 
     public Long getNumberOfDisplayedRows() {
       return parameter.getDisplayedRows() != null ? parameter.getDisplayedRows() : 8;
+    }
+
+    public String getOnGridLoadFunction() {
+      return parameter.getOnGridLoadFunction();
     }
 
     public boolean getShowTitle() {

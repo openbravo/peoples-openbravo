@@ -37,6 +37,7 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Validation;
+import org.openbravo.model.ad.ui.Window;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
   @Inject
   private OBViewParameterHandler paramHandler;
   private boolean popup;
+  Window parentWindow;
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
@@ -227,5 +229,9 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
       }
       i = token.indexOf("'");
     }
+  }
+
+  public void setParentWindow(Window parentWindow) {
+    this.parentWindow = parentWindow;
   }
 }

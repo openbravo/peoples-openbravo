@@ -70,7 +70,7 @@ although the same is done by the compressor
     <#if property.additional>
     , additional: ${property.additional?string}
     </#if>
-<#if property.id>
+<#if property.id && !property.additional>
     ,primaryKey: true
 </#if>
 <#--

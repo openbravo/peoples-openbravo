@@ -1080,6 +1080,8 @@ public class AdvancedQueryBuilder {
       return currentWhereClause;
     }
     String localWhereClause = currentWhereClause;
+    String tabId = RequestContext.get().getRequestParameter("tabId");
+    Tab tab = null;
     while (localWhereClause.contains("@")) {
       int firstAtIndex = localWhereClause.indexOf("@");
       String prefix = localWhereClause.substring(0, firstAtIndex);
@@ -1095,13 +1097,15 @@ public class AdvancedQueryBuilder {
 
       // Try to select the value from the request instead of picking it from the context
       // Look if param is an ID
-      if (param.substring(param.length() - 3).toUpperCase().equals("_ID")) {
+      if (param.substring(param.length() - 3).toUpperCase().equals("_ID")
+          && !StringUtils.isEmpty(tabId)) {
         VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
         Entity paramEntity = ModelProvider.getInstance().getEntityByTableName(
             param.substring(0, param.length() - 3));
 
-        Tab tab = OBDal.getInstance().get(Tab.class,
-            RequestContext.get().getRequestParameter("tabId"));
+        if (tab == null) {
+          tab = OBDal.getInstance().get(Tab.class, tabId);
+        }
         Tab ancestorTab = KernelUtils.getInstance().getParentTab(tab);
 
         while (ancestorTab != null && paramValue.equals("")) {
@@ -1112,8 +1116,13 @@ public class AdvancedQueryBuilder {
           if (tabEntity.equals(paramEntity)) {
             paramValue = vars.getStringParameter("@" + paramEntity.getName() + ".id@");
           } else {
-            Property prop = tabEntity.getPropertyByColumnName(param);
-            paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
+            try {
+              Property prop = tabEntity.getPropertyByColumnName(param);
+              paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
+            } catch (Exception ignore) {
+              // ignoring exception as the property might be found from context.
+              // for eg., refer issue https://issues.openbravo.com/view.php?id=26871
+            }
           }
           ancestorTab = KernelUtils.getInstance().getParentTab(ancestorTab);
         }

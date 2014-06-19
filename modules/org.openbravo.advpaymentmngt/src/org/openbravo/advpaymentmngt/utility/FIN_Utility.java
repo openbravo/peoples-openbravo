@@ -37,7 +37,6 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -82,10 +81,11 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.utils.Replace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FIN_Utility {
-  private static final long serialVersionUID = 1L;
-  static Logger log4j = Logger.getLogger(Utility.class);
+  private static final Logger log4j = LoggerFactory.getLogger(FIN_Utility.class);
   private static AdvPaymentMngtDao dao;
 
   /**
@@ -323,10 +323,31 @@ public class FIN_Utility {
    * 
    * @param docType
    *          Document type of the document
+   * @param tableName
+   *          the name of the table from which the sequence will be taken if the Document Type does
+   *          not have any sequence associated.
    * @return the next sequence number of the Document Type defined for the Organization and document
    *         category. Null if no sequence is found.
    */
   public static String getDocumentNo(DocumentType docType, String tableName) {
+    return getDocumentNo(docType, tableName, true);
+  }
+
+  /**
+   * Returns the next sequence number of the Document Type defined for the Organization and document
+   * category.
+   * 
+   * @param docType
+   *          Document type of the document
+   * @param tableName
+   *          the name of the table from which the sequence will be taken if the Document Type does
+   *          not have any sequence associated.
+   * @param updateNext
+   *          Flag to update the current number of the sequence
+   * @return the next sequence number of the Document Type defined for the Organization and document
+   *         category. Null if no sequence is found.
+   */
+  public static String getDocumentNo(DocumentType docType, String tableName, boolean updateNext) {
     String nextDocNumber = "";
     if (docType != null) {
       Sequence seq = docType.getDocumentSequence();
@@ -344,9 +365,11 @@ public class FIN_Utility {
         nextDocNumber += seq.getNextAssignedNumber().toString();
         if (seq.getSuffix() != null)
           nextDocNumber += seq.getSuffix();
-        seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
-        OBDal.getInstance().save(seq);
-        // OBDal.getInstance().flush();
+        if (updateNext) {
+          seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
+          OBDal.getInstance().save(seq);
+          // OBDal.getInstance().flush();
+        }
       }
     }
 
@@ -365,12 +388,35 @@ public class FIN_Utility {
    * @param tableName
    *          the name of the table from which the sequence will be taken if the Document Type does
    *          not have any sequence associated.
+   * @param updateNext
+   *          Flag to update the current number of the sequence
    * @return the next sequence number of the Document Type defined for the Organization and document
    *         category. Null if no sequence is found.
    */
   public static String getDocumentNo(Organization org, String docCategory, String tableName) {
     DocumentType outDocType = getDocumentType(org, docCategory);
-    return getDocumentNo(outDocType, tableName);
+    return getDocumentNo(outDocType, tableName, true);
+  }
+
+  /**
+   * Returns the next sequence number of the Document Type defined for the Organization and document
+   * category.
+   * 
+   * @param org
+   *          the Organization for which the Document Type is defined. The Document Type can belong
+   *          to the parent organization tree of the specified Organization.
+   * @param docCategory
+   *          the document category of the Document Type.
+   * @param tableName
+   *          the name of the table from which the sequence will be taken if the Document Type does
+   *          not have any sequence associated.
+   * @return the next sequence number of the Document Type defined for the Organization and document
+   *         category. Null if no sequence is found.
+   */
+  public static String getDocumentNo(Organization org, String docCategory, String tableName,
+      boolean updateNext) {
+    DocumentType outDocType = getDocumentType(org, docCategory);
+    return getDocumentNo(outDocType, tableName, updateNext);
   }
 
   /**
@@ -870,7 +916,7 @@ public class FIN_Utility {
         }
       }
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Error getting conversion rate", e);
       return null;
     } finally {
       OBContext.restorePreviousMode();
@@ -930,7 +976,7 @@ public class FIN_Utility {
         return 0;
       }
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Error getting conversion rate precission", e);
       return 6; // by default precision of 6 decimals as is defaulted in Format.xml
     }
   }
@@ -1074,7 +1120,7 @@ public class FIN_Utility {
       }
       return listPaymentConfirmedOrNot;
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Error getting list of confirmed payments", e);
       return null;
     } finally {
       OBContext.restorePreviousMode();

@@ -31,7 +31,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -86,9 +86,11 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     String tableId = (String) parameters.get("tableId");
     if (tableId != null) {
       Table table = OBDal.getInstance().get(Table.class, tableId);
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
       for (Column column : table.getADColumnList()) {
         final DataSourceProperty dsProperty = new DataSourceProperty();
-        dsProperty.setName(column.getName());
+        Property property = entity.getPropertyByColumnName(column.getDBColumnName());
+        dsProperty.setName(property.getName());
         dsProperty.setMandatory(column.isMandatory());
         dsProperty.setUpdatable(column.isUpdatable());
         Reference reference = column.getReference();
@@ -96,6 +98,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
             reference);
         if (uiDefinition instanceof IDUIDefinition) {
           dsProperty.setId(true);
+          dsProperty.setName("id");
         } else {
           dsProperty.setId(false);
         }
@@ -128,12 +131,23 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     String hqlQuery = countQuery.getQueryString();
     int nRows = -1;
     if (hqlQuery.toUpperCase().contains(GROUPBY)) {
-      // No risk in using list, the request is done always paginated
-      nRows = countQuery.list().size();
+      justCount = false;
+      countQuery = getQuery(table, parameters, justCount);
+      return getGroupedCount(countQuery);
     } else {
       nRows = ((Number) countQuery.uniqueResult()).intValue();
     }
     return nRows;
+  }
+
+  protected int getGroupedCount(Query countQuery) {
+    int nRows = -1;
+    ScrollableResults scrollableResults = countQuery.scroll();
+    if (scrollableResults.last()) {
+      nRows = scrollableResults.getRowNumber();
+    }
+    scrollableResults.close();
+    return nRows + 1;
   }
 
   @Override
@@ -259,7 +273,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
     parameters.put("_justCount", String.valueOf(justCount));
 
-    Map<String, Object> queryNamedParameters = new HashMap<String, Object>();
+    Map<String, Object> queryNamedParameters = queryBuilder.getNamedParameters();
 
     // if the is any HQL Query transformer defined for this table, use it to transform the query
     hqlQuery = transFormQuery(hqlQuery, queryNamedParameters, parameters);
@@ -278,9 +292,12 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
 
     // sets the parameters of the query
-    queryNamedParameters.putAll(queryBuilder.getNamedParameters());
     for (String key : queryNamedParameters.keySet()) {
-      query.setParameter(key, queryNamedParameters.get(key));
+      // Injection and transforms might have modified the query removing named parameters. Check
+      // that key is still in the query.
+      if (hqlQuery.contains(key)) {
+        query.setParameter(key, queryNamedParameters.get(key));
+      }
     }
 
     OBContext.restorePreviousMode();
@@ -582,9 +599,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property property = entity.getProperty(propertyName);
     OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
-    columnCriteria.add(Restrictions.eq(Column.PROPERTY_TABLE, table));
-    columnCriteria.add(Restrictions.eq(Column.PROPERTY_NAME, property.getColumnName()));
-    Column column = (Column) columnCriteria.uniqueResult();
+    Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
     if (!orderByClause.isEmpty()) {
       orderByClause = ORDERBY + column.getEntityAlias();
       if (property.getTargetEntity() != null) {

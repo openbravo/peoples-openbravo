@@ -297,12 +297,14 @@ public class DalUtil {
         if (p.isOneToMany()) {
           @SuppressWarnings("unchecked")
           final List<BaseOBObject> bobs = (List<BaseOBObject>) value;
-          for (int i = 0; i < bobs.size(); i++) {
-            final BaseOBObject curValue = bobs.get(i);
-            if (fromTo.containsKey(curValue)) {
-              bobs.set(i, fromTo.get(curValue));
+            if (bobs != null) {
+            for (int i = 0; i < bobs.size(); i++) {
+              final BaseOBObject curValue = bobs.get(i);
+              if (fromTo.containsKey(curValue)) {
+                bobs.set(i, fromTo.get(curValue));
+              }
             }
-          }
+          } 
         } else if (fromTo.containsKey(value)) {
           to.setValue(p.getName(), fromTo.get(value));
         }

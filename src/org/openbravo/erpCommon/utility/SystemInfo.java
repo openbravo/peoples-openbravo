@@ -419,7 +419,7 @@ public class SystemInfo {
     }
   }
 
-  private final static String getDatabaseVersion(ConnectionProvider conn) throws ServletException {
+  public final static String getDatabaseVersion(ConnectionProvider conn) throws ServletException {
     validateConnection(conn);
     if (systemInfo.get(Item.DATABASE) == null) {
       load(Item.DATABASE, conn);

@@ -134,11 +134,21 @@ public class DimensionDisplayUtility {
     // (context.$IsAcctDimCentrally === 'N' && context.$Element_U2 === 'Y') ||
     // (context.$IsAcctDimCentrally === 'Y' && context['$Element_U2_' +
     // OB.Utilities.getValue(currentValues, 'DOCBASETYPE') '+ _H'] === 'Y')
-    String displayLogicPart1 = "(context." + IsAcctDimCentrally
-        + " === 'N' && context.$Element_%s === 'Y')";
-    String displayLogicPart2 = " || (context."
-        + IsAcctDimCentrally
-        + " === 'Y' && context['$Element_%s_' + OB.Utilities.getValue(currentValues, \"%s\") + '_%s'] === 'Y')";
+    String displayLogicPart1 = "";
+    String displayLogicPart2 = "";
+    if (field.getDisplayLogic() != null && field.getDisplaylogicgrid() == null) {
+      displayLogicPart1 = "(context." + IsAcctDimCentrally
+          + " === 'N' && context.$Element_%s === 'Y')";
+      displayLogicPart2 = " || (context."
+          + IsAcctDimCentrally
+          + " === 'Y' && context['$Element_%s_' + OB.Utilities.getValue(currentValues, \"%s\") + '_%s'] === 'Y')";
+    } else {
+      displayLogicPart1 = "(context." + IsAcctDimCentrally
+          + " === 'N' && context.$Element_%s === 'Y')";
+      displayLogicPart2 = " || (context."
+          + IsAcctDimCentrally
+          + " === 'Y' && context['$Element_%s_' + OB.Utilities.getValue(context, \"%s\") + '_%s'] === 'Y')";
+    }
 
     try {
       OBContext.setAdminMode(true);
