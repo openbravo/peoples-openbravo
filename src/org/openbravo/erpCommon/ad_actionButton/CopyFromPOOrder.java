@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,23 +22,30 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tax;
+import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.service.db.CallProcess;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class CopyFromPOOrder extends HttpSecureAppServlet {
@@ -91,6 +98,8 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
     String strGrossAmount = "0";
     String strNetPriceList = "0";
     String strGrossPriceList = "0";
+    // String strOrderLine = "";
+    List<String> strOrderLineList = new ArrayList<String>();
     Connection conn = null;
     try {
       conn = getTransactionConnection();
@@ -106,7 +115,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       } finally {
         OBContext.restorePreviousMode();
       }
-
+      int lineCount = 0;
       for (i = 0; data != null && i < data.length; i++) {
         CopyFromPOOrderData[] data3 = CopyFromPOOrderData.selectPriceForProduct(this,
             data[i].mProductId,
@@ -187,7 +196,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
         }
 
         int line = Integer.valueOf(orderData[0].line.equals("") ? "0" : orderData[0].line)
-            .intValue() + ((i + 1) * 10);
+            .intValue() + ((lineCount + 1) * 10);
         String strCOrderlineID = SequenceIdData.getUUID();
         try {
           String isInstance = CopyFromPOOrderData.getIsInstanceValue(conn, this,
@@ -200,26 +209,33 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
                 vars.getUser(), vars.getUser(), data[i].mAttributesetinstanceId);
             data[i].mAttributesetinstanceId = strMAttributesetinstanceID;
           }
-          CopyFromPOOrderData.insertCOrderline(
-              conn,
-              this,
-              strCOrderlineID,
-              orderData[0].adClientId,
-              orderData[0].adOrgId,
-              vars.getUser(),
-              strKey,
-              Integer.toString(line),
-              orderData[0].cBpartnerId,
-              orderData[0].cBpartnerLocationId.equals("") ? ExpenseSOrderData.cBPartnerLocationId(
-                  this, orderData[0].cBpartnerId) : orderData[0].cBpartnerLocationId,
-              orderData[0].dateordered, orderData[0].datepromised, data[i].description,
-              data[i].mProductId, orderData[0].mWarehouseId.equals("") ? vars.getWarehouse()
-                  : orderData[0].mWarehouseId, data[i].cUomId, data[i].qtyordered,
-              data[i].quantityorder, data[i].cCurrencyId, strNetPriceList, strPriceActual,
-              strPriceLimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline,
-              data[i].mAttributesetinstanceId, strGrossPriceList, strGrossUnitPrice,
-              strGrossAmount, strGrossBaseUnitPrice, data[i].cProjectId, data[i].user1Id,
-              data[i].user2Id, data[i].cCostcenterId, data[i].aAssetId);
+          if (data[i].bomParentId == null || data[i].bomParentId.equals("")) {
+            CopyFromPOOrderData.insertCOrderline(
+                conn,
+                this,
+                strCOrderlineID,
+                orderData[0].adClientId,
+                orderData[0].adOrgId,
+                vars.getUser(),
+                strKey,
+                Integer.toString(line),
+                orderData[0].cBpartnerId,
+                orderData[0].cBpartnerLocationId.equals("") ? ExpenseSOrderData
+                    .cBPartnerLocationId(this, orderData[0].cBpartnerId)
+                    : orderData[0].cBpartnerLocationId, orderData[0].dateordered,
+                orderData[0].datepromised, data[i].description, data[i].mProductId,
+                orderData[0].mWarehouseId.equals("") ? vars.getWarehouse()
+                    : orderData[0].mWarehouseId, data[i].cUomId, data[i].qtyordered,
+                data[i].quantityorder, data[i].cCurrencyId, strNetPriceList, strPriceActual,
+                strPriceLimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline,
+                data[i].mAttributesetinstanceId, strGrossPriceList, strGrossUnitPrice,
+                strGrossAmount, strGrossBaseUnitPrice, data[i].cProjectId, data[i].user1Id,
+                data[i].user2Id, data[i].cCostcenterId, data[i].aAssetId);
+            lineCount++;
+            if (data[i].explode.equals("Y")) {
+              strOrderLineList.add(strCOrderlineID);
+            }
+          }
         } catch (ServletException ex) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);
@@ -232,7 +248,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       myError = new OBError();
       myError.setType("Success");
       myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-      myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + i);
+      myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + lineCount);
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
@@ -241,6 +257,28 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+    }
+    try {
+      for (String strOrderLine : strOrderLineList) {
+        OBContext.setAdminMode(true);
+        org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
+            org.openbravo.model.ad.ui.Process.class, "DFC78024B1F54CBB95DC73425BA6687F");
+
+        final ProcessInstance pInstance = CallProcess.getInstance().call(process, strOrderLine,
+            null);
+
+        if (pInstance.getResult() == 0) {
+          // error processing
+          OBError myMessage = Utility.getProcessInstanceMessage(this, vars,
+              PInstanceProcessData.select(new DalConnectionProvider(), pInstance.getId()));
+          throw new OBException(myMessage.getMessage());
+        }
+      }
+    } catch (ServletException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } finally {
+      OBContext.restorePreviousMode();
     }
     return myError;
   }
