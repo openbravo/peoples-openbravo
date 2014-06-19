@@ -110,7 +110,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
       Calendar cal = Calendar.getInstance();
       cal.add(Calendar.SECOND, (-1) * PING_TIMEOUT_SECS);
 
-      String strDate = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(cal.getTime());
+      String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(cal.getTime());
       long t = System.currentTimeMillis();
       int deactivatedSessions = SessionLoginData.deactivateExpiredSessions(cp, strDate);
       log.debug("Deactivated " + deactivatedSessions
