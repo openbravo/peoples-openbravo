@@ -166,6 +166,9 @@ isc.OBPickAndExecuteGrid.addProperties({
         // include in the request the values of the parameters of the parameter window
         isc.addProperties(dsRequest.params, me.view.theForm.getValues());
       }
+      if (me.viewProperties && me.viewProperties.tabId) {
+        dsRequest.params.tabId = me.viewProperties.tabId;
+      }
       return this.Super('transformRequest', arguments);
     };
     filterableProperties = this.getFields().findAll('canFilter', true);
