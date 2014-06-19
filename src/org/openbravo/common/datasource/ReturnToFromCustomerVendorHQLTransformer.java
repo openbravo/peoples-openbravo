@@ -29,8 +29,12 @@ import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 @ComponentProvider.Qualifier("CDB9DC9655F24DF8AB41AA0ADBD04390")
 public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransformer {
 
-  private static final String unitPriceLeftClause = "(case when (select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol) = true then  coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (select e.salesOrderLine.grossUnitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) else   coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (select e.salesOrderLine.unitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) end)";
-  private static final String orderNoLeftClause = " coalesce ((select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol), '0')";
+  private static final String returnToVendorTabId = "CA841F390E5D4E10B68EFAC108278262";
+
+  private static final String rtv_unitPriceLeftClause = "(case when (select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol) = true then  coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (select e.salesOrderLine.grossUnitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) else   coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (select e.salesOrderLine.unitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) end)";
+  private static final String rtv_orderNoLeftClause = " coalesce ((select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol), '0')";
+  private static final String rfc_unitPriceLeftClause = "(case when (iol.salesOrderLine.salesOrder.priceList.priceIncludesTax) = true then  coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (iol.salesOrderLine.grossUnitPrice)) else   coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (iol.salesOrderLine.unitPrice)) end)";
+  private static final String rfc_orderNoLeftClause = " coalesce ((iol.salesOrderLine.salesOrder.documentNo), '0')";
   private static final String returnedLeftClause = " coalesce((select ol.orderedQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0)";
   private static final String returnedOthersLeftClause = " coalesce((select sum(ol.orderedQuantity) from OrderLine as ol left join ol.salesOrder as o where ol.goodsShipmentLine = iol and o.processed = true and o.documentStatus <> 'VO'), 0)";
   private static final String returnReasonLeftClause = " coalesce((select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), '')";
@@ -38,6 +42,17 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
   private static final String returnReasonDataQuery = " select distinct e.name from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId) ";
   private static final String unitPriceProperty = "unitPrice";
   private static final String grossUnitPriceProperty = "grossUnitPrice";
+
+  private static final String rtv_orderNo = "(select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)";
+  private static final String rfc_orderNo = "iol.salesOrderLine.salesOrder.documentNo";
+  private static final String rtv_unitPrice = "(select e.salesOrderLine.unitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)";
+  private static final String rfc_unitPrice = "iol.salesOrderLine.unitPrice";
+  private static final String rtv_grossUnitPrice = "(select e.salesOrderLine.grossUnitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)";
+  private static final String rfc_grossUnitPrice = "iol.salesOrderLine.grossUnitPrice";
+  private static final String rtv_tax = "(select e.salesOrderLine.tax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)";
+  private static final String rfc_tax = "iol.salesOrderLine.tax";
+  private static final String rtv_priceIncludeTax = "(select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)";
+  private static final String rfc_priceIncludeTax = "iol.salesOrderLine.salesOrder.priceList.priceIncludesTax";
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
@@ -48,13 +63,9 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
     queryNamedParameters.put("salesOrderId", salesOrderId);
     queryNamedParameters.put("businessPartnerId", businessPartnerId);
 
-    // uses the subqueries of the columns in the left clauses
-    String transformedHqlQuery = hqlQuery.replace("@unitPriceLeftClause@", unitPriceLeftClause);
-    transformedHqlQuery = transformedHqlQuery.replace("@orderNoLeftClause@", orderNoLeftClause);
-    transformedHqlQuery = transformedHqlQuery.replace("@returnedLeftClause@", returnedLeftClause);
+    String transformedHqlQuery = hqlQuery.replace("@returnedLeftClause@", returnedLeftClause);
     transformedHqlQuery = transformedHqlQuery.replace("@returnedOthersLeftClause@",
         returnedOthersLeftClause);
-
     Order order = OBDal.getInstance().get(Order.class, salesOrderId);
     if (order.getPriceList().isPriceIncludesTax()) {
       transformedHqlQuery = transformedHqlQuery.replaceAll("@unitPriceProperty@",
@@ -63,6 +74,62 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
       transformedHqlQuery = transformedHqlQuery
           .replaceAll("@unitPriceProperty@", unitPriceProperty);
     }
+
+    String tabId = requestParameters.get("tabId");
+    if (returnToVendorTabId.equals(tabId)) {
+      transformedHqlQuery = transformHqlQueryReturnToVendor(transformedHqlQuery, requestParameters,
+          salesOrderId);
+    } else {
+      transformedHqlQuery = transformHqlQueryReturnFromCustomer(transformedHqlQuery,
+          requestParameters, salesOrderId);
+    }
+
+    return transformedHqlQuery;
+  }
+
+  public String transformHqlQueryReturnToVendor(String hqlQuery,
+      Map<String, String> requestParameters, String salesOrderId) {
+    // uses the subqueries of the columns in the left clauses
+    String transformedHqlQuery = hqlQuery.replace("@unitPriceLeftClause@", rtv_unitPriceLeftClause);
+    transformedHqlQuery = transformedHqlQuery.replace("@orderNoLeftClause@", rtv_orderNoLeftClause);
+    transformedHqlQuery = transformedHqlQuery.replace("@isSalesTransaction@", "false");
+    transformedHqlQuery = transformedHqlQuery.replace("@orderNoSubQuery@", rtv_orderNo);
+    transformedHqlQuery = transformedHqlQuery.replace("@grossUnitPriceSubQuery@",
+        rtv_grossUnitPrice);
+    transformedHqlQuery = transformedHqlQuery.replace("@unitPriceSubQuery@", rtv_unitPrice);
+    transformedHqlQuery = transformedHqlQuery.replace("@taxSubQuery@", rtv_tax);
+    transformedHqlQuery = transformedHqlQuery.replace("@priceIncludeTaxSubQuery@",
+        rtv_priceIncludeTax);
+
+    String distinctProperty = requestParameters.get("_distinct");
+    if ("returnReason".equals(distinctProperty)) {
+      // Uses custom queries for the return reason column
+      String justCount = requestParameters.get("_justCount");
+      if ("true".equals(justCount)) {
+        transformedHqlQuery = returnReasonCountQuery;
+      } else {
+        transformedHqlQuery = returnReasonDataQuery;
+      }
+    } else {
+      transformedHqlQuery = transformedHqlQuery.replace("@returnReasonLeftClause@.name",
+          returnReasonLeftClause);
+    }
+    return transformedHqlQuery;
+  }
+
+  public String transformHqlQueryReturnFromCustomer(String hqlQuery,
+      Map<String, String> requestParameters, String salesOrderId) {
+
+    String transformedHqlQuery = hqlQuery.replace("@unitPriceLeftClause@", rfc_unitPriceLeftClause);
+    transformedHqlQuery = transformedHqlQuery.replace("@orderNoLeftClause@", rfc_orderNoLeftClause);
+    transformedHqlQuery = transformedHqlQuery.replace("@isSalesTransaction@", "true");
+    transformedHqlQuery = transformedHqlQuery.replace("@orderNoSubQuery@", rfc_orderNo);
+    transformedHqlQuery = transformedHqlQuery.replace("@grossUnitPriceSubQuery@",
+        rfc_grossUnitPrice);
+    transformedHqlQuery = transformedHqlQuery.replace("@unitPriceSubQuery@", rfc_unitPrice);
+    transformedHqlQuery = transformedHqlQuery.replace("@taxSubQuery@", rfc_tax);
+    transformedHqlQuery = transformedHqlQuery.replace("@priceIncludeTaxSubQuery@",
+        rfc_priceIncludeTax);
 
     String distinctProperty = requestParameters.get("_distinct");
     if ("returnReason".equals(distinctProperty)) {
