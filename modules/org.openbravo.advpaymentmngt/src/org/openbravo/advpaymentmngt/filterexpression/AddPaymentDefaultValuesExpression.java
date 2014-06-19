@@ -32,6 +32,7 @@ import org.openbravo.client.application.FilterExpression;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +52,7 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
 
       AddPaymentDefaultValuesHandler handler = getHandler(strWindowId);
       if (handler == null) {
-        throw new OBException("No handler found");
+        throw new OBException(String.format(OBMessageUtils.messageBD("APRM_NOHANDLER")));
       }
       strCurrentParam = requestMap.get("currentParam");
       Parameters param = Parameters.getParameter(strCurrentParam);
