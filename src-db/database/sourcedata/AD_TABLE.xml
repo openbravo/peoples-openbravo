@@ -11480,25 +11480,25 @@ where ol.goodsShipmentLine = iol
 and o.processed = true
 and o.documentStatus <> 'VO'), 0) as returnQtyOtherRM,
 (case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null then false else true end) as obSelected,
-coalesce((select ol.orderedQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0) as returned,
+coalesce((select ol.orderedQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0)*(-1) as returned,
 (select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) as returnReason,
 coalesce((select ol.tax from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) ,
-(select e.salesOrderLine.tax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) as tax,
-(case when (select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol) = true then
+@taxSubQuery@) as tax,
+(case when @priceIncludeTaxSubQuery@ = true then
  coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), 
-          (select e.salesOrderLine.grossUnitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol))
+          @grossUnitPriceSubQuery@)
 else 
  coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), 
-          (select e.salesOrderLine.unitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol))
+          @unitPriceSubQuery@)
 end) as unitPrice,
-(select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol) as orderNo
+@orderNoSubQuery@ as orderNo
 MAINFROM MaterialMgmtShipmentInOutLine as iol 
 left join  iol.attributeSetValue as attributeSetValue
 join iol.shipmentReceipt as io 
 where io.businessPartner.id = :businessPartnerId 
 and io.processed = true and io.documentStatus <> 'VO' 
-and io.salesTransaction = false 
-and iol.organization in ('E443A31992CB4635AFCAEABE7183CE85') 
+and io.salesTransaction = @isSalesTransaction@ 
+and @insertion_point_0@
 and @additional_filters@]]></HQLQUERY>
 <!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ENTITY_ALIAS><![CDATA[iol]]></ENTITY_ALIAS>
 <!--CDB9DC9655F24DF8AB41AA0ADBD04390--></AD_TABLE>
