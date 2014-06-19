@@ -203,6 +203,24 @@
              RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_product||' '||'@ProductNullAndMovementQtyGreaterZero@') ;
           end if ;
 	     End ;
+	     Declare
+       v_Message_Qty VARCHAR(2000) :='';
+	     BEGIN
+					FOR Cur_Lines IN (
+                             SELECT M.line
+                             FROM M_InOut I,
+                                  M_InOutLine M
+                             WHERE I.M_InOut_ID=M.M_InOut_ID
+                               AND I.M_INOUT_ID=v_Record_ID
+                               AND (M.M_PRODUCT_ID IS NOT NULL AND M.MOVEMENTQTY = 0)
+                               ORDER BY M.line
+                            ) LOOP
+          v_Message_Qty:=v_Message_Qty||Cur_Lines.line||', ';
+          END LOOP;
+          IF v_Message_Qty != '' THEN
+             RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_Message_Qty||' '||'@ProductNotNullAndMovementQtyZero@') ;
+          END IF;
+	     End ;
       if(v_isreturndoctype = 'N' AND v_isSoTrx = 'Y' and v_DocAction<>'RC') then
         v_message := null;
         for Cur_OrderLine in (
