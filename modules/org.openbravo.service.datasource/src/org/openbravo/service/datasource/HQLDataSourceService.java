@@ -126,8 +126,21 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   @Override
   protected int getCount(Map<String, String> parameters) {
     Table table = getTableFromParameters(parameters);
-    boolean justCount = false;
+    boolean justCount = true;
     Query countQuery = getQuery(table, parameters, justCount);
+    String hqlQuery = countQuery.getQueryString();
+    int nRows = -1;
+    if (hqlQuery.toUpperCase().contains(GROUPBY)) {
+      justCount = false;
+      countQuery = getQuery(table, parameters, justCount);
+      return getGroupedCount(countQuery);
+    } else {
+      nRows = ((Number) countQuery.uniqueResult()).intValue();
+    }
+    return nRows;
+  }
+
+  protected int getGroupedCount(Query countQuery) {
     int nRows = -1;
     ScrollableResults scrollableResults = countQuery.scroll();
     if (scrollableResults.last()) {
