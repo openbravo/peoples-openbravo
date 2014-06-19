@@ -278,6 +278,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       differenceamt = BigDecimal.prototype.ZERO,
       creditamt = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
       glitemamt = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
+      orderInvoiceData = orderInvoice.data.localData,
       total = orderInvoice.data.totalRows,
       writeoff, amt, outstandingAmount, i;
 
@@ -286,13 +287,12 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
   // add credit amount
   amount = amount.add(creditamt);
 
-  var orderInvoiceData = orderInvoice.data.localData;
   for (i = 0; i < total; i++) {
     if (isc.isA.Object(orderInvoiceData[i]) && !isc.isA.emptyObject(orderInvoiceData[i])) {
       outstandingAmount = new BigDecimal(String(orderInvoiceData[i].outstandingAmount));
       if (outstandingAmount.signum() < 0) {
         negativeamt = negativeamt.add(new BigDecimal(Math.abs(outstandingAmount).toString()));
-      }        
+      }
     }
   }
 
@@ -301,7 +301,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
   }
 
   for (i = 0; i < total; i++) {
-    if (!isc.isA.Object(orderInvoice.getEditValues(i)) || isc.isA.emptyObject(orderInvoice.getEditValues(i))) {
+    if (!isc.isA.Object(orderInvoiceData[i]) || isc.isA.emptyObject(orderInvoiceData[i])) {
       continue;
     }
     writeoff = orderInvoice.getEditValues(i).writeoff;
