@@ -324,6 +324,7 @@
 
       this.get('dataSyncModels').push({
         model: OB.Model.CashManagement,
+        isPersistent: true,
         className: 'org.openbravo.retail.posterminal.ProcessCashMgmt',
         criteria: {
           'isbeingprocessed': 'N'
