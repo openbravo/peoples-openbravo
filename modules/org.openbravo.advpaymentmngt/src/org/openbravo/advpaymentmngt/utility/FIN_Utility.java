@@ -37,7 +37,6 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -82,10 +81,11 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.utils.Replace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FIN_Utility {
-  private static final long serialVersionUID = 1L;
-  static Logger log4j = Logger.getLogger(Utility.class);
+  private static final Logger log4j = LoggerFactory.getLogger(FIN_Utility.class);
   private static AdvPaymentMngtDao dao;
 
   /**
@@ -916,7 +916,7 @@ public class FIN_Utility {
         }
       }
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Error getting conversion rate", e);
       return null;
     } finally {
       OBContext.restorePreviousMode();
@@ -976,7 +976,7 @@ public class FIN_Utility {
         return 0;
       }
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Error getting conversion rate precission", e);
       return 6; // by default precision of 6 decimals as is defaulted in Format.xml
     }
   }
@@ -1120,7 +1120,7 @@ public class FIN_Utility {
       }
       return listPaymentConfirmedOrNot;
     } catch (Exception e) {
-      log4j.error(e);
+      log4j.error("Error getting list of confirmed payments", e);
       return null;
     } finally {
       OBContext.restorePreviousMode();
