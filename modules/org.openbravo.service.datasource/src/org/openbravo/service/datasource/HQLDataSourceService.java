@@ -126,14 +126,14 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   @Override
   protected int getCount(Map<String, String> parameters) {
     Table table = getTableFromParameters(parameters);
-    boolean justCount = true;
+    boolean justCount = false;
     Query countQuery = getQuery(table, parameters, justCount);
     int nRows = -1;
     ScrollableResults scrollableResults = countQuery.scroll();
     if (scrollableResults.last()) {
       nRows = scrollableResults.getRowNumber();
-      scrollableResults.close();
     }
+    scrollableResults.close();
     return nRows + 1;
   }
 
