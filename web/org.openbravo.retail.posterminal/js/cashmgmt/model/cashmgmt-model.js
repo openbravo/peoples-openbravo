@@ -28,7 +28,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       'isbeingprocessed': 'N'
     }, function (cashUp) {
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-        'cashup_id': cashUp.at(0).get('id')
+        'cashup_id': cashUp.at(0).get('id'),
+        _orderByClause: 'searchKey desc'
       }, function (pays) {
         payments = pays;
         payments.each(function (pay) {
