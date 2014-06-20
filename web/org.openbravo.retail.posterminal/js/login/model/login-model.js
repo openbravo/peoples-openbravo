@@ -32,7 +32,7 @@
                 logConfiguration: {
                   deviceIdentifier: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
                   logPropertiesExtension: [
-        
+
                   function () {
                     return {
                       online: OB.MobileApp.model.get('connectedToERP')
@@ -97,7 +97,7 @@
               } else {
                 var msg = "";
                 if (data.exception.message !== undefined) {
-                  msg = " Error: " + data.exception.message + ".";
+                  msg = " Error: " + data.exception.message;
                 }
                 OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + msg, [{
                   label: OB.I18N.getLabel('OBMOBC_LblOk'),
@@ -509,35 +509,35 @@
       this.setDocumentSequence();
     },
 
-    postLoginActions: function () { 
-      var me = this, 
-          loadModelsIncFunc; 
-      //MASTER DATA REFRESH 
-      var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000; 
-      if (minIncRefresh) { 
-        if (this.get('loggedUsingCache')) { 
-          setTimeout(function () { 
-            OB.MobileApp.model.loadModels(null, true); 
-            if (me.get('loggedUsingCache')) { 
-              me.set('loggedUsingCache', false); 
-              me.renderTerminalMain(); 
-            } 
-          }, 3000); 
-        } else { 
-          if (me.get('loggedUsingCache')) { 
-            me.set('loggedUsingCache', false); 
-            me.renderTerminalMain(); 
-          } 
-        } 
-        loadModelsIncFunc = function () { 
-          OB.MobileApp.model.loadModels(null, true); 
-        }; 
-        setInterval(loadModelsIncFunc, minIncRefresh); 
-      } else if (me.get('loggedUsingCache')) { 
-        me.set('loggedUsingCache', false); 
-        me.renderTerminalMain(); 
-      } 
-    }, 
+    postLoginActions: function () {
+      var me = this,
+          loadModelsIncFunc;
+      //MASTER DATA REFRESH
+      var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
+      if (minIncRefresh) {
+        if (this.get('loggedUsingCache')) {
+          setTimeout(function () {
+            OB.MobileApp.model.loadModels(null, true);
+            if (me.get('loggedUsingCache')) {
+              me.set('loggedUsingCache', false);
+              me.renderTerminalMain();
+            }
+          }, 3000);
+        } else {
+          if (me.get('loggedUsingCache')) {
+            me.set('loggedUsingCache', false);
+            me.renderTerminalMain();
+          }
+        }
+        loadModelsIncFunc = function () {
+          OB.MobileApp.model.loadModels(null, true);
+        };
+        setInterval(loadModelsIncFunc, minIncRefresh);
+      } else if (me.get('loggedUsingCache')) {
+        me.set('loggedUsingCache', false);
+        me.renderTerminalMain();
+      }
+    },
 
     cleanSessionInfo: function () {
       this.cleanTerminalData();
