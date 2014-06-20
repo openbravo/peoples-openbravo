@@ -701,6 +701,8 @@ isc.OBSelectorWidget.addProperties({
       pickListWidth: this.width,
       pickListProperties: {
         fetchDelay: 400,
+        // prevents additional requests when loading data
+        drawAllMaxCells: 0,
         showHeaderContextMenu: false,
         hide: function () {
           this.Super('hide', arguments);
