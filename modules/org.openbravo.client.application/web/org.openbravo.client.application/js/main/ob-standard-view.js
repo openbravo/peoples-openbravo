@@ -389,9 +389,24 @@ isc.OBStandardView.addProperties({
 
   },
 
-  handleDefaultTreeView: function (parentContextInfo) {
+  // ** {{{ handleDefaultTreeView }}} **
+  //
+  // Evaluates the 'Default Tree View Logic' to show the grid view or the tree view
+  //
+  // Parameters:
+  // * {{{handleCurrent}}}: 'false' by default. It specifies if the logic should be applied in current record.
+  // * {{{handleChilds}}}: 'true' by default. It specifies if the logic should be applied in child records.
+  // * {{{parentContextInfo}}}: the context info of the parent. To ensure that the childs (if 'handleChilds' is 'true') have also the context info of its parent.
+  handleDefaultTreeView: function (handleCurrent, handleChilds, parentContextInfo) {
     var contextInfo, tabViewPane, length, i, p;
     contextInfo = this.getContextInfo(false, true, true);
+
+    if (!handleCurrent) {
+      handleCurrent = false;
+    }
+    if (!handleChilds) {
+      handleChilds = true;
+    }
 
     for (p in parentContextInfo) {
       // While evaluating the 'defaultTreeViewLogicIf' the parent contextInfo is needed
@@ -402,27 +417,30 @@ isc.OBStandardView.addProperties({
       }
     }
 
-    if (this.treeGrid && isc.isA.Function(this.defaultTreeViewLogicIf)) {
-      if (this.defaultTreeViewLogicIf(contextInfo)) {
-        if (!this.isShowingTree) {
-          if (this.treeGrid.getDataSource()) {
-            OB.ToolbarUtils.showTreeGrid(this);
-          } else {
-            this.defaultTreeView = true;
+    if (handleCurrent) {
+      if (this.treeGrid && isc.isA.Function(this.defaultTreeViewLogicIf)) {
+        if (this.defaultTreeViewLogicIf(contextInfo)) {
+          if (!this.isShowingTree) {
+            if (this.treeGrid.getDataSource()) {
+              OB.ToolbarUtils.showTreeGrid(this);
+            } else {
+              this.defaultTreeView = true;
+            }
           }
+        } else if (this.isShowingTree) {
+          OB.ToolbarUtils.hideTreeGrid(this);
         }
-      } else if (this.isShowingTree) {
-        OB.ToolbarUtils.hideTreeGrid(this);
       }
     }
 
-    if (this.childTabSet) {
+
+    if (handleChilds && this.childTabSet) {
       length = this.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
         tabViewPane = this.childTabSet.tabs[i].pane;
         if (tabViewPane.handleDefaultTreeView) {
           this.addPreferenceValues(contextInfo, tabViewPane);
-          tabViewPane.handleDefaultTreeView(contextInfo);
+          tabViewPane.handleDefaultTreeView(true, true, contextInfo);
         }
       }
     }
