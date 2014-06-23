@@ -19,7 +19,7 @@ enyo.kind({
   components: [{
     style: 'margin: 5px',
     components: [{
-      style: 'position: relative;background-color: #ffffff; color: black;',
+      style: 'position: relative;background-color: #ffffff; color: black;overflow-y: auto; max-height:622px',
       components: [{
         kind: 'OB.UI.ReceiptsCounter',
         name: 'receiptcounter'
