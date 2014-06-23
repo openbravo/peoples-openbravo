@@ -44,6 +44,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
+import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
  * Implements generic data operations which have parameters and json as an input and return results
@@ -371,8 +372,8 @@ public class DefaultJsonDataService implements JsonDataService {
       log.warn("Fetching data without pagination, this can cause perfomance issues. Parameters: "
           + paramMsg);
 
-      if (parameters.containsKey(JsonConstants.TAB_PARAMETER)) {
-        // || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)
+      if (parameters.containsKey(JsonConstants.TAB_PARAMETER)
+          || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
         // FIXME: Some selectors working in 2.50 windows are incorrectly unpaged (see issue #26734)
         // for now we are not preventing unpaged selector requests till this issue is properly fixed
         // after that they should be prevented again

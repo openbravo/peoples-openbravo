@@ -1903,7 +1903,12 @@ isc.OBStandardView.addProperties({
       if (refreshCallback) {
         refreshCallback();
       }
-      me.viewForm.refresh();
+      // only perform refresh if the viewForm has a valid record.
+      // else a request is not done with incomplete criteria which results in non paginated request.
+      // Refer issue https://issues.openbravo.com/view.php?id=26838
+      if (me.viewForm.getValues()[OB.Constants.ID]) {
+        me.viewForm.refresh();
+      }
     };
 
     if (!newRecordsToBeIncluded) {
