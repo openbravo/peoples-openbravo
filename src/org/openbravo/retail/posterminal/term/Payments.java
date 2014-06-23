@@ -34,54 +34,60 @@ public class Payments extends JSONProcessSimple {
     JSONObject result = new JSONObject();
     OBContext.setAdminMode(true);
 
-    JSONArray respArray = new JSONArray();
-    String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
-    String hqlPayments = "select p as payment, p.paymentMethod as paymentMethod, "
-        + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
-        + "p.financialAccount.currency.iSOCode as isocode, "
-        + "p.financialAccount.currency.symbol as symbol, p.financialAccount.currency.currencySymbolAtTheRight as currencySymbolAtTheRight, "
-        + "p.financialAccount.currentBalance as currentBalance "
-        + "from OBPOS_App_Payment as p where p.obposApplications.id=? "
-        + "and p.$readableCriteria order by p.line, p.commercialName";
+    try {
 
-    SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext.getOBContext()
-        .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
-        null);
+      JSONArray respArray = new JSONArray();
+      String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
+      String hqlPayments = "select p as payment, p.paymentMethod as paymentMethod, "
+          + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
+          + "p.financialAccount.currency.iSOCode as isocode, "
+          + "p.financialAccount.currency.symbol as symbol, p.financialAccount.currency.currencySymbolAtTheRight as currencySymbolAtTheRight, "
+          + "p.financialAccount.currentBalance as currentBalance "
+          + "from OBPOS_App_Payment as p where p.obposApplications.id=? "
+          + "and p.$readableCriteria order by p.line, p.commercialName";
 
-    final Session session = OBDal.getInstance().getSession();
-    final Query paymentsquery = session.createQuery(querybuilder.getHQLQuery());
-    paymentsquery.setString(0, posId);
+      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext
+          .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+          .getCurrentOrganization().getId(), null);
 
-    DataToJsonConverter converter = new DataToJsonConverter();
+      final Session session = OBDal.getInstance().getSession();
+      final Query paymentsquery = session.createQuery(querybuilder.getHQLQuery());
+      paymentsquery.setString(0, posId);
 
-    for (Object objLine : paymentsquery.list()) {
-      Object[] objPayment = (Object[]) objLine;
-      JSONObject payment = new JSONObject();
-      payment.put("payment",
-          converter.toJsonObject((BaseOBObject) objPayment[0], DataResolvingMode.FULL));
-      payment.put("paymentMethod",
-          converter.toJsonObject((BaseOBObject) objPayment[1], DataResolvingMode.FULL));
+      DataToJsonConverter converter = new DataToJsonConverter();
 
-      payment.put("rate", objPayment[2]);
-      BigDecimal mulrate = BigDecimal.ZERO;
-      BigDecimal rate = new BigDecimal((String) objPayment[2]);
-      if (rate.compareTo(BigDecimal.ZERO) != 0) {
-        mulrate = BigDecimal.ONE.divide(rate, 12, 4);
+      for (Object objLine : paymentsquery.list()) {
+        Object[] objPayment = (Object[]) objLine;
+        JSONObject payment = new JSONObject();
+        payment.put("payment",
+            converter.toJsonObject((BaseOBObject) objPayment[0], DataResolvingMode.FULL));
+        payment.put("paymentMethod",
+            converter.toJsonObject((BaseOBObject) objPayment[1], DataResolvingMode.FULL));
+
+        payment.put("rate", objPayment[2]);
+        BigDecimal mulrate = BigDecimal.ZERO;
+        BigDecimal rate = new BigDecimal((String) objPayment[2]);
+        if (rate.compareTo(BigDecimal.ZERO) != 0) {
+          mulrate = BigDecimal.ONE.divide(rate, 12, 4);
+        }
+        payment.put("mulrate", mulrate.toPlainString());
+
+        payment.put("isocode", objPayment[4]);
+        payment.put("symbol", objPayment[5]);
+        payment.put("currencySymbolAtTheRight", objPayment[6]);
+        payment.put("currentBalance", objPayment[7]);
+        respArray.put(payment);
+
       }
-      payment.put("mulrate", mulrate.toPlainString());
 
-      payment.put("isocode", objPayment[4]);
-      payment.put("symbol", objPayment[5]);
-      payment.put("currencySymbolAtTheRight", objPayment[6]);
-      payment.put("currentBalance", objPayment[7]);
-      respArray.put(payment);
+      result.put(JsonConstants.RESPONSE_DATA, respArray);
+      result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
 
+      return result;
+
+    } finally {
+      OBContext.restorePreviousMode();
     }
-
-    result.put(JsonConstants.RESPONSE_DATA, respArray);
-    result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-
-    return result;
   }
 
 }
