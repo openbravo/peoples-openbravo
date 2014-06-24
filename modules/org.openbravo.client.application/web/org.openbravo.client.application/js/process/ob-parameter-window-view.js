@@ -476,6 +476,9 @@ isc.OBParameterWindowView.addProperties({
         defaultFilter = {},
         gridsToBeFiltered = [];
     if (!this.theForm) {
+      if (this.onLoadFunction) {
+        this.onLoadFunction(this);
+      }
       return;
     }
 
