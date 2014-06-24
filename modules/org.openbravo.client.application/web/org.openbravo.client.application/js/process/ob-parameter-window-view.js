@@ -58,7 +58,9 @@ isc.OBParameterWindowView.addProperties({
 
     function actionClick() {
       view.messageBar.hide();
-      view.theForm.errorMessage = '';
+      if (view.theForm) {
+        view.theForm.errorMessage = '';
+      }
       if (view.validate()) {
         view.doProcess(this._buttonValue);
       } else {
@@ -108,6 +110,7 @@ isc.OBParameterWindowView.addProperties({
       }
     } else {
       buttonLayout.push(this.okButton);
+      // TODO: check if this is used, and remove as it is already registered
       OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.ok', this.okButton);
       if (this.popup) {
         buttonLayout.push(isc.LayoutSpacer.create({
@@ -126,6 +129,8 @@ isc.OBParameterWindowView.addProperties({
       });
       buttonLayout.push(cancelButton);
       buttonLayout.push(isc.LayoutSpacer.create({}));
+      OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Cancel_Button_' + this.processId, cancelButton);
+      // TODO: check if this is used, and remove as it is already registered
       OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.cancel', cancelButton);
     }
 
@@ -178,7 +183,7 @@ isc.OBParameterWindowView.addProperties({
       } catch (_exception) {
         isc.warn(_exception + ' ' + _exception.message + ' ' + _exception.stack);
       }
-      if (originalShowIfValue && item.defaultFilter !== null && item.getType() === 'OBPickEditGridItem') {
+      if (originalShowIfValue && item.defaultFilter !== null && !isc.isA.emptyObject(item.defaultFilter) && item.getType() === 'OBPickEditGridItem') {
         item.canvas.viewGrid.setFilterEditorCriteria(item.defaultFilter);
         item.canvas.viewGrid.filterByEditor();
       }
@@ -286,6 +291,12 @@ isc.OBParameterWindowView.addProperties({
     OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, params, function (rpcResponse, data, rpcRequest) {
       view.handleDefaults(data);
     });
+
+    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_' + this.processId, this);
+    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_MessageBar_' + this.processId, this.messageBar);
+    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_OK_Button_' + this.processId, this.okButton);
+    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Form_' + this.processId, this.theForm);
+    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_FormContainerLayout_' + this.processId, this.formContainerLayout);
   },
 
   handleResponse: function (refresh, message, responseActions, retryExecution, data) {
@@ -432,8 +443,6 @@ isc.OBParameterWindowView.addProperties({
       this.resultLayout.destroy();
       delete this.resultLayout;
     }
-    this.showProcessing(true);
-
     // change tab title to show executing...
     tab = OB.MainView.TabSet.getTab(this.viewTabId);
     if (tab) {
@@ -445,6 +454,7 @@ isc.OBParameterWindowView.addProperties({
     allProperties._params = this.getContextInfo();
 
     actionHandlerCall = function (me) {
+      me.showProcessing(true);
       OB.RemoteCallManager.call(me.actionHandler, allProperties, {
         processId: me.processId,
         windowId: me.windowId
@@ -466,6 +476,9 @@ isc.OBParameterWindowView.addProperties({
         defaultFilter = {},
         gridsToBeFiltered = [];
     if (!this.theForm) {
+      if (this.onLoadFunction) {
+        this.onLoadFunction(this);
+      }
       return;
     }
 

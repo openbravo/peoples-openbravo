@@ -135,13 +135,19 @@ isc.OBTreeViewGrid.addProperties({
       // the new callback checks if the node movement has to be reverted
       var newCallback = function (dsResponse, data, dsRequest) {
           var i, node, parentNode;
-          for (i = 0; i < data.length; i++) {
-            node = data[i];
-            if (node.revertMovement) {
-              parentNode = dsRequest.dragTree.find('id', node.parentId);
-              if (parentNode) {
-                // move the node back to its previous index
-                dsRequest.dragTree.move(node, parentNode, node.prevIndex);
+          if (dsRequest.newParentNode && dsRequest.dragTree && dsRequest.newParentNode.nodeId === dsRequest.dragTree.rootValue) {
+            // if the node is being moved to the root, reload the grid to force
+            // displaying properly the node in its new position. see issue https://issues.openbravo.com/view.php?id=26898
+            dsRequest.dragTree.invalidateCache();
+          } else {
+            for (i = 0; i < data.length; i++) {
+              node = data[i];
+              if (node.revertMovement) {
+                parentNode = dsRequest.dragTree.find('id', node.parentId);
+                if (parentNode) {
+                  // move the node back to its previous index
+                  dsRequest.dragTree.move(node, parentNode, node.prevIndex);
+                }
               }
             }
           }

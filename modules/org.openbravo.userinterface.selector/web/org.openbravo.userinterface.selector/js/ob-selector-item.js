@@ -801,7 +801,7 @@ isc.OBSelectorItem.addProperties({
     // do not prevent the count operation
     requestProperties.params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
 
-    if (this.form.getFocusItem() !== this && !this.form.view.isShowingForm && this.getEnteredValue() === '' && this.savedEnteredValue) {
+    if (this.form.getFocusItem() !== this && !(this.form.view && this.form.view.isShowingForm) && this.getEnteredValue() === '' && this.savedEnteredValue) {
       this.setElementValue(this.savedEnteredValue);
       delete this.savedEnteredValue;
     } else if (this.form && this.form.view && this.form.view.isShowingForm && this.savedEnteredValue) {

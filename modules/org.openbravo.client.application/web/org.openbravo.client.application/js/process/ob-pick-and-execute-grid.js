@@ -72,6 +72,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.selectedIds = [];
     this.deselectedIds = [];
+    this.lastValidatedValues = [];
 
     // the getValuesAsCriteria function of the edit form of the filter editor should always be called with 
     // advanced = true to guarantee that the returned criteria will have the proper format
@@ -147,6 +148,8 @@ isc.OBPickAndExecuteGrid.addProperties({
       filterEditorType: 'StaticTextItem'
     });
 
+
+    // TODO: check if needed, refactor and remove
     OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.Grid', this);
 
     // FIXME:---
@@ -187,6 +190,8 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.filterEditorProperties.visibility = 'hidden';
     }
     this.Super('initWidget', arguments);
+
+    OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Grid_' + this.parameterName + '_' + this.contentView.view.processId, this);
   },
 
   evaluateDisplayLogicForGridColumns: function () {
@@ -205,6 +210,7 @@ isc.OBPickAndExecuteGrid.addProperties({
         }
       }
     }
+    this.view.markForRedraw();
   },
 
   getLongestFieldName: function () {
@@ -270,6 +276,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.selectionUpdated(record, this.getSelectedRecords());
 
     this.Super('selectionChanged', arguments);
+    this.view.theForm.markForRedraw();
   },
 
   selectionUpdated: function (record, recordList) {
@@ -310,7 +317,13 @@ isc.OBPickAndExecuteGrid.addProperties({
         colNum = this.getEditCol(),
         editField = this.getEditField(colNum),
         undef;
-
+    // if no value is provided use the value from the edit form. If it does not exist, use the stored value
+    if (newValue === null || newValue === undefined) {
+      newValue = this.getEditValue(rowNum, colNum);
+    }
+    if (newValue === null || newValue === undefined) {
+      newValue = this.getRecord(rowNum)[editField.name];
+    }
     // Execute onChangeFunctions if they exist
     if (this && OB.OnChangeRegistry.hasOnChange(this.view.viewId, editField)) {
       OB.OnChangeRegistry.call(this.ID, editField, this.view, this.view.theForm, this);
@@ -327,7 +340,12 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     // after editing a field value read only can be affected
     this.handleReadOnlyLogic();
+
+    // store the form values right after validating them
+    this.lastValidatedValues[rowNum] = this.getEditValues(rowNum);
+
   },
+
 
   // disables/enables fields with read only logic
   handleReadOnlyLogic: function () {
@@ -341,14 +359,24 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
   },
 
-  handleFilterEditorSubmit: function (criteria, context) {
+  addSelectedIDsToCriteria: function (criteria, cleanDummies) {
     var ids = [],
         crit = {},
         len = this.selectedIds.length,
-        i, c, found;
+        i, c, found, criterion;
     //saved Data will be used to retain values after fetch through filters.
     if (len > 0) {
       this.data.savedData = this.data.localData;
+    }
+
+    if (cleanDummies) {
+      criteria.criteria = criteria.criteria || [];
+      for (i = criteria.criteria.length - 1; i >= 0; i--) {
+        criterion = criteria.criteria[i];
+        if (criterion.fieldName && (criterion.fieldName === '_dummy' || (criterion.fieldName === 'id' && criterion.operator === 'equals'))) {
+          criteria.criteria.splice(i, 1);
+        }
+      }
     }
 
     for (i = 0; i < len; i++) {
@@ -406,9 +434,17 @@ isc.OBPickAndExecuteGrid.addProperties({
           criteria: []
         };
       }
+
+
+
       criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
       crit = criteria;
     }
+    return crit;
+  },
+
+  handleFilterEditorSubmit: function (criteria, context) {
+    var crit = this.addSelectedIDsToCriteria(criteria);
 
     this.Super('handleFilterEditorSubmit', [crit, context]);
   },
@@ -453,6 +489,10 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
 
     this.Super('dataArrived', arguments);
+    if (this.onGridLoadFunction) {
+      this.onGridLoadFunction(this);
+      this.view.okButton.setEnabled(this.view.allRequiredParametersSet());
+    }
   },
 
   recordClick: function (grid, record, recordNum, field, fieldNum, value, rawValue) {
@@ -690,6 +730,11 @@ isc.OBPickAndExecuteGrid.addProperties({
           // Execute onChangeFunctions if they exist
           if (this && OB.OnChangeRegistry.hasOnChange(form.grid.ID, item)) {
             OB.OnChangeRegistry.call(form.grid.ID, item, form.grid.view, form.grid.view.theForm, form.grid);
+            form.grid.view.theForm.redraw();
+          }
+          // if the grid edit form has been changed after the last validation, validate it again
+          if (!isc.objectsAreEqual(form.grid.lastValidatedValues[rowNum], form.grid.getEditValues(rowNum))) {
+            form.grid.validateCell(form.grid.getEditRow(), form.grid.getEditCol());
           }
         };
         for (i = 0; i < items.length; i++) {

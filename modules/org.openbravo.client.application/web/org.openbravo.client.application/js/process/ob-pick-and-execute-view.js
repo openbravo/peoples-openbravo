@@ -89,7 +89,8 @@ isc.OBPickAndExecuteView.addProperties({
       neverValidate: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
       showGridSummary: this.showGridSummary,
       viewProperties: this.viewProperties,
-      parameterName: this.parameterName
+      parameterName: this.parameterName,
+      onGridLoadFunction: this.onGridLoadFunction
     });
 
 

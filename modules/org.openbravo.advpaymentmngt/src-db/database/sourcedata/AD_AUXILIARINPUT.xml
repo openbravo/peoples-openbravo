@@ -64,6 +64,25 @@ where fin_financial_account_id = @FIN_Financial_Account_ID@)]]></CODE>
 <!--4FA457B12B4E411FA662D4D97A53B2E1-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
 <!--4FA457B12B4E411FA662D4D97A53B2E1--></AD_AUXILIARINPUT>
 
+<!--874CCFB2FE7B40D79D2B0AE27951853F--><AD_AUXILIARINPUT>
+<!--874CCFB2FE7B40D79D2B0AE27951853F-->  <AD_AUXILIARINPUT_ID><![CDATA[874CCFB2FE7B40D79D2B0AE27951853F]]></AD_AUXILIARINPUT_ID>
+<!--874CCFB2FE7B40D79D2B0AE27951853F-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--874CCFB2FE7B40D79D2B0AE27951853F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--874CCFB2FE7B40D79D2B0AE27951853F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--874CCFB2FE7B40D79D2B0AE27951853F-->  <AD_TAB_ID><![CDATA[294]]></AD_TAB_ID>
+<!--874CCFB2FE7B40D79D2B0AE27951853F-->  <NAME><![CDATA[APRM_OrderIsPaid]]></NAME>
+<!--874CCFB2FE7B40D79D2B0AE27951853F-->  <CODE><![CDATA[@SQL=select case when ps.outstandingamt > 0 then 'N' else 'Y' end
+          from fin_payment_scheduledetail fpsd
+              join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+              join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
+              join fin_payment_schedule ps ON ps.fin_payment_schedule_id = fpsd.fin_payment_schedule_order
+              join c_order co on co.c_order_id=ps.c_order_id
+                WHERE ps.c_order_id =@c_order_id@
+                and to_number(aprm_seqnumberpaymentstatus(fp.status)) >= 40
+                group by co.GrandTotal, ps.outstandingamt, ps.c_order_id]]></CODE>
+<!--874CCFB2FE7B40D79D2B0AE27951853F-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
+<!--874CCFB2FE7B40D79D2B0AE27951853F--></AD_AUXILIARINPUT>
+
 <!--9D630C9E4C734361BFB09B153EEE3BCB--><AD_AUXILIARINPUT>
 <!--9D630C9E4C734361BFB09B153EEE3BCB-->  <AD_AUXILIARINPUT_ID><![CDATA[9D630C9E4C734361BFB09B153EEE3BCB]]></AD_AUXILIARINPUT_ID>
 <!--9D630C9E4C734361BFB09B153EEE3BCB-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -74,6 +93,25 @@ where fin_financial_account_id = @FIN_Financial_Account_ID@)]]></CODE>
 <!--9D630C9E4C734361BFB09B153EEE3BCB-->  <CODE><![CDATA[@SQL=SELECT PROCESSED FROM FIN_BankStatement WHERE FIN_BankStatement_ID = @FIN_Bankstatement_ID@]]></CODE>
 <!--9D630C9E4C734361BFB09B153EEE3BCB-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
 <!--9D630C9E4C734361BFB09B153EEE3BCB--></AD_AUXILIARINPUT>
+
+<!--9FF4321DE0E5487B8A649A444F3F64BC--><AD_AUXILIARINPUT>
+<!--9FF4321DE0E5487B8A649A444F3F64BC-->  <AD_AUXILIARINPUT_ID><![CDATA[9FF4321DE0E5487B8A649A444F3F64BC]]></AD_AUXILIARINPUT_ID>
+<!--9FF4321DE0E5487B8A649A444F3F64BC-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--9FF4321DE0E5487B8A649A444F3F64BC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--9FF4321DE0E5487B8A649A444F3F64BC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--9FF4321DE0E5487B8A649A444F3F64BC-->  <AD_TAB_ID><![CDATA[186]]></AD_TAB_ID>
+<!--9FF4321DE0E5487B8A649A444F3F64BC-->  <NAME><![CDATA[APRM_OrderIsPaid]]></NAME>
+<!--9FF4321DE0E5487B8A649A444F3F64BC-->  <CODE><![CDATA[@SQL=select case when ps.outstandingamt > 0 then 'N' else 'Y' end
+          from fin_payment_scheduledetail fpsd
+              join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+              join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
+              join fin_payment_schedule ps ON ps.fin_payment_schedule_id = fpsd.fin_payment_schedule_order
+              join c_order co on co.c_order_id=ps.c_order_id
+                WHERE ps.c_order_id =@c_order_id@
+                and to_number(aprm_seqnumberpaymentstatus(fp.status)) >= 40
+                group by co.GrandTotal, ps.outstandingamt, ps.c_order_id]]></CODE>
+<!--9FF4321DE0E5487B8A649A444F3F64BC-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
+<!--9FF4321DE0E5487B8A649A444F3F64BC--></AD_AUXILIARINPUT>
 
 <!--B1C25B989C164EDFB7F9B26CB799DDAA--><AD_AUXILIARINPUT>
 <!--B1C25B989C164EDFB7F9B26CB799DDAA-->  <AD_AUXILIARINPUT_ID><![CDATA[B1C25B989C164EDFB7F9B26CB799DDAA]]></AD_AUXILIARINPUT_ID>

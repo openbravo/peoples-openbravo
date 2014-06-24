@@ -1,5 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
+<!--0FA3B20AECB74FA5A888AA7465FD1B1C--><AD_VAL_RULE>
+<!--0FA3B20AECB74FA5A888AA7465FD1B1C-->  <AD_VAL_RULE_ID><![CDATA[0FA3B20AECB74FA5A888AA7465FD1B1C]]></AD_VAL_RULE_ID>
+<!--0FA3B20AECB74FA5A888AA7465FD1B1C-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0FA3B20AECB74FA5A888AA7465FD1B1C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0FA3B20AECB74FA5A888AA7465FD1B1C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0FA3B20AECB74FA5A888AA7465FD1B1C-->  <NAME><![CDATA[APRMActionDocumentByIssotrxAndPaymentMethod]]></NAME>
+<!--0FA3B20AECB74FA5A888AA7465FD1B1C-->  <TYPE><![CDATA[HQL_JS]]></TYPE>
+<!--0FA3B20AECB74FA5A888AA7465FD1B1C-->  <CODE><![CDATA["e.reference.id = '7D750D39954C4F7A81B35230676D5D9F' and ((" + OB.getParameters().get('issotrx') + " = true and (((select automaticDeposit from FinancialMgmtFinAccPaymentMethod where paymentMethod = '" + OB.getParameters().get('fin_paymentmethod_id') + "' and account = '" + OB.getParameters().get('fin_financial_account_id') + "') = false and e.searchKey in ('PRP', 'PRD')) or ((select automaticDeposit from FinancialMgmtFinAccPaymentMethod where paymentMethod = '" + OB.getParameters().get('fin_paymentmethod_id') + "' and account = '" + OB.getParameters().get('fin_financial_account_id') + "') = true and e.searchKey in ('PRD')))) or (" + OB.getParameters().get('issotrx') + " = false and (((select automaticWithdrawn from FinancialMgmtFinAccPaymentMethod where paymentMethod = '" + OB.getParameters().get('fin_paymentmethod_id') + "' and account = '" + OB.getParameters().get('fin_financial_account_id') + "') = false and e.searchKey in ('PPP', 'PPW')) or ((select automaticWithdrawn from FinancialMgmtFinAccPaymentMethod where paymentMethod = '" + OB.getParameters().get('fin_paymentmethod_id') + "' and account = '" + OB.getParameters().get('fin_financial_account_id') + "') = true and e.searchKey in ('PPW')))))"]]></CODE>
+<!--0FA3B20AECB74FA5A888AA7465FD1B1C-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
+<!--0FA3B20AECB74FA5A888AA7465FD1B1C--></AD_VAL_RULE>
+
 <!--119E4BFBC4264A148450053A47E7D3FE--><AD_VAL_RULE>
 <!--119E4BFBC4264A148450053A47E7D3FE-->  <AD_VAL_RULE_ID><![CDATA[119E4BFBC4264A148450053A47E7D3FE]]></AD_VAL_RULE_ID>
 <!--119E4BFBC4264A148450053A47E7D3FE-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

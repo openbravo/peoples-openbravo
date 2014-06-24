@@ -164,7 +164,7 @@ public class OBViewFieldHandler {
       }
 
       final DynamicExpressionParser parser = new DynamicExpressionParser(f.getDisplaylogicgrid(),
-          tab);
+          tab, f);
       displayLogicGridMap.put(f, parser.getJSExpression());
 
       log.debug(f.getTab().getId() + " - " + f.getName() + " >>> " + parser.getJSExpression());
@@ -1215,6 +1215,10 @@ public class OBViewFieldHandler {
       if (!props.contains("canFilter") && field.getTab().isObuiappCanDelete()
           && field.getTab().getWindow().getWindowType().equals("OBUIAPP_PickAndExecute")) {
         props = props + ", canFilter: false";
+      }
+      if (!props.contains("canSort") && field.getTab().isObuiappCanAdd()
+          && field.getTab().getWindow().getWindowType().equals("OBUIAPP_PickAndExecute")) {
+        props = props + ", canSort: false";
       }
       return props;
     }

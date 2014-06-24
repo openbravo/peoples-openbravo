@@ -105,7 +105,9 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
               defaultValue = context.get(inpName);
               inpName = "inp" + Sqlc.TransformaNombreColumna(param.getDBColumnName());
             } else {
-              defaultValue = ParameterUtils.getJSExpressionResult(fixRequestMap(parameters),
+              Map<String, String> requestMap = fixRequestMap(parameters);
+              requestMap.put("currentParam", param.getDBColumnName());
+              defaultValue = ParameterUtils.getJSExpressionResult(requestMap,
                   (HttpSession) parameters.get(KernelConstants.HTTP_SESSION), rawDefaultValue);
               if (context == null) {
                 context = new JSONObject();
@@ -152,6 +154,7 @@ public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
                 if (field.getObuiappDefaultExpression() != null) {
                   String rawDefaultExpression = field.getObuiappDefaultExpression();
                   Object defaultExpression;
+                  parameters.put("filterExpressionColumnName", field.getColumn().getDBColumnName());
                   defaultExpression = ParameterUtils.getJSExpressionResult(
                       fixRequestMap(parameters),
                       (HttpSession) parameters.get(KernelConstants.HTTP_SESSION),

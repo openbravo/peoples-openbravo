@@ -32,6 +32,7 @@ import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -49,6 +50,8 @@ import org.openbravo.model.ad.ui.Window;
 public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   private static final Logger log = Logger.getLogger(BaseProcessActionHandler.class);
+
+  private static final String GRID_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
@@ -95,14 +98,45 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       Process process = OBDal.getInstance().get(Process.class, processId);
       String updatedContent = content;
       if (process.isGridlegacy()) {
+        log.warn("Process "
+            + process.getName()
+            + " is marked as Grid Legacy, you should consider migrating it to prevent parameter conversion");
+
         JSONObject jsonRequest = new JSONObject(content);
         if (!jsonRequest.isNull("_params")) {
-          JSONObject jsonparams = jsonRequest.getJSONObject("_params");
-          String gridParamName = jsonparams.names().getString(0);
-          JSONObject jsongrid = jsonparams.getJSONObject(gridParamName);
-          jsonRequest.put("_selection", jsongrid.getJSONArray("_selection"));
-          jsonRequest.put("_allRows", jsongrid.getJSONArray("_allRows"));
-          updatedContent = jsonRequest.toString();
+          try {
+            Parameter gridParameter = null;
+            boolean shouldConvert = false;
+            for (Parameter param : process.getOBUIAPPParameterList()) {
+              if (GRID_REFERENCE_ID.equals(DalUtil.getId(param.getReference()))) {
+                if (gridParameter != null) {
+                  log.error("Error while trying to conver parameters to legacy mode. There are more than one grid parameter. Not converting it.");
+                  shouldConvert = false;
+                } else {
+                  gridParameter = param;
+                  shouldConvert = true;
+                }
+              }
+            }
+
+            if (gridParameter == null) {
+              log.info("There is no grid parameter in proces " + process.getName()
+                  + ". No conversion is needed so Grid Legacy can be safelly unflagged.");
+            }
+
+            if (shouldConvert) {
+              JSONObject jsonparams = jsonRequest.getJSONObject("_params");
+              if (jsonparams.has(gridParameter.getDBColumnName())
+                  && !jsonparams.isNull(gridParameter.getDBColumnName())) {
+                JSONObject jsongrid = jsonparams.getJSONObject(gridParameter.getDBColumnName());
+                jsonRequest.put("_selection", jsongrid.getJSONArray("_selection"));
+                jsonRequest.put("_allRows", jsongrid.getJSONArray("_allRows"));
+              }
+              updatedContent = jsonRequest.toString();
+            }
+          } catch (Exception e) {
+            log.error("Error while converting parameters. Sending them without conversion", e);
+          }
         }
       }
       return doExecute(parameters, updatedContent);

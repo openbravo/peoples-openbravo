@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -322,7 +322,7 @@ public class SystemService implements OBSingleton {
       List<Entity> entities = ModelProvider.getInstance().getModel();
       for (Entity entity : entities) {
         if ((entity.isClientEnabled() || entity.getName().equals("ADClient")) && !entity.isView()
-            && !entity.isDataSourceBased() && !entity.isVirtualEntity()) {
+            && !entity.isDataSourceBased() && !entity.isHQLBased() && !entity.isVirtualEntity()) {
           final String sql = "delete from " + entity.getTableName() + " where ad_client_id=?";
           sqlCommands.add(sql);
         }
