@@ -38,8 +38,8 @@
         this.set('net', attributes.net);
         this.set('promotions', attributes.promotions);
         this.set('priceIncludesTax', attributes.priceIncludesTax);
-        if (!attributes.grossListPrice && attributes.product && attributes.product.price) {
-          this.set('grossListPrice', attributes.product.price.standardPrice);
+        if (!attributes.grossListPrice && attributes.product && attributes.product.listPrice) {
+          this.set('grossListPrice', attributes.product.listPrice);
         }
       }
     },
@@ -57,7 +57,7 @@
     },
 
     printDiscount: function () {
-      var disc = OB.DEC.sub(this.get('priceList'), this.get('price'));
+      var disc = OB.DEC.sub(this.get('product').get('standardPrice'), this.get('price'));
       var prom = this.getTotalAmountOfPromotions();
       // if there is a discount no promotion then only discount no promotion is shown
       // if there is not a discount no promotion and there is a promotion then promotion is shown
@@ -74,7 +74,7 @@
 
     // returns the discount to substract in total
     discountInTotal: function () {
-      var disc = OB.DEC.sub(this.get('priceList'), this.get('price'));
+      var disc = OB.DEC.sub(this.get('product').get('standardPrice'), this.get('price'));
       // if there is a discount no promotion then total is price*qty
       // otherwise total is price*qty - discount
       if (OB.DEC.compare(disc) === 0) {
@@ -343,7 +343,7 @@
             grossUnitPrice, discountPercentage, base;
 
         // Calculate inline discount: discount applied before promotions
-        if (line.get('priceList') !== price || (_.isNumber(line.get('discountedLinePrice')) && line.get('discountedLinePrice') !== line.get('priceList'))) {
+        if (line.get('product').get('standardPrice') !== price || (_.isNumber(line.get('discountedLinePrice')) && line.get('discountedLinePrice') !== line.get('product').get('standardPrice'))) {
           grossUnitPrice = new BigDecimal(price.toString());
           if (OB.DEC.compare(grossListPrice) === 0) {
             discountPercentage = OB.DEC.Zero;
@@ -1147,7 +1147,7 @@
         uOM: p.get('uOM'),
         qty: OB.DEC.number(units),
         price: OB.DEC.number(p.get('standardPrice')),
-        priceList: OB.DEC.number(p.get('standardPrice')),
+        priceList: OB.DEC.number(p.get('listPrice')),
         priceIncludesTax: this.get('priceIncludesTax'),
         warehouse: {
           id: OB.POS.modelterminal.get('warehouses')[0].warehouseid,
@@ -2141,7 +2141,7 @@
                 uOM: iter.uOM,
                 qty: OB.DEC.number(iter.quantity),
                 price: price,
-                priceList: price,
+                priceList: prod.get('listPrice'),
                 promotions: iter.promotions,
                 priceIncludesTax: order.get('priceIncludesTax'),
                 warehouse: {
