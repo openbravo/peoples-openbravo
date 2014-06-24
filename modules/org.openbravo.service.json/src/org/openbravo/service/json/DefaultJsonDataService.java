@@ -96,7 +96,7 @@ public class DefaultJsonDataService implements JsonDataService {
        * case if the field is a table reference, add the displayed column to list of columns to be
        * retrieved. Refer issue https://issues.openbravo.com/view.php?id=26696
        */
-      if (StringUtils.isNotEmpty(displayField)) {
+      if (StringUtils.isNotEmpty(displayField) && StringUtils.isNotEmpty(selectedProperties)) {
         for (String selectedProp : selectedProperties.split(",")) {
           if (selectedProp.equals(displayField)) {
             propertyPresent = true;
