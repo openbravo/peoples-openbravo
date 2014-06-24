@@ -33,6 +33,7 @@
   TYPE RECORD IS REF CURSOR;
   Cur_Dbprefix RECORD;
   v_invoicepaidstatus  VARCHAR2(32);
+  v_fin_payment_schedule_invoice VARCHAR2(32);
 BEGIN
   -- Check if the status exists
   SELECT count(*) INTO v_count FROM DUAL
@@ -43,12 +44,12 @@ BEGIN
   IF (v_count = 0) THEN
     RETURN 'N';
   END IF;
-  select isinvoicepaid 
-  into v_isinvoicepaid
+  select isinvoicepaid , fin_payment_schedule_invoice
+  into v_isinvoicepaid , v_fin_payment_schedule_invoice
   from fin_payment_scheduledetail
   where fin_payment_scheduledetail_id=p_fin_psd_id;
   
-  IF ((p_fin_psd_id <> '') AND (p_fin_psd_id is not null))THEN
+   IF (((p_fin_psd_id <> '') or (p_fin_psd_id is not null)) AND (v_fin_payment_schedule_invoice is not null))THEN
     IF(v_isinvoicepaid='Y')THEN
      -- core intermediate statuses
       v_isPaymentConfirmed := 'Y';
