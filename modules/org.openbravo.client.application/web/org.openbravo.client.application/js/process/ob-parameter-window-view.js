@@ -58,7 +58,9 @@ isc.OBParameterWindowView.addProperties({
 
     function actionClick() {
       view.messageBar.hide();
-      view.theForm.errorMessage = '';
+      if (view.theForm) {
+        view.theForm.errorMessage = '';
+      }
       if (view.validate()) {
         view.doProcess(this._buttonValue);
       } else {
