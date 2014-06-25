@@ -186,11 +186,8 @@ public class FIN_ExecutePayment {
             try {
               OBContext.setAdminMode(true);
               for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
-                if (pd.getGLItem() != null) {
-                  continue;
-                }
                 for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-                  if (psd.isInvoicePaid()
+                  if ((pd.getGLItem() != null || psd.isInvoicePaid())
                       && FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
                       && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0) {
                     FIN_FinaccTransaction transaction = TransactionsDao
@@ -215,11 +212,8 @@ public class FIN_ExecutePayment {
           try {
             OBContext.setAdminMode(true);
             for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
-              if (pd.getGLItem() != null) {
-                continue;
-              }
               for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-                if (psd.isInvoicePaid()) {
+                if (pd.getGLItem() != null || psd.isInvoicePaid()) {
                   updatePaymentAmounts(paymentRunPayment.getPayment());
                 }
               }
