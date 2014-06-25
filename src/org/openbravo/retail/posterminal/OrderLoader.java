@@ -61,6 +61,7 @@ import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
@@ -1042,7 +1043,8 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       order.setId(jsonorder.getString("id"));
     }
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
-
+    BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class,
+        jsonorder.getJSONObject("bp").getString("id"));
     order.setTransactionDocument((DocumentType) OBDal.getInstance().getProxy("DocumentType",
         jsonorder.getString("documentType")));
     order.setAccountingDate(order.getOrderDate());
@@ -1050,11 +1052,9 @@ public class OrderLoader extends POSDataSynchronizationProcess {
     order.setPartnerAddress(OBDal.getInstance().get(Location.class,
         jsonorder.getJSONObject("bp").getString("locId")));
     order.setInvoiceAddress(order.getPartnerAddress());
-    order.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance().getProxy("FIN_PaymentMethod",
-        jsonorder.getJSONObject("bp").getString("paymentMethod")));
-    order.setPaymentTerms((PaymentTerm) OBDal.getInstance().getProxy("FinancialMgmtPaymentTerm",
-        jsonorder.getJSONObject("bp").getString("paymentTerms")));
-    order.setInvoiceTerms(jsonorder.getJSONObject("bp").getString("invoiceTerms"));
+    order.setPaymentMethod((FIN_PaymentMethod) bp.getPaymentMethod());
+    order.setPaymentTerms((PaymentTerm) bp.getPaymentTerms());
+    order.setInvoiceTerms(bp.getInvoiceTerms());
     order.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
         stdPrecision, RoundingMode.HALF_UP));
     order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")).setScale(stdPrecision,
