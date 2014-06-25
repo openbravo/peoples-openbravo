@@ -82,12 +82,6 @@ isc.Tree.addProperties({
     } else {
       return this._original_getLoadState(node);
     }
-  },
-
-  dataArrived: function (parentNode) {
-    var children = this.getChildren(parentNode),
-        target = window[this.componentId];
-    target.transformData(children);
   }
 });
 
