@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -770,7 +770,8 @@ function onloadFunctions() {
                   </tr>
 
                   <tr>
-                    <td class="Button_RightAlign_ContentCell" colspan="2">
+                    <td class="ContentCell"></td>
+                    <td class="Button_RightAlign_ContentCell" colspan="0">
                       <div>
                         <button type="button" 
                           id="buttonHTML" 
@@ -795,7 +796,7 @@ function onloadFunctions() {
                         </button>
                       </div>
                     </td>
-                    <td class="Button_LeftAlign_ContentCell" colspan="0">
+                    <td class="Button_CenterAlign_ContentCell" colspan="0">
                       <div>
                         <button type="button" 
                           class="ButtonLink" 
@@ -819,12 +820,37 @@ function onloadFunctions() {
                         </button>
                       </div>
                     </td>
+                    <td class="Button_LeftAlign_ContentCell" colspan="0">
+                      <div>
+                        <button type="button" 
+                          id="buttonExcel" 
+                          class="ButtonLink" 
+                          onclick="submitCommandForm('EXCEL', true, null, 'ReportInvoiceVendorDimensionalAnalysesXLS.xls', '_blank', null, false);return false;" 
+                          onfocus="buttonEvent('onfocus', this); window.status='Generate Excel'; return true;" 
+                          onblur="buttonEvent('onblur', this);" 
+                          onkeyup="buttonEvent('onkeyup', this);" 
+                          onkeydown="buttonEvent('onkeydown', this);" 
+                          onkeypress="buttonEvent('onkeypress', this);" 
+                          onmouseup="buttonEvent('onmouseup', this);" 
+                          onmousedown="buttonEvent('onmousedown', this);" 
+                          onmouseover="buttonEvent('onmouseover', this); window.status='Generate Excel'; return true;" 
+                          onmouseout="buttonEvent('onmouseout', this);">
+                          <table class="Button">
+                            <tr>
+                              <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Generate Excel" title="Generate Excel" src="../../../../../web/images/blank.gif" border="0" /></td>
+                              <td class="Button_text">XLS Format</td>
+                              <td class="Button_right"></td>
+                            </tr>
+                          </table>
+                        </button>
+                      </div>
+                    </td>  
                     <td class="TitleCell"><span class="LabelText">Currency</span></td>
                   	<td class="Combo_ContentCell">
-                  	<select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
-                    <option value=""><div id="reportC_Currency_ID"></div></option>
-                    </select>
-                  </td> 
+                  	  <select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+                      <option value=""><div id="reportC_Currency_ID"></div></option>
+                      </select>
+                    </td> 
                   </tr>
 
               </table>
