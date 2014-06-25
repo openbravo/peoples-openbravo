@@ -536,13 +536,13 @@ OB.APRM.AddPayment.updateGLItemsTotal = function (form, rowNum, remove) {
       grid = form.getItem('glitem').canvas.viewGrid,
       receivedInField = grid.getFieldByColumnName('received_in'),
       paidOutField = grid.getFieldByColumnName('paid_out'),
-      allRecords = (grid.data.allRows) ? grid.data.allRows.length : 0,
       glItemTotalItem = form.getItem('amount_gl_items'),
       issotrx = form.getItem('issotrx').getValue(),
-      amt, i, bdAmt, receivedInAmt, paidOutAmt;
+      amt, i, bdAmt, receivedInAmt, paidOutAmt, allRecords;
 
   grid.saveAllEdits();
-
+  // allRecords should be initialized after grid.saveAllEdits()
+  allRecords = (grid.data.allRows) ? grid.data.allRows.length : 0;
   for (i = 0; i < allRecords; i++) {
     if (remove && i === rowNum) {
       continue;
