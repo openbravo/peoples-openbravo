@@ -182,47 +182,29 @@ public class FIN_ExecutePayment {
             paymentRunPayment.getPayment().setPosted("N");
             try {
               for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
-                if (pd.getGLItem() != null) {
-                  continue;
-                }
                 for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-                  if (psd.isInvoicePaid()
-                      && FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
-                      && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0) {
-                    FIN_FinaccTransaction transaction = TransactionsDao
-                        .createFinAccTransaction(paymentRunPayment.getPayment());
-                    VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get()
-                        .getRequest());
-                    OBError processTransactionError = processTransaction(vars,
-                        new DalConnectionProvider(), "P", transaction);
-                    if (processTransactionError != null
-                        && "Error".equals(processTransactionError.getType())) {
-                      return processTransactionError;
+                  if (pd.getGLItem() != null || psd.isInvoicePaid()) {
+                    if (FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
+                        && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0) {
+                      FIN_FinaccTransaction transaction = TransactionsDao
+                          .createFinAccTransaction(paymentRunPayment.getPayment());
+                      VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get()
+                          .getRequest());
+                      OBError processTransactionError = processTransaction(vars,
+                          new DalConnectionProvider(), "P", transaction);
+                      if (processTransactionError != null
+                          && "Error".equals(processTransactionError.getType())) {
+                        return processTransactionError;
+                      }
                     }
+                    updatePaymentAmounts(paymentRunPayment.getPayment());
                   }
                 }
                 break;
               }
-
             } finally {
               OBContext.restorePreviousMode();
             }
-          }
-          try {
-            OBContext.setAdminMode(true);
-            for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
-              if (pd.getGLItem() != null) {
-                continue;
-              }
-              for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-                if (psd.isInvoicePaid()) {
-                  updatePaymentAmounts(paymentRunPayment.getPayment());
-                }
-              }
-              break;
-            }
-          } finally {
-            OBContext.restorePreviousMode();
           }
           OBDal.getInstance().save(paymentRunPayment.getPayment());
 
