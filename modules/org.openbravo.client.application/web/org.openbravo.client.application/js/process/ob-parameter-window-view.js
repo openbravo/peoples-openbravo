@@ -544,6 +544,9 @@ isc.OBParameterWindowView.addProperties({
     isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');
     if (isNumber && OB.Utilities.Number.IsValidValueString(type, stringValue)) {
       return OB.Utilities.Number.OBMaskedToJS(stringValue, type.decSeparator, type.groupSeparator);
+    } else if (isNumber && isc.isA.Number(OB.Utilities.Number.OBMaskedToJS(stringValue, '.', ','))) {
+      // it might happen that default value uses the default '.' and ',' as decimal and group separator
+      return OB.Utilities.Number.OBMaskedToJS(stringValue, '.', ',');
     } else {
       return stringValue;
     }
