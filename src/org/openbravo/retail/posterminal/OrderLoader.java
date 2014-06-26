@@ -1363,6 +1363,9 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
           stdPrecision, RoundingMode.HALF_UP);
+      if (order.getGrandTotalAmount().signum() == -1) {
+        amount = amount.negate();
+      }
       BigDecimal origAmount = amount;
       BigDecimal mulrate = new BigDecimal(1);
       // FIXME: Coversion should be only in one direction: (USD-->EUR)
