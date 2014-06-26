@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,9 +33,7 @@
       CASE WHEN SUM(COSTCALCULATED) = 0 THEN SUM(CONVCOSTREF) WHEN SUM(COSTEDAMTREF) = 0 THEN 0 WHEN SUM(CASE WHEN GROUPCOUNT = COSTCALCULATED THEN 0 ELSE CONVAMOUNTREF END) = 0 THEN 0 ELSE SUM(CONVCOSTREF)*SUM(CONVAMOUNTREF)/SUM(CASE WHEN GROUPCOUNT = COSTCALCULATED THEN 0 ELSE CONVAMOUNTREF END) END AS CONVCOSTREF,
 	  C_CURRENCY_SYMBOL(?, 0, 'Y') AS CONVSYM,	  	  
 	  C_CURRENCY_ISOSYM(?) AS CONVISOSYM,
-      '' AS ID, '' AS NAME, '' AS TRANSCURRENCYID, '' AS TRANSDATE, '' AS TRANSCLIENTID, '' AS TRANSORGID, SUM(ZZ.COSTCALCULATED) AS COSTCALCULATED,
-      '' AS ORG, '' AS PARTNERGROUP, '' AS PARTNER, '' AS DOCUMENTNO, '' AS INVOICEDATE, '' AS PRODCATEGORY, '' AS PRODUCT, 
-      '' AS PROFIT, '' AS MARGIN, '' AS PRICE, '' AS CONTACT, '' AS SALESREP, '' AS PROJECT, '' AS ADDRESS
+      '' AS ID, '' AS NAME, '' AS TRANSCURRENCYID, '' AS TRANSDATE, '' AS TRANSCLIENTID, '' AS TRANSORGID, SUM(ZZ.COSTCALCULATED) AS COSTCALCULATED
       FROM (SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 
       SUM(LINENETAMT) AS AMOUNT, SUM(QTYINVOICED) AS QTY, SUM(WEIGHT) AS WEIGHT, SUM(COST) AS COST, 
       SUM(LINENETREF) AS AMOUNTREF, SUM(QTYINVOICEDREF) AS QTYREF, SUM(WEIGHT_REF) AS WEIGHTREF, SUM(COSTREF) AS COSTREF,     	  
@@ -488,69 +486,5 @@
      ]]></Sql>
      <Parameter name="lang"/> 
      <Parameter name="shown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID IN]]></Parameter>
-  </SqlMethod>
-  <SqlMethod name="selectXLS" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT ORG, PARTNERGROUP, PARTNER, DOCUMENTNO, INVOICEDATE, PRODCATEGORY, PRODUCT, 
-        AMOUNT, COST, (AMOUNT - COST) AS PROFIT, CASE WHEN AMOUNT <> 0 THEN 100 * (AMOUNT - COST) / AMOUNT ELSE 0 END AS MARGIN, 
-        WEIGHT, QTY, CONTACT, SALESREP, PROJECT, ADDRESS
-        FROM (
-          SELECT AD_ORG.NAME AS ORG, 
-            C_BP_GROUP.NAME AS PARTNERGROUP, 
-            C_BPARTNER.NAME AS PARTNER, 
-            C_INVOICE.DOCUMENTNO AS DOCUMENTNO, 
-            TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS INVOICEDATE, 
-            M_PRODUCT_CATEGORY.NAME AS PRODCATEGORY, 
-            M_PRODUCT.NAME AS PRODUCT, 
-            CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END AS AMOUNT,
-            CASE WHEN (M_PRODUCT.ISSTOCKED='Y' AND M_PRODUCT.PRODUCTTYPE='I') THEN (CASE WHEN trx.movementqty = 0 THEN 0 ELSE COALESCE(C_CURRENCY_CONVERT_PRECISION (ROUND(trxcost.cost/abs(trx.movementqty)*c_invoiceline.qtyinvoiced, C_GET_CURRENCY_PRECISION(trxcost.c_currency_id, 'C')), trxcost.c_currency_id,?,trx.movementdate,NULL,trx.ad_client_id,trx.ad_org_id,'C'), 0) END)    ELSE (COALESCE(M_GET_NO_TRX_PRODUCT_COST(M_PRODUCT.M_PRODUCT_ID, C_INVOICE.DATEINVOICED, 'STA', ad_org.ad_org_id, null, C_INVOICE.C_CURRENCY_ID), 0)*C_INVOICELINE.QTYINVOICED) END AS COST,                
-            C_INVOICELINE.QTYINVOICED*M_PRODUCT.WEIGHT AS WEIGHT,
-            C_INVOICELINE.QTYINVOICED AS QTY,
-            (SELECT U.NAME FROM AD_USER U WHERE U.AD_USER_ID = C_INVOICE.AD_USER_ID) AS CONTACT,
-            (SELECT SR.NAME FROM AD_USER SR WHERE SR.AD_USER_ID = C_INVOICE.SALESREP_ID) AS SALESREP,
-            (SELECT P.NAME FROM C_PROJECT P WHERE P.C_PROJECT_ID = C_INVOICE.C_PROJECT_ID) AS PROJECT,
-            (SELECT PL.NAME FROM C_BPARTNER_LOCATION PL WHERE PL.C_BPARTNER_LOCATION_ID = C_INVOICE.C_BPARTNER_LOCATION_ID) AS ADDRESS
-            FROM C_INVOICELINE 
-                join C_INVOICE on C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
-                join C_BPARTNER on C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-                join C_BP_GROUP on C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
-                join AD_ORG on C_INVOICE.AD_ORG_ID = AD_ORG.AD_ORG_ID
-                left join C_BPARTNER CB on C_BPARTNER.SALESREP_ID = CB.C_BPARTNER_ID
-                left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
-                left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
-                left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID
-                left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-                left join C_UOM on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
-                left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
-                left join M_INOUTLINE on C_INVOICELINE.M_INOUTLINE_ID = M_INOUTLINE.M_INOUTLINE_ID
-                left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
-                left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
-                left join (SELECT SUM(cost) as cost, m_transaction_id, c_currency_id
-                           FROM m_transaction_cost
-                           GROUP BY m_transaction_id, c_currency_id
-                          ) trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
-          WHERE C_INVOICE.ISSOTRX = 'Y'
-            AND C_INVOICE.PROCESSED = 'Y'
-            AND C_INVOICE.AD_ORG_ID IN ('1')
-            AND C_INVOICE.AD_CLIENT_ID IN ('7')
-            AND 1=1
-          ) A
-          ORDER BY ORG, PARTNERGROUP, PARTNER, INVOICEDATE, DOCUMENTNO, PRODCATEGORY, PRODUCT, AMOUNT, COST, PROFIT, MARGIN, WEIGHT, QTY, CONTACT, SALESREP, PROJECT, ADDRESS
-     ]]></Sql>
-    <Parameter name="cCurrencyConv"/>
-    <Parameter name="adOrgId" optional="true" type="replace" after="AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'"/>
-    <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
-    <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
-    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
-    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
   </SqlMethod>
 </SqlClass>
