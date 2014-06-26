@@ -772,6 +772,13 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           response.setContentType("application/xls; charset=UTF-8");
           PrintWriter out = response.getWriter();
           XmlDocument xmlDocument = null;
+          /*
+           * ReportBudgetGenerateExcelData[] data1 = null; String columns =
+           * "' ' AS PARTNER, ' ' AS PARTNERGROUP, ' ' AS PRODUCT, ' ' AS PRODCATEGORY, ' ' AS USER1, ' ' AS USER2, ' ' AS COSTCENTER, ' ' AS SALESREGION, ' ' AS CAMPAIGN, ' ' AS ACTIVITY, ' ' AS PROJECT, ' ' AS TRXORG, ' ' AS MONTH, VALIDCOMBINATION, ACCOUNTSCHEMA, CURRENCY "
+           * ; String tables =
+           * ", (SELECT AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(C_ELEMENTVALUE_ID), 'en_US' ) AS VALIDCOMBINATION FROM C_ELEMENTVALUE WHERE C_ELEMENTVALUE_ID = '5D8F47EE1B5F4245811D3067300F7159') VCOMB, (SELECT AD_COLUMN_IDENTIFIER('C_ACCTSCHEMA', TO_CHAR(C_ACCTSCHEMA_ID), 'en_US' ) AS ACCOUNTSCHEMA, ISO_CODE AS CURRENCY FROM C_ACCTSCHEMA, C_CURRENCY WHERE C_ACCTSCHEMA.C_CURRENCY_ID=C_CURRENCY.C_CURRENCY_ID AND C_ACCTSCHEMA_ID = 'F6488042ACD14B6A87EBF42DB13F9EFC') ACSCH"
+           * ; data1 = ReportBudgetGenerateExcelData.select(this, columns, tables.toString());
+           */
           xmlDocument = xmlEngine.readXmlTemplate(
               "org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesXLS")
               .createXmlDocument();
