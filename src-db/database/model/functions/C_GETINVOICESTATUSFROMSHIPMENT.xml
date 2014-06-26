@@ -31,6 +31,9 @@ join c_invoiceline inv on minline.m_inoutline_id=inv.m_inoutline_id,
 where minline.m_inout_id=p_minoutid;
 If (v_percent is NULL) then
 v_percent:=0;
+else if (v_percent > 100) then
+v_percent:=100;
+END IF;
 END IF;
 RETURN v_percent;
 END C_GETINVOICESTATUSFROMSHIPMENT
