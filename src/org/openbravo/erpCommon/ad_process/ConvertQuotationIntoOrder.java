@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -240,30 +240,10 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(objCloneOrder);
 
-      if (recalculatePrices) {
-        // If prices are going to be recalculated, call C_Order_Post
-        callCOrderPost(objCloneOrder);
-        OBDal.getInstance().flush();
-        OBDal.getInstance().refresh(objCloneOrder);
-      } else {
-        // Create the Payment Plan for the new Sales Order
-        try {
-          OBContext.setAdminMode(true);
-          FIN_PaymentSchedule ps = generatePaymentPlan(objCloneOrder);
-          FIN_PaymentScheduleDetail psd = generatePaymentPlanDetails(objCloneOrder, ps);
-          ps.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(psd);
-          objCloneOrder.getFINPaymentScheduleList().add(ps);
-          OBDal.getInstance().save(ps);
-          OBDal.getInstance().save(psd);
-        } finally {
-          OBContext.restorePreviousMode();
-        }
-      }
-
-      // Change Sales Order Status to Completed
-      objCloneOrder.setDocumentAction("RE");
-      objCloneOrder.setDocumentStatus("CO");
-      objCloneOrder.setProcessed(true);
+      // If prices are going to be recalculated, call C_Order_Post
+      callCOrderPost(objCloneOrder, recalculatePrices);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().refresh(objCloneOrder);
 
       // Set the Status of the Quotation to Closed - Converted
       objOrder.setDocumentStatus("CA");
@@ -365,11 +345,12 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
   /**
    * Call C_Order_Post
    */
-  private void callCOrderPost(Order objCloneOrder) {
+  private void callCOrderPost(Order objCloneOrder, boolean recalculatePrices) {
     try {
       final List<Object> parameters = new ArrayList<Object>();
       parameters.add(null);
       parameters.add(objCloneOrder.getId());
+      parameters.add(recalculatePrices ? "Y" : "N");
       final String procedureName = "c_order_post1";
       CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
     } catch (Exception e) {
