@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -54,7 +54,6 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_TRANSACTION.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDate" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE < to_date(?)]]></Parameter>
     <Parameter name="mProduct" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="mLocator" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_LOCATOR.M_LOCATOR_ID IN]]></Parameter>
     <Parameter name="mProductCategory" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
     <Parameter name="locatorX" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_LOCATOR.X) = UPPER(?)]]></Parameter>
     <Parameter name="locatorY" optional="true" after="AND 1=1"><![CDATA[ AND UPPER(M_LOCATOR.Y) = UPPER(?)]]></Parameter>
