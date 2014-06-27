@@ -1043,8 +1043,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       order.setId(jsonorder.getString("id"));
     }
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
-    BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class,
-        jsonorder.getJSONObject("bp").getString("id"));
+    BusinessPartner bp = order.getBusinessPartner();
     order.setTransactionDocument((DocumentType) OBDal.getInstance().getProxy("DocumentType",
         jsonorder.getString("documentType")));
     order.setAccountingDate(order.getOrderDate());
