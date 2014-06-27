@@ -160,7 +160,12 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
         }
 
         if (recalculatePrices) {
-          recalculatePrices(objOrder, ordLine, objCloneOrder, objCloneOrdLine, lineTax);
+          try {
+            OBContext.setAdminMode(true);
+            recalculatePrices(objOrder, ordLine, objCloneOrder, objCloneOrdLine, lineTax);
+          } finally {
+            OBContext.restorePreviousMode();
+          }
         } else {
           for (OrderLineOffer offer : ordLine.getOrderLineOfferList()) {
             // Copy Promotions and Discounts.
@@ -255,20 +260,25 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       OBDal.getInstance().refresh(objCloneOrder);
       OBDal.getInstance().refresh(objOrder);
 
-      for (OrderLine orderLine : objCloneOrder.getOrderLineList()) {
-        if (("I".equals(orderLine.getProduct().getProductType()))
-            && (orderLine.getProduct().isStocked())) {
-          if (orderLine.isDirectShipment()) {
-            update = ((Zero.subtract(orderLine.getReservedQuantity())).subtract(orderLine
-                .getDeliveredQuantity())) != Zero;
-          } else {
-            update = ((orderLine.getOrderedQuantity().subtract(orderLine.getReservedQuantity()))
-                .subtract(orderLine.getDeliveredQuantity())) != Zero;
-          }
-          if (update) {
-            callUpdateStoragePending(objCloneOrder, orderLine);
+      try {
+        OBContext.setAdminMode(true);
+        for (OrderLine orderLine : objCloneOrder.getOrderLineList()) {
+          if (("I".equals(orderLine.getProduct().getProductType()))
+              && (orderLine.getProduct().isStocked())) {
+            if (orderLine.isDirectShipment()) {
+              update = ((Zero.subtract(orderLine.getReservedQuantity())).subtract(orderLine
+                  .getDeliveredQuantity())) != Zero;
+            } else {
+              update = ((orderLine.getOrderedQuantity().subtract(orderLine.getReservedQuantity()))
+                  .subtract(orderLine.getDeliveredQuantity())) != Zero;
+            }
+            if (update) {
+              callUpdateStoragePending(objCloneOrder, orderLine);
+            }
           }
         }
+      } finally {
+        OBContext.restorePreviousMode();
       }
       OBDal.getInstance().commitAndClose();
       OBError result = OBErrorBuilder.buildMessage(null, "success", "@SalesOrderDocumentno@ "
