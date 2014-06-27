@@ -173,11 +173,20 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
         OBError message = processPayment(payment, strAction, strDifferenceAction, differenceAmount,
             exchangeRate);
-        JSONObject errorMessage = new JSONObject();
-        errorMessage.put("severity", message.getType().toLowerCase());
-        errorMessage.put("title", message.getTitle());
-        errorMessage.put("text", message.getMessage());
-        jsonResponse.put("message", errorMessage);
+        // JSONObject errorMessage = new JSONObject();
+        // errorMessage.put("severity", message.getType().toLowerCase());
+        // errorMessage.put("title", message.getTitle());
+        // errorMessage.put("text", message.getMessage());
+        // jsonResponse.put("message", errorMessage);
+        JSONObject setSelectorValueFromRecord = new JSONObject();
+        JSONObject record = new JSONObject();
+        JSONObject responseActions = new JSONObject();
+        record.put("value", payment.getId());
+        record.put("map", payment.getIdentifier());
+        setSelectorValueFromRecord.put("record", record);
+        responseActions.put("setSelectorValueFromRecord", setSelectorValueFromRecord);
+        jsonResponse.put("responseActions", responseActions);
+
       }
 
     } catch (Exception e) {
