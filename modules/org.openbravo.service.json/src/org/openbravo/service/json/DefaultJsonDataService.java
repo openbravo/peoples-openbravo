@@ -396,9 +396,6 @@ public class DefaultJsonDataService implements JsonDataService {
 
       if (parameters.containsKey(JsonConstants.TAB_PARAMETER)
           || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
-        // FIXME: Some selectors working in 2.50 windows are incorrectly unpaged (see issue #26734)
-        // for now we are not preventing unpaged selector requests till this issue is properly fixed
-        // after that they should be prevented again
 
         // for standard tab and selector datasources pagination is mandatory
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));
