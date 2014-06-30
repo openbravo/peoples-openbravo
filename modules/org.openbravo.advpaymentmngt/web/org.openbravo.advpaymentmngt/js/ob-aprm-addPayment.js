@@ -382,12 +382,20 @@ OB.APRM.AddPayment.updateDifference = function (form) {
       receivedFrom = form.getItem('received_from').getValue() || '',
       totalGLItems = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       diffAmt = actualPayment.add(credit).subtract(total),
-      expectedDiffAmt = expectedPayment.add(credit).subtract(total).add(totalGLItems);
-  differenceItem.setValue(Number(diffAmt.toString()));
-  if (expectedDiffAmt.signum() === 0) {
-    expectedDifferenceItem.setValue(Number(diffAmt.toString()));
+      amount = total;
+
+  if ((actualPayment.signum() === 0) || (actualPayment.compareTo(expectedPayment) > 0)) {
+    amount = actualPayment;
+  }
+  if (credit.signum() !== 0) {
+    amount = amount.add(credit);
+  }
+  if (expectedPayment.compareTo(total.abs()) > 0) {
+    differenceItem.setValue(Number(expectedPayment.subtract(total)));
+  } else if (amount.compareTo(total) > 0) {
+    differenceItem.setValue(Number(amount.subtract(total)));
   } else {
-    expectedDifferenceItem.setValue(Number(expectedDiffAmt.toString()));
+    differenceItem.setValue(Number('0'));
   }
   if (diffAmt.signum() !== 0) {
     OB.APRM.AddPayment.updateDifferenceActions(form);
