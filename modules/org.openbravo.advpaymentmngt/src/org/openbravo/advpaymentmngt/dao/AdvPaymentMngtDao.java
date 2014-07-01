@@ -1181,7 +1181,10 @@ public class AdvPaymentMngtDao {
       whereClause.append(" as ft");
       whereClause.append(" where ft.");
       whereClause.append(FIN_FinaccTransaction.PROPERTY_ACCOUNT);
-      whereClause.append(".id = ?) ");
+      whereClause.append(".id = ? ");
+      whereClause.append(" and ft.");
+      whereClause.append(FIN_FinaccTransaction.PROPERTY_PROCESSED);
+      whereClause.append(" = true) ");
       whereClause.append(" and p.");
       whereClause.append(FIN_Payment.PROPERTY_ACCOUNT);
       whereClause.append(".id = ? ");
