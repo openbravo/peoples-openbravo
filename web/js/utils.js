@@ -101,7 +101,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '22716';
+  var number = '23952';
   return number;
 }
 
@@ -984,9 +984,7 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   var appUrl = getAppUrl();
   var adds = "";
   var isPopup = null;
-  if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
-    _name = _name.replace(/ /g,"_"); //To fix strange issue with IE8 that window name declared as var xx = window.open can not have spaces
-  }
+  _name = _name.replace(/ /g,"_"); //The name should not contain spaces in order to avoid problems with window.open and window.close operations
   // Deprecated in 2.50, search for the old frameAplication and the new appFrame
   if (_name!='appFrame' && _name!='frameAplicacion' && _name!='frameMenu') isPopup =  true;
   else isPopup = false;
