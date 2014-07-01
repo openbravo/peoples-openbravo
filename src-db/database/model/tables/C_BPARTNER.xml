@@ -369,6 +369,14 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="UPDATE_CURRENCY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="BP_CURRENCY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
@@ -398,6 +406,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_PAYMENTTERM" name="C_BPARTNER_C_PAYMENTTERM">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="C_BPARTNER_CURRENCY">
+        <reference local="BP_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="C_BPARTNER_FIN_FINACC">
         <reference local="FIN_FINANCIAL_ACCOUNT_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
