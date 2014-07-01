@@ -115,11 +115,12 @@ public class SL_Production_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpattributeset\", \"" + FormatUtilities.replaceJS(strAttrSet)
         + "\"),\n");
     resultado.append("new Array(\"inpattrsetvaluetype\", \""
-        + FormatUtilities.replaceJS(strAttrSetValueType) + "\"),\n");
+        + FormatUtilities.replaceJS(strAttrSetValueType == null ? "":strAttrSetValueType) + "\"),\n");
     resultado.append("new Array(\"inpmovementqty\", " + (strQty.equals("") ? "\"\"" : strQty)
         + "),\n");
     resultado.append("new Array(\"inpquantityorder\", " + (strPQty.equals("") ? "\"\"" : strPQty)
         + "),\n");
+ 
     if (strPUOM.startsWith("\""))
       strPUOM = strPUOM.substring(1, strPUOM.length() - 1);
     resultado.append("new Array(\"inpmProductUomId\", ");

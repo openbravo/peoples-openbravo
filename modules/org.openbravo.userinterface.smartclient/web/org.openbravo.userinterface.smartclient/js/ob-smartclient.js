@@ -166,6 +166,36 @@ isc.ResultSet.addProperties({
     } else {
       return this._original_shouldUseClientSorting();
     }
+  },
+  _original_filterLocalData: isc.ResultSet.getPrototype().filterLocalData,
+  // when filtering locally use identifier as the fieldName as the grid contains only identifier property.
+  // refer issue https://issues.openbravo.com/view.php?id=26696.
+  filterLocalData: function () {
+    var newProperty, i, j, localCriteria, fieldName;
+    if (this.criteria && this.criteria.criteria) {
+      for (i = 0; i < this.criteria.criteria.length; i++) {
+        if (this.criteria.criteria[i].fieldName) {
+          fieldName = this.criteria.criteria[i].fieldName;
+          if (fieldName.indexOf(OB.Constants.FIELDSEPARATOR) !== -1) {
+            newProperty = fieldName.substring(0, fieldName.indexOf(OB.Constants.FIELDSEPARATOR) + 1);
+            newProperty = newProperty + OB.Constants.IDENTIFIER;
+            this.criteria.criteria[i].fieldName = newProperty;
+          }
+          //when more than one records are selected, update the subcriteria also
+          if (this.criteria.criteria[i].criteria) {
+            localCriteria = this.criteria.criteria[i].criteria;
+            for (j = 0; j < localCriteria.length; j++) {
+              if (localCriteria[j].fieldName && localCriteria[j].fieldName.indexOf(OB.Constants.FIELDSEPARATOR) !== -1) {
+                newProperty = localCriteria[j].fieldName.substring(0, fieldName.indexOf(OB.Constants.FIELDSEPARATOR) + 1);
+                newProperty = newProperty + OB.Constants.IDENTIFIER;
+                localCriteria[j].fieldName = newProperty;
+              }
+            }
+          }
+        }
+      }
+    }
+    return this._original_filterLocalData();
   }
 });
 

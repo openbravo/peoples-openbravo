@@ -72,6 +72,10 @@ isc.OBFKFilterTextItem.addProperties({
         if (gridView) {
           requestProperties.params.tabId = gridView.tabId || (gridView.sourceView && gridView.sourceView.tabId);
         }
+        //send the display field in request params to add it to the list of fields to be fetched.
+        if (this.formItem && this.formItem.displayField) {
+          requestProperties.params.displayField = this.formItem.displayField;
+        }
         delete me.forceReload;
       },
 

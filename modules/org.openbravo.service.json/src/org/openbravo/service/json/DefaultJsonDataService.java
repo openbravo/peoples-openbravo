@@ -44,6 +44,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
+import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
  * Implements generic data operations which have parameters and json as an input and return results
@@ -83,11 +84,33 @@ public class DefaultJsonDataService implements JsonDataService {
    */
   public String fetch(Map<String, String> parameters) {
     try {
+      boolean propertyPresent = false;
       final String entityName = parameters.get(JsonConstants.ENTITYNAME);
       Check.isNotNull(entityName, "The name of the service/entityname should not be null");
       Check.isNotNull(parameters, "The parameters should not be null");
 
       String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
+      String displayField = parameters.get(JsonConstants.DISPLAYFIELD_PARAMETER);
+      /**
+       * if displayField parameter is present, combo field's filter method is being called. in this
+       * case if the field is a table reference, add the displayed column to list of columns to be
+       * retrieved. Refer issue https://issues.openbravo.com/view.php?id=26696
+       */
+      if (StringUtils.isNotEmpty(displayField) && StringUtils.isNotEmpty(selectedProperties)) {
+        for (String selectedProp : selectedProperties.split(",")) {
+          if (selectedProp.equals(displayField)) {
+            propertyPresent = true;
+            break;
+          }
+        }
+        if (!propertyPresent) {
+          if (StringUtils.isNotEmpty(selectedProperties)) {
+            selectedProperties = selectedProperties.concat("," + displayField);
+          } else {
+            selectedProperties = displayField;
+          }
+        }
+      }
 
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();
@@ -371,11 +394,8 @@ public class DefaultJsonDataService implements JsonDataService {
       log.warn("Fetching data without pagination, this can cause perfomance issues. Parameters: "
           + paramMsg);
 
-      if (parameters.containsKey(JsonConstants.TAB_PARAMETER)) {
-        // || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)
-        // FIXME: Some selectors working in 2.50 windows are incorrectly unpaged (see issue #26734)
-        // for now we are not preventing unpaged selector requests till this issue is properly fixed
-        // after that they should be prevented again
+      if (parameters.containsKey(JsonConstants.TAB_PARAMETER)
+          || parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
 
         // for standard tab and selector datasources pagination is mandatory
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));

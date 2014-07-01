@@ -218,10 +218,11 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function (grid) {
   var issotrx = this.view.theForm.getItem('issotrx').getValue(),
       payment = this.view.theForm.getItem('fin_payment_id').getValue();
   grid.isReady = true;
-  if (!issotrx && payment) {
-    OB.APRM.AddPayment.updateInvOrderTotal(this.view.theForm, grid);
-  } else if (grid.selectedIds.length === 0) {
+
+  if ((issotrx || !payment) && (grid.selectedIds.length === 0)) {
     OB.APRM.AddPayment.distributeAmount(this.view, this.view.theForm, false);
+  } else {
+    OB.APRM.AddPayment.updateInvOrderTotal(this.view.theForm, grid);
   }
   OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
 };
@@ -250,22 +251,22 @@ OB.APRM.AddPayment.tryToUpdateActualExpected = function (form) {
       creditGrid = form.getItem('credit_to_use').canvas.viewGrid;
 
   if (orderInvoiceGrid.isReady && glitemGrid.isReady && creditGrid.isReady) {
-    OB.APRM.AddPayment.updateActualExpected(form, true);
+    OB.APRM.AddPayment.updateActualExpected(form);
   }
 };
 
 OB.APRM.AddPayment.orderInvoiceAmountOnChange = function (item, view, form, grid) {
-  OB.APRM.AddPayment.updateActualExpected(form, false);
+  OB.APRM.AddPayment.updateActualExpected(form);
   OB.APRM.AddPayment.updateInvOrderTotal(form, grid);
 };
 
 OB.APRM.AddPayment.orderInvoiceTotalAmountOnChange = function (item, view, form, grid) {
-  OB.APRM.AddPayment.updateActualExpected(form, false);
+  OB.APRM.AddPayment.updateActualExpected(form);
   OB.APRM.AddPayment.updateTotal(form);
 };
 
 OB.APRM.AddPayment.glItemTotalAmountOnChange = function (item, view, form, grid) {
-  OB.APRM.AddPayment.updateActualExpected(form, false);
+  OB.APRM.AddPayment.updateActualExpected(form);
   OB.APRM.AddPayment.updateTotal(form);
 };
 
@@ -354,7 +355,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       delete orderInvoice.preventDistributingOnSelectionChanged;
     }
   }
-  OB.APRM.AddPayment.updateActualExpected(form, false);
+  OB.APRM.AddPayment.updateActualExpected(form);
   OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
 };
 
@@ -381,12 +382,20 @@ OB.APRM.AddPayment.updateDifference = function (form) {
       receivedFrom = form.getItem('received_from').getValue() || '',
       totalGLItems = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       diffAmt = actualPayment.add(credit).subtract(total),
-      expectedDiffAmt = expectedPayment.add(credit).subtract(total).add(totalGLItems);
-  differenceItem.setValue(Number(diffAmt.toString()));
-  if (expectedDiffAmt.signum() === 0) {
-    expectedDifferenceItem.setValue(Number(diffAmt.toString()));
+      amount = total;
+
+  if ((actualPayment.signum() === 0) || (actualPayment.compareTo(expectedPayment) > 0)) {
+    amount = actualPayment;
+  }
+  if (credit.signum() !== 0) {
+    amount = amount.add(credit);
+  }
+  if (expectedPayment.compareTo(total.abs()) > 0) {
+    differenceItem.setValue(Number(expectedPayment.subtract(total)));
+  } else if (amount.compareTo(total) > 0) {
+    differenceItem.setValue(Number(amount.subtract(total)));
   } else {
-    expectedDifferenceItem.setValue(Number(expectedDiffAmt.toString()));
+    differenceItem.setValue(Number('0'));
   }
   if (diffAmt.signum() !== 0) {
     OB.APRM.AddPayment.updateDifferenceActions(form);
@@ -482,11 +491,11 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
     }
   }
   OB.APRM.AddPayment.updateInvOrderTotal(view.theForm, orderInvoice);
-  OB.APRM.AddPayment.updateActualExpected(view.theForm, false);
+  OB.APRM.AddPayment.updateActualExpected(view.theForm);
   OB.APRM.AddPayment.updateDifference(view.theForm);
 };
 
-OB.APRM.AddPayment.updateActualExpected = function (form, onload) {
+OB.APRM.AddPayment.updateActualExpected = function (form) {
   var orderInvoice = form.getItem('order_invoice').canvas.viewGrid,
       issotrx = form.getItem('issotrx').getValue(),
       totalAmountoutstanding = BigDecimal.prototype.ZERO,
@@ -507,7 +516,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form, onload) {
   } else {
     expectedPayment.setValue(Number('0'));
   }
-  if (!issotrx && !onload) {
+  if (!issotrx) {
     actpayment = totalAmount.add(glitemtotal).add(generateCredit);
     actualPayment.setValue(Number(actpayment));
     if (credit.compareTo(BigDecimal.prototype.ZERO) > 0) {
@@ -536,13 +545,13 @@ OB.APRM.AddPayment.updateGLItemsTotal = function (form, rowNum, remove) {
       grid = form.getItem('glitem').canvas.viewGrid,
       receivedInField = grid.getFieldByColumnName('received_in'),
       paidOutField = grid.getFieldByColumnName('paid_out'),
-      allRecords = (grid.data.allRows) ? grid.data.allRows.length : 0,
       glItemTotalItem = form.getItem('amount_gl_items'),
       issotrx = form.getItem('issotrx').getValue(),
-      amt, i, bdAmt, receivedInAmt, paidOutAmt;
+      amt, i, bdAmt, receivedInAmt, paidOutAmt, allRecords;
 
   grid.saveAllEdits();
-
+  // allRecords should be initialized after grid.saveAllEdits()
+  allRecords = (grid.data.allRows) ? grid.data.allRows.length : 0;
   for (i = 0; i < allRecords; i++) {
     if (remove && i === rowNum) {
       continue;
@@ -580,7 +589,7 @@ OB.APRM.AddPayment.glItemAmountOnChange = function (item, view, form, grid) {
   }
 
   OB.APRM.AddPayment.updateGLItemsTotal(form, item.rowNum, false);
-  OB.APRM.AddPayment.updateActualExpected(form, false);
+  OB.APRM.AddPayment.updateActualExpected(form);
   OB.APRM.AddPayment.updateDifference(form);
   return true;
 };
@@ -610,7 +619,7 @@ OB.APRM.AddPayment.updateCreditOnChange = function (item, view, form, grid) {
     OB.APRM.AddPayment.distributeAmount(view, form, true);
   }
   OB.APRM.AddPayment.updateDifference(form);
-  OB.APRM.AddPayment.updateActualExpected(form, false);
+  OB.APRM.AddPayment.updateActualExpected(form);
   return true;
 };
 
@@ -669,7 +678,7 @@ OB.APRM.AddPayment.creditValidation = function (item, validator, value, record) 
 
 OB.APRM.AddPayment.doSelectionChangedCredit = function (record, state, view) {
   OB.APRM.AddPayment.updateCreditTotal(view.theForm);
-  OB.APRM.AddPayment.updateActualExpected(view.theForm, false);
+  OB.APRM.AddPayment.updateActualExpected(view.theForm);
 };
 
 OB.APRM.AddPayment.conversionRateOnChange = function (item, view, form, grid) {

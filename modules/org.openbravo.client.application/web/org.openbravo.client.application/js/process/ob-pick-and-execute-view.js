@@ -90,7 +90,7 @@ isc.OBPickAndExecuteView.addProperties({
       showGridSummary: this.showGridSummary,
       viewProperties: this.viewProperties,
       parameterName: this.parameterName,
-      onGridLoadFunction:this.onGridLoadFunction
+      onGridLoadFunction: this.onGridLoadFunction
     });
 
 
