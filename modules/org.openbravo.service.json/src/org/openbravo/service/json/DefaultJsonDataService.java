@@ -84,33 +84,11 @@ public class DefaultJsonDataService implements JsonDataService {
    */
   public String fetch(Map<String, String> parameters) {
     try {
-      boolean propertyPresent = false;
       final String entityName = parameters.get(JsonConstants.ENTITYNAME);
       Check.isNotNull(entityName, "The name of the service/entityname should not be null");
       Check.isNotNull(parameters, "The parameters should not be null");
 
       String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
-      String displayField = parameters.get(JsonConstants.DISPLAYFIELD_PARAMETER);
-      /**
-       * if displayField parameter is present, combo field's filter method is being called. in this
-       * case if the field is a table reference, add the displayed column to list of columns to be
-       * retrieved. Refer issue https://issues.openbravo.com/view.php?id=26696
-       */
-      if (StringUtils.isNotEmpty(displayField)) {
-        for (String selectedProp : selectedProperties.split(",")) {
-          if (selectedProp.equals(displayField)) {
-            propertyPresent = true;
-            break;
-          }
-        }
-        if (!propertyPresent) {
-          if (StringUtils.isNotEmpty(selectedProperties)) {
-            selectedProperties = selectedProperties.concat("," + displayField);
-          } else {
-            selectedProperties = displayField;
-          }
-        }
-      }
 
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();

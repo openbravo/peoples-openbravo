@@ -597,10 +597,6 @@ isc.OBGrid.addProperties({
           field.filterEditorProperties.criteriaField = field.criteriaField;
         }
 
-        if (field.criteriaDisplayField) {
-          field.filterEditorProperties.criteriaDisplayField = field.criteriaDisplayField;
-        }
-
         if (field.editorType && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteTime')()) {
           // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
           // http://forums.smartclient.com/showthread.php?p=116135

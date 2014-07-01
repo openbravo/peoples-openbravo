@@ -25,6 +25,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.ui.Field;
@@ -59,9 +60,8 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
       Reference referenceSearchKey = column.getReferenceSearchKey();
       if (referenceSearchKey != null && referenceSearchKey.getADReferencedTableList().size() > 0) {
         ReferencedTable referencedTable = referenceSearchKey.getADReferencedTableList().get(0);
-        // set the criteriaDisplayField in all cases, as the display column need not be part of
-        // identifier. Refer issue https://issues.openbravo.com/view.php?id=26696
-        if (referencedTable != null) {
+        if (referencedTable != null
+            && isTableWithMultipleIdentifierColumns(referencedTable.getTable())) {
           Property prop = KernelUtils.getInstance().getPropertyFromColumn(column);
           Property referencedProp = KernelUtils.getInstance().getPropertyFromColumn(
               referencedTable.getDisplayedColumn());
@@ -74,6 +74,22 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
       }
     }
     return super.getGridFieldProperties(field) + criteriaField;
+  }
+
+  /* Returns true if the identifier of the table is composed of more than one column */
+  private Boolean isTableWithMultipleIdentifierColumns(Table relatedTable) {
+    int nIdentifiers = 0;
+    for (Column curColumn : relatedTable.getADColumnList()) {
+      if (curColumn.isIdentifier()) {
+        nIdentifiers += 1;
+        if (nIdentifiers > 1) {
+          // if there is more than one identifier return true
+          return true;
+        }
+      }
+    }
+    // there is only one identifier column
+    return false;
   }
 
   @Override
