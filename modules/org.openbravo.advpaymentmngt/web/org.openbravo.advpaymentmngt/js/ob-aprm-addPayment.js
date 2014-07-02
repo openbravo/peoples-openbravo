@@ -747,7 +747,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
 
   // Check if there is pending amount to distribute that could be distributed
   for (i = 0; i < selectedRecords.length; i++) {
-    outstandingAmount = new BigDecimal(String(orderInvoiceGrid.getRecord(i).outstandingAmount));
+    outstandingAmount = new BigDecimal(String(selectedRecords[i].outstandingAmount));
     totalOustandingAmount = totalOustandingAmount.add(outstandingAmount);
   }
   for (i = 0; i < orderInvoiceGrid.data.totalRows; i++) {
