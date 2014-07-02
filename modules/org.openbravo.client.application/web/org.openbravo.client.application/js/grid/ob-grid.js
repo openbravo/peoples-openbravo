@@ -924,13 +924,11 @@ isc.OBGrid.addProperties({
       _textMatchStyle: 'substring',
       _UTCOffsetMiliseconds: OB.Utilities.Date.getUTCOffsetInMiliseconds()
     }, lcriteria, this.getFetchRequestParams(null, isExporting));
-    if (this.getSortField()) {
-      sortCriteria = this.getSort();
-      if (sortCriteria && sortCriteria.length > 0) {
-        d._sortBy = sortCriteria[0].property;
-        if (sortCriteria[0].direction === 'descending') {
-          d._sortBy = '-' + d._sortBy;
-        }
+    sortCriteria = this.getSort();
+    if (sortCriteria && sortCriteria.length > 0) {
+      d._sortBy = sortCriteria[0].property;
+      if (sortCriteria[0].direction === 'descending') {
+        d._sortBy = '-' + d._sortBy;
       }
     }
     OB.Utilities.postThroughHiddenForm(dsURL, d);
