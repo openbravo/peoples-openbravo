@@ -70,7 +70,7 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
       BigDecimal costAdjusted = newAmountCost.subtract(totalCost);
 
       CostAdjustmentUtils.insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted,
-          Boolean.TRUE);
+          Boolean.TRUE, null, null);
 
       JSONObject message = CostAdjustmentProcess.processCostAdjustment(costAdjustmentHeader);
       jsonResponse.put("message", message);

@@ -23,6 +23,8 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
@@ -30,8 +32,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InternalConsumption;
@@ -101,7 +105,30 @@ public class CostingServer {
       // insert on m_transaction_cost
       createTransactionCost();
       OBDal.getInstance().save(transaction);
-      // insert cost adjustment!ª!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      // check if cost adjustment should be done
+      if (CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction, getCostingRule()
+          .isWarehouseDimension())) {
+
+        CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
+            transaction.getOrganization(), "BDT"); // BDT= Backdated transaction
+
+        CostAdjustmentUtils.insertCostAdjustmentLine(transaction, costAdjustmentHeader, null,
+            Boolean.TRUE, CostAdjustmentUtils.getEndOfDay(transaction.getMovementDate()), null);
+
+        try {
+          JSONObject message = CostAdjustmentProcess.processCostAdjustment(costAdjustmentHeader);
+
+          if (message.get("severity") != "success") {
+            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@")
+                + ": " + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
+          }
+        } catch (JSONException e) {
+          OBDal.getInstance().rollbackAndClose();
+          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+        }
+      }
+
       setNotPostedTransaction();
     } finally {
       OBContext.restorePreviousMode();
