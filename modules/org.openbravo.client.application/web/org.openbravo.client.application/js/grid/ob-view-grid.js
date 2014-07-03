@@ -2287,6 +2287,9 @@ isc.OBViewGrid.addProperties({
           } else {
             grid.filterEditor.getEditForm().setValue(field.name, OB.Utilities.encodeSearchOperator(value));
           }
+          if (field.filterEditorType === 'OBFKFilterTextItem' && grid.filterEditor.getEditForm().getField(field.name)) {
+            grid.filterEditor.getEditForm().getField(field.name).filterType = 'id';
+          }
           var criteria = grid.filterEditor.getEditForm().getValuesAsCriteria();
           grid.checkShowFilterFunnelIcon(criteria);
           grid.filterData(criteria);
