@@ -295,7 +295,7 @@ enyo.kind({
       components: [{
         classes: 'span12',
         components: [{
-          name: 'bpslistitemprinter',
+          name: 'stBPAdvSearch',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '301px',
           renderHeader: 'OB.OBPOSPointOfSale.UI.customers.ModalCustomerScrollableHeader',
@@ -377,7 +377,7 @@ enyo.kind({
   bpsList: null,
   init: function () {
     this.bpsList = new Backbone.Collection();
-    this.$.bpslistitemprinter.setCollection(this.bpsList);
+    this.$.stBPAdvSearch.setCollection(this.bpsList);
     this.bpsList.on('click', function (model) {
       var sw = this.subWindow;
       this.doChangeSubWindow({

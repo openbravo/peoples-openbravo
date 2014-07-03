@@ -277,7 +277,7 @@ enyo.kind({
       components: [{
         classes: 'span12',
         components: [{
-          name: 'bpslistitemprinter',
+          name: 'stBPAssignToReceipt',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '400px',
           renderHeader: 'OB.UI.ModalBpScrollableHeader',
@@ -321,7 +321,7 @@ enyo.kind({
   bpsList: null,
   init: function (model) {
     this.bpsList = new Backbone.Collection();
-    this.$.bpslistitemprinter.setCollection(this.bpsList);
+    this.$.stBPAssignToReceipt.setCollection(this.bpsList);
     this.bpsList.on('click', function (model) {
       this.doChangeBusinessPartner({
         businessPartner: model
@@ -336,12 +336,12 @@ enyo.kind({
   topPosition: '125px',
   kind: 'OB.UI.Modal',
   executeOnShow: function () {
-    this.$.body.$.listBps.$.bpslistitemprinter.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;
   },
 
   executeOnHide: function () {
-    this.$.body.$.listBps.$.bpslistitemprinter.$.theader.$.modalBpScrollableHeader.clearAction();
+    this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.clearAction();
   },
   i18nHeader: 'OBPOS_LblAssignCustomer',
   body: {
