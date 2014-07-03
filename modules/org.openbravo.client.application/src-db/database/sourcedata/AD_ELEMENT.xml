@@ -67,7 +67,7 @@
 <!--1DD68F7AE78B4F0EB010F507D4B7A0D4-->  <DESCRIPTION><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.]]></DESCRIPTION>
 <!--1DD68F7AE78B4F0EB010F507D4B7A0D4-->  <HELP><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.
 
-The legacy parameter windows could only contain one grid, so the _selection and _allRows properties of the grid were directly accesible in the handler from the params object. I.e:
+The legacy parameter windows could only contain one grid, so the _selection and _allRows properties of the grid were directly accessible in the handler from the params object. I.e:
 
 JSONArray gridRows = jsonparams.getJSONArray(ApplicationConstants.ALL_ROWS_PARAM);
 

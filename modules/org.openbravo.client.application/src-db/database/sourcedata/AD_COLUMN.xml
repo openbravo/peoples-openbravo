@@ -1902,7 +1902,7 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--3E8FC3621ACE40258A020FE6B0E7A9E0-->  <DESCRIPTION><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.]]></DESCRIPTION>
 <!--3E8FC3621ACE40258A020FE6B0E7A9E0-->  <HELP><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.
 
-The legacy parameter windows could only contain one grid, so the _selection and _allRows properties of the grid were directly accesible in the handler from the params object. I.e:
+The legacy parameter windows could only contain one grid, so the _selection and _allRows properties of the grid were directly accessible in the handler from the params object. I.e:
 
 JSONArray gridRows = jsonparams.getJSONArray(ApplicationConstants.ALL_ROWS_PARAM);
 

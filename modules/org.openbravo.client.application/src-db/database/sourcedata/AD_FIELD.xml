@@ -2400,7 +2400,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <DESCRIPTION><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.]]></DESCRIPTION>
 <!--784DC50B8A1845C6BFDED5F3A7DC0702-->  <HELP><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.
 
-The legacy parameter windows could only contain one grid, so the _selection and _allRows properties of the grid were directly accesible in the handler from the params object. I.e:
+The legacy parameter windows could only contain one grid, so the _selection and _allRows properties of the grid were directly accessible in the handler from the params object. I.e:
 
 JSONArray gridRows = jsonparams.getJSONArray(ApplicationConstants.ALL_ROWS_PARAM);
 
