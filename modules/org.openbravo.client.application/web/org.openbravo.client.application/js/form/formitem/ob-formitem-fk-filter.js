@@ -46,6 +46,7 @@ isc.OBFKFilterTextItem.addProperties({
   // filterType = 'id' means that the foreign key will be filtered using the record ids. This is only possible when filtering the grid by selecting a record from the filter drop down
   // filterType = 'identifier' means that the foreign key will be filtered using the record ids
   filterType: 'identifier',
+  filterAuxCache: [],
 
   emptyPickListMessage: OB.I18N.getLabel('OBUISC_ListGrid.emptyMessage'),
 
@@ -380,15 +381,17 @@ isc.OBFKFilterTextItem.addProperties({
     var i, value, values = [],
         operators = isc.DataSource.getSearchOperators(),
         valueSet = false,
-        criteria = criterion ? criterion.criteria : null;
+        criteria = criterion ? criterion.criteria : null,
+        identifier;
     if (criteria && criteria.length && criterion.operator === 'or') {
       for (i = 0; i < criteria.length; i++) {
         //handles case where column filter symbols are removed. Refer Issue https://issues.openbravo.com/view.php?id=23925
         if (criteria[i].operator !== "iContains" && criteria[i].operator !== "contains" && criteria[i].operator !== "regexp") {
           value = criteria[i].value;
           if (operators[criteria[i].operator] && (operators[criteria[i].operator].ID === criteria[i].operator) && operators[criteria[i].operator].symbol && value && (value.indexOf(operators[criteria[i].operator].symbol) === -1)) {
-            if (this.filterType === 'id' && this.pickList.data.find('id', value)) {
-              value = this.pickList.data.find('id', value)[OB.Constants.IDENTIFIER];
+            identifier = this.getRecordIdentifierFromId(value);
+            if (this.filterType === 'id' && identifier) {
+              value = identifier;
             }
             values.push(operators[criteria[i].operator].symbol + value);
             valueSet = true;
@@ -402,14 +405,14 @@ isc.OBFKFilterTextItem.addProperties({
       this.setValue(values);
     } else {
       value = this.buildValueExpressions(criterion);
-      if (this.filterType === 'id' && this.pickList.data.find('id', value)) {
-        value = this.pickList.data.find('id', value)[OB.Constants.IDENTIFIER];
+      if (this.filterType === 'id') {
+        identifier = this.getRecordIdentifierFromId(value);
+        if (identifier) {
+          value = identifier;
+        }
       }
       if (criterion.operator !== "iContains" && criterion.operator !== "contains" && criterion.operator !== "regexp") {
         if (operators[criterion.operator] && (operators[criterion.operator].ID === criterion.operator) && operators[criterion.operator].symbol && value && (value.indexOf(operators[criterion.operator].symbol) === -1)) {
-          if (this.filterType === 'id' && this.pickList.data.find('id', value)) {
-            value = this.pickList.data.find('id', value)[OB.Constants.IDENTIFIER];
-          }
           value = operators[criterion.operator].symbol + value;
         }
       }
@@ -510,7 +513,8 @@ isc.OBFKFilterTextItem.addProperties({
   // if the filterType is ID, try to return the record ids instead of the record identifiers
   getCriteriaValue: function () {
     var value, values = this.getValue(),
-        record, i, criteriaValues = [];
+        record, i, criteriaValues = [],
+        recordId;
     if (values && this.filterType === 'id') {
       for (i = 0; i < values.length; i++) {
         value = values[i];
@@ -518,17 +522,37 @@ isc.OBFKFilterTextItem.addProperties({
           // if the value has the equals operator prefix, get rid of it
           value = value.substring(2);
         }
-        record = this.pickList.data.find('_identifier', value);
-        if (!record || !record[OB.Constants.ID]) {
+        recordId = this.getRecordIdFromIdentifier(value);
+        if (!recordId) {
           // if the record is not found  or it does not have an id, use the standard criteria value
           return this.Super('getCriteriaValue', arguments);
         } else {
-          criteriaValues.add(record[OB.Constants.ID]);
+          criteriaValues.add(recordId);
         }
       }
       return criteriaValues;
     } else {
       return this.Super('getCriteriaValue', arguments);
     }
+  },
+
+  getRecordIdFromIdentifier: function (identifier) {
+    var recordId;
+    if (this.pickList && this.pickList.data.find(OB.Constants.IDENTIFIER, identifier)) {
+      recordId = this.pickList.data.find(OB.Constants.IDENTIFIER, identifier)[OB.Constants.ID];
+    } else if (this.filterAuxCache && this.filterAuxCache.find(OB.Constants.IDENTIFIER, identifier)) {
+      recordId = this.filterAuxCache.find(OB.Constants.IDENTIFIER, identifier)[OB.Constants.ID];
+    }
+    return recordId;
+  },
+
+  getRecordIdentifierFromId: function (id) {
+    var recordIdentifier;
+    if (this.pickList && this.pickList.data.find(OB.Constants.ID, id)) {
+      recordIdentifier = this.pickList.data.find(OB.Constants.ID, id)[OB.Constants.IDENTIFIER];
+    } else if (this.filterAuxCache && this.filterAuxCache.find(OB.Constants.ID, id)) {
+      recordIdentifier = this.filterAuxCache.find(OB.Constants.ID, id)[OB.Constants.IDENTIFIER];
+    }
+    return recordIdentifier;
   }
 });

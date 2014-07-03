@@ -2274,7 +2274,8 @@ isc.OBViewGrid.addProperties({
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_UseAsFilter'),
         click: function () {
-          var value;
+          var value, filterFormItem = grid.filterEditor.getEditForm().getField(field.name),
+              cacheElement = {};
           // a foreign key field, use the displayfield/identifier
           if (field.fkField && field.displayField) {
             value = record[field.displayField];
@@ -2283,12 +2284,18 @@ isc.OBViewGrid.addProperties({
           }
           // assume a date range filter item
           if (isc.isA.Date(value) && field.filterEditorType === 'OBMiniDateRangeItem') {
-            grid.filterEditor.getEditForm().getField(field.name).setSingleDateValue(value);
+            filterFormItem.setSingleDateValue(value);
           } else {
             grid.filterEditor.getEditForm().setValue(field.name, OB.Utilities.encodeSearchOperator(value));
           }
-          if (field.filterEditorType === 'OBFKFilterTextItem' && grid.filterEditor.getEditForm().getField(field.name)) {
-            grid.filterEditor.getEditForm().getField(field.name).filterType = 'id';
+          if (field.filterEditorType === 'OBFKFilterTextItem' && filterFormItem) {
+            filterFormItem.filterType = 'id';
+            if (!filterFormItem.getRecordIdentifierFromId(record[field.name])) {
+              // if the filter editor does not know about this record, add the its id and its identifier to the auxiliary filter cache
+              cacheElement[OB.Constants.ID] = record[field.name];
+              cacheElement[OB.Constants.IDENTIFIER] = record[field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
+              filterFormItem.filterAuxCache.add(cacheElement);
+            }
           }
           var criteria = grid.filterEditor.getEditForm().getValuesAsCriteria();
           grid.checkShowFilterFunnelIcon(criteria);
