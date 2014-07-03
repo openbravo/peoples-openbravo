@@ -101,6 +101,7 @@ public class CostingServer {
       // insert on m_transaction_cost
       createTransactionCost();
       OBDal.getInstance().save(transaction);
+      // insert cost adjustment!ª!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       setNotPostedTransaction();
     } finally {
       OBContext.restorePreviousMode();
