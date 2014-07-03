@@ -19,20 +19,15 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
-import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DbUtility;
@@ -42,8 +37,6 @@ import org.slf4j.LoggerFactory;
 public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
   private static final Logger log = LoggerFactory
       .getLogger(ManualCostAdjustmentProcessHandler.class);
-  final String strCategoryCostAdj = "CAD";
-  final String strTableCostAdj = "M_CostAdjustment";
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -67,36 +60,19 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
         return jsonResponse;
       }
 
-      final DocumentType docType = FIN_Utility.getDocumentType(transaction.getOrganization(),
-          strCategoryCostAdj);
-      final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
-
-      CostAdjustment costAdjustment = OBProvider.getInstance().get(CostAdjustment.class);
-      costAdjustment.setOrganization(transaction.getOrganization());
-      costAdjustment.setDocumentType(docType);
-      costAdjustment.setDocumentNo(docNo);
-      costAdjustment.setReferenceDate(new Date());
-      costAdjustment.setSourceProcess("MCC");
-      costAdjustment.setProcessed(Boolean.FALSE);
+      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
+          transaction.getOrganization(), "MCC"); // MCC= Manual Cost Correction
 
       BigDecimal totalCost = BigDecimal.ZERO;
       for (TransactionCost transactionCost : transaction.getTransactionCostList()) {
         totalCost = totalCost.add(transactionCost.getCost());
       }
-      BigDecimal costToAdjust = newAmountCost.subtract(totalCost);
+      BigDecimal costAdjusted = newAmountCost.subtract(totalCost);
 
-      CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance()
-          .get(CostAdjustmentLine.class);
-      costAdjustmentLine.setOrganization(transaction.getOrganization());
-      costAdjustmentLine.setCostAdjustment(costAdjustment);
-      costAdjustmentLine.setAdjustmentAmount(costToAdjust);
-      costAdjustmentLine.setInventoryTransaction(transaction);
-      costAdjustmentLine.setSource(Boolean.TRUE);
+      CostAdjustmentUtils.insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted,
+          Boolean.TRUE);
 
-      OBDal.getInstance().save(costAdjustment);
-      OBDal.getInstance().save(costAdjustmentLine);
-
-      JSONObject message = CostAdjustmentProcess.processCostAdjustment(costAdjustment);
+      JSONObject message = CostAdjustmentProcess.processCostAdjustment(costAdjustmentHeader);
       jsonResponse.put("message", message);
 
     } catch (OBException e) {
