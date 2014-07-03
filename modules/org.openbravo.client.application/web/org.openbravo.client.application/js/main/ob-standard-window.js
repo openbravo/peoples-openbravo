@@ -172,6 +172,23 @@ isc.OBStandardWindow.addProperties({
       itemCloseClick: function () {
         return true;
       },
+      setSize: function (width, height) {
+        var me = this;
+        this.hide();
+        // The timeouts are to avoid, as far as possible, ugly resizing effects.
+        setTimeout(function () {
+          me.setWidth(width);
+          me.setHeight(height);
+          if (isc.Browser.isWebKit) { // To avoid strange effect in Chrome when restoring the maximized window (it only happens odd times)
+            me.parentElement.parentElement.parentElement.setWidth('99%');
+            me.parentElement.parentElement.parentElement.setWidth('100%');
+          }
+
+          setTimeout(function () {
+            me.show();
+          }, 1);
+        }, 1);
+      },
       restore: function () {
         this.Super('restore', arguments);
         if (isc.Browser.isWebKit) { // To avoid strange effect in Chrome when restoring the maximized window (it only happens odd times)
