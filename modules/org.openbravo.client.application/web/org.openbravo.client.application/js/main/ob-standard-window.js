@@ -439,8 +439,8 @@ isc.OBStandardWindow.addProperties({
         view = this.getView(tab.tabId);
         disabledFields = [];
         if (view !== null) {
-          for (i = 0; i < view.viewForm.getFields().length; i++) {
-            field = view.viewForm.getFields()[i];
+          for (i = 0; i < view.formFields.length; i++) {
+            field = view.formFields[i];
             if (tab.fields[field.name] !== undefined) {
               field.updatable = tab.fields[field.name];
               field.disabled = !tab.fields[field.name];
