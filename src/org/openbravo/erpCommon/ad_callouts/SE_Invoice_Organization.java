@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
@@ -34,16 +33,12 @@ public class SE_Invoice_Organization extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     final String strinpissotrx = info.getStringParameter("inpissotrx", filterYesNo);
+    final String strOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+    final String strBPartnerId = info.getStringParameter("inpcBpartnerId", IsIDFilter.instance);
+    final String strBPartnerLocationId = info.getStringParameter("inpcBpartnerLocationId",
+        IsIDFilter.instance);
 
-    // Sales flow only (from the organization)
-    if (StringUtils.equals("Y", strinpissotrx)) {
-      final String strOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
-      final String calculatedIsCashVat = CashVATUtil.getOrganizationIsCashVAT(strOrgId);
-      if (calculatedIsCashVat != null && filterYesNo.accept(calculatedIsCashVat)) {
-        info.addResult("inpiscashvat", calculatedIsCashVat);
-      }
-    }
-
+    info.addResult("inpiscashvat",
+        CashVATUtil.isCashVAT(strinpissotrx, strOrgId, strBPartnerId, strBPartnerLocationId));
   }
-
 }

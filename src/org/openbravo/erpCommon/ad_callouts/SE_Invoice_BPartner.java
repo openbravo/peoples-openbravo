@@ -27,7 +27,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -37,7 +36,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.BpartnerMiscData;
-import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
@@ -331,24 +329,6 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       }
 
       resultado.append(", new Array('MESSAGE', \"" + message + "\")");
-
-      // Cash VAT
-      // Purchase flow only (from Business Partner OR organization) "double cash"
-      if (StringUtils.equals("N", strIsSOTrx)) {
-        final String bpCashVAT = CashVATUtil.getBusinessPartnerIsCashVAT(strBPartner);
-        resultado.append(", \nnew Array(\"");
-        resultado.append("inpiscashvat");
-        resultado.append("\", \"");
-        if (StringUtils.equals("Y", bpCashVAT)) {
-          resultado.append("Y");
-        } else {
-          final String orgCashVAT = CashVATUtil.getOrganizationIsCashVAT(strOrgId);
-          final String orgDoubleCash = CashVATUtil.getOrganizationIsDoubleCash(strOrgId);
-          resultado.append(StringUtils.equals("Y", orgCashVAT)
-              && StringUtils.equals("Y", orgDoubleCash) ? "Y" : "N");
-        }
-        resultado.append("\")");
-      }
 
       resultado.append(");");
     }
