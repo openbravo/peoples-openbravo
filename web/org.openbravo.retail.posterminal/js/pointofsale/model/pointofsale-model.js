@@ -47,6 +47,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   loadUnpaidOrders: function () {
     // Shows a modal window with the orders pending to be paid
     var orderlist = this.get('orderList'),
+        model = this,
         criteria = {
         'hasbeenpaid': 'N',
         'session': OB.POS.modelterminal.get('session')
@@ -54,19 +55,26 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Dal.find(OB.Model.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
       var currentOrder = {},
           loadOrderStr;
-      if (!ordersNotPaid || ordersNotPaid.length === 0) {
-        // If there are no pending orders,
-        //  add an initial empty order
-        orderlist.addFirstOrder();
-      } else {
-        // The order object is stored in the json property of the row fetched from the database
-        orderlist.reset(ordersNotPaid.models);
-        // At this point it is sure that there exists at least one order
-        currentOrder = ordersNotPaid.models[0];
-        orderlist.load(currentOrder);
-        loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
-        OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBPOS_Info'));
-      }
+
+      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreLoadUnpaidOrdersHook', {
+        ordersNotPaid: ordersNotPaid,
+        model: model
+      }, function (args) {
+        if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
+          // If there are no pending orders,
+          //  add an initial empty order
+          orderlist.addFirstOrder();
+        } else {
+          // The order object is stored in the json property of the row fetched from the database
+          orderlist.reset(args.ordersNotPaid.models);
+          // At this point it is sure that there exists at least one order
+          // Function to continue of there is some error
+          currentOrder = args.ordersNotPaid.models[0];
+          orderlist.load(currentOrder);
+          loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
+          OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBPOS_Info'));
+        }
+      });
     }, function () { //OB.Dal.find error
       // If there is an error fetching the pending orders,
       // add an initial empty order
