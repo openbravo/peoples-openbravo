@@ -1343,6 +1343,17 @@
       WHERE C_Order_ID=v_Record_ID
         AND (AD_Client_ID<>v_Client_ID) ;
 
+      IF (v_docaction = 'CO' AND v_issotrx = 'N') THEN
+          UPDATE m_transaction
+          SET checkpricedifference = 'Y'
+          WHERE m_transaction_id IN (
+            SELECT trx.m_transaction_id 
+            FROM c_orderline  ol
+                 JOIN m_matchpo mpo ON mpo.c_orderline_id = ol.c_orderline_id
+                 JOIN m_transaction trx ON mpo.m_inoutline_id = trx.m_inoutline_id
+            WHERE trx.iscostcalculated = 'Y' AND  ol.c_order_id = v_record_id);
+      END IF;
+
     /**************************************************************************
      * Order Complete:5 - Something to do:6
      */
