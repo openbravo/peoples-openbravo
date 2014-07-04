@@ -19,7 +19,6 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 
@@ -146,20 +145,5 @@ public class CostAdjustmentUtils {
     Object res = trxQry.uniqueResult();
 
     return res != null;
-  }
-
-  /**
-   * Returns the last second of the day passed as argument
-   * 
-   * @param date
-   * 
-   */
-  public static Date getEndOfDay(Date day) {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(day);
-    cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
-    cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MINUTE));
-    cal.set(Calendar.SECOND, cal.getMaximum(Calendar.SECOND));
-    return cal.getTime();
   }
 }
