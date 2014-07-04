@@ -671,7 +671,7 @@ The 'Compatibility with Legacy Grids' flag should only be checked if its handler
 <!--DD25DA6ACBD5424B89E09A93A5D4656C-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--DD25DA6ACBD5424B89E09A93A5D4656C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--DD25DA6ACBD5424B89E09A93A5D4656C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--DD25DA6ACBD5424B89E09A93A5D4656C-->  <COLUMNNAME><![CDATA[Allowfilterbyidentifier]]></COLUMNNAME>
+<!--DD25DA6ACBD5424B89E09A93A5D4656C-->  <COLUMNNAME><![CDATA[AllowFilterByIdentifier]]></COLUMNNAME>
 <!--DD25DA6ACBD5424B89E09A93A5D4656C-->  <NAME><![CDATA[Allow Filtering Foreign Keys by its iIdentifier]]></NAME>
 <!--DD25DA6ACBD5424B89E09A93A5D4656C-->  <PRINTNAME><![CDATA[Allow Filtering Foreign Keys by its iIdentifier]]></PRINTNAME>
 <!--DD25DA6ACBD5424B89E09A93A5D4656C-->  <DESCRIPTION><![CDATA[If this flag is checked, then the user can filter foreign keys either by selecting some options from the filter drop down or by entering text manually.]]></DESCRIPTION>

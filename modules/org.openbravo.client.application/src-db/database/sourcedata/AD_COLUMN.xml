@@ -3694,7 +3694,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--7E5D4C62298D4310A12AB5F28B9D2C51-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--7E5D4C62298D4310A12AB5F28B9D2C51-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7E5D4C62298D4310A12AB5F28B9D2C51-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--7E5D4C62298D4310A12AB5F28B9D2C51-->  <NAME><![CDATA[AllowFilterByiIdentifier]]></NAME>
+<!--7E5D4C62298D4310A12AB5F28B9D2C51-->  <NAME><![CDATA[AllowFilterByIdentifier]]></NAME>
 <!--7E5D4C62298D4310A12AB5F28B9D2C51-->  <DESCRIPTION><![CDATA[If this flag is checked, then the user can filter foreign keys either by selecting some options from the filter drop down or by entering text manually.]]></DESCRIPTION>
 <!--7E5D4C62298D4310A12AB5F28B9D2C51-->  <HELP><![CDATA[If this flag is checked, then the user can filter foreign keys either by selecting some options from the filter drop down or by entering text manually. If this flag is unchecked, then the foreign keys would only be filterable by selecting some options from the filter drop down, which has better performance.]]></HELP>
 <!--7E5D4C62298D4310A12AB5F28B9D2C51-->  <COLUMNNAME><![CDATA[Allowfilterbyidentifier]]></COLUMNNAME>
@@ -7692,7 +7692,7 @@ This will retrieve the session variable SESSIONVAR and use it as default value f
 <!--CF562906BE6342239337F14D04D92759-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--CF562906BE6342239337F14D04D92759-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--CF562906BE6342239337F14D04D92759-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--CF562906BE6342239337F14D04D92759-->  <NAME><![CDATA[AllowFilterByiIdentifier]]></NAME>
+<!--CF562906BE6342239337F14D04D92759-->  <NAME><![CDATA[AllowFilterByIdentifier]]></NAME>
 <!--CF562906BE6342239337F14D04D92759-->  <DESCRIPTION><![CDATA[If this flag is checked, then the user can filter foreign keys either by selecting some options from the filter drop down or by entering text manually.]]></DESCRIPTION>
 <!--CF562906BE6342239337F14D04D92759-->  <HELP><![CDATA[If this flag is checked, then the user can filter foreign keys either by selecting some options from the filter drop down or by entering text manually. If this flag is unchecked, then the foreign keys would only be filterable by selecting some options from the filter drop down, which has better performance.]]></HELP>
 <!--CF562906BE6342239337F14D04D92759-->  <COLUMNNAME><![CDATA[Allowfilterbyidentifier]]></COLUMNNAME>
@@ -8847,7 +8847,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--F900AB0A4EA649598EA364C23D6D2533-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--F900AB0A4EA649598EA364C23D6D2533-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F900AB0A4EA649598EA364C23D6D2533-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--F900AB0A4EA649598EA364C23D6D2533-->  <NAME><![CDATA[AllowFilterByiIdentifier]]></NAME>
+<!--F900AB0A4EA649598EA364C23D6D2533-->  <NAME><![CDATA[AllowFilterByIdentifier]]></NAME>
 <!--F900AB0A4EA649598EA364C23D6D2533-->  <DESCRIPTION><![CDATA[If this flag is checked, then the user can filter foreign keys either by selecting some options from the filter drop down or by entering text manually.]]></DESCRIPTION>
 <!--F900AB0A4EA649598EA364C23D6D2533-->  <HELP><![CDATA[If this flag is checked, then the user can filter foreign keys either by selecting some options from the filter drop down or by entering text manually. If this flag is unchecked, then the foreign keys would only be filterable by selecting some options from the filter drop down, which has better performance.]]></HELP>
 <!--F900AB0A4EA649598EA364C23D6D2533-->  <COLUMNNAME><![CDATA[Allowfilterbyidentifier]]></COLUMNNAME>
