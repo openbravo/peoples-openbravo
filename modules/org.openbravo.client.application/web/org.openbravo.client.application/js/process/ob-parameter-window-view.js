@@ -121,10 +121,15 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup) {
       cancelButton = isc.OBFormButton.create({
+        process: this,
         title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
         realTitle: '',
         click: function () {
-          view.closeClick();
+          if (this.process.isExpandedRecord) {
+            this.process.callerField.grid.collapseRecord(this.process.callerField.record);
+          } else {
+            view.closeClick();
+          }
         }
       });
       buttonLayout.push(cancelButton);
@@ -254,7 +259,8 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup) {
       this.firstFocusedItem = this.okButton;
-      this.popupButtons = isc.HLayout.create({
+      this.popupButtons = isc.OBFormContainerLayout.create({
+        defaultLayoutAlign: 'center',
         align: 'center',
         width: '100%',
         height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,

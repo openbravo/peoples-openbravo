@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,5 +27,5 @@ OB.Styles.Process.PickAndExecute = {
   iconDeleteSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/process/iconDelete.png',
   iconDeleteStyle: 'OBProcessIconDeleteImg',
   addNewButtonAlign: 'left',
-  buttonLayoutHeight: 80
+  buttonLayoutHeight: 60
 };
