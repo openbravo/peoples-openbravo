@@ -212,6 +212,7 @@
       <unique name="FIN_FINACC_TRANSACTION_UN">
         <unique-column name="FIN_PAYMENT_ID"/>
       </unique>
+      <check name="FIN_TRANS_AMOUNTS_CHK"><![CDATA[(PAYMENTAMT <> 0) OR (DEPOSITAMT <> 0)]]></check>
       <check name="FIN_TRANS_CREATE_ALGORITHM_CHK"><![CDATA[CREATEDBYALGORITHM IN ('Y', 'N')]]></check>
       <check name="FIN_TRANS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
