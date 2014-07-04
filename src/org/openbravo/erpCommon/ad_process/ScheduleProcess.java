@@ -19,6 +19,8 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.ui.ProcessGroupList;
 import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
@@ -68,9 +71,17 @@ public class ScheduleProcess extends HttpSecureAppServlet {
     try {
       // Avoid launch empty groups
       if (group.equals("Y")) {
-        String groupId = vars.getStringParameter("inpisgroup");
         ProcessRequest requestObject = OBDal.getInstance().get(ProcessRequest.class, requestId);
-        if (requestObject.getProcessGroup().getProcessGroupListList().size() == 0) {
+        List<ProcessGroupList> processes = requestObject.getProcessGroup()
+            .getProcessGroupListList();
+        List<ProcessGroupList> activeProcesses = new ArrayList<ProcessGroupList>();
+        for (ProcessGroupList process : processes) {
+          if (process.isActive()) {
+            activeProcesses.add(process);
+          }
+        }
+
+        if (activeProcesses.size() == 0) {
           advisePopUp(request, response, "ERROR", OBMessageUtils.getI18NMessage("Error", null),
               OBMessageUtils.getI18NMessage("PROGROUP_NoProcess", new String[] { requestObject
                   .getProcessGroup().getName() }));

@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -68,8 +67,6 @@ public class GroupInfo {
   private String status;
 
   private boolean stopWhenFails;
-
-  private static final Logger log4j = Logger.getLogger(GroupInfo.class);
 
   /**
    * Creates a new GroupInfo object with the given parameters
@@ -178,7 +175,7 @@ public class GroupInfo {
         && (status.equals(Process.SUCCESS) || (status.equals(Process.ERROR) && !stopWhenFails))) {
 
       ProcessGroupList processList = groupList.get(currentposition);
-      String actualProcessId = processList.getProcess().getId();
+      String currentProcessId = processList.getProcess().getId();
       currentposition++;
       groupLog.append(now()
           + processList.getSequenceNumber()
@@ -186,11 +183,11 @@ public class GroupInfo {
               .getProcess().getName() }) + "\n");
 
       // Execute next process immediately
-      final ProcessBundle firstProcessBundle = new ProcessBundle(actualProcessId, vars,
+      final ProcessBundle firstProcess = new ProcessBundle(currentProcessId, vars,
           Channel.SCHEDULED, request.getClient().getId(), request.getOrganization().getId(),
           request.isSecurityBasedOnRole(), this).init(conn);
-      OBScheduler.getInstance().schedule(firstProcessBundle);
-      return actualProcessId;
+      OBScheduler.getInstance().schedule(firstProcess);
+      return currentProcessId;
     } else {
       endGroupTime = new Date();
       return END;

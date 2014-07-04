@@ -32,12 +32,14 @@ import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.model.ad.ui.ProcessRun;
 import org.openbravo.service.db.DalBaseProcess;
 
+/**
+ * Process used to execute process groups
+ */
 public class ProcessGroup extends DalBaseProcess {
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
 
-    ProcessLogger log = bundle.getLogger();
     ConnectionProvider conn = bundle.getConnection();
     final VariablesSecureApp vars = bundle.getContext().toVars();
     final ProcessRequest processRequest = OBDal.getInstance().get(ProcessRequest.class,

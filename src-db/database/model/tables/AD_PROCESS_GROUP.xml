@@ -62,6 +62,8 @@
       <foreign-key foreignTable="AD_MODULE" name="AD_PROCESS_GROUP_MODULE">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
+      <check name="AD_PGROUP_PREVENTCONCURR_CHK"><![CDATA[PREVENTCONCURRENT IN ('Y', 'N')]]></check>
+      <check name="AD_PGROUP_STOPWHENFAIL_CHK"><![CDATA[STOPWHENFAIL IN ('Y', 'N')]]></check>
       <check name="AD_PROCESS_GROUP_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

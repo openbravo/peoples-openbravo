@@ -3201,8 +3201,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--C846A9EFF5D741A693029D516432BF6C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C846A9EFF5D741A693029D516432BF6C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C846A9EFF5D741A693029D516432BF6C-->  <NAME><![CDATA[Process Group]]></NAME>
-<!--C846A9EFF5D741A693029D516432BF6C-->  <DESCRIPTION><![CDATA[Create a Process Group to be executed in serials from the Process Request window]]></DESCRIPTION>
-<!--C846A9EFF5D741A693029D516432BF6C-->  <HELP><![CDATA[Create a Process Group to be executed in serials from the Process Request window]]></HELP>
+<!--C846A9EFF5D741A693029D516432BF6C-->  <DESCRIPTION><![CDATA[Create a Process Group to be able to schedule and execute a group of processes as a single unit from the Process Scheduler. The batch of processes will be executed in series.]]></DESCRIPTION>
+<!--C846A9EFF5D741A693029D516432BF6C-->  <HELP><![CDATA[Create a Process Group to be able to schedule and execute a group of processes as a single unit from the Process Scheduler. The batch of processes will be executed in series.]]></HELP>
 <!--C846A9EFF5D741A693029D516432BF6C-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--C846A9EFF5D741A693029D516432BF6C-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--C846A9EFF5D741A693029D516432BF6C-->  <PROCESSING><![CDATA[N]]></PROCESSING>

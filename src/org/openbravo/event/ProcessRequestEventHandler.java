@@ -33,6 +33,9 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.ProcessGroup;
 import org.openbravo.model.ad.ui.ProcessRequest;
 
+/**
+ * Event Handler to check Process Group fields consistency
+ */
 public class ProcessRequestEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
