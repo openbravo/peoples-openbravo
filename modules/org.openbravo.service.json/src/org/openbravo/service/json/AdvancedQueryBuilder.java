@@ -471,12 +471,15 @@ public class AdvancedQueryBuilder {
 
   private String parseSimpleClause(String fieldName, String operator, Object value)
       throws JSONException {
+
     // note: code duplicated in parseSingleClause
-    final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), fieldName);
+    List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), fieldName);
     if (properties.isEmpty()) {
       return null;
     }
-    final Property property = properties.get(properties.size() - 1);
+    properties = getPropertyForTableReference(properties);
+    Property property = properties.get(properties.size() - 1);
+
     if (property == null) {
       return null;
     }
@@ -512,8 +515,8 @@ public class AdvancedQueryBuilder {
         || operator.equals(OPERATOR_GREATEROREQUALFIELD)
         || operator.equals(OPERATOR_LESSOREQUALFIElD) || operator.equals(OPERATOR_CONTAINSFIELD)
         || operator.equals(OPERATOR_STARTSWITHFIELD) || operator.equals(OPERATOR_ENDSWITHFIELD)) {
-      final List<Property> properties = JsonUtils
-          .getPropertiesOnPath(getEntity(), value.toString());
+      List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), value.toString());
+      properties = getPropertyForTableReference(properties);
       if (properties.isEmpty()) {
         // invalid property, report it with a listing of allowed names
         final StringBuilder sb = new StringBuilder();
@@ -849,7 +852,8 @@ public class AdvancedQueryBuilder {
       prefix = getMainAlias() + DalUtil.DOT;
     } else if (key.endsWith(JsonConstants.IDENTIFIER)) {
       final String propPath = key.substring(0, key.indexOf(JsonConstants.IDENTIFIER) - 1);
-      final String join = resolveJoins(JsonUtils.getPropertiesOnPath(getEntity(), propPath),
+      final String join = resolveJoins(
+          getPropertyForTableReference(JsonUtils.getPropertiesOnPath(getEntity(), propPath)),
           propPath);
       prefix = join + DalUtil.DOT;
     } else if (index == -1) {
@@ -1201,11 +1205,11 @@ public class AdvancedQueryBuilder {
     }
 
     for (String additionalProperty : additionalProperties) {
-      final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(),
-          additionalProperty);
+      List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), additionalProperty);
       if (properties.isEmpty()) {
         continue;
       }
+      properties = getPropertyForTableReference(properties);
       final Property lastProperty = properties.get(properties.size() - 1);
       if (lastProperty.isPrimitive()) {
         properties.remove(lastProperty);
@@ -1722,7 +1726,8 @@ public class AdvancedQueryBuilder {
 
   public void addSelectFunctionPart(String function, String field) {
     String localField = field;
-    final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), localField);
+    List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), localField);
+    properties = getPropertyForTableReference(properties);
     localField = resolveJoins(properties, localField);
     if (properties.size() > 0) {
       final Property lastProperty = properties.get(properties.size() - 1);
@@ -1745,8 +1750,8 @@ public class AdvancedQueryBuilder {
 
   public void addSelectClausePart(String selectClausePart) {
     String localSelectClausePart = selectClausePart;
-    final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(),
-        localSelectClausePart);
+    List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), localSelectClausePart);
+    properties = getPropertyForTableReference(properties);
     localSelectClausePart = resolveJoins(properties, localSelectClausePart);
     selectClauseParts.add(localSelectClausePart);
   }
@@ -1781,5 +1786,46 @@ public class AdvancedQueryBuilder {
 
   void setDistinctPropertyPath(String distinctPropertyPath) {
     this.distinctPropertyPath = distinctPropertyPath;
+  }
+
+  /**
+   * Returns the appropriate display column property for table references instead of the identifier
+   * properties. Used in cases when filtering data in grid, based on the data of table reference.
+   * 
+   * @param properties
+   * @return properties with the proper display column property
+   */
+  private List<Property> getPropertyForTableReference(List<Property> properties) {
+    if (properties.isEmpty()) {
+      return properties;
+    }
+    Property property = properties.get(properties.size() - 1);
+    boolean tableReference = false;
+    if (properties.size() >= 2) {
+      final Property refProperty = properties.get(properties.size() - 2);
+      tableReference = refProperty.getDomainType() instanceof TableDomainType;
+      if (tableReference) {
+        // special case table reference itself
+        final boolean isTable = property.getEntity() == ModelProvider.getInstance().getEntity(
+            Table.ENTITY_NAME);
+        if (isTable) {
+          property = property.getEntity().getProperty(Table.PROPERTY_NAME);
+        } else {
+          // read the reference to get the table reference
+          final Reference reference = OBDal.getInstance().get(Reference.class,
+              refProperty.getDomainType().getReference().getId());
+          for (ReferencedTable referencedTable : reference.getADReferencedTableList()) {
+            if (referencedTable.isActive() && referencedTable.getDisplayedColumn() != null
+                && referencedTable.getDisplayedColumn().isActive()) {
+              property = property.getEntity().getPropertyByColumnName(
+                  referencedTable.getDisplayedColumn().getDBColumnName());
+              break;
+            }
+          }
+        }
+      }
+    }
+    properties.set(properties.size() - 1, property);
+    return properties;
   }
 }

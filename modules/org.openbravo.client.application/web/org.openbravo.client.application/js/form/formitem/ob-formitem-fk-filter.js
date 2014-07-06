@@ -72,6 +72,11 @@ isc.OBFKFilterTextItem.addProperties({
         if (gridView) {
           requestProperties.params.tabId = gridView.tabId || (gridView.sourceView && gridView.sourceView.tabId);
         }
+        // send the display field in request params to add it to the list of fields to be fetched in DefaultJsonDataService.
+        // used for displaying table references properly. Refer issue https://issues.openbravo.com/view.php?id=26696
+        if (this.formItem && this.formItem.displayProperty) {
+          requestProperties.params.displayProperty = this.formItem.displayProperty;
+        }
         delete me.forceReload;
       },
 

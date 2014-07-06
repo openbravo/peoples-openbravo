@@ -89,6 +89,26 @@ public class DefaultJsonDataService implements JsonDataService {
       Check.isNotNull(parameters, "The parameters should not be null");
 
       String selectedProperties = parameters.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER);
+      // The display property is present only for displaying table references in filter.
+      // This parameter is used to set the identifier with the display column value.
+      // Refer https://issues.openbravo.com/view.php?id=26696
+      String displayField = parameters.get(JsonConstants.DISPLAYFIELD_PARAMETER);
+      if (StringUtils.isNotEmpty(displayField) && StringUtils.isNotEmpty(selectedProperties)) {
+        boolean propertyPresent = false;
+        for (String selectedProp : selectedProperties.split(",")) {
+          if (selectedProp.equals(displayField)) {
+            propertyPresent = true;
+            break;
+          }
+        }
+        if (!propertyPresent) {
+          if (StringUtils.isNotEmpty(selectedProperties)) {
+            selectedProperties = selectedProperties.concat("," + displayField);
+          } else {
+            selectedProperties = displayField;
+          }
+        }
+      }
 
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();
@@ -217,6 +237,9 @@ public class DefaultJsonDataService implements JsonDataService {
           DataToJsonConverter.class);
       toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
       toJsonConverter.setSelectedProperties(selectedProperties);
+      if (StringUtils.isNotEmpty(displayField) && (!displayField.equals(JsonConstants.IDENTIFIER))) {
+        toJsonConverter.setDisplayProperty(displayField);
+      }
       final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
 
       addWritableAttribute(jsonObjects);

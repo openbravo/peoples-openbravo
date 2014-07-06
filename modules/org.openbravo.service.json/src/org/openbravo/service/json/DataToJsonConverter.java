@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ObjectNotFoundException;
@@ -77,6 +78,9 @@ public class DataToJsonConverter {
 
   // limit the json serialization to these properties
   private List<String> selectedProperties = new ArrayList<String>();
+
+  // display property used for table reference fields
+  private String displayProperty = null;
 
   private static final Logger log = LoggerFactory.getLogger(DataToJsonConverter.class);
 
@@ -204,6 +208,19 @@ public class DataToJsonConverter {
           } else {
             jsonObject.put(replaceDots(additionalProperty), convertPrimitiveValue(property, value));
           }
+        }
+      }
+      // When table references are set, the identifier should contain the display property for as it
+      // is done in the grid data. Refer https://issues.openbravo.com/view.php?id=26696
+      if (StringUtils.isNotEmpty(displayProperty)) {
+        if (jsonObject.has(displayProperty + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER)
+            && !jsonObject.get(displayProperty + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER)
+                .equals(jsonObject.NULL)) {
+          jsonObject.put(JsonConstants.IDENTIFIER,
+              jsonObject.get(displayProperty + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER));
+        } else if (jsonObject.has(displayProperty)
+            && !jsonObject.get(displayProperty).equals(jsonObject.NULL)) {
+          jsonObject.put(JsonConstants.IDENTIFIER, jsonObject.get(displayProperty));
         }
       }
 
@@ -403,5 +420,9 @@ public class DataToJsonConverter {
       if (!selectedProp.isEmpty())
         selectedProperties.add(selectedProp);
     }
+  }
+
+  public void setDisplayProperty(String displayPropertyValue) {
+    displayProperty = displayPropertyValue;
   }
 }

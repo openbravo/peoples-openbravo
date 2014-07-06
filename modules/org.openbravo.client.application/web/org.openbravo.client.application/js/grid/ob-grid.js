@@ -597,6 +597,12 @@ isc.OBGrid.addProperties({
           field.filterEditorProperties.criteriaField = field.criteriaField;
         }
 
+        // send the display property to formitem to be used in request params used to fetch data.
+        // used for displaying table references properly. Refer issue https://issues.openbravo.com/view.php?id=26696
+        if (field.displayProperty) {
+          field.filterEditorProperties.displayProperty = field.displayProperty;
+        }
+
         if (field.editorType && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteTime')()) {
           // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
           // http://forums.smartclient.com/showthread.php?p=116135
