@@ -72,6 +72,7 @@ import org.openbravo.model.ad.ui.Window;
 import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
+import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 
@@ -83,6 +84,7 @@ import org.openbravo.service.json.JsonUtils;
 public class QueryListDataSource extends ReadOnlyDataSourceService implements PortalAccessible {
   private static final String OPTIONAL_FILTERS = "@optional_filters@";
   private static final Logger log = Logger.getLogger(QueryListDataSource.class);
+  private static final String OPERATOR = "$OPERATOR";
 
   /**
    * Returns the count of objects based on the passed parameters.
@@ -151,6 +153,8 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         for (int i = 0; i < criterias.length(); i++) {
           final JSONObject criteria = criterias.getJSONObject(i);
           parameters.put(criteria.getString("fieldName"), criteria.getString("value"));
+          parameters
+              .put(criteria.getString("fieldName") + OPERATOR, criteria.getString("operator"));
         }
       } catch (JSONException e) {
         // Ignore exception.
@@ -159,7 +163,6 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       String HQL = widgetClass.getOBCQLWidgetQueryList().get(0).getHQL();
       // Parse the HQL in case that optional filters are required
       HQL = parseOptionalFilters(HQL, viewMode, parameters, columns, xmlDateFormat);
-
       Query widgetQuery = OBDal.getInstance().getSession().createQuery(HQL);
       String[] queryAliases = widgetQuery.getReturnAliases();
 
@@ -371,6 +374,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       for (OBCQL_QueryColumn column : columns) {
         if (column.isCanBeFiltered()) {
           String value = parameters.get(column.getDisplayExpression());
+          String operator = parameters.get(column.getDisplayExpression() + OPERATOR);
           if (column.getReference().getName().equals("YesNo") && value != null) {
             if (value.equals("true")) {
               value = "Y";
@@ -380,7 +384,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
           }
           String whereClause = " 1=1 ";
           if (value != null) {
-            whereClause = getWhereClause(value, column, xmlDateFormat);
+            whereClause = getWhereClause(value, column, xmlDateFormat, operator);
           }
 
           if (HQL.contains("@" + column.getDisplayExpression() + "@")) {
@@ -396,13 +400,14 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
   }
 
   private String getWhereClause(String value, OBCQL_QueryColumn column,
-      SimpleDateFormat xmlDateFormat) {
+      SimpleDateFormat xmlDateFormat, String operator) {
     String whereClause = "";
     DomainType domainType = ModelProvider.getInstance().getReference(column.getReference().getId())
         .getDomainType();
     if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
         || domainType.getClass().equals(LongDomainType.class)) {
-      whereClause = column.getWhereClauseLeftPart() + " = " + value;
+      whereClause = column.getWhereClauseLeftPart() + " "
+          + AdvancedQueryBuilder.getHqlOperator(operator) + " " + value;
     } else if (domainType.getClass().equals(DateDomainType.class)) {
       try {
         final Calendar cal = Calendar.getInstance();

@@ -990,7 +990,7 @@ public class AdvancedQueryBuilder {
         || operator.equals(OPERATOR_NOT) || operator.equals(OPERATOR_NOTINSET);
   }
 
-  private String getHqlOperator(String operator) {
+  public static String getHqlOperator(String operator) {
     if (operator.equals(OPERATOR_EQUALS)) {
       return "=";
     } else if (operator.equals(OPERATOR_INSET)) {
