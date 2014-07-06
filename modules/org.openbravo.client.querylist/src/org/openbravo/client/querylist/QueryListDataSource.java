@@ -406,8 +406,12 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         .getDomainType();
     if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
         || domainType.getClass().equals(LongDomainType.class)) {
-      whereClause = column.getWhereClauseLeftPart() + " "
-          + AdvancedQueryBuilder.getHqlOperator(operator) + " " + value;
+      if (StringUtils.isNotEmpty(value)) {
+        whereClause = column.getWhereClauseLeftPart() + " "
+            + AdvancedQueryBuilder.getHqlOperator(operator) + " " + value;
+      } else {
+        whereClause = " 1=1 ";
+      }
     } else if (domainType.getClass().equals(DateDomainType.class)) {
       try {
         final Calendar cal = Calendar.getInstance();
