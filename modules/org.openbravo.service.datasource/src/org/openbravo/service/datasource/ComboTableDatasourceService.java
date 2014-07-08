@@ -155,7 +155,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
           vars, new FieldProviderFactory(parameters), windowId, null);
 
-      if (parameters.get("_currentValue") != null) {
+      if (parameters.get("_currentValue") != null && StringUtils.isEmpty(filterString)) {
         newParameters.put("@ACTUAL_VALUE@", parameters.get("_currentValue"));
       }
 
