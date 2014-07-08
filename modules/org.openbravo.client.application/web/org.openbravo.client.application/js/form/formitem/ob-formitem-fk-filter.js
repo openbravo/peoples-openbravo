@@ -155,6 +155,11 @@ isc.OBFKFilterTextItem.addProperties({
     this.observe(grid, "dataArrived", "observer.setForceReload()");
 
     this.multipleValueSeparator = ' or ';
+
+    // if the filter by identifier has been disabled using grid configuration, set the filter type to 'id'
+    if (this.allowFkFilterByIdentifier === false) {
+      this.filterType = 'id';
+    }
   },
 
   destroy: function () {
@@ -204,11 +209,40 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   blur: function () {
-    if (this._hasChanged) {
+    if (this._hasChanged && this.allowFkFilterByIdentifier === false) {
+      // close the picklist if the item is due to a user tab action
+      if (isc.EH.getKeyName() === 'Tab') {
+        this.pickList.hide();
+      }
+      // restore the filter editor with the previous criteria
+      this.setCriterion(this.getAppliedCriteria());
+      // do not perform a filter action on blur if the filtering by identifier is not allowed
+    } else if (this._hasChanged && this.allowFkFilterByIdentifier !== false) {
       this.form.grid.performAction();
     }
     delete this._hasChanged;
     this.Super('blur', arguments);
+  },
+
+  // returns the criteria for this field that is applied to the data that the grid is currently showing
+  // this.getCriteria() would return the modified criteria that needs to be reverted
+  getAppliedCriteria: function () {
+    var currentGridCriteria = this.grid.sourceWidget.getCriteria(),
+        i, emptyCriteria = {
+        operator: "and",
+        _constructor: "AdvancedCriteria",
+        criteria: []
+        };
+    if (!currentGridCriteria || !currentGridCriteria.criteria) {
+      return emptyCriteria;
+    }
+    for (i = 0; i < currentGridCriteria.criteria.length; i++) {
+      if (currentGridCriteria.criteria[i].fieldName === this.name) {
+        return currentGridCriteria.criteria[i];
+      }
+    }
+    // if no criteria was found for this field, return an empty criteria
+    return emptyCriteria;
   },
 
   // overridden otherwise the picklist fields from the grid field
@@ -248,7 +282,8 @@ isc.OBFKFilterTextItem.addProperties({
   // combine the value of the field with the overall grid
   // filter values
   getPickListFilterCriteria: function () {
-    var pickListCriteria = this.getCriterion(),
+    var forceFilterByIdentifier = true,
+        pickListCriteria = this.getCriterion(null, forceFilterByIdentifier),
         gridCriteria, i, criteriaFieldName = this.getCriteriaFieldName();
 
     if (this.form.grid.sourceWidget.lazyFiltering) {
@@ -313,10 +348,15 @@ isc.OBFKFilterTextItem.addProperties({
     }
   },
 
-  getCriterion: function (textMatchStyle) {
-    var value = this.getCriteriaValue(),
-        operator, fieldName, crit;
+  getCriterion: function (textMatchStyle, forceFilterByIdentifier) {
+    var value, operator, fieldName, crit;
 
+    // sometimes (i.e. when the filter drop down is populated) it is needed to force a filter using the identifier
+    // if the filter using the identifier is not allowed, the filter type will be reverted to 'id' at the end of this function
+    if (forceFilterByIdentifier) {
+      this.filterType = 'identifier';
+    }
+    value = this.getCriteriaValue();
     if (value === null || isc.is.emptyString(value)) {
       return;
     }
@@ -342,6 +382,10 @@ isc.OBFKFilterTextItem.addProperties({
     if (this.operator && this.operator !== 'iContains') {
       // In this case we need to overwrite the operator assigned by the parseValueExpressions/parseOBValueExpressions logic
       crit = this.replaceCriterionOperator(crit, value, this.operator);
+    }
+
+    if (this.allowFkFilterByIdentifier === false) {
+      this.filterType = 'id';
     }
 
     return crit;
@@ -500,8 +544,9 @@ isc.OBFKFilterTextItem.addProperties({
   },
 
   handleChanged: function (value) {
-    if (this._pickingValue) {
+    if (this._pickingValue || this.allowFkFilterByIdentifier === false) {
       // if the filter text has changed because a value has been ficked from the filter drop down, use the id filter
+      // do this also if the only filter type allowed is 'id'
       this.filterType = 'id';
     } else {
       // otherwise use the standard filter using the record identifier
