@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.User;
@@ -78,8 +79,16 @@ public class UserContextCache implements OBSingleton {
     CacheEntry ce = cache.get(userId);
     purgeCache();
     if (ce != null) {
-      ce.setLastUsed(System.currentTimeMillis());
-      return ce.getObContext();
+      if (!userId.equals(DalUtil.getId(ce.getObContext().getUser()))) {
+        // check cached OBContext has the same userId than the one used as key, if not invalidate it
+        // and get new one this can happen in case of: existent ws cache entry for a user and login
+        // in app with same browser and different user at this point OBContext is reset to new user
+        // but still cached to old one
+        cache.remove(ce);
+      } else {
+        ce.setLastUsed(System.currentTimeMillis());
+        return ce.getObContext();
+      }
     }
     final OBContext obContext = OBContext.createOBContext(userId);
     ce = new CacheEntry();
