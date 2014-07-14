@@ -487,7 +487,7 @@ public class OrderGroupingProcessor {
 
     // if the total paid is distinct that grossamount, we should create a new sched detail with the
     // difference
-    if (grossamount.compareTo(totalPaid) != 0) {
+    if (grossamount.compareTo(totalPaid) != 0 && grossamount.compareTo(BigDecimal.ZERO) != 0) {
       FIN_PaymentScheduleDetail newDetail = OBProvider.getInstance().get(
           FIN_PaymentScheduleDetail.class);
       newDetail.setAmount(grossamount.subtract(totalPaid));
@@ -495,6 +495,9 @@ public class OrderGroupingProcessor {
       paymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(newDetail);
       paymentSchedule.setOutstandingAmount(grossamount.subtract(totalPaid));
 
+    }
+    if (grossamount.compareTo(BigDecimal.ZERO) != 0) {
+      totalPaid = BigDecimal.ZERO;
     }
 
     invoice.setGrandTotalAmount(grossamount);
@@ -510,6 +513,11 @@ public class OrderGroupingProcessor {
     paymentSchedule.setPaidAmount(totalPaid);
     origPaymentSchedule.setAmount(grossamount);
 
+    if (grossamount.compareTo(BigDecimal.ZERO) == 0) {
+      paymentSchedule.setActive(false);
+      OBDal.getInstance().remove(paymentSchedule);
+      OBDal.getInstance().remove(origPaymentSchedule);
+    }
     // Update customer credit
 
     BigDecimal total = invoice.getGrandTotalAmount();
