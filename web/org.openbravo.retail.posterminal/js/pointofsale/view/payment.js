@@ -511,6 +511,7 @@ enyo.kind({
           if (this.owner.receipt.get('orderType') === 3) {
             this.owner.receipt.trigger('voidLayaway');
           } else {
+            this.setDisabled(true);
             this.owner.model.get('order').trigger('paymentDone');
           }
           this.drawerOpened = false;
@@ -525,6 +526,7 @@ enyo.kind({
         if (this.owner.receipt.get('orderType') === 3) {
           this.owner.receipt.trigger('voidLayaway');
         } else {
+          this.setDisabled(true);
           this.owner.receipt.trigger('paymentDone');
           if (this.allowOpenDrawer) {
             this.owner.receipt.trigger('openDrawer');
