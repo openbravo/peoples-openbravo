@@ -38,5 +38,12 @@
     type: 'TEXT'
   }]);
 
+  SalesRepresentative.addIndex([{
+    name: 'salesrep_identifier_idx',
+    columns: [{
+      name: '_identifier',
+      sort: 'desc'
+    }]
+  }]);
   OB.Data.Registry.registerModel(SalesRepresentative);
 }());

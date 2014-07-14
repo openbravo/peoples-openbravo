@@ -252,5 +252,19 @@
 
 
 
+  BusinessPartner.addIndex([{
+    name: 'bp_filter_idx',
+    columns: [{
+      name: '_filter',
+      sort: 'desc'
+    }]
+  }, {
+    name: 'bp_name_idx',
+    columns: [{
+      name: 'name',
+      sort: 'desc'
+    }]
+  }]);
+
   OB.Data.Registry.registerModel(BusinessPartner);
 }());

@@ -49,5 +49,13 @@
     type: 'TEXT'
   }]);
 
+  CurrencyPanel.addIndex([{
+    name: 'currency_panel_idx',
+    columns: [{
+      name: 'c_currency_id',
+      sort: 'desc'
+    }]
+  }]);
+
   OB.Data.Registry.registerModel(CurrencyPanel);
 }());

@@ -82,6 +82,9 @@
       <index name="OBPOS_APP_PAYMENT_PAYTYPE" unique="false">
         <index-column name="OBPOS_APP_PAYMENT_TYPE_ID"/>
       </index>
+      <index name="OBPOS_APP_PAYMENT_TERMINAL_IDX" unique="false">
+        <index-column name="OBPOS_APPLICATIONS_ID"/>
+      </index>
       <index name="OBPOS_CMEVENTS_FK" unique="false">
         <index-column name="OBRETCO_CMEVENTS_ID"/>
       </index>
