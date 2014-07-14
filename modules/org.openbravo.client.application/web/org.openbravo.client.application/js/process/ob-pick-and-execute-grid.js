@@ -65,6 +65,10 @@ isc.OBPickAndExecuteGrid.addProperties({
     return true;
   },
 
+  //** {{{ dataPageSize }}} **
+  // The data page size used for loading paged data from the server.
+  dataPageSize: 100,
+
   initWidget: function () {
     var i, len = this.fields.length,
         theGrid, me = this,
@@ -550,6 +554,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (this.sqlOrderByClause) {
       params[OB.Constants.SQL_ORDERBY_PARAMETER] = this.sqlOrderByClause;
     }
+
+    // prevent the count operation
+    params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
 
     if (this.filterClause) {
       if (props.whereClause) {

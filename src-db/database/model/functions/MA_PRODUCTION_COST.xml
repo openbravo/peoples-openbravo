@@ -161,6 +161,7 @@ BEGIN
                                                      AND pl2.M_productionplan_ID = pp.M_ProductionPlan_ID
                                                      AND pl1.calculated = 'N')
                                     AND pp.MA_COSTCENTER_VERSION_ID IS NOT NULL
+                                    AND pl.movementqty <> 0
                                  GROUP BY pp.M_ProductionPlan_ID, pp.ma_costcenter_version_id, ccv.costuom,
                                            ccv.COST, pp.MA_CostCenterUse, pp.MA_WRPHASE_ID, pp.LINE) LOOP
         v_ResultStr := 'Common variables';

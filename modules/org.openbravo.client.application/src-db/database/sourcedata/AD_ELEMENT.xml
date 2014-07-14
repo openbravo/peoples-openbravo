@@ -67,7 +67,7 @@
 <!--1DD68F7AE78B4F0EB010F507D4B7A0D4-->  <DESCRIPTION><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.]]></DESCRIPTION>
 <!--1DD68F7AE78B4F0EB010F507D4B7A0D4-->  <HELP><![CDATA[This flags is used to specify if this process should be compatible with the legacy parameter windows.
 
-The legacy parameter windows could only contain one grid, so the _selection and _allRows properties of the grid were directly accesible in the handler from the params object. I.e:
+The legacy parameter windows could only contain one grid, so the _selection and _allRows properties of the grid were directly accessible in the handler from the params object. I.e:
 
 JSONArray gridRows = jsonparams.getJSONArray(ApplicationConstants.ALL_ROWS_PARAM);
 
@@ -762,6 +762,21 @@ This function (manually coded), can:
 <!--F39469FBB4F041BFBC730BB9E0691F29-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
 <!--F39469FBB4F041BFBC730BB9E0691F29-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--F39469FBB4F041BFBC730BB9E0691F29--></AD_ELEMENT>
+
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8--><AD_ELEMENT>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8-->  <AD_ELEMENT_ID><![CDATA[F9B6ACA97BD34B1BBACBBC4899D9E6D8]]></AD_ELEMENT_ID>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8-->  <COLUMNNAME><![CDATA[IsCanAddRecordsToSelector]]></COLUMNNAME>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8-->  <NAME><![CDATA[Can Add Records to a Selector]]></NAME>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8-->  <PRINTNAME><![CDATA[Can Add Records to a Selector]]></PRINTNAME>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8-->  <DESCRIPTION><![CDATA[By selecting this flag, the process will be available in the 'Defined Selector' window]]></DESCRIPTION>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8-->  <HELP><![CDATA[By selecting this flag, the process will be available in the 'Defined Selector' window.
+This process has to be capable of adding records to a selector.]]></HELP>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--F9B6ACA97BD34B1BBACBBC4899D9E6D8--></AD_ELEMENT>
 
 <!--FAF5CE55DE8E4B26A9DC0610CFB30AC3--><AD_ELEMENT>
 <!--FAF5CE55DE8E4B26A9DC0610CFB30AC3-->  <AD_ELEMENT_ID><![CDATA[FAF5CE55DE8E4B26A9DC0610CFB30AC3]]></AD_ELEMENT_ID>

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,7 +52,12 @@ isc.OBSelectorItem.addProperties({
   popupIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/search_picker.png',
   popupIconWidth: 21,
   popupIconHeight: 21,
-  popupIconHspace: 0
+  popupIconHspace: 0,
+
+  addIconSrc: OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/add_icon.png',
+  addIconWidth: 21,
+  addIconHeight: 21,
+  addIconHspace: 0
 });
 
 isc.OBSelectorLinkItem.addProperties({

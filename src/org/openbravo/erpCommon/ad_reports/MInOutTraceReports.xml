@@ -48,7 +48,7 @@
     <FIELD id="fieldProductName" replaceCharacters="html">productName</FIELD>
     <FIELD id="fieldAttributeName" replaceCharacters="html">attributeName</FIELD>
     <FIELD id="fieldLocatorName" replaceCharacters="html">locatorName</FIELD>
-    <FIELD id="fieldHTML" replaceCharacters="html">html</FIELD>
+    <FIELD id="fieldHTML">html</FIELD>
 
     <SECTION id="sectionDetail"/>
   </structure>

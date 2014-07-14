@@ -35,6 +35,9 @@ import org.openbravo.model.common.geography.Region;
  * Test webservice for reading, updating and posting. The test cases here require a running
  * Openbravo at http://localhost:8080/openbravo.
  * 
+ * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
+ * test cases NOT begin by "test...".
+ * 
  * @author mtaal
  */
 
@@ -45,10 +48,27 @@ public class WSUpdateTest extends BaseWSTest {
   private static String cityId = null;
 
   /**
+   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
+   * execution order of the test cases.
+   * 
+   * @throws Exception
+   */
+  public void testContent() throws Exception {
+    aCreateCity();
+    readUpdateCity();
+    incorrectRootTag();
+    readAddDeleteCity();
+    readAddDeleteQueryCity();
+    doTest14973();
+    readAddCityWrongMethodError();
+    zRemoveCity();
+  }
+
+  /**
    * Creates a city through a webservice calls. This test must be run before the others because it
    * sets the cityId member in this class.
    */
-  public void testACreateCity() {
+  public void aCreateCity() {
     // do not replace this with a call to setUserContext,
     // the city must be stored using the client/org of the 100 user
     // this ensures that webservice calls will be able to find the city
@@ -81,7 +101,7 @@ public class WSUpdateTest extends BaseWSTest {
    */
   private void initializeCreateCity() throws Exception {
     if (cityId == null) {
-      testACreateCity();
+      aCreateCity();
     }
   }
 
@@ -90,7 +110,7 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
-  public void testReadUpdateCity() throws Exception {
+  public void readUpdateCity() throws Exception {
     initializeCreateCity();
 
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
@@ -115,7 +135,7 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
-  public void testIncorrectRootTag() throws Exception {
+  public void incorrectRootTag() throws Exception {
     initializeCreateCity();
 
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
@@ -132,13 +152,13 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
-  public void testReadAddDeleteCity() throws Exception {
+  public void readAddDeleteCity() throws Exception {
     initializeCreateCity();
 
     doTestReadAddDeleteCity(false);
   }
 
-  public void testReadAddDeleteQueryCity() throws Exception {
+  public void readAddDeleteQueryCity() throws Exception {
     initializeCreateCity();
 
     doTestReadAddDeleteCity(true);
@@ -215,7 +235,7 @@ public class WSUpdateTest extends BaseWSTest {
    * Tests issue 14973 https://issues.openbravo.com/view.php?id=14973 DalWebServiceServlet does not
    * report errors which occur at commit time
    */
-  public void test14973() throws Exception {
+  public void doTest14973() throws Exception {
     final HttpURLConnection hc = createConnection("/ws/dal/Product/1000004", "DELETE");
     hc.connect();
     assertEquals(500, hc.getResponseCode());
@@ -226,7 +246,7 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
-  public void testReadAddCityWrongMethodError() throws Exception {
+  public void readAddCityWrongMethodError() throws Exception {
     initializeCreateCity();
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     String newCity = city.replaceAll("</name>", (System.currentTimeMillis() + "").substring(6)
@@ -247,7 +267,7 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
-  public void testZRemoveCity() throws Exception {
+  public void zRemoveCity() throws Exception {
     initializeCreateCity();
     doDirectDeleteRequest("/ws/dal/City/" + cityId, 200);
   }

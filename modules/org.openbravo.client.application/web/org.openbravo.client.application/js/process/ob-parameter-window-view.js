@@ -121,10 +121,15 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup) {
       cancelButton = isc.OBFormButton.create({
+        process: this,
         title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
         realTitle: '',
         click: function () {
-          view.closeClick();
+          if (this.process.isExpandedRecord) {
+            this.process.callerField.grid.collapseRecord(this.process.callerField.record);
+          } else {
+            view.closeClick();
+          }
         }
       });
       buttonLayout.push(cancelButton);
@@ -254,7 +259,8 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup) {
       this.firstFocusedItem = this.okButton;
-      this.popupButtons = isc.HLayout.create({
+      this.popupButtons = isc.OBFormContainerLayout.create({
+        defaultLayoutAlign: 'center',
         align: 'center',
         width: '100%',
         height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
@@ -299,7 +305,7 @@ isc.OBParameterWindowView.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_FormContainerLayout_' + this.processId, this.formContainerLayout);
   },
 
-  handleResponse: function (refresh, message, responseActions, retryExecution, data) {
+  handleResponse: function (refreshParent, message, responseActions, retryExecution, data) {
     var window = this.parentWindow,
         tab = OB.MainView.TabSet.getTab(this.viewTabId),
         i;
@@ -369,7 +375,7 @@ isc.OBParameterWindowView.addProperties({
     if (this.popup && !retryExecution) {
       this.buttonOwnerView.setAsActiveView();
 
-      if (refresh) {
+      if (refreshParent) {
         window.refresh();
       }
 
@@ -459,7 +465,7 @@ isc.OBParameterWindowView.addProperties({
         processId: me.processId,
         windowId: me.windowId
       }, function (rpcResponse, data, rpcRequest) {
-        view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
+        view.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
       });
     };
 

@@ -429,7 +429,7 @@ public class PrintController extends HttpSecureAppServlet {
             }
           }
 
-          response.setContentType("application/json");
+          response.setContentType("application/json; charset=UTF-8");
           final PrintWriter out = response.getWriter();
           out.println(o.toString());
           out.close();
@@ -452,7 +452,7 @@ public class PrintController extends HttpSecureAppServlet {
             }
           }
 
-          response.setContentType("application/json");
+          response.setContentType("application/json; charset=UTF-8");
           final PrintWriter out = response.getWriter();
           out.println(o.toString());
           out.close();

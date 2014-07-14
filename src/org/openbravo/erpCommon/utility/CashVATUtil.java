@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -41,6 +42,7 @@ import org.openbravo.erpCommon.ad_forms.DocTax;
 import org.openbravo.erpCommon.ad_forms.Fact;
 import org.openbravo.erpCommon.ad_forms.FactLine;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
@@ -131,6 +133,94 @@ public class CashVATUtil {
     }
 
     return null;
+  }
+
+  /**
+   * It returns true if Organization's and Business Partner's countries are different, which implies
+   * a non Cash VAT document.
+   * 
+   * If Organization has no address, it tries to get its legal entity address instead.
+   * 
+   * @param strOrgId
+   *          Organization Id
+   * @param strBPartnerLocationId
+   *          Business Partner Location Id from the document (invoice, order, etc.)
+   * @return It returns true if Organization's and Business Partner's countries are different
+   */
+  public static boolean isForcedNonCashVAT(final String strOrgId, final String strBPartnerLocationId) {
+    String orgCountryId = null;
+    String bpCountryId = null;
+    try {
+      OBContext.setAdminMode(true);
+      final Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
+      try {
+        orgCountryId = org.getOrganizationInformationList().get(0).getLocationAddress()
+            .getCountry().getId();
+      } catch (Exception noOrgLocation) {
+        final Organization legalEntity = OBContext.getOBContext()
+            .getOrganizationStructureProvider(org.getClient().getId()).getLegalEntity(org);
+        legalEntity.getOrganizationInformationList().get(0).getLocationAddress().getCountry()
+            .getId();
+      }
+      bpCountryId = OBDal.getInstance().get(Location.class, strBPartnerLocationId)
+          .getLocationAddress().getCountry().getId();
+    } catch (Exception noLocationInOrgOrBP) {
+      // OrgCountryId or bpCountryId not yet set. Continue with the flow
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return (orgCountryId != null && bpCountryId != null && !orgCountryId.equals(bpCountryId));
+  }
+
+  /**
+   * Returns "Y" if the combination of these parameters represents a Cash VAT transaction.
+   * 
+   * It first checks whether the organization's and business partner's location country is
+   * different. In this case it returns "N", because Cash VAT transactions are only valid within the
+   * same country. <br/>
+   * 
+   * For sales flow, it checks whether the organization is declared as Cash VAT. In this case it
+   * returns "Y". <br/>
+   * 
+   * For purchase flow, it first checks if the organization is declared as Cash VAT and Double cash
+   * criteria. In this case it returns "Y"; otherwise it returns the business partner Cash VAT
+   * configuration
+   * 
+   * @param strIsSOTrx
+   *          is Sales transaction ("Y" or "N")
+   * @param strOrgId
+   *          organization ID
+   * @param strBPartnerId
+   *          business partner ID
+   * @param strBPartnerLocationId
+   *          business partner location ID (from the document: order, invoice, etc.)
+   * @return "Y" for Cash VAT transactions, otherwise returns "N"
+   */
+  public static String isCashVAT(final String strIsSOTrx, final String strOrgId,
+      final String strBPartnerId, final String strBPartnerLocationId) {
+    final boolean isForcedNonCashVAT = isForcedNonCashVAT(strOrgId, strBPartnerLocationId);
+
+    if (isForcedNonCashVAT) {
+      // The Organization's and Business Partner's countries are different. It implies Cash VAT = N
+      return "N";
+    } else {
+      final String orgCashVAT = CashVATUtil.getOrganizationIsCashVAT(strOrgId);
+      if (StringUtils.equals("Y", strIsSOTrx)) {
+        // Sales flow only (from the organization)
+        return orgCashVAT;
+      } else {
+        // Purchase flow
+        final String orgDoubleCash = CashVATUtil.getOrganizationIsDoubleCash(strOrgId);
+        if (StringUtils.equals("Y", orgCashVAT) && StringUtils.equals("Y", orgDoubleCash)) {
+          // from Organization Double Cash Criteria
+          return "Y";
+        } else {
+          // from Business Partner
+          return getBusinessPartnerIsCashVAT(strBPartnerId);
+        }
+      }
+    }
   }
 
   /**

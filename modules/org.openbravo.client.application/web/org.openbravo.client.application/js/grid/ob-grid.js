@@ -597,8 +597,10 @@ isc.OBGrid.addProperties({
           field.filterEditorProperties.criteriaField = field.criteriaField;
         }
 
-        if (field.criteriaDisplayField) {
-          field.filterEditorProperties.criteriaDisplayField = field.criteriaDisplayField;
+        // send the display property to formitem to be used in request params used to fetch data.
+        // used for displaying table references properly. Refer issue https://issues.openbravo.com/view.php?id=26696
+        if (field.displayProperty) {
+          field.filterEditorProperties.displayProperty = field.displayProperty;
         }
 
         if (field.editorType && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteTime')()) {
@@ -620,6 +622,10 @@ isc.OBGrid.addProperties({
           }
           field.formatCellValueFunctionReplaced = true;
           field.formatCellValue = formatCellValueFunction;
+          // if there is a clientClass that expands a grid record, fixedRecordHeight should be false in order to allow the record expansion
+          if (new Function('return isc.' + field.clientClass + '.getPrototype().canExpandRecord')()) {
+            this.fixedRecordHeights = false;
+          }
         }
       }
     }
@@ -928,13 +934,11 @@ isc.OBGrid.addProperties({
       _textMatchStyle: 'substring',
       _UTCOffsetMiliseconds: OB.Utilities.Date.getUTCOffsetInMiliseconds()
     }, lcriteria, this.getFetchRequestParams(null, isExporting));
-    if (this.getSortField()) {
-      sortCriteria = this.getSort();
-      if (sortCriteria && sortCriteria.length > 0) {
-        d._sortBy = sortCriteria[0].property;
-        if (sortCriteria[0].direction === 'descending') {
-          d._sortBy = '-' + d._sortBy;
-        }
+    sortCriteria = this.getSort();
+    if (sortCriteria && sortCriteria.length > 0) {
+      d._sortBy = sortCriteria[0].property;
+      if (sortCriteria[0].direction === 'descending') {
+        d._sortBy = '-' + d._sortBy;
       }
     }
     OB.Utilities.postThroughHiddenForm(dsURL, d);
@@ -1094,6 +1098,124 @@ isc.OBGrid.addProperties({
       return this.Super('getSortArrowImage', arguments);
     }
 
+  },
+
+  collapseRecord: function (record) {
+    var expandedItem = this.getCurrentExpansionComponent(record),
+        ret = this.Super('collapseRecord', arguments);
+    if (expandedItem && typeof expandedItem.destroy === 'function') {
+      expandedItem.destroy();
+    }
+    return ret;
+  },
+
+  //** {{{ openExpansionProcess }}} **
+  //
+  // Opens a process inside a grid row.
+  // Parameters:
+  //  * {{{process}}} The process to be opened
+  //  * {{{record}}} The record where the process will be opened
+  //  * {{{selectOnOpen}}} It indicates if the record will be selected when the process be opened (true by default)
+  //  * {{{deselectAllOnOpen}}} It indicates if all other records will be unselected when the process be opened. It is applied before 'selectOnOpen' (true by default)
+  //  * {{{collapseOthersOnOpen}}} It indicates if any other opened process should be closed (true by default)
+  //  * {{{width}}} The width of the opened process (100% by default)
+  //  * {{{height}}} The height of the opened process (7 grid rows + 'bottom buttons layout' by default)
+  //  * {{{topMargin}}} The top margin of the process. (10 by default)
+  //  * {{{rightMargin}}} The right margin of the process. (30 by default)
+  //  * {{{bottomMargin}}} The bottom margin of the process. (10 by default)
+  //  * {{{leftMargin}}} The left margin of the process. (30 by default)
+  openExpansionProcess: function (process, record, selectOnOpen, deselectAllOnOpen, collapseOthersOnOpen, width, height, topMargin, rightMargin, bottomMargin, leftMargin) {
+    var defaultHeight;
+
+    if (!process || !record) {
+      return;
+    }
+    if (this.fixedRecordHeights) {
+      isc.warn('This grid has "fixedRecordHeights" set to "true". It should be set to "false" in order to view the process', function () {
+        return true;
+      }, {
+        icon: '[SKINIMG]Dialog/error.png',
+        title: OB.I18N.getLabel('OBUIAPP_Error')
+      });
+      return;
+    }
+
+    if (typeof selectOnOpen === 'undefined' || selectOnOpen === null) {
+      selectOnOpen = true;
+    }
+    if (typeof deselectAllOnOpen === 'undefined' || deselectAllOnOpen === null) {
+      deselectAllOnOpen = true;
+    }
+    if (typeof collapseOthersOnOpen === 'undefined' || collapseOthersOnOpen === null) {
+      collapseOthersOnOpen = true;
+    }
+    if (typeof topMargin === 'undefined' || topMargin === null) {
+      topMargin = (process.expandedTopMargin ? process.expandedTopMargin : 10);
+    }
+    if (typeof rightMargin === 'undefined' || rightMargin === null) {
+      rightMargin = (process.expandedRightMargin ? process.expandedRightMargin : 30);
+    }
+    if (typeof bottomMargin === 'undefined' || bottomMargin === null) {
+      bottomMargin = (process.expandedBottomMargin ? process.expandedBottomMargin : 10);
+    }
+    if (typeof leftMargin === 'undefined' || leftMargin === null) {
+      leftMargin = (process.expandedLeftMargin ? process.expandedLeftMargin : 30);
+    }
+
+    if (typeof width === 'undefined' || width === null) {
+      width = (process.expandedWidth ? process.expandedWidth : '100%');
+      if (typeof width === 'string' && width.indexOf('%') === -1) {
+        width = parseInt(width, 10);
+      }
+      if (typeof width === 'number') {
+        width = width + rightMargin + leftMargin;
+      }
+    }
+
+    defaultHeight = isc.OBViewGrid.getPrototype().cellHeight * 6 + //
+    isc.OBViewGrid.getPrototype().filterEditorDefaults.height + //
+    OB.Styles.Process.PickAndExecute.buttonLayoutHeight;
+
+    if (typeof height === 'undefined' || height === null) {
+      height = (process.expandedHeight ? process.expandedHeight : defaultHeight);
+      if (typeof height === 'string' && height.indexOf('%') === -1) {
+        height = parseInt(width, 10);
+      }
+      if (typeof height === 'number') {
+        height = height + topMargin + bottomMargin;
+      }
+    }
+
+    if (deselectAllOnOpen) {
+      this.deselectAllRecords();
+    }
+
+    if (selectOnOpen) {
+      this.selectRecord(record);
+    }
+
+    process.isExpandedRecord = true;
+
+    this.getExpansionComponent = function (theRecord) {
+      var layout = isc.VLayout.create({
+        height: height,
+        width: width,
+        layoutTopMargin: topMargin,
+        layoutRightMargin: rightMargin,
+        layoutBottomMargin: bottomMargin,
+        layoutLeftMargin: leftMargin,
+        members: [process]
+      });
+      return layout;
+    };
+
+    this.canExpandMultipleRecords = !collapseOthersOnOpen;
+
+    this.expandRecord(record);
+
+    this.getExpansionComponent = function () {
+      return;
+    };
   }
 });
 

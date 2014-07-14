@@ -238,7 +238,8 @@ public class OBViewParameterHandler {
     }
 
     public boolean isRequired() {
-      return parameter.isMandatory();
+      // grid params should always be marked as not mandatory
+      return !isGrid() && parameter.isMandatory();
     }
 
     public boolean isGrid() {
