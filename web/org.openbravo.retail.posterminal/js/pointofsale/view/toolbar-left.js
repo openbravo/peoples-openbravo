@@ -180,7 +180,9 @@ enyo.kind({
   tabPanel: 'payment',
   handlers: {
     onChangedTotal: 'renderTotal',
-    onRightToolbarDisabled: 'disabledButton'
+    onRightToolbarDisabled: 'disabledButton',
+    onApplyingDiscount: 'disableButton',
+    onAppliedDiscount: 'enableButton'
   },
   disabledButton: function (inSender, inEvent) {
     if (inEvent.exceptionPanel === this.tabPanel) {
@@ -188,6 +190,12 @@ enyo.kind({
     }
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
+  },
+  disableButton: function () {
+    this.setDisabled(true);
+  },
+  enableButton: function () {
+    this.setDisabled(false);
   },
   events: {
     onTabChange: ''
