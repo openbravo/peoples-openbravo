@@ -88,19 +88,5 @@
     //window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
   });
 
-  executeWhenDOMReady = function () {
-    if (document.readyState === "interactive" || document.readyState === "complete") {
-      //modelterminal.load();
-      //TODO: this is required but should be changed to make it possible to be included in terminal component
-      OB.UTIL.checkConnectivityStatus(); //Initial check;
-      setInterval(OB.UTIL.checkConnectivityStatus, 5000);
-
-    } else {
-      setTimeout(function () {
-        executeWhenDOMReady();
-      }, 50);
-    }
-  };
-  executeWhenDOMReady();
 
 }());

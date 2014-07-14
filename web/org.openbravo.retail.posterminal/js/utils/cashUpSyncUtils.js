@@ -20,33 +20,31 @@
     var me = this,
         cashupsToSend = [];
     this.proc = new OB.DS.Process(OB.UTIL.processCashUpClass);
-    if (OB.MobileApp.model.get('connectedToERP')) {
-      OB.Dal.find(OB.Model.CashUp, {
-        isbeingprocessed: 'Y'
-      }, function (cashups) {
-        if (cashups.length > 0) {
-          _.each(cashups.models, function (cashup) {
-            cashupsToSend.push(JSON.parse(cashup.get('objToSend')));
-          }, this);
-          me.proc.exec({
-            cashups: cashupsToSend
-          }, function (data, message) {
-            if (data && data.exception) {
-              // The server response is an Error! -> Orders have not been processed
-              if (errorCallback) {
-                errorCallback();
-              }
-            } else {
-              OB.UTIL.initCashUp(function () {
-                OB.UTIL.deleteCashUps(cashups.models);
-                if (successCallback) {
-                  successCallback();
-                }
-              });
+    OB.Dal.find(OB.Model.CashUp, {
+      isbeingprocessed: 'Y'
+    }, function (cashups) {
+      if (cashups.length > 0) {
+        _.each(cashups.models, function (cashup) {
+          cashupsToSend.push(JSON.parse(cashup.get('objToSend')));
+        }, this);
+        me.proc.exec({
+          cashups: cashupsToSend
+        }, function (data, message) {
+          if (data && data.exception) {
+            // The server response is an Error! -> Orders have not been processed
+            if (errorCallback) {
+              errorCallback();
             }
-          }, null, null, 4000);
-        }
-      }, null, this);
-    }
+          } else {
+            OB.UTIL.initCashUp(function () {
+              OB.UTIL.deleteCashUps(cashups.models);
+              if (successCallback) {
+                successCallback();
+              }
+            });
+          }
+        }, null, null, 4000);
+      }
+    }, null, this);
   };
 }());

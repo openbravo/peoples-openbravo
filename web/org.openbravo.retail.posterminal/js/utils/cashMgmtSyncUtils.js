@@ -22,35 +22,33 @@
         'isbeingprocessed': 'N'
         };
     this.proc = new OB.DS.Process(OB.UTIL.processCashMgmtClass);
-    if (OB.MobileApp.model.get('connectedToERP')) {
-      OB.Dal.find(OB.Model.CashManagement, criteria, function (cashmgmts) {
-        if (cashmgmts.length > 0) {
-          me.proc.exec({
-            depsdropstosend: cashmgmts.toJSON()
-          }, function (data, message) {
-            if (data && data.exception) {
-              // The server response is an Error! -> Orders have not been processed
-              if (errorCallback) {
-                errorCallback();
-              }
-            } else {
-              cashmgmts.each(function (cashmgmt) {
-                cashmgmt.set('isbeingprocessed', 'Y');
-                OB.Dal.save(cashmgmt, null, function (tx, err) {
-                  OB.UTIL.showError(err);
-                });
-              });
-              if (successCallback) {
-                successCallback();
-              }
+    OB.Dal.find(OB.Model.CashManagement, criteria, function (cashmgmts) {
+      if (cashmgmts.length > 0) {
+        me.proc.exec({
+          depsdropstosend: cashmgmts.toJSON()
+        }, function (data, message) {
+          if (data && data.exception) {
+            // The server response is an Error! -> Orders have not been processed
+            if (errorCallback) {
+              errorCallback();
             }
-          }, null, null, 4000);
-        } else {
-          if (successCallback) {
-            successCallback();
+          } else {
+            cashmgmts.each(function (cashmgmt) {
+              cashmgmt.set('isbeingprocessed', 'Y');
+              OB.Dal.save(cashmgmt, null, function (tx, err) {
+                OB.UTIL.showError(err);
+              });
+            });
+            if (successCallback) {
+              successCallback();
+            }
           }
+        }, null, null, 4000);
+      } else {
+        if (successCallback) {
+          successCallback();
         }
-      }, null, this);
-    }
+      }
+    }, null, this);
   };
 }());

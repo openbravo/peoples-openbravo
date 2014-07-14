@@ -28,7 +28,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
 
       this.trigger('ready');
     }, this);
-    if (OB.POS.modelterminal.get('connectedToERP')) {
+    if (!OB.POS.modelterminal.get('loggedOffline')) {
       OB.Dal.loadModels(true, this.models, this.data);
     } else {
       if (this.init) {

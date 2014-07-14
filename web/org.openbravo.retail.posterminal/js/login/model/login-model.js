@@ -117,7 +117,8 @@
           OB.info('Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({
-            terminal: OB.MobileApp.model.get('terminalName')
+            terminal: OB.MobileApp.model.get('terminalName'),
+            ignoreForConnectionStatus: true
           }, function (data) {
             if (data[0]) {
               terminalModel.set(me.properties[0], data[0]);
@@ -283,17 +284,7 @@
       this.router.route("login", "login", function () {
         if (!_.isNull(me.get('context'))) {
           OB.UTIL.showLoading(true);
-          if (OB.MobileApp.model.get('connectedToERP')) {
-            new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({}, function (inResponse) {
-              if (inResponse && !inResponse.exception) {
-                me.navigate('retail.pointofsale');
-              } else {
-                OB.MobileApp.model.triggerLogout();
-              }
-            });
-          } else {
-            me.navigate('retail.pointofsale');
-          }
+          me.navigate('retail.pointofsale');
         } else {
           this.terminal.renderLogin();
         }
@@ -337,7 +328,7 @@
             //nothing to show
           };
           customersChangedNotProcessed.each(function (cus) {
-            cus.set('json', enyo.json.parse(cus.get('json')));
+            cus.set('json', JSON.parse(cus.get('json')));
           });
           OB.UTIL.processCustomers(customersChangedNotProcessed, successCallback, errorCallback);
         });

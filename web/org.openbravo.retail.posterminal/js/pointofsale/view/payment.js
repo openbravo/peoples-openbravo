@@ -682,7 +682,7 @@ enyo.kind({
     var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     var me = this;
     var paymentstatus = this.model.get('order').getPaymentStatus();
-    if (!paymentstatus.isReturn && OB.POS.modelterminal.get('connectedToERP')) {
+    if (!paymentstatus.isReturn) {
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
       process.exec({
         businessPartnerId: this.model.get('order').get('bp').get('id'),
@@ -713,6 +713,14 @@ enyo.kind({
         } else {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
         }
+      }, function () {
+        me.doShowPopup({
+          popup: 'modalEnoughCredit',
+          args: {
+            order: me.model.get('order'),
+            message: 'OBPOS_Unabletocheckcredit'
+          }
+        });
       });
       //    } else if (this.model.get('order').get('orderType') === 1) {
     } else if (paymentstatus.isReturn) {
@@ -724,14 +732,6 @@ enyo.kind({
         popup: 'modalEnoughCredit',
         args: {
           order: this.model.get('order')
-        }
-      });
-    } else {
-      this.doShowPopup({
-        popup: 'modalEnoughCredit',
-        args: {
-          order: this.model.get('order'),
-          message: 'OBPOS_Unabletocheckcredit'
         }
       });
     }

@@ -560,7 +560,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     receipt.on('voidLayaway', function () {
       var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway'),
           auxReceipt = new OB.Model.Order();
-      if (OB.MobileApp.model.get('connectedToERP')) {
         auxReceipt.clearWith(receipt);
         process.exec({
           order: receipt
@@ -586,9 +585,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
           }
         });
-      } else {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-      }
     }, this);
   },
 

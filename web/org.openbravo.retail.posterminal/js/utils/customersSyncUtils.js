@@ -22,32 +22,23 @@
       customersToJson.push(customer.get('json'));
     });
     this.proc = new OB.DS.Process(OB.UTIL.processCustomerClass);
-    if (OB.MobileApp.model.get('connectedToERP')) {
-      this.proc.exec({
-        terminalId: OB.MobileApp.model.get('terminal').id,
-        customer: customersToJson
-      }, function (data, message) {
-        if (data && data.exception) {
-          // The server response is an Error! -> Orders have not been processed
-          changedCustomers.each(function (changedCustomer) {
-            changedCustomer.set('isbeingprocessed', 'N');
-            changedCustomer.set('json', JSON.stringify(changedCustomer.get('json')));
-            OB.Dal.save(changedCustomer, null, function (tx, err) {
-              OB.UTIL.showError(err);
-            });
-          });
-          if (errorCallback) {
-            errorCallback();
-          }
-        } else {
-          // Customers have been processed, delete them from the queue
-          OB.Dal.removeAll(OB.Model.ChangedBusinessPartners, null, function () {
-            successCallback();
-          }, function (tx, err) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorRemovingLocallyProcessedCustomer'));
-          });
+    this.proc.exec({
+      terminalId: OB.MobileApp.model.get('terminal').id,
+      customer: customersToJson
+    }, function (data, message) {
+      if (data && data.exception) {
+        // The server response is an Error! -> Orders have not been processed
+        if (errorCallback) {
+          errorCallback();
         }
-      }, null, null, 4000);
-    }
+      } else {
+        // Customers have been processed, delete them from the queue
+        OB.Dal.removeAll(OB.Model.ChangedBusinessPartners, null, function () {
+          successCallback();
+        }, function (tx, err) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorRemovingLocallyProcessedCustomer'));
+        });
+      }
+    }, null, null, 4000);
   };
 }());
