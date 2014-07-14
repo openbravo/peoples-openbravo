@@ -88,11 +88,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
             var fromCurrencyId = auxPay.get('paymentMethod').currency;
             auxPay.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
-            if (OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId)) {
-              auxPay.set('foreignExpected', 0);
-            } else {
-              auxPay.set('foreignExpected', expected);
-            }
+            auxPay.set('foreignExpected', expected);
 
             tempList.add(auxPay);
             if (args.index === OB.POS.modelterminal.get('payments').length - 1) {
