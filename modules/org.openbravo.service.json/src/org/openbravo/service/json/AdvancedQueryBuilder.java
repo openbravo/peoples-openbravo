@@ -158,6 +158,11 @@ public class AdvancedQueryBuilder {
   private String distinctPropertyPath;
   private DataEntityQueryService subDataEntityQueryService;
 
+  // map that indicates, for a property, if its join definition is used only in joins used for
+  // filtering the grid
+  // see issue https://issues.openbravo.com/view.php?id=26279
+  private Map<String, Boolean> gridFilterExclusiveJoinMap = new HashMap<String, Boolean>();
+
   private int aliasOffset = 0;
 
   public Entity getEntity() {
@@ -235,8 +240,16 @@ public class AdvancedQueryBuilder {
       // if the property allows null values, use a left join instead an inner join
       if (!distinctPropertyPath.contains(DalUtil.FIELDSEPARATOR)
           && subEntity.getProperty(distinctPropertyPath).allowNullValues()) {
+        String joinType = null;
+        // if all the identifier properties of the subentity are mandatory, an inner join can be
+        // used
+        if (KernelUtils.hasNullableIdentifierProperties(subEntity)) {
+          joinType = " left join ";
+        } else {
+          joinType = " inner join ";
+        }
         whereClause += " exists (select 1 from " + subEntity.getName() + " "
-            + subEntityQueryBuilder.getJoinClause() + " left join "
+            + subEntityQueryBuilder.getJoinClause() + joinType
             + subEntityQueryBuilder.getMainAlias() + DalUtil.DOT + distinctPropertyPath + " as i "
             + subentityWhere + " i = " + mainAlias + subEntityClientOrg + ") ";
       } else {
@@ -597,7 +610,8 @@ public class AdvancedQueryBuilder {
 
     String clause = null;
     if (orNesting > 0) {
-      clause = resolveJoins(properties, useFieldName);
+      boolean fromCriteria = true;
+      clause = resolveJoins(properties, useFieldName, fromCriteria);
     } else if (getMainAlias() != null) {
       clause = getMainAlias() + DalUtil.DOT + useFieldName.trim();
     } else {
@@ -852,9 +866,9 @@ public class AdvancedQueryBuilder {
       prefix = getMainAlias() + DalUtil.DOT;
     } else if (key.endsWith(JsonConstants.IDENTIFIER)) {
       final String propPath = key.substring(0, key.indexOf(JsonConstants.IDENTIFIER) - 1);
-      final String join = resolveJoins(
-          getPropertyForTableReference(JsonUtils.getPropertiesOnPath(getEntity(), propPath)),
-          propPath);
+      boolean fromCriteria = true;
+      final String join = resolveJoins(getPropertyForTableReference(JsonUtils.getPropertiesOnPath(getEntity(), propPath)),
+          propPath, fromCriteria);
       prefix = join + DalUtil.DOT;
     } else if (index == -1) {
       prefix = "";
@@ -1217,7 +1231,8 @@ public class AdvancedQueryBuilder {
       if (properties.isEmpty() || lastProperty.isOneToMany()) {
         continue;
       }
-      resolveJoins(properties, getMainAlias());
+      boolean fromCriteria = false;
+      resolveJoins(properties, getMainAlias(), fromCriteria);
     }
 
     // make sure that the join clauses are computed
@@ -1371,9 +1386,9 @@ public class AdvancedQueryBuilder {
         path = orderByExpression[0];
         direction = " " + orderByExpression[1] + " ";
       }
-
+      boolean fromCriteria = false;
       final String resolvedPath = resolveJoins(JsonUtils.getPropertiesOnPath(getEntity(), path),
-          path);
+          path, fromCriteria);
       sb.append(resolvedPath);
       sb.append(direction);
     }
@@ -1555,9 +1570,15 @@ public class AdvancedQueryBuilder {
     setMainAlias(JsonConstants.MAIN_ALIAS);
   }
 
+  public String resolveJoins(List<Property> props, String originalPath) {
+    // by default use fromCriteria = false. that way if resolveJoins is called without the
+    // fromCriteria parameter, a 'left join' will be used, which is the previous standard behavior
+    return resolveJoins(props, originalPath, false);
+  }
+
   // Resolves the list of properties against existing join definitions
   // creates new join definitions when necessary
-  public String resolveJoins(List<Property> props, String originalPath) {
+  public String resolveJoins(List<Property> props, String originalPath, boolean fromCriteria) {
     String alias = getMainAlias();
     if (alias == null) {
       return originalPath;
@@ -1568,6 +1589,9 @@ public class AdvancedQueryBuilder {
       boolean found = false;
       for (JoinDefinition joinDefinition : joinDefinitions) {
         if (joinDefinition.appliesTo(alias, prop)) {
+          if (!fromCriteria) {
+            gridFilterExclusiveJoinMap.put(prop.getName(), Boolean.FALSE);
+          }
           alias = joinDefinition.getJoinAlias();
           joinedPropertyIndex = index;
           found = true;
@@ -1590,6 +1614,11 @@ public class AdvancedQueryBuilder {
       final JoinDefinition joinDefinition = new JoinDefinition();
       joinDefinition.setOwnerAlias(alias);
       joinDefinition.setProperty(prop);
+      if (fromCriteria) {
+        gridFilterExclusiveJoinMap.put(prop.getName(), Boolean.TRUE);
+      } else {
+        gridFilterExclusiveJoinMap.put(prop.getName(), Boolean.FALSE);
+      }
       joinDefinitions.add(joinDefinition);
 
       // move the result up to use the new JoinDefinition
@@ -1638,7 +1667,17 @@ public class AdvancedQueryBuilder {
         return " left outer join " + (fetchJoin ? "fetch " : "")
             + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + propName + " as " + joinAlias;
       } else {
-        return " left join " + (fetchJoin ? "fetch " : "")
+        String joinType = null;
+        // if all the identifier properties of the target entity are mandatory, and if the joined
+        // entity is used only in where clauses resulting from filtering the grid, an inner join can
+        // be used
+        if (KernelUtils.hasNullableIdentifierProperties(property.getTargetEntity())
+            || !(Boolean.TRUE.equals(gridFilterExclusiveJoinMap.get(property.getName())))) {
+          joinType = " left join ";
+        } else {
+          joinType = " inner join ";
+        }
+        return joinType + (fetchJoin ? "fetch " : "")
             + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + propName + " as " + joinAlias;
       }
     }
@@ -1728,7 +1767,8 @@ public class AdvancedQueryBuilder {
     String localField = field;
     List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), localField);
     properties = getPropertyForTableReference(properties);
-    localField = resolveJoins(properties, localField);
+    boolean fromCriteria = false;
+    localField = resolveJoins(properties, localField, fromCriteria);
     if (properties.size() > 0) {
       final Property lastProperty = properties.get(properties.size() - 1);
       if (lastProperty.getTargetEntity() != null) {
@@ -1752,7 +1792,8 @@ public class AdvancedQueryBuilder {
     String localSelectClausePart = selectClausePart;
     List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), localSelectClausePart);
     properties = getPropertyForTableReference(properties);
-    localSelectClausePart = resolveJoins(properties, localSelectClausePart);
+    boolean fromCriteria = false;
+    localSelectClausePart = resolveJoins(properties, localSelectClausePart, fromCriteria);
     selectClauseParts.add(localSelectClausePart);
   }
 

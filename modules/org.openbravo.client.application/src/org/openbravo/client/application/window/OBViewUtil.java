@@ -176,13 +176,14 @@ public class OBViewUtil {
     Boolean canFilter = null;
     Boolean filterOnChange = null;
     Boolean lazyFiltering = null;
+    Boolean allowFkFilterByIdentifier = null;
     String operator = null;
     Long thresholdToFilter = null;
     JSONObject result = new JSONObject();
 
     if (field != null && field.getId() != null) {
       if (canSort == null || canFilter == null || operator == null || filterOnChange == null
-          || thresholdToFilter == null) {
+          || thresholdToFilter == null || allowFkFilterByIdentifier == null) {
         List<Object> fieldParams = new ArrayList<Object>();
         String fieldConfsHql = " as p where p.field.id = ? ";
         fieldParams.add(field.getId());
@@ -217,6 +218,13 @@ public class OBViewUtil {
               filterOnChange = false;
             }
           }
+          if (allowFkFilterByIdentifier == null) {
+            if ("Y".equals(fieldConfs.get(0).getAllowFilterByIdentifier())) {
+              allowFkFilterByIdentifier = true;
+            } else if ("N".equals(fieldConfs.get(0).getAllowFilterByIdentifier())) {
+              allowFkFilterByIdentifier = false;
+            }
+          }
           if (thresholdToFilter == null) {
             thresholdToFilter = fieldConfs.get(0).getThresholdToFilter();
           }
@@ -225,7 +233,7 @@ public class OBViewUtil {
     }
 
     if (canSort == null || canFilter == null || operator == null || filterOnChange == null
-        || thresholdToFilter == null) {
+        || thresholdToFilter == null || allowFkFilterByIdentifier == null) {
       List<Object> tabParams = new ArrayList<Object>();
       String tabConfsHql = " as p where p.tab.id = ? ";
       tabParams.add(tab.getId());
@@ -267,6 +275,14 @@ public class OBViewUtil {
             lazyFiltering = false;
           }
         }
+        if (allowFkFilterByIdentifier == null) {
+          if ("Y".equals(tabConfs.get(0).getAllowFilterByIdentifier())) {
+            allowFkFilterByIdentifier = true;
+          } else if ("N".equals(tabConfs.get(0).getAllowFilterByIdentifier())) {
+            allowFkFilterByIdentifier = false;
+          }
+        }
+
         if (thresholdToFilter == null) {
           thresholdToFilter = tabConfs.get(0).getThresholdToFilter();
         }
@@ -295,6 +311,9 @@ public class OBViewUtil {
         }
         if (thresholdToFilter == null) {
           thresholdToFilter = sysConfs.get(0).getThresholdToFilter();
+        }
+        if (allowFkFilterByIdentifier == null) {
+          allowFkFilterByIdentifier = sysConfs.get(0).isAllowFilterByIdentifier();
         }
       }
     }
@@ -334,6 +353,9 @@ public class OBViewUtil {
       }
       if (thresholdToFilter != null) {
         result.put("thresholdToFilter", thresholdToFilter);
+      }
+      if (allowFkFilterByIdentifier != null) {
+        result.put("allowFkFilterByIdentifier", allowFkFilterByIdentifier);
       }
     } catch (JSONException e) {
       log.error("Couldn't get field property value");
