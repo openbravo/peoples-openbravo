@@ -20,7 +20,21 @@
     discountRules: alreadyDefinedRules,
     executor: new OB.Model.DiscountsExecutor(),
     preventApplyPromotions: false,
+    applyPromotionsTimeout: {},
     applyPromotions: function (receipt, line) {
+      var me = this,
+          timeoutId;
+      if (line && this.applyPromotionsTimeout[line.cid]) {
+        clearTimeout(this.applyPromotionsTimeout[line.cid]);
+      }
+      timeoutId = setTimeout(function () {
+        me.applyPromotionsImp(receipt, line);
+      }, 300);
+      if (line) {
+        this.applyPromotionsTimeout[line.cid] = timeoutId;
+      }
+    },
+    applyPromotionsLat: function (receipt, line) {
       var me = this;
       if (receipt.get('skipApplyPromotions') || this.preventApplyPromotions) {
         return;
@@ -79,10 +93,10 @@
                   oldLines.push(l.clone());
                 });
                 me.applyPromotionsImp(auxReceipt, undefined, true);
-              }else {
+              } else {
                 receipt.trigger('applyPromotionsFinished');
               }
-            }else {
+            } else {
               receipt.trigger('applyPromotionsFinished');
             }
 
