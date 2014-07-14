@@ -14764,8 +14764,8 @@ The corresponding tables have then the following setting:
 <!--538F938952AC44A182A9AB92DD7895DB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--538F938952AC44A182A9AB92DD7895DB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--538F938952AC44A182A9AB92DD7895DB-->  <NAME><![CDATA[Process Group]]></NAME>
-<!--538F938952AC44A182A9AB92DD7895DB-->  <DESCRIPTION><![CDATA[Create a Process Group to be executed in serials from the Process Request window]]></DESCRIPTION>
-<!--538F938952AC44A182A9AB92DD7895DB-->  <HELP><![CDATA[Create a Process Group to be executed in serials from the Process Request window]]></HELP>
+<!--538F938952AC44A182A9AB92DD7895DB-->  <DESCRIPTION><![CDATA[Create a Process Group to be able to schedule and execute a group of processes as a single unit from the Process Scheduler. The batch of processes will be executed in series.]]></DESCRIPTION>
+<!--538F938952AC44A182A9AB92DD7895DB-->  <HELP><![CDATA[Create a Process Group to be able to schedule and execute a group of processes as a single unit from the Process Scheduler. The batch of processes will be executed in series.]]></HELP>
 <!--538F938952AC44A182A9AB92DD7895DB-->  <AD_TABLE_ID><![CDATA[861F0EA985C7422080911D45FB53F4F2]]></AD_TABLE_ID>
 <!--538F938952AC44A182A9AB92DD7895DB-->  <AD_WINDOW_ID><![CDATA[C846A9EFF5D741A693029D516432BF6C]]></AD_WINDOW_ID>
 <!--538F938952AC44A182A9AB92DD7895DB-->  <SEQNO><![CDATA[10]]></SEQNO>

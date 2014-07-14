@@ -19,17 +19,17 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
@@ -70,18 +70,15 @@ public class ScheduleProcess extends HttpSecureAppServlet {
 
     try {
       // Avoid launch empty groups
+      // Duplicated code in: RescheduleProcess
       if (group.equals("Y")) {
         ProcessRequest requestObject = OBDal.getInstance().get(ProcessRequest.class, requestId);
-        List<ProcessGroupList> processes = requestObject.getProcessGroup()
-            .getProcessGroupListList();
-        List<ProcessGroupList> activeProcesses = new ArrayList<ProcessGroupList>();
-        for (ProcessGroupList process : processes) {
-          if (process.isActive()) {
-            activeProcesses.add(process);
-          }
-        }
-
-        if (activeProcesses.size() == 0) {
+        OBCriteria<ProcessGroupList> processListCri = OBDal.getInstance().createCriteria(
+            ProcessGroupList.class);
+        processListCri.add(Restrictions.eq(ProcessGroupList.PROPERTY_PROCESSGROUP,
+            requestObject.getProcessGroup()));
+        processListCri.setMaxResults(1);
+        if (processListCri.list().size() == 0) {
           advisePopUp(request, response, "ERROR", OBMessageUtils.getI18NMessage("Error", null),
               OBMessageUtils.getI18NMessage("PROGROUP_NoProcess", new String[] { requestObject
                   .getProcessGroup().getName() }));

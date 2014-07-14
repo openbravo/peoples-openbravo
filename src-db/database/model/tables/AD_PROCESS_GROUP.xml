@@ -43,11 +43,11 @@
       </column>
       <column name="PREVENTCONCURRENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+        <onCreateDefault/>
       </column>
       <column name="STOPWHENFAIL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+        <onCreateDefault/>
       </column>
       <column name="AD_MODULE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
