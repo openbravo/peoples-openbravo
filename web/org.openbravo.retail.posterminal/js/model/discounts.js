@@ -28,7 +28,7 @@
         clearTimeout(this.applyPromotionsTimeout[line.cid]);
       }
       timeoutId = setTimeout(function () {
-        me.applyPromotionsImp(receipt, line);
+        me.applyPromotionsLat(receipt, line);
       }, 300);
       if (line) {
         this.applyPromotionsTimeout[line.cid] = timeoutId;
