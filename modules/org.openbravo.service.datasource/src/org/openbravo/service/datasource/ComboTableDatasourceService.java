@@ -72,18 +72,16 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     String filterString = null;
 
     int startRow = -1, endRow = -1, num = 0;
-    ;
+
+    OBContext.setAdminMode(true);
     try {
+      // check access to current entity
       field = OBDal.getInstance().get(Field.class, fieldId);
       column = field.getColumn();
       targetEntity = ModelProvider.getInstance().getEntityByTableId(
           (String) DalUtil.getId(column.getTable()));
       OBContext.getOBContext().getEntityAccessChecker().checkReadable(targetEntity);
-    } catch (Exception e1) {
-      throw new OBException(e1);
-    }
-    OBContext.setAdminMode(true);
-    try {
+
       if (!StringUtils.isEmpty(parameters.get("criteria"))) {
         String criteria = parameters.get("criteria");
         for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
