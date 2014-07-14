@@ -29,7 +29,7 @@
       }
       timeoutId = setTimeout(function () {
         me.applyPromotionsLat(receipt, line);
-      }, 300);
+      }, 0);
       if (line) {
         OB.MobileApp.view.waterfall('onApplyingDiscount');
         this.applyPromotionsTimeout[line.cid] = timeoutId;
