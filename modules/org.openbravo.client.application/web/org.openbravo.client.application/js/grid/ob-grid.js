@@ -260,7 +260,7 @@ isc.OBGrid.addProperties({
       clientClass = clientClassArray[0];
       clientClassProps = clientClassArray[1];
 
-      clientClassIsShownInGridEdit = new Function('return ' + clientClass + '.getInstanceProperty("isShownInGridEdit")')();
+      clientClassIsShownInGridEdit = OB.Utilities.getCanvasProp(clientClass, 'isShownInGridEdit');
 
       if (!isEditRecord || clientClassIsShownInGridEdit) {
         canvas = isc.ClassFactory.newInstance(clientClass, {
@@ -562,7 +562,7 @@ isc.OBGrid.addProperties({
 
     OBAbsoluteTimeItem_FormatCellValueFunction = function (value, record, rowNum, colNum, grid) {
       var newValue = value,
-          format = isc.OBAbsoluteTimeItem.getPrototype().timeFormatter;
+          format = isc.OBAbsoluteTimeItem.getInstanceProperty('timeFormatter');
       if (Object.prototype.toString.call(newValue) === '[object String]') {
         newValue = isc.Time.parseInput(newValue);
       }
@@ -575,7 +575,7 @@ isc.OBGrid.addProperties({
       var newValue = value;
       newValue = OB.Utilities.Date.addTimezoneOffset(newValue);
       var showTime = false;
-      if (this.editorType && new Function('return isc.' + this.editorType + '.getPrototype().showTime')()) {
+      if (this.editorType && OB.Utilities.getCanvasProp(this.editorType, 'showTime')) {
         showTime = true;
       }
 
@@ -603,13 +603,13 @@ isc.OBGrid.addProperties({
           field.filterEditorProperties.displayProperty = field.displayProperty;
         }
 
-        if (field.editorType && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteTime')()) {
+        if (field.editorType && OB.Utilities.getCanvasProp(field.editorType, 'isAbsoluteTime')) {
           // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
           // http://forums.smartclient.com/showthread.php?p=116135
           field.formatCellValue = OBAbsoluteTimeItem_FormatCellValueFunction;
         }
 
-        if (field.editorType && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteDateTime')()) {
+        if (field.editorType && OB.Utilities.getCanvasProp(field.editorType, 'isAbsoluteDateTime')) {
           // In the case of an absolute datetime, the JS date needs to be converted in order to avoid the UTC conversion
           // http://forums.smartclient.com/showthread.php?p=116135
           field.formatCellValue = OBAbsoluteDateTimeItem_FormatCellValueFunction;
@@ -623,7 +623,7 @@ isc.OBGrid.addProperties({
           field.formatCellValueFunctionReplaced = true;
           field.formatCellValue = formatCellValueFunction;
           // if there is a clientClass that expands a grid record, fixedRecordHeight should be false in order to allow the record expansion
-          if (new Function('return isc.' + field.clientClass + '.getPrototype().canExpandRecord')()) {
+          if (OB.Utilities.getCanvasProp(field.clientClass, 'canExpandRecord')) {
             this.fixedRecordHeights = false;
           }
         }

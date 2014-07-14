@@ -2489,7 +2489,7 @@ isc.OBStandardView.addProperties({
         field = component.getField(propertyObj.property);
         if (field && field.editorType //
         && Object.prototype.toString.call(value) === '[object Date]' //
-        && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteDateTime')()) { //
+        && OB.Utilities.getCanvasProp(field.editorType, 'isAbsoluteDateTime')) {
           // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
           // http://forums.smartclient.com/showthread.php?p=116135
           value = OB.Utilities.Date.addTimezoneOffset(value);

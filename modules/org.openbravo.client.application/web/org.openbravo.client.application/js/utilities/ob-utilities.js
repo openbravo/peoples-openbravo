@@ -1079,6 +1079,25 @@ OB.Utilities.clientClassSplitProps = function (clientClass) {
   return ret;
 };
 
+//** {{{ OB.Utilities.getCanvasProp }}} **
+//
+// Returns the value of the property of the canvas item
+// Parameters:
+//  * {{{canvas}}} String the canvas item
+//  * {{{prop}}} String the property to get the value
+OB.Utilities.getCanvasProp = function (canvas, prop) {
+  if (canvas.indexOf('{') !== -1) {
+    canvas = OB.Utilities.clientClassSplitProps(canvas)[0];
+  }
+  if (new Function('if (window.' + canvas + ') { return true; }')()) {
+    if (new Function('if (typeof ' + canvas + '.getInstanceProperty === "function") { return true; }')()) {
+      // 'getInstanceProperty' is a Smartclient function to determine the property value of a canvas
+      return new Function('return ' + canvas + '.getInstanceProperty("' + prop + '")')();
+    }
+  }
+  return;
+};
+
 
 //** {{{ OB.Utilities.getRGBAStringFromOBColor }}} **
 //
