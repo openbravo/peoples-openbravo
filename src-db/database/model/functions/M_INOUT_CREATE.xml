@@ -34,7 +34,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -228,8 +228,7 @@ BEGIN --BODY
           AND o.C_DocType_ID IN (SELECT C_DocType_ID
                                  FROM C_DOCTYPE
                                  WHERE DocBaseType='SOO'
-                                   AND DocSubTypeSO NOT IN('ON', 'OB')
-                                   AND isReturn = 'N')
+                                   AND DocSubTypeSO NOT IN('ON', 'OB'))
           AND ((v_Selection='Y' AND o.IsSelected='Y')
               OR (v_Selection<>'Y'
                   AND (v_AD_Org_ID IS NULL OR v_AD_Org_ID=o.AD_Org_ID) 
@@ -275,8 +274,7 @@ BEGIN --BODY
           AND o.C_DocType_ID IN (SELECT C_DocType_ID
                                  FROM C_DOCTYPE
                                  WHERE DocBaseType='SOO'
-                                   AND DocSubTypeSO NOT IN('ON', 'OB')
-                                   AND isReturn = 'N')
+                                   AND DocSubTypeSO NOT IN('ON', 'OB'))
           -- Manually Selected
           AND ((v_Selection='Y' AND o.IsSelected='Y')
               OR (v_Selection<>'Y' -- Specific or individual organization
