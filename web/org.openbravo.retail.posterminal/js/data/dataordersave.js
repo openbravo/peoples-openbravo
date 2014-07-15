@@ -37,6 +37,36 @@
       }
       this.receipt.set('hasbeenpaid', 'Y');
 
+      // check receipt integrity
+      // sum the amounts of the lines
+      var oldGross = this.receipt.getGross();
+      var realGross = 0;
+      this.receipt.get('lines').forEach(function (line) {
+        line.calculateGross();
+        if (line.get('priceIncludesTax')) {
+          realGross = OB.DEC.add(realGross, line.get('lineGrossAmount'));
+        } else {
+          realGross = OB.DEC.add(realGross, line.get('discountedGross'));
+        }
+      });
+      // check if the amount of the lines is different from the gross
+      if (oldGross !== realGross) {
+        OB.error("Receipt integrity: FAILED");
+        if (OB.POS.modelterminal.hasPermission('OBPOS_TicketIntegrityCheck', true)) {
+          if (this.receipt.get('id')) {
+            OB.Dal.remove(model.get('orderList').current, null, null);
+          }
+          model.get('orderList').deleteCurrent();
+          OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_ErrorOrderIntegrity'), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true,
+            action: function () {}
+          }]);
+          return;
+        }
+      }
+      OB.trace("Receipt integrity: OK");
+
       OB.UTIL.updateDocumentSequenceInDB(docno);
 
       delete this.receipt.attributes.json;
