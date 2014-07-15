@@ -22,7 +22,7 @@ isc.ClassFactory.defineClass('OBGrid', isc.ListGrid);
 // The OBGrid combines common grid functionality usefull for different 
 // grid implementations.
 isc.OBGrid.addProperties({
-
+  bodyConstructor: 'OBViewGridBody',
   reverseRTLAlign: true,
   dragTrackerMode: 'none',
   // recycle gives better performance but also results
@@ -75,6 +75,18 @@ isc.OBGrid.addProperties({
     }
 
     return value;
+  },
+
+  onFetchData: function (criteria, requestProperties) {
+    this.setFechingData();
+  },
+
+  setFechingData: function () {
+    this.fetchingData = true;
+  },
+
+  isFetchingData: function () {
+    return this.fetchingData;
   },
 
   cellHoverHTML: function (record, rowNum, colNum) {
@@ -689,6 +701,9 @@ isc.OBGrid.addProperties({
       }
     }
     if (!keepFilterClause) {
+      if (this.view && this.view.viewGrid) {
+        this.view.viewGrid.fetchingData = true;
+      }
       // forcing fetch from server in case default filters are removed, in other
       // cases adaptive filtering can be used if possible
       if (this.data) {
@@ -1216,6 +1231,38 @@ isc.OBGrid.addProperties({
     this.getExpansionComponent = function () {
       return;
     };
+  }
+});
+
+// = OBViewGridBody =
+// OBViewGridBody is used as bodyConstructor for OBGrid, its purpose is to flag 
+// in the grid when fetch data is complete and data is drawn, to be used by automated 
+// Selenium tests
+isc.ClassFactory.defineClass('OBViewGridBody', 'GridBody');
+isc.OBViewGridBody.addProperties({
+  redraw: function () {
+    var newDrawArea, grid, drawArea, firstRecord, loading;
+
+    this.Super('redraw', arguments);
+
+    grid = this.grid;
+    if (grid && grid.fetchingData && grid.body === this) {
+      // check if we are still loading data
+      newDrawArea = this.getDrawArea();
+      drawArea = this._oldDrawArea;
+      if (!drawArea) {
+        drawArea = this._oldDrawArea = [0, 0, 0, 0];
+      }
+
+      firstRecord = grid.getRecord(newDrawArea[0]);
+
+      loading = firstRecord === Array.LOADING;
+
+      if (!loading) {
+        // data is already loaded
+        this.grid.fetchingData = false;
+      }
+    }
   }
 });
 

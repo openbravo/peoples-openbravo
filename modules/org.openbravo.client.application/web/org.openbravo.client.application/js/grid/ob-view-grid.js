@@ -2083,6 +2083,7 @@ isc.OBViewGrid.addProperties({
       this.data.totalRows = 0;
       this.data.cachedRows = 0;
     }
+    this.setFechingData();
 
     requestProperties = requestProperties || {};
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
@@ -2417,6 +2418,8 @@ isc.OBViewGrid.addProperties({
     }
     return false;
   },
+
+
 
   // +++++++++++++++++++++++++++++ Record Selection Handling +++++++++++++++++++++++
   updateSelectedCountDisplay: function () {

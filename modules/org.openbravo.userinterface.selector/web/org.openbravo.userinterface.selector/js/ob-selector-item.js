@@ -143,6 +143,7 @@ isc.OBSelectorPopupWindow.addProperties({
       sortField: this.displayField,
 
       onFetchData: function (criteria, requestProperties) {
+        this.setFechingData();
         requestProperties = requestProperties || {};
         requestProperties.params = this.getFetchRequestParams(requestProperties.params);
       },
