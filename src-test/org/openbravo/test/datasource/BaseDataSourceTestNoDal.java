@@ -66,8 +66,6 @@ public class BaseDataSourceTestNoDal extends TestCase {
   /**
    * Obtains URL of Openbravo instance, by default taken from Openbravo.poperties context.url
    * property
-   * 
-   * @return
    */
   protected String getOpenbravoURL() {
     if (OB_URL != null) {

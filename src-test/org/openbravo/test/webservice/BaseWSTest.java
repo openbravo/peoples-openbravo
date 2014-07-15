@@ -236,9 +236,9 @@ public class BaseWSTest extends BaseTest {
    *          the expected HTTP response code
    * @param validate
    *          if true then the response content is validated against the Openbravo XML Schema
-   * @param logError
+   * @param logException
    *          indicates whether in case of Exception it should be logged, this param should be false
-   *          when Exception is exptected in order not to pollute the log
+   *          when Exception is expected in order not to pollute the log
    * @return the content returned from the GET request
    */
   protected String doTestGetRequest(String wsPart, String testContent, int responseCode,
