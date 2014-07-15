@@ -395,7 +395,8 @@ enyo.kind({
       var currencyId = payment.get('paymentMethod').currency;
       var me = this;
       OB.Dal.find(OB.Model.CurrencyPanel, {
-        currency: currencyId
+        currency: currencyId,
+        _orderByClause: 'line'
       }, function (coins) {
         var coinCol = new Backbone.Collection();
 

@@ -336,7 +336,8 @@ enyo.kind({
 
         // Build the panel
         OB.Dal.find(OB.Model.CurrencyPanel, {
-          'currency': payment.paymentMethod.currency
+          'currency': payment.paymentMethod.currency,
+          _orderByClause: 'line'
         }, function (datacurrency) {
           if (datacurrency.length > 0) {
             me.buildCoinsAndNotesPanel(payment, payment.symbol, datacurrency);
