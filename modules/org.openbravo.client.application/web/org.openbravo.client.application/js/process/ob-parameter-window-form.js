@@ -67,5 +67,17 @@ isc.OBParameterWindowForm.addProperties({
       this.redraw();
     }
     this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
+  },
+
+  setFieldSections: function () {
+    var i, item, length;
+
+    length = this.getItems().length;
+    for (i = 0; i < length; i++) {
+      item = this.getItem(i);
+      if (item && item.setSectionItemInContent) {
+        item.setSectionItemInContent(this);
+      }
+    }
   }
 });

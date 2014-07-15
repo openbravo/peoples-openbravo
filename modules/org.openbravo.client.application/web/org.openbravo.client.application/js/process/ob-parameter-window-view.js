@@ -250,6 +250,7 @@ isc.OBParameterWindowView.addProperties({
           this.isPickAndExecuteWindow = true;
         }
         this.theForm.setItems(items);
+        this.theForm.setFieldSections();
         this.formContainerLayout = isc.OBFormContainerLayout.create({});
         this.formContainerLayout.addMember(this.theForm);
         this.members.push(this.formContainerLayout);
