@@ -251,6 +251,15 @@ isc.OBGrid.addProperties({
     return false;
   },
 
+  getCellAlign: function (record, rowNum, colNum) {
+    var fld = this.getFields()[colNum];
+    if (fld && fld.clientClass && OB.Utilities.getCanvasProp(fld.clientClass, 'cellAlign')) {
+      return OB.Utilities.getCanvasProp(fld.clientClass, 'cellAlign');
+    } else {
+      return this.Super('getCellAlign', arguments);
+    }
+  },
+
   createRecordComponent: function (record, colNum) {
     var field = this.getField(colNum),
         rowNum = this.getRecordIndex(record),
@@ -637,6 +646,25 @@ isc.OBGrid.addProperties({
           // if there is a clientClass that expands a grid record, fixedRecordHeight should be false in order to allow the record expansion
           if (OB.Utilities.getCanvasProp(field.clientClass, 'canExpandRecord')) {
             this.fixedRecordHeights = false;
+          }
+          // Manage the case the clientClass overwrites the 'canSort'
+          if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'canSort') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'canSort') === null) {
+            field.canSort = OB.Utilities.getCanvasProp(field.clientClass, 'canSort');
+          }
+          // Manage the case the clientClass overwrites the 'canFilter'
+          if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'canFilter') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'canFilter') === null) {
+            field.canFilter = OB.Utilities.getCanvasProp(field.clientClass, 'canFilter');
+          }
+          // Manage the case the clientClass overwrites the 'filterEditorType'
+          if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'filterEditorType') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'filterEditorType') === null) {
+            field.filterEditorType = OB.Utilities.getCanvasProp(field.clientClass, 'filterEditorType');
+          }
+          // Manage the case the clientClass overwrites the 'editorType'. 'OBClientClassCanvasItem' by default.
+          if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'editorType') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'editorType') === null) {
+            field.editorType = OB.Utilities.getCanvasProp(field.clientClass, 'editorType');
+            if (field.editorProperties) {
+              field.editorProperties.editorType = OB.Utilities.getCanvasProp(field.clientClass, 'editorType');
+            }
           }
         }
       }
