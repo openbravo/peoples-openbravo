@@ -106,6 +106,16 @@ public class CostingServer {
       createTransactionCost();
       OBDal.getInstance().save(transaction);
 
+      // check if price correction is needed
+      if (transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList().size() != 0) {
+        try {
+          PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
+        } catch (JSONException e) {
+          OBDal.getInstance().rollbackAndClose();
+          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+        }
+      }
+
       // check if cost adjustment should be done
       if (CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction, getCostingRule()
           .isWarehouseDimension())) {

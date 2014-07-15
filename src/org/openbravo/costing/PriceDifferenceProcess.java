@@ -42,6 +42,69 @@ import org.slf4j.LoggerFactory;
 public class PriceDifferenceProcess {
   private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcessHandler.class);
 
+  public static void processPriceDifferenceTransaction(MaterialTransaction materialTransaction)
+      throws OBException, JSONException {
+    BigDecimal newAmountCost = BigDecimal.ZERO;
+    BigDecimal orderAmt = BigDecimal.ZERO;
+    BigDecimal oldAmountCost = BigDecimal.ZERO;
+    BigDecimal qty = BigDecimal.ZERO;
+
+    CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
+        materialTransaction.getOrganization(), "PDC"); // PDC= Price Difference Correction
+    // No invoice
+    if (materialTransaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList().size() == 0) {// getProcurementReceiptInvoiceMatchList()????
+
+      for (org.openbravo.model.procurement.POInvoiceMatch matchPO : materialTransaction
+          .getGoodsShipmentLine().getProcurementPOInvoiceMatchList()) {
+        orderAmt = matchPO.getQuantity().multiply(matchPO.getSalesOrderLine().getUnitPrice());
+        newAmountCost = newAmountCost.add(FinancialUtils.getConvertedAmount(orderAmt, matchPO
+            .getSalesOrderLine().getCurrency(), materialTransaction.getCurrency(),
+            materialTransaction.getMovementDate(), materialTransaction.getOrganization(),
+            FinancialUtils.PRECISION_STANDARD));
+      }
+    } else {
+      for (ReceiptInvoiceMatch matchReceipt : materialTransaction.getGoodsShipmentLine()
+          .getProcurementReceiptInvoiceMatchList()) {
+        orderAmt = matchReceipt.getQuantity()
+            .multiply(matchReceipt.getInvoiceLine().getUnitPrice());
+        newAmountCost = newAmountCost.add(FinancialUtils.getConvertedAmount(orderAmt, matchReceipt
+            .getInvoiceLine().getInvoice().getCurrency(), materialTransaction.getCurrency(),
+            materialTransaction.getMovementDate(), materialTransaction // Currency From??????
+                .getOrganization(), FinancialUtils.PRECISION_STANDARD));
+        qty = qty.add(matchReceipt.getQuantity());
+      }
+      if (qty != materialTransaction.getMovementQuantity()) {
+        for (org.openbravo.model.procurement.POInvoiceMatch matchPO : materialTransaction
+            .getGoodsShipmentLine().getProcurementPOInvoiceMatchList()) {
+
+          if (matchPO.getGoodsShipmentLine() != null) {
+
+            orderAmt = (matchPO.getQuantity().subtract(qty)).multiply(matchPO.getSalesOrderLine()
+                .getUnitPrice());
+            newAmountCost = newAmountCost.add(FinancialUtils.getConvertedAmount(orderAmt, matchPO
+                .getSalesOrderLine().getCurrency(), materialTransaction.getCurrency(),
+                materialTransaction.getMovementDate(), materialTransaction.getOrganization(),
+                FinancialUtils.PRECISION_STANDARD));
+            break;
+          }
+        }
+      }
+    }
+    oldAmountCost = materialTransaction.getTransactionCost();
+    for (TransactionCost trxCost : materialTransaction.getTransactionCostList()) {
+      if (trxCost.getCostadjustmentline() != null
+          && trxCost.getCostadjustmentline().getCostAdjustment().getSourceProcess().equals("PDC")) {
+        oldAmountCost = oldAmountCost.add(trxCost.getCost());
+      }
+    }
+    CostAdjustmentUtils.insertCostAdjustmentLine(materialTransaction, costAdjustmentHeader,
+        newAmountCost.subtract(oldAmountCost), Boolean.TRUE, null, null);
+
+    materialTransaction.setCheckpricedifference(false);
+    OBDal.getInstance().save(materialTransaction);
+
+  }
+
   /**
    * Method to process a cost adjustment.
    * 
@@ -55,11 +118,6 @@ public class PriceDifferenceProcess {
    */
   public static JSONObject processPriceDifference(Date date, Product product) throws OBException,
       JSONException {
-
-    BigDecimal newAmountCost;
-    BigDecimal orderAmt;
-    BigDecimal oldAmountCost;
-    BigDecimal qty;
 
     JSONObject message = new JSONObject();
     message.put("severity", "success");
@@ -80,61 +138,8 @@ public class PriceDifferenceProcess {
     ScrollableResults lines = mTrxs.scroll(ScrollMode.FORWARD_ONLY);
 
     while (lines.next()) {
-      newAmountCost = BigDecimal.ZERO;
-      oldAmountCost = BigDecimal.ZERO;
-      qty = BigDecimal.ZERO;
       MaterialTransaction line = (MaterialTransaction) lines.get(0);
-      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
-          line.getOrganization(), "PDC"); // PDC= Price Difference Correction
-      // No invoice
-      if (line.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList().size() == 0) {// getProcurementReceiptInvoiceMatchList()????
-
-        for (org.openbravo.model.procurement.POInvoiceMatch matchPO : line.getGoodsShipmentLine()
-            .getProcurementPOInvoiceMatchList()) {
-          orderAmt = matchPO.getQuantity().multiply(matchPO.getSalesOrderLine().getUnitPrice());
-          newAmountCost = newAmountCost.add(FinancialUtils.getConvertedAmount(orderAmt, matchPO
-              .getSalesOrderLine().getCurrency(), line.getCurrency(), line.getMovementDate(), line
-              .getOrganization(), FinancialUtils.PRECISION_STANDARD));
-        }
-      } else {
-        for (ReceiptInvoiceMatch matchReceipt : line.getGoodsShipmentLine()
-            .getProcurementReceiptInvoiceMatchList()) {
-          orderAmt = matchReceipt.getQuantity().multiply(
-              matchReceipt.getInvoiceLine().getUnitPrice());
-          newAmountCost = newAmountCost.add(FinancialUtils.getConvertedAmount(orderAmt,
-              matchReceipt.getInvoiceLine().getInvoice().getCurrency(), line.getCurrency(),
-              line.getMovementDate(), line // Currency From??????
-                  .getOrganization(), FinancialUtils.PRECISION_STANDARD));
-          qty = qty.add(matchReceipt.getQuantity());
-        }
-        if (qty != line.getMovementQuantity()) {
-          for (org.openbravo.model.procurement.POInvoiceMatch matchPO : line.getGoodsShipmentLine()
-              .getProcurementPOInvoiceMatchList()) {
-
-            if (matchPO.getGoodsShipmentLine() != null) {
-
-              orderAmt = (matchPO.getQuantity().subtract(qty)).multiply(matchPO.getSalesOrderLine()
-                  .getUnitPrice());
-              newAmountCost = newAmountCost.add(FinancialUtils.getConvertedAmount(orderAmt, matchPO
-                  .getSalesOrderLine().getCurrency(), line.getCurrency(), line.getMovementDate(),
-                  line.getOrganization(), FinancialUtils.PRECISION_STANDARD));
-              break;
-            }
-          }
-        }
-      }
-      oldAmountCost = line.getTransactionCost();
-      for (TransactionCost trxCost : line.getTransactionCostList()) {
-        if (trxCost.getCostadjustmentline() != null
-            && trxCost.getCostadjustmentline().getCostAdjustment().getSourceProcess().equals("PDC")) {
-          oldAmountCost = oldAmountCost.add(trxCost.getCost());
-        }
-      }
-      CostAdjustmentUtils.insertCostAdjustmentLine(line, costAdjustmentHeader,
-          newAmountCost.subtract(oldAmountCost), Boolean.TRUE, null, null);
-
-      line.setCheckpricedifference(false);
-      OBDal.getInstance().save(line);
+      processPriceDifferenceTransaction(line);
     }
     return message;
   }
