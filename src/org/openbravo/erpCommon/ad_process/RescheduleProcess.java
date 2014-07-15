@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,11 +25,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.ui.ProcessGroupList;
+import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 
@@ -61,9 +66,26 @@ public class RescheduleProcess extends HttpSecureAppServlet {
 
     final String windowId = vars.getStringParameter("inpwindowId");
     final String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
+    final String group = vars.getStringParameter("inpisgroup");
 
     String message;
     try {
+      // Avoid launch empty groups
+      // Duplicated code in: ScheduleProcess
+      if (group.equals("Y")) {
+        ProcessRequest requestObject = OBDal.getInstance().get(ProcessRequest.class, requestId);
+        OBCriteria<ProcessGroupList> processListCri = OBDal.getInstance().createCriteria(
+            ProcessGroupList.class);
+        processListCri.add(Restrictions.eq(ProcessGroupList.PROPERTY_PROCESSGROUP,
+            requestObject.getProcessGroup()));
+        processListCri.setMaxResults(1);
+        if (processListCri.list().size() == 0) {
+          advisePopUp(request, response, "ERROR", OBMessageUtils.getI18NMessage("Error", null),
+              OBMessageUtils.getI18NMessage("PROGROUP_NoProcess", new String[] { requestObject
+                  .getProcessGroup().getName() }));
+          return;
+        }
+      }
       final ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
       OBScheduler.getInstance().schedule(requestId, bundle);
 
