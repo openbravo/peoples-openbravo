@@ -803,7 +803,7 @@
    
           SELECT count(*) 
           INTO v_isSchedule
-          FROM DUAL WHERE EXISTS (SELECT 1 FROM C_ORDER WHERE ISSELECTED = 'Y' AND INVOICERULE = 'S');
+          FROM DUAL WHERE EXISTS (SELECT 1 FROM C_ORDER WHERE ISSELECTED = 'Y' AND INVOICERULE IN ('S','D'));
        
         /**
         * Invoice Schedule ======================================================
