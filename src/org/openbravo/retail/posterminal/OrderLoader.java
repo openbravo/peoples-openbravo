@@ -1148,8 +1148,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
       // p_dateLastInventory --- **
       cs.setDate(11, null);
       // p_preqty
-      cs.setBigDecimal(12, transaction.getMovementQuantity() != null ? transaction
-          .getMovementQuantity().multiply(NEGATIVE_ONE) : null);
+      cs.setBigDecimal(12, BigDecimal.ZERO);
       // p_preqtyorder
       cs.setBigDecimal(13, transaction.getOrderQuantity() != null ? transaction.getOrderQuantity()
           .multiply(NEGATIVE_ONE) : null);
