@@ -30,6 +30,8 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The main purpose of the user context cache is to support session-less http requests without a
@@ -50,6 +52,8 @@ public class UserContextCache implements OBSingleton {
   private final long EXPIRES_IN = 1000 * 60 * 30;
 
   private static UserContextCache instance;
+
+  private static final Logger log = LoggerFactory.getLogger(UserContextCache.class);
 
   public static synchronized UserContextCache getInstance() {
     if (instance == null) {
@@ -84,8 +88,17 @@ public class UserContextCache implements OBSingleton {
         // and get new one this can happen in case of: existent ws cache entry for a user and login
         // in app with same browser and different user at this point OBContext is reset to new user
         // but still cached to old one
+        if (log.isDebugEnabled()) {
+          log.debug(
+              "Found element in cache for userId {}, but had incorrect user {}. Removing it from cache.",
+              userId, ce.getObContext().getUser());
+        }
         cache.remove(ce);
       } else {
+        if (log.isDebugEnabled()) {
+          log.debug("Found element in cache. User: {}, Role: {}", ce.getObContext().getUser(), ce
+              .getObContext().getRole());
+        }
         ce.setLastUsed(System.currentTimeMillis());
         return ce.getObContext();
       }
@@ -96,6 +109,10 @@ public class UserContextCache implements OBSingleton {
     ce.setObContext(obContext);
     ce.setUserId(userId);
     cache.put(userId, ce);
+    if (log.isDebugEnabled()) {
+      log.debug("Created new cache entry.  User: {}, Role: {}", ce.getObContext().getUser(), ce
+          .getObContext().getRole());
+    }
     return obContext;
   }
 

@@ -72,11 +72,13 @@ public class BaseWebServiceServlet extends HttpServlet {
     }
 
     if (userId != null) {
+      log.debug("WS accessed by userId " + userId);
       OBContext.setOBContext(UserContextCache.getInstance().getCreateOBContext(userId));
       OBContext.setOBContextInSession(request, OBContext.getOBContext());
 
       doService(request, response);
     } else {
+      log.debug("WS accessed by unauthenticated user, requesting authentication");
       // not logged in
       if (!"false".equals(request.getParameter("auth"))) {
         response.setHeader("WWW-Authenticate", "Basic realm=\"Openbravo\"");
