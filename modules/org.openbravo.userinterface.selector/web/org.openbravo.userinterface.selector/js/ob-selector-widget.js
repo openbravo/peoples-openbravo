@@ -64,6 +64,7 @@ isc.OBSelectorWidget.addClassProperties({
     // ** {{{ selectorFieldTextBoxStyle }}} **
     // Selector input css classname
     selectorFieldTextBoxStyle: 'selectItemText',
+    pendingTextBoxStyle: null,
 
     // ** {{{ selectorFieldTextBoxStyleRequired }}} **
     // Selector input css classname
@@ -646,6 +647,7 @@ isc.OBSelectorWidget.addProperties({
       validateOnChange: true,
       completeOnTab: true,
       valueMap: initialValueMap,
+      addUnknownValues: false,
       icons: [{
         selector: this,
         showFocused: true,
@@ -802,6 +804,8 @@ isc.OBSelectorWidget.addProperties({
     } else {
       this.selectorField.textBoxStyle = isc.OBSelectorWidget.styling.selectorFieldTextBoxStyle;
     }
+
+    this.selectorField.pendingTextBoxStyle = isc.OBSelectorWidget.styling.pendingTextBoxStyle;
 
     this.selectorField.setValue(this.openbravoField.value);
     this.initialValue = this.selectorField.getValue();
