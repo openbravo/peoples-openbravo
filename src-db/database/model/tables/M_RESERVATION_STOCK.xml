@@ -82,6 +82,12 @@
       <index name="M_RESERVATION_STOCK_RES" unique="false">
         <index-column name="M_RESERVATION_ID"/>
       </index>
+      <index name="M_RESERVSTOCK_ATTRSETINS_IDX" unique="false">
+        <index-column name="M_ATTRIBUTESETINSTANCE_ID"/>
+      </index>
+      <index name="M_RESERVSTOCK_LOCATOR_IDX" unique="false">
+        <index-column name="M_LOCATOR_ID"/>
+      </index>
       <index name="M_RESERVSTOCK_ORDERLINE_IDX" unique="false">
         <index-column name="C_ORDERLINE_ID"/>
       </index>
