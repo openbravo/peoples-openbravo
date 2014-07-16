@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009-2012 Openbravo SL 
+ * All portions are Copyright (C) 2009-2014 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -332,7 +332,7 @@ public class PaymentReport extends HttpSecureAppServlet {
             strPaymentMethodId, strFinancialAccountId, strcCurrency, strConvertCurrency,
             strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
             strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo, strExpectedDateFrom,
-            strExpectedDateTo);
+            strExpectedDateTo, "HTML");
       } catch (OBException e) {
         discardAL.add("sectionGroupCrit");
         discardAL.add("sectionStatus");
@@ -348,11 +348,12 @@ public class PaymentReport extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageType", "WARNING");
         xmlDocument.setParameter("messageTitle",
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()));
-        xmlDocument
-            .setParameter(
-                "messageMessage",
-                Utility.messageBD(this, "FINPR_NoConversionFound", vars.getLanguage())
-                    + e.getMessage());
+        String noConversionFound = "";
+        if (e.getMessage() != null && e.getMessage().contains("->"))
+          noConversionFound = Utility
+              .messageBD(this, "FINPR_NoConversionFound", vars.getLanguage());
+        xmlDocument.setParameter("messageMessage",
+            noConversionFound + Utility.messageBD(this, e.getMessage(), vars.getLanguage()));
       }
 
       if (data != null && data.length == 0) {
@@ -765,7 +766,7 @@ public class PaymentReport extends HttpSecureAppServlet {
           strPaymentMethodId, strFinancialAccountId, strcCurrency, strConvertCurrency,
           strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
           strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo, strExpectedDateFrom,
-          strExpectedDateTo);
+          strExpectedDateTo, strOutput);
     } catch (OBException e) {
       advisePopUp(request, response, "WARNING",
           Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
