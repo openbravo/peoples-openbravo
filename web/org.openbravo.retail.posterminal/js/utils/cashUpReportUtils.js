@@ -154,7 +154,7 @@
           });
         });
         };
-    _.each(cashUpModels, function (cashup) {
+    _.each(cashUpModels.models, function (cashup) {
       var cashUpId = cashup.get('id');
       OB.Dal.find(OB.Model.TaxCashUp, {
         cashup_id: cashUpId
