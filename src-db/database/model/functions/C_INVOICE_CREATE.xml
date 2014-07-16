@@ -258,7 +258,7 @@
                     AND o.ISSELECTED = 'Y'
                     AND o.DocStatus IN('CO', 'CL')
                     AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
-                    AND o.InvoiceRule NOT IN ('S')))  -- of all or a specific business partner / organization
+                    AND o.InvoiceRule NOT IN ('S','D')))  -- of all or a specific business partner / organization
                 AND EXISTS
                     (SELECT *
                      FROM C_ORDERLINE l
@@ -297,7 +297,7 @@
               AND o.ISSELECTED = 'Y'
               AND o.DocStatus IN('CO', 'CL')
               AND o.IsSOTrx='Y'  -- not for InvoiceSchedule
-              AND o.InvoiceRule NOT IN ('S')  -- of all or a specific business partner / organization
+              AND o.InvoiceRule NOT IN ('S','D')  -- of all or a specific business partner / organization
               ))
               AND EXISTS
               (SELECT *
