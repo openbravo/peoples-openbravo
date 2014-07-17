@@ -600,7 +600,14 @@ public class AdvancedQueryBuilder {
               useProperty = property.getEntity().getPropertyByColumnName(
                   referencedTable.getDisplayedColumn().getDBColumnName());
               final int index = useFieldName.lastIndexOf(DalUtil.DOT);
-              useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
+              if (useProperty.isPrimitive()) {
+                useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
+              } else {
+                // adding _identifier so that the identifier properties will be formed properly in
+                // computeLeftWhereClauseForIdentifier.
+                useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName()
+                    + DalUtil.DOT + JsonConstants.IDENTIFIER;
+              }
               break;
             }
           }
@@ -630,14 +637,16 @@ public class AdvancedQueryBuilder {
         clause = getMainAlias() + DalUtil.DOT
             + useFieldName.replace(DalUtil.DOT + JsonConstants.IDENTIFIER, "");
       } else {
-        clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause);
+        clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause,
+            tableReference);
       }
     } else if (!useProperty.isPrimitive()) {
       clause = clause + ".id";
     } else if (tableReference && useProperty.isTranslatable()
         && OBContext.hasTranslationInstalled()) {
       // filtering by table reference translatable field: use translation table
-      clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause);
+      clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause,
+          tableReference);
     }
 
     if (ignoreCase(properties, operator)) {
@@ -852,14 +861,20 @@ public class AdvancedQueryBuilder {
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,
-      String leftWherePart) {
+      String leftWherePart, boolean isTableReference) {
 
     // the identifierProperties are read from the owning entity of the
     // property, that should work fine, as this last property is always part of the
     // identifier
-    final List<Property> identifierProperties = property.getEntity().getIdentifierProperties();
-    Check.isTrue(identifierProperties.contains(property), "Property " + property
-        + " not part of identifier of " + property.getEntity());
+    List<Property> identifierProperties = null;
+    if (!isTableReference) {
+      identifierProperties = property.getEntity().getIdentifierProperties();
+      Check.isTrue(identifierProperties.contains(property), "Property " + property
+          + " not part of identifier of " + property.getEntity());
+    } else {
+      // for table references, the display column identifier properties should be used in the joins
+      identifierProperties = property.getTargetEntity().getIdentifierProperties();
+    }
     String prefix;
     final int index = leftWherePart.lastIndexOf(DalUtil.DOT);
     if (key.equals(JsonConstants.IDENTIFIER)) {
@@ -867,7 +882,8 @@ public class AdvancedQueryBuilder {
     } else if (key.endsWith(JsonConstants.IDENTIFIER)) {
       final String propPath = key.substring(0, key.indexOf(JsonConstants.IDENTIFIER) - 1);
       boolean fromCriteria = true;
-      final String join = resolveJoins(getPropertyForTableReference(JsonUtils.getPropertiesOnPath(getEntity(), propPath)),
+      final String join = resolveJoins(
+          getPropertyForTableReference(JsonUtils.getPropertiesOnPath(getEntity(), propPath)),
           propPath, fromCriteria);
       prefix = join + DalUtil.DOT;
     } else if (index == -1) {
