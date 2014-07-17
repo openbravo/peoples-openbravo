@@ -150,6 +150,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
         costadjline.getCostAdjustment(), costadjline.getAdjustmentAmount().negate(), false,
         trx.getTransactionProcessDate(), null);
     newCAL.setRelatedTransactionAdjusted(false);
+    newCAL.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance().getProxy(
+        CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
+
     OBDal.getInstance().save(newCAL);
   }
 
@@ -175,6 +178,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
           costadjline.getCostAdjustment(), adjAmt.negate(), false,
           prodtrx.getTransactionProcessDate(), null);
       newCAL.setRelatedTransactionAdjusted(false);
+      newCAL.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance().getProxy(
+          CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
       OBDal.getInstance().save(newCAL);
 
       pendingAdjAmt = pendingAdjAmt.subtract(adjAmt);
@@ -201,6 +206,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
           costadjline.getCostAdjustment(), costadjline.getAdjustmentAmount().negate(), false,
           prodtrx.getTransactionProcessDate(), null);
       newCAL.setRelatedTransactionAdjusted(false);
+      newCAL.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance().getProxy(
+          CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
       OBDal.getInstance().save(newCAL);
     }
   }
@@ -215,6 +222,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
         costadjline.getCostAdjustment(), costadjline.getAdjustmentAmount().negate(), false,
         voidedTrx.getTransactionProcessDate(), null);
     newCAL.setRelatedTransactionAdjusted(false);
+    newCAL.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance().getProxy(
+        CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
     OBDal.getInstance().save(newCAL);
   }
 
@@ -226,9 +235,12 @@ public abstract class CostingAlgorithmAdjustmentImp {
       if (movementTransaction.getId().equals(transaction.getId())) {
         continue;
       }
-      CostAdjustmentUtils.insertCostAdjustmentLine(movementTransaction,
+      CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(movementTransaction,
           costadjline.getCostAdjustment(), costadjline.getAdjustmentAmount().negate(), false,
           movementTransaction.getTransactionProcessDate(), null);
+      newCAL.setRelatedTransactionAdjusted(false);
+      newCAL.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance().getProxy(
+          CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
     }
   }
 
@@ -238,10 +250,13 @@ public abstract class CostingAlgorithmAdjustmentImp {
     if (voidedinoutline != null) {
       CostAdjustmentLine costadjline = getCostAdjLine();
       for (MaterialTransaction trx : voidedinoutline.getMaterialMgmtMaterialTransactionList()) {
-        // TODO: Generate cost adjustment line
-        CostAdjustmentUtils.insertCostAdjustmentLine(trx, costadjline.getCostAdjustment(),
-            costadjline.getAdjustmentAmount().negate(), false, trx.getTransactionProcessDate(),
-            null);
+        // TODO: Generate cost adjustment line. Check if adjustment amount is properly calculated
+        CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
+            costadjline.getCostAdjustment(), costadjline.getAdjustmentAmount().negate(), false,
+            trx.getTransactionProcessDate(), null);
+        newCAL.setRelatedTransactionAdjusted(false);
+        newCAL.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance().getProxy(
+            CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
       }
     }
   }
@@ -257,8 +272,12 @@ public abstract class CostingAlgorithmAdjustmentImp {
           // TODO: Generate cost adjustment line
           BigDecimal adjAmt = costAdjAmt.multiply(rettrx.getMovementQuantity().abs()).divide(
               inoutline.getMovementQuantity().abs(), precission, RoundingMode.HALF_UP);
-          CostAdjustmentUtils.insertCostAdjustmentLine(rettrx, costadjline.getCostAdjustment(),
-              adjAmt, false, rettrx.getTransactionProcessDate(), null);
+          CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(rettrx,
+              costadjline.getCostAdjustment(), adjAmt, false, rettrx.getTransactionProcessDate(),
+              null);
+          newCAL.setRelatedTransactionAdjusted(false);
+          newCAL.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance().getProxy(
+              CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
         }
       }
     }

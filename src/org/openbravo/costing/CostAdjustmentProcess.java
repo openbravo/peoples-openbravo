@@ -32,12 +32,12 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
@@ -75,8 +75,7 @@ public class CostAdjustmentProcess {
     try {
       doChecks(costAdjustment, message);
       calculateAdjustmentAmount(costAdjustment.getId(), message);
-      costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
-      generateTransactionCosts(costAdjustment);
+      // costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
       costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
       costAdjustment.setProcessed(true);
       OBDal.getInstance().save(costAdjustment);
@@ -132,12 +131,14 @@ public class CostAdjustmentProcess {
         // Reload cost adjustment object in case the costing algorithm has cleared the session.
         line = OBDal.getInstance().get(CostAdjustmentLine.class, strCostAdjLineId);
         line.setRelatedTransactionAdjusted(true);
+        OBDal.getInstance().save(line);
         OBDal.getInstance().flush();
         OBDal.getInstance().getSession().clear();
       }
     } finally {
       lines.close();
     }
+    generateTransactionCosts(OBDal.getInstance().get(CostAdjustment.class, strCostAdjustmentId));
     if (hasNewLines) {
       calculateAdjustmentAmount(strCostAdjustmentId, message);
     }
@@ -149,15 +150,20 @@ public class CostAdjustmentProcess {
     Date referenceDate = costAdjustment.getReferenceDate();
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustment));
     ScrollableResults lines = critLines.scroll(ScrollMode.FORWARD_ONLY);
+
     while (lines.next()) {
       CostAdjustmentLine line = (CostAdjustmentLine) lines.get(0);
+      if (!line.getTransactionCostList().isEmpty()) {
+        continue;
+      }
       TransactionCost trxCost = OBProvider.getInstance().get(TransactionCost.class);
       trxCost.setInventoryTransaction(line.getInventoryTransaction());
+      trxCost.setOrganization(line.getInventoryTransaction().getOrganization());
       trxCost.setCost(line.getAdjustmentAmount());
       trxCost.setCostDate(referenceDate);
       trxCost.setCostadjustmentline(line);
       // FIXME: Set proper currency!!!
-      trxCost.setCurrency(OBDal.getInstance().get(Currency.class, "102"));
+      trxCost.setCurrency(line.getInventoryTransaction().getCurrency());
 
       OBDal.getInstance().save(trxCost);
       OBDal.getInstance().flush();
@@ -178,5 +184,13 @@ public class CostAdjustmentProcess {
       }
     }
     return implementor;
+  }
+
+  public static JSONObject doProcessCostAdjustment(CostAdjustment costAdjustment)
+      throws OBException, JSONException {
+    CostAdjustmentProcess cap = WeldUtils
+        .getInstanceFromStaticBeanManager(CostAdjustmentProcess.class);
+    JSONObject message = cap.processCostAdjustment(costAdjustment);
+    return message;
   }
 }

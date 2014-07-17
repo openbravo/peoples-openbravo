@@ -73,6 +73,7 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
       CostAdjustmentUtils.insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted,
           Boolean.TRUE, null, null);
 
+      OBDal.getInstance().flush();
       CostAdjustmentProcess cap = WeldUtils
           .getInstanceFromStaticBeanManager(CostAdjustmentProcess.class);
       JSONObject message = cap.processCostAdjustment(costAdjustmentHeader);
