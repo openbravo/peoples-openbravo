@@ -286,6 +286,8 @@ isc.OBTreeItemTree.addProperties({
       dsRequest.params._startRow = 0;
       dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit;
       dsRequest.params.treeReferenceId = target.treeItem.treeReferenceId;
+      var contextInfo = target.treeItem.form.view.getContextInfo(false, true);
+      isc.addProperties(dsRequest.params, contextInfo);
       return this.Super('transformRequest', arguments);
     };
 
@@ -516,11 +518,14 @@ isc.OBTreeItemPopupWindow.addProperties({
       setDataSource: function (ds, fields) {
         var me = this;
         ds.transformRequest = function (dsRequest) {
-          var target = window[dsRequest.componentId];
+          var target = window[dsRequest.componentId],
+              contextInfo;
           dsRequest.params = dsRequest.params || {};
           dsRequest.params._startRow = 0;
           dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit;
           dsRequest.params.treeReferenceId = target.treeItem.treeReferenceId;
+          contextInfo = target.treeItem.form.view.getContextInfo(false, true);
+          isc.addProperties(dsRequest.params, contextInfo);
           return this.Super('transformRequest', arguments);
         };
 
@@ -674,11 +679,12 @@ isc.ClassFactory.defineClass('OBTreeFilterSelectItem', isc.OBFKFilterTextItem);
 isc.OBTreeFilterSelectItem.addProperties({
 
   filterDataBoundPickList: function (requestProperties, dropCache) {
+    var contextInfo;
     requestProperties = requestProperties || {};
     requestProperties.params = requestProperties.params || {};
     // on purpose not passing the third boolean param
-    var contextInfo = this.treeWindow.treeItem.form.view.getContextInfo(false, true);
-
+    contextInfo = this.treeWindow.treeItem.form.view.getContextInfo(false, true);
+    isc.addProperties(requestProperties.params, contextInfo);
     // also add the special ORG parameter
     if (this.treeWindow.treeItem.form.getField('organization')) {
       requestProperties.params[OB.Constants.ORG_PARAMETER] = this.treeWindow.treeItem.form.getValue('organization');
