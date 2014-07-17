@@ -98,7 +98,7 @@
             this.approvedRequest(approved, supervisor, approvalType, callback);
           }));
         }
-      }), function () {
+      }), enyo.bind(this, function () {
         // offline
         OB.Dal.find(OB.Model.Supervisor, {
           'name': username
@@ -162,7 +162,7 @@
             }
           }
         }), function () {});
-      });
+      }));
 
     }
   });
