@@ -17,6 +17,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -43,18 +44,26 @@ import org.openbravo.service.json.JsonConstants;
 
 public class CashCloseProcessor {
 
+  private static final Logger logger = Logger.getLogger(CashCloseProcessor.class);
+
   @Inject
   @Any
   private Instance<CashupHook> cashupHooks;
 
   public JSONObject processCashClose(OBPOSApplications posTerminal, JSONObject jsonCashup,
       JSONArray cashMgmtIds, Date cashUpDate) throws Exception {
+
+    long t0 = System.currentTimeMillis();
+
     String cashUpId = jsonCashup.getString("id");
     JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
     OBPOSAppCashup cashUp = createCashUp(posTerminal, cashUpId, cashUpDate);
     OBDal.getInstance().save(cashUp);
 
     for (int i = 0; i < cashCloseInfo.length(); i++) {
+
+      long t10 = System.currentTimeMillis();
+
       JSONObject cashCloseObj = cashCloseInfo.getJSONObject(i);
 
       BigDecimal difference = new BigDecimal(cashCloseObj.getString("difference"));
@@ -68,6 +77,8 @@ public class CashCloseProcessor {
       String paymentTypeId = cashCloseObj.getString("paymentTypeId");
       OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
 
+      long t11 = System.currentTimeMillis();
+
       FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj, posTerminal,
           paymentType.getFinancialAccount(), cashUpDate);
 
@@ -79,9 +90,13 @@ public class CashCloseProcessor {
       }
       OBDal.getInstance().save(reconciliation);
 
+      long t12 = System.currentTimeMillis();
+
       OBPOSAppCashReconcil recon = createCashUpReconciliation(posTerminal, paymentType,
           reconciliation, cashUp);
       OBDal.getInstance().save(recon);
+
+      long t13 = System.currentTimeMillis();
 
       BigDecimal reconciliationTotal = BigDecimal
           .valueOf(cashCloseObj.getDouble("foreignExpected")).add(foreignDifference);
@@ -106,10 +121,19 @@ public class CashCloseProcessor {
           OBDal.getInstance().save(depositTransaction);
         }
       }
+      long t14 = System.currentTimeMillis();
 
       associateTransactions(paymentType, reconciliation, cashUpId, cashMgmtIds);
 
+      long t15 = System.currentTimeMillis();
+
+      logger.info("Cash Up Info. Total time: " + (t15 - t10) + ". Init: " + (t11 - t10)
+          + ". Reconciliation: " + (t12 - t11) + ". Cash Up Reconciliation: " + (t13 - t12)
+          + ". Payment and Deposit Transactions: " + (t14 - t13) + ". Associate Transactions: "
+          + (t15 - t14));
     }
+
+    long t1 = System.currentTimeMillis();
 
     // Hook for procesing cashups..
     JSONArray messages = new JSONArray(); // all messages returned by hooks
@@ -126,8 +150,15 @@ public class CashCloseProcessor {
       }
     }
 
+    long t2 = System.currentTimeMillis();
+
     OBDal.getInstance().flush();
     OBDal.getInstance().commitAndClose();
+
+    long t3 = System.currentTimeMillis();
+
+    logger.info("Cash Up Processor. Total time: " + (t3 - t0) + ". Processing: " + (t1 - t0)
+        + ". Hooks: " + (t2 - t1) + ". Flush: " + (t3 - t2));
 
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
