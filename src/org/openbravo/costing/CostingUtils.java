@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -31,6 +31,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -51,6 +52,8 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.model.pricing.pricelist.ProductPrice;
 
 public class CostingUtils {
   protected static Logger log4j = Logger.getLogger(CostingUtils.class);
@@ -101,6 +104,49 @@ public class CostingUtils {
       }
     }
     return cost;
+  }
+
+  public static BigDecimal getDefaultCost(Product product, BigDecimal qty, Organization org,
+      Date costDate, Date movementDate, BusinessPartner bp, Currency currency,
+      HashMap<CostDimension, BaseOBObject> costDimensions) {
+    Costing stdCost = getStandardCostDefinition(product, org, costDate, costDimensions);
+    PriceList pricelist = null;
+    if (bp != null) {
+      pricelist = bp.getPurchasePricelist();
+    }
+    ProductPrice pp = FinancialUtils
+        .getProductPrice(product, movementDate, false, pricelist, false);
+    if (stdCost == null && pp == null) {
+      throw new OBException("@NoPriceListOrStandardCostForProduct@ @Organization@: "
+          + org.getName() + ", @Product@: " + product.getName() + ", @Date@: "
+          + OBDateUtils.formatDate(costDate));
+    } else if (stdCost != null && pp == null) {
+      BigDecimal standardCost = getStandardCost(product, org, costDate, costDimensions, currency);
+      return qty.abs().multiply(standardCost);
+    } else if (stdCost == null && pp != null) {
+      BigDecimal cost = pp.getStandardPrice().multiply(qty.abs());
+      if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
+          currency.getId())) {
+        // no conversion needed
+        return cost;
+      }
+      return FinancialUtils.getConvertedAmount(cost, pp.getPriceListVersion().getPriceList()
+          .getCurrency(), currency, movementDate, org, FinancialUtils.PRECISION_STANDARD);
+
+    } else if (stdCost != null && pp != null
+        && stdCost.getStartingDate().before(pp.getPriceListVersion().getValidFromDate())) {
+      BigDecimal cost = pp.getStandardPrice().multiply(qty.abs());
+      if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
+          currency.getId())) {
+        // no conversion needed
+        return cost;
+      }
+      return FinancialUtils.getConvertedAmount(cost, pp.getPriceListVersion().getPriceList()
+          .getCurrency(), currency, movementDate, org, FinancialUtils.PRECISION_STANDARD);
+    } else {
+      BigDecimal standardCost = getStandardCost(product, org, costDate, costDimensions, currency);
+      return qty.abs().multiply(standardCost);
+    }
   }
 
   /**
