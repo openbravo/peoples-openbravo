@@ -20,16 +20,24 @@ package org.openbravo.costing;
 
 import java.util.Date;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
@@ -39,6 +47,12 @@ import org.slf4j.LoggerFactory;
 
 public class CostAdjustmentProcess {
   private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcessHandler.class);
+  @Inject
+  @Any
+  private Instance<CostingAlgorithmAdjustmentImp> costAdjustmentAlgorithms;
+  @Inject
+  @Any
+  private Instance<CostAdjusmentProcessCheck> costAdjustmentProcessChecks;
 
   /**
    * Method to process a cost adjustment.
@@ -51,33 +65,85 @@ public class CostAdjustmentProcess {
    *           when there is an error that prevents the cost adjustment to be processed.
    * @throws JSONException
    */
-  public static JSONObject processCostAdjustment(CostAdjustment costAdjustment) throws OBException,
+  public JSONObject processCostAdjustment(CostAdjustment costAdjustment) throws OBException,
       JSONException {
     JSONObject message = new JSONObject();
     message.put("severity", "success");
     message.put("title", "");
     message.put("text", OBMessageUtils.messageBD("Success"));
-    doChecks(costAdjustment, message);
-    calculateAdjustmentAmount(costAdjustment, message);
-    generateTransactionCosts(costAdjustment);
+    OBContext.setAdminMode(true);
+    try {
+      doChecks(costAdjustment, message);
+      calculateAdjustmentAmount(costAdjustment.getId(), message);
+      costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
+      generateTransactionCosts(costAdjustment);
+      costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
+      costAdjustment.setProcessed(true);
+      OBDal.getInstance().save(costAdjustment);
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     return message;
   }
 
-  private static void doChecks(CostAdjustment costAdjustment, JSONObject message) {
+  private void doChecks(CostAdjustment costAdjustment, JSONObject message) {
 
+    // Execute checks added implementing costAdjustmentProcess interface.
+
+    for (CostAdjusmentProcessCheck checksInstance : costAdjustmentProcessChecks) {
+      checksInstance.doCheck(costAdjustment, message);
+    }
   }
 
-  private static void calculateAdjustmentAmount(CostAdjustment costAdjustment, JSONObject message) {
+  private void calculateAdjustmentAmount(String strCostAdjustmentId, JSONObject message) {
+    boolean hasNewLines = false;
     OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
         CostAdjustmentLine.class);
     critLines.createAlias(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, "trx");
-    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustment));
-    critLines.addOrderBy("trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
-    critLines.addOrderBy("trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
+    critLines.createAlias(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, "ca");
+    critLines.add(Restrictions.eq("ca.id", strCostAdjustmentId));
+    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED, false));
+    critLines.addOrder(Order.asc("trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE));
+    critLines.addOrder(Order.asc("trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE));
+    // critLines.addOrderBy("trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
+    // critLines.addOrderBy("trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
+    ScrollableResults lines = critLines.scroll(ScrollMode.FORWARD_ONLY);
+    try {
+      while (lines.next()) {
+        hasNewLines = true;
+        CostAdjustmentLine line = (CostAdjustmentLine) lines.get(0);
+        final String strCostAdjLineId = line.getId();
+        MaterialTransaction trx = line.getInventoryTransaction();
+        if (trx.getCostingAlgorithm() == null) {
+          throw new OBException("Cannot adjust transactions calculated with legacy cost engine.");
+        }
 
+        // Add transactions that depend on the transaction being adjusted.
+        CostingAlgorithmAdjustmentImp costAdjImp = getAlgorithmAdjustmentImp(trx
+            .getCostingAlgorithm().getId());
+
+        if (costAdjImp == null) {
+          throw new OBException(
+              "The algorithm used to calculate the cost of the transaction does not implement cost adjustments.");
+        }
+        costAdjImp.init(line);
+        costAdjImp.searchRelatedTransactionCosts();
+        // Reload cost adjustment object in case the costing algorithm has cleared the session.
+        line = OBDal.getInstance().get(CostAdjustmentLine.class, strCostAdjLineId);
+        line.setRelatedTransactionAdjusted(true);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().getSession().clear();
+      }
+    } finally {
+      lines.close();
+    }
+    if (hasNewLines) {
+      calculateAdjustmentAmount(strCostAdjustmentId, message);
+    }
   }
 
-  private static void generateTransactionCosts(CostAdjustment costAdjustment) {
+  private void generateTransactionCosts(CostAdjustment costAdjustment) {
     OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
         CostAdjustmentLine.class);
     Date referenceDate = costAdjustment.getReferenceDate();
@@ -89,13 +155,28 @@ public class CostAdjustmentProcess {
       trxCost.setInventoryTransaction(line.getInventoryTransaction());
       trxCost.setCost(line.getAdjustmentAmount());
       trxCost.setCostDate(referenceDate);
+      trxCost.setCostadjustmentline(line);
       // FIXME: Set proper currency!!!
-      trxCost.setCurrency(null);
+      trxCost.setCurrency(OBDal.getInstance().get(Currency.class, "102"));
 
       OBDal.getInstance().save(trxCost);
       OBDal.getInstance().flush();
       OBDal.getInstance().getSession().clear();
     }
     lines.close();
+  }
+
+  private CostingAlgorithmAdjustmentImp getAlgorithmAdjustmentImp(String strCostingAlgorithmId) {
+    CostingAlgorithmAdjustmentImp implementor = null;
+    for (CostingAlgorithmAdjustmentImp nextImplementor : costAdjustmentAlgorithms
+        .select(new ComponentProvider.Selector(strCostingAlgorithmId))) {
+      if (implementor == null) {
+        implementor = nextImplementor;
+      } else {
+        log.warn("More than one class found implementing cost adjustment for algorithm with id {}",
+            strCostingAlgorithmId);
+      }
+    }
+    return implementor;
   }
 }

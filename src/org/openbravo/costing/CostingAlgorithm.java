@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -531,29 +531,10 @@ public abstract class CostingAlgorithm {
   }
 
   protected BigDecimal getDefaultCost() {
-    Costing stdCost = CostingUtils.getStandardCostDefinition(transaction.getProduct(), costOrg,
-        transaction.getTransactionProcessDate(), costDimensions);
     BusinessPartner bp = CostingUtils.getTrxBusinessPartner(transaction, trxType);
-    PriceList pricelist = null;
-    if (bp != null) {
-      pricelist = bp.getPurchasePricelist();
-    }
-    ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
-        transaction.getMovementDate(), false, pricelist, false);
-    if (stdCost == null && pp == null) {
-      throw new OBException("@NoPriceListOrStandardCostForProduct@ @Organization@: "
-          + costOrg.getName() + ", @Product@: " + transaction.getProduct().getName() + ", @Date@: "
-          + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
-    } else if (stdCost != null && pp == null) {
-      return getTransactionStandardCost();
-    } else if (stdCost == null && pp != null) {
-      return getPriceListCost();
-    } else if (stdCost != null && pp != null
-        && stdCost.getStartingDate().before(pp.getPriceListVersion().getValidFromDate())) {
-      return getPriceListCost();
-    } else {
-      return getTransactionStandardCost();
-    }
+    return CostingUtils.getDefaultCost(transaction.getProduct(), transaction.getMovementQuantity(),
+        costOrg, transaction.getTransactionProcessDate(), transaction.getMovementDate(), bp,
+        costCurrency, costDimensions);
   }
 
   /**

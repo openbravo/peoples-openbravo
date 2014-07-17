@@ -24,6 +24,7 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -72,7 +73,9 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
       CostAdjustmentUtils.insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted,
           Boolean.TRUE, null, null);
 
-      JSONObject message = CostAdjustmentProcess.processCostAdjustment(costAdjustmentHeader);
+      CostAdjustmentProcess cap = WeldUtils
+          .getInstanceFromStaticBeanManager(CostAdjustmentProcess.class);
+      JSONObject message = cap.processCostAdjustment(costAdjustmentHeader);
       jsonResponse.put("message", message);
 
     } catch (OBException e) {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -28,6 +28,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -127,7 +128,9 @@ public class CostingServer {
             Boolean.TRUE, OBDateUtils.getEndOfDay(transaction.getMovementDate()), null);
 
         try {
-          JSONObject message = CostAdjustmentProcess.processCostAdjustment(costAdjustmentHeader);
+          CostAdjustmentProcess cap = WeldUtils
+              .getInstanceFromStaticBeanManager(CostAdjustmentProcess.class);
+          JSONObject message = cap.processCostAdjustment(costAdjustmentHeader);
 
           if (message.get("severity") != "success") {
             throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@")
