@@ -3305,6 +3305,7 @@ function getFrame(frameName) {
           try {
             targetFrame = parent;
             while (targetFrame !== null && targetFrame !== targetFrame.parent && !LayoutMDICheck(targetFrame)) {
+              var dummy = targetFrame.parent.document;
               targetFrame = targetFrame.parent;
             }
           } catch (e) {
