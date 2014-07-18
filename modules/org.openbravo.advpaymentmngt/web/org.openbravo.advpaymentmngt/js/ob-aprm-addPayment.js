@@ -735,6 +735,17 @@ OB.APRM.AddPayment.orderAndRemoveDuplicates = function (val) {
   return retVal;
 };
 
+OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
+  var document = form.getItem('trxtype').getValue(),
+      issotrx = form.getItem('issotrx');
+  if (document === 'RCIN') {
+    issotrx.setValue(true);
+  } else {
+    issotrx.setValue(false);
+  }
+};
+
+
 OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
       receivedFrom = view.theForm.getItem('received_from').getValue(),
