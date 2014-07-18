@@ -19,7 +19,6 @@
 package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,6 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -69,6 +67,8 @@ abstract class AddPaymentDefaultValuesHandler {
   abstract String getDefaultCurrency(Map<String, String> requestMap) throws JSONException;
 
   abstract String getOrganization(Map<String, String> requestMap) throws JSONException;
+
+  abstract String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException;
 
   protected abstract long getSeq();
 
@@ -158,10 +158,6 @@ abstract class AddPaymentDefaultValuesHandler {
       }
     }
     return null;
-  }
-
-  String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
-    return OBDateUtils.formatDate(new Date());
   }
 
   String getDefaultPaymentMethod(Map<String, String> requestMap) throws JSONException {
