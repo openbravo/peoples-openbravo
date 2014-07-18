@@ -21,6 +21,7 @@
     this.hasInvLayaways = false;
 
     this.receipt.on('closed', function (eventParams) {
+      OB.warn('Ticket closed. Id: ' + model.get('order').get('id') + ". Docno: " + model.get('order').get('documentNo') + ". Total gross: " + model.get('order').get('gross'));
       this.receipt = model.get('order');
       var me = this,
           docno = this.receipt.get('documentNo'),
@@ -61,6 +62,14 @@
             currentDocNo = receipt.get('documentNo') || docno;
 
         receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+        // convert returns
+        if (receipt.get('gross') < 0) {
+          _.forEach(receipt.get('payments').models, function (item) {
+            item.set('amount', -item.get('amount'));
+            item.set('origAmount', -item.get('origAmount'));
+            item.set('paid', -item.get('paid'));
+          });
+        }
         receipt.set('json', JSON.stringify(receipt.toJSON()));
 
         auxReceipt.clearWith(receipt);
