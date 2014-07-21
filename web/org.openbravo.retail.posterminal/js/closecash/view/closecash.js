@@ -231,6 +231,10 @@ enyo.kind({
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.total.printAmount(this.model.get('totalExpected'));
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(OB.DEC.sub(0, this.model.get('totalExpected')));
 
+    this.model.on('change:totalExpected', function () {
+      this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.total.printAmount(this.model.get('totalExpected'));
+    }, this);
+
     this.model.on('change:totalCounted', function () {
       this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
