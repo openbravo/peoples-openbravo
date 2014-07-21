@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,6 +44,9 @@ import org.openbravo.service.db.ImportResult;
  * there is an object with B which also has the value V1 for the unique key field. Then object A
  * will overwrite object B in the database.
  * 
+ * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
+ * test cases NOT begin by "test...".
+ * 
  * @author mtaal
  */
 
@@ -51,10 +54,15 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
 
   private static final Logger log = Logger.getLogger(UniqueConstraintImportTest.class);
 
+  public void testContent() {
+    aCreateCountryTrl();
+    countryTrlImport();
+  }
+
   /**
    * Builds the testdata, {@link CountryTrl} objects for a specific {@link Country}.
    */
-  public void testACreateCountryTrl() {
+  public void aCreateCountryTrl() {
     setSystemAdministratorContext();
     final Country country = getCountry("Norway");
     final OBCriteria<CountryTrl> obc = OBDal.getInstance().createCriteria(CountryTrl.class);
@@ -81,6 +89,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
       OBDal.getInstance().save(countryTrl);
       created++;
     }
+    OBDal.getInstance().commitAndClose();
     log.debug("Created " + created + " countrytrl objects");
   }
 
@@ -91,7 +100,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
    * 
    * This method also cleans up the testdata.
    */
-  public void testCountryTrlImport() {
+  public void countryTrlImport() {
     setTestAdminContext();
 
     // read countrytrl
@@ -113,6 +122,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
             "eventhough it does not belong to the target organization") != -1);
 
     for (final BaseOBObject bob : ir.getUpdatedObjects()) {
+      OBDal.getInstance().refresh(bob);
       assertEquals(CountryTrl.class.getName(), bob.getClass().getName());
       // and clean up
       OBDal.getInstance().remove(bob);

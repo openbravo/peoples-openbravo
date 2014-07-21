@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,9 @@ import org.openbravo.test.base.BaseTest;
 /**
  * Test the use of the {@link DynamicOBObject}.
  * 
+ * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
+ * test cases NOT begin by "test...".
+ * 
  * @author mtaal
  */
 
@@ -45,9 +48,19 @@ public class DynamicEntityTest extends BaseTest {
   private static final Logger log = Logger.getLogger(DynamicEntityTest.class);
 
   /**
+   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
+   * execution order of the test cases.
+   */
+  public void testContent() {
+    createBPGroup();
+    removeBPGroup();
+    checkBPGroupRemoved();
+  }
+
+  /**
    * Create a record for the {@link Category} in the database using a {@link DynamicOBObject}.
    */
-  public void testCreateBPGroup() {
+  public void createBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final DynamicOBObject bpGroup = new DynamicOBObject();
@@ -58,13 +71,14 @@ public class DynamicEntityTest extends BaseTest {
     bpGroup.set(Category.PROPERTY_SEARCHKEY, "hello world");
     bpGroup.setActive(true);
     OBDal.getInstance().save(bpGroup);
+    OBDal.getInstance().commitAndClose();
     printXML(bpGroup);
   }
 
   /**
    * Queries for the created {@link Category} and then removes.
    */
-  public void testRemoveBPGroup() {
+  public void removeBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     addReadWriteAccess(CategoryAccounts.class);
@@ -95,21 +109,24 @@ public class DynamicEntityTest extends BaseTest {
     obc2.add(Restrictions.eq(CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY, bpgs.get(0)));
     final List<CategoryAccounts> bogas = obc2.list();
     for (final CategoryAccounts bga : bogas) {
+      OBDal.getInstance().refresh(bga);
       OBDal.getInstance().remove(bga);
     }
     OBDal.getInstance().remove(bpgs.get(0));
+    OBDal.getInstance().flush();
   }
 
   /**
    * Checks if the removal did occur.
    */
-  public void testCheckBPGroupRemoved() {
+  public void checkBPGroupRemoved() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Restrictions.eq(Category.PROPERTY_NAME, "hello world"));
     final List<Category> bpgs = obc.list();
     assertEquals(0, bpgs.size());
+    OBDal.getInstance().flush();
   }
 
   private void printXML(BaseOBObject bob) {
