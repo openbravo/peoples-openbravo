@@ -154,4 +154,10 @@ public class PaymentOutAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
     return getPayment(requestMap).getOrganization().getId();
   }
 
+  @Override
+  String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
+    // Document Type
+    return "";
+  }
+
 }

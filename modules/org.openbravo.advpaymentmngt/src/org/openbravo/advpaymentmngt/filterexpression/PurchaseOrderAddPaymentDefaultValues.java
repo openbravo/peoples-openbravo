@@ -127,6 +127,12 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
     return getOrder(new JSONObject(requestMap.get("context"))).getOrganization().getId();
   }
 
+  @Override
+  String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
+    // Document Type
+    return "";
+  }
+
   Order getOrder(JSONObject context) throws JSONException {
     return OBDal.getInstance().get(Order.class, context.getString("inpcOrderId"));
   }

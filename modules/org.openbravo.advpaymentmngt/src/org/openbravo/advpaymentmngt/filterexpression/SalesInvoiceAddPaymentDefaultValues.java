@@ -123,6 +123,12 @@ public class SalesInvoiceAddPaymentDefaultValues extends AddPaymentDefaultValues
     return getInvoice(new JSONObject(requestMap.get("context"))).getOrganization().getId();
   }
 
+  @Override
+  String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
+    // Document Type
+    return "";
+  }
+
   Invoice getInvoice(JSONObject context) throws JSONException {
     return OBDal.getInstance().get(Invoice.class, context.getString("inpcInvoiceId"));
   }

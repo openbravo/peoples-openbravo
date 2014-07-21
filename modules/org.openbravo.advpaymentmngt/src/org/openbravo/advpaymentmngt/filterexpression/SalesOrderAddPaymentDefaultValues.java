@@ -131,4 +131,10 @@ public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
     return OBDal.getInstance().get(Order.class, context.getString("inpcOrderId"));
   }
 
+  @Override
+  String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
+    // Document Type
+    return "";
+  }
+
 }
