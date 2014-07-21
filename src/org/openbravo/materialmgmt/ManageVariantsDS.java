@@ -127,6 +127,10 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         prChUseCode.put(prCh, prChAux);
         i++;
       }
+
+      if (variantNumber > 1000) {
+        return result;
+      }
       totalMaxLength += Long.toString(variantNumber).length();
       boolean useCodes = totalMaxLength <= searchKeyLength;
 

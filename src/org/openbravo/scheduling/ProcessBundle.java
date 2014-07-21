@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,6 +70,8 @@ public class ProcessBundle {
 
   private String processRequestId;
 
+  private String processRunId;
+
   private boolean closeConnection;
 
   private String impl;
@@ -89,6 +91,8 @@ public class ProcessBundle {
   private Object result;
 
   private Channel channel;
+
+  private GroupInfo groupInfo;
 
   static Logger log = Logger.getLogger(ProcessBundle.class);
 
@@ -149,12 +153,48 @@ public class ProcessBundle {
   }
 
   /**
+   * Creates a new ProcessBundle object with the given parameters.
+   * 
+   * @param processId
+   *          the process id
+   * @param vars
+   *          clients security/application context variables
+   * @param channel
+   *          the channel through which this process was scheduled/executed
+   * @param client
+   *          the client that scheduled/executed this process
+   * @param organization
+   *          the organization under which this process will run
+   * @param roleSecurity
+   *          is role security
+   * @param groupInfo
+   *          the information of the process group which the process belongs to
+   */
+  public ProcessBundle(String processId, VariablesSecureApp vars, Channel channel, String client,
+      String organization, boolean roleSecurity, GroupInfo groupInfo) {
+    this.processId = processId;
+    this.context = new ProcessContext(vars, client, organization, roleSecurity);
+    this.channel = channel;
+    this.closeConnection = true;
+    this.groupInfo = groupInfo;
+  }
+
+  /**
    * Returns the unique id for the schedule configuration of this process.
    * 
    * @return the process request's id (primary key within the ProcessRequest entity)
    */
   public String getProcessRequestId() {
     return this.processRequestId;
+  }
+
+  /**
+   * Returns the id of the process run.
+   * 
+   * @return Returns the id of the process run
+   */
+  public String getProcessRunId() {
+    return this.processRunId;
   }
 
   /**
@@ -213,6 +253,28 @@ public class ProcessBundle {
   public String getParamsDeflated() {
     final XStream xstream = new XStream(new JettisonMappedXmlDriver());
     return xstream.toXML(getParams());
+  }
+
+  /**
+   * Returns true if the process is a group
+   * 
+   * @return true if the process is a group
+   */
+  public boolean isGroup() {
+    return this.processId.equals(GroupInfo.processGroupId);
+  }
+
+  /**
+   * Returns the info of the group
+   * 
+   * @return the info of the group
+   */
+  public GroupInfo getGroupInfo() {
+    return this.groupInfo;
+  }
+
+  public void setProcessRunId(String strProcessRunId) {
+    this.processRunId = strProcessRunId;
   }
 
   public void setParams(Map<String, Object> params) {
@@ -367,8 +429,14 @@ public class ProcessBundle {
   public static final ProcessBundle request(String requestId, VariablesSecureApp vars,
       ConnectionProvider conn) throws ServletException {
     final ProcessRequestData data = ProcessRequestData.select(conn, requestId);
+    String processId = "";
 
-    final String processId = data.processId;
+    if (data.isgroup.equals("Y")) {
+      processId = GroupInfo.processGroupId;
+    } else {
+      processId = data.processId;
+    }
+
     final boolean isRoleSecurity = data.isrolesecurity != null && data.isrolesecurity.equals("Y");
     final ProcessBundle bundle = new ProcessBundle(processId, requestId, vars, Channel.SCHEDULED,
         data.client, data.organization, isRoleSecurity).init(conn);

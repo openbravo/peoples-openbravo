@@ -22,7 +22,7 @@ isc.ClassFactory.defineClass('OBGrid', isc.ListGrid);
 // The OBGrid combines common grid functionality usefull for different 
 // grid implementations.
 isc.OBGrid.addProperties({
-
+  bodyConstructor: 'OBViewGridBody',
   reverseRTLAlign: true,
   dragTrackerMode: 'none',
   // recycle gives better performance but also results
@@ -75,6 +75,18 @@ isc.OBGrid.addProperties({
     }
 
     return value;
+  },
+
+  onFetchData: function (criteria, requestProperties) {
+    this.setFechingData();
+  },
+
+  setFechingData: function () {
+    this.fetchingData = true;
+  },
+
+  isFetchingData: function () {
+    return this.fetchingData;
   },
 
   cellHoverHTML: function (record, rowNum, colNum) {
@@ -239,6 +251,15 @@ isc.OBGrid.addProperties({
     return false;
   },
 
+  getCellAlign: function (record, rowNum, colNum) {
+    var fld = this.getFields()[colNum];
+    if (fld && fld.clientClass && OB.Utilities.getCanvasProp(fld.clientClass, 'cellAlign')) {
+      return OB.Utilities.getCanvasProp(fld.clientClass, 'cellAlign');
+    } else {
+      return this.Super('getCellAlign', arguments);
+    }
+  },
+
   createRecordComponent: function (record, colNum) {
     var field = this.getField(colNum),
         rowNum = this.getRecordIndex(record),
@@ -260,7 +281,7 @@ isc.OBGrid.addProperties({
       clientClass = clientClassArray[0];
       clientClassProps = clientClassArray[1];
 
-      clientClassIsShownInGridEdit = new Function('return ' + clientClass + '.getInstanceProperty("isShownInGridEdit")')();
+      clientClassIsShownInGridEdit = OB.Utilities.getCanvasProp(clientClass, 'isShownInGridEdit');
 
       if (!isEditRecord || clientClassIsShownInGridEdit) {
         canvas = isc.ClassFactory.newInstance(clientClass, {
@@ -562,7 +583,7 @@ isc.OBGrid.addProperties({
 
     OBAbsoluteTimeItem_FormatCellValueFunction = function (value, record, rowNum, colNum, grid) {
       var newValue = value,
-          format = isc.OBAbsoluteTimeItem.getPrototype().timeFormatter;
+          format = isc.OBAbsoluteTimeItem.getInstanceProperty('timeFormatter');
       if (Object.prototype.toString.call(newValue) === '[object String]') {
         newValue = isc.Time.parseInput(newValue);
       }
@@ -575,7 +596,7 @@ isc.OBGrid.addProperties({
       var newValue = value;
       newValue = OB.Utilities.Date.addTimezoneOffset(newValue);
       var showTime = false;
-      if (this.editorType && new Function('return isc.' + this.editorType + '.getPrototype().showTime')()) {
+      if (this.editorType && OB.Utilities.getCanvasProp(this.editorType, 'showTime')) {
         showTime = true;
       }
 
@@ -597,17 +618,19 @@ isc.OBGrid.addProperties({
           field.filterEditorProperties.criteriaField = field.criteriaField;
         }
 
-        if (field.criteriaDisplayField) {
-          field.filterEditorProperties.criteriaDisplayField = field.criteriaDisplayField;
+        // send the display property to formitem to be used in request params used to fetch data.
+        // used for displaying table references properly. Refer issue https://issues.openbravo.com/view.php?id=26696
+        if (field.displayProperty) {
+          field.filterEditorProperties.displayProperty = field.displayProperty;
         }
 
-        if (field.editorType && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteTime')()) {
+        if (field.editorType && OB.Utilities.getCanvasProp(field.editorType, 'isAbsoluteTime')) {
           // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
           // http://forums.smartclient.com/showthread.php?p=116135
           field.formatCellValue = OBAbsoluteTimeItem_FormatCellValueFunction;
         }
 
-        if (field.editorType && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteDateTime')()) {
+        if (field.editorType && OB.Utilities.getCanvasProp(field.editorType, 'isAbsoluteDateTime')) {
           // In the case of an absolute datetime, the JS date needs to be converted in order to avoid the UTC conversion
           // http://forums.smartclient.com/showthread.php?p=116135
           field.formatCellValue = OBAbsoluteDateTimeItem_FormatCellValueFunction;
@@ -620,6 +643,29 @@ isc.OBGrid.addProperties({
           }
           field.formatCellValueFunctionReplaced = true;
           field.formatCellValue = formatCellValueFunction;
+          // if there is a clientClass that expands a grid record, fixedRecordHeight should be false in order to allow the record expansion
+          if (OB.Utilities.getCanvasProp(field.clientClass, 'canExpandRecord')) {
+            this.fixedRecordHeights = false;
+          }
+          // Manage the case the clientClass overwrites the 'canSort'
+          if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'canSort') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'canSort') === null) {
+            field.canSort = OB.Utilities.getCanvasProp(field.clientClass, 'canSort');
+          }
+          // Manage the case the clientClass overwrites the 'canFilter'
+          if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'canFilter') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'canFilter') === null) {
+            field.canFilter = OB.Utilities.getCanvasProp(field.clientClass, 'canFilter');
+          }
+          // Manage the case the clientClass overwrites the 'filterEditorType'
+          if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'filterEditorType') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'filterEditorType') === null) {
+            field.filterEditorType = OB.Utilities.getCanvasProp(field.clientClass, 'filterEditorType');
+          }
+          // Manage the case the clientClass overwrites the 'editorType'. 'OBClientClassCanvasItem' by default.
+          if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'editorType') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'editorType') === null) {
+            field.editorType = OB.Utilities.getCanvasProp(field.clientClass, 'editorType');
+            if (field.editorProperties) {
+              field.editorProperties.editorType = OB.Utilities.getCanvasProp(field.clientClass, 'editorType');
+            }
+          }
         }
       }
     }
@@ -683,6 +729,9 @@ isc.OBGrid.addProperties({
       }
     }
     if (!keepFilterClause) {
+      if (this.view && this.view.viewGrid) {
+        this.view.viewGrid.fetchingData = true;
+      }
       // forcing fetch from server in case default filters are removed, in other
       // cases adaptive filtering can be used if possible
       if (this.data) {
@@ -928,13 +977,11 @@ isc.OBGrid.addProperties({
       _textMatchStyle: 'substring',
       _UTCOffsetMiliseconds: OB.Utilities.Date.getUTCOffsetInMiliseconds()
     }, lcriteria, this.getFetchRequestParams(null, isExporting));
-    if (this.getSortField()) {
-      sortCriteria = this.getSort();
-      if (sortCriteria && sortCriteria.length > 0) {
-        d._sortBy = sortCriteria[0].property;
-        if (sortCriteria[0].direction === 'descending') {
-          d._sortBy = '-' + d._sortBy;
-        }
+    sortCriteria = this.getSort();
+    if (sortCriteria && sortCriteria.length > 0) {
+      d._sortBy = sortCriteria[0].property;
+      if (sortCriteria[0].direction === 'descending') {
+        d._sortBy = '-' + d._sortBy;
       }
     }
     OB.Utilities.postThroughHiddenForm(dsURL, d);
@@ -1094,6 +1141,156 @@ isc.OBGrid.addProperties({
       return this.Super('getSortArrowImage', arguments);
     }
 
+  },
+
+  collapseRecord: function (record) {
+    var expandedItem = this.getCurrentExpansionComponent(record),
+        ret = this.Super('collapseRecord', arguments);
+    if (expandedItem && typeof expandedItem.destroy === 'function') {
+      expandedItem.destroy();
+    }
+    return ret;
+  },
+
+  //** {{{ openExpansionProcess }}} **
+  //
+  // Opens a process inside a grid row.
+  // Parameters:
+  //  * {{{process}}} The process to be opened
+  //  * {{{record}}} The record where the process will be opened
+  //  * {{{selectOnOpen}}} It indicates if the record will be selected when the process be opened (true by default)
+  //  * {{{deselectAllOnOpen}}} It indicates if all other records will be unselected when the process be opened. It is applied before 'selectOnOpen' (true by default)
+  //  * {{{collapseOthersOnOpen}}} It indicates if any other opened process should be closed (true by default)
+  //  * {{{width}}} The width of the opened process (100% by default)
+  //  * {{{height}}} The height of the opened process (7 grid rows + 'bottom buttons layout' by default)
+  //  * {{{topMargin}}} The top margin of the process. (10 by default)
+  //  * {{{rightMargin}}} The right margin of the process. (30 by default)
+  //  * {{{bottomMargin}}} The bottom margin of the process. (10 by default)
+  //  * {{{leftMargin}}} The left margin of the process. (30 by default)
+  openExpansionProcess: function (process, record, selectOnOpen, deselectAllOnOpen, collapseOthersOnOpen, width, height, topMargin, rightMargin, bottomMargin, leftMargin) {
+    var defaultHeight;
+
+    if (!process || !record) {
+      return;
+    }
+    if (this.fixedRecordHeights) {
+      isc.warn('This grid has "fixedRecordHeights" set to "true". It should be set to "false" in order to view the process', function () {
+        return true;
+      }, {
+        icon: '[SKINIMG]Dialog/error.png',
+        title: OB.I18N.getLabel('OBUIAPP_Error')
+      });
+      return;
+    }
+
+    if (typeof selectOnOpen === 'undefined' || selectOnOpen === null) {
+      selectOnOpen = true;
+    }
+    if (typeof deselectAllOnOpen === 'undefined' || deselectAllOnOpen === null) {
+      deselectAllOnOpen = true;
+    }
+    if (typeof collapseOthersOnOpen === 'undefined' || collapseOthersOnOpen === null) {
+      collapseOthersOnOpen = true;
+    }
+    if (typeof topMargin === 'undefined' || topMargin === null) {
+      topMargin = (process.expandedTopMargin ? process.expandedTopMargin : 10);
+    }
+    if (typeof rightMargin === 'undefined' || rightMargin === null) {
+      rightMargin = (process.expandedRightMargin ? process.expandedRightMargin : 30);
+    }
+    if (typeof bottomMargin === 'undefined' || bottomMargin === null) {
+      bottomMargin = (process.expandedBottomMargin ? process.expandedBottomMargin : 10);
+    }
+    if (typeof leftMargin === 'undefined' || leftMargin === null) {
+      leftMargin = (process.expandedLeftMargin ? process.expandedLeftMargin : 30);
+    }
+
+    if (typeof width === 'undefined' || width === null) {
+      width = (process.expandedWidth ? process.expandedWidth : '100%');
+      if (typeof width === 'string' && width.indexOf('%') === -1) {
+        width = parseInt(width, 10);
+      }
+      if (typeof width === 'number') {
+        width = width + rightMargin + leftMargin;
+      }
+    }
+
+    defaultHeight = isc.OBViewGrid.getPrototype().cellHeight * 6 + //
+    isc.OBViewGrid.getPrototype().filterEditorDefaults.height + //
+    OB.Styles.Process.PickAndExecute.buttonLayoutHeight;
+
+    if (typeof height === 'undefined' || height === null) {
+      height = (process.expandedHeight ? process.expandedHeight : defaultHeight);
+      if (typeof height === 'string' && height.indexOf('%') === -1) {
+        height = parseInt(width, 10);
+      }
+      if (typeof height === 'number') {
+        height = height + topMargin + bottomMargin;
+      }
+    }
+
+    if (deselectAllOnOpen) {
+      this.deselectAllRecords();
+    }
+
+    if (selectOnOpen) {
+      this.selectRecord(record);
+    }
+
+    process.isExpandedRecord = true;
+
+    this.getExpansionComponent = function (theRecord) {
+      var layout = isc.VLayout.create({
+        height: height,
+        width: width,
+        layoutTopMargin: topMargin,
+        layoutRightMargin: rightMargin,
+        layoutBottomMargin: bottomMargin,
+        layoutLeftMargin: leftMargin,
+        members: [process]
+      });
+      return layout;
+    };
+
+    this.canExpandMultipleRecords = !collapseOthersOnOpen;
+
+    this.expandRecord(record);
+
+    this.getExpansionComponent = function () {
+      return;
+    };
+  }
+});
+
+// = OBViewGridBody =
+// OBViewGridBody is used as bodyConstructor for OBGrid, its purpose is to flag 
+// in the grid when fetch data is complete and data is drawn, to be used by automated 
+// Selenium tests
+isc.ClassFactory.defineClass('OBViewGridBody', 'GridBody');
+isc.OBViewGridBody.addProperties({
+  redraw: function () {
+    var newDrawArea, grid, drawArea, firstRecord, loading;
+
+    this.Super('redraw', arguments);
+
+    grid = this.grid;
+    if (grid && grid.fetchingData && grid.body === this) {
+      // check if we are still loading data
+      newDrawArea = this.getDrawArea();
+      drawArea = this._oldDrawArea;
+      if (!drawArea) {
+        drawArea = this._oldDrawArea = [0, 0, 0, 0];
+      }
+
+      firstRecord = grid.getRecord(newDrawArea[0]);
+
+      loading = firstRecord === Array.LOADING;
+
+      if (!loading) {
+        // data is already loaded
+        this.grid.fetchingData = false;
+      }
+    }
   }
 });
 

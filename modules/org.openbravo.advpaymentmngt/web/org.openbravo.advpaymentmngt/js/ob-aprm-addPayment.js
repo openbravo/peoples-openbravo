@@ -97,8 +97,8 @@ OB.APRM.AddPayment.onLoad = function (view) {
       glitemGrid = form.getItem('glitem').canvas.viewGrid,
       creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid,
       overpaymentAction = form.getItem('overpayment_action'),
-      payment = form.getItem('fin_payment_id').getValue();
-
+      payment = form.getItem('fin_payment_id').getValue(),
+      issotrx = form.getItem('issotrx').getValue();
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, view.theForm, !payment);
   glitemGrid.fetchData();
   creditUseGrid.fetchData();
@@ -111,6 +111,9 @@ OB.APRM.AddPayment.onLoad = function (view) {
   form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
   overpaymentAction.originalValueMap = isc.addProperties({}, overpaymentAction.getValueMap());
+  if (issotrx) {
+    form.focusInItem(form.getItem('actual_payment'));
+  }
 };
 
 OB.APRM.AddPayment.addNewGLItem = function (grid) {
@@ -382,20 +385,12 @@ OB.APRM.AddPayment.updateDifference = function (form) {
       receivedFrom = form.getItem('received_from').getValue() || '',
       totalGLItems = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       diffAmt = actualPayment.add(credit).subtract(total),
-      amount = total;
-
-  if ((actualPayment.signum() === 0) || (actualPayment.compareTo(expectedPayment) > 0)) {
-    amount = actualPayment;
-  }
-  if (credit.signum() !== 0) {
-    amount = amount.add(credit);
-  }
-  if (expectedPayment.compareTo(total.abs()) > 0) {
-    differenceItem.setValue(Number(expectedPayment.subtract(total)));
-  } else if (amount.compareTo(total) > 0) {
-    differenceItem.setValue(Number(amount.subtract(total)));
+      expectedDiffAmt = expectedPayment.add(credit).subtract(total).add(totalGLItems);
+  differenceItem.setValue(Number(diffAmt.toString()));
+  if (expectedDiffAmt.signum() === 0) {
+    expectedDifferenceItem.setValue(Number(diffAmt.toString()));
   } else {
-    differenceItem.setValue(Number('0'));
+    expectedDifferenceItem.setValue(Number(expectedDiffAmt.toString()));
   }
   if (diffAmt.signum() !== 0) {
     OB.APRM.AddPayment.updateDifferenceActions(form);
@@ -766,7 +761,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
 
   // Check if there is pending amount to distribute that could be distributed
   for (i = 0; i < selectedRecords.length; i++) {
-    outstandingAmount = new BigDecimal(String(orderInvoiceGrid.getRecord(i).outstandingAmount));
+    outstandingAmount = new BigDecimal(String(selectedRecords[i].outstandingAmount));
     totalOustandingAmount = totalOustandingAmount.add(outstandingAmount);
   }
   for (i = 0; i < orderInvoiceGrid.data.totalRows; i++) {
@@ -783,6 +778,11 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   // If there is Overpayment check it exists a business partner
   if (overpaymentAction && receivedFrom === null) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithoutBPartner'));
+    return false;
+  }
+  //If Actual Payment amount is negative, it is not necessary to use credit.
+  if ((total.compareTo(BigDecimal.prototype.ZERO) < 0) && (creditTotalItem.signum() !== 0)) {
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithNegativeAmt'));
     return false;
   }
 

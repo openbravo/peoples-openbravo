@@ -502,4 +502,22 @@ public class KernelUtils {
     }
     return targetColumnName;
   }
+
+  /**
+   * Returns true if any of the identifier properties of the provided entity is nullable
+   * 
+   * @param entity
+   *          entity whose identifier might be comprised by nullable properties
+   * @return true if at least one of the identifier properties of the provided entity is nullable,
+   *         false if all of them are mandatory
+   */
+  public static boolean hasNullableIdentifierProperties(Entity entity) {
+    List<Property> identifierProperties = entity.getIdentifierProperties();
+    for (Property property : identifierProperties) {
+      if (!property.isMandatory()) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

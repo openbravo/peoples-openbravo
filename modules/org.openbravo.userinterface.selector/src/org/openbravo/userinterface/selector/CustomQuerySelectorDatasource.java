@@ -36,8 +36,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
@@ -80,6 +78,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
     final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
     final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    // Defaulted to endRow + 2 to check for more records while scrolling.
+    int totalRows = endRow + 2, rowCount = 0;
 
     String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
 
@@ -106,28 +106,6 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
       Query selQuery = OBDal.getInstance().getSession().createQuery(HQL);
       String[] queryAliases = selQuery.getReturnAliases();
-      if ("true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER))) {
-        int totalRows = 0, queryListSize = 0, clearEachLoop = 100;
-        // Defaulted to endRow + 2 to check for more records while scrolling.
-        totalRows = endRow + 2;
-        ScrollableResults queryResults = selQuery.scroll(ScrollMode.FORWARD_ONLY);
-        try {
-          while (queryResults.next()) {
-            queryListSize++;
-            if (queryListSize % clearEachLoop == 0) {
-              OBDal.getInstance().getSession().clear();
-            }
-          }
-        } finally {
-          queryResults.close();
-        }
-        if (startRow < endRow) {
-          if (queryListSize < endRow) {
-            totalRows = queryListSize;
-          }
-          parameters.put(JsonConstants.RESPONSE_TOTALROWS, String.valueOf(totalRows));
-        }
-      }
 
       if (startRow > 0) {
         selQuery.setFirstResult(startRow);
@@ -137,6 +115,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       }
 
       for (Object objResult : selQuery.list()) {
+        rowCount++;
         final Map<String, Object> data = new LinkedHashMap<String, Object>();
         Object[] resultList = new Object[1];
         if (objResult instanceof Object[]) {
@@ -162,6 +141,14 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
           }
         }
         result.add(data);
+      }
+      if ("true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER))) {
+        if (startRow < endRow) {
+          if (rowCount < endRow) {
+            totalRows = rowCount;
+          }
+          parameters.put(JsonConstants.RESPONSE_TOTALROWS, String.valueOf(totalRows));
+        }
       }
     } finally {
       OBContext.restorePreviousMode();

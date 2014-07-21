@@ -290,7 +290,7 @@ public class InitialSetupUtility {
   }
 
   /**
-   * @Deprecated use tableTreeRelation, because it retrieves all tableTrees, instead of only the
+   * @deprecated use tableTreeRelation, because it retrieves all tableTrees, instead of only the
    *             trees defined in the DA_TreeType type list reference Returns the relation of trees
    *             defined in the reference list of the application dictionary called AD_TreeType Type
    * 
@@ -2151,8 +2151,6 @@ public class InitialSetupUtility {
   /**
    * Returns the ADTree associated with the given table
    * 
-   * @param strTreeTypeMenu
-   *          two letters corresponding to the tree type for the menu
    * @return Tree menu element (defined at system level)
    * @throws Exception
    */

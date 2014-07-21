@@ -19,7 +19,6 @@
 package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +29,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -69,6 +69,8 @@ abstract class AddPaymentDefaultValuesHandler {
   abstract String getOrganization(Map<String, String> requestMap) throws JSONException;
 
   abstract String getDefaultDocument(Map<String, String> requestMap) throws JSONException;
+  
+  abstract String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException;
 
   protected abstract long getSeq();
 
@@ -136,17 +138,28 @@ abstract class AddPaymentDefaultValuesHandler {
       BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
           strBPartnerId);
       boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
-      if (isSOTrx && businessPartner.getAccount() != null) {
-        return businessPartner.getAccount().getId();
-      } else if (!isSOTrx && businessPartner.getPOFinancialAccount() != null) {
-        return businessPartner.getPOFinancialAccount().getId();
+      if (context.has("inpadClientId") && context.has("inpadOrgId")) {
+        final OrganizationStructureProvider osp = OBContext.getOBContext()
+            .getOrganizationStructureProvider(context.getString("inpadClientId"));
+        if (isSOTrx && businessPartner.getAccount() != null) {
+          if (osp.isInNaturalTree(businessPartner.getAccount().getOrganization(), OBDal
+              .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
+            return businessPartner.getAccount().getId();
+          } else {
+            return "";
+          }
+
+        } else if (!isSOTrx && businessPartner.getPOFinancialAccount() != null) {
+          if (osp.isInNaturalTree(businessPartner.getPOFinancialAccount().getOrganization(), OBDal
+              .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
+            return businessPartner.getPOFinancialAccount().getId();
+          } else {
+            return "";
+          }
+        }
       }
     }
     return null;
-  }
-
-  String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
-    return OBDateUtils.formatDate(new Date());
   }
 
   String getDefaultPaymentMethod(Map<String, String> requestMap) throws JSONException {

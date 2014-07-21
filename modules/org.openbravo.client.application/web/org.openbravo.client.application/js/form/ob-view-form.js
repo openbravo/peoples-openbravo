@@ -1032,7 +1032,7 @@ OB.ViewFormProperties = {
       isDate = field.type && (typeInstance.inheritsFrom === 'date' || typeInstance.inheritsFrom === 'time');
       isDateTime = field.type && typeInstance.inheritsFrom === 'datetime';
       isImage = field.type && typeInstance.inheritsFrom === 'image';
-      if (isDateTime && typeInstance.editorType && new Function('return isc.' + typeInstance.editorType + '.getPrototype().isAbsoluteDateTime')()) {
+      if (isDateTime && typeInstance.editorType && OB.Utilities.getCanvasProp(typeInstance.editorType, 'isAbsoluteDateTime')) {
         isAbsoluteDateTime = true;
         isDateTime = false;
       }

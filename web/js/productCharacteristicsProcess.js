@@ -50,8 +50,18 @@ OB.ProductCharacteristics = {
     params.processId = 'A832A5DA28FB4BB391BDE883E928DFC5';
     params.action = 'INITIALIZE';
     OB.ProductCharacteristics.execute(params, view);
-  }
+  },
+  
+  TestOnGridLoad: function (grid) {
+	  var nRecordsReceived = grid.getData().getLength(),
+	      messageBar = grid.view.messageBar;
+	  if (nRecordsReceived==0){
+		  messageBar.setMessage('info', 'The number of records is too high. Please, try to review product characteristics.');
+	  }
+	  //messageBar.setMessage('info', 'The number of records is too high. Please, try to review product characteristics.');
+	},
 };
+
 
 isc.defineClass('UpdateInvariantCharacteristicsPopup', isc.OBPopup);
 
@@ -77,6 +87,7 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
         params = this.params,
         i;
 
+        
     // Populates the combos using the provided characteristicList
     this.characteristicCombos = [];
     for (i = 0; i < this.characteristicList.length; i++) {

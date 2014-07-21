@@ -106,8 +106,8 @@ isc.OBPickAndExecuteView.addProperties({
           view.viewGrid.startEditingNew(newValues);
         }
       });
+      OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Grid_AddNew' + this.parameterName + '_' + this.view.processId, this.addNewButton);
     }
-    OB.TestRegistry.register('org.openbravo.client.application.process.pickandexecute.button.addnew', this.addNewButton);
 
     this.members = [this.messageBar, this.viewGrid, isc.HLayout.create({
       height: 1,

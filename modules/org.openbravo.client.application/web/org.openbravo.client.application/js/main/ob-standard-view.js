@@ -755,9 +755,10 @@ isc.OBStandardView.addProperties({
 
     this.standardWindow.addView(childView);
 
-    if (this.childTabSet.tabs.length > 0) {
-      // If it is a child tab that is not in the first position, load a basic child view
-      // to ensure a lazy inizialitazion of the contents.
+    if (this.childTabSet.tabs.length > 0 && !this.standardWindow.targetTabId) {
+      // If it is a child tab that is not in the first position and if it is not a
+      // direct navigation to the record (issue 27008), load a basic child view
+      // to ensure a lazy initialization of the contents.
       // Once the tab be selected, the proper content will be loaded.
       this.prepareBasicChildView(childView);
     } else {
@@ -2489,7 +2490,7 @@ isc.OBStandardView.addProperties({
         field = component.getField(propertyObj.property);
         if (field && field.editorType //
         && Object.prototype.toString.call(value) === '[object Date]' //
-        && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteDateTime')()) { //
+        && OB.Utilities.getCanvasProp(field.editorType, 'isAbsoluteDateTime')) {
           // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
           // http://forums.smartclient.com/showthread.php?p=116135
           value = OB.Utilities.Date.addTimezoneOffset(value);

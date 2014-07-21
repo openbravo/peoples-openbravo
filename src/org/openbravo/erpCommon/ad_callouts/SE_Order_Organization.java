@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.filter.ValueListFilter;
@@ -41,14 +40,13 @@ public class SE_Order_Organization extends SimpleCallout {
     boolean updateWarehouse = true;
     FieldProvider[] td = null;
 
-    // Sales flow only (from the organization)
-    if (StringUtils.equals("Y", strinpissotrx)) {
-      final String strOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
-      final String calculatedIsCashVat = CashVATUtil.getOrganizationIsCashVAT(strOrgId);
-      if (calculatedIsCashVat != null && filterYesNo.accept(calculatedIsCashVat)) {
-        info.addResult("inpiscashvat", calculatedIsCashVat);
-      }
-    }
+    final String strOrgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+    final String strBPartnerId = info.getStringParameter("inpcBpartnerId", IsIDFilter.instance);
+    final String strBPartnerLocationId = info.getStringParameter("inpcBpartnerLocationId",
+        IsIDFilter.instance);
+
+    info.addResult("inpiscashvat",
+        CashVATUtil.isCashVAT(strinpissotrx, strOrgId, strBPartnerId, strBPartnerLocationId));
 
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE",
