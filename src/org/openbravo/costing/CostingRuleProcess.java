@@ -347,7 +347,7 @@ public class CostingRuleProcess implements Process {
     }
     // Process closing physical inventories.
     for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
-      new InventoryCountProcess().processInventory(cri.getCloseInventory());
+      new InventoryCountProcess().processInventory(cri.getCloseInventory(), false);
     }
   }
 
@@ -514,7 +514,7 @@ public class CostingRuleProcess implements Process {
         OBDal.getInstance().save(initICL);
       }
       OBDal.getInstance().flush();
-      new InventoryCountProcess().processInventory(cri.getInitInventory());
+      new InventoryCountProcess().processInventory(cri.getInitInventory(), false);
     }
     if (!existsPreviousRule) {
       updateInitInventoriesTrxDate(startingDate, ruleId);

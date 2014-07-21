@@ -126,6 +126,11 @@ public class InventoryCountProcess implements Process {
   }
 
   public OBError processInventory(InventoryCount inventory) throws OBException {
+    return processInventory(inventory, true);
+  }
+
+  public OBError processInventory(InventoryCount inventory, boolean checkReservationQty)
+      throws OBException {
     OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
@@ -180,9 +185,13 @@ public class InventoryCountProcess implements Process {
     insert.append(", now()");
     insert.append(", u");
     insert.append(", 'I+'");
-    // We have to set check reservation quantity flag equal to false
-    insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
-        + InventoryCount.PROPERTY_PROCESSED);
+    // We have to set check reservation quantity flag equal to checkReservationQty
+    if (checkReservationQty) {
+      insert.append(", e." + InventoryCountLine.PROPERTY_ACTIVE);
+    } else {
+      insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
+          + InventoryCount.PROPERTY_PROCESSED);
+    }
     insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
         + InventoryCount.PROPERTY_MOVEMENTDATE);
     insert.append(", e." + InventoryCountLine.PROPERTY_STORAGEBIN);
@@ -217,6 +226,7 @@ public class InventoryCountProcess implements Process {
     queryInsert.setString("user", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     queryInsert.setString("currentDate", dateFormatter.format(new Date()));
+    // queryInsert.setBoolean("checkReservation", checkReservationQty);
     queryInsert.executeUpdate();
 
     if (!inventory.getClient().getClientInformationList().get(0).isAllowNegativeStock()) {

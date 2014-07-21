@@ -121,10 +121,15 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup) {
       cancelButton = isc.OBFormButton.create({
+        process: this,
         title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
         realTitle: '',
         click: function () {
-          view.closeClick();
+          if (this.process.isExpandedRecord) {
+            this.process.callerField.grid.collapseRecord(this.process.callerField.record);
+          } else {
+            view.closeClick();
+          }
         }
       });
       buttonLayout.push(cancelButton);
@@ -245,6 +250,7 @@ isc.OBParameterWindowView.addProperties({
           this.isPickAndExecuteWindow = true;
         }
         this.theForm.setItems(items);
+        this.theForm.setFieldSections();
         this.formContainerLayout = isc.OBFormContainerLayout.create({});
         this.formContainerLayout.addMember(this.theForm);
         this.members.push(this.formContainerLayout);
@@ -254,7 +260,8 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup) {
       this.firstFocusedItem = this.okButton;
-      this.popupButtons = isc.HLayout.create({
+      this.popupButtons = isc.OBFormContainerLayout.create({
+        defaultLayoutAlign: 'center',
         align: 'center',
         width: '100%',
         height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
@@ -299,7 +306,7 @@ isc.OBParameterWindowView.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_FormContainerLayout_' + this.processId, this.formContainerLayout);
   },
 
-  handleResponse: function (refresh, message, responseActions, retryExecution, data) {
+  handleResponse: function (refreshParent, message, responseActions, retryExecution, data) {
     var window = this.parentWindow,
         tab = OB.MainView.TabSet.getTab(this.viewTabId),
         i;
@@ -369,7 +376,7 @@ isc.OBParameterWindowView.addProperties({
     if (this.popup && !retryExecution) {
       this.buttonOwnerView.setAsActiveView();
 
-      if (refresh) {
+      if (refreshParent) {
         window.refresh();
       }
 
@@ -459,7 +466,7 @@ isc.OBParameterWindowView.addProperties({
         processId: me.processId,
         windowId: me.windowId
       }, function (rpcResponse, data, rpcRequest) {
-        view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
+        view.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
       });
     };
 
@@ -544,6 +551,9 @@ isc.OBParameterWindowView.addProperties({
     isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');
     if (isNumber && OB.Utilities.Number.IsValidValueString(type, stringValue)) {
       return OB.Utilities.Number.OBMaskedToJS(stringValue, type.decSeparator, type.groupSeparator);
+    } else if (isNumber && isc.isA.Number(OB.Utilities.Number.OBMaskedToJS(stringValue, '.', ','))) {
+      // it might happen that default value uses the default '.' and ',' as decimal and group separator
+      return OB.Utilities.Number.OBMaskedToJS(stringValue, '.', ',');
     } else {
       return stringValue;
     }

@@ -59,7 +59,25 @@ isc.OBParameterWindowForm.addProperties({
     // evaluate explicitly the display logic for the grid fields
     this.paramWindow.handleDisplayLogicForGridColumns();
     // force a redraw to reevaluate the display logic of the parameters
-    this.redraw();
+    // if possible the redraw should be done before setting the availability of the ok button
+    // if the updated item is a date/datetime, then it is not possible to do a redraw at this point, because in that case the focus does not go properly to the next parameter
+    if (isc.SimpleType.getType(item.type).inheritsFrom === 'date' || isc.SimpleType.getType(item.type).inheritsFrom === 'datetime') {
+      this.markForRedraw();
+    } else {
+      this.redraw();
+    }
     this.paramWindow.okButton.setEnabled(this.paramWindow.allRequiredParametersSet());
+  },
+
+  setFieldSections: function () {
+    var i, item, length;
+
+    length = this.getItems().length;
+    for (i = 0; i < length; i++) {
+      item = this.getItem(i);
+      if (item && item.setSectionItemInContent) {
+        item.setSectionItemInContent(this);
+      }
+    }
   }
 });

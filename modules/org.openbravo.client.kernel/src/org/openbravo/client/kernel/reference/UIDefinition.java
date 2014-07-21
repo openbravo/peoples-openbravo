@@ -574,13 +574,31 @@ public abstract class UIDefinition {
       values.addAll(Arrays.asList(fps));
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
       ArrayList<String> possibleIds = new ArrayList<String>();
-      // If column is mandatory we add an initial blank value
-      if (!field.getColumn().isMandatory() && StringUtils.isEmpty(columnValue)) {
-        possibleIds.add("");
-        JSONObject entry = new JSONObject();
-        entry.put(JsonConstants.ID, (String) null);
-        entry.put(JsonConstants.IDENTIFIER, (String) null);
-        comboEntries.add(entry);
+      // If column is not mandatory we add an initial blank value
+      if (!field.getColumn().isMandatory()) {
+        // check if column value is present and is the first selected value.
+        // If yes, no need for the blank value as it is the single value to be set.
+        if (!StringUtils.isEmpty(columnValue) && !isListReference) {
+          if (values.size() > 0 && values.get(0).getField(JsonConstants.ID) != null) {
+            if (!columnValue.equals(values.get(0).getField(JsonConstants.ID))) {
+              possibleIds.add("");
+              JSONObject entry = new JSONObject();
+              entry.put(JsonConstants.ID, (String) null);
+              entry.put(JsonConstants.IDENTIFIER, (String) null);
+              comboEntries.add(entry);
+              // only one value has to be set if column value is present, but since it is not
+              // present in the valueMap clearing it and setting empty value.
+              // Refer issue https://issues.openbravo.com/view.php?id=27061
+              values = new ArrayList<FieldProvider>();
+            }
+          }
+        } else {
+          possibleIds.add("");
+          JSONObject entry = new JSONObject();
+          entry.put(JsonConstants.ID, (String) null);
+          entry.put(JsonConstants.IDENTIFIER, (String) null);
+          comboEntries.add(entry);
+        }
       }
       for (FieldProvider fp : values) {
         possibleIds.add(fp.getField("ID"));

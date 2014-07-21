@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,8 @@
       <Sql><![CDATA[
       	SELECT AD_Process_Request_ID AS Id, AD_Process_ID AS Process_Id,
       	AD_Client_ID AS Client, AD_Org_Id AS Organization, AD_User_ID AS UserId,
-      	IsRoleSecurity, Status, Channel, Ob_Context, Params, AD_Process_Set_Id	 
+      	IsRoleSecurity, Status, Channel, Ob_Context, Params, AD_Process_Set_Id,
+      	IsGroup, AD_Process_Group_ID	 
       	FROM AD_Process_Request
       	WHERE AD_Process_Request_ID = ?
     ]]></Sql>
@@ -137,6 +138,16 @@
     <Parameter name="status"/>
     <Parameter name="channel"/>
     <Parameter name="obContext"/>
+    <Parameter name="id"/>
+   </SqlMethod>
+   <SqlMethod name="updateGroup" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        UPDATE AD_Process_Request
+        SET AD_Process_Request_Group_ID = ?
+        WHERE AD_Process_Request_ID = ?
+    ]]></Sql>
+    <Parameter name="group"/>
     <Parameter name="id"/>
    </SqlMethod>
 </SqlClass>

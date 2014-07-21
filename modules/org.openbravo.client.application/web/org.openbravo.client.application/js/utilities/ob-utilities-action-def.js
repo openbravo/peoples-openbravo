@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,9 +67,13 @@ OB.Utilities.Action.set('showMsgInView', function (paramObj) {
 //* {{{msgType}}}: The message type. It can be 'success', 'error', 'info' or 'warning'
 //* {{{msgTitle}}}: The title of the message.
 //* {{{msgText}}}: The text of the message.
+//* {{{force}}}: (Optional) If it should force the message to be show in the popup.
+//               Typically it is used in 'error' cases with 'retryExecution' set as 'true'
 OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
   var processView = paramObj._processView;
-  if (processView.popup && processView.buttonOwnerView && processView.buttonOwnerView.messageBar) {
+  if (processView.messageBar && paramObj.force === true) {
+    processView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+  } else if (processView.popup && processView.buttonOwnerView && processView.buttonOwnerView.messageBar) {
     processView.buttonOwnerView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
   } else if (processView.messageBar) {
     processView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
@@ -114,4 +118,16 @@ OB.Utilities.Action.set('openDirectTab', function (paramObj) {
       OB.Utilities.Action.resumeThread(paramObj.threadId, 1500); //Call this action again with a 1500ms delay
     }
   }
+});
+
+// ** {{{ setSelectorValueFromRecord }}} **
+// It sets a given value in the selector caller field (if it exists)
+// Parameters:
+// * {{{record}}}: The record to be set in the selector
+OB.Utilities.Action.set('setSelectorValueFromRecord', function (paramObj) {
+  var callerField = paramObj._processView.callerField;
+  if (!callerField) {
+    return;
+  }
+  callerField.setValueFromRecord(paramObj.record, true, true);
 });

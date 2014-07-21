@@ -1323,7 +1323,7 @@ public class OBViewFieldHandler {
       getUIDefinition().establishGridConfigurationSettings(field);
 
       if (getClientClass().length() > 0) {
-        return "editorType: 'OBClientClassCanvasItem', filterEditorType: 'TextItem', ";
+        return "editorType: 'OBClientClassCanvasItem', ";
       }
 
       String jsonString = getUIDefinition().getFieldProperties(field).trim();

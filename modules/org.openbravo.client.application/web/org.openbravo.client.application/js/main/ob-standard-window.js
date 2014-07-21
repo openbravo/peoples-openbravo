@@ -172,6 +172,23 @@ isc.OBStandardWindow.addProperties({
       itemCloseClick: function () {
         return true;
       },
+      setSize: function (width, height) {
+        var me = this;
+        this.hide();
+        // The timeouts are to avoid, as far as possible, ugly resizing effects.
+        setTimeout(function () {
+          me.setWidth(width);
+          me.setHeight(height);
+          if (isc.Browser.isWebKit) { // To avoid strange effect in Chrome when restoring the maximized window (it only happens odd times)
+            me.parentElement.parentElement.parentElement.setWidth('99%');
+            me.parentElement.parentElement.parentElement.setWidth('100%');
+          }
+
+          setTimeout(function () {
+            me.show();
+          }, 1);
+        }, 1);
+      },
       restore: function () {
         this.Super('restore', arguments);
         if (isc.Browser.isWebKit) { // To avoid strange effect in Chrome when restoring the maximized window (it only happens odd times)
@@ -249,13 +266,46 @@ isc.OBStandardWindow.addProperties({
     }
   },
 
-  openProcess: function (params) {
+  buildProcess: function (params) {
     var parts = this.getPrototype().Class.split('_'),
         len = parts.length,
         className = '_',
         tabSet = OB.MainView.TabSet,
-        vStack, manualJS, originalClassName, processClass, processOwnerView;
+        vStack, manualJS, originalClassName, processClass, processOwnerView, runningProcess;
 
+    if (params.paramWindow) {
+      className = className + params.processId;
+      if (len === 3) {
+        // keep original classname in case one with timestamp is not present
+        originalClassName = className;
+
+        // debug mode, we have added _timestamp
+        className = className + '_' + parts[2];
+      }
+
+      processClass = isc[className] || isc[originalClassName];
+
+      if (processClass) {
+        processOwnerView = this.getProcessOwnerView(params.processId);
+        runningProcess = processClass.create(isc.addProperties({}, params, {
+          parentWindow: this,
+          sourceView: this.activeView,
+          buttonOwnerView: processOwnerView
+        }));
+        return runningProcess;
+      } else {
+        isc.warn(OB.I18N.getLabel('OBUIAPP_ProcessClassNotFound', [params.processId]), function () {
+          return true;
+        }, {
+          icon: '[SKINIMG]Dialog/error.png',
+          title: OB.I18N.getLabel('OBUIAPP_Error')
+        });
+      }
+    }
+  },
+
+  openProcess: function (params) {
+    var processOwnerView, selectedState, processToBeOpened;
     if (params.uiPattern === 'M') { // Manual UI Pattern
       try {
         if (isc.isA.Function(params.actionHandler)) {
@@ -266,37 +316,12 @@ isc.OBStandardWindow.addProperties({
         isc.warn(e.message);
       }
     } else {
-      if (params.paramWindow) {
-        className = className + params.processId;
-        if (len === 3) {
-          // keep original classname in case one with timestamp is not present
-          originalClassName = className;
-
-          // debug mode, we have added _timestamp
-          className = className + '_' + parts[2];
-        }
-
-        processClass = isc[className] || isc[originalClassName];
-
-        if (processClass) {
-          processOwnerView = this.getProcessOwnerView(params.processId);
-          this.selectedState = processOwnerView.viewGrid && processOwnerView.viewGrid.getSelectedState();
-          this.runningProcess = processClass.create(isc.addProperties({}, params, {
-            parentWindow: this,
-            sourceView: this.activeView,
-            buttonOwnerView: processOwnerView
-          }));
-
-          this.openPopupInTab(this.runningProcess, params.windowTitle, (this.runningProcess.popupWidth ? this.runningProcess.popupWidth : '90%'), (this.runningProcess.popupHeight ? this.runningProcess.popupHeight : '90%'), (this.runningProcess.showMinimizeButton ? this.runningProcess.showMinimizeButton : false), (this.runningProcess.showMaximizeButton ? this.runningProcess.showMaximizeButton : false), true, true);
-
-        } else {
-          isc.warn(OB.I18N.getLabel('OBUIAPP_ProcessClassNotFound', [params.processId]), function () {
-            return true;
-          }, {
-            icon: '[SKINIMG]Dialog/error.png',
-            title: OB.I18N.getLabel('OBUIAPP_Error')
-          });
-        }
+      processToBeOpened = this.buildProcess(params);
+      if (processToBeOpened) {
+        processOwnerView = this.getProcessOwnerView(params.processId);
+        this.runningProcess = processToBeOpened;
+        this.selectedState = processOwnerView.viewGrid && processOwnerView.viewGrid.getSelectedState();
+        this.openPopupInTab(this.runningProcess, params.windowTitle, (this.runningProcess.popupWidth ? this.runningProcess.popupWidth : '90%'), (this.runningProcess.popupHeight ? this.runningProcess.popupHeight : '90%'), (this.runningProcess.showMinimizeButton ? this.runningProcess.showMinimizeButton : false), (this.runningProcess.showMaximizeButton ? this.runningProcess.showMaximizeButton : false), true, true);
       }
     }
   },
@@ -439,8 +464,8 @@ isc.OBStandardWindow.addProperties({
         view = this.getView(tab.tabId);
         disabledFields = [];
         if (view !== null) {
-          for (i = 0; i < view.viewForm.getFields().length; i++) {
-            field = view.viewForm.getFields()[i];
+          for (i = 0; i < view.formFields.length; i++) {
+            field = view.formFields[i];
             if (tab.fields[field.name] !== undefined) {
               field.updatable = tab.fields[field.name];
               field.disabled = !tab.fields[field.name];

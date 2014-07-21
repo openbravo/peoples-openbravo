@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -145,6 +145,58 @@ isc.OBAddPercentageSign.addProperties({
     }
     if (this.grid && this.grid.body) {
       this.grid.body.markForRedraw();
+    }
+  }
+});
+
+isc.defineClass('OBLevelImg', isc.Img);
+
+isc.OBLevelImg.addProperties({
+  cellAlign: 'center',
+  // The valueList should be overridden if this canvas item is applied to a different scale, for example ['none', 'weak', 'small', 'medium', 'high']
+  valuesList: [0, 1, 2, 3, 4],
+
+  setState: function () {
+    //To avoid add "_Disabled" to the src image if the grid row is disabled
+    return '';
+  },
+
+  click: function () {
+    if (this.grid) {
+      this.grid.selectSingleRecord(this.record);
+    }
+    return this.Super('click', arguments);
+  },
+
+  setValue: function (value) {
+    var i;
+    if (!value) {
+      if (this.value) {
+        value = this.value;
+      } else {
+        return;
+      }
+    }
+    for (i = 0; i < this.valuesList.length; i++) {
+      if (value.toString() === this.valuesList[i].toString()) {
+        value = i;
+      }
+    }
+    if (typeof value === 'number' && value >= 0 && value < this.valuesList.length) {
+      this.value = value;
+      this.setWidth(41);
+      this.setHeight(20);
+      this.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/levelImg_' + value.toString() + '_' + (this.valuesList.length - 1).toString() + '.png');
+    }
+  },
+
+  showValue: function (displayValue, dataValue, form, item) {
+    this.setValue(dataValue);
+  },
+
+  setRecord: function (record) {
+    if (this.field && this.field.name && record[this.field.name]) {
+      this.setValue(record[this.field.name]);
     }
   }
 });

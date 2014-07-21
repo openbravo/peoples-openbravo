@@ -826,7 +826,7 @@ AND EXISTS (SELECT 1 FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Ord
 <!--800004-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800004-->  <NAME><![CDATA[AD_Process isBackground]]></NAME>
 <!--800004-->  <TYPE><![CDATA[S]]></TYPE>
-<!--800004-->  <CODE><![CDATA[AD_Process.IsBackground='Y']]></CODE>
+<!--800004-->  <CODE><![CDATA[AD_Process.IsBackground='Y' AND AD_Process.AD_Process_ID <> '5BD4D2B3313E4C708F0AE29095AF16AD']]></CODE>
 <!--800004-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800004--></AD_VAL_RULE>
 

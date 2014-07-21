@@ -46,6 +46,9 @@ import org.openbravo.service.db.ImportResult;
  * Test import of data with a business object ({@link PaymentTerm} and {@link PaymentTermLine}),
  * adding and removing childs.
  * 
+ * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
+ * test cases NOT begin by "test...".
+ * 
  * @author mtaal
  */
 
@@ -62,19 +65,35 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   private static int TOTAL_PT_PTL = 0;
 
   // private static int TOTAL_PT_PTL = NO_OF_PT + NO_OF_PT + NO_OF_PT_LINE;
+  /**
+   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
+   * execution order of the test cases.
+   */
+  public void testContent() {
+    aPaymentTerm();
+    bPaymentTerm();
+    cPaymentTerm();
+    dPaymentTerm();
+    ePaymentTerm();
+    fPaymentTerm();
+    gPaymentTerm();
+    hPaymentTerm();
+    zPaymentTerm();
+  }
 
   /** Sets up the test data, creates a first of Payment Terms. */
-  public void testAPaymentTerm() {
+  public void aPaymentTerm() {
     cleanRefDataLoaded();
     setTestUserContext();
     addReadWriteAccess(PaymentTermTrl.class);
     createSavePaymentTerm();
+    OBDal.getInstance().flush();
   }
 
   /**
    * Export the Payment Terms from one client and import into another client.
    */
-  public void testBPaymentTerm() {
+  public void bPaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -103,13 +122,14 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
     assertEquals(TOTAL_PT_PTL, ir.getInsertedObjects().size());
     assertEquals(0, ir.getUpdatedObjects().size());
+    OBDal.getInstance().flush();
   }
 
   /**
-   * Execute the same test as in {@link #testBPaymentTerm()}, as it is repeated and no data has
-   * changed no updates should take place.
+   * Execute the same test as in {@link #bPaymentTerm()}, as it is repeated and no data has changed
+   * no updates should take place.
    */
-  public void testCPaymentTerm() {
+  public void cPaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -132,13 +152,14 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
     assertEquals(0, ir.getInsertedObjects().size());
     assertEquals(0, ir.getUpdatedObjects().size());
+    OBDal.getInstance().flush();
   }
 
   /**
-   * Now do the same as in {@link #testCPaymentTerm()} only now with some small changes in the xml,
-   * so that some objects are updated.
+   * Now do the same as in {@link #cPaymentTerm()} only now with some small changes in the xml, so
+   * that some objects are updated.
    */
-  public void testDPaymentTerm() {
+  public void dPaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -175,13 +196,14 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
         assertTrue(ir.getUpdatedObjects().contains(ptl.getPaymentTerms()));
       }
     }
+    OBDal.getInstance().flush();
   }
 
   /**
    * Test removal of a PaymentTermLine from a PaymentTerm in the xml, then import. After importing
    * the PaymentTermLine should have gone.
    */
-  public void testEPaymentTerm() {
+  public void ePaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -223,16 +245,18 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     } finally {
       OBContext.restorePreviousMode();
     }
+    OBDal.getInstance().flush();
   }
 
   /**
-   * Tests that the previous test {@link #testEPaymentTerm()} did not really remove a line. See this
+   * Tests that the previous test {@link #ePaymentTerm()} did not really remove a line. See this
    * issue: https://issues.openbravo.com/view.php?id=15690
    */
-  public void testFPaymentTerm() {
+  public void fPaymentTerm() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
     final List<PaymentTerm> pts = getPaymentTerms();
     for (final PaymentTerm pt : pts) {
+      OBDal.getInstance().refresh(pt);
       assertEquals(NO_OF_PT_LINE, pt.getFinancialMgmtPaymentTermLineList().size());
     }
   }
@@ -240,7 +264,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   /**
    * Add a PaymentTermLine in the xml and import it, there should be an extra line then.
    */
-  public void testGPaymentTerm() {
+  public void gPaymentTerm() {
 
     setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
@@ -288,27 +312,30 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       assertTrue(o instanceof PaymentTermTrl || o instanceof PaymentTerm
           || o instanceof PaymentTermLine);
     }
+    OBDal.getInstance().flush();
   }
 
   /**
-   * Tests that {@link #testGPaymentTerm()} was successfull.
+   * Tests that {@link #gPaymentTerm()} was successfull.
    */
-  public void testHPaymentTerm() {
+  public void hPaymentTerm() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();
     for (final PaymentTerm pt : pts) {
+      OBDal.getInstance().refresh(pt);
       // one pt has 2 lines, one has 1 line
       final int size = pt.getFinancialMgmtPaymentTermLineList().size();
       System.err.println(size);
       assertTrue(size == 2 || size == 3);
     }
+    OBDal.getInstance().flush();
   }
 
   /**
    * Remove the testdata.
    */
-  public void testZPaymentTerm() {
+  public void zPaymentTerm() {
     setTestUserContext();
     setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();
@@ -332,6 +359,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     } finally {
       OBContext.restorePreviousMode();
     }
+    OBDal.getInstance().flush();
   }
 
   private void createSavePaymentTerm() {
@@ -382,11 +410,13 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       }
     }
     TOTAL_PT_PTL = cnt;
+    OBDal.getInstance().flush();
   }
 
   private List<PaymentTerm> getPaymentTerms() {
     final OBCriteria<PaymentTerm> obc = OBDal.getInstance().createCriteria(PaymentTerm.class);
     obc.add(Restrictions.ilike("name", PREFIX + "%"));
+    OBDal.getInstance().flush();
     return obc.list();
   }
 

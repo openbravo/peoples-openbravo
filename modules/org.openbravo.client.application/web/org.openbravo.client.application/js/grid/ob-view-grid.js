@@ -963,7 +963,10 @@ isc.OBViewGrid.addProperties({
 
     if (includeFilter) {
       state.filter = this.getCriteria();
-
+      if (state.filter) {
+        // store the foreign key filter auxiliary cache. this is needed if the grid contains any filter column whose current filter type is 'id'
+        state.filterAuxCache = this.getFKFilterAuxiliaryCache(state.filter);
+      }
       if (!this.filterClause) {
         state.noFilterClause = true;
       }
@@ -991,6 +994,45 @@ isc.OBViewGrid.addProperties({
       return state;
     }
     return '(' + isc.Comm.serialize(state, false) + ')';
+  },
+
+  // returns an object containing the foreign key filter cache of all the filter fields whose current filter type is 'id'
+  getFKFilterAuxiliaryCache: function (criteria) {
+    var filterField, criterion, filterLength = criteria.criteria.length,
+        fkFilterAuxCache = [],
+        innerCache = [],
+        filterEditForm, cacheElement, i;
+    if (!this.filterEditor || !this.filterEditor.getEditForm()) {
+      return fkFilterAuxCache;
+    }
+    filterEditForm = this.filterEditor.getEditForm();
+    for (i = 0; i < filterLength; i++) {
+      criterion = criteria.criteria[i];
+      filterField = filterEditForm.getField(criterion.fieldName);
+      innerCache = [];
+      if (filterField && filterField.filterType === 'id') {
+        if (criterion.criteria) {
+          for (i = 0; i < criterion.criteria.length; i++) {
+            cacheElement = {};
+            cacheElement.fieldName = criterion.criteria[i].fieldName;
+            cacheElement[OB.Constants.ID] = criterion.criteria[i].value;
+            cacheElement[OB.Constants.IDENTIFIER] = filterField.getRecordIdentifierFromId(criterion.criteria[i].value);
+            innerCache.add(cacheElement);
+          }
+        } else {
+          cacheElement = {};
+          cacheElement.fieldName = criterion.fieldName;
+          cacheElement[OB.Constants.ID] = criterion.value;
+          cacheElement[OB.Constants.IDENTIFIER] = filterField.getRecordIdentifierFromId(criterion.value);
+          innerCache.add(cacheElement);
+        }
+        fkFilterAuxCache.add({
+          fieldName: criterion.fieldName,
+          cache: innerCache
+        });
+      }
+    }
+    return fkFilterAuxCache;
   },
 
   setViewState: function (state, settingDefault) {
@@ -1088,10 +1130,28 @@ isc.OBViewGrid.addProperties({
       if (this.filterEditor && !this.filterEditor.getEditForm()) {
         this.filterEditor.setValuesAsCriteria(localState.filter);
       }
+      // if any filter fields of the stored view was using the 'id' filter type, load its auxiliary cache
+      this.loadFilterAuxiliaryCache(localState.filterAuxCache);
       // this initial criteria needs to be removed in order to properly
       // manage filtering clean up
       this.initialCriteriaSetBySavedView = true;
       this.setCriteria(localState.filter);
+    }
+  },
+
+  // loads the foreign key filter auxiliary cache of all the filter fields that were using the 'id' filter type when the view was saved
+  loadFilterAuxiliaryCache: function (filterAuxCache) {
+    var i, cacheElement, filterField;
+    if (!filterAuxCache || !isc.isA.Array(filterAuxCache) || filterAuxCache.length === 0) {
+      return;
+    }
+    for (i = 0; i < filterAuxCache.length; i++) {
+      cacheElement = filterAuxCache[i];
+      filterField = this.filterEditor.getEditForm().getField(cacheElement.fieldName);
+      filterField.filterType = 'id';
+      if (filterField) {
+        filterField.filterAuxCache = cacheElement.cache;
+      }
     }
   },
 
@@ -2023,6 +2083,7 @@ isc.OBViewGrid.addProperties({
       this.data.totalRows = 0;
       this.data.cachedRows = 0;
     }
+    this.setFechingData();
 
     requestProperties = requestProperties || {};
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
@@ -2274,7 +2335,8 @@ isc.OBViewGrid.addProperties({
       menuItems.add({
         title: OB.I18N.getLabel('OBUIAPP_UseAsFilter'),
         click: function () {
-          var value;
+          var value, filterFormItem = grid.filterEditor.getEditForm().getField(field.name),
+              cacheElement = {};
           // a foreign key field, use the displayfield/identifier
           if (field.fkField && field.displayField) {
             value = record[field.displayField];
@@ -2283,9 +2345,18 @@ isc.OBViewGrid.addProperties({
           }
           // assume a date range filter item
           if (isc.isA.Date(value) && field.filterEditorType === 'OBMiniDateRangeItem') {
-            grid.filterEditor.getEditForm().getField(field.name).setSingleDateValue(value);
+            filterFormItem.setSingleDateValue(value);
           } else {
             grid.filterEditor.getEditForm().setValue(field.name, OB.Utilities.encodeSearchOperator(value));
+          }
+          if (field.filterEditorType === 'OBFKFilterTextItem' && filterFormItem) {
+            filterFormItem.filterType = 'id';
+            if (!filterFormItem.getRecordIdentifierFromId(record[field.name])) {
+              // if the filter editor does not know about this record, add the its id and its identifier to the auxiliary filter cache              
+              cacheElement[OB.Constants.ID] = record[field.name];
+              cacheElement[OB.Constants.IDENTIFIER] = record[field.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER];
+              filterFormItem.filterAuxCache.add(cacheElement);
+            }
           }
           var criteria = grid.filterEditor.getEditForm().getValuesAsCriteria();
           grid.checkShowFilterFunnelIcon(criteria);
@@ -2347,6 +2418,8 @@ isc.OBViewGrid.addProperties({
     }
     return false;
   },
+
+
 
   // +++++++++++++++++++++++++++++ Record Selection Handling +++++++++++++++++++++++
   updateSelectedCountDisplay: function () {

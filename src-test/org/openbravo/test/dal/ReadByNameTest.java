@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,9 @@ import org.openbravo.test.base.BaseTest;
 /**
  * Tests creating a location and then reading it again using the {@link OBCriteria} api.
  * 
+ * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
+ * test cases NOT begin by "test...".
+ * 
  * @author iperdomo
  */
 public class ReadByNameTest extends BaseTest {
@@ -41,7 +44,18 @@ public class ReadByNameTest extends BaseTest {
   private static String locId; // Location Id
   private static String locName; // Location name
 
-  public void testCreateBP() {
+  /**
+   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
+   * execution order of the test cases.
+   */
+  public void testContent() {
+    createBP();
+    addLocation();
+    findLocation();
+    pBData();
+  }
+
+  public void createBP() {
 
     setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
@@ -66,7 +80,7 @@ public class ReadByNameTest extends BaseTest {
     bpId = bp.getId();
   }
 
-  public void testAddLocation() {
+  public void addLocation() {
 
     setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
@@ -97,11 +111,12 @@ public class ReadByNameTest extends BaseTest {
 
     OBDal.getInstance().save(bpLoc);
     OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
 
     locId = bpLoc.getId();
   }
 
-  public void testFindLocation() {
+  public void findLocation() {
     // tests have run in the correct order
     assertNotNull(locName);
     assertNotNull(locId);
@@ -126,7 +141,7 @@ public class ReadByNameTest extends BaseTest {
     assertEquals(locName, tmpLoc.getName());
   }
 
-  public void testPBData() {
+  public void pBData() {
 
     setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
@@ -141,7 +156,7 @@ public class ReadByNameTest extends BaseTest {
     }
     setTestAdminContext();
     OBDal.getInstance().remove(bp);
-
+    OBDal.getInstance().flush();
     assertNull(OBDal.getInstance().get(BusinessPartner.class, bpId));
     assertNull(OBDal.getInstance().get(Location.class, locId));
   }

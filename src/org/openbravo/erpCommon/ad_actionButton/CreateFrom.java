@@ -1610,11 +1610,12 @@ public class CreateFrom extends HttpSecureAppServlet {
                   data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
                   priceActual, priceLimit, lineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
                   data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
-                  priceStd, lineNetAmt.toString(), priceGross, grossAmt.toString(),
-                  priceListGross.toString(), priceStdGross.toString(), isDeferred, planType,
-                  periodNumber, startingPeriodId, data[i].aAssetId, data[i].cProjectId,
-                  data[i].cCostcenterId, data[i].user1Id, data[i].user2Id, data[i].explode,
-                  data[i].isorder);
+                  priceStd, lineNetAmt.toString(), priceGross, grossAmt.toString(), priceListGross
+                      .toString(), priceStdGross.toString(), isDeferred, planType, periodNumber,
+                  startingPeriodId, data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId,
+                  data[i].user1Id, data[i].user2Id, data[i].explode,
+                  data[i].mInoutlineId.equals("") || data[i].mInoutlineId == null ? data[i].isorder
+                      : "N");
 
               if (!data[i].mInoutlineId.isEmpty() && strType.equals("SHIPMENT")) {
                 CreateFromInvoiceData.insertShipmentAcctDimension(conn, this, strSequence,
