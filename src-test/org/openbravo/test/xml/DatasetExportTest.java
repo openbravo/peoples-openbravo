@@ -267,6 +267,8 @@ public class DatasetExportTest extends BaseTest {
     dst.setIncludeAllColumns(true);
     dst.setTable(table);
     if (tableName.equals(Order.TABLE_NAME)) {
+      // selected arbitrary order ids of F&B of completed orders which are part of sample data
+      // these orders have enough hierarchy to be a valid testcase for business objects
       dst.setSQLWhereClause("id in ('C56A4B27B49941AB8B9F35396CB15C12','8ED7AAEB268848F88C3AA215B8457B3D',"
           + "'510DD91466964C1CB23441F7288B355D','896E0588D1FC4FB9B8A62C204C08C213',"
           + "'B75A5CF209B74B37BFF0A8CC21B1B15A','029FB113350249BEB492B86F53FF70CF',"
