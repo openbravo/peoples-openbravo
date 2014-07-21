@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008, 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008, 2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -48,6 +48,9 @@ import org.openbravo.test.base.BaseTest;
  * 
  * Note the testcases assume that they are run in the order defined in this class.
  * 
+ * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
+ * test cases NOT begin by "test...".
+ * 
  * @author mtaal
  */
 
@@ -55,9 +58,26 @@ public class DalQueryTest extends BaseTest {
   private static final Logger log = Logger.getLogger(DalQueryTest.class);
 
   /**
+   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
+   * execution order of the test cases.
+   */
+  public void testContent() {
+    dalFirstWhereLeftJoinClause();
+    dalExtraJoinWhereLeftJoinClause();
+    dalWhereLeftJoinClause();
+    dalOtherWhereLeftJoinClause();
+    dalAnOtherWhereLeftJoinClause();
+    createBPGroup();
+    removeBPGroup();
+    checkBPGroupRemoved();
+    updateCurrencyByUser();
+    transaction25PageRead();
+  }
+
+  /**
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
-  public void testDalFirstWhereLeftJoinClause() {
+  public void dalFirstWhereLeftJoinClause() {
     setTestAdminContext();
     final String where = "as mo left join mo.callout moc left join mo.reference mor left join mo.specialForm mof left join mo.process mop left join mo.tab mot where moc.module.id='0' or mor.module.id='0' or mof.module.id='0' or mop.module.id='0' or mot.module.id='0'";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
@@ -68,7 +88,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
-  public void testDalExtraJoinWhereLeftJoinClause() {
+  public void dalExtraJoinWhereLeftJoinClause() {
     setTestAdminContext();
     final String where = "as mom left join mom."
         + ModelImplementationMapping.PROPERTY_MODELOBJECT
@@ -91,7 +111,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
-  public void testDalWhereLeftJoinClause() {
+  public void dalWhereLeftJoinClause() {
     setTestAdminContext();
     final String where = "as mo left join mo.callout moc left join mo.reference mor where moc.module.id='0' or mor.module.id='0'";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
@@ -102,7 +122,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
-  public void testDalOtherWhereLeftJoinClause() {
+  public void dalOtherWhereLeftJoinClause() {
     setTestAdminContext();
     final String where = "as mo left join mo.callout moc left join mo.reference mor where (moc.module.id='0' or mor.module.id='0') and exists(from ADUser where id<>'0')";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
@@ -113,7 +133,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
-  public void testDalAnOtherWhereLeftJoinClause() {
+  public void dalAnOtherWhereLeftJoinClause() {
     setTestAdminContext();
     final String where = "exists(from ADUser where id<>'0')";
     final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
@@ -124,7 +144,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Test creates a new {@link Category} and saves it. The new object is removed in the next test.
    */
-  public void testCreateBPGroup() {
+  public void createBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final Category bpg = OBProvider.getInstance().get(Category.class);
@@ -134,12 +154,13 @@ public class DalQueryTest extends BaseTest {
     bpg.setSearchKey("testvalue");
     bpg.setActive(true);
     OBDal.getInstance().save(bpg);
+    OBDal.getInstance().flush();
   }
 
   /**
    * Test queries for the created {@link Category} and removes it.
    */
-  public void testRemoveBPGroup() {
+  public void removeBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     addReadWriteAccess(CategoryAccounts.class);
@@ -169,28 +190,31 @@ public class DalQueryTest extends BaseTest {
         " " + CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY + "=?", parameters);
     final List<CategoryAccounts> bpgas = q2.list();
     for (final CategoryAccounts bga : bpgas) {
+      OBDal.getInstance().refresh(bga);
       OBDal.getInstance().remove(bga);
     }
     OBDal.getInstance().remove(bpgs.get(0));
+    OBDal.getInstance().flush();
   }
 
   /**
    * Check that the {@link Category} was indeed removed.
    */
-  public void testCheckBPGroupRemoved() {
+  public void checkBPGroupRemoved() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final OBQuery<Category> obQuery = OBDal.getInstance().createQuery(Category.class,
         Category.PROPERTY_NAME + "='testname' or " + Category.PROPERTY_SEARCHKEY + "='testvalue'");
     final List<Category> bpgs = obQuery.list();
     assertEquals(0, bpgs.size());
+    OBDal.getInstance().flush();
   }
 
   /**
    * Tests queries for a currency and then updates it. The test should fail as the user does not
    * have update authorisation.
    */
-  public void testUpdateCurrencyByUser() {
+  public void updateCurrencyByUser() {
     setUserContext("E12DC7B3FF8C4F64924A98195223B1F8");
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
@@ -214,7 +238,7 @@ public class DalQueryTest extends BaseTest {
    * has been implemented such that it reads all the references (which are non-null) and uses their
    * identifier to create the identifier of the transaction. The test sorts on product.name.
    */
-  public void testTransaction25PageRead() {
+  public void transaction25PageRead() {
     setTestUserContext();
     addReadWriteAccess(MaterialTransaction.class);
     final OBQuery<MaterialTransaction> cq = OBDal.getInstance().createQuery(
