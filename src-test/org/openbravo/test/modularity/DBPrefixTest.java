@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,13 +33,31 @@ import org.openbravo.test.base.BaseTest;
  * This tests check that db prefixes are correctly checked when they are inserted in DB in order not
  * to follow modularity rules
  * 
+ * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
+ * test cases NOT begin by "test...".
  */
 public class DBPrefixTest extends BaseTest {
 
   /**
+   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
+   * execution order of the test cases.
+   */
+  public void testContent() {
+    createModule();
+    addDBPrefixValid1();
+    addDBPrefixValid2();
+    addDBPrefixNotValid1();
+    addDBPrefixNotValid2();
+    addDBPrefixNotValid3();
+    addDBPrefixNotValid4();
+    deleteModule();
+
+  }
+
+  /**
    * Creates a new module to test with
    */
-  public void testCreateModule() {
+  public void createModule() {
     setSystemAdministratorContext();
     Module module = OBProvider.getInstance().get(Module.class);
     module.setName("Test-dbprefixes-names");
@@ -48,54 +66,55 @@ public class DBPrefixTest extends BaseTest {
     module.setDescription("Testing dbprefixes");
     module.setInDevelopment(true);
     OBDal.getInstance().save(module);
+    OBDal.getInstance().flush();
   }
 
   /**
    * Add a valid dbprefixes, everything should go ok only alphabetic upper chars
    */
-  public void testAddDBPrefixValid1() {
+  public void addDBPrefixValid1() {
     insertDBPrefix("OK", true);
   }
 
   /**
    * alpha numeric chars not starting with a numeric one
    */
-  public void testAddDBPrefixValid2() {
+  public void addDBPrefixValid2() {
     insertDBPrefix("OK12", true);
   }
 
   /**
    * Add not valid db prefixes starts with number
    */
-  public void testAddDBPrefixNotValid1() {
+  public void addDBPrefixNotValid1() {
     insertDBPrefix("1FAIL", false);
   }
 
   /**
    * contains lower case letters
    */
-  public void testAddDBPrefixNotValid2() {
+  public void addDBPrefixNotValid2() {
     insertDBPrefix("Fail", false);
   }
 
   /**
    * contains underscore
    */
-  public void testAddDBPrefixNotValid3() {
+  public void addDBPrefixNotValid3() {
     insertDBPrefix("FAIL_1", false);
   }
 
   /**
    * contains other non-alphabetic chars
    */
-  public void testAddDBPrefixNotValid4() {
+  public void addDBPrefixNotValid4() {
     insertDBPrefix("FAIL&/1", false);
   }
 
   /**
    * Deletes all the modules matching the name for the testing one
    */
-  public void testDeleteModule() {
+  public void deleteModule() {
     setSystemAdministratorContext();
     final OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
     obCriteria.add(Restrictions.eq(Module.PROPERTY_JAVAPACKAGE, "org.openbravo.test.dbprefix"));
@@ -106,7 +125,7 @@ public class DBPrefixTest extends BaseTest {
     }
   }
 
-  // Obtains the module iserted for testing purposes
+  // Obtains the module inserted for testing purposes
   private Module getModule() {
     setSystemAdministratorContext();
     final OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
@@ -148,5 +167,6 @@ public class DBPrefixTest extends BaseTest {
       assertFalse("Not inserted a valid prefix:" + name, exception);
     else
       assertTrue("Inserted a non-valid prefix:" + name, exception);
+    OBDal.getInstance().flush();
   }
 }
