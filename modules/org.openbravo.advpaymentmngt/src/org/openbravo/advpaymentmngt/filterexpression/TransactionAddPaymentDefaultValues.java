@@ -19,6 +19,7 @@
 package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +28,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
@@ -139,6 +141,11 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
       }
     }
     return "";
+  }
+
+  @Override
+  String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
+    return OBDateUtils.formatDate(new Date());
   }
 
   private FIN_FinancialAccount getFinancialAccount(Map<String, String> requestMap)
