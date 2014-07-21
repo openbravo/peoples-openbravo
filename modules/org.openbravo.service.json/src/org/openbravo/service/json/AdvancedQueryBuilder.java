@@ -637,8 +637,49 @@ public class AdvancedQueryBuilder {
         clause = getMainAlias() + DalUtil.DOT
             + useFieldName.replace(DalUtil.DOT + JsonConstants.IDENTIFIER, "");
       } else {
-        clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause,
-            tableReference);
+        if (subEntity != null) {
+          final Property refProperty = this.distinctProperty;
+          tableReference = refProperty.getDomainType() instanceof TableDomainType;
+          final boolean isTable = property.getEntity() == ModelProvider.getInstance().getEntity(
+              Table.ENTITY_NAME);
+          if (isTable) {
+            useProperty = property.getEntity().getProperty(Table.PROPERTY_NAME);
+            final int index = useFieldName.indexOf(DalUtil.DOT);
+            useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
+          } else {
+            // read the reference to get the table reference
+            final Reference reference = OBDal.getInstance().get(Reference.class,
+                refProperty.getDomainType().getReference().getId());
+            for (ReferencedTable referencedTable : reference.getADReferencedTableList()) {
+              if (referencedTable.isActive() && referencedTable.getDisplayedColumn() != null
+                  && referencedTable.getDisplayedColumn().isActive()) {
+                useProperty = property.getEntity().getPropertyByColumnName(
+                    referencedTable.getDisplayedColumn().getDBColumnName());
+                final int index = useFieldName.lastIndexOf(DalUtil.DOT);
+                if (useProperty.isPrimitive()) {
+                  useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
+                } else {
+                  // adding _identifier so that the identifier properties will be formed properly in
+                  // computeLeftWhereClauseForIdentifier.
+                  useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName()
+                      + DalUtil.DOT + JsonConstants.IDENTIFIER;
+                }
+                break;
+              }
+            }
+          }
+          clause = getEntity() + DalUtil.DOT + useFieldName;
+          if (!useProperty.isPrimitive()) {
+            clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause,
+                tableReference);
+          } else {
+            // passing true for last argument to apply filterCriteria
+            clause = resolveJoins(properties, useFieldName, true);
+          }
+        } else {
+          clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause,
+              tableReference);
+        }
       }
     } else if (!useProperty.isPrimitive()) {
       clause = clause + ".id";
@@ -648,7 +689,6 @@ public class AdvancedQueryBuilder {
       clause = computeLeftWhereClauseForIdentifier(useProperty, useFieldName, clause,
           tableReference);
     }
-
     if (ignoreCase(properties, operator)) {
       clause = "upper(" + clause + ")";
     }
@@ -867,15 +907,17 @@ public class AdvancedQueryBuilder {
     // property, that should work fine, as this last property is always part of the
     // identifier
     List<Property> identifierProperties = null;
+    identifierProperties = property.getEntity().getIdentifierProperties();
     if (!isTableReference) {
-      identifierProperties = property.getEntity().getIdentifierProperties();
       Check.isTrue(identifierProperties.contains(property), "Property " + property
           + " not part of identifier of " + property.getEntity());
     } else {
       // for table references, the display column identifier properties should be used in the joins
-      identifierProperties = property.getTargetEntity().getIdentifierProperties();
+      if (property.getTargetEntity() != null) {
+        identifierProperties = property.getTargetEntity().getIdentifierProperties();
+      }
     }
-    String prefix;
+    String prefix = "";
     final int index = leftWherePart.lastIndexOf(DalUtil.DOT);
     if (key.equals(JsonConstants.IDENTIFIER)) {
       prefix = getMainAlias() + DalUtil.DOT;
@@ -890,7 +932,9 @@ public class AdvancedQueryBuilder {
       prefix = "";
     } else {
       // the + 1 makes sure that the dot is included
-      prefix = leftWherePart.substring(0, index + 1);
+      if (index != -1) {
+        prefix = leftWherePart.substring(0, index + 1);
+      }
     }
     return createIdentifierLeftClause(identifierProperties, prefix);
   }
