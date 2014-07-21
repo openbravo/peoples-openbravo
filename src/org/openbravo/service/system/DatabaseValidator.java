@@ -53,6 +53,7 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.scheduling.KillableProcess;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
 /**
@@ -262,6 +263,8 @@ public class DatabaseValidator implements SystemValidator {
     checkDataSetName(result);
 
     checkPasswordColumns(result);
+
+    checkKillableImplementation(result);
 
     return result;
   }
@@ -892,5 +895,39 @@ public class DatabaseValidator implements SystemValidator {
       }
     }
 
+  }
+
+  /**
+   * Checks that java background killable process are truly killable.
+   * 
+   * If a background process has the killable check-box marked the java process associated must
+   * implement the KillableProcess interface.
+   */
+  private void checkKillableImplementation(SystemValidationResult result) {
+
+    OBCriteria<org.openbravo.model.ad.ui.Process> obc = OBDal.getInstance().createCriteria(
+        org.openbravo.model.ad.ui.Process.class);
+    obc.add(Restrictions.eq(org.openbravo.model.ad.ui.Process.PROPERTY_KILLABLE, true));
+    if (validateModule != null) {
+      obc.add(Restrictions.eq(DataSet.PROPERTY_MODULE, validateModule));
+    }
+    List<org.openbravo.model.ad.ui.Process> processList = obc.list();
+    for (org.openbravo.model.ad.ui.Process process : processList) {
+      try {
+        Class<?> processClass = Class.forName(process.getJavaClassName());
+        if (!KillableProcess.class.isAssignableFrom(processClass)) {
+          result
+              .addWarning(
+                  SystemValidationResult.SystemValidationType.KILLABLENOTIMPLEMENTED,
+                  "The process "
+                      + process.getIdentifier()
+                      + " is marked as killable so the javaclass associated must implement the KillableProcess interface");
+        }
+      } catch (ClassNotFoundException e) {
+        result.addWarning(SystemValidationResult.SystemValidationType.KILLABLENOTIMPLEMENTED,
+            "Error trying to obtain the class for process " + process.getIdentifier());
+      }
+
+    }
   }
 }
