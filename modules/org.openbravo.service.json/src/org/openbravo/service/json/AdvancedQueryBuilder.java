@@ -637,9 +637,9 @@ public class AdvancedQueryBuilder {
         clause = getMainAlias() + DalUtil.DOT
             + useFieldName.replace(DalUtil.DOT + JsonConstants.IDENTIFIER, "");
       } else {
-        if (subEntity != null) {
-          final Property refProperty = this.distinctProperty;
-          tableReference = refProperty.getDomainType() instanceof TableDomainType;
+        final Property refProperty = this.distinctProperty;
+        tableReference = refProperty.getDomainType() instanceof TableDomainType;
+        if (subEntity != null && tableReference) {
           final boolean isTable = property.getEntity() == ModelProvider.getInstance().getEntity(
               Table.ENTITY_NAME);
           if (isTable) {
@@ -1415,8 +1415,10 @@ public class AdvancedQueryBuilder {
       boolean tableReference = false;
       if (originalProp == null) {
         if (distinctProperty != null) {
-          tableReference = true;
-          originalProp = distinctProperty;
+          tableReference = distinctProperty.getDomainType() instanceof TableDomainType;
+          if (tableReference) {
+            originalProp = distinctProperty;
+          }
         }
       } else {
         tableReference = originalProp.getDomainType() instanceof TableDomainType;
