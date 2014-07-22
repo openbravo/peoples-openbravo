@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="description" content="Openbravo Point of Sale window">
   <meta name="author" content="Openbravo, S.L.U.">
-  
+
   <%@include file="../org.openbravo.mobile.core/assets/include/mobile.jsp" %>
 
   <link rel="shortcut icon" type="image/x-icon" href="../../web/images/favicon.ico" />
@@ -47,10 +47,10 @@
   </script>
 
   <script>
-OB.POS.terminal = new OB.UI.Terminal({
-terminal: OB.POS.modelterminal
-});
-OB.POS.terminal.write();
+    OB.POS.terminal = new OB.UI.Terminal({
+      terminal: OB.POS.modelterminal
+    });
+    OB.POS.terminal.write();
   </script>
-   </body>
+</body>
 </html>
