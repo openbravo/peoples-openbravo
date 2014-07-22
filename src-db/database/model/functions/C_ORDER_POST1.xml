@@ -1348,8 +1348,8 @@
      */
       BEGIN
         v_ResultStr:='OrderCompleteCheck';
-        SELECT SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyDelivered*hex_to_int(C_OrderLine_ID)),
-            SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyInvoiced*hex_to_int(C_OrderLine_ID))
+        SELECT SUM(QtyOrdered) -SUM(QtyDelivered),
+            SUM(QtyOrdered) -SUM(QtyInvoiced)
           INTO ToDeliver,
             ToInvoice
         FROM C_ORDERLINE
@@ -1498,8 +1498,8 @@
      /**
       * Final Completeness check
       */
-      SELECT SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyDelivered*hex_to_int(C_OrderLine_ID)),
-          SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyInvoiced*hex_to_int(C_OrderLine_ID))
+      SELECT SUM(QtyOrdered) -SUM(QtyDelivered),
+          SUM(QtyOrdered) -SUM(QtyInvoiced)
         INTO ToDeliver,
           ToInvoice
       FROM C_ORDERLINE
