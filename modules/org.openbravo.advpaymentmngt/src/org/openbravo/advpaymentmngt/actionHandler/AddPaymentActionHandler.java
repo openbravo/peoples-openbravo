@@ -154,7 +154,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           errorMessage.put("severity", "error");
           errorMessage.put("text", e.getMessage());
           jsonResponse.put("message", errorMessage);
-          return errorMessage;
+          return jsonResponse;
         }
       }
       payment.setAmount(new BigDecimal(strActualPayment));
