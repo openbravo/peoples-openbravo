@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,8 @@
 	  SUM(CONVAMOUNTREF) AS CONVAMOUNTREF,
 	  C_CURRENCY_SYMBOL(?, 0, 'Y') AS CONVSYM,	  	  
 	  C_CURRENCY_ISOSYM(?) AS CONVISOSYM,
-	  '' AS ID, '' AS NAME, '' AS TRANSCURRENCYID, '' AS TRANSDATE, '' AS TRANSCLIENTID, '' AS TRANSORGID
+	  '' AS ID, '' AS NAME, '' AS TRANSCURRENCYID, '' AS TRANSDATE, '' AS TRANSCLIENTID, '' AS TRANSORGID,
+      '' AS ORG, '' AS PARTNERGROUP, '' AS PARTNER, '' AS DOCUMENTNO, '' AS INVOICEDATE, '' AS PRODCATEGORY, '' AS PRODUCT
       FROM (SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, 
       SUM(LINENETAMT) AS AMOUNT, SUM(QTYINVOICED) AS QTY,
       SUM(LINENETREF) AS AMOUNTREF, SUM(QTYINVOICEDREF) AS QTYREF,     
@@ -263,4 +264,49 @@
      <Parameter name="lang"/> 
      <Parameter name="shown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID IN]]></Parameter>
   </SqlMethod>
+  
+  <SqlMethod name="selectXLS" type="preparedStatement" return="scrollable">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+    SELECT ORG, PARTNERGROUP, PARTNER, DOCUMENTNO, INVOICEDATE, PRODCATEGORY, PRODUCT, AMOUNT, QTY
+      FROM 
+      (SELECT (SELECT O.NAME FROM AD_ORG O WHERE O.AD_ORG_ID = C_INVOICE.AD_ORG_ID) AS ORG,             
+       C_BP_GROUP.NAME AS PARTNERGROUP,             
+       C_BPARTNER.NAME AS PARTNER,             
+       C_INVOICE.DOCUMENTNO AS DOCUMENTNO,             
+       TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS INVOICEDATE,  
+       M_PRODUCT_CATEGORY.NAME AS PRODCATEGORY,             
+       M_PRODUCT.NAME AS PRODUCT,
+       CASE WHEN C_DOCTYPE.DOCBASETYPE = 'APC' THEN C_CURRENCY_CONVERT(C_INVOICELINE.LINENETAMT*-1, C_INVOICE.C_CURRENCY_ID, ?, TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())), NULL, C_INVOICE.AD_CLIENT_ID, C_INVOICE.AD_ORG_ID) ELSE C_CURRENCY_CONVERT(C_INVOICELINE.LINENETAMT, C_INVOICE.C_CURRENCY_ID, ?, TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())), NULL, C_INVOICE.AD_CLIENT_ID, C_INVOICE.AD_ORG_ID) END AS AMOUNT,
+       CASE WHEN C_DOCTYPE.DOCBASETYPE = 'APC' THEN C_INVOICELINE.QTYINVOICED*-1 ELSE C_INVOICELINE.QTYINVOICED END AS QTY
+      FROM C_INVOICELINE left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+                         left join C_UOM     on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID 
+                         left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
+                         left join C_INVOICE on C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
+                         left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID,
+      C_BPARTNER, C_BP_GROUP
+      WHERE C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      AND C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
+      AND C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
+      AND C_INVOICE.ISSOTRX = 'N'
+      AND C_INVOICE.PROCESSED = 'Y'
+      AND 0=0 AND C_INVOICE.AD_ORG_ID IN ('1')
+      AND C_INVOICE.AD_CLIENT_ID IN ('6')
+      AND 1=1) AA
+      ORDER BY ORG, DOCUMENTNO, INVOICEDATE
+     ]]></Sql>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'6'"/>
+    <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+    <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+  </SqlMethod>
+  
 </SqlClass>
