@@ -63,7 +63,10 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
       final String strAction = (String) bundle.getParams().get("action");
 
       // retrieve standard params
-      final String recordID = (String) bundle.getParams().get("Fin_FinAcc_Transaction_ID");
+      String recordID = (String) bundle.getParams().get("Fin_FinAcc_Transaction_ID");
+      if (recordID == null) {
+        recordID = (String) bundle.getParams().get("Fin_Finacc_Transaction_ID");
+      }
       final FIN_FinaccTransaction transaction = dao
           .getObject(FIN_FinaccTransaction.class, recordID);
       final VariablesSecureApp vars = bundle.getContext().toVars();
