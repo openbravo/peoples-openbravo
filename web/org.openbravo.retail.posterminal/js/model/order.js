@@ -1747,10 +1747,12 @@
           linesToMerge = _.filter(me.get('lines').models, function (line) {
             var qtyReserved = 0;
             (line.get('promotions') || []).forEach(
-
-            function (p) {
-              qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved || 0);
-            });
+              function (p) {
+                if (p.qtyOfferReserved > 0) {
+                  qtyReserved = OB.DEC.add(qtyReserved, p.qtyOfferReserved);
+                }
+              }
+            );
             if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && OB.DEC.sub(line.get('qty'), qtyReserved) > 0 && !_.find(line.get('promotions'), function (promo) {
               return promo.manual || promo.doNotMerge;
             })) {
