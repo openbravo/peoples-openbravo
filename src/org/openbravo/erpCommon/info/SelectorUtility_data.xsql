@@ -79,5 +79,20 @@
      <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
      <Parameter name="mLocatorId" optional="true" type="argument" after="(1=2" text=" OR M_LOCATOR_ID IN"/>
   </SqlMethod>
+  
+  <SqlMethod name="selectCDocType" type="preparedStatement" return="multiple">
+    <Sql>
+    <![CDATA[
+      SELECT DT.C_DOCTYPE_ID AS ID, AO.NAME || ' - ' || DT.NAME AS NAME
+      FROM C_DOCTYPE DT, AD_ORG AO
+      WHERE DT.AD_ORG_ID = AO.AD_ORG_ID
+      AND DT.AD_ORG_ID IN ('1')
+      AND DT.AD_CLIENT_ID IN ('1')
+      AND (1=2 )
+     ]]></Sql>
+     <Parameter name="adOrgClient" type="replace" optional="true" after="AD_ORG_ID IN (" text="'1'"/>
+     <Parameter name="adUserClient" type="replace" optional="true" after="AD_CLIENT_ID IN (" text="'1'"/>
+     <Parameter name="mLocatorId" optional="true" type="argument" after="(1=2" text=" OR C_DOCTYPE_ID IN"/>
+  </SqlMethod>
 
 </SqlClass>

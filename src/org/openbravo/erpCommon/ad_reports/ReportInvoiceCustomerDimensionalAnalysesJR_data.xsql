@@ -162,6 +162,7 @@
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
     <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT to_char(" text="'8'"/>
     <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 , to_char(" text="'9'"/>
     <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 , to_char(" text="'10'"/>
@@ -185,6 +186,7 @@
     <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="cProjectId" optional="true" after="AND 2=2"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="producttype" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
   </SqlMethod>
 
@@ -194,7 +196,8 @@
     <![CDATA[
       SELECT COUNT( DISTINCT 1 ) AS COUNT
       FROM C_INVOICE left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
-                     left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID,
+                     left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
+                     left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID,
            C_INVOICELINE left join C_UOM on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
                          left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
                          left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
@@ -223,6 +226,7 @@
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
     <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
     <Parameter name="dateFromRef" optional="true" after="3=3"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
@@ -323,6 +327,7 @@
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10" text=", 1"/>
   </SqlMethod>
 
@@ -332,7 +337,8 @@
     <![CDATA[
       SELECT COUNT( DISTINCT 1 ) AS COUNT
       FROM C_INVOICE left join AD_USER on C_INVOICE.SALESREP_ID = AD_USER.AD_USER_ID
-                     left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID,
+                     left join C_PROJECT on C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
+                     left join C_DOCTYPE on C_INVOICE.C_DOCTYPE_ID=C_DOCTYPE.C_DOCTYPE_ID,
            C_INVOICELINE left join C_UOM on C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
                          left join M_PRODUCT on C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
                          left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID
@@ -361,6 +367,7 @@
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
     <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
   </SqlMethod>
@@ -554,5 +561,6 @@
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
     <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
+    <Parameter name="cDocTypeId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_DOCTYPE.C_DOCTYPE_ID IN]]></Parameter>
   </SqlMethod>
 </SqlClass>

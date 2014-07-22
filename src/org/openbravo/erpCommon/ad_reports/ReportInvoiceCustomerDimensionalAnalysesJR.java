@@ -85,6 +85,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           "ReportInvoiceCustomerDimensionalAnalysesJR|project", "");
       String strProducttype = vars.getGlobalVariable("inpProducttype",
           "ReportInvoiceCustomerDimensionalAnalysesJR|producttype", "");
+      String strcDocTypeId = vars.getInGlobalVariable("inpcDocTypeId_IN",
+          "ReportInvoiceCustomerDimensionalAnalysesJR|doctype", "", IsIDFilter.instance);
       String strOrder = vars.getGlobalVariable("inpOrder",
           "ReportInvoiceCustomerDimensionalAnalyze|order", "Normal");
       String strMayor = vars.getNumericGlobalVariable("inpMayor",
@@ -105,7 +107,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       printPageDataSheet(request, response, vars, strComparative, strDateFrom, strDateTo,
           strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown,
           strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strcProjectId,
-          strProducttype, strOrder, strMayor, strMenor, strPartnerSalesRepId, strCurrencyId);
+          strProducttype, strcDocTypeId, strOrder, strMayor, strMenor, strPartnerSalesRepId,
+          strCurrencyId);
     } else if (vars.commandIn("EDIT_HTML", "EDIT_HTML_COMPARATIVE")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportInvoiceCustomerDimensionalAnalysesJR|dateFrom");
@@ -134,6 +137,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           "ReportInvoiceCustomerDimensionalAnalysesJR|project");
       String strProducttype = vars.getRequestGlobalVariable("inpProducttype",
           "ReportInvoiceCustomerDimensionalAnalysesJR|producttype");
+      String strcDocTypeId = vars.getRequestInGlobalVariable("inpcDocTypeId_IN",
+          "ReportInvoiceCustomerDimensionalAnalysesJR|doctype", IsIDFilter.instance);
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportInvoiceCustomerDimensionalAnalysesJR|order");
       String strMayor = vars.getNumericParameter("inpMayor", "");
@@ -146,7 +151,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       printPageHtml(request, response, vars, strComparative, strDateFrom, strDateTo,
           strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown,
           strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strcProjectId,
-          strProducttype, strOrder, strMayor, strMenor, strPartnerSalesrepId, strCurrencyId, "html");
+          strProducttype, strcDocTypeId, strOrder, strMayor, strMenor, strPartnerSalesrepId,
+          strCurrencyId, "html");
     } else if (vars.commandIn("EDIT_PDF", "EDIT_PDF_COMPARATIVE")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportInvoiceCustomerDimensionalAnalysesJR|dateFrom");
@@ -175,6 +181,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           "ReportInvoiceCustomerDimensionalAnalysesJR|project");
       String strProducttype = vars.getRequestGlobalVariable("inpProducttype",
           "ReportInvoiceCustomerDimensionalAnalysesJR|producttype");
+      String strcDocTypeId = vars.getRequestInGlobalVariable("inpcDocTypeId_IN",
+          "ReportInvoiceCustomerDimensionalAnalysesJR|doctype", IsIDFilter.instance);
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportSalesDimensionalAnalyze|order");
       String strMayor = vars.getNumericParameter("inpMayor", "");
@@ -187,7 +195,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       printPageHtml(request, response, vars, strComparative, strDateFrom, strDateTo,
           strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown,
           strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strcProjectId,
-          strProducttype, strOrder, strMayor, strMenor, strPartnerSalesrepId, strCurrencyId, "pdf");
+          strProducttype, strcDocTypeId, strOrder, strMayor, strMenor, strPartnerSalesrepId,
+          strCurrencyId, "pdf");
     } else if (vars.commandIn("EXCEL")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportInvoiceCustomerDimensionalAnalysesJR|dateFrom");
@@ -216,6 +225,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           "ReportInvoiceCustomerDimensionalAnalysesJR|project");
       String strProducttype = vars.getRequestGlobalVariable("inpProducttype",
           "ReportInvoiceCustomerDimensionalAnalysesJR|producttype");
+      String strcDocTypeId = vars.getRequestInGlobalVariable("inpcDocTypeId_IN",
+          "ReportInvoiceCustomerDimensionalAnalysesJR|doctype", IsIDFilter.instance);
       String strOrder = vars.getRequestGlobalVariable("inpOrder",
           "ReportSalesDimensionalAnalyze|order");
       String strMayor = vars.getNumericParameter("inpMayor", "");
@@ -228,7 +239,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       printPageHtml(request, response, vars, strComparative, strDateFrom, strDateTo,
           strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown,
           strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strcProjectId,
-          strProducttype, strOrder, strMayor, strMenor, strPartnerSalesrepId, strCurrencyId, "xls");
+          strProducttype, strcDocTypeId, strOrder, strMayor, strMenor, strPartnerSalesrepId,
+          strCurrencyId, "xls");
     } else
       pageErrorPopUp(response);
   }
@@ -238,8 +250,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strPartnerGroup, String strcBpartnerId, String strProductCategory,
       String strmProductId, String strNotShown, String strShown, String strDateFromRef,
       String strDateToRef, String strOrg, String strsalesrepId, String strcProjectId,
-      String strProducttype, String strOrder, String strMayor, String strMenor,
-      String strPartnerSalesrepId, String strCurrencyId) throws IOException, ServletException {
+      String strProducttype, String strcDocTypeId, String strOrder, String strMayor,
+      String strMenor, String strPartnerSalesrepId, String strCurrencyId) throws IOException,
+      ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     String discard[] = { "selEliminarHeader1" };
@@ -425,6 +438,13 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       throw new ServletException(ex);
     }
 
+    xmlDocument.setData(
+        "reportCDocTypeId_IN",
+        "liststructure",
+        SelectorUtilityData.selectCDocType(this,
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), strcDocTypeId));
+
     if (vars.getLanguage().equals("en_US")) {
       xmlDocument.setData("structure1",
           ReportInvoiceCustomerDimensionalAnalysesJRData.selectNotShown(this, strShown));
@@ -452,9 +472,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strPartnerGroup, String strcBpartnerId, String strProductCategory,
       String strmProductId, String strNotShown, String strShown, String strDateFromRef,
       String strDateToRef, String strOrg, String strsalesrepId, String strcProjectId,
-      String strProducttype, String strOrder, String strMayor, String strMenor,
-      String strPartnerSalesrepId, String strCurrencyId, String strOutput) throws IOException,
-      ServletException {
+      String strProducttype, String strcDocTypeId, String strOrder, String strMayor,
+      String strMenor, String strPartnerSalesrepId, String strCurrencyId, String strOutput)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     String strOrderby = "";
@@ -685,15 +705,15 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                     vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
                     strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId,
                     strsalesrepId, strPartnerSalesrepId, strcProjectId, strProducttype,
-                    strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDateFromRef,
-                    DateTimeData.nDaysAfter(this, strDateToRef, "1"))
+                    strcDocTypeId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                    strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"))
                 : ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparativeCount(this,
                     levelsconcat.toString(), Tree.getMembers(this,
                         TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(
                         this, vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
                     strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId,
                     strsalesrepId, strPartnerSalesrepId, strcProjectId, strProducttype,
-                    strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1")));
+                    strcDocTypeId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1")));
       }
     } catch (NumberFormatException e) {
     }
@@ -717,7 +737,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                       "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
                   .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
               strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
-              strcProjectId, strProducttype);
+              strcProjectId, strProducttype, strcDocTypeId);
         } catch (ServletException ex) {
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
         }
@@ -732,8 +752,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                         "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
                     .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
                 strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
-                strcProjectId, strProducttype, strDateFromRef, DateTimeData.nDaysAfter(this,
-                    strDateToRef, "1"), strOrderby);
+                strcProjectId, strProducttype, strcDocTypeId, strDateFromRef, DateTimeData
+                    .nDaysAfter(this, strDateToRef, "1"), strOrderby);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           }
@@ -747,7 +767,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                     "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
                     .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
                 strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
-                strcProjectId, strProducttype, strOrderby);
+                strcProjectId, strProducttype, strcDocTypeId, strOrderby);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           }
