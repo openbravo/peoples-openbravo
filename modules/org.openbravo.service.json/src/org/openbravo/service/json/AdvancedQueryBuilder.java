@@ -638,7 +638,9 @@ public class AdvancedQueryBuilder {
             + useFieldName.replace(DalUtil.DOT + JsonConstants.IDENTIFIER, "");
       } else {
         final Property refProperty = this.distinctProperty;
-        tableReference = refProperty.getDomainType() instanceof TableDomainType;
+        if (refProperty != null) {
+          tableReference = refProperty.getDomainType() instanceof TableDomainType;
+        }
         if (subEntity != null && tableReference) {
           final boolean isTable = property.getEntity() == ModelProvider.getInstance().getEntity(
               Table.ENTITY_NAME);
