@@ -47,10 +47,14 @@
   </script>
 
   <script>
-    OB.POS.terminal = new OB.UI.Terminal({
-      terminal: OB.POS.modelterminal
-    });
-    OB.POS.terminal.write();
+    if ((typeof OB !== "undefined") && (typeof OB.POS !== "undefined")) {
+      OB.POS.terminal = new OB.UI.Terminal({
+        terminal: OB.POS.modelterminal
+      });
+      OB.POS.terminal.write();
+    } else {
+      console.error('Cannot find OB namespace. Check that the javascript files do not contain syntax errors.');
+    }
   </script>
 </body>
 </html>
