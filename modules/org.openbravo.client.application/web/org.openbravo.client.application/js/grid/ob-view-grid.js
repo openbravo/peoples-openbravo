@@ -994,7 +994,7 @@ isc.OBViewGrid.addProperties({
   },
 
   setViewState: function (state, settingDefault) {
-    var localState, i, fld, hasSummaryFunction;
+    var localState, i, fld, hasSummaryFunction, hasDefaultSavedView;
 
     localState = this.evalViewState(state, 'viewState');
 
@@ -1006,6 +1006,10 @@ isc.OBViewGrid.addProperties({
     if (!localState) {
       return;
     }
+
+    // by default, there are no summary functions
+    hasSummaryFunction = false;
+    this.setShowGridSummary(false);
 
     if (this.getDataSource()) {
       // old versions stored selected records in grid view, this can cause
@@ -1024,9 +1028,7 @@ isc.OBViewGrid.addProperties({
             delete fld.summaryFunction;
           }
         }
-        this.setShowGridSummary(hasSummaryFunction);
       }
-
       // remove focus as this results in blur behavior before the
       // (filter)editor is redrawn with new fields when
       // doing setviewstate
@@ -1060,6 +1062,14 @@ isc.OBViewGrid.addProperties({
       }
 
       this.Super('setViewState', ['(' + isc.Comm.serialize(localState, false) + ')']);
+
+      hasDefaultSavedView = this.view && this.view.standardWindow && this.view.standardWindow.checkIfDefaultSavedView();
+      if (hasSummaryFunction && (!settingDefault || !hasDefaultSavedView)) {
+        // setting summary functions only once, if not causes several requests (see issue #27157)
+        // it is set when setting saved view, or setting defaults (grid configuration) if there is no saved view
+        this.recalculateGridSummary();
+        this.setShowGridSummary(true);
+      }
 
       // Focus on the first filterable item
       if (this.view.isActiveView()) {
