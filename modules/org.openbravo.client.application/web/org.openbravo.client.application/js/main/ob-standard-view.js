@@ -834,7 +834,6 @@ isc.OBStandardView.addProperties({
       // the logic doesn't pass through the 'setAsActiveView' so the 'prepareFullChildView' should be done
       // on the tab selection instead.
       me.prepareFullChildView(childView, childTabDef);
-      childTabDef.pane.parentTabSet.doHandleClick();
     };
 
     childTabDef.pane.destroy = function () {
