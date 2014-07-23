@@ -204,13 +204,15 @@ OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
 };
 
 OB.DS.HWServer.prototype.print = function (template, params, callback) {
-  if (template && template.getData) {
-    var me = this;
-    template.getData(function (data) {
-      me.print(data, params, callback);
-    });
-  } else {
-    this._print(template, params, callback);
+  if (template) {
+    if (template.getData) {
+      var me = this;
+      template.getData(function (data) {
+        me.print(data, params, callback);
+      });
+    } else {
+      this._print(template, params, callback);
+    }
   }
 };
 
