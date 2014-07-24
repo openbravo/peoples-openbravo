@@ -184,7 +184,7 @@ public class OrderLoader extends JSONProcessSimple {
           parameters.add(jsonorder.getString("id"));
           OBQuery<Order> orders = OBDal.getInstance().createQuery(Order.class, "id=?");
           orders.setParameters(parameters);
-          if (orders.count() > 0) {
+          if (orders.count() > 0 && additionalCheckForDuplicates(jsonorder)) {
             log.warn("Order duplicated with id: " + jsonorder.getString("id")
                 + "  Not error saved.");
           } else {
@@ -395,6 +395,22 @@ public class OrderLoader extends JSONProcessSimple {
     return successMessage(jsonorder);
   }
 
+  protected boolean additionalCheckForDuplicates(JSONObject record) {
+    try {
+      Order orderInDatabase = OBDal.getInstance().get(Order.class, record.getString("id"));
+      String docNoInDatabase = orderInDatabase.getDocumentNo();
+      String docNoInJSON = "";
+      docNoInJSON = record.getString("documentNo");
+      if (!docNoInDatabase.equals(docNoInJSON)) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (JSONException e) {
+      return true;
+    }
+  }
+
   private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order,
       ShipmentInOut shipment, Invoice invoice) throws Exception {
     for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
@@ -459,7 +475,15 @@ public class OrderLoader extends JSONProcessSimple {
           && !jsonorder.getString("id").equals("")) {
         Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
         if (order != null) {
-          return true;
+          // Additional check to verify that the order is indeed a duplicate
+          if (!additionalCheckForDuplicates(jsonorder)) {
+            throw new OBException(
+                "An order has the same id, but it's not a duplicate. Existing order id:"
+                    + order.getId() + ". Existing order documentNo:" + order.getDocumentNo()
+                    + ". New documentNo:" + jsonorder.getString("documentNo"));
+          } else {
+            return true;
+          }
         }
       }
       if ((!jsonorder.has("gross") || jsonorder.getString("gross").equals("0"))
