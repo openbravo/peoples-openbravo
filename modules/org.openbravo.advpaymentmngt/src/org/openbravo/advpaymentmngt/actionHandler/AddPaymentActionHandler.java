@@ -172,7 +172,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           || strAction.equals("PPW")) {
 
         OBError message = processPayment(payment, strAction, strDifferenceAction, differenceAmount,
-            exchangeRate);
+            exchangeRate, jsonparams);
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", message.getType().toLowerCase());
         errorMessage.put("title", message.getTitle());
@@ -329,6 +329,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         creditPayment.setDescription(truncateDescription);
         // Set Used Credit = Amount + Previous used credit introduced by the user
         creditPayment.setUsedCredit(usedCreditAmt.add(creditPayment.getUsedCredit()));
+        ;
         FIN_PaymentProcess.linkCreditPayment(payment, usedCreditAmt, creditPayment);
         OBDal.getInstance().save(creditPayment);
       }
@@ -468,7 +469,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
   }
 
   private OBError processPayment(FIN_Payment payment, String strAction, String strDifferenceAction,
-      BigDecimal refundAmount, BigDecimal exchangeRate) throws Exception {
+      BigDecimal refundAmount, BigDecimal exchangeRate, JSONObject jsonparams) throws Exception {
     ConnectionProvider conn = new DalConnectionProvider(true);
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
 
@@ -497,6 +498,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       conn = new DalConnectionProvider(true);
       OBDal.getInstance().getSession().clear();
       payment = OBDal.getInstance().get(FIN_Payment.class, payment.getId());
+      addCredit(payment, jsonparams);
     }
     if (!strDifferenceAction.equals("refund")) {
       return message;
