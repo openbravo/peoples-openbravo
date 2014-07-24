@@ -21,8 +21,8 @@
     this.hasInvLayaways = false;
 
     this.receipt.on('closed', function (eventParams) {
-      OB.warn('Ticket closed. ' + model.get('order').getOrderDescription());
       this.receipt = model.get('order');
+      OB.warn('Ticket closed. ' + this.receipt.getOrderDescription());
       var me = this,
           docno = this.receipt.get('documentNo'),
           isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')),
