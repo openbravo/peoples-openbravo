@@ -708,6 +708,7 @@ public abstract class AcctServer {
         Status = AcctServer.STATUS_Error;
         save(conn, vars.getUser());
         log4j.warn(e);
+        log4j.warn("RecordId: " + strClave + " - tableId" + AD_Table_ID);
         e.printStackTrace();
       }
     } catch (ServletException e) {
