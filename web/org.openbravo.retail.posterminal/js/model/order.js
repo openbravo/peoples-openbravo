@@ -1977,7 +1977,22 @@
         }
       });
       return arrayMessages1;
+    },
+
+    getOrderDescription: function () {
+      var desc = 'Id: ' + this.get('id') + ". Docno: " + this.get('documentNo') + ". Total gross: " + this.get('gross') + ". Lines: [";
+      var i = 0;
+      this.get('lines').forEach(function (l) {
+        if (i !== 0) {
+          desc += ",";
+        }
+        desc += '{Product: ' + l.get('product').get('_identifier') + ', Quantity: ' + l.get('qty') + ' Gross: ' + l.get('gross') + '}';
+        i++;
+      });
+      desc += ']';
+      return desc;
     }
+
   });
 
   var OrderList = Backbone.Collection.extend({
