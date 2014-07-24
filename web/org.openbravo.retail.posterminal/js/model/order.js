@@ -1025,8 +1025,8 @@
       disc.manual = discount.manual;
       disc.userAmt = discount.userAmt;
       disc.lastApplied = discount.lastApplied;
-      disc.obdiscQtyoffer = (rule.get('qtyOffer') || line.get('qty'));
-      disc.qtyOffer = (rule.get('qtyOffer') || line.get('qty'));
+      disc.obdiscQtyoffer = (OB.DEC.toNumber(rule.get('qtyOffer')) || line.get('qty'));
+      disc.qtyOffer = disc.obdiscQtyoffer;
       disc.doNotMerge = discount.doNotMerge;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
