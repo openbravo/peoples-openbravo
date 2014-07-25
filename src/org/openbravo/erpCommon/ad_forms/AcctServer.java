@@ -707,9 +707,8 @@ public abstract class AcctServer {
         errors++;
         Status = AcctServer.STATUS_Error;
         save(conn, vars.getUser());
-        log4j.warn(e);
-        log4j.warn("RecordId: " + strClave + " - tableId" + AD_Table_ID);
-        e.printStackTrace();
+        log4j.error(
+            "An error ocurred posting RecordId: " + strClave + " - tableId: " + AD_Table_ID, e);
       }
     } catch (ServletException e) {
       log4j.error(e);
