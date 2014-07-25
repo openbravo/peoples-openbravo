@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.common.actionhandler;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
@@ -32,10 +31,18 @@ import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.service.db.DbUtility;
 import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * Kill Process is launched from kill button in the Process Monitor Window. It will try to execute
+ * the kill method in the process instance.
+ * 
+ */
 public class KillProcess extends BaseProcessActionHandler {
 
-  private static final Logger log4j = Logger.getLogger(KillProcess.class);
+  private static final Logger log = LoggerFactory.getLogger(KillProcess.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -78,7 +85,7 @@ public class KillProcess extends BaseProcessActionHandler {
 
     } catch (Exception ex) {
       Throwable e = DbUtility.getUnderlyingSQLException(ex);
-      log4j.error("Error in Kill Process", e);
+      log.error("Error in Kill Process", e);
       try {
         result = buildResult("error", "Error", e.getMessage());
       } catch (Exception ignoreException) {
