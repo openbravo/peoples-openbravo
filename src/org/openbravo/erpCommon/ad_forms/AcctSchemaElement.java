@@ -90,7 +90,8 @@ public final class AcctSchemaElement implements Serializable {
         log4jAcctSchemaElement.debug(seqNo + " " + name + " " + segmentType + "=" + defaultValue);
         if (mandatory.equals("Y") && defaultValue.equals(""))
           log4jAcctSchemaElement
-              .warn("AcctSchameElement.getAcctSchemaElementList - No default value for " + name);
+              .warn("AcctSchameElement.getAcctSchemaElementList - No default value for " + name
+                  + " for AccountingSchema: " + C_AcctSchema_ID);
         e = new AcctSchemaElement(id, seqNo, name, segmentType, C_Element_ID, defaultValue,
             mandatory, balanced);
         list.add(e);
