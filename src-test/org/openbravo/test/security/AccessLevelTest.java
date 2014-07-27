@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,14 @@
 
 package org.openbravo.test.security;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.AccessLevel;
@@ -41,7 +46,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.common.order.Order;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests/checks the accesslevel of an entity. See the {@link AccessLevelChecker}.
@@ -52,11 +57,12 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class AccessLevelTest extends BaseTest {
+public class AccessLevelTest extends OBBaseTest {
 
   /**
    * Test that the access level is tested correctly
    */
+  @Test
   public void testUserDataAccessLevel() {
     // Table Access Level:
     // "6";"System/Client"
@@ -112,6 +118,7 @@ public class AccessLevelTest extends BaseTest {
    * Tests/checks if the current client/org of the all objects in the database is valid for the
    * access level defined for that entity.
    */
+  @Test
   public void testADataAccessLevel() {
     setSystemAdministratorContext();
     final List<Entity> entities = ModelProvider.getInstance().getModel();
@@ -191,6 +198,7 @@ public class AccessLevelTest extends BaseTest {
   /**
    * Tests the Client Organization access level.
    */
+  @Test
   public void testAccessLevelCO() {
     setTestAdminContext();
     final Client c = OBDal.getInstance().get(Client.class, "0");
@@ -211,6 +219,7 @@ public class AccessLevelTest extends BaseTest {
   /**
    * Test the System access level.
    */
+  @Test
   public void testAccessLevelSystem() {
     setSystemAdministratorContext();
     final Organization o = OBDal.getInstance().get(Organization.class, "1000002");
@@ -231,6 +240,7 @@ public class AccessLevelTest extends BaseTest {
   /**
    * Tests the Organization Access Level.
    */
+  @Test
   public void testAccessLevelOrganization() {
     setSystemAdministratorContext();
     final Organization o = OBDal.getInstance().get(Organization.class, "0");
@@ -251,6 +261,7 @@ public class AccessLevelTest extends BaseTest {
   /**
    * Tests Access Level System Client.
    */
+  @Test
   public void testAccessLevelSC() {
     setSystemAdministratorContext();
     final Organization o = OBDal.getInstance().get(Organization.class, "1000001");

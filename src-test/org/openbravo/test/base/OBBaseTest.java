@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,12 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.criterion.Restrictions;
+import org.junit.After;
+import org.junit.Before;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -56,9 +55,9 @@ import org.openbravo.model.ad.access.User;
  * @author iperdomo
  */
 
-public class BaseTest extends TestCase {
+public class OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(BaseTest.class);
+  private static final Logger log = Logger.getLogger(OBBaseTest.class);
 
   private boolean errorOccured = false;
 
@@ -160,8 +159,8 @@ public class BaseTest extends TestCase {
    * Overridden to initialize the Dal layer, sets the current user to the the User:
    * {@link #TEST_USER_ID}
    */
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
 
     if (this.getClass().getResource("/log4j.lcf") != null) {
       PropertyConfigurator.configure(this.getClass().getResource("/log4j.lcf"));
@@ -170,7 +169,7 @@ public class BaseTest extends TestCase {
     initializeDalLayer();
     // clear the session otherwise it keeps the old model
     setTestUserContext();
-    super.setUp();
+    // super.setUp();
     // be negative is set back to false at the end of a successfull test.
     errorOccured = true;
   }
@@ -291,28 +290,19 @@ public class BaseTest extends TestCase {
     return userIds.get(r.nextInt(userIds.size()));
   }
 
-  @Override
-  public TestResult run() {
-    // TODO Auto-generated method stub
-    return super.run();
-  }
-
-  /**
-   * Overridden to keep track if an exception was thrown, if not then errorOccurred is set to false,
-   * signaling to tearDown to commit the transaction.
-   */
-  @Override
-  public void runTest() throws Throwable {
-    super.runTest();
-    errorOccured = false;
-  }
-
-  /**
-   * Performs rolling back of a transaction (in case setTestCompleted was not called by the
-   * subclass), or commits the transaction if the testcase passed without exception.
-   */
-  @Override
-  protected void tearDown() throws Exception {
+  /*
+   * public TestResult run() { // TODO Auto-generated method stub return super.run(); }
+   * 
+   * /** Overridden to keep track if an exception was thrown, if not then errorOccurred is set to
+   * false, signaling to tearDown to commit the transaction.
+   *//*
+      * public void runTest() throws Throwable { super.runTest(); errorOccured = false; }
+      * 
+      * /** Performs rolling back of a transaction (in case setTestCompleted was not called by the
+      * subclass), or commits the transaction if the testcase passed without exception.
+      */
+  @After
+  public void tearDown() throws Exception {
     // if not an administrator but still admin mode set throw an exception
     if (!OBContext.getOBContext().getUser().getId().equals("0")
         && !OBContext.getOBContext().getRole().getId().equals("0")
@@ -340,7 +330,8 @@ public class BaseTest extends TestCase {
       SessionHandler.deleteSessionHandler();
       OBContext.setOBContext((OBContext) null);
     }
-    super.tearDown();
+
+    // super.tearDown();
   }
 
   /**

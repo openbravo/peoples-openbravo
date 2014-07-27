@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,13 @@
 
 package org.openbravo.test.xml;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.dal.core.OBContext;
@@ -45,6 +50,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
    * Test that a warning is given that an object (in this case {@link Greeting} is not writable
    * because of access definitions for the user.
    */
+  @Test
   public void testNotWritableUpdate() {
     cleanRefDataLoaded();
     setTestUserContext();
@@ -88,6 +94,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
    * Tests that an error message is given that an object is new but the user is not allowed to write
    * it (because of access definitions).
    */
+  @Test
   public void testNotWritableInsertError() {
     cleanRefDataLoaded();
     setTestUserContext();
@@ -120,11 +127,13 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
    * then the one passed in during the import. This can happen if an object belongs in organization
    * * (0), while the update/import is in another organization.
    */
+  @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
+  @Test
   public void testUpdatingOtherOrganizationWarning() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
+    // if (1 == 1)
+    // return;
     cleanRefDataLoaded();
     setTestUserContext();
     addReadWriteAccess(Warehouse.class);

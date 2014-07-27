@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008, 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008, 2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -22,12 +22,17 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -41,7 +46,7 @@ import org.openbravo.model.common.businesspartner.CategoryAccounts;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test different parts of the dal api: {@link OBDal}, {@link OBCriteria} and {@link OBQuery}.
@@ -51,12 +56,13 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DalQueryTest extends BaseTest {
+public class DalQueryTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(DalQueryTest.class);
 
   /**
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
+  @Test
   public void testDalFirstWhereLeftJoinClause() {
     setTestAdminContext();
     final String where = "as mo left join mo.callout moc left join mo.reference mor left join mo.specialForm mof left join mo.process mop left join mo.tab mot where moc.module.id='0' or mor.module.id='0' or mof.module.id='0' or mop.module.id='0' or mot.module.id='0'";
@@ -68,6 +74,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
+  @Test
   public void testDalExtraJoinWhereLeftJoinClause() {
     setTestAdminContext();
     final String where = "as mom left join mom."
@@ -91,6 +98,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
+  @Test
   public void testDalWhereLeftJoinClause() {
     setTestAdminContext();
     final String where = "as mo left join mo.callout moc left join mo.reference mor where moc.module.id='0' or mor.module.id='0'";
@@ -102,6 +110,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
+  @Test
   public void testDalOtherWhereLeftJoinClause() {
     setTestAdminContext();
     final String where = "as mo left join mo.callout moc left join mo.reference mor where (moc.module.id='0' or mor.module.id='0') and exists(from ADUser where id<>'0')";
@@ -113,6 +122,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
+  @Test
   public void testDalAnOtherWhereLeftJoinClause() {
     setTestAdminContext();
     final String where = "exists(from ADUser where id<>'0')";
@@ -124,6 +134,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Test creates a new {@link Category} and saves it. The new object is removed in the next test.
    */
+  @Test
   public void testCreateBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
@@ -139,6 +150,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Test queries for the created {@link Category} and removes it.
    */
+  @Test
   public void testRemoveBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
@@ -177,6 +189,7 @@ public class DalQueryTest extends BaseTest {
   /**
    * Check that the {@link Category} was indeed removed.
    */
+  @Test
   public void testCheckBPGroupRemoved() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
@@ -190,6 +203,7 @@ public class DalQueryTest extends BaseTest {
    * Tests queries for a currency and then updates it. The test should fail as the user does not
    * have update authorisation.
    */
+  @Test
   public void testUpdateCurrencyByUser() {
     setUserContext("E12DC7B3FF8C4F64924A98195223B1F8");
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
@@ -214,6 +228,7 @@ public class DalQueryTest extends BaseTest {
    * has been implemented such that it reads all the references (which are non-null) and uses their
    * identifier to create the identifier of the transaction. The test sorts on product.name.
    */
+  @Test
   public void testTransaction25PageRead() {
     setTestUserContext();
     addReadWriteAccess(MaterialTransaction.class);

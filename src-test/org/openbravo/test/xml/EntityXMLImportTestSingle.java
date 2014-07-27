@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,16 @@
 
 package org.openbravo.test.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.openbravo.model.ad.system.Client.PROPERTY_ORGANIZATION;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
@@ -56,6 +60,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * Test an import of data in its own organization/client. This should not result in an update or
    * insert.
    */
+  @Test
   public void testImportNoUpdate() {
     setTestAdminContext();
 
@@ -91,6 +96,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
   /**
    * Export {@link Greeting} from one org and import in the other
    */
+  @Test
   public void test1Greeting() {
     cleanRefDataLoaded();
     setTestUserContext();
@@ -117,6 +123,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * Test that a repeat of the action of @ #test1Greeting()} is done without updating/inserting an
    * object.
    */
+  @Test
   public void test2Greeting() {
     setTestUserContext();
     addReadWriteAccess(Greeting.class);
@@ -138,6 +145,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * Tests reads the {@link Greeting} objects from the QA_TEST_ORG_ID, changes something and then
    * imports again. The result should be twenty updates.
    */
+  @Test
   public void test3Greeting() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
 
@@ -158,6 +166,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
   /**
    * Remove the test data from QA_TEST_ORG_ID.
    */
+  @Test
   public void test4Greeting() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
 
@@ -177,6 +186,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
   /**
    * Checks that the testdata was indeed removed.
    */
+  @Test
   public void test5Greeting() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
 
@@ -193,6 +203,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
   /**
    * Same test as before exporting and then importing in same organization.
    */
+  @Test
   public void test6Greeting() {
     doTestNoChange(Greeting.class);
   }

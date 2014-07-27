@@ -11,13 +11,18 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.test.xml;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileReader;
@@ -33,6 +38,7 @@ import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.model.Table;
 import org.apache.ddlutils.platform.ExcludeFilter;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -100,6 +106,7 @@ public class ClientExportImportTest extends XMLBaseTest {
    * 
    * Also tests mantis 9000: https://issues.openbravo.com/view.php?id=9000
    */
+  @Test
   public void testExportImportClient1000000() {
 
     // This test has been temporarily disabled until the following issue related to the export
@@ -207,6 +214,7 @@ public class ClientExportImportTest extends XMLBaseTest {
    * Exports the "QA Testing" client and then imports as a new client. Has as side effect that a
    * completely new client is added in the database.
    */
+
   public void _testExportImportClient1000001() {
     exportImport(QA_TEST_CLIENT_ID);
     // SystemService.getInstance().removeAllClientData(newClientId);
@@ -216,6 +224,7 @@ public class ClientExportImportTest extends XMLBaseTest {
    * Test which copies a client, then deletes it, and then tests that the foreign keys are still
    * activated
    */
+  @Test
   public void testDeleteClient() {
     Platform platform = SystemService.getInstance().getPlatform();
     ExcludeFilter excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(

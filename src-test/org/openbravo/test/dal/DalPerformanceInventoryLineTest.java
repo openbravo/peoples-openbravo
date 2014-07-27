@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,12 +24,14 @@ import java.math.BigDecimal;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Does some simple performance tests by creating sets of {@link InventoryCount} and
@@ -38,7 +40,7 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DalPerformanceInventoryLineTest extends BaseTest {
+public class DalPerformanceInventoryLineTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(DalPerformanceInventoryLineTest.class);
 
@@ -52,11 +54,13 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
    * {@link InventoryCountLine} objects. These objects are stored in the database and the timing is
    * reported.
    */
+  @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
+  @Test
   public void testACreateInventoryLine() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
+    // if (1 == 1)
+    // return;
     setTestUserContext();
 
     // make sure our user can do this addReadWriteAccess(InventoryCount.class);
@@ -99,12 +103,13 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
    * Reads the {@link InventoryCountLine} objects created in the above tests and adds one new line
    * and updates one line. The timings are reported in the log.
    */
-
+  @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
+  @Test
   public void testBReadAndAddLine() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
+    // if (1 == 1)
+    // return;
     setTestUserContext(); // make sure our user can do this
     addReadWriteAccess(InventoryCount.class);
     addReadWriteAccess(InventoryCountLine.class);
@@ -149,6 +154,7 @@ public class DalPerformanceInventoryLineTest extends BaseTest {
   /**
    * Removes the created {@link InventoryCount} and {@link InventoryCountLine} records.
    */
+  @Test
   public void testZCleanUp() {
     addReadWriteAccess(InventoryCount.class);
     addReadWriteAccess(InventoryCountLine.class);

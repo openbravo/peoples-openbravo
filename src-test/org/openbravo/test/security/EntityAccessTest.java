@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,15 @@
 
 package org.openbravo.test.security;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -32,7 +37,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.currency.CurrencyTrl;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests access on the basis of window and table definitions. Also tests derived read access.
@@ -45,7 +50,7 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class EntityAccessTest extends BaseTest {
+public class EntityAccessTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(EntityAccessTest.class);
 
@@ -53,6 +58,7 @@ public class EntityAccessTest extends BaseTest {
    * This test contains the invocations for the rest of the test cases. By this way, we preserve the
    * execution order of the test cases.
    */
+  @Test
   public void testContent() {
     createCurrency();
     checkDerivedReadableCurrency();
@@ -89,6 +95,7 @@ public class EntityAccessTest extends BaseTest {
    * After fixing issue #0010139, all entities are deletable. Therefore this test case is not going
    * to be executed.
    */
+  @Test
   public void doNotExecutetestNonDeletable() {
     setTestUserContext();
     addReadWriteAccess(Currency.class);

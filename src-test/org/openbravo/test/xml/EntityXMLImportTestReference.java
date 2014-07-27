@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,19 @@
 
 package org.openbravo.test.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -64,8 +71,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
   private List<String> warehouseNames = new ArrayList<String>();
   private List<String> locationAddresses = new ArrayList<String>();
 
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     Location l = null;
     super.setUp();
     setTestUserContext();
@@ -87,11 +94,13 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
    * Exports {@link Warehouse} objects from client/org {@link #TEST_CLIENT_ID} and imports them in
    * {@link #QA_TEST_CLIENT_ID}. Also the referenced {@link Location} objects are imported.
    */
+  @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
+  @Test
   public void test1Warehouse() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
+    // if (1 == 1)
+    // return;
     cleanRefDataLoaded();
     setTestUserContext();
     addReadWriteAccess(Warehouse.class);
@@ -121,11 +130,13 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
    * Remove the imported {@link Warehouse} objects from the {@link #QA_TEST_CLIENT_ID} client. The
    * imported {@link Location} objects should still remain.
    */
+  @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
+  @Test
   public void test2Warehouse() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
+    // if (1 == 1)
+    // return;
     setUserContext(QA_TEST_ADMIN_USER_ID);
     // a warehouse is not deletable, but as we are cleaning up, they should be
     // deleted, force this by being admin
@@ -143,11 +154,13 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
    * the {@link Location} objects are also exported but not imported as they already exist in
    * {@link #QA_TEST_CLIENT_ID}.
    */
+  @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
+  @Test
   public void test3Warehouse() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
+    // if (1 == 1)
+    // return;
     setTestUserContext();
     addReadWriteAccess(Warehouse.class);
     final String xml = getXML(Warehouse.class,
@@ -176,11 +189,13 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
    * Clean up by removing both the imported {@link Warehouse} and {@link Location} objects from
    * {@link #QA_TEST_CLIENT_ID} client.
    */
+  @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
+  @Test
   public void test4Warehouse() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
+    // if (1 == 1)
+    // return;
     setUserContext(QA_TEST_ADMIN_USER_ID);
     // a warehouse is not deletable, but as we are cleaning up, they should be
     // deleted, force this by being admin

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,10 +26,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.order.OrderLine;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests a complex query using the DAL, is used in the developers guide.
@@ -37,7 +38,7 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DalComplexQueryTestOrderLine extends BaseTest {
+public class DalComplexQueryTestOrderLine extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(DalComplexQueryTestOrderLine.class);
 
@@ -68,6 +69,7 @@ public class DalComplexQueryTestOrderLine extends BaseTest {
   /**
    * Tests a complexer query related to order lines.
    */
+  @Test
   public void testComplexOBQuery() {
     setTestAdminContext();
 
@@ -154,6 +156,7 @@ public class DalComplexQueryTestOrderLine extends BaseTest {
     }
   }
 
+  @Test
   public void testComplexQueryTwoHQL() {
     setTestAdminContext();
 

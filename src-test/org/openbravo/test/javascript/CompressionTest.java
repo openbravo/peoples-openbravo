@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 
 package org.openbravo.test.javascript;
 
+import org.junit.Test;
 import org.openbravo.test.ant.BaseAntTest;
 
 /**
@@ -30,6 +31,7 @@ import org.openbravo.test.ant.BaseAntTest;
 public class CompressionTest extends BaseAntTest {
   // private static final Logger log = Logger.getLogger(JavaScriptAntTest.class);
 
+  @Test
   public void testAntCompression() {
     doTest("minimizeJSandCSS");
   }

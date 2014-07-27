@@ -19,6 +19,10 @@
 
 package org.openbravo.test.webservice;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,7 +50,7 @@ import org.dom4j.io.SAXReader;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.xml.XMLUtil;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -59,7 +63,7 @@ import org.xml.sax.XMLReader;
  * @author mtaal
  */
 
-public class BaseWSTest extends BaseTest {
+public class BaseWSTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(BaseWSTest.class);
   private static final String CONTEXT_PROPERTY = "context.url";
@@ -236,9 +240,9 @@ public class BaseWSTest extends BaseTest {
    *          the expected HTTP response code
    * @param validate
    *          if true then the response content is validated against the Openbravo XML Schema
-   * @param logException
+   * @param logError
    *          indicates whether in case of Exception it should be logged, this param should be false
-   *          when Exception is expected in order not to pollute the log
+   *          when Exception is exptected in order not to pollute the log
    * @return the content returned from the GET request
    */
   protected String doTestGetRequest(String wsPart, String testContent, int responseCode,

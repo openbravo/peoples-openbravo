@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,12 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the usage of the {@link OBContext#setAdminMode()} and
@@ -37,11 +41,12 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class AdminContextTest extends BaseTest {
+public class AdminContextTest extends OBBaseTest {
 
   /**
    * Test a single call to the admin context setting.
    */
+  @Test
   public void testSingleAdminContextCall() {
     setTestUserContext();
     assertFalse(OBContext.getOBContext().isInAdministratorMode());
@@ -54,6 +59,7 @@ public class AdminContextTest extends BaseTest {
   /**
    * Test multiple nested calls to setting and reseting admin context.
    */
+  @Test
   public void testMultipleAdminContextCall() {
     setTestUserContext();
     assertFalse(OBContext.getOBContext().isInAdministratorMode());

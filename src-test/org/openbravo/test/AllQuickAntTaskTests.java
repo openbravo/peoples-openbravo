@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,8 @@
 
 package org.openbravo.test;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.DalConnectionProviderTest;
@@ -60,72 +59,17 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
  * 
  * @author mtaal
  */
+
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ DalPerformanceProxyTest.class, DalTest.class, DalFilterTest.class,
+    DalUtilTest.class, DalConnectionProviderTest.class, ValidationTest.class, OBContextTest.class,
+    DalStoredProcedureTest.class, AdminContextTest.class, UniqueConstraintTest.class,
+    ClassLoaderTest.class, DBPrefixTest.class, AccessLevelTest.class,
+    AllowedOrganizationsTest.class, EntityAccessTest.class,
+    WritableReadableOrganizationClientTest.class, SystemServiceTest.class,
+    SystemValidatorTest.class, ErrorTextParserTest.class, EntityXMLImportTestBusinessObject.class,
+    EntityXMLImportTestReference.class, EntityXMLImportTestSingle.class,
+    EntityXMLImportTestWarning.class, EntityXMLIssues.class, UniqueConstraintImportTest.class,
+    PreferenceTest.class, ClassicSelectorTest.class })
 public class AllQuickAntTaskTests {
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite("Test for org.openbravo.test.dal");
-    // $JUnit-BEGIN$
-    // suite.addTestSuite(CompositeIdTest.class);
-
-    // dal
-    // suite.addTestSuite(DalComplexQueryRequisitionTest.class);
-    // suite.addTestSuite(DalComplexQueryTestOrderLine.class);
-    // suite.addTestSuite(DalPerformanceInventoryLineTest.class);
-    // suite.addTestSuite(DalPerformanceProductTest.class);
-    // suite.addTestSuite(DalQueryTest.class);
-    suite.addTestSuite(DalPerformanceProxyTest.class);
-    suite.addTestSuite(DalTest.class);
-    suite.addTestSuite(DalFilterTest.class);
-    suite.addTestSuite(DalUtilTest.class);
-    suite.addTestSuite(DalConnectionProviderTest.class);
-    // suite.addTestSuite(DynamicEntityTest.class);
-    // suite.addTestSuite(HiddenUpdateTest.class);
-    // suite.addTestSuite(HqlTest.class);
-    // suite.addTestSuite(MappingGenerationTest.class);
-    suite.addTestSuite(ValidationTest.class);
-    suite.addTestSuite(OBContextTest.class);
-    suite.addTestSuite(DalStoredProcedureTest.class);
-    suite.addTestSuite(AdminContextTest.class);
-
-    // expression
-    // suite.addTestSuite(EvaluationTest.class);
-
-    // model
-    // suite.addTestSuite(RuntimeModelTest.class);
-    // suite.addTestSuite(OneToManyTest.class);
-    suite.addTestSuite(UniqueConstraintTest.class);
-    suite.addTestSuite(ClassLoaderTest.class);
-
-    // modularity
-    // suite.addTestSuite(DatasetServiceTest.class);
-    suite.addTestSuite(DBPrefixTest.class);
-
-    // security
-    suite.addTestSuite(AccessLevelTest.class);
-    suite.addTestSuite(AllowedOrganizationsTest.class);
-    suite.addTestSuite(EntityAccessTest.class);
-    suite.addTestSuite(WritableReadableOrganizationClientTest.class);
-
-    // system
-    suite.addTestSuite(SystemServiceTest.class);
-    suite.addTestSuite(SystemValidatorTest.class);
-    suite.addTestSuite(ErrorTextParserTest.class);
-
-    // xml
-    // suite.addTestSuite(ClientExportImportTest.class);
-    suite.addTestSuite(EntityXMLImportTestBusinessObject.class);
-    suite.addTestSuite(EntityXMLImportTestReference.class);
-    suite.addTestSuite(EntityXMLImportTestSingle.class);
-    suite.addTestSuite(EntityXMLImportTestWarning.class);
-    suite.addTestSuite(EntityXMLIssues.class);
-    suite.addTestSuite(UniqueConstraintImportTest.class);
-
-    // preferences
-    suite.addTestSuite(PreferenceTest.class);
-
-    suite.addTestSuite(ClassicSelectorTest.class);
-
-    // $JUnit-END$
-    return suite;
-  }
 }

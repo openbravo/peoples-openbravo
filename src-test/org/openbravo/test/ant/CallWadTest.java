@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@
 package org.openbravo.test.ant;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.wad.Wad;
 
@@ -33,6 +34,7 @@ public class CallWadTest extends BaseAntTest {
   /**
    * Calls Wad.main(String[]) with a number of commandline arguments.
    */
+  @Test
   public void testWad() {
     PropertyConfigurator.configure(this.getClass().getResource("/log4j.properties"));
 

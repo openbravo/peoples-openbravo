@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,11 +19,15 @@
 
 package org.openbravo.test.xml;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -41,7 +45,7 @@ import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.db.DataExportService;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the {@link DataExportService} specifically for exports driven by a {@link DataSet}. The
@@ -56,7 +60,7 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DatasetExportTest extends BaseTest {
+public class DatasetExportTest extends OBBaseTest {
 
   /**
    * Tests include all columns except for the audit info columns.
@@ -64,6 +68,7 @@ public class DatasetExportTest extends BaseTest {
    * @see DataSetTable#setExcludeAuditInfo(Boolean)
    * @see DataSetTable#setIncludeAllColumns(Boolean)
    */
+  @Test
   public void testIncludeAllExcludeAudit() {
     setSystemAdministratorContext();
     final DataSet ds = createDataSet();
@@ -81,6 +86,7 @@ public class DatasetExportTest extends BaseTest {
    * @see DataSetTable#setExcludeAuditInfo(Boolean)
    * @see DataSetTable#setIncludeAllColumns(Boolean)
    */
+  @Test
   public void testIncludeAll() {
     setSystemAdministratorContext();
     final DataSet ds = createDataSet();
@@ -99,6 +105,7 @@ public class DatasetExportTest extends BaseTest {
    * @see DataSetTable#setIncludeAllColumns(Boolean)
    * @see DataSetTable#isBusinessObject()
    */
+  @Test
   public void testIncludeAllPlusChildren() {
     setSystemAdministratorContext();
     final DataSet ds = createDataSet();
@@ -123,6 +130,7 @@ public class DatasetExportTest extends BaseTest {
    * @see DataSetTable#getDataSetColumnList()
    * @see DataSetColumn#isExcluded()
    */
+  @Test
   public void testIncludeAllExcludeSpecificColumn() {
     setSystemAdministratorContext();
     final DataSet ds = createDataSet();
@@ -153,6 +161,7 @@ public class DatasetExportTest extends BaseTest {
    * @see DataSetTable#getDataSetColumnList()
    * @see DataSetColumn#isExcluded()
    */
+  @Test
   public void testExcludeAllIncludeSpecificColumn() {
     setSystemAdministratorContext();
     final DataSet ds = createDataSet();

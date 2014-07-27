@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -20,11 +20,15 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the filters added to the hibernate mapping.
@@ -32,17 +36,20 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DalFilterTest extends BaseTest {
+public class DalFilterTest extends OBBaseTest {
+  @Test
   public void testActiveFilterDisabled() {
     doTest(true);
   }
 
+  @Test
   public void testActiveFilterEnabled() {
     OBDal.getInstance().commitAndClose();
     OBDal.getInstance().enableActiveFilter();
     doTest(false);
   }
 
+  @Test
   public void testActiveFilterEnDisabled() {
     OBDal.getInstance().commitAndClose();
     OBDal.getInstance().enableActiveFilter();

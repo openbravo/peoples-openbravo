@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,11 @@
 
 package org.openbravo.test.dal;
 
+import org.junit.Test;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the {@link DalConnectionProvider}.
@@ -30,12 +31,13 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DalConnectionProviderTest extends BaseTest {
+public class DalConnectionProviderTest extends OBBaseTest {
   // private static final Logger log = Logger.getLogger(DalConnectionProviderTest.class);
 
   /**
    * Tests calling database procedures using the dal connection provider
    */
+  @Test
   public void testDalConnectionProvider() throws Exception {
     setSystemAdministratorContext();
 

@@ -19,6 +19,9 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Set;
 
 import org.codehaus.jettison.json.JSONException;
@@ -27,6 +30,7 @@ import org.hibernate.QueryException;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.EntityKey;
 import org.hibernate.stat.SessionStatistics;
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.SessionHandler;
@@ -37,7 +41,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.Order_ComputedColumns;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Set of tests for computed columns lazy loading
@@ -45,12 +49,13 @@ import org.openbravo.test.base.BaseTest;
  * @author alostale
  * 
  */
-public class ComputedColumnsTest extends BaseTest {
+public class ComputedColumnsTest extends OBBaseTest {
   private static final String EXCEPTION_MSG = "could not resolve property: deliveryStatus of: Order";
 
   /**
    * Tests computed columns are lazily loaded
    */
+  @Test
   public void testLazyLoad() {
     setTestUserContext();
 
@@ -79,6 +84,7 @@ public class ComputedColumnsTest extends BaseTest {
    * Note this way of filtering is potentially harmful in terms of performance because computed
    * column need to be calculated in order to do the filtering.
    */
+  @Test
   public void testComputedColumnHQLFilter() {
     setTestUserContext();
 
@@ -92,6 +98,7 @@ public class ComputedColumnsTest extends BaseTest {
   /**
    * Tests computed columns can not be used in OBCriteria
    */
+  @Test
   public void testComputedColumnCriteriaFilter() {
     setTestUserContext();
 
@@ -113,6 +120,7 @@ public class ComputedColumnsTest extends BaseTest {
    * Direct access to computed columns in HQL was allowed prior to MP27, now it is not anymore and
    * proxy needs to be used.
    */
+  @Test
   public void testComputedColumnHQLFilterOldWay() {
     setTestUserContext();
 
@@ -147,6 +155,7 @@ public class ComputedColumnsTest extends BaseTest {
    * 
    * Computed columns for a new object should be null when converting to JSON
    */
+  @Test
   public void testJSONConverter() throws JSONException {
     Order myOrder = OBProvider.getInstance().get(Order.class);
     DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(DataToJsonConverter.class);

@@ -11,36 +11,44 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.UUID;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.Location;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests creating a location and then reading it again using the {@link OBCriteria} api.
  * 
  * @author iperdomo
  */
-public class ReadByNameTest extends BaseTest {
+public class ReadByNameTest extends OBBaseTest {
 
   // Will hold Ids for next tests
   private static String bpId; // Business Partner Id
   private static String locId; // Location Id
   private static String locName; // Location name
 
+  @Test
   public void testCreateBP() {
 
     setTestUserContext();
@@ -66,6 +74,7 @@ public class ReadByNameTest extends BaseTest {
     bpId = bp.getId();
   }
 
+  @Test
   public void testAddLocation() {
 
     setTestUserContext();
@@ -101,6 +110,7 @@ public class ReadByNameTest extends BaseTest {
     locId = bpLoc.getId();
   }
 
+  @Test
   public void testFindLocation() {
     // tests have run in the correct order
     assertNotNull(locName);
@@ -126,6 +136,7 @@ public class ReadByNameTest extends BaseTest {
     assertEquals(locName, tmpLoc.getName());
   }
 
+  @Test
   public void testPBData() {
 
     setTestUserContext();

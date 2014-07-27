@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ package org.openbravo.test.security;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -33,7 +34,7 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Iterates over all the data in the database and checks the organization of the referenced objects.
@@ -44,11 +45,12 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class AllDataAllowedOrganizationsTest extends BaseTest {
+public class AllDataAllowedOrganizationsTest extends OBBaseTest {
 
   /**
    * Test all data for correct organization settings.
    */
+  @Test
   public void testReferencedOrganizations() {
     setSystemAdministratorContext();
 

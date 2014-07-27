@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,13 @@
 
 package org.openbravo.test.system;
 
+import static org.junit.Assert.assertEquals;
+
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.junit.Test;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the {@link OBPropertiesProvider} class.
@@ -30,11 +33,12 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class OBPropertiesProviderTest extends BaseTest {
+public class OBPropertiesProviderTest extends OBBaseTest {
 
   /**
    * Test the {@link OBPropertiesProvider#getFormatXMLDocument()} method.
    */
+  @Test
   public void testFormatXMLRead() {
     setSystemAdministratorContext();
     final Document xmlFormat = OBPropertiesProvider.getInstance().getFormatXMLDocument();

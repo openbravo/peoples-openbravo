@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,15 @@
 
 package org.openbravo.test.modularity;
 
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.QueryTimeoutException;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.GenericJDBCException;
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -32,7 +35,7 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.DataPackage;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDBPrefix;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * This test case checks that table names are correctly checked when inserting them into DB. It must
@@ -41,13 +44,14 @@ import org.openbravo.test.base.BaseTest;
  * 
  * @author alostale
  */
-public class TableNameTest extends BaseTest {
+public class TableNameTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(TableNameTest.class);
 
   /**
    * Creates a test module to work with it in later tests
    */
+  @Test
   public void testCreateModule() {
     setSystemAdministratorContext();
     Module module = OBProvider.getInstance().get(Module.class);
@@ -75,6 +79,7 @@ public class TableNameTest extends BaseTest {
    * Creates a table that is valid, it has a valid name according with the db prefix for the module
    * it is assigned to
    */
+  @Test
   public void testCreateTable1() {
     setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
@@ -92,6 +97,7 @@ public class TableNameTest extends BaseTest {
    * It tries to insert a table with a non-valid name prefix, it is tested that DB raises an
    * exception and thus the table is not inserted.
    */
+  @Test
   public void testCreateTable2() {
     setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
@@ -117,6 +123,7 @@ public class TableNameTest extends BaseTest {
    * Same test as testCreateTable2 but trying to insert the table in a package that for core module,
    * it should not insert anything
    */
+  @Test
   public void testCreateTable3() {
     setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
@@ -142,6 +149,7 @@ public class TableNameTest extends BaseTest {
    * This test tryies to change the package for the table created in testCreateTable1 to a package
    * in core, this should fail because the naming rules are not filled
    */
+  @Test
   public void testChangePackage() {
     setSystemAdministratorContext();
     OBCriteria<Table> obCriteria = OBDal.getInstance().createCriteria(Table.class);
@@ -164,6 +172,7 @@ public class TableNameTest extends BaseTest {
   /**
    * Removes all created objects from database.
    */
+  @Test
   public void testCleanUp() {
     setSystemAdministratorContext();
     OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);

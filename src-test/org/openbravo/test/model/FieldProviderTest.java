@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,9 @@
 
 package org.openbravo.test.model;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -27,7 +30,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.OBObjectFieldProvider;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the {@link OBObjectFieldProvider}.
@@ -35,12 +38,13 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class FieldProviderTest extends BaseTest {
+public class FieldProviderTest extends OBBaseTest {
 
   /**
    * Read all data from the database and create field providers then iterate over all columns and
    * get the value.
    */
+  @Test
   public void testAll() {
     super.setTestAdminContext();
     for (Entity e : ModelProvider.getInstance().getModel()) {

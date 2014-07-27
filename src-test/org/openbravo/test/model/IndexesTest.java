@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,13 +19,16 @@
 
 package org.openbravo.test.model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,13 +38,14 @@ import org.slf4j.LoggerFactory;
  * @author alostale
  * 
  */
-public class IndexesTest extends BaseTest {
+public class IndexesTest extends OBBaseTest {
   final static private Logger log = LoggerFactory.getLogger(IndexesTest.class);
 
   /**
    * Verifies in subtabs that their tables have a index to for the FK column linking to their parent
    * table.
    */
+  @Test
   public void testSubTabs() {
     int windowName = 1;
     int parentTab = 2;

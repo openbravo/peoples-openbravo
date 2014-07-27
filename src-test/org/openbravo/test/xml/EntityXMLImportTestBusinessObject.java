@@ -11,13 +11,17 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.test.xml;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,6 +30,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -51,7 +56,7 @@ import org.openbravo.service.db.ImportResult;
  * 
  * @author mtaal
  */
-
+// @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
   // prefix is used to uniquely identify the payment terms used in this test case
@@ -69,6 +74,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    * This test contains the invocations for the rest of the test cases. By this way, we preserve the
    * execution order of the test cases.
    */
+
+  @Test
   public void testContent() {
     aPaymentTerm();
     bPaymentTerm();
@@ -126,8 +133,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Execute the same test as in {@link #bPaymentTerm()}, as it is repeated and no data has changed
-   * no updates should take place.
+   * Execute the same test as in {@link #testBPaymentTerm()}, as it is repeated and no data has
+   * changed no updates should take place.
    */
   public void cPaymentTerm() {
 
@@ -156,8 +163,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Now do the same as in {@link #cPaymentTerm()} only now with some small changes in the xml, so
-   * that some objects are updated.
+   * Now do the same as in {@link #testCPaymentTerm()} only now with some small changes in the xml,
+   * so that some objects are updated.
    */
   public void dPaymentTerm() {
 
@@ -249,7 +256,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Tests that the previous test {@link #ePaymentTerm()} did not really remove a line. See this
+   * Tests that the previous test {@link #testEPaymentTerm()} did not really remove a line. See this
    * issue: https://issues.openbravo.com/view.php?id=15690
    */
   public void fPaymentTerm() {
@@ -316,7 +323,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Tests that {@link #gPaymentTerm()} was successfull.
+   * Tests that {@link #testGPaymentTerm()} was successfull.
    */
   public void hPaymentTerm() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
@@ -410,7 +417,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       }
     }
     TOTAL_PT_PTL = cnt;
-    OBDal.getInstance().flush();
+    // OBDal.getInstance().flush();
   }
 
   private List<PaymentTerm> getPaymentTerms() {

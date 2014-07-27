@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,14 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -33,7 +37,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.CategoryAccounts;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the use of the {@link DynamicOBObject}.
@@ -41,12 +45,13 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DynamicEntityTest extends BaseTest {
+public class DynamicEntityTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(DynamicEntityTest.class);
 
   /**
    * Create a record for the {@link Category} in the database using a {@link DynamicOBObject}.
    */
+  @Test
   public void testCreateBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
@@ -64,6 +69,7 @@ public class DynamicEntityTest extends BaseTest {
   /**
    * Queries for the created {@link Category} and then removes.
    */
+  @Test
   public void testRemoveBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
@@ -103,6 +109,7 @@ public class DynamicEntityTest extends BaseTest {
   /**
    * Checks if the removal did occur.
    */
+  @Test
   public void testCheckBPGroupRemoved() {
     setTestUserContext();
     addReadWriteAccess(Category.class);

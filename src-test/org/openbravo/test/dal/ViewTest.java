@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,9 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -26,18 +29,19 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test if views work properly
  * 
  * @author mtaal
  */
-public class ViewTest extends BaseTest {
+public class ViewTest extends OBBaseTest {
 
   /**
    * Iterates over all views
    */
+  @Test
   public void testViews() {
     setTestAdminContext();
     int cnt = 0;
@@ -56,6 +60,7 @@ public class ViewTest extends BaseTest {
   /**
    * Tests issue https://issues.openbravo.com/view.php?id=14914 that view objects are not copied.
    */
+  @Test
   public void test14914() {
     setTestUserContext();
     OBContext.setAdminMode();

@@ -19,11 +19,14 @@
 
 package org.openbravo.test.datasource;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -48,6 +51,7 @@ public class TestCSVEncoding extends BaseDataSourceTestDal {
    * @throws Exception
    */
 
+  @Test
   public void testEncoding() throws Exception {
 
     OBContext.setAdminMode(false);

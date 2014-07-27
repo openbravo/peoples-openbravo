@@ -11,13 +11,15 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.test.xml;
+
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,7 +38,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.model.ad.utility.ReferenceDataStore;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Supports testing of xml imports/export. Provides convenience methods.
@@ -44,7 +46,7 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class XMLBaseTest extends BaseTest {
+public class XMLBaseTest extends OBBaseTest {
 
   protected void compare(String result, String file) {
     try {

@@ -11,19 +11,21 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2010 Openbravo SLU
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.test.javascript;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.net.URL;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
+import org.junit.Before;
+import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 
@@ -33,15 +35,15 @@ import org.openbravo.base.session.OBPropertiesProvider;
  * @author iperdomo
  * 
  */
-public class JavaScriptAPITest extends TestCase {
+public class JavaScriptAPITest {
 
   /**
    * Sets up the Openbravo.properties file
    */
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     setConfigPropertyFiles();
-    super.setUp();
+
   }
 
   /**
@@ -68,6 +70,7 @@ public class JavaScriptAPITest extends TestCase {
   /**
    * Checks the JavaScript API It fails if the resultant API Map is not empty
    */
+  @Test
   public void testJavaScriptAPI() {
     JavaScriptAPIChecker apiCheck = new JavaScriptAPIChecker();
     final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();

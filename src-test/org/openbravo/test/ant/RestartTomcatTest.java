@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 
 package org.openbravo.test.ant;
 
+import org.junit.Test;
 import org.openbravo.service.system.ReloadContext;
 
 /**
@@ -32,6 +33,7 @@ public class RestartTomcatTest extends BaseAntTest {
   /**
    * Restart a running tomcat.
    */
+  @Test
   public void testRestart() {
     ReloadContext.reload();
     // RestartTomcat.restart();

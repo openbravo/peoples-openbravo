@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,16 +19,20 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.payment.PaymentTermTrl;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the {@link DalUtil} class and then specifically the copy methods.
@@ -36,11 +40,12 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DalCopyTest extends BaseTest {
+public class DalCopyTest extends OBBaseTest {
 
   /**
    * Test copy of a structure, parent and childs should point to eachother
    */
+  @Test
   public void testHiddenUpdates() {
     setTestUserContext();
     addReadWriteAccess(PaymentTerm.class);

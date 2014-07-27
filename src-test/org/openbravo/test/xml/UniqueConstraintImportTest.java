@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,14 @@
 
 package org.openbravo.test.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
@@ -54,6 +58,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
   /**
    * Builds the testdata, {@link CountryTrl} objects for a specific {@link Country}.
    */
+  @Test
   public void testACreateCountryTrl() {
     setSystemAdministratorContext();
     final Country country = getCountry("Norway");
@@ -91,6 +96,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
    * 
    * This method also cleans up the testdata.
    */
+  @Test
   public void testCountryTrlImport() {
     setTestAdminContext();
 

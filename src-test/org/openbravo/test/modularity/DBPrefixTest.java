@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,26 +19,32 @@
 
 package org.openbravo.test.modularity;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDBPrefix;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * This tests check that db prefixes are correctly checked when they are inserted in DB in order not
  * to follow modularity rules
  * 
  */
-public class DBPrefixTest extends BaseTest {
+public class DBPrefixTest extends OBBaseTest {
 
   /**
    * Creates a new module to test with
    */
+  @Test
   public void testCreateModule() {
     setSystemAdministratorContext();
     Module module = OBProvider.getInstance().get(Module.class);
@@ -53,6 +59,7 @@ public class DBPrefixTest extends BaseTest {
   /**
    * Add a valid dbprefixes, everything should go ok only alphabetic upper chars
    */
+  @Test
   public void testAddDBPrefixValid1() {
     insertDBPrefix("OK", true);
   }
@@ -60,6 +67,7 @@ public class DBPrefixTest extends BaseTest {
   /**
    * alpha numeric chars not starting with a numeric one
    */
+  @Test
   public void testAddDBPrefixValid2() {
     insertDBPrefix("OK12", true);
   }
@@ -67,6 +75,7 @@ public class DBPrefixTest extends BaseTest {
   /**
    * Add not valid db prefixes starts with number
    */
+  @Test
   public void testAddDBPrefixNotValid1() {
     insertDBPrefix("1FAIL", false);
   }
@@ -74,6 +83,7 @@ public class DBPrefixTest extends BaseTest {
   /**
    * contains lower case letters
    */
+  @Test
   public void testAddDBPrefixNotValid2() {
     insertDBPrefix("Fail", false);
   }
@@ -81,6 +91,7 @@ public class DBPrefixTest extends BaseTest {
   /**
    * contains underscore
    */
+  @Test
   public void testAddDBPrefixNotValid3() {
     insertDBPrefix("FAIL_1", false);
   }
@@ -88,6 +99,7 @@ public class DBPrefixTest extends BaseTest {
   /**
    * contains other non-alphabetic chars
    */
+  @Test
   public void testAddDBPrefixNotValid4() {
     insertDBPrefix("FAIL&/1", false);
   }
@@ -95,6 +107,7 @@ public class DBPrefixTest extends BaseTest {
   /**
    * Deletes all the modules matching the name for the testing one
    */
+  @Test
   public void testDeleteModule() {
     setSystemAdministratorContext();
     final OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
@@ -143,7 +156,6 @@ public class DBPrefixTest extends BaseTest {
       exception = true;
       OBDal.getInstance().rollbackAndClose();
     }
-
     if (isValid)
       assertFalse("Not inserted a valid prefix:" + name, exception);
     else

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,9 @@
 
 package org.openbravo.test.dal;
 
+import org.junit.Test;
 import org.openbravo.dal.core.DalMappingGenerator;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test generation of hbm, very basic just generates it.
@@ -28,9 +29,10 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class MappingGenerationTest extends BaseTest {
+public class MappingGenerationTest extends OBBaseTest {
 
   /** Generate the hibernate mapping */
+  @Test
   public void testMappingGeneration() {
     DalMappingGenerator.getInstance().generateMapping();
   }

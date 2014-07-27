@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,15 +19,20 @@
 
 package org.openbravo.test.security;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Set;
 
+import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests computation of natural tree of an organization. This is used to compute the readable
@@ -39,11 +44,12 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class AllowedOrganizationsTest extends BaseTest {
+public class AllowedOrganizationsTest extends OBBaseTest {
 
   /**
    * Tests valid organizations trees for different organizations.
    */
+  @Test
   public void testOrganizationTree() {
     setTestAdminContext();
     // FIXME: Fix test with new org tree map
@@ -79,6 +85,7 @@ public class AllowedOrganizationsTest extends BaseTest {
    * Checks a special case that an object of an organization A may only refer to objects in the
    * natural tree of A.
    */
+  @Test
   public void testOrganizationCheck() {
     setSystemAdministratorContext();
     OBContext.getOBContext().getOrganizationStructureProvider().reInitialize();

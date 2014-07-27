@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,19 +19,23 @@
 
 package org.openbravo.test.expression;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.openbravo.base.expression.Evaluator;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the expression processor used in datasets: {@link Evaluator}.
@@ -39,12 +43,13 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class EvaluationTest extends BaseTest {
+public class EvaluationTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(EvaluationTest.class);
 
   /**
    * Tests the evaluation of a simple java script expression executed on a set of objects.
    */
+  @Test
   public void testEvaluation() {
     setSystemAdministratorContext();
 
@@ -74,6 +79,7 @@ public class EvaluationTest extends BaseTest {
    * Tests https://issues.openbravo.com/view.php?id=12575 It is neccessary to create a testcase for
    * Transient Condition
    */
+  @Test
   public void testOrderEvaluation() {
     setTestUserContext();
     addReadWriteAccess(Order.class);

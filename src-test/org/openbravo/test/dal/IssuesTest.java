@@ -11,13 +11,19 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.test.dal;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,6 +50,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Reference;
@@ -91,7 +99,7 @@ import org.openbravo.service.db.DalBaseProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DataEntityQueryService;
 import org.openbravo.service.json.DataToJsonConverter;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the following issues:
@@ -168,12 +176,13 @@ import org.openbravo.test.base.BaseTest;
  * @author iperdomo
  */
 
-public class IssuesTest extends BaseTest {
+public class IssuesTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(IssuesTest.class);
 
   /**
    * https://issues.openbravo.com/view.php?id=18688
    */
+  @Test
   public void test18688() {
     final Session session = OBDal.getInstance().getSession();
     OBDal.getInstance().registerSQLFunction("ad_column_identifier_std",
@@ -190,6 +199,7 @@ public class IssuesTest extends BaseTest {
   /**
    * https://issues.openbravo.com/view.php?id=13749
    */
+  @Test
   public void test13749() {
     setTestAdminContext();
     try {
@@ -208,6 +218,7 @@ public class IssuesTest extends BaseTest {
   /**
    * https://issues.openbravo.com/view.php?id=12918
    */
+  @Test
   public void test12918() {
     setSystemAdministratorContext();
 
@@ -232,6 +243,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests https://issues.openbravo.com/view.php?id=12702
    */
+  @Test
   public void test12702() {
     final Reference ref1 = new Reference();
     final Reference ref2 = new Reference();
@@ -250,6 +262,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=12106
    */
+  @Test
   public void test12106() {
     setSystemAdministratorContext();
     {
@@ -287,6 +300,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=12202
    */
+  @Test
   public void test12202() {
     setSystemAdministratorContext();
     final List<Module> modules = OBDal.getInstance().createCriteria(Module.class).list();
@@ -301,6 +315,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=12201
    */
+  @Test
   public void test12201() {
     setSystemAdministratorContext();
     assertEquals("0", OBContext.getOBContext().getUser().getId());
@@ -311,6 +326,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=12143
    */
+  @Test
   public void test12143() {
     setSystemAdministratorContext();
     final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class, null);
@@ -329,6 +345,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=11812
    */
+  @Test
   public void test11812() {
     assertTrue(24 == (Long) new LongDomainType().createFromString("24.0"));
     try {
@@ -342,6 +359,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=11461
    */
+  @Test
   public void test11461() {
     setSystemAdministratorContext();
 
@@ -378,6 +396,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=11681
    */
+  @Test
   public void test11681() {
     setSystemAdministratorContext();
 
@@ -418,6 +437,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=12497
    */
+  @Test
   public void test12497() {
     final InvoiceLine invoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
     assertTrue(invoiceLine.isActive());
@@ -428,6 +448,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=12853
    */
+  @Test
   public void test12853() {
     setSystemAdministratorContext();
     final OBQuery<Product> products = OBDal.getInstance().createQuery(Product.class,
@@ -440,6 +461,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests issue: https://issues.openbravo.com/view.php?id=12903
    */
+  @Test
   public void test12903() {
     setSystemAdministratorContext();
     OBQuery<Product> products;
@@ -475,6 +497,7 @@ public class IssuesTest extends BaseTest {
    * Tests: 13135: OBContext.getLanguage() returns 'wrong' language, if user does not have a default
    * language set
    */
+  @Test
   public void test13135() {
     setSystemAdministratorContext();
 
@@ -499,6 +522,7 @@ public class IssuesTest extends BaseTest {
    * Tests: 13136: OBContext.getLanguage does only use users' default language, and does not honor
    * language change in the role change popup
    */
+  @Test
   public void test13136() {
     OBContext.setOBContext("100", "0", "0", "0", "en_IN");
     assertEquals("130", OBContext.getOBContext().getLanguage().getId());
@@ -511,11 +535,13 @@ public class IssuesTest extends BaseTest {
    * https://issues.openbravo.com/view.php?id=13283: [REST] use organization of the object to
    * retrieved referenced objects
    */
+  @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
+  @Test
   public void test13281And13283() throws Exception {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
+    // if (1 == 1)
+    // return;
     OBContext.setOBContext(TEST_USER_ID, TEST_ROLE_ID, TEST_CLIENT_ID, "0");
 
     // use the same logic as in the DalWebService
@@ -540,6 +566,7 @@ public class IssuesTest extends BaseTest {
    * https://issues.openbravo.com/view.php?id=13509: In a OBCriteria you can't use list() after a
    * count() call
    */
+  @Test
   public void test13509() throws Exception {
     setTestAdminContext();
     final OBCriteria<Organization> orgs = OBDal.getInstance().createCriteria(Organization.class);
@@ -554,6 +581,7 @@ public class IssuesTest extends BaseTest {
    * https://issues.openbravo.com/view.php?id=14276: Need feature to disable maintaining audit info
    * via dal for one request/dal-session
    */
+  @Test
   public void test14276() throws Exception {
     setSystemAdministratorContext();
     OBInterceptor.setPreventUpdateInfoChange(true);
@@ -606,6 +634,7 @@ public class IssuesTest extends BaseTest {
    * https://issues.openbravo.com/view.php?id=15050: OBQuery: whereclause with alias with a comma
    * direct after the alias fails
    */
+  @Test
   public void test15050() throws Exception {
     setSystemAdministratorContext();
     final String whereClause = " as t, ADColumn as c where c.table = t and c.keyColumn=true";
@@ -616,6 +645,7 @@ public class IssuesTest extends BaseTest {
   /**
    * https://issues.openbravo.com/view.php?id=15218: error when closing transaction
    */
+  @Test
   public void test15218() throws Exception {
     final OBContext obContext = OBContext.getOBContext();
     final DalThreadHandler dth = new DalThreadHandler() {
@@ -635,6 +665,7 @@ public class IssuesTest extends BaseTest {
    * https://issues.openbravo.com/view.php?id=15360: ModelProvider.getTable(tablename) should not
    * fail
    */
+  @Test
   public void test15360() throws Exception {
     org.openbravo.base.model.Table corder = ModelProvider.getInstance().getTable("C_Order");
     assertFalse(corder == null);
@@ -644,6 +675,7 @@ public class IssuesTest extends BaseTest {
    * Testing part of code 'used' in the fix of issue 15742. Especially if storing 10000 'ñ'
    * characters in a column of type clob/text works correctly.
    */
+  @Test
   public void test15742() {
     final int logsize = 10000;
     setSystemAdministratorContext();
@@ -666,6 +698,7 @@ public class IssuesTest extends BaseTest {
    * Testing issue 0017058. It verifies that the NVARCHAR JDBC type is properly mapped The test SQL
    * query is used in the IDL module.
    */
+  @Test
   public void test17058() {
 
     setSystemAdministratorContext();
@@ -688,6 +721,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Testing issue 20129. https://issues.openbravo.com/view.php?id=20129 Tests getChildOrg()
    */
+  @Test
   public void test20129A() {
     setTestAdminContext();
     final String clientId = OBContext.getOBContext().getCurrentClient().getId();
@@ -704,6 +738,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests getNaturalTree()
    */
+  @Test
   public void test20129B() {
     setTestAdminContext();
     final String clientId = OBContext.getOBContext().getCurrentClient().getId();
@@ -720,6 +755,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests getReadableOrganizations()
    */
+  @Test
   public void test20129C() {
     setTestAdminContext();
     String[] readableOrganizations = OBContext.getOBContext().getReadableOrganizations();
@@ -731,6 +767,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests getReadableClients()
    */
+  @Test
   public void test20129D() {
     setTestAdminContext();
     String[] readableClients = OBContext.getOBContext().getReadableClients();
@@ -742,6 +779,7 @@ public class IssuesTest extends BaseTest {
   /**
    * Tests getWritableOrganizations()
    */
+  @Test
   public void test20129E() {
     setTestAdminContext();
     Set<String> writableOrganizations = OBContext.getOBContext().getWritableOrganizations();
@@ -750,6 +788,7 @@ public class IssuesTest extends BaseTest {
     assertFalse(writableOrganizations2.isEmpty());
   }
 
+  @Test
   public void test20611() {
     OBCriteria<BusinessPartner> c = OBDal.getInstance().createCriteria(BusinessPartner.class);
     ScrollableResults iterator = c.scroll(ScrollMode.FORWARD_ONLY);
@@ -760,6 +799,7 @@ public class IssuesTest extends BaseTest {
    * Testing issue 0020659. Tests that if an invalid organization id is provided, getChildOrg
    * returns an empty set instead of null.
    */
+  @Test
   public void test20659() {
     setTestAdminContext();
     String nonExistentOrg = "-123ZXY";
@@ -771,6 +811,7 @@ public class IssuesTest extends BaseTest {
     assertTrue(childOrg.isEmpty());
   }
 
+  @Test
   public void test20733() {
     setTestUserContext();
     DataEntityQueryService service = new DataEntityQueryService();
@@ -787,6 +828,7 @@ public class IssuesTest extends BaseTest {
     }
   }
 
+  @Test
   public void test21360() throws Exception {
     final DalConnectionProvider connectionProvider = new DalConnectionProvider();
     // test that a new connection is returned
@@ -798,6 +840,7 @@ public class IssuesTest extends BaseTest {
     Assert.assertNotSame(otherConnection, yetAnotherConnection);
   }
 
+  @Test
   public void test22235() throws Exception {
     final OBContext obContext = OBContext.getOBContext();
     final VariablesSecureApp vars = new VariablesSecureApp(obContext.getUser().getId(), obContext
@@ -820,6 +863,7 @@ public class IssuesTest extends BaseTest {
     Assert.assertFalse(test22235.isErrorOccured());
   }
 
+  @Test
   public void test23627() throws Exception {
     // read one order line, take its uom, copy it and check that the order line list is empty
     final OBQuery<OrderLine> ols = OBDal.getInstance().createQuery(OrderLine.class, null);
@@ -831,6 +875,7 @@ public class IssuesTest extends BaseTest {
     assertTrue(copiedUom.getOrderLineList().isEmpty());
   }
 
+  @Test
   public void test23743() throws Exception {
     // create a OBQuery where clause with WHERE keyword and see query does not return exception when
     // fetching results or getting count

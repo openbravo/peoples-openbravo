@@ -11,13 +11,19 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.test.model;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +33,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
 import org.hibernate.criterion.Order;
+import org.junit.Before;
+import org.junit.Test;
 import org.openbravo.base.model.Column;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -37,7 +45,7 @@ import org.openbravo.base.model.Reference;
 import org.openbravo.base.model.Table;
 import org.openbravo.base.model.domaintype.BasePrimitiveDomainType;
 import org.openbravo.base.session.SessionFactoryController;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the in-memory runtime model provided by the {@link ModelProvider}.
@@ -47,15 +55,15 @@ import org.openbravo.test.base.BaseTest;
  * @author iperdomo
  */
 
-public class RuntimeModelTest extends BaseTest {
+public class RuntimeModelTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(RuntimeModelTest.class);
 
   // cached list of all tables & columns as used by several tests
   private List<Table> allTables;
 
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     super.setUp();
     allTables = getTables();
   }
@@ -63,6 +71,7 @@ public class RuntimeModelTest extends BaseTest {
   /**
    * Iterates over the model and prints it to the log.
    */
+  @Test
   public void testDumpModel() {
     for (Entity e : ModelProvider.getInstance().getModel()) {
       log.debug(">>>>>>>>>>>>>> " + e.getName() + " (" + e.getTableName() + ") <<<<<<<<<<<<<<<<<");
@@ -75,6 +84,7 @@ public class RuntimeModelTest extends BaseTest {
   /**
    * Checks if there are tables without a PK in the model.
    */
+  @Test
   public void testPK() {
     final ArrayList<Table> tablesWithoutPK = new ArrayList<Table>();
     for (final Table t : allTables) {
@@ -97,6 +107,7 @@ public class RuntimeModelTest extends BaseTest {
    * See issue https://issues.openbravo.com/view.php?id=10624 Spaces in AD_TABLE.name should be
    * handled better, currently the entity name contains a space resulting in errors in HQL
    */
+  @Test
   public void testTableName() {
     for (final Table t : allTables) {
       final char[] chars = t.getName().toCharArray();
@@ -116,6 +127,7 @@ public class RuntimeModelTest extends BaseTest {
    * Just checks that there is a {@link ModelProvider} and that it returns a model (a list of
    * {@link Entity} objects).
    */
+  @Test
   public void testModelProvider() {
     for (final Entity e : ModelProvider.getInstance().getModel()) {
       log.debug("tablename: " + e.getTableName() + " -- classname: " + e.getClassName()
@@ -131,6 +143,7 @@ public class RuntimeModelTest extends BaseTest {
    * 
    * @see Entity#getName()
    */
+  @Test
   public void testUniqueTableMapping() {
     final List<String> mappings = new ArrayList<String>();
     boolean duplicated = false;
@@ -150,6 +163,7 @@ public class RuntimeModelTest extends BaseTest {
    * 
    * @see Property#getName()
    */
+  @Test
   public void testUniqueColumnMapping() {
     boolean duplicated = false;
     for (final Entity e : ModelProvider.getInstance().getModel()) {
@@ -169,6 +183,7 @@ public class RuntimeModelTest extends BaseTest {
   /**
    * Tests that each entity/table has only one PK.
    */
+  @Test
   public void testOnePK() {
     int total = 0;
     for (final Table t : allTables) {
@@ -194,6 +209,7 @@ public class RuntimeModelTest extends BaseTest {
     assertEquals(0, total);
   }
 
+  @Test
   public void testIdentifiers() {
     final ArrayList<String> tables = new ArrayList<String>();
     for (final Table t : allTables) {
@@ -211,6 +227,7 @@ public class RuntimeModelTest extends BaseTest {
   /**
    * Tests that all non-one-to-many/not-one-to-one/not-composite id columns have a column
    */
+  @Test
   public void testColumnIdSet() {
     for (Entity entity : ModelProvider.getInstance().getModel()) {
       for (Property property : entity.getProperties()) {
@@ -229,6 +246,7 @@ public class RuntimeModelTest extends BaseTest {
    * @see Column#getReference()
    * @see Reference
    */
+  @Test
   public void testIsParent() {
     final ArrayList<String> columns = new ArrayList<String>();
 
@@ -254,6 +272,7 @@ public class RuntimeModelTest extends BaseTest {
   /**
    * Tests that columns that has {@link Column#isParent()} on true are not of a primitive type.
    */
+  @Test
   public void testIsParent2() {
     final ArrayList<String> columns = new ArrayList<String>();
 
@@ -274,6 +293,7 @@ public class RuntimeModelTest extends BaseTest {
   /**
    * Checks that a column that has {@link Column#isParent()} on true has a table defined.
    */
+  @Test
   public void testIsParent3() {
     final ArrayList<String> columns = new ArrayList<String>();
     for (final Table t : allTables) {
@@ -295,6 +315,7 @@ public class RuntimeModelTest extends BaseTest {
   /**
    * Checks that a column that has {@link Column#isParent()} finishes on _ID.
    */
+  @Test
   public void testIsParent4() {
     final ArrayList<String> columns = new ArrayList<String>();
     for (final Table t : allTables) {
@@ -315,6 +336,7 @@ public class RuntimeModelTest extends BaseTest {
     assertEquals(0, columns.size());
   }
 
+  @Test
   public void testPrimitiveDomainTypeDefaultMethods() {
     final CustomDomainType customDomainType = new CustomDomainType();
     final long testNumber = 121;

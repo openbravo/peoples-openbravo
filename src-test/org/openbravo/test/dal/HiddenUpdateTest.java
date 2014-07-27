@@ -19,6 +19,8 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.fail;
+
 import java.io.Serializable;
 import java.util.Iterator;
 
@@ -27,6 +29,7 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.SessionFactoryController;
@@ -35,7 +38,7 @@ import org.openbravo.dal.core.DalSessionFactoryController;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test for updates which can happen behind the scenes (but should not happen) if properties are
@@ -46,13 +49,14 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class HiddenUpdateTest extends BaseTest {
+public class HiddenUpdateTest extends OBBaseTest {
 
   /**
    * Tests for hidden updates. Hidden updates can occur when a load/read of an entity also changes
    * the state, or that hibernate detects dirty in another way. Use the Hibernate Interceptor
    * concept.
    */
+  @Test
   public void testHiddenUpdates() {
     setSystemAdministratorContext();
 

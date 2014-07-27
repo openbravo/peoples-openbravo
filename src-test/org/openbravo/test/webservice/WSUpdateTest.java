@@ -19,10 +19,15 @@
 
 package org.openbravo.test.webservice;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -53,6 +58,7 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testContent() throws Exception {
     aCreateCity();
     readUpdateCity();
