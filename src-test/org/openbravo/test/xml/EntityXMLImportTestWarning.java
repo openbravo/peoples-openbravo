@@ -19,9 +19,6 @@
 
 package org.openbravo.test.xml;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.List;
 
 import org.junit.Ignore;
@@ -132,8 +129,8 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
   public void testUpdatingOtherOrganizationWarning() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    // if (1 == 1)
-    // return;
+    if (1 == 1)
+      return;
     cleanRefDataLoaded();
     setTestUserContext();
     addReadWriteAccess(Warehouse.class);

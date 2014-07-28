@@ -19,14 +19,13 @@
 
 package org.openbravo.test.dal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -44,7 +43,7 @@ import org.openbravo.test.base.OBBaseTest;
  * 
  * @author mtaal
  */
-
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DynamicEntityTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(DynamicEntityTest.class);
 
@@ -52,7 +51,7 @@ public class DynamicEntityTest extends OBBaseTest {
    * Create a record for the {@link Category} in the database using a {@link DynamicOBObject}.
    */
   @Test
-  public void testCreateBPGroup() {
+  public void testACreateBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final DynamicOBObject bpGroup = new DynamicOBObject();
@@ -63,6 +62,7 @@ public class DynamicEntityTest extends OBBaseTest {
     bpGroup.set(Category.PROPERTY_SEARCHKEY, "hello world");
     bpGroup.setActive(true);
     OBDal.getInstance().save(bpGroup);
+    OBDal.getInstance().commitAndClose();
     printXML(bpGroup);
   }
 
@@ -70,7 +70,7 @@ public class DynamicEntityTest extends OBBaseTest {
    * Queries for the created {@link Category} and then removes.
    */
   @Test
-  public void testRemoveBPGroup() {
+  public void testBRemoveBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     addReadWriteAccess(CategoryAccounts.class);
@@ -101,16 +101,18 @@ public class DynamicEntityTest extends OBBaseTest {
     obc2.add(Restrictions.eq(CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY, bpgs.get(0)));
     final List<CategoryAccounts> bogas = obc2.list();
     for (final CategoryAccounts bga : bogas) {
+      OBDal.getInstance().refresh(bga);
       OBDal.getInstance().remove(bga);
     }
     OBDal.getInstance().remove(bpgs.get(0));
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
    * Checks if the removal did occur.
    */
   @Test
-  public void testCheckBPGroupRemoved() {
+  public void testCCheckBPGroupRemoved() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);

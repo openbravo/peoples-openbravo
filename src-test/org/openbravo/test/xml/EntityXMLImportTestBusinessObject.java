@@ -11,17 +11,13 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.test.xml;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -56,7 +52,7 @@ import org.openbravo.service.db.ImportResult;
  * 
  * @author mtaal
  */
-// @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
 public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
   // prefix is used to uniquely identify the payment terms used in this test case
@@ -74,7 +70,6 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    * This test contains the invocations for the rest of the test cases. By this way, we preserve the
    * execution order of the test cases.
    */
-
   @Test
   public void testContent() {
     aPaymentTerm();
@@ -89,7 +84,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /** Sets up the test data, creates a first of Payment Terms. */
-  public void aPaymentTerm() {
+  private void aPaymentTerm() {
     cleanRefDataLoaded();
     setTestUserContext();
     addReadWriteAccess(PaymentTermTrl.class);
@@ -100,7 +95,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   /**
    * Export the Payment Terms from one client and import into another client.
    */
-  public void bPaymentTerm() {
+  private void bPaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -133,10 +128,10 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Execute the same test as in {@link #testBPaymentTerm()}, as it is repeated and no data has
-   * changed no updates should take place.
+   * Execute the same test as in {@link #bPaymentTerm()}, as it is repeated and no data has changed
+   * no updates should take place.
    */
-  public void cPaymentTerm() {
+  private void cPaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -163,10 +158,10 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Now do the same as in {@link #testCPaymentTerm()} only now with some small changes in the xml,
-   * so that some objects are updated.
+   * Now do the same as in {@link #cPaymentTerm()} only now with some small changes in the xml, so
+   * that some objects are updated.
    */
-  public void dPaymentTerm() {
+  private void dPaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -210,7 +205,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    * Test removal of a PaymentTermLine from a PaymentTerm in the xml, then import. After importing
    * the PaymentTermLine should have gone.
    */
-  public void ePaymentTerm() {
+  private void ePaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -256,10 +251,10 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Tests that the previous test {@link #testEPaymentTerm()} did not really remove a line. See this
+   * Tests that the previous test {@link #ePaymentTerm()} did not really remove a line. See this
    * issue: https://issues.openbravo.com/view.php?id=15690
    */
-  public void fPaymentTerm() {
+  private void fPaymentTerm() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
     final List<PaymentTerm> pts = getPaymentTerms();
     for (final PaymentTerm pt : pts) {
@@ -271,7 +266,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   /**
    * Add a PaymentTermLine in the xml and import it, there should be an extra line then.
    */
-  public void gPaymentTerm() {
+  private void gPaymentTerm() {
 
     setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
@@ -323,9 +318,9 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   /**
-   * Tests that {@link #testGPaymentTerm()} was successfull.
+   * Tests that {@link #gPaymentTerm()} was successfull.
    */
-  public void hPaymentTerm() {
+  private void hPaymentTerm() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();
@@ -342,7 +337,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   /**
    * Remove the testdata.
    */
-  public void zPaymentTerm() {
+  private void zPaymentTerm() {
     setTestUserContext();
     setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();
@@ -417,7 +412,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       }
     }
     TOTAL_PT_PTL = cnt;
-    // OBDal.getInstance().flush();
+    OBDal.getInstance().flush();
   }
 
   private List<PaymentTerm> getPaymentTerms() {

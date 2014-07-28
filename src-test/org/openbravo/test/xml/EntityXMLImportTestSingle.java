@@ -19,9 +19,6 @@
 
 package org.openbravo.test.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.openbravo.model.ad.system.Client.PROPERTY_ORGANIZATION;
 
 import java.util.List;

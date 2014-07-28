@@ -19,8 +19,6 @@
 
 package org.openbravo.test.datasource;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.HashMap;
 import java.util.Map;
 

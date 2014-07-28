@@ -19,10 +19,6 @@
 
 package org.openbravo.test.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,8 +95,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
   public void test1Warehouse() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    // if (1 == 1)
-    // return;
+    if (1 == 1)
+      return;
     cleanRefDataLoaded();
     setTestUserContext();
     addReadWriteAccess(Warehouse.class);
@@ -135,8 +131,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
   public void test2Warehouse() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    // if (1 == 1)
-    // return;
+    if (1 == 1)
+      return;
     setUserContext(QA_TEST_ADMIN_USER_ID);
     // a warehouse is not deletable, but as we are cleaning up, they should be
     // deleted, force this by being admin
@@ -159,8 +155,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
   public void test3Warehouse() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    // if (1 == 1)
-    // return;
+    if (1 == 1)
+      return;
     setTestUserContext();
     addReadWriteAccess(Warehouse.class);
     final String xml = getXML(Warehouse.class,
@@ -194,8 +190,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
   public void test4Warehouse() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    // if (1 == 1)
-    // return;
+    if (1 == 1)
+      return;
     setUserContext(QA_TEST_ADMIN_USER_ID);
     // a warehouse is not deletable, but as we are cleaning up, they should be
     // deleted, force this by being admin

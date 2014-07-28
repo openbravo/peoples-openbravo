@@ -18,16 +18,12 @@
  */
 package org.openbravo.test.dal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.UUID;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -41,6 +37,7 @@ import org.openbravo.test.base.OBBaseTest;
  * 
  * @author iperdomo
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ReadByNameTest extends OBBaseTest {
 
   // Will hold Ids for next tests
@@ -49,7 +46,7 @@ public class ReadByNameTest extends OBBaseTest {
   private static String locName; // Location name
 
   @Test
-  public void testCreateBP() {
+  public void testACreateBP() {
 
     setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
@@ -72,10 +69,11 @@ public class ReadByNameTest extends OBBaseTest {
     OBDal.getInstance().save(bp);
     OBDal.getInstance().flush();
     bpId = bp.getId();
+    OBDal.getInstance().commitAndClose();
   }
 
   @Test
-  public void testAddLocation() {
+  public void testBAddLocation() {
 
     setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
@@ -108,10 +106,11 @@ public class ReadByNameTest extends OBBaseTest {
     OBDal.getInstance().flush();
 
     locId = bpLoc.getId();
+    OBDal.getInstance().commitAndClose();
   }
 
   @Test
-  public void testFindLocation() {
+  public void testCFindLocation() {
     // tests have run in the correct order
     assertNotNull(locName);
     assertNotNull(locId);
@@ -137,7 +136,7 @@ public class ReadByNameTest extends OBBaseTest {
   }
 
   @Test
-  public void testPBData() {
+  public void testDPBData() {
 
     setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);

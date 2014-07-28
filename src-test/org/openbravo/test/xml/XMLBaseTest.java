@@ -19,8 +19,6 @@
 
 package org.openbravo.test.xml;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

@@ -19,8 +19,6 @@
 
 package org.openbravo.test.system;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.util.List;
 import java.util.Properties;

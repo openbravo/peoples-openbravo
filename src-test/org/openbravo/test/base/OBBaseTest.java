@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import junit.framework.TestCase;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.criterion.Restrictions;
@@ -55,7 +57,7 @@ import org.openbravo.model.ad.access.User;
  * @author iperdomo
  */
 
-public class OBBaseTest {
+public class OBBaseTest extends TestCase {
 
   private static final Logger log = Logger.getLogger(OBBaseTest.class);
 
@@ -161,7 +163,6 @@ public class OBBaseTest {
    */
   @Before
   public void setUp() throws Exception {
-
     if (this.getClass().getResource("/log4j.lcf") != null) {
       PropertyConfigurator.configure(this.getClass().getResource("/log4j.lcf"));
     }
@@ -169,7 +170,7 @@ public class OBBaseTest {
     initializeDalLayer();
     // clear the session otherwise it keeps the old model
     setTestUserContext();
-    // super.setUp();
+    super.setUp();
     // be negative is set back to false at the end of a successfull test.
     errorOccured = true;
   }
@@ -330,8 +331,7 @@ public class OBBaseTest {
       SessionHandler.deleteSessionHandler();
       OBContext.setOBContext((OBContext) null);
     }
-
-    // super.tearDown();
+    super.tearDown();
   }
 
   /**

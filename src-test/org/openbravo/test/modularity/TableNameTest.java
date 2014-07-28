@@ -19,15 +19,15 @@
 
 package org.openbravo.test.modularity;
 
-import static org.junit.Assert.fail;
-
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.QueryTimeoutException;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.GenericJDBCException;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -44,6 +44,7 @@ import org.openbravo.test.base.OBBaseTest;
  * 
  * @author alostale
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TableNameTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(TableNameTest.class);
@@ -52,7 +53,7 @@ public class TableNameTest extends OBBaseTest {
    * Creates a test module to work with it in later tests
    */
   @Test
-  public void testCreateModule() {
+  public void testACreateModule() {
     setSystemAdministratorContext();
     Module module = OBProvider.getInstance().get(Module.class);
     module.setName("Test-table-names");
@@ -80,7 +81,7 @@ public class TableNameTest extends OBBaseTest {
    * it is assigned to
    */
   @Test
-  public void testCreateTable1() {
+  public void testBCreateTable1() {
     setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
     table.setName("TEST1_Table1");
@@ -98,7 +99,7 @@ public class TableNameTest extends OBBaseTest {
    * exception and thus the table is not inserted.
    */
   @Test
-  public void testCreateTable2() {
+  public void testCCreateTable2() {
     setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
     table.setName("TEST_Table2");
@@ -124,7 +125,7 @@ public class TableNameTest extends OBBaseTest {
    * it should not insert anything
    */
   @Test
-  public void testCreateTable3() {
+  public void testDCreateTable3() {
     setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
     table.setName("TEST1_Table3");
@@ -150,7 +151,7 @@ public class TableNameTest extends OBBaseTest {
    * in core, this should fail because the naming rules are not filled
    */
   @Test
-  public void testChangePackage() {
+  public void testEChangePackage() {
     setSystemAdministratorContext();
     OBCriteria<Table> obCriteria = OBDal.getInstance().createCriteria(Table.class);
     obCriteria.add(Restrictions.eq(Module.PROPERTY_NAME, "TEST1_Table1"));
@@ -173,7 +174,7 @@ public class TableNameTest extends OBBaseTest {
    * Removes all created objects from database.
    */
   @Test
-  public void testCleanUp() {
+  public void testFCleanUp() {
     setSystemAdministratorContext();
     OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
     obCriteria.add(Restrictions.eq(Module.PROPERTY_NAME, "Test-table-names"));

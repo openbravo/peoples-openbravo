@@ -19,8 +19,6 @@
 
 package org.openbravo.test.dal;
 
-import static org.junit.Assert.fail;
-
 import java.io.Serializable;
 import java.util.Iterator;
 

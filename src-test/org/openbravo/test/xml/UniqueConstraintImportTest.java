@@ -19,14 +19,13 @@
 
 package org.openbravo.test.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
@@ -50,7 +49,7 @@ import org.openbravo.service.db.ImportResult;
  * 
  * @author mtaal
  */
-
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UniqueConstraintImportTest extends XMLBaseTest {
 
   private static final Logger log = Logger.getLogger(UniqueConstraintImportTest.class);
@@ -86,6 +85,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
       OBDal.getInstance().save(countryTrl);
       created++;
     }
+    OBDal.getInstance().commitAndClose();
     log.debug("Created " + created + " countrytrl objects");
   }
 
@@ -97,7 +97,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
    * This method also cleans up the testdata.
    */
   @Test
-  public void testCountryTrlImport() {
+  public void testBCountryTrlImport() {
     setTestAdminContext();
 
     // read countrytrl
@@ -119,6 +119,7 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
             "eventhough it does not belong to the target organization") != -1);
 
     for (final BaseOBObject bob : ir.getUpdatedObjects()) {
+      OBDal.getInstance().refresh(bob);
       assertEquals(CountryTrl.class.getName(), bob.getClass().getName());
       // and clean up
       OBDal.getInstance().remove(bob);

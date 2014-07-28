@@ -19,13 +19,12 @@
 
 package org.openbravo.test.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -39,6 +38,7 @@ import org.openbravo.test.base.OBBaseTest;
  * 
  * @author iperdomo
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class OneToManyTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(OneToManyTest.class);
@@ -49,7 +49,7 @@ public class OneToManyTest extends OBBaseTest {
    * Tests if it is possible to iterate over {@link OrderLine} objects of an {@link Order}. Adds one
    */
   @Test
-  public void testAccessChildCollection() {
+  public void testAAccessChildCollection() {
     setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
@@ -71,11 +71,11 @@ public class OneToManyTest extends OBBaseTest {
    */
   @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
   @Test
-  public void testAddOrderLine() {
+  public void testBAddOrderLine() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    // if (1 == 1)
-    // return;
+    if (1 == 1)
+      return;
     setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
@@ -114,11 +114,11 @@ public class OneToManyTest extends OBBaseTest {
    */
   @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
   @Test
-  public void testDeleteChild() {
+  public void testCDeleteChild() {
     // This test is currently disabled because it didn't work with the new Openbravo demo data
     // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    // if (1 == 1)
-    // return;
+    if (1 == 1)
+      return;
     setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
@@ -149,7 +149,7 @@ public class OneToManyTest extends OBBaseTest {
    * This test checks if the order line has indeed been deleted.
    */
   @Test
-  public void testConfirmDeleted() {
+  public void testDConfirmDeleted() {
     setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);

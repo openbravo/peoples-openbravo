@@ -19,8 +19,6 @@
 
 package org.openbravo.test.dal;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;

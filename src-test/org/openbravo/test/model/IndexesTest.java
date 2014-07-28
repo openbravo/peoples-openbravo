@@ -19,8 +19,6 @@
 
 package org.openbravo.test.model;
 
-import static org.junit.Assert.assertEquals;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;

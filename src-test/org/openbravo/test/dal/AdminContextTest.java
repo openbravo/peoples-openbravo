@@ -19,9 +19,6 @@
 
 package org.openbravo.test.dal;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.test.base.OBBaseTest;

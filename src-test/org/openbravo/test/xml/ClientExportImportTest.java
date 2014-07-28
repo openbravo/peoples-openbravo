@@ -19,11 +19,6 @@
 
 package org.openbravo.test.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -120,6 +115,7 @@ public class ClientExportImportTest extends XMLBaseTest {
     // SystemService.getInstance().removeAllClientData(newClientId);
   }
 
+  @Test
   private void testTreeNodesMantis9000(String newClientID) {
     final OBQuery<TreeNode> nodes = OBDal.getInstance().createQuery(TreeNode.class,
         "client.id='" + newClientID + "'");
@@ -174,6 +170,7 @@ public class ClientExportImportTest extends XMLBaseTest {
 
   }
 
+  @Test
   private void testAccountingFactMantis9000(String newClientID) {
     final OBQuery<AccountingFact> facts = OBDal.getInstance().createQuery(AccountingFact.class,
         "client.id='" + newClientID + "'");
@@ -214,7 +211,7 @@ public class ClientExportImportTest extends XMLBaseTest {
    * Exports the "QA Testing" client and then imports as a new client. Has as side effect that a
    * completely new client is added in the database.
    */
-
+  @Test
   public void _testExportImportClient1000001() {
     exportImport(QA_TEST_CLIENT_ID);
     // SystemService.getInstance().removeAllClientData(newClientId);
