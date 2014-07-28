@@ -58,7 +58,7 @@
         <onCreateDefault/>
       </column>
       <column name="DOCSTATUS" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
+        <default><![CDATA[DR]]></default>
         <onCreateDefault/>
       </column>
       <column name="CANCEL" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">

@@ -61,8 +61,8 @@ public class CancelCostAdjustment extends BaseActionHandler {
       final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
       costAdjustmentCancel.setDocumentNo(docNo);
 
-      costAdjustmentOrig.setCostadjustmentCancel(costAdjustmentCancel);
-      costAdjustmentOrig.setDocstatus("VO");
+      costAdjustmentOrig.setCostAdjustmentCancel(costAdjustmentCancel);
+      costAdjustmentOrig.setDocumentStatus("VO");
       OBDal.getInstance().save(costAdjustmentCancel);
       OBDal.getInstance().save(costAdjustmentOrig);
       OBDal.getInstance().flush();
