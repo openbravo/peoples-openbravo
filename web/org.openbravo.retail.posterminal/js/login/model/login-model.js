@@ -392,9 +392,9 @@
             });
           } else {
             OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
-              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_SynchronizingDataMessage'));
+              OB.UTIL.showI18NWarning('OBPOS_SynchronizingDataMessage');
               OB.MobileApp.model.syncAllModels(function () {
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SynchronizationWasSuccessfulMessage'));
+                OB.UTIL.showI18NSuccess('OBPOS_SynchronizationWasSuccessfulMessage', 'OBPOS_SynchronizingDataMessage');
                 if (successCallback) {
                   successCallback();
                 }
@@ -404,9 +404,9 @@
         });
       } else {
         OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_SynchronizingDataMessage'));
+          OB.UTIL.showI18NWarning('OBPOS_SynchronizingDataMessage');
           OB.MobileApp.model.syncAllModels(function () {
-            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SynchronizationWasSuccessfulMessage'));
+            OB.UTIL.showI18NSuccess('OBPOS_SynchronizationWasSuccessfulMessage', 'OBPOS_SynchronizingDataMessage');
             if (successCallback) {
               successCallback();
             }
