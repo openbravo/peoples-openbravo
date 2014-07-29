@@ -27,7 +27,8 @@ public class DeleteDuplicateMatchInvoice extends ModuleScript {
     try {
       ConnectionProvider cp = getConnectionProvider();
       DeleteDuplicateMatchInvoiceData.deletePurchase(cp);
-      DeleteDuplicateMatchInvoiceData.deleteSales(cp);
+      DeleteDuplicateMatchInvoiceData.deleteSalesFirstPart(cp);
+      DeleteDuplicateMatchInvoiceData.deleteSalesSecondPart(cp);
     } catch (Exception e) {
       handleError(e);
     }

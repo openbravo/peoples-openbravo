@@ -41,7 +41,7 @@
       ]]>
     </Sql>
   </SqlMethod>
-  <SqlMethod name="deleteSales" type="preparedStatement" return="rowcount">
+  <SqlMethod name="deleteSalesFirstPart" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
       DELETE FROM m_matchinv WHERE m_matchinv_id IN (SELECT m_matchinv_id FROM m_matchinv minv
@@ -50,8 +50,15 @@
             FROM m_matchinv m 
             LEFT JOIN m_inoutline ml on m.m_inoutline_id = ml.m_inoutline_id 
             LEFT JOIN m_inout mi on mi.m_inout_id = ml.m_inout_id 
-            WHERE mi.issotrx = 'Y' AND m.m_matchinv_id = minv.m_matchinv_id)
-        OR EXISTS (
+            WHERE mi.issotrx = 'Y' AND m.m_matchinv_id = minv.m_matchinv_id))
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="deleteSalesSecondPart" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      DELETE FROM m_matchinv WHERE m_matchinv_id IN (SELECT m_matchinv_id FROM m_matchinv minv
+        WHERE EXISTS (
             SELECT 1
             FROM m_matchinv m 
             LEFT JOIN c_invoiceline ci on m.c_invoiceline_id = ci.c_invoiceline_id 
