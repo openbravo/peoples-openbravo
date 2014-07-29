@@ -54,8 +54,20 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   }
 
   @Override
-  String getDefaultIsSOTrx(Map<String, String> requestMap) {
-    return "Y";
+  String getDefaultIsSOTrx(Map<String, String> requestMap) throws JSONException {
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    if (context.has("inptrxtype") && context.get("inptrxtype") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inptrxtype"))) {
+      String document = context.getString("inptrxtype");
+      if ("BPD".equals(document)) {
+        return "Y";
+      } else if ("BPW".equals(document)) {
+        return "N";
+      } else {
+        return "";
+      }
+    }
+    return "";
   }
 
   @Override
