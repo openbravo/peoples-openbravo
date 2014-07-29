@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -395,6 +395,9 @@ public class DalWebService implements WebService {
       final String entityName = segments[0];
       final String id = segments[1];
       final BaseOBObject result = OBDal.getInstance().get(entityName, id);
+      if (result == null) {
+        throw new OBException("Not found record for deletion: entity " + entityName + ", id " + id);
+      }
       final String resIdentifier = result.getIdentifier();
       OBDal.getInstance().remove(result);
       OBDal.getInstance().commitAndClose();
