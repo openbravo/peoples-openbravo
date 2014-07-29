@@ -1087,9 +1087,7 @@ public abstract class AcctServer {
     try {
       m_fact[index] = createFact(m_as[index], conn, con, vars);
     } catch (Exception e) {
-      log4j.warn(e);
-      log4j.warn("RecordID: " + Record_ID + " - TableId: " + AD_Table_ID);
-      e.printStackTrace();
+      log4j.warn("RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
     }
     if (!Status.equals(STATUS_NotPosted))
       return Status;
