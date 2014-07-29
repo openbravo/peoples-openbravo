@@ -108,7 +108,9 @@ public class CostingServer {
       OBDal.getInstance().save(transaction);
 
       // check if price correction is needed
-      if (transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList().size() != 0) {
+      if (transaction.getGoodsShipmentLine() != null
+          && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList() != null
+          && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList().size() != 0) {
         try {
           PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
         } catch (JSONException e) {

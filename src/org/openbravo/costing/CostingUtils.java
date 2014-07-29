@@ -48,6 +48,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.Costing;
+import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
@@ -450,5 +451,30 @@ public class CostingUtils {
     olQry.setNamedParameter("org", osp.getChildTree(org.getId(), true));
     olQry.setMaxResult(1);
     return olQry.uniqueResult();
+  }
+
+  public static CostingRule getCostDimensionRule(Organization org, Date date) {
+    StringBuffer where = new StringBuffer();
+    where.append(CostingRule.PROPERTY_ORGANIZATION + " = :organization");
+    where.append(" and (" + CostingRule.PROPERTY_STARTINGDATE + " is null ");
+    where.append("   or " + CostingRule.PROPERTY_STARTINGDATE + " <= :startdate)");
+    where.append(" and (" + CostingRule.PROPERTY_ENDINGDATE + " is null");
+    where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " > :enddate )");
+    where.append(" order by case when " + CostingRule.PROPERTY_STARTINGDATE
+        + " is null then 1 else 0 end, " + CostingRule.PROPERTY_STARTINGDATE + " desc");
+    where.append(" and " + CostingRule.PROPERTY_VALIDATED + " = true");
+    OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
+        where.toString());
+    crQry.setFilterOnReadableOrganization(false);
+    crQry.setNamedParameter("organization", org);
+    crQry.setNamedParameter("startdate", date);
+    crQry.setNamedParameter("enddate", date);
+    crQry.setMaxResult(1);
+    List<CostingRule> costRules = crQry.list();
+    if (costRules.size() == 0) {
+      throw new OBException("@NoCostingRuleFoundForOrganizationAndDate@ @Organization@: "
+          + org.getName() + ", @Date@: " + OBDateUtils.formatDate(date));
+    }
+    return costRules.get(0);
   }
 }
