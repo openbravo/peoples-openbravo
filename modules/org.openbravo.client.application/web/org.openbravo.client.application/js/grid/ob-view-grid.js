@@ -3750,8 +3750,6 @@ isc.OBViewGrid.addProperties({
       } else {
         component.showEditOpen();
       }
-    } else if (isEditRecord) {
-      return null;
     } else {
       return this.Super('updateRecordComponent', arguments);
     }

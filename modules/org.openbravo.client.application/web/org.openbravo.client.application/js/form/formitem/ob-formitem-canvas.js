@@ -153,6 +153,8 @@ isc.defineClass('OBLevelImg', isc.Img);
 
 isc.OBLevelImg.addProperties({
   cellAlign: 'center',
+  canEdit: false,
+  isShownInGridEdit: true,
   // The valueList should be overridden if this canvas item is applied to a different scale, for example ['none', 'weak', 'small', 'medium', 'high']
   valuesList: [0, 1, 2, 3, 4],
 
