@@ -21,11 +21,16 @@ package org.openbravo.costing;
 
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -50,9 +55,21 @@ public class CancelCostAdjustment extends BaseActionHandler {
       String caId = jsonData.getString("inpmCostadjustmentId");
       CostAdjustment costAdjustmentOrig = OBDal.getInstance().get(CostAdjustment.class, caId);
       CostAdjustment costAdjustmentCancel = (CostAdjustment) DalUtil.copy(costAdjustmentOrig, true);
-      for (CostAdjustmentLine costAdjustmentline : costAdjustmentCancel.getCostAdjustmentLineList()) {
-        costAdjustmentline.setSource(true);
-        costAdjustmentline.setAdjustmentAmount(costAdjustmentline.getAdjustmentAmount().negate());
+
+      OBCriteria<CostAdjustmentLine> qLines = OBDal.getInstance().createCriteria(
+          CostAdjustmentLine.class);
+      qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustmentCancel));
+      ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
+      try {
+        while (scrollLines.next()) {
+          final CostAdjustmentLine line = (CostAdjustmentLine) scrollLines.get()[0];
+          line.setSource(true);
+          // clear session after each line iteration because the number of objects read in memory is
+          // big
+          OBDal.getInstance().getSession().clear();
+        }
+      } finally {
+        scrollLines.close();
       }
       final DocumentType docType = FIN_Utility.getDocumentType(
           costAdjustmentOrig.getOrganization(), strCategoryCostAdj);
@@ -64,9 +81,8 @@ public class CancelCostAdjustment extends BaseActionHandler {
       OBDal.getInstance().save(costAdjustmentCancel);
       OBDal.getInstance().save(costAdjustmentOrig);
 
-      String message = "Ok";
       errorMessage.put("severity", "success");
-      errorMessage.put("text", message);
+      errorMessage.put("text", OBMessageUtils.messageBD("Success"));
       result.put("message", errorMessage);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
@@ -76,12 +92,10 @@ public class CancelCostAdjustment extends BaseActionHandler {
         String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
-        errorMessage.put("title", "Error");
+        errorMessage.put("title", OBMessageUtils.messageBD("Error"));
         errorMessage.put("text", message);
         result.put("message", errorMessage);
-      } catch (Exception e2) {
-        log.error(e.getMessage(), e2);
-        // do nothing, give up
+      } catch (JSONException ignore) {
       }
     } finally {
       OBContext.restorePreviousMode();
