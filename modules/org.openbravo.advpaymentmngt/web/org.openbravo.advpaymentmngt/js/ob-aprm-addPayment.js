@@ -385,7 +385,9 @@ OB.APRM.AddPayment.updateDifference = function (form) {
       receivedFrom = form.getItem('received_from').getValue() || '',
       totalGLItems = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       diffAmt = actualPayment.add(credit).subtract(total),
-      expectedDiffAmt = expectedPayment.add(credit).subtract(total).add(totalGLItems);
+      expectedDiffAmt = expectedPayment.add(credit).subtract(total).add(totalGLItems),
+      affectedParams = [],
+      displayLogicValues = {};
   differenceItem.setValue(Number(diffAmt.toString()));
   if (expectedDiffAmt.signum() === 0) {
     expectedDifferenceItem.setValue(Number(diffAmt.toString()));
@@ -395,6 +397,8 @@ OB.APRM.AddPayment.updateDifference = function (form) {
   if (diffAmt.signum() !== 0) {
     OB.APRM.AddPayment.updateDifferenceActions(form);
   }
+  affectedParams.push(form.getField('overpayment_action_display_logic').paramId);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, null, affectedParams);
 };
 
 OB.APRM.AddPayment.updateDifferenceActions = function (form) {
@@ -732,14 +736,63 @@ OB.APRM.AddPayment.orderAndRemoveDuplicates = function (val) {
 
 OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
   var document = form.getItem('trxtype').getValue(),
-      issotrx = form.getItem('issotrx');
+      issotrx = form.getItem('issotrx'),
+      affectedParams = [];
   if (document === 'RCIN') {
     issotrx.setValue(true);
   } else {
     issotrx.setValue(false);
   }
+  affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
+  affectedParams.push(form.getField('actual_payment_readonly_logic').paramId);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
 };
 
+OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
+  var affectedParams = [];
+  affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
+};
+
+OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, affectedParams) {
+  var callbackOnProcessActionHandler, params = {},
+      thisform, thisview;
+  thisform = form;
+  thisview = view;
+  params.context = form.paramWindow.getContextInfo();
+  params.context.inpwindowId = form.paramWindow.parentWindow.windowId;
+
+  callbackDisplayLogicActionHandler = function (response, data, request) {
+    var i, field, def, values = data.values;
+
+    for (i in values) {
+      if (values.hasOwnProperty(i)) {
+        def = values[i];
+        field = thisform.getItem(i);
+        if (field) {
+          if (isc.isA.Object(def)) {
+            if (def.identifier && def.value) {
+              field.valueMap = field.valueMap || {};
+              field.valueMap[def.value] = def.identifier;
+              field.setValue(def.value);
+            }
+          } else {
+            field.setValue(thisform.paramWindow.getTypeSafeValue(field.typeInstance, def));
+          }
+        }
+      }
+    }
+    if (thisview) {
+    	view.handleReadOnlyLogic();
+    }
+    thisform.markForRedraw();
+  };
+
+  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentDisplayLogicActionHandler', {
+    affectedParams: affectedParams,
+    params: params
+  }, {}, callbackDisplayLogicActionHandler);
+};
 
 OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
