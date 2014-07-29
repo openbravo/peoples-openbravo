@@ -78,6 +78,7 @@ public class CostAdjustmentProcess {
       // costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
       costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
       costAdjustment.setProcessed(true);
+      costAdjustment.setDocumentStatus("CO");
       OBDal.getInstance().save(costAdjustment);
 
     } finally {
