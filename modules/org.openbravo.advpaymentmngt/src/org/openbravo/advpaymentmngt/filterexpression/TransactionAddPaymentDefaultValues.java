@@ -19,6 +19,8 @@
 package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -111,6 +113,10 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   String getDefaultPaymentMethod(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     boolean isReceipt = true;
+    if (context.has("IsSOTrx")) {
+      isReceipt = "Y".equals(context.get("IsSOTrx")) ? true : false;
+    }
+
     FinAccPaymentMethod anyFinAccPaymentMethod = null;
     for (FinAccPaymentMethod finAccPaymentMethod : getFinancialAccount(requestMap)
         .getFinancialMgmtFinAccPaymentMethodList()) {
@@ -120,7 +126,10 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
           return finAccPaymentMethod.getPaymentMethod().getId();
         }
       }
-      anyFinAccPaymentMethod = finAccPaymentMethod;
+      if ((isReceipt && finAccPaymentMethod.isPayinAllow())
+          || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
+        anyFinAccPaymentMethod = finAccPaymentMethod;
+      }
     }
     return anyFinAccPaymentMethod != null ? anyFinAccPaymentMethod.getPaymentMethod().getId() : "";
   }
@@ -145,7 +154,18 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
 
   @Override
   String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
-    return OBDateUtils.formatDate(new Date());
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    if (context.has("inpstatementdate") && !context.isNull("inpstatementdate")
+        && !"".equals(context.getString("inpstatementdate"))) {
+      try {
+        Date date = new SimpleDateFormat("dd-MM-yyyy").parse(context.getString("inpstatementdate"));
+        return OBDateUtils.formatDate(date);
+      } catch (ParseException e) {
+        return OBDateUtils.formatDate(new Date());
+      }
+    } else {
+      return OBDateUtils.formatDate(new Date());
+    }
   }
 
   private FIN_FinancialAccount getFinancialAccount(Map<String, String> requestMap)
