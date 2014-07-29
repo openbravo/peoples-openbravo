@@ -1087,7 +1087,8 @@ public abstract class AcctServer {
     try {
       m_fact[index] = createFact(m_as[index], conn, con, vars);
     } catch (Exception e) {
-      log4j.warn("RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
+      log4j.warn(
+          "Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
     }
     if (!Status.equals(STATUS_NotPosted))
       return Status;
