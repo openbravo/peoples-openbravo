@@ -162,7 +162,7 @@ public class CostAdjustmentProcess {
       trxCost.setOrganization(line.getInventoryTransaction().getOrganization());
       trxCost.setCost(line.getAdjustmentAmount());
       trxCost.setCostDate(referenceDate);
-      trxCost.setCostadjustmentline(line);
+      trxCost.setCostAdjustmentLine(line);
       // FIXME: Set proper currency!!!
       trxCost.setCurrency(line.getInventoryTransaction().getCurrency());
 
