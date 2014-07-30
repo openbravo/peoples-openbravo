@@ -744,9 +744,10 @@ OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
   } else {
     issotrx.setValue(false);
   }
-
+  
+  form.getItem('fin_paymentmethod_id').setValue('');
+  form.getItem('received_from').setValue('');
   OB.APRM.AddPayment.reloadLabels(form);
-
   affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
   affectedParams.push(form.getField('actual_payment_readonly_logic').paramId);
   OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
