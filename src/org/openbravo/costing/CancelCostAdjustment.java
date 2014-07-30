@@ -56,21 +56,6 @@ public class CancelCostAdjustment extends BaseActionHandler {
       CostAdjustment costAdjustmentOrig = OBDal.getInstance().get(CostAdjustment.class, caId);
       CostAdjustment costAdjustmentCancel = (CostAdjustment) DalUtil.copy(costAdjustmentOrig, true);
 
-      OBCriteria<CostAdjustmentLine> qLines = OBDal.getInstance().createCriteria(
-          CostAdjustmentLine.class);
-      qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustmentCancel));
-      ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
-      try {
-        while (scrollLines.next()) {
-          final CostAdjustmentLine line = (CostAdjustmentLine) scrollLines.get()[0];
-          line.setSource(true);
-          // clear session after each line iteration because the number of objects read in memory is
-          // big
-          OBDal.getInstance().getSession().clear();
-        }
-      } finally {
-        scrollLines.close();
-      }
       final DocumentType docType = FIN_Utility.getDocumentType(
           costAdjustmentOrig.getOrganization(), strCategoryCostAdj);
       final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
@@ -80,6 +65,26 @@ public class CancelCostAdjustment extends BaseActionHandler {
       costAdjustmentOrig.setDocstatus("VO");
       OBDal.getInstance().save(costAdjustmentCancel);
       OBDal.getInstance().save(costAdjustmentOrig);
+      OBDal.getInstance().flush();
+
+      OBCriteria<CostAdjustmentLine> qLines = OBDal.getInstance().createCriteria(
+          CostAdjustmentLine.class);
+      qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustmentCancel));
+      ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
+      try {
+        while (scrollLines.next()) {
+          final CostAdjustmentLine line = (CostAdjustmentLine) scrollLines.get()[0];
+          line.setSource(true);
+          line.setAdjustmentAmount(line.getAdjustmentAmount().negate());
+          OBDal.getInstance().save(line);
+          OBDal.getInstance().flush();
+          // clear session after each line iteration because the number of objects read in memory is
+          // big
+          OBDal.getInstance().getSession().clear();
+        }
+      } finally {
+        scrollLines.close();
+      }
 
       errorMessage.put("severity", "success");
       errorMessage.put("text", OBMessageUtils.messageBD("Success"));
