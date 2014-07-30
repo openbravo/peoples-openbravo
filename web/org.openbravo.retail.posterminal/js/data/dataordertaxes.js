@@ -151,7 +151,7 @@
                   linegross = element.get('lineGrossAmount') || element.get('gross');
                 }
 
-                element.set('linerate', linerate);
+                element.set('linerate', OB.DEC.toNumber(linerate));
                 element.set('tax', linetaxid);
                 element.set('taxAmount', OB.DEC.sub(linegross, linenet));
                 element.set('net', calculatedLineNet);
@@ -323,7 +323,7 @@
           var product = element.get('product');
           if (element.get('ignoreTaxes') === true || product.get('ignoreTaxes') === true) {
             var taxLine = {};
-            element.set('linerate', BigDecimal.prototype.ONE);
+            element.set('linerate', OB.DEC.toNumber(BigDecimal.prototype.ONE));
             element.set('tax', OB.MobileApp.model.get('terminal').taxexempid);
             element.set('taxAmount', OB.DEC.Zero);
             element.set('net', element.get('net'));
@@ -434,7 +434,7 @@
                   }, this);
 
                   var linepricegross = OB.DEC.div(linegross, element.get('qty'));
-                  element.set('linerate', String(linerate));
+                  element.set('linerate', OB.DEC.toNumber(linerate));
                   element.set('tax', linetaxid);
                   element.set('taxAmount', OB.DEC.mul(OB.DEC.mul(discountedprice, element.get('qty')), linerate));
                   element.set('net', linenet);
