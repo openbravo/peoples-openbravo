@@ -281,7 +281,8 @@ isc.OBParameterWindowView.addProperties({
     this.Super('initWidget', arguments);
 
     params = {
-      processId: this.processId
+      processId: this.processId,
+      windowId: this.windowId
     };
 
     if (this.sourceView) {
