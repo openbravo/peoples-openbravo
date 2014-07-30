@@ -66,7 +66,7 @@ public class CancelCostAdjustment extends BaseActionHandler {
       OBDal.getInstance().save(costAdjustmentCancel);
       OBDal.getInstance().save(costAdjustmentOrig);
       OBDal.getInstance().flush();
-
+      // Call cost
       OBCriteria<CostAdjustmentLine> qLines = OBDal.getInstance().createCriteria(
           CostAdjustmentLine.class);
       qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustmentCancel));
@@ -85,10 +85,8 @@ public class CancelCostAdjustment extends BaseActionHandler {
       } finally {
         scrollLines.close();
       }
-
-      errorMessage.put("severity", "success");
-      errorMessage.put("text", OBMessageUtils.messageBD("Success"));
-      result.put("message", errorMessage);
+      JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentCancel);
+      result.put("message", message);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error(e.getMessage(), e);
