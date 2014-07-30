@@ -744,7 +744,7 @@ OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
   } else {
     issotrx.setValue(false);
   }
-  
+
   form.getItem('fin_paymentmethod_id').setValue('');
   form.getItem('received_from').setValue('');
   OB.APRM.AddPayment.reloadLabels(form);
@@ -824,6 +824,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       actualPayment = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0)),
       overpaymentAction = view.theForm.getItem('overpayment_action').getValue(),
       creditTotalItem = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
+      document = view.theForm.getItem('trxtype').getValue(),
       amountField = orderInvoiceGrid.getFieldByColumnName('amount'),
       selectedRecords = orderInvoiceGrid.getSelectedRecords(),
       writeOffLimitPreference = OB.PropertyStore.get('WriteOffLimitPreference', view.windowId),
@@ -866,6 +867,11 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   } else if (total.compareTo(actualPayment.add(creditTotalItem)) > 0) {
     // More than available amount has been distributed
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_JSMOREAMOUTALLOCATED'));
+    return false;
+  }
+
+  if (document !== null && document !== '' && actualPayment.compareTo(BigDecimal.prototype.ZERO) === 0) {
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_ZEROAMOUNTPAYMENTTRANSACTION'));
     return false;
   }
 
