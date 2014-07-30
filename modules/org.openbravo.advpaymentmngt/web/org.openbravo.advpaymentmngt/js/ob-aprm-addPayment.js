@@ -100,6 +100,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
       payment = form.getItem('fin_payment_id').getValue(),
       issotrx = form.getItem('issotrx').getValue();
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, view.theForm, !payment);
+  OB.APRM.AddPayment.reloadLabels(form);
   glitemGrid.fetchData();
   creditUseGrid.fetchData();
   orderInvoiceGrid.selectionChanged = OB.APRM.AddPayment.selectionChanged;
@@ -743,6 +744,9 @@ OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
   } else {
     issotrx.setValue(false);
   }
+
+  OB.APRM.AddPayment.reloadLabels(form);
+
   affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
   affectedParams.push(form.getField('actual_payment_readonly_logic').paramId);
   OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
@@ -755,7 +759,7 @@ OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
 };
 
 OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, affectedParams) {
-  var callbackOnProcessActionHandler, params = {},
+  var callbackDisplayLogicActionHandler, params = {},
       thisform, thisview;
   thisform = form;
   thisview = view;
@@ -783,7 +787,7 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, aff
       }
     }
     if (thisview) {
-    	view.handleReadOnlyLogic();
+      thisview.handleReadOnlyLogic();
     }
     thisform.markForRedraw();
   };
@@ -792,6 +796,21 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, aff
     affectedParams: affectedParams,
     params: params
   }, {}, callbackDisplayLogicActionHandler);
+};
+
+OB.APRM.AddPayment.reloadLabels = function (form) {
+  var callbackReloadLabelsActionHandler, params = {};
+  params.businessPartner = form.getItem('received_from').paramId;
+  params.financialAccount = form.getItem('fin_financial_account_id').paramId;
+  params.issotrx = form.getItem('issotrx').getValue();
+
+  callbackReloadLabelsActionHandler = function (response, data, request) {
+    form.getItem('received_from').title = data.values.businessPartner;
+    form.getItem('fin_financial_account_id').title = data.values.financialAccount;
+    form.markForRedraw();
+  };
+
+  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentReloadLabelsActionHandler', {}, params, callbackReloadLabelsActionHandler);
 };
 
 OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
