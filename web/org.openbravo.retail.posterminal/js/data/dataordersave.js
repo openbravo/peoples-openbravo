@@ -73,10 +73,6 @@
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
       this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
-      // The order will not be processed if the navigator is offline
-      if (OB.POS.modelterminal.get('connectedToERP')) {
-        this.receipt.set('isbeingprocessed', 'Y');
-      }
 
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
         context: this,
