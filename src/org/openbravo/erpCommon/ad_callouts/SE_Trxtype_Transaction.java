@@ -35,14 +35,17 @@ public class SE_Trxtype_Transaction extends SimpleCallout {
         info.addResult("inpcGlitemId", "");
         info.addResult("inpdepositamt", BigDecimal.ZERO);
         info.addResult("inppaymentamt", BigDecimal.ZERO);
+        info.addResult("inpissotrx", "Y");
       }
       if ("BPW".equals(strTrxType)) {
         info.addResult("inpfinPaymentId", "");
         info.addResult("inpdepositamt", BigDecimal.ZERO);
+        info.addResult("inpissotrx", "N");
       }
       if ("BPD".equals(strTrxType)) {
         info.addResult("inpfinPaymentId", "");
         info.addResult("inppaymentamt", BigDecimal.ZERO);
+        info.addResult("inpissotrx", "Y");
       }
 
     } catch (Exception e) {
