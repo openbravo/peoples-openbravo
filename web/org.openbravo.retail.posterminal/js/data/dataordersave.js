@@ -172,11 +172,6 @@
           creationDate = new Date(),
           creationDateTransformed = new Date(creationDate.getUTCFullYear(), creationDate.getUTCMonth(), creationDate.getUTCDate(), creationDate.getUTCHours(), creationDate.getUTCMinutes(), creationDate.getUTCSeconds());
 
-      if (this.receipt.get('isbeingprocessed') === 'Y') {
-        //The receipt has already been sent, it should not be sent again
-        return;
-      }
-
       this.receipt.set('hasbeenpaid', 'Y');
 
       OB.UTIL.updateDocumentSequenceInDB(docno);
@@ -188,10 +183,6 @@
       this.receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
       this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
 
-      // The order will not be processed if the navigator is offline
-      if (OB.POS.modelterminal.get('connectedToERP')) {
-        this.receipt.set('isbeingprocessed', 'Y');
-      }
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
         context: this,
         model: model,
