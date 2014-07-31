@@ -267,6 +267,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
 
       function prepareToSendCallback(order) {
+        auxReceipt = new OB.Model.Order();
+        auxReceipt.clearWith(order);
+
         if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
           var negativeLines = _.filter(order.get('lines').models, function (line) {
             return line.get('qty') < 0;
@@ -288,6 +291,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           offline: true
         }); // to guaranty execution order
         SyncReadyToSendFunction();
+
+        auxReceiptList.push(auxReceipt);
+        if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
+          OB.UTIL.cashUpReport(auxReceiptList);
+        }
       }
 
       //this var is a function (copy of the above one) which is called by every items, but it is just executed once (when ALL items has called to it)
@@ -357,13 +365,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }
           }
         }
-
         iter.prepareToSend(prepareToSendCallback);
-        auxReceipt = new OB.Model.Order();
-        auxReceipt.clearWith(iter);
-        auxReceiptList.push(auxReceipt);
       }
-      OB.UTIL.cashUpReport(auxReceiptList);
+
     }, this);
 
     customersave = new OB.DATA.CustomerSave(this);
