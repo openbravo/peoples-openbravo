@@ -316,12 +316,8 @@
     },
 
     calculateTaxes: function (callback, doNotSave) {
-      if (callback) {
-        callback();
-      }
-      if (!doNotSave) {
-        this.save();
-      }
+      var tmp = new OB.DATA.OrderTaxes(this);
+      this.calculateTaxes(callback);
     },
 
     prepareToSend: function (callback) {
