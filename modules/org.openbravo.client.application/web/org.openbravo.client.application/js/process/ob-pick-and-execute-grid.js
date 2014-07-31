@@ -529,6 +529,15 @@ isc.OBPickAndExecuteGrid.addProperties({
   onFetchData: function (criteria, requestProperties) {
     requestProperties = requestProperties || {};
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
+    this.setFechingData();
+  },
+
+  setFechingData: function () {
+    this.fetchingData = true;
+  },
+
+  isFetchingData: function () {
+    return this.fetchingData;
   },
 
   clearFilter: function () {
