@@ -135,6 +135,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
               && getConversionRateDocument(transaction).size() == 0) {
             insertConversionRateDocument(transaction);
           }
+          transaction.setAprmProcessed("R");
           OBDal.getInstance().save(financialAccount);
           OBDal.getInstance().save(transaction);
           OBDal.getInstance().flush();
@@ -205,6 +206,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             transaction.setStatus(transaction.getDepositAmount().compareTo(
                 transaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
           }
+          transaction.setAprmProcessed("P");
           OBDal.getInstance().save(transaction);
           OBDal.getInstance().flush();
           bundle.setResult(msg);
