@@ -125,6 +125,7 @@
 
   v_iscashvat C_Order.IsCashVat%TYPE;
   v_recalculateDiscounts VARCHAR(1):='Y';
+  v_isactive VARCHAR2(1):='N';
 
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
@@ -177,6 +178,15 @@
         RAISE_APPLICATION_ERROR(-20000, '@QuantitiesNotMatch@') ;
       END IF;
     END LOOP;
+  END IF;
+
+  /* Check active business partner*/
+  SELECT isactive INTO v_isactive
+  FROM C_Bpartner
+  WHERE C_Bpartner_ID = v_C_Bpartner_ID;
+
+  IF(v_isactive = 'N') THEN
+    RAISE_APPLICATION_ERROR(-20000, '@InActiveBusinessPartner@');
   END IF;
   
     /**
