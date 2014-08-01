@@ -177,7 +177,9 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> overwrittenAuxiliaryInputs = new ArrayList<String>();
       // The provided overwrittenAuxiliaryInputs only have to be persisted when calling the FIC in
       // CHANGE mode. In the rest of the modes all auxiliary inputs are computed regardless of
-      // whether a callout have modified them in a previous request
+      // whether a callout have modified them in a previous request with the exception of NEW. In
+      // NEW mode auxiliary inputs are not recomputed if they were previously calculated by callouts
+      // (within in the same request)
       if (jsContent.has("overwrittenAuxiliaryInputs") && "CHANGE".equals(mode)) {
         overwrittenAuxiliaryInputs = convertJSONArray(jsContent
             .getJSONArray("overwrittenAuxiliaryInputs"));
@@ -884,7 +886,7 @@ public class FormInitializationComponent extends BaseActionHandler {
   private void computeAuxiliaryInputs(String mode, Tab tab, Map<String, JSONObject> columnValues,
       List<String> overwrittenAuxiliaryInputs) {
     for (AuxiliaryInput auxIn : getAuxiliaryInputList(tab.getId())) {
-      if (mode.equals("CHANGE")) {
+      if (mode.equals("CHANGE") || mode.equals("NEW")) {
         // Don't compute the auxiliary inputs that have been overwritten by callouts
         if (overwrittenAuxiliaryInputs.contains(auxIn.getName())) {
           continue;
