@@ -11,22 +11,23 @@ import org.openbravo.client.kernel.RequestContext;
 public class BusinessPartnerCustomerFilterExpression implements FilterExpression {
   private Logger log = Logger.getLogger(BusinessPartnerCustomerFilterExpression.class);
   private Map<String, String> requestMap;
-  private String windowId;
+  private String tabId;
+  private String transactionTabId = "23691259D1BD4496BCC5F32645BCA4B9";
   private String issotrx = null;
   String result = null;
 
   @Override
   public String getExpression(Map<String, String> _requestMap) {
     requestMap = _requestMap;
-    windowId = requestMap.get(OBBindingsConstants.WINDOW_ID_PARAM);
-    if (requestMap.get("issotrx") != null) {
+    tabId = requestMap.get(OBBindingsConstants.TAB_ID_PARAM);
+    if (requestMap.get("issotrx") != null && transactionTabId.equals(tabId)) {
       issotrx = requestMap.get("issotrx");
       if ("true".equals(issotrx)) {
         return "true";
       } else {
         return "";
       }
-    } else if (requestMap.get("IsSOTrx") != null) {
+    } else if (requestMap.get("IsSOTrx") != null && transactionTabId.equals(tabId)) {
       issotrx = requestMap.get("IsSOTrx");
       if ("Y".equals(issotrx)) {
         return "true";
