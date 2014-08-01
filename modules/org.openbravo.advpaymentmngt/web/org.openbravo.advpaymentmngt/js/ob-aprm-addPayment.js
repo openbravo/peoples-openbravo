@@ -761,14 +761,14 @@ OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
 
 OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, affectedParams) {
   var callbackDisplayLogicActionHandler, params = {},
-      thisform, thisview;
+      thisform, thisview, creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid;
   thisform = form;
   thisview = view;
   params.context = form.paramWindow.getContextInfo();
   params.context.inpwindowId = form.paramWindow.parentWindow.windowId;
 
   callbackDisplayLogicActionHandler = function (response, data, request) {
-    var i, field, def, values = data.values;
+    var i, field, def, values = data.values, newCriteria = {};
 
     for (i in values) {
       if (values.hasOwnProperty(i)) {
@@ -789,6 +789,13 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, aff
     }
     if (thisview) {
       thisview.handleReadOnlyLogic();
+    }
+    // If credit grid is now displayed fetch data
+    if (values.credit_to_use_display_logic && values.credit_to_use_display_logic == 'Y') {
+      newCriteria.criteria = [];
+      // add dummy criterion to force fetch
+      newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+      creditUseGrid.fetchData(newCriteria);
     }
     thisform.markForRedraw();
   };
