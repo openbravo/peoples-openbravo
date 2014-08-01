@@ -92,8 +92,8 @@ public class PriceDifferenceProcess {
     }
     oldAmountCost = materialTransaction.getTransactionCost();
     for (TransactionCost trxCost : materialTransaction.getTransactionCostList()) {
-      if (trxCost.getCostadjustmentline() != null
-          && trxCost.getCostadjustmentline().getCostAdjustment().getSourceProcess().equals("PDC")) {
+      if (trxCost.getCostAdjustmentLine() != null
+          && trxCost.getCostAdjustmentLine().getCostAdjustment().getSourceProcess().equals("PDC")) {
         oldAmountCost = oldAmountCost.add(trxCost.getCost());
       }
     }
