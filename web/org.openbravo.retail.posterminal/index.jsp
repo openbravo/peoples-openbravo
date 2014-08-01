@@ -53,7 +53,7 @@
       });
       OB.POS.terminal.write();
     } else {
-      console.error('Cannot find OB namespace. Check that the javascript files do not contain syntax errors.');
+      console.error('Cannot find OB namespace. Please, reload (F5). If this error raises again, check that the javascript files do not contain syntax errors.');
     }
   </script>
 </body>
