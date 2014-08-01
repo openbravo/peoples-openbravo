@@ -279,19 +279,17 @@ public class OrderLoader extends POSDataSynchronizationProcess {
     return successMessage(jsonorder);
   }
 
+  @Override
   protected boolean additionalCheckForDuplicates(JSONObject record) {
     try {
       Order orderInDatabase = OBDal.getInstance().get(Order.class, record.getString("id"));
       String docNoInDatabase = orderInDatabase.getDocumentNo();
       String docNoInJSON = "";
       docNoInJSON = record.getString("documentNo");
-      if (!docNoInDatabase.equals(docNoInJSON)) {
-        return false;
-      } else {
-        return true;
-      }
+      return docNoInDatabase.equals(docNoInJSON);
     } catch (JSONException e) {
-      return true;
+      log.error("JSON information couldn't be read when verifying duplicate", e);
+      return false;
     }
   }
 
