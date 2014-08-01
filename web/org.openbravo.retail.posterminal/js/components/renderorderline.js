@@ -225,11 +225,13 @@ enyo.kind({
     this.inherited(arguments);
     this.$.name.setContent(OB.POS.modelterminal.getPaymentName(this.model.get('kind')) || this.model.get('name'));
     if (OB.UTIL.isNullOrUndefined(this.model.get('paymentDate'))) {
-      paymentDate = OB.I18N.formatDate(new Date());
+      paymentDate = new Date();
     } else {
-      paymentDate = OB.I18N.formatDate(this.model.get('paymentDate'));
+      // Convert to UTC to properly manage browser timezone
+      paymentDate = this.model.get('paymentDate');
+      paymentDate = new Date(paymentDate.getTime() + (60000 * paymentDate.getTimezoneOffset()));
     }
-    this.$.date.setContent(paymentDate);
+    this.$.date.setContent(OB.I18N.formatDate(paymentDate));
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
       this.$.foreignAmount.setContent(this.model.printForeignAmount());
     } else {
