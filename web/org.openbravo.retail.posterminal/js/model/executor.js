@@ -34,6 +34,7 @@ OB.Model.Executor = Backbone.Model.extend({
   },
 
   addEvent: function (event, replaceExistent) {
+    var synchId = SynchronizationHelper.busyUntilFinishes('executor');
     var evtQueue = this.get('eventQueue'),
         currentEvt, actionQueue, currentExecutionQueue;
     if (replaceExistent && evtQueue) {
@@ -54,6 +55,7 @@ OB.Model.Executor = Backbone.Model.extend({
     this.set('exec', (this.get('exec') || 0) + 1);
 
     event.on('finish', function () {
+      SynchronizationHelper.finished(synchId, 'executor');
       var currentExecutionQueue = (this.get('exec') || 0) - 1;
       this.set('exec', currentExecutionQueue);
       OB.info('event execution time', (new Date().getTime()) - event.get('start'), currentExecutionQueue);
