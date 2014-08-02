@@ -94,7 +94,15 @@ enyo.kind({
     span: 4,
     handlers: {
       onDisableNextButton: 'disableNextButton',
-      onEnableNextButton: 'enableNextButton'
+      onEnableNextButton: 'enableNextButton',
+      synchronizing: 'disableButton',
+      synchronized: 'enableButton'
+    },
+    disableButton: function () {
+      this.setDisabled(true);
+    },
+    enableButton: function () {
+      this.setDisabled(false);
     },
     enableNextButton: function () {
       this.setDisabled(false);
@@ -389,7 +397,7 @@ enyo.kind({
     var nextsubstep = this.model.get('substep') + direction;
 
     if (nextstep <= 0) {
-      // error. go to the begining   
+      // error. go to the begining
       this.model.set('step', 1);
       this.model.set('substep', -1);
       this.moveStep(1);

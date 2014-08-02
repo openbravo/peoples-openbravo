@@ -30,6 +30,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     //Check for orders wich are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
+    var synchId = SynchronizationHelper.busyUntilFinishes('cashup.init');
     var undf, me = this,
         newstep, expected = 0,
         totalStartings = 0,
@@ -104,6 +105,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             index: index
           });
         }, this);
+        SynchronizationHelper.finished(synchId, 'init');
       });
     }, this);
 
@@ -351,6 +353,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
   //Step 4
   getCountCashSummary: function () {
+    var synchId = SynchronizationHelper.busyUntilFinishes('getCountCashSummary');
     var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, undf, model, value = OB.DEC.Zero,
         second = OB.DEC.Zero;
     countCashSummary = {
@@ -439,11 +442,13 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }
       }
     }
+    SynchronizationHelper.finished(synchId, 'getCountCashSummary');
     return countCashSummary;
   },
   additionalProperties: [],
   propertyFunctions: [],
   processAndFinishCashUp: function () {
+    var synchId = SynchronizationHelper.busyUntilFinishes('processAndFinishCashUp');
     var objToSend = {
       posTerminal: OB.POS.modelterminal.get('terminal').id,
       id: OB.UTIL.get_UUID(),
@@ -487,6 +492,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       OB.Dal.find(OB.Model.CashManagement, {
         'cashup_id': cashUp.at(0).get('id')
       }, function (cashMgmts) {
+        SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
         _.each(cashMgmts.models, function (cashMgmt) {
           objToSend.get('cashMgmtIds').push(cashMgmt.get('id'));
         });
