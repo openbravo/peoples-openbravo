@@ -32,7 +32,16 @@ OB.Model.Executor = Backbone.Model.extend({
       }
     }, this);
   },
-
+  removeGroup: function (groupId) {
+    var evtQueue = this.get('eventQueue');
+    evtQueue.where({
+      groupId: groupId
+    }).forEach(function (evt) {
+      SynchronizationHelper.finished(evt.get('synchId'), 'executor');
+      evtQueue.remove(evt);
+    }, this);
+    this.set('eventQueue', evtQueue);
+  },
   addEvent: function (event, replaceExistent) {
     var synchId = SynchronizationHelper.busyUntilFinishes('executor');
     var evtQueue = this.get('eventQueue'),
@@ -54,6 +63,7 @@ OB.Model.Executor = Backbone.Model.extend({
 
     this.set('exec', (this.get('exec') || 0) + 1);
 
+    event.set('synchId', synchId);
     event.on('finish', function () {
       SynchronizationHelper.finished(synchId, 'executor');
       var currentExecutionQueue = (this.get('exec') || 0) - 1;

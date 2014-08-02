@@ -22,17 +22,10 @@
     preventApplyPromotions: false,
     applyPromotionsTimeout: {},
     applyPromotions: function (receipt, line) {
-      var me = this,
-          timeoutId;
-      if (line && this.applyPromotionsTimeout[line.cid]) {
-        clearTimeout(this.applyPromotionsTimeout[line.cid]);
-      }
-      timeoutId = setTimeout(function () {
-        me.applyPromotionsLat(receipt, line);
-      }, 0);
-      if (line) {
-        this.applyPromotionsTimeout[line.cid] = timeoutId;
-      }
+      // if the discount algorithm already started, stop pending computations...
+      this.executor.removeGroup('discounts');
+      // ... and start over
+      this.applyPromotionsLat(receipt, line);
     },
     applyPromotionsLat: function (receipt, line) {
       var me = this;
@@ -163,6 +156,7 @@
       if (line) {
         this.executor.addEvent(new Backbone.Model({
           id: line.cid,
+          groupId: 'discounts',
           receipt: receipt,
           line: line,
           skipSave: skipSave
