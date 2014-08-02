@@ -31,7 +31,6 @@
         me.applyPromotionsLat(receipt, line);
       }, 0);
       if (line) {
-        OB.MobileApp.view.waterfall('onApplyingDiscount');
         this.applyPromotionsTimeout[line.cid] = timeoutId;
       }
     },

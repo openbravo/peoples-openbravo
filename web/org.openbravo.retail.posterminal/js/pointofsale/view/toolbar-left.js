@@ -181,7 +181,6 @@ enyo.kind({
   handlers: {
     onChangedTotal: 'renderTotal',
     onRightToolbarDisabled: 'disabledButton',
-    onApplyingDiscount: 'disableButton',
     synchronizing: 'disableButton',
     synchronized: 'enableButton'
   },

@@ -248,10 +248,10 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     }
   },
   preEvent: function () {
-    OB.MobileApp.view.waterfall('onApplyingDiscount');
+    // Logic to implement before the event is created
   },
   postEvent: function () {
-    OB.MobileApp.view.waterfall('onAppliedDiscount');
+    // Logic to implement after the event is created
   },
   preAction: function (evt) {
     var line = evt.get('line'),
