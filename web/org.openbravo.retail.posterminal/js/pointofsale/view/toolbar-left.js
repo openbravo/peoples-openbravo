@@ -182,7 +182,8 @@ enyo.kind({
     onChangedTotal: 'renderTotal',
     onRightToolbarDisabled: 'disabledButton',
     onApplyingDiscount: 'disableButton',
-    onAppliedDiscount: 'enableButton'
+    synchronizing: 'disableButton',
+    synchronized: 'enableButton'
   },
   disabledButton: function (inSender, inEvent) {
     if (inEvent.exceptionPanel === this.tabPanel) {
