@@ -1254,7 +1254,8 @@
                   -- Update so_res_status
                   UPDATE c_orderline
                   SET so_res_status = CASE WHEN cur_orderline.qtyordered = v_reservedqty THEN 'CR'
-                                           ELSE 'PR'
+					   WHEN cur_orderline.qtyordered > v_reservedqty AND v_reservedqty > 0 THEN 'PR'
+                                           ELSE 'NR'
                                       END
                   WHERE c_orderline_id = cur_orderline.c_orderline_id;
                 END IF;
