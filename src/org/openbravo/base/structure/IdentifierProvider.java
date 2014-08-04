@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -150,7 +150,7 @@ public class IdentifierProvider implements OBSingleton {
       } else if (value != null) {
 
         // TODO: add number formatting...
-        if (property.isDate() || property.isDatetime()) {
+        if (property.isDate() || property.isDatetime() || property.isAbsoluteDateTime()) {
           value = formatDate(property, (Date) value);
         }
 
@@ -179,7 +179,7 @@ public class IdentifierProvider implements OBSingleton {
       dateFormat = new SimpleDateFormat(dateFormatString);
       dateTimeFormat = new SimpleDateFormat(dateTimeFormatString);
     }
-    if (property.isDatetime()) {
+    if (property.isDatetime() || property.isAbsoluteDateTime()) {
       return dateTimeFormat.format(date);
     } else {
       return dateFormat.format(date);
