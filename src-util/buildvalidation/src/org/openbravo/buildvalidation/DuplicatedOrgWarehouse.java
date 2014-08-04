@@ -33,16 +33,18 @@ public class DuplicatedOrgWarehouse extends BuildValidation{
     ConnectionProvider cp = getConnectionProvider();
     ArrayList<String> errors = new ArrayList<String>();
     try{
-      if (DuplicatedOrgWarehouseData.existsDuplicatedOrgWarehouse(cp)) {
-    	DuplicatedOrgWarehouseData[] orgWarehouse =  DuplicatedOrgWarehouseData.DuplicatedOrganizationWarehouse(cp);
-    	errors.add("Due to a database constraint modification, is no longer allowed to "+
+      if (DuplicatedOrgWarehouseData.existOrgWarehouseTable(cp)) {
+        if (DuplicatedOrgWarehouseData.existsDuplicatedOrgWarehouse(cp)) {
+          DuplicatedOrgWarehouseData[] orgWarehouse =  DuplicatedOrgWarehouseData.DuplicatedOrganizationWarehouse(cp);
+          errors.add("Due to a database constraint modification, is no longer allowed to "+
     	            "assign the same Warehouse more than once in each Organization. "+
     	            "There exists data in your database that do not fit this new constraint. Please review following:- ");
-    	for(int i = 0; i < orgWarehouse.length ;i++) {
-        errors.add(" Client: " + orgWarehouse[i].client + ", Organization: " + orgWarehouse[i].organization + ", Warehouse: " + orgWarehouse[i].warehouse);
-    	}
-      }
-    } catch (Exception e) {
+          for(int i = 0; i < orgWarehouse.length ;i++) {
+            errors.add(" Client: " + orgWarehouse[i].client + ", Organization: " + orgWarehouse[i].organization + ", Warehouse: " + orgWarehouse[i].warehouse);
+          }
+        }
+      } 
+    }catch (Exception e) {
       return handleError(e);
     }
     return errors;

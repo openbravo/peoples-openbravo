@@ -40,4 +40,13 @@
         HAVING count(*)>1
       ]]></Sql>
   </SqlMethod>
+  <SqlMethod name="existOrgWarehouseTable" type="preparedStatement" return="boolean">
+    <SqlMethodComment>Check if the AD_Org_Warehouse table exist</SqlMethodComment>
+    <Sql><![CDATA[
+       SELECT count(*) AS EXISTING
+       FROM ad_table
+       WHERE ad_table_id = '26673F55911848E894D837F57207A92B'
+      ]]>
+    </Sql>
+  </SqlMethod>
 </SqlClass>
