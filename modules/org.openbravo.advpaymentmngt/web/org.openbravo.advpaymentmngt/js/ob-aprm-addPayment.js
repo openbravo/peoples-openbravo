@@ -407,7 +407,11 @@ OB.APRM.AddPayment.updateDifferenceActions = function (form) {
       overpaymentAction = form.getItem('overpayment_action'),
       actualPayment = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
       newValueMap = {},
-      defaultValue = '';
+      defaultValue = '',
+      trxtype = form.getItem('trxtype').getValue();
+  if (trxtype !== null) {
+    form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
+  }
   // Update difference action available values.
   if (form.isCreditAllowed) {
     newValueMap.CR = overpaymentAction.originalValueMap.CR;
@@ -768,7 +772,8 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, aff
   params.context.inpwindowId = form.paramWindow.parentWindow.windowId;
 
   callbackDisplayLogicActionHandler = function (response, data, request) {
-    var i, field, def, values = data.values, newCriteria = {};
+    var i, field, def, values = data.values,
+        newCriteria = {};
 
     for (i in values) {
       if (values.hasOwnProperty(i)) {
@@ -791,7 +796,7 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, aff
       thisview.handleReadOnlyLogic();
     }
     // If credit grid is now displayed fetch data
-    if (values.credit_to_use_display_logic && values.credit_to_use_display_logic == 'Y') {
+    if (values.credit_to_use_display_logic && values.credit_to_use_display_logic === 'Y') {
       newCriteria.criteria = [];
       // add dummy criterion to force fetch
       newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
