@@ -10,8 +10,6 @@ import javax.servlet.ServletException;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.data.UtilSql;
-import org.openbravo.service.db.QueryTimeOutUtil;
-import org.openbravo.database.SessionInfo;
 import java.util.*;
 
 class UpdateReconciliationStatementProcessedValueData implements FieldProvider {
@@ -33,18 +31,10 @@ static Logger log4j = Logger.getLogger(UpdateReconciliationStatementProcessedVal
  }
 
   public static UpdateReconciliationStatementProcessedValueData[] select(ConnectionProvider connectionProvider)    throws ServletException {
-    return select((String)null, connectionProvider, 0, 0);
-  }
-
-  public static UpdateReconciliationStatementProcessedValueData[] select(String queryType, ConnectionProvider connectionProvider)    throws ServletException {
-    return select(queryType, connectionProvider, 0, 0);
+    return select(connectionProvider, 0, 0);
   }
 
   public static UpdateReconciliationStatementProcessedValueData[] select(ConnectionProvider connectionProvider, int firstRegister, int numberRegisters)    throws ServletException {
-    return select((String)null, connectionProvider);
-  }
-
-  public static UpdateReconciliationStatementProcessedValueData[] select(String queryType, ConnectionProvider connectionProvider, int firstRegister, int numberRegisters)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "        select 1 as name from dual";
@@ -55,11 +45,6 @@ static Logger log4j = Logger.getLogger(UpdateReconciliationStatementProcessedVal
 
     try {
     st = connectionProvider.getPreparedStatement(strSql);
-      String profile = queryType;
-      if (profile == null || profile.isEmpty()) {
-        profile = SessionInfo.getQueryProfile();
-      }
-      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, profile);
 
       result = st.executeQuery();
       long countRecord = 0;
@@ -99,10 +84,6 @@ static Logger log4j = Logger.getLogger(UpdateReconciliationStatementProcessedVal
   }
 
   public static int updateFinancialAccount(ConnectionProvider connectionProvider)    throws ServletException {
-    return updateFinancialAccount((String)null, connectionProvider);
-  }
-
-  public static int updateFinancialAccount(String queryType, ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "        UPDATE FIN_FINANCIAL_ACCOUNT SET EM_APRM_MatchTrans_Force = em_aprm_matchtransactions";
@@ -112,11 +93,6 @@ static Logger log4j = Logger.getLogger(UpdateReconciliationStatementProcessedVal
 
     try {
     st = connectionProvider.getPreparedStatement(strSql);
-      String profile = queryType;
-      if (profile == null || profile.isEmpty()) {
-        profile = SessionInfo.getQueryProfile();
-      }
-      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, profile);
 
       updateCount = st.executeUpdate();
     } catch(SQLException e){
@@ -136,10 +112,6 @@ static Logger log4j = Logger.getLogger(UpdateReconciliationStatementProcessedVal
   }
 
   public static int updateStatement(ConnectionProvider connectionProvider)    throws ServletException {
-    return updateStatement((String)null, connectionProvider);
-  }
-
-  public static int updateStatement(String queryType, ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
       "        UPDATE FIN_BANKSTATEMENT SET em_aprm_process_bs_force = em_aprm_process_bs ";
@@ -149,11 +121,6 @@ static Logger log4j = Logger.getLogger(UpdateReconciliationStatementProcessedVal
 
     try {
     st = connectionProvider.getPreparedStatement(strSql);
-      String profile = queryType;
-      if (profile == null || profile.isEmpty()) {
-        profile = SessionInfo.getQueryProfile();
-      }
-      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, profile);
 
       updateCount = st.executeUpdate();
     } catch(SQLException e){
@@ -173,24 +140,15 @@ static Logger log4j = Logger.getLogger(UpdateReconciliationStatementProcessedVal
   }
 
   public static int updateReconciliation(ConnectionProvider connectionProvider)    throws ServletException {
-    return updateReconciliation((String)null, connectionProvider);
-  }
-
-  public static int updateReconciliation(String queryType, ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 
-      "        UPDATE FIN_BANKSTATEMENT SET em_aprm_process_rec_force = em_aprm_process_rec ";
+      "        UPDATE FIN_RECONCILIATION SET EM_APRM_Process_Rec_Force = em_aprm_process_rec ";
 
     int updateCount = 0;
     PreparedStatement st = null;
 
     try {
     st = connectionProvider.getPreparedStatement(strSql);
-      String profile = queryType;
-      if (profile == null || profile.isEmpty()) {
-        profile = SessionInfo.getQueryProfile();
-      }
-      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, profile);
 
       updateCount = st.executeUpdate();
     } catch(SQLException e){
