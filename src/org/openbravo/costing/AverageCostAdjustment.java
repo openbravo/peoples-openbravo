@@ -67,7 +67,10 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         && basetrx.getPhysicalInventoryLine().getRelatedInventory() != null) {
       return;
     }
-    BigDecimal adjustmentBalance = getCostAdjLine().getAdjustmentAmount();
+    BigDecimal adjustmentBalance = BigDecimal.ZERO;
+    if (getCostAdjLine().getTransactionCostList().isEmpty()) {
+      adjustmentBalance = getCostAdjLine().getAdjustmentAmount();
+    }
     Date trxDate = getCostAdjLine().getTransactionDate();
     if (trxDate == null) {
       trxDate = basetrx.getTransactionProcessDate();
@@ -79,8 +82,13 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     BigDecimal currentStock = getCurrentStock();
     BigDecimal currentValueAmt = getCurrentValuedStock();
-    cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, precission,
-        RoundingMode.HALF_UP);
+    if (currentStock.signum() != 0) {
+      // FIXME: Cuando entra por segunda vez a buscar las rtansactiones relacionadas está
+      // considerando 2 veces el adjustemeent balance porque ya está incluido en el current value
+      // amount
+      cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, precission,
+          RoundingMode.HALF_UP);
+    }
     ScrollableResults trxs = getRelatedTransactions();
     try {
       while (trxs.next()) {

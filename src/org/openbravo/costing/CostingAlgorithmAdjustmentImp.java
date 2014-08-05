@@ -130,9 +130,6 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
 
     getRelatedTransactionsByAlgorithm();
-    costAdjLine = getCostAdjLine();
-    costAdjLine.setRelatedTransactionAdjusted(true);
-    OBDal.getInstance().save(costAdjLine);
   }
 
   /*
