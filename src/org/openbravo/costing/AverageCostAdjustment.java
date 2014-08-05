@@ -83,9 +83,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     BigDecimal currentStock = getCurrentStock();
     BigDecimal currentValueAmt = getCurrentValuedStock();
     if (currentStock.signum() != 0) {
-      // FIXME: Cuando entra por segunda vez a buscar las rtansactiones relacionadas está
-      // considerando 2 veces el adjustemeent balance porque ya está incluido en el current value
-      // amount
       cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, precission,
           RoundingMode.HALF_UP);
     }
@@ -147,9 +144,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             // If there is a difference insert a cost adjustment line.
             CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
                 getCostAdjLine().getCostAdjustment(), expectedCost.subtract(trxCost), false,
-                trx.getTransactionProcessDate(), null);
-            // newCAL.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance().getProxy(
-            // CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
+                trx.getTransactionProcessDate(), trx.getMovementDate());
+            newCAL.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance().getProxy(
+                CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
             newCAL.setRelatedTransactionAdjusted(false);
             OBDal.getInstance().save(newCAL);
           }
