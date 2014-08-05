@@ -767,9 +767,28 @@ OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
 };
 
 OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
-  var affectedParams = [];
+  var affectedParams = [],
+      trxtype = form.getItem('trxtype').getValue(),
+      callback, receivedFrom = form.getItem('received_from').getValue(),
+      isSOTrx = form.getItem('issotrx').getValue(),
+      financialAccount = form.getItem('fin_financial_account_id').getValue();
   affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
   OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
+
+  callback = function (response, data, request) {
+    form.getItem('fin_paymentmethod_id').setValue(data.paymentMethodId);
+  };
+
+  if (trxtype !== "") {
+
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.ReceivedFromPaymentMethodActionHandler', {
+      receivedFrom: receivedFrom,
+      isSOTrx: isSOTrx,
+      financialAccount: financialAccount
+    }, {}, callback);
+
+  }
+
 };
 
 OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, affectedParams) {
