@@ -759,7 +759,9 @@
     },
     //Attrs is an object of attributes that will be set in order
     _addProduct: function (p, qty, options, attrs) {
-      var me = this;
+      var newLine = true,
+          line = null,
+          me = this;
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
@@ -783,12 +785,12 @@
           } else if (data.result === 0) {
             alert(OB.I18N.getLabel('OBPOS_WeightZero'));
           } else {
-            me.createLine(p, data.result, options, attrs);
+            line = me.createLine(p, data.result, options, attrs);
           }
         });
       } else {
         if (p.get('groupProduct') || (options && options.packId)) {
-          var affectedByPack, line;
+          var affectedByPack;
           if (options && options.line) {
             line = options.line;
           } else {
@@ -818,8 +820,10 @@
             if (args.line) {
               args.receipt.addUnit(args.line, args.qty);
               args.line.trigger('selected', args.line);
+              line = args.line;
+              newLine = false;
             } else {
-              args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
+              line = args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
             }
           });
 
@@ -827,12 +831,22 @@
           //remove line even it is a grouped line
           if (options && options.line && qty === -1) {
             this.addUnit(options.line, qty);
+            line = options.line;
+            newLine = false;
           } else {
-            this.createLine(p, qty, options, attrs);
+            line = this.createLine(p, qty, options, attrs);
           }
         }
       }
       this.save();
+      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostAddProductToOrder', {
+        receipt: this,
+        productToAdd: p,
+        orderline: line,
+        qtyToAdd: qty,
+        options: options,
+        newLine: newLine
+      }, function (args) {});
     },
 
     _drawLinesDistribution: function (data) {
