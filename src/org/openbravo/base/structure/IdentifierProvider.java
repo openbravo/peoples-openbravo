@@ -61,6 +61,7 @@ public class IdentifierProvider implements OBSingleton {
 
   private SimpleDateFormat dateFormat = null;
   private SimpleDateFormat dateTimeFormat = null;
+  private SimpleDateFormat timeFormat = null;
 
   /**
    * Returns the identifier of the object. The identifier is computed using the identifier
@@ -152,6 +153,8 @@ public class IdentifierProvider implements OBSingleton {
         // TODO: add number formatting...
         if (property.isDate() || property.isDatetime() || property.isAbsoluteDateTime()) {
           value = formatDate(property, (Date) value);
+        } else if (property.isTime() || property.isAbsoluteTime()) {
+          value = formatTime(property, (Date) value);
         }
 
         sb.append(value);
@@ -184,5 +187,21 @@ public class IdentifierProvider implements OBSingleton {
     } else {
       return dateFormat.format(date);
     }
+  }
+
+  private synchronized String formatTime(Property property, Date date) {
+    if (date == null) {
+      return "";
+    }
+    if (timeFormat == null) {
+      final String dateTimeFormatString = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties().getProperty("dateTimeFormat.java");
+      if (dateTimeFormatString.toUpperCase().endsWith("A")) {
+        timeFormat = new SimpleDateFormat("hh:mm:ss a");
+      } else {
+        timeFormat = new SimpleDateFormat("HH:mm:ss");
+      }
+    }
+    return timeFormat.format(date);
   }
 }
