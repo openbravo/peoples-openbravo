@@ -88,7 +88,21 @@ public class CostAdjustmentProcess {
   }
 
   private void doChecks(CostAdjustment costAdjustment, JSONObject message) {
-
+    // initialize is related transaction adjusted flag to false
+    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
+        CostAdjustmentLine.class);
+    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustment));
+    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED, true));
+    ScrollableResults lines = critLines.scroll(ScrollMode.FORWARD_ONLY);
+    try {
+      while (lines.next()) {
+        CostAdjustmentLine line = (CostAdjustmentLine) lines.get(0);
+        line.setRelatedTransactionAdjusted(false);
+        OBDal.getInstance().save(line);
+      }
+    } finally {
+      lines.close();
+    }
     // Execute checks added implementing costAdjustmentProcess interface.
 
     for (CostAdjusmentProcessCheck checksInstance : costAdjustmentProcessChecks) {
