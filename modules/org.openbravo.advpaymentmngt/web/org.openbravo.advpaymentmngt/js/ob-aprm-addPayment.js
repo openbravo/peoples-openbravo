@@ -175,8 +175,17 @@ OB.APRM.AddPayment.financialAccountOnChange = function (item, view, form, grid) 
 };
 
 OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
+  var ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      defaultFilter = {
+      paymentMethodName: item.getElementValue()
+      },
+      trxtype = form.getItem('trxtype').getValue();
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
+  if (trxtype !== "") {
+    ordinvgrid.setFilterEditorCriteria(defaultFilter);
+    ordinvgrid.filterByEditor();
+  }
 };
 
 OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form, grid) {
@@ -409,7 +418,7 @@ OB.APRM.AddPayment.updateDifferenceActions = function (form) {
       newValueMap = {},
       defaultValue = '',
       trxtype = form.getItem('trxtype').getValue();
-  if (trxtype !== null) {
+  if (trxtype !== "") {
     form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
   }
   // Update difference action available values.
