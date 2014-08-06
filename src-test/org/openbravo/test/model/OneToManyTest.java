@@ -19,6 +19,9 @@
 
 package org.openbravo.test.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
@@ -72,10 +75,6 @@ public class OneToManyTest extends OBBaseTest {
   @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
   @Test
   public void testBAddOrderLine() {
-    // This test is currently disabled because it didn't work with the new Openbravo demo data
-    // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
     setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
@@ -115,10 +114,6 @@ public class OneToManyTest extends OBBaseTest {
   @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
   @Test
   public void testCDeleteChild() {
-    // This test is currently disabled because it didn't work with the new Openbravo demo data
-    // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
     setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);

@@ -19,6 +19,12 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -532,10 +538,6 @@ public class IssuesTest extends OBBaseTest {
   @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
   @Test
   public void test13281And13283() throws Exception {
-    // This test is currently disabled because it didn't work with the new Openbravo demo data
-    // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    // if (1 == 1)
-    // return;
     OBContext.setOBContext(TEST_USER_ID, TEST_ROLE_ID, TEST_CLIENT_ID, "0");
 
     // use the same logic as in the DalWebService
@@ -549,7 +551,7 @@ public class IssuesTest extends OBBaseTest {
     final SAXReader reader = new SAXReader();
     final Document document = reader.read(this.getClass().getResourceAsStream("test_13281.xml"));
     final List<BaseOBObject> result = xec.process(document);
-    assertTrue(result.size() == 1);
+    assertEquals(1, result.size());
     assertTrue(result.get(0) instanceof Order);
     final Order order = (Order) result.get(0);
     // The same Organization ID of the test_13281.xml

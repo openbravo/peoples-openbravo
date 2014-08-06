@@ -57,10 +57,6 @@ public class DalPerformanceInventoryLineTest extends OBBaseTest {
   @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
   @Test
   public void testACreateInventoryLine() {
-    // This test is currently disabled because it didn't work with the new Openbravo demo data
-    // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    // if (1 == 1)
-    // return;
     setTestUserContext();
 
     // make sure our user can do this addReadWriteAccess(InventoryCount.class);
@@ -106,10 +102,6 @@ public class DalPerformanceInventoryLineTest extends OBBaseTest {
   @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
   @Test
   public void testBReadAndAddLine() {
-    // This test is currently disabled because it didn't work with the new Openbravo demo data
-    // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    // if (1 == 1)
-    // return;
     setTestUserContext(); // make sure our user can do this
     addReadWriteAccess(InventoryCount.class);
     addReadWriteAccess(InventoryCountLine.class);

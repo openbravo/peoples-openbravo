@@ -19,6 +19,9 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+
 import java.util.ArrayList;
 import java.util.List;
 

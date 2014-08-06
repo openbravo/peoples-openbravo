@@ -19,6 +19,10 @@
 
 package org.openbravo.test.security;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -73,7 +77,7 @@ public class EntityAccessTest extends OBBaseTest {
       c.setCostingPrecision((long) 4);
       OBDal.getInstance().save(c);
     }
-    OBDal.getInstance().commitAndClose();
+
   }
 
   /**
@@ -85,8 +89,6 @@ public class EntityAccessTest extends OBBaseTest {
   @Ignore("This test is currently disabled because after fixing issue #0010139, all entities are deletable.")
   @Test
   public void testBDoNotExecutetestNonDeletable() {
-    if (1 == 1)
-      return;
     setTestUserContext();
     addReadWriteAccess(Currency.class);
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
@@ -149,7 +151,6 @@ public class EntityAccessTest extends OBBaseTest {
         }
       }
     }
-    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -174,7 +175,6 @@ public class EntityAccessTest extends OBBaseTest {
       assertTrue("Wrong exception thrown:  " + e.getMessage(),
           e.getMessage().indexOf("is not writable by this user") != -1);
     }
-    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -211,6 +211,5 @@ public class EntityAccessTest extends OBBaseTest {
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     OBDal.getInstance().remove(cs.get(0));
-    OBDal.getInstance().commitAndClose();
   }
 }

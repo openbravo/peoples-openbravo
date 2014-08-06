@@ -19,6 +19,8 @@
 
 package org.openbravo.test.datasource;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -128,10 +130,10 @@ public class TestCSVEncoding extends BaseDataSourceTestDal {
     String[] res2 = response2.split("\n");
 
     OBContext.restorePreviousMode();
+    OBDal.getInstance().commitAndClose();
 
     // Second assert
     assertTrue("On delete CSV Text Preference Arabic characters are still showing", res2[1]
         .substring(1, 4).equals("?.?"));
-
   }
 }

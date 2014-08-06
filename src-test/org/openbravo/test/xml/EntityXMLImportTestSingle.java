@@ -19,13 +19,18 @@
 
 package org.openbravo.test.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.openbravo.model.ad.system.Client.PROPERTY_ORGANIZATION;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
@@ -46,6 +51,7 @@ import org.openbravo.service.db.ImportResult;
  * @author mtaal
  */
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EntityXMLImportTestSingle extends XMLBaseTest {
 
   private static final Logger log = Logger.getLogger(EntityXMLImportTestSingle.class);
@@ -58,7 +64,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
    * insert.
    */
   @Test
-  public void testImportNoUpdate() {
+  public void test0ImportNoUpdate() {
     setTestAdminContext();
 
     final String xml = exportTax();
@@ -73,6 +79,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     if (ir.hasErrorOccured()) {
       fail(ir.getErrorMessages());
     }
+    OBDal.getInstance().commitAndClose();
   }
 
   private String exportTax() {
@@ -114,6 +121,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     if (ir.hasErrorOccured()) {
       fail(ir.getErrorMessages());
     }
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -136,6 +144,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     if (ir.hasErrorOccured()) {
       fail(ir.getErrorMessages());
     }
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -158,6 +167,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     if (ir.hasErrorOccured()) {
       fail(ir.getErrorMessages());
     }
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -178,6 +188,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     for (final Greeting g : obc.list()) {
       OBDal.getInstance().remove(g);
     }
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -195,6 +206,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
     obc.setFilterOnReadableOrganization(false);
     obc.add(Restrictions.eq(PROPERTY_ORGANIZATION, org));
     assertEquals(0, obc.list().size());
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -218,6 +230,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
         OBContext.getOBContext().getCurrentOrganization(), xml);
     assertTrue(ir.getInsertedObjects().size() == 0);
     assertTrue(ir.getUpdatedObjects().size() == 0);
+    OBDal.getInstance().commitAndClose();
   }
 
   private void createTestData() {
@@ -236,6 +249,5 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
       OBDal.getInstance().save(greeting);
     }
     OBDal.getInstance().commitAndClose();
-
   }
 }

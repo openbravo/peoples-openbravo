@@ -19,6 +19,8 @@
 
 package org.openbravo.test.system;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.Connection;
 
 import javax.servlet.ServletException;

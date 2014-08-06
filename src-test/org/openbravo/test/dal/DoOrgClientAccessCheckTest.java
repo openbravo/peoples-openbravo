@@ -19,6 +19,8 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;

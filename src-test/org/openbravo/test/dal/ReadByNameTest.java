@@ -18,6 +18,12 @@
  */
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.UUID;
 
 import org.hibernate.criterion.Restrictions;
@@ -154,5 +160,6 @@ public class ReadByNameTest extends OBBaseTest {
 
     assertNull(OBDal.getInstance().get(BusinessPartner.class, bpId));
     assertNull(OBDal.getInstance().get(Location.class, locId));
+    OBDal.getInstance().commitAndClose();
   }
 }

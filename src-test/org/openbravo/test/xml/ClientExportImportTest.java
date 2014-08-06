@@ -19,6 +19,11 @@
 
 package org.openbravo.test.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -33,6 +38,7 @@ import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.model.Table;
 import org.apache.ddlutils.platform.ExcludeFilter;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -65,6 +71,7 @@ import org.openbravo.service.system.SystemService;
  * 
  * @author mtaal
  */
+// @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ClientExportImportTest extends XMLBaseTest {
 
   // public void _testImportReferenceData() throws Exception {
@@ -101,6 +108,7 @@ public class ClientExportImportTest extends XMLBaseTest {
    * 
    * Also tests mantis 9000: https://issues.openbravo.com/view.php?id=9000
    */
+  @Ignore("This test has been temporarily disabled until the following issue related to the export client functionality is fixed: https://issues.openbravo.com/view.php?id=14848")
   @Test
   public void testExportImportClient1000000() {
 
@@ -115,7 +123,6 @@ public class ClientExportImportTest extends XMLBaseTest {
     // SystemService.getInstance().removeAllClientData(newClientId);
   }
 
-  @Test
   private void testTreeNodesMantis9000(String newClientID) {
     final OBQuery<TreeNode> nodes = OBDal.getInstance().createQuery(TreeNode.class,
         "client.id='" + newClientID + "'");
@@ -167,10 +174,8 @@ public class ClientExportImportTest extends XMLBaseTest {
       }
     }
     assertTrue(testDoneAtLeastOnce);
-
   }
 
-  @Test
   private void testAccountingFactMantis9000(String newClientID) {
     final OBQuery<AccountingFact> facts = OBDal.getInstance().createQuery(AccountingFact.class,
         "client.id='" + newClientID + "'");
@@ -211,6 +216,7 @@ public class ClientExportImportTest extends XMLBaseTest {
    * Exports the "QA Testing" client and then imports as a new client. Has as side effect that a
    * completely new client is added in the database.
    */
+  @Ignore("This test has been temporarily disabled.")
   @Test
   public void _testExportImportClient1000001() {
     exportImport(QA_TEST_CLIENT_ID);
@@ -222,7 +228,7 @@ public class ClientExportImportTest extends XMLBaseTest {
    * activated
    */
   @Test
-  public void testDeleteClient() {
+  public void testZDeleteClient() {
     Platform platform = SystemService.getInstance().getPlatform();
     ExcludeFilter excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(
         new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -328,6 +334,8 @@ public class ClientExportImportTest extends XMLBaseTest {
     }
   }
 
+  @Ignore("This test has been temporarily disabled.")
+  @Test
   public void _testImportAccountingTest() {
     doImport("Accounting_Test.xml");
   }
@@ -354,5 +362,4 @@ public class ClientExportImportTest extends XMLBaseTest {
       throw new OBException(e);
     }
   }
-
 }

@@ -19,6 +19,8 @@
 
 package org.openbravo.test.system;
 
+import static org.junit.Assert.assertEquals;
+
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.junit.Test;

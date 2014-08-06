@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -35,7 +36,6 @@ import org.openbravo.test.base.OBBaseTest;
  * 
  * @author mtaal
  */
-
 public class DalComplexQueryRequisitionTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(DalComplexQueryRequisitionTest.class);
@@ -207,6 +207,7 @@ public class DalComplexQueryRequisitionTest extends OBBaseTest {
     }
   }
 
+  @Ignore("This test has been temporarily disabled.")
   @Test
   public void _testComplexQueryOne() {
     setTestAdminContext();

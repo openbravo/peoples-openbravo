@@ -19,11 +19,16 @@
 
 package org.openbravo.test.webservice;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 
 import org.apache.log4j.Logger;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -54,6 +59,7 @@ public class WSUpdateTest extends BaseWSTest {
    * Creates a city through a webservice calls. This test must be run before the others because it
    * sets the cityId member in this class.
    */
+  @Test
   public void testACreateCity() {
     // do not replace this with a call to setUserContext,
     // the city must be stored using the client/org of the 100 user
@@ -96,6 +102,7 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testBReadUpdateCity() throws Exception {
     initializeCreateCity();
 
@@ -122,6 +129,7 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testCIncorrectRootTag() throws Exception {
     initializeCreateCity();
 
@@ -139,12 +147,14 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testDReadAddDeleteCity() throws Exception {
     initializeCreateCity();
 
     doTestReadAddDeleteCity(false);
   }
 
+  @Test
   public void testEReadAddDeleteQueryCity() throws Exception {
     initializeCreateCity();
 
@@ -222,6 +232,7 @@ public class WSUpdateTest extends BaseWSTest {
    * Tests issue 14973 https://issues.openbravo.com/view.php?id=14973 DalWebServiceServlet does not
    * report errors which occur at commit time
    */
+  @Test
   public void testFDoTest14973() throws Exception {
     final HttpURLConnection hc = createConnection("/ws/dal/Product/1000004", "DELETE");
     hc.connect();
@@ -233,6 +244,7 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testGReadAddCityWrongMethodError() throws Exception {
     initializeCreateCity();
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
@@ -254,6 +266,7 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testHRemoveCity() throws Exception {
     initializeCreateCity();
     doDirectDeleteRequest("/ws/dal/City/" + cityId, 200);

@@ -19,6 +19,10 @@
 
 package org.openbravo.test.modularity;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
@@ -43,8 +47,7 @@ public class DBPrefixTest extends OBBaseTest {
   /**
    * Creates a new module to test with
    */
-  @Test
-  public void testACreateModule() {
+  private void createModule() {
     setSystemAdministratorContext();
     Module module = OBProvider.getInstance().get(Module.class);
     module.setName("Test-dbprefixes-names");
@@ -53,14 +56,16 @@ public class DBPrefixTest extends OBBaseTest {
     module.setDescription("Testing dbprefixes");
     module.setInDevelopment(true);
     OBDal.getInstance().save(module);
-    OBDal.getInstance().commitAndClose();
+    OBDal.getInstance().flush();
   }
 
   /**
-   * Add a valid dbprefixes, everything should go ok only alphabetic upper chars
+   * Add a valid dbprefixes, everything should go ok only alphabetic upper chars. First call to
+   * createModule().
    */
   @Test
-  public void testBAddDBPrefixValid1() {
+  public void testAAddDBPrefixValid1() {
+    createModule();
     insertDBPrefix("OK", true);
   }
 
@@ -68,7 +73,7 @@ public class DBPrefixTest extends OBBaseTest {
    * alpha numeric chars not starting with a numeric one
    */
   @Test
-  public void testCAddDBPrefixValid2() {
+  public void testBAddDBPrefixValid2() {
     insertDBPrefix("OK12", true);
   }
 
@@ -76,7 +81,7 @@ public class DBPrefixTest extends OBBaseTest {
    * Add not valid db prefixes starts with number
    */
   @Test
-  public void testDAddDBPrefixNotValid1() {
+  public void testCAddDBPrefixNotValid1() {
     insertDBPrefix("1FAIL", false);
   }
 
@@ -84,7 +89,7 @@ public class DBPrefixTest extends OBBaseTest {
    * contains lower case letters
    */
   @Test
-  public void testEAddDBPrefixNotValid2() {
+  public void testDAddDBPrefixNotValid2() {
     insertDBPrefix("Fail", false);
   }
 
@@ -92,23 +97,23 @@ public class DBPrefixTest extends OBBaseTest {
    * contains underscore
    */
   @Test
-  public void testFAddDBPrefixNotValid3() {
+  public void testEAddDBPrefixNotValid3() {
     insertDBPrefix("FAIL_1", false);
   }
 
   /**
-   * contains other non-alphabetic chars
+   * contains other non-alphabetic chars. In the end, call to deleteModule
    */
   @Test
-  public void testGAddDBPrefixNotValid4() {
+  public void testFAddDBPrefixNotValid4() {
     insertDBPrefix("FAIL&/1", false);
+    deleteModule();
   }
 
   /**
    * Deletes all the modules matching the name for the testing one
    */
-  @Test
-  public void testHDeleteModule() {
+  public void deleteModule() {
     setSystemAdministratorContext();
     final OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
     obCriteria.add(Restrictions.eq(Module.PROPERTY_JAVAPACKAGE, "org.openbravo.test.dbprefix"));
@@ -117,6 +122,7 @@ public class DBPrefixTest extends OBBaseTest {
       System.out.println("Removing module: " + mod.getName());
       OBDal.getInstance().remove(mod);
     }
+    OBDal.getInstance().commitAndClose();
   }
 
   // Obtains the module iserted for testing purposes
@@ -160,5 +166,6 @@ public class DBPrefixTest extends OBBaseTest {
       assertFalse("Not inserted a valid prefix:" + name, exception);
     else
       assertTrue("Inserted a non-valid prefix:" + name, exception);
+    OBDal.getInstance().flush();
   }
 }

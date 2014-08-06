@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.criterion.Restrictions;
@@ -50,14 +48,14 @@ import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.model.ad.access.User;
 
 /**
- * Base test class which can/should be extended by most other test classes which want to make use of
- * the Openbravo test infrastructure.
+ * OBBaseTest class which can/should be extended by most other test classes which want to make use
+ * of the Openbravo test infrastructure.
  * 
- * @author mtaal
- * @author iperdomo
+ * @author inigosanchez
+ * 
  */
 
-public class OBBaseTest extends TestCase {
+public class OBBaseTest {
 
   private static final Logger log = Logger.getLogger(OBBaseTest.class);
 
@@ -170,7 +168,7 @@ public class OBBaseTest extends TestCase {
     initializeDalLayer();
     // clear the session otherwise it keeps the old model
     setTestUserContext();
-    super.setUp();
+    // super.setUp();
     // be negative is set back to false at the end of a successfull test.
     errorOccured = true;
   }
@@ -331,7 +329,7 @@ public class OBBaseTest extends TestCase {
       SessionHandler.deleteSessionHandler();
       OBContext.setOBContext((OBContext) null);
     }
-    super.tearDown();
+    // super.tearDown();
   }
 
   /**
@@ -370,7 +368,7 @@ public class OBBaseTest extends TestCase {
   }
 
   /**
-   * Deprecated, no need to call this method explicitly anymore. The BaseTest class overrides the
+   * Deprecated, no need to call this method explicitly anymore. The OBBaseTest class overrides the
    * runTest method which sets the internal flag, overriding any value passed in this method.
    * 
    * @param errorOccured

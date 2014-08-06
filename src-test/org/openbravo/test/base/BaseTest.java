@@ -49,8 +49,10 @@ import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.model.ad.access.User;
 
 /**
- * Base test class which can/should be extended by most other test classes which want to make use of
- * the Openbravo test infrastructure.
+ * BaseTest class is deprecated. All test case that works with old notation, will be working
+ * normally.
+ * 
+ * @deprecated
  * 
  * @author mtaal
  * @author iperdomo
