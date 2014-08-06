@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, _, $ */
+/*global OB, enyo, Backbone, _, $ ,SynchronizationHelper */
 
 OB.OBPOSCashUp = OB.OBPOSCashUp || {};
 OB.OBPOSCashUp.Model = OB.OBPOSCashUp.Model || {};

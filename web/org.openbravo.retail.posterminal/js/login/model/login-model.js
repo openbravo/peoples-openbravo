@@ -7,8 +7,8 @@
  ************************************************************************************
  */
 
-/*global B, $, _, console, enyo, Backbone, window, confirm, $LAB */
-
+/*global B, $, _, console, enyo, Backbone, window, confirm, $LAB ,SynchronizationHelper */
+ 
 (function () {
   var executeWhenDOMReady;
 

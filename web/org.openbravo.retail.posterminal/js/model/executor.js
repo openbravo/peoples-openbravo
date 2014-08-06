@@ -6,7 +6,8 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/*global Backbone,console,_*/
+
+/*global Backbone ,console ,_ ,SynchronizationHelper */
 
 /**
  * OB.Model.Executor provides a mechanism to execute actions synchronously even each of
