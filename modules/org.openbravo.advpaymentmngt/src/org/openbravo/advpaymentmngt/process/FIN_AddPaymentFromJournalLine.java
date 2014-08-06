@@ -113,12 +113,14 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
       // Generate Payment
       FIN_Payment payment = dao.getNewPayment(isReceipt, journalLine.getOrganization(),
           dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo, bPartner,
-          paymentMethod, financialAccount, journalLine.getDebit().subtract(journalLine.getCredit())
+          paymentMethod, financialAccount,
+          journalLine.getForeignCurrencyDebit().subtract(journalLine.getForeignCurrencyCredit())
               .abs().toString(), date, null, journalLine.getCurrency(), null, null);
 
       // Add Payment Details
-      FIN_AddPayment.saveGLItem(payment, journalLine.getDebit().subtract(journalLine.getCredit())
-          .abs(), glItem, bPartner, journalLine.getProduct(), journalLine.getProject(),
+      FIN_AddPayment.saveGLItem(payment,
+          journalLine.getForeignCurrencyDebit().subtract(journalLine.getForeignCurrencyCredit())
+              .abs(), glItem, bPartner, journalLine.getProduct(), journalLine.getProject(),
           journalLine.getSalesCampaign(), journalLine.getActivity(), journalLine.getSalesRegion(),
           journalLine.getCostCenter(), journalLine.getStDimension(), journalLine.getNdDimension());
 
