@@ -65,8 +65,9 @@ public class CostAdjustmentProcess {
    *           when there is an error that prevents the cost adjustment to be processed.
    * @throws JSONException
    */
-  public JSONObject processCostAdjustment(CostAdjustment costAdjustment) throws OBException,
+  public JSONObject processCostAdjustment(CostAdjustment _costAdjustment) throws OBException,
       JSONException {
+    CostAdjustment costAdjustment = _costAdjustment;
     JSONObject message = new JSONObject();
     message.put("severity", "success");
     message.put("title", "");
@@ -74,13 +75,13 @@ public class CostAdjustmentProcess {
     OBContext.setAdminMode(true);
     try {
       doChecks(costAdjustment, message);
+      initializeLines(costAdjustment);
       calculateAdjustmentAmount(costAdjustment.getId(), message);
-      // costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
+
       costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
       costAdjustment.setProcessed(true);
       costAdjustment.setDocumentStatus("CO");
       OBDal.getInstance().save(costAdjustment);
-
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -88,25 +89,37 @@ public class CostAdjustmentProcess {
   }
 
   private void doChecks(CostAdjustment costAdjustment, JSONObject message) {
+    // Execute checks added implementing costAdjustmentProcess interface.
+
+    for (CostAdjusmentProcessCheck checksInstance : costAdjustmentProcessChecks) {
+      checksInstance.doCheck(costAdjustment, message);
+    }
+  }
+
+  private void initializeLines(CostAdjustment costAdjustment) {
     // initialize is related transaction adjusted flag to false
     OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
         CostAdjustmentLine.class);
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustment));
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED, true));
     ScrollableResults lines = critLines.scroll(ScrollMode.FORWARD_ONLY);
+    long count = 1L;
     try {
       while (lines.next()) {
         CostAdjustmentLine line = (CostAdjustmentLine) lines.get(0);
         line.setRelatedTransactionAdjusted(false);
         OBDal.getInstance().save(line);
+
+        if (count % 1000 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+        count++;
       }
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
     } finally {
       lines.close();
-    }
-    // Execute checks added implementing costAdjustmentProcess interface.
-
-    for (CostAdjusmentProcessCheck checksInstance : costAdjustmentProcessChecks) {
-      checksInstance.doCheck(costAdjustment, message);
     }
   }
 
@@ -120,8 +133,6 @@ public class CostAdjustmentProcess {
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED, false));
     critLines.addOrder(Order.asc("trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE));
     critLines.addOrder(Order.asc("trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE));
-    // critLines.addOrderBy("trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
-    // critLines.addOrderBy("trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
     ScrollableResults lines = critLines.scroll(ScrollMode.FORWARD_ONLY);
     try {
       while (lines.next()) {
