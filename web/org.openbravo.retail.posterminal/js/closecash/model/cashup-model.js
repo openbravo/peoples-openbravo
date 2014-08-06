@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, _, $ ,SynchronizationHelper */
+/*global OB, enyo, Backbone, _, $, SynchronizationHelper */
 
 OB.OBPOSCashUp = OB.OBPOSCashUp || {};
 OB.OBPOSCashUp.Model = OB.OBPOSCashUp.Model || {};
@@ -319,7 +319,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   isPaymentMethodListVisible: function () {
     return this.get('step') === 2;
   },
-  // Step 2: logic, expected vs counted 
+  // Step 2: logic, expected vs counted
   countAll: function () {
     this.get('paymentList').each(function (model) {
       model.set('foreignCounted', OB.DEC.add(0, model.get('foreignExpected')));

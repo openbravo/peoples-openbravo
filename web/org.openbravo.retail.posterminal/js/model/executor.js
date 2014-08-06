@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone ,console ,_ ,SynchronizationHelper */
+/*global Backbone, console, _, SynchronizationHelper */
 
 /**
  * OB.Model.Executor provides a mechanism to execute actions synchronously even each of
@@ -133,7 +133,7 @@ OB.Model.Executor = Backbone.Model.extend({
 });
 
 OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
-  // parameters that will be used in the SQL to get promotions, in case this SQL is extended, 
+  // parameters that will be used in the SQL to get promotions, in case this SQL is extended,
   // these parameters might be required to be extended too
   criteriaParams: ['bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'productId', 'productId'],
 
@@ -270,7 +270,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         manualPromotions = [],
         appliedPromotions, appliedPack;
 
-    // Keep discretionary discounts at the beginning, recalculate them based on 
+    // Keep discretionary discounts at the beginning, recalculate them based on
     // new info in line
     appliedPromotions = line.get('promotions');
     if (appliedPromotions) {
