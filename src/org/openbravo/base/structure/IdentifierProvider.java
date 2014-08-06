@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,6 +61,7 @@ public class IdentifierProvider implements OBSingleton {
 
   private SimpleDateFormat dateFormat = null;
   private SimpleDateFormat dateTimeFormat = null;
+  private SimpleDateFormat timeFormat = null;
 
   /**
    * Returns the identifier of the object. The identifier is computed using the identifier
@@ -150,8 +151,10 @@ public class IdentifierProvider implements OBSingleton {
       } else if (value != null) {
 
         // TODO: add number formatting...
-        if (property.isDate() || property.isDatetime()) {
+        if (property.isDate() || property.isDatetime() || property.isAbsoluteDateTime()) {
           value = formatDate(property, (Date) value);
+        } else if (property.isTime() || property.isAbsoluteTime()) {
+          value = formatTime(property, (Date) value);
         }
 
         sb.append(value);
@@ -179,10 +182,26 @@ public class IdentifierProvider implements OBSingleton {
       dateFormat = new SimpleDateFormat(dateFormatString);
       dateTimeFormat = new SimpleDateFormat(dateTimeFormatString);
     }
-    if (property.isDatetime()) {
+    if (property.isDatetime() || property.isAbsoluteDateTime()) {
       return dateTimeFormat.format(date);
     } else {
       return dateFormat.format(date);
     }
+  }
+
+  private synchronized String formatTime(Property property, Date date) {
+    if (date == null) {
+      return "";
+    }
+    if (timeFormat == null) {
+      final String dateTimeFormatString = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties().getProperty("dateTimeFormat.java");
+      if (dateTimeFormatString.toUpperCase().endsWith("A")) {
+        timeFormat = new SimpleDateFormat("hh:mm:ss a");
+      } else {
+        timeFormat = new SimpleDateFormat("HH:mm:ss");
+      }
+    }
+    return timeFormat.format(date);
   }
 }

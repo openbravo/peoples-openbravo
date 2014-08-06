@@ -36,6 +36,7 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalSessionFactoryController;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.test.base.OBBaseTest;
@@ -77,10 +78,17 @@ public class HiddenUpdateTest extends OBBaseTest {
         final String entityName = pc.getEntityName();
 
         Entity entity = ModelProvider.getInstance().getEntity(entityName);
-        if (entity.isHQLBased() || entity.isDataSourceBased()) {
+        // can also ignore views as they will result in errors anyway and they are
+        // mapped as not updateable
+        if (entity.isHQLBased() || entity.isDataSourceBased() || entity.isView()) {
           continue;
         }
-        for (final Object o : OBDal.getInstance().createCriteria(entityName).list()) {
+
+        // read max 5 records from each type, should be enough to limit runtime of the test
+        // and still give good results.
+        final OBCriteria<BaseOBObject> criteria = OBDal.getInstance().createCriteria(entityName);
+        criteria.setMaxResults(5);
+        for (final Object o : criteria.list()) {
           if (o == null) {
             // can occur when reading views which have nullable
             // columns in a

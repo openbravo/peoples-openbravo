@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,7 @@ import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.validation.ValidationException;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
@@ -307,16 +308,19 @@ public class DataImportService implements OBSingleton {
     for (BaseOBObject objectToRepair : repairReferences) {
       if (objectToRepair instanceof TreeNode) {
         final TreeNode tn = (TreeNode) objectToRepair;
-        final Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
+        Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
             tn.getTree().getTypeArea());
+        if (entity == null && tn.getTree().getTable() != null) {
+          entity = ModelProvider.getInstance().getEntityByTableId(
+              (String) DalUtil.getId(tn.getTree().getTable()));
+        }
         if (entity == null) {
+          String msg = "Imported tree nodes belong to a tree  " + tn.getTree()
+              + " which is not related to any entity.";
           if (ir.getWarningMessages() == null) {
-            ir.setWarningMessages("Imported tree nodes belong to a tree with a tree type "
-                + tn.getTree().getTypeArea() + " which is not related to any entity.");
+            ir.setWarningMessages(msg);
           } else {
-            ir.setWarningMessages(ir.getWarningMessages()
-                + "\nImported tree nodes belong to a tree with a tree type "
-                + tn.getTree().getTypeArea() + " which is not related to any entity.");
+            ir.setWarningMessages(ir.getWarningMessages() + "\n" + msg);
           }
           continue;
         }

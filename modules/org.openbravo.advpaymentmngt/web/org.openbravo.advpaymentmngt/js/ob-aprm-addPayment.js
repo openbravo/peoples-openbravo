@@ -97,8 +97,8 @@ OB.APRM.AddPayment.onLoad = function (view) {
       glitemGrid = form.getItem('glitem').canvas.viewGrid,
       creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid,
       overpaymentAction = form.getItem('overpayment_action'),
-      payment = form.getItem('fin_payment_id').getValue();
-
+      payment = form.getItem('fin_payment_id').getValue(),
+      issotrx = form.getItem('issotrx').getValue();
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, view.theForm, !payment);
   glitemGrid.fetchData();
   creditUseGrid.fetchData();
@@ -111,6 +111,9 @@ OB.APRM.AddPayment.onLoad = function (view) {
   form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
   overpaymentAction.originalValueMap = isc.addProperties({}, overpaymentAction.getValueMap());
+  if (issotrx) {
+    form.focusInItem(form.getItem('actual_payment'));
+  }
 };
 
 OB.APRM.AddPayment.addNewGLItem = function (grid) {

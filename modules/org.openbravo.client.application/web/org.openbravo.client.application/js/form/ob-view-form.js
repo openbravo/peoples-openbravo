@@ -1566,7 +1566,9 @@ OB.ViewFormProperties = {
       // if no recordIndex then select explicitly
       if (recordIndex === -1) {
         record = view.viewGrid.data.find('id', id);
-        recordIndex = view.viewGrid.data.indexOf(record);
+        if (record !== null) {
+          recordIndex = view.viewGrid.data.indexOf(record);
+        }
       }
 
       // not in the filter, insert the record in the cachedata so it will be made visible

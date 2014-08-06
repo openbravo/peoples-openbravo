@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,6 +69,7 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
@@ -233,9 +234,10 @@ public class DataSourceServlet extends BaseKernelServlet {
             OBContext.restorePreviousMode();
           }
           response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
+          QueryJSONWriterToCSV writer;
           if (getDataSource(request) instanceof DefaultDataSourceService) {
-            QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
-                getDataSource(request).getEntity());
+            writer = new QueryJSONWriterToCSV(request, response, parameters, getDataSource(request)
+                .getEntity());
             // when exporting a OB grid, the isActive filter should not be set
             parameters.put(JsonConstants.NO_ACTIVE_FILTER, "true");
             ((DefaultDataSourceService) getDataSource(request)).fetch(parameters, writer);
@@ -243,12 +245,14 @@ public class DataSourceServlet extends BaseKernelServlet {
             String result = getDataSource(request).fetch(parameters);
             JSONObject jsonResult = new JSONObject(result);
             JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
-            QueryJSONWriterToCSV writer = new QueryJSONWriterToCSV(request, response, parameters,
-                getDataSource(request).getEntity());
+            writer = new QueryJSONWriterToCSV(request, response, parameters, getDataSource(request)
+                .getEntity());
             for (int i = 0; i < data.length(); i++) {
               writer.write(data.getJSONObject(i));
             }
           }
+
+          writer.writeCSVFooterNote(parameters);
         } else {
           log.error("Unsupported export format: " + exportAs);
         }
@@ -462,6 +466,8 @@ public class DataSourceServlet extends BaseKernelServlet {
             refLists.put(propKey, reflists);
           }
         }
+
+        writeCSVHeaderNote(parameters);
         if (fieldProperties.size() > 0) {
           // If the request came with the view state information, we get the properties from there
           for (int i = 0; i < fieldProperties.size(); i++) {
@@ -639,6 +645,62 @@ public class DataSourceServlet extends BaseKernelServlet {
       calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
 
       return calendar.getTime();
+    }
+
+    private void writeCSVHeaderNote(Map<String, String> parameters) throws IOException,
+        PropertyException {
+      final String csvHeaderMsg = getMessage(parameters, "OBSERDS_CSVHeaderMessage");
+
+      if (StringUtils.isNotBlank(csvHeaderMsg)) {
+        writer.append("\"").append(csvHeaderMsg).append("\"");
+        fillEmptyColumns();
+        writer.append("\n");
+      }
+    }
+
+    private void writeCSVFooterNote(Map<String, String> parameters) throws IOException,
+        PropertyException {
+      final String csvFooterMsg = getMessage(parameters, "OBSERDS_CSVFooterMessage");
+
+      if (StringUtils.isNotBlank(csvFooterMsg)) {
+        writer.append("\n").append("\"").append(csvFooterMsg).append("\"");
+        fillEmptyColumns();
+      }
+    }
+
+    private String getMessage(final Map<String, String> parameters, final String property)
+        throws PropertyException {
+      OBContext.setAdminMode(true);
+      try {
+        String csvMessage = null;
+        try {
+          Window window = parameters.get("tab") == null
+              || parameters.get("tab").equals("undefined") ? null : OBDal.getInstance()
+              .get(Tab.class, parameters.get("tab")).getWindow();
+          csvMessage = Preferences.getPreferenceValue(property, true, OBContext.getOBContext()
+              .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+              .getOBContext().getUser(), OBContext.getOBContext().getRole(), window);
+        } catch (PropertyNotFoundException e) {
+          // There is no preference defined
+          csvMessage = null;
+        }
+
+        if (StringUtils.isNotBlank(csvMessage)) {
+          csvMessage = Replace.replace(Replace.replace(
+              Replace.replace(OBMessageUtils.messageBD(csvMessage), "\\n", "\n"), "&quot;", "\""),
+              "\"", "\"\"");
+        }
+
+        return csvMessage;
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    }
+
+    private void fillEmptyColumns() throws IOException {
+      for (int i = 1; i < fieldProperties.size(); i++) {
+        writer.append(fieldSeparator);
+      }
     }
   }
 

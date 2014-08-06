@@ -755,9 +755,10 @@ isc.OBStandardView.addProperties({
 
     this.standardWindow.addView(childView);
 
-    if (this.childTabSet.tabs.length > 0) {
-      // If it is a child tab that is not in the first position, load a basic child view
-      // to ensure a lazy inizialitazion of the contents.
+    if (this.childTabSet.tabs.length > 0 && !this.standardWindow.targetTabId) {
+      // If it is a child tab that is not in the first position and if it is not a
+      // direct navigation to the record (issue 27008), load a basic child view
+      // to ensure a lazy initialization of the contents.
       // Once the tab be selected, the proper content will be loaded.
       this.prepareBasicChildView(childView);
     } else {
@@ -833,7 +834,6 @@ isc.OBStandardView.addProperties({
       // the logic doesn't pass through the 'setAsActiveView' so the 'prepareFullChildView' should be done
       // on the tab selection instead.
       me.prepareFullChildView(childView, childTabDef);
-      childTabDef.pane.parentTabSet.doHandleClick();
     };
 
     childTabDef.pane.destroy = function () {
