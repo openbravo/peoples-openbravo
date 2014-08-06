@@ -53,6 +53,8 @@ abstract class AddPaymentReadOnlyLogicsHandler {
   abstract boolean getFinancialAccountReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
+  abstract boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap) throws JSONException;
+
   protected abstract long getSeq();
 
   boolean getConvertedAmountReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
@@ -108,4 +110,5 @@ abstract class AddPaymentReadOnlyLogicsHandler {
       OBContext.restorePreviousMode();
     }
   }
+
 }

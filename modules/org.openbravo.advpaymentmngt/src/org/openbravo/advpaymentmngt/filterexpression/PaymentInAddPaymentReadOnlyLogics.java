@@ -62,4 +62,9 @@ public class PaymentInAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogicsH
   boolean getFinancialAccountReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     return true;
   }
+
+  @Override
+  boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+    return true;
+  }
 }

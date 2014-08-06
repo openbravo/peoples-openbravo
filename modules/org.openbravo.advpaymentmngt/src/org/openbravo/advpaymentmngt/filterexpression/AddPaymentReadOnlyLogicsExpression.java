@@ -74,6 +74,8 @@ public class AddPaymentReadOnlyLogicsExpression implements FilterExpression {
           return handler.getFinancialAccountReadOnlyLogic(requestMap) ? "Y" : "N";
         case ConversionRate:
           return handler.getConversionRateReadOnlyLogic(requestMap) ? "Y" : "N";
+        case Currency:
+          return handler.getCurrencyReadOnlyLogic(requestMap) ? "Y" : "N";
         }
       } catch (Exception e) {
         log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(),
@@ -116,7 +118,7 @@ public class AddPaymentReadOnlyLogicsExpression implements FilterExpression {
         "received_from_readonly_logic"), PaymentMethod("payment_method_readonly_logic"), ActualPayment(
         "actual_payment_readonly_logic"), ConvertedAmount("converted_amount_readonly_logic"), PaymentDate(
         "payment_date_readonly_logic"), FinancialAccount("fin_financial_account_id_readonly_logic"), ConversionRate(
-        "conversion_rate_readonly_logic");
+        "conversion_rate_readonly_logic"), Currency("c_currency_id_readonly_logic");
 
     private String columnname;
 

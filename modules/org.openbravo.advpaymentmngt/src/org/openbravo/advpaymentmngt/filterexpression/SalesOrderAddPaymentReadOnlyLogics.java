@@ -64,4 +64,9 @@ public class SalesOrderAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogics
     return false;
   }
 
+  @Override
+  boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+    return true;
+  }
+
 }

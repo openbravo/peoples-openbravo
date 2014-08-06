@@ -24,6 +24,10 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
+import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
 @ComponentProvider.Qualifier(APRMConstants.TRANSACTION_WINDOW_ID)
 public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogicsHandler {
@@ -74,5 +78,80 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
   @Override
   boolean getFinancialAccountReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     return true;
+  }
+
+  @Override
+  boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    FIN_PaymentMethod paymentMethod = null;
+    FIN_FinancialAccount financialAccount = null;
+    boolean readOnly = true;
+    if (context.has("fin_paymentmethod_id") && !context.isNull("fin_paymentmethod_id")) {
+      paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
+          context.getString("fin_paymentmethod_id"));
+    } else {
+      paymentMethod = OBDal.getInstance()
+          .get(FIN_PaymentMethod.class, getPaymentMethod(requestMap));
+    }
+    if (context.has("inpfinFinancialAccountId") && !context.isNull("inpfinFinancialAccountId")) {
+      financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+          context.getString("inpfinFinancialAccountId"));
+    } else if (context.has("fin_financial_account_id")
+        && !context.isNull("fin_financial_account_id")) {
+      financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+          context.getString("fin_financial_account_id"));
+    }
+
+    for (FinAccPaymentMethod finAccPaymentMethod : financialAccount
+        .getFinancialMgmtFinAccPaymentMethodList()) {
+      if (context.has("inptrxtype") && !context.isNull("inptrxtype")
+          && (context.getString("inptrxtype").toString().equals("RCIN"))) {
+        if (finAccPaymentMethod.getPaymentMethod().equals(paymentMethod)
+            && finAccPaymentMethod.isPayinIsMulticurrency()) {
+          readOnly = false;
+        }
+      } else {
+        if (finAccPaymentMethod.getPaymentMethod().equals(paymentMethod)
+            && finAccPaymentMethod.isPayoutIsMulticurrency()) {
+          readOnly = false;
+        }
+      }
+    }
+    return readOnly;
+  }
+
+  private String getPaymentMethod(Map<String, String> requestMap) throws JSONException {
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    boolean isReceipt = true;
+    if (context.has("IsSOTrx")) {
+      isReceipt = "Y".equals(context.get("IsSOTrx")) ? true : false;
+    }
+
+    FinAccPaymentMethod anyFinAccPaymentMethod = null;
+    for (FinAccPaymentMethod finAccPaymentMethod : getFinancialAccount(requestMap)
+        .getFinancialMgmtFinAccPaymentMethodList()) {
+      if (finAccPaymentMethod.isDefault()) {
+        if ((isReceipt && finAccPaymentMethod.isPayinAllow())
+            || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
+          return finAccPaymentMethod.getPaymentMethod().getId();
+        }
+      }
+      if ((isReceipt && finAccPaymentMethod.isPayinAllow())
+          || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
+        anyFinAccPaymentMethod = finAccPaymentMethod;
+      }
+    }
+    return anyFinAccPaymentMethod != null ? anyFinAccPaymentMethod.getPaymentMethod().getId() : "";
+  }
+
+  private FIN_FinancialAccount getFinancialAccount(Map<String, String> requestMap)
+      throws JSONException {
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    if (context.has("inpfinFinancialAccountId") && !context.isNull("inpfinFinancialAccountId")
+        && !"".equals(context.getString("inpfinFinancialAccountId"))) {
+      return OBDal.getInstance().get(FIN_FinancialAccount.class,
+          context.get("inpfinFinancialAccountId"));
+    }
+    return null;
   }
 }

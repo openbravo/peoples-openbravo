@@ -63,4 +63,9 @@ public class PaymentOutAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogics
     return true;
   }
 
+  @Override
+  boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+    return true;
+  }
+
 }

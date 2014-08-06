@@ -170,8 +170,11 @@ OB.APRM.AddPayment.checkSingleActionAvailable = function (form) {
 };
 
 OB.APRM.AddPayment.financialAccountOnChange = function (item, view, form, grid) {
+  var affectedParams = [];
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
+  affectedParams.push(form.getField('c_currency_id_readonly_logic').paramId);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
 };
 
 OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
@@ -179,12 +182,34 @@ OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
       defaultFilter = {
       paymentMethodName: item.getElementValue()
       },
-      trxtype = form.getItem('trxtype').getValue();
+      trxtype = form.getItem('trxtype').getValue(),
+      affectedParams = [];
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
   if (trxtype !== "") {
     ordinvgrid.setFilterEditorCriteria(defaultFilter);
     ordinvgrid.filterByEditor();
+  }
+  affectedParams.push(form.getField('c_currency_id_readonly_logic').paramId);
+  OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
+};
+
+OB.APRM.AddPayment.currencyOnChange = function (item, view, form, grid) {
+  var trxtype = form.getItem('trxtype').getValue(),
+      ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      newCriteria;
+  if (trxtype !== "") {
+    OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
+
+    // fetch data after change trx type, filters should be preserved and ids of
+    // the selected records should be sent
+    newCriteria = ordinvgrid.addSelectedIDsToCriteria(ordinvgrid.getCriteria(), true);
+    newCriteria.criteria = newCriteria.criteria || [];
+    // add dummy criterion to force fetch
+    newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    ordinvgrid.invalidateCache();
+
+    form.redraw();
   }
 };
 
@@ -214,7 +239,7 @@ OB.APRM.AddPayment.transactionTypeOnChangeFunction = function (item, view, form,
   newCriteria.criteria = newCriteria.criteria || [];
   // add dummy criterion to force fetch
   newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-  ordinvgrid.fetchData(newCriteria);
+  ordinvgrid.invalidateCache();
 
   form.redraw();
 };
