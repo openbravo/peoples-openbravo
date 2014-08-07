@@ -878,11 +878,15 @@
         qtyToAdd: qty,
         options: options
       }, function (args) {
+        // do not allow generic products to be added to the receipt
+        if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
+          return;
+        }
         if (args && args.useLines) {
           me._drawLinesDistribution(args);
-        } else {
-          me._addProduct(p, qty, options, attrs);
+          return;
         }
+        me._addProduct(p, qty, options, attrs);
       });
     },
 
