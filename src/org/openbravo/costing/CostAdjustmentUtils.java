@@ -86,7 +86,7 @@ public class CostAdjustmentUtils {
       Date transactionDate, Date accountingDate) {
 
     CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
-    costAdjustmentLine.setOrganization(transaction.getOrganization());
+    costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
     costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
     costAdjustmentLine.setAdjustmentAmount(costAdjusted);
     costAdjustmentLine.setCurrency(transaction.getCurrency());

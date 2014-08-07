@@ -26,6 +26,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
@@ -60,9 +63,11 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
         jsonResponse.put("message", message);
         return jsonResponse;
       }
+      OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider((String) DalUtil.getId(transaction.getClient()));
 
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
-          transaction.getOrganization(), "MCC"); // MCC= Manual Cost Correction
+          osp.getLegalEntity(transaction.getOrganization()), "MCC"); // MCC= Manual Cost Correction
 
       BigDecimal totalCost = BigDecimal.ZERO;
       for (TransactionCost transactionCost : transaction.getTransactionCostList()) {
