@@ -89,10 +89,12 @@ public class CostAdjustmentUtils {
     costAdjustmentLine.setOrganization(transaction.getOrganization());
     costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
     costAdjustmentLine.setAdjustmentAmount(costAdjusted);
+    costAdjustmentLine.setCurrency(transaction.getCurrency());
     costAdjustmentLine.setInventoryTransaction(transaction);
     costAdjustmentLine.setSource(isSource);
     costAdjustmentLine.setTransactionDate(transactionDate);
     costAdjustmentLine.setAccountingDate(accountingDate);
+    costAdjustmentLine.setLineNo(getNewLineNo(costAdjustmentHeader));
 
     OBDal.getInstance().save(costAdjustmentLine);
 
@@ -145,5 +147,20 @@ public class CostAdjustmentUtils {
     Object res = trxQry.uniqueResult();
 
     return res != null;
+  }
+
+  private static Long getNewLineNo(CostAdjustment cadj) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as cal");
+    where.append(" where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " = :costAdjustment");
+    where.append(" order by cal." + CostAdjustmentLine.PROPERTY_LINENO + " desc");
+    OBQuery<CostAdjustmentLine> calQry = OBDal.getInstance().createQuery(CostAdjustmentLine.class,
+        where.toString());
+    calQry.setNamedParameter("costAdjustment", cadj);
+    if (calQry.count() > 0) {
+      CostAdjustmentLine cal = calQry.list().get(0);
+      return cal.getLineNo() + 10L;
+    }
+    return 10L;
   }
 }

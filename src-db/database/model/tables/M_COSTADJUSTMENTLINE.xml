@@ -69,6 +69,17 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="LINE" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_CURRENCY_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="C_CURRENCY" name="C_COSTADJLINE_C_CURRENCY">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_COSTADJUSTMENTLINE" name="M_COSTADJLINE_PARENTLINE">
         <reference local="PARENT_COSTADJUSTMENTLINE_ID" foreign="M_COSTADJUSTMENTLINE_ID"/>
       </foreign-key>

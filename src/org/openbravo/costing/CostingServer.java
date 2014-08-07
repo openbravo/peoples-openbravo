@@ -348,7 +348,7 @@ public class CostingServer {
     /**
      * Given a Material Management transaction returns its type.
      */
-    static TrxType getTrxType(MaterialTransaction transaction) {
+    public static TrxType getTrxType(MaterialTransaction transaction) {
       if (transaction.getGoodsShipmentLine() != null) {
         // Receipt / Shipment
         org.openbravo.model.materialmgmt.transaction.ShipmentInOut inout = transaction

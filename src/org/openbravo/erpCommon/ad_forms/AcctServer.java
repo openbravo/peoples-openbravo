@@ -275,6 +275,8 @@ public abstract class AcctServer {
   public static final String DOCTYPE_Reconciliation = "REC";
   // FinBankStatement
   public static final String DOCTYPE_FinBankStatement = "BST";
+  // CostAdjustment
+  public static final String DOCTYPE_CostAdjustment = "CAD";
 
   /*************************************************************************/
 
