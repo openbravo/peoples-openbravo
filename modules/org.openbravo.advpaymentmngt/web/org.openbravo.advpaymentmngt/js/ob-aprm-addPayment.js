@@ -780,19 +780,32 @@ OB.APRM.AddPayment.orderAndRemoveDuplicates = function (val) {
 OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
   var document = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
       issotrx = form.getItem('issotrx'),
-      affectedParams = [];
+      affectedParams = [],
+      ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      newCriteria;
   if (document === 'RCIN') {
     issotrx.setValue(true);
   } else {
     issotrx.setValue(false);
   }
 
-  form.getItem('fin_paymentmethod_id').setValue('');
-  form.getItem('received_from').setValue('');
+  form.getItem('fin_paymentmethod_id').setValue(null);
+  form.getItem('received_from').setValue(null);
   OB.APRM.AddPayment.reloadLabels(form);
   affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
   affectedParams.push(form.getField('actual_payment_readonly_logic').paramId);
   OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
+
+  if (document !== "") {
+    // fetch data after change trx type, filters should be preserved and ids of
+    // the selected records should be sent
+    newCriteria = ordinvgrid.addSelectedIDsToCriteria(ordinvgrid.getCriteria(), true);
+    newCriteria.criteria = newCriteria.criteria || [];
+    // add dummy criterion to force fetch
+    newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    ordinvgrid.invalidateCache();
+    form.redraw();
+  }
 };
 
 OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
@@ -809,15 +822,12 @@ OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
   };
 
   if (trxtype !== "") {
-
     OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.ReceivedFromPaymentMethodActionHandler', {
       receivedFrom: receivedFrom,
       isSOTrx: isSOTrx,
       financialAccount: financialAccount
     }, {}, callback);
-
   }
-
 };
 
 OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, affectedParams) {
