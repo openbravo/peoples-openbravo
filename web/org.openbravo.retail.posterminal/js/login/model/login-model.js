@@ -518,13 +518,14 @@
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
       if (minIncRefresh) {
         if (this.get('loggedUsingCache')) {
-          setTimeout(function () {
+          OB.MobileApp.model.on('synchronized', function () {
             OB.MobileApp.model.loadModels(null, true);
             if (me.get('loggedUsingCache')) {
               me.set('loggedUsingCache', false);
               me.renderTerminalMain();
+              OB.MobileApp.model.off('synchronized');
             }
-          }, 3000);
+          });
         } else {
           if (me.get('loggedUsingCache')) {
             me.set('loggedUsingCache', false);
