@@ -98,7 +98,8 @@ OB.APRM.AddPayment.onLoad = function (view) {
       creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid,
       overpaymentAction = form.getItem('overpayment_action'),
       payment = form.getItem('fin_payment_id').getValue(),
-      issotrx = form.getItem('issotrx').getValue();
+      issotrx = form.getItem('issotrx').getValue(),
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "";
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, view.theForm, !payment);
   OB.APRM.AddPayment.reloadLabels(form);
   glitemGrid.fetchData();
@@ -114,6 +115,9 @@ OB.APRM.AddPayment.onLoad = function (view) {
   overpaymentAction.originalValueMap = isc.addProperties({}, overpaymentAction.getValueMap());
   if (issotrx) {
     form.focusInItem(form.getItem('actual_payment'));
+  }
+  if (trxtype === "") {
+    form.removeField(0);
   }
 };
 
@@ -182,7 +186,7 @@ OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
       defaultFilter = {
       paymentMethodName: item.getElementValue()
       },
-      trxtype = form.getItem('trxtype').getValue(),
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
       affectedParams = [];
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
@@ -195,7 +199,7 @@ OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
 };
 
 OB.APRM.AddPayment.currencyOnChange = function (item, view, form, grid) {
-  var trxtype = form.getItem('trxtype').getValue(),
+  var trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
       ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
       newCriteria;
   if (trxtype !== "") {
@@ -442,7 +446,7 @@ OB.APRM.AddPayment.updateDifferenceActions = function (form) {
       actualPayment = new BigDecimal(String(form.getItem('actual_payment').getValue() || 0)),
       newValueMap = {},
       defaultValue = '',
-      trxtype = form.getItem('trxtype').getValue();
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "";
   if (trxtype !== "") {
     form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
   }
@@ -774,7 +778,7 @@ OB.APRM.AddPayment.orderAndRemoveDuplicates = function (val) {
 };
 
 OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
-  var document = form.getItem('trxtype').getValue(),
+  var document = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
       issotrx = form.getItem('issotrx'),
       affectedParams = [];
   if (document === 'RCIN') {
@@ -793,7 +797,7 @@ OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
 
 OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
   var affectedParams = [],
-      trxtype = form.getItem('trxtype').getValue(),
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
       callback, receivedFrom = form.getItem('received_from').getValue(),
       isSOTrx = form.getItem('issotrx').getValue(),
       financialAccount = form.getItem('fin_financial_account_id').getValue();
@@ -889,7 +893,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
       actualPayment = new BigDecimal(String(view.theForm.getItem('actual_payment').getValue() || 0)),
       overpaymentAction = view.theForm.getItem('overpayment_action').getValue(),
       creditTotalItem = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
-      document = view.theForm.getItem('trxtype').getValue(),
+      document = (view.theForm.getItem('trxtype')) ? view.theForm.getItem('trxtype').getValue() : "",
       amountField = orderInvoiceGrid.getFieldByColumnName('amount'),
       selectedRecords = orderInvoiceGrid.getSelectedRecords(),
       writeOffLimitPreference = OB.PropertyStore.get('WriteOffLimitPreference', view.windowId),
