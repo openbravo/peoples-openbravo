@@ -28,3 +28,77 @@ OB.APRM.MatchStatement.onLoad = function (view) {
 OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall) {
 
 };
+
+
+isc.ClassFactory.defineClass('APRMMatchStatGridButtonsComponent', isc.HLayout);
+
+isc.APRMMatchStatGridButtonsComponent.addProperties({
+  canExpandRecord: true,
+
+  initWidget: function () {
+    var me = this,
+        searchButton, addButton, clearButton, buttonSeparator1, buttonSeparator2;
+
+    searchButton = isc.OBGridToolStripIcon.create({
+      buttonType: 'search',
+      originalPrompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
+      prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
+      action: function () {
+        var processId = '9BED7889E1034FE68BD85D5D16857320',
+            grid = me.grid,
+            record = me.record,
+            standardWindow = grid.view.parentWindow.view.standardWindow;
+
+        //TODO: Apply the proper created process
+        var process = standardWindow.buildProcess({
+          callerField: me,
+          paramWindow: true,
+          processId: processId,
+          windowId: grid.view.windowId,
+          windowTitle: 'Search'
+        });
+
+        grid.openExpansionProcess(process, record);
+      }
+    });
+
+    addButton = isc.OBGridToolStripIcon.create({
+      buttonType: 'add',
+      originalPrompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
+      prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
+      action: function () {
+        alert('Add Button');
+      }
+    });
+
+    clearButton = isc.OBGridToolStripIcon.create({
+      buttonType: 'clearRight',
+      originalPrompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
+      prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
+      action: function () {
+        alert('Clear Button');
+      }
+    });
+
+    buttonSeparator1 = isc.OBGridToolStripSeparator.create({});
+    buttonSeparator2 = isc.OBGridToolStripSeparator.create({});
+
+    this.addMembers([searchButton, buttonSeparator1, addButton, buttonSeparator2, clearButton]);
+    this.Super('initWidget', arguments);
+  }
+});
+
+
+isc.APRMMatchStatGridButtonsComponent.addProperties({
+  cellAlign: 'center',
+
+  height: 21,
+  width: '100%',
+  overflow: 'hidden',
+  align: 'center',
+  defaultLayoutAlign: 'center',
+  styleName: 'OBGridToolStrip',
+  layoutLeftMargin: -2,
+  layoutRightMargin: 0,
+  membersMargin: 4
+});

@@ -201,7 +201,7 @@ and @insertion_point_0@]]></HQLQUERY>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <AD_PACKAGE_ID><![CDATA[AC33B2262748414A816510545755435A]]></AD_PACKAGE_ID>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--BC21981DCF0846338D631887BEDFE7FA-->  <HQLQUERY><![CDATA[select bsl.transactionDate as transactionDate, COALESCE(bsl.businessPartner.name, bsl.bpartnername) as businessPartner, bsl.referenceNo as referenceNo, bsl.cramount as cramount, bsl.matchingtype as affinity, bsl.matchingtype as matchingtype, bsl.id as id
+<!--BC21981DCF0846338D631887BEDFE7FA-->  <HQLQUERY><![CDATA[select bsl.transactionDate as transactionDate, COALESCE(bsl.businessPartner.name, bsl.bpartnername) as businessPartner, bsl.referenceNo as referenceNo, bsl.cramount as cramount, bsl.id as match, bsl.matchingtype as affinity, bsl.matchingtype as matchingtype, bsl.id as id
 from FIN_BankStatementLine as bsl
 where @additional_filters@
 and @whereClause@]]></HQLQUERY>
