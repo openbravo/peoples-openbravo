@@ -74,7 +74,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     strTransactionId = transaction.getId();
     CostingServer costingServer = new CostingServer(transaction);
     strCostOrgId = costingServer.getOrganization().getId();
-    strCostCurrencyId = transaction.getCurrency().getId();
+    strCostCurrencyId = (String) DalUtil.getId(transaction.getCurrency());
     trxType = CostingServer.TrxType.getTrxType(transaction);
     CostingRule costingRule = costingServer.getCostingRule();
     strCostingRuleId = costingRule.getId();
@@ -322,6 +322,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
       break;
     }
     CostAdjustmentLine costAdjLine = getCostAdjLine();
+    costAdjLine.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
+        strCostCurrencyId));
     costAdjLine.setAdjustmentAmount(adjAmt);
     OBDal.getInstance().save(costAdjLine);
 

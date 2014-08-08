@@ -72,8 +72,15 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     BigDecimal adjustmentBalance = BigDecimal.ZERO;
     CostAdjustmentLine costAdjLine = getCostAdjLine();
     if (costAdjLine.getTransactionCostList().isEmpty()) {
-      adjustmentBalance = costAdjLine.getAdjustmentAmount();
+      if (strCostCurrencyId.equals(costAdjLine.getCurrency().getId())) {
+        adjustmentBalance = FinancialUtils.getConvertedAmount(costAdjLine.getAdjustmentAmount(),
+            costAdjLine.getCurrency(), getCostCurrency(), costAdjLine.getAccountingDate(),
+            getCostOrg(), "C");
+      } else {
+        adjustmentBalance = costAdjLine.getAdjustmentAmount();
+      }
     }
+
     Date trxDate = costAdjLine.getTransactionDate();
     if (trxDate == null) {
       trxDate = basetrx.getTransactionProcessDate();
@@ -90,12 +97,24 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           RoundingMode.HALF_UP);
     }
     ScrollableResults trxs = getRelatedTransactions();
+    String strCurrentCurId = strCostCurrencyId;
     try {
       while (trxs.next()) {
         MaterialTransaction trx = (MaterialTransaction) trxs.get()[0];
+        if (!strCurrentCurId.equals(trx.getCurrency().getId())) {
+          currentValueAmt = FinancialUtils.getConvertedAmount(currentValueAmt, OBDal.getInstance()
+              .get(Currency.class, strCurrentCurId), trx.getCurrency(), trx.getMovementDate(),
+              getCostOrg(), "C");
+          cost = FinancialUtils.getConvertedAmount(cost,
+              OBDal.getInstance().get(Currency.class, strCurrentCurId), trx.getCurrency(),
+              trx.getMovementDate(), getCostOrg(), "C");
+          strCurrentCurId = trx.getCurrency().getId();
+        }
         CostAdjustmentLine adjustedLine = getAdjustmentLine(trx);
         if (adjustedLine != null) {
           adjustedLine.setRelatedTransactionAdjusted(true);
+          // FIXME: check if this adjustment line has a dependant line that also needs to be
+          // reparent.
           adjustedLine.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance()
               .getProxy(CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
         }
@@ -178,7 +197,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         Costing newCosting = OBProvider.getInstance().get(Costing.class);
         newCosting.setCost(cost);
         newCosting.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
-            strCostCurrencyId));
+            strCurrentCurId));
         newCosting.setStartingDate(newDate);
         newCosting.setEndingDate(dateTo);
         newCosting.setInventoryTransaction(null);
@@ -215,7 +234,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     // Get amounts of processed adjustments and the adjustment that it is being processed.
     select.append("   and (ca = :ca");
     select.append("     or ca." + CostAdjustment.PROPERTY_PROCESSED + " = true)");
-    // TODO: Add filter to consider only costs based on the algorithm (avoid landed cost)
 
     Query qryCost = OBDal.getInstance().getSession().createQuery(select.toString());
     qryCost.setParameter("trx", trx.getId());

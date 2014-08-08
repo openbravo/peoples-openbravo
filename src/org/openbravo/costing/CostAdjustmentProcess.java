@@ -18,6 +18,7 @@
  */
 package org.openbravo.costing;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.enterprise.inject.Any;
@@ -38,6 +39,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
@@ -183,19 +185,24 @@ public class CostAdjustmentProcess {
         continue;
       }
       TransactionCost trxCost = OBProvider.getInstance().get(TransactionCost.class);
-      trxCost.setInventoryTransaction(line.getInventoryTransaction());
-      trxCost.setOrganization(line.getInventoryTransaction().getOrganization());
-      trxCost.setCost(line.getAdjustmentAmount());
+      MaterialTransaction trx = line.getInventoryTransaction();
+      trxCost.setInventoryTransaction(trx);
+      trxCost.setOrganization(trx.getOrganization());
       trxCost.setCostDate(referenceDate);
       trxCost.setCostAdjustmentLine(line);
       trxCost.setUnitCost(line.isUnitCost());
-      if (line.getAccountingDate() != null) {
-        trxCost.setAccountingDate(line.getAccountingDate());
-      } else {
-        trxCost.setAccountingDate(line.getInventoryTransaction().getMovementDate());
+      Date accountingDate = line.getAccountingDate();
+      if (accountingDate == null) {
+        accountingDate = trx.getMovementDate();
       }
-      // FIXME: Set proper currency!!!
-      trxCost.setCurrency(line.getInventoryTransaction().getCurrency());
+      trxCost.setAccountingDate(accountingDate);
+      BigDecimal convertedAmt = line.getAdjustmentAmount();
+      if (!line.getCurrency().getId().equals(trx.getCurrency().getId())) {
+        convertedAmt = FinancialUtils.getConvertedAmount(convertedAmt, line.getCurrency(),
+            trx.getCurrency(), accountingDate, trx.getOrganization(), "C");
+      }
+      trxCost.setCost(convertedAmt);
+      trxCost.setCurrency(line.getCurrency());
 
       OBDal.getInstance().save(trxCost);
       OBDal.getInstance().flush();
