@@ -313,6 +313,8 @@
 <!--B76C33B1F0454792B1F8D0E1EDF1710C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B76C33B1F0454792B1F8D0E1EDF1710C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B76C33B1F0454792B1F8D0E1EDF1710C-->  <NAME><![CDATA[Accounting Date]]></NAME>
+<!--B76C33B1F0454792B1F8D0E1EDF1710C-->  <DESCRIPTION><![CDATA[The date this transaction is recorded for in the general ledger.]]></DESCRIPTION>
+<!--B76C33B1F0454792B1F8D0E1EDF1710C-->  <HELP><![CDATA[The date this transaction is recorded on in the general ledger. This date also indicates which accounting period within the fiscal year this transaction will be part of.]]></HELP>
 <!--B76C33B1F0454792B1F8D0E1EDF1710C-->  <SEQNO><![CDATA[20]]></SEQNO>
 <!--B76C33B1F0454792B1F8D0E1EDF1710C-->  <AD_REFERENCE_ID><![CDATA[15]]></AD_REFERENCE_ID>
 <!--B76C33B1F0454792B1F8D0E1EDF1710C-->  <COLUMNNAME><![CDATA[DateAcct]]></COLUMNNAME>
