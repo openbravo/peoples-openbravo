@@ -880,6 +880,7 @@
       }, function (args) {
         // do not allow generic products to be added to the receipt
         if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
+          OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
           return;
         }
         if (args && args.useLines) {
