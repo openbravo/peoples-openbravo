@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -86,6 +87,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
               Utility.getContext(this, vars, "#User_Client", "Account")));
       String strNotInitialBalance = vars.getGlobalVariable("inpNotInitialBalance",
           "ReportTrialBalance|notInitialBalance", "Y");
+      String strIncludeZeroFigures = vars.getGlobalVariable("inpIncludeZeroFigures",
+          "ReportTrialBalance|includeZeroFigures", "");
       String strcElementValueFromDes = "", strcElementValueToDes = "";
       if (!strcElementValueFrom.equals(""))
         strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(this,
@@ -101,7 +104,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strOrg, strLevel,
           strcElementValueFrom, strcElementValueTo, strcElementValueFromDes, strcElementValueToDes,
           strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, strNotInitialBalance,
-          strGroupBy);
+          strGroupBy, strIncludeZeroFigures);
 
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
@@ -125,6 +128,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           "ReportTrialBalance|C_ElementValue_IDTO");
       String strNotInitialBalance = vars.getStringParameter("inpNotInitialBalance", "N");
       vars.setSessionValue("ReportTrialBalance|notInitialBalance", strNotInitialBalance);
+      String strIncludeZeroFigures = vars.getRequestGlobalVariable("inpIncludeZeroFigures",
+          "ReportTrialBalance|includeZeroFigures");
       String strcElementValueFromDes = "", strcElementValueToDes = "";
       if (!strcElementValueFrom.equals(""))
         strcElementValueFromDes = ReportTrialBalanceData.selectSubaccountDescription(this,
@@ -138,7 +143,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strPageNo, strOrg, strLevel,
           strcElementValueFrom, strcElementValueTo, strcElementValueFromDes, strcElementValueToDes,
           strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId, strNotInitialBalance,
-          strGroupBy);
+          strGroupBy, strIncludeZeroFigures);
 
     } else if (vars.commandIn("PDF", "XLS")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
@@ -171,15 +176,18 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strPageNo = vars.getRequestGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo");
       String strNotInitialBalance = vars.getStringParameter("inpNotInitialBalance", "N");
       vars.setSessionValue("ReportTrialBalance|notInitialBalance", strNotInitialBalance);
+      String strIncludeZeroFigures = vars.getStringParameter("inpIncludeZeroFigures", "N");
+      vars.setSessionValue("ReportTrialBalance|includeZeroFigures", strIncludeZeroFigures);
+
       if (vars.commandIn("PDF"))
         printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel,
             strcElementValueFrom, strcElementValueFromDes, strcElementValueTo,
             strcElementValueToDes, strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId,
-            strNotInitialBalance, strGroupBy, strPageNo);
+            strNotInitialBalance, strGroupBy, strPageNo, strIncludeZeroFigures);
       else
         printPageDataXLS(request, response, vars, strDateFrom, strDateTo, strOrg, strLevel,
             strcElementValueFrom, strcElementValueTo, strcBpartnerId, strmProductId, strcProjectId,
-            strcAcctSchemaId, strNotInitialBalance, strGroupBy);
+            strcAcctSchemaId, strNotInitialBalance, strGroupBy, strIncludeZeroFigures);
 
     } else if (vars.commandIn("OPEN")) {
       String strAccountId = vars.getRequiredStringParameter("inpcAccountId");
@@ -278,8 +286,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strDateFrom, String strDateTo, String strPageNo, String strOrg, String strLevel,
       String strcElementValueFrom, String strcElementValueTo, String strcElementValueFromDes,
       String strcElementValueToDes, String strcBpartnerId, String strmProductId,
-      String strcProjectId, String strcAcctSchemaId, String strNotInitialBalance, String strGroupBy)
-      throws IOException, ServletException {
+      String strcProjectId, String strcAcctSchemaId, String strNotInitialBalance,
+      String strGroupBy, String strIncludeZeroFigures) throws IOException, ServletException {
 
     String strMessage = "";
     XmlDocument xmlDocument = null;
@@ -430,6 +438,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         + "');"));
     xmlDocument.setParameter("groupbyselected", strGroupBy);
     xmlDocument.setParameter("notInitialBalance", strNotInitialBalance);
+    xmlDocument.setParameter("paramZeroFigures", strIncludeZeroFigures);
 
     xmlDocument.setData(
         "reportCBPartnerId_IN",
@@ -453,6 +462,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", ""), strcProjectIdAux));
 
     if (data != null && data.length > 0) {
+      if ("Y".equals(strIncludeZeroFigures))
+        data = includeZeroFigures(data, strcAcctSchemaId, strOrg);
       xmlDocument.setData("structure1", data);
     } else {
       if (vars.commandIn("FIND")) {
@@ -473,7 +484,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg,
       String strLevel, String strcElementValueFrom, String strcElementValueTo,
       String strcBpartnerId, String strmProductId, String strcProjectId, String strcAcctSchemaId,
-      String strNotInitialBalance, String strGroupBy) throws IOException, ServletException {
+      String strNotInitialBalance, String strGroupBy, String strIncludeZeroFigures)
+      throws IOException, ServletException {
 
     response.setContentType("text/html; charset=UTF-8");
     ReportTrialBalanceData[] data = null;
@@ -531,6 +543,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
+        if ("Y".equals(strIncludeZeroFigures))
+          data = includeZeroFigures(data, strcAcctSchemaId, strOrg);
+
         AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strcAcctSchemaId);
 
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportTrialBalanceExcel.jrxml";
@@ -573,8 +588,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strLevel, String strcElementValueFrom, String strcElementValueFromDes,
       String strcElementValueTo, String strcElementValueToDes, String strcBpartnerId,
       String strmProductId, String strcProjectId, String strcAcctSchemaId,
-      String strNotInitialBalance, String strGroupBy, String strPageNo) throws IOException,
-      ServletException {
+      String strNotInitialBalance, String strGroupBy, String strPageNo, String strIncludeZeroFigures)
+      throws IOException, ServletException {
 
     response.setContentType("text/html; charset=UTF-8");
     ReportTrialBalanceData[] data = null;
@@ -616,6 +631,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
+        if ("Y".equals(strIncludeZeroFigures))
+          data = includeZeroFigures(data, strcAcctSchemaId, strOrg);
+
         AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strcAcctSchemaId);
 
         String strLanguage = vars.getLanguage();
@@ -847,6 +865,58 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
   private String getFamily(String strTree, String strChild) throws IOException, ServletException {
     return Tree.getMembers(this, strTree, strChild);
+  }
+
+  /**
+   * Adds zero figures (all CoA) to the report data
+   * 
+   * @param data
+   * @param strcAcctSchemaId
+   * @param strOrg
+   * @return ReportTrialBalanceData array with zero figures.
+   * @throws ServletException
+   */
+  private ReportTrialBalanceData[] includeZeroFigures(ReportTrialBalanceData[] data,
+      String strcAcctSchemaId, String strOrg) throws ServletException {
+    ReportTrialBalanceData[] dataZeroFigures = null;
+    ReportTrialBalanceData[] dataAccountCombinations = ReportTrialBalanceData
+        .selectAccountCombinations(this, strcAcctSchemaId);
+    if (dataAccountCombinations.length > 0) {
+      Vector<Object> vec = new Vector<Object>();
+      List<String> dataAccounts = new ArrayList<String>(data.length);
+      for (int i = 0; i < data.length; i++) {
+        dataAccounts.add(data[i].id);
+      }
+      int j = 0;
+      int extra = 0;
+      for (int i = 0; i < dataAccountCombinations.length; i++) {
+        String accountId = dataAccountCombinations[i].id;
+        if (dataAccounts.contains(accountId)) {
+          int lastAccountMatch = dataAccounts.lastIndexOf(accountId);
+          int extraCount = 0;
+          for (int k = j; k <= lastAccountMatch; k++) {
+            vec.addElement(data[k]);
+            j++;
+            if (extraCount > 0)
+              extra++;
+            extraCount++;
+          }
+        } else {
+          ReportTrialBalanceData[] dataProcess = ReportTrialBalanceData.set();
+          dataProcess[0].accountId = dataAccountCombinations[i].accountId;
+          dataProcess[0].amtacctcr = "0";
+          dataProcess[0].amtacctdr = "0";
+          dataProcess[0].id = dataAccountCombinations[i].id;
+          dataProcess[0].name = dataAccountCombinations[i].name;
+          dataProcess[0].saldoFinal = "0";
+          dataProcess[0].saldoInicial = "0";
+          vec.addElement(dataProcess[0]);
+        }
+      }
+      dataZeroFigures = new ReportTrialBalanceData[dataAccountCombinations.length + extra];
+      vec.copyInto(dataZeroFigures);
+    }
+    return dataZeroFigures;
   }
 
   public String getServletInfo() {

@@ -25,7 +25,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2013 Openbravo SLU
+* All portions are Copyright (C) 2012-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -232,6 +232,8 @@ BEGIN
                       JOIN m_reservation r ON rs2.m_reservation_id = r.m_reservation_id
                   WHERE rs2.c_orderline_id IS NOT NULL
                     AND r.res_status NOT IN ('DR')
+                    AND r.m_product_id = v_product_id
+                    AND r.c_uom_id = v_uom_id
                   GROUP BY rs2.c_orderline_id
                 ) pre ON rs.c_orderline_id = pre.c_orderline_id
           WHERE rs.m_reservation_id = v_reservation_id

@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,6 +89,7 @@ function validate(action)
     }
 	markCheckedAllElements(frm.inpmProductId_IN);
 	markCheckedAllElements(frm.inpcBPartnerId_IN);
+	markCheckedAllElements(frm.inpcDocTypeId_IN);
 	markCheckedAllElements(frm.inpShown);
 	return true;
 }
@@ -633,6 +634,99 @@ function onloadFunctions() {
                         <option value=""> <div id="reportProducttype"></div></option>
                     </select></td>
                   </tr>
+                  <tr>
+                    <td class="TitleCell"><span class="LabelText">Document Type</span></td>
+                    <td class="List_ContentCell" colspan="2">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                        <td>
+                          <select class="List_width List_height" name="inpcDocTypeId_IN" multiple="" id="reportCDocTypeId_IN"></select>
+                        </td>
+                        <td class="List_Button_ContentCell">
+                          <table border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                              <td>
+                                <a class="List_Button_TopLink" href="#"
+                                  onclick="openMultiSearch(null, null, '../info/DocTypeMultiple.html', 'SELECTOR_DOCTYPE', false, 'frmMain', 'inpcDocTypeId_IN');return false;"
+                                  onfocus="setWindowElementFocus(this); window.status='Add'; return true;"
+                                  onblur="window.status=''; return true;"
+                                  onkeypress="this.className='List_Button_TopLink_active'; return true;"
+                                  onkeyup="this.className='List_Button_TopLink_focus'; return true;">
+                                  <table class="List_Button_Top"
+                                    onmousedown="this.className='List_Button_Top_active'; return true;"
+                                    onmouseup="this.className='List_Button_Top'; return true;"
+                                    onmouseover="this.className='List_Button_Top_hover'; window.status='Add'; return true;"
+                                    onmouseout="this.className='List_Button_Top'; window.status=''; return true;">
+                                    <tr>
+                                      <td class="List_Button_Top_bg">
+                                        <img class="List_Button_Icon List_Button_Icon_Add" src="../../../../../web/images/blank.gif" alt="Add" title="Add"/>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="List_Button_Separator">
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                                <a class="List_Button_MiddleLink" href="#"
+                                  onclick="clearSelectedElements(document.frmMain.inpcDocTypeId_IN);return false;"
+                                  onfocus="setWindowElementFocus(this); window.status='Delete selected elements'; return true;"
+                                  onblur="window.status=''; return true;"
+                                  onkeypress="this.className='List_Button_MiddleLink_active'; return true;"
+                                  onkeyup="this.className='List_Button_MiddleLink_focus'; return true;">
+                                  <table class="List_Button_Middle"
+                                    onmousedown="this.className='List_Button_Middle_active'; return true;"
+                                    onmouseup="this.className='List_Button_Middle'; return true;"
+                                    onmouseover="this.className='List_Button_Middle_hover'; window.status='Delete selected elements'; return true;"
+                                    onmouseout="this.className='List_Button_Middle'; window.status=''; return true;">
+                                    <tr>
+                                      <td class="List_Button_Middle_bg">
+                                        <img class="List_Button_Icon List_Button_Icon_Delete" src="../../../../../web/images/blank.gif" alt="Delete selected elements" title="Delete selected elements"/>
+                                      </td>
+                                    </tr>
+                                  </table>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="List_Button_Separator">
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                                <a class="List_Button_BottomLink" href="#"
+                                  onclick="clearList(document.frmMain.inpcDocTypeId_IN);return false;"
+                                  onfocus="setWindowElementFocus(this); window.status='Delete all elements'; return true;"
+                                  onblur="window.status=''; return true;"
+                                  onkeypress="this.className='List_Button_BottomLink_active'; return true;"
+                                  onkeyup="this.className='List_Button_BottomLink_focus'; return true;">
+                                  <table class="List_Button_Bottom"
+                                    onmousedown="this.className='List_Button_Bottom_active'; return true;"
+                                    onmouseup="this.className='List_Button_Bottom'; return true;"
+                                    onmouseover="this.className='List_Button_Bottom_hover'; window.status='Delete all elements'; return true;"
+                                    onmouseout="this.className='List_Button_Bottom'; window.status=''; return true;">
+                                    <tr>
+                                      <td class="List_Button_Bottom_bg">
+                                        <img class="List_Button_Icon List_Button_Icon_DeleteAll" src="../../../../../web/images/blank.gif" alt="Delete all elements" title="Delete all elements"/>
+				                      </td>
+				                    </tr>
+                                  </table>
+                                </a>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                    <td class="ContentCell"></td>
+                    <td class="TitleCell"></td>
+                    <td class="ContentCell"></td>
+                  </tr>
 
                   <tr>
                     <td colspan="6">
@@ -822,7 +916,8 @@ function onloadFunctions() {
                   </tr>
 
                   <tr>
-                    <td class="Button_RightAlign_ContentCell" colspan="2">
+                    <td class="ContentCell"></td>
+                    <td class="Button_RightAlign_ContentCell" colspan="0">
                       <div>
                         <button type="button" 
                           id="buttonHTML" 
@@ -847,7 +942,7 @@ function onloadFunctions() {
                         </button>
                       </div>
                     </td>
-                    <td class="Button_LeftAlign_ContentCell" colspan="0">
+                    <td class="Button_CenterAlign_ContentCell" colspan="0">
                       <div>
                         <button type="button" 
                           class="ButtonLink" 
@@ -871,12 +966,37 @@ function onloadFunctions() {
                         </button>
                       </div>
                     </td>
+                    <td class="Button_LeftAlign_ContentCell" colspan="0">
+                            <div>
+                              <button type="button" 
+                                id="buttonExcel" 
+                                class="ButtonLink" 
+                                onclick="submitCommandForm('EXCEL', true, null, 'ReportInvoiceCustomerDimensionalAnalysesXLS.xls', '_blank', null, false);return false;" 
+                                onfocus="buttonEvent('onfocus', this); window.status='Generate Excel'; return true;" 
+                                onblur="buttonEvent('onblur', this);" 
+                                onkeyup="buttonEvent('onkeyup', this);" 
+                                onkeydown="buttonEvent('onkeydown', this);" 
+                                onkeypress="buttonEvent('onkeypress', this);" 
+                                onmouseup="buttonEvent('onmouseup', this);" 
+                                onmousedown="buttonEvent('onmousedown', this);" 
+                                onmouseover="buttonEvent('onmouseover', this); window.status='Generate Excel'; return true;" 
+                                onmouseout="buttonEvent('onmouseout', this);">
+                                <table class="Button">
+                                  <tr>
+                                    <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Generate Excel" title="Generate Excel" src="../../../../../web/images/blank.gif" border="0" /></td>
+                                    <td class="Button_text">XLS Format</td>
+                                    <td class="Button_right"></td>
+                                  </tr>
+                                </table>
+                              </button>
+                            </div>
+                          </td>                    
                     <td class="TitleCell"><span class="LabelText">Currency</span></td>
-                  <td class="Combo_ContentCell">
-  		     		<select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
-     		      	<option value=""><div id="reportC_Currency_ID"></div></option>
-   		     		</select>
-		   		  </td>
+                    <td class="Combo_ContentCell">
+                      <select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+                        <option value=""><div id="reportC_Currency_ID"></div></option>
+                      </select>
+                    </td>
                   </tr>
 
 </table>

@@ -153,6 +153,8 @@ isc.defineClass('OBLevelImg', isc.Img);
 
 isc.OBLevelImg.addProperties({
   cellAlign: 'center',
+  canEdit: false,
+  isShownInGridEdit: true,
   // The valueList should be overridden if this canvas item is applied to a different scale, for example ['none', 'weak', 'small', 'medium', 'high']
   valuesList: [0, 1, 2, 3, 4],
 
@@ -187,6 +189,11 @@ isc.OBLevelImg.addProperties({
       this.setWidth(41);
       this.setHeight(20);
       this.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/levelImg_' + value.toString() + '_' + (this.valuesList.length - 1).toString() + '.png');
+    } else {
+      this.value = null;
+      this.setWidth(1);
+      this.setHeight(1);
+      this.setSrc(OB.Styles.skinsPath + 'Default/smartclient/images/blank.gif');
     }
   },
 

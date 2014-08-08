@@ -51,6 +51,7 @@ public class DimensionDisplayUtility {
   public static final String DIM_Organization = "OO";
   public static final String DIM_Project = "PJ";
   public static final String DIM_BPartner = "BP";
+  public static final String DIM_BPartnerD = "BP";
   public static final String DIM_Product = "PR";
   public static final String DIM_CostCenter = "CC";
   public static final String DIM_User1 = "U1";
@@ -98,6 +99,7 @@ public class DimensionDisplayUtility {
     columnDimensionMap.put("AD_ORG_ID", DIM_Organization);
     columnDimensionMap.put("C_PROJECT_ID", DIM_Project);
     columnDimensionMap.put("C_BPARTNER_ID", DIM_BPartner);
+    columnDimensionMap.put("C_BPARTNER_ID_DIM", DIM_BPartnerD);
     columnDimensionMap.put("M_PRODUCT_ID", DIM_Product);
     columnDimensionMap.put("C_COSTCENTER_ID", DIM_CostCenter);
     columnDimensionMap.put("USER1_ID", DIM_User1);

@@ -66,8 +66,8 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn,
-      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
+  String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -149,16 +149,19 @@ public class DocMatchInv extends AcctServer {
     }
     if (data == null || data.length == 0)
       return null;
-    for (int i = 0; i < data.length; i++) {
-      DocLine_Material docLine = new DocLine_Material(DocumentType, Record_ID, strInOutLineId);
-      docLine.loadAttributes(data[i], this);
-      OBContext.setAdminMode(false);
-      String strQty = data[i].movementqty;
-      docLine.setQty(strQty);
 
-      list.add(docLine);
-    }
-    // Return Array
+    try {
+      OBContext.setAdminMode(false);
+      for (int i = 0; i < data.length; i++) {
+        DocLine_Material docLine = new DocLine_Material(DocumentType, Record_ID, strInOutLineId);
+        docLine.loadAttributes(data[i], this);
+        String strQty = data[i].movementqty;
+        docLine.setQty(strQty);
+        list.add(docLine);
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    } // Return Array
     DocLine[] dl = new DocLine[list.size()];
     list.toArray(dl);
     return dl;
@@ -503,17 +506,16 @@ public class DocMatchInv extends AcctServer {
   } // updateProductInfo
 
   private MaterialTransaction getTransaction(String matchInvId) {
-    OBContext.setAdminMode(false);
     MaterialTransaction transaction;
-    if (OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId).getGoodsShipmentLine()
-        .getMaterialMgmtMaterialTransactionList().size() == 0) {
-      return null;
-    }
     try {
+      OBContext.setAdminMode(false);
+      if (OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId).getGoodsShipmentLine()
+          .getMaterialMgmtMaterialTransactionList().size() == 0) {
+        return null;
+      }
       transaction = OBDal.getInstance().get(ReceiptInvoiceMatch.class, matchInvId)
           .getGoodsShipmentLine().getMaterialMgmtMaterialTransactionList().get(0);
     } finally {
-
       OBContext.restorePreviousMode();
     }
     return transaction;

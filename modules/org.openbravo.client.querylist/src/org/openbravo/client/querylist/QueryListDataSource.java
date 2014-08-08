@@ -170,6 +170,11 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         // the values for the summary fields
         HQL = updateHQLWithSummaryFields(HQL, parameters.get(JsonConstants.SUMMARY_PARAMETER));
       }
+
+      if (parameters.containsKey(JsonConstants.SORTBY_PARAMETER)) {
+        HQL = updateSortByFields(HQL, parameters.get(JsonConstants.SORTBY_PARAMETER));
+      }
+
       Query widgetQuery = OBDal.getInstance().getSession().createQuery(HQL);
       String[] queryAliases = widgetQuery.getReturnAliases();
 
@@ -286,14 +291,48 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
           result.add(data);
         }
       }
-      String sortBy = parameters.get("_sortBy");
-      if (StringUtils.isNotEmpty(sortBy)) {
-        sort(sortBy, result);
-      }
       return result;
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * Updates the order by clause of the HQL query so that it obtains the values for the summary
+   * fields. If the HQL query already contains order by fields, the new fields are appended for the
+   * existing fields.
+   * 
+   * @param hQL
+   *          original HQL query
+   * @param sortByParametersString
+   *          parameter that contains sortBy field values
+   * @return an updated HQL query that will set the order by fields
+   */
+  private String updateSortByFields(String hql, String sortBy) {
+    String[] fieldList = null;
+    String sortByClause = "", hqlString = hql;
+    if (sortBy.contains(",")) {
+      fieldList = sortBy.split(",");
+    }
+    if (hqlString.toLowerCase().contains("order by")) {
+      if (fieldList == null) {
+        sortByClause = sortBy.startsWith("-") ? sortBy.substring(1, sortBy.length()) + " desc "
+            : sortBy;
+      } else {
+        // sort by multiple columns
+        for (String field : fieldList) {
+          sortByClause = field.startsWith("-") ? sortByClause.concat(field.substring(1,
+              field.length()))
+              + " desc " : sortByClause.concat(field);
+        }
+      }
+      int sortByIndex = hqlString.toLowerCase().indexOf("order by");
+      hqlString = hqlString.substring(0, sortByIndex + "order by".length() + 1) + sortByClause
+          + "," + hqlString.substring(sortByIndex + "order by".length() + 1);
+    } else {
+      hqlString = hqlString.concat(" order by " + sortByClause);
+    }
+    return hqlString;
   }
 
   /**

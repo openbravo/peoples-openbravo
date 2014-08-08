@@ -36,7 +36,7 @@ isc.OBSelectorPopupWindow.addProperties({
 
   initWidget: function () {
     var selectorWindow = this,
-        okButton, createNewButton, cancelButton, operator, i, hasIdentifier;
+        okButton, createNewButton, cancelButton, operator, i;
 
     this.setFilterEditorProperties(this.selectorGridFields);
 
@@ -87,17 +87,17 @@ isc.OBSelectorPopupWindow.addProperties({
       operator = 'iStartsWith';
     }
 
-    hasIdentifier = false;
     for (i = 0; i < this.selectorGridFields.length; i++) {
       this.selectorGridFields[i].canSort = (this.selectorGridFields[i].canSort === false ? false : true);
-      this.selectorGridFields[i].escapeHTML = (this.selectorGridFields[i].escapeHTML === false ? false : true);
+      if (this.selectorGridFields[i].name === OB.Constants.IDENTIFIER) {
+        this.selectorGridFields[i].escapeHTML = true;
+      } else {
+        this.selectorGridFields[i].escapeHTML = (this.selectorGridFields[i].escapeHTML === false ? false : true);
+      }
       if (this.selectorGridFields[i].disableFilter) {
         this.selectorGridFields[i].canFilter = false;
       } else {
         this.selectorGridFields[i].canFilter = true;
-      }
-      if (this.selectorGridFields[i].name === OB.Constants.IDENTIFIER) {
-        hasIdentifier = true;
       }
       // apply the proper operator for the filter of text fields
       if (isc.SimpleType.inheritsFrom(this.selectorGridFields[i].type, 'text')) {
@@ -112,12 +112,6 @@ isc.OBSelectorPopupWindow.addProperties({
       }
     }
     if (!this.dataSource.fields || !this.dataSource.fields.length || this.dataSource.fields.length === 0) {
-      if (!hasIdentifier && this.selectorGridFields) {
-        this.selectorGridFields.push({
-          name: OB.Constants.IDENTIFIER,
-          escapeHTML: true
-        });
-      }
       this.dataSource.fields = this.selectorGridFields;
       this.dataSource.init();
     }

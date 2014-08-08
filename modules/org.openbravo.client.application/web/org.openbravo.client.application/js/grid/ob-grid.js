@@ -306,9 +306,15 @@ isc.OBGrid.addProperties({
   updateRecordComponent: function (record, colNum, component, recordChanged) {
     var field = this.getField(colNum),
         isSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]),
-        rowNum = this.getRecordIndex(record);
+        rowNum = this.getRecordIndex(record),
+        isEditRecord = rowNum === this.getEditRow();
 
     if (isSummary) {
+      return null;
+    }
+
+    if (isEditRecord && !component.isShownInGridEdit) {
+      //TODO: In OBPickAndExecuteGrid this logic doesn't work very well
       return null;
     }
 
@@ -646,6 +652,19 @@ isc.OBGrid.addProperties({
           // if there is a clientClass that expands a grid record, fixedRecordHeight should be false in order to allow the record expansion
           if (OB.Utilities.getCanvasProp(field.clientClass, 'canExpandRecord')) {
             this.fixedRecordHeights = false;
+          }
+          // Manage the case the clientClass overwrites the 'canEdit'
+          // If it is not set in the javascript definition of the component, the value returned from the datasource will be used
+          // In case canEdit be true, in grid edition mode the 'editorType' of the component will be rendered.
+          // In case canEdit be false, nothing will be rendered
+          // NOTE: This applies to the editor specified in the component. By default the editor is 'OBClientClassCanvasItem', that means that the editor will be exactly the same
+          //       component than the defined Client Class. You can overwrite the 'editorType' to have a different one. In any case, when 'canEdit' be true, it is desiderable to set
+          //       'isShownInGridEdit' to false, to avoid view two components one above the other.
+          //       As just has been said, if you want to have a particular editor for the edition mode, set 'canEdit' to trie and 'isShownInGridEdit' to false
+          //       If you don't want to see anything in edition mode, just set both 'canEdit' and 'isShownInGridEdit' to false
+          //       If you want to see exactly the same in edition mode than in read mode (no edition capabilities), set 'canEdit' to false and 'isShownInGridEdit' to true
+          if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'canEdit') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'canEdit') === null) {
+            field.canEdit = OB.Utilities.getCanvasProp(field.clientClass, 'canEdit');
           }
           // Manage the case the clientClass overwrites the 'canSort'
           if (typeof OB.Utilities.getCanvasProp(field.clientClass, 'canSort') !== 'undefined' || OB.Utilities.getCanvasProp(field.clientClass, 'canSort') === null) {
@@ -1341,7 +1360,21 @@ isc.OBGridLinkButton.addProperties({
 });
 
 isc.ClassFactory.defineClass('OBGridFormButton', isc.OBFormButton);
-isc.OBGridFormButton.addProperties({});
+isc.OBGridFormButton.addProperties({
+  showValue: function (displayValue, dataValue, form, item) {
+    if (this.autoFit_orig) {
+      // Restore the autofit attribute if it was set in a first instance to avoid that if the button is
+      // shown as an editor in edition mode (canEdit: true) spans the row width.
+      this.setAutoFit(true);
+    }
+    return this.Super('showValue', arguments);
+  },
+
+  initWidget: function () {
+    this.autoFit_orig = this.autoFit;
+    return this.Super('initWidget', arguments);
+  }
+});
 
 
 isc.defineClass('OBGridLinkCellClick', isc.OBGridLinkItem);

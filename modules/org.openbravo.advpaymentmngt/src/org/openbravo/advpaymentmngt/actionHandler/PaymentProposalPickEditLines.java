@@ -107,7 +107,8 @@ public class PaymentProposalPickEditLines extends BaseProcessActionHandler {
     HashMap<String, String> map = new HashMap<String, String>();
     map.put("DifferentPaymentMethod", "false");
     map.put("Count", "0");
-    JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
+    JSONObject grid = jsonRequest.getJSONObject("_params").getJSONObject("grid");
+    JSONArray selectedLines = grid.getJSONArray("_selection");
     final String strPaymentProposalId = jsonRequest.getString("Fin_Payment_Proposal_ID");
     FIN_PaymentProposal paymentProposal = OBDal.getInstance().get(FIN_PaymentProposal.class,
         strPaymentProposalId);

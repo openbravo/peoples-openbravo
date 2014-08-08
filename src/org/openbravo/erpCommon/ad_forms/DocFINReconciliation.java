@@ -556,8 +556,10 @@ public class DocFINReconciliation extends AcctServer {
           AcctSchemaTableDocType.class, whereClause.toString());
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
-      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0)
+      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+          && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
         strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
+      }
 
       if (strClassname.equals("")) {
         final StringBuilder whereClause2 = new StringBuilder();

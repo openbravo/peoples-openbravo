@@ -35,7 +35,7 @@ import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestComboDatasource extends BaseDataSourceTestNoDal {
+public class TestComboDatasource extends BaseDataSourceTestDal {
 
   private static final Logger log = LoggerFactory.getLogger(TestComboDatasource.class);
 
@@ -104,6 +104,35 @@ public class TestComboDatasource extends BaseDataSourceTestNoDal {
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
     assertEquals("paginated combo number of records", 75, data.length());
+  }
+
+  /**
+   * Checks selected value not in 1st page
+   * 
+   * see issue #27233
+   */
+  public void testDefaultNotInFirstPage() throws Exception {
+    String US_ID = "100";
+
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("fieldId", "1005500085"); // BP > Account > Country
+    params.put("_operationType", "fetch");
+    params.put("_startRow", "0");
+    params.put("_endRow", "75");
+    params.put("_currentValue", US_ID); // US
+
+    JSONObject jsonResponse = requestCombo(params);
+    JSONArray data = getData(jsonResponse);
+    assertTrue(getStatus(jsonResponse).equals(
+        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
+
+    int totalRows = jsonResponse.getJSONObject("response").getInt("totalRows"); // 78
+    int endRow = jsonResponse.getJSONObject("response").getInt("endRow"); // 76
+    assertTrue("more than one page shoudl be detected", totalRows > endRow + 1);
+    String lastRowId = data.getJSONObject(data.length() - 1).getString("id");
+    assertFalse(
+        "selected record should not be added at the end of 1st page, because it is in a page after it",
+        lastRowId.equals(US_ID));
   }
 
   /**
