@@ -117,6 +117,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           // reparent.
           adjustedLine.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance()
               .getProxy(CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
+
+          OBDal.getInstance().save(adjustedLine);
         }
         BigDecimal trxCost = getTrxCost(trx, false);
         currentValueAmt = currentValueAmt.add(trxCost.multiply(new BigDecimal(trx
