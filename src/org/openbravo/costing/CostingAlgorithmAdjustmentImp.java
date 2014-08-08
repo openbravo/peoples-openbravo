@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -144,6 +145,10 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
   protected CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction trx,
       BigDecimal adjustmentamt, CostAdjustmentLine parentLine) {
+    Date dateAcct = trx.getMovementDate();
+    if (parentLine != null && dateAcct.before(parentLine.getAccountingDate())) {
+      dateAcct = parentLine.getAccountingDate();
+    }
     CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
         (CostAdjustment) OBDal.getInstance().getProxy(CostAdjustment.ENTITY_NAME, strCostAdjId),
         adjustmentamt, false, trx.getTransactionProcessDate(), trx.getMovementDate());
