@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
@@ -35,6 +36,7 @@ import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DbUtility;
+import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +53,7 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
       final String strTransactionId = jsonContent.getString("M_Transaction_ID");
       final JSONObject params = jsonContent.getJSONObject("_params");
       final BigDecimal newAmountCost = new BigDecimal(params.getString("Cost"));
+      final Date acctDate = JsonUtils.createDateFormat().parse(params.getString("DateAcct"));
 
       final MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
           strTransactionId);
@@ -76,7 +79,7 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
       BigDecimal costAdjusted = newAmountCost.subtract(totalCost);
 
       CostAdjustmentUtils.insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted,
-          Boolean.TRUE, null, null);
+          Boolean.TRUE, transaction.getTransactionProcessDate(), acctDate);
 
       OBDal.getInstance().flush();
       CostAdjustmentProcess cap = WeldUtils
