@@ -19,26 +19,22 @@
 
 package org.openbravo.advpaymentmngt.hqlinjections;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
-import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.database.ConnectionProviderImpl;
-import org.openbravo.exception.PoolNotFoundException;
-import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.json.JsonUtils;
 
 @ComponentProvider.Qualifier("BC21981DCF0846338D631887BEDFE7FA")
 public class MatchStatementTransformer extends HqlQueryTransformer {
@@ -48,15 +44,21 @@ public class MatchStatementTransformer extends HqlQueryTransformer {
   @Override
   public String transformHqlQuery(String _hqlQuery, Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
-    StringBuffer whereClause = getWhereClause(requestParameters);
+    StringBuffer whereClause = getWhereClause(requestParameters, queryNamedParameters);
     // @FIN_Financial_Account.id@
     String transformedHql = _hqlQuery.replace("@whereClause@", whereClause.toString());
     return transformedHql;
   }
 
-  private StringBuffer getWhereClause(Map<String, String> requestParameters) {
+  private StringBuffer getWhereClause(Map<String, String> requestParameters,
+      Map<String, Object> queryNamedParameters) {
+    boolean hasCriteria = requestParameters.containsKey("criteria");
+    JSONObject criteria = new JSONObject();
+    if (hasCriteria) {
+      criteria = JsonUtils.buildCriteria(requestParameters);
+    }
     StringBuffer selectClause = new StringBuffer();
-    selectClause.append("1 in (1)");
+    // TODO: Review what others do with criteria (Reference AddPaymentOrderInvoicesTransformer)
     final String financialAccountId = requestParameters.get("@FIN_Financial_Account.id@");
     if (financialAccountId != null) {
       VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
@@ -72,34 +74,23 @@ public class MatchStatementTransformer extends HqlQueryTransformer {
       if (reconciliation == null) {
         try {
           // TODO: It doesn't work
-          reconciliation = MatchTransactionDao.addNewReconciliation(getConnectionProviderMy(),
+          reconciliation = MatchTransactionDao.addNewReconciliation(new DalConnectionProvider(),
               vars, financialAccountId);
         } catch (ServletException e) {
           // TODO: Handle exception
           // e.printStackTrace();
         }
-      } else {
-        // final String tabId = "";
-        // TODO: get the proper tabId
-        // updateReconciliation(reconciliation.getId(), financialAccountId, tabId, false);
       }
-      if (reconciliation != null) {
-        final String reconciliationId = reconciliation.getId();
-        List<FIN_BankStatementLine> bankLines = MatchTransactionDao.getMatchingBankStatementLines(
-            financialAccountId, reconciliationId, "ALL", "Y");
-        System.out.println(bankLines);
+      selectClause.append(" (fat is null or fat.reconciliation.id = :reconciliation) ");
+      selectClause.append(" and bs.account.id = :account ");
+      queryNamedParameters.put("reconciliation", reconciliation.getId());
+      queryNamedParameters.put("account", reconciliation.getAccount().getId());
+      if (!MatchTransactionDao.islastreconciliation(reconciliation)) {
+        selectClause.append(" and bsl.transactionDate <= :endingdate ");
+        queryNamedParameters.put("endingdate", reconciliation.getEndingDate());
       }
     }
     return selectClause;
   }
 
-  private static ConnectionProvider getConnectionProviderMy() {
-    try {
-      final String propFile = OBConfigFileProvider.getInstance().getFileLocation();
-      final ConnectionProvider conn = new ConnectionProviderImpl(propFile + "/Openbravo.properties");
-      return conn;
-    } catch (PoolNotFoundException e) {
-      throw new IllegalStateException(e);
-    }
-  }
 }
