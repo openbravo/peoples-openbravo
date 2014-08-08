@@ -188,6 +188,7 @@ public class CostAdjustmentProcess {
       trxCost.setCost(line.getAdjustmentAmount());
       trxCost.setCostDate(referenceDate);
       trxCost.setCostAdjustmentLine(line);
+      trxCost.setUnitCost(line.isUnitCost());
       // FIXME: Set proper currency!!!
       trxCost.setCurrency(line.getInventoryTransaction().getCurrency());
 
