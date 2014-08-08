@@ -204,7 +204,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         newCosting.setEndingDate(dateTo);
         newCosting.setInventoryTransaction(null);
         newCosting.setProduct(basetrx.getProduct());
-        if (basetrx.getProduct().isProduction()) {
+        if (isManufacturingProduct) {
           newCosting.setOrganization((Organization) OBDal.getInstance().getProxy(
               Organization.ENTITY_NAME, "0"));
         } else {
@@ -331,11 +331,18 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
    * only takes transactions that have its cost calculated.
    */
   private BigDecimal getCurrentStock() {
-    // Get child tree of organizations.
-    Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
-        .getChildTree(strCostOrgId, true);
-    HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
+    Organization org = getCostOrg();
     MaterialTransaction trx = getTransaction();
+    HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
+
+    // Get child tree of organizations.
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        trx.getClient().getId());
+    Set<String> orgs = osp.getChildTree(org.getId(), true);
+    if (isManufacturingProduct) {
+      orgs = osp.getChildTree("0", false);
+      costDimensions = CostingUtils.getEmptyDimensions();
+    }
 
     StringBuffer select = new StringBuffer();
     select
@@ -383,8 +390,13 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
 
     // Get child tree of organizations.
-    Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
-        .getChildTree(org.getId(), true);
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        trx.getClient().getId());
+    Set<String> orgs = osp.getChildTree(org.getId(), true);
+    if (isManufacturingProduct) {
+      orgs = osp.getChildTree("0", false);
+      costDimensions = CostingUtils.getEmptyDimensions();
+    }
 
     StringBuffer select = new StringBuffer();
     select.append(" select sum(case");

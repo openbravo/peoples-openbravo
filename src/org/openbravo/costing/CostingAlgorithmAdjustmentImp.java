@@ -59,6 +59,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
   protected String strCostCurrencyId;
   protected TrxType trxType;
   protected String strCostingRuleId;
+  protected boolean isManufacturingProduct;
   protected HashMap<CostDimension, String> costDimensionIds = new HashMap<CostDimension, String>();
 
   /**
@@ -73,6 +74,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     strCostAdjId = (String) DalUtil.getId(costAdjLine.getCostAdjustment());
     MaterialTransaction transaction = costAdjLine.getInventoryTransaction();
     strTransactionId = transaction.getId();
+    isManufacturingProduct = transaction.getProduct().isProduction();
     CostingServer costingServer = new CostingServer(transaction);
     strCostOrgId = costingServer.getOrganization().getId();
     strCostCurrencyId = (String) DalUtil.getId(transaction.getCurrency());
@@ -82,7 +84,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
     HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
     // Production products cannot be calculated by warehouse dimension.
-    if (!transaction.getProduct().isProduction() && costingRule.isWarehouseDimension()) {
+    if (!isManufacturingProduct && costingRule.isWarehouseDimension()) {
       costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
     }
     for (CostDimension costDimension : costDimensions.keySet()) {
