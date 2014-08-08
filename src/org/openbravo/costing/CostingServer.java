@@ -265,6 +265,7 @@ public class CostingServer {
     transactionCost.setCost(trxCost);
     transactionCost.setCurrency(currency);
     transactionCost.setCostDate(transaction.getTransactionProcessDate());
+    transactionCost.setAccountingDate(transaction.getMovementDate());
     OBDal.getInstance().save(transactionCost);
     transaction.getTransactionCostList().add(transactionCost);
   }
