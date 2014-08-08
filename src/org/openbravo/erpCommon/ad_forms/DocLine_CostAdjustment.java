@@ -68,60 +68,79 @@ public class DocLine_CostAdjustment extends DocLine {
     case Shipment:
       transactionType = TRXTYPE_SHIPMENT;
       transactionNegative = false;
+      break;
     case ShipmentReturn:
       transactionType = TRXTYPE_SHIPMENT;
       transactionNegative = true;
+      break;
     case ShipmentVoid:
       transactionType = TRXTYPE_SHIPMENT;
       transactionNegative = true;
+      break;
     case ShipmentNegative:
       transactionType = TRXTYPE_SHIPMENT;
       transactionNegative = true;
+      break;
     case Receipt:
       transactionType = TRXTYPE_RECEIPT;
       transactionNegative = false;
+      break;
     case ReceiptReturn:
       transactionType = TRXTYPE_RECEIPT;
       transactionNegative = true;
+      break;
     case ReceiptVoid:
       transactionType = TRXTYPE_RECEIPT;
       transactionNegative = true;
+      break;
     case ReceiptNegative:
       transactionType = TRXTYPE_RECEIPT;
       transactionNegative = true;
+      break;
     case InventoryDecrease:
       transactionType = TRXTYPE_INVENTORY;
       transactionNegative = true;
+      break;
     case InventoryIncrease:
       transactionType = TRXTYPE_INVENTORY;
       transactionNegative = false;
+      break;
     case IntMovementFrom:
       transactionType = TRXTYPE_INTERNALMOVEMENTFROM;
       transactionNegative = true;
+      break;
     case IntMovementTo:
       transactionType = TRXTYPE_INTERNALMOVEMENTTO;
       transactionNegative = false;
+      break;
     case InternalCons:
       transactionType = TRXTYPE_INTERNALCONSUMPTION;
       transactionNegative = false;
+      break;
     case InternalConsNegative:
       transactionType = TRXTYPE_INTERNALCONSUMPTION;
       transactionNegative = true;
+      break;
     case InternalConsVoid:
       transactionType = TRXTYPE_INTERNALCONSUMPTION;
       transactionNegative = true;
+      break;
     case BOMPart:
       transactionType = TRXTYPE_BOM;
-      transactionNegative = false;
+      transactionNegative = true;
+      break;
     case BOMProduct:
       transactionType = TRXTYPE_BOM;
       transactionNegative = false;
+      break;
     case ManufacturingConsumed:
       transactionType = TRXTYPE_MANUFACTURING;
       transactionNegative = true;
+      break;
     case ManufacturingProduced:
       transactionType = TRXTYPE_MANUFACTURING;
       transactionNegative = false;
+      break;
     case Unknown:
       throw new OBException("@UnknownTrxType@: " + trxType);
     default:
