@@ -314,7 +314,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
     if (sortBy.contains(",")) {
       fieldList = sortBy.split(",");
     }
-    if (hqlString.contains("order by")) {
+    if (hqlString.toLowerCase().contains("order by")) {
       if (fieldList == null) {
         sortByClause = sortBy.startsWith("-") ? sortBy.substring(1, sortBy.length()) + " desc "
             : sortBy;
@@ -326,14 +326,11 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
               + " desc " : sortByClause.concat(field);
         }
       }
-      hqlString = hqlString.replace("order by", "order by " + sortByClause + ",");
+      int sortByIndex = hqlString.toLowerCase().indexOf("order by");
+      hqlString = hqlString.substring(0, sortByIndex + "order by".length() + 1) + sortByClause
+          + "," + hqlString.substring(sortByIndex + "order by".length() + 1);
     } else {
-      // if limit is present in the hql, append order by before it
-      if (hqlString.contains("limit")) {
-        hqlString.replace("limit", sortByClause + " limit");
-      } else {
-        hqlString = hqlString.concat(" order by " + sortByClause);
-      }
+      hqlString = hqlString.concat(" order by " + sortByClause);
     }
     return hqlString;
   }
