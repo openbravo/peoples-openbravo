@@ -77,6 +77,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISUNITCOST" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="C_CURRENCY" name="C_COSTADJLINE_C_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
@@ -102,5 +106,6 @@
       <check name="M_COSTADJLINE_POSTING_CHK"><![CDATA[NEEDSPOSTING IN ('Y', 'N')]]></check>
       <check name="M_COSTADJLINE_SOURCE_CHK"><![CDATA[ISSOURCE IN ('Y', 'N')]]></check>
       <check name="M_COSTADJUSTMENTLINE_RELTRXADJ"><![CDATA[ISRELATEDTRXADJUSTED IN ('Y', 'N')]]></check>
+      <check name="M_COSTADJUSTMENTLINE_UNITCOST"><![CDATA[ISUNITCOST IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -99,7 +99,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           adjustedLine.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance()
               .getProxy(CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
         }
-        BigDecimal trxCost = getTrxCost(trx);
+        BigDecimal trxCost = getTrxCost(trx, false);
         currentValueAmt = currentValueAmt.add(trxCost.multiply(new BigDecimal(trx
             .getMovementQuantity().signum())));
         currentStock = currentStock.add(trx.getMovementQuantity());
@@ -145,14 +145,15 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             return;
           }
         } else if (!trx.isManualcostadjustment() && adjustedLine == null) {
-          // Check current trx cost matches new expected cost
+          // Check current trx unit cost matches new expected cost
           BigDecimal expectedCost = cost.multiply(trx.getMovementQuantity().abs());
-          if (expectedCost.compareTo(trxCost) != 0) {
-            adjustmentBalance = adjustmentBalance.add(expectedCost.subtract(trxCost).multiply(
+          BigDecimal unitCost = getTrxCost(trx, true);
+          if (expectedCost.compareTo(unitCost) != 0) {
+            adjustmentBalance = adjustmentBalance.add(expectedCost.subtract(unitCost).multiply(
                 new BigDecimal(trx.getMovementQuantity().signum())));
             // If there is a difference insert a cost adjustment line.
             CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx,
-                expectedCost.subtract(trxCost), getCostAdjLine());
+                expectedCost.subtract(unitCost), getCostAdjLine());
             newCAL.setRelatedTransactionAdjusted(true);
           }
         }
@@ -202,12 +203,15 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
   }
 
-  private BigDecimal getTrxCost(MaterialTransaction trx) {
+  private BigDecimal getTrxCost(MaterialTransaction trx, boolean justUnitCost) {
     StringBuffer select = new StringBuffer();
     select.append("select sum(cal." + CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT + ") as cost");
     select.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
     select.append("   join cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " as ca");
     select.append(" where cal." + CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION + ".id = :trx");
+    if (justUnitCost) {
+      select.append("  and cal." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
+    }
     // Get amounts of processed adjustments and the adjustment that it is being processed.
     select.append("   and (ca = :ca");
     select.append("     or ca." + CostAdjustment.PROPERTY_PROCESSED + " = true)");
