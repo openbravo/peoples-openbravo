@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,14 @@
 
 package org.openbravo.client.kernel.test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -31,7 +35,7 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.client.kernel.TemplateDependency;
 import org.openbravo.client.kernel.TemplateResolver;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the {@link TemplateResolver}.
@@ -43,7 +47,7 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class TemplateResolverTest extends BaseTest {
+public class TemplateResolverTest extends OBBaseTest {
   private static final List<Template> EMPTY_LIST = Collections.emptyList();
 
   // read some default values used in the test
@@ -60,9 +64,9 @@ public class TemplateResolverTest extends BaseTest {
     COMPONENT_TYPE = componentTypeProperty.getAllowedValues().iterator().next();
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @Before
+  protected void setUpT() throws Exception {
+    // super.setUp();
 
     // after super.setUp, must be done after initializing dal layer in super class
     initializeStatics();
@@ -76,6 +80,7 @@ public class TemplateResolverTest extends BaseTest {
    * 
    * Then the returned result is computed depth-first: D, E, B, F, G, C, A
    */
+  @Test
   public void testResolveDependencies() throws Exception {
     setSystemAdministratorContext();
 
@@ -118,6 +123,7 @@ public class TemplateResolverTest extends BaseTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testResolveDependenciesWithOverrides() throws Exception {
     setUserContext("0");
 

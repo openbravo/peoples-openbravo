@@ -11,12 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.userinterface.selectors.test;
+
+import static org.junit.Assert.assertEquals;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,16 +28,18 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
+import org.junit.Test;
 import org.openbravo.client.application.OBBindings;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the current API exposed to JavaScript expression through OBBindings class
  * 
  * @author iperdomo
  */
-public class ExpressionsTest extends BaseTest {
+public class ExpressionsTest extends OBBaseTest {
 
   private ScriptEngineManager manager;
   private ScriptEngine engine;
@@ -44,9 +48,9 @@ public class ExpressionsTest extends BaseTest {
 
   private HashMap<String, String> expr = new HashMap<String, String>();
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @Before
+  protected void setUpEt() throws Exception {
+    // super.setUp();
 
     // Everything runs as System Admin user
     setSystemAdministratorContext();
@@ -78,6 +82,7 @@ public class ExpressionsTest extends BaseTest {
 
   }
 
+  @Test
   public void testUserName() {
     final String s = expr.get("Get current user's name");
     try {
@@ -88,6 +93,7 @@ public class ExpressionsTest extends BaseTest {
     assertEquals(result.toString(), OBContext.getOBContext().getUser().getName());
   }
 
+  @Test
   public void testLanguage() {
     final String s = expr.get("Get current language");
     try {
@@ -98,6 +104,7 @@ public class ExpressionsTest extends BaseTest {
     assertEquals(result.toString(), OBContext.getOBContext().getLanguage().getLanguage());
   }
 
+  @Test
   public void testFormatDate() {
     final String s = expr.get("Format today's date");
     final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -109,6 +116,7 @@ public class ExpressionsTest extends BaseTest {
     assertEquals(df.format(Calendar.getInstance().getTime()), result);
   }
 
+  @Test
   public void testCurrentClientId() {
     final String s = expr.get("Get current client id");
     try {
@@ -119,6 +127,7 @@ public class ExpressionsTest extends BaseTest {
     assertEquals(OBContext.getOBContext().getCurrentClient().getId(), result);
   }
 
+  @Test
   public void testParseDate() {
     final String s = expr.get("Parse date with fixed format");
     final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -130,6 +139,7 @@ public class ExpressionsTest extends BaseTest {
     }
   }
 
+  @Test
   public void testFormatParsedDate() {
     final String s = expr.get("Format a parsed date");
     try {
@@ -140,6 +150,7 @@ public class ExpressionsTest extends BaseTest {
     }
   }
 
+  @Test
   public void testCustomerVendorFilter() {
     final String s = expr.get("Filter by vendor/customer");
     try {
@@ -150,6 +161,7 @@ public class ExpressionsTest extends BaseTest {
     assertEquals("", result);
   }
 
+  @Test
   public void testGetFilterExpression() {
     final String s = expr.get("Complex expression from Java");
     try {

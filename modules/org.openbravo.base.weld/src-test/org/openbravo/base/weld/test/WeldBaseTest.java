@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,16 +24,9 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
-import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.importer.ExplodedImporter;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Base test for weld, provides access to the weld container.
@@ -41,7 +34,7 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 @RunWith(Arquillian.class)
-public class WeldBaseTest extends BaseTest {
+public class WeldBaseTest extends OBBaseTest {
 
   @Deployment
   public static JavaArchive createTestArchive() {
@@ -59,16 +52,6 @@ public class WeldBaseTest extends BaseTest {
 
   @Inject
   private BeanManager beanManager;
-
-  @Before
-  public void setUp() throws Exception {
-    super.setUp();
-  }
-
-  @After
-  public void tearDown() throws Exception {
-    super.tearDown();
-  }
 
   @SuppressWarnings("unchecked")
   protected <U extends Object> U getWeldComponent(Class<U> clz) {

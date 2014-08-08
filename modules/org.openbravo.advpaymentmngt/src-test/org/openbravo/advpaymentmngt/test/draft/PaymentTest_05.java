@@ -11,13 +11,15 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
 
 package org.openbravo.advpaymentmngt.test.draft;
+
+import static org.junit.Assert.assertFalse;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
+import org.junit.Test;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -46,13 +50,13 @@ import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * The PaymentTest_03 class used to test the payment document generation and reactivation with
  * write-off option.
  */
-public class PaymentTest_05 extends BaseTest {
+public class PaymentTest_05 extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(PaymentTest_05.class);
 
@@ -70,15 +74,16 @@ public class PaymentTest_05 extends BaseTest {
   /**
    * Initial Set up.
    */
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @Before
+  protected void setUpP05() throws Exception {
+    // super.setUp();
     TestUtility.setTestContext();
   }
 
   /**
    * Payment Proposal with two invoices of different business partner partially paid.
    */
+  @Test
   public void testRunPayment_05() {
     String fruitBio = "8A64B71A2B0B2946012B0FE1E45F01B0";
     String happyDrinks = "8A64B71A2B0B2946012B0FE1E37001AB";

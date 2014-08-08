@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -23,26 +23,29 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.Before;
+import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.geography.Location;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
-public class FinancialAccountTest extends BaseTest {
+public class FinancialAccountTest extends OBBaseTest {
 
   private static final String BANK = "B";
   private static final String CASH = "C";
   private static final String STANDARD_DESCRIPTION = "JUnit Test";
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @Before
+  protected void setUpF() throws Exception {
+    // super.setUp();
     TestUtility.setTestContext();
   }
 
+  @Test
   public void testAddFinancialAccountValid1() {
     TestUtility.insertFinancialAccount("APRM_FINANCIAL_ACCOUNT_1", STANDARD_DESCRIPTION,
         getOneInstance(Currency.class), CASH, false, getOneInstance(Location.class),
@@ -51,6 +54,7 @@ public class FinancialAccountTest extends BaseTest {
   }
 
   // Pre-requisite: at least one Matching Algorithm created
+  @Test
   public void testAddFinancialAccountValid2() {
     TestUtility.insertFinancialAccount("APRM_FINANCIAL_ACCOUNT_2", STANDARD_DESCRIPTION,
         getOneInstance(Currency.class), BANK, false, getOneInstance(Location.class),
@@ -59,6 +63,7 @@ public class FinancialAccountTest extends BaseTest {
         null/* getOneInstance(MatchingAlgorithm.class) */, true, false);
   }
 
+  @Test
   public void testAddFinancialAccountValid3() {
     TestUtility.insertFinancialAccount("APRM_FINANCIAL_ACCOUNT_3", STANDARD_DESCRIPTION,
         getOneInstance(Currency.class), BANK, false, getOneInstance(Location.class),
@@ -69,6 +74,7 @@ public class FinancialAccountTest extends BaseTest {
   /**
    * Currency is mandatory
    */
+  @Test
   public void testAddFinancialAccountNotValid1() {
     TestUtility.insertFinancialAccount("APRM_FINANCIAL_ACCOUNT_4", STANDARD_DESCRIPTION, null,
         BANK, false, getOneInstance(Location.class), getOneInstance(BusinessPartner.class), "2054",
@@ -79,6 +85,7 @@ public class FinancialAccountTest extends BaseTest {
   /**
    * Deletes all the Payment Methods created for testing
    */
+  @Test
   public void testDeleteFinancialAccounts() {
     final OBCriteria<FIN_FinancialAccount> obCriteria = OBDal.getInstance().createCriteria(
         FIN_FinancialAccount.class);
