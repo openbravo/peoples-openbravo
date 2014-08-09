@@ -7,11 +7,12 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, $ */
+/*global OB, enyo, $, SynchronizationHelper */
 
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.LeftToolbarImpl',
   kind: 'OB.UI.MultiColumn.Toolbar',
+  synchId: null,
   buttons: [{
     kind: 'OB.UI.ToolbarButton',
     name: 'btnCancel',
@@ -27,10 +28,20 @@ enyo.kind({
   }, {
     kind: 'OB.UI.ToolbarButton',
     name: 'btnDone',
-    disabled: false,
+    disabled: true,
     i18nLabel: 'OBPOS_LblDone',
     stepCount: 0,
     span: 6,
+    handlers: {
+      synchronizing: 'disableButton',
+      synchronized: 'enableButton'
+    },
+    disableButton: function () {
+      this.setDisabled(true);
+    },
+    enableButton: function () {
+      this.setDisabled(false);
+    },
     init: function (model) {
       this.model = model;
     },
@@ -122,6 +133,7 @@ enyo.kind({
   }],
 
   init: function () {
+    this.synchId = SynchronizationHelper.busyUntilFinishes("cashmanagement");
     this.inherited(arguments);
 
     // cashMgmtDepositEvents or cashMgmtDropEvents Collection is shown by OB.UI.Table, when selecting an option 'click' event
@@ -157,6 +169,10 @@ enyo.kind({
         }
       }]);
     }, this);
+  },
+
+  rendered: function () {
+    SynchronizationHelper.finished(this.synchId, "cashmanagement");
   }
 });
 
