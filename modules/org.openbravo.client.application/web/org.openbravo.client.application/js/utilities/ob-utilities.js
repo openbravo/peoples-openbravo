@@ -379,6 +379,9 @@ OB.Utilities.openDirectTab = function (tabId, recordId, command, position, crite
     if (urlParams.criteria) {
       view.additionalCriteriaTabId = data.tabId;
       view.additionalCriteria = urlParams.criteria;
+      if (urlParams.fkCache) {
+        view.fkCache = urlParams.fkCache;
+      }
     }
 
     if (urlParams.replaceDefaultFilter) {
