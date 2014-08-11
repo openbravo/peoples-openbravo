@@ -2418,6 +2418,8 @@ public abstract class AcctServer {
       conversionDate = dateFormat.format(transaction.getDateAcct());
       conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Transaction, transaction.getId(),
           currencyIDFrom, currencyIDTo);
+    } else {
+      conversionDate = dateAcct;
     }
     if (conversionRateCurrentDoc != null) {
       amtTo = applyRate(_amount, conversionRateCurrentDoc, true);
