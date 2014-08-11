@@ -1091,7 +1091,7 @@ public class FIN_Utility {
     parameters.add(status);
     parameters.add((psd != null) ? psd.getId() : "");
     String result = (String) CallStoredProcedure.getInstance().call("APRM_ISPAYMENTCONFIRMED",
-        parameters, null);
+        parameters, null, false);
 
     return "Y".equals(result);
   }
