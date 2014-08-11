@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,18 @@
 
 package org.openbravo.test.security;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -32,7 +40,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.currency.CurrencyTrl;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests access on the basis of window and table definitions. Also tests derived read access.
@@ -45,27 +53,16 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class EntityAccessTest extends BaseTest {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class EntityAccessTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(EntityAccessTest.class);
 
   /**
-   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
-   * execution order of the test cases.
-   */
-  public void testContent() {
-    createCurrency();
-    checkDerivedReadableCurrency();
-    updateCurrencyDerivedRead();
-    nonReadable();
-    zDeleteTestData();
-
-  }
-
-  /**
    * Creates test data, a {@link Currency}.
    */
-  public void createCurrency() {
+  @Test
+  public void testACreateCurrency() {
     setTestAdminContext();
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "TE2"));
@@ -80,7 +77,7 @@ public class EntityAccessTest extends BaseTest {
       c.setCostingPrecision((long) 4);
       OBDal.getInstance().save(c);
     }
-    OBDal.getInstance().flush();
+
   }
 
   /**
@@ -89,7 +86,9 @@ public class EntityAccessTest extends BaseTest {
    * After fixing issue #0010139, all entities are deletable. Therefore this test case is not going
    * to be executed.
    */
-  public void doNotExecutetestNonDeletable() {
+  @Ignore("This test is currently disabled because after fixing issue #0010139, all entities are deletable.")
+  @Test
+  public void testBDoNotExecutetestNonDeletable() {
     setTestUserContext();
     addReadWriteAccess(Currency.class);
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
@@ -99,7 +98,7 @@ public class EntityAccessTest extends BaseTest {
     final Currency c = cs.get(0);
     try {
       OBDal.getInstance().remove(c);
-      OBDal.getInstance().flush();
+      OBDal.getInstance().commitAndClose();
       fail("Currency should be non-deletable");
     } catch (final OBSecurityException e) {
       assertTrue("Wrong exception thrown:  " + e.getMessage(),
@@ -112,7 +111,8 @@ public class EntityAccessTest extends BaseTest {
    * read. Also checks the allowRead concept of a BaseOBObject (
    * {@link BaseOBObject#setAllowRead(boolean)})
    */
-  public void checkDerivedReadableCurrency() {
+  @Test
+  public void testCCheckDerivedReadableCurrency() {
     setUserContext(TEST2_USER_ID);
     final Currency c = OBDal.getInstance().get(Currency.class, "100");
     log.debug(c.getIdentifier());
@@ -151,13 +151,13 @@ public class EntityAccessTest extends BaseTest {
         }
       }
     }
-    OBDal.getInstance().flush();
   }
 
   /**
    * Test derived readable on a set method, also there this check must be done.
    */
-  public void updateCurrencyDerivedRead() {
+  @Test
+  public void testDUpdateCurrencyDerivedRead() {
     setUserContext(TEST2_USER_ID);
     final Currency c = OBDal.getInstance().get(Currency.class, "100");
     try {
@@ -175,14 +175,14 @@ public class EntityAccessTest extends BaseTest {
       assertTrue("Wrong exception thrown:  " + e.getMessage(),
           e.getMessage().indexOf("is not writable by this user") != -1);
     }
-    OBDal.getInstance().flush();
   }
 
   /**
    * Checks non-readable, if an object/entity is not readable then it may not be read through the
    * {@link OBDal}.
    */
-  public void nonReadable() {
+  @Test
+  public void testENonReadable() {
     assertTrue(true);
     // FIXME: find a test case for this!
 
@@ -202,7 +202,7 @@ public class EntityAccessTest extends BaseTest {
   /**
    * Removes the test data by using the administrator account.
    */
-  public void zDeleteTestData() {
+  public void testFDeleteTestData() {
     setTestUserContext();
     addReadWriteAccess(Currency.class);
     addReadWriteAccess(CurrencyTrl.class);
@@ -211,7 +211,5 @@ public class EntityAccessTest extends BaseTest {
     final List<Currency> cs = obc.list();
     assertEquals(1, cs.size());
     OBDal.getInstance().remove(cs.get(0));
-    OBDal.getInstance().flush();
   }
-
 }

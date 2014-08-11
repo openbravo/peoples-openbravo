@@ -11,13 +11,20 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.service.json.test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -29,6 +36,7 @@ import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.type.Type;
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -46,7 +54,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonToDataConverter;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the {@link DataToJsonConverter} and the {@link JsonToDataConverter} classes by converting to
@@ -55,12 +63,13 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class JsonConversionTest extends BaseTest {
+public class JsonConversionTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(JsonConversionTest.class);
 
   /**
    * Read one BaseOBObject and convert to json and back to the object again.
    */
+  @Test
   public void testJsonConversionOfSingleObject() throws Exception {
     setSystemAdministratorContext();
     final Client client = OBDal.getInstance().get(Client.class, "0");
@@ -78,6 +87,7 @@ public class JsonConversionTest extends BaseTest {
    * Test a json property path consisting of several steps (dots).
    * 
    */
+  @Test
   public void testJsonMultiplePaths() throws Exception {
     setSystemAdministratorContext();
     final User user = OBDal.getInstance().get(User.class, "1000018");
@@ -110,6 +120,7 @@ public class JsonConversionTest extends BaseTest {
   /**
    * Read list of ADColumn objects and translate to json and back.
    */
+  @Test
   public void testJsonConversionListOfObjects() throws Exception {
     setSystemAdministratorContext();
     final List<BaseOBObject> columns = OBDal.getInstance()
@@ -132,6 +143,7 @@ public class JsonConversionTest extends BaseTest {
    * Read all objects in the database and translate to json and back. Then check that no updates
    * take place.
    */
+  @Test
   public void testJsonConversionAllObjects() throws Exception {
     setSystemAdministratorContext();
     final SessionFactoryController currentSFC = SessionFactoryController.getInstance();
@@ -169,6 +181,7 @@ public class JsonConversionTest extends BaseTest {
 
   // test issue:
   // https://issues.openbravo.com/view.php?id=14697
+  @Test
   public void testIssue14697CheckDerivedReadableCurrency() {
     setUserContext(getRandomUser().getId());
     final BaseOBObject c = OBDal.getInstance().get(Currency.class, "100");

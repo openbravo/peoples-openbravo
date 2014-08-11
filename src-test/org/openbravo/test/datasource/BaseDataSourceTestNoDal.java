@@ -21,8 +21,6 @@ package org.openbravo.test.datasource;
 
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 /**
  * Base for tests performing requests to a live Openbravo instance. It doesn't allow to work with
  * DAL, in case it is needed {@link BaseDataSourceTestDal} can be used instead.
@@ -33,7 +31,7 @@ import junit.framework.TestCase;
  * @author alostale
  * 
  */
-public class BaseDataSourceTestNoDal extends TestCase {
+public class BaseDataSourceTestNoDal {
   private static String OB_URL = null;
   protected static final String LOGIN = "Openbravo";
   protected static final String PWD = "openbravo";
@@ -66,6 +64,8 @@ public class BaseDataSourceTestNoDal extends TestCase {
   /**
    * Obtains URL of Openbravo instance, by default taken from Openbravo.poperties context.url
    * property
+   * 
+   * @return
    */
   protected String getOpenbravoURL() {
     if (OB_URL != null) {

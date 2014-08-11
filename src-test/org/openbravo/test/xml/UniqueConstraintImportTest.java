@@ -19,10 +19,16 @@
 
 package org.openbravo.test.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
@@ -44,25 +50,18 @@ import org.openbravo.service.db.ImportResult;
  * there is an object with B which also has the value V1 for the unique key field. Then object A
  * will overwrite object B in the database.
  * 
- * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
- * test cases NOT begin by "test...".
- * 
  * @author mtaal
  */
-
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UniqueConstraintImportTest extends XMLBaseTest {
 
   private static final Logger log = Logger.getLogger(UniqueConstraintImportTest.class);
 
-  public void testContent() {
-    aCreateCountryTrl();
-    countryTrlImport();
-  }
-
   /**
    * Builds the testdata, {@link CountryTrl} objects for a specific {@link Country}.
    */
-  public void aCreateCountryTrl() {
+  @Test
+  public void testACreateCountryTrl() {
     setSystemAdministratorContext();
     final Country country = getCountry("Norway");
     final OBCriteria<CountryTrl> obc = OBDal.getInstance().createCriteria(CountryTrl.class);
@@ -100,7 +99,8 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
    * 
    * This method also cleans up the testdata.
    */
-  public void countryTrlImport() {
+  @Test
+  public void testBCountryTrlImport() {
     setTestAdminContext();
 
     // read countrytrl

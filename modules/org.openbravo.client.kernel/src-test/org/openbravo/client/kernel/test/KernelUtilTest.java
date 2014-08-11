@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,13 +19,18 @@
 
 package org.openbravo.client.kernel.test;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the {@link KernelUtils} class.
@@ -33,15 +38,17 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class KernelUtilTest extends BaseTest {
+public class KernelUtilTest extends OBBaseTest {
 
   private static void initializeStatics() {
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-
+  /** 
+   * This before method is named setUpK() to avoid overwriting the super 
+   * setUp method that is invoke automatically before this one.
+   */
+  @Before
+  public void setUpK() throws Exception {
     // after super.setUp, must be done after initializing dal layer in super class
     initializeStatics();
   }
@@ -49,6 +56,7 @@ public class KernelUtilTest extends BaseTest {
   /**
    * Tests {@link KernelUtils#getModulesOrderedByDependency()}.
    */
+  @Test
   public void testModulesOrderByDependency() throws Exception {
     setSystemAdministratorContext();
     final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
@@ -76,6 +84,7 @@ public class KernelUtilTest extends BaseTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testVersionId() throws Exception {
     setSystemAdministratorContext();
     try {

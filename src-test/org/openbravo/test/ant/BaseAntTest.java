@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,9 +22,8 @@ package org.openbravo.test.ant;
 import java.io.File;
 import java.net.URL;
 
-import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -35,13 +34,14 @@ import org.openbravo.base.session.OBPropertiesProvider;
  * @author mtaal
  */
 
-public class BaseAntTest extends TestCase {
+public class BaseAntTest {
   private static final Logger log = Logger.getLogger(BaseAntTest.class);
 
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     setConfigPropertyFiles();
-    super.setUp();
+    // In JUnit 3x this class extends TestCase and can do super.
+    // super.setUp();
   }
 
   protected void doTest(String task) {

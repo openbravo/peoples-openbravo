@@ -19,10 +19,17 @@
 
 package org.openbravo.test.webservice;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 
 import org.apache.log4j.Logger;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -41,6 +48,7 @@ import org.openbravo.model.common.geography.Region;
  * @author mtaal
  */
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WSUpdateTest extends BaseWSTest {
 
   private static final Logger log = Logger.getLogger(WSUpdateTest.class);
@@ -48,27 +56,11 @@ public class WSUpdateTest extends BaseWSTest {
   private static String cityId = null;
 
   /**
-   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
-   * execution order of the test cases.
-   * 
-   * @throws Exception
-   */
-  public void testContent() throws Exception {
-    aCreateCity();
-    readUpdateCity();
-    incorrectRootTag();
-    readAddDeleteCity();
-    readAddDeleteQueryCity();
-    doTest14973();
-    readAddCityWrongMethodError();
-    zRemoveCity();
-  }
-
-  /**
    * Creates a city through a webservice calls. This test must be run before the others because it
    * sets the cityId member in this class.
    */
-  public void aCreateCity() {
+  @Test
+  public void testACreateCity() {
     // do not replace this with a call to setUserContext,
     // the city must be stored using the client/org of the 100 user
     // this ensures that webservice calls will be able to find the city
@@ -101,7 +93,7 @@ public class WSUpdateTest extends BaseWSTest {
    */
   private void initializeCreateCity() throws Exception {
     if (cityId == null) {
-      aCreateCity();
+      testACreateCity();
     }
   }
 
@@ -110,7 +102,8 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
-  public void readUpdateCity() throws Exception {
+  @Test
+  public void testBReadUpdateCity() throws Exception {
     initializeCreateCity();
 
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
@@ -128,6 +121,7 @@ public class WSUpdateTest extends BaseWSTest {
     final String content = doContentRequest("/ws/dal/City/" + cityId, newCity, 200, "<updated>",
         "POST");
     assertTrue(content.indexOf("City id=\"" + cityId + "") != -1);
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -135,7 +129,8 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
-  public void incorrectRootTag() throws Exception {
+  @Test
+  public void testCIncorrectRootTag() throws Exception {
     initializeCreateCity();
 
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
@@ -152,13 +147,15 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
-  public void readAddDeleteCity() throws Exception {
+  @Test
+  public void testDReadAddDeleteCity() throws Exception {
     initializeCreateCity();
 
     doTestReadAddDeleteCity(false);
   }
 
-  public void readAddDeleteQueryCity() throws Exception {
+  @Test
+  public void testEReadAddDeleteQueryCity() throws Exception {
     initializeCreateCity();
 
     doTestReadAddDeleteCity(true);
@@ -235,7 +232,8 @@ public class WSUpdateTest extends BaseWSTest {
    * Tests issue 14973 https://issues.openbravo.com/view.php?id=14973 DalWebServiceServlet does not
    * report errors which occur at commit time
    */
-  public void doTest14973() throws Exception {
+  @Test
+  public void testFDoTest14973() throws Exception {
     final HttpURLConnection hc = createConnection("/ws/dal/Product/1000004", "DELETE");
     hc.connect();
     assertEquals(500, hc.getResponseCode());
@@ -246,7 +244,8 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
-  public void readAddCityWrongMethodError() throws Exception {
+  @Test
+  public void testGReadAddCityWrongMethodError() throws Exception {
     initializeCreateCity();
     final String city = doTestGetRequest("/ws/dal/City/" + cityId, null, 200);
     String newCity = city.replaceAll("</name>", (System.currentTimeMillis() + "").substring(6)
@@ -267,7 +266,8 @@ public class WSUpdateTest extends BaseWSTest {
    * 
    * @throws Exception
    */
-  public void zRemoveCity() throws Exception {
+  @Test
+  public void testHRemoveCity() throws Exception {
     initializeCreateCity();
     doDirectDeleteRequest("/ws/dal/City/" + cityId, 200);
   }

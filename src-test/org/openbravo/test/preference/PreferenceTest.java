@@ -18,6 +18,11 @@
  */
 package org.openbravo.test.preference;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,6 +31,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -44,9 +52,10 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
-public class PreferenceTest extends BaseTest {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class PreferenceTest extends OBBaseTest {
 
   private static final String SALES_ROLE_ID = "FA057013C10148828D2430F66F42EF1A";
 
@@ -75,35 +84,8 @@ public class PreferenceTest extends BaseTest {
    */
   private static final String ORG_B2 = "B843C30461EA4501935CB1D125C9C25A";
 
-  /**
-   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
-   * execution order of the test cases.
-   * 
-   * @throws PropertyException
-   * @throws SQLException
-   */
-  public void testContent() throws PropertyException, SQLException {
-    createPreference();
-    overwritePreference();
-    samePropertyDifferentVisibility();
-    propertyGet();
-    pLPropertyGet();
-    windowVisibility();
-    pLWindowVisibility();
-    orgVisibility();
-    pLOrgVisibility();
-    exceptionNotFound();
-    pLExceptionNotFound();
-    conflict();
-    pLConflict();
-    solvedConflict();
-    pLSolvedConflict();
-    preferenceClientOrgSetting();
-    preferenceListSetAndGet();
-    clean();
-  }
-
-  public void createPreference() {
+  @Test
+  public void testACreatePreference() {
     setSystemAdministratorContext();
 
     Preferences.setPreferenceValue("testProperty", "testValue", false, null, null, null, null,
@@ -120,7 +102,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void overwritePreference() {
+  @Test
+  public void testBOverwritePreference() {
     setSystemAdministratorContext();
 
     Preferences.setPreferenceValue("testProperty", "newValue", false, null, null, null, null, null,
@@ -138,7 +121,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void samePropertyDifferentVisibility() {
+  @Test
+  public void testCSamePropertyDifferentVisibility() {
     setSystemAdministratorContext();
 
     Role role = OBDal.getInstance().get(Role.class, SALES_ROLE_ID); // Sales
@@ -155,7 +139,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void propertyGet() throws PropertyException {
+  @Test
+  public void testDPropertyGet() throws PropertyException {
     setSystemAdministratorContext();
     String value = Preferences.getPreferenceValue("testProperty", false, OBContext.getOBContext()
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
@@ -167,10 +152,10 @@ public class PreferenceTest extends BaseTest {
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
         .getOBContext().getUser(), role, null);
     assertEquals("Not found expected value.", "salesValue", value);
-    OBDal.getInstance().flush();
   }
 
-  public void pLPropertyGet() throws SQLException {
+  @Test
+  public void testEPLPropertyGet() throws SQLException {
     setSystemAdministratorContext();
     String value = getPLPreference("testProperty", false, OBContext.getOBContext()
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
@@ -182,10 +167,10 @@ public class PreferenceTest extends BaseTest {
         OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
         role, null);
     assertEquals("Not found expected value.", "salesValue", value);
-    OBDal.getInstance().flush();
   }
 
-  public void windowVisibility() throws PropertyException {
+  @Test
+  public void testFWindowVisibility() throws PropertyException {
     setSystemAdministratorContext();
     Window window = OBDal.getInstance().get(Window.class, "276"); // Alert window
     Preferences.setPreferenceValue("testProperty", "alertGeneral", false, null, null, null, null,
@@ -218,7 +203,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void pLWindowVisibility() throws SQLException {
+  @Test
+  public void testGPLWindowVisibility() throws SQLException {
     setSystemAdministratorContext();
     Window window = OBDal.getInstance().get(Window.class, "276"); // Alert window
     Preferences.setPreferenceValue("testProperty", "alertGeneral", false, null, null, null, null,
@@ -247,7 +233,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void orgVisibility() throws PropertyException {
+  @Test
+  public void testHOrgVisibility() throws PropertyException {
     setSystemAdministratorContext();
     Client client = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
     Organization orgB = OBDal.getInstance().get(Organization.class, ORG_B);
@@ -294,7 +281,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void pLOrgVisibility() throws SQLException {
+  @Test
+  public void testIPLOrgVisibility() throws SQLException {
 
     setSystemAdministratorContext();
     Client client = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
@@ -331,7 +319,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void exceptionNotFound() {
+  @Test
+  public void testJExceptionNotFound() {
     PropertyException exception = null;
     try {
       Preferences.getPreferenceValue("testNotExists", false, OBContext.getOBContext()
@@ -346,7 +335,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void pLExceptionNotFound() {
+  @Test
+  public void testKPLExceptionNotFound() {
     SQLException exception = null;
     try {
       getPLPreference("testNotExists", false, OBContext.getOBContext().getCurrentClient(),
@@ -361,7 +351,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void conflict() {
+  @Test
+  public void testLConflict() {
     setSystemAdministratorContext();
     Preference newPref = OBProvider.getInstance().get(Preference.class);
     newPref.setPropertyList(false);
@@ -384,7 +375,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void pLConflict() {
+  @Test
+  public void testMPLConflict() {
     setSystemAdministratorContext();
     SQLException exception = null;
     try {
@@ -399,7 +391,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void solvedConflict() throws PropertyException {
+  @Test
+  public void testNSolvedConflict() throws PropertyException {
     setSystemAdministratorContext();
 
     // This piece of code doesn't work because of issue #13153
@@ -427,16 +420,17 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void pLSolvedConflict() throws SQLException {
+  @Test
+  public void testOPLSolvedConflict() throws SQLException {
     setSystemAdministratorContext();
     String value = getPLPreference("testProperty", false, OBContext.getOBContext()
         .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
         .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "anotherValue", value);
-    OBDal.getInstance().commitAndClose();
   }
 
-  public void preferenceClientOrgSetting() {
+  @Test
+  public void testPPreferenceClientOrgSetting() {
     setTestAdminContext();
     Preference p = Preferences.setPreferenceValue("testProperty2", "testValue", false, null, null,
         null, null, null, null);
@@ -445,7 +439,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void preferenceListSetAndGet() throws PropertyException {
+  @Test
+  public void testQPreferenceListSetAndGet() throws PropertyException {
     setSystemAdministratorContext();
 
     // Property configuration list
@@ -486,7 +481,8 @@ public class PreferenceTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void clean() {
+  @Test
+  public void testRClean() {
     setSystemAdministratorContext();
     OBCriteria<Preference> qPref = OBDal.getInstance().createCriteria(Preference.class);
     qPref.add(Restrictions.or(Restrictions.like(Preference.PROPERTY_ATTRIBUTE, "testProperty%"),
@@ -503,7 +499,6 @@ public class PreferenceTest extends BaseTest {
       OBDal.getInstance().refresh(l);
       OBDal.getInstance().remove(l);
     }
-    OBDal.getInstance().flush();
     OBDal.getInstance().commitAndClose();
   }
 

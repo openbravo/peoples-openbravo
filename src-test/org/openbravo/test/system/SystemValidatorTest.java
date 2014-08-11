@@ -11,13 +11,15 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.test.system;
+
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.List;
@@ -29,6 +31,7 @@ import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.platform.ExcludeFilter;
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.ddlutils.util.DBSMOBUtil;
@@ -37,7 +40,7 @@ import org.openbravo.service.system.DatabaseValidator;
 import org.openbravo.service.system.ModuleValidator;
 import org.openbravo.service.system.SystemValidationResult;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests System Validation.
@@ -48,7 +51,7 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class SystemValidatorTest extends BaseTest {
+public class SystemValidatorTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(SystemValidatorTest.class);
 
@@ -114,6 +117,7 @@ public class SystemValidatorTest extends BaseTest {
   /**
    * Performs module validation using the {@link ModuleValidator}.
    */
+  @Test
   public void testModulesValidation() {
     setSystemAdministratorContext();
     final ModuleValidator moduleValidator = new ModuleValidator();

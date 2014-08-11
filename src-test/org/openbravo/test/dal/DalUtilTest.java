@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,10 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -26,7 +30,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the {@link DalUtil} class.
@@ -35,11 +39,12 @@ import org.openbravo.test.base.BaseTest;
  * @author iperdomo
  */
 
-public class DalUtilTest extends BaseTest {
+public class DalUtilTest extends OBBaseTest {
 
   /**
    * Tests {@link DalUtil#getPropertyFromPath(org.openbravo.base.model.Entity, String)}.
    */
+  @Test
   public void testGetProperty() {
     setSystemAdministratorContext();
     final Entity bpEntity = ModelProvider.getInstance().getEntity(BusinessPartner.ENTITY_NAME);
@@ -52,6 +57,7 @@ public class DalUtilTest extends BaseTest {
   /**
    * Tests {@link DalUtil#getValueFromPath(org.openbravo.base.structure.BaseOBObject, String)}.
    */
+  @Test
   public void testGetValue() {
     setSystemAdministratorContext();
     final Organization org = OBDal.getInstance().get(Organization.class, "0");

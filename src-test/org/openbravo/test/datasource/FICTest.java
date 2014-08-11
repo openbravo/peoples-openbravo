@@ -19,17 +19,20 @@
 
 package org.openbravo.test.datasource;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Test;
 
 /**
  * Test cases for FormInitializationComponent
  * 
  * @author alostale
- *
+ * 
  */
 public class FICTest extends BaseDataSourceTestNoDal {
 
@@ -39,6 +42,7 @@ public class FICTest extends BaseDataSourceTestNoDal {
    * 
    * See issue #27234
    */
+  @Test
   public void testAuxiliaryInputBasedOnCallout() throws Exception {
     Map<String, String> params = new HashMap<String, String>();
     params.put("MODE", "NEW");

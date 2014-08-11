@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.collection.PersistentBag;
 import org.hibernate.proxy.HibernateProxy;
 import org.junit.Assert;
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
@@ -38,7 +39,7 @@ import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Contains examples used to explain Data Access Layer performance.
@@ -48,11 +49,12 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DalPerformanceExampleTest extends BaseTest {
+public class DalPerformanceExampleTest extends OBBaseTest {
 
   /**
    * Simple query for all products.
    */
+  @Test
   public void testSimpleQuery() {
     setTestUserContext();
 
@@ -70,6 +72,7 @@ public class DalPerformanceExampleTest extends BaseTest {
   /**
    * Scrollable results
    */
+  @Test
   public void testSimpleScrollQuery() {
     setTestUserContext();
 
@@ -107,6 +110,7 @@ public class DalPerformanceExampleTest extends BaseTest {
   /**
    * Scrollable results
    */
+  @Test
   public void testInsertBPs() {
     setTestUserContext();
     final int cnt = 100;
@@ -138,6 +142,7 @@ public class DalPerformanceExampleTest extends BaseTest {
   /**
    * Proxy
    */
+  @Test
   public void testShowProxy() {
     setTestUserContext();
 
@@ -172,6 +177,7 @@ public class DalPerformanceExampleTest extends BaseTest {
   /**
    * Show object graph loading
    */
+  @Test
   public void testShowObjectGraph() {
     setTestUserContext();
 
@@ -198,6 +204,7 @@ public class DalPerformanceExampleTest extends BaseTest {
   /**
    * Show collection loading
    */
+  @Test
   public void testShowCollectionLoading() {
     setTestUserContext();
 
@@ -216,6 +223,7 @@ public class DalPerformanceExampleTest extends BaseTest {
   /**
    * Show explicit joining of referenced objects
    */
+  @Test
   public void testJoinReferencedObjects() {
     setTestUserContext();
     {
@@ -269,6 +277,7 @@ public class DalPerformanceExampleTest extends BaseTest {
   /**
    * DML Style operations
    */
+  @Test
   public void testDML() {
     // for example add an a to all categories
     String hqlVersionedUpdate = "update BusinessPartnerCategory set name = CONCAT(name, 'a') where name <> null";
@@ -280,6 +289,7 @@ public class DalPerformanceExampleTest extends BaseTest {
   /**
    * Scrollable results
    */
+  @Test
   public void testInsertSalesOrders() {
     setTestUserContext();
     final int cnt = 100;

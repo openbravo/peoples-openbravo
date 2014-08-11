@@ -21,7 +21,7 @@ package org.openbravo.test.datasource;
 
 import java.util.Map;
 
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Base for tests performing requests to a live Openbravo instance. Allows to work with DAL, in case
@@ -33,7 +33,7 @@ import org.openbravo.test.base.BaseTest;
  * @author alostale
  * 
  */
-public class BaseDataSourceTestDal extends BaseTest {
+public class BaseDataSourceTestDal extends OBBaseTest {
   private static String OB_URL = null;
   protected static final String LOGIN = "Openbravo";
   protected static final String PWD = "openbravo";
@@ -66,6 +66,8 @@ public class BaseDataSourceTestDal extends BaseTest {
   /**
    * Obtains URL of Openbravo instance, by default taken from Openbravo.poperties context.url
    * property
+   * 
+   * @return
    */
   protected String getOpenbravoURL() {
     if (OB_URL != null) {

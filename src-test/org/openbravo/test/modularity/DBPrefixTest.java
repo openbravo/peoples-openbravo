@@ -19,45 +19,35 @@
 
 package org.openbravo.test.modularity;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDBPrefix;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * This tests check that db prefixes are correctly checked when they are inserted in DB in order not
  * to follow modularity rules
  * 
- * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
- * test cases NOT begin by "test...".
  */
-public class DBPrefixTest extends BaseTest {
-
-  /**
-   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
-   * execution order of the test cases.
-   */
-  public void testContent() {
-    createModule();
-    addDBPrefixValid1();
-    addDBPrefixValid2();
-    addDBPrefixNotValid1();
-    addDBPrefixNotValid2();
-    addDBPrefixNotValid3();
-    addDBPrefixNotValid4();
-    deleteModule();
-
-  }
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class DBPrefixTest extends OBBaseTest {
 
   /**
    * Creates a new module to test with
    */
-  public void createModule() {
+  private void createModule() {
     setSystemAdministratorContext();
     Module module = OBProvider.getInstance().get(Module.class);
     module.setName("Test-dbprefixes-names");
@@ -70,45 +60,54 @@ public class DBPrefixTest extends BaseTest {
   }
 
   /**
-   * Add a valid dbprefixes, everything should go ok only alphabetic upper chars
+   * Add a valid dbprefixes, everything should go ok only alphabetic upper chars. First call to
+   * createModule().
    */
-  public void addDBPrefixValid1() {
+  @Test
+  public void testAAddDBPrefixValid1() {
+    createModule();
     insertDBPrefix("OK", true);
   }
 
   /**
    * alpha numeric chars not starting with a numeric one
    */
-  public void addDBPrefixValid2() {
+  @Test
+  public void testBAddDBPrefixValid2() {
     insertDBPrefix("OK12", true);
   }
 
   /**
    * Add not valid db prefixes starts with number
    */
-  public void addDBPrefixNotValid1() {
+  @Test
+  public void testCAddDBPrefixNotValid1() {
     insertDBPrefix("1FAIL", false);
   }
 
   /**
    * contains lower case letters
    */
-  public void addDBPrefixNotValid2() {
+  @Test
+  public void testDAddDBPrefixNotValid2() {
     insertDBPrefix("Fail", false);
   }
 
   /**
    * contains underscore
    */
-  public void addDBPrefixNotValid3() {
+  @Test
+  public void testEAddDBPrefixNotValid3() {
     insertDBPrefix("FAIL_1", false);
   }
 
   /**
-   * contains other non-alphabetic chars
+   * contains other non-alphabetic chars. In the end, call to deleteModule
    */
-  public void addDBPrefixNotValid4() {
+  @Test
+  public void testFAddDBPrefixNotValid4() {
     insertDBPrefix("FAIL&/1", false);
+    deleteModule();
   }
 
   /**
@@ -123,9 +122,10 @@ public class DBPrefixTest extends BaseTest {
       System.out.println("Removing module: " + mod.getName());
       OBDal.getInstance().remove(mod);
     }
+    OBDal.getInstance().commitAndClose();
   }
 
-  // Obtains the module inserted for testing purposes
+  // Obtains the module iserted for testing purposes
   private Module getModule() {
     setSystemAdministratorContext();
     final OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
@@ -162,7 +162,6 @@ public class DBPrefixTest extends BaseTest {
       exception = true;
       OBDal.getInstance().rollbackAndClose();
     }
-
     if (isValid)
       assertFalse("Not inserted a valid prefix:" + name, exception);
     else

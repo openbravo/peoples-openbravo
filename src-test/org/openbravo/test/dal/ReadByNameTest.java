@@ -18,44 +18,41 @@
  */
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.UUID;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.Location;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests creating a location and then reading it again using the {@link OBCriteria} api.
  * 
- * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
- * test cases NOT begin by "test...".
- * 
  * @author iperdomo
  */
-public class ReadByNameTest extends BaseTest {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class ReadByNameTest extends OBBaseTest {
 
   // Will hold Ids for next tests
   private static String bpId; // Business Partner Id
   private static String locId; // Location Id
   private static String locName; // Location name
 
-  /**
-   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
-   * execution order of the test cases.
-   */
-  public void testContent() {
-    createBP();
-    addLocation();
-    findLocation();
-    pBData();
-  }
-
-  public void createBP() {
+  @Test
+  public void testACreateBP() {
 
     setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
@@ -78,9 +75,11 @@ public class ReadByNameTest extends BaseTest {
     OBDal.getInstance().save(bp);
     OBDal.getInstance().flush();
     bpId = bp.getId();
+    OBDal.getInstance().commitAndClose();
   }
 
-  public void addLocation() {
+  @Test
+  public void testBAddLocation() {
 
     setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
@@ -111,12 +110,13 @@ public class ReadByNameTest extends BaseTest {
 
     OBDal.getInstance().save(bpLoc);
     OBDal.getInstance().flush();
-    OBDal.getInstance().commitAndClose();
 
     locId = bpLoc.getId();
+    OBDal.getInstance().commitAndClose();
   }
 
-  public void findLocation() {
+  @Test
+  public void testCFindLocation() {
     // tests have run in the correct order
     assertNotNull(locName);
     assertNotNull(locId);
@@ -141,7 +141,8 @@ public class ReadByNameTest extends BaseTest {
     assertEquals(locName, tmpLoc.getName());
   }
 
-  public void pBData() {
+  @Test
+  public void testDPBData() {
 
     setTestUserContext();
     addReadWriteAccess(BusinessPartner.class);
@@ -156,8 +157,9 @@ public class ReadByNameTest extends BaseTest {
     }
     setTestAdminContext();
     OBDal.getInstance().remove(bp);
-    OBDal.getInstance().flush();
+
     assertNull(OBDal.getInstance().get(BusinessPartner.class, bpId));
     assertNull(OBDal.getInstance().get(Location.class, locId));
+    OBDal.getInstance().commitAndClose();
   }
 }

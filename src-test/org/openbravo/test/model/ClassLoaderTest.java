@@ -11,30 +11,33 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.test.model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.domain.ModelImplementation;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests registered classes in Application Dictionary
  * 
  * @author iperdomo
  */
-public class ClassLoaderTest extends BaseTest {
+public class ClassLoaderTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(ClassLoaderTest.class);
 
@@ -42,6 +45,7 @@ public class ClassLoaderTest extends BaseTest {
    * Test if all registered classes in Application Dictionary can be loaded. Consistency test to
    * have a clean web.xml
    */
+  @Test
   public void testModelObject() {
 
     final List<String> notFoundClasses = new ArrayList<String>();

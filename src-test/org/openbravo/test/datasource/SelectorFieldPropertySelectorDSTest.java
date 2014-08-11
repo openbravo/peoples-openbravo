@@ -19,12 +19,17 @@
 
 package org.openbravo.test.datasource;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +50,7 @@ public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal
   /**
    * Performs a request for properties without filtering
    */
+  @Test
   public void testFullList() throws Exception {
     Map<String, String> params = new HashMap<String, String>();
     params.put("inpobuiselSelectorId", PRODUCT_SELECTOR_ID);
@@ -61,6 +67,7 @@ public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal
   /**
    * Performs a request for properties filtering by property "id"
    */
+  @Test
   public void testFilter() throws Exception {
     Map<String, String> params = new HashMap<String, String>();
     params.put("inpobuiselSelectorId", PRODUCT_SELECTOR_ID);
@@ -79,6 +86,7 @@ public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal
    * _Computed column proxy property
    * 
    */
+  @Test
   public void testPropertyFieldComputedColumn1() throws Exception {
     Map<String, String> params = new HashMap<String, String>();
     params.put("inpadTableId", SHIPMENT_TABLE_ID);
@@ -98,6 +106,7 @@ public class SelectorFieldPropertySelectorDSTest extends BaseDataSourceTestNoDal
    * should return a list of all computed columns defined in C_Order table
    * 
    */
+  @Test
   public void testPropertyFieldComputedColumn2() throws Exception {
     Map<String, String> params = new HashMap<String, String>();
     params.put("inpadTableId", SHIPMENT_TABLE_ID);

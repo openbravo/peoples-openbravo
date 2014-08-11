@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,14 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -40,7 +44,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
 import org.openbravo.model.common.invoice.InvoiceSchedule;
 import org.openbravo.model.procurement.Requisition;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test property validations and validators.
@@ -52,11 +56,12 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class ValidationTest extends BaseTest {
+public class ValidationTest extends OBBaseTest {
 
   /**
    * Tests the type checking of primitive {@link Property} values.
    */
+  @Test
   public void testTypeChecking() {
     setTestAdminContext();
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
@@ -80,6 +85,7 @@ public class ValidationTest extends BaseTest {
   /**
    * Performs type checking of property values on a {@link DynamicOBObject}.
    */
+  @Test
   public void testTypeCheckDynamicObject() {
     final DynamicOBObject bpGroup = new DynamicOBObject();
     bpGroup.setEntityName(Category.ENTITY_NAME);
@@ -107,6 +113,7 @@ public class ValidationTest extends BaseTest {
   /**
    * Tests the validation of a list value (an enumeration).
    */
+  @Test
   public void testListValue() {
     setTestAdminContext();
     final OBCriteria<AlertRule> obc = OBDal.getInstance().createCriteria(AlertRule.class);
@@ -126,6 +133,7 @@ public class ValidationTest extends BaseTest {
   /**
    * Tests the field length validation on a String.
    */
+  @Test
   public void testFieldLength() {
     setSystemAdministratorContext();
 
@@ -153,6 +161,7 @@ public class ValidationTest extends BaseTest {
    * 
    * @see Property#getMaxValue()
    */
+  @Test
   public void testMaxValue() {
     setTestUserContext();
     addReadWriteAccess(InvoiceSchedule.class);
@@ -174,6 +183,7 @@ public class ValidationTest extends BaseTest {
    * 
    * @see Property#getMinValue()
    */
+  @Test
   public void testMinValue() {
     setTestUserContext();
     addReadWriteAccess(InvoiceSchedule.class);
@@ -193,6 +203,7 @@ public class ValidationTest extends BaseTest {
   /**
    * Tests Mantis issue: 8624: Validation should not check field length of id/foreign key columns
    */
+  @Test
   public void testMantis8624() {
     final String id = "012345678901234567890123456789";
     final AcctSchemaTableDocType oi = OBProvider.getInstance().get(AcctSchemaTableDocType.class);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,19 @@
 
 package org.openbravo.test.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
@@ -51,6 +58,7 @@ public class EntityXMLIssues extends XMLBaseTest {
    * Checks mantis issue 6212, issue text: When inserting reference data using DAL into ad_client 0
    * it should not generate new uuids but maintain the current ids but it is doing so.
    */
+  @Test
   public void testMantis6212() {
     cleanRefDataLoaded();
     final Client c = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
@@ -89,6 +97,7 @@ public class EntityXMLIssues extends XMLBaseTest {
    * dal trims the blank spaces so in case the column contains only blank spaces it is treated as
    * null.
    */
+  @Test
   public void testMantis6213() {
     cleanRefDataLoaded();
     final Client c = OBDal.getInstance().get(Client.class, TEST_CLIENT_ID);
@@ -144,6 +153,7 @@ public class EntityXMLIssues extends XMLBaseTest {
   /**
    * Test mantis issue 12633: XML Conversion from integer numbers should be more robust
    */
+  @Test
   public void testMantis12633() {
     setTestAdminContext();
     // read the column
@@ -172,6 +182,7 @@ public class EntityXMLIssues extends XMLBaseTest {
    * 20357: There should be a way to define with properties i want to export in a EntityXMLConverter
    * call
    */
+  @Test
   public void testIssue20357() {
 
     final OBCriteria<BaseOBObject> obc = OBDal.getInstance().createCriteria("Product");

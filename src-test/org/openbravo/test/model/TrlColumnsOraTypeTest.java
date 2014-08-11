@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,13 +19,16 @@
 
 package org.openbravo.test.model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author alostale
  * 
  */
-public class TrlColumnsOraTypeTest extends BaseTest {
+public class TrlColumnsOraTypeTest extends OBBaseTest {
   final static private Logger log = LoggerFactory.getLogger(TrlColumnsOraTypeTest.class);
 
   final static int TABLE_NAME = 1;
@@ -47,6 +50,7 @@ public class TrlColumnsOraTypeTest extends BaseTest {
   final static int TRL_LENGTH = 5;
   final static int BASE_LENGTH = 6;
 
+  @Test
   public void testTrlColumnsOraType() {
     DalConnectionProvider cp = new DalConnectionProvider(false);
     if (!cp.getRDBMS().equals("ORACLE")) {

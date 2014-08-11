@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,15 +19,13 @@
 
 package org.openbravo.test;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
 import org.openbravo.test.dal.DalComplexQueryTestOrderLine;
 import org.openbravo.test.dal.DalConnectionProviderTest;
-import org.openbravo.test.dal.DalCopyTest;
 import org.openbravo.test.dal.DalPerformanceInventoryLineTest;
 import org.openbravo.test.dal.DalPerformanceProductTest;
 import org.openbravo.test.dal.DalPerformanceProxyTest;
@@ -76,76 +74,62 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
  * 
  * @author mtaal
  */
-public class AntTaskTests {
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite("Test for org.openbravo.test.dal");
-    // $JUnit-BEGIN$
-    // suite.addTestSuite(CompositeIdTest.class);
-
-    // dal
-    suite.addTestSuite(DalComplexQueryRequisitionTest.class);
-    suite.addTestSuite(DalComplexQueryTestOrderLine.class);
-    suite.addTestSuite(DalPerformanceInventoryLineTest.class);
-    suite.addTestSuite(DalPerformanceProductTest.class);
-    suite.addTestSuite(DalPerformanceProxyTest.class);
-    suite.addTestSuite(DalQueryTest.class);
-    suite.addTestSuite(DalConnectionProviderTest.class);
-    suite.addTestSuite(DalTest.class);
-    suite.addTestSuite(DalUtilTest.class);
-    suite.addTestSuite(DalCopyTest.class);
-    suite.addTestSuite(DynamicEntityTest.class);
-    suite.addTestSuite(IssuesTest.class);
-    suite.addTestSuite(HiddenUpdateTest.class);
-    // suite.addTestSuite(HqlTest.class);
-    suite.addTestSuite(MappingGenerationTest.class);
-    suite.addTestSuite(ValidationTest.class);
-    suite.addTestSuite(OBContextTest.class);
-    suite.addTestSuite(DalStoredProcedureTest.class);
-    suite.addTestSuite(ReadByNameTest.class);
-    suite.addTestSuite(ComputedColumnsTest.class);
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+// dal
+    DalComplexQueryRequisitionTest.class, //
+    DalComplexQueryTestOrderLine.class, //
+    DalPerformanceInventoryLineTest.class, //
+    DalPerformanceProductTest.class, //
+    DalPerformanceProxyTest.class, //
+    DalQueryTest.class, //
+    DalConnectionProviderTest.class, //
+    DalTest.class, //
+    DalUtilTest.class, //
+    IssuesTest.class, //
+    DalConnectionProviderTest.class, //
+    DynamicEntityTest.class, //
+    HiddenUpdateTest.class, //
+    MappingGenerationTest.class, //
+    ValidationTest.class, //
+    OBContextTest.class, //
+    DalStoredProcedureTest.class, //
+    ReadByNameTest.class, //
+    ComputedColumnsTest.class,
 
     // expression
-    suite.addTestSuite(EvaluationTest.class);
+    EvaluationTest.class,
 
     // model
-    suite.addTestSuite(RuntimeModelTest.class);
-    suite.addTestSuite(OneToManyTest.class);
-    suite.addTestSuite(UniqueConstraintTest.class);
-    suite.addTestSuite(ClassLoaderTest.class);
+    RuntimeModelTest.class, OneToManyTest.class, //
+    UniqueConstraintTest.class, //
+    ClassLoaderTest.class,
 
     // modularity
-    suite.addTestSuite(DatasetServiceTest.class);
-    suite.addTestSuite(DBPrefixTest.class);
-    suite.addTestSuite(MergePropertiesTest.class);
-    suite.addTestSuite(TableNameTest.class);
+    DatasetServiceTest.class, //
+    DBPrefixTest.class, //
+    MergePropertiesTest.class, //
+    TableNameTest.class,
 
     // security
-    suite.addTestSuite(AccessLevelTest.class);
-    suite.addTestSuite(AllowedOrganizationsTest.class);
-    suite.addTestSuite(EntityAccessTest.class);
-    suite.addTestSuite(WritableReadableOrganizationClientTest.class);
+    AccessLevelTest.class, //
+    AllowedOrganizationsTest.class, //
+    EntityAccessTest.class, //
+    WritableReadableOrganizationClientTest.class,
 
     // system
-    suite.addTestSuite(SystemServiceTest.class);
-    suite.addTestSuite(SystemValidatorTest.class);
-    suite.addTestSuite(ErrorTextParserTest.class);
+    SystemServiceTest.class, //
+    SystemValidatorTest.class, //
+    ErrorTextParserTest.class,
 
     // xml
-    // not executing has side effects
-    // suite.addTestSuite(ClientExportImportTest.class);
-    suite.addTestSuite(EntityXMLImportTestBusinessObject.class);
-    suite.addTestSuite(EntityXMLImportTestReference.class);
-    suite.addTestSuite(EntityXMLImportTestSingle.class);
-    suite.addTestSuite(EntityXMLImportTestWarning.class);
-    suite.addTestSuite(EntityXMLIssues.class);
-    suite.addTestSuite(UniqueConstraintImportTest.class);
-    suite.addTestSuite(DatasetExportTest.class);
-
-    suite.addTestSuite(ClassicSelectorTest.class);
-
-    // $JUnit-END$
-    return suite;
-  }
-
+    EntityXMLImportTestBusinessObject.class, //
+    EntityXMLImportTestReference.class, //
+    EntityXMLImportTestSingle.class, //
+    EntityXMLImportTestWarning.class, //
+    EntityXMLIssues.class, //
+    UniqueConstraintImportTest.class, //
+    DatasetExportTest.class, //
+    ClassicSelectorTest.class, })
+public class AntTaskTests {
 }

@@ -11,29 +11,29 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
-package org.openbravo.test.javascript;
+package org.openbravo.erpCommon.security;
 
-import org.junit.Test;
-import org.openbravo.test.ant.BaseAntTest;
+import javax.enterprise.context.ApplicationScoped;
 
 /**
- * Test the compression of a static js file.
+ * If this interface is implemented, an alternative HTML code for Google Sign In is displayed in Log
+ * In page.
  * 
- * @author mtaal
+ * Note at most one class per instance should implement this interface.
+ * 
+ * @author alostale
+ *
  */
-
-public class CompressionTest extends BaseAntTest {
-  // private static final Logger log = Logger.getLogger(JavaScriptAntTest.class);
-
-  @Test
-  public void testAntCompression() {
-    doTest("minimizeJSandCSS");
-  }
-
+@ApplicationScoped
+public interface SignInProvider {
+  /**
+   * HTML code to be placed in Log In page for Google Sing in button
+   */
+  public String getLoginPageSignInHTMLCode();
 }

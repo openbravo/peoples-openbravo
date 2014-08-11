@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,10 +20,11 @@
 package org.openbravo.test.dal;
 
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.businesspartner.Category;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Contains one simple test case to test reading of in-memory model and a simple query action.
@@ -31,12 +32,13 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class SimpleDalReadTest extends BaseTest {
+public class SimpleDalReadTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(SimpleDalReadTest.class);
 
   /**
    * Read a couple of BPCategories.
    */
+  @Test
   public void testDoRead() {
     setSystemAdministratorContext();
     final OBQuery<Category> obQuery = OBDal.getInstance().createQuery(Category.class, "");
