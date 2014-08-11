@@ -18,6 +18,9 @@
  */
 package org.openbravo.test.modularity;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,20 +28,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.openbravo.erpCommon.utility.Utility;
 
 /**
  * This test case checks the properties merge functionality used when upgrading core
  * 
  */
-public class MergePropertiesTest extends TestCase {
+public class MergePropertiesTest {
   private static String ORIGINAL_FILE = "test-orig.properties";
   private static String NEW_FILE = "test-new.properties";
 
   /**
-   * creates original properties file to be tested later
+   * crates original properties file to be tested later
    * 
    * @throws FileNotFoundException
    * @throws IOException
@@ -70,6 +72,7 @@ public class MergePropertiesTest extends TestCase {
    * @throws FileNotFoundException
    * @throws IOException
    */
+  @Test
   public void testMerge() throws FileNotFoundException, IOException {
     createOriginalFile1();
     createNewFile1();
@@ -86,13 +89,13 @@ public class MergePropertiesTest extends TestCase {
     assertTrue("Not correctly merged test3 property",
         prop.getProperty("test3").equals("value3.default"));
 
-    deleteFiles1();
+    testDeleteFiles1();
   }
 
   /**
    * deletes testing files
    */
-  private void deleteFiles1() {
+  private void testDeleteFiles1() {
     assertTrue("couldn't delete " + ORIGINAL_FILE, new File(ORIGINAL_FILE).delete());
     assertTrue("couldn't delete " + ORIGINAL_FILE, new File(NEW_FILE).delete());
   }
@@ -130,6 +133,7 @@ public class MergePropertiesTest extends TestCase {
    * @throws FileNotFoundException
    * @throws IOException
    */
+  @Test
   public void testMerge2() throws FileNotFoundException, IOException {
     createOriginalFile2();
     createNewFile2();

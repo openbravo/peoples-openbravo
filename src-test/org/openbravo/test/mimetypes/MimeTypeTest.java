@@ -11,26 +11,28 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.test.mimetypes;
 
+import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.MimeTypeUtil;
 import org.openbravo.model.ad.utility.Image;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Simple test for MimeTypeUtil class
  * 
  * @author iperdomo
  */
-public class MimeTypeTest extends BaseTest {
+public class MimeTypeTest extends OBBaseTest {
 
+  @Test
   public void testGetImageMimeTypes() {
     setSystemAdministratorContext();
 

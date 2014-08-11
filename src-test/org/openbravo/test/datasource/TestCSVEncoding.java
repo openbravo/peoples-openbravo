@@ -19,11 +19,14 @@
 
 package org.openbravo.test.datasource;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -48,6 +51,7 @@ public class TestCSVEncoding extends BaseDataSourceTestDal {
    * @throws Exception
    */
 
+  @Test
   public void testEncoding() throws Exception {
 
     OBContext.setAdminMode(false);
@@ -126,10 +130,10 @@ public class TestCSVEncoding extends BaseDataSourceTestDal {
     String[] res2 = response2.split("\n");
 
     OBContext.restorePreviousMode();
+    OBDal.getInstance().commitAndClose();
 
     // Second assert
     assertTrue("On delete CSV Text Preference Arabic characters are still showing", res2[1]
         .substring(1, 4).equals("?.?"));
-
   }
 }

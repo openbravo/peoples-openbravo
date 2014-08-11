@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,18 +19,23 @@
 
 package org.openbravo.test.security;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests check of writable organization and allowed client.
@@ -42,12 +47,13 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class WritableReadableOrganizationClientTest extends BaseTest {
+public class WritableReadableOrganizationClientTest extends OBBaseTest {
 
   /**
    * Checks for two users that each writable organization also occurs in the readable organizations
    * list.
    */
+  @Test
   public void testAccessLevelCO() {
     setSystemAdministratorContext();
     doCheckUser();
@@ -82,6 +88,7 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
    * @see OBContext#getReadableClients()
    * @see OBContext#getCurrentClient()
    */
+  @Test
   public void testClient() {
     final OBContext obContext = OBContext.getOBContext();
     final String[] cs = obContext.getReadableClients();
@@ -103,6 +110,7 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
   /**
    * Checks that writable organization is checked when an invalid update is attempted.
    */
+  @Test
   public void testUpdateNotAllowed() {
     setTestUserContext();
     addReadWriteAccess(Product.class);
@@ -129,6 +137,7 @@ public class WritableReadableOrganizationClientTest extends BaseTest {
   /**
    * Test if a check is done that an update in an invalid client is not allowed.
    */
+  @Test
   public void testCheckInvalidClient() {
     setTestUserContext();
     addReadWriteAccess(Category.class);

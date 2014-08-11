@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,15 +19,18 @@
 
 package org.openbravo.test.system;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
+import org.junit.Test;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the ErrorTextParser class logic.
@@ -35,12 +38,14 @@ import org.openbravo.test.base.BaseTest;
  * @author huehner
  */
 
-public class ErrorTextParserTest extends BaseTest {
+public class ErrorTextParserTest extends OBBaseTest {
 
+  @Test
   public void testDuplicatePrimaryKey() throws Exception {
     doErrorTextParserTest(1);
   }
 
+  @Test
   public void testNotNull() throws Exception {
     // test disabled on pgsql, as its error message text in not-null case cannot be parsed so far
     if (getConnectionProvider().getRDBMS().equals("ORACLE")) {
@@ -48,30 +53,37 @@ public class ErrorTextParserTest extends BaseTest {
     }
   }
 
+  @Test
   public void testBoolean() throws Exception {
     doErrorTextParserTest(3);
   }
 
+  @Test
   public void testUniqueSingleField() throws Exception {
     doErrorTextParserTest(4);
   }
 
+  @Test
   public void testUniqueMultipleFields() throws Exception {
     doErrorTextParserTest(5);
   }
 
+  @Test
   public void testFKInsert() throws Exception {
     doErrorTextParserTest(6);
   }
 
+  @Test
   public void testFKDelete() throws Exception {
     doErrorTextParserTest(7);
   }
 
+  @Test
   public void testNonBooleanCheck() throws Exception {
     doErrorTextParserTest(8);
   }
 
+  @Test
   public void testPGSpanish() throws Exception {
     // only test on pgsql, as specifically testing against es_ES/pgsql error messsage
     if (getConnectionProvider().getRDBMS().equals("POSTGRE")) {

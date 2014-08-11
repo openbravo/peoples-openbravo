@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.util.UUID;
 import org.hibernate.StatelessSession;
 import org.hibernate.proxy.HibernateProxy;
 import org.junit.Assert;
+import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.SessionFactoryController;
@@ -35,7 +36,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test case to try and test proxy loading or stateless sessions.
@@ -43,10 +44,11 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DalPerformanceProxyTest extends BaseTest {
+public class DalPerformanceProxyTest extends OBBaseTest {
 
   private static final int CNT = 10;
 
+  @Test
   public void testProxyBPCreate() {
     try {
       setTestAdminContext();
@@ -98,6 +100,7 @@ public class DalPerformanceProxyTest extends BaseTest {
     }
   }
 
+  @Test
   public void testStatelessBPCreate() {
     try {
       setTestAdminContext();

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ package org.openbravo.test.model;
 import java.io.FileWriter;
 import java.util.List;
 
+import org.junit.Test;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -33,7 +34,7 @@ import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.User;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Not to be used in practice, contains some utility methods.
@@ -41,14 +42,10 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class UtilsTest extends BaseTest {
+public class UtilsTest extends OBBaseTest {
 
   // don't initialize dal layer for model tests
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-  }
-
+  @Test
   public void _testDumpModelToFile() throws Exception {
     final StringBuilder sb = new StringBuilder();
     for (Entity e : ModelProvider.getInstance().getModel()) {
@@ -64,6 +61,7 @@ public class UtilsTest extends BaseTest {
     fw.close();
   }
 
+  @Test
   public void testDumpAuthorisations() {
     setSystemAdministratorContext();
     final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
@@ -84,6 +82,7 @@ public class UtilsTest extends BaseTest {
     }
   }
 
+  @Test
   public void testWriteAll() throws Exception {
     // final StringWriter sw = new StringWriter();
     final FileWriter writer = new FileWriter("/home/mtaal/mytmp/test.csv");

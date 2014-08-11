@@ -19,6 +19,10 @@
 
 package org.openbravo.test.accounting;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,6 +33,7 @@ import java.util.Date;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.junit.Test;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -42,7 +47,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * 
  * 
  */
-public class RecordID2Test extends BaseTest {
+public class RecordID2Test extends OBBaseTest {
   final static private Logger log = LoggerFactory.getLogger(RecordID2Test.class);
   private static final String TABLE_INVOICE = "318";
   private static final String TABLE_TRANSACTION = "4D8C3B3C31D1410DA046140C9F024D17";
@@ -63,6 +68,7 @@ public class RecordID2Test extends BaseTest {
    * DateBalanced) Case 1: Invoice posted and just reconciliation posted. After both are posted
    * receivables entry should be balanced Invoice: I/1 Reconciliation: 1000032
    */
+  @Test
   public void testRecordID2_case1() {
     // Invoice I/1 from QA dataset
     String strCInvoiceId = "FF808081328278B5013282A1A35800A0";
@@ -128,6 +134,7 @@ public class RecordID2Test extends BaseTest {
    * entry should be balanced Invoice: I/10 Transaction: line 50 - 400012 - 02-04-2011 - Customer A
    * - 146.00
    */
+  @Test
   public void testRecordID2_case2() {
     // Invoice I/10 from QA dataset
     String strCInvoiceId = "FF8080813285D49A0132874B35C7030C";
@@ -191,6 +198,7 @@ public class RecordID2Test extends BaseTest {
    * entry should be balanced Invoice: I/11 Payment: 400013 - 02-04-2011 - Customer A - 30.00 Then
    * transaction is posted and in transit balance is checked
    */
+  @Test
   public void testRecordID2_case3() {
     // Invoice I/11 from QA dataset
     String strCInvoiceId = "FF8080813285D49A0132875C1EF60374";
@@ -285,6 +293,7 @@ public class RecordID2Test extends BaseTest {
    * EURO - EUR - 400016 - 02-04-2011 - Customer A - 40.00 - 0 Reconciliation: 1000042 . When
    * Transaction and reconciliation are posted in transit account balance should be 0
    */
+  @Test
   public void testRecordID2_case4() {
     // Invoice I/14 from QA dataset
     String strCInvoiceId = "FF808081328B2FE901328B5AE4030098";
@@ -378,6 +387,7 @@ public class RecordID2Test extends BaseTest {
    * posted receivables entry should be balanced. Invoice: I/3 Payment: 400002 Reconciliation:
    * 1000034. When Payment and reconciliation are posted in transit account balance should be 0
    */
+  @Test
   public void testRecordID2_case5() {
     // Invoice I/3 from QA dataset
     String strCInvoiceId = "FF8080813282F9FE0132830158E20024";

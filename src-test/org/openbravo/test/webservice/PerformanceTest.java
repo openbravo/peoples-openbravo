@@ -28,6 +28,7 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 
 /**
@@ -42,6 +43,7 @@ import org.openbravo.base.exception.OBException;
 public class PerformanceTest extends BaseWSTest {
   private static final Logger log = Logger.getLogger(PerformanceTest.class);
 
+  @Test
   public void testPerformance() {
     try {
       final HttpURLConnection hc = createConnection(

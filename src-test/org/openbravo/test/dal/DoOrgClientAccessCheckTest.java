@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,9 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -26,10 +29,11 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
-public class DoOrgClientAccessCheckTest extends BaseTest {
+public class DoOrgClientAccessCheckTest extends OBBaseTest {
 
+  @Test
   public void testNormalAdminMode() {
 
     setTestUserContext();
@@ -43,6 +47,7 @@ public class DoOrgClientAccessCheckTest extends BaseTest {
     }
   }
 
+  @Test
   public void testDoOrgClientAccessCheckWrongClient() {
 
     setTestUserContext();
@@ -58,6 +63,7 @@ public class DoOrgClientAccessCheckTest extends BaseTest {
     }
   }
 
+  @Test
   public void testDoOrgClientAccessCheck() {
 
     setTestUserContext();
@@ -72,6 +78,7 @@ public class DoOrgClientAccessCheckTest extends BaseTest {
     }
   }
 
+  @Test
   public void testNormalUserMode() {
 
     setTestUserContext();
