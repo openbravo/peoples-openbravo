@@ -1249,7 +1249,7 @@ isc.OBViewGrid.addProperties({
   },
 
   setView: function (view) {
-    var dataPageSizeaux, length, i, crit, groupByMaxRecords;
+    var dataPageSizeaux, length, i, crit, groupByMaxRecords, fkCache;
 
     this.view = view;
 
@@ -1274,6 +1274,10 @@ isc.OBViewGrid.addProperties({
     if (this.view.tabId === this.view.standardWindow.additionalCriteriaTabId && this.view.standardWindow.additionalCriteria) {
       crit = isc.JSON.decode(unescape(this.view.standardWindow.additionalCriteria));
       this.setCriteria(crit);
+      if (this.view.standardWindow.fkCache) {
+        this.fkCache = isc.JSON.decode(unescape(this.view.standardWindow.fkCache));
+        // cannot apply the fkCache yet because the grid might not have a filter editor yet
+      }
       delete this.view.standardWindow.additionalCriteria;
     }
     // if there is no autoexpand field then just divide the space
@@ -1542,6 +1546,12 @@ isc.OBViewGrid.addProperties({
 
     this.resetEmptyMessage();
     this.view.updateTabTitle();
+    // apply the fk cache to ensure the identifiers of the filtered foreign keys are shown
+    if (this.fkCache) {
+      this.loadFilterAuxiliaryCache(this.fkCache);
+      // delete it to avoid loading the cache more than once
+      delete this.fkCache;
+    }
 
     /*
      * In case the url contains advanced criteria, the initial criteria contains the criteria to be applied. So it should not be deleted.

@@ -702,7 +702,7 @@ isc.OBStandardView.addProperties({
 
   getDirectLinkUrl: function () {
     var url = window.location.href,
-        crit;
+        crit, fkCache;
     var qIndex = url.indexOf('?');
     var dIndex = url.indexOf('#');
     var index = -1;
@@ -735,6 +735,13 @@ isc.OBStandardView.addProperties({
           prettyPrint: false,
           dateFormat: 'dateConstructor'
         }));
+        fkCache = this.viewGrid.getFKFilterAuxiliaryCache(crit);
+        if (isc.isA.Array(fkCache) && fkCache.length > 0) {
+          url = url + '&fkCache=' + escape(isc.JSON.encode(fkCache, {
+            prettyPrint: false,
+            dateFormat: 'dateConstructor'
+          })) + '&';
+        }
       }
     }
 
