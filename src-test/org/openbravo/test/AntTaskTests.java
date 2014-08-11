@@ -76,40 +76,60 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    // dal
-    DalComplexQueryRequisitionTest.class, DalComplexQueryTestOrderLine.class,
-    DalPerformanceInventoryLineTest.class, DalPerformanceProductTest.class,
-    DalPerformanceProxyTest.class, DalQueryTest.class, DalConnectionProviderTest.class,
-    DalTest.class, DalUtilTest.class, IssuesTest.class, DalConnectionProviderTest.class,
-    DynamicEntityTest.class, HiddenUpdateTest.class,
-    MappingGenerationTest.class,
-    ValidationTest.class,
-    OBContextTest.class,
-    DalStoredProcedureTest.class,
-    ReadByNameTest.class,
+// dal
+    DalComplexQueryRequisitionTest.class, //
+    DalComplexQueryTestOrderLine.class, //
+    DalPerformanceInventoryLineTest.class, //
+    DalPerformanceProductTest.class, //
+    DalPerformanceProxyTest.class, //
+    DalQueryTest.class, //
+    DalConnectionProviderTest.class, //
+    DalTest.class, //
+    DalUtilTest.class, //
+    IssuesTest.class, //
+    DalConnectionProviderTest.class, //
+    DynamicEntityTest.class, //
+    HiddenUpdateTest.class, //
+    MappingGenerationTest.class, //
+    ValidationTest.class, //
+    OBContextTest.class, //
+    DalStoredProcedureTest.class, //
+    ReadByNameTest.class, //
     ComputedColumnsTest.class,
 
     // expression
     EvaluationTest.class,
 
     // model
-    RuntimeModelTest.class, OneToManyTest.class,
-    UniqueConstraintTest.class,
+    RuntimeModelTest.class, OneToManyTest.class, //
+    UniqueConstraintTest.class, //
     ClassLoaderTest.class,
 
     // modularity
-    DatasetServiceTest.class, DBPrefixTest.class,
-    MergePropertiesTest.class,
+    DatasetServiceTest.class, //
+    DBPrefixTest.class, //
+    MergePropertiesTest.class, //
     TableNameTest.class,
 
     // security
-    AccessLevelTest.class, AllowedOrganizationsTest.class, EntityAccessTest.class,
+    AccessLevelTest.class, //
+    AllowedOrganizationsTest.class, //
+    EntityAccessTest.class, //
     WritableReadableOrganizationClientTest.class,
 
-    SystemServiceTest.class, SystemValidatorTest.class, ErrorTextParserTest.class,
+    // system
+    SystemServiceTest.class, //
+    SystemValidatorTest.class, //
+    ErrorTextParserTest.class,
 
-    EntityXMLImportTestBusinessObject.class, EntityXMLImportTestReference.class,
-    EntityXMLImportTestSingle.class, EntityXMLImportTestWarning.class, EntityXMLIssues.class,
-    UniqueConstraintImportTest.class, DatasetExportTest.class, ClassicSelectorTest.class, })
+    // xml
+    EntityXMLImportTestBusinessObject.class, //
+    EntityXMLImportTestReference.class, //
+    EntityXMLImportTestSingle.class, //
+    EntityXMLImportTestWarning.class, //
+    EntityXMLIssues.class, //
+    UniqueConstraintImportTest.class, //
+    DatasetExportTest.class, //
+    ClassicSelectorTest.class, })
 public class AntTaskTests {
 }

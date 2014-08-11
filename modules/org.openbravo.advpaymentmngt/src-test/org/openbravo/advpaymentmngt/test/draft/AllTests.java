@@ -43,13 +43,23 @@ import org.openbravo.advpaymentmngt.test.draft.PaymentTest_11;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+  
     // Master Data Configuration
-    FinancialAccountTest.class,
+    FinancialAccountTest.class, //
     PaymentMethodTest.class,
+    
     // Payment scenarios
-    PaymentTest_01.class, PaymentTest_02.class, PaymentTest_03.class, PaymentTest_04.class,
-    PaymentTest_05.class, PaymentTest_06.class, PaymentTest_07.class, PaymentTest_08.class,
-    PaymentTest_09.class, PaymentTest_10.class, PaymentTest_11.class })
+    PaymentTest_01.class, //
+    PaymentTest_02.class, //
+    PaymentTest_03.class, //
+    PaymentTest_04.class, //
+    PaymentTest_05.class, //
+    PaymentTest_06.class, //
+    PaymentTest_07.class, //
+    PaymentTest_08.class, //
+    PaymentTest_09.class, //
+    PaymentTest_10.class, //
+    PaymentTest_11.class })
 public class AllTests {
 
 }

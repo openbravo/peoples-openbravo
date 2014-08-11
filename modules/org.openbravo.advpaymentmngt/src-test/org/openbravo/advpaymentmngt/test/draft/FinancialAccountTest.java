@@ -39,9 +39,12 @@ public class FinancialAccountTest extends OBBaseTest {
   private static final String CASH = "C";
   private static final String STANDARD_DESCRIPTION = "JUnit Test";
 
+  /**
+   * This before method is named setUpF() to avoid overwriting the super 
+   * setUp method that is invoke automatically before this one.
+   */
   @Before
-  protected void setUpF() throws Exception {
-    // super.setUp();
+  public void setUpF() throws Exception {
     TestUtility.setTestContext();
   }
 

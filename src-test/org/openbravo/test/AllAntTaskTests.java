@@ -80,22 +80,74 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
  */
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ DalComplexQueryRequisitionTest.class, DalComplexQueryTestOrderLine.class,
-    DalPerformanceInventoryLineTest.class, DalPerformanceProductTest.class,
-    DalPerformanceProxyTest.class, DalQueryTest.class, DalFilterTest.class, DalTest.class,
-    DalUtilTest.class, IssuesTest.class, DalConnectionProviderTest.class, DynamicEntityTest.class,
-    HiddenUpdateTest.class, MappingGenerationTest.class, ValidationTest.class, OBContextTest.class,
-    DalStoredProcedureTest.class, ReadByNameTest.class, AdminContextTest.class, ViewTest.class,
-    ComputedColumnsTest.class, EvaluationTest.class, RuntimeModelTest.class, OneToManyTest.class,
-    UniqueConstraintTest.class, ClassLoaderTest.class, IndexesTest.class,
-    TrlColumnsOraTypeTest.class, DatasetServiceTest.class, DBPrefixTest.class,
-    MergePropertiesTest.class, TableNameTest.class, AccessLevelTest.class,
-    AllowedOrganizationsTest.class, EntityAccessTest.class,
-    WritableReadableOrganizationClientTest.class, SystemServiceTest.class,
-    SystemValidatorTest.class, ErrorTextParserTest.class, ClientExportImportTest.class,
-    EntityXMLImportTestBusinessObject.class, EntityXMLImportTestReference.class,
-    EntityXMLImportTestSingle.class, EntityXMLImportTestWarning.class, EntityXMLIssues.class,
-    UniqueConstraintImportTest.class, DatasetExportTest.class, PreferenceTest.class,
-    ClassicSelectorTest.class, RecordID2Test.class })
+@Suite.SuiteClasses({
+
+// dal
+    DalComplexQueryRequisitionTest.class,//
+    DalComplexQueryTestOrderLine.class,//
+    DalPerformanceInventoryLineTest.class,//
+    DalPerformanceProductTest.class, //
+    DalPerformanceProxyTest.class, //
+    DalQueryTest.class,//
+    DalFilterTest.class,//
+    DalTest.class,//
+    DalUtilTest.class,//
+    IssuesTest.class, //
+    DalConnectionProviderTest.class, //
+    DynamicEntityTest.class, //
+    HiddenUpdateTest.class, //
+    MappingGenerationTest.class, //
+    ValidationTest.class, //
+    OBContextTest.class, //
+    DalStoredProcedureTest.class, //
+    ReadByNameTest.class, //
+    AdminContextTest.class, //
+    ViewTest.class, //
+    ComputedColumnsTest.class,
+
+    // expression
+    EvaluationTest.class,
+
+    // model
+    RuntimeModelTest.class, //
+    OneToManyTest.class, //
+    UniqueConstraintTest.class, //
+    ClassLoaderTest.class, //
+    IndexesTest.class, //
+    TrlColumnsOraTypeTest.class,
+
+    // modularity
+    DatasetServiceTest.class, //
+    DBPrefixTest.class, //
+    MergePropertiesTest.class, //
+    TableNameTest.class,
+
+    // security
+    AccessLevelTest.class, //
+    AllowedOrganizationsTest.class, //
+    EntityAccessTest.class, //
+    WritableReadableOrganizationClientTest.class,
+
+    // system
+    SystemServiceTest.class, //
+    SystemValidatorTest.class, //
+    ErrorTextParserTest.class,
+
+    // xml
+    ClientExportImportTest.class, //
+    EntityXMLImportTestBusinessObject.class, //
+    EntityXMLImportTestReference.class, //
+    EntityXMLImportTestSingle.class, //
+    EntityXMLImportTestWarning.class, //
+    EntityXMLIssues.class, //
+    UniqueConstraintImportTest.class, //
+    DatasetExportTest.class,
+
+    // preferences
+    PreferenceTest.class, //
+    ClassicSelectorTest.class,
+
+    // Accounting
+    RecordID2Test.class })
 public class AllAntTaskTests {
 }

@@ -62,9 +62,12 @@ public class RuntimeModelTest extends OBBaseTest {
   // cached list of all tables & columns as used by several tests
   private List<Table> allTables;
 
+  /**
+   * This before method is named setUpRmt() to avoid overwriting the super setUp method that is
+   * invoke automatically before this one.
+   */
   @Before
-  public void setUp() throws Exception {
-    super.setUp();
+  public void setUpRmt() throws Exception {
     allTables = getTables();
   }
 

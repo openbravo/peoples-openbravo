@@ -37,9 +37,15 @@ import org.openbravo.test.webservice.WSUpdateTest;
  */
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ WSReadTest.class, WSUpdateTest.class, PerformanceTest.class,
-    WSAddRecordWithComputedColumns.class, TestCSVEncoding.class,
-    SelectorFieldPropertySelectorDSTest.class, ProductSelectorDataSourceTest.class,
+@Suite.SuiteClasses({
+
+WSReadTest.class, //
+    WSUpdateTest.class, //
+    PerformanceTest.class, //
+    WSAddRecordWithComputedColumns.class, //
+    TestCSVEncoding.class, //
+    SelectorFieldPropertySelectorDSTest.class, //
+    ProductSelectorDataSourceTest.class, //
     TestComboDatasource.class })
 public class AllWebserviceTests {
 }

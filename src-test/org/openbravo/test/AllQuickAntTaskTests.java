@@ -61,15 +61,41 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
  */
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ DalPerformanceProxyTest.class, DalTest.class, DalFilterTest.class,
-    DalUtilTest.class, DalConnectionProviderTest.class, ValidationTest.class, OBContextTest.class,
-    DalStoredProcedureTest.class, AdminContextTest.class, UniqueConstraintTest.class,
-    ClassLoaderTest.class, DBPrefixTest.class, AccessLevelTest.class,
-    AllowedOrganizationsTest.class, EntityAccessTest.class,
-    WritableReadableOrganizationClientTest.class, SystemServiceTest.class,
-    SystemValidatorTest.class, ErrorTextParserTest.class, EntityXMLImportTestBusinessObject.class,
-    EntityXMLImportTestReference.class, EntityXMLImportTestSingle.class,
-    EntityXMLImportTestWarning.class, EntityXMLIssues.class, UniqueConstraintImportTest.class,
-    PreferenceTest.class, ClassicSelectorTest.class })
+@Suite.SuiteClasses({
+// dal
+    DalPerformanceProxyTest.class, //
+    DalTest.class, //
+    DalFilterTest.class, //
+    DalUtilTest.class, //
+    DalConnectionProviderTest.class, //
+    ValidationTest.class, //
+    OBContextTest.class, //
+    DalStoredProcedureTest.class, //
+    AdminContextTest.class,
+
+    // model
+    UniqueConstraintTest.class, //
+    ClassLoaderTest.class,
+
+    // modularity
+    DBPrefixTest.class,
+
+    // security
+    AccessLevelTest.class, AllowedOrganizationsTest.class, //
+    EntityAccessTest.class, WritableReadableOrganizationClientTest.class,
+
+    // system
+    SystemServiceTest.class, SystemValidatorTest.class, //
+    ErrorTextParserTest.class,
+
+    // xml
+    EntityXMLImportTestBusinessObject.class, EntityXMLImportTestReference.class, //
+    EntityXMLImportTestSingle.class, EntityXMLImportTestWarning.class, //
+    EntityXMLIssues.class, //
+    UniqueConstraintImportTest.class,
+
+    // preferences
+    PreferenceTest.class, //
+    ClassicSelectorTest.class })
 public class AllQuickAntTaskTests {
 }

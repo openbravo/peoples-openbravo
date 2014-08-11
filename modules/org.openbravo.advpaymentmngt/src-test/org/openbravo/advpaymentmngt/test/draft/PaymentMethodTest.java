@@ -39,9 +39,12 @@ public class PaymentMethodTest extends OBBaseTest {
   private static final String DEPOSIT_ACCOUNT = "DEP";
   private static final String STANDARD_DESCRIPTION = "JUnit Test";
 
+  /**
+   * This before method is named setUpP() to avoid overwriting the super 
+   * setUp method that is invoke automatically before this one.
+   */
   @Before
-  protected void setUpP() throws Exception {
-    // super.setUp();
+  public void setUpP() throws Exception {
     TestUtility.setTestContext();
   }
 

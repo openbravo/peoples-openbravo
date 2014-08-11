@@ -35,7 +35,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalLayerInitializer;
 import org.openbravo.dal.core.OBContext;
@@ -158,6 +157,7 @@ public class OBBaseTest {
   /**
    * Overridden to initialize the Dal layer, sets the current user to the the User:
    * {@link #TEST_USER_ID}
+   * 
    */
   @Before
   public void setUp() throws Exception {
@@ -168,7 +168,6 @@ public class OBBaseTest {
     initializeDalLayer();
     // clear the session otherwise it keeps the old model
     setTestUserContext();
-    // super.setUp();
     // be negative is set back to false at the end of a successfull test.
     errorOccured = true;
   }
@@ -195,29 +194,10 @@ public class OBBaseTest {
   }
 
   /**
-   * Reads the configuration properties from the property files.
-   * 
-   * @deprecated Behavior has been implemented in the {@link OBPropertiesProvider}. Is now done
-   *             automatically when initializing the DAL layer.
-   */
-  protected void setConfigPropertyFiles() {
-  }
-
-  /**
    * Set the current user to the 0 user.
    */
   protected void setSystemAdministratorContext() {
     OBContext.setOBContext("0");
-  }
-
-  @Deprecated
-  protected void setBigBazaarAdminContext() {
-    setTestAdminContext();
-  }
-
-  @Deprecated
-  protected void setBigBazaarUserContext() {
-    setTestUserContext();
   }
 
   /**
@@ -329,7 +309,6 @@ public class OBBaseTest {
       SessionHandler.deleteSessionHandler();
       OBContext.setOBContext((OBContext) null);
     }
-    // super.tearDown();
   }
 
   /**
@@ -365,17 +344,6 @@ public class OBBaseTest {
    */
   public void commitTransaction() {
     OBDal.getInstance().commitAndClose();
-  }
-
-  /**
-   * Deprecated, no need to call this method explicitly anymore. The OBBaseTest class overrides the
-   * runTest method which sets the internal flag, overriding any value passed in this method.
-   * 
-   * @param errorOccured
-   * @deprecated
-   */
-  public void setErrorOccured(boolean errorOccured) {
-    this.errorOccured = errorOccured;
   }
 
   /**

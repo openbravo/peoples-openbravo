@@ -238,6 +238,26 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR)));
   }
 
+  /**
+   * Tests a request to a combo with a role that has no access to field entity. This case was
+   * failing (see issue #27057)
+   */
+  @Test
+  public void testRequestWithoutFieldAccess() throws Exception {
+    // Set employee role
+    changeProfile("D615084948E046E3A439915008F464A6", "192", "E443A31992CB4635AFCAEABE7183CE85",
+        "B2D40D8A5D644DD89E329DC297309055");
+
+    // Fetching Price List combo in Requisition window
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("fieldId", "803817");
+    params.put("_operationType", "fetch");
+    params.put("_startRow", "0");
+    params.put("_endRow", "75");
+    JSONObject jsonResponse = requestCombo(params);
+    assertTrue("Combo should have data", getData(jsonResponse).length() > 0);
+  }
+
   private JSONObject requestCombo(Map<String, String> params) throws Exception {
     String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
         params, 200, "POST");

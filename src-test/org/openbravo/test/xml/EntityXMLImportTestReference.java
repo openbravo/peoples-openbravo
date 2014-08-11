@@ -71,10 +71,13 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
   private List<String> warehouseNames = new ArrayList<String>();
   private List<String> locationAddresses = new ArrayList<String>();
 
+  /**
+   * This before method is named setUpE() to avoid overwriting the super setUp method that is invoke
+   * automatically before this one.
+   */
   @Before
-  public void setUp() throws Exception {
+  public void setUpE() throws Exception {
     Location l = null;
-    super.setUp();
     setTestUserContext();
     OBCriteria<Warehouse> obc = OBDal.getInstance().createCriteria(Warehouse.class);
     obc.add(Restrictions.eq(Warehouse.PROPERTY_ORGANIZATION,

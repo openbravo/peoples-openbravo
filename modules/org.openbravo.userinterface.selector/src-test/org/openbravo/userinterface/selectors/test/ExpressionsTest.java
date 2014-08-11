@@ -48,10 +48,12 @@ public class ExpressionsTest extends OBBaseTest {
 
   private HashMap<String, String> expr = new HashMap<String, String>();
 
+  /** 
+   * This before method is named setUpEt() to avoid overwriting the super 
+   * setUp method that is invoke automatically before this one.
+   */
   @Before
-  protected void setUpEt() throws Exception {
-    // super.setUp();
-
+  public void setUpEt() throws Exception {
     // Everything runs as System Admin user
     setSystemAdministratorContext();
 

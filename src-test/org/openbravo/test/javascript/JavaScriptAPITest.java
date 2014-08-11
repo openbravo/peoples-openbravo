@@ -43,7 +43,6 @@ public class JavaScriptAPITest {
   @Before
   public void setUp() throws Exception {
     setConfigPropertyFiles();
-
   }
 
   /**

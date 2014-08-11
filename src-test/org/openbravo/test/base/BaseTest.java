@@ -52,6 +52,9 @@ import org.openbravo.model.ad.access.User;
  * BaseTest class is deprecated. All test case that works with old notation, will be working
  * normally.
  * 
+ * Any new test case will be linked to OBBaseTest that handles all the necessary steps to initialize
+ * the Data Access Layer from now.
+ * 
  * @deprecated
  * 
  * @author mtaal

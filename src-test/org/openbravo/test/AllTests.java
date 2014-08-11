@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,29 +56,47 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    // security
-    AccessLevelTest.class,
-    AllowedOrganizationsTest.class,
-    EntityAccessTest.class,
+
+// security
+    EntityAccessTest.class, //
+    AccessLevelTest.class, //
+    AllowedOrganizationsTest.class, //
     WritableReadableOrganizationClientTest.class,
+
     // dal
-    HiddenUpdateTest.class, MappingGenerationTest.class, ValidationTest.class,
-    DynamicEntityTest.class, DalTest.class, DalFilterTest.class, DalUtilTest.class,
-    IssuesTest.class, DalQueryTest.class, DalConnectionProviderTest.class, DalCopyTest.class,
-    DalStoredProcedureTest.class,
-    ReadByNameTest.class,
-    DalPerformanceProxyTest.class,
-    ComputedColumnsTest.class,
+    HiddenUpdateTest.class, //
+    MappingGenerationTest.class, //
+    ValidationTest.class, //
+    DynamicEntityTest.class, //
+    DalTest.class, //
+    DalFilterTest.class, //
+    DalUtilTest.class, //
+    IssuesTest.class, //
+    DalQueryTest.class, //
+    DalConnectionProviderTest.class, //
+    DalCopyTest.class, //
+    DalStoredProcedureTest.class, //
+    ReadByNameTest.class, //
+    DalPerformanceProxyTest.class, //
+    ComputedColumnsTest.class, //
+
     // model
-    RuntimeModelTest.class, OneToManyTest.class,
-    ClassLoaderTest.class,
-    IndexesTest.class,
+    RuntimeModelTest.class, //
+    OneToManyTest.class, //
+    ClassLoaderTest.class, //
+    IndexesTest.class, //
     TrlColumnsOraTypeTest.class,
+
     // expression
     EvaluationTest.class,
+
     // xml
-    EntityXMLImportTestBusinessObject.class, EntityXMLImportTestReference.class,
-    EntityXMLImportTestSingle.class, EntityXMLImportTestWarning.class, EntityXMLIssues.class,
-    UniqueConstraintImportTest.class, ClassicSelectorTest.class })
+    EntityXMLImportTestBusinessObject.class, //
+    EntityXMLImportTestReference.class, //
+    EntityXMLImportTestSingle.class, //
+    EntityXMLImportTestWarning.class, //
+    EntityXMLIssues.class, //
+    UniqueConstraintImportTest.class, //
+    ClassicSelectorTest.class })
 public class AllTests {
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -51,12 +53,10 @@ import org.openbravo.service.db.ImportResult;
  * Test import of data with a business object ({@link PaymentTerm} and {@link PaymentTermLine}),
  * adding and removing childs.
  * 
- * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
- * test cases NOT begin by "test...".
- * 
  * @author mtaal
  */
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
   // prefix is used to uniquely identify the payment terms used in this test case
@@ -70,25 +70,10 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   private static int TOTAL_PT_PTL = 0;
 
   // private static int TOTAL_PT_PTL = NO_OF_PT + NO_OF_PT + NO_OF_PT_LINE;
-  /**
-   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
-   * execution order of the test cases.
-   */
-  @Test
-  public void testContent() {
-    aPaymentTerm();
-    bPaymentTerm();
-    cPaymentTerm();
-    dPaymentTerm();
-    ePaymentTerm();
-    fPaymentTerm();
-    gPaymentTerm();
-    hPaymentTerm();
-    zPaymentTerm();
-  }
 
   /** Sets up the test data, creates a first of Payment Terms. */
-  private void aPaymentTerm() {
+  @Test
+  public void testAPaymentTerm() {
     cleanRefDataLoaded();
     setTestUserContext();
     addReadWriteAccess(PaymentTermTrl.class);
@@ -99,7 +84,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   /**
    * Export the Payment Terms from one client and import into another client.
    */
-  private void bPaymentTerm() {
+  @Test
+  public void testBPaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -135,7 +121,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    * Execute the same test as in {@link #bPaymentTerm()}, as it is repeated and no data has changed
    * no updates should take place.
    */
-  private void cPaymentTerm() {
+  @Test
+  public void testCPaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -165,7 +152,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    * Now do the same as in {@link #cPaymentTerm()} only now with some small changes in the xml, so
    * that some objects are updated.
    */
-  private void dPaymentTerm() {
+  @Test
+  public void testDPaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -209,7 +197,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    * Test removal of a PaymentTermLine from a PaymentTerm in the xml, then import. After importing
    * the PaymentTermLine should have gone.
    */
-  private void ePaymentTerm() {
+  @Test
+  public void testEPaymentTerm() {
 
     setTestUserContext();
     setAccess();
@@ -258,7 +247,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
    * Tests that the previous test {@link #ePaymentTerm()} did not really remove a line. See this
    * issue: https://issues.openbravo.com/view.php?id=15690
    */
-  private void fPaymentTerm() {
+  @Test
+  public void testFPaymentTerm() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
     final List<PaymentTerm> pts = getPaymentTerms();
     for (final PaymentTerm pt : pts) {
@@ -270,7 +260,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   /**
    * Add a PaymentTermLine in the xml and import it, there should be an extra line then.
    */
-  private void gPaymentTerm() {
+  @Test
+  public void testGPaymentTerm() {
 
     setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
@@ -324,7 +315,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   /**
    * Tests that {@link #gPaymentTerm()} was successfull.
    */
-  private void hPaymentTerm() {
+  @Test
+  public void testHPaymentTerm() {
     setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();
@@ -341,7 +333,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   /**
    * Remove the testdata.
    */
-  private void zPaymentTerm() {
+  @Test
+  public void testZPaymentTerm() {
     setTestUserContext();
     setAccess();
     final List<PaymentTerm> pts = getPaymentTerms();

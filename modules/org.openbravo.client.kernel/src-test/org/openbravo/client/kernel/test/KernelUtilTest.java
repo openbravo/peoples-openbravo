@@ -43,10 +43,12 @@ public class KernelUtilTest extends OBBaseTest {
   private static void initializeStatics() {
   }
 
+  /** 
+   * This before method is named setUpK() to avoid overwriting the super 
+   * setUp method that is invoke automatically before this one.
+   */
   @Before
-  protected void setUpK() throws Exception {
-    // super.setUp();
-
+  public void setUpK() throws Exception {
     // after super.setUp, must be done after initializing dal layer in super class
     initializeStatics();
   }

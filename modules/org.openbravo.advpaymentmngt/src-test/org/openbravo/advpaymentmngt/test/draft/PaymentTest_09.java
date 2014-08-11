@@ -85,10 +85,13 @@ public class PaymentTest_09 extends OBBaseTest {
 
   /**
    * Initial Set up.
+   * 
+   * This before method is named setUpP09() to avoid overwriting the super 
+   * setUp method that is invoke automatically before this one.
+   * 
    */
   @Before
-  protected void setUpP09() throws Exception {
-    // super.setUp();
+  public void setUpP09() throws Exception {
     TestUtility.setTestContextSpain();
   }
 

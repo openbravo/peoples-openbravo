@@ -73,10 +73,13 @@ public class PaymentTest_05 extends OBBaseTest {
 
   /**
    * Initial Set up.
+   * 
+   * This before method is named setUpP05() to avoid overwriting the super 
+   * setUp method that is invoke automatically before this one.
+   * 
    */
   @Before
-  protected void setUpP05() throws Exception {
-    // super.setUp();
+  public void setUpP05() throws Exception {
     TestUtility.setTestContext();
   }
 

@@ -64,10 +64,12 @@ public class TemplateResolverTest extends OBBaseTest {
     COMPONENT_TYPE = componentTypeProperty.getAllowedValues().iterator().next();
   }
 
+  /** 
+   * This before method is named setUpT() to avoid overwriting the super 
+   * setUp method that is invoke automatically before this one.
+   */
   @Before
-  protected void setUpT() throws Exception {
-    // super.setUp();
-
+  public void setUpT() throws Exception {
     // after super.setUp, must be done after initializing dal layer in super class
     initializeStatics();
   }
