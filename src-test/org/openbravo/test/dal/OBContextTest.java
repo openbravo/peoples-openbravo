@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,12 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the {@link OBContext} class.
@@ -28,11 +32,12 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class OBContextTest extends BaseTest {
+public class OBContextTest extends OBBaseTest {
 
   /**
    * Tests if the warehouse is set correctly in the OBContext.
    */
+  @Test
   public void testWarehouseInContext() {
     OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID, null, TEST_WAREHOUSE_ID);
     assertTrue(OBContext.getOBContext().getWarehouse().getId().equals(TEST_WAREHOUSE_ID));
@@ -41,6 +46,7 @@ public class OBContextTest extends BaseTest {
   /**
    * Tests if the language is set correctly in the OBContext.
    */
+  @Test
   public void testLanguageInContext() {
     OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID, "en_US");
     assertTrue(OBContext.getOBContext().getLanguage().getId().equals("192"));
@@ -53,6 +59,7 @@ public class OBContextTest extends BaseTest {
    * 
    * See: https://issues.openbravo.com/view.php?id=8853
    */
+  @Test
   public void testMultiThreadedOBContext() throws Exception {
     setTestUserContext();
     Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
@@ -157,6 +164,7 @@ public class OBContextTest extends BaseTest {
    * 
    * To test this issue set the OBContext.ADMIN_TRACE_SIZE to a higher value than 0
    */
+  @Test
   public void testUnbalancedCallsToAdminMode() {
     OBContext.setAdminMode();
     OBContext.setAdminMode();

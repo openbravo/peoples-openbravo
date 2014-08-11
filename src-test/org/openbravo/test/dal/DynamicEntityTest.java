@@ -19,10 +19,16 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -33,34 +39,22 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.CategoryAccounts;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the use of the {@link DynamicOBObject}.
  * 
- * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
- * test cases NOT begin by "test...".
- * 
  * @author mtaal
  */
-
-public class DynamicEntityTest extends BaseTest {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class DynamicEntityTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(DynamicEntityTest.class);
-
-  /**
-   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
-   * execution order of the test cases.
-   */
-  public void testContent() {
-    createBPGroup();
-    removeBPGroup();
-    checkBPGroupRemoved();
-  }
 
   /**
    * Create a record for the {@link Category} in the database using a {@link DynamicOBObject}.
    */
-  public void createBPGroup() {
+  @Test
+  public void testACreateBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final DynamicOBObject bpGroup = new DynamicOBObject();
@@ -78,7 +72,8 @@ public class DynamicEntityTest extends BaseTest {
   /**
    * Queries for the created {@link Category} and then removes.
    */
-  public void removeBPGroup() {
+  @Test
+  public void testBRemoveBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     addReadWriteAccess(CategoryAccounts.class);
@@ -113,20 +108,20 @@ public class DynamicEntityTest extends BaseTest {
       OBDal.getInstance().remove(bga);
     }
     OBDal.getInstance().remove(bpgs.get(0));
-    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
    * Checks if the removal did occur.
    */
-  public void checkBPGroupRemoved() {
+  @Test
+  public void testCCheckBPGroupRemoved() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Restrictions.eq(Category.PROPERTY_NAME, "hello world"));
     final List<Category> bpgs = obc.list();
     assertEquals(0, bpgs.size());
-    OBDal.getInstance().flush();
   }
 
   private void printXML(BaseOBObject bob) {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008, 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -22,10 +22,18 @@
 
 package org.openbravo.test.dal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
@@ -43,47 +51,25 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.cashmgmt.CashBook;
 import org.openbravo.model.financialmgmt.cashmgmt.CashBookAccounts;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test different parts of the dal api: {@link OBDal} and {@link OBCriteria}.
  * 
  * Note the testcases assume that they are run in the order defined in this class.
  * 
- * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
- * test cases NOT begin by "test...".
- * 
  * @author mtaal
  */
 
-public class DalTest extends BaseTest {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class DalTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(DalTest.class);
-
-  /**
-   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
-   * execution order of the test cases.
-   */
-  public void testContent() {
-    saveBooleanValue1();
-    saveBooleanValue2();
-    createBPGroup();
-    removeBPGroup();
-    checkBPGroupRemoved();
-    updateCurrencyByUser();
-    updateCurrencyByAdmin();
-    tToString();
-    transaction25PageRead();
-    transactionAllPagesTime();
-    currencyPageRead();
-    cashBookPageRead();
-    cashBookTrigger();
-    getPropertyFromColumnName();
-  }
 
   /**
    * Test to assert save false in a null char(1) column - Part I
    */
-  public void saveBooleanValue1() {
+  @Test
+  public void testASaveBooleanValue1() {
     setSystemAdministratorContext();
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     if (sysInfo.isEnableHeartbeat() == null) {
@@ -96,18 +82,20 @@ public class DalTest extends BaseTest {
   /**
    * Test to assert save false in a null char(1) column - Part II
    */
-  public void saveBooleanValue2() {
+  @Test
+  public void testBSaveBooleanValue2() {
     setSystemAdministratorContext();
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     assertTrue(sysInfo.isEnableHeartbeat() != null);
-    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
    * Test creates a {@link Category}, test simple save through {@link OBDal}. The new object is
    * removed in a later test.
    */
-  public void createBPGroup() {
+  @Test
+  public void testCCreateBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final Category bpg = OBProvider.getInstance().get(Category.class);
@@ -123,7 +111,8 @@ public class DalTest extends BaseTest {
   /**
    * Test queries for the {@link Category} created in the previous step and removes it.
    */
-  public void removeBPGroup() {
+  @Test
+  public void testDRemoveBPGroup() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     addReadWriteAccess(CategoryAccounts.class);
@@ -162,19 +151,20 @@ public class DalTest extends BaseTest {
   /**
    * This test checks if the {@link Category} was removed in the previous step.
    */
-  public void checkBPGroupRemoved() {
+  @Test
+  public void testECheckBPGroupRemoved() {
     setTestUserContext();
     addReadWriteAccess(Category.class);
     final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(Category.class);
     obc.add(Restrictions.eq(Category.PROPERTY_NAME, "testname"));
     final List<Category> bpgs = obc.list();
     assertEquals(0, bpgs.size());
-    OBDal.getInstance().flush();
   }
 
   // test querying for a specific currency and then updating it
   // should fail for a user
-  public void updateCurrencyByUser() {
+  @Test
+  public void testFUpdateCurrencyByUser() {
     setUserContext("E12DC7B3FF8C4F64924A98195223B1F8");
     final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
     obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, "USD"));
@@ -197,7 +187,8 @@ public class DalTest extends BaseTest {
   /**
    * Test updates the description of {@link Currency} by the admin user.
    */
-  public void updateCurrencyByAdmin() {
+  @Test
+  public void testGUpdateCurrencyByAdmin() {
     setTestAdminContext();
     Currency c = null;
     String prevDescription = null;
@@ -227,13 +218,13 @@ public class DalTest extends BaseTest {
       newC.setDescription(prevDescription);
       commitTransaction();
     }
-    OBDal.getInstance().commitAndClose();
   }
 
   /**
    * Tests the toString method of the BaseOBObject ({@link BaseOBObject#toString()}).
    */
-  public void tToString() {
+  @Test
+  public void testHToString() {
     setTestAdminContext();
     final List<Product> products = OBDal.getInstance().createCriteria(Product.class).list();
     final StringBuilder sb = new StringBuilder();
@@ -250,7 +241,8 @@ public class DalTest extends BaseTest {
    * sorting on the name of a related entity (in this case {@link MaterialTransaction#getProduct()
    * #getName()}.
    */
-  public void transaction25PageRead() {
+  @Test
+  public void testITransaction25PageRead() {
     setTestUserContext();
     addReadWriteAccess(MaterialTransaction.class);
     final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance().createCriteria(
@@ -281,7 +273,8 @@ public class DalTest extends BaseTest {
    * Test reads 500 pages of the {@link MaterialTransaction} table and then prints how many
    * milliseconds one page took to retrieve.
    */
-  public void transactionAllPagesTime() {
+  @Test
+  public void testJTransactionAllPagesTime() {
     setSystemAdministratorContext();
     final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
@@ -312,14 +305,15 @@ public class DalTest extends BaseTest {
       time = System.currentTimeMillis();
       SessionHandler.getInstance().commitAndClose();
     }
-    log.debug("Read " + pageCount + " pages with average " + avg + " milliSeconds per page");
     OBDal.getInstance().commitAndClose();
+    log.debug("Read " + pageCount + " pages with average " + avg + " milliSeconds per page");
   }
 
   /**
    * Tests paged read of {@link Currency} objects.
    */
-  public void currencyPageRead() {
+  @Test
+  public void testKCurrencyPageRead() {
     setSystemAdministratorContext();
     final int count = OBDal.getInstance().createCriteria(Currency.class).count();
     final int pageSize = 5;
@@ -341,7 +335,8 @@ public class DalTest extends BaseTest {
   /**
    * Tests paged read of {@link CashBook} objects.
    */
-  public void cashBookPageRead() {
+  @Test
+  public void testLCashBookPageRead() {
     setSystemAdministratorContext();
     final int count = OBDal.getInstance().createCriteria(CashBook.ENTITY_NAME).count();
     final int pageSize = 5;
@@ -362,7 +357,8 @@ public class DalTest extends BaseTest {
   /**
    * Tests if a database trigger is fired on creation of a {@link CashBook}.
    */
-  public void cashBookTrigger() {
+  @Test
+  public void testMCashBookTrigger() {
     setTestUserContext();
     OBContext.setAdminMode(true);
     try {
@@ -403,7 +399,8 @@ public class DalTest extends BaseTest {
     OBDal.getInstance().commitAndClose();
   }
 
-  public void getPropertyFromColumnName() {
+  @Test
+  public void testNGetPropertyFromColumnName() {
     final Property property = DalUtil.getProperty("AD_COLUMN", "AD_COLUMN_ID");
     assertNotNull(property);
   }

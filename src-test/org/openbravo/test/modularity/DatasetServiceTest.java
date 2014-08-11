@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -35,7 +36,7 @@ import org.openbravo.model.ad.utility.DataSetColumn;
 import org.openbravo.model.ad.utility.DataSetTable;
 import org.openbravo.service.dataset.DataSetService;
 import org.openbravo.service.db.DataExportService;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the {@link DataSetService} object and its methods.
@@ -43,7 +44,7 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DatasetServiceTest extends BaseTest {
+public class DatasetServiceTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(DatasetServiceTest.class);
 
@@ -53,6 +54,7 @@ public class DatasetServiceTest extends BaseTest {
    * @see DataSet#getDataSetTableList()
    * @see DataSetTable#getSQLWhereClause()
    */
+  @Test
   public void testCheckQueries() {
     setTestAdminContext();
 
@@ -79,6 +81,7 @@ public class DatasetServiceTest extends BaseTest {
   /**
    * Exports the data of all data sets.
    */
+  @Test
   public void testExportAllDataSets() {
     setTestAdminContext();
     final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
@@ -101,6 +104,7 @@ public class DatasetServiceTest extends BaseTest {
    * 
    * @see Table
    */
+  @Test
   public void testDataSetTable() {
     setTestAdminContext();
     final DataSetTable dst = OBProvider.getInstance().get(DataSetTable.class);
@@ -118,6 +122,7 @@ public class DatasetServiceTest extends BaseTest {
   /**
    * Read all data defined for all data sets.
    */
+  @Test
   public void testReadAll() {
     setTestAdminContext();
 

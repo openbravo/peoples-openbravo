@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,13 @@
 
 package org.openbravo.test.system;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
@@ -29,7 +33,7 @@ import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.service.dataset.DataSetService;
 import org.openbravo.service.system.SystemService;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the {@link SystemService} class.
@@ -37,12 +41,13 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class SystemServiceTest extends BaseTest {
+public class SystemServiceTest extends OBBaseTest {
   private static final long ONEDAY = 1000 * 60 * 60 * 24;
 
   /**
    * Test the {@link DataSetService#hasChanged(DataSet, Date)} method.
    */
+  @Test
   public void testChangedDataSet() {
     setSystemAdministratorContext();
 
@@ -54,7 +59,8 @@ public class SystemServiceTest extends BaseTest {
           .getInstance().hasChanged(ds, tomorrow));
     }
 
-    // pick smallest possible date in past to ensure that there is always a change in some dataset after this date
+    // pick smallest possible date in past to ensure that there is always a change in some dataset
+    // after this date
     final Date past = new Date(0);
     for (DataSet ds : dss) {
       if (!DataSetService.getInstance().hasData(ds)) {
@@ -69,6 +75,7 @@ public class SystemServiceTest extends BaseTest {
    * Tests the {@link SystemService#hasChanged(Class[], Date)} method which is used to check if an
    * object in a specific table have changed since a specific time.
    */
+  @Test
   public void testChangedClasses() {
     setSystemAdministratorContext();
     final Class<?>[] clzs = new Class<?>[] { Table.class, Column.class, Reference.class };

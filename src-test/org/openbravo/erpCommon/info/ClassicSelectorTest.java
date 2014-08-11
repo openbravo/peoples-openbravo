@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,13 @@
 
 package org.openbravo.erpCommon.info;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.servlet.ServletException;
 
+import org.junit.Test;
 import org.openbravo.erpCommon.utility.TableSQLData;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests consistency between select and countRows methods of the (old) selectors in erpCommon/info.
@@ -31,11 +34,12 @@ import org.openbravo.test.base.BaseTest;
  * 
  * @author huehner
  */
-public class ClassicSelectorTest extends BaseTest {
+public class ClassicSelectorTest extends OBBaseTest {
 
   /**
    * Test BusinessPartnerMultiple selector.
    */
+  @Test
   public void testBpartnerMultiple() throws Exception {
 
     String client = "'" + TEST_CLIENT_ID + "'";

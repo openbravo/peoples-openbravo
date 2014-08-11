@@ -24,12 +24,18 @@ package org.openbravo.test.datasource;
  * @author Shankar Balachandran 
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
@@ -47,6 +53,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
    * 
    * @throws Exception
    */
+  @Test
   public void testFetchWithoutLimitParameters() throws Exception {
     setOBContext("100");
     // Using values of window dropdown in preference window
@@ -69,6 +76,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
    * 
    * @throws Exception
    */
+  @Test
   public void testFetchWithLargeData() throws Exception {
     // setContext("100");
     // Using values of window dropdown in preference window
@@ -90,6 +98,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
    * 
    * @throws Exception
    */
+  @Test
   public void testPaginatedFetch() throws Exception {
     setOBContext("100");
     // Using values of window dropdown in preference window
@@ -140,6 +149,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
    * 
    * @throws Exception
    */
+  @Test
   public void testFilter() throws Exception {
     setOBContext("100");
     // Using values of visible at user in preference
@@ -164,6 +174,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
    * 
    * @throws Exception
    */
+  @Test
   public void testFilterWithPagination() throws Exception {
     setOBContext("100");
     // Using values of visible at user in preference
@@ -188,6 +199,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
    * 
    * @throws Exception
    */
+  @Test
   public void testAccess() throws Exception {
     setOBContext("100");
     // Using values of window dropdown in menu
@@ -208,6 +220,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
    * 
    * @throws Exception
    */
+  @Test
   public void testAccessForFilter() throws Exception {
     setOBContext("100");
     // Using values of window dropdown in menu
@@ -229,6 +242,7 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
    * Tests a request to a combo with a role that has no access to field entity. This case was
    * failing (see issue #27057)
    */
+  @Test
   public void testRequestWithoutFieldAccess() throws Exception {
     // Set employee role
     changeProfile("D615084948E046E3A439915008F464A6", "192", "E443A31992CB4635AFCAEABE7183CE85",

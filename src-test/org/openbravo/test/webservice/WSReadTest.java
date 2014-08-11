@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,12 @@
 
 package org.openbravo.test.webservice;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URLEncoder;
 
+import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.datamodel.Column;
@@ -40,6 +44,7 @@ public class WSReadTest extends BaseWSTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testSchemaWebService() throws Exception {
     doTestGetRequest("/ws/dal/schema", "<xs:element name=\"Openbravo\">", 200, false);
   }
@@ -49,6 +54,7 @@ public class WSReadTest extends BaseWSTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testTypesWebService() throws Exception {
     doTestGetRequest("/ws/dal", "<Types>", 200, false);
   }
@@ -58,6 +64,7 @@ public class WSReadTest extends BaseWSTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testWhereClause() throws Exception {
     String whereClause = "(table.id='104' or table.id='105') and isKey='Y'";
     whereClause = URLEncoder.encode(whereClause, "UTF-8");
@@ -78,6 +85,7 @@ public class WSReadTest extends BaseWSTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testPagedWhereClause() throws Exception {
     setTestAdminContext();
     requestColumnPage(1, 10);

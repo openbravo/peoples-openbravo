@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 
 package org.openbravo.test.ant;
 
+import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 
 /**
@@ -31,23 +32,28 @@ import org.openbravo.dal.service.OBDal;
 
 public class AntTasksTest extends BaseAntTest {
 
+  @Test
   public void testCompileComplete() {
     doTest("compile.complete");
   }
 
+  @Test
   public void testUpdateDatabase() {
     doTest("update.database");
   }
 
+  @Test
   public void testWad() {
     doTest("wad", "src");
   }
 
+  @Test
   public void testImportReferenceData() {
     doTest("import.reference.data");
     OBDal.getInstance().commitAndClose();
   }
 
+  @Test
   public void testCreateDatabase() {
     doTest("create.database");
   }

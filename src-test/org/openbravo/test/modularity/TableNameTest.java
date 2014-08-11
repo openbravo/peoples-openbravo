@@ -19,12 +19,17 @@
 
 package org.openbravo.test.modularity;
 
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.QueryTimeoutException;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.GenericJDBCException;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -32,39 +37,25 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.DataPackage;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDBPrefix;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * This test case checks that table names are correctly checked when inserting them into DB. It must
  * be checkes the table name starts with the db prefix for the module and it is not possible to add
  * tables with non-allowed names.
  * 
- * IMPORTANT: Test cases are called by one of them called testContent(). The name of the rest of the
- * test cases NOT begin by "test...".
- * 
  * @author alostale
  */
-public class TableNameTest extends BaseTest {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class TableNameTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(TableNameTest.class);
 
   /**
-   * This test contains the invocations for the rest of the test cases. By this way, we preserve the
-   * execution order of the test cases.
-   */
-  public void testContent() {
-    createModule();
-    createTable1();
-    createTable2();
-    createTable3();
-    changePackage();
-    cleanUp();
-  }
-
-  /**
    * Creates a test module to work with it in later tests
    */
-  public void createModule() {
+  @Test
+  public void testACreateModule() {
     setSystemAdministratorContext();
     Module module = OBProvider.getInstance().get(Module.class);
     module.setName("Test-table-names");
@@ -85,14 +76,14 @@ public class TableNameTest extends BaseTest {
     pack.setModule(module);
     OBDal.getInstance().save(pack);
     commitTransaction();
-    OBDal.getInstance().flush();
   }
 
   /**
    * Creates a table that is valid, it has a valid name according with the db prefix for the module
    * it is assigned to
    */
-  public void createTable1() {
+  @Test
+  public void testBCreateTable1() {
     setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
     table.setName("TEST1_Table1");
@@ -103,14 +94,14 @@ public class TableNameTest extends BaseTest {
     table.setDataPackage(getPackage("org.openbravo.test.tablename.data"));
     OBDal.getInstance().save(table);
     commitTransaction();
-    OBDal.getInstance().flush();
   }
 
   /**
    * It tries to insert a table with a non-valid name prefix, it is tested that DB raises an
    * exception and thus the table is not inserted.
    */
-  public void createTable2() {
+  @Test
+  public void testCCreateTable2() {
     setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
     table.setName("TEST_Table2");
@@ -129,14 +120,14 @@ public class TableNameTest extends BaseTest {
     } catch (QueryTimeoutException e) { // thrown on oracle
       rollback();
     }
-    OBDal.getInstance().flush();
   }
 
   /**
    * Same test as testCreateTable2 but trying to insert the table in a package that for core module,
    * it should not insert anything
    */
-  public void createTable3() {
+  @Test
+  public void testDCreateTable3() {
     setSystemAdministratorContext();
     Table table = OBProvider.getInstance().get(Table.class);
     table.setName("TEST1_Table3");
@@ -155,14 +146,14 @@ public class TableNameTest extends BaseTest {
     } catch (QueryTimeoutException e) { // thrown on oracle
       rollback();
     }
-    OBDal.getInstance().flush();
   }
 
   /**
    * This test tryies to change the package for the table created in testCreateTable1 to a package
    * in core, this should fail because the naming rules are not filled
    */
-  public void changePackage() {
+  @Test
+  public void testEChangePackage() {
     setSystemAdministratorContext();
     OBCriteria<Table> obCriteria = OBDal.getInstance().createCriteria(Table.class);
     obCriteria.add(Restrictions.eq(Module.PROPERTY_NAME, "TEST1_Table1"));
@@ -179,13 +170,13 @@ public class TableNameTest extends BaseTest {
     } catch (QueryTimeoutException e) { // thrown on oracle
       rollback();
     }
-    OBDal.getInstance().flush();
   }
 
   /**
    * Removes all created objects from database.
    */
-  public void cleanUp() {
+  @Test
+  public void testFCleanUp() {
     setSystemAdministratorContext();
     OBCriteria<Module> obCriteria = OBDal.getInstance().createCriteria(Module.class);
     obCriteria.add(Restrictions.eq(Module.PROPERTY_NAME, "Test-table-names"));
@@ -226,7 +217,7 @@ public class TableNameTest extends BaseTest {
       OBDal.getInstance().remove(module);
       commitTransaction();
     }
-    OBDal.getInstance().flush();
+
   }
 
   private DataPackage getPackage(String name) {

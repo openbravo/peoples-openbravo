@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,13 @@
 
 package org.openbravo.test.dal;
 
+import org.junit.Test;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.geography.Location;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Generates many {@link Location} objects to use for testing performance.
@@ -32,12 +33,13 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class PerformanceGenerateInstanceTest extends BaseTest {
+public class PerformanceGenerateInstanceTest extends OBBaseTest {
 
   private static final int START = 1001;
   private static final long NUMBER = 1000000;
   private static final long COMMIT_COUNT = NUMBER / 10;
 
+  @Test
   public void testLocationInstanceCreation() {
     setTestAdminContext();
     final Location location = OBDal.getInstance().get(Location.class, "1000000");

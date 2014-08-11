@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.SessionImplementor;
 import org.junit.Assert;
+import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -40,7 +41,7 @@ import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test case to try and test proxy loading or stateless sessions.
@@ -48,10 +49,11 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DalPerformanceCriteriaTest extends BaseTest {
+public class DalPerformanceCriteriaTest extends OBBaseTest {
 
   private static final int CNT = 1000;
 
+  @Test
   public void testPerformance() {
     createManyBPs();
 
@@ -127,6 +129,7 @@ public class DalPerformanceCriteriaTest extends BaseTest {
 
   }
 
+  @Test
   public void testCriteriaScrollable() {
 
     OBCriteria<BusinessPartner> c = OBDal.getInstance().createCriteria(BusinessPartner.class);

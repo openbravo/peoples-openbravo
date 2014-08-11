@@ -11,13 +11,17 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.test.dal;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
@@ -38,7 +43,7 @@ import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.CallStoredProcedure;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the {@link CallStoredProcedure} class and the {@link CallProcess} class.
@@ -46,7 +51,7 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DalStoredProcedureTest extends BaseTest {
+public class DalStoredProcedureTest extends OBBaseTest {
 
   /**
    * Tests the {@link CallProcess} class
@@ -95,6 +100,7 @@ public class DalStoredProcedureTest extends BaseTest {
   /**
    * Tests calling database procedures using the dal connection provider
    */
+  @Test
   public void testCallGetTax() throws Exception {
     setSystemAdministratorContext();
 
@@ -125,6 +131,7 @@ public class DalStoredProcedureTest extends BaseTest {
   /**
    * Tests calling database procedures using the dal connection provider
    */
+  @Test
   public void testCallDivide() throws Exception {
     setSystemAdministratorContext();
 
@@ -147,6 +154,7 @@ public class DalStoredProcedureTest extends BaseTest {
   /**
    * Tests calling database procedures using the dal connection provider
    */
+  @Test
   public void testCallLastDay() throws Exception {
     setSystemAdministratorContext();
 

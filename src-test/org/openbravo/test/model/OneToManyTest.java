@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,22 +19,30 @@
 
 package org.openbravo.test.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.FixMethodOrder;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test cases for one-to-many support: adding a child, deleting a child.
  * 
  * @author iperdomo
  */
-public class OneToManyTest extends BaseTest {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class OneToManyTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(OneToManyTest.class);
 
@@ -43,7 +51,8 @@ public class OneToManyTest extends BaseTest {
   /**
    * Tests if it is possible to iterate over {@link OrderLine} objects of an {@link Order}. Adds one
    */
-  public void testAccessChildCollection() {
+  @Test
+  public void testAAccessChildCollection() {
     setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
@@ -63,11 +72,9 @@ public class OneToManyTest extends BaseTest {
    * Tests adding an {@link OrderLine} to an {@link Order} without explicitly saving the order line,
    * the cascade behavior defined in the hibernate mapping should take care of that.
    */
-  public void testAddOrderLine() {
-    // This test is currently disabled because it didn't work with the new Openbravo demo data
-    // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
+  @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
+  @Test
+  public void testBAddOrderLine() {
     setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
@@ -104,11 +111,9 @@ public class OneToManyTest extends BaseTest {
   /**
    * Now the order line from the previous test case is deleted.
    */
-  public void testDeleteChild() {
-    // This test is currently disabled because it didn't work with the new Openbravo demo data
-    // More info can be found here: https://issues.openbravo.com/view.php?id=20264
-    if (1 == 1)
-      return;
+  @Ignore("This test is currently disabled because it didn't work with the new Openbravo demo data. More info: https://issues.openbravo.com/view.php?id=20264")
+  @Test
+  public void testCDeleteChild() {
     setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);
@@ -138,7 +143,8 @@ public class OneToManyTest extends BaseTest {
   /**
    * This test checks if the order line has indeed been deleted.
    */
-  public void testConfirmDeleted() {
+  @Test
+  public void testDConfirmDeleted() {
     setTestUserContext();
     addReadWriteAccess(Order.class);
     addReadWriteAccess(OrderLine.class);

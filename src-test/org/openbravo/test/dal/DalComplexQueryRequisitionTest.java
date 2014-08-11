@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,18 +24,19 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.procurement.RequisitionLine;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests a complex query using the DAL. Is used in the Developers Guide HowTo.
  * 
  * @author mtaal
  */
-
-public class DalComplexQueryRequisitionTest extends BaseTest {
+public class DalComplexQueryRequisitionTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(DalComplexQueryRequisitionTest.class);
 
@@ -76,6 +77,7 @@ public class DalComplexQueryRequisitionTest extends BaseTest {
   /**
    * Tests a complex query related to requisition lines.
    */
+  @Test
   public void testComplexQueryOne() {
     setTestAdminContext();
 
@@ -205,6 +207,8 @@ public class DalComplexQueryRequisitionTest extends BaseTest {
     }
   }
 
+  @Ignore("This test has been temporarily disabled.")
+  @Test
   public void _testComplexQueryOne() {
     setTestAdminContext();
 

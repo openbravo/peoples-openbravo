@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,10 +20,11 @@
 package org.openbravo.test.dal;
 
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Does some simple performance tests by reading and updating of all {@link Product} objects, either
@@ -32,12 +33,13 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class DalPerformanceProductTest extends BaseTest {
+public class DalPerformanceProductTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(DalPerformanceProductTest.class);
 
   /**
    * Tests a paged read of products and print of the identifier. The timing is reported in the log.
    */
+  @Test
   public void testProduct25PageRead() {
     setUserContext(getRandomUser().getId());
     final OBCriteria<Product> countObc = OBDal.getInstance().createCriteria(Product.class);
@@ -75,6 +77,7 @@ public class DalPerformanceProductTest extends BaseTest {
    * read for the {@link Product}, nl. the {@link Product#getProductCategory()} and the
    * {@link Product#getTaxCategory()}. The timing is reported in the log.
    */
+  @Test
   public void testProduct25PageReadGetExtra() {
     setUserContext(getRandomUser().getId());
     final OBCriteria<Product> countObc = OBDal.getInstance().createCriteria(Product.class);
@@ -116,6 +119,7 @@ public class DalPerformanceProductTest extends BaseTest {
    * Reads all {@link Product} objects sorted by name and also prints related information:
    * {@link Product#getProductCategory()} and {@link Product#getTaxCategory()}.
    */
+  @Test
   public void testReadProducts() {
     setUserContext(getRandomUser().getId());
     final OBCriteria<Product> obc = OBDal.getInstance().createCriteria(Product.class);
@@ -138,6 +142,7 @@ public class DalPerformanceProductTest extends BaseTest {
   /**
    * Reads all {@link Product} objects and updates the name.
    */
+  @Test
   public void testUpdateAllProducts() {
     setTestUserContext();
     final OBCriteria<Product> countObc = OBDal.getInstance().createCriteria(Product.class);
@@ -163,6 +168,7 @@ public class DalPerformanceProductTest extends BaseTest {
   /**
    * Reads all products in a paged manner and updates the name.
    */
+  @Test
   public void testUpdateAllProductsByPage() {
     setTestUserContext();
     addReadWriteAccess(Product.class);

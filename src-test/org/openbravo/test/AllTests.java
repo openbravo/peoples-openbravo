@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,8 @@
 
 package org.openbravo.test;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalConnectionProviderTest;
@@ -55,58 +54,49 @@ import org.openbravo.test.xml.EntityXMLImportTestWarning;
 import org.openbravo.test.xml.EntityXMLIssues;
 import org.openbravo.test.xml.UniqueConstraintImportTest;
 
-public class AllTests {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
 
-  public static Test suite() {
-    final TestSuite suite = new TestSuite("Test for org.openbravo.test.dal");
-    // $JUnit-BEGIN$
-    // suite.addTestSuite(CompositeIdTest.class);
-
-    // security
-    suite.addTestSuite(EntityAccessTest.class);
-    suite.addTestSuite(AccessLevelTest.class);
-    suite.addTestSuite(AllowedOrganizationsTest.class);
-    suite.addTestSuite(WritableReadableOrganizationClientTest.class);
+// security
+    EntityAccessTest.class, //
+    AccessLevelTest.class, //
+    AllowedOrganizationsTest.class, //
+    WritableReadableOrganizationClientTest.class,
 
     // dal
-    suite.addTestSuite(HiddenUpdateTest.class);
-    suite.addTestSuite(MappingGenerationTest.class);
-    suite.addTestSuite(ValidationTest.class);
-    suite.addTestSuite(DynamicEntityTest.class);
-    suite.addTestSuite(DalTest.class);
-    suite.addTestSuite(DalFilterTest.class);
-    suite.addTestSuite(DalUtilTest.class);
-    suite.addTestSuite(IssuesTest.class);
-    suite.addTestSuite(DalQueryTest.class);
-    suite.addTestSuite(DalConnectionProviderTest.class);
-    suite.addTestSuite(DalCopyTest.class);
-    suite.addTestSuite(DalStoredProcedureTest.class);
-    suite.addTestSuite(ReadByNameTest.class);
-    suite.addTestSuite(DalPerformanceProxyTest.class);
-    suite.addTestSuite(ComputedColumnsTest.class);
+    HiddenUpdateTest.class, //
+    MappingGenerationTest.class, //
+    ValidationTest.class, //
+    DynamicEntityTest.class, //
+    DalTest.class, //
+    DalFilterTest.class, //
+    DalUtilTest.class, //
+    IssuesTest.class, //
+    DalQueryTest.class, //
+    DalConnectionProviderTest.class, //
+    DalCopyTest.class, //
+    DalStoredProcedureTest.class, //
+    ReadByNameTest.class, //
+    DalPerformanceProxyTest.class, //
+    ComputedColumnsTest.class, //
 
     // model
-    suite.addTestSuite(RuntimeModelTest.class);
-    suite.addTestSuite(OneToManyTest.class);
-    suite.addTestSuite(ClassLoaderTest.class);
-    suite.addTestSuite(IndexesTest.class);
-    suite.addTestSuite(TrlColumnsOraTypeTest.class);
+    RuntimeModelTest.class, //
+    OneToManyTest.class, //
+    ClassLoaderTest.class, //
+    IndexesTest.class, //
+    TrlColumnsOraTypeTest.class,
 
     // expression
-    suite.addTestSuite(EvaluationTest.class);
+    EvaluationTest.class,
 
     // xml
-    suite.addTestSuite(EntityXMLImportTestBusinessObject.class);
-    suite.addTestSuite(EntityXMLImportTestReference.class);
-    suite.addTestSuite(EntityXMLImportTestSingle.class);
-    suite.addTestSuite(EntityXMLImportTestWarning.class);
-    suite.addTestSuite(EntityXMLIssues.class);
-    suite.addTestSuite(UniqueConstraintImportTest.class);
-
-    suite.addTestSuite(ClassicSelectorTest.class);
-
-    // $JUnit-END$
-    return suite;
-  }
-
+    EntityXMLImportTestBusinessObject.class, //
+    EntityXMLImportTestReference.class, //
+    EntityXMLImportTestSingle.class, //
+    EntityXMLImportTestWarning.class, //
+    EntityXMLIssues.class, //
+    UniqueConstraintImportTest.class, //
+    ClassicSelectorTest.class })
+public class AllTests {
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.criterion.Restrictions;
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -43,7 +44,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Generates the entity model wiki page and its subpages:
@@ -60,7 +61,7 @@ import org.openbravo.test.base.BaseTest;
  * 
  * @author mtaal
  */
-public class GenerateEntityModelWiki extends BaseTest {
+public class GenerateEntityModelWiki extends OBBaseTest {
   private static final String WIKI_URL = "http://wiki.openbravo.com/wiki/index.php";
   private static final String ENTITY_MODEL_PATH = "ERP/2.50/Developers_Guide/Reference/Entity_Model";
   // TODO: obtain cookies and token in a proper way
@@ -72,6 +73,7 @@ public class GenerateEntityModelWiki extends BaseTest {
 
   private final Map<String, String> cachedTemplates = new HashMap<String, String>();
 
+  @Test
   public void _testPrint() {
     // ERP/2.50/Developers_Guide/Database_Model/org.openbravo.model.ad.datamodel/AD_Table
     final List<Entity> entities = new ArrayList<Entity>(ModelProvider.getInstance().getModel());
@@ -87,6 +89,7 @@ public class GenerateEntityModelWiki extends BaseTest {
    * 
    * @throws Exception
    */
+  @Test
   public void testGenerateWiki() throws Exception {
     super.setTestAdminContext();
     if (true) {

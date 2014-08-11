@@ -11,13 +11,16 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.test.dal;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,14 +36,15 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Level;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.Query;
+import org.junit.Test;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.test.base.BaseTest;
 import org.openbravo.test.base.HiddenObjectHelper;
+import org.openbravo.test.base.OBBaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * @author alostale
  * 
  */
-public class ADCachedMultiThreadTest extends BaseTest {
+public class ADCachedMultiThreadTest extends OBBaseTest {
   private static final int TEST_EXECUTIONS = 10;
   private static final int MAX_DELAY = 250;
 
@@ -72,6 +76,7 @@ public class ADCachedMultiThreadTest extends BaseTest {
    * Verifies tab object is completely initialized by Thread 1 so Thread 2 can work with it
    * 
    */
+  @Test
   public void testParentTabCache() throws Exception {
 
     executeTestParentTab(true);
@@ -87,6 +92,7 @@ public class ADCachedMultiThreadTest extends BaseTest {
    * Verifies tab object is completely initialized by Thread 1 so Thread 2 can work with it
    * 
    */
+  @Test
   public void testParentTabNoCache() throws Exception {
     executeTestParentTab(false);
   }
@@ -101,6 +107,7 @@ public class ADCachedMultiThreadTest extends BaseTest {
    * Using cache
    * 
    */
+  @Test
   public void testMultiCallsCache() throws Exception {
     executeTestMultiCalls(true);
   }
@@ -113,6 +120,7 @@ public class ADCachedMultiThreadTest extends BaseTest {
    * session which is one of the ways issue #24421 was reproducible. Not using cache
    * 
    */
+  @Test
   public void testMultiCallsNoCache() throws Exception {
     executeTestMultiCalls(false);
   }
@@ -143,6 +151,7 @@ public class ADCachedMultiThreadTest extends BaseTest {
    * which needs to be completely initialized within current tab
    * 
    */
+  @Test
   public void testPropertyColumn() throws Exception {
     // Expecting LazyInitializationException, disabling log not to display it
     org.apache.log4j.Logger category = org.apache.log4j.Logger

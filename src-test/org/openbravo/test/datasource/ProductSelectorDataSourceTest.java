@@ -19,10 +19,14 @@
 
 package org.openbravo.test.datasource;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Test;
 
 /**
  * Test Product Complete Selector DataSource
@@ -36,6 +40,7 @@ public class ProductSelectorDataSourceTest extends BaseDataSourceTestNoDal {
   /**
    * Obtains a list of all warehouses from the selector. Test for issue #26317
    */
+  @Test
   public void testWarehouseFKDropDown() throws Exception {
     JSONObject resp = performRequest(false);
 
@@ -45,6 +50,7 @@ public class ProductSelectorDataSourceTest extends BaseDataSourceTestNoDal {
   /**
    * Obtains a list of filtered warehouses. Test for issue #26317
    */
+  @Test
   public void testWarehouseFKDropDownFilter() throws Exception {
     JSONObject resp = performRequest(true);
     assertEquals("Data should have 2 warehouses", 2, resp.getJSONArray("data").length());

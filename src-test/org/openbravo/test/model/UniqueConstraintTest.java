@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,13 @@
 
 package org.openbravo.test.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -30,7 +34,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.geography.Country;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Tests the api which allows to query for objects which would match a certain object based on the
@@ -39,13 +43,14 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class UniqueConstraintTest extends BaseTest {
+public class UniqueConstraintTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(UniqueConstraintTest.class);
 
   /**
    * Check that the unique constraints are loaded ([@link {@link Entity#getUniqueConstraints()}).
    */
+  @Test
   public void testUniqueConstraintLoad() {
     final Entity entity = ModelProvider.getInstance().getEntityByTableName("C_Country_Trl");
     assertEquals(1, entity.getUniqueConstraints().size());
@@ -55,6 +60,7 @@ public class UniqueConstraintTest extends BaseTest {
   /**
    * Tests the {@link OBDal#findUniqueConstrainedObjects(BaseOBObject)} method.
    */
+  @Test
   public void testUniqueConstraintQuerying() {
     setUserContext(getRandomUser().getId());
     addReadWriteAccess(Country.class);
