@@ -9,9 +9,13 @@ public class UpdateTransactionTypeTransactionTab extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      UpdateTransactionTypeTransactionTabData.updateToBankFee(cp);
-      UpdateTransactionTypeTransactionTabData.updateToBPDeposit(cp);
-      UpdateTransactionTypeTransactionTabData.updateToBPWithdrawal(cp);
+      boolean isUpdated= UpdateTransactionTypeTransactionTabData.isExecuted(cp);
+      if (!isUpdated){
+        UpdateTransactionTypeTransactionTabData.updateToBankFee(cp);
+        UpdateTransactionTypeTransactionTabData.updateToBPDeposit(cp);
+        UpdateTransactionTypeTransactionTabData.updateToBPWithdrawal(cp);
+        UpdateTransactionTypeTransactionTabData.createPreference(cp);
+      }
     } catch (Exception e) {
       handleError(e);
     }   

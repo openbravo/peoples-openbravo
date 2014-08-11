@@ -166,4 +166,72 @@ static Logger log4j = Logger.getLogger(UpdateTransactionTypeTransactionTabData.c
     }
     return(updateCount);
   }
+
+  public static boolean isExecuted(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "        SELECT count(*) as exist" +
+      "        FROM DUAL" +
+      "        WHERE EXISTS (SELECT 1 FROM ad_preference" +
+      "                      WHERE attribute = 'UpdatedTransactionType')";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "exist").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(boolReturn);
+  }
+
+  public static int createPreference(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "           INSERT INTO ad_preference (" +
+      "           ad_preference_id, ad_client_id, ad_org_id, isactive," +
+      "           createdby, created, updatedby, updated,attribute" +
+      "           ) VALUES (" +
+      "           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'UpdatedTransactionType')";
+
+    int updateCount = 0;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      updateCount = st.executeUpdate();
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception ignore){
+        ignore.printStackTrace();
+      }
+    }
+    return(updateCount);
+  }
 }
