@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER OBPOS_APPLICATIONS_CHECK_TRG">
+    <trigger name="OBPOS_APPLICATIONS_CHECK_TRG" table="OBPOS_APPLICATIONS" fires="before" insert="true" update="true" delete="true" foreach="row">
+      <body><![CDATA[
+/*
+ ************************************************************************************
+ * Copyright (C) 2014 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
+    v_CountSons NUMBER;
+        
+BEGIN
+    
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
+    END IF;
+
+  IF (UPDATING) THEN
+    IF (COALESCE(:NEW.obpos_terminaltype_id , '0') != COALESCE(:OLD.obpos_terminaltype_id , '0')) THEN
+      SELECT COUNT(*) INTO v_CountSons FROM obpos_app_payment WHERE obpos_app_payment.obpos_applications_id = :NEW.obpos_applications_id;
+      IF (v_CountSons > 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OBPOS_CANNOTCHANGETERMINALTYPE@');
+      END IF;
+    END IF;
+  END IF;
+
+END OBPOS_APPLICATIONS_CHECK_TRG
+]]></body>
+    </trigger>
+  </database>
