@@ -306,17 +306,17 @@
   OB.OBPOSPointOfSale.Print = OB.OBPOSPointOfSale.Print || {};
 
   OB.OBPOSPointOfSale.Print.Receipt = PrintReceipt;
-  OB.OBPOSPointOfSale.Print.ReceiptTemplate = 'res/printreceipt.xml';
-  OB.OBPOSPointOfSale.Print.ReceiptClosedTemplate = 'res/printclosedreceipt.xml';
-  OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice = 'res/printinvoice.xml';
-  OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn = 'res/printreturn.xml';
-  OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice = 'res/printreturninvoice.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplate = '../org.openbravo.retail.posterminal/res/printreceipt.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptClosedTemplate = '../org.openbravo.retail.posterminal/res/printclosedreceipt.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice = '../org.openbravo.retail.posterminal/res/printinvoice.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn = '../org.openbravo.retail.posterminal/res/printreturn.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice = '../org.openbravo.retail.posterminal/res/printreturninvoice.xml';
   OB.OBPOSPointOfSale.Print.ReceiptLine = PrintReceiptLine;
-  OB.OBPOSPointOfSale.Print.ReceiptLineTemplate = 'res/printline.xml';
-  OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway = 'res/printlayaway.xml';
-  OB.OBPOSPointOfSale.Print.DisplayTotal = 'res/displaytotal.xml';
-  OB.OBPOSPointOfSale.Print.CashUpTemplate = 'res/printcashup.xml';
-  OB.OBPOSPointOfSale.Print.GoodByeTemplate = 'res/goodbye.xml';
-  OB.OBPOSPointOfSale.Print.WelcomeTemplate = 'res/welcome.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptLineTemplate = '../org.openbravo.retail.posterminal/res/printline.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway = '../org.openbravo.retail.posterminal/res/printlayaway.xml';
+  OB.OBPOSPointOfSale.Print.DisplayTotal = '../org.openbravo.retail.posterminal/res/displaytotal.xml';
+  OB.OBPOSPointOfSale.Print.CashUpTemplate = '../org.openbravo.retail.posterminal/res/printcashup.xml';
+  OB.OBPOSPointOfSale.Print.GoodByeTemplate = '../org.openbravo.retail.posterminal/res/goodbye.xml';
+  OB.OBPOSPointOfSale.Print.WelcomeTemplate = '../org.openbravo.retail.posterminal/res/welcome.xml';
 
 }());
