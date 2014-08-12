@@ -10,7 +10,7 @@
         <onCreateDefault/>
       </column>
       <column name="EM_APRM_PROCESSED" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default><![CDATA[[P]]></default>
+        <default><![CDATA[P]]></default>
         <onCreateDefault><![CDATA['R']]></onCreateDefault>
       </column>
     </table>
