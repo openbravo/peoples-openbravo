@@ -49,6 +49,7 @@ public class PriceDifferenceProcess {
     BigDecimal orderAmt = BigDecimal.ZERO;
     BigDecimal oldAmountCost = BigDecimal.ZERO;
     BigDecimal qty = BigDecimal.ZERO;
+    Date costAdjDateAcct = null;
 
     CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
         materialTransaction.getOrganization(), "PDC"); // PDC= Price Difference Correction
@@ -62,6 +63,10 @@ public class PriceDifferenceProcess {
             .getSalesOrderLine().getCurrency(), materialTransaction.getCurrency(),
             materialTransaction.getMovementDate(), materialTransaction.getOrganization(),
             FinancialUtils.PRECISION_STANDARD));
+        if ((costAdjDateAcct == null)
+            || (costAdjDateAcct.before(matchPO.getInvoiceLine().getInvoice().getInvoiceDate()))) {
+          costAdjDateAcct = matchPO.getInvoiceLine().getInvoice().getInvoiceDate();
+        }
       }
     } else {
       for (ReceiptInvoiceMatch matchReceipt : materialTransaction.getGoodsShipmentLine()
@@ -73,6 +78,10 @@ public class PriceDifferenceProcess {
             materialTransaction.getMovementDate(), materialTransaction // Currency From??????
                 .getOrganization(), FinancialUtils.PRECISION_STANDARD));
         qty = qty.add(matchReceipt.getQuantity());
+        if ((costAdjDateAcct == null)
+            || (costAdjDateAcct.before(matchReceipt.getInvoiceLine().getInvoice().getInvoiceDate()))) {
+          costAdjDateAcct = matchReceipt.getInvoiceLine().getInvoice().getInvoiceDate();
+        }
       }
       if (qty != materialTransaction.getMovementQuantity()) {
         for (org.openbravo.model.procurement.POInvoiceMatch matchPO : materialTransaction
@@ -98,9 +107,13 @@ public class PriceDifferenceProcess {
         oldAmountCost = oldAmountCost.add(trxCost.getCost());
       }
     }
+
+    if (costAdjDateAcct == null) {
+      costAdjDateAcct = new Date();
+    }
     CostAdjustmentLine costAdjLine = CostAdjustmentUtils.insertCostAdjustmentLine(
         materialTransaction, costAdjustmentHeader, newAmountCost.subtract(oldAmountCost),
-        Boolean.TRUE, null, null);
+        Boolean.TRUE, null, costAdjDateAcct);
 
     costAdjLine.setNeedsPosting(false);
     OBDal.getInstance().save(costAdjLine);
