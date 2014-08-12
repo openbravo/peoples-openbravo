@@ -138,4 +138,10 @@ public class SalesOrderAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
     return OBDateUtils.formatDate(new Date());
   }
 
+  @Override
+  String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
+    // Document Type
+    return "";
+  }
+
 }

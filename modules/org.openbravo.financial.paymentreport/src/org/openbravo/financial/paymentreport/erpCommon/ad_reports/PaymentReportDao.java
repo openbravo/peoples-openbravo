@@ -1714,6 +1714,7 @@ public class PaymentReportDao {
       obCriteriaTrans.createAlias(FIN_FinaccTransaction.PROPERTY_ACCOUNT, "acc",
           OBCriteria.LEFT_JOIN);
       obCriteriaTrans.add(Restrictions.isNull(FIN_FinaccTransaction.PROPERTY_FINPAYMENT));
+      obCriteriaTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_PROCESSED, true));
       obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_ORGANIZATION,
           organizations));
 

@@ -161,4 +161,10 @@ public class PaymentOutAddPaymentDefaultValues extends AddPaymentDefaultValuesHa
     return OBDateUtils.formatDate(getPayment(requestMap).getPaymentDate());
   }
 
+  @Override
+  String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
+    // Document Type
+    return "";
+  }
+
 }

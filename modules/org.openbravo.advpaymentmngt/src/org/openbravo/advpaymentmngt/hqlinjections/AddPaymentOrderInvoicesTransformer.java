@@ -322,9 +322,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     int orgFilterIndex = hqlQuery.indexOf(" psd.organization in ", whereIndex);
     int beginIndex = hqlQuery.indexOf(" AND ", orgFilterIndex);
     int endIndex = hqlQuery.indexOf("and @whereClause@");
-    String gridFilters = hqlQuery.substring(beginIndex, endIndex);
-
-    hqlQuery = hqlQuery.replace(gridFilters, " ");
+    if (beginIndex != -1) {
+      String gridFilters = hqlQuery.substring(beginIndex, endIndex);
+      hqlQuery = hqlQuery.replace(gridFilters, " ");
+    }
     return hqlQuery;
   }
 
@@ -448,10 +449,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     if (havingGridFilters.contains("@amount@")) {
       havingGridFilters = havingGridFilters.replaceAll("@amount@", "COALESCE(sum(fp.amount), 0)");
     }
-
-    havingClause.append(" having ( " + havingGridFilters + " )");
+    if (havingGridFilters != null && !"".equals(havingGridFilters.trim())) {
+      havingClause.append(" having ( " + havingGridFilters + " )");
+    }
     hqlQuery = hqlQuery.replace("@havingClause@", havingClause.toString());
-
     return hqlQuery;
   }
 

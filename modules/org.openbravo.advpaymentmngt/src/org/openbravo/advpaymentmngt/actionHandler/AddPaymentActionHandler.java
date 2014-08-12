@@ -178,6 +178,16 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         errorMessage.put("title", message.getTitle());
         errorMessage.put("text", message.getMessage());
         jsonResponse.put("message", errorMessage);
+        jsonResponse.put("refreshParent", false);
+        JSONObject setSelectorValueFromRecord = new JSONObject();
+        JSONObject record = new JSONObject();
+        JSONObject responseActions = new JSONObject();
+        record.put("value", payment.getId());
+        record.put("map", payment.getIdentifier());
+        setSelectorValueFromRecord.put("record", record);
+        responseActions.put("setSelectorValueFromRecord", setSelectorValueFromRecord);
+        jsonResponse.put("responseActions", responseActions);
+
       }
 
     } catch (Exception e) {

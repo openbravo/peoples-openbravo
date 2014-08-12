@@ -68,6 +68,8 @@ abstract class AddPaymentDefaultValuesHandler {
 
   abstract String getOrganization(Map<String, String> requestMap) throws JSONException;
 
+  abstract String getDefaultDocument(Map<String, String> requestMap) throws JSONException;
+  
   abstract String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException;
 
   protected abstract long getSeq();
