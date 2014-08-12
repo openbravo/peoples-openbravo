@@ -78,7 +78,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     setTestUserContext();
     addReadWriteAccess(PaymentTermTrl.class);
     createSavePaymentTerm();
-    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -114,7 +114,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
     assertEquals(TOTAL_PT_PTL, ir.getInsertedObjects().size());
     assertEquals(0, ir.getUpdatedObjects().size());
-    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -145,7 +145,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
     assertEquals(0, ir.getInsertedObjects().size());
     assertEquals(0, ir.getUpdatedObjects().size());
-    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -190,7 +190,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
         assertTrue(ir.getUpdatedObjects().contains(ptl.getPaymentTerms()));
       }
     }
-    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -240,7 +240,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     } finally {
       OBContext.restorePreviousMode();
     }
-    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -309,7 +309,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       assertTrue(o instanceof PaymentTermTrl || o instanceof PaymentTerm
           || o instanceof PaymentTermLine);
     }
-    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -327,7 +327,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       System.err.println(size);
       assertTrue(size == 2 || size == 3);
     }
-    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
   }
 
   /**
@@ -358,7 +358,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     } finally {
       OBContext.restorePreviousMode();
     }
-    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
   }
 
   private void createSavePaymentTerm() {
@@ -409,7 +409,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
       }
     }
     TOTAL_PT_PTL = cnt;
-    OBDal.getInstance().flush();
+    OBDal.getInstance().commitAndClose();
   }
 
   private List<PaymentTerm> getPaymentTerms() {
