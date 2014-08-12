@@ -109,6 +109,12 @@ isc.OBToolbar.addClassProperties({
       var view = this.view,
           grid = view.viewGrid;
 
+      if (grid.lazyFiltering && !isc.isA.ResultSet(grid.data)) {
+        grid.dataProperties.dataSource = grid.dataSource;
+        grid.dataProperties.initialData = [];
+        grid.dataProperties.resultSize = 100;
+        grid.setData(grid.createDataModel());
+      }
       // In case of no record selected getRecordIndex(undefined) returns -1,
       // which is the top position, other case it adds bellow current selected row.
       if (grid.getSelectedRecord()) {
@@ -131,7 +137,16 @@ isc.OBToolbar.addClassProperties({
 
   NEW_DOC_BUTTON_PROPERTIES: {
     action: function () {
-      this.view.newDocument();
+      var view = this.view,
+          grid = view.viewGrid;
+
+      if (grid.lazyFiltering && !isc.isA.ResultSet(grid.data)) {
+        grid.dataProperties.dataSource = grid.dataSource;
+        grid.dataProperties.initialData = [];
+        grid.dataProperties.resultSize = 100;
+        grid.setData(grid.createDataModel());
+      }
+      view.newDocument();
     },
     buttonType: 'newDoc',
     sortPosition: 10,
