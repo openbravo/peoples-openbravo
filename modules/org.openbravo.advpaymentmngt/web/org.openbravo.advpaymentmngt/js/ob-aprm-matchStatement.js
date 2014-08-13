@@ -67,8 +67,22 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       originalPrompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       action: function () {
-        alert('Add Button');
-      }
+          var processId = 'E68790A7B65F4D45AB35E2BAE34C1F39',
+              grid = me.grid,
+              record = me.record,
+              standardWindow = grid.view.parentWindow.view.standardWindow;
+
+          //TODO: Apply the proper created process
+          var process = standardWindow.buildProcess({
+            callerField: me,
+            paramWindow: true,
+            processId: processId,
+            windowId: grid.view.windowId,
+            windowTitle: 'Add'
+          });
+
+          grid.openExpansionProcess(process, record);
+        }
     });
 
     clearButton = isc.OBGridToolStripIcon.create({
