@@ -11,15 +11,15 @@
 
 (function () {
 
-  OB.Data.Registry.registerModel(OB.Data.ExtensibleModel.extend({
+  var OfflinePrinter = OB.Data.ExtensibleModel.extend({
     modelName: 'OfflinePrinter',
     tableName: 'OfflinePrinter',
     entityName: 'OfflinePrinter',
     source: '',
     local: true
-  }));
+  });
 
-  OB.Model.OfflinePrinter.addProperties([{
+  OfflinePrinter.addProperties([{
     name: 'id',
     column: 'offline_id',
     primaryKey: true,
@@ -34,13 +34,13 @@
     type: 'TEXT'
   }]);
 
-  OB.Model.OfflinePrinter.printPendingJobs = function () {
+  OfflinePrinter.printPendingJobs = function () {
     OB.Dal.find(OB.Model.OfflinePrinter, {}, function (jobs) {
       OB.Model.OfflinePrinter._printPendingJobs(jobs);
     });
   };
 
-  OB.Model.OfflinePrinter._printPendingJobs = function (jobs) {
+  OfflinePrinter._printPendingJobs = function (jobs) {
     var job, sendfunction;
     if (jobs.length > 0) {
       job = jobs.at(0);
@@ -57,4 +57,5 @@
     }
   };
 
+  OB.Data.Registry.registerModel(OfflinePrinter);
 }());
