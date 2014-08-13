@@ -839,13 +839,21 @@ isc.OBSelectorItem.addProperties({
   },
 
   openProcess: function (enteredValues) {
-    var standardWindow = this.form.view.standardWindow;
+    var view, standardWindow;
+    if (this.form && this.form.view) {
+      // If the selector is in a standard window
+      view = this.form.view;
+    } else if (this.form && this.form.paramWindow && this.form.paramWindow.parentWindow && this.form.paramWindow.parentWindow.view) {
+      // If the selector is in a parameter window
+      view = this.form.paramWindow.parentWindow.view;
+    }
+    standardWindow = view.standardWindow;
     standardWindow.openProcess({
       callerField: this,
       enteredValues: enteredValues,
       paramWindow: true,
       processId: this.processId,
-      windowId: this.form.view.windowId,
+      windowId: view.windowId,
       windowTitle: OB.I18N.getLabel('OBUISEL_AddNewRecord', [this.title])
     });
   },
