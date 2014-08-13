@@ -12,7 +12,7 @@
 (function () {
 
   OB = window.OB || {};
-  OB.UTILS = window.OB.UTILS || {};
+  OB.UTIL = window.OB.UTIL || {};
 
   function findAndSave(cashuptaxes, i, finishCallback) {
 
