@@ -53,6 +53,8 @@ isc.OBParameterWindowView.addProperties({
         newButton, cancelButton, view = this,
         newShowIf, params, updatedExpandSection;
 
+    // this flag can be used by Selenium to determine when defaults are set
+    this.defaultsAreSet = false;
 
     // Buttons
 
@@ -539,6 +541,9 @@ isc.OBParameterWindowView.addProperties({
     this.okButton.setEnabled(this.allRequiredParametersSet());
 
     this.handleDisplayLogicForGridColumns();
+
+    // this flag can be used by Selenium to determine when defaults are set
+    this.defaultsAreSet = true;
   },
 
   /**
