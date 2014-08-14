@@ -257,7 +257,7 @@ isc.OBToolbar.addClassProperties({
     sortPosition: 80,
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
     updateState: function () {
-      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.windowId) === 'N');
+      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.windowId) === 'N' || this.view.isShowingTree);
     },
     keyboardShortcutId: 'ToolBar_Export'
   },
