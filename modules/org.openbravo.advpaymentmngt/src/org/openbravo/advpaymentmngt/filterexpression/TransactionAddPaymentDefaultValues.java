@@ -44,17 +44,17 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   }
 
   @Override
-  String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
     return BigDecimal.ZERO.toPlainString();
   }
 
   @Override
-  String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
     return BigDecimal.ZERO.toPlainString();
   }
 
   @Override
-  String getDefaultIsSOTrx(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultIsSOTrx(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     if (context.has("inptrxtype") && context.get("inptrxtype") != JSONObject.NULL
         && StringUtils.isNotEmpty(context.getString("inptrxtype"))) {
@@ -71,58 +71,58 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   }
 
   @Override
-  String getDefaultTransactionType(Map<String, String> requestMap) {
+  public String getDefaultTransactionType(Map<String, String> requestMap) {
     return "I";
   }
 
   @Override
-  String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultOrderType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultOrderType(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException {
     return BigDecimal.ONE.toPlainString();
   }
 
   @Override
-  String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException {
     return BigDecimal.ZERO.toPlainString();
   }
 
   @Override
-  String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
     return getFinancialAccount(requestMap).getCurrency().getStandardPrecision().toString();
   }
 
   @Override
-  String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
     return getFinancialAccount(requestMap).getCurrency().getId().toString();
   }
 
   @Override
-  String getOrganization(Map<String, String> requestMap) throws JSONException {
+  public String getOrganization(Map<String, String> requestMap) throws JSONException {
     // Organization of the current Payment
     return getFinancialAccount(requestMap).getOrganization().getId();
   }
 
   @Override
-  String getDefaultPaymentMethod(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultPaymentMethod(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     boolean isReceipt = true;
     if (context.has("IsSOTrx")) {
@@ -147,7 +147,7 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   }
 
   @Override
-  String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
     // Document Type
     JSONObject context = new JSONObject(requestMap.get("context"));
     if (context.has("inptrxtype") && context.get("inptrxtype") != JSONObject.NULL
@@ -165,7 +165,7 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   }
 
   @Override
-  String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     if (context.has("inpstatementdate") && !context.isNull("inpstatementdate")
         && !"".equals(context.getString("inpstatementdate"))) {

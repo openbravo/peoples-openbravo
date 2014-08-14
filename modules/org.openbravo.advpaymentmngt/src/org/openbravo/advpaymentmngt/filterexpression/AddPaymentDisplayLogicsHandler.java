@@ -27,16 +27,26 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 @RequestScoped
-abstract class AddPaymentDisplayLogicsHandler {
+public abstract class AddPaymentDisplayLogicsHandler {
 
-  abstract boolean getDocumentDisplayLogic(Map<String, String> requestMap) throws JSONException;
+  public abstract boolean getOrganizationDisplayLogic(Map<String, String> requestMap)
+      throws JSONException;
 
-  abstract boolean getCreditToUseDisplayLogic(Map<String, String> requestMap) throws JSONException;
+  public abstract boolean getDocumentDisplayLogic(Map<String, String> requestMap)
+      throws JSONException;
+
+  public abstract boolean getCreditToUseDisplayLogic(Map<String, String> requestMap)
+      throws JSONException;
 
   protected abstract long getSeq();
 
-  boolean getOverpaymentActionDisplayLogic(Map<String, String> requestMap) throws JSONException {
-    JSONObject context = new JSONObject(requestMap.get("context"));
+  public boolean getOverpaymentActionDisplayLogic(Map<String, String> requestMap)
+      throws JSONException {
+    String strContext = requestMap.get("context");
+    if (strContext == null) {
+      return false;
+    }
+    JSONObject context = new JSONObject(strContext);
     if (context.has("difference")) {
       double diff = context.getDouble("difference");
       BigDecimal difference = new BigDecimal(diff);

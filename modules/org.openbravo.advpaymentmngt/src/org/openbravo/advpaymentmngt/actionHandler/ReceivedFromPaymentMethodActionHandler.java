@@ -21,7 +21,6 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -41,25 +40,30 @@ public class ReceivedFromPaymentMethodActionHandler extends BaseActionHandler {
       FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
           jsonData.getString("financialAccount"));
       boolean contains = false;
-      final String receivedFrom = jsonData.getString("receivedFrom");
       String paymentMethod = null;
-      if (StringUtils.isNotEmpty(receivedFrom)) {
-        BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-            receivedFrom);
-        if (jsonData.getString("isSOTrx").toString().equals("true")) {
-          paymentMethod = businessPartner.getPaymentMethod().getId();
-        } else {
-          paymentMethod = businessPartner.getPOPaymentMethod().getId();
+
+      if (financialAccount != null) {
+        if (jsonData.has("receivedFrom") && jsonData.get("receivedFrom") != JSONObject.NULL) {
+          final String receivedFrom = jsonData.getString("receivedFrom");
+          BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
+              receivedFrom);
+          if (jsonData.getString("isSOTrx").toString().equals("true")) {
+            paymentMethod = businessPartner.getPaymentMethod().getId();
+          } else {
+            paymentMethod = businessPartner.getPOPaymentMethod().getId();
+          }
+          for (FinAccPaymentMethod finAccPaymentMethod : financialAccount
+              .getFinancialMgmtFinAccPaymentMethodList()) {
+            if (finAccPaymentMethod.getPaymentMethod().equals(
+                OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethod))) {
+              contains = true;
+            } else {
+              contains = false;
+            }
+          }
         }
-      }
-      for (FinAccPaymentMethod finAccPaymentMethod : financialAccount
-          .getFinancialMgmtFinAccPaymentMethodList()) {
-        if (finAccPaymentMethod.getPaymentMethod().equals(
-            OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethod))) {
-          contains = true;
-        } else {
-          contains = false;
-        }
+      } else {
+        contains = false;
       }
       if (!contains) {
         paymentMethod = "";

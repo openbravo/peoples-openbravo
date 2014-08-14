@@ -39,22 +39,23 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
   }
 
   @Override
-  boolean getPaymentDocumentNoReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getPaymentDocumentNoReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException {
     return false;
   }
 
   @Override
-  boolean getReceivedFromReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getReceivedFromReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     return false;
   }
 
   @Override
-  boolean getPaymentMethodReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getPaymentMethodReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     return false;
   }
 
   @Override
-  boolean getActualPaymentReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getActualPaymentReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     String document = null;
     if (context.has("inptrxtype") && !context.isNull("inptrxtype")) {
@@ -71,20 +72,22 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
   }
 
   @Override
-  boolean getPaymentDateReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getPaymentDateReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     return false;
   }
 
   @Override
-  boolean getFinancialAccountReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getFinancialAccountReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException {
     return true;
   }
 
   @Override
-  boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     FIN_PaymentMethod paymentMethod = null;
     FIN_FinancialAccount financialAccount = null;
+    String trxtype = null;
     boolean readOnly = true;
     if (context.has("fin_paymentmethod_id") && !context.isNull("fin_paymentmethod_id")) {
       paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
@@ -101,19 +104,25 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
       financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
           context.getString("fin_financial_account_id"));
     }
-
-    for (FinAccPaymentMethod finAccPaymentMethod : financialAccount
-        .getFinancialMgmtFinAccPaymentMethodList()) {
-      if (context.has("inptrxtype") && !context.isNull("inptrxtype")
-          && (context.getString("inptrxtype").toString().equals("RCIN"))) {
-        if (finAccPaymentMethod.getPaymentMethod().equals(paymentMethod)
-            && finAccPaymentMethod.isPayinIsMulticurrency()) {
-          readOnly = false;
-        }
-      } else {
-        if (finAccPaymentMethod.getPaymentMethod().equals(paymentMethod)
-            && finAccPaymentMethod.isPayoutIsMulticurrency()) {
-          readOnly = false;
+    if (context.has("inptrxtype") && !context.isNull("inptrxtype")) {
+      trxtype = context.getString("inptrxtype");
+    }
+    if (context.has("trxtype") && !context.isNull("trxtype")) {
+      trxtype = context.getString("trxtype");
+    }
+    if (trxtype != null) {
+      for (FinAccPaymentMethod finAccPaymentMethod : financialAccount
+          .getFinancialMgmtFinAccPaymentMethodList()) {
+        if (trxtype.equals("RCIN") || trxtype.equals("BPD")) {
+          if (finAccPaymentMethod.getPaymentMethod().equals(paymentMethod)
+              && finAccPaymentMethod.isPayinIsMulticurrency()) {
+            readOnly = false;
+          }
+        } else if (trxtype.equals("PDOUT") || trxtype.equals("BPW")) {
+          if (finAccPaymentMethod.getPaymentMethod().equals(paymentMethod)
+              && finAccPaymentMethod.isPayoutIsMulticurrency()) {
+            readOnly = false;
+          }
         }
       }
     }
@@ -151,6 +160,11 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
         && !"".equals(context.getString("inpfinFinancialAccountId"))) {
       return OBDal.getInstance().get(FIN_FinancialAccount.class,
           context.get("inpfinFinancialAccountId"));
+    }
+    if (context.has("fin_financial_account_id") && !context.isNull("fin_financial_account_id")
+        && !"".equals(context.getString("fin_financial_account_id"))) {
+      return OBDal.getInstance().get(FIN_FinancialAccount.class,
+          context.get("fin_financial_account_id"));
     }
     return null;
   }

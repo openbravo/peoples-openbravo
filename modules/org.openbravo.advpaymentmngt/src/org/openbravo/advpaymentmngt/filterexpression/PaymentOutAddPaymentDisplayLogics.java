@@ -41,13 +41,19 @@ public class PaymentOutAddPaymentDisplayLogics extends AddPaymentDisplayLogicsHa
   }
 
   @Override
-  boolean getDocumentDisplayLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getOrganizationDisplayLogic(Map<String, String> requestMap) throws JSONException {
+    // Organization
+    return false;
+  }
+
+  @Override
+  public boolean getDocumentDisplayLogic(Map<String, String> requestMap) throws JSONException {
     // Document Type
     return false;
   }
 
   @Override
-  boolean getCreditToUseDisplayLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getCreditToUseDisplayLogic(Map<String, String> requestMap) throws JSONException {
     FIN_Payment paymentOut = getPayment(requestMap);
     if (getGeneratedCredit(requestMap).signum() == 0) {
       BusinessPartner bpartner = paymentOut.getBusinessPartner();

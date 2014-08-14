@@ -39,7 +39,7 @@
 <!--5D29D4DFCF4440B8BF89420419A0DBFE-->  <NAME><![CDATA[Financial Account]]></NAME>
 <!--5D29D4DFCF4440B8BF89420419A0DBFE-->  <AD_REFERENCE_ID><![CDATA[7F1A079A842545DF966D7EFD4BC5CFCE]]></AD_REFERENCE_ID>
 <!--5D29D4DFCF4440B8BF89420419A0DBFE-->  <AD_TABLE_ID><![CDATA[B129E53BC0E747879F7BA17F0AECEC32]]></AD_TABLE_ID>
-<!--5D29D4DFCF4440B8BF89420419A0DBFE-->  <WHERECLAUSE><![CDATA[@fin_paymentmethod_id@ is null or exists (select 1 from FinancialMgmtFinAccPaymentMethod fpm join fpm.account as fa where fpm.paymentMethod.id = @fin_paymentmethod_id@ and fa = e and (case when @inpissotrx@ = 'true' then fpm.payinAllow else fpm.payoutAllow end) = true and (@inpcCurrencyId@ = fa.currency.id or (case when @inpissotrx@ = 'true' then fpm.payinIsMulticurrency else fpm.payoutIsMulticurrency end) = true))]]></WHERECLAUSE>
+<!--5D29D4DFCF4440B8BF89420419A0DBFE-->  <WHERECLAUSE><![CDATA[@fin_paymentmethod_id@ is null or exists (select 1 from FinancialMgmtFinAccPaymentMethod fpm join fpm.account as fa where fpm.paymentMethod.id = @fin_paymentmethod_id@ and fa = e and (case when @issotrx@ = 'true' then fpm.payinAllow else fpm.payoutAllow end) = true and (@c_currency_id@ = fa.currency.id or (case when @issotrx@ = 'true' then fpm.payinIsMulticurrency else fpm.payoutIsMulticurrency end) = true))]]></WHERECLAUSE>
 <!--5D29D4DFCF4440B8BF89420419A0DBFE-->  <OBCLKER_TEMPLATE_ID><![CDATA[9314DE8599AD44E7BFC4CC50699042AB]]></OBCLKER_TEMPLATE_ID>
 <!--5D29D4DFCF4440B8BF89420419A0DBFE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5D29D4DFCF4440B8BF89420419A0DBFE-->  <SUGGESTIONTEXTMATCHSTYLE><![CDATA[startsWith]]></SUGGESTIONTEXTMATCHSTYLE>
@@ -170,7 +170,7 @@
 <!--BA4FDCB15ACB47AD81BE3985E13032EE-->  <NAME><![CDATA[Payment Method]]></NAME>
 <!--BA4FDCB15ACB47AD81BE3985E13032EE-->  <AD_REFERENCE_ID><![CDATA[E664E415582A483DBBC91DEF256FB9E6]]></AD_REFERENCE_ID>
 <!--BA4FDCB15ACB47AD81BE3985E13032EE-->  <AD_TABLE_ID><![CDATA[0B44DF7A2A854784BF34AD49C58647D7]]></AD_TABLE_ID>
-<!--BA4FDCB15ACB47AD81BE3985E13032EE-->  <WHERECLAUSE><![CDATA[exists (select 1 from FinancialMgmtFinAccPaymentMethod fpm where fpm.paymentMethod = e  and  (case when @issotrx@ = 'true' then fpm.payinAllow else fpm.payoutAllow end) = true   and fpm.account.id =  @fin_financial_account_id@ or @inpwindowId@ <> '94EAA455D2644E04AB25D93BE5157B6D')]]></WHERECLAUSE>
+<!--BA4FDCB15ACB47AD81BE3985E13032EE-->  <WHERECLAUSE><![CDATA[exists (select 1 from FinancialMgmtFinAccPaymentMethod fpm where fpm.paymentMethod = e  and  (case when @issotrx@ = 'true' then fpm.payinAllow else fpm.payoutAllow end) = true   and (fpm.account.id =  @fin_financial_account_id@ or @inpwindowId@ <> '94EAA455D2644E04AB25D93BE5157B6D'))]]></WHERECLAUSE>
 <!--BA4FDCB15ACB47AD81BE3985E13032EE-->  <OBCLKER_TEMPLATE_ID><![CDATA[9314DE8599AD44E7BFC4CC50699042AB]]></OBCLKER_TEMPLATE_ID>
 <!--BA4FDCB15ACB47AD81BE3985E13032EE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--BA4FDCB15ACB47AD81BE3985E13032EE-->  <SUGGESTIONTEXTMATCHSTYLE><![CDATA[substring]]></SUGGESTIONTEXTMATCHSTYLE>

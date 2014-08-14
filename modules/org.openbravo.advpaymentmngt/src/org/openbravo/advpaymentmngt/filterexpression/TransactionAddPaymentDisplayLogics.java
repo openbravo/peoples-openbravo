@@ -41,13 +41,19 @@ public class TransactionAddPaymentDisplayLogics extends AddPaymentDisplayLogicsH
   }
 
   @Override
-  boolean getDocumentDisplayLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getDocumentDisplayLogic(Map<String, String> requestMap) throws JSONException {
     // Document Type
     return true;
   }
 
   @Override
-  boolean getCreditToUseDisplayLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getOrganizationDisplayLogic(Map<String, String> requestMap) throws JSONException {
+    // Organization
+    return false;
+  }
+
+  @Override
+  public boolean getCreditToUseDisplayLogic(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     if (context.has("received_from") && !context.isNull("received_from")
         && !"".equals(context.getString("received_from"))) {

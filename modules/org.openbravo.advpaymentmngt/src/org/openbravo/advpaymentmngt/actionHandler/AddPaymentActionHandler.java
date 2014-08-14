@@ -82,13 +82,21 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonResponse = new JSONObject();
     OBContext.setAdminMode(true);
+    boolean openedFromMenu = false;
     try {
       VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
       // Get Params
       JSONObject jsonRequest = new JSONObject(content);
       JSONObject jsonparams = jsonRequest.getJSONObject("_params");
 
-      final String strOrgId = jsonRequest.getString("inpadOrgId");
+      openedFromMenu = "null".equals(parameters.get("windowId").toString()) ? true : false;
+
+      String strOrgId = null;
+      if (jsonRequest.has("inpadOrgId") && jsonRequest.get("inpadOrgId") != JSONObject.NULL) {
+        strOrgId = jsonRequest.getString("inpadOrgId");
+      } else if (jsonparams.has("ad_org_id") && jsonparams.get("ad_org_id") != JSONObject.NULL) {
+        strOrgId = jsonparams.getString("ad_org_id");
+      }
       Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
       boolean isReceipt = jsonparams.getBoolean("issotrx");
 
@@ -153,6 +161,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           JSONObject errorMessage = new JSONObject();
           errorMessage.put("severity", "error");
           errorMessage.put("text", e.getMessage());
+          jsonResponse.put("retryExecution", openedFromMenu);
           jsonResponse.put("message", errorMessage);
           return jsonResponse;
         }
@@ -177,6 +186,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         errorMessage.put("severity", message.getType().toLowerCase());
         errorMessage.put("title", message.getTitle());
         errorMessage.put("text", message.getMessage());
+        jsonResponse.put("retryExecution", openedFromMenu);
         jsonResponse.put("message", errorMessage);
         jsonResponse.put("refreshParent", false);
         JSONObject setSelectorValueFromRecord = new JSONObject();
@@ -186,6 +196,9 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         record.put("map", payment.getIdentifier());
         setSelectorValueFromRecord.put("record", record);
         responseActions.put("setSelectorValueFromRecord", setSelectorValueFromRecord);
+        if (openedFromMenu) {
+          responseActions.put("reloadParameters", setSelectorValueFromRecord);
+        }
         jsonResponse.put("responseActions", responseActions);
 
       }
@@ -201,6 +214,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("text", message);
+        jsonResponse.put("retryExecution", openedFromMenu);
         jsonResponse.put("message", errorMessage);
 
       } catch (Exception ignore) {
