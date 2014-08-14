@@ -1289,3 +1289,17 @@ OB.Utilities.getObjectSize = function (object) {
   }
   return size;
 };
+
+//** {{{ OB.Utilities.createResultSetManually }}} **
+//
+// Creates a ResultSet manually for a grid
+// Parameters:
+//  * {{{grid}}} The grid whose ResultSet will be created manually
+OB.Utilities.createResultSetManually = function (grid) {
+  grid.dataProperties.dataSource = grid.dataSource;
+  grid.dataProperties.initialData = [];
+  grid.dataProperties.resultSize = 100;
+  grid.dataProperties.useClientFiltering = false;
+  grid.dataProperties.manualResultSet = true;
+  grid.setData(grid.createDataModel());
+};

@@ -266,7 +266,11 @@ OB.ViewFormProperties = {
   },
 
   editNewRecord: function (preventFocus) {
+    var grid = this.view.viewGrid;
     this.clearValues();
+    if (grid.lazyFiltering && !isc.isA.ResultSet(grid.data)) {
+      OB.Utilities.createResultSetManually(grid);
+    }
     var ret = this.Super('editNewRecord', arguments);
     this.doEditRecordActions(preventFocus, true);
     return ret;
