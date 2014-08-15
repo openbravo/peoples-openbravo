@@ -20,7 +20,7 @@
 ************************************************************************/
   v_characteristic_id 	NVARCHAR2(32);
   v_active 		VARCHAR2(32):='N';
-  v_exist	NUMBER:=0;
+  v_exist NUMBER:=0;
 BEGIN
   IF (AD_isTriggerEnabled()='N') THEN
     RETURN;
