@@ -2333,23 +2333,23 @@
     }
 
   });
+
   var MultiOrders = Backbone.Model.extend({
     modelName: 'MultiOrders',
-    initialize: function () {
-      //ISSUE 24487: Callbacks of this collection still exists if you come back from other page.
-      //Force to remove callbacks
-      this.get('multiOrdersList').off();
-    },
     defaults: {
-      //isMultiOrders: false,
-      multiOrdersList: new Backbone.Collection(),
       total: OB.DEC.Zero,
       payment: OB.DEC.Zero,
       pending: OB.DEC.Zero,
       change: OB.DEC.Zero,
-      payments: new Backbone.Collection(),
       openDrawer: false,
       additionalInfo: null
+    },
+    initialize: function () {
+      this.set('multiOrdersList', new Backbone.Collection());
+      this.set('payments', new Backbone.Collection());
+      // ISSUE 24487: Callbacks of this collection still exists if you come back from other page.
+      // Force to remove callbacks
+      this.get('multiOrdersList').off();
     },
     getPaymentStatus: function () {
       var total = OB.DEC.abs(this.getTotal());
@@ -2366,7 +2366,6 @@
         'payments': this.get('payments')
       };
     },
-
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
