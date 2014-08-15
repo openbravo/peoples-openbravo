@@ -31,10 +31,10 @@ enyo.kind({
     i18nLabel: 'OBPOS_SalesRepresentative',
     permission: 'OBPOS_salesRepresentative.receipt',
     permissionOption: 'OBPOS_SR.comboOrModal',
-    collection: new OB.Collection.SalesRepresentativeList(),
     retrievedPropertyForValue: 'id',
     retrievedPropertyForText: '_identifier',
     init: function (model) {
+      this.collection = new OB.Collection.SalesRepresentativeList();
       this.model = model;
       if (!OB.POS.modelterminal.hasPermission(this.permission)) {
         this.parent.parent.parent.hide();
