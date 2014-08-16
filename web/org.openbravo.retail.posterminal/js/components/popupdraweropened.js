@@ -58,11 +58,11 @@ enyo.kind({
   }
 });
 
-OB.MobileApp.model.hookManager.registerHook('OBPOS_LoadPOSWindow', function (args, callbacks) {
+OB.UTIL.HookManager.registerHook('OBPOS_LoadPOSWindow', function (args, callbacks) {
   if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
     OB.POS.hwserver.isDrawerClosed({
       openFirst: false
     }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
   }
-  OB.MobileApp.model.hookManager.callbackExecutor(args, callbacks);
+  OB.UTIL.HookManager.callbackExecutor(args, callbacks);
 });

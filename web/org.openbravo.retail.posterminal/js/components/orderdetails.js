@@ -25,7 +25,7 @@ enyo.kind({
     } else {
       content = this.order.get('orderDate') + ' - ' + docNo;
     }
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_OrderDetailContentHook', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_OrderDetailContentHook', {
       content: content,
       docNo: docNo,
       order: me.order

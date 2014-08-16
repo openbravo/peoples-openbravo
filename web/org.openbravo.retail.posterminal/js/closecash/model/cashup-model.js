@@ -205,7 +205,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }, this);
         cashUpReport.set('startings', startings);
         //FIXME: We are not sure if other finds are done.
-        OB.MobileApp.model.hookManager.executeHooks('OBPOS_EditCashupReport', {
+        OB.UTIL.HookManager.executeHooks('OBPOS_EditCashupReport', {
           cashUpReport: cashUpReport
         }, function (args) {
           me.get('cashUpReport').add(args.cashUpReport);

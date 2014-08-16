@@ -324,7 +324,7 @@ enyo.kind({
             }
             me.model.get('leftColumnViewManager').setOrderMode();
           }
-          OB.MobileApp.model.hookManager.executeHooks('OBRETUR_ReturnFromOrig', {
+          OB.UTIL.HookManager.executeHooks('OBRETUR_ReturnFromOrig', {
             order: data[0],
             context: me,
             params: me.parent.parent.params

@@ -803,7 +803,7 @@
               }
             });
           }
-          OB.MobileApp.model.hookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
+          OB.UTIL.HookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
             receipt: this,
             line: line,
             allLines: this.get('lines'),
@@ -872,7 +872,7 @@
     addProduct: function (p, qty, options, attrs) {
       OB.debug('_addProduct');
       var me = this;
-      OB.MobileApp.model.hookManager.executeHooks('OBPOS_AddProductToOrder', {
+      OB.UTIL.HookManager.executeHooks('OBPOS_AddProductToOrder', {
         receipt: this,
         productToAdd: p,
         qtyToAdd: qty,
@@ -1504,7 +1504,7 @@
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
       order = this;
-      OB.MobileApp.model.hookManager.executeHooks('OBPOS_preAddPayment', {
+      OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
         receipt: this
@@ -2450,7 +2450,7 @@
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
       order = this;
-      OB.MobileApp.model.hookManager.executeHooks('OBPOS_preAddPayment', {
+      OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
         receipt: this

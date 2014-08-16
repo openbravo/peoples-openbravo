@@ -78,7 +78,7 @@
         me = this,
         template;
 
-    OB.MobileApp.model.hookManager.executeHooks('OBPRINT_PrePrint', {
+    OB.UTIL.HookManager.executeHooks('OBPRINT_PrePrint', {
       forcePrint: printargs.forcePrint,
       offline: printargs.offline,
       order: order ? order : me.receipt,

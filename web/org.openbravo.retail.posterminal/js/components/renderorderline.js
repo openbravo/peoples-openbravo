@@ -100,7 +100,7 @@ enyo.kind({
       }, this);
 
     }
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_RenderOrderLine', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_RenderOrderLine', {
       orderline: this
     }, function (args) {
       //All should be done in module side

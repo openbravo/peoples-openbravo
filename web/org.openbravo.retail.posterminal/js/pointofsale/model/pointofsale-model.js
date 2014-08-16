@@ -56,7 +56,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var currentOrder = {},
           loadOrderStr;
 
-      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreLoadUnpaidOrdersHook', {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreLoadUnpaidOrdersHook', {
         ordersNotPaid: ordersNotPaid,
         model: model
       }, function (args) {
@@ -597,7 +597,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
    */
   completePayment: function () {
     var me = this;
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_PrePaymentHook', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentHook', {
       context: this
     }, function () {
       me.checkPaymentApproval();
@@ -611,7 +611,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
    */
   checkPaymentApproval: function () {
     var me = this;
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_CheckPaymentApproval', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_CheckPaymentApproval', {
       approvals: [],
       context: this
     }, function (args) {

@@ -272,7 +272,7 @@ enyo.kind({
       if (this.model.get('leftColumnViewManager').isOrder()) {
         var receipt = this.model.get('order');
         if (receipt.get("isPaid")) {
-          OB.MobileApp.model.hookManager.executeHooks('OBPOS_PrePrintPaidReceipt', {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PrePrintPaidReceipt', {
             context: this,
             receipt: this.model.get('order')
           }, function (args) {
@@ -341,7 +341,7 @@ enyo.kind({
     }
 
     if (inEvent && inEvent.notSavedOrder === true) {
-      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
         context: this,
         receipt: this.model.get('order')
       }, function (args) {
@@ -378,7 +378,7 @@ enyo.kind({
       }
     }
 
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreAddProductToOrder', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductToOrder', {
       context: this,
       receipt: this.model.get('order'),
       productToAdd: inEvent.product,

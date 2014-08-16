@@ -9,7 +9,7 @@
 
 /*global enyo, Backbone, $, _ */
 
-OB.MobileApp.model.hookManager.registerHook('OBMOBC_PreWindowOpen', function (args, callbacks) {
+OB.UTIL.HookManager.registerHook('OBMOBC_PreWindowOpen', function (args, callbacks) {
   var context = args.context,
       windows = args.windows,
       errorFunc = function () {
@@ -28,6 +28,6 @@ OB.MobileApp.model.hookManager.registerHook('OBMOBC_PreWindowOpen', function (ar
     } else {
       args.cancellation = true;
     }
-    OB.MobileApp.model.hookManager.callbackExecutor(args, callbacks);
+    OB.UTIL.HookManager.callbackExecutor(args, callbacks);
   });
 });

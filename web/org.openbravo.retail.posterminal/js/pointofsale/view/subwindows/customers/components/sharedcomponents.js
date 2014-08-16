@@ -179,7 +179,7 @@ enyo.kind({
     var me = this,
         inSenderOriginal = inSender,
         inEventOriginal = inEvent;
-    OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreCustomerSave', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_PreCustomerSave', {
       inSender: inSenderOriginal,
       inEvent: inEventOriginal,
       passValidation: true,

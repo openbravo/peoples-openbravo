@@ -74,7 +74,7 @@
       this.receipt.set('created', creationDate.getTime());
       this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
 
-      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
         context: this,
         model: model,
         receipt: model.get('order')
@@ -115,11 +115,11 @@
                 }
               }
               };
-          if (OB.MobileApp.model.hookManager.get('OBPOS_PostSyncReceipt')) {
+          if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
             //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
             //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
             OB.MobileApp.model.runSyncProcess(function () {
-              OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostSyncReceipt', {
+              OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
                 receipt: auxReceipt
               }, function (args) {
                 successCallback();
@@ -128,7 +128,7 @@
                 }
               });
             }, function () {
-              OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostSyncReceipt', {
+              OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
                 receipt: auxReceipt
               }, function (args) {
                 if (eventParams && eventParams.callback) {
@@ -175,7 +175,7 @@
       this.receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
       this.receipt.set('json', JSON.stringify(this.receipt.toJSON()));
 
-      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
         context: this,
         model: model,
         receipt: this.receipt
