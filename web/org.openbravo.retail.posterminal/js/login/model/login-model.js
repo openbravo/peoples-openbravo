@@ -21,24 +21,24 @@
       me.set({
         appName: 'WebPOS',
         appModuleId: 'FF808181326CC34901326D53DBCF0018',
-                terminalName: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
+        terminalName: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
         supportsOffline: true,
         loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
         loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
         applicationFormatUrl: '../../org.openbravo.client.kernel/OBPOS_Main/ApplicationFormats',
-                logoutUrlParams: window.localStorage.getItem('terminalAuthentication') === 'Y' ? {} : {
-                  terminal: OB.UTIL.getParameterByName("terminal")
-                },
-                logConfiguration: {
-                  deviceIdentifier: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
-                  logPropertiesExtension: [
+        logoutUrlParams: window.localStorage.getItem('terminalAuthentication') === 'Y' ? {} : {
+          terminal: OB.UTIL.getParameterByName("terminal")
+        },
+        logConfiguration: {
+          deviceIdentifier: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
+          logPropertiesExtension: [
 
-                  function () {
-                    return {
-                      online: OB.MobileApp.model.get('connectedToERP')
-                    };
-                  }]
-                },
+          function () {
+            return {
+              online: OB.MobileApp.model.get('connectedToERP')
+            };
+          }]
+        },
         profileOptions: {
           showOrganization: false,
           showWarehouse: false,
