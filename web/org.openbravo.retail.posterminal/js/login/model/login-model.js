@@ -347,7 +347,48 @@
         }
       });
 
-      OB.Model.Terminal.prototype.initialize.call(this);
+      this.on('ready', function () {
+        var terminal = this.get('terminal');
+
+        // Set Hardware..
+        OB.POS.hwserver = new OB.DS.HWServer(terminal.hardwareurl, terminal.scaleurl);
+
+        // Set Arithmetic properties:
+        OB.DEC.setContext(OB.UTIL.getFirstValidValue([me.get('currency').obposPosprecision, me.get('currency').pricePrecision]), BigDecimal.prototype.ROUND_HALF_UP);
+
+        // Set disable promotion discount property
+        OB.Dal.find(OB.Model.Discount, {
+          _whereClause: "where m_offer_type_id in (" + OB.Model.Discounts.getManualPromotions() + ")"
+        }, function (promos) {
+          if (promos.length === 0) {
+            me.set('isDisableDiscount', true);
+          } else {
+            me.set('isDisableDiscount', false);
+          }
+        }, function () {
+          return true;
+        });
+
+        OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
+          OB.POS.navigate('retail.pointofsale');
+        });
+
+        if (me.get('loggedOffline') === true) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
+        }
+
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {});
+      });
+
+      this.on('logout', function () {
+        // Logged out. go to login window
+        me.off('loginfail');
+        // Redirect to login window
+        window.localStorage.setItem('target-window', window.location.href);
+        //window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
+      });
+
+      OB.Model.Terminal.prototype.initialize.call(me);
 
       this.router.route("login", "login", function () {
         if (!_.isNull(me.get('context'))) {
