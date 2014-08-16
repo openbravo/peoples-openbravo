@@ -67,10 +67,15 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     throw new IllegalArgumentException("Component id " + componentId + " not supported.");
   }
 
+  final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
+
   @Override
   public List<ComponentResource> getGlobalComponentResources() {
+    if (globalResources.size() > 0 && globalResources.contains(null) == false) {
+      return globalResources;
+    }
+    globalResources.clear();
 
-    final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/js/";
     final String cssPrefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/css/";
 
