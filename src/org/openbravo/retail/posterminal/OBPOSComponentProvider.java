@@ -77,7 +77,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     globalResources.clear();
 
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/js/";
-    final String cssPrefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/css/";
 
     final String[] resourceDependency = {
         "model/changedbusinesspartners",
@@ -86,7 +85,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/cashup",
         "model/cashmanagement",
         "login/model/login-model",
-
         // Common components
         "datasource",
         // "data/dal",
