@@ -75,12 +75,19 @@ public class DataSourceComponentProvider extends BaseComponentProvider {
     return dataSourceComponent;
   }
 
+  final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
+
   /**
    * @return an empty String (no global resources)
    * @see org.openbravo.client.kernel.ComponentProvider#getGlobalComponentResources()
    */
-  public List<ComponentResource> getGlobalComponentResources() {
-    final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
+  @Override
+  public synchronized List<ComponentResource> getGlobalComponentResources() {
+    if (globalResources.size() > 0) {
+      return globalResources;
+    }
+    globalResources.clear();
+
     globalResources.add(createStaticResource(
         "web/org.openbravo.service.datasource/js/ob-datasource-utilities.js", true));
     return globalResources;
