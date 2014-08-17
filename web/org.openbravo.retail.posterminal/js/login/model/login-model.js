@@ -390,14 +390,6 @@
 
       OB.Model.Terminal.prototype.initialize.call(me);
 
-      this.router.route("login", "login", function () {
-        if (!_.isNull(me.get('context'))) {
-          OB.UTIL.showLoading(true);
-          me.navigate('retail.pointofsale');
-        } else {
-          this.terminal.renderLogin();
-        }
-      });
     },
 
     runSyncProcess: function (successCallback, errorCallback) {
