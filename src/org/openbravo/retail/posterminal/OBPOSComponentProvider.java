@@ -67,10 +67,15 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     throw new IllegalArgumentException("Component id " + componentId + " not supported.");
   }
 
-  @Override
-  public List<ComponentResource> getGlobalComponentResources() {
+  final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
 
-    final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
+  @Override
+  public synchronized List<ComponentResource> getGlobalComponentResources() {
+    if (globalResources.size() > 0) {
+      return globalResources;
+    }
+    globalResources.clear();
+
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/js/";
 
     final String[] resourceDependency = {
@@ -239,7 +244,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] cssDependency = { "pos-login", "obpos-main" };
 
-    for (String resource : resourceDependency) {
+    for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static, prefix + resource
           + ".js", POSUtils.APP_NAME));
     }
@@ -247,7 +252,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
         + "components/errors.js", ComponentResource.APP_OB3));
 
-    for (String resource : cssDependency) {
+    for (final String resource : cssDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Stylesheet, prefix
           + "../css/" + resource + ".css", POSUtils.APP_NAME));
     }
