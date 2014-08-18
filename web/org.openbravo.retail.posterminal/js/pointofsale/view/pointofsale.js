@@ -931,7 +931,6 @@ enyo.kind({
               this.$[changedModel.previousAttributes().currentWindow.name].setShowing(false);
               this.$[changedModel.get('currentWindow').name].setShowing(true);
               OB.MobileApp.view.scanningFocus(true);
-              //OB.POS.terminal.$.focusKeeper.focus();
             } else {
               //developers helps
               //OB.info("Error! A subwindow must inherits from OB.UI.subwindow -> restore previous state");
