@@ -33,7 +33,7 @@
                 window.applicationCache.swapCache();
                 window.location.reload();
               } else {
-                OB.POS.terminal.$.containerWindow.getRoot().$.DatabaseDialog.show();
+                OB.ModelApp.view.$.containerWindow.getRoot().$.DatabaseDialog.show();
               }
             }, function () {
               window.console.error(arguments);
