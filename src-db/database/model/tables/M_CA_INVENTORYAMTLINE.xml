@@ -65,6 +65,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_CA_INVENTORYAMT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_CA_INAMTLN_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -76,6 +80,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="M_CA_INAMTLN_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_CA_INVENTORYAMT" name="M_CA_INVAMT_LINE">
+        <reference local="M_CA_INVENTORYAMT_ID" foreign="M_CA_INVENTORYAMT_ID"/>
       </foreign-key>
       <check name="M_CA_INAMTLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

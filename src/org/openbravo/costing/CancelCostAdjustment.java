@@ -72,15 +72,20 @@ public class CancelCostAdjustment extends BaseActionHandler {
       qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustmentCancel));
       ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
       try {
+        int cnt = 0;
         while (scrollLines.next()) {
           final CostAdjustmentLine line = (CostAdjustmentLine) scrollLines.get()[0];
           line.setSource(true);
           line.setAdjustmentAmount(line.getAdjustmentAmount().negate());
           OBDal.getInstance().save(line);
-          OBDal.getInstance().flush();
-          // clear session after each line iteration because the number of objects read in memory is
-          // big
-          OBDal.getInstance().getSession().clear();
+          if ((cnt++ % 10) == 0) {
+            OBDal.getInstance().flush();
+            // clear session after each line iteration because the number of objects read in memory
+            // is
+            // big
+            OBDal.getInstance().getSession().clear();
+          }
+
         }
       } finally {
         scrollLines.close();

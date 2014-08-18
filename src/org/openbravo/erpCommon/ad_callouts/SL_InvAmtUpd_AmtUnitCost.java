@@ -22,6 +22,9 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.enterprise.Organization;
+
 public class SL_InvAmtUpd_AmtUnitCost extends SimpleCallout {
 
   private static final long serialVersionUID = 1L;
@@ -29,11 +32,15 @@ public class SL_InvAmtUpd_AmtUnitCost extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     BigDecimal onHandQty = info.getBigDecimalParameter("inponhandqty");
+    String orgId = info.getStringParameter("inpadOrgId", null);
+    Organization organization = OBDal.getInstance().get(Organization.class, orgId);
 
     if (info.getLastFieldChanged().equalsIgnoreCase("inpinventoryAmount")) {
       BigDecimal invAmount = info.getBigDecimalParameter("inpinventoryAmount");
-      info.addResult("inpunitcost",
-          onHandQty.intValue() == 0 ? BigDecimal.ZERO : invAmount.divide(onHandQty));
+      info.addResult(
+          "inpunitcost",
+          onHandQty.intValue() == 0 ? BigDecimal.ZERO : invAmount.divide(onHandQty, organization
+              .getCurrency().getPricePrecision().intValue(), BigDecimal.ROUND_HALF_UP));
     } else if (info.getLastFieldChanged().equalsIgnoreCase("inpunitcost")) {
       BigDecimal unitCost = info.getBigDecimalParameter("inpunitcost");
       info.addResult("inpinventoryAmount", unitCost.multiply(onHandQty));

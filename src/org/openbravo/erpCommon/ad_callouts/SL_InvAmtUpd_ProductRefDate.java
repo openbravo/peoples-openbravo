@@ -78,8 +78,10 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
                 costDimensions);
             info.addResult("inpcurInventoryAmount", currentValuedStock);
             info.addResult("inponhandqty", currentStock);
-            info.addResult("inpcurUnitcost", currentStock.intValue() == 0 ? BigDecimal.ZERO
-                : currentValuedStock.divide(currentStock, RoundingMode.HALF_UP));
+            info.addResult(
+                "inpcurUnitcost",
+                currentStock.intValue() == 0 ? BigDecimal.ZERO : currentValuedStock.divide(
+                    currentStock, currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
           }
         } else {
           info.addResult("inpiswarehousedimension", "N");
@@ -90,8 +92,10 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
               referenceDate, CostingUtils.getEmptyDimensions());
           info.addResult("inpcurInventoryAmount", currentValuedStock);
           info.addResult("inponhandqty", currentStock);
-          info.addResult("inpcurUnitcost", currentStock.intValue() == 0 ? BigDecimal.ZERO
-              : currentValuedStock.divide(currentStock, RoundingMode.HALF_UP));
+          info.addResult(
+              "inpcurUnitcost",
+              currentStock.intValue() == 0 ? BigDecimal.ZERO : currentValuedStock.divide(
+                  currentStock, currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
         }
       }
     } catch (ParseException ignore) {
