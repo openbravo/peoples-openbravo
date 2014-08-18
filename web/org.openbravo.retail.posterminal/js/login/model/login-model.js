@@ -890,15 +890,10 @@
     }
   });
 
-  // var modelterminal= ;
   OB.POS = {
     modelterminal: new OB.Model.POSTerminal(),
     paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
     paramTerminal: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
-    //    terminal: new OB.UI.Terminal({
-    //      test:'1',
-    //      terminal: this.modelterminal
-    //    }),
     hrefWindow: function (windowname) {
       return '?terminal=' + window.encodeURIComponent(OB.MobileApp.model.get('terminalName')) + '&window=' + window.encodeURIComponent(windowname);
     },
