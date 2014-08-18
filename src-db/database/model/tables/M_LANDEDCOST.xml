@@ -67,6 +67,9 @@
       <foreign-key foreignTable="C_CURRENCY" name="M_LANDEDCOST_CURRENCY">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="M_LANDEDCOST_DOCTYPE">
+        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_LANDEDCOST_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
