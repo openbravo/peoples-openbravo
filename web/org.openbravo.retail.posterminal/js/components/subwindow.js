@@ -43,11 +43,11 @@ enyo.kind({
     if (this.showing) {
       this.originalScanMode = OB.MobileApp.view.scanMode;
       OB.MobileApp.view.scanningFocus(false);
-      OB.POS.terminal.openedSubwindow = this;
+      OB.MobileApp.view.openedSubwindow = this;
       this.setDefaultActionButton();
     } else {
       OB.MobileApp.view.scanningFocus(this.originalScanMode);
-      OB.POS.terminal.openedSubwindow = null;
+      OB.MobileApp.view.openedSubwindow = null;
     }
   },
   focusInPopup: function () {
