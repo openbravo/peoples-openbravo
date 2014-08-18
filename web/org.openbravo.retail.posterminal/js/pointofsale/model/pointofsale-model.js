@@ -308,7 +308,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         while (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) {
           for (i = 0; i < this.get('multiOrders').get('payments').length; i++) {
             var payment = this.get('multiOrders').get('payments').at(i),
-                paymentMethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+                paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
             //FIXME:Change is always given back in store currency
             if (this.get('multiOrders').get('change') > 0 && paymentMethod.paymentMethod.iscash) {
               payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), this.get('multiOrders').get('change')));
@@ -408,12 +408,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
         if (!_.isUndefined(receipt.selectedPayment) && receipt.getChange() > 0) {
-          var payment = OB.POS.terminal.terminal.paymentnames[receipt.selectedPayment];
+          var payment = OB.MobileApp.model.paymentnames[receipt.selectedPayment];
           receipt.get('payments').each(function (model) {
             clonedCollection.add(new Backbone.Model(model.toJSON()));
           });
           if (!payment.paymentMethod.iscash) {
-            payment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
+            payment = OB.MobileApp.model.paymentnames[OB.POS.modelterminal.get('paymentcash')];
           }
           if (receipt.get('payment') >= receipt.get('gross')) {
             receipt.addPayment(new OB.Model.PaymentLine({

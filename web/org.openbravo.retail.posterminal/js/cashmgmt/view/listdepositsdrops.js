@@ -212,7 +212,7 @@ enyo.kind({
         transactionsCollection = new Backbone.Collection(transactionsArray),
         total;
 
-    var fromCurrencyId = OB.POS.terminal.terminal.paymentnames[this.model.attributes.searchKey].paymentMethod.currency;
+    var fromCurrencyId = OB.MobileApp.model.paymentnames[this.model.attributes.searchKey].paymentMethod.currency;
 
     this.inherited(arguments);
 

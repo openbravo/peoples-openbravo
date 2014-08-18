@@ -160,7 +160,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         '_orderByClause': 'name asc'
       }, function (payMthds) { //OB.Dal.find success
         cashUpReport.set('totalStartings', _.reduce(payMthds.models, function (accum, trx) {
-          var fromCurrencyId = OB.POS.terminal.terminal.paymentnames[trx.get('searchKey')].paymentMethod.currency;
+          var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
           var cStartingCash = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, trx.get('startingCash'));
           return OB.DEC.add(accum, cStartingCash);
         }, 0));

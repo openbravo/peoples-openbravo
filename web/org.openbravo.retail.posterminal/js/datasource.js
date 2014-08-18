@@ -126,8 +126,8 @@ OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
         popupDrawerOpened.$.bodyContent.$.label.setContent(OB.I18N.getLabel('OBPOS_ToReturn') + ':');
         _.each(popup.receipt.get('payments').models, function (payment) {
           if (payment.get('isCash')) {
-            symbol = OB.POS.terminal.terminal.paymentnames[payment.get('kind')].symbol;
-            symbolAtRight = OB.POS.terminal.terminal.paymentnames[payment.get('kind')].currencySymbolAtTheRight;
+            symbol = OB.MobileApp.model.paymentnames[payment.get('kind')].symbol;
+            symbolAtRight = OB.MobileApp.model.paymentnames[payment.get('kind')].currencySymbolAtTheRight;
             popupDrawerOpened.$.bodyContent.$.label.setContent(popupDrawerOpened.$.bodyContent.$.label.getContent() + ' ' + OB.I18N.formatCurrencyWithSymbol(payment.get('paid'), symbol, symbolAtRight));
           }
         });

@@ -2117,7 +2117,7 @@
       if (model.isLayaway) {
         order.set('isLayaway', true);
         order.set('id', model.orderid);
-        order.set('createdBy', OB.POS.terminal.terminal.usermodel.id);
+        order.set('createdBy', OB.MobileApp.model.usermodel.id);
         order.set('hasbeenpaid', 'N');
         order.set('session', OB.POS.modelterminal.get('session'));
       } else {

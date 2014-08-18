@@ -25,7 +25,7 @@ enyo.kind({
   },
   buttonStatusChanged: function (inSender, inEvent) {
     var payment, amt, change, pending, isMultiOrders, paymentstatus;
-    payment = inEvent.value.payment || OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
+    payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.POS.modelterminal.get('paymentcash')];
     if (_.isUndefined(payment)) {
       return true;
     }
@@ -170,7 +170,7 @@ enyo.kind({
         this.$.layawayaction.hide();
         return;
       }
-      var payment = OB.POS.terminal.terminal.paymentnames[OB.POS.terminal.terminal.get('paymentcash')];
+      var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
         this.$.creditsalesaction.hide();
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
@@ -199,13 +199,13 @@ enyo.kind({
       symbol = OB.MobileApp.model.get('terminal').symbol;
       symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
     }
-    if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment])) {
-      symbol = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].symbol;
-      rate = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].mulrate;
-      symbolAtRight = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].currencySymbolAtTheRight;
-      isCashType = OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment].paymentMethod.iscash;
+    if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.MobileApp.model.paymentnames[this.receipt.selectedPayment])) {
+      symbol = OB.MobileApp.model.paymentnames[this.receipt.selectedPayment].symbol;
+      rate = OB.MobileApp.model.paymentnames[this.receipt.selectedPayment].mulrate;
+      symbolAtRight = OB.MobileApp.model.paymentnames[this.receipt.selectedPayment].currencySymbolAtTheRight;
+      isCashType = OB.MobileApp.model.paymentnames[this.receipt.selectedPayment].paymentMethod.iscash;
     }
-    this.checkEnoughCashAvailable(paymentstatus, OB.POS.terminal.terminal.paymentnames[this.receipt.selectedPayment || OB.POS.modelterminal.get('paymentcash')]);
+    this.checkEnoughCashAvailable(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.selectedPayment || OB.POS.modelterminal.get('paymentcash')]);
     if (paymentstatus.change) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
       OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
@@ -312,9 +312,9 @@ enyo.kind({
       symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
     }
     if (paymentstatus.get('selectedPayment')) {
-      selectedPayment = OB.POS.terminal.terminal.paymentnames[paymentstatus.get('selectedPayment')];
+      selectedPayment = OB.MobileApp.model.paymentnames[paymentstatus.get('selectedPayment')];
     } else {
-      selectedPayment = OB.POS.terminal.terminal.paymentnames[OB.POS.modelterminal.get('paymentcash')];
+      selectedPayment = OB.MobileApp.model.paymentnames[OB.POS.modelterminal.get('paymentcash')];
     }
     if (!_.isUndefined(selectedPayment)) {
       symbol = selectedPayment.symbol;
