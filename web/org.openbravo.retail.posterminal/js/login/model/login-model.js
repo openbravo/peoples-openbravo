@@ -920,9 +920,6 @@
     }
   };
 
-  //  OB.POS.terminal = new OB.UI.Terminal({
-  //    terminal: OB.POS.modelterminal
-  //  });
   OB.POS.modelterminal.set('loginUtilsParams', {
     terminalName: OB.MobileApp.model.get('terminalName')
   });
