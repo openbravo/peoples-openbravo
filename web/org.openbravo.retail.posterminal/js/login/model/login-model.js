@@ -551,12 +551,16 @@
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
       if (minIncRefresh) {
         if (this.get('loggedUsingCache')) {
+          OB.MobileApp.model.set('minIncRefreshSynchronized', false);
           OB.MobileApp.model.on('synchronized', function () {
+            if (OB.MobileApp.model.get('minIncRefreshSynchronized')) {
+              return;
+            }
+            OB.MobileApp.model.set('minIncRefreshSynchronized', true);
             OB.MobileApp.model.loadModels(null, true);
             if (me.get('loggedUsingCache')) {
               me.set('loggedUsingCache', false);
               me.renderTerminalMain();
-              OB.MobileApp.model.off('synchronized');
             }
           });
         } else {
