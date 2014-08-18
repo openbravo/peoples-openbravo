@@ -58,6 +58,8 @@ public class AddPaymentDisplayLogicsExpression implements FilterExpression {
       Parameters param = Parameters.getParameter(strCurrentParam);
       try {
         switch (param) {
+        case Organization:
+          return handler.getOrganizationDisplayLogic(requestMap) ? "Y" : "N";
         case Document:
           return handler.getDocumentDisplayLogic(requestMap) ? "Y" : "N";
         case CreditToUse:
@@ -80,8 +82,13 @@ public class AddPaymentDisplayLogicsExpression implements FilterExpression {
 
   private String getWindowId(Map<String, String> requestMap) throws JSONException {
     final String strContext = requestMap.get("context");
-    JSONObject context = new JSONObject(strContext);
-    return context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
+    if (strContext != null) {
+      JSONObject context = new JSONObject(strContext);
+      if (context != null && context.has(OBBindingsConstants.WINDOW_ID_PARAM)) {
+        return context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
+      }
+    }
+    return "NULLWINDOWID";
   }
 
   private AddPaymentDisplayLogicsHandler getHandler(String strWindowId) {
@@ -102,8 +109,8 @@ public class AddPaymentDisplayLogicsExpression implements FilterExpression {
   }
 
   private enum Parameters {
-    Document("trxtype_display_logic"), CreditToUse("credit_to_use_display_logic"), OverpaymentAction(
-        "overpayment_action_display_logic");
+    Organization("ad_org_id_display_logic"), Document("trxtype_display_logic"), CreditToUse(
+        "credit_to_use_display_logic"), OverpaymentAction("overpayment_action_display_logic");
 
     private String columnname;
 

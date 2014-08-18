@@ -32,34 +32,41 @@ import org.openbravo.model.ad.ui.Window;
 import org.openbravo.scheduling.ProcessLogger;
 
 @RequestScoped
-abstract class AddPaymentReadOnlyLogicsHandler {
+public abstract class AddPaymentReadOnlyLogicsHandler {
 
   private static ProcessLogger logger;
 
-  abstract boolean getPaymentDocumentNoReadOnlyLogic(Map<String, String> requestMap)
+  public abstract boolean getPaymentDocumentNoReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
-  abstract boolean getReceivedFromReadOnlyLogic(Map<String, String> requestMap)
+  public abstract boolean getReceivedFromReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
-  abstract boolean getPaymentMethodReadOnlyLogic(Map<String, String> requestMap)
+  public abstract boolean getPaymentMethodReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
-  abstract boolean getActualPaymentReadOnlyLogic(Map<String, String> requestMap)
+  public abstract boolean getActualPaymentReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
-  abstract boolean getPaymentDateReadOnlyLogic(Map<String, String> requestMap) throws JSONException;
-
-  abstract boolean getFinancialAccountReadOnlyLogic(Map<String, String> requestMap)
+  public abstract boolean getPaymentDateReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
-  abstract boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap) throws JSONException;
+  public abstract boolean getFinancialAccountReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException;
+
+  public abstract boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException;
 
   protected abstract long getSeq();
 
-  boolean getConvertedAmountReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getConvertedAmountReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException {
+    String strContext = requestMap.get("context");
+    if (strContext == null) {
+      return false;
+    }
     OBContext.setAdminMode();
-    JSONObject context = new JSONObject(requestMap.get("context"));
+    JSONObject context = new JSONObject(strContext);
     String strWindow = context.getString("inpwindowId");
     Window window = OBDal.getInstance().get(Window.class, strWindow == null ? "" : strWindow);
 
@@ -84,9 +91,14 @@ abstract class AddPaymentReadOnlyLogicsHandler {
     }
   }
 
-  boolean getConversionRateReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getConversionRateReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException {
+    String strContext = requestMap.get("context");
+    if (strContext == null) {
+      return false;
+    }
     OBContext.setAdminMode();
-    JSONObject context = new JSONObject(requestMap.get("context"));
+    JSONObject context = new JSONObject(strContext);
     String strWindow = context.getString("inpwindowId");
     Window window = OBDal.getInstance().get(Window.class, strWindow == null ? "" : strWindow);
 

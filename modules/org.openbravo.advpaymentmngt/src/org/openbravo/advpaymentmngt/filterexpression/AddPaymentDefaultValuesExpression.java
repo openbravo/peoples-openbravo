@@ -120,8 +120,13 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
 
   private String getWindowId(Map<String, String> requestMap) throws JSONException {
     final String strContext = requestMap.get("context");
-    JSONObject context = new JSONObject(strContext);
-    return context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
+    if (strContext != null) {
+      JSONObject context = new JSONObject(strContext);
+      if (context != null && context.has(OBBindingsConstants.WINDOW_ID_PARAM)) {
+        return context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
+      }
+    }
+    return "NULLWINDOWID";
   }
 
   private AddPaymentDefaultValuesHandler getHandler(String strWindowId) {

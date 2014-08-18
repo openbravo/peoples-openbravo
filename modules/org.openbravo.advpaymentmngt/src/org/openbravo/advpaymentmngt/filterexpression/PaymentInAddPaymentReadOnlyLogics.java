@@ -34,37 +34,39 @@ public class PaymentInAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogicsH
   }
 
   @Override
-  boolean getPaymentDocumentNoReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getPaymentDocumentNoReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException {
     return true;
   }
 
   @Override
-  boolean getReceivedFromReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getReceivedFromReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     return true;
   }
 
   @Override
-  boolean getPaymentMethodReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getPaymentMethodReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     return true;
   }
 
   @Override
-  boolean getActualPaymentReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getActualPaymentReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     return false;
   }
 
   @Override
-  boolean getPaymentDateReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getPaymentDateReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     return true;
   }
 
   @Override
-  boolean getFinancialAccountReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getFinancialAccountReadOnlyLogic(Map<String, String> requestMap)
+      throws JSONException {
     return true;
   }
 
   @Override
-  boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
+  public boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     return true;
   }
 }

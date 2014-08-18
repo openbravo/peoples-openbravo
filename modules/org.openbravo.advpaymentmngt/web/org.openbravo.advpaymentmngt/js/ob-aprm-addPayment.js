@@ -118,6 +118,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
   }
   if (trxtype === "") {
     form.removeField(0);
+    form.removeField(1);
   }
 };
 
@@ -135,10 +136,21 @@ OB.APRM.AddPayment.paymentMethodMulticurrency = function (view, form, recalcConv
       orgId = form.getItem('ad_org_id').getValue();
 
   callback = function (response, data, request) {
-    var isShown = data.isPayIsMulticurrency && currencyId !== data.currencyToId;
+    var isShown = false;
+    if (data.currencyId) {
+      if (!form.getItem('c_currency_id').valueMap) {
+        form.getItem('c_currency_id').valueMap = {};
+      }
+      form.getItem('c_currency_id').setValue(data.currencyId);
+      form.getItem('c_currency_id').valueMap[data.currencyId] = data.currencyIdIdentifier;
+    }
+    isShown = data.isPayIsMulticurrency && currencyId !== data.currencyToId && currencyId !== undefined;
     if (data.isWrongFinancialAccount) {
       form.getItem('fin_financial_account_id').setValue('');
     } else {
+      if (!form.getItem('c_currency_to_id').valueMap) {
+        form.getItem('c_currency_to_id').valueMap = {};
+      }
       form.getItem('c_currency_to_id').setValue(data.currencyToId);
       form.getItem('c_currency_to_id').valueMap[data.currencyToId] = data.currencyToIdentifier;
       if (recalcConvRate && isc.isA.Number(data.conversionrate)) {
@@ -782,7 +794,8 @@ OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
       issotrx = form.getItem('issotrx'),
       affectedParams = [],
       ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
-      newCriteria;
+      organization = form.getItem('ad_org_id'),
+      newCriteria, callback;
   if (document === 'RCIN') {
     issotrx.setValue(true);
   } else {
@@ -791,6 +804,9 @@ OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
 
   form.getItem('fin_paymentmethod_id').setValue(null);
   form.getItem('received_from').setValue(null);
+  if (!form.paramWindow.parentWindow) {
+    form.getItem('fin_financial_account_id').setValue(null);
+  }
   OB.APRM.AddPayment.reloadLabels(form);
   affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
   affectedParams.push(form.getField('actual_payment_readonly_logic').paramId);
@@ -806,6 +822,17 @@ OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
     ordinvgrid.invalidateCache();
     form.redraw();
   }
+
+  callback = function (response, data, request) {
+    form.getItem('payment_documentno').setValue(data.payment_documentno);
+  };
+
+  if (document !== "") {
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentDocumentNoActionHandler', {
+      organization: organization.getValue(),
+      issotrx: issotrx.getValue()
+    }, {}, callback);
+  }
 };
 
 OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
@@ -813,12 +840,18 @@ OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
       trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
       callback, receivedFrom = form.getItem('received_from').getValue(),
       isSOTrx = form.getItem('issotrx').getValue(),
-      financialAccount = form.getItem('fin_financial_account_id').getValue();
+      financialAccount = form.getItem('fin_financial_account_id').getValue(),
+      ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      defaultFilter = {
+      businessPartnerName: item.getElementValue()
+      };
   affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
   OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
 
   callback = function (response, data, request) {
-    form.getItem('fin_paymentmethod_id').setValue(data.paymentMethodId);
+    if (data.paymentMethodId !== '') {
+      form.getItem('fin_paymentmethod_id').setValue(data.paymentMethodId);
+    }
   };
 
   if (trxtype !== "") {
@@ -827,6 +860,8 @@ OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
       isSOTrx: isSOTrx,
       financialAccount: financialAccount
     }, {}, callback);
+    ordinvgrid.setFilterEditorCriteria(defaultFilter);
+    ordinvgrid.filterByEditor();
   }
 };
 
@@ -836,7 +871,9 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function (form, view, aff
   thisform = form;
   thisview = view;
   params.context = form.paramWindow.getContextInfo();
-  params.context.inpwindowId = form.paramWindow.parentWindow.windowId;
+  if (form.paramWindow.parentWindow && form.paramWindow.parentWindow.windowId) {
+    params.context.inpwindowId = form.paramWindow.parentWindow.windowId;
+  }
 
   callbackDisplayLogicActionHandler = function (response, data, request) {
     var i, field, def, values = data.values,

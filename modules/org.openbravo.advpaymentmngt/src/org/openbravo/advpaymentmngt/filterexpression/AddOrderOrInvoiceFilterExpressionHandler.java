@@ -48,6 +48,14 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
 
   protected abstract long getSeq();
 
+  /**
+   * This method gets called to obtain the default filtering values for the grid. It can be
+   * overwritten using Injections.
+   * 
+   * @param requestMap
+   * @return String containing the value for the filter expression
+   * @throws JSONException
+   */
   String getFilterExpression(Map<String, String> requestMap) throws JSONException {
     return getDefaultPaymentMethod(requestMap);
   }

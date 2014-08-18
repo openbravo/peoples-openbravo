@@ -26,5 +26,6 @@ public class APRMConstants {
   public final static String PAYMENT_IN_WINDOW_ID = "E547CE89D4C04429B6340FFA44E70716";
   public final static String PAYMENT_OUT_WINDOW_ID = "6F8F913FA60F4CBD93DC1D3AA696E76E";
   public final static String TRANSACTION_WINDOW_ID = "94EAA455D2644E04AB25D93BE5157B6D";
+  public final static String ADD_PAYMENT_MENU = "NULLWINDOWID";
 
 }

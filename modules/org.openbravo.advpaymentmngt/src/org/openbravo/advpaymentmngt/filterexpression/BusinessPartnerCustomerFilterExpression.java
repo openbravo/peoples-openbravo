@@ -20,7 +20,7 @@ public class BusinessPartnerCustomerFilterExpression implements FilterExpression
   public String getExpression(Map<String, String> _requestMap) {
     requestMap = _requestMap;
     tabId = requestMap.get(OBBindingsConstants.TAB_ID_PARAM);
-    if (requestMap.get("issotrx") != null && transactionTabId.equals(tabId)) {
+    if (requestMap.get("issotrx") != null && (transactionTabId.equals(tabId) || tabId == null)) {
       issotrx = requestMap.get("issotrx");
       if ("true".equals(issotrx)) {
         return "true";

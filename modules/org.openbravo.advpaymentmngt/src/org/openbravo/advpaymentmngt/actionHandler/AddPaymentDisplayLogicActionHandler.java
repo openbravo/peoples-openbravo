@@ -53,6 +53,7 @@ public class AddPaymentDisplayLogicActionHandler extends BaseActionHandler {
       final JSONArray affectedParams = jsonData.getJSONArray("affectedParams");
       final JSONObject params = jsonData.getJSONObject("params");
 
+      @SuppressWarnings("unchecked")
       Iterator<String> keys = params.keys();
       while (keys.hasNext()) {
         String key = keys.next();
