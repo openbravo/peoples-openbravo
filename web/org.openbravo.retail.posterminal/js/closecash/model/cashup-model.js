@@ -27,7 +27,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   },
   cashupstepsdefinition: ['OB.CashUp.StepPendingOrders', 'OB.CashUp.CashPayments', 'OB.CashUp.PaymentMethods', 'OB.CashUp.CashToKeep', 'OB.CashUp.PostPrintAndClose'],
   init: function () {
-    //Check for orders wich are being processed in this moment.
+    //Check for orders which are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
     var synchId = SynchronizationHelper.busyUntilFinishes('cashup.init');
@@ -52,7 +52,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('paymentList', new Backbone.Collection());
     OB.Dal.find(OB.Model.CashUp, {
-      'isbeingprocessed': 'N'
+      'isprocessed': 'N'
     }, function (cashUp) {
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
         'cashup_id': cashUp.at(0).get('id'),
@@ -114,7 +114,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
     this.set('cashUpReport', new Backbone.Collection());
     OB.Dal.find(OB.Model.CashUp, {
-      'isbeingprocessed': 'N'
+      'isprocessed': 'N'
     }, function (cashUp) {
       cashUpReport = cashUp.at(0);
       OB.Dal.find(OB.Model.CashManagement, {
@@ -449,81 +449,59 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   propertyFunctions: [],
   processAndFinishCashUp: function () {
     var synchId = SynchronizationHelper.busyUntilFinishes('processAndFinishCashUp');
-    var objToSend = {
-      posTerminal: OB.POS.modelterminal.get('terminal').id,
-      id: OB.UTIL.get_UUID(),
-      cashCloseInfo: [],
-      cashUpDate: this.get('cashUpReport').at(0).get('time')
-    },
-        server = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashClose'),
-        me = this,
-        i;
     OB.UTIL.showLoading(true);
+    var currentMe = this;
     OB.Dal.find(OB.Model.CashUp, {
-      'isbeingprocessed': 'N'
+      'isprocessed': 'N'
     }, function (cashUp) {
-      objToSend = new Backbone.Model({
-        posTerminal: OB.POS.modelterminal.get('terminal').id,
-        id: cashUp.at(0).get('id'),
-        cashCloseInfo: [],
-        cashUpDate: me.get('cashUpReport').at(0).get('time')
-      });
-      for (i = 0; i < me.additionalProperties.length; i++) {
-        objToSend.set(me.additionalProperties[i], me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0)));
-      }
-      _.each(me.get('paymentList').models, function (curModel) {
-        var cashCloseInfo = {
-          expected: 0,
-          difference: 0,
-          paymentTypeId: 0,
-          paymentMethod: {}
-        };
-        cashCloseInfo.paymentTypeId = curModel.get('id');
-        cashCloseInfo.difference = curModel.get('difference');
-        cashCloseInfo.foreignDifference = curModel.get('foreignDifference');
-        cashCloseInfo.expected = curModel.get('expected');
-        cashCloseInfo.foreignExpected = curModel.get('foreignExpected');
-        curModel.get('paymentMethod').amountToKeep = curModel.get('qtyToKeep');
-        cashCloseInfo.paymentMethod = curModel.get('paymentMethod');
-        objToSend.get('cashCloseInfo').push(cashCloseInfo);
-      }, this);
-
-      objToSend.set('cashMgmtIds', []);
-      OB.Dal.find(OB.Model.CashManagement, {
-        'cashup_id': cashUp.at(0).get('id')
-      }, function (cashMgmts) {
-        SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
-        _.each(cashMgmts.models, function (cashMgmt) {
-          objToSend.get('cashMgmtIds').push(cashMgmt.get('id'));
-        });
-        cashUp.at(0).set('userId', OB.POS.modelterminal.get('context').user.id);
-        objToSend.set('userId', OB.POS.modelterminal.get('context').user.id);
-        cashUp.at(0).set('objToSend', JSON.stringify(objToSend.toJSON()));
-        cashUp.at(0).set('isbeingprocessed', 'Y');
-        OB.Dal.save(cashUp.at(0), null, null);
-        if (OB.MobileApp.model.get('connectedToERP')) {
-          if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
-            me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
-          }
-          OB.MobileApp.model.runSyncProcess(function () {
-            OB.UTIL.calculateCurrentCash();
-            OB.UTIL.showLoading(false);
-            me.set("finished", true);
+      OB.UTIL.composeCashupInfo(cashUp, currentMe, function (me) {
+        var i, objToSend = JSON.parse(cashUp.at(0).get('objToSend'));
+        objToSend.cashUpDate = me.get('cashUpReport').at(0).get('time');
+        for (i = 0; i < me.additionalProperties.length; i++) {
+          var pos = me.additionalProperties[i];
+          objToSend.pos = me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0));
+        }
+        var cashCloseArray = [];
+        objToSend.cashCloseInfo = cashCloseArray;
+        _.each(me.get('paymentList').models, function (curModel) {
+          var cashCloseInfo = {
+            expected: 0,
+            difference: 0,
+            paymentTypeId: 0,
+            paymentMethod: {}
+          };
+          cashCloseInfo.paymentTypeId = curModel.get('id');
+          cashCloseInfo.difference = curModel.get('difference');
+          cashCloseInfo.foreignDifference = curModel.get('foreignDifference');
+          cashCloseInfo.expected = curModel.get('expected');
+          cashCloseInfo.foreignExpected = curModel.get('foreignExpected');
+          curModel.get('paymentMethod').amountToKeep = curModel.get('qtyToKeep');
+          cashCloseInfo.paymentMethod = curModel.get('paymentMethod');
+          objToSend.cashCloseInfo.push(cashCloseInfo);
+        }, me);
+        var cashMgmtIds = [];
+        objToSend.cashMgmtIds = cashMgmtIds;
+        OB.Dal.find(OB.Model.CashManagement, {
+          'cashup_id': cashUp.at(0).get('id')
+        }, function (cashMgmts) {
+          _.each(cashMgmts.models, function (cashMgmt) {
+            objToSend.cashMgmtIds.push(cashMgmt.get('id'));
           });
-        } else {
+          cashUp.at(0).set('userId', OB.POS.modelterminal.get('context').user.id);
+          objToSend.userId = OB.POS.modelterminal.get('context').user.id;
+          objToSend.isprocessed = 'Y';
+          cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
+          cashUp.at(0).set('isprocessed', 'Y');
           OB.Dal.save(cashUp.at(0), function () {
             if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
               me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
             }
-            OB.UTIL.initCashUp(function () {
-              OB.UTIL.calculateCurrentCash();
-              OB.UTIL.showLoading(false);
-              me.set("finished", true);
-            });
-          }, null);
-        }
-      }, null, null);
-    }, null, this);
+            OB.UTIL.showLoading(false);
+            me.set("finished", true);
+          }, null, null);
+        }, null);
+      }, null, this);
+    });
   },
   convertExpected: function () {
     _.each(this.get('paymentList').models, function (model) {

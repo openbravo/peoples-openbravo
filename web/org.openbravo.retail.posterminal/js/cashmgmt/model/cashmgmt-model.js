@@ -18,14 +18,14 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
   models: [OB.Model.CashManagement],
   init: function () {
     var payments = new Backbone.Collection(),
-      me = this,
-      paymentMth, criteria, runSyncProcessCM, error, addedCashMgmt, selectedPayment;
+        me = this,
+        paymentMth, criteria, runSyncProcessCM, error, addedCashMgmt, selectedPayment;
     this.set('payments', new Backbone.Collection());
     this.set('cashMgmtDropEvents', new Backbone.Collection(OB.POS.modelterminal.get('cashMgmtDropEvents')));
     this.set('cashMgmtDepositEvents', new Backbone.Collection(OB.POS.modelterminal.get('cashMgmtDepositEvents')));
 
     OB.Dal.find(OB.Model.CashUp, {
-      'isbeingprocessed': 'N'
+      'isprocessed': 'N'
     }, function (cashUp) {
       OB.Dal.find(OB.Model.PaymentMethodCashUp, {
         'cashup_id': cashUp.at(0).get('id'),
@@ -68,7 +68,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       }
 
       OB.Dal.find(OB.Model.CashUp, {
-        'isbeingprocessed': 'N'
+        'isprocessed': 'N'
       }, function (cashUp) {
         addedCashMgmt = new OB.Model.CashManagement({
           id: OB.Dal.get_uuid(),

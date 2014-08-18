@@ -340,11 +340,10 @@
 
       this.get('dataSyncModels').push({
         model: OB.Model.CashUp,
+        isPersistent: true,
         className: 'org.openbravo.retail.posterminal.ProcessCashClose',
         timeout: 600000,
-        criteria: {
-          isbeingprocessed: 'Y'
-        },
+        criteria: {},
         postProcessingFunction: function (data, callback) {
           OB.UTIL.initCashUp(function () {
             OB.UTIL.deleteCashUps(data);
