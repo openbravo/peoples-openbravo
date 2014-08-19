@@ -67,7 +67,7 @@ public class CostAdjustmentProcess {
    *           when there is an error that prevents the cost adjustment to be processed.
    * @throws JSONException
    */
-  public JSONObject processCostAdjustment(CostAdjustment _costAdjustment) throws OBException,
+  private JSONObject processCostAdjustment(CostAdjustment _costAdjustment) throws OBException,
       JSONException {
     CostAdjustment costAdjustment = _costAdjustment;
     JSONObject message = new JSONObject();
@@ -87,6 +87,7 @@ public class CostAdjustmentProcess {
     } finally {
       OBContext.restorePreviousMode();
     }
+
     return message;
   }
 
@@ -225,11 +226,16 @@ public class CostAdjustmentProcess {
     return implementor;
   }
 
-  public static JSONObject doProcessCostAdjustment(CostAdjustment costAdjustment)
+  public static synchronized JSONObject doProcessCostAdjustment(CostAdjustment costAdjustment)
       throws OBException, JSONException {
+    String docNo = costAdjustment.getDocumentNo();
+    log.debug("Starts process cost adjustment: {}", docNo);
+    long t1 = System.currentTimeMillis();
     CostAdjustmentProcess cap = WeldUtils
         .getInstanceFromStaticBeanManager(CostAdjustmentProcess.class);
     JSONObject message = cap.processCostAdjustment(costAdjustment);
+    log.debug("Ends process cost adjustment: {}, took {} ms.", docNo,
+        (System.currentTimeMillis() - t1));
     return message;
   }
 }

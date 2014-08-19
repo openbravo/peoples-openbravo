@@ -28,7 +28,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
-import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -151,9 +150,7 @@ public class CostingServer {
             Boolean.TRUE, OBDateUtils.getEndOfDay(transaction.getMovementDate()), null);
 
         try {
-          CostAdjustmentProcess cap = WeldUtils
-              .getInstanceFromStaticBeanManager(CostAdjustmentProcess.class);
-          JSONObject message = cap.processCostAdjustment(costAdjustmentHeader);
+          JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
 
           if (message.get("severity") != "success") {
             throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@")
