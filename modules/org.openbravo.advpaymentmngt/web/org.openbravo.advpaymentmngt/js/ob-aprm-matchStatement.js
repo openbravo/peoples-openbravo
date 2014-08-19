@@ -54,8 +54,6 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
           callerField: me,
           paramWindow: true,
           processId: processId,
-          record: record,
-          recordId: record,
           windowId: grid.view.windowId,
           windowTitle: 'Search'
         });
@@ -118,3 +116,20 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
   layoutRightMargin: 0,
   membersMargin: 4
 });
+
+
+
+OB.APRM.MatchStatement.Candidates = {};
+
+OB.APRM.MatchStatement.Candidates.onLoad = function (view) {
+  var bankStatementLineId = view.callerField.record.id,
+      grid = view.theForm.getItem('candidates').canvas.viewGrid;
+
+  grid.getFetchRequestParams_orig = grid.getFetchRequestParams;
+  grid.getFetchRequestParams = function (params) {
+    params = params || {};
+    params = grid.getFetchRequestParams_orig(params);
+    params.bankStatementLineId = bankStatementLineId;
+    return params;
+  };
+};

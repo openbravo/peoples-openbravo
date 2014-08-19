@@ -79,6 +79,7 @@ public class CandidatesDatasource extends ReadOnlyDataSourceService {
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    final String bankStatementLineId = parameters.get("bankStatementLineId");
 
     int offset = startRow;
     int nRows = endRow - startRow + 1;
@@ -97,7 +98,7 @@ public class CandidatesDatasource extends ReadOnlyDataSourceService {
 
     // TODO recover bank line
     final FIN_BankStatementLine line = OBDal.getInstance().get(FIN_BankStatementLine.class,
-        "25869E0C419A4C1BA6361BFA4EE5404A");
+        bankStatementLineId);
     StandardMatchingCandidatesAlgorithm smc = new StandardMatchingCandidatesAlgorithm();
     List<FIN_CandidateRecord> transactionCandidates = smc.getTransactionCandidates(line,
         new ArrayList<FIN_FinaccTransaction>());
