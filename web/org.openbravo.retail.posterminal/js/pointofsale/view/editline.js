@@ -434,7 +434,7 @@ enyo.kind({
         this.$.editlineimage.setImg(this.line.get('product').get('img'));
         this.$.icon.parent.hide();
       }
-      if (this.line.get('gross') < OB.DEC.Zero) {
+      if (this.line.get('qty') < OB.DEC.Zero) {
         if (!_.isUndefined(this.line.get('returnReason'))) {
           selectedReason = _.filter(this.$.returnreason.children, function (reason) {
             return reason.getValue() === me.line.get('returnReason');

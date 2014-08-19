@@ -527,7 +527,7 @@
           isReturn = true;
 
       _.each(this.get('lines').models, function (line) {
-        if (line.get('gross') > 0) {
+        if (line.get('qty') > 0) {
           isReturn = false;
         }
       }, this);

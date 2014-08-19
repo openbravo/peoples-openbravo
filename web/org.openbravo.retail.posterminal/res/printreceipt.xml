@@ -17,7 +17,7 @@
       <%
         var title,
             negativeLines = _.filter(order.get('lines').models, function (line) {
-                return line.get('gross') < 0;
+                return line.get('qty') < 0;
               }).length;
         if (negativeLines === 0) {
           title = OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ReceiptRpt_Title'));

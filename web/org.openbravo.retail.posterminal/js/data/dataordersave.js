@@ -85,7 +85,7 @@
 
         receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         // convert returns
-        if (receipt.get('gross') < 0) {
+        if (receipt.get('qty') < 0) {
           _.forEach(receipt.get('payments').models, function (item) {
             item.set('amount', -item.get('amount'));
             item.set('origAmount', -item.get('origAmount'));
