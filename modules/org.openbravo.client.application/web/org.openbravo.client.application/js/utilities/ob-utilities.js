@@ -1302,4 +1302,5 @@ OB.Utilities.createResultSetManually = function (grid) {
   grid.dataProperties.useClientFiltering = false;
   grid.dataProperties.manualResultSet = true;
   grid.setData(grid.createDataModel());
+  grid.serverDataNotLoaded = true;
 };
