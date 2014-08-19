@@ -44,7 +44,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       originalPrompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       action: function () {
-        var processId = '9BED7889E1034FE68BD85D5D16857320',
+        var processId = 'F2B2DB751AF245D3A5DF28EE00EF2685',
             grid = me.grid,
             record = me.record,
             standardWindow = grid.view.parentWindow.view.standardWindow;
