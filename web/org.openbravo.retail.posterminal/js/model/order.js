@@ -2182,7 +2182,8 @@
             });
           });
           order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
-          //order.set('payments', model.receiptPayments);
+          order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss.s").toDate());
+           //order.set('payments', model.receiptPayments);
           payments = new PaymentLineList();
           _.each(model.receiptPayments, function (iter) {
             var paymentProp;
