@@ -54,6 +54,8 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
           callerField: me,
           paramWindow: true,
           processId: processId,
+          record: record,
+          recordId: record,
           windowId: grid.view.windowId,
           windowTitle: 'Search'
         });

@@ -21,6 +21,8 @@ package org.openbravo.advpaymentmngt.utility;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
@@ -141,4 +143,25 @@ public class FIN_CandidateRecord {
     return "TODO";
   }
 
+  public Map<String, Object> toMap() {
+    // TODO other columns
+    final Map<String, Object> map = new HashMap<String, Object>();
+
+    map.put("id", baseOBObject.getId());
+    map.put("ad_client_id", "23C59575B9CF467C9620760EB255B389");
+    map.put("ad_org_id", "B843C30461EA4501935CB1D125C9C25A");
+    map.put("createdby", "100");
+    map.put("updatedby", "100");
+    map.put("created", new Date());
+    map.put("updated", new Date());
+    map.put("isactive", "Y");
+    // map.put("affinity", affinity);
+    map.put("affinity", "dummy3");
+    map.put("date", getDate());
+    map.put("c_bpartner_id", getBusinessPartner().getId());
+    map.put("amount", getAmount());
+    map.put("date", new Date());
+
+    return map;
+  }
 }

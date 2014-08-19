@@ -21,11 +21,14 @@ package org.openbravo.advpaymentmngt.algorithm;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.utility.FIN_CandidateRecord;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchingCandidatesAlgorithm_I;
@@ -64,11 +67,9 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
     final List<Object> parameters = new ArrayList<Object>();
     BigDecimal amount = line.getCramount().subtract(line.getDramount());
     boolean isReceipt = amount.signum() > 0;
-    // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
-    // removed when new security implementation is done
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
+    ScrollableResults scrollLines = null;
     try {
-
       whereClause.append(" as p "); // pending payments //
       whereClause.append(" where not exists ");
       whereClause
@@ -124,13 +125,22 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
 
       obqPayment.setParameters(parameters);
 
-      // TODO use Scrollable
       final List<FIN_CandidateRecord> candidateRecords = new ArrayList<FIN_CandidateRecord>();
-      for (final FIN_Payment paymentCandidate : obqPayment.list()) {
+      scrollLines = obqPayment.scroll(ScrollMode.FORWARD_ONLY);
+      int j = 1;
+      while (scrollLines.next()) {
+        final FIN_Payment paymentCandidate = (FIN_Payment) scrollLines.get(0);
         candidateRecords.add(new FIN_CandidateRecord(paymentCandidate));
+        if (j % 100 == 0) {
+          OBDal.getInstance().getSession().clear();
+        }
+        j++;
       }
       return candidateRecords;
     } finally {
+      if (scrollLines != null) {
+        scrollLines.close();
+      }
       OBContext.restorePreviousMode();
     }
   }
@@ -138,59 +148,68 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
   @Override
   public List<FIN_CandidateRecord> getInvoiceCandidates(FIN_BankStatementLine line,
       List<Invoice> excluded) {
-    final StringBuilder whereClause = new StringBuilder();
+    final StringBuilder hql = new StringBuilder();
     final List<Object> parameters = new ArrayList<Object>();
     BigDecimal amount = line.getCramount().subtract(line.getDramount());
     boolean isReceipt = amount.signum() > 0;
-    // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
-    // removed when new security implementation is done
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
+    ScrollableResults scrollLines = null;
     try {
+      hql.append(" select distinct(i.id) ");
 
-      whereClause.append(" as psd "); // pending scheduled payments //
-      whereClause.append(" left outer join psd.invoicePaymentSchedule as psdi");
-      whereClause.append(" left outer join psdi.invoice ");
-      whereClause.append(" where psd.");
-      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-      whereClause.append(" is null");
-      whereClause.append(" and psd.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_ORGANIZATION);
-      whereClause.append(".id in (");
-      whereClause.append(parse(OBContext.getOBContext().getOrganizationStructureProvider()
+      // hql.append(" psdi.");
+      // hql.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
+      // hql.append(", psdi.");
+      // hql.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
+      // hql.append(", psdi.");
+      // hql.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
+      // hql.append(".");
+      // hql.append(Invoice.PROPERTY_DOCUMENTNO);
+
+      hql.append(" from FIN_Payment_ScheduleDetail as psd "); // pending scheduled payments //
+      hql.append(" inner join psd.invoicePaymentSchedule as psdi");
+      hql.append(" inner join psdi.invoice as i ");
+      hql.append(" where psd.");
+      hql.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
+      hql.append(" is null");
+      hql.append(" and psd.");
+      hql.append(FIN_PaymentSchedule.PROPERTY_ORGANIZATION);
+      hql.append(".id in (");
+      hql.append(parse(OBContext.getOBContext().getOrganizationStructureProvider()
           .getNaturalTree(line.getOrganization().getId())));
-      whereClause.append(")");
+      hql.append(")");
 
       // Transaction type filter
-      whereClause.append(" and psdi.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-      whereClause.append(" is not null");
+      hql.append(" and psdi.");
+      hql.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
+      hql.append(" is not null");
 
       if (line.getBusinessPartner() != null) {
-        whereClause.append(" and psdi.");
-        whereClause.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-        whereClause.append(".");
-        whereClause.append(Invoice.PROPERTY_BUSINESSPARTNER);
-        whereClause.append(".id = '");
-        whereClause.append(line.getBusinessPartner().getId());
-        whereClause.append("'");
+        hql.append(" and psdi.");
+        hql.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
+        hql.append(".");
+        hql.append(Invoice.PROPERTY_BUSINESSPARTNER);
+        hql.append(".id = '");
+        hql.append(line.getBusinessPartner().getId());
+        hql.append("'");
       }
-      whereClause.append(" and psdi.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-      whereClause.append(".");
-      whereClause.append(Invoice.PROPERTY_SALESTRANSACTION);
-      whereClause.append(" = ");
-      whereClause.append(isReceipt);
-      whereClause.append(" and psdi.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-      whereClause.append(".");
-      whereClause.append(Invoice.PROPERTY_CURRENCY);
-      whereClause.append(".id = '");
-      whereClause.append(line.getBankStatement().getAccount().getCurrency().getId());
-      whereClause.append("'");
+      hql.append(" and psdi.");
+      hql.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
+      hql.append(".");
+      hql.append(Invoice.PROPERTY_SALESTRANSACTION);
+      hql.append(" = ");
+      hql.append(isReceipt);
+      hql.append(" and psdi.");
+      hql.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
+      hql.append(".");
+      hql.append(Invoice.PROPERTY_CURRENCY);
+      hql.append(".id = '");
+      hql.append(line.getBankStatement().getAccount().getCurrency().getId());
+      hql.append("'");
       // amount
-      whereClause.append(" and psdi.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT);
-      whereClause.append(" = ?");
+      hql.append(" and psdi.");
+      hql.append(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT);
+      hql.append(" = ?");
       parameters.add(amount.abs());
       // dateTo
       // TODO Review this date. i guess someone can pay a bill prior to due date
@@ -202,93 +221,99 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
       // parameters.add(line.getTransactionDate());
       // TODO: Add order to show first scheduled payments from invoices and later scheduled payments
       // from not invoiced orders.
-      whereClause.append(" order by");
-      whereClause.append(" psdi.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
-      whereClause.append(", psdi.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-      whereClause.append(", psdi.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-      whereClause.append(".");
-      whereClause.append(Invoice.PROPERTY_DOCUMENTNO);
-      final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance().createQuery(
-          FIN_PaymentScheduleDetail.class, whereClause.toString());
+      // hql.append(" order by");
+      // hql.append(" psdi.");
+      // hql.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
+      // hql.append(", psdi.");
+      // hql.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
+      // hql.append(", psdi.");
+      // hql.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
+      // hql.append(".");
+      // hql.append(Invoice.PROPERTY_DOCUMENTNO);
 
-      obqPSD.setParameters(parameters);
-
-      // TODO get invoices and use Scrollable
-      final List<FIN_CandidateRecord> candidateRecords = new ArrayList<FIN_CandidateRecord>();
-      final Set<Invoice> invoices = new HashSet<Invoice>();
-      for (final FIN_PaymentScheduleDetail psd : obqPSD.list()) {
-        invoices.add(psd.getInvoicePaymentSchedule().getInvoice());
+      final Session session = OBDal.getInstance().getSession();
+      final Query query = session.createQuery(hql.toString());
+      for (int i = 0; i < parameters.size(); i++) {
+        query.setParameter(i, parameters.get(i));
       }
-      for (final Invoice invoice : invoices) {
-        candidateRecords.add(new FIN_CandidateRecord(invoice));
+
+      final List<FIN_CandidateRecord> candidateRecords = new ArrayList<FIN_CandidateRecord>();
+      scrollLines = query.scroll(ScrollMode.FORWARD_ONLY);
+      int j = 1;
+      while (scrollLines.next()) {
+        final String invoiceId = scrollLines.getString(0);
+        candidateRecords.add(new FIN_CandidateRecord(OBDal.getInstance().get(Invoice.class,
+            invoiceId)));
+        if (j % 100 == 0) {
+          session.clear();
+        }
+        j++;
       }
 
       return candidateRecords;
     } finally {
+      if (scrollLines != null) {
+        scrollLines.close();
+      }
       OBContext.restorePreviousMode();
     }
-
   }
 
   @Override
   public List<FIN_CandidateRecord> getOrderCandidates(FIN_BankStatementLine line,
       List<Order> excluded) {
-    final StringBuilder whereClause = new StringBuilder();
+    final StringBuilder hql = new StringBuilder();
     final List<Object> parameters = new ArrayList<Object>();
     BigDecimal amount = line.getCramount().subtract(line.getDramount());
     boolean isReceipt = amount.signum() > 0;
-    // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
-    // removed when new security implementation is done
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
+    ScrollableResults scrollLines = null;
     try {
-
-      whereClause.append(" as psd "); // pending scheduled payments //
-      whereClause.append(" left outer join psd.orderPaymentSchedule psdo");
-      whereClause.append(" left outer join psdo.order ");
-      whereClause.append(" where psd.");
-      whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-      whereClause.append(" is null");
-      whereClause.append(" and psd.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_ORGANIZATION);
-      whereClause.append(".id in (");
-      whereClause.append(parse(OBContext.getOBContext().getOrganizationStructureProvider()
+      hql.append(" select distinct(o.id) ");
+      hql.append(" from FIN_Payment_ScheduleDetail as psd "); // pending scheduled payments //
+      hql.append(" inner join psd.orderPaymentSchedule psdo");
+      hql.append(" inner join psdo.order as o ");
+      hql.append(" where psd.");
+      hql.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
+      hql.append(" is null");
+      hql.append(" and psd.");
+      hql.append(FIN_PaymentSchedule.PROPERTY_ORGANIZATION);
+      hql.append(".id in (");
+      hql.append(parse(OBContext.getOBContext().getOrganizationStructureProvider()
           .getNaturalTree(line.getOrganization().getId())));
-      whereClause.append(")");
+      hql.append(")");
 
       // Transaction type filter
-      whereClause.append(" and psdo.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
-      whereClause.append(" is not null");
+      hql.append(" and psdo.");
+      hql.append(FIN_PaymentSchedule.PROPERTY_ORDER);
+      hql.append(" is not null");
 
       if (line.getBusinessPartner() != null) {
-        whereClause.append(" and psdo.");
-        whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
-        whereClause.append(".");
-        whereClause.append(Order.PROPERTY_BUSINESSPARTNER);
-        whereClause.append(".id = '");
-        whereClause.append(line.getBusinessPartner().getId());
-        whereClause.append("'");
+        hql.append(" and psdo.");
+        hql.append(FIN_PaymentSchedule.PROPERTY_ORDER);
+        hql.append(".");
+        hql.append(Order.PROPERTY_BUSINESSPARTNER);
+        hql.append(".id = '");
+        hql.append(line.getBusinessPartner().getId());
+        hql.append("'");
       }
-      whereClause.append(" and psdo.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
-      whereClause.append(".");
-      whereClause.append(Order.PROPERTY_SALESTRANSACTION);
-      whereClause.append(" = ");
-      whereClause.append(isReceipt);
-      whereClause.append(" and psdo.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
-      whereClause.append(".");
-      whereClause.append(Order.PROPERTY_CURRENCY);
-      whereClause.append(".id = '");
-      whereClause.append(line.getBankStatement().getAccount().getCurrency().getId());
-      whereClause.append("'");
+      hql.append(" and psdo.");
+      hql.append(FIN_PaymentSchedule.PROPERTY_ORDER);
+      hql.append(".");
+      hql.append(Order.PROPERTY_SALESTRANSACTION);
+      hql.append(" = ");
+      hql.append(isReceipt);
+      hql.append(" and psdo.");
+      hql.append(FIN_PaymentSchedule.PROPERTY_ORDER);
+      hql.append(".");
+      hql.append(Order.PROPERTY_CURRENCY);
+      hql.append(".id = '");
+      hql.append(line.getBankStatement().getAccount().getCurrency().getId());
+      hql.append("'");
       // amount
-      whereClause.append(" and psdo.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT);
-      whereClause.append(" = ?");
+      hql.append(" and psdo.");
+      hql.append(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT);
+      hql.append(" = ?");
       parameters.add(amount.abs());
       // dateTo
       // TODO Review this date. i guess someone can pay a bill prior to due date
@@ -300,33 +325,32 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
       // parameters.add(line.getTransactionDate());
       // TODO: Add order to show first scheduled payments from invoices and later scheduled payments
       // from not invoiced orders.
-      whereClause.append(" order by");
-      whereClause.append(" psdo.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
-      whereClause.append(", psdo.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-      whereClause.append(", psdo.");
-      whereClause.append(FIN_PaymentSchedule.PROPERTY_ORDER);
-      whereClause.append(".");
-      whereClause.append(Order.PROPERTY_DOCUMENTNO);
-      final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance().createQuery(
-          FIN_PaymentScheduleDetail.class, whereClause.toString());
 
-      obqPSD.setParameters(parameters);
-
-      // TODO get invoices and use Scrollable
-      final List<FIN_CandidateRecord> candidateRecords = new ArrayList<FIN_CandidateRecord>();
-      final Set<Order> orders = new HashSet<Order>();
-      for (final FIN_PaymentScheduleDetail psd : obqPSD.list()) {
-        orders.add(psd.getOrderPaymentSchedule().getOrder());
+      final Session session = OBDal.getInstance().getSession();
+      final Query query = session.createQuery(hql.toString());
+      for (int i = 0; i < parameters.size(); i++) {
+        query.setParameter(i, parameters.get(i));
       }
-      for (final Order order : orders) {
-        candidateRecords.add(new FIN_CandidateRecord(order));
+
+      final List<FIN_CandidateRecord> candidateRecords = new ArrayList<FIN_CandidateRecord>();
+      scrollLines = query.scroll(ScrollMode.FORWARD_ONLY);
+      int j = 1;
+      while (scrollLines.next()) {
+        final String orderId = scrollLines.getString(0);
+        candidateRecords
+            .add(new FIN_CandidateRecord(OBDal.getInstance().get(Order.class, orderId)));
+        if (j % 100 == 0) {
+          session.clear();
+        }
+        j++;
       }
 
       return candidateRecords;
 
     } finally {
+      if (scrollLines != null) {
+        scrollLines.close();
+      }
       OBContext.restorePreviousMode();
     }
   }
