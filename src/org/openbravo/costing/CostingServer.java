@@ -32,8 +32,10 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
@@ -75,6 +77,8 @@ public class CostingServer {
    * 
    */
   public void process() throws OBException {
+    boolean doNotCheckPriceCorrectionTrxs = false;
+    boolean doNotCheckBackDatedTrxs = false;
     if (trxCost != null) {
       // Transaction cost has already been calculated. Nothing to do.
       return;
@@ -108,7 +112,15 @@ public class CostingServer {
       OBDal.getInstance().save(transaction);
 
       // check if price correction is needed
-      if (transaction.getGoodsShipmentLine() != null
+      try {
+        doNotCheckPriceCorrectionTrxs = Preferences.getPreferenceValue(
+            "doNotCheckPriceCorrectionTrxs", true, OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null).equals("Y");
+      } catch (PropertyException e1) {
+        doNotCheckPriceCorrectionTrxs = false;
+      }
+      if (!doNotCheckPriceCorrectionTrxs && transaction.getGoodsShipmentLine() != null
           && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList() != null
           && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList().size() != 0) {
         try {
@@ -120,8 +132,17 @@ public class CostingServer {
       }
 
       // check if cost adjustment should be done
-      if (CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction, getCostingRule()
-          .isWarehouseDimension())) {
+      try {
+        doNotCheckBackDatedTrxs = Preferences.getPreferenceValue("doNotCheckBackDatedTrxs", true,
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null).equals("Y");
+      } catch (PropertyException e1) {
+        doNotCheckBackDatedTrxs = false;
+      }
+      if (!doNotCheckBackDatedTrxs
+          && CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction, getCostingRule()
+              .isWarehouseDimension())) {
 
         CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
             transaction.getOrganization(), "BDT"); // BDT= Backdated transaction
