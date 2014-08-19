@@ -1344,9 +1344,7 @@ public class VariablesBase {
       if (!attribute.equalsIgnoreCase("menuVertical"))
         if (log4j.isDebugEnabled())
           log4j.debug("Set session attribute: " + attribute + ":..." + value.toString());
-    } catch (final IllegalStateException ise) {
-      throw new IllegalStateException(ise);
-    } catch (final Exception e) {
+    } catch (Exception e) {
       log4j.error("setSessionValue error: " + attribute + ":..." + value);
     }
   }
