@@ -252,6 +252,8 @@ public abstract class AcctServer {
   public static final String DOCTYPE_MatMovement = "MMM";
   /** Material Production */
   public static final String DOCTYPE_MatProduction = "MMP";
+  /** Material Internal Consumption */
+  public static final String DOCTYPE_MatInternalConsumption = "MIC";
 
   /** Match Invoice */
   public static final String DOCTYPE_MatMatchInv = "MXI";
@@ -472,7 +474,7 @@ public abstract class AcctServer {
         || AD_Table_ID.equals("407") || AD_Table_ID.equals("392") || AD_Table_ID.equals("259")
         || AD_Table_ID.equals("800019") || AD_Table_ID.equals("319") || AD_Table_ID.equals("321")
         || AD_Table_ID.equals("323") || AD_Table_ID.equals("325") || AD_Table_ID.equals("224")
-        || AD_Table_ID.equals("472")) {
+        || AD_Table_ID.equals("472") || AD_Table_ID.equals("800168")) {
       switch (Integer.parseInt(AD_Table_ID)) {
       case 318:
         acct = new DocInvoice(AD_Client_ID, AD_Org_ID, connectionProvider);
@@ -573,6 +575,13 @@ public abstract class AcctServer {
         acct.tableName = "M_MatchInv";
         acct.strDateColumn = "DateTrx";
         acct.AD_Table_ID = "472";
+        acct.reloadAcctSchemaArray();
+        break;
+      case 800168:
+        acct = new DocInternalConsumption(AD_Client_ID, AD_Org_ID, connectionProvider);
+        acct.tableName = "M_Internal_Consumption";
+        acct.strDateColumn = "MovementDate";
+        acct.AD_Table_ID = "800168";
         acct.reloadAcctSchemaArray();
         break;
       // case 473: acct = new
