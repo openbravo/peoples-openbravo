@@ -65,6 +65,6 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="M_LC_RECEIPT_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="M_LC_RECEIPT_IO_CHECK"><![CDATA[M_INOUT_ID IS NOT NULL OR M_INOUTLINE_ID IS NOT NULL]]></check>
+      <check name="M_LC_RECEIPT_IO_CHECK"><![CDATA[(M_INOUT_ID IS NOT NULL) OR (M_INOUTLINE_ID IS NOT NULL)]]></check>
     </table>
   </database>
