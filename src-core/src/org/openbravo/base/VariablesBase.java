@@ -1321,6 +1321,8 @@ public class VariablesBase {
       auxStr = (String) session.getAttribute(sessionAttribute.toUpperCase());
       if (auxStr == null || auxStr.trim().equals(""))
         auxStr = defaultValue;
+    } catch (final IllegalStateException ise) {
+      throw new IllegalStateException(ise);
     } catch (Exception e) {
       auxStr = defaultValue;
     }
@@ -1344,7 +1346,9 @@ public class VariablesBase {
       if (!attribute.equalsIgnoreCase("menuVertical"))
         if (log4j.isDebugEnabled())
           log4j.debug("Set session attribute: " + attribute + ":..." + value.toString());
-    } catch (Exception e) {
+    } catch (final IllegalStateException ise) {
+      throw new IllegalStateException(ise);
+    } catch (final Exception e) {
       log4j.error("setSessionValue error: " + attribute + ":..." + value);
     }
   }
@@ -1360,7 +1364,8 @@ public class VariablesBase {
       if (log4j.isDebugEnabled())
         log4j.debug("Remove session attribute: " + attribute + ":..." + getSessionValue(attribute));
       session.removeAttribute(attribute.toUpperCase());
-
+    } catch (final IllegalStateException ise) {
+      throw new IllegalStateException(ise);
     } catch (Exception e) {
       log4j.error("removeSessionValue error: " + attribute);
     }
