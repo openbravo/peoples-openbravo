@@ -1704,7 +1704,8 @@ isc.OBViewGrid.addProperties({
     if (this.data.manualResultSet && !this.data.useClientFiltering) {
       this.data.useClientFiltering = true;
     }
-
+    //  update the state of the toolbar buttons, as the availability of some of them depends on the number of records loaded
+    this.view.toolBar.updateButtonState(true);
     return ret;
   },
 
