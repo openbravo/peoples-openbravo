@@ -34,8 +34,8 @@
  		SET BP_Currency_ID = (
  		                     SELECT C_Currency_ID
  		                     FROM M_Pricelist
- 		                     WHERE M_Pricelist_ID=(case when bp.iscustomer='Y' then bp.M_Pricelist_ID
- 		                                                when bp.isvendor='Y' then  bp.PO_Pricelist_ID
+ 		                     WHERE M_Pricelist_ID=(case when bp.iscustomer='Y' and bp.m_pricelist_id is not null then bp.M_Pricelist_ID
+ 		                                                when bp.isvendor='Y' and bp.po_pricelist_id is not null then  bp.PO_Pricelist_ID
  		                                                end)
  		                     )
  		WHERE bp.BP_Currency_ID IS NULL
@@ -64,6 +64,29 @@
            createdby, created, updatedby, updated,attribute
            ) VALUES (
            get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'InitializeBPCurrency')
+         ]]>
+        </Sql>
+   </SqlMethod>
+   <SqlMethod name="isUpdated" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as exist
+        FROM DUAL
+        WHERE EXISTS (SELECT 1 FROM ad_preference
+                      WHERE attribute = 'UpdateBPCurrency')
+      ]]>
+    </Sql>
+  </SqlMethod>
+   <SqlMethod name="createUpdatePreference" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+       <Sql> 
+       <![CDATA[ 
+           INSERT INTO ad_preference (
+           ad_preference_id, ad_client_id, ad_org_id, isactive,
+           createdby, created, updatedby, updated,attribute
+           ) VALUES (
+           get_uuid(), '0', '0', 'Y', '0', NOW(), '0', NOW(),'UpdateBPCurrency')
          ]]>
         </Sql>
    </SqlMethod>

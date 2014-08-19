@@ -36,6 +36,13 @@ public class InitializeBPCurrency extends ModuleScript {
       if (!isExecuted){
         InitializeBPCurrencyData.initializeCurrency(cp);
         InitializeBPCurrencyData.createPreference(cp);
+        InitializeBPCurrencyData.createUpdatePreference(cp);
+      } else {
+        boolean isUpdated = InitializeBPCurrencyData.isUpdated(cp);
+        if(!isUpdated) {
+          InitializeBPCurrencyData.initializeCurrency(cp);
+          InitializeBPCurrencyData.createUpdatePreference(cp);
+        }
       }
     } catch (Exception e) {
       handleError(e);
