@@ -53,7 +53,7 @@
       });
       OB.POS.terminal.write();
     } else {
-      console.error('Cannot find OB namespace. Please, reload (F5). If this error raises again, check that the javascript files do not contain syntax errors.');
+      console.error('The WebPOS cannot be loaded. Please, reload (F5). If this error raises again:\n\n- check that the javascript files do not contain syntax errors\n- check that the session was not invalidated in the server\n');
     }
   </script>
 </body>
