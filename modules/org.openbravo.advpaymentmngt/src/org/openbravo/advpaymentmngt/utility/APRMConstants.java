@@ -28,4 +28,14 @@ public class APRMConstants {
   public final static String TRANSACTION_WINDOW_ID = "94EAA455D2644E04AB25D93BE5157B6D";
   public final static String ADD_PAYMENT_MENU = "NULLWINDOWID";
 
+  /* Matching Candidate Algorithm */
+  // Matched Document
+  public final static String CANDIDATE_MATCHED_DOCUMENT__TRANSACTION = "T";
+  public final static String CANDIDATE_MATCHED_DOCUMENT__PAYMENT = "P";
+  public final static String CANDIDATE_MATCHED_DOCUMENT__INVOICE = "I";
+  public final static String CANDIDATE_MATCHED_DOCUMENT__ORDER = "O";
+
+  // Match Type
+  public final static String CANDIDATE_MATCH_TYPE__AUTO = "A";
+  public final static String CANDIDATE_MATCH_TYPE__MANUAL = "M";
 }

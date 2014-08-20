@@ -54,7 +54,7 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
     for (final FIN_FinaccTransaction transactionCandidate : MatchTransactionDao
         .getMatchingFinancialTransaction(line.getBankStatement().getAccount().getId(), amount,
             excluded)) {
-      candidateRecords.add(new FIN_CandidateRecord(transactionCandidate));
+      candidateRecords.add(new FIN_CandidateRecord(transactionCandidate, line));
     }
 
     return candidateRecords;
@@ -113,16 +113,9 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
       whereClause.append(FIN_Payment.PROPERTY_PAYMENTDATE);
       whereClause.append(" <= ?");
       parameters.add(line.getTransactionDate());
-      // TODO: Add order to show first scheduled payments from invoices and later scheduled payments
-      // from not invoiced orders.
-      whereClause.append(" order by");
-      whereClause.append(" p.");
-      whereClause.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-      whereClause.append(", p.");
-      whereClause.append(FIN_Payment.PROPERTY_DOCUMENTNO);
+
       final OBQuery<FIN_Payment> obqPayment = OBDal.getInstance().createQuery(FIN_Payment.class,
           whereClause.toString());
-
       obqPayment.setParameters(parameters);
 
       final List<FIN_CandidateRecord> candidateRecords = new ArrayList<FIN_CandidateRecord>();
@@ -130,7 +123,7 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
       int j = 1;
       while (scrollLines.next()) {
         final FIN_Payment paymentCandidate = (FIN_Payment) scrollLines.get(0);
-        candidateRecords.add(new FIN_CandidateRecord(paymentCandidate));
+        candidateRecords.add(new FIN_CandidateRecord(paymentCandidate, line));
         if (j % 100 == 0) {
           OBDal.getInstance().getSession().clear();
         }
@@ -156,16 +149,6 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
     ScrollableResults scrollLines = null;
     try {
       hql.append(" select distinct(i.id) ");
-
-      // hql.append(" psdi.");
-      // hql.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
-      // hql.append(", psdi.");
-      // hql.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-      // hql.append(", psdi.");
-      // hql.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-      // hql.append(".");
-      // hql.append(Invoice.PROPERTY_DOCUMENTNO);
-
       hql.append(" from FIN_Payment_ScheduleDetail as psd "); // pending scheduled payments //
       hql.append(" inner join psd.invoicePaymentSchedule as psdi");
       hql.append(" inner join psdi.invoice as i ");
@@ -211,25 +194,6 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
       hql.append(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT);
       hql.append(" = ?");
       parameters.add(amount.abs());
-      // dateTo
-      // TODO Review this date. i guess someone can pay a bill prior to due date
-      // whereClause.append(" and psd.");
-      // whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-      // whereClause.append(".");
-      // whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-      // whereClause.append(" <= ?");
-      // parameters.add(line.getTransactionDate());
-      // TODO: Add order to show first scheduled payments from invoices and later scheduled payments
-      // from not invoiced orders.
-      // hql.append(" order by");
-      // hql.append(" psdi.");
-      // hql.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTPRIORITY);
-      // hql.append(", psdi.");
-      // hql.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-      // hql.append(", psdi.");
-      // hql.append(FIN_PaymentSchedule.PROPERTY_INVOICE);
-      // hql.append(".");
-      // hql.append(Invoice.PROPERTY_DOCUMENTNO);
 
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(hql.toString());
@@ -243,7 +207,7 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
       while (scrollLines.next()) {
         final String invoiceId = scrollLines.getString(0);
         candidateRecords.add(new FIN_CandidateRecord(OBDal.getInstance().get(Invoice.class,
-            invoiceId)));
+            invoiceId), line));
         if (j % 100 == 0) {
           session.clear();
         }
@@ -315,16 +279,6 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
       hql.append(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT);
       hql.append(" = ?");
       parameters.add(amount.abs());
-      // dateTo
-      // TODO Review this date. i guess someone can pay a bill prior to due date
-      // whereClause.append(" and psd.");
-      // whereClause.append(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE);
-      // whereClause.append(".");
-      // whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-      // whereClause.append(" <= ?");
-      // parameters.add(line.getTransactionDate());
-      // TODO: Add order to show first scheduled payments from invoices and later scheduled payments
-      // from not invoiced orders.
 
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(hql.toString());
@@ -337,8 +291,8 @@ public class StandardMatchingCandidatesAlgorithm implements FIN_MatchingCandidat
       int j = 1;
       while (scrollLines.next()) {
         final String orderId = scrollLines.getString(0);
-        candidateRecords
-            .add(new FIN_CandidateRecord(OBDal.getInstance().get(Order.class, orderId)));
+        candidateRecords.add(new FIN_CandidateRecord(OBDal.getInstance().get(Order.class, orderId),
+            line));
         if (j % 100 == 0) {
           session.clear();
         }

@@ -20,15 +20,19 @@
 package org.openbravo.advpaymentmngt.utility;
 
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
@@ -38,24 +42,62 @@ public class FIN_CandidateRecord {
   private FIN_Payment payment;
   private Invoice invoice;
   private Order order;
+  private Date date;
+  private BusinessPartner businessPartner;
+  private BigDecimal amount;
+  private String matchedDoc;
+  private String matchType = APRMConstants.CANDIDATE_MATCH_TYPE__AUTO;
+  private String reference;
   private String affinity;
 
-  public FIN_CandidateRecord(final BaseOBObject baseOBObject) {
+  public FIN_CandidateRecord(final BaseOBObject baseOBObject,
+      final FIN_BankStatementLine bankStatementLine) {
+    if (baseOBObject == null || bankStatementLine == null) {
+      throw new InvalidParameterException(
+          "FIN_CandidateRecord: baseOBObject and bankStatementLine must not be null");
+    }
+
     this.baseOBObject = baseOBObject;
     if (baseOBObject instanceof FIN_FinaccTransaction) {
       this.transaction = (FIN_FinaccTransaction) baseOBObject;
+      this.matchedDoc = APRMConstants.CANDIDATE_MATCHED_DOCUMENT__TRANSACTION;
+      this.date = transaction.getDateAcct();
+      this.amount = transaction.getPaymentAmount();
+      this.reference = transaction.getDescription();
     } else if (baseOBObject instanceof FIN_Payment) {
       this.payment = (FIN_Payment) baseOBObject;
+      this.matchedDoc = APRMConstants.CANDIDATE_MATCHED_DOCUMENT__PAYMENT;
+      this.date = payment.getPaymentDate();
+      this.amount = payment.getAmount();
+      this.reference = payment.getReferenceNo();
     } else if (baseOBObject instanceof Invoice) {
       this.invoice = (Invoice) baseOBObject;
+      this.matchedDoc = APRMConstants.CANDIDATE_MATCHED_DOCUMENT__INVOICE;
+      this.date = invoice.getInvoiceDate();
+      this.amount = invoice.getGrandTotalAmount();
+      this.reference = invoice.getDocumentNo();
     } else if (baseOBObject instanceof Order) {
       this.order = (Order) baseOBObject;
+      this.matchedDoc = APRMConstants.CANDIDATE_MATCHED_DOCUMENT__ORDER;
+      this.date = order.getOrderDate();
+      this.amount = order.getGrandTotalAmount();
+      this.reference = order.getDocumentNo();
     } else {
       throw new OBException(
           "The FIN_CandidateRecord only accepts instances of FIN_FinaccTransaction/FIN_Payment/Invoice/Order, and the this object is instance of "
               + baseOBObject.getClass().toString());
     }
-    this.affinity = calculateAffinity(getBusinessPartner(), getDate(), getAmount());
+    try {
+      this.businessPartner = (BusinessPartner) (baseOBObject.getClass()).getMethod(
+          "getBusinessPartner", new Class[0]).invoke(baseOBObject, new Object[0]);
+    } catch (Exception e) {
+      throw new OBException("Error while getting the FIN_CandidateRecord business partner");
+    }
+    this.affinity = calculateAffinity(bankStatementLine);
+  }
+
+  public BaseOBObject getBaseOBObject() {
+    return baseOBObject;
   }
 
   public FIN_FinaccTransaction getTransaction() {
@@ -78,90 +120,88 @@ public class FIN_CandidateRecord {
     return affinity;
   }
 
+  public String getMatchedDoc() {
+    return matchedDoc;
+  }
+
+  public String getMatchType() {
+    return matchType;
+  }
+
   public BusinessPartner getBusinessPartner() {
-    try {
-      return (BusinessPartner) (baseOBObject.getClass()).getMethod("getBusinessPartner",
-          new Class[0]).invoke(baseOBObject, new Object[0]);
-    } catch (Exception e) {
-      throw new OBException("Error while getting the FIN_CandidateRecord business partner");
-    }
+    return businessPartner;
   }
 
   public Date getDate() {
-    if (baseOBObject instanceof FIN_FinaccTransaction) {
-      return transaction.getDateAcct();
-    } else if (baseOBObject instanceof FIN_Payment) {
-      return payment.getPaymentDate();
-    } else if (baseOBObject instanceof Invoice) {
-      return invoice.getInvoiceDate();
-    } else if (baseOBObject instanceof Order) {
-      return order.getOrderDate();
-    } else {
-      throw new OBException(
-          "The FIN_CandidateRecord only accepts instances of FIN_FinaccTransaction/FIN_Payment/Invoice/Order, and the this object is instance of "
-              + baseOBObject.getClass().toString());
-    }
+    return date;
   }
 
   public BigDecimal getAmount() {
-    if (baseOBObject instanceof FIN_FinaccTransaction) {
-      return transaction.getPaymentAmount();
-    } else if (baseOBObject instanceof FIN_Payment) {
-      return payment.getAmount();
-    } else if (baseOBObject instanceof Invoice) {
-      return invoice.getGrandTotalAmount();
-    } else if (baseOBObject instanceof Order) {
-      return order.getGrandTotalAmount();
-    } else {
-      throw new OBException(
-          "The FIN_CandidateRecord only accepts instances of FIN_FinaccTransaction/FIN_Payment/Invoice/Order, and the this object is instance of "
-              + baseOBObject.getClass().toString());
+    return amount;
+  }
+
+  public String getReference() {
+    return reference;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    try {
+      return ((FIN_CandidateRecord) other).getBaseOBObject().getId()
+          .equals(getBaseOBObject().getId());
+    } catch (Exception e) {
+      return false;
     }
   }
 
-  public String calculateAffinity(final BusinessPartner bpBankLine, final Date dateBankLine,
-      final BigDecimal amountBankLine) {
-    return calculateAffinity(bpBankLine, getBusinessPartner(), dateBankLine, getDate(),
-        amountBankLine, getAmount());
+  @Override
+  public int hashCode() {
+    HashCodeBuilder hcb = new HashCodeBuilder();
+    hcb.append(getBaseOBObject().getId());
+    return hcb.toHashCode();
   }
 
-  public static String calculateAffinity(final BusinessPartner bpBankLine,
-      final BusinessPartner bpRecord, final Date dateBankLine, final Date dateRecord,
-      final BigDecimal amountBankLine, final BigDecimal amountRecord) {
-    int i = 0;
-    if (bpBankLine != null && bpBankLine.getId().equals(bpRecord.getId())) {
-      i++;
+  public String toString() {
+    return matchedDoc + "-" + baseOBObject.getId();
+  }
+
+  public String calculateAffinity(final FIN_BankStatementLine bankStatementLine) {
+    final BusinessPartner bankLineBP = bankStatementLine.getBusinessPartner();
+    final Date bankLineDate = bankStatementLine.getTransactionDate();
+    final BigDecimal bankLineAmt = bankStatementLine.getCramount().subtract(
+        bankStatementLine.getDramount());
+    final String bankLineReference = bankStatementLine.getReferenceNo();
+
+    int affinityPoints = 0;
+    if (bankLineBP != null && StringUtils.equals(bankLineBP.getId(), businessPartner.getId())) {
+      affinityPoints++;
     }
-    if (dateBankLine != null && dateBankLine.equals(dateRecord)) {
-      i++;
+    if (bankLineDate != null && bankLineDate.equals(date)) {
+      affinityPoints++;
     }
-    if (amountBankLine != null && amountBankLine.compareTo(amountRecord) == 0) {
-      i++;
+    if (bankLineAmt != null && bankLineAmt.compareTo(amount) == 0) {
+      affinityPoints++;
+    }
+    if (StringUtils.contains(reference, bankLineReference)) {
+      affinityPoints++;
     }
 
-    // TODO define a better algorithm
-    return "TODO";
+    return Integer.toString(affinityPoints);
   }
 
   public Map<String, Object> toMap() {
-    // TODO other columns
     final Map<String, Object> map = new HashMap<String, Object>();
-
+    map.put("_identifier", toString());
     map.put("id", baseOBObject.getId());
-    map.put("ad_client_id", "23C59575B9CF467C9620760EB255B389");
-    map.put("ad_org_id", "B843C30461EA4501935CB1D125C9C25A");
-    map.put("createdby", "100");
-    map.put("updatedby", "100");
-    map.put("created", new Date());
-    map.put("updated", new Date());
-    map.put("isactive", "Y");
-    // map.put("affinity", affinity);
-    map.put("affinity", "dummy3");
+    map.put("affinity", getAffinity());
     map.put("date", getDate());
-    map.put("c_bpartner_id", getBusinessPartner().getId());
+    map.put("businessPartner", getBusinessPartner().getId());
+    map.put("businessPartner$_identifier", getBusinessPartner().getIdentifier());
     map.put("amount", getAmount());
-    map.put("date", new Date());
-
+    map.put("date", getDate());
+    map.put("matchedDoc", getMatchedDoc());
+    map.put("matchType", getMatchType());
+    map.put("reference", getReference());
     return map;
   }
 }
