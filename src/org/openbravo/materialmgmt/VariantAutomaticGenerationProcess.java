@@ -21,7 +21,6 @@ package org.openbravo.materialmgmt;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -131,7 +130,7 @@ public class VariantAutomaticGenerationProcess implements Process {
       boolean hasNext = true;
       int productNo = 0;
       int k = 0;
-      Long start = new Date().getTime();
+      Long start = System.currentTimeMillis();
       do {
         k = k + 1;
         // Create variant product
@@ -197,14 +196,14 @@ public class VariantAutomaticGenerationProcess implements Process {
         }
         productNo++;
 
-        // Create variants from 1 to 1000.
+        // Creates variants from 1 to 1000 and shows time spent on it.
         if (k == 1000) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
-          log4j.error("dentro bucle variants: " + productNo + " : "
-              + ((new Date().getTime()) - (start)));
+          log4j.debug("Variants loop: " + productNo + " : "
+              + ((System.currentTimeMillis()) - (start)));
           k = 0;
-          start = new Date().getTime();
+          start = System.currentTimeMillis();
         }
 
       } while (hasNext);
