@@ -86,7 +86,7 @@ BEGIN
 			ELSIF (:old.isStocked = 'Y' AND :new.isStocked = 'N') THEN
 				RAISE_APPLICATION_ERROR(-20000, '@StockedProductWithMovements@');
 			ELSIF (:old.Production <> :new.Production) THEN
-				RAISE_APPLICATION_ERROR(-20000, '@StockedProductWithMovements@');
+				RAISE_APPLICATION_ERROR(-20000, '@ManufacturingFlagWithStock@');
 			ELSE
 				RAISE_APPLICATION_ERROR(-20000, '@20400@');
 			END IF;
