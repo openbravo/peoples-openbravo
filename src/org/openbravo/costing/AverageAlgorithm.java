@@ -96,6 +96,16 @@ public class AverageAlgorithm extends CostingAlgorithm {
   }
 
   /**
+   * Closing inventories cost is calculated with the current stock balance.
+   */
+  protected BigDecimal getInventoryClosingCost() {
+    BigDecimal cost = CostingUtils.getCurrentValuedStockByAttrAndLocator(transaction.getProduct(),
+        costOrg, transaction.getTransactionProcessDate(), transaction.getAttributeSetValue(),
+        transaction.getStorageBin(), costCurrency);
+    return cost;
+  }
+
+  /**
    * In case the Default Cost is used it prioritizes the existence of an average cost.
    */
   @Override
@@ -263,6 +273,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     case ShipmentReturn:
     case ShipmentNegative:
     case InventoryIncrease:
+    case InventoryOpening:
     case IntMovementTo:
     case InternalConsNegative:
     case InternalConsVoid:

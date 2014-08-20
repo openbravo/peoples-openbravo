@@ -363,7 +363,7 @@ public class CostingServer {
    * Transaction types implemented on the cost engine.
    */
   public enum TrxType {
-    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, InternalConsVoid, BOMPart, BOMProduct, ManufacturingConsumed, ManufacturingProduced, Unknown;
+    Shipment, ShipmentReturn, ShipmentVoid, ShipmentNegative, Receipt, ReceiptReturn, ReceiptVoid, ReceiptNegative, InventoryIncrease, InventoryDecrease, InventoryOpening, InventoryClosing, IntMovementFrom, IntMovementTo, InternalCons, InternalConsNegative, InternalConsVoid, BOMPart, BOMProduct, ManufacturingConsumed, ManufacturingProduced, Unknown;
     /**
      * Given a Material Management transaction returns its type.
      */
@@ -409,6 +409,13 @@ public class CostingServer {
         }
       } else if (transaction.getPhysicalInventoryLine() != null) {
         // Physical Inventory
+        String invType = transaction.getPhysicalInventoryLine().getPhysInventory()
+            .getInventoryType();
+        if ("O".equals(invType)) {
+          return InventoryOpening;
+        } else if ("C".equals(invType)) {
+          return InventoryClosing;
+        }
         if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) > 0) {
           log4j.debug("Physical inventory, increments stock: "
               + transaction.getPhysicalInventoryLine().getIdentifier());
@@ -464,6 +471,5 @@ public class CostingServer {
       }
       return Unknown;
     }
-
   }
 }

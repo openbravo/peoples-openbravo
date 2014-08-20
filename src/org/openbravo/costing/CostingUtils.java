@@ -46,6 +46,7 @@ import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
@@ -388,6 +389,70 @@ public class CostingUtils {
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
+    trxQry.setParameterList("orgs", orgs);
+    @SuppressWarnings("unchecked")
+    List<Object[]> o = trxQry.list();
+    BigDecimal sum = BigDecimal.ZERO;
+    if (o.size() == 0) {
+      return sum;
+    }
+    for (Object[] resultSet : o) {
+      BigDecimal origAmt = (BigDecimal) resultSet[0];
+      Currency origCur = OBDal.getInstance().get(Currency.class, resultSet[1]);
+      Date convDate = (Date) resultSet[2];
+
+      if (origCur != currency) {
+        sum = sum.add(FinancialUtils.getConvertedAmount(origAmt, origCur, currency, convDate, org,
+            FinancialUtils.PRECISION_COSTING));
+      } else {
+        sum = sum.add(origAmt);
+      }
+    }
+    return sum;
+  }
+
+  /**
+   * Calculates the value of the stock of the product on the given date, locator and attributes. The
+   * amount is converted to given currency. It only takes transactions that have its cost
+   * calculated.
+   */
+  public static BigDecimal getCurrentValuedStockByAttrAndLocator(Product product, Organization org,
+      Date date, AttributeSetInstance attributesetinstance, Locator locator, Currency currency) {
+    // Get child tree of organizations.
+    Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
+        .getChildTree(org.getId(), true);
+
+    StringBuffer select = new StringBuffer();
+    select.append(" select sum(case");
+    select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
+        + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
+    select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost,");
+    select.append("  tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency,");
+    select.append("  coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") as mdate");
+
+    select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
+    select.append("  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    select.append("  left join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as line");
+    select.append("  left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
+
+    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
+    select.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :date");
+    select.append("  and trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id = :attrib");
+    select.append("  and trx." + MaterialTransaction.PROPERTY_STORAGEBIN + ".id = :locator");
+    // Include only transactions that have its cost calculated
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY + ",");
+    select.append("   coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
+
+    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    trxQry.setParameter("product", product.getId());
+    trxQry.setParameter("date", date);
+    trxQry.setParameter("attrib", attributesetinstance);
+    trxQry.setParameter("locator", locator);
     trxQry.setParameterList("orgs", orgs);
     @SuppressWarnings("unchecked")
     List<Object[]> o = trxQry.list();

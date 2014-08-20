@@ -121,6 +121,10 @@ public abstract class CostingAlgorithm {
       return getInventoryDecreaseCost();
     case InventoryIncrease:
       return getInventoryIncreaseCost();
+    case InventoryOpening:
+      return getInventoryOpeningCost();
+    case InventoryClosing:
+      return getInventoryClosingCost();
     case IntMovementFrom:
       return getIntMovementFromCost();
     case IntMovementTo:
@@ -372,6 +376,26 @@ public abstract class CostingAlgorithm {
           .multiply(transaction.getMovementQuantity().abs());
     }
     return getDefaultCost();
+  }
+
+  /**
+   * Calculates the total cost amount of the physical inventory as if it were an Inventory Increase
+   * transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
+  protected BigDecimal getInventoryOpeningCost() {
+    return getInventoryIncreaseCost();
+  }
+
+  /**
+   * Calculates the total cost amount of the physical inventory as if it were an Inventory Decrease
+   * transaction.
+   * 
+   * @return BigDecimal object representing the total cost amount of the transaction.
+   */
+  protected BigDecimal getInventoryClosingCost() {
+    return getInventoryDecreaseCost();
   }
 
   /**
