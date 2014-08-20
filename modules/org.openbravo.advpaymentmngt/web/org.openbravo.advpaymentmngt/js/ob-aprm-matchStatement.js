@@ -90,7 +90,18 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       originalPrompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       action: function () {
-        alert('Clear Button');
+        var callback, bankStatementLineId = me.record.id,
+            view = me.grid.view;
+        callback = function (response, data, request) {
+          if (data.message.severity === 'error') {
+            view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
+          } else {
+            view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, data.message.title, data.message.text);
+          }
+        }
+        OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.UnMatchTransactionActionHandler', {
+          bankStatementLineId: bankStatementLineId
+        }, {}, callback);
       }
     });
 
