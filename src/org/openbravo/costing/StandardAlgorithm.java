@@ -104,21 +104,21 @@ public class StandardAlgorithm extends CostingAlgorithm {
     currentCosting.setEndingDate(transaction.getTransactionProcessDate());
     OBDal.getInstance().save(currentCosting);
 
-    Costing cost = (Costing) DalUtil.copy(currentCosting, false);
-    cost.setCost(newCost);
-    cost.setStartingDate(transaction.getTransactionProcessDate());
-    cost.setCurrency(costCurrency);
-    cost.setInventoryTransaction(transaction);
+    Costing costing = (Costing) DalUtil.copy(currentCosting, false);
+    costing.setCost(newCost);
+    costing.setStartingDate(transaction.getTransactionProcessDate());
+    costing.setCurrency(costCurrency);
+    costing.setInventoryTransaction(transaction);
     if (transaction.getProduct().isProduction()) {
-      cost.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
+      costing.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
     } else {
-      cost.setOrganization(costOrg);
+      costing.setOrganization(costOrg);
     }
-    cost.setCostType("AVA");
-    cost.setManual(false);
-    cost.setPermanent(true);
+    costing.setCostType("STA");
+    costing.setManual(false);
+    costing.setPermanent(true);
 
-    OBDal.getInstance().save(cost);
+    OBDal.getInstance().save(costing);
   }
 
 }
