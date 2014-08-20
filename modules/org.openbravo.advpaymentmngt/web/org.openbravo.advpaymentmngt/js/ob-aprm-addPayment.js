@@ -99,7 +99,20 @@ OB.APRM.AddPayment.onLoad = function (view) {
       overpaymentAction = form.getItem('overpayment_action'),
       payment = form.getItem('fin_payment_id').getValue(),
       issotrx = form.getItem('issotrx').getValue(),
-      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "";
+      trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
+      bankStatementLineId;
+  if (view && view.callerField && view.callerField.view && view.callerField.view.callerField && view.callerField.view.callerField.record && //
+  typeof view.callerField.view.callerField.record.affinity !== 'undefined' && //
+  typeof view.callerField.view.callerField.record.matchingType !== 'undefined') {
+    // If all this conditions are true it means that we are inside the 'Add Payment' process, inside the 'Add Transaction' process, inside the 'Match Statement' process
+    // and in this case we need the 'bankStatementLineId'
+    bankStatementLineId = view.callerField.view.callerField.record.id;
+    view.theForm.addField(isc.OBTextItem.create({
+      name: 'bankStatementLineId',
+      value: bankStatementLineId
+    }));
+    view.theForm.hideItem('bankStatementLineId');
+  }
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, view.theForm, !payment);
   OB.APRM.AddPayment.reloadLabels(form);
   glitemGrid.fetchData();

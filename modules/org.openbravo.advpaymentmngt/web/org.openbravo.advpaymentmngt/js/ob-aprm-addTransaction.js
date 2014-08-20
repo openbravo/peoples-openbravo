@@ -21,7 +21,12 @@ OB.APRM.AddTransaction = {};
 
 
 OB.APRM.AddTransaction.onLoad = function (view) {
-
+  var bankStatementLineId = view.callerField.record.id;
+  view.theForm.addField(isc.OBTextItem.create({
+    name: 'bankStatementLineId',
+    value: bankStatementLineId
+  }));
+  view.theForm.hideItem('bankStatementLineId');
 };
 
 

@@ -20,6 +20,7 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -33,6 +34,13 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonResponse = new JSONObject();
     OBContext.setAdminMode(true);
+    try {
+      JSONObject request = new JSONObject(content);
+      JSONObject params = request.getJSONObject("_params");
+      String bankStatementLineId = params.getString("bankStatementLineId");
+    } catch (JSONException e) {
+      log.error("Error in process", e);
+    }
     return jsonResponse;
   }
 }
