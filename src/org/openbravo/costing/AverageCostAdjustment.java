@@ -46,7 +46,6 @@ import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
@@ -88,12 +87,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     Costing costing = AverageAlgorithm.getProductCost(trxDate, basetrx.getProduct(),
         getCostDimensions(), getCostOrg());
     BigDecimal cost = costing.getCost();
-    int precission = getCostCurrency().getCostingPrecision().intValue();
 
     BigDecimal currentStock = getCurrentStock();
     BigDecimal currentValueAmt = getCurrentValuedStock();
     if (currentStock.signum() != 0) {
-      cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, precission,
+      cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, costCurPrecission,
           RoundingMode.HALF_UP);
     }
     ScrollableResults trxs = getRelatedTransactions();
@@ -120,7 +118,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
           OBDal.getInstance().save(adjustedLine);
         }
-        BigDecimal trxCost = getTrxCost(trx, false);
+        BigDecimal trxCost = CostAdjustmentUtils.getTrxCost(getCostAdjLine().getCostAdjustment(),
+            trx, false);
         currentValueAmt = currentValueAmt.add(trxCost.multiply(new BigDecimal(trx
             .getMovementQuantity().signum())));
         currentStock = currentStock.add(trx.getMovementQuantity());
@@ -152,11 +151,10 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           break;
         }
 
-        // FIXME: Also check decreasing inventories with custom cost.
         if (AverageAlgorithm.modifiesAverage(currentTrxType)) {
           // Recalculate average, if current stock is zero the average is not modified
           if (currentStock.signum() != 0) {
-            cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, precission,
+            cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, costCurPrecission,
                 RoundingMode.HALF_UP);
           }
           Costing curCosting = trx.getMaterialMgmtCostingList().get(0);
@@ -168,7 +166,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         } else if (!trx.isManualcostadjustment() && adjustedLine == null) {
           // Check current trx unit cost matches new expected cost
           BigDecimal expectedCost = cost.multiply(trx.getMovementQuantity().abs());
-          BigDecimal unitCost = getTrxCost(trx, true);
+          BigDecimal unitCost = CostAdjustmentUtils.getTrxCost(
+              getCostAdjLine().getCostAdjustment(), trx, true);
           if (expectedCost.compareTo(unitCost) != 0) {
             adjustmentBalance = adjustmentBalance.add(expectedCost.subtract(unitCost).multiply(
                 new BigDecimal(trx.getMovementQuantity().signum())));
@@ -222,31 +221,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         OBDal.getInstance().save(newCosting);
       }
     }
-  }
-
-  private BigDecimal getTrxCost(MaterialTransaction trx, boolean justUnitCost) {
-    StringBuffer select = new StringBuffer();
-    select.append("select sum(cal." + CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT + ") as cost");
-    select.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
-    select.append("   join cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " as ca");
-    select.append(" where cal." + CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION + ".id = :trx");
-    if (justUnitCost) {
-      select.append("  and cal." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
-    }
-    // Get amounts of processed adjustments and the adjustment that it is being processed.
-    select.append("   and (ca = :ca");
-    select.append("     or ca." + CostAdjustment.PROPERTY_PROCESSED + " = true)");
-
-    Query qryCost = OBDal.getInstance().getSession().createQuery(select.toString());
-    qryCost.setParameter("trx", trx.getId());
-    qryCost.setParameter("ca", getCostAdjLine().getCostAdjustment());
-
-    Object adjCost = qryCost.uniqueResult();
-    BigDecimal cost = trx.getTransactionCost();
-    if (adjCost != null) {
-      cost = cost.add((BigDecimal) adjCost);
-    }
-    return cost;
   }
 
   @Override
