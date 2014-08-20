@@ -420,12 +420,12 @@ OB.APRM.AddPayment.updateDifferenceActions = function (form) {
 OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
   var totalAmt = BigDecimal.prototype.ZERO,
       amountField = grid.getFieldByColumnName('amount'),
-      selectedRecords = grid.getSelectedRecords(),
+      selectedRecords = grid.selectedIds,
       invOrdTotalItem = form.getItem('amount_inv_ords'),
       amt, i, bdAmt;
 
   for (i = 0; i < selectedRecords.length; i++) {
-    amt = grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), amountField);
+    amt = grid.getEditedCell(grid.getRecordIndex(grid.data.localData.find('id', grid.selectedIds[i])), amountField);
     bdAmt = new BigDecimal(String(amt));
     totalAmt = totalAmt.add(bdAmt);
   }
