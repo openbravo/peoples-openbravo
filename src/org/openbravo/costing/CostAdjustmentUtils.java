@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -162,5 +163,31 @@ public class CostAdjustmentUtils {
       return cal.getLineNo() + 10L;
     }
     return 10L;
+  }
+
+  public static BigDecimal getTrxCost(CostAdjustment costAdj, MaterialTransaction trx,
+      boolean justUnitCost) {
+    StringBuffer select = new StringBuffer();
+    select.append("select sum(cal." + CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT + ") as cost");
+    select.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
+    select.append("   join cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " as ca");
+    select.append(" where cal." + CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION + ".id = :trx");
+    if (justUnitCost) {
+      select.append("  and cal." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
+    }
+    // Get amounts of processed adjustments and the adjustment that it is being processed.
+    select.append("   and (ca = :ca");
+    select.append("     or ca." + CostAdjustment.PROPERTY_PROCESSED + " = true)");
+
+    Query qryCost = OBDal.getInstance().getSession().createQuery(select.toString());
+    qryCost.setParameter("trx", trx.getId());
+    qryCost.setParameter("ca", costAdj);
+
+    Object adjCost = qryCost.uniqueResult();
+    BigDecimal cost = trx.getTransactionCost();
+    if (adjCost != null) {
+      cost = cost.add((BigDecimal) adjCost);
+    }
+    return cost;
   }
 }

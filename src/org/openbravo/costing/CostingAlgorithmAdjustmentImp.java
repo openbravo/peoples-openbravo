@@ -57,6 +57,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
   protected String strTransactionId;
   protected String strCostOrgId;
   protected String strCostCurrencyId;
+  protected int costCurPrecission;
+  protected int stdCurPrecission;
   protected TrxType trxType;
   protected String strCostingRuleId;
   protected boolean isManufacturingProduct;
@@ -77,7 +79,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
     isManufacturingProduct = transaction.getProduct().isProduction();
     CostingServer costingServer = new CostingServer(transaction);
     strCostOrgId = costingServer.getOrganization().getId();
-    strCostCurrencyId = (String) DalUtil.getId(transaction.getCurrency());
+    strCostCurrencyId = transaction.getCurrency().getId();
+    costCurPrecission = transaction.getCurrency().getCostingPrecision().intValue();
+    stdCurPrecission = transaction.getCurrency().getStandardPrecision().intValue();
     trxType = CostingServer.TrxType.getTrxType(transaction);
     CostingRule costingRule = costingServer.getCostingRule();
     strCostingRuleId = costingRule.getId();
@@ -115,7 +119,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     getRelatedTransactionsByAlgorithm();
   }
 
-  private void addCostDependingTrx(CostAdjustmentLine costAdjLine) {
+  protected void addCostDependingTrx(CostAdjustmentLine costAdjLine) {
     // Some transaction costs are directly related to other transaction costs. These relationships
     // must be kept when the original transaction cost is adjusted adjusting as well the dependent
     // transactions.
@@ -169,7 +173,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
    * When the cost of a Closing Inventory is adjusted it is needed to adjust with the same amount
    * the related Opening Inventory.
    */
-  private void searchOpeningInventory(CostAdjustmentLine costAdjLine) {
+  protected void searchOpeningInventory(CostAdjustmentLine costAdjLine) {
     InventoryCountLine invline = costAdjLine.getInventoryTransaction().getPhysicalInventoryLine()
         .getRelatedInventory();
     if (invline == null) {
@@ -179,7 +183,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     insertCostAdjustmentLine(deptrx, costAdjLine.getAdjustmentAmount().negate(), costAdjLine);
   }
 
-  private void searchManufacturingProduced(CostAdjustmentLine costAdjLine) {
+  protected void searchManufacturingProduced(CostAdjustmentLine costAdjLine) {
     CostAdjustmentLine lastAdjLine = null;
     BigDecimal pendingAmt = costAdjLine.getAdjustmentAmount();
     List<ProductionLine> productionLines = costAdjLine.getInventoryTransaction()
@@ -207,7 +211,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
   }
 
-  private void searchBOMProducts(CostAdjustmentLine costAdjLine) {
+  protected void searchBOMProducts(CostAdjustmentLine costAdjLine) {
     for (ProductionLine pline : costAdjLine.getInventoryTransaction().getProductionLine()
         .getProductionPlan().getManufacturingProductionLineList()) {
       if (pline.getMovementQuantity().signum() <= 0) {
@@ -218,7 +222,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
   }
 
-  private void searchVoidInternalConsumption(CostAdjustmentLine costAdjLine) {
+  protected void searchVoidInternalConsumption(CostAdjustmentLine costAdjLine) {
     InternalConsumptionLine intCons = costAdjLine.getInventoryTransaction()
         .getInternalConsumptionLine()
         .getMaterialMgmtInternalConsumptionLineVoidedInternalConsumptionLineList().get(0);
@@ -226,7 +230,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     insertCostAdjustmentLine(voidedTrx, costAdjLine.getAdjustmentAmount().negate(), costAdjLine);
   }
 
-  private void searchIntMovementTo(CostAdjustmentLine costAdjLine) {
+  protected void searchIntMovementTo(CostAdjustmentLine costAdjLine) {
     MaterialTransaction transaction = costAdjLine.getInventoryTransaction();
     for (MaterialTransaction movementTransaction : transaction.getMovementLine()
         .getMaterialMgmtMaterialTransactionList()) {
@@ -238,7 +242,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
   }
 
-  private void searchVoidInOut(CostAdjustmentLine costAdjLine) {
+  protected void searchVoidInOut(CostAdjustmentLine costAdjLine) {
     ShipmentInOutLine voidedinoutline = costAdjLine.getInventoryTransaction()
         .getGoodsShipmentLine().getCanceledInoutLine();
     if (voidedinoutline == null) {
@@ -250,7 +254,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
   }
 
-  private void searchReturnShipments(CostAdjustmentLine costAdjLine) {
+  protected void searchReturnShipments(CostAdjustmentLine costAdjLine) {
     ShipmentInOutLine inoutline = costAdjLine.getInventoryTransaction().getGoodsShipmentLine();
     BigDecimal costAdjAmt = costAdjLine.getAdjustmentAmount().negate();
     int precission = getCostCurrency().getStandardPrecision().intValue();
@@ -297,9 +301,14 @@ public abstract class CostingAlgorithmAdjustmentImp {
         break;
       }
     case ShipmentNegative:
+      // These transaction types are calculated using the default cost. Check if there is a
+      // difference.
+      adjAmt = getDefaultCostDifference();
+      break;
     case InventoryIncrease:
+    case InventoryOpening:
       if (inventoryHasCost()) {
-        // If the inventory line defined a unitary cost it does not depend on the date.
+        // If the inventory line defines a unit cost it does not depend on the date.
         break;
       }
     case InternalConsNegative:
@@ -312,6 +321,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     case ReceiptReturn:
     case ReceiptNegative:
     case InventoryDecrease:
+    case InventoryClosing:
     case IntMovementFrom:
     case InternalCons:
     case BOMPart:
