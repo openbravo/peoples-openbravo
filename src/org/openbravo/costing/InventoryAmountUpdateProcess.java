@@ -321,6 +321,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     closeInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
         warehouseId));
     closeInv.setMovementDate(localDate);
+    closeInv.setInventoryType("C");
     inv.setCloseInventory(closeInv);
 
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
@@ -331,6 +332,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     initInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
         warehouseId));
     initInv.setMovementDate(localDate);
+    initInv.setInventoryType("O");
     inv.setInitInventory(initInv);
     OBDal.getInstance().save(invLine);
     OBDal.getInstance().save(closeInv);
