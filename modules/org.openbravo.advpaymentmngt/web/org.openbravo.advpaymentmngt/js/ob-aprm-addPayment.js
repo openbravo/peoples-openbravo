@@ -118,7 +118,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
   }
   if (trxtype === "") {
     form.removeField(0);
-    form.removeField(1);
+    form.removeField(0);
   }
 };
 

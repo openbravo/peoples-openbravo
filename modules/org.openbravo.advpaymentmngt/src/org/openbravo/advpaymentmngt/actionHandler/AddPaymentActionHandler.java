@@ -183,12 +183,14 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         OBError message = processPayment(payment, strAction, strDifferenceAction, differenceAmount,
             exchangeRate, jsonparams);
         JSONObject errorMessage = new JSONObject();
+
         errorMessage.put("severity", message.getType().toLowerCase());
         errorMessage.put("title", message.getTitle());
         errorMessage.put("text", message.getMessage());
         jsonResponse.put("retryExecution", openedFromMenu);
         jsonResponse.put("message", errorMessage);
-        jsonResponse.put("refreshParent", false);
+        jsonResponse.put("refreshParent", true);
+
         JSONObject setSelectorValueFromRecord = new JSONObject();
         JSONObject record = new JSONObject();
         JSONObject responseActions = new JSONObject();

@@ -56,15 +56,22 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   @Override
   public String getDefaultIsSOTrx(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("inptrxtype") && context.get("inptrxtype") != JSONObject.NULL
-        && StringUtils.isNotEmpty(context.getString("inptrxtype"))) {
-      String document = context.getString("inptrxtype");
-      if ("BPD".equals(document)) {
-        return "Y";
-      } else if ("BPW".equals(document)) {
-        return "N";
+    if (context.has("inptrxtype")
+        && context.get("inptrxtype") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inptrxtype"))
+        || (context.has("inpwindowId") && context.get("inpwindowId").equals(
+            "94EAA455D2644E04AB25D93BE5157B6D"))) {
+      if (context.has("inptrxtype")) {
+        String document = context.getString("inptrxtype");
+        if ("BPD".equals(document)) {
+          return "Y";
+        } else if ("BPW".equals(document)) {
+          return "N";
+        } else {
+          return "";
+        }
       } else {
-        return "";
+        return "Y";
       }
     }
     return "";
@@ -150,16 +157,24 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   public String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
     // Document Type
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("inptrxtype") && context.get("inptrxtype") != JSONObject.NULL
-        && StringUtils.isNotEmpty(context.getString("inptrxtype"))) {
-      String document = context.getString("inptrxtype");
-      if ("BPD".equals(document)) {
-        return "RCIN";
-      } else if ("BPW".equals(document)) {
-        return "PDOUT";
+    if (context.has("inptrxtype")
+        && context.get("inptrxtype") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inptrxtype"))
+        || (context.has("inpwindowId") && context.get("inpwindowId").equals(
+            "94EAA455D2644E04AB25D93BE5157B6D"))) {
+      if (context.has("inptrxtype")) {
+        String document = context.getString("inptrxtype");
+        if ("BPD".equals(document)) {
+          return "RCIN";
+        } else if ("BPW".equals(document)) {
+          return "PDOUT";
+        } else {
+          return "";
+        }
       } else {
-        return "";
+        return "RCIN";
       }
+
     }
     return "";
   }

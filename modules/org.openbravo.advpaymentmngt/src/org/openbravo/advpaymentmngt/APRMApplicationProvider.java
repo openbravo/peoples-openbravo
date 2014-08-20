@@ -44,6 +44,8 @@ public class APRMApplicationProvider extends BaseComponentProvider {
         "web/org.openbravo.advpaymentmngt/js/ob-aprm-addPayment.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.advpaymentmngt/js/ob-aprm-matchStatement.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.advpaymentmngt/js/ob-aprm-addTransaction.js", true));
     return globalResources;
   }
 }
