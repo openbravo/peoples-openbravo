@@ -88,7 +88,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
     HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
     // Production products cannot be calculated by warehouse dimension.
-    if (!isManufacturingProduct && costingRule.isWarehouseDimension()) {
+    if (costingRule.isWarehouseDimension()) {
       costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
     }
     for (CostDimension costDimension : costDimensions.keySet()) {

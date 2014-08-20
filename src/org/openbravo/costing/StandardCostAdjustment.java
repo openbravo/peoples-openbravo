@@ -69,6 +69,9 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
       Costing stdCost = CostingUtils.getStandardCostDefinition(trx.getProduct(), getCostOrg(),
           startingDate, getCostDimensions());
+      // Modify isManufacturingProduct flag in case it has changed at some point.
+      isManufacturingProduct = ((String) DalUtil.getId(stdCost.getOrganization())).equals("0");
+
       BigDecimal baseCurrentCost = stdCost.getCost();
       if (!stdCost.getCurrency().equals(strCostCurrencyId)) {
         baseCurrentCost = FinancialUtils.getConvertedAmount(baseCurrentCost, stdCost.getCurrency(),
@@ -108,8 +111,12 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
   private ScrollableResults getRelatedTransactions(Date startingDate, Date endingDate) {
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
         (String) DalUtil.getId(getCostOrg().getClient()));
-    Set<String> orgs = osp.getChildTree(strCostOrgId, true);
     HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
+    Set<String> orgs = osp.getChildTree(strCostOrgId, true);
+    if (isManufacturingProduct) {
+      orgs = osp.getChildTree("0", false);
+      costDimensions = CostingUtils.getEmptyDimensions();
+    }
     Warehouse warehouse = (Warehouse) costDimensions.get(CostDimension.Warehouse);
     MaterialTransaction trx = getTransaction();
 
@@ -161,7 +168,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     cost.setStartingDate(transaction.getTransactionProcessDate());
     cost.setCurrency(getCostCurrency());
     cost.setInventoryTransaction(transaction);
-    if (transaction.getProduct().isProduction()) {
+    if (isManufacturingProduct) {
       cost.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
     } else {
       cost.setOrganization(getCostOrg());

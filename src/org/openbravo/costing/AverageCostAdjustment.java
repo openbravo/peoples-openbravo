@@ -35,6 +35,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -86,6 +87,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     Costing costing = AverageAlgorithm.getProductCost(trxDate, basetrx.getProduct(),
         getCostDimensions(), getCostOrg());
+    // Modify isManufacturingProduct flag in case it has changed at some point.
+    isManufacturingProduct = ((String) DalUtil.getId(costing.getOrganization())).equals("0");
     BigDecimal cost = costing.getCost();
 
     BigDecimal currentStock = getCurrentStock();
@@ -244,10 +247,14 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
   private ScrollableResults getRelatedTransactions() {
     CostingRule costingRule = getCostingRule();
+    HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
         costingRule.getClient().getId());
     Set<String> orgs = osp.getChildTree(strCostOrgId, true);
-    HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
+    if (isManufacturingProduct) {
+      orgs = osp.getChildTree("0", false);
+      costDimensions = CostingUtils.getEmptyDimensions();
+    }
     Warehouse warehouse = (Warehouse) costDimensions.get(CostDimension.Warehouse);
     MaterialTransaction trx = getTransaction();
 
@@ -286,6 +293,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
     trxQry.setFilterOnReadableOrganization(false);
+    trxQry.setFilterOnReadableClients(false);
     trxQry.setNamedParameter("mvtdate", trx.getMovementDate());
     trxQry.setNamedParameter("trxdate", trx.getTransactionProcessDate());
     if (costingRule.getEndingDate() != null) {
