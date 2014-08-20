@@ -47,6 +47,8 @@ public class MatchStatementTransformer extends HqlQueryTransformer {
     StringBuffer whereClause = getWhereClause(requestParameters, queryNamedParameters);
     // @FIN_Financial_Account.id@
     String transformedHql = _hqlQuery.replace("@whereClause@", whereClause.toString());
+    transformedHql = transformedHql.replace("@selectClause@", " ");
+    transformedHql = transformedHql.replace("@joinClause@", " ");
     return transformedHql;
   }
 
@@ -57,7 +59,7 @@ public class MatchStatementTransformer extends HqlQueryTransformer {
     if (hasCriteria) {
       criteria = JsonUtils.buildCriteria(requestParameters);
     }
-    StringBuffer selectClause = new StringBuffer();
+    StringBuffer whereClause = new StringBuffer();
     // TODO: Review what others do with criteria (Reference AddPaymentOrderInvoicesTransformer)
     final String financialAccountId = requestParameters.get("@FIN_Financial_Account.id@");
     if (financialAccountId != null) {
@@ -81,16 +83,16 @@ public class MatchStatementTransformer extends HqlQueryTransformer {
           // e.printStackTrace();
         }
       }
-      selectClause.append(" (fat is null or fat.reconciliation.id = :reconciliation) ");
-      selectClause.append(" and bs.account.id = :account ");
+      whereClause.append(" (fat is null or fat.reconciliation.id = :reconciliation) ");
+      whereClause.append(" and bs.account.id = :account ");
       queryNamedParameters.put("reconciliation", reconciliation.getId());
       queryNamedParameters.put("account", reconciliation.getAccount().getId());
       if (!MatchTransactionDao.islastreconciliation(reconciliation)) {
-        selectClause.append(" and bsl.transactionDate <= :endingdate ");
+        whereClause.append(" and bsl.transactionDate <= :endingdate ");
         queryNamedParameters.put("endingdate", reconciliation.getEndingDate());
       }
     }
-    return selectClause;
+    return whereClause;
   }
 
 }

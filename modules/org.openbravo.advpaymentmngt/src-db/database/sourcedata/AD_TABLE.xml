@@ -224,11 +224,12 @@ and @insertion_point_0@]]></HQLQUERY>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <AD_PACKAGE_ID><![CDATA[AC33B2262748414A816510545755435A]]></AD_PACKAGE_ID>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--BC21981DCF0846338D631887BEDFE7FA-->  <HQLQUERY><![CDATA[select bsl.transactionDate as transactionDate, case when bp is null then bsl.bpartnername  else bp.name end AS businessPartner, bsl.referenceNo as referenceNo, bsl.cramount - bsl.dramount as amount, bsl.id as match, bsl.matchingtype as affinity, bsl.matchingtype as matchingtype, bsl.id as id
+<!--BC21981DCF0846338D631887BEDFE7FA-->  <HQLQUERY><![CDATA[select bsl.transactionDate as transactionDate, case when bp is null then bsl.bpartnername  else bp.name end AS businessPartner, bsl.referenceNo as referenceNo, bsl.cramount - bsl.dramount as amount, bsl.id as match, bsl.matchingtype as affinity, bsl.matchingtype as matchingtype, bsl.id as id @selectClause@
 from FIN_BankStatementLine as bsl
  join bsl.bankStatement as bs
 left outer join bsl.financialAccountTransaction as fat
 left outer join bsl.businessPartner AS bp
+@joinClause@
 where @additional_filters@
 and bs.processed = 'Y'
 and @whereClause@
