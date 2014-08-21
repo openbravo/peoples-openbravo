@@ -39,20 +39,20 @@ public class PaymentTransactionActionHandler extends BaseActionHandler {
       JSONObject result = new JSONObject();
       if ("".equals(strPaymentId)) {
         result.put("description", "");
-        result.put("inpdepositamt", BigDecimal.ZERO);
-        result.put("inppaymentamt", BigDecimal.ZERO);
+        result.put("depositamt", BigDecimal.ZERO);
+        result.put("paymentamt", BigDecimal.ZERO);
       }
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strPaymentId);
       if ((payment.isReceipt() && payment.getAmount().compareTo(BigDecimal.ZERO) > 0)
           || (!payment.isReceipt() && payment.getAmount().compareTo(BigDecimal.ZERO) < 0)) {
-        result.put("inpdepositamt", payment.getFinancialTransactionAmount().abs());
-        result.put("inppaymentamt", BigDecimal.ZERO);
+        result.put("depositamt", payment.getFinancialTransactionAmount().abs());
+        result.put("paymentamt", BigDecimal.ZERO);
       } else {
-        result.put("inpdepositamt", BigDecimal.ZERO);
-        result.put("inppaymentamt", payment.getFinancialTransactionAmount().abs());
+        result.put("depositamt", BigDecimal.ZERO);
+        result.put("paymentamt", payment.getFinancialTransactionAmount().abs());
       }
       if (payment.getBusinessPartner() != null) {
-        result.put("inpcBpartnerId", payment.getBusinessPartner().getId());
+        result.put("cBpartnerId", payment.getBusinessPartner().getId());
       }
       if (payment.getDescription() != null) {
         result.put("description", payment.getDescription());

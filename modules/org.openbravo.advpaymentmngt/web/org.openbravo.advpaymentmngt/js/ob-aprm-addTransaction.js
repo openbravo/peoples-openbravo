@@ -57,6 +57,9 @@ OB.APRM.AddTransaction.paymentOnChangeFunction = function (item, view, form, gri
 
   callback = function (response, data, request) {
     form.getItem('description').setValue(data.description);
+    form.getItem('depositamt').setValue(data.depositamt);
+    form.getItem('withdrawalamt').setValue(data.paymentamt);
+    form.getItem('c_bpartner_id').setValue(data.cBpartnerId);
   };
 
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentTransactionActionHandler', {
@@ -75,6 +78,8 @@ OB.APRM.AddTransaction.glitemOnChangeFunction = function (item, view, form, grid
 
   callback = function (response, data, request) {
     form.getItem('description').setValue(data.description);
+
+    
   };
 
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.GLItemTransactionActionHandler', {

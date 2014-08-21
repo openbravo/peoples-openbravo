@@ -291,6 +291,9 @@ isc.OBParameterWindowView.addProperties({
       processId: this.processId,
       windowId: this.windowId
     };
+    
+    // allow to add external parameters
+    isc.addProperties(params, this.externalParams);
 
     if (this.sourceView) {
       params.context = this.sourceView.getContextInfo(false, true, true, true);

@@ -27,7 +27,7 @@ public class AddTransactionFilterExpression implements FilterExpression {
     try {
       switch (param) {
       case TransactionType:
-        return getDefaultDocument();
+        return getDefaultDocument(requestMap);
       case TransactionDate:
         return getDefaultTransactionDate();
       case AccountingDate:
@@ -76,7 +76,14 @@ public class AddTransactionFilterExpression implements FilterExpression {
     }
   }
 
-  String getDefaultDocument() {
+  String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
+    JSONObject request = new JSONObject(requestMap);
+    JSONObject params = request.getJSONObject("_params");
+    String bankStatementLineId = params.getString("inpfinBankstatementId");
+    if (request.has("inpfinBankstatementId") && !request.isNull("inpfinBankstatementId")) {
+
+    }
+
     return "BPD";
   }
 

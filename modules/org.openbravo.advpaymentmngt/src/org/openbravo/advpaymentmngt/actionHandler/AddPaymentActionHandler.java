@@ -83,6 +83,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     JSONObject jsonResponse = new JSONObject();
     OBContext.setAdminMode(true);
     boolean openedFromMenu = false;
+    boolean openedFromAddTransaction = false;
     try {
       VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
       // Get Params
@@ -90,7 +91,11 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       JSONObject jsonparams = jsonRequest.getJSONObject("_params");
 
       openedFromMenu = "null".equals(parameters.get("windowId").toString()) ? true : false;
-
+      if (jsonparams.has("bankStatementLineId")
+          && jsonparams.get("bankStatementLineId") != JSONObject.NULL) {
+        openedFromAddTransaction = "null".equals(jsonparams.get("bankStatementLineId").toString()) ? false
+            : true;
+      }
       String strOrgId = null;
       if (jsonRequest.has("inpadOrgId") && jsonRequest.get("inpadOrgId") != JSONObject.NULL) {
         strOrgId = jsonRequest.getString("inpadOrgId");
@@ -183,14 +188,14 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         OBError message = processPayment(payment, strAction, strDifferenceAction, differenceAmount,
             exchangeRate, jsonparams);
         JSONObject errorMessage = new JSONObject();
-
-        errorMessage.put("severity", message.getType().toLowerCase());
-        errorMessage.put("title", message.getTitle());
-        errorMessage.put("text", message.getMessage());
-        jsonResponse.put("retryExecution", openedFromMenu);
-        jsonResponse.put("message", errorMessage);
-        jsonResponse.put("refreshParent", true);
-
+        if (!openedFromAddTransaction) {
+          errorMessage.put("severity", message.getType().toLowerCase());
+          errorMessage.put("title", message.getTitle());
+          errorMessage.put("text", message.getMessage());
+          jsonResponse.put("retryExecution", openedFromMenu);
+          jsonResponse.put("message", errorMessage);
+          jsonResponse.put("refreshParent", true);
+        }
         JSONObject setSelectorValueFromRecord = new JSONObject();
         JSONObject record = new JSONObject();
         JSONObject responseActions = new JSONObject();

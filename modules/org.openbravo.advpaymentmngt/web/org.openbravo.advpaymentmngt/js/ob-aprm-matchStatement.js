@@ -78,6 +78,9 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
           paramWindow: true,
           processId: processId,
           windowId: grid.view.windowId,
+          externalParams: {
+            bankStatementLineId: me.record.id
+          },
           windowTitle: 'Add'
         });
 
@@ -98,7 +101,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
           } else {
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, data.message.title, data.message.text);
           }
-        }
+        };
         OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.UnMatchTransactionActionHandler', {
           bankStatementLineId: bankStatementLineId
         }, {}, callback);
