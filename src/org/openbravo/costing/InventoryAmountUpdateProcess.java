@@ -62,8 +62,6 @@ import org.slf4j.LoggerFactory;
 
 public class InventoryAmountUpdateProcess extends BaseActionHandler {
   private static Logger log = LoggerFactory.getLogger(InventoryAmountUpdateProcess.class);
-  final static String strCategoryCostAdj = "IAU";
-  final static String strTableCostAdj = "M_CA_INVENTORYAMT";
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
