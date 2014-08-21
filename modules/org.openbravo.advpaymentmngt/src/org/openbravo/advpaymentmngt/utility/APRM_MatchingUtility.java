@@ -446,4 +446,20 @@ public class APRM_MatchingUtility {
     myMessage = (OBError) pb.getResult();
     return myMessage;
   }
+
+  /**
+   * Wait till the a reconciliation is not in process
+   * 
+   * @param reconciliation
+   *          The reconciliation that is being processing
+   */
+  public static void wait(FIN_Reconciliation reconciliation) {
+    while (reconciliation.isProcessNow()) {
+      long t0, t1;
+      t0 = System.currentTimeMillis();
+      do {
+        t1 = System.currentTimeMillis();
+      } while ((t1 - t0) < 200);
+    }
+  }
 }

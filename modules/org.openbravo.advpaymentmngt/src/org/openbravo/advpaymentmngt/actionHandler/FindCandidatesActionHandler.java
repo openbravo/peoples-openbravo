@@ -28,12 +28,12 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
+import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
+import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
 import org.openbravo.advpaymentmngt.utility.FIN_CandidateRecord;
-import org.openbravo.advpaymentmngt.utility.FIN_MatchedTransaction;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -50,6 +50,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -65,6 +66,10 @@ public class FindCandidatesActionHandler extends BaseActionHandler {
     JSONObject result = new JSONObject();
     JSONObject errorMessage = new JSONObject();
     OBContext.setAdminMode(true);
+    VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+        OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
+    ConnectionProvider conn = new DalConnectionProvider();
     try {
       final JSONObject jsonData = new JSONObject(data);
       String strBankStatementLineId = jsonData.getString("bankStatementLineId");
@@ -89,8 +94,16 @@ public class FindCandidatesActionHandler extends BaseActionHandler {
         }
       }
 
+      FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, finTrans.getAccount().getId()), "N");
+      if (reconciliation == null) {
+        reconciliation = MatchTransactionDao.addNewReconciliation(conn, vars, finTrans.getAccount()
+            .getId());
+      }
+
       if (finTrans != null) {
-        matchBankStatementLine(strBankStatementLineId, finTrans.getId(), null);
+        APRM_MatchingUtility.matchBankStatementLine(strBankStatementLineId, finTrans.getId(),
+            reconciliation.getId(), null);
       }
 
       String message = "Ok";
@@ -116,49 +129,6 @@ public class FindCandidatesActionHandler extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return result;
-  }
-
-  /**
-   * Match a bank statement line with a financial account transaction
-   * 
-   * @param strFinBankStatementLineId
-   *          Bank Statement Line Id
-   * @param strFinancialTransactionId
-   *          Financial Account Transaction Id
-   * @param matchLevel
-   *          Match Level
-   */
-  void matchBankStatementLine(String strFinBankStatementLineId, String strFinancialTransactionId,
-      String matchLevel) {
-    try {
-      FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
-          strFinBankStatementLineId);
-      // OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
-      // .lock(BankStatementLine.ENTITY_NAME, bsl);
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          strFinancialTransactionId);
-      if (transaction != null) {
-        if (bsl.getFinancialAccountTransaction() != null) {
-          // log4j.error("Bank Statement Line Already Matched: " + bsl.getIdentifier());
-          // unmatch(bsl);
-        }
-        bsl.setFinancialAccountTransaction(transaction);
-        if (matchLevel == null || "".equals(matchLevel)) {
-          matchLevel = FIN_MatchedTransaction.MANUALMATCH;
-        }
-        bsl.setMatchingtype(matchLevel);
-        transaction.setStatus("RPPC");
-        if (transaction.getFinPayment() != null) {
-          transaction.getFinPayment().setStatus("RPPC");
-        }
-        OBDal.getInstance().save(transaction);
-        OBDal.getInstance().save(bsl);
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getConnection().commit();
-      }
-    } catch (Exception e) {
-      throw new OBException(e.getMessage());
-    }
   }
 
   /**

@@ -21,7 +21,26 @@ OB.APRM.MatchStatement = {};
 
 
 OB.APRM.MatchStatement.onLoad = function (view) {
-
+  var execute, grid = view.theForm.getItem('match_statement').canvas.viewGrid;
+  grid.dataSourceOrig = grid.dataSource;
+  grid.dataSource = null;
+  execute = function (ok) {
+    var onProcessCallbak, newCriteria = {},
+        params = {};
+    if (grid.view.sourceView) {
+      params.context = grid.view.sourceView.getContextInfo();
+    }
+    params.executeMatching = ok;
+    onProcessCallbak = function (response, data, request) {
+      grid.dataSource = grid.dataSourceOrig;
+      newCriteria.criteria = [];
+      // add dummy criterion to force fetch
+      newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+      grid.fetchData(newCriteria);
+    }
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadActionHandler', {}, params, onProcessCallbak);
+  }
+  isc.ask(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
 };
 
 
@@ -94,8 +113,13 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       action: function () {
         var callback, bankStatementLineId = me.record.id,
-            view = me.grid.view;
+            view = me.grid.view,
+            newCriteria = {};
         callback = function (response, data, request) {
+          newCriteria.criteria = [];
+          // add dummy criterion to force fetch
+          newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+          me.grid.fetchData(newCriteria);
           if (data.message.severity === 'error') {
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
           } else {
