@@ -284,8 +284,16 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       glitemamt = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       orderInvoiceData = orderInvoice.data.localData,
       total = orderInvoice.data.totalRows,
-      writeoff, amt, outstandingAmount, i;
+      writeoff, amt, outstandingAmount, i, showMessageProperty, showMessage;
 
+  if (orderInvoice.data.localData.length < (orderInvoice.data.totalRows)) {
+    showMessageProperty = OB.PropertyStore.get('APRM_ShowNoDistributeMsg');
+    showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"');
+    if (showMessage) {
+      orderInvoice.contentView.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + OB.I18N.getLabel('APRM_NoDistributeMsg') + '</div><div class="' + OB.Styles.MessageBar.rightMsgContainerStyle + '"><a href="#" class="' + OB.Styles.MessageBar.rightMsgTextStyle + '" onclick="' + 'window[\'' + orderInvoice.contentView.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'APRM_ShowNoDistributeMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
+    }
+    return;
+  }
   // subtract glitem amount
   amount = amount.subtract(glitemamt);
   // add credit amount
