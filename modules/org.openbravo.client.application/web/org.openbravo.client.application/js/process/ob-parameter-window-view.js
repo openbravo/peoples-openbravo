@@ -279,7 +279,11 @@ isc.OBParameterWindowView.addProperties({
         this.closeClick = function () {
           return true;
         }; // To avoid loop when "Super call"
-        this.parentElement.parentElement.closeClick(); // Super call
+        if (this.isExpandedRecord) {
+          this.callerField.grid.collapseRecord(this.callerField.record);
+        } else {
+          this.parentElement.parentElement.closeClick(); // Super call
+        }
       };
     }
     this.loading = OB.Utilities.createLoadingLayout(OB.I18N.getLabel('OBUIAPP_PROCESSING'));
@@ -291,7 +295,7 @@ isc.OBParameterWindowView.addProperties({
       processId: this.processId,
       windowId: this.windowId
     };
-    
+
     // allow to add external parameters
     isc.addProperties(params, this.externalParams);
 
@@ -387,7 +391,11 @@ isc.OBParameterWindowView.addProperties({
       this.closeClick = function () {
         return true;
       }; // To avoid loop when "Super call"
-      this.parentElement.parentElement.closeClick(); // Super call
+      if (this.isExpandedRecord) {
+        this.callerField.grid.collapseRecord(this.callerField.record);
+      } else {
+        this.parentElement.parentElement.closeClick(); // Super call
+      }
     }
   },
 
