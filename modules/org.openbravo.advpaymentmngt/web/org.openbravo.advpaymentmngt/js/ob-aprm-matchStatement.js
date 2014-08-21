@@ -37,9 +37,9 @@ OB.APRM.MatchStatement.onLoad = function (view) {
       // add dummy criterion to force fetch
       newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
       grid.fetchData(newCriteria);
-    }
+    };
     OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadActionHandler', {}, params, onProcessCallbak);
-  }
+  };
   isc.ask(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
 };
 
@@ -53,6 +53,11 @@ isc.ClassFactory.defineClass('APRMMatchStatGridButtonsComponent', isc.HLayout);
 
 isc.APRMMatchStatGridButtonsComponent.addProperties({
   canExpandRecord: true,
+
+  click: function () {
+    this.grid.selectSingleRecord(this.record);
+    return this.Super('click', arguments);
+  },
 
   initWidget: function () {
     var me = this,
