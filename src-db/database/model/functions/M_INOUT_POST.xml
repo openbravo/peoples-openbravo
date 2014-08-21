@@ -600,6 +600,7 @@
               ELSIF (cur_inout.issotrx = 'N' AND cur_inoutline.canceled_inoutline_id IS NOT NULL AND v_qty < 0) THEN
                 -- Revert to pre-reservations
 
+		BEGIN
                   select  sum(iol.movementqty)
                   into v_qtysumorders
                   from m_inoutline iol
@@ -612,6 +613,11 @@
                   where c_orderline_id=cur_inoutline.c_orderline_id
                   and rs.m_locator_id=cur_inoutline.m_locator_id;
 
+                EXCEPTION
+                  WHEN NO_DATA_FOUND THEN
+                  v_qtysumorders:=0;
+                  v_released:=0;
+                END;
                   v_penqty := -v_qty - ((v_qtysumorders+(-cur_inoutline.movementqty))-v_released);
 
                 DECLARE
