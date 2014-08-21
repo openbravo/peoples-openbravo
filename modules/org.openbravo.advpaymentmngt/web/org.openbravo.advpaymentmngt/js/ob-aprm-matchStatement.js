@@ -22,6 +22,14 @@ OB.APRM.MatchStatement = {};
 
 OB.APRM.MatchStatement.onLoad = function (view) {
   var execute, grid = view.theForm.getItem('match_statement').canvas.viewGrid;
+  view.doRefreshFunction = function () {
+    var newCriteria = {};
+    newCriteria.criteria = [];
+    // add dummy criterion to force fetch
+    newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    grid.fetchData(newCriteria);
+  };
+
   grid.dataSourceOrig = grid.dataSource;
   grid.dataSource = null;
   execute = function (ok) {
@@ -33,10 +41,7 @@ OB.APRM.MatchStatement.onLoad = function (view) {
     params.executeMatching = ok;
     onProcessCallbak = function (response, data, request) {
       grid.dataSource = grid.dataSourceOrig;
-      newCriteria.criteria = [];
-      // add dummy criterion to force fetch
-      newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-      grid.fetchData(newCriteria);
+      view.doRefreshFunction();
     };
     OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadActionHandler', {}, params, onProcessCallbak);
   };
@@ -60,6 +65,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
   },
 
   initWidget: function () {
+    this.view = this.grid.view;
     var me = this,
         searchButton, addButton, clearButton, buttonSeparator1, buttonSeparator2;
 
@@ -118,13 +124,9 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       action: function () {
         var callback, bankStatementLineId = me.record.id,
-            view = me.grid.view,
-            newCriteria = {};
+            view = me.grid.view;
         callback = function (response, data, request) {
-          newCriteria.criteria = [];
-          // add dummy criterion to force fetch
-          newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-          me.grid.fetchData(newCriteria);
+          view.doRefreshFunction();
           if (data.message.severity === 'error') {
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
           } else {

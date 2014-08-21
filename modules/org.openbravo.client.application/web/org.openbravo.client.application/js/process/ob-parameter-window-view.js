@@ -385,7 +385,12 @@ isc.OBParameterWindowView.addProperties({
       this.buttonOwnerView.setAsActiveView();
 
       if (refreshParent) {
-        window.refresh();
+        if (this.callerField && this.callerField.view && typeof this.callerField.grid.view.doRefreshFunction === 'function') {
+          // In this case we are inside a process called from another process, so we want to refresh the caller process instead of the main window.
+          this.callerField.view.doRefreshFunction();
+        } else {
+          window.refresh();
+        }
       }
 
       this.closeClick = function () {
