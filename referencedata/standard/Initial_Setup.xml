@@ -500,6 +500,31 @@
     <return>false</return>
     <documentTypeForOrder xsi:nil="true"/>
   </DocumentType>
+  <DocumentType id="27825A3873BC4205930F5D29BBCD5C58" identifier="Landed Cost">
+    <id>27825A3873BC4205930F5D29BBCD5C58</id>
+    <active>true</active>
+    <name>Landed Cost</name>
+    <printText>Landed Cost</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>LDC</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>true</sequencedDocument>
+    <documentSequence id="27143293130E4A04B9F8E0267C09B7CA" entity-name="ADSequence" identifier="Landed Cost"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>true</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="082F967CDF7245EB9A150941F326C45C" entity-name="ADTable" identifier="M_LandedCost"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>false</return>
+    <documentTypeForOrder xsi:nil="true"/>
+  </DocumentType>
   <DocumentType id="2D7C15F0F44E4F289A729415EFD700C1" identifier="Return Material">
     <id>2D7C15F0F44E4F289A729415EFD700C1</id>
     <active>false</active>
@@ -1213,7 +1238,7 @@
     <documentTypeForInvoice xsi:nil="true"/>
     <sequencedDocument>true</sequencedDocument>
     <documentSequence id="447F87AD22024A97909F97B24E4F12C9" entity-name="ADSequence" identifier="Cost Adjustment"/>
-    <gLCategory id="0" entity-name="FinancialMgmtGLCategory" identifier="None of System"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>1</numberOfCopies>
@@ -1313,7 +1338,7 @@
     <documentTypeForInvoice xsi:nil="true"/>
     <sequencedDocument>true</sequencedDocument>
     <documentSequence id="D2EE396D507A4956A971BA93D785C310" entity-name="ADSequence" identifier="Inventory Amount Update"/>
-    <gLCategory id="0" entity-name="FinancialMgmtGLCategory" identifier="None of System"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
     <comments xsi:nil="true"/>
     <default>false</default>
     <numberOfCopies>1</numberOfCopies>
@@ -1440,6 +1465,18 @@
     <id>267B166C6F4B49E893CF6276EE396E7D</id>
     <active>true</active>
     <name>Production</name>
+    <description xsi:nil="true"/>
+    <valueFormat xsi:nil="true"/>
+    <autoNumbering>true</autoNumbering>
+    <incrementBy>1</incrementBy>
+    <startingNo>1000000</startingNo>
+    <usedForRecordID>false</usedForRecordID>
+    <restartSequenceEveryYear>false</restartSequenceEveryYear>
+  </ADSequence>
+  <ADSequence id="27143293130E4A04B9F8E0267C09B7CA" identifier="Landed Cost">
+    <id>27143293130E4A04B9F8E0267C09B7CA</id>
+    <active>true</active>
+    <name>Landed Cost</name>
     <description xsi:nil="true"/>
     <valueFormat xsi:nil="true"/>
     <autoNumbering>true</autoNumbering>
