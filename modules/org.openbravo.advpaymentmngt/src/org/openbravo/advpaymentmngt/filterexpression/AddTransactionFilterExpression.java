@@ -1,5 +1,6 @@
 package org.openbravo.advpaymentmngt.filterexpression;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.openbravo.client.application.FilterExpression;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 
 public class AddTransactionFilterExpression implements FilterExpression {
@@ -40,7 +42,6 @@ public class AddTransactionFilterExpression implements FilterExpression {
         return getDefaultDepositAmout();
       case WithdrawalAmount:
         return getDefaulWithdrawalAmount();
-
       }
     } catch (Exception e) {
       log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(), e);
@@ -77,14 +78,16 @@ public class AddTransactionFilterExpression implements FilterExpression {
   }
 
   String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
-    JSONObject request = new JSONObject(requestMap);
-    JSONObject params = request.getJSONObject("_params");
-    String bankStatementLineId = params.getString("inpfinBankstatementId");
-    if (request.has("inpfinBankstatementId") && !request.isNull("inpfinBankstatementId")) {
 
+    String bankStatementLineId = requestMap.get("bankStatementLineId");
+    FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
+        bankStatementLineId);
+    if (!(bankstatementline.getDramount().equals(BigDecimal.ZERO))) {
+      return "BPW";
+    } else {
+      return "BPD";
     }
 
-    return "BPD";
   }
 
   String getDefaultTransactionDate() throws JSONException {
@@ -131,5 +134,4 @@ public class AddTransactionFilterExpression implements FilterExpression {
   String getOrganization(Map<String, String> requestMap) throws JSONException {
     return getFinancialAccount(requestMap).getOrganization().getId();
   }
-
 }
