@@ -20,11 +20,15 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
@@ -36,15 +40,20 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
+import org.openbravo.model.materialmgmt.cost.LCReceipt;
+import org.openbravo.model.materialmgmt.cost.LandedCost;
+import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InternalConsumption;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 
 /**
@@ -58,6 +67,8 @@ public class CostingServer {
   private CostingRule costingRule;
   private Currency currency;
   private Organization organization;
+  final static String strCategoryLandedCost = "LDC";
+  final static String strTableLandedCost = "M_LandedCost";
 
   public CostingServer(MaterialTransaction transaction) {
     this.transaction = transaction;
@@ -74,10 +85,13 @@ public class CostingServer {
   /**
    * Calculates and stores in the database the cost of the transaction.
    * 
+   * 
    */
-  public void process() throws OBException {
+  public void process() {
     boolean doNotCheckPriceCorrectionTrxs = false;
     boolean doNotCheckBackDatedTrxs = false;
+    final DocumentType docType = FIN_Utility.getDocumentType(organization, strCategoryLandedCost);
+    final String docNo = FIN_Utility.getDocumentNo(docType, strTableLandedCost);
     if (trxCost != null) {
       // Transaction cost has already been calculated. Nothing to do.
       return;
@@ -109,6 +123,7 @@ public class CostingServer {
       // insert on m_transaction_cost
       createTransactionCost();
       OBDal.getInstance().save(transaction);
+      OBDal.getInstance().flush();
 
       // check if price correction is needed
       try {
@@ -127,6 +142,65 @@ public class CostingServer {
         } catch (JSONException e) {
           OBDal.getInstance().rollbackAndClose();
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+        }
+      }
+
+      // check if landed cost need to be processed
+      TrxType trxType = TrxType.getTrxType(transaction);
+      if (trxType == TrxType.Receipt || trxType.name().equals("ReceiptReturn")
+          || trxType.name().equals("ReceiptNegative")) {
+        StringBuffer where = new StringBuffer();
+        where.append(" as lc");
+        where
+            .append(" where not exists (select 1 from MaterialMgmtMaterialTransaction mtrans where mtrans."
+                + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE
+                + "."
+                + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT
+                + ".id =:inoutId and mtrans."
+                + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
+                + "= false) and lc."
+                + LandedCostCost.PROPERTY_LANDEDCOST
+                + " is null"
+                + " and lc."
+                + LandedCostCost.PROPERTY_GOODSSHIPMENT + ".id =:inoutId");
+        OBQuery<LandedCostCost> qry = OBDal.getInstance().createQuery(LandedCostCost.class,
+            where.toString());
+        qry.setNamedParameter("inoutId", transaction.getGoodsShipmentLine().getShipmentReceipt()
+            .getId());
+
+        ScrollableResults lcLines = qry.scroll(ScrollMode.FORWARD_ONLY);
+        try {
+          LandedCost landedCost = new LandedCost();
+          landedCost.setReferenceDate(new Date());
+          landedCost.setDocumentType(docType);
+          landedCost.setDocumentNo(docNo);
+          landedCost.setCurrency(currency);
+          landedCost.setOrganization(organization);
+          OBDal.getInstance().save(landedCost);
+
+          LCReceipt lcReceipt = new LCReceipt();
+          lcReceipt.setLandedCost(landedCost);
+          lcReceipt.setGoodsShipment(transaction.getGoodsShipmentLine().getShipmentReceipt());
+          OBDal.getInstance().save(lcReceipt);
+
+          while (lcLines.next()) {
+            final LandedCostCost landedCostCost = (LandedCostCost) lcLines.get()[0];
+            landedCostCost.setLandedCost(landedCost);
+            OBDal.getInstance().save(landedCostCost);
+          }
+
+          JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
+
+          if (message.get("severity") != "success") {
+            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@")
+                + ": " + landedCost.getDocumentNo() + " - " + message.getString("text"));
+          }
+        } catch (JSONException e) {
+          OBDal.getInstance().rollbackAndClose();
+          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@"));
+        } catch (Exception ignore) {
+        } finally {
+          lcLines.close();
         }
       }
 
