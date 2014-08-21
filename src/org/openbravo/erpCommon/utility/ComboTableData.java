@@ -1189,7 +1189,14 @@ public class ComboTableData {
       result.close();
 
       if (includeActual && actual != null && !actual.equals("") && !idFound) {
-        boolean allDataInSinglePage = startRow == 0 && vector.size() < endRow - startRow;
+        boolean allDataInSinglePage;
+        if (startRow != null && endRow != null) {
+          allDataInSinglePage = startRow == 0 && vector.size() < endRow - startRow;
+        } else {
+          // This method is invoked with startRow = endRow = null for lists. Lists always have load
+          // all data in a single page
+          allDataInSinglePage = true;
+        }
         if (!allDataInSinglePage) {
           // retrieved a partial set of data, checking if current id is in a page different that the
           // served applying the same criteria, if so, do not add it again to the list (it will
