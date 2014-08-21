@@ -15,6 +15,20 @@
   // global components.
   OB = window.OB || {};
 
+  // add WebSQL database version for WebPOS
+  OB.UTIL.VersionManagement.current.posterminal = {
+    rootName: 'RR14Q',
+    major: '4',
+    minor: '0'
+  };
+  OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase = {
+    name: 'WEBPOS',
+    size: 4 * 1024 * 1024,
+    displayName: 'Openbravo Web POS',
+    major: '0',
+    minor: '7'
+  };
+
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
     initialize: function () {
       var me = this;
@@ -46,15 +60,17 @@
             role: 'oBPOSDefaultPOSRole'
           }
         },
+        // setting here the localDB, overrides the OB.MobileApp.model localDB default
         localDB: {
-          size: 4 * 1024 * 1024,
-          name: 'WEBPOS',
-          displayName: 'Openbravo Web POS',
-          version: '0.7'
+          size: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.size,
+          name: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.name,
+          displayName: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.displayName,
+          version: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.major + '.' + OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.minor
         },
         logDBTrxThreshold: 300,
         logDBStmtThreshold: 1000
       });
+
       this.initActions(function () {
         me.set('terminalName', window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
         me.set('logoutUrlParams', window.localStorage.getItem('terminalAuthentication') === 'Y' ? {} : {
