@@ -463,6 +463,9 @@ isc.OBPickAndExecuteGrid.addProperties({
         record[this.selectionProperty] = true;
         if (this.data.savedData) {
           savedRecord = this.data.savedData.find('id', this.selectedIds[i]);
+          if (!savedRecord) {
+            continue;
+          }
           //Setting editable fields from saved Data to retain values.
           for (j = 0; j < fields.length; j++) {
             if (fields[j].canEdit !== false) {
