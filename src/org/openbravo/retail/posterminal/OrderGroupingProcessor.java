@@ -74,7 +74,7 @@ public class OrderGroupingProcessor {
     query.setNamedParameter("terminal", posTerminal);
     query.setNamedParameter("cashUpId", cashUpId);
 
-    long t1 = System.currentTimeMillis();
+    long t0 = System.currentTimeMillis();
     ScrollableResults orderLines = query.scroll(ScrollMode.FORWARD_ONLY);
     Invoice invoice = null;
     FIN_PaymentSchedule paymentSchedule = null;
@@ -91,7 +91,6 @@ public class OrderGroupingProcessor {
     long taxLineNo = 0;
     try {
       while (orderLines.next()) {
-        long t = System.currentTimeMillis();
         isMultiShipmentLine = false;
         OrderLine orderLine = (OrderLine) orderLines.get(0);
         log.debug("Line id:" + orderLine.getId());
@@ -202,7 +201,6 @@ public class OrderGroupingProcessor {
             invoiceLine.setTaxableAmount(invoiceLine.getTaxableAmount() == null ? BigDecimal.ZERO
                 : invoiceLine.getTaxableAmount().add(tax.getTaxableAmount()));
           }
-          log.debug("Line time: " + (System.currentTimeMillis() - t));
           if (lineno % 500 == 0) {
             OBDal.getInstance().flush();
             OBDal.getInstance().getSession().clear();
@@ -222,12 +220,14 @@ public class OrderGroupingProcessor {
     } finally {
       orderLines.close();
     }
+
     finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule,
         cashUpDate);
     // The commit will be done in ProcessCashClose.java (flush), Transactional process.
     // OBDal.getInstance().getConnection().commit();
+    long t3 = System.currentTimeMillis();
 
-    log.info("Total time: " + (System.currentTimeMillis() - t1));
+    log.info("Total time: " + (t3 - t0));
     JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return jsonResponse;
@@ -463,7 +463,6 @@ public class OrderGroupingProcessor {
     if (oriInvoice == null) {
       return;
     }
-    long tf = System.currentTimeMillis();
     Invoice invoice = OBDal.getInstance().get(Invoice.class, oriInvoice.getId());
 
     OBDal.getInstance().save(invoice);
@@ -526,7 +525,6 @@ public class OrderGroupingProcessor {
     }
 
     OBDal.getInstance().flush();
-    log.debug("Finishing invoice: " + (System.currentTimeMillis() - tf));
   }
 
   OrderLine[] splitOrderLineByShipmentLine(OrderLine ol) {

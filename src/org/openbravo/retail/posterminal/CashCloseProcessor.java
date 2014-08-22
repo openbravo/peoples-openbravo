@@ -62,8 +62,6 @@ public class CashCloseProcessor {
 
     for (int i = 0; i < cashCloseInfo.length(); i++) {
 
-      long t10 = System.currentTimeMillis();
-
       JSONObject cashCloseObj = cashCloseInfo.getJSONObject(i);
 
       BigDecimal difference = new BigDecimal(cashCloseObj.getString("difference"));
@@ -77,8 +75,6 @@ public class CashCloseProcessor {
       String paymentTypeId = cashCloseObj.getString("paymentTypeId");
       OBPOSAppPayment paymentType = OBDal.getInstance().get(OBPOSAppPayment.class, paymentTypeId);
 
-      long t11 = System.currentTimeMillis();
-
       FIN_Reconciliation reconciliation = createReconciliation(cashCloseObj, posTerminal,
           paymentType.getFinancialAccount(), cashUpDate);
 
@@ -90,13 +86,9 @@ public class CashCloseProcessor {
       }
       OBDal.getInstance().save(reconciliation);
 
-      long t12 = System.currentTimeMillis();
-
       OBPOSAppCashReconcil recon = createCashUpReconciliation(posTerminal, paymentType,
           reconciliation, cashUp);
       OBDal.getInstance().save(recon);
-
-      long t13 = System.currentTimeMillis();
 
       BigDecimal reconciliationTotal = BigDecimal
           .valueOf(cashCloseObj.getDouble("foreignExpected")).add(foreignDifference);
@@ -121,16 +113,7 @@ public class CashCloseProcessor {
           OBDal.getInstance().save(depositTransaction);
         }
       }
-      long t14 = System.currentTimeMillis();
-
       associateTransactions(paymentType, reconciliation, cashUpId, cashMgmtIds);
-
-      long t15 = System.currentTimeMillis();
-
-      logger.info("Cash Up Info. Total time: " + (t15 - t10) + ". Init: " + (t11 - t10)
-          + ". Reconciliation: " + (t12 - t11) + ". Cash Up Reconciliation: " + (t13 - t12)
-          + ". Payment and Deposit Transactions: " + (t14 - t13) + ". Associate Transactions: "
-          + (t15 - t14));
     }
 
     long t1 = System.currentTimeMillis();
