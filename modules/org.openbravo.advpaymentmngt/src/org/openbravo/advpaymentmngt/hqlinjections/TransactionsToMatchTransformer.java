@@ -24,40 +24,34 @@ import java.util.Map;
 
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
-import org.openbravo.service.db.DalConnectionProvider;
 
 @ComponentProvider.Qualifier("D56CF1065EF14D52ADAD2AAB0CB63EFC")
-public class TransactionMatchTransformer extends HqlQueryTransformer {
-  final static String RDBMS = new DalConnectionProvider(false).getRDBMS();
-  final static String TABLE_ID = "D56CF1065EF14D52ADAD2AAB0CB63EFC";
+public class TransactionsToMatchTransformer extends HqlQueryTransformer {
 
   @Override
   public String transformHqlQuery(String _hqlQuery, Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
-    final StringBuffer whereClause = getWhereClause(requestParameters, queryNamedParameters);
-
-    String transformedHql = _hqlQuery.replace("@whereclause@", whereClause.toString());
+    String transformedHql = _hqlQuery.replace("@whereclause@",
+        getWhereClause(requestParameters, queryNamedParameters));
     transformedHql = transformedHql.replace("@selectClause@", " ");
     transformedHql = transformedHql.replace("@joinClause@", " ");
     return transformedHql;
   }
 
-  private StringBuffer getWhereClause(Map<String, String> requestParameters,
+  protected String getWhereClause(Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
     final StringBuffer whereClause = new StringBuffer();
-    // TODO remove NOT
     whereClause.append("e.reconciliation is null ");
     whereClause.append("and e.account.id = :account  ");
     whereClause.append("and e.transactionDate <= :dateTo  ");
 
     final String accountId = requestParameters.get("@FIN_Financial_Account.id@");
-    // TODO transaction date
+    // FIXME get transaction date
     final Date transactionDate = new Date();
 
     queryNamedParameters.put("account", accountId);
     queryNamedParameters.put("dateTo", transactionDate);
 
-    return whereClause;
+    return whereClause.toString();
   }
-
 }
