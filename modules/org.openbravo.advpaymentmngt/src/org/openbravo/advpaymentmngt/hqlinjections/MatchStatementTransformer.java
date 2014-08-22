@@ -21,71 +21,62 @@ package org.openbravo.advpaymentmngt.hqlinjections;
 
 import java.util.Map;
 
-import javax.servlet.ServletException;
-
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
-import org.openbravo.service.db.DalConnectionProvider;
 
 @ComponentProvider.Qualifier("BC21981DCF0846338D631887BEDFE7FA")
 public class MatchStatementTransformer extends HqlQueryTransformer {
-  final static String RDBMS = new DalConnectionProvider(false).getRDBMS();
-  final static String TABLE_ID = "BC21981DCF0846338D631887BEDFE7FA";
 
   @Override
   public String transformHqlQuery(String _hqlQuery, Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
-    StringBuffer whereClause = getWhereClause(requestParameters, queryNamedParameters);
-    // @FIN_Financial_Account.id@
-    String transformedHql = _hqlQuery.replace("@whereClause@", whereClause.toString());
+    String transformedHql = _hqlQuery.replace("@whereClause@",
+        getWhereClause(requestParameters, queryNamedParameters));
     transformedHql = transformedHql.replace("@selectClause@", " ");
     transformedHql = transformedHql.replace("@joinClause@", " ");
     return transformedHql;
   }
 
-  private StringBuffer getWhereClause(Map<String, String> requestParameters,
+  protected String getWhereClause(Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
-    StringBuffer whereClause = new StringBuffer();
-    // TODO: Review what others do with criteria (Reference AddPaymentOrderInvoicesTransformer)
     final String financialAccountId = requestParameters.get("@FIN_Financial_Account.id@");
-    if (financialAccountId != null) {
-      VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-          OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-              .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
+    final StringBuffer whereClause = new StringBuffer();
+    if (StringUtils.isNotBlank(financialAccountId)) {
+      try {
+        OBContext.setAdminMode(true);
+        final FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+            financialAccountId);
+        final FIN_Reconciliation lastReconciliation = TransactionsDao.getLastReconciliation(
+            finAccount, "N");
 
-      FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal.getInstance()
-          .get(FIN_FinancialAccount.class, financialAccountId), "N");
+        whereClause.append(" (fat is null ");
 
-      // TODO:
-      // * Handle runingReconciliations
-      // * Handle mixedLines
-      if (reconciliation == null) {
-        try {
-          // TODO: It doesn't work
-          reconciliation = MatchTransactionDao.addNewReconciliation(new DalConnectionProvider(),
-              vars, financialAccountId);
-        } catch (ServletException e) {
-          // TODO: Handle exception
-          // e.printStackTrace();
+        if (lastReconciliation != null) {
+          whereClause.append("            or fat.reconciliation.id = :reconciliation ");
+          queryNamedParameters.put("reconciliation", lastReconciliation.getId());
         }
-      }
-      whereClause.append(" (fat is null or fat.reconciliation.id = :reconciliation) ");
-      whereClause.append(" and bs.account.id = :account ");
-      queryNamedParameters.put("reconciliation", reconciliation.getId());
-      queryNamedParameters.put("account", reconciliation.getAccount().getId());
-      if (!MatchTransactionDao.islastreconciliation(reconciliation)) {
-        whereClause.append(" and bsl.transactionDate <= :endingdate ");
-        queryNamedParameters.put("endingdate", reconciliation.getEndingDate());
+        whereClause.append(" ) ");
+
+        whereClause.append(" and bs.account.id = :account ");
+        queryNamedParameters.put("account", finAccount.getId());
+
+        if (lastReconciliation != null
+            && !MatchTransactionDao.islastreconciliation(lastReconciliation)) {
+          whereClause.append(" and bsl.transactionDate <= :endingdate ");
+          queryNamedParameters.put("endingdate", lastReconciliation.getEndingDate());
+        }
+      } finally {
+        OBContext.restorePreviousMode();
       }
     }
-    return whereClause;
-  }
 
+    return whereClause.toString();
+  }
 }
