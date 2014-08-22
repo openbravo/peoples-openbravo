@@ -33,7 +33,6 @@ import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchedTransaction;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchingTransaction;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -47,7 +46,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
-import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLineTemp;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.model.financialmgmt.payment.MatchingAlgorithm;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -64,10 +62,6 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
     JSONObject jsonResponse = new JSONObject();
     OBContext.setAdminMode(true);
 
-    VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-        OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
-    ConnectionProvider conn = new DalConnectionProvider();
     String strReconciliationId = "";
     try {
       JSONObject context = null;
@@ -86,19 +80,10 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
         APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
 
         APRM_MatchingUtility.fixMixedLines(reconciliation, log);
-
-        OBContext.setAdminMode();
-        try {
-          getSnapShot(reconciliation);
-          reconciledItems = reconciliation.getFINReconciliationLineVList().size();
-        } finally {
-          OBContext.restorePreviousMode();
-        }
       }
       if (MatchTransactionDao.getUnMatchedBankStatementLines(account).size() == 0
           && reconciledItems == 0) {
-        OBError message = Utility.translateError(conn, vars, vars.getLanguage(),
-            Utility.parseTranslation(conn, vars, vars.getLanguage(), "@APRM_NoStatementsToMatch@"));
+        OBError message = OBMessageUtils.translateError("@APRM_NoStatementsToMatch@");
         jsonResponse = new JSONObject();
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", message.getType().toLowerCase());
@@ -107,12 +92,16 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
         jsonResponse.put("message", errorMessage);
         return jsonResponse;
       } else {
+        VariablesSecureApp vars = new VariablesSecureApp(
+            OBContext.getOBContext().getUser().getId(), OBContext.getOBContext().getCurrentClient()
+                .getId(), OBContext.getOBContext().getCurrentOrganization().getId(), OBContext
+                .getOBContext().getRole().getId());
+        ConnectionProvider conn = new DalConnectionProvider();
         if (reconciliation == null) {
           reconciliation = MatchTransactionDao.addNewReconciliation(conn, vars,
               strFinancialAccountId);
           strReconciliationId = reconciliation.getId();
           APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
-          getSnapShot(reconciliation);
         } else {
           updateReconciliation(conn, vars, reconciliation.getId(), strFinancialAccountId, false);
         }
@@ -253,71 +242,5 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
     obc.addOrder(Order.desc(FIN_ReconciliationLine_v.PROPERTY_TRANSACTIONDATE));
     obc.setMaxResults(1);
     return ((FIN_ReconciliationLine_v) obc.uniqueResult()).getTransactionDate();
-  }
-
-  private void getSnapShot(FIN_Reconciliation reconciliation) {
-    if (reconciliation == null) {
-      return;
-    }
-    OBContext.setAdminMode();
-    try {
-      // First remove old temp info if exists
-      List<FIN_ReconciliationLineTemp> oldTempLines = reconciliation
-          .getFINReconciliationLineTempList();
-      for (FIN_ReconciliationLineTemp oldtempLine : oldTempLines) {
-        OBDal.getInstance().remove(oldtempLine);
-      }
-      oldTempLines.clear();
-      OBDal.getInstance().flush();
-      // Now copy info taken from the reconciliation when first opened
-      List<FIN_ReconciliationLine_v> reconciledlines = reconciliation
-          .getFINReconciliationLineVList();
-      for (FIN_ReconciliationLine_v reconciledLine : reconciledlines) {
-        FIN_ReconciliationLineTemp lineTemp = OBProvider.getInstance().get(
-            FIN_ReconciliationLineTemp.class);
-        lineTemp.setClient(reconciledLine.getClient());
-        lineTemp.setOrganization(reconciledLine.getOrganization());
-        lineTemp.setReconciliation(reconciledLine.getReconciliation());
-        lineTemp.setBankStatementLine(reconciledLine.getBankStatementLine());
-        if (reconciledLine.getFinancialAccountTransaction() != null
-            && reconciledLine.getFinancialAccountTransaction().isCreatedByAlgorithm()) {
-          if (reconciledLine.getFinancialAccountTransaction().getFinPayment() != null
-              && !reconciledLine.getFinancialAccountTransaction().getFinPayment()
-                  .isCreatedByAlgorithm()) {
-            lineTemp.setPayment(reconciledLine.getPayment());
-          } else if (reconciledLine.getFinancialAccountTransaction() != null
-              && reconciledLine.getFinancialAccountTransaction().getFinPayment() != null
-              && reconciledLine.getFinancialAccountTransaction().getFinPayment()
-                  .getFINPaymentDetailList().size() > 0
-              && reconciledLine.getFinancialAccountTransaction().getFinPayment()
-                  .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList() != null
-              && reconciledLine.getFinancialAccountTransaction().getFinPayment()
-                  .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList().size() > 0
-              && (reconciledLine.getFinancialAccountTransaction().getFinPayment()
-                  .getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList().get(0)
-                  .getInvoicePaymentSchedule() != null || reconciledLine
-                  .getFinancialAccountTransaction().getFinPayment().getFINPaymentDetailList()
-                  .get(0).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null)) {
-            lineTemp.setPaymentScheduleDetail(reconciledLine.getFinancialAccountTransaction()
-                .getFinPayment().getFINPaymentDetailList().get(0).getFINPaymentScheduleDetailList()
-                .get(0));
-          }
-        } else {
-          lineTemp.setFinancialAccountTransaction(reconciledLine.getFinancialAccountTransaction());
-        }
-        if (reconciledLine.getFinancialAccountTransaction().getFinPayment() != null) {
-          lineTemp.setPaymentDocumentno(reconciledLine.getFinancialAccountTransaction()
-              .getFinPayment().getDocumentNo());
-        }
-        lineTemp
-            .setMatched(reconciledLine.getBankStatementLine().getFinancialAccountTransaction() != null);
-        lineTemp.setMatchlevel(reconciledLine.getBankStatementLine().getMatchingtype());
-        OBDal.getInstance().save(lineTemp);
-      }
-      OBDal.getInstance().flush();
-      OBDal.getInstance().getSession().clear();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 }
