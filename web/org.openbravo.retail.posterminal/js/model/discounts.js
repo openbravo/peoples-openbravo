@@ -106,7 +106,7 @@
           });
         }
 
-        // if preventApplyPromotions then the promotions will not be deleted, because they will not be recalculated 
+        // if preventApplyPromotions then the promotions will not be deleted, because they will not be recalculated
         if (!this.preventApplyPromotions) {
           var manualPromotions;
           _.each(auxReceipt.get('lines').models, function (line) {
@@ -325,7 +325,7 @@
   });
 
 
-  // Because of dependency models cannot be directly registered in promotions module 
+  // Because of dependency models cannot be directly registered in promotions module
   if (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.extraModels) {
     for (i = 0; i < OB.Model.Discounts.extraModels.length; i++) {
       OB.Data.Registry.registerModel(OB.Model.Discounts.extraModels[i]);
