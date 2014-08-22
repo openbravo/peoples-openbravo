@@ -500,11 +500,11 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       generateCredit = new BigDecimal(String(form.getItem('generateCredit').getValue() || 0)),
       glitemtotal = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
-      selectedRecords = orderInvoice.getSelectedRecords(),
+      selectedRecords = orderInvoice.selectedIds,
       actpayment, i;
   for (i = 0; i < selectedRecords.length; i++) {
-    totalAmountoutstanding = totalAmountoutstanding.add(new BigDecimal(String(orderInvoice.getEditedCell(orderInvoice.getRecordIndex(selectedRecords[i]), orderInvoice.getFieldByColumnName('outstandingAmount')))));
-    totalAmount = totalAmount.add(new BigDecimal(String(orderInvoice.getEditedCell(orderInvoice.getRecordIndex(selectedRecords[i]), orderInvoice.getFieldByColumnName('amount')))));
+    totalAmountoutstanding = totalAmountoutstanding.add(new BigDecimal(String(orderInvoice.getEditedCell(orderInvoice.getRecordIndex(orderInvoice.data.localData.find('id', orderInvoice.selectedIds[i])), orderInvoice.getFieldByColumnName('outstandingAmount')))));
+    totalAmount = totalAmount.add(new BigDecimal(String(orderInvoice.getEditedCell(orderInvoice.getRecordIndex(orderInvoice.data.localData.find('id', orderInvoice.selectedIds[i])), orderInvoice.getFieldByColumnName('amount')))));
   }
   if (selectedRecords.length > 0) {
     expectedPayment.setValue(Number(totalAmountoutstanding));
