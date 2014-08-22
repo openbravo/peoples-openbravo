@@ -67,7 +67,7 @@ public class LandedCostProcess {
    *         language.
    * @throws Exception
    */
-  public JSONObject processLandedCost(LandedCost _landedCost) throws Exception {
+  public JSONObject processLandedCost(LandedCost _landedCost) {
     LandedCost landedCost = _landedCost;
     JSONObject message = new JSONObject();
     OBContext.setAdminMode(true);
@@ -88,9 +88,7 @@ public class LandedCostProcess {
       landedCost = OBDal.getInstance().get(LandedCost.class, landedCost.getId());
       landedCost.setDocumentStatus("CO");
       OBDal.getInstance().save(landedCost);
-    } catch (Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      throw e;
+    } catch (JSONException ignore) {
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -230,7 +228,7 @@ public class LandedCostProcess {
     return lcDistAlgInstance;
   }
 
-  public static JSONObject doProcessLandedCost(LandedCost landedCost) throws Exception {
+  public static JSONObject doProcessLandedCost(LandedCost landedCost) {
     LandedCostProcess lcp = WeldUtils.getInstanceFromStaticBeanManager(LandedCostProcess.class);
     JSONObject message = lcp.processLandedCost(landedCost);
     return message;

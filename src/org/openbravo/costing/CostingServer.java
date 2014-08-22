@@ -170,35 +170,41 @@ public class CostingServer {
 
         ScrollableResults lcLines = qry.scroll(ScrollMode.FORWARD_ONLY);
         try {
-          LandedCost landedCost = new LandedCost();
-          landedCost.setReferenceDate(new Date());
-          landedCost.setDocumentType(docType);
-          landedCost.setDocumentNo(docNo);
-          landedCost.setCurrency(currency);
-          landedCost.setOrganization(organization);
-          OBDal.getInstance().save(landedCost);
-
-          LCReceipt lcReceipt = new LCReceipt();
-          lcReceipt.setLandedCost(landedCost);
-          lcReceipt.setGoodsShipment(transaction.getGoodsShipmentLine().getShipmentReceipt());
-          OBDal.getInstance().save(lcReceipt);
+          LandedCost landedCost = null;
 
           while (lcLines.next()) {
+            if (landedCost == null) {
+              landedCost = OBProvider.getInstance().get(LandedCost.class);
+              landedCost.setReferenceDate(new Date());
+              landedCost.setDocumentType(docType);
+              landedCost.setDocumentNo(docNo);
+              landedCost.setCurrency(currency);
+              landedCost.setOrganization(organization);
+              OBDal.getInstance().save(landedCost);
+
+              LCReceipt lcReceipt = OBProvider.getInstance().get(LCReceipt.class);
+              lcReceipt.setLandedCost(landedCost);
+              lcReceipt.setGoodsShipment(transaction.getGoodsShipmentLine().getShipmentReceipt());
+              OBDal.getInstance().save(lcReceipt);
+
+            }
             final LandedCostCost landedCostCost = (LandedCostCost) lcLines.get()[0];
             landedCostCost.setLandedCost(landedCost);
             OBDal.getInstance().save(landedCostCost);
           }
 
-          JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
+          if (landedCost != null) {
 
-          if (message.get("severity") != "success") {
-            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@")
-                + ": " + landedCost.getDocumentNo() + " - " + message.getString("text"));
+            JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
+
+            if (message.get("severity") != "success") {
+              throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@")
+                  + ": " + landedCost.getDocumentNo() + " - " + message.getString("text"));
+            }
           }
         } catch (JSONException e) {
           OBDal.getInstance().rollbackAndClose();
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@"));
-        } catch (Exception ignore) {
         } finally {
           lcLines.close();
         }
