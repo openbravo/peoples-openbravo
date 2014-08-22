@@ -224,11 +224,14 @@ and @insertion_point_0@]]></HQLQUERY>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <AD_PACKAGE_ID><![CDATA[AC33B2262748414A816510545755435A]]></AD_PACKAGE_ID>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--BC21981DCF0846338D631887BEDFE7FA-->  <HQLQUERY><![CDATA[select bsl.transactionDate as transactionDate, case when bp is null then bsl.bpartnername  else bp.name end AS businessPartner, bsl.referenceNo as referenceNo, bsl.cramount - bsl.dramount as amount, bsl.id as match, bsl.matchingtype as affinity, bsl.matchingtype as matchingtype, bsl.id as id @selectClause@
+<!--BC21981DCF0846338D631887BEDFE7FA-->  <HQLQUERY><![CDATA[select bsl.transactionDate as banklineDate, case when bp is null then bsl.bpartnername  else bp.name end AS businessPartner, bsl.referenceNo as referenceNo, bsl.cramount - bsl.dramount as amount, bsl.id as match, bsl.matchingtype as affinity, bsl.matchingtype as matchingtype, bsl.id as id, 
+fat.transactionDate as transactionDate, transactionBP.name as transactionBPName, fat.depositAmount - fat.paymentAmount as transactionAmount
+ @selectClause@
 from FIN_BankStatementLine as bsl
  join bsl.bankStatement as bs
 left outer join bsl.financialAccountTransaction as fat
 left outer join bsl.businessPartner AS bp
+left outer join fat.businessPartner as transactionBP
 @joinClause@
 where @additional_filters@
 and bs.processed = 'Y'
@@ -236,6 +239,40 @@ and @whereClause@
 order by bsl.transactionDate, bsl.lineNo]]></HQLQUERY>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <ENTITY_ALIAS><![CDATA[bsl]]></ENTITY_ALIAS>
 <!--BC21981DCF0846338D631887BEDFE7FA--></AD_TABLE>
+
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC--><AD_TABLE>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <AD_TABLE_ID><![CDATA[D56CF1065EF14D52ADAD2AAB0CB63EFC]]></AD_TABLE_ID>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <NAME><![CDATA[aprm_transactiontomatch]]></NAME>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <TABLENAME><![CDATA[aprm_transactiontomatch]]></TABLENAME>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <AD_WINDOW_ID><![CDATA[5BF18A01DB3F4DBBBE1B8A4A6134ACD1]]></AD_WINDOW_ID>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <ISDELETEABLE><![CDATA[N]]></ISDELETEABLE>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <AD_PACKAGE_ID><![CDATA[AC33B2262748414A816510545755435A]]></AD_PACKAGE_ID>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <ISTREE><![CDATA[N]]></ISTREE>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <HQLQUERY><![CDATA[select e.id, e.transactionDate, bp.name as businessPartner, 
+gl.name as gLItem, fp.documentNo as finPayment, e.description, 
+e.paymentAmount, e.depositAmount 
+@selectClause@
+from FIN_Finacc_Transaction e
+left join e.businessPartner as bp
+left join e.gLItem as gl
+left join e.finPayment fp
+@joinClause@
+where @additional_filters@
+and @whereclause@]]></HQLQUERY>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <ENTITY_ALIAS><![CDATA[e]]></ENTITY_ALIAS>
+<!--D56CF1065EF14D52ADAD2AAB0CB63EFC--></AD_TABLE>
 
 <!--DC814AB3BC84486CA5411131724BC95A--><AD_TABLE>
 <!--DC814AB3BC84486CA5411131724BC95A-->  <AD_TABLE_ID><![CDATA[DC814AB3BC84486CA5411131724BC95A]]></AD_TABLE_ID>

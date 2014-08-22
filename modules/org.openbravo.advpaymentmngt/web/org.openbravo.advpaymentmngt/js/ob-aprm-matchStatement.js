@@ -74,17 +74,20 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       originalPrompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
       action: function () {
-        var processId = 'F2B2DB751AF245D3A5DF28EE00EF2685',
+        var processId = '154CB4F9274A479CB38A285E16984539',
             grid = me.grid,
             record = me.record,
             standardWindow = grid.view.parentWindow.view.standardWindow;
 
-        //TODO: Apply the proper created process
         var process = standardWindow.buildProcess({
           callerField: me,
           paramWindow: true,
           processId: processId,
           windowId: grid.view.windowId,
+          externalParams: {
+            bankStatementLineId: record.id,
+            transactionDate: record.transactionDate
+          },
           windowTitle: 'Search'
         });
 

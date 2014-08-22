@@ -23,7 +23,6 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -34,7 +33,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.service.json.JsonUtils;
 
 @ComponentProvider.Qualifier("BC21981DCF0846338D631887BEDFE7FA")
 public class MatchStatementTransformer extends HqlQueryTransformer {
@@ -54,11 +52,6 @@ public class MatchStatementTransformer extends HqlQueryTransformer {
 
   private StringBuffer getWhereClause(Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
-    boolean hasCriteria = requestParameters.containsKey("criteria");
-    JSONObject criteria = new JSONObject();
-    if (hasCriteria) {
-      criteria = JsonUtils.buildCriteria(requestParameters);
-    }
     StringBuffer whereClause = new StringBuffer();
     // TODO: Review what others do with criteria (Reference AddPaymentOrderInvoicesTransformer)
     final String financialAccountId = requestParameters.get("@FIN_Financial_Account.id@");

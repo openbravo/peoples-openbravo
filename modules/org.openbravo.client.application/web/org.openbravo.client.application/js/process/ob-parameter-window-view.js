@@ -477,6 +477,9 @@ isc.OBParameterWindowView.addProperties({
 
     allProperties._params = this.getContextInfo();
 
+    // allow to add external parameters
+    isc.addProperties(allProperties._params, this.externalParams);
+
     actionHandlerCall = function (me) {
       me.showProcessing(true);
       OB.RemoteCallManager.call(me.actionHandler, allProperties, {
