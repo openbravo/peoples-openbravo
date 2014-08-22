@@ -22,13 +22,6 @@ OB.APRM.MatchStatement = {};
 
 OB.APRM.MatchStatement.onLoad = function (view) {
   var execute, grid = view.theForm.getItem('match_statement').canvas.viewGrid;
-  view.doRefreshFunction = function () {
-    var newCriteria = {};
-    newCriteria.criteria = [];
-    // add dummy criterion to force fetch
-    newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-    grid.fetchData(newCriteria);
-  };
 
   grid.dataSourceOrig = grid.dataSource;
   grid.dataSource = null;
@@ -41,13 +34,21 @@ OB.APRM.MatchStatement.onLoad = function (view) {
     params.executeMatching = ok;
     onProcessCallbak = function (response, data, request) {
       grid.dataSource = grid.dataSourceOrig;
-      view.doRefreshFunction();
+      view.onRefreshFunction(view);
     };
     OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadActionHandler', {}, params, onProcessCallbak);
   };
   isc.ask(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
 };
 
+OB.APRM.MatchStatement.onRefresh = function (view) {
+  var grid = view.theForm.getItem('match_statement').canvas.viewGrid,
+      newCriteria = {};
+  newCriteria.criteria = [];
+  // add dummy criterion to force fetch
+  newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+  grid.fetchData(newCriteria);
+};
 
 OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall) {
 
@@ -129,7 +130,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
         var callback, bankStatementLineId = me.record.id,
             view = me.grid.view;
         callback = function (response, data, request) {
-          view.doRefreshFunction();
+          view.onRefreshFunction(view);
           if (data.message.severity === 'error') {
             view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
           } else {
