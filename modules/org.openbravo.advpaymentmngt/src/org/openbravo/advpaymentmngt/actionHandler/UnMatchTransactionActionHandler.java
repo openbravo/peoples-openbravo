@@ -50,13 +50,7 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
 
       reconciliation = bsline.getFinancialAccountTransaction().getReconciliation();
       if (reconciliation != null) {
-        if (reconciliation.isProcessNow()) {
-          APRM_MatchingUtility.wait(reconciliation);
-        }
-        reconciliation.setProcessNow(true);
-        OBDal.getInstance().save(reconciliation);
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getConnection().commit();
+        APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
       }
 
       APRM_MatchingUtility.unmatch(bsline);
@@ -85,9 +79,7 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
       }
     } finally {
       OBContext.restorePreviousMode();
-      reconciliation.setProcessNow(false);
-      OBDal.getInstance().save(reconciliation);
-      OBDal.getInstance().flush();
+      APRM_MatchingUtility.setNotProcessingReconciliation(reconciliation.getId());
     }
     return result;
   }

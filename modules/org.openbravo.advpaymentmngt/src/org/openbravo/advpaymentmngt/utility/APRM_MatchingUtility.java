@@ -20,10 +20,15 @@
 package org.openbravo.advpaymentmngt.utility;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.LockOptions;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
@@ -33,11 +38,13 @@ import org.openbravo.advpaymentmngt.process.FIN_ReconciliationProcess;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.model.financialmgmt.cashmgmt.BankStatementLine;
@@ -448,18 +455,80 @@ public class APRM_MatchingUtility {
   }
 
   /**
-   * Wait till the a reconciliation is not in process
+   * Wait till a reconciliation is not being processed by an active session different from the
+   * current context session
    * 
    * @param reconciliation
    *          The reconciliation that is being processing
    */
-  public static void wait(FIN_Reconciliation reconciliation) {
-    while (reconciliation.isProcessNow()) {
-      long t0, t1;
-      t0 = System.currentTimeMillis();
-      do {
-        t1 = System.currentTimeMillis();
-      } while ((t1 - t0) < 200);
+  public static void waitIfNecessary(FIN_Reconciliation reconciliation) throws InterruptedException {
+    try {
+      OBContext.setAdminMode(true);
+      final String contextSessionId = getContextSessionId();
+      final String reconciliationProcessSessionId = reconciliation.getAprmProcessingSession();
+      Session reconciliationProcessSession = null;
+
+      if (StringUtils.isNotBlank(reconciliationProcessSessionId)) {
+        reconciliationProcessSession = OBDal.getInstance().get(Session.class,
+            reconciliationProcessSessionId);
+      }
+      while (reconciliation.isProcessNow()
+          && !StringUtils.equals(contextSessionId, reconciliationProcessSessionId)
+          && reconciliationProcessSession != null && reconciliationProcessSession.isSessionActive()) {
+        TimeUnit.MILLISECONDS.sleep(200);
+        OBDal.getInstance().refresh(reconciliation);
+        if (reconciliationProcessSession != null) {
+          OBDal.getInstance().refresh(reconciliationProcessSession);
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
+
+  /**
+   * Returns the current context session ID (from HttpSession)
+   * 
+   * @return ID with the #AD_SESSION_ID
+   */
+  public static String getContextSessionId() {
+    final HttpSession httpSession = RequestContext.get().getSession();
+    return (String) httpSession.getAttribute("#AD_SESSION_ID");
+  }
+
+  /**
+   * Sets the reconciliation as being processed pointing to the session ID that have requested it
+   * and flushes to the database
+   * 
+   */
+  public static void setProcessingReconciliation(final FIN_Reconciliation reconciliation)
+      throws InterruptedException, SQLException {
+    waitIfNecessary(reconciliation);
+    reconciliation.setProcessNow(true);
+    reconciliation.setAprmProcessingSession(getContextSessionId());
+    OBDal.getInstance().save(reconciliation);
+    OBDal.getInstance().flush();
+    OBDal.getInstance().getConnection().commit();
+  }
+
+  /**
+   * Sets the reconciliation as not being processed, removes the information about the session ID
+   * that previously processed it and flushes to the database
+   * 
+   */
+  public static void setNotProcessingReconciliation(final String reconciliationId) {
+    try {
+      OBContext.setAdminMode(true);
+      final FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
+          reconciliationId);
+      reconciliation.setProcessNow(false);
+      reconciliation.setAprmProcessingSession(null);
+      OBDal.getInstance().save(reconciliation);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    OBDal.getInstance().flush();
+  }
+
 }

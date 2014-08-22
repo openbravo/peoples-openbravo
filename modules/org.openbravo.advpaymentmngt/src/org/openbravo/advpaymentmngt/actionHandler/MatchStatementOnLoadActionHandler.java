@@ -63,6 +63,7 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     JSONObject jsonResponse = new JSONObject();
     OBContext.setAdminMode(true);
+
     VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
         OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
             .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
@@ -82,13 +83,7 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       int reconciledItems = 0;
       if (reconciliation != null) {
         strReconciliationId = reconciliation.getId();
-        if (reconciliation.isProcessNow()) {
-          APRM_MatchingUtility.wait(reconciliation);
-        }
-        reconciliation.setProcessNow(true);
-        OBDal.getInstance().save(reconciliation);
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getConnection().commit();
+        APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
 
         List<FIN_FinaccTransaction> mixedLines = APRM_MatchingUtility
             .getManualReconciliationLines(reconciliation);
@@ -146,13 +141,7 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
           reconciliation = MatchTransactionDao.addNewReconciliation(conn, vars,
               strFinancialAccountId);
           strReconciliationId = reconciliation.getId();
-          if (reconciliation.isProcessNow()) {
-            APRM_MatchingUtility.wait(reconciliation);
-          }
-          reconciliation.setProcessNow(true);
-          OBDal.getInstance().save(reconciliation);
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getConnection().commit();
+          APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
           getSnapShot(reconciliation);
         } else {
           updateReconciliation(conn, vars, reconciliation.getId(), strFinancialAccountId, false);
@@ -236,11 +225,7 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       }
     } finally {
       OBContext.restorePreviousMode();
-      FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
-          strReconciliationId);
-      reconciliation.setProcessNow(false);
-      OBDal.getInstance().save(reconciliation);
-      OBDal.getInstance().flush();
+      APRM_MatchingUtility.setNotProcessingReconciliation(strReconciliationId);
     }
     return jsonResponse;
   }
