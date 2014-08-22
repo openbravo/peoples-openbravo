@@ -193,9 +193,26 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (!canFilter) {
       this.filterEditorProperties.visibility = 'hidden';
     }
+
+    this.isExpandedRecordAutoFitRedrawAlreadyAplied = false;
+
     this.Super('initWidget', arguments);
 
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Grid_' + this.parameterName + '_' + this.contentView.view.processId, this);
+  },
+
+  redraw: function () {
+    var ret = this.Super('redraw', arguments);
+    if (this.autoFitFieldWidths && this.view && this.view.isExpandedRecord && !this.isExpandedRecordAutoFitRedrawAlreadyAplied) {
+      // There is a problem with the grid calculating the auto fit field width if it is opened inside an expanded record.
+      // Also, the "_updateFieldWidths" ListGrid function cannot be overwritten.
+      // With this the re-calculation is forced once the grid has been already drawn in its place, so the auto fit field width can be properly calculated.
+      this.setAutoFitFieldWidths(false);
+      this.setAutoFitFieldWidths(true);
+      // Flag to ensure that this logic only is executed once and not each time the grid be resized.
+      this.isExpandedRecordAutoFitRedrawAlreadyAplied = true;
+    }
+    return ret;
   },
 
   evaluateDisplayLogicForGridColumns: function () {
