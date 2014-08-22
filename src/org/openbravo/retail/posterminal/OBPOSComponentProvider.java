@@ -50,6 +50,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
   public static final String QUALIFIER = "OBPOS_Main";
   public static final String APP_FORMAT = "ApplicationFormats";
 
+  private List<ComponentResource> globalResources = null;
+
   @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
     final BaseComponent component = createComponent(componentId, parameters);
@@ -67,14 +69,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     throw new IllegalArgumentException("Component id " + componentId + " not supported.");
   }
 
-  final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
-
   @Override
   public synchronized List<ComponentResource> getGlobalComponentResources() {
-    if (globalResources.size() > 0) {
+    if (globalResources != null) {
       return globalResources;
     }
-    globalResources.clear();
+    globalResources = new ArrayList<ComponentResource>();
 
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/js/";
 
