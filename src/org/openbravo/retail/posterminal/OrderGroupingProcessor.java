@@ -19,6 +19,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.LockOptions;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
@@ -215,6 +216,15 @@ public class OrderGroupingProcessor {
             OBDal.getInstance().getSession().evict(olSplitted);
           }
         }
+
+        OBDal.getInstance().flush();
+        OBDal.getInstance().getSession().clear();
+        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
+            .lock(invoice.ENTITY_NAME, invoice);
+        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
+            .lock(paymentSchedule.ENTITY_NAME, paymentSchedule);
+        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
+            .lock(origPaymentSchedule.ENTITY_NAME, origPaymentSchedule);
       }
 
     } finally {
@@ -223,6 +233,8 @@ public class OrderGroupingProcessor {
 
     finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule,
         cashUpDate);
+    OBDal.getInstance().getSession().clear();
+
     // The commit will be done in ProcessCashClose.java (flush), Transactional process.
     // OBDal.getInstance().getConnection().commit();
     long t3 = System.currentTimeMillis();
