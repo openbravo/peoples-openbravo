@@ -85,38 +85,8 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
         strReconciliationId = reconciliation.getId();
         APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
 
-        List<FIN_FinaccTransaction> mixedLines = APRM_MatchingUtility
-            .getManualReconciliationLines(reconciliation);
-        if (mixedLines.size() > 0) {
-          // Fix mixing Reconciliation and log the issue
-          log.warn("Mixing Reconciliations: An error occured which left an inconsistent status for the current reconciliation: "
-              + reconciliation.getIdentifier());
-          OBContext.setAdminMode(false);
-          try {
-            for (FIN_FinaccTransaction mixedLine : mixedLines) {
-              APRM_MatchingUtility.fixMixedLine(mixedLine);
-              log.warn("Fixing Mixed Line (transaction appears as cleared but no bank statement line is linked to it): "
-                  + mixedLine.getLineNo() + " - " + mixedLine.getIdentifier());
-            }
-            OBDal.getInstance().flush();
-          } finally {
-            OBContext.restorePreviousMode();
-          }
-        }
-        // Check if problem remains
-        mixedLines = APRM_MatchingUtility.getManualReconciliationLines(reconciliation);
-        if (mixedLines.size() > 0) {
-          OBDal.getInstance().rollbackAndClose();
-          OBError message = Utility.translateError(conn, vars, vars.getLanguage(), Utility
-              .parseTranslation(conn, vars, vars.getLanguage(), "@APRM_ReconciliationMixed@"));
-          jsonResponse = new JSONObject();
-          JSONObject errorMessage = new JSONObject();
-          errorMessage.put("severity", message.getType().toLowerCase());
-          errorMessage.put("title", message.getTitle());
-          errorMessage.put("text", message.getMessage());
-          jsonResponse.put("message", errorMessage);
-          return jsonResponse;
-        }
+        APRM_MatchingUtility.fixMixedLines(reconciliation, log);
+
         OBContext.setAdminMode();
         try {
           getSnapShot(reconciliation);

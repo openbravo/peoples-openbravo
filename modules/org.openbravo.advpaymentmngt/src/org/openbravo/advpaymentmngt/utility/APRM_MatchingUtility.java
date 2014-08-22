@@ -44,6 +44,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
@@ -87,6 +88,46 @@ public class APRM_MatchingUtility {
       return result;
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Fix wrong financial transactions of a reconciliation. If the fix is not possible, it launches
+   * an OBException
+   * 
+   * @param mixedLine
+   *          The financial transaction to be fixed
+   * @param log
+   *          to log warning messages about the process. It can be null
+   */
+  public static void fixMixedLines(FIN_Reconciliation reconciliation, Logger log) {
+    List<FIN_FinaccTransaction> mixedLines = APRM_MatchingUtility
+        .getManualReconciliationLines(reconciliation);
+    if (mixedLines.size() > 0) {
+      // Fix mixing Reconciliation and log the issue
+      if (log != null) {
+        log.warn("Mixing Reconciliations: An error occured which left an inconsistent status for the current reconciliation: "
+            + reconciliation.getIdentifier());
+      }
+      OBContext.setAdminMode(false);
+      try {
+        for (FIN_FinaccTransaction mixedLine : mixedLines) {
+          APRM_MatchingUtility.fixMixedLine(mixedLine);
+          if (log != null) {
+            log.warn("Fixing Mixed Line (transaction appears as cleared but no bank statement line is linked to it): "
+                + mixedLine.getLineNo() + " - " + mixedLine.getIdentifier());
+          }
+        }
+        OBDal.getInstance().flush();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    }
+    // Check if problem remains
+    mixedLines = APRM_MatchingUtility.getManualReconciliationLines(reconciliation);
+
+    if (!mixedLines.isEmpty()) {
+      throw new OBException(OBMessageUtils.messageBD("@APRM_ReconciliationMixed@"));
     }
   }
 
