@@ -335,6 +335,7 @@
       this.get('dataSyncModels').push({
         model: OB.Model.Order,
         className: 'org.openbravo.retail.posterminal.OrderLoader',
+        timeout: 60000,
         criteria: {
           hasbeenpaid: 'Y'
         }
@@ -352,6 +353,7 @@
       this.get('dataSyncModels').push({
         model: OB.Model.CashUp,
         className: 'org.openbravo.retail.posterminal.ProcessCashClose',
+        timeout: 600000,
         criteria: {
           isbeingprocessed: 'Y'
         },
