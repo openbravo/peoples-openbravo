@@ -139,6 +139,11 @@ public abstract class AuthenticationManager {
       localAdress = HttpBaseUtils.getLocalAddress(request);
     }
 
+    // if we are in 'forceLogin' model there is no need to process any other code
+    if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
+      return null;
+    }
+
     final String userId = doAuthenticate(request, response);
 
     final VariablesSecureApp vars = new VariablesSecureApp(request, false);
