@@ -41,6 +41,8 @@ import org.openbravo.client.kernel.ComponentProvider;
 public class DataSourceComponentProvider extends BaseComponentProvider {
   public final static String QUALIFIER = DataSourceConstants.DS_COMPONENT_TYPE;
 
+  private List<ComponentResource> globalResources = null;
+
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;
 
@@ -75,18 +77,16 @@ public class DataSourceComponentProvider extends BaseComponentProvider {
     return dataSourceComponent;
   }
 
-  final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
-
   /**
    * @return an empty String (no global resources)
    * @see org.openbravo.client.kernel.ComponentProvider#getGlobalComponentResources()
    */
   @Override
   public synchronized List<ComponentResource> getGlobalComponentResources() {
-    if (globalResources.size() > 0) {
+    if (globalResources != null) {
       return globalResources;
     }
-    globalResources.clear();
+    globalResources = new ArrayList<ComponentResource>();
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.service.datasource/js/ob-datasource-utilities.js", true));
