@@ -139,7 +139,7 @@ public abstract class AuthenticationManager {
       localAdress = HttpBaseUtils.getLocalAddress(request);
     }
 
-    // if we are in 'forceLogin' model there is no need to process any other code
+    // if we in 'forceLogin' state, there is no need to process any other code
     if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
       return null;
     }
