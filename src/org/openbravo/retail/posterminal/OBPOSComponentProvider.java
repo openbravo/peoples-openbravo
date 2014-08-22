@@ -79,6 +79,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/js/";
 
     final String[] resourceDependency = {
+        "main",
         "model/changedbusinesspartners",
         "model/changedbplocation",
         "model/order",
@@ -119,7 +120,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalnoteditableorder",
         "components/modalnoteditableline",
         "components/obpos-approval",
-        "main",
         // Web POS window
         "utils/cashUpReportUtils",
         "components/keypadcoins",

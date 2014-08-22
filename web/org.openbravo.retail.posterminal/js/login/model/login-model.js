@@ -15,20 +15,6 @@
   // global components.
   OB = window.OB || {};
 
-  // add WebSQL database version for WebPOS
-  OB.UTIL.VersionManagement.current.posterminal = {
-    rootName: 'RR14Q',
-    major: '4',
-    minor: '0'
-  };
-  OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase = {
-    name: 'WEBPOS',
-    size: 4 * 1024 * 1024,
-    displayName: 'Openbravo Web POS',
-    major: '0',
-    minor: '7'
-  };
-
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
     initialize: function () {
       var me = this;
