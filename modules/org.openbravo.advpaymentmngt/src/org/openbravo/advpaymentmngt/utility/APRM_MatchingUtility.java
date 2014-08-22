@@ -97,26 +97,22 @@ public class APRM_MatchingUtility {
    * 
    * @param mixedLine
    *          The financial transaction to be fixed
-   * @param log
-   *          to log warning messages about the process. It can be null
    */
-  public static void fixMixedLines(FIN_Reconciliation reconciliation, Logger log) {
+  public static void fixMixedLines(FIN_Reconciliation reconciliation) {
     List<FIN_FinaccTransaction> mixedLines = APRM_MatchingUtility
         .getManualReconciliationLines(reconciliation);
     if (mixedLines.size() > 0) {
       // Fix mixing Reconciliation and log the issue
-      if (log != null) {
-        log.warn("Mixing Reconciliations: An error occured which left an inconsistent status for the current reconciliation: "
-            + reconciliation.getIdentifier());
-      }
+      log4j
+          .warn("Mixing Reconciliations: An error occured which left an inconsistent status for the current reconciliation: "
+              + reconciliation.getIdentifier());
       OBContext.setAdminMode(false);
       try {
         for (FIN_FinaccTransaction mixedLine : mixedLines) {
           APRM_MatchingUtility.fixMixedLine(mixedLine);
-          if (log != null) {
-            log.warn("Fixing Mixed Line (transaction appears as cleared but no bank statement line is linked to it): "
-                + mixedLine.getLineNo() + " - " + mixedLine.getIdentifier());
-          }
+          log4j
+              .warn("Fixing Mixed Line (transaction appears as cleared but no bank statement line is linked to it): "
+                  + mixedLine.getLineNo() + " - " + mixedLine.getIdentifier());
         }
         OBDal.getInstance().flush();
       } finally {

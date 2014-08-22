@@ -79,7 +79,7 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
         strReconciliationId = reconciliation.getId();
         APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
 
-        APRM_MatchingUtility.fixMixedLines(reconciliation, log);
+        APRM_MatchingUtility.fixMixedLines(reconciliation);
       }
       if (MatchTransactionDao.getUnMatchedBankStatementLines(account).size() == 0
           && reconciledItems == 0) {
