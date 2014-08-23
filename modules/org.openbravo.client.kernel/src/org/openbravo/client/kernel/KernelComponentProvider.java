@@ -37,8 +37,6 @@ import org.openbravo.dal.core.OBContext;
 public class KernelComponentProvider extends BaseComponentProvider {
   public static final String QUALIFIER = KernelConstants.KERNEL_COMPONENT_TYPE;
 
-  private List<ComponentResource> globalResources = null;
-
   /*
    * (non-Javadoc)
    * 
@@ -82,12 +80,14 @@ public class KernelComponentProvider extends BaseComponentProvider {
     return versionParam;
   }
 
+  final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
+
   @Override
   public synchronized List<ComponentResource> getGlobalComponentResources() {
-    if (globalResources != null) {
+    if (globalResources.size() > 0) {
       return globalResources;
     }
-    globalResources = new ArrayList<ComponentResource>();
+    globalResources.clear();
 
     globalResources.add(createStaticResource("org.openbravo.client.kernel/"
         + KernelConstants.KERNEL_COMPONENT_TYPE + "/" + KernelConstants.APPLICATION_COMPONENT_ID,
