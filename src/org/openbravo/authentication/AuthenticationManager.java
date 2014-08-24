@@ -147,7 +147,7 @@ public abstract class AuthenticationManager {
     }
 
     // if we in 'forceLogin' state, there is no need to process any other code
-    if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
+    if (userId == null && "Y".equals(request.getSession().getAttribute("forceLogin"))) {
       return null;
     }
 
