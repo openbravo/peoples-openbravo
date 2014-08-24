@@ -139,16 +139,16 @@ public abstract class AuthenticationManager {
       localAdress = HttpBaseUtils.getLocalAddress(request);
     }
 
-    // if we in 'forceLogin' state, there is no need to process any other code
-    if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
-      return null;
-    }
-
     final String userId = doAuthenticate(request, response);
 
     final VariablesSecureApp vars = new VariablesSecureApp(request, false);
     if (StringUtils.isEmpty(vars.getSessionValue("#AD_SESSION_ID"))) {
       setDBSession(request, userId, SUCCESS_SESSION_STANDARD, true);
+    }
+
+    // if we in 'forceLogin' state, there is no need to process any other code
+    if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
+      return null;
     }
 
     // A restricted resource can define a custom login URL
