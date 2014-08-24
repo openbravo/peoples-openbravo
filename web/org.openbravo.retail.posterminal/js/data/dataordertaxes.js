@@ -74,6 +74,7 @@
           // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)
           OB.UTIL.HookManager.executeHooks('OBPOS_FindTaxRate', {
             context: me,
+            line: element,
             sql: sql
           }, function (args) {
             OB.Dal.query(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
@@ -365,6 +366,7 @@
             // or if toCountryId and toRegionId are nulls then will be ordered by validfromdate)
             OB.UTIL.HookManager.executeHooks('OBPOS_FindTaxRate', {
               context: me,
+              line: element,
               sql: sql
             }, function (args) {
               OB.Dal.query(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
