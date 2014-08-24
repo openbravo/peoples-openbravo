@@ -47,7 +47,7 @@
   </script>
 
   <script>
-    if ((typeof OB !== "undefined") && (typeof OB.POS !== "undefined")) {
+    if ((typeof OB !== 'undefined') && (typeof OB.POS !== 'undefined')) {
       OB.POS.terminal = new OB.UI.Terminal({
         terminal: OB.POS.modelterminal
       });
