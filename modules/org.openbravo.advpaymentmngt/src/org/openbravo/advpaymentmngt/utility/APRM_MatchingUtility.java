@@ -261,20 +261,20 @@ public class APRM_MatchingUtility {
             ma.getJavaClassName());
         matchingTransaction.unmatch(finTrans);
 
+        OBDal.getInstance().getConnection().commit();
+
         // Do not allow bank statement lines of 0
         if (bsline.getCramount().compareTo(BigDecimal.ZERO) == 0
             && bsline.getDramount().compareTo(BigDecimal.ZERO) == 0) {
           FIN_BankStatement bs = bsline.getBankStatement();
           bs.setProcessed(false);
           OBDal.getInstance().save(bs);
-          OBDal.getInstance().flush();
           OBDal.getInstance().remove(bsline);
-          OBDal.getInstance().flush();
+          OBDal.getInstance().getConnection().commit();
           bs.setProcessed(true);
           OBDal.getInstance().save(bs);
           OBDal.getInstance().flush();
         }
-        OBDal.getInstance().getConnection().commit();
       }
     } catch (Exception e) {
       throw new OBException(e);
