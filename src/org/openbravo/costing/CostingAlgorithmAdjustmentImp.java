@@ -154,8 +154,15 @@ public abstract class CostingAlgorithmAdjustmentImp {
   protected CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction trx,
       BigDecimal adjustmentamt, CostAdjustmentLine parentLine) {
     Date dateAcct = trx.getMovementDate();
-    if (parentLine != null && dateAcct.before(parentLine.getAccountingDate())) {
-      dateAcct = parentLine.getAccountingDate();
+    if (parentLine != null) {
+      Date parentAcctDate = parentLine.getAccountingDate();
+      if (parentAcctDate == null) {
+        parentAcctDate = parentLine.getInventoryTransaction().getMovementDate();
+      }
+
+      if (dateAcct.before(parentAcctDate)) {
+        dateAcct = parentAcctDate;
+      }
     }
     CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
         (CostAdjustment) OBDal.getInstance().getProxy(CostAdjustment.ENTITY_NAME, strCostAdjId),
