@@ -64,7 +64,14 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
     if (context.has("issotrx") && !context.isNull("issotrx")) {
       document = context.getString("trxtype");
     }
-    if ("BPD".equals(document) || "RCIN".equals(document)) {
+    if (document != null) {
+      if ("BPD".equals(document) || "RCIN".equals(document)) {
+        return false;
+      } else {
+        return true;
+      }
+    } else if ((context.has("inpwindowId") && context.get("inpwindowId").equals(
+        "94EAA455D2644E04AB25D93BE5157B6D"))) {
       return false;
     } else {
       return true;
