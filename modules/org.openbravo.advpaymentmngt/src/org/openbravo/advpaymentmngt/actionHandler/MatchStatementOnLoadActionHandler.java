@@ -94,13 +94,12 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
           msg.put("msgType", "error");
           msg.put("msgTitle", message.getTitle());
           msg.put("msgText", message.getMessage());
-          // msg.put("force", true);
+          msg.put("force", true);
           JSONObject msgTotalAction = new JSONObject();
           msgTotalAction.put("showMsgInProcessView", msg);
           actions.put(msgTotalAction);
 
           jsonResponse.put("responseActions", actions);
-          jsonResponse.put("retryExecution", true);
           return jsonResponse;
         }
         /* Run the automatic matching algorithm */
@@ -113,14 +112,19 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       log.error("Exception handling the match statement", e);
 
       try {
+        JSONArray actions = new JSONArray();
         jsonResponse = new JSONObject();
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         JSONObject errorMessage = new JSONObject();
-        errorMessage.put("severity", "error");
-        errorMessage.put("text", message);
-        jsonResponse.put("message", errorMessage);
-
+        errorMessage.put("msgType", "error");
+        errorMessage.put("msgTitle", "Error");
+        errorMessage.put("msgText", message);
+        errorMessage.put("force", true);
+        JSONObject msgErrorlAction = new JSONObject();
+        msgErrorlAction.put("showMsgInProcessView", errorMessage);
+        actions.put(msgErrorlAction);
+        jsonResponse.put("responseActions", actions);
       } catch (Exception ignore) {
       }
     } finally {

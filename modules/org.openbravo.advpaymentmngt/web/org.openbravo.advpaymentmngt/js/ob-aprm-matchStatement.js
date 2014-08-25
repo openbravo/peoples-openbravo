@@ -33,6 +33,9 @@ OB.APRM.MatchStatement.onLoad = function (view) {
     }
     params.executeMatching = ok;
     onProcessCallbak = function (response, data, request) {
+      if (data.responseActions) {
+        OB.Utilities.Action.executeJSON(data.responseActions, null, null, view);
+      }
       grid.dataSource = grid.dataSourceOrig;
       view.onRefreshFunction(view);
     };
