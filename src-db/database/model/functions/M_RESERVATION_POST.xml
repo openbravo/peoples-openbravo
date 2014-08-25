@@ -278,16 +278,6 @@ BEGIN
 
       v_newstatus := 'CO';
       v_newaction := 'HO';
-      /* Do not process reservation's with no lines
-      */
-      v_countlines:=0;
-      SELECT COUNT(*) INTO v_countlines
-        FROM m_reservation_stock
-        WHERE m_reservation_id = v_reservation_id;
-      IF(v_countlines = 0) THEN
-	v_newstatus:='DR';
-	v_newaction:='PR';
-      END IF;
 
     END;
 
@@ -417,6 +407,23 @@ BEGIN
     -- ADD RESERVED STOCK
     M_RESERVE_STOCK_AUTO(v_reservation_id, v_user_id, v_message);
   END IF;
+
+  /* Do not process reservation's with no lines
+      */
+      v_countlines:=0;
+      SELECT COUNT(*) INTO v_countlines
+        FROM m_reservation_stock
+        WHERE m_reservation_id = v_reservation_id;
+      IF(v_countlines = 0) THEN
+        v_newstatus:='DR';
+        v_newaction:='PR';
+	UPDATE m_reservation
+          SET res_status = v_newstatus,
+              res_process = v_newaction,
+              updated = now(),
+              updatedby = v_user_id
+        WHERE m_reservation_id = v_reservation_id;
+      END IF;
 
   IF (p_pinstance_id IS NOT NULL) THEN
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
