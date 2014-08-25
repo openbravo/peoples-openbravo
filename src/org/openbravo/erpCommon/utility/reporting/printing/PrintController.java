@@ -815,7 +815,7 @@ public class PrintController extends HttpSecureAppServlet {
     try {
       EmailManager.sendEmail(host, auth, username, password, connSecurity, port, senderAddress,
           recipientTO, recipientCC, recipientBCC, replyTo, emailSubject, emailBody, contentType,
-          attachments, null, null);
+          attachments, new Date(), null);
     } catch (Exception exception) {
       log4j.error(exception);
       final String exceptionClass = exception.getClass().toString().replace("class ", "");
