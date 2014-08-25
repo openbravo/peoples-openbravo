@@ -558,7 +558,7 @@ public class APRM_MatchingUtility {
         whereClause.append(" and  bsl.").append(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE)
             .append(" <= :endingdate");
       }
-      whereClause.append("   and fat is null");
+      whereClause.append("   and bsl.financialAccountTransaction is null");
       whereClause.append(" order by bsl.").append(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE);
       whereClause.append(", bsl.").append(FIN_BankStatementLine.PROPERTY_LINENO);
       whereClause.append(", bsl.").append(FIN_BankStatementLine.PROPERTY_BPARTNERNAME);
