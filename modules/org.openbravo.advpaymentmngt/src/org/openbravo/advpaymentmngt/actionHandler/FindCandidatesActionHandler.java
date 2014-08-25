@@ -102,8 +102,7 @@ public class FindCandidatesActionHandler extends BaseActionHandler {
       }
 
       if (finTrans != null) {
-        APRM_MatchingUtility.matchBankStatementLine(strBankStatementLineId, finTrans.getId(),
-            reconciliation.getId(), null);
+        APRM_MatchingUtility.matchBankStatementLine(bsline, finTrans, reconciliation, null);
       }
 
       String message = "Ok";

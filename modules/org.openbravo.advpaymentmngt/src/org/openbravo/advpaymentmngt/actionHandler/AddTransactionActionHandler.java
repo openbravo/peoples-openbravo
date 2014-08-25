@@ -46,6 +46,7 @@ import org.openbravo.model.financialmgmt.accounting.Costcenter;
 import org.openbravo.model.financialmgmt.accounting.UserDimension1;
 import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.gl.GLItem;
+import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -115,6 +116,9 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     ConnectionProvider conn = new DalConnectionProvider(true);
     try {
+      final FIN_BankStatementLine bankStatementLine = OBDal.getInstance().get(
+          FIN_BankStatementLine.class, strFinBankStatementLineId);
+
       // SALES = DEPOSIT
       // PURCHASE = PAYMENT
       if (!strTransactionType.equals("BF") && (!selectedPaymentsIds.equals("null"))) { // Payment
@@ -149,8 +153,8 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
           if (!"".equals(strFinBankStatementLineId)) {
             FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal
                 .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
-            APRM_MatchingUtility.matchBankStatementLine(strFinBankStatementLineId,
-                finTrans.getId(), reconciliation.getId(), null);
+            APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, finTrans,
+                reconciliation, null);
           }
         }
 
@@ -220,8 +224,8 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
 
           FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal
               .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
-          APRM_MatchingUtility.matchBankStatementLine(strFinBankStatementLineId, finTrans.getId(),
-              reconciliation.getId(), null);
+          APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, finTrans, reconciliation,
+              null);
         }
       }
       if (strTransactionType.equals("BF")) { // Bank Fee
@@ -246,8 +250,8 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
         if (!"".equals(strFinBankStatementLineId)) {
           FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal
               .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
-          APRM_MatchingUtility.matchBankStatementLine(strFinBankStatementLineId, finTrans.getId(),
-              reconciliation.getId(), null);
+          APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, finTrans, reconciliation,
+              null);
         }
       }
 

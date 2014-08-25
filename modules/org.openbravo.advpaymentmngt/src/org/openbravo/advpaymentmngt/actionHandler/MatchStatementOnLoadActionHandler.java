@@ -18,37 +18,35 @@
  */
 package org.openbravo.advpaymentmngt.actionHandler;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchedTransaction;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchingTransaction;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.model.financialmgmt.payment.MatchingAlgorithm;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,111 +58,54 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     JSONObject jsonResponse = new JSONObject();
-    OBContext.setAdminMode(true);
-
-    String strReconciliationId = "";
+    String strReconciliationId = null;
     try {
-      JSONObject context = null;
-      if (parameters.get("context") != null) {
-        context = new JSONObject((String) parameters.get("context"));
-      }
-      String strFinancialAccountId = context.getString("inpfinFinancialAccountId");
-      FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          strFinancialAccountId);
+      OBContext.setAdminMode(true);
+
+      final JSONObject context = new JSONObject((String) parameters.get("context"));
+      final String strFinancialAccountId = context.getString("Fin_Financial_Account_ID");
+      boolean executeAutoMatchingAlgm = "true".equals(parameters.get("executeMatching")) ? true
+          : false;
+
+      final FIN_FinancialAccount financialAccount = OBDal.getInstance().get(
+          FIN_FinancialAccount.class, strFinancialAccountId);
+
+      /* Get the right reconciliation */
       FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal.getInstance()
           .get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
-      boolean executeMatching = "true".equals(parameters.get("executeMatching")) ? true : false;
-      int reconciledItems = 0;
-      if (reconciliation != null) {
-        strReconciliationId = reconciliation.getId();
-        APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
+      if (reconciliation == null) {
+        // Create a new reconciliation
+        reconciliation = APRM_MatchingUtility.addNewDraftReconciliation(financialAccount);
 
-        APRM_MatchingUtility.fixMixedLines(reconciliation);
-      }
-      if (MatchTransactionDao.getUnMatchedBankStatementLines(account).size() == 0
-          && reconciledItems == 0) {
-        OBError message = OBMessageUtils.translateError("@APRM_NoStatementsToMatch@");
-        jsonResponse = new JSONObject();
-        JSONObject errorMessage = new JSONObject();
-        errorMessage.put("severity", message.getType().toLowerCase());
-        errorMessage.put("title", message.getTitle());
-        errorMessage.put("text", message.getMessage());
-        jsonResponse.put("message", errorMessage);
-        return jsonResponse;
       } else {
-        VariablesSecureApp vars = new VariablesSecureApp(
-            OBContext.getOBContext().getUser().getId(), OBContext.getOBContext().getCurrentClient()
-                .getId(), OBContext.getOBContext().getCurrentOrganization().getId(), OBContext
-                .getOBContext().getRole().getId());
-        ConnectionProvider conn = new DalConnectionProvider();
-        if (reconciliation == null) {
-          reconciliation = MatchTransactionDao.addNewReconciliation(conn, vars,
-              strFinancialAccountId);
-          strReconciliationId = reconciliation.getId();
-          APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
-        } else {
-          updateReconciliation(conn, vars, reconciliation.getId(), strFinancialAccountId, false);
-        }
+        // Reuse last reconciliation
+        APRM_MatchingUtility.fixMixedLines(reconciliation);
+        updateReconciliation(reconciliation, financialAccount, false);
       }
+      strReconciliationId = reconciliation.getId();
 
-      FIN_FinancialAccount financial = new AdvPaymentMngtDao().getObject(
-          FIN_FinancialAccount.class, strFinancialAccountId);
-      MatchingAlgorithm ma = financial.getMatchingAlgorithm();
-      FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
-          ma.getJavaClassName());
-      List<FIN_BankStatementLine> bankLines = MatchTransactionDao.getMatchingBankStatementLines(
-          strFinancialAccountId, strReconciliationId, "ALL", "N");
-      List<FIN_FinaccTransaction> excluded = new ArrayList<FIN_FinaccTransaction>();
+      if (executeAutoMatchingAlgm) {
+        /* Verify we have something left to match */
+        if (MatchTransactionDao.getUnMatchedBankStatementLines(financialAccount).isEmpty()) {
+          OBError message = OBMessageUtils.translateError("@APRM_NoStatementsToMatch@");
+          JSONArray actions = new JSONArray();
+          JSONObject msg = new JSONObject();
+          // FIXME warning
+          msg.put("msgType", "error");
+          msg.put("msgTitle", message.getTitle());
+          msg.put("msgText", message.getMessage());
+          // msg.put("force", true);
+          JSONObject msgTotalAction = new JSONObject();
+          msgTotalAction.put("showMsgInProcessView", msg);
+          actions.put(msgTotalAction);
 
-      // Change for scrollable results (update the previous method to return a scrollable results)
-      for (FIN_BankStatementLine bankStatementLine : bankLines) {
-        // boolean alreadyMatched = false;
-        // String matchingType = bankStatementLine.getMatchingtype();
-        FIN_FinaccTransaction transaction = bankStatementLine.getFinancialAccountTransaction();
-        if (transaction == null) {
-          FIN_MatchedTransaction matched = null;
-          if (executeMatching) {
-            // try to match if exception is thrown continue
-            try {
-              // long initMatchLine = System.currentTimeMillis();
-              matched = matchingTransaction.match(bankStatementLine, excluded);
-              // initMatch = initMatch + (System.currentTimeMillis() - initMatchLine);
-              OBDal.getInstance().getConnection().commit();
-            } catch (Exception e) {
-              OBDal.getInstance().rollbackAndClose();
-              bankStatementLine = OBDal.getInstance().get(FIN_BankStatementLine.class,
-                  bankStatementLine.getId());
-              // matchingType = bankStatementLine.getMatchingtype();
-              transaction = bankStatementLine.getFinancialAccountTransaction();
-              matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
-            }
-          } else {
-            matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
-          }
-          transaction = matched.getTransaction();
-          if (transaction != null) {
-            APRM_MatchingUtility.matchBankStatementLine(bankStatementLine.getId(),
-                transaction.getId(), strReconciliationId, matched.getMatchLevel());
-          }
-          // When hide flag checked then exclude matchings for transactions out of date range
-          // if ("Y".equals(strHideDate)
-          // && matched.getTransaction() != null
-          // && matched.getTransaction().getTransactionDate()
-          // .compareTo(reconciliation.getEndingDate()) > 0) {
-          // transaction = null;
-          // matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
-          // unmatch(bankStatementLine);
-          // bankStatementLine = OBDal.getInstance().get(FIN_BankStatementLine.class,
-          // bankStatementLine.getId());
-          // }
-          if (transaction != null) {
-            excluded.add(transaction);
-          }
-          // matchingType = matched.getMatchLevel();
+          jsonResponse.put("responseActions", actions);
+          jsonResponse.put("retryExecution", true);
+          return jsonResponse;
         }
-        // else {
-        // alreadyMatched = true;
-        // }
+        /* Run the automatic matching algorithm */
+        runAutoMatchingAlgorithm(strReconciliationId, strFinancialAccountId, financialAccount,
+            reconciliation);
       }
 
     } catch (Exception e) {
@@ -189,14 +130,45 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
     return jsonResponse;
   }
 
-  private boolean updateReconciliation(ConnectionProvider conn, VariablesSecureApp vars,
-      String strReconciliationId, String strFinancialAccountId, boolean process) {
-    OBContext.setAdminMode(true);
+  private void runAutoMatchingAlgorithm(String strReconciliationId,
+      final String strFinancialAccountId, final FIN_FinancialAccount financialAccount,
+      FIN_Reconciliation reconciliation) throws InterruptedException, SQLException {
+    APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
+    final MatchingAlgorithm ma = financialAccount.getMatchingAlgorithm();
+    final FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
+        ma.getJavaClassName());
+    final ScrollableResults bankLinesSR = APRM_MatchingUtility
+        .getPendingToBeMatchedBankStatementLines(strFinancialAccountId, strReconciliationId);
+    final List<FIN_FinaccTransaction> excluded = new ArrayList<FIN_FinaccTransaction>();
     try {
-      FIN_Reconciliation reconciliation = MatchTransactionDao.getObject(FIN_Reconciliation.class,
-          strReconciliationId);
-      FIN_FinancialAccount financialAccount = MatchTransactionDao.getObject(
-          FIN_FinancialAccount.class, strFinancialAccountId);
+      while (bankLinesSR.next()) {
+        final FIN_BankStatementLine bankStatementLine = (FIN_BankStatementLine) bankLinesSR.get(0);
+
+        FIN_MatchedTransaction matched;
+        // try to match if exception is thrown continue
+        try {
+          matched = matchingTransaction.match(bankStatementLine, excluded);
+        } catch (Exception e) {
+          matched = new FIN_MatchedTransaction(null, FIN_MatchedTransaction.NOMATCH);
+        }
+
+        FIN_FinaccTransaction transaction = matched.getTransaction();
+        if (transaction != null
+            && APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, transaction,
+                reconciliation, matched.getMatchLevel())) {
+          excluded.add(transaction);
+        }
+      }
+    } finally {
+      bankLinesSR.close();
+    }
+  }
+
+  private boolean updateReconciliation(final FIN_Reconciliation reconciliation,
+      final FIN_FinancialAccount financialAccount, boolean process) {
+    try {
+      OBContext.setAdminMode(true);
+
       if (MatchTransactionDao.islastreconciliation(reconciliation)) {
         Date maxBSLDate = MatchTransactionDao.getBankStatementLineMaxDate(financialAccount);
         reconciliation.setEndingDate(maxBSLDate);
@@ -218,15 +190,13 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       OBDal.getInstance().flush();
       if (process) {
         // Process Reconciliation
-        OBError myError = APRM_MatchingUtility.processReconciliation(conn, vars, "P",
-            reconciliation);
+        OBError myError = APRM_MatchingUtility.processReconciliation("P", reconciliation);
         if (myError != null && myError.getType().equalsIgnoreCase("error")) {
           throw new OBException(myError.getMessage());
         }
       }
     } catch (Exception ex) {
-      OBError menssage = Utility.translateError(conn, vars, vars.getLanguage(), ex.getMessage());
-      return false;
+      throw new OBException(ex.getMessage());
     } finally {
       OBContext.restorePreviousMode();
     }

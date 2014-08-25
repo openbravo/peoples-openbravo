@@ -29,6 +29,8 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.db.DbUtility;
@@ -53,14 +55,19 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
         final String strBankLineId = params.getString("bankStatementLineId");
         final String strSelectedTransactionId = selection.getJSONObject(0).getString("id");
 
-        // TODO, get the reconciliation inside the APRM_MatchingUtility.matchBankStatementLine
-        FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(
-            OBDal.getInstance().get(FIN_FinancialAccount.class,
-                jsonData.getString("inpfinFinancialAccountId")), "N");
-        APRM_MatchingUtility.matchBankStatementLine(strBankLineId, strSelectedTransactionId,
-            reconciliation.getId(), null);
+        final FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
+            jsonData.getString("inpfinFinancialAccountId"));
+        final FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(account,
+            "N");
+        final FIN_BankStatementLine bankStatementLine = OBDal.getInstance().get(
+            FIN_BankStatementLine.class, strBankLineId);
+        final FIN_FinaccTransaction transaction = OBDal.getInstance().get(
+            FIN_FinaccTransaction.class, strSelectedTransactionId);
+        APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, transaction, reconciliation,
+            null);
 
       } else {
+        // FIXME try to control this from the UI (disable Done if no record is selected)
         JSONArray actions = new JSONArray();
         JSONObject msg = new JSONObject();
         msg.put("msgType", "error");
