@@ -90,7 +90,11 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       JSONObject jsonRequest = new JSONObject(content);
       JSONObject jsonparams = jsonRequest.getJSONObject("_params");
 
-      openedFromMenu = "null".equals(parameters.get("windowId").toString()) ? true : false;
+      if (jsonRequest.has("inpwindowId") && jsonRequest.get("inpwindowId") != JSONObject.NULL) {
+        openedFromMenu = false;
+      } else {
+        openedFromMenu = "null".equals(parameters.get("windowId").toString()) ? true : false;
+      }
       if (jsonparams.has("bankStatementLineId")
           && jsonparams.get("bankStatementLineId") != JSONObject.NULL) {
         openedFromAddTransaction = "null".equals(jsonparams.get("bankStatementLineId").toString()) ? false
