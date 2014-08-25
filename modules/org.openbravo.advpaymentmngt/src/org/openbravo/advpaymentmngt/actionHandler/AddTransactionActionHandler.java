@@ -19,11 +19,11 @@
 package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
@@ -57,6 +57,7 @@ import org.openbravo.model.project.Project;
 import org.openbravo.model.sales.SalesRegion;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +79,7 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
 
       String strTransactionType = params.getString("trxtype");
       String strTransactionDate = params.getString("trxdate");
+      Date transactionDate = JsonUtils.createDateFormat().parse(strTransactionDate);
 
       String selectedPaymentsIds = "";
       if (params.has("fin_payment_id")) {
@@ -96,10 +98,10 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
         strDescription = params.getString("description");
       }
       createTransaction(strTabId, strFinancialAccountId, selectedPaymentsIds, strTransactionType,
-          strGLItemId, strTransactionDate, strFinBankStatementLineId, strDepositAmount,
+          strGLItemId, transactionDate, strFinBankStatementLineId, strDepositAmount,
           strWithdrawalamt, strDescription, params);
 
-    } catch (JSONException e) {
+    } catch (Exception e) {
       log.error("Error in process", e);
     }
     return jsonResponse;
@@ -107,7 +109,7 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
 
   private void createTransaction(String strTabId, String strFinancialAccountId,
       String selectedPaymentsIds, String strTransactionType, String strGLItemId,
-      String strTransactionDate, String strFinBankStatementLineId, String strDepositAmount,
+      Date transactionDate, String strFinBankStatementLineId, String strDepositAmount,
       String strWithdrawalamt, String strDescription, JSONObject params) {
     dao = new AdvPaymentMngtDao();
     String strMessage = "";
@@ -142,9 +144,8 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
               OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId),
               TransactionsDao.getTransactionMaxLineNo(OBDal.getInstance().get(
                   FIN_FinancialAccount.class, strFinancialAccountId)) + 10, p, description,
-              FIN_Utility.getDate(strTransactionDate), null, p.isReceipt() ? "RDNC" : "PWNC",
-              depositAmt, paymentAmt, null, null, null, p.isReceipt() ? "BPD" : "BPW",
-              FIN_Utility.getDate(strTransactionDate), p.getCurrency(),
+              transactionDate, null, p.isReceipt() ? "RDNC" : "PWNC", depositAmt, paymentAmt, null,
+              null, null, p.isReceipt() ? "BPD" : "BPW", transactionDate, p.getCurrency(),
               p.getFinancialTransactionConvertRate(), p.getAmount());
           OBError processTransactionError = processTransaction(vars, conn, "P", finTrans);
           if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
@@ -210,11 +211,11 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
 
         // Currency, Organization, paymentDate,
         FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(organization, account,
-            TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description, FIN_Utility
-                .getDate(strTransactionDate), glItem, isReceipt ? "RDNC" : "PWNC",
-            glItemDepositAmt, glItemPaymentAmt, project, campaign, activity, isReceipt ? "BPD"
-                : "BPW", FIN_Utility.getDate(strTransactionDate), null, null, null,
-            businessPartner, product, salesRegion, user1, user2, costcenter);
+            TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description,
+            transactionDate, glItem, isReceipt ? "RDNC" : "PWNC", glItemDepositAmt,
+            glItemPaymentAmt, project, campaign, activity, isReceipt ? "BPD" : "BPW",
+            transactionDate, null, null, null, businessPartner, product, salesRegion, user1, user2,
+            costcenter);
         OBError processTransactionError = processTransaction(vars, conn, "P", finTrans);
         if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
           throw new OBException(processTransactionError.getMessage());
@@ -239,9 +240,8 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
 
         FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(account.getOrganization(),
             account, TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description,
-            FIN_Utility.getDate(strTransactionDate), null, isReceipt ? "RDNC" : "PWNC",
-            feeDepositAmt, feePaymentAmt, null, null, null, "BF",
-            FIN_Utility.getDate(strTransactionDate), null, null, null);
+            transactionDate, null, isReceipt ? "RDNC" : "PWNC", feeDepositAmt, feePaymentAmt, null,
+            null, null, "BF", transactionDate, null, null, null);
         OBError processTransactionError = processTransaction(vars, conn, "P", finTrans);
         if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
           throw new OBException(processTransactionError.getMessage());
