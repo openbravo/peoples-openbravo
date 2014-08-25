@@ -198,7 +198,7 @@ public class APRM_MatchingUtility {
 
       if (transaction != null) {
         if (bankStatementLine.getFinancialAccountTransaction() != null) {
-          log4j.error("Bank Statement Line Already Matched: " + bankStatementLine.getIdentifier());
+          log4j.warn("Bank Statement Line Already Matched: " + bankStatementLine.getIdentifier());
           unmatch(bankStatementLine);
         }
         bankStatementLine.setFinancialAccountTransaction(transaction);
