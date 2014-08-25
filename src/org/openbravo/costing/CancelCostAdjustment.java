@@ -60,11 +60,10 @@ public class CancelCostAdjustment extends BaseActionHandler {
           costAdjustmentOrig.getOrganization(), strCategoryCostAdj);
       final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
       costAdjustmentCancel.setDocumentNo(docNo);
-
       costAdjustmentOrig.setCostAdjustmentCancel(costAdjustmentCancel);
       costAdjustmentOrig.setDocumentStatus("VO");
-      OBDal.getInstance().save(costAdjustmentCancel);
       OBDal.getInstance().save(costAdjustmentOrig);
+      OBDal.getInstance().save(costAdjustmentCancel);
       OBDal.getInstance().flush();
       // Call cost
       OBCriteria<CostAdjustmentLine> qLines = OBDal.getInstance().createCriteria(
@@ -91,6 +90,11 @@ public class CancelCostAdjustment extends BaseActionHandler {
         scrollLines.close();
       }
       JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentCancel);
+      CostAdjustment costAdjCancel = OBDal.getInstance().get(CostAdjustment.class,
+          costAdjustmentCancel.getId());
+      costAdjCancel.setDocumentStatus("VO");
+      OBDal.getInstance().save(costAdjCancel);
+      OBDal.getInstance().flush();
       result.put("message", message);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
