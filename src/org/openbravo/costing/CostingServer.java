@@ -236,7 +236,8 @@ public class CostingServer {
           transaction.getOrganization(), "BDT"); // BDT= Backdated transaction
 
       CostAdjustmentUtils.insertCostAdjustmentLine(transaction, costAdjustmentHeader, null,
-          Boolean.TRUE, OBDateUtils.getEndOfDay(transaction.getMovementDate()), null);
+          Boolean.TRUE, OBDateUtils.getEndOfDay(transaction.getMovementDate()),
+          transaction.getMovementDate());
 
       try {
         JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
