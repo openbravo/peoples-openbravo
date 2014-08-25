@@ -71,8 +71,8 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
         JSONArray actions = new JSONArray();
         JSONObject msg = new JSONObject();
         msg.put("msgType", "error");
-        msg.put("msgTitle", "Error");
-        msg.put("msgText", "No record selected");
+        msg.put("msgTitle", OBMessageUtils.messageBD("Error"));
+        msg.put("msgText", OBMessageUtils.messageBD("APRM_SELECT_RECORD_ERROR"));
         msg.put("force", true);
         JSONObject msgTotalAction = new JSONObject();
         msgTotalAction.put("showMsgInProcessView", msg);
