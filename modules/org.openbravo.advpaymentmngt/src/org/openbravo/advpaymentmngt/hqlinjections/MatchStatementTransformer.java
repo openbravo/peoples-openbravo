@@ -41,6 +41,10 @@ public class MatchStatementTransformer extends HqlQueryTransformer {
         getWhereClause(requestParameters, queryNamedParameters));
     transformedHql = transformedHql.replace("@selectClause@", " ");
     transformedHql = transformedHql.replace("@joinClause@", " ");
+
+    final boolean isOrder = StringUtils.containsIgnoreCase(_hqlQuery, "order by");
+    transformedHql = transformedHql.replace("@orderby@",
+        isOrder ? " " : getDefaultOrderByClause(requestParameters, queryNamedParameters));
     return transformedHql;
   }
 
@@ -78,5 +82,10 @@ public class MatchStatementTransformer extends HqlQueryTransformer {
     }
 
     return whereClause.toString();
+  }
+
+  protected String getDefaultOrderByClause(Map<String, String> requestParameters,
+      Map<String, Object> queryNamedParameters) {
+    return "order by banklineDate, lineNo";
   }
 }
