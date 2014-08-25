@@ -44,8 +44,8 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
     FIN_Reconciliation reconciliation = null;
     try {
       final JSONObject jsonData = new JSONObject(data);
-      String strBankStatementLineId = jsonData.getString("bankStatementLineId");
-      FIN_BankStatementLine bsline = OBDal.getInstance().get(FIN_BankStatementLine.class,
+      final String strBankStatementLineId = jsonData.getString("bankStatementLineId");
+      final FIN_BankStatementLine bsline = OBDal.getInstance().get(FIN_BankStatementLine.class,
           strBankStatementLineId);
 
       reconciliation = bsline.getFinancialAccountTransaction().getReconciliation();
@@ -54,14 +54,6 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
       }
 
       APRM_MatchingUtility.unmatch(bsline);
-
-      final String strNewRefundPaymentMessage = OBMessageUtils
-          .parseTranslation("@APRM_SuccessfullUnmatch@");
-
-      errorMessage.put("severity", "success");
-      errorMessage.put("title", "Success");
-      errorMessage.put("text", strNewRefundPaymentMessage);
-      result.put("message", errorMessage);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error(e.getMessage(), e);
