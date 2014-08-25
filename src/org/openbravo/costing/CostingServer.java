@@ -88,10 +88,6 @@ public class CostingServer {
    * 
    */
   public void process() {
-    boolean doNotCheckPriceCorrectionTrxs = false;
-    boolean doNotCheckBackDatedTrxs = false;
-    final DocumentType docType = FIN_Utility.getDocumentType(organization, strCategoryLandedCost);
-    final String docNo = FIN_Utility.getDocumentNo(docType, strTableLandedCost);
     if (trxCost != null) {
       // Transaction cost has already been calculated. Nothing to do.
       return;
@@ -125,128 +121,134 @@ public class CostingServer {
       OBDal.getInstance().save(transaction);
       OBDal.getInstance().flush();
 
-      // check if price correction is needed
-      try {
-        doNotCheckPriceCorrectionTrxs = Preferences.getPreferenceValue(
-            "doNotCheckPriceCorrectionTrxs", true, OBContext.getOBContext().getCurrentClient(),
-            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-            OBContext.getOBContext().getRole(), null).equals("Y");
-      } catch (PropertyException e1) {
-        doNotCheckPriceCorrectionTrxs = false;
-      }
-      if (!doNotCheckPriceCorrectionTrxs && transaction.getGoodsShipmentLine() != null
-          && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList() != null
-          && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList().size() != 0) {
-        try {
-          PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
-        } catch (JSONException e) {
-          OBDal.getInstance().rollbackAndClose();
-          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
-        }
-      }
-
-      // check if landed cost need to be processed
-      TrxType trxType = TrxType.getTrxType(transaction);
-      if (trxType == TrxType.Receipt || trxType.name().equals("ReceiptReturn")
-          || trxType.name().equals("ReceiptNegative")) {
-        StringBuffer where = new StringBuffer();
-        where.append(" as lc");
-        where
-            .append(" where not exists (select 1 from MaterialMgmtMaterialTransaction mtrans where mtrans."
-                + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE
-                + "."
-                + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT
-                + ".id =:inoutId and mtrans."
-                + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
-                + "= false) and lc."
-                + LandedCostCost.PROPERTY_LANDEDCOST
-                + " is null"
-                + " and lc."
-                + LandedCostCost.PROPERTY_GOODSSHIPMENT + ".id =:inoutId");
-        OBQuery<LandedCostCost> qry = OBDal.getInstance().createQuery(LandedCostCost.class,
-            where.toString());
-        qry.setNamedParameter("inoutId", transaction.getGoodsShipmentLine().getShipmentReceipt()
-            .getId());
-
-        ScrollableResults lcLines = qry.scroll(ScrollMode.FORWARD_ONLY);
-        try {
-          LandedCost landedCost = null;
-
-          while (lcLines.next()) {
-            if (landedCost == null) {
-              landedCost = OBProvider.getInstance().get(LandedCost.class);
-              landedCost.setReferenceDate(new Date());
-              landedCost.setDocumentType(docType);
-              landedCost.setDocumentNo(docNo);
-              landedCost.setCurrency(currency);
-              landedCost.setOrganization(organization);
-              OBDal.getInstance().save(landedCost);
-
-              LCReceipt lcReceipt = OBProvider.getInstance().get(LCReceipt.class);
-              lcReceipt.setLandedCost(landedCost);
-              lcReceipt.setGoodsShipment(transaction.getGoodsShipmentLine().getShipmentReceipt());
-              OBDal.getInstance().save(lcReceipt);
-
-            }
-            final LandedCostCost landedCostCost = (LandedCostCost) lcLines.get()[0];
-            landedCostCost.setLandedCost(landedCost);
-            OBDal.getInstance().save(landedCostCost);
-          }
-
-          if (landedCost != null) {
-
-            JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
-
-            if (message.get("severity") != "success") {
-              throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@")
-                  + ": " + landedCost.getDocumentNo() + " - " + message.getString("text"));
-            }
-          }
-        } catch (JSONException e) {
-          OBDal.getInstance().rollbackAndClose();
-          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@"));
-        } finally {
-          lcLines.close();
-        }
-      }
-
-      // check if cost adjustment should be done
-      try {
-        doNotCheckBackDatedTrxs = Preferences.getPreferenceValue("doNotCheckBackDatedTrxs", true,
-            OBContext.getOBContext().getCurrentClient(),
-            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-            OBContext.getOBContext().getRole(), null).equals("Y");
-      } catch (PropertyException e1) {
-        doNotCheckBackDatedTrxs = false;
-      }
-      if (!doNotCheckBackDatedTrxs
-          && CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction, getCostingRule()
-              .isWarehouseDimension())) {
-
-        CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
-            transaction.getOrganization(), "BDT"); // BDT= Backdated transaction
-
-        CostAdjustmentUtils.insertCostAdjustmentLine(transaction, costAdjustmentHeader, null,
-            Boolean.TRUE, OBDateUtils.getEndOfDay(transaction.getMovementDate()), null);
-
-        try {
-          JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
-
-          if (message.get("severity") != "success") {
-            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@")
-                + ": " + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
-          }
-        } catch (JSONException e) {
-          OBDal.getInstance().rollbackAndClose();
-          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
-        }
-      }
-
+      checkCostAdjustments();
       setNotPostedTransaction();
     } finally {
       OBContext.restorePreviousMode();
     }
     return;
+  }
+
+  private void checkCostAdjustments() {
+    boolean doNotCheckPriceCorrectionTrxs = false;
+    boolean doNotCheckBackDatedTrxs = false;
+    // check if price correction is needed
+    try {
+      doNotCheckPriceCorrectionTrxs = Preferences.getPreferenceValue(
+          "doNotCheckPriceCorrectionTrxs", true, OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null).equals("Y");
+    } catch (PropertyException e1) {
+      doNotCheckPriceCorrectionTrxs = false;
+    }
+    if (!doNotCheckPriceCorrectionTrxs && transaction.getGoodsShipmentLine() != null
+        && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList() != null
+        && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList().size() != 0) {
+      try {
+        PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
+      } catch (JSONException e) {
+        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+      }
+    }
+
+    // check if landed cost need to be processed
+    TrxType trxType = TrxType.getTrxType(transaction);
+    if (trxType == TrxType.Receipt || trxType.name().equals("ReceiptReturn")
+        || trxType.name().equals("ReceiptNegative")) {
+      StringBuffer where = new StringBuffer();
+      where.append(" as lc");
+      where
+          .append(" where not exists (select 1 from MaterialMgmtMaterialTransaction mtrans where mtrans."
+              + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE
+              + "."
+              + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT
+              + ".id =:inoutId and mtrans."
+              + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
+              + "= false) and lc."
+              + LandedCostCost.PROPERTY_LANDEDCOST
+              + " is null"
+              + " and lc."
+              + LandedCostCost.PROPERTY_GOODSSHIPMENT + ".id =:inoutId");
+      OBQuery<LandedCostCost> qry = OBDal.getInstance().createQuery(LandedCostCost.class,
+          where.toString());
+      qry.setNamedParameter("inoutId", transaction.getGoodsShipmentLine().getShipmentReceipt()
+          .getId());
+
+      ScrollableResults lcLines = qry.scroll(ScrollMode.FORWARD_ONLY);
+      try {
+        LandedCost landedCost = null;
+
+        while (lcLines.next()) {
+          if (landedCost == null) {
+            final DocumentType docType = FIN_Utility.getDocumentType(organization,
+                strCategoryLandedCost);
+            final String docNo = FIN_Utility.getDocumentNo(docType, strTableLandedCost);
+
+            landedCost = OBProvider.getInstance().get(LandedCost.class);
+            landedCost.setReferenceDate(new Date());
+            landedCost.setDocumentType(docType);
+            landedCost.setDocumentNo(docNo);
+            landedCost.setCurrency(currency);
+            landedCost.setOrganization(organization);
+            OBDal.getInstance().save(landedCost);
+
+            LCReceipt lcReceipt = OBProvider.getInstance().get(LCReceipt.class);
+            lcReceipt.setLandedCost(landedCost);
+            lcReceipt.setGoodsShipment(transaction.getGoodsShipmentLine().getShipmentReceipt());
+            OBDal.getInstance().save(lcReceipt);
+
+          }
+          final LandedCostCost landedCostCost = (LandedCostCost) lcLines.get()[0];
+          landedCostCost.setLandedCost(landedCost);
+          OBDal.getInstance().save(landedCostCost);
+        }
+
+        if (landedCost != null) {
+
+          JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
+
+          if (message.get("severity") != "success") {
+            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@")
+                + ": " + landedCost.getDocumentNo() + " - " + message.getString("text"));
+          }
+        }
+      } catch (JSONException e) {
+        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingLandedCost@"));
+      } finally {
+        lcLines.close();
+      }
+    }
+
+    // check if cost adjustment should be done
+    try {
+      doNotCheckBackDatedTrxs = Preferences.getPreferenceValue("doNotCheckBackDatedTrxs", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null).equals("Y");
+    } catch (PropertyException e1) {
+      doNotCheckBackDatedTrxs = false;
+    }
+    if (!doNotCheckBackDatedTrxs
+        && CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction, getCostingRule()
+            .isWarehouseDimension())) {
+
+      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
+          transaction.getOrganization(), "BDT"); // BDT= Backdated transaction
+
+      CostAdjustmentUtils.insertCostAdjustmentLine(transaction, costAdjustmentHeader, null,
+          Boolean.TRUE, OBDateUtils.getEndOfDay(transaction.getMovementDate()), null);
+
+      try {
+        JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
+
+        if (message.get("severity") != "success") {
+          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
+              + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
+        }
+      } catch (JSONException e) {
+        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+      }
+    }
   }
 
   private void setNotPostedTransaction() {
@@ -280,7 +282,9 @@ public class CostingServer {
       break;
     }
     case InventoryDecrease:
-    case InventoryIncrease: {
+    case InventoryIncrease:
+    case InventoryOpening:
+    case InventoryClosing: {
       InventoryCount inventory = transaction.getPhysicalInventoryLine().getPhysInventory();
       if (!"N".equals(inventory.getPosted()) || !"Y".equals(inventory.getPosted())) {
         inventory.setPosted("N");
