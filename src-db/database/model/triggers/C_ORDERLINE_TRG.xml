@@ -135,8 +135,8 @@ IF (UPDATING) THEN
          SELECT max(m_reservation_id) INTO v_reservation_id
          FROM m_reservation 
          WHERE c_orderline_id = :OLD.c_orderline_id
-         AND res_status = 'DR'
-         ORDER BY CREATED DESC;
+         AND m_product_id = :OLD.m_product_id
+         AND res_status = 'DR';
          DELETE FROM m_reservation_stock
          WHERE m_reservation_id = v_reservation_id;
          UPDATE m_reservation
