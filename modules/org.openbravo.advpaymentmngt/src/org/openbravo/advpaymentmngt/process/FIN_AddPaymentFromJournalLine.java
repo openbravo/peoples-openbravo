@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -54,7 +54,7 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
     String strMessageType = "";
     StringBuilder strMessageResult = new StringBuilder();
     String strTitle = "";
-
+    OBContext.setAdminMode(true);
     try {
 
       // retrieve the parameters from the bundle
@@ -67,8 +67,8 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
       BusinessPartner bPartner = journalLine.getBusinessPartner();
       GLItem glItem = journalLine.getGLItem();
       Date date = journalLine.getPaymentDate();
-      boolean isReceipt = journalLine.getDebit().subtract(journalLine.getCredit())
-          .compareTo(BigDecimal.ZERO) > 0;
+      boolean isReceipt = journalLine.getDebit().subtract(journalLine.getCredit()).compareTo(
+          BigDecimal.ZERO) > 0;
 
       // Check restrictions
       OBContext.setAdminMode(false);
@@ -111,18 +111,18 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
           (isReceipt) ? "ARR" : "APP", (isReceipt) ? "AR Receipt" : "AP Payment");
 
       // Generate Payment
-      FIN_Payment payment = dao.getNewPayment(isReceipt, journalLine.getOrganization(),
-          dao.getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo, bPartner,
-          paymentMethod, financialAccount,
-          journalLine.getForeignCurrencyDebit().subtract(journalLine.getForeignCurrencyCredit())
-              .abs().toString(), date, null, journalLine.getCurrency(), null, null);
+      FIN_Payment payment = dao.getNewPayment(isReceipt, journalLine.getOrganization(), dao
+          .getObject(DocumentType.class, strDocTypeId), strPaymentDocumentNo, bPartner,
+          paymentMethod, financialAccount, journalLine.getForeignCurrencyDebit().subtract(
+              journalLine.getForeignCurrencyCredit()).abs().toString(), date, null, journalLine
+              .getCurrency(), null, null);
 
       // Add Payment Details
-      FIN_AddPayment.saveGLItem(payment,
-          journalLine.getForeignCurrencyDebit().subtract(journalLine.getForeignCurrencyCredit())
-              .abs(), glItem, bPartner, journalLine.getProduct(), journalLine.getProject(),
-          journalLine.getSalesCampaign(), journalLine.getActivity(), journalLine.getSalesRegion(),
-          journalLine.getCostCenter(), journalLine.getStDimension(), journalLine.getNdDimension());
+      FIN_AddPayment.saveGLItem(payment, journalLine.getForeignCurrencyDebit().subtract(
+          journalLine.getForeignCurrencyCredit()).abs(), glItem, bPartner,
+          journalLine.getProduct(), journalLine.getProject(), journalLine.getSalesCampaign(),
+          journalLine.getActivity(), journalLine.getSalesRegion(), journalLine.getCostCenter(),
+          journalLine.getStDimension(), journalLine.getNdDimension());
 
       OBDal.getInstance().flush();
 
@@ -144,10 +144,8 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
         strMessageType = "Success";
       }
       strMessageResult.append("@Payment@ ").append(payment.getDocumentNo());
-      strMessageResult
-          .append(" (")
-          .append(
-              payment.getBusinessPartner() != null ? payment.getBusinessPartner().getName() : "")
+      strMessageResult.append(" (").append(
+          payment.getBusinessPartner() != null ? payment.getBusinessPartner().getName() : "")
           .append(")");
       if (!"".equals(message.getMessage()))
         strMessageResult.append(": ").append(message.getMessage());
@@ -170,6 +168,8 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
       msg.setMessage(e.getMessage());
       msg.setTitle("@Error@");
       bundle.setResult(msg);
+    } finally {
+      OBContext.restorePreviousMode();
     }
 
   }
