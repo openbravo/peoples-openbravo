@@ -68,8 +68,8 @@ public class CashVATUtil {
     try {
       OBContext.setAdminMode(true);
       final Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
-      final Organization legalEntity = OBContext.getOBContext()
-          .getOrganizationStructureProvider(org.getClient().getId()).getLegalEntity(org);
+      final Organization legalEntity = OBContext.getOBContext().getOrganizationStructureProvider(
+          org.getClient().getId()).getLegalEntity(org);
       if (legalEntity != null && legalEntity.getOrganizationInformationList() != null
           && !legalEntity.getOrganizationInformationList().isEmpty()) {
         return legalEntity.getOrganizationInformationList().get(0).isCashVAT() ? "Y" : "N";
@@ -95,8 +95,8 @@ public class CashVATUtil {
     try {
       OBContext.setAdminMode(true);
       final Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
-      final Organization legalEntity = OBContext.getOBContext()
-          .getOrganizationStructureProvider(org.getClient().getId()).getLegalEntity(org);
+      final Organization legalEntity = OBContext.getOBContext().getOrganizationStructureProvider(
+          org.getClient().getId()).getLegalEntity(org);
       if (legalEntity != null && legalEntity.getOrganizationInformationList() != null
           && !legalEntity.getOrganizationInformationList().isEmpty()) {
         return legalEntity.getOrganizationInformationList().get(0).isDoubleCash() ? "Y" : "N";
@@ -357,7 +357,8 @@ public class CashVATUtil {
       FactLine factLine2 = null;
       for (final InvoiceTaxCashVAT_V itcv : line.getInvoiceTaxCashVAT_V()) {
         final TaxRate tax = itcv.getInvoiceTax().getTax();
-        if (tax.isCashVAT()) {
+        Invoice inv = itcv.getInvoiceTax().getInvoice();
+        if (tax.isCashVAT() && inv.equals(invoice)) {
           final BigDecimal taxAmt = itcv.getTaxAmount();
           if (taxAmt.compareTo(BigDecimal.ZERO) != 0) {
             final DocTax m_tax = new DocTax(tax.getId(), tax.getName(), tax.getRate().toString(),
