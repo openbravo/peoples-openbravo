@@ -134,11 +134,8 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
             view = me.grid.view;
         callback = function (response, data, request) {
           view.onRefreshFunction(view);
-          if (data.message) {
-            if (data.message.severity === 'error') {
+          if (data && data.message && data.message.severity === 'error') {
               view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
-            } else {
-              view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, data.message.title, data.message.text);
             }
           }
         };
