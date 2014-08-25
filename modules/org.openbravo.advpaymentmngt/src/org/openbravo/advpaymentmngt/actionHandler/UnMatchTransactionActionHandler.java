@@ -28,6 +28,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
@@ -40,20 +41,23 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     JSONObject result = new JSONObject();
     JSONObject errorMessage = new JSONObject();
-    OBContext.setAdminMode(true);
-    FIN_Reconciliation reconciliation = null;
+    String reconciliationId = null;
     try {
+      OBContext.setAdminMode(true);
       final JSONObject jsonData = new JSONObject(data);
       final String strBankStatementLineId = jsonData.getString("bankStatementLineId");
       final FIN_BankStatementLine bsline = OBDal.getInstance().get(FIN_BankStatementLine.class,
           strBankStatementLineId);
+      final FIN_FinaccTransaction transaction = bsline.getFinancialAccountTransaction();
 
-      reconciliation = bsline.getFinancialAccountTransaction().getReconciliation();
-      if (reconciliation != null) {
-        APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
+      if (transaction != null) {
+        final FIN_Reconciliation reconciliation = transaction.getReconciliation();
+        if (reconciliation != null) {
+          reconciliationId = reconciliation.getId();
+          APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
+        }
+        APRM_MatchingUtility.unmatch(bsline);
       }
-
-      APRM_MatchingUtility.unmatch(bsline);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error(e.getMessage(), e);
@@ -71,7 +75,7 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
       }
     } finally {
       OBContext.restorePreviousMode();
-      APRM_MatchingUtility.setNotProcessingReconciliation(reconciliation.getId());
+      APRM_MatchingUtility.setNotProcessingReconciliation(reconciliationId);
     }
     return result;
   }

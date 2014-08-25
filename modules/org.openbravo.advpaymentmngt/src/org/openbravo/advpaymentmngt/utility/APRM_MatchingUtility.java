@@ -62,7 +62,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
-import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLineTemp;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.model.financialmgmt.payment.MatchingAlgorithm;
 import org.openbravo.scheduling.ProcessBundle;
@@ -233,37 +232,21 @@ public class APRM_MatchingUtility {
    * @param bsline
    *          Bank Statement Line to be unmatched from a transaction
    */
-  public static void unmatch(FIN_BankStatementLine bsline) {
+  public static void unmatch(final FIN_BankStatementLine bsline) {
     try {
       OBContext.setAdminMode(true);
-      FIN_FinaccTransaction finTrans = bsline.getFinancialAccountTransaction();
-      // if (finTrans == null) {
-      // String strTransactionId = vars.getStringParameter("inpFinancialTransactionId_"
-      // + bsline.getId());
-      // if (strTransactionId != null && !"".equals(strTransactionId)) {
-      // finTrans = OBDal.getInstance().get(FIN_FinaccTransaction.class, strTransactionId);
-      // }
-      // }
+      final FIN_FinaccTransaction finTrans = bsline.getFinancialAccountTransaction();
       if (finTrans != null) {
         finTrans.setReconciliation(null);
-        finTrans.setStatus((finTrans.getDepositAmount().subtract(finTrans.getPaymentAmount())
-            .signum() == 1) ? "RDNC" : "PWNC");
         bsline.setFinancialAccountTransaction(null);
+        bsline.setMatchingtype(null);
+
         OBDal.getInstance().save(finTrans);
-        // OBDal.getInstance().flush();
-      }
-      bsline.setMatchingtype(null);
-      OBDal.getInstance().save(bsline);
-      // OBDal.getInstance().flush();
+        OBDal.getInstance().save(bsline);
 
-      // merge if the bank statement line was split before
-      mergeBankStatementLine(bsline);
+        // merge if the bank statement line was split before
+        mergeBankStatementLine(bsline);
 
-      if (finTrans != null) {
-        if (finTrans.getFinPayment() != null) {
-          finTrans.getFinPayment().setStatus(
-              (finTrans.getFinPayment().isReceipt()) ? "RDNC" : "PWNC");
-        }
         boolean isReceipt = false;
         if (finTrans.getFinPayment() != null) {
           isReceipt = finTrans.getFinPayment().isReceipt();
@@ -271,30 +254,28 @@ public class APRM_MatchingUtility {
           isReceipt = finTrans.getDepositAmount().compareTo(finTrans.getPaymentAmount()) > 0;
         }
         finTrans.setStatus(isReceipt ? "RDNC" : "PWNC");
-        finTrans.setReconciliation(null);
-        OBDal.getInstance().save(finTrans);
-        // OBDal.getInstance().flush();
-      }
-      // Execute un-matching logic defined by algorithm
-      MatchingAlgorithm ma = bsline.getBankStatement().getAccount().getMatchingAlgorithm();
-      FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
-          ma.getJavaClassName());
-      matchingTransaction.unmatch(finTrans);
 
-      // Do not allow bank statement lines of 0
-      if (bsline.getCramount().compareTo(BigDecimal.ZERO) == 0
-          && bsline.getDramount().compareTo(BigDecimal.ZERO) == 0) {
-        FIN_BankStatement bs = bsline.getBankStatement();
-        bs.setProcessed(false);
-        OBDal.getInstance().save(bs);
-        OBDal.getInstance().flush();
-        OBDal.getInstance().remove(bsline);
-        OBDal.getInstance().flush();
-        bs.setProcessed(true);
-        OBDal.getInstance().save(bs);
-        OBDal.getInstance().flush();
+        // Execute un-matching logic defined by algorithm
+        final MatchingAlgorithm ma = bsline.getBankStatement().getAccount().getMatchingAlgorithm();
+        final FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
+            ma.getJavaClassName());
+        matchingTransaction.unmatch(finTrans);
+
+        // Do not allow bank statement lines of 0
+        if (bsline.getCramount().compareTo(BigDecimal.ZERO) == 0
+            && bsline.getDramount().compareTo(BigDecimal.ZERO) == 0) {
+          FIN_BankStatement bs = bsline.getBankStatement();
+          bs.setProcessed(false);
+          OBDal.getInstance().save(bs);
+          OBDal.getInstance().flush();
+          OBDal.getInstance().remove(bsline);
+          OBDal.getInstance().flush();
+          bs.setProcessed(true);
+          OBDal.getInstance().save(bs);
+          OBDal.getInstance().flush();
+        }
+        OBDal.getInstance().getConnection().commit();
       }
-      OBDal.getInstance().getConnection().commit();
     } catch (Exception e) {
       throw new OBException(e);
     } finally {
@@ -320,18 +301,16 @@ public class APRM_MatchingUtility {
     obc.add(Restrictions.ne(FIN_BankStatementLine.PROPERTY_ID, bsline.getId()));
     obc.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
 
-    if (obc.list().size() > 0) {
+    final List<FIN_BankStatementLine> splitLines = obc.list();
+
+    if (!splitLines.isEmpty()) {
       bs.setProcessed(false);
       OBDal.getInstance().save(bs);
       OBDal.getInstance().flush();
 
-      for (FIN_BankStatementLine bsl : obc.list()) {
+      for (final FIN_BankStatementLine bsl : splitLines) {
         totalCredit = totalCredit.add(bsl.getCramount());
         totalDebit = totalDebit.add(bsl.getDramount());
-        for (FIN_ReconciliationLineTemp tempbsline : getRecTempLines(bsl)) {
-          tempbsline.setBankStatementLine(bsline);
-          OBDal.getInstance().save(tempbsline);
-        }
         OBDal.getInstance().remove(bsl);
       }
 
@@ -357,26 +336,6 @@ public class APRM_MatchingUtility {
       OBDal.getInstance().flush();
     }
 
-  }
-
-  /**
-   * This method retrieves all the reconciliation snapshot lines linked to the given bank statement
-   * line.
-   * 
-   * @param bsline
-   *          Bank Statement Line.
-   * @return All the reconciliation snapshot lines linked to the given bank statement line.
-   */
-  public static List<FIN_ReconciliationLineTemp> getRecTempLines(FIN_BankStatementLine bsline) {
-    OBContext.setAdminMode();
-    try {
-      final OBCriteria<FIN_ReconciliationLineTemp> obc = OBDal.getInstance().createCriteria(
-          FIN_ReconciliationLineTemp.class);
-      obc.add(Restrictions.eq(FIN_ReconciliationLineTemp.PROPERTY_BANKSTATEMENTLINE, bsline));
-      return obc.list();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 
   /**
