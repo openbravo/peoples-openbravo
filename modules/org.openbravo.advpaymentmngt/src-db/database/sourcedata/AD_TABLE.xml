@@ -224,7 +224,9 @@ and @insertion_point_0@]]></HQLQUERY>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <AD_PACKAGE_ID><![CDATA[AC33B2262748414A816510545755435A]]></AD_PACKAGE_ID>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--BC21981DCF0846338D631887BEDFE7FA-->  <HQLQUERY><![CDATA[select bsl.transactionDate as banklineDate, case when bp is null then bsl.bpartnername  else bp.name end AS businessPartner, bsl.referenceNo as referenceNo, bsl.cramount - bsl.dramount as amount, bsl.id as match, bsl.matchingtype as affinity, bsl.matchingtype as matchingtype, bsl.id as id, 
+<!--BC21981DCF0846338D631887BEDFE7FA-->  <HQLQUERY><![CDATA[select bsl.transactionDate as banklineDate, case when bp is null then bsl.bpartnername  else bp.name end AS businessPartner, bsl.referenceNo as referenceNo, bsl.cramount - bsl.dramount as amount, bsl.id as match, bsl.matchingtype as affinity, 
+case when fat is null then false else true end AS cleared,
+bsl.matchingtype as matchingtype, bsl.id as id, 
 fat.transactionDate as transactionDate, transactionBP.name as transactionBPName, fat.depositAmount - fat.paymentAmount as transactionAmount
  @selectClause@
 from FIN_BankStatementLine as bsl
