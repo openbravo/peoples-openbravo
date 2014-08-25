@@ -135,8 +135,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
         callback = function (response, data, request) {
           view.onRefreshFunction(view);
           if (data && data.message && data.message.severity === 'error') {
-              view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
-            }
+            view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
           }
         };
         OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.UnMatchTransactionActionHandler', {
