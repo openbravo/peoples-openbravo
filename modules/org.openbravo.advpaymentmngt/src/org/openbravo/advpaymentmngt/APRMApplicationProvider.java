@@ -32,7 +32,6 @@ public class APRMApplicationProvider extends BaseComponentProvider {
 
   @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -46,6 +45,8 @@ public class APRMApplicationProvider extends BaseComponentProvider {
         "web/org.openbravo.advpaymentmngt/js/ob-aprm-matchStatement.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.advpaymentmngt/js/ob-aprm-addTransaction.js", true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.advpaymentmngt/js/ob-aprm-findTransaction.js", true));
     return globalResources;
   }
 }
