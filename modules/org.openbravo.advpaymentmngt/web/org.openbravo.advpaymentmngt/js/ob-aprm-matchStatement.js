@@ -126,6 +126,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
 
     clearButton = isc.OBGridToolStripIcon.create({
       buttonType: 'clearRight',
+      showDisabled: true,
       originalPrompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_DELETE_BUTTON'),
       prompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_DELETE_BUTTON'),
       action: function () {
