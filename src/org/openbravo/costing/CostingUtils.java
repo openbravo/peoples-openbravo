@@ -542,4 +542,54 @@ public class CostingUtils {
     }
     return costRules.get(0);
   }
+
+  /**
+   * Calculates the stock of the product on the given date and for the given cost dimensions. It
+   * only takes transactions that have its cost calculated.
+   */
+  public static BigDecimal getCurrentStock(Organization org, MaterialTransaction trx,
+      HashMap<CostDimension, BaseOBObject> costDimensions, boolean isManufacturingProduct) {
+
+    // Get child tree of organizations.
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        trx.getClient().getId());
+    Set<String> orgs = osp.getChildTree(org.getId(), true);
+    if (isManufacturingProduct) {
+      orgs = osp.getChildTree("0", false);
+      costDimensions = CostingUtils.getEmptyDimensions();
+    }
+
+    StringBuffer select = new StringBuffer();
+    select
+        .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
+    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
+    // Include only transactions that have its cost calculated. Should be all.
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    // Consider only transactions with movement date equal or lower than the movement date of the
+    // adjusted transaction. But for transactions with the same movement date only those with a
+    // transaction date equal or before the process date of the adjusted transaction.
+    select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
+    select.append("     or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+        + " <= :trxdate ))");
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    }
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    trxQry.setParameter("product", trx.getProduct());
+    trxQry.setParameter("mvtdate", trx.getMovementDate());
+    trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    }
+    trxQry.setParameterList("orgs", orgs);
+    Object stock = trxQry.uniqueResult();
+    if (stock != null) {
+      return (BigDecimal) stock;
+    }
+    return BigDecimal.ZERO;
+  }
 }

@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
@@ -49,7 +49,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@RequestScoped
+@ApplicationScoped
 public abstract class CostingAlgorithmAdjustmentImp {
   protected static Logger log4j = LoggerFactory.getLogger(CostingAlgorithmAdjustmentImp.class);
   protected String strCostAdjLineId;
@@ -108,8 +108,13 @@ public abstract class CostingAlgorithmAdjustmentImp {
     CostAdjustmentLine costAdjLine = getCostAdjLine();
 
     // Backdated transactions are inserted with a null adjustment amount.
-    if (costAdjLine.getAdjustmentAmount() == null) {
-      calculateAdjustmentAmount();
+    if (costAdjLine.isBackdatedTrx()) {
+      calculateBackdatedAdjustmentAmount();
+    }
+
+    // Negative stock correction are inserted with a null adjustment amount.
+    if (costAdjLine.isNegativeStockCorrection()) {
+      calculateNegativeStockCorrectionAdjustmentAmount();
     }
 
     if (costAdjLine.isSource()) {
@@ -279,9 +284,11 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
   }
 
+  abstract void calculateNegativeStockCorrectionAdjustmentAmount();
+
   abstract void getRelatedTransactionsByAlgorithm();
 
-  protected void calculateAdjustmentAmount() {
+  protected void calculateBackdatedAdjustmentAmount() {
     BigDecimal adjAmt = BigDecimal.ZERO;
     // Incoming transactions does not modify the calculated cost
     switch (trxType) {

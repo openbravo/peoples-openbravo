@@ -43,6 +43,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
+import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.LCReceipt;
 import org.openbravo.model.materialmgmt.cost.LandedCost;
@@ -235,9 +236,38 @@ public class CostingServer {
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
           transaction.getOrganization(), "BDT"); // BDT= Backdated transaction
 
-      CostAdjustmentUtils.insertCostAdjustmentLine(transaction, costAdjustmentHeader, null,
-          Boolean.TRUE, OBDateUtils.getEndOfDay(transaction.getMovementDate()),
-          transaction.getMovementDate());
+      CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
+          costAdjustmentHeader, null, Boolean.TRUE,
+          OBDateUtils.getEndOfDay(transaction.getMovementDate()), transaction.getMovementDate());
+      cal.setBackdatedTrx(Boolean.TRUE);
+      OBDal.getInstance().save(cal);
+
+      try {
+        JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
+
+        if (message.get("severity") != "success") {
+          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
+              + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
+        }
+      } catch (JSONException e) {
+        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+      }
+    }
+
+    // check if negative stock correction should be done
+
+    boolean modifiesAvg = AverageAlgorithm.modifiesAverage(TrxType.getTrxType(transaction));
+    BigDecimal currentStock = CostingUtils.getCurrentStock(getOrganization(), transaction,
+        getCostingAlgorithm().costDimensions, transaction.getProduct().isProduction());
+    // the stock preivous to transaction was negative
+    if (currentStock.compareTo(transaction.getMovementQuantity()) < 0 && modifiesAvg) {
+
+      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
+          transaction.getOrganization(), "NSC"); // NSC= Negative Stock Correction
+
+      CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
+          costAdjustmentHeader, null, Boolean.TRUE, transaction.getTransactionProcessDate(), null);
+      cal.setNegativeStockCorrection(Boolean.TRUE);
 
       try {
         JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);

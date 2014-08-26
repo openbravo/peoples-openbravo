@@ -196,6 +196,10 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
   }
 
   @Override
+  void calculateNegativeStockCorrectionAdjustmentAmount() {
+  }
+
+  @Override
   protected void addCostDependingTrx(CostAdjustmentLine costAdjLine) {
     // Do nothing.
     // All transactions are calculated using the current standard cost so there is no need to

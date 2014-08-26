@@ -81,22 +81,23 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       }
     }
 
-    Date trxDate = costAdjLine.getTransactionDate();
-    if (trxDate == null) {
-      trxDate = basetrx.getTransactionProcessDate();
-    }
+    Date trxDate = basetrx.getTransactionProcessDate();
+
     Costing costing = AverageAlgorithm.getProductCost(trxDate, basetrx.getProduct(),
         getCostDimensions(), getCostOrg());
     // Modify isManufacturingProduct flag in case it has changed at some point.
     isManufacturingProduct = ((String) DalUtil.getId(costing.getOrganization())).equals("0");
     BigDecimal cost = costing.getCost();
 
-    BigDecimal currentStock = getCurrentStock();
+    BigDecimal currentStock = CostingUtils.getCurrentStock(getCostOrg(), getTransaction(),
+        getCostDimensions(), isManufacturingProduct);
+
     BigDecimal currentValueAmt = getCurrentValuedStock();
     if (currentStock.signum() != 0) {
       cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, costCurPrecission,
           RoundingMode.HALF_UP);
     }
+
     ScrollableResults trxs = getRelatedTransactions();
     String strCurrentCurId = strCostCurrencyId;
     try {
@@ -160,6 +161,23 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, costCurPrecission,
                 RoundingMode.HALF_UP);
           }
+          // stock was negative and cost distinct that trx cost then Negative Stock Correction is
+          // added
+          BigDecimal expectedCost = cost.multiply(trx.getMovementQuantity().abs());
+
+          if (currentStock.compareTo(trx.getMovementQuantity()) < 0 && cost.compareTo(trxCost) != 0) {
+            adjustmentBalance = adjustmentBalance.add(cost.subtract(trxCost).multiply(
+                new BigDecimal(trx.getMovementQuantity().signum())));
+            // If there is a difference insert a cost adjustment line.
+            CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx,
+                expectedCost.subtract(trxCost), getCostAdjLine());
+            newCAL.setNegativeStockCorrection(true);
+            // newCAL.setBackdatedTrx(true);
+            newCAL.setRelatedTransactionAdjusted(true);
+            cost = trxCost.divide(trx.getMovementQuantity(), costCurPrecission,
+                RoundingMode.HALF_UP);
+          }
+
           Costing curCosting = trx.getMaterialMgmtCostingList().get(0);
           if (curCosting.getCost().compareTo(cost) == 0) {
             // new cost hasn't changed, following transactions will have the same cost, so no more
@@ -231,8 +249,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     // Calculate the average cost on the transaction's movement date and adjust the cost if needed.
     MaterialTransaction trx = getTransaction();
     CostAdjustmentLine costAdjLine = getCostAdjLine();
-    Costing costing = AverageAlgorithm.getProductCost(costAdjLine.getTransactionDate(),
-        trx.getProduct(), getCostDimensions(), getCostOrg());
+
+    Costing costing = getTrxProductCost(trx, getCostDimensions(), getCostOrg());
     BigDecimal cost = costing.getCost();
     Currency costCurrency = getCostCurrency();
     if (costing.getCurrency() != costCurrency) {
@@ -306,58 +324,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
-  }
-
-  /**
-   * Calculates the stock of the product on the given date and for the given cost dimensions. It
-   * only takes transactions that have its cost calculated.
-   */
-  private BigDecimal getCurrentStock() {
-    Organization org = getCostOrg();
-    MaterialTransaction trx = getTransaction();
-    HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
-
-    // Get child tree of organizations.
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        trx.getClient().getId());
-    Set<String> orgs = osp.getChildTree(org.getId(), true);
-    if (isManufacturingProduct) {
-      orgs = osp.getChildTree("0", false);
-      costDimensions = CostingUtils.getEmptyDimensions();
-    }
-
-    StringBuffer select = new StringBuffer();
-    select
-        .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
-    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
-    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    // Include only transactions that have its cost calculated. Should be all.
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    // Consider only transactions with movement date equal or lower than the movement date of the
-    // adjusted transaction. But for transactions with the same movement date only those with a
-    // transaction date equal or before the process date of the adjusted transaction.
-    select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
-    select.append("     or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-    select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " <= :trxdate ))");
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
-    }
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
-    trxQry.setParameter("product", trx.getProduct());
-    trxQry.setParameter("mvtdate", trx.getMovementDate());
-    trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
-    }
-    trxQry.setParameterList("orgs", orgs);
-    Object stock = trxQry.uniqueResult();
-    if (stock != null) {
-      return (BigDecimal) stock;
-    }
-    return BigDecimal.ZERO;
   }
 
   /**
@@ -448,5 +414,83 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     critCAL.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_PARENTCOSTADJUSTMENTLINE, OBDal
         .getInstance().getProxy(CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId)));
     return (CostAdjustmentLine) critCAL.uniqueResult();
+  }
+
+  @Override
+  void calculateNegativeStockCorrectionAdjustmentAmount() {
+    MaterialTransaction basetrx = getTransaction();
+    BigDecimal currentStock = CostingUtils.getCurrentStock(getCostOrg(), getTransaction(),
+        getCostDimensions(), isManufacturingProduct);
+    BigDecimal currentValueAmt = getCurrentValuedStock();
+    int precission = getCostCurrency().getCostingPrecision().intValue();
+
+    BigDecimal trxCost = CostAdjustmentUtils.getTrxCost(getCostAdjLine().getCostAdjustment(),
+        basetrx, false);
+    BigDecimal trxUnitCost = trxCost.divide(basetrx.getMovementQuantity(), precission);
+    BigDecimal totalStock = currentStock.add(basetrx.getMovementQuantity());
+    // BigDecimal adjustAmt = totalStock.multiply(trxUnitCost).subtract(trxCost)
+    // .subtract(currentValueAmt);
+    BigDecimal adjustAmt = currentStock.multiply(trxUnitCost).subtract(currentValueAmt);
+
+    CostAdjustmentLine costAdjLine = getCostAdjLine();
+    costAdjLine.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
+        strCostCurrencyId));
+    costAdjLine.setAdjustmentAmount(adjustAmt);
+    OBDal.getInstance().save(costAdjLine);
+
+  }
+
+  /**
+   * Calculates the value of the stock of the product on the given date, for the given cost
+   * dimensions and for the given currency. It only takes transactions that have its cost
+   * calculated.
+   */
+  protected static Costing getTrxProductCost(MaterialTransaction trx,
+      HashMap<CostDimension, BaseOBObject> costDimensions, Organization costOrg) {
+
+    // Get child tree of organizations.
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        costOrg.getClient().getId());
+    Set<String> orgs = osp.getChildTree(costOrg.getId(), true);
+
+    StringBuffer select = new StringBuffer();
+    select.append(" select c ");
+
+    select.append(" from " + Costing.ENTITY_NAME + " as c");
+    select.append("  join c." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+
+    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
+    // Consider only transactions with movement date equal or lower than the movement date of the
+    // adjusted transaction. But for transactions with the same movement date only those with a
+    // transaction date equal or before the process date of the adjusted transaction.
+    select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
+    select.append("     or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+        + " <= :trxdate ))");
+    // Include only transactions that have its cost calculated
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    }
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    select.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ", trx."
+        + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+
+    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    trxQry.setParameter("product", trx.getProduct().getId());
+    trxQry.setParameter("mvtdate", trx.getMovementDate());
+    trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
+
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    }
+    trxQry.setParameterList("orgs", orgs);
+    @SuppressWarnings("unchecked")
+    List<Costing> o = trxQry.list();
+    if (o.size() == 0) {
+      return null;
+    }
+    return o.get(0);
   }
 }
