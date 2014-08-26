@@ -47,6 +47,14 @@
   </script>
 
   <script>
+    // catch loading errors
+    window.onerror = function (e, url, line) {
+      var errorInfo;
+      if (typeof (e) === 'string') {
+        errorInfo = e + '. Line number: ' + line + '. File uuid: ' + url + '.';
+        console.error(errorInfo);
+      }
+    };
     if ((typeof OB !== 'undefined') && (typeof OB.POS !== 'undefined')) {
       OB.POS.terminal = new OB.UI.Terminal({
         terminal: OB.POS.modelterminal
