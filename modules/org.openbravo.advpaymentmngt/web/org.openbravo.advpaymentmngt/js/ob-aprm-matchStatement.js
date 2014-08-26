@@ -75,8 +75,8 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
 
     searchButton = isc.OBGridToolStripIcon.create({
       buttonType: 'search',
-      originalPrompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
-      prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
+      originalPrompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_SEARCH_BUTTON'),
+      prompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_SEARCH_BUTTON'),
       action: function () {
         var processId = '154CB4F9274A479CB38A285E16984539',
             grid = me.grid,
@@ -101,15 +101,14 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
 
     addButton = isc.OBGridToolStripIcon.create({
       buttonType: 'add',
-      originalPrompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
-      prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
+      originalPrompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_ADD_BUTTON'),
+      prompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_ADD_BUTTON'),
       action: function () {
         var processId = 'E68790A7B65F4D45AB35E2BAE34C1F39',
             grid = me.grid,
             record = me.record,
             standardWindow = grid.view.parentWindow.view.standardWindow;
 
-        //TODO: Apply the proper created process
         var process = standardWindow.buildProcess({
           callerField: me,
           paramWindow: true,
@@ -127,8 +126,8 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
 
     clearButton = isc.OBGridToolStripIcon.create({
       buttonType: 'clearRight',
-      originalPrompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
-      prompt: OB.I18N.getLabel('OBUIAPP_GridEditButtonPrompt'),
+      originalPrompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_DELETE_BUTTON'),
+      prompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_DELETE_BUTTON'),
       action: function () {
         var callback, bankStatementLineId = me.record.id,
             view = me.grid.view;
