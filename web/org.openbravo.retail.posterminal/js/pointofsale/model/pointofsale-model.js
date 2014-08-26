@@ -594,13 +594,19 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
    * This method is invoked before paying a ticket, it is intended to do global
    * modifications in the ticket with OBPOS_PrePaymentHook hook, after this hook
    * execution checkPaymentApproval is invoked
+   * OBPOS_PrePaymentApproval can be used to ensure certain order within the
+   * same hook
    */
   completePayment: function () {
     var me = this;
     OB.UTIL.HookManager.executeHooks('OBPOS_PrePaymentHook', {
       context: this
     }, function () {
-      me.checkPaymentApproval();
+      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PrePaymentApproval', {
+        context: me
+      }, function () {
+        me.checkPaymentApproval();
+      });
     });
   },
 
