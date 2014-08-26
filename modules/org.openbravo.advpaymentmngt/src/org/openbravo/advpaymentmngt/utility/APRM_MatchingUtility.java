@@ -277,7 +277,7 @@ public class APRM_MatchingUtility {
         }
       }
     } catch (Exception e) {
-      throw new OBException(e);
+      throw new OBException(e.getMessage());
     } finally {
       OBContext.restorePreviousMode();
     }
