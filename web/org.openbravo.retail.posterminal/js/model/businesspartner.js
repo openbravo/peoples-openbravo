@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone, _ */
+/*global Backbone, _, OB */
 
 (function () {
 
@@ -70,7 +70,7 @@
       //copy data from model to this
     },
     newCustomer: function () {
-      //set values of new attrs in bp model 
+      //set values of new attrs in bp model
       //this values will be copied to the created one
       //in the next instruction
       this.trigger('beforeChangeCustomerForNewOne', this);

@@ -7,9 +7,12 @@
  ************************************************************************************
  */
 
-/*global B, $, _, Backbone, window, confirm, OB, console, localStorage */
+/*global B, $, _, Backbone, window, confirm, console, localStorage */
+
+var OB = window.OB || {};
 
 (function () {
+
 
   // alert all errors
   window.onerror = function (e, url, line) {

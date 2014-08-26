@@ -7,13 +7,10 @@
  ************************************************************************************
  */
 
-/*global B, $, _, console, enyo, Backbone, window, confirm, $LAB, SynchronizationHelper */
+/*global B, $, _, console, enyo, Backbone, window, confirm, $LAB, SynchronizationHelper, OB, BigDecimal, document, setTimeout, setInterval */
 
 (function () {
   var executeWhenDOMReady;
-
-  // global components.
-  OB = window.OB || {};
 
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
     initialize: function () {
