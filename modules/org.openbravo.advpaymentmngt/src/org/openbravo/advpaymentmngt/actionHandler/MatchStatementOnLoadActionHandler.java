@@ -83,7 +83,7 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       } else {
         // Reuse last reconciliation
         APRM_MatchingUtility.fixMixedLines(reconciliation);
-        updateReconciliation(reconciliation, financialAccount, false);
+        APRM_MatchingUtility.updateReconciliation(reconciliation, financialAccount, false);
       }
       strReconciliationId = reconciliation.getId();
 
@@ -160,56 +160,6 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
     }
 
     return matchedLines;
-  }
-
-  private boolean updateReconciliation(final FIN_Reconciliation reconciliation,
-      final FIN_FinancialAccount financialAccount, boolean process) {
-    try {
-      OBContext.setAdminMode(true);
-
-      if (MatchTransactionDao.islastreconciliation(reconciliation)) {
-        Date maxBSLDate = MatchTransactionDao.getBankStatementLineMaxDate(financialAccount);
-        reconciliation.setEndingDate(maxBSLDate);
-        reconciliation.setTransactionDate(maxBSLDate);
-      } else {
-        Date maxClearItemDate = getClearItemsMaxDate(reconciliation);
-        reconciliation.setEndingDate(maxClearItemDate);
-        reconciliation.setTransactionDate(maxClearItemDate);
-      }
-      reconciliation.setEndingBalance(MatchTransactionDao.getEndingBalance(reconciliation));
-
-      if (!process) {
-        reconciliation.setProcessed(false);
-        reconciliation.setDocumentStatus("DR");
-        reconciliation.setAPRMProcessReconciliation("P");
-        reconciliation.setAprmProcessRec("P");
-      }
-      OBDal.getInstance().save(reconciliation);
-      OBDal.getInstance().flush();
-      if (process) {
-        // Process Reconciliation
-        OBError myError = APRM_MatchingUtility.processReconciliation("P", reconciliation);
-        if (myError != null && myError.getType().equalsIgnoreCase("error")) {
-          throw new OBException(myError.getMessage());
-        }
-      }
-    } catch (Exception ex) {
-      throw new OBException(ex.getMessage());
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return true;
-  }
-
-  private Date getClearItemsMaxDate(FIN_Reconciliation reconciliation) {
-    OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance().createCriteria(
-        FIN_ReconciliationLine_v.class);
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
-    obc.addOrder(Order.desc(FIN_ReconciliationLine_v.PROPERTY_TRANSACTIONDATE));
-    obc.setMaxResults(1);
-    return ((FIN_ReconciliationLine_v) obc.uniqueResult()).getTransactionDate();
   }
 
   private JSONArray createMessage(final String messageSearchKey, final String msgType,
