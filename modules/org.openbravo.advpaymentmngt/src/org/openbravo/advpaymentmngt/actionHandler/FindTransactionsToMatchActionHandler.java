@@ -43,9 +43,9 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     JSONObject result = new JSONObject();
-    JSONObject errorMessage = new JSONObject();
-    OBContext.setAdminMode(true);
+
     try {
+      OBContext.setAdminMode(true);
       final JSONObject jsonData = new JSONObject(data);
       final JSONObject params = jsonData.getJSONObject("_params");
       final JSONArray selection = params.getJSONObject("findtransactiontomatch").getJSONArray(
@@ -64,20 +64,12 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
         final FIN_FinaccTransaction transaction = OBDal.getInstance().get(
             FIN_FinaccTransaction.class, strSelectedTransactionId);
         APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, transaction, reconciliation,
-            null);
+            null, true);
 
       } else {
         // FIXME try to control this from the UI (disable Done if no record is selected)
-        JSONArray actions = new JSONArray();
-        JSONObject msg = new JSONObject();
-        msg.put("msgType", "error");
-        msg.put("msgTitle", OBMessageUtils.messageBD("Error"));
-        msg.put("msgText", OBMessageUtils.messageBD("APRM_SELECT_RECORD_ERROR"));
-        msg.put("force", true);
-        JSONObject msgTotalAction = new JSONObject();
-        msgTotalAction.put("showMsgInProcessView", msg);
-        actions.put(msgTotalAction);
-
+        final JSONArray actions = APRM_MatchingUtility.createMessageInProcessView(
+            "@APRM_SELECT_RECORD_ERROR@", "error");
         result.put("responseActions", actions);
         result.put("retryExecution", true);
       }
@@ -88,11 +80,9 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
       try {
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
-        errorMessage = new JSONObject();
-        errorMessage.put("severity", "error");
-        errorMessage.put("title", "Error");
-        errorMessage.put("text", message);
-        result.put("message", errorMessage);
+        final JSONArray actions = APRM_MatchingUtility.createMessageInProcessView(message, "error");
+        result.put("responseActions", actions);
+        result.put("retryExecution", true);
       } catch (Exception e2) {
         log.error(e.getMessage(), e2);
         // do nothing, give up
@@ -102,5 +92,4 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
     }
     return result;
   }
-
 }

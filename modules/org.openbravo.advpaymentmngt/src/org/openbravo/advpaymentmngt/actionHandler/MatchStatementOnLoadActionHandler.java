@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
@@ -35,8 +34,6 @@ import org.openbravo.advpaymentmngt.utility.FIN_MatchingTransaction;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -84,7 +81,8 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       if (executeAutoMatchingAlgm) {
         /* Verify we have something left to match */
         if (MatchTransactionDao.getUnMatchedBankStatementLines(financialAccount).isEmpty()) {
-          actions = createMessage("@APRM_NoStatementsToMatch@", "warning");
+          actions = APRM_MatchingUtility.createMessageInProcessView("@APRM_NoStatementsToMatch@",
+              "warning");
           jsonResponse.put("responseActions", actions);
           return jsonResponse;
         }
@@ -93,9 +91,11 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
         int matchedLines = runAutoMatchingAlgorithm(strReconciliationId, strFinancialAccountId,
             financialAccount, reconciliation);
         if (matchedLines > 0) {
-          actions = createMessage("@APRM_AutomaticMatchedLines@", "success", matchedLines);
+          actions = APRM_MatchingUtility.createMessageInProcessView("@APRM_AutomaticMatchedLines@",
+              "success", matchedLines);
         } else {
-          actions = createMessage("@APRM_NoAutomaticMatchedLines@", "warning");
+          actions = APRM_MatchingUtility.createMessageInProcessView(
+              "@APRM_NoAutomaticMatchedLines@", "warning");
         }
         jsonResponse.put("responseActions", actions);
       }
@@ -106,7 +106,7 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       try {
         jsonResponse = new JSONObject();
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
-        actions = createMessage(ex.getMessage(), "error");
+        actions = APRM_MatchingUtility.createMessageInProcessView(ex.getMessage(), "error");
         jsonResponse.put("responseActions", actions);
       } catch (Exception ignore) {
       }
@@ -144,7 +144,7 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
         FIN_FinaccTransaction transaction = matched.getTransaction();
         if (transaction != null
             && APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, transaction,
-                reconciliation, matched.getMatchLevel())) {
+                reconciliation, matched.getMatchLevel(), false)) {
           excluded.add(transaction);
           matchedLines++;
         }
@@ -154,23 +154,5 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
     }
 
     return matchedLines;
-  }
-
-  private JSONArray createMessage(final String messageSearchKey, final String msgType,
-      Object... messageParams) throws JSONException {
-    final OBError message = OBMessageUtils.translateError(messageSearchKey);
-
-    final JSONObject msg = new JSONObject();
-    msg.put("msgType", msgType);
-    msg.put("msgTitle", message.getTitle());
-    msg.put("msgText", String.format(message.getMessage(), messageParams));
-    msg.put("force", true);
-
-    final JSONObject msgTotalAction = new JSONObject();
-    msgTotalAction.put("showMsgInProcessView", msg);
-
-    final JSONArray actions = new JSONArray();
-    actions.put(msgTotalAction);
-    return actions;
   }
 }

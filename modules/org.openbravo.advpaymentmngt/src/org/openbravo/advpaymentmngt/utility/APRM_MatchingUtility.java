@@ -31,12 +31,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.LockOptions;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_ReconciliationProcess;
@@ -45,6 +47,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -73,7 +76,6 @@ import org.slf4j.LoggerFactory;
 
 public class APRM_MatchingUtility {
   private static final Logger log4j = LoggerFactory.getLogger(APRM_MatchingUtility.class);
-  private static AdvPaymentMngtDao dao;
 
   /**
    * Get reconciliation lines of a reconciliation that had been matched manually
@@ -183,25 +185,35 @@ public class APRM_MatchingUtility {
    * Match a bank statement line with a financial account transaction. If the bank statement has
    * associated a transaction, it is first unmatched and then matched against the given transaction.
    * 
-   * If success, the method automatically run a commit. In case of exceptions, the method
-   * automatically run a rollback
+   * If the bank statement line amount is different from the transaction amount, the process will
+   * automatically split the bank statement line in two (see
+   * {@link #splitBankStatementLine(FIN_Reconciliation, FIN_BankStatementLine, FIN_FinaccTransaction)}
    * 
-   * @return true if the matching is completed successfully
+   * 
+   * @return If success, the method automatically run a commit and returns true. In case of
+   *         exceptions, the method will either throw the exception or return false. This behavior
+   *         is controlled by the throwException boolean parameter
    * 
    */
   public static boolean matchBankStatementLine(final FIN_BankStatementLine bankStatementLine,
       final FIN_FinaccTransaction transaction, final FIN_Reconciliation reconciliation,
-      final String matchLevel) {
+      final String matchLevel, boolean throwException) {
     try {
       OBContext.setAdminMode(true);
       OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
           .lock(BankStatementLine.ENTITY_NAME, bankStatementLine);
 
       if (transaction != null) {
+        // Unmatch the previous line
         if (bankStatementLine.getFinancialAccountTransaction() != null) {
           log4j.warn("Bank Statement Line Already Matched: " + bankStatementLine.getIdentifier());
           unmatch(bankStatementLine);
         }
+
+        // Split if necessary (bank line amount != transaction amount)
+        splitBankStatementLine(reconciliation, bankStatementLine, transaction);
+
+        // Match the transaction
         bankStatementLine.setFinancialAccountTransaction(transaction);
         bankStatementLine
             .setMatchingtype(StringUtils.isBlank(matchLevel) ? FIN_MatchedTransaction.MANUALMATCH
@@ -217,9 +229,13 @@ public class APRM_MatchingUtility {
         OBDal.getInstance().getConnection().commit();
       }
     } catch (Exception e) {
-      log4j.error("Error during matchBankStatementLine");
+      log4j.error("Error during matchBankStatementLine, performing a rollback");
       OBDal.getInstance().rollbackAndClose();
-      return false;
+      if (throwException) {
+        throw new OBException(e.getMessage());
+      } else {
+        return false;
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -679,6 +695,123 @@ public class APRM_MatchingUtility {
     obc.addOrder(Order.desc(FIN_ReconciliationLine_v.PROPERTY_TRANSACTIONDATE));
     obc.setMaxResults(1);
     return ((FIN_ReconciliationLine_v) obc.uniqueResult()).getTransactionDate();
+  }
+
+  /**
+   * Split the given bank statement line only when it does not match with the amount of the given
+   * transaction. It will create a clone of the given bank statement line with the difference
+   * amount. The original bank statement line amounts will be set equal to the amounts in the
+   * transaction
+   * 
+   */
+  public static void splitBankStatementLine(final FIN_Reconciliation reconciliation,
+      final FIN_BankStatementLine bankStatementLine, final FIN_FinaccTransaction transaction) {
+    try {
+      OBContext.setAdminMode(true);
+      if (reconciliation == null || bankStatementLine == null || transaction == null) {
+        throw new OBException("splitBankStatementLine method requires not null parameters");
+      }
+
+      final BigDecimal bslAmount = bankStatementLine.getCramount().subtract(
+          bankStatementLine.getDramount());
+      final BigDecimal trxAmount = transaction.getDepositAmount().subtract(
+          transaction.getPaymentAmount());
+
+      // If amounts don't match we continue with the split
+      if (bslAmount.compareTo(trxAmount) != 0) {
+        if ("Y".equals(reconciliation.getPosted())) {
+          // reconciliation posted not possible to split a row
+          throw new OBException(OBMessageUtils.messageBD("APRM_SplitBSLReconciliationPosted"));
+        }
+        if (bankStatementLine.getFinancialAccountTransaction() != null
+            && bankStatementLine.getFinancialAccountTransaction().getReconciliation() != null) {
+          throw new OBException(OBMessageUtils.messageBD("APRM_SplitBSLAlreadyMatched"));
+        }
+
+        // prevent trigger
+        FIN_BankStatement bs = bankStatementLine.getBankStatement();
+        bs.setProcessed(false);
+        OBDal.getInstance().save(bs);
+        OBDal.getInstance().flush();
+
+        // Duplicate bank statement line with pending amount
+        FIN_BankStatementLine clonedBSLine = (FIN_BankStatementLine) DalUtil.copy(
+            bankStatementLine, true);
+        final BigDecimal credit = bankStatementLine.getCramount().subtract(
+            transaction.getDepositAmount());
+        final BigDecimal debit = bankStatementLine.getDramount().subtract(
+            transaction.getPaymentAmount());
+        clonedBSLine.setCramount(credit);
+        clonedBSLine.setDramount(debit);
+
+        if (credit.compareTo(BigDecimal.ZERO) != 0 && debit.compareTo(BigDecimal.ZERO) != 0) {
+          BigDecimal total = credit.subtract(debit);
+          if (total.compareTo(BigDecimal.ZERO) == -1) {
+            clonedBSLine.setCramount(BigDecimal.ZERO);
+            clonedBSLine.setDramount(total.abs());
+          } else {
+            clonedBSLine.setCramount(total);
+            clonedBSLine.setDramount(BigDecimal.ZERO);
+          }
+        } else {
+          if (credit.compareTo(BigDecimal.ZERO) == -1) {
+            clonedBSLine.setCramount(BigDecimal.ZERO);
+            clonedBSLine.setDramount(credit.abs());
+          }
+          if (debit.compareTo(BigDecimal.ZERO) == -1) {
+            clonedBSLine.setDramount(BigDecimal.ZERO);
+            clonedBSLine.setCramount(debit.abs());
+          }
+
+        }
+
+        // Set bankstatement line amounts with the matched transaction amounts
+        bankStatementLine.setCramount(transaction.getDepositAmount());
+        bankStatementLine.setDramount(transaction.getPaymentAmount());
+
+        bs.setProcessed(true);
+
+        // Save
+        OBDal.getInstance().save(bs);
+        OBDal.getInstance().save(clonedBSLine);
+        OBDal.getInstance().save(bankStatementLine);
+      }
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns a JSONArray with a message to be shown in the process view
+   * 
+   * @param messageSearchKey
+   *          String with the message to translate (see
+   *          {@link OBMessageUtils#translateError(String)}
+   * @param msgType
+   *          error, warning, success, info
+   * @param messageParams
+   *          parameters to be applied to the message text using
+   *          {@link String#format(String, Object...)}
+   * @return a JSONArray with a message to be shown in the process view
+   * @throws JSONException
+   */
+  public static JSONArray createMessageInProcessView(final String messageSearchKey,
+      final String msgType, Object... messageParams) throws JSONException {
+    final OBError message = OBMessageUtils.translateError(messageSearchKey);
+
+    final JSONObject msg = new JSONObject();
+    msg.put("msgType", msgType);
+    msg.put("msgTitle", message.getTitle());
+    msg.put("msgText", String.format(message.getMessage(), messageParams));
+    msg.put("force", true);
+
+    final JSONObject msgTotalAction = new JSONObject();
+    msgTotalAction.put("showMsgInProcessView", msg);
+
+    final JSONArray actions = new JSONArray();
+    actions.put(msgTotalAction);
+    return actions;
   }
 
 }
