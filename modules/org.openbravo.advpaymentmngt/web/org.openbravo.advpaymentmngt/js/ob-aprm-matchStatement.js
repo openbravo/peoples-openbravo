@@ -54,7 +54,7 @@ OB.APRM.MatchStatement.onRefresh = function (view) {
 };
 
 OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall) {
-
+  actionHandlerCall(view);
 };
 
 

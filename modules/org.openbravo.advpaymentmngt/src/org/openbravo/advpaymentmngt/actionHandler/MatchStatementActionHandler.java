@@ -21,10 +21,15 @@ package org.openbravo.advpaymentmngt.actionHandler;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.advpaymentmngt.dao.TransactionsDao;
+import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +40,24 @@ public class MatchStatementActionHandler extends BaseProcessActionHandler {
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonResponse = new JSONObject();
+    String strReconciliationId = null;
     OBContext.setAdminMode(true);
     try {
-
+      JSONObject jsonRequest = new JSONObject(content);
+      String strFinancialAccount = jsonRequest.getString("inpfinFinancialAccountId");
+      final FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+          strFinancialAccount);
+      final FIN_Reconciliation lastReconciliation = TransactionsDao.getLastReconciliation(
+          finAccount, "N");
+      APRM_MatchingUtility.setProcessingReconciliation(lastReconciliation);
+      if (APRM_MatchingUtility.updateReconciliation(lastReconciliation, finAccount, true)) {
+        final OBError message = OBMessageUtils.translateError("@Success@");
+        final JSONObject msg = new JSONObject();
+        msg.put("severity", "success");
+        msg.put("title", message.getTitle());
+        msg.put("text", message.getMessage());
+        jsonResponse.put("message", msg);
+      }
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error("Exception handling the match statement", e);
@@ -55,6 +75,7 @@ public class MatchStatementActionHandler extends BaseProcessActionHandler {
       }
     } finally {
       OBContext.restorePreviousMode();
+      APRM_MatchingUtility.setNotProcessingReconciliation(strReconciliationId);
     }
     return jsonResponse;
   }

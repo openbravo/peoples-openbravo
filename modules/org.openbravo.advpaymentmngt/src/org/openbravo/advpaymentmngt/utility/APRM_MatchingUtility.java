@@ -592,8 +592,9 @@ public class APRM_MatchingUtility {
         // FIXME : Well-formed error message
         throw new OBException("No Document Type defined for the Reconciliation");
       }
+      DocumentType docType = OBDal.getInstance().get(DocumentType.class, strDocType);
       final String strDocumentNo = FIN_Utility.getDocumentNo(financialAccount.getOrganization(),
-          strDocType, "FIN_Reconciliation", true);
+          docType.getDocumentCategory(), "FIN_Reconciliation", true);
       if (strDocumentNo == null || strDocumentNo.equals("")) {
         // FIXME : Well-formed error message
         throw new OBException(
