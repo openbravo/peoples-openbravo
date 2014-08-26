@@ -26,20 +26,20 @@ OB.APRM.MatchStatement.onLoad = function (view) {
   grid.dataSourceOrig = grid.dataSource;
   grid.dataSource = null;
   execute = function (ok) {
-    var onProcessCallbak, newCriteria = {},
+    var onLoadCallback, newCriteria = {},
         params = {};
     if (grid.view.sourceView) {
       params.context = grid.view.sourceView.getContextInfo();
     }
     params.executeMatching = ok;
-    onProcessCallbak = function (response, data, request) {
+    onLoadCallback = function (response, data, request) {
       if (data.responseActions) {
         OB.Utilities.Action.executeJSON(data.responseActions, null, null, view);
       }
       grid.dataSource = grid.dataSourceOrig;
       view.onRefreshFunction(view);
     };
-    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadActionHandler', {}, params, onProcessCallbak);
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadActionHandler', {}, params, onLoadCallback);
   };
   isc.ask(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
 };
