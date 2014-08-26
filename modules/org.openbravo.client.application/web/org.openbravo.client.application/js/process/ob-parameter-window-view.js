@@ -303,6 +303,10 @@ isc.OBParameterWindowView.addProperties({
       params.context = this.sourceView.getContextInfo(false, true, true, true);
     }
 
+    if (this.callerField && this.callerField.view && this.callerField.view.getContextInfo) {
+      isc.addProperties(params.context || {}, this.callerField.view.getContextInfo(true /*excludeGrids*/));
+    }
+
     OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, params, function (rpcResponse, data, rpcRequest) {
       view.handleDefaults(data);
     });
@@ -618,7 +622,7 @@ isc.OBParameterWindowView.addProperties({
     }
   },
 
-  getContextInfo: function () {
+  getContextInfo: function (excludeGrids) {
     var result = {},
         params, i;
     if (!this.theForm) {
@@ -628,6 +632,9 @@ isc.OBParameterWindowView.addProperties({
     if (this.theForm && this.theForm.getItems) {
       params = this.theForm.getItems();
       for (i = 0; i < params.length; i++) {
+        if (excludeGrids && params[i].type === 'OBPickEditGridItem') {
+          continue;
+        }
         result[params[i].name] = params[i].getValue();
       }
     }
