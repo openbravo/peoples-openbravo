@@ -20,6 +20,8 @@
 OB.APRM.FindTransactions = {};
 
 OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall) {
+  var execute;
+  
   execute = function (ok) {
     if (ok) {
       actionHandlerCall(view);
