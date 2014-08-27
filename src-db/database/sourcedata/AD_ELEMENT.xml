@@ -20603,7 +20603,7 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--000AC0F629015A1FE050007F010018C3-->  <COLUMNNAME><![CDATA[IsUnitCost]]></COLUMNNAME>
 <!--000AC0F629015A1FE050007F010018C3-->  <NAME><![CDATA[Unit Cost]]></NAME>
 <!--000AC0F629015A1FE050007F010018C3-->  <PRINTNAME><![CDATA[Unit Cost]]></PRINTNAME>
-<!--000AC0F629015A1FE050007F010018C3-->  <HELP><![CDATA[Determines if the cost amount is part of the unit cost of the transaction or a cost added like freight costs or insurance costs.]]></HELP>
+<!--000AC0F629015A1FE050007F010018C3-->  <HELP><![CDATA[When checked the cost amount is considered part of the unit cost of the transaction or a cost added like freight costs or insurance costs.]]></HELP>
 <!--000AC0F629015A1FE050007F010018C3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--000AC0F629015A1FE050007F010018C3-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--000AC0F629015A1FE050007F010018C3--></AD_ELEMENT>

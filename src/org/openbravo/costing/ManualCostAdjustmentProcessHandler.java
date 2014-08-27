@@ -32,6 +32,7 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
+import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DbUtility;
@@ -53,6 +54,8 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
       final JSONObject params = jsonContent.getJSONObject("_params");
       final BigDecimal newAmountCost = new BigDecimal(params.getString("Cost"));
       final Date acctDate = JsonUtils.createDateFormat().parse(params.getString("DateAcct"));
+      final boolean isIncremental = params.getBoolean("IsIncremental");
+      final boolean isUnitCost = params.getBoolean("IsUnitCost");
 
       MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
           strTransactionId);
@@ -71,18 +74,26 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
           osp.getLegalEntity(transaction.getOrganization()), "MCC"); // MCC= Manual Cost Correction
 
-      BigDecimal totalCost = BigDecimal.ZERO;
-      for (TransactionCost transactionCost : transaction.getTransactionCostList()) {
-        totalCost = totalCost.add(transactionCost.getCost());
+      BigDecimal costAdjusted;
+      if (isIncremental) {
+        costAdjusted = newAmountCost;
+      } else {
+        BigDecimal totalCost = BigDecimal.ZERO;
+        for (TransactionCost transactionCost : transaction.getTransactionCostList()) {
+          totalCost = totalCost.add(transactionCost.getCost());
+        }
+        costAdjusted = newAmountCost.subtract(totalCost);
       }
-      BigDecimal costAdjusted = newAmountCost.subtract(totalCost);
-
-      CostAdjustmentUtils.insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted,
-          Boolean.TRUE, transaction.getTransactionProcessDate(), acctDate);
+      CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
+          costAdjustmentHeader, costAdjusted, Boolean.TRUE,
+          transaction.getTransactionProcessDate(), acctDate);
+      if (isIncremental) {
+        cal.setUnitCost(isUnitCost);
+      }
 
       OBDal.getInstance().flush();
       JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
-      if (!message.getString("severity").equalsIgnoreCase("error")) {
+      if (!isIncremental && !message.getString("severity").equalsIgnoreCase("error")) {
         transaction = OBDal.getInstance().get(MaterialTransaction.class, strTransactionId);
         transaction.setCostPermanent(Boolean.TRUE);
         OBDal.getInstance().save(transaction);
