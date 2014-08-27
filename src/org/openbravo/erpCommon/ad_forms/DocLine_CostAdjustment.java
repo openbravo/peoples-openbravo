@@ -105,6 +105,14 @@ public class DocLine_CostAdjustment extends DocLine {
       transactionType = TRXTYPE_INVENTORY;
       transactionNegative = false;
       break;
+    case InventoryOpening:
+      transactionType = TRXTYPE_INVENTORY;
+      transactionNegative = false;
+      break;
+    case InventoryClosing:
+      transactionType = TRXTYPE_INVENTORY;
+      transactionNegative = false;
+      break;
     case IntMovementFrom:
       transactionType = TRXTYPE_INTERNALMOVEMENTFROM;
       transactionNegative = true;
