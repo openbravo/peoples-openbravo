@@ -147,6 +147,9 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
     buttonSeparator1 = isc.OBGridToolStripSeparator.create({});
     buttonSeparator2 = isc.OBGridToolStripSeparator.create({});
 
+    // Disable clear button if record is not linked to a transaction
+    clearButton.setDisabled(!me.record.cleared);
+
     this.addMembers([searchButton, buttonSeparator1, addButton, buttonSeparator2, clearButton]);
     this.Super('initWidget', arguments);
   }
