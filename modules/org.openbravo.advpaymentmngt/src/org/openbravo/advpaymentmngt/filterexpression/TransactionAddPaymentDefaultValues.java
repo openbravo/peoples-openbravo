@@ -33,6 +33,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
+import org.openbravo.service.json.JsonUtils;
 
 @ComponentProvider.Qualifier(APRMConstants.TRANSACTION_WINDOW_ID)
 public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesHandler {
@@ -56,25 +57,21 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   @Override
   public String getDefaultIsSOTrx(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("inptrxtype")
-        && context.get("inptrxtype") != JSONObject.NULL
-        && StringUtils.isNotEmpty(context.getString("inptrxtype"))
-        || (context.has("inpwindowId") && context.get("inpwindowId").equals(
-            "94EAA455D2644E04AB25D93BE5157B6D"))) {
-      if (context.has("inptrxtype")) {
-        String document = context.getString("inptrxtype");
-        if ("BPD".equals(document)) {
-          return "Y";
-        } else if ("BPW".equals(document)) {
-          return "N";
-        } else {
-          return "";
-        }
-      } else {
-        return "Y";
-      }
+    String document = null;
+    if (context.has("trxtype") && context.get("trxtype") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("trxtype"))) {
+      document = context.getString("trxtype");
+    } else if (context.has("inptrxtype") && context.get("inptrxtype") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inptrxtype"))) {
+      document = context.getString("inptrxtype");
     }
-    return "";
+    if ("BPD".equals(document)) {
+      return "Y";
+    } else if ("BPW".equals(document)) {
+      return "N";
+    } else {
+      return "";
+    }
   }
 
   @Override
@@ -130,23 +127,23 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
 
   @Override
   public String getDefaultPaymentMethod(Map<String, String> requestMap) throws JSONException {
-    JSONObject context = new JSONObject(requestMap.get("context"));
-    boolean isReceipt = true;
-    if (context.has("IsSOTrx")) {
-      isReceipt = "Y".equals(context.get("IsSOTrx")) ? true : false;
-    }
+    boolean isReceipt = "Y".equals(getDefaultIsSOTrx(requestMap));
 
     FinAccPaymentMethod anyFinAccPaymentMethod = null;
     for (FinAccPaymentMethod finAccPaymentMethod : getFinancialAccount(requestMap)
         .getFinancialMgmtFinAccPaymentMethodList()) {
       if (finAccPaymentMethod.isDefault()) {
-        if ((isReceipt && finAccPaymentMethod.isPayinAllow())
-            || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
+        if ((isReceipt && finAccPaymentMethod.isPayinAllow() && !finAccPaymentMethod
+            .isAutomaticDeposit())
+            || (!isReceipt && finAccPaymentMethod.isPayoutAllow() && !finAccPaymentMethod
+                .isAutomaticWithdrawn())) {
           return finAccPaymentMethod.getPaymentMethod().getId();
         }
       }
-      if ((isReceipt && finAccPaymentMethod.isPayinAllow())
-          || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
+      if ((isReceipt && finAccPaymentMethod.isPayinAllow() && !finAccPaymentMethod
+          .isAutomaticDeposit())
+          || (!isReceipt && finAccPaymentMethod.isPayoutAllow() && !finAccPaymentMethod
+              .isAutomaticWithdrawn())) {
         anyFinAccPaymentMethod = finAccPaymentMethod;
       }
     }
@@ -157,42 +154,48 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   public String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
     // Document Type
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("inptrxtype")
-        && context.get("inptrxtype") != JSONObject.NULL
-        && StringUtils.isNotEmpty(context.getString("inptrxtype"))
-        || (context.has("inpwindowId") && context.get("inpwindowId").equals(
-            "94EAA455D2644E04AB25D93BE5157B6D"))) {
-      if (context.has("inptrxtype")) {
-        String document = context.getString("inptrxtype");
-        if ("BPD".equals(document)) {
-          return "RCIN";
-        } else if ("BPW".equals(document)) {
-          return "PDOUT";
-        } else {
-          return "";
-        }
-      } else {
-        return "RCIN";
-      }
-
+    String document = null;
+    if (context.has("trxtype") && context.get("trxtype") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("trxtype"))) {
+      document = context.getString("trxtype");
+    } else if (context.has("inptrxtype") && context.get("inptrxtype") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inptrxtype"))) {
+      document = context.getString("inptrxtype");
     }
-    return "";
+    if ("BPD".equals(document)) {
+      return "RCIN";
+    } else if ("BPW".equals(document)) {
+      return "PDOUT";
+    } else {
+      return "";
+    }
   }
 
   @Override
   public String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("inpstatementdate") && !context.isNull("inpstatementdate")
-        && !"".equals(context.getString("inpstatementdate"))) {
-      try {
-        Date date = new SimpleDateFormat("dd-MM-yyyy").parse(context.getString("inpstatementdate"));
+    String strTransactionDate = null;
+    try {
+      if (context.has("trxdate") && !context.isNull("trxdate")
+          && !"".equals(context.getString("trxdate"))) {
+        strTransactionDate = context.getString("trxdate");
+        Date transactionDate = JsonUtils.createDateFormat().parse(strTransactionDate);
+        return OBDateUtils.formatDate(transactionDate);
+      } else if (context.has("inpstatementdate") && !context.isNull("inpstatementdate")
+          && !"".equals(context.getString("inpstatementdate"))) {
+        strTransactionDate = context.getString("inpstatementdate");
+      }
+      if (strTransactionDate != null) {
+
+        Date date = new SimpleDateFormat("dd-MM-yyyy").parse(strTransactionDate);
         return OBDateUtils.formatDate(date);
-      } catch (ParseException e) {
+      } else {
         return OBDateUtils.formatDate(new Date());
       }
-    } else {
+    } catch (ParseException e) {
       return OBDateUtils.formatDate(new Date());
     }
+
   }
 
   private FIN_FinancialAccount getFinancialAccount(Map<String, String> requestMap)
