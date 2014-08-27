@@ -23,6 +23,9 @@ import java.util.Date;
 import java.util.Map;
 
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 
 @ComponentProvider.Qualifier("D56CF1065EF14D52ADAD2AAB0CB63EFC")
@@ -40,17 +43,27 @@ public class TransactionsToMatchTransformer extends HqlQueryTransformer {
 
   protected String getWhereClause(Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
+    final String accountId = requestParameters.get("@FIN_Financial_Account.id@");
+    final String bankStatementLineId = requestParameters.get("bankStatementLineId");
+
+    Date date;
+    try {
+      OBContext.setAdminMode(true);
+      date = OBDal.getInstance().get(FIN_BankStatementLine.class, bankStatementLineId)
+          .getTransactionDate();
+    } catch (Exception e) {
+      date = new Date();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
     final StringBuffer whereClause = new StringBuffer();
     whereClause.append("e.reconciliation is null ");
     whereClause.append("and e.account.id = :account  ");
     whereClause.append("and e.transactionDate <= :dateTo  ");
 
-    final String accountId = requestParameters.get("@FIN_Financial_Account.id@");
-    // FIXME get transaction date
-    final Date transactionDate = new Date();
-
     queryNamedParameters.put("account", accountId);
-    queryNamedParameters.put("dateTo", transactionDate);
+    queryNamedParameters.put("dateTo", date);
 
     return whereClause.toString();
   }
