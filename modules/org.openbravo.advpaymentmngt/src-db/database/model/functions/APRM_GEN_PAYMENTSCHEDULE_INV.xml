@@ -526,7 +526,7 @@ BEGIN
 
 	      -- Create C_InvoiceTax_CashVAT records
 	      IF (v_IsCashVAT = 'Y' AND order_schdet.fin_payment_detail_id IS NOT NULL) THEN
-                v_PercentageCashVAT := abs(c_currency_round(v_scheduledetailamount * 100 / v_GrandTotal, v_Currency_ID, null));
+                v_PercentageCashVAT := c_currency_round(v_scheduledetailamount * 100 / v_GrandTotal, v_Currency_ID, null);
 		FOR cur_cinvoicetax IN (
 		  SELECT it.C_InvoiceTax_ID, it.taxamt, it.taxbaseamt
                   FROM C_InvoiceTax it INNER JOIN C_Tax t on (it.c_tax_id = t.c_tax_id)
@@ -810,7 +810,7 @@ BEGIN
                   
                 -- Create C_InvoiceTax_CashVAT records
 	      IF (v_IsCashVAT = 'Y') THEN
-                v_PercentageCashVAT := abs(c_currency_round(cur_linktopayment_scheddetails.AMOUNT * 100 / v_GrandTotal, v_Currency_ID, null));
+                v_PercentageCashVAT := c_currency_round(cur_linktopayment_scheddetails.AMOUNT * 100 / v_GrandTotal, v_Currency_ID, null);
                 FOR cur_cinvoicetax IN (
                   SELECT it.C_InvoiceTax_ID, it.taxamt, it.taxbaseamt
                   FROM C_InvoiceTax it INNER JOIN C_Tax t on (it.c_tax_id = t.c_tax_id)
