@@ -305,15 +305,17 @@ enyo.kind({
         content = OB.I18N.getLabel('OBPOS_FinishCloseDialog');
       }
 
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
-        label: OB.I18N.getLabel('OBMOBC_LblOk'),
-        isConfirmButton: true,
-        action: function () {
-          me.finalAction();
-          return true;
-        }
-      }], {
-        autoDismiss: false
+      OB.UTIL.HookManager.executeHooks('OBPOS_AfterCashUpSent', {}, function () {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {
+            me.finalAction();
+            return true;
+          }
+        }], {
+          autoDismiss: false
+        });
       });
 
     }, this);
