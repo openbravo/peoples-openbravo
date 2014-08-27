@@ -39,7 +39,9 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
+import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_ReconciliationProcess;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
@@ -57,9 +59,17 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
+import org.openbravo.model.financialmgmt.accounting.Costcenter;
+import org.openbravo.model.financialmgmt.accounting.UserDimension1;
+import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.cashmgmt.BankStatementLine;
+import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -68,6 +78,10 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.financialmgmt.payment.FIN_ReconciliationLine_v;
 import org.openbravo.model.financialmgmt.payment.MatchingAlgorithm;
+import org.openbravo.model.marketing.Campaign;
+import org.openbravo.model.materialmgmt.cost.ABCActivity;
+import org.openbravo.model.project.Project;
+import org.openbravo.model.sales.SalesRegion;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -812,6 +826,41 @@ public class APRM_MatchingUtility {
     final JSONArray actions = new JSONArray();
     actions.put(msgTotalAction);
     return actions;
+  }
+
+  /**
+   * Creates a new financial transaction from the given parameters. If the strFinBankStatementLineId
+   * is not blank, then it tries to match the new transaction to the bank statement line
+   * 
+   */
+  public static void createAndMatchFinancialTransaction(String strFinancialAccountId,
+      String strTransactionType, Date transactionDate, String strFinBankStatementLineId,
+      Organization organization, final FIN_FinancialAccount account, FIN_Payment payment,
+      String description, GLItem glItem, boolean isReceipt, BigDecimal depositAmt,
+      BigDecimal paymentAmt, Currency paymentCurrency, BigDecimal convertRate,
+      BigDecimal sourceAmount, Campaign campaign, Project project, ABCActivity activity,
+      SalesRegion salesRegion, Product product, BusinessPartner businessPartner,
+      UserDimension1 user1, UserDimension2 user2, Costcenter costcenter,
+      final FIN_BankStatementLine bankStatementLine, VariablesSecureApp vars,
+      ConnectionProvider conn, boolean throwException) throws Exception {
+    final AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
+    final FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(organization, account,
+        TransactionsDao.getTransactionMaxLineNo(account) + 10, payment, description,
+        transactionDate, glItem, isReceipt ? "RDNC" : "PWNC", depositAmt, paymentAmt, project,
+        campaign, activity, StringUtils.equals(strTransactionType, "BF") ? "BF" : isReceipt ? "BPD"
+            : "BPW", transactionDate, paymentCurrency, convertRate, sourceAmount, businessPartner,
+        product, salesRegion, user1, user2, costcenter);
+    final OBError processTransactionError = processTransaction(vars, conn, "P", finTrans);
+    if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
+      throw new OBException(processTransactionError.getMessage());
+    }
+
+    if (StringUtils.isNotBlank(strFinBankStatementLineId)) {
+      final FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal
+          .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
+      APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, finTrans, reconciliation,
+          null, true);
+    }
   }
 
 }

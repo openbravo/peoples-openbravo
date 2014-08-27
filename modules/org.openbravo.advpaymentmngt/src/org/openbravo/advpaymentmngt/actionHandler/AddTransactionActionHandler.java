@@ -20,26 +20,23 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
-import org.openbravo.advpaymentmngt.dao.TransactionsDao;
-import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.accounting.Costcenter;
@@ -47,248 +44,169 @@ import org.openbravo.model.financialmgmt.accounting.UserDimension1;
 import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
-import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
-import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.model.marketing.Campaign;
 import org.openbravo.model.materialmgmt.cost.ABCActivity;
 import org.openbravo.model.project.Project;
 import org.openbravo.model.sales.SalesRegion;
-import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AddTransactionActionHandler extends BaseProcessActionHandler {
-  final private static Logger log = LoggerFactory.getLogger(AddPaymentActionHandler.class);
-  private AdvPaymentMngtDao dao;
+  final private static Logger log = LoggerFactory.getLogger(AddTransactionActionHandler.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
-    JSONObject jsonResponse = new JSONObject();
-    OBContext.setAdminMode(true);
+    final JSONObject result = new JSONObject();
+
     try {
-      JSONObject request = new JSONObject(content);
-      JSONObject params = request.getJSONObject("_params");
-      String strFinBankStatementLineId = params.getString("bankStatementLineId");
+      final JSONObject request = new JSONObject(content);
+      final JSONObject params = request.getJSONObject("_params");
 
-      String strTabId = request.getString("inpTabId");
-      String strFinancialAccountId = request.getString("Fin_Financial_Account_ID");
+      final String strFinBankStatementLineId = params.getString("bankStatementLineId");
+      final String strTabId = request.getString("inpTabId");
+      final String strFinancialAccountId = request.getString("Fin_Financial_Account_ID");
+      final String strTransactionType = params.getString("trxtype");
+      final String strTransactionDate = params.getString("trxdate");
+      final Date transactionDate = JsonUtils.createDateFormat().parse(strTransactionDate);
+      final String selectedPaymentsIds = params.has("fin_payment_id") ? params
+          .getString("fin_payment_id") : "";
+      final String strGLItemId = params.has("c_glitem_id") ? params.getString("c_glitem_id") : "";
+      final String strDepositAmount = params.getString("depositamt");
+      final String strWithdrawalamt = params.getString("withdrawalamt");
+      final String strDescription = params.has("description") ? params.getString("description")
+          : "";
 
-      String strTransactionType = params.getString("trxtype");
-      String strTransactionDate = params.getString("trxdate");
-      Date transactionDate = JsonUtils.createDateFormat().parse(strTransactionDate);
-
-      String selectedPaymentsIds = "";
-      if (params.has("fin_payment_id")) {
-        selectedPaymentsIds = params.getString("fin_payment_id");
+      createAndMatchTransaction(strTabId, strFinancialAccountId, selectedPaymentsIds,
+          strTransactionType, strGLItemId, transactionDate, strFinBankStatementLineId,
+          strDepositAmount, strWithdrawalamt, strDescription, params);
+    } catch (final Exception e) {
+      OBDal.getInstance().rollbackAndClose();
+      log.error(e.getMessage(), e);
+      try {
+        Throwable ex = DbUtility.getUnderlyingSQLException(e);
+        final JSONArray actions = APRM_MatchingUtility.createMessageInProcessView(ex.getMessage(),
+            "error");
+        result.put("responseActions", actions);
+        result.put("retryExecution", true);
+      } catch (Exception e2) {
+        log.error(e2.getMessage(), e2);
+        // do nothing, give up
       }
-      String strGLItemId = "";
-      if (params.has("c_glitem_id")) {
-        strGLItemId = params.getString("c_glitem_id");
-      }
-
-      String strDepositAmount = params.getString("depositamt");
-      String strWithdrawalamt = params.getString("withdrawalamt");
-
-      String strDescription = "";
-      if (params.has("description")) {
-        strDescription = params.getString("description");
-      }
-      createTransaction(strTabId, strFinancialAccountId, selectedPaymentsIds, strTransactionType,
-          strGLItemId, transactionDate, strFinBankStatementLineId, strDepositAmount,
-          strWithdrawalamt, strDescription, params);
-
-    } catch (Exception e) {
-      log.error("Error in process", e);
     }
-    return jsonResponse;
+    return result;
   }
 
-  private void createTransaction(String strTabId, String strFinancialAccountId,
+  private void createAndMatchTransaction(String strTabId, String strFinancialAccountId,
       String selectedPaymentsIds, String strTransactionType, String strGLItemId,
       Date transactionDate, String strFinBankStatementLineId, String strDepositAmount,
-      String strWithdrawalamt, String strDescription, JSONObject params) {
-    dao = new AdvPaymentMngtDao();
-    String strMessage = "";
-    OBError msg = new OBError();
-    OBContext.setAdminMode();
-    VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-    ConnectionProvider conn = new DalConnectionProvider(true);
+      String strWithdrawalamt, String strDescription, JSONObject params) throws Exception {
+    final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+    final ConnectionProvider conn = new DalConnectionProvider(false);
+
     try {
+      OBContext.setAdminMode(true);
+
+      Organization organization = null;
+      final FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
+          strFinancialAccountId);
+      String description = "";
+      GLItem glItem = null;
+      boolean isReceipt = true;
+      BigDecimal depositAmt = BigDecimal.ZERO;
+      BigDecimal paymentAmt = BigDecimal.ZERO;
+
+      Currency paymentCurrency = null;
+      BigDecimal convertRate = null;
+      BigDecimal sourceAmount = null;
+
+      Campaign campaign = null;
+      Project project = null;
+      ABCActivity activity = null;
+      SalesRegion salesRegion = null;
+      Product product = null;
+      BusinessPartner businessPartner = null;
+      UserDimension1 user1 = null;
+      UserDimension2 user2 = null;
+      Costcenter costcenter = null;
+
       final FIN_BankStatementLine bankStatementLine = OBDal.getInstance().get(
           FIN_BankStatementLine.class, strFinBankStatementLineId);
 
-      // SALES = DEPOSIT
-      // PURCHASE = PAYMENT
-      if (!strTransactionType.equals("BF") && (!selectedPaymentsIds.equals("null"))) { // Payment
-
-        List<FIN_Payment> selectedPayments = FIN_Utility.getOBObjectList(FIN_Payment.class,
+      if (!selectedPaymentsIds.equals("null")) { // Payment
+        final List<FIN_Payment> selectedPayments = FIN_Utility.getOBObjectList(FIN_Payment.class,
             selectedPaymentsIds);
+        for (final FIN_Payment payment : selectedPayments) { // FIXME is possible to have more than
+                                                             // 1 payment?
+          depositAmt = FIN_Utility.getDepositAmount(payment.isReceipt(),
+              payment.getFinancialTransactionAmount());
+          paymentAmt = FIN_Utility.getPaymentAmount(payment.isReceipt(),
+              payment.getFinancialTransactionAmount());
+          isReceipt = payment.isReceipt();
+          description = StringUtils.isNotBlank(payment.getDescription()) ? payment.getDescription()
+              .replace("\n", ". ") : "";
+          organization = payment.getOrganization();
+          paymentCurrency = payment.getCurrency();
+          convertRate = payment.getFinancialTransactionConvertRate();
+          sourceAmount = payment.getAmount();
 
-        for (FIN_Payment p : selectedPayments) {
-          BigDecimal depositAmt = FIN_Utility.getDepositAmount(p.isReceipt(),
-              p.getFinancialTransactionAmount());
-          BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(p.isReceipt(),
-              p.getFinancialTransactionAmount());
-
-          String description = null;
-          if (p.getDescription() != null) {
-            description = p.getDescription().replace("\n", ". ");
-          }
-
-          FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(
-              p.getOrganization(),
-              OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId),
-              TransactionsDao.getTransactionMaxLineNo(OBDal.getInstance().get(
-                  FIN_FinancialAccount.class, strFinancialAccountId)) + 10, p, description,
-              transactionDate, null, p.isReceipt() ? "RDNC" : "PWNC", depositAmt, paymentAmt, null,
-              null, null, p.isReceipt() ? "BPD" : "BPW", transactionDate, p.getCurrency(),
-              p.getFinancialTransactionConvertRate(), p.getAmount());
-          OBError processTransactionError = processTransaction(vars, conn, "P", finTrans);
-          if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
-            throw new OBException(processTransactionError.getMessage());
-          }
-          if (!"".equals(strFinBankStatementLineId)) {
-            FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal
-                .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
-            APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, finTrans,
-                reconciliation, null, true);
-          }
+          APRM_MatchingUtility.createAndMatchFinancialTransaction(strFinancialAccountId,
+              strTransactionType, transactionDate, strFinBankStatementLineId, organization,
+              account, payment, description, glItem, isReceipt, depositAmt, paymentAmt,
+              paymentCurrency, convertRate, sourceAmount, campaign, project, activity, salesRegion,
+              product, businessPartner, user1, user2, costcenter, bankStatementLine, vars, conn,
+              true);
         }
+      } else {
+        if (!strGLItemId.equals("null")) {// GL item
+          // Accounting Dimensions
+          final String strElement_OT = params.getString("ad_org_id");
+          organization = OBDal.getInstance().get(Organization.class, strElement_OT);
+          final String strElement_BP = params.getString("c_bpartner_id");
+          businessPartner = OBDal.getInstance().get(BusinessPartner.class, strElement_BP);
+          final String strElement_PR = params.getString("m_product_id");
+          product = OBDal.getInstance().get(Product.class, strElement_PR);
+          final String strElement_PJ = params.getString("c_project_id");
+          project = OBDal.getInstance().get(Project.class, strElement_PJ);
+          final String strElement_AY = params.getString("c_activity_id");
+          activity = OBDal.getInstance().get(ABCActivity.class, strElement_AY);
+          final String strElement_SR = params.getString("c_salesregion_id");
+          salesRegion = OBDal.getInstance().get(SalesRegion.class, strElement_SR);
+          final String strElement_MC = params.getString("c_campaign_id");
+          campaign = OBDal.getInstance().get(Campaign.class, strElement_MC);
+          final String strElement_U1 = params.getString("user1_id");
+          user1 = OBDal.getInstance().get(UserDimension1.class, strElement_U1);
+          final String strElement_U2 = params.getString("user2_id");
+          user2 = OBDal.getInstance().get(UserDimension2.class, strElement_U2);
+          final String strElement_CC = params.getString("c_costcenter_id");
+          costcenter = OBDal.getInstance().get(Costcenter.class, strElement_CC);
 
-        if (selectedPaymentsIds != null && selectedPayments.size() > 0) {
-          strMessage = selectedPayments.size() + " " + "@RowsInserted@";
+          glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
+
+          depositAmt = new BigDecimal(strDepositAmount);
+          paymentAmt = new BigDecimal(strWithdrawalamt);
+          isReceipt = (depositAmt.compareTo(paymentAmt) >= 0);
+          description = StringUtils.isBlank(strDescription) ? OBMessageUtils
+              .messageBD("APRM_GLItem") + ": " + glItem.getName() : strDescription;
+        } else { // Bank Fee or transaction without payment and gl item
+          depositAmt = new BigDecimal(strDepositAmount);
+          paymentAmt = new BigDecimal(strWithdrawalamt);
+          isReceipt = (depositAmt.compareTo(paymentAmt) >= 0);
+          description = StringUtils.isBlank(strDescription) ? OBMessageUtils
+              .messageBD("APRM_BankFee") : strDescription;
         }
-
+        APRM_MatchingUtility.createAndMatchFinancialTransaction(strFinancialAccountId,
+            strTransactionType, transactionDate, strFinBankStatementLineId, organization, account,
+            null, description, glItem, isReceipt, depositAmt, paymentAmt, paymentCurrency,
+            convertRate, sourceAmount, campaign, project, activity, salesRegion, product,
+            businessPartner, user1, user2, costcenter, bankStatementLine, vars, conn, true);
       }
-      if (!strTransactionType.equals("BF") && (!strGLItemId.equals("null"))) {// GL item
-        // Accounting Dimensions
-        final String strElement_OT = params.getString("ad_org_id");
-        final Organization organization = OBDal.getInstance()
-            .get(Organization.class, strElement_OT);
-
-        final String strElement_BP = params.getString("c_bpartner_id");
-        final BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-            strElement_BP);
-
-        final String strElement_PR = params.getString("m_product_id");
-        final Product product = OBDal.getInstance().get(Product.class, strElement_PR);
-
-        final String strElement_PJ = params.getString("c_project_id");
-        final Project project = OBDal.getInstance().get(Project.class, strElement_PJ);
-
-        final String strElement_AY = params.getString("c_activity_id");
-        final ABCActivity activity = OBDal.getInstance().get(ABCActivity.class, strElement_AY);
-
-        final String strElement_SR = params.getString("c_salesregion_id");
-        final SalesRegion salesRegion = OBDal.getInstance().get(SalesRegion.class, strElement_SR);
-
-        final String strElement_MC = params.getString("c_campaign_id");
-        final Campaign campaign = OBDal.getInstance().get(Campaign.class, strElement_MC);
-
-        final String strElement_U1 = params.getString("user1_id");
-        final UserDimension1 user1 = OBDal.getInstance().get(UserDimension1.class, strElement_U1);
-
-        final String strElement_U2 = params.getString("user2_id");
-        final UserDimension2 user2 = OBDal.getInstance().get(UserDimension2.class, strElement_U2);
-
-        final String strElement_CC = params.getString("c_costcenter_id");
-        final Costcenter costcenter = OBDal.getInstance().get(Costcenter.class, strElement_CC);
-
-        BigDecimal glItemDepositAmt = new BigDecimal(strDepositAmount);
-        BigDecimal glItemPaymentAmt = new BigDecimal(strWithdrawalamt);
-
-        FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            strFinancialAccountId);
-        GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
-        String description = strDescription.isEmpty() ? Utility.messageBD(conn, "APRM_GLItem",
-            vars.getLanguage())
-            + ": " + glItem.getName() : strDescription;
-        boolean isReceipt = (glItemDepositAmt.compareTo(glItemPaymentAmt) >= 0);
-
-        // Currency, Organization, paymentDate,
-        FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(organization, account,
-            TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description,
-            transactionDate, glItem, isReceipt ? "RDNC" : "PWNC", glItemDepositAmt,
-            glItemPaymentAmt, project, campaign, activity, isReceipt ? "BPD" : "BPW",
-            transactionDate, null, null, null, businessPartner, product, salesRegion, user1, user2,
-            costcenter);
-        OBError processTransactionError = processTransaction(vars, conn, "P", finTrans);
-        if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
-          throw new OBException(processTransactionError.getMessage());
-        }
-        strMessage = "1 " + "@RowsInserted@";
-        if (!"".equals(strFinBankStatementLineId)) {
-
-          FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal
-              .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
-          APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, finTrans, reconciliation,
-              null, true);
-        }
-      }
-      if (strTransactionType.equals("BF")) { // Bank Fee
-        BigDecimal feeDepositAmt = new BigDecimal(strDepositAmount);
-        BigDecimal feePaymentAmt = new BigDecimal(strWithdrawalamt);
-        FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            strFinancialAccountId);
-        boolean isReceipt = (feeDepositAmt.compareTo(feePaymentAmt) >= 0);
-        String description = strDescription.isEmpty() ? Utility.messageBD(conn, "APRM_BankFee",
-            vars.getLanguage()) : strDescription;
-
-        FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(account.getOrganization(),
-            account, TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description,
-            transactionDate, null, isReceipt ? "RDNC" : "PWNC", feeDepositAmt, feePaymentAmt, null,
-            null, null, "BF", transactionDate, null, null, null);
-        OBError processTransactionError = processTransaction(vars, conn, "P", finTrans);
-        if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
-          throw new OBException(processTransactionError.getMessage());
-        }
-        strMessage = "1 " + "@RowsInserted@";
-        if (!"".equals(strFinBankStatementLineId)) {
-          FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal
-              .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
-          APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, finTrans, reconciliation,
-              null, true);
-        }
-      }
-
-    } catch (Exception e) {
-      OBError newError = Utility.translateError(conn, vars, vars.getLanguage(),
-          FIN_Utility.getExceptionMessage(e));
-      throw new OBException(newError.getMessage());
     } finally {
       OBContext.restorePreviousMode();
     }
   }
-
-  /**
-   * It calls the Transaction Process for the given transaction and action.
-   * 
-   * @param vars
-   *          VariablesSecureApp with the session data.
-   * @param conn
-   *          ConnectionProvider with the connection being used.
-   * @param strAction
-   *          String with the action of the process. {P, D, R}
-   * @param transaction
-   *          FIN_FinaccTransaction that needs to be processed.
-   * @return a OBError with the result message of the process.
-   * @throws Exception
-   */
-  private OBError processTransaction(VariablesSecureApp vars, ConnectionProvider conn,
-      String strAction, FIN_FinaccTransaction transaction) throws Exception {
-    ProcessBundle pb = new ProcessBundle("F68F2890E96D4D85A1DEF0274D105BCE", vars).init(conn);
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("action", strAction);
-    parameters.put("Fin_FinAcc_Transaction_ID", transaction.getId());
-    pb.setParams(parameters);
-    OBError myMessage = null;
-    new FIN_TransactionProcess().execute(pb);
-    myMessage = (OBError) pb.getResult();
-    return myMessage;
-  }
-
 }
