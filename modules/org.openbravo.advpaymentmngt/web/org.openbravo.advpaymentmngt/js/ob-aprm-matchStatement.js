@@ -117,6 +117,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
           paramWindow: true,
           processId: processId,
           windowId: grid.view.windowId,
+          expandedHeight: 440,
           externalParams: {
             bankStatementLineId: me.record.id
           },
