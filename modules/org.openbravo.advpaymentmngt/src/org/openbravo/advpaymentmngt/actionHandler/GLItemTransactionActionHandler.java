@@ -21,9 +21,12 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
+import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.gl.GLItem;
@@ -32,22 +35,34 @@ public class GLItemTransactionActionHandler extends BaseActionHandler {
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
+    final JSONObject result = new JSONObject();
+
     try {
+      OBContext.setAdminMode(true);
       final JSONObject jsonData = new JSONObject(data);
       final String strGLItemId = jsonData.getString("strGLItemId");
+
       String description = "";
-      JSONObject result = new JSONObject();
-      if ("".equals(strGLItemId)) {
-        result.put("description", "");
+      if (StringUtils.isNotBlank(strGLItemId)) {
+        final GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
+        if (glItem != null) {
+          description = OBMessageUtils.messageBD("APRM_GLItem") + ": " + glItem.getName();
+        }
       }
-      GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
-      description = OBMessageUtils.messageBD("APRM_GLItem") + ": " + glItem.getName();
 
       result.put("description", description);
-      return result;
     } catch (Exception e) {
-      throw new OBException(e);
+      try {
+        final JSONArray actions = APRM_MatchingUtility.createMessageInProcessView(e.getMessage(),
+            "error");
+        result.put("responseActions", actions);
+        result.put("retryExecution", true);
+      } catch (Exception ignore) {
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
-  }
 
+    return result;
+  }
 }
