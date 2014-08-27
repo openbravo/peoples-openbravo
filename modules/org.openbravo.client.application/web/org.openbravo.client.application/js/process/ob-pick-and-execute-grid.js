@@ -166,6 +166,10 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     this.dataSource.transformRequest = function (dsRequest) {
       dsRequest.params = dsRequest.params || {};
+      if (me.view && me.view.externalParams) {
+        // include in the request the external params of the view, if any
+        isc.addProperties(dsRequest.params, me.view.externalParams);
+      }
       if (me.view && me.view.theForm) {
         // include in the request the values of the parameters of the parameter window
         isc.addProperties(dsRequest.params, me.view.theForm.getValues());
