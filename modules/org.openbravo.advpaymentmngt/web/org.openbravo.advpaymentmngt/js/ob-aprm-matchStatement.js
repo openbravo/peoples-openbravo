@@ -86,7 +86,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
             record = me.record,
             standardWindow = grid.view.parentWindow.view.standardWindow;
 
-        var process = standardWindow.buildProcess({
+        var process = standardWindow.openProcess({
           callerField: me,
           paramWindow: true,
           processId: processId,
@@ -95,10 +95,8 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
             bankStatementLineId: record.id,
             transactionDate: record.transactionDate
           },
-          windowTitle: 'Search'
+          windowTitle: OB.I18N.getLabel('APRM_MATCHTRANSACTION_SEARCH_BUTTON', [this.title])
         });
-
-        grid.openExpansionProcess(process, record);
       }
     });
 
@@ -112,7 +110,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
             record = me.record,
             standardWindow = grid.view.parentWindow.view.standardWindow;
 
-        var process = standardWindow.buildProcess({
+        var process = standardWindow.openProcess({
           callerField: me,
           paramWindow: true,
           processId: processId,
@@ -121,10 +119,8 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
           externalParams: {
             bankStatementLineId: me.record.id
           },
-          windowTitle: 'Add'
+          windowTitle: OB.I18N.getLabel('APRM_MATCHTRANSACTION_ADD_BUTTON', [this.title])
         });
-
-        grid.openExpansionProcess(process, record);
       }
     });
 
