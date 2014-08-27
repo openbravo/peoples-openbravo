@@ -51,16 +51,16 @@ OB.ProductCharacteristics = {
     params.action = 'INITIALIZE';
     OB.ProductCharacteristics.execute(params, view);
   },
-  
+
   //Shows a message in order to notify that number of records is too high, so
   //product characteristics should be changed.
-  testOnGridLoad: function(grid) {
-	    var nRecordsReceived = grid.getData().getLength(),
-	        messageBar = grid.view.messageBar;
-	    if (nRecordsReceived == 0) {
-	        messageBar.setMessage('info', OB.I18N.getLabel('HighRecords'));
-	    }
-	},
+  testOnGridLoad: function (grid) {
+    var nRecordsReceived = grid.getData().getLength(),
+        messageBar = grid.view.messageBar;
+    if (nRecordsReceived == 0) {
+      messageBar.setMessage('info', OB.I18N.getLabel('HighRecords'));
+    }
+  },
 };
 
 isc.defineClass('UpdateInvariantCharacteristicsPopup', isc.OBPopup);
@@ -85,12 +85,111 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.UpdateInvariantCharacteristics.popup', this);
     var originalView = this.view,
         params = this.params,
-        i;
-   
+        i, emptyFunction, initTreeField;
+
+    emptyFunction = function () {};
+    initTreeField = function () {
+      this.optionDataSource = OB.Datasource.create({
+        createClassName: '',
+        dataURL: '/openbravo/org.openbravo.service.datasource/CharacteristicValue',
+        requestProperties: {
+          params: {
+            targetProperty: this.name,
+            adTabId: 'A43B5CFC17754AED86B9E57F71460C4E',
+            IsSelectorItem: 'true',
+            Constants_FIELDSEPARATOR: '$',
+            columnName: this.name,
+            Constants_IDENTIFIER: '_identifier',
+            _extraProperties: 'id,name'
+          }
+        },
+        fields: [{
+          name: 'id',
+          type: '_id_13',
+          primaryKey: true
+        }, {
+          name: 'client',
+          type: '_id_19'
+        }, {
+          name: 'client$_identifier'
+        }, {
+          name: 'organization',
+          type: '_id_19'
+        }, {
+          name: 'organization$_identifier'
+        }, {
+          name: 'active',
+          type: '_id_20'
+        }, {
+          name: 'creationDate',
+          type: '_id_16'
+        }, {
+          name: 'createdBy',
+          type: '_id_30'
+        }, {
+          name: 'createdBy$_identifier'
+        }, {
+          name: 'updated',
+          type: '_id_16'
+        }, {
+          name: 'updatedBy',
+          type: '_id_30'
+        }, {
+          name: 'updatedBy$_identifier'
+        }, {
+          name: 'characteristic',
+          type: '_id_19'
+        }, {
+          name: 'characteristic$_identifier'
+        }, {
+          name: 'name',
+          type: '_id_10'
+        }, {
+          name: 'summaryLevel',
+          type: '_id_20'
+        }, {
+          name: 'code',
+          type: '_id_10'
+        }, {
+          name: 'description',
+          type: '_id_10'
+        }, {
+          name: 'addProducts',
+          type: '_id_28'
+        }, {
+          name: 'id',
+          type: '_id_13',
+          additional: true,
+          primaryKey: true
+        }, {
+          name: 'name',
+          type: '_id_10',
+          additional: true
+        }]
+      });
+
+      this.Super('init', arguments);
+
+      // Place the picklist to the front
+      this.Super('init', arguments);
+      this.tree.originalShow = this.tree.show;
+      this.tree.treeItem.addParamsToRequest = function () {
+        return {
+          parentCharId: this.parentCharId
+        }
+      };
+      this.tree.show = function () {
+        this.originalShow();
+        this.bringToFront();
+      };
+    };
+
     // Populates the combos using the provided characteristicList
     this.characteristicCombos = [];
     for (i = 0; i < this.characteristicList.length; i++) {
       this.characteristicCombos[i] = isc.DynamicForm.create({
+        view: originalView.view,
+        handleItemChange: emptyFunction,
         fields: [{
           id: this.characteristicList[i].id,
           name: this.characteristicList[i].name,
@@ -101,7 +200,46 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
           height: 20,
           width: 255,
           required: false,
-          type: '_id_17'
+          form: {
+            view: originalView.view
+          },
+          columnName: this.characteristicList[i].name,
+          inpColumnName: this.characteristicList[i].name,
+          refColumnName: this.characteristicList[i].name,
+          targetEntity: this.characteristicList[i].name,
+          treeReferenceId: '95582A51651D415993D0FD3B64C8E861',
+          parentCharId: this.characteristicList[i].id,
+          dataSourceId: '90034CAE96E847D78FBEF6D38CB1930D',
+          parentSelectionAllowed: true,
+          popupTextMatchStyle: 'substring',
+          textMatchStyle: 'substring',
+          defaultPopupFilterField: 'name',
+          displayField: 'name',
+          valueField: 'id',
+          referencedTableId: 'E913D17C9B3847CF92235082DBE2EC44',
+          pickListFields: [{
+            title: ' ',
+            name: 'name',
+            type: 'text'
+          }],
+          showSelectorGrid: true,
+          treeGridFields: [{
+            title: 'name',
+            name: 'name',
+            canSort: false,
+            type: '_id_10'
+          }],
+          extraSearchFields: [],
+          init: initTreeField,
+          gridProps: {
+            sort: 3,
+            autoExpand: true,
+            displayField: 'characteristicValue$name',
+            displaylength: 32,
+            fkField: true,
+            showHover: true
+          },
+          type: '_id_D3D9A7BAF4594950922A22B2D7ABFA74'
         }]
       });
     }
