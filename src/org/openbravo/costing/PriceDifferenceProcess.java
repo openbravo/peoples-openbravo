@@ -37,11 +37,8 @@ import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PriceDifferenceProcess {
-  private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcessHandler.class);
 
   public static void processPriceDifferenceTransaction(MaterialTransaction materialTransaction)
       throws OBException, JSONException {

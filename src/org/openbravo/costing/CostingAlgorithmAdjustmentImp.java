@@ -61,6 +61,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
   protected int stdCurPrecission;
   protected TrxType trxType;
   protected String strCostingRuleId;
+  protected Date startingDate;
+  protected String strClientId;
   protected boolean isManufacturingProduct;
   protected HashMap<CostDimension, String> costDimensionIds = new HashMap<CostDimension, String>();
 
@@ -71,7 +73,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
    * @param costAdjLine
    *          The Cost Adjustment Line that it is processed.
    */
-  public void init(CostAdjustmentLine costAdjLine) {
+  protected void init(CostAdjustmentLine costAdjLine) {
     strCostAdjLineId = costAdjLine.getId();
     strCostAdjId = (String) DalUtil.getId(costAdjLine.getCostAdjustment());
     MaterialTransaction transaction = costAdjLine.getInventoryTransaction();
@@ -85,6 +87,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
     trxType = CostingServer.TrxType.getTrxType(transaction);
     CostingRule costingRule = costingServer.getCostingRule();
     strCostingRuleId = costingRule.getId();
+    startingDate = costingRule.getStartingDate();
+    strClientId = costingRule.getClient().getId();
 
     HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
     // Production products cannot be calculated by warehouse dimension.
@@ -109,7 +113,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
     // Backdated transactions are inserted with a null adjustment amount.
     if (costAdjLine.isBackdatedTrx()) {
-      calculateBackdatedAdjustmentAmount();
+      calculateBackdatedTrxAdjustment();
     }
 
     // Negative stock correction are inserted with a null adjustment amount.
@@ -284,11 +288,11 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
   }
 
-  abstract void calculateNegativeStockCorrectionAdjustmentAmount();
+  protected abstract void calculateNegativeStockCorrectionAdjustmentAmount();
 
-  abstract void getRelatedTransactionsByAlgorithm();
+  protected abstract void getRelatedTransactionsByAlgorithm();
 
-  protected void calculateBackdatedAdjustmentAmount() {
+  protected void calculateBackdatedTrxAdjustment() {
     BigDecimal adjAmt = BigDecimal.ZERO;
     // Incoming transactions does not modify the calculated cost
     switch (trxType) {
@@ -307,8 +311,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
         break;
       }
       // Check receipt default on backdated date.
+      adjAmt = getDefaultCostDifference();
       break;
-
     case ShipmentReturn:
       if (hasReturnedReceipt()) {
         // If the return receipt has a original receipt the cost amount does not depend on the date.
@@ -354,7 +358,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
   }
 
-  abstract BigDecimal getOutgoingBackdatedTrxAdjAmt();
+  protected abstract BigDecimal getOutgoingBackdatedTrxAdjAmt();
 
   private BigDecimal getDefaultCostDifference() {
     MaterialTransaction trx = getTransaction();

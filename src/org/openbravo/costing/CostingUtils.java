@@ -548,12 +548,13 @@ public class CostingUtils {
    * only takes transactions that have its cost calculated.
    */
   public static BigDecimal getCurrentStock(Organization org, MaterialTransaction trx,
-      HashMap<CostDimension, BaseOBObject> costDimensions, boolean isManufacturingProduct) {
+      HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct) {
 
     // Get child tree of organizations.
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
         trx.getClient().getId());
     Set<String> orgs = osp.getChildTree(org.getId(), true);
+    HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
     if (isManufacturingProduct) {
       orgs = osp.getChildTree("0", false);
       costDimensions = CostingUtils.getEmptyDimensions();

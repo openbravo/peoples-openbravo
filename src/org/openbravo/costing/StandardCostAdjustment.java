@@ -51,7 +51,7 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
   @Override
-  void getRelatedTransactionsByAlgorithm() {
+  protected void getRelatedTransactionsByAlgorithm() {
     // Inventory opening transactions are the only transaction types that can generates a new
     // Standard Cost. Having a new Standard COst on a backdated transaction forces to adjust the
     // cost off all the transactions from the backdated transaction to the next defined standard
@@ -64,18 +64,18 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
           .setScale(costCurPrecission, RoundingMode.HALF_UP);
 
       // Cost is effective on the beginning of the following date.
-      Date startingDate = DateUtils.truncate(
+      Date firstDate = DateUtils.truncate(
           DateUtils.addDays(getCostAdjLine().getTransactionDate(), 1), Calendar.DATE);
 
       Costing stdCost = CostingUtils.getStandardCostDefinition(trx.getProduct(), getCostOrg(),
-          startingDate, getCostDimensions());
+          firstDate, getCostDimensions());
       // Modify isManufacturingProduct flag in case it has changed at some point.
       isManufacturingProduct = ((String) DalUtil.getId(stdCost.getOrganization())).equals("0");
 
       BigDecimal baseCurrentCost = stdCost.getCost();
       if (!stdCost.getCurrency().equals(strCostCurrencyId)) {
         baseCurrentCost = FinancialUtils.getConvertedAmount(baseCurrentCost, stdCost.getCurrency(),
-            getCostCurrency(), startingDate, getCostOrg(), "C");
+            getCostCurrency(), firstDate, getCostOrg(), "C");
       }
       if (baseCurrentCost.compareTo(unitCost) == 0) {
         // If current cost is the same than the unit cost there is no need to create a new costing
@@ -108,7 +108,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
   }
 
-  private ScrollableResults getRelatedTransactions(Date startingDate, Date endingDate) {
+  private ScrollableResults getRelatedTransactions(Date firstDate, Date endingDate) {
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
         (String) DalUtil.getId(getCostOrg().getClient()));
     HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
@@ -146,7 +146,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
     trxQry.setFilterOnReadableOrganization(false);
-    trxQry.setNamedParameter("mvtdate", startingDate);
+    trxQry.setNamedParameter("mvtdate", firstDate);
     trxQry.setNamedParameter("enddate", endingDate);
     trxQry.setNamedParameter("orgs", orgs);
     trxQry.setNamedParameter("product", trx.getProduct());
@@ -182,7 +182,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
   }
 
   @Override
-  BigDecimal getOutgoingBackdatedTrxAdjAmt() {
+  protected BigDecimal getOutgoingBackdatedTrxAdjAmt() {
     // Calculate the standard cost on the transaction's movement date and adjust the cost if needed.
     MaterialTransaction trx = getTransaction();
     CostAdjustmentLine costAdjLine = getCostAdjLine();
@@ -196,7 +196,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
   }
 
   @Override
-  void calculateNegativeStockCorrectionAdjustmentAmount() {
+  protected void calculateNegativeStockCorrectionAdjustmentAmount() {
   }
 
   @Override

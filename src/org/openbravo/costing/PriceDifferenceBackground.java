@@ -18,8 +18,6 @@
  */
 package org.openbravo.costing;
 
-import java.util.Date;
-
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
@@ -47,7 +45,7 @@ public class PriceDifferenceBackground extends DalBaseProcess {
       OBContext.setAdminMode(false);
       result.setType("Success");
       result.setTitle(OBMessageUtils.messageBD("Success"));
-      PriceDifferenceProcess.processPriceDifference(new Date(), null);
+      PriceDifferenceProcess.processPriceDifference(null, null);
 
       logger.logln(OBMessageUtils.messageBD("Success"));
       bundle.setResult(result);
