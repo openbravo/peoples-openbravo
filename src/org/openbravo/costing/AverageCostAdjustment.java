@@ -210,6 +210,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             curCosting.setPermanent(Boolean.FALSE);
             OBDal.getInstance().save(curCosting);
             OBDal.getInstance().flush();
+            if (curCosting.getOriginalCost() == null) {
+              curCosting.setOriginalCost(curCosting.getCost());
+            }
             curCosting.setCost(cost);
             curCosting.setPermanent(Boolean.TRUE);
             OBDal.getInstance().save(curCosting);
