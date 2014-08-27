@@ -439,8 +439,8 @@ public class CostingUtils {
 
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     select.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :date");
-    select.append("  and trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id = :attrib");
-    select.append("  and trx." + MaterialTransaction.PROPERTY_STORAGEBIN + ".id = :locator");
+    select.append("  and trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + " = :attrib");
+    select.append("  and trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " = :locator");
     // Include only transactions that have its cost calculated
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
