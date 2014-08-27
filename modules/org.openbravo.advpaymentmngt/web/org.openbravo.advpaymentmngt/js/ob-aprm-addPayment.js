@@ -123,7 +123,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
   creditUseGrid.selectionChanged = OB.APRM.AddPayment.selectionChangedCredit;
   orderInvoiceGrid.dataArrived = OB.APRM.AddPayment.ordInvDataArrived;
 
-  form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
+  form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined && form.getItem('received_from').getValue() !== null;
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
   overpaymentAction.originalValueMap = isc.addProperties({}, overpaymentAction.getValueMap());
   if (issotrx) {
@@ -473,7 +473,7 @@ OB.APRM.AddPayment.updateDifferenceActions = function (form) {
       defaultValue = '',
       trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "";
   if (trxtype !== "") {
-    form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
+    form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined && form.getItem('received_from').getValue() !== null;
   }
   // Update difference action available values.
   if (form.isCreditAllowed) {
