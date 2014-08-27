@@ -31,7 +31,37 @@ OB.APRM.AddTransaction.onLoad = function (view) {
 
 
 OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall) {
+  var execute;
 
+  execute = function (ok) {
+    if (ok) {
+      actionHandlerCall(view);
+    }
+  };
+
+  // Called from Match Statement grid when we have view.callerField.record.match
+  if (view && view.callerField && view.callerField.record && view.callerField.record.match && typeof view.getContextInfo === 'function') {
+    var blineAmt = view.callerField.record.amount,
+        trxDepositAmt = view.getContextInfo().depositamt,
+        trxPaymentAmt = view.getContextInfo().withdrawalamt,
+        trxAmt = trxDepositAmt - trxPaymentAmt,
+        hideSplitConfirmation = OB.PropertyStore.get('APRM_MATCHSTATEMENT_HIDE_PARTIALMATCH_POPUP', view.windowId);
+
+    if (trxAmt !== blineAmt) {
+      // Split required
+      if (hideSplitConfirmation === 'Y') {
+        // Continue with the match
+        actionHandlerCall(view);
+      } else {
+        isc.ask(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm'), execute);
+      }
+    } else {
+      // Continue with the match
+      actionHandlerCall(view);
+    }
+  } else {
+    actionHandlerCall(view);
+  }
 };
 
 OB.APRM.AddTransaction.trxTypeOnChangeFunction = function (item, view, form, grid) {
@@ -78,8 +108,6 @@ OB.APRM.AddTransaction.glitemOnChangeFunction = function (item, view, form, grid
 
   callback = function (response, data, request) {
     form.getItem('description').setValue(data.description);
-
-    
   };
 
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.GLItemTransactionActionHandler', {
