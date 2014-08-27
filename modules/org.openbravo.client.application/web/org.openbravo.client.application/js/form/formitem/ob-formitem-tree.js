@@ -288,9 +288,9 @@ isc.OBTreeItemTree.addProperties({
       dsRequest.params.treeReferenceId = target.treeItem.treeReferenceId;
       var contextInfo = target.treeItem.form.view.getContextInfo(false, true);
       isc.addProperties(dsRequest.params, contextInfo);
-      // if the tree item has external params, add them to the request params
-      if (target.treeItem.externalParams) {
-        isc.addProperties(dsRequest.params, target.treeItem.externalParams);
+      // if the tree item has defined manually a function to add params to the request, do it
+      if (target.treeItem.addParamsToRequest) {
+        isc.addProperties(dsRequest.params, target.treeItem.addParamsToRequest());
       }
       return this.Super('transformRequest', arguments);
     };
