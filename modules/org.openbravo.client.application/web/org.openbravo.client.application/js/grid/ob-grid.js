@@ -704,11 +704,12 @@ isc.OBGrid.addProperties({
             delete grid.filterHasChanged;
             delete grid.sortingHasChanged;
             delete grid._filteringAndSortingManually;
-          } else if (!isc.isA.ResultSet(grid.data)) {
+          } else if (!isc.isA.ResultSet(grid.data) || grid.serverDataNotLoaded) {
             // The initial data has not been loaded yet, refreshGrid
             // refreshGrid applies also the current sorting
             grid.refreshGrid();
             delete grid.sortingHasChanged;
+            delete grid.serverDataNotLoaded;
           } else if (grid.sortingHasChanged) {
             grid.setSort(grid.savedSortSpecifiers, true);
             delete grid.sortingHasChanged;

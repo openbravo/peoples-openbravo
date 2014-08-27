@@ -1770,18 +1770,23 @@ isc.OBStandardView.addProperties({
 
   getParentRecord: function () {
     var grid = null;
-    if (!this.parentView || !this.parentView.viewGrid.getSelectedRecords() || this.parentView.viewGrid.getSelectedRecords().length !== 1) {
+    // if there is no parent view, there is no parent record
+    if (!this.parentView) {
       return null;
     }
-
-    // a new parent is not a real parent
-    if (this.parentView.viewGrid.getSelectedRecord()._new) {
-      return null;
-    }
+    // use the standard tree of the tree grid depending on the view being shown
     if (this.parentView.isShowingTree) {
       grid = this.parentView.treeGrid;
     } else {
       grid = this.parentView.viewGrid;
+    }
+    // if the parent grid does not have exactly one selected record, return null
+    if (!grid.getSelectedRecords() || grid.getSelectedRecords().length !== 1) {
+      return null;
+    }
+    // a new parent is not a real parent
+    if (!this.parentView.isShowingTree && this.parentView.viewGrid.getSelectedRecord()._new) {
+      return null;
     }
     return grid.getSelectedRecord();
   },

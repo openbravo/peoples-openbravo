@@ -34,7 +34,7 @@
   <SqlMethod name="strMProductUOMID" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT M_PRODUCT_UOM_ID FROM M_PRODUCT_UOM WHERE M_PRODUCT_ID = ? AND C_UOM_ID = ?
+      SELECT M_PRODUCT_UOM_ID FROM M_PRODUCT_UOM WHERE M_PRODUCT_ID = ? AND C_UOM_ID = ? AND ISACTIVE = 'Y'
     </Sql>
     <Parameter name="mProductId"/>
     <Parameter name="cUOMId"/>
@@ -45,6 +45,7 @@
       SELECT (CASE COUNT(*) WHEN 0 THEN 0 ELSE 1 END) AS TOTAL 
       FROM M_PRODUCT_UOM 
       WHERE M_PRODUCT_ID = ?
+      AND ISACTIVE = 'Y'
     </Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>

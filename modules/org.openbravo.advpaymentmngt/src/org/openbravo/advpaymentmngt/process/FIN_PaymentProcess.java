@@ -765,17 +765,20 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         OBContext.setAdminMode();
         try {
           BusinessPartner businessPartner = payment.getBusinessPartner();
-          // When credit is used (consumed) we compensate so_creditused as this amount is already
-          // included in the payment details. Credit consumed should not affect to so_creditused
           BigDecimal paidAmount = BigDecimal.ZERO;
           String fromCurrency = payment.getCurrency().getId();
-          String toCurrency = businessPartner.getCurrency().getId();
-          if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
-              && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
-            if (isReceipt) {
-              decreaseCustomerCredit(businessPartner, payment.getUsedCredit());
-            } else {
-              increaseCustomerCredit(businessPartner, payment.getUsedCredit());
+          String toCurrency = "";
+          if (!(businessPartner == null)) {
+            // When credit is used (consumed) we compensate so_creditused as this amount is already
+            // included in the payment details. Credit consumed should not affect to so_creditused
+            toCurrency = businessPartner.getCurrency().getId();
+            if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
+                && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
+              if (isReceipt) {
+                decreaseCustomerCredit(businessPartner, payment.getUsedCredit());
+              } else {
+                increaseCustomerCredit(businessPartner, payment.getUsedCredit());
+              }
             }
           }
           List<FIN_PaymentDetail> paymentDetails = payment.getFINPaymentDetailList();
@@ -838,41 +841,42 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                         .getInvoicePaymentSchedule().getInvoice() : null;
                     paidAmount = BigDecimal.ZERO;
                     fromCurrency = payment.getCurrency().getId();
-                    toCurrency = businessPartner.getCurrency().getId();
-                    if (!fromCurrency.equals(toCurrency)) {
-                      BigDecimal exchangeRate = BigDecimal.ZERO;
-                      // check at invoice document level
-                      List<ConversionRateDoc> conversionRateDocumentForInvoice = getConversionRateDocumentForInvoice(
-                          invoiceForConversion, isReceipt);
-                      if (conversionRateDocumentForInvoice.size() > 0) {
-                        exchangeRate = conversionRateDocumentForInvoice.get(0).getRate();
+                    toCurrency = "";
+                    if (!(businessPartner == null)) {
+                      toCurrency = businessPartner.getCurrency().getId();
+                      if (!fromCurrency.equals(toCurrency)) {
+                        BigDecimal exchangeRate = BigDecimal.ZERO;
+                        // check at invoice document level
+                        List<ConversionRateDoc> conversionRateDocumentForInvoice = getConversionRateDocumentForInvoice(
+                            invoiceForConversion, isReceipt);
+                        if (conversionRateDocumentForInvoice.size() > 0) {
+                          exchangeRate = conversionRateDocumentForInvoice.get(0).getRate();
+                        } else {
+                          // global
+                          exchangeRate = getConversionRate(payment.getOrganization().getId(),
+                              fromCurrency, toCurrency,
+                              invoiceForConversion != null ? invoiceForConversion.getInvoiceDate()
+                                  : payment.getPaymentDate());
+                        }
+                        if (exchangeRate == BigDecimal.ZERO) {
+                          msg.setType("Error");
+                          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+                          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+                              "@NoCurrencyConversion@"));
+                          bundle.setResult(msg);
+                          OBDal.getInstance().rollbackAndClose();
+                          return;
+                        }
+                        paidAmount = amount.multiply(exchangeRate);
                       } else {
-                        // global
-                        exchangeRate = getConversionRate(payment.getOrganization().getId(),
-                            fromCurrency, toCurrency,
-                            invoiceForConversion != null ? invoiceForConversion.getInvoiceDate()
-                                : payment.getPaymentDate());
+                        paidAmount = amount;
                       }
-                      if (exchangeRate == BigDecimal.ZERO) {
-                        msg.setType("Error");
-                        msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-                        msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
-                            "@NoCurrencyConversion@"));
-                        bundle.setResult(msg);
-                        OBDal.getInstance().rollbackAndClose();
-                        return;
+                      if (isReceipt) {
+                        increaseCustomerCredit(businessPartner, paidAmount);
+                      } else {
+                        decreaseCustomerCredit(businessPartner, paidAmount);
                       }
-                      paidAmount = amount.multiply(exchangeRate);
-                    } else {
-                      paidAmount = amount;
                     }
-                    if (isReceipt) {
-                      increaseCustomerCredit(businessPartner, paidAmount);
-                    } else {
-                      decreaseCustomerCredit(businessPartner, paidAmount);
-
-                    }
-
                   }
                 }
                 if (paymentScheduleDetail.getOrderPaymentSchedule() != null && restorePaidAmounts) {

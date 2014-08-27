@@ -256,63 +256,7 @@ build.war: build a war file in the lib directory.
   <target name="generate.entities.quick.forked" depends="compile.src.gen">
     <taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
     <workflow friendlyWarnings="${friendlyWarnings}" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" />
-  </target>
-
-  <target name="run.tests" depends="compileSqlc,generate.entities.quick">
-    
-    <copy todir="${build}">
-      <fileset dir="${base.src.test}" includes="**/*.xml" />
-    </copy>
-    
-    <junit printsummary="yes" haltonfailure="yes">
-      <classpath refid="project.class.path" />
-      <formatter type="plain" usefile="no"/>
-      <test name="org.openbravo.test.AntTaskTests" haltonfailure="no"/>
-    </junit>
-  </target>
-
-  <target name="run.all.tests" depends="compileSqlc,generate.entities.quick">
-    
-    <copy todir="${build}">
-      <fileset dir="${base.src.test}" includes="**/*.xml" />
-    </copy>
-
-    <junit printsummary="yes" haltonfailure="yes">
-      <classpath refid="project.class.path" />
-      <formatter type="plain" usefile="no"/>
-      <test name="org.openbravo.test.AllAntTaskTests" haltonfailure="no" outfile="result">
-	    <formatter type="xml" />
-	  </test>
-    </junit>
-  </target>
-
-  <target name="run.quick.tests" depends="compileSqlc,generate.entities.quick">
-    
-    <copy todir="${build}">
-      <fileset dir="${base.src.test}" includes="**/*.xml" />
-    </copy>
-    
-    <junit printsummary="yes" haltonfailure="yes">
-      <classpath refid="project.class.path" />
-      <formatter type="plain" usefile="no"/>
-      <test name="org.openbravo.test.AllQuickAntTaskTests" haltonfailure="no"/>
-    </junit>
-  </target>
-
-  <target name="run.webservice.tests" depends="compileSqlc,generate.entities.quick">
-    
-    <copy todir="${build}">
-      <fileset dir="${base.src.test}" includes="**/*.xml" />
-    </copy>
-
-    <junit printsummary="yes" haltonfailure="yes">
-      <classpath refid="project.class.path" />
-      <formatter type="plain" usefile="no"/>
-      <test name="org.openbravo.test.AllWebserviceTests" haltonfailure="no" outfile="resultws">
-        <formatter type="xml" />
-      </test>
-    </junit>
-  </target>
+  </target> 
 
   <target name="run.api.test.javascript">
   	<taskdef name="jstest" classname="org.openbravo.test.javascript.JavaScriptAntTest" classpathref="project.class.path" />
@@ -324,10 +268,8 @@ build.war: build a war file in the lib directory.
     <pathelement path="${basedir}" />
     <pathelement path="${build.sqlc}/src" />
     <pathelement path="${build.sqlc}/srcAD" />
-    <pathelement path="${base.src.test}" />
     <dirset dir="${base.modules}">
       <include name="*/src" />
-      <include name="*/src-test" />
     </dirset>
   </path>
  

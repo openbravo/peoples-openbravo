@@ -21,15 +21,12 @@
 	<classpathentry kind="src" path="modules/org.openbravo.service.datasource/src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.service.integration.openid/src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.service.integration.google/src"/>
-	<classpathentry kind="src" path="src-test"/>
 	<classpathentry including="quartz.properties" kind="src" path="config"/>
 	<classpathentry kind="src" path="src-gen"/>
 	<classpathentry including="**/*.java" kind="src" path="srcAD"/>
 	<classpathentry including="**/*.java" kind="src" path="build/javasqlc/srcAD"/>
 	<classpathentry including="**/*.java" kind="src" path="build/javasqlc/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/build/junit.jar"/>
 	<classpathentry kind="lib" path="lib/build/js.jar"/>
-	<classpathentry kind="lib" path="lib/build/hamcrest-all-1.3.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -457,7 +457,7 @@ public class AlertProcess implements Process {
                       targetUserClientLanguage) + "\n" + finalMessage;
                   final String contentType = "text/plain; charset=utf-8";
                   final List<File> attachments = null;
-                  final Date sentDate = null;
+                  final Date sentDate = new Date();
                   final List<String> headerExtras = null;
 
                   final Object[] email = { host, auth, username, password, connSecurity, port,

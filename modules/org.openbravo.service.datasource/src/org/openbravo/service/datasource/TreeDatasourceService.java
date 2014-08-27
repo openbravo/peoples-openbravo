@@ -733,7 +733,14 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     HashMap<String, String> replacements = new HashMap<String, String>();
     while (matcher.find()) {
       String contextPropertyName = hqlTreeWhereClause.substring(matcher.start(), matcher.end());
-      String value = parameters.get(contextPropertyName);
+      String value = null;
+      if (parameters.containsKey(contextPropertyName)) {
+        value = parameters.get(contextPropertyName);
+      } else if (parameters.containsKey(contextPropertyName.substring(1,
+          contextPropertyName.length() - 1))) {
+        // try again without the '@'
+        value = parameters.get(contextPropertyName.substring(1, contextPropertyName.length() - 1));
+      }
       replacements.put(contextPropertyName, "'" + value + "'");
     }
     String hqlCopy = new String(hqlTreeWhereClause);

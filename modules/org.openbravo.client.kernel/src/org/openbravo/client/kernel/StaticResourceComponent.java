@@ -224,6 +224,28 @@ public class StaticResourceComponent extends BaseComponent {
     }
 
     if (!"".equals(sb.toString())) {
+      final String referer = RequestContext.get().getRequest().getHeader("referer");
+      /*
+       * If a module is in development or the application is running the tests, add the isDebug
+       * variable to the generated javascript file.
+       * 
+       * If the isDebug variable is present in the javascript files, the code that calls
+       * OB.UTIL.Debug will not be executed
+       * 
+       * This option is intended to run additional code (checks, etc) that will not be run while in
+       * production.
+       * 
+       * This improves performance at the same time that the developer have a tool to improve
+       * stability.
+       * 
+       * TODO: add an algorithm to remove the OB.UTIL.Debug code and calls from the generated
+       * javacript file
+       * 
+       * TODO: don't load the ob-debug.js file if not in use
+       */
+      if (isInDevelopment() || referer.indexOf("/ret-") > 0) {
+        sb.insert(0, "var isDebug = true;\n\n");
+      }
       sb.append("if (window.onerror && window.onerror.name === '"
           + KernelConstants.BOOTSTRAP_ERROR_HANDLER_NAME + "') { window.onerror = null; }");
       sb.append("if (typeof OBStartApplication !== 'undefined' && Object.prototype.toString.call(OBStartApplication) === '[object Function]') { OBStartApplication(); }");

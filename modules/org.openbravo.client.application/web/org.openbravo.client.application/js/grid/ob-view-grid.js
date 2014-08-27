@@ -1700,6 +1700,12 @@ isc.OBViewGrid.addProperties({
       this.actionAfterDataArrived = null;
     }
 
+
+    if (this.data.manualResultSet && !this.data.useClientFiltering) {
+      this.data.useClientFiltering = true;
+    }
+    //  update the state of the toolbar buttons, as the availability of some of them depends on the number of records loaded
+    this.view.toolBar.updateButtonState(true);
     return ret;
   },
 
@@ -2804,6 +2810,11 @@ isc.OBViewGrid.addProperties({
     } else {
       insertRow = rowNum + 1;
     }
+
+    if (this.lazyFiltering && !isc.isA.ResultSet(this.data)) {
+      OB.Utilities.createResultSetManually(this);
+    }
+
     this.createNewRecordForEditing(insertRow);
     this.startEditing(insertRow);
     this.recomputeCanvasComponents(insertRow);

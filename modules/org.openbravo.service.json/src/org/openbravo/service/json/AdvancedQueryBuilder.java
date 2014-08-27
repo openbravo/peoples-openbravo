@@ -1870,28 +1870,33 @@ public class AdvancedQueryBuilder {
   }
 
   public void addSelectFunctionPart(String function, String field) {
-    String localField = field;
-    List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), localField);
-    properties = getPropertyForTableReference(properties);
-    boolean fromCriteria = false;
-    localField = resolveJoins(properties, localField, fromCriteria);
-    if (properties.size() > 0) {
-      final Property lastProperty = properties.get(properties.size() - 1);
-      if (lastProperty.getTargetEntity() != null) {
-        final StringBuilder sb = new StringBuilder();
-        for (Property identifierProperty : lastProperty.getTargetEntity().getIdentifierProperties()) {
-          if (sb.length() > 0) {
-            sb.append(" + ");
+    if ("count".equals(function)) {
+      selectClauseParts.add(function + "(*)");
+    } else {
+      String localField = field;
+      List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), localField);
+      properties = getPropertyForTableReference(properties);
+      boolean fromCriteria = false;
+      localField = resolveJoins(properties, localField, fromCriteria);
+      if (properties.size() > 0) {
+        final Property lastProperty = properties.get(properties.size() - 1);
+        if (lastProperty.getTargetEntity() != null) {
+          final StringBuilder sb = new StringBuilder();
+          for (Property identifierProperty : lastProperty.getTargetEntity()
+              .getIdentifierProperties()) {
+            if (sb.length() > 0) {
+              sb.append(" + ");
+            }
+            sb.append(localField + "." + identifierProperty.getName());
           }
-          sb.append(localField + "." + identifierProperty.getName());
+          localField = sb.toString();
         }
-        localField = sb.toString();
       }
+      // for select clause with functions replace the joins before so that the join values are not
+      // lost later. Refer issue https://issues.openbravo.com/view.php?id=25008
+      localField = replaceJoinsWithValue(localField);
+      selectClauseParts.add(function + "(" + localField + ")");
     }
-    // for select clause with functions replace the joins before so that the join values are not
-    // lost later. Refer issue https://issues.openbravo.com/view.php?id=25008
-    localField = replaceJoinsWithValue(localField);
-    selectClauseParts.add(function + "(" + localField + ")");
   }
 
   public void addSelectClausePart(String selectClausePart) {

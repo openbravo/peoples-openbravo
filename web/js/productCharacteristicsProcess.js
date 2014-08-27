@@ -52,16 +52,16 @@ OB.ProductCharacteristics = {
     OB.ProductCharacteristics.execute(params, view);
   },
   
-  TestOnGridLoad: function (grid) {
-	  var nRecordsReceived = grid.getData().getLength(),
-	      messageBar = grid.view.messageBar;
-	  if (nRecordsReceived==0){
-		  messageBar.setMessage('info', 'The number of records is too high. Please, try to review product characteristics.');
-	  }
-	  //messageBar.setMessage('info', 'The number of records is too high. Please, try to review product characteristics.');
+  //Shows a message in order to notify that number of records is too high, so
+  //product characteristics should be changed.
+  testOnGridLoad: function(grid) {
+	    var nRecordsReceived = grid.getData().getLength(),
+	        messageBar = grid.view.messageBar;
+	    if (nRecordsReceived == 0) {
+	        messageBar.setMessage('info', OB.I18N.getLabel('HighRecords'));
+	    }
 	},
 };
-
 
 isc.defineClass('UpdateInvariantCharacteristicsPopup', isc.OBPopup);
 
@@ -86,8 +86,7 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
     var originalView = this.view,
         params = this.params,
         i;
-
-        
+   
     // Populates the combos using the provided characteristicList
     this.characteristicCombos = [];
     for (i = 0; i < this.characteristicList.length; i++) {
