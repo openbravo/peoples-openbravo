@@ -54,7 +54,7 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
       final BigDecimal newAmountCost = new BigDecimal(params.getString("Cost"));
       final Date acctDate = JsonUtils.createDateFormat().parse(params.getString("DateAcct"));
 
-      final MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
+      MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
           strTransactionId);
 
       if (transaction.getTransactionCost() == null) {
@@ -82,6 +82,11 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
 
       OBDal.getInstance().flush();
       JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
+      if (!message.getString("severity").equalsIgnoreCase("error")) {
+        transaction = OBDal.getInstance().get(MaterialTransaction.class, strTransactionId);
+        transaction.setCostPermanent(Boolean.TRUE);
+        OBDal.getInstance().save(transaction);
+      }
       jsonResponse.put("message", message);
 
     } catch (OBException e) {

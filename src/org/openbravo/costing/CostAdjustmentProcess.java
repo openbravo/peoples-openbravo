@@ -20,6 +20,7 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -92,8 +93,42 @@ public class CostAdjustmentProcess {
   }
 
   private void doChecks(CostAdjustment costAdjustment, JSONObject message) {
-    // Execute checks added implementing costAdjustmentProcess interface.
+    // Check that there are not permanently adjusted transactions in the sources.
+    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
+        CostAdjustmentLine.class);
+    critLines.createAlias(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, "trx");
+    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustment));
+    critLines.add(Restrictions.eq("trx." + MaterialTransaction.PROPERTY_ISCOSTPERMANENT, true));
+    critLines.addOrder(Order.asc(CostAdjustmentLine.PROPERTY_LINENO));
 
+    ScrollableResults lines = critLines.scroll(ScrollMode.FORWARD_ONLY);
+    long count = 1L;
+    try {
+      String strLines = "";
+      while (lines.next()) {
+        CostAdjustmentLine line = (CostAdjustmentLine) lines.get(0);
+        strLines += line.getLineNo() + ", ";
+
+        if (count % 1000 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+        count++;
+      }
+      if (!strLines.isEmpty()) {
+        strLines = strLines.substring(0, strLines.length() - 2);
+        String errorMessage = OBMessageUtils.messageBD("CostAdjustmentWithPermanentLines");
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("lines", strLines);
+        throw new OBException(OBMessageUtils.parseTranslation(errorMessage, map));
+      }
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
+    } finally {
+      lines.close();
+    }
+
+    // Execute checks added implementing costAdjustmentProcess interface.
     for (CostAdjusmentProcessCheck checksInstance : costAdjustmentProcessChecks) {
       checksInstance.doCheck(costAdjustment, message);
     }

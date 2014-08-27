@@ -76,6 +76,10 @@ public class CancelCostAdjustment extends BaseActionHandler {
           final CostAdjustmentLine line = (CostAdjustmentLine) scrollLines.get()[0];
           line.setSource(true);
           line.setAdjustmentAmount(line.getAdjustmentAmount().negate());
+          if (line.getInventoryTransaction().isCostPermanent()) {
+            line.getInventoryTransaction().setCostPermanent(Boolean.FALSE);
+            OBDal.getInstance().save(line.getInventoryTransaction());
+          }
           OBDal.getInstance().save(line);
           if ((cnt++ % 10) == 0) {
             OBDal.getInstance().flush();
