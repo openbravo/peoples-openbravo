@@ -40,6 +40,9 @@ OB.APRM.MatchStatement.onLoad = function (view) {
       view.onRefreshFunction(view);
     };
     OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadActionHandler', {}, params, onLoadCallback);
+    if (grid && grid.parentElement && grid.parentElement.messageBar && grid.parentElement.messageBar.text && grid.parentElement.messageBar.text.contents) {
+      grid.parentElement.messageBar.text.setContents(grid.parentElement.messageBar.text.contents.replace(OB.I18N.getLabel('OBUIAPP_ClearFilters'), OB.I18N.getLabel('OBUIAPP_ClearFilters') + '<br/>' + OB.I18N.getLabel('APRM_GRID_PERSIST_MESSAGE')));
+    }
   };
   isc.ask(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
 };
