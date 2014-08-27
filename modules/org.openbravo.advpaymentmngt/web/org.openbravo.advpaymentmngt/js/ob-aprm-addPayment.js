@@ -286,7 +286,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       total = orderInvoice.data.totalRows,
       writeoff, amt, outstandingAmount, i, showMessageProperty, showMessage;
 
-  if (orderInvoice.data.localData.length < (orderInvoice.data.totalRows)) {
+  if (orderInvoice.data.cachedRows < (orderInvoice.data.totalRows)) {
     showMessageProperty = OB.PropertyStore.get('APRM_ShowNoDistributeMsg');
     showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"');
     if (showMessage) {
