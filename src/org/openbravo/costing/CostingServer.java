@@ -133,6 +133,7 @@ public class CostingServer {
   private void checkCostAdjustments() {
     boolean doNotCheckPriceCorrectionTrxs = false;
     boolean doNotCheckBackDatedTrxs = false;
+    boolean doNotCheckNegativeStockCorrectionTrxs = false;
     // check if price correction is needed
     try {
       doNotCheckPriceCorrectionTrxs = Preferences.getPreferenceValue(
@@ -255,12 +256,22 @@ public class CostingServer {
     }
 
     // check if negative stock correction should be done
+    try {
+      doNotCheckBackDatedTrxs = Preferences.getPreferenceValue(
+          "doNotCheckNegativeStockCorrecctionTrxs", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null).equals("Y");
+    } catch (PropertyException e1) {
+      doNotCheckNegativeStockCorrectionTrxs = false;
+    }
 
     boolean modifiesAvg = AverageAlgorithm.modifiesAverage(TrxType.getTrxType(transaction));
     BigDecimal currentStock = CostingUtils.getCurrentStock(getOrganization(), transaction,
         getCostingAlgorithm().costDimensions, transaction.getProduct().isProduction());
     // the stock preivous to transaction was negative
-    if (currentStock.compareTo(transaction.getMovementQuantity()) < 0 && modifiesAvg) {
+    if (!doNotCheckNegativeStockCorrectionTrxs
+        && currentStock.compareTo(transaction.getMovementQuantity()) < 0 && modifiesAvg) {
 
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
           transaction.getOrganization(), "NSC"); // NSC= Negative Stock Correction
