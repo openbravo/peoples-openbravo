@@ -20,6 +20,7 @@ package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
@@ -93,7 +94,6 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
   public boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     FIN_PaymentMethod paymentMethod = null;
-    FIN_FinancialAccount financialAccount = null;
     String trxtype = null;
     boolean readOnly = true;
     if (context.has("fin_paymentmethod_id") && !context.isNull("fin_paymentmethod_id")) {
@@ -103,14 +103,6 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
       paymentMethod = OBDal.getInstance()
           .get(FIN_PaymentMethod.class, getPaymentMethod(requestMap));
     }
-    if (context.has("inpfinFinancialAccountId") && !context.isNull("inpfinFinancialAccountId")) {
-      financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          context.getString("inpfinFinancialAccountId"));
-    } else if (context.has("fin_financial_account_id")
-        && !context.isNull("fin_financial_account_id")) {
-      financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          context.getString("fin_financial_account_id"));
-    }
     if (context.has("inptrxtype") && !context.isNull("inptrxtype")) {
       trxtype = context.getString("inptrxtype");
     }
@@ -118,7 +110,7 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
       trxtype = context.getString("trxtype");
     }
     if (trxtype != null) {
-      for (FinAccPaymentMethod finAccPaymentMethod : financialAccount
+      for (FinAccPaymentMethod finAccPaymentMethod : getFinancialAccount(requestMap)
           .getFinancialMgmtFinAccPaymentMethodList()) {
         if (trxtype.equals("RCIN") || trxtype.equals("BPD")) {
           if (finAccPaymentMethod.getPaymentMethod().equals(paymentMethod)
@@ -137,11 +129,7 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
   }
 
   private String getPaymentMethod(Map<String, String> requestMap) throws JSONException {
-    JSONObject context = new JSONObject(requestMap.get("context"));
-    boolean isReceipt = true;
-    if (context.has("IsSOTrx")) {
-      isReceipt = "Y".equals(context.get("IsSOTrx")) ? true : false;
-    }
+    boolean isReceipt = "Y".equals(getDefaultIsSOTrx(requestMap));
 
     FinAccPaymentMethod anyFinAccPaymentMethod = null;
     for (FinAccPaymentMethod finAccPaymentMethod : getFinancialAccount(requestMap)
@@ -173,6 +161,30 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
       return OBDal.getInstance().get(FIN_FinancialAccount.class,
           context.get("fin_financial_account_id"));
     }
+    if (context.has("Fin_Financial_Account_ID") && !context.isNull("Fin_Financial_Account_ID")
+        && !"".equals(context.getString("Fin_Financial_Account_ID"))) {
+      return OBDal.getInstance().get(FIN_FinancialAccount.class,
+          context.get("Fin_Financial_Account_ID"));
+    }
     return null;
+  }
+
+  private String getDefaultIsSOTrx(Map<String, String> requestMap) throws JSONException {
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    String document = null;
+    if (context.has("trxtype") && context.get("trxtype") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("trxtype"))) {
+      document = context.getString("trxtype");
+    } else if (context.has("inptrxtype") && context.get("inptrxtype") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inptrxtype"))) {
+      document = context.getString("inptrxtype");
+    }
+    if ("BPD".equals(document)) {
+      return "Y";
+    } else if ("BPW".equals(document)) {
+      return "N";
+    } else {
+      return "";
+    }
   }
 }

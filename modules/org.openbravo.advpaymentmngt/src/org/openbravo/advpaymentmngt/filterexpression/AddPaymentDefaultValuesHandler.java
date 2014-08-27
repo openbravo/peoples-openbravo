@@ -126,12 +126,12 @@ public abstract class AddPaymentDefaultValuesHandler {
 
   public String getDefaultDocumentNo(Map<String, String> requestMap) throws JSONException {
     String strContext = requestMap.get("context");
+    String strOrgId = getOrganization(requestMap);
     if (strContext == null) {
       return "";
     }
-    JSONObject context = new JSONObject(strContext);
 
-    Organization org = OBDal.getInstance().get(Organization.class, context.get("inpadOrgId"));
+    Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
     boolean isReceipt = "Y".equals(getDefaultIsSOTrx(requestMap));
 
     String strDocNo = FIN_Utility.getDocumentNo(org, isReceipt ? "ARR" : "APP", "FIN_Payment",
@@ -150,6 +150,10 @@ public abstract class AddPaymentDefaultValuesHandler {
         && context.get("inpfinFinancialAccountId") != JSONObject.NULL
         && StringUtils.isNotEmpty(context.getString("inpfinFinancialAccountId"))) {
       return context.getString("inpfinFinancialAccountId");
+    } else if (context.has("Fin_Financial_Account_ID")
+        && context.get("Fin_Financial_Account_ID") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("Fin_Financial_Account_ID"))) {
+      return context.getString("Fin_Financial_Account_ID");
     }
     String strBPartnerId = getDefaultReceivedFrom(requestMap);
 

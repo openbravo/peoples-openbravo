@@ -176,8 +176,8 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strTransactionDate = null;
     try {
-      if (context.has("trxdate") && !context.isNull("trxdate")
-          && !"".equals(context.getString("trxdate"))) {
+      if (context.has("trxdate") && context.get("trxdate") != JSONObject.NULL
+          && StringUtils.isNotEmpty(context.getString("trxdate"))) {
         strTransactionDate = context.getString("trxdate");
         Date transactionDate = JsonUtils.createDateFormat().parse(strTransactionDate);
         return OBDateUtils.formatDate(transactionDate);
@@ -201,10 +201,18 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   private FIN_FinancialAccount getFinancialAccount(Map<String, String> requestMap)
       throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("inpfinFinancialAccountId") && !context.isNull("inpfinFinancialAccountId")
-        && !"".equals(context.getString("inpfinFinancialAccountId"))) {
-      return OBDal.getInstance().get(FIN_FinancialAccount.class,
-          context.get("inpfinFinancialAccountId"));
+    String strFinancialAccount = null;
+    if (context.has("inpfinFinancialAccountId")
+        && context.get("inpfinFinancialAccountId") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inpfinFinancialAccountId"))) {
+      strFinancialAccount = context.getString("inpfinFinancialAccountId");
+    } else if (context.has("Fin_Financial_Account_ID")
+        && context.get("Fin_Financial_Account_ID") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("Fin_Financial_Account_ID"))) {
+      strFinancialAccount = context.getString("Fin_Financial_Account_ID");
+    }
+    if (strFinancialAccount != null) {
+      return OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccount);
     }
     return null;
   }
