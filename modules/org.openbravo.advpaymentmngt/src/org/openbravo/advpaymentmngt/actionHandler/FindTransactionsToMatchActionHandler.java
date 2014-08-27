@@ -28,7 +28,6 @@ import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -79,8 +78,8 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
       log.error(e.getMessage(), e);
       try {
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
-        String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
-        final JSONArray actions = APRM_MatchingUtility.createMessageInProcessView(message, "error");
+        final JSONArray actions = APRM_MatchingUtility.createMessageInProcessView(ex.getMessage(),
+            "error");
         result.put("responseActions", actions);
         result.put("retryExecution", true);
       } catch (Exception e2) {
