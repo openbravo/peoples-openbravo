@@ -29,6 +29,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.Process;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -559,5 +561,15 @@ public class DimensionDisplayUtility {
     cad.setShowInBreakdown(showInBreakDown);
     OBDal.getInstance().save(cad);
     return cad;
+  }
+
+  public static List<String> getRequiredSessionVariablesForTab(Process process, Parameter parameter) {
+    // TODO
+    return new ArrayList<String>();
+  }
+
+  public static String computeAccountingDimensionDisplayLogic(Process process, Parameter parameter) {
+    // TODO
+    return "";
   }
 }
