@@ -45,9 +45,14 @@ OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall) {
         trxDepositAmt = view.getContextInfo().depositamt,
         trxPaymentAmt = view.getContextInfo().withdrawalamt,
         trxAmt = trxDepositAmt - trxPaymentAmt,
+        paymentId = view.getContextInfo().fin_payment_id,
+        glitemId = view.getContextInfo().c_glitem_id,
+        trxType = view.getContextInfo().trxtype,
         hideSplitConfirmation = OB.PropertyStore.get('APRM_MATCHSTATEMENT_HIDE_PARTIALMATCH_POPUP', view.windowId);
 
-    if (trxAmt !== blineAmt) {
+    if (("BPD" === trxType || "BPW" === trxType) && !glitemId && !paymentId) {
+      view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_INVALID_TRANSACTION'));
+    } else if (trxAmt !== blineAmt) {
       // Split required
       if (hideSplitConfirmation === 'Y') {
         // Continue with the match

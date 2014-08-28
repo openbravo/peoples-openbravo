@@ -38,4 +38,9 @@ public class APRMConstants {
   // Match Type
   public final static String CANDIDATE_MATCH_TYPE__AUTO = "A";
   public final static String CANDIDATE_MATCH_TYPE__MANUAL = "M";
+
+  /* Transaction Type */
+  public static final String TRXTYPE_BPDeposit = "BPD";
+  public static final String TRXTYPE_BPWithdrawal = "BPW";
+  public static final String TRXTYPE_BankFee = "BF";
 }
