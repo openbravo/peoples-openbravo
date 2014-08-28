@@ -20,7 +20,6 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -73,7 +72,7 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
       final String strTransactionType = params.getString("trxtype");
       final String strTransactionDate = params.getString("trxdate");
       final Date transactionDate = JsonUtils.createDateFormat().parse(strTransactionDate);
-      final String selectedPaymentsIds = params.has("fin_payment_id") ? params
+      final String selectedPaymentId = params.has("fin_payment_id") ? params
           .getString("fin_payment_id") : "";
       final String strGLItemId = params.has("c_glitem_id") ? params.getString("c_glitem_id") : "";
       final String strDepositAmount = params.getString("depositamt");
@@ -81,7 +80,7 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
       final String strDescription = params.has("description") ? params.getString("description")
           : "";
 
-      createAndMatchTransaction(strTabId, strFinancialAccountId, selectedPaymentsIds,
+      createAndMatchTransaction(strTabId, strFinancialAccountId, selectedPaymentId,
           strTransactionType, strGLItemId, transactionDate, strFinBankStatementLineId,
           strDepositAmount, strWithdrawalamt, strDescription, params);
     } catch (final Exception e) {
@@ -102,7 +101,7 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
   }
 
   private void createAndMatchTransaction(String strTabId, String strFinancialAccountId,
-      String selectedPaymentsIds, String strTransactionType, String strGLItemId,
+      String selectedPaymentId, String strTransactionType, String strGLItemId,
       Date transactionDate, String strFinBankStatementLineId, String strDepositAmount,
       String strWithdrawalamt, String strDescription, JSONObject params) throws Exception {
     final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
@@ -138,10 +137,8 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
       final FIN_BankStatementLine bankStatementLine = OBDal.getInstance().get(
           FIN_BankStatementLine.class, strFinBankStatementLineId);
 
-      if (!selectedPaymentsIds.equals("null")) { // Payment
-        final List<FIN_Payment> selectedPayments = FIN_Utility.getOBObjectList(FIN_Payment.class,
-            selectedPaymentsIds);
-        payment = selectedPayments.get(0); // A transaction is linked to 1 payment
+      if (!selectedPaymentId.equals("null")) { // Payment
+        payment = OBDal.getInstance().get(FIN_Payment.class, selectedPaymentId);
         depositAmt = FIN_Utility.getDepositAmount(payment.isReceipt(),
             payment.getFinancialTransactionAmount());
         paymentAmt = FIN_Utility.getPaymentAmount(payment.isReceipt(),
