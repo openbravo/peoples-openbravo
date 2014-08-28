@@ -39,7 +39,6 @@ import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +104,6 @@ public class PriceDifferenceProcess {
       OBDal.getInstance().save(costAdjLine);
     }
 
-
     // check if there is some difference in the qty ordered not invoiced
     if (materialTransaction.getGoodsShipmentLine().getSalesOrderLine() != null) {
       OrderLine ol = materialTransaction.getGoodsShipmentLine().getSalesOrderLine();
@@ -125,9 +123,9 @@ public class PriceDifferenceProcess {
 
       if (adjustAmtOther.compareTo(BigDecimal.ZERO) != 0) {
         createCostAdjustmenHeader(materialTransaction.getOrganization());
-        CostAdjustmentLine costAdjLine = CostAdjustmentUtils
-            .insertCostAdjustmentLine(materialTransaction, costAdjHeader, adjustAmtOther,
-                Boolean.TRUE, null, costAdjDateAcct);
+        CostAdjustmentLine costAdjLine = CostAdjustmentUtils.insertCostAdjustmentLine(
+            materialTransaction, costAdjHeader, adjustAmtOther, Boolean.TRUE, null,
+            materialTransaction.getGoodsShipmentLine().getShipmentReceipt().getMovementDate());
         costAdjLine.setNeedsPosting(Boolean.TRUE);
         OBDal.getInstance().save(costAdjLine);
       }
