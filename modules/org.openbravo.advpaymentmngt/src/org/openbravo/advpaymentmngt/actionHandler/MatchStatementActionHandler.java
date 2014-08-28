@@ -49,6 +49,7 @@ public class MatchStatementActionHandler extends BaseProcessActionHandler {
           strFinancialAccount);
       final FIN_Reconciliation lastReconciliation = TransactionsDao.getLastReconciliation(
           finAccount, "N");
+      strReconciliationId = lastReconciliation.getId();
       APRM_MatchingUtility.setProcessingReconciliation(lastReconciliation);
       if (APRM_MatchingUtility.updateReconciliation(lastReconciliation, finAccount, true)) {
         final OBError message = OBMessageUtils.translateError("@Success@");
