@@ -137,10 +137,6 @@
         <default/>
         <onCreateDefault><![CDATA[CASE WHEN TYPE='B' AND ACCOUNTNO IS NOT NULL THEN 'GENERIC' ELSE NULL END]]></onCreateDefault>
       </column>
-      <column name="FIN_MATCHING_CANDIDATE_ALGM_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="AD_CLIENT" name="FIN_AD_CLIENT_ACCOUNT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -161,9 +157,6 @@
       </foreign-key>
       <foreign-key foreignTable="FIN_MATCHING_ALGORITHM" name="FIN_FINACC_MATCH_ALGORITHM">
         <reference local="FIN_MATCHING_ALGORITHM_ID" foreign="FIN_MATCHING_ALGORITHM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="FIN_MATCHING_CANDIDATE_ALGM" name="FIN_FINACC_MATCHCAND_ALGM">
-        <reference local="FIN_MATCHING_CANDIDATE_ALGM_ID" foreign="FIN_MATCHING_CANDIDATE_ALGM_ID"/>
       </foreign-key>
       <check name="FIN_FINACC_DEFAULT_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
       <check name="FIN_FINACC_SHOWGENERIC_CHK"><![CDATA[((UPPER((BANKFORMAT)) = UPPER('GENERIC')) AND (GENERICACCOUNTNO IS NOT NULL)) OR (UPPER((BANKFORMAT)) <> UPPER('GENERIC'))]]></check>
