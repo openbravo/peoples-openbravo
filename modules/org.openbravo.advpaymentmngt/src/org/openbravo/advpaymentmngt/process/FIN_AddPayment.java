@@ -1361,6 +1361,28 @@ public class FIN_AddPayment {
    * @throws Exception
    */
   public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
+      String strAction, FIN_Payment payment) throws Exception {
+    OBError myMessage = processPayment(vars, conn, strAction, payment, null);
+    return myMessage;
+  }
+
+  /**
+   * It calls the PAyment Process for the given payment, action and origin.
+   * 
+   * @param vars
+   *          VariablesSecureApp with the session data.
+   * @param conn
+   *          ConnectionProvider with the connection being used.
+   * @param strAction
+   *          String with the action of the process. {P, D, R}
+   * @param payment
+   *          FIN_Payment that needs to be processed.
+   * @param comingFrom
+   *          Origin where the process is invoked
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
       String strAction, FIN_Payment payment, String comingFrom) throws Exception {
     ProcessBundle pb = new ProcessBundle("6255BE488882480599C81284B70CD9B3", vars).init(conn);
     HashMap<String, Object> parameters = new HashMap<String, Object>();
