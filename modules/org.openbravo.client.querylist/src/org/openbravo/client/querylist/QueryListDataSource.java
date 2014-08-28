@@ -266,12 +266,12 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
               if (queryAliases[i].equals(column.getDisplayExpression())
                   || (!isExport && queryAliases[i].equals(column.getLinkExpression()))) {
                 Object value = resultList[i];
-                if (value instanceof Timestamp) {
+                if (domainType instanceof DateDomainType || domainType instanceof DateDomainType) {
+                    value = xmlDateFormat.format(value);
+                  }
+                else if (value instanceof Timestamp) {
                   value = xmlDateTimeFormat.format(value);
                   value = JsonUtils.convertToCorrectXSDFormat((String) value);
-                }
-                if (value instanceof Date) {
-                  value = xmlDateFormat.format(value);
                 }
 
                 if (domainType instanceof BooleanDomainType) {
