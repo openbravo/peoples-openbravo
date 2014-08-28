@@ -116,6 +116,7 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
           strFinancialAccountId);
       String description = "";
       GLItem glItem = null;
+      FIN_Payment payment = null;
       boolean isReceipt = true;
       BigDecimal depositAmt = BigDecimal.ZERO;
       BigDecimal paymentAmt = BigDecimal.ZERO;
@@ -140,71 +141,61 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
       if (!selectedPaymentsIds.equals("null")) { // Payment
         final List<FIN_Payment> selectedPayments = FIN_Utility.getOBObjectList(FIN_Payment.class,
             selectedPaymentsIds);
-        for (final FIN_Payment payment : selectedPayments) { // FIXME is possible to have more than
-                                                             // 1 payment?
-          depositAmt = FIN_Utility.getDepositAmount(payment.isReceipt(),
-              payment.getFinancialTransactionAmount());
-          paymentAmt = FIN_Utility.getPaymentAmount(payment.isReceipt(),
-              payment.getFinancialTransactionAmount());
-          isReceipt = payment.isReceipt();
-          description = StringUtils.isNotBlank(payment.getDescription()) ? payment.getDescription()
-              .replace("\n", ". ") : "";
-          organization = payment.getOrganization();
-          paymentCurrency = payment.getCurrency();
-          convertRate = payment.getFinancialTransactionConvertRate();
-          sourceAmount = payment.getAmount();
+        payment = selectedPayments.get(0); // A transaction is linked to 1 payment
+        depositAmt = FIN_Utility.getDepositAmount(payment.isReceipt(),
+            payment.getFinancialTransactionAmount());
+        paymentAmt = FIN_Utility.getPaymentAmount(payment.isReceipt(),
+            payment.getFinancialTransactionAmount());
+        isReceipt = payment.isReceipt();
+        description = StringUtils.isNotBlank(payment.getDescription()) ? payment.getDescription()
+            .replace("\n", ". ") : "";
+        organization = payment.getOrganization();
+        paymentCurrency = payment.getCurrency();
+        convertRate = payment.getFinancialTransactionConvertRate();
+        sourceAmount = payment.getAmount();
+      } else if (!strGLItemId.equals("null")) {// GL item
+        // Accounting Dimensions
+        final String strElement_OT = params.getString("ad_org_id");
+        organization = OBDal.getInstance().get(Organization.class, strElement_OT);
+        final String strElement_BP = params.getString("c_bpartner_id");
+        businessPartner = OBDal.getInstance().get(BusinessPartner.class, strElement_BP);
+        final String strElement_PR = params.getString("m_product_id");
+        product = OBDal.getInstance().get(Product.class, strElement_PR);
+        final String strElement_PJ = params.getString("c_project_id");
+        project = OBDal.getInstance().get(Project.class, strElement_PJ);
+        final String strElement_AY = params.getString("c_activity_id");
+        activity = OBDal.getInstance().get(ABCActivity.class, strElement_AY);
+        final String strElement_SR = params.getString("c_salesregion_id");
+        salesRegion = OBDal.getInstance().get(SalesRegion.class, strElement_SR);
+        final String strElement_MC = params.getString("c_campaign_id");
+        campaign = OBDal.getInstance().get(Campaign.class, strElement_MC);
+        final String strElement_U1 = params.getString("user1_id");
+        user1 = OBDal.getInstance().get(UserDimension1.class, strElement_U1);
+        final String strElement_U2 = params.getString("user2_id");
+        user2 = OBDal.getInstance().get(UserDimension2.class, strElement_U2);
+        final String strElement_CC = params.getString("c_costcenter_id");
+        costcenter = OBDal.getInstance().get(Costcenter.class, strElement_CC);
 
-          APRM_MatchingUtility.createAndMatchFinancialTransaction(strFinancialAccountId,
-              strTransactionType, transactionDate, strFinBankStatementLineId, organization,
-              account, payment, description, glItem, isReceipt, depositAmt, paymentAmt,
-              paymentCurrency, convertRate, sourceAmount, campaign, project, activity, salesRegion,
-              product, businessPartner, user1, user2, costcenter, bankStatementLine, vars, conn,
-              true);
-        }
-      } else {
-        if (!strGLItemId.equals("null")) {// GL item
-          // Accounting Dimensions
-          final String strElement_OT = params.getString("ad_org_id");
-          organization = OBDal.getInstance().get(Organization.class, strElement_OT);
-          final String strElement_BP = params.getString("c_bpartner_id");
-          businessPartner = OBDal.getInstance().get(BusinessPartner.class, strElement_BP);
-          final String strElement_PR = params.getString("m_product_id");
-          product = OBDal.getInstance().get(Product.class, strElement_PR);
-          final String strElement_PJ = params.getString("c_project_id");
-          project = OBDal.getInstance().get(Project.class, strElement_PJ);
-          final String strElement_AY = params.getString("c_activity_id");
-          activity = OBDal.getInstance().get(ABCActivity.class, strElement_AY);
-          final String strElement_SR = params.getString("c_salesregion_id");
-          salesRegion = OBDal.getInstance().get(SalesRegion.class, strElement_SR);
-          final String strElement_MC = params.getString("c_campaign_id");
-          campaign = OBDal.getInstance().get(Campaign.class, strElement_MC);
-          final String strElement_U1 = params.getString("user1_id");
-          user1 = OBDal.getInstance().get(UserDimension1.class, strElement_U1);
-          final String strElement_U2 = params.getString("user2_id");
-          user2 = OBDal.getInstance().get(UserDimension2.class, strElement_U2);
-          final String strElement_CC = params.getString("c_costcenter_id");
-          costcenter = OBDal.getInstance().get(Costcenter.class, strElement_CC);
+        glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
 
-          glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
-
-          depositAmt = new BigDecimal(strDepositAmount);
-          paymentAmt = new BigDecimal(strWithdrawalamt);
-          isReceipt = (depositAmt.compareTo(paymentAmt) >= 0);
-          description = StringUtils.isBlank(strDescription) ? OBMessageUtils
-              .messageBD("APRM_GLItem") + ": " + glItem.getName() : strDescription;
-        } else { // Bank Fee or transaction without payment and gl item
-          depositAmt = new BigDecimal(strDepositAmount);
-          paymentAmt = new BigDecimal(strWithdrawalamt);
-          isReceipt = (depositAmt.compareTo(paymentAmt) >= 0);
-          description = StringUtils.isBlank(strDescription) ? OBMessageUtils
-              .messageBD("APRM_BankFee") : strDescription;
-        }
-        APRM_MatchingUtility.createAndMatchFinancialTransaction(strFinancialAccountId,
-            strTransactionType, transactionDate, strFinBankStatementLineId, organization, account,
-            null, description, glItem, isReceipt, depositAmt, paymentAmt, paymentCurrency,
-            convertRate, sourceAmount, campaign, project, activity, salesRegion, product,
-            businessPartner, user1, user2, costcenter, bankStatementLine, vars, conn, true);
+        depositAmt = new BigDecimal(strDepositAmount);
+        paymentAmt = new BigDecimal(strWithdrawalamt);
+        isReceipt = (depositAmt.compareTo(paymentAmt) >= 0);
+        description = StringUtils.isBlank(strDescription) ? OBMessageUtils.messageBD("APRM_GLItem")
+            + ": " + glItem.getName() : strDescription;
+      } else { // Bank Fee or transaction without payment and gl item
+        depositAmt = new BigDecimal(strDepositAmount);
+        paymentAmt = new BigDecimal(strWithdrawalamt);
+        isReceipt = (depositAmt.compareTo(paymentAmt) >= 0);
+        description = StringUtils.isBlank(strDescription) ? OBMessageUtils
+            .messageBD("APRM_BankFee") : strDescription;
       }
+
+      APRM_MatchingUtility.createAndMatchFinancialTransaction(strFinancialAccountId,
+          strTransactionType, transactionDate, strFinBankStatementLineId, organization, account,
+          payment, description, glItem, isReceipt, depositAmt, paymentAmt, paymentCurrency,
+          convertRate, sourceAmount, campaign, project, activity, salesRegion, product,
+          businessPartner, user1, user2, costcenter, bankStatementLine, vars, conn, true);
     } finally {
       OBContext.restorePreviousMode();
     }

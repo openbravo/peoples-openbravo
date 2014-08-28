@@ -161,11 +161,14 @@ public class APRM_MatchingUtility {
    */
   public static void fixMixedLine(FIN_FinaccTransaction mixedLine) {
     boolean isReceipt = mixedLine.getDepositAmount().compareTo(BigDecimal.ZERO) != 0;
-    mixedLine.setStatus(isReceipt ? "RDNC" : "PWNC");
+    mixedLine.setStatus(isReceipt ? APRMConstants.PAYMENT_STATUS_DEPOSIT_NOT_CLEARED
+        : APRMConstants.PAYMENT_STATUS_WITHDRAWAL_NOT_CLEARED);
     mixedLine.setReconciliation(null);
     OBDal.getInstance().save(mixedLine);
     if (mixedLine.getFinPayment() != null) {
-      mixedLine.getFinPayment().setStatus(isReceipt ? "RDNC" : "PWNC");
+      mixedLine.getFinPayment().setStatus(
+          isReceipt ? APRMConstants.PAYMENT_STATUS_DEPOSIT_NOT_CLEARED
+              : APRMConstants.PAYMENT_STATUS_WITHDRAWAL_NOT_CLEARED);
       OBDal.getInstance().save(mixedLine.getFinPayment());
     }
   }
@@ -232,10 +235,10 @@ public class APRM_MatchingUtility {
         bankStatementLine
             .setMatchingtype(StringUtils.isBlank(matchLevel) ? FIN_MatchedTransaction.MANUALMATCH
                 : matchLevel);
-        transaction.setStatus("RPPC");
+        transaction.setStatus(APRMConstants.PAYMENT_STATUS_PAYMENT_CLEARED);
         transaction.setReconciliation(reconciliation);
         if (transaction.getFinPayment() != null) {
-          transaction.getFinPayment().setStatus("RPPC");
+          transaction.getFinPayment().setStatus(APRMConstants.PAYMENT_STATUS_PAYMENT_CLEARED);
         }
         OBDal.getInstance().save(transaction);
         OBDal.getInstance().save(bankStatementLine);
@@ -284,7 +287,8 @@ public class APRM_MatchingUtility {
         } else {
           isReceipt = finTrans.getDepositAmount().compareTo(finTrans.getPaymentAmount()) > 0;
         }
-        finTrans.setStatus(isReceipt ? "RDNC" : "PWNC");
+        finTrans.setStatus(isReceipt ? APRMConstants.PAYMENT_STATUS_DEPOSIT_NOT_CLEARED
+            : APRMConstants.PAYMENT_STATUS_WITHDRAWAL_NOT_CLEARED);
 
         // Execute un-matching logic defined by algorithm
         final MatchingAlgorithm ma = bsline.getBankStatement().getAccount().getMatchingAlgorithm();
@@ -844,12 +848,16 @@ public class APRM_MatchingUtility {
       final FIN_BankStatementLine bankStatementLine, VariablesSecureApp vars,
       ConnectionProvider conn, boolean throwException) throws Exception {
     final AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
-    final FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(organization, account,
-        TransactionsDao.getTransactionMaxLineNo(account) + 10, payment, description,
-        transactionDate, glItem, isReceipt ? "RDNC" : "PWNC", depositAmt, paymentAmt, project,
-        campaign, activity, StringUtils.equals(strTransactionType, "BF") ? "BF" : isReceipt ? "BPD"
-            : "BPW", transactionDate, paymentCurrency, convertRate, sourceAmount, businessPartner,
-        product, salesRegion, user1, user2, costcenter);
+    final FIN_FinaccTransaction finTrans = dao
+        .getNewFinancialTransaction(organization, account, TransactionsDao
+            .getTransactionMaxLineNo(account) + 10, payment, description, transactionDate, glItem,
+            isReceipt ? APRMConstants.PAYMENT_STATUS_DEPOSIT_NOT_CLEARED
+                : APRMConstants.PAYMENT_STATUS_WITHDRAWAL_NOT_CLEARED, depositAmt, paymentAmt,
+            project, campaign, activity, StringUtils.equals(strTransactionType,
+                APRMConstants.TRXTYPE_BankFee) ? APRMConstants.TRXTYPE_BankFee
+                : isReceipt ? APRMConstants.TRXTYPE_BPDeposit : APRMConstants.TRXTYPE_BPWithdrawal,
+            transactionDate, paymentCurrency, convertRate, sourceAmount, businessPartner, product,
+            salesRegion, user1, user2, costcenter);
     final OBError processTransactionError = processTransaction(vars, conn, "P", finTrans);
     if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
       throw new OBException(processTransactionError.getMessage());

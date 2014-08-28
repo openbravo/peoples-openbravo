@@ -43,4 +43,14 @@ public class APRMConstants {
   public static final String TRXTYPE_BPDeposit = "BPD";
   public static final String TRXTYPE_BPWithdrawal = "BPW";
   public static final String TRXTYPE_BankFee = "BF";
+
+  /* Payment Statuses */
+  public static final String PAYMENT_STATUS_AWAITING_EXECUTION = "RPAE";
+  public static final String PAYMENT_STATUS_CANCELED = "RPVOID";
+  public static final String PAYMENT_STATUS_PAYMENT_CLEARED = "RPPC";
+  public static final String PAYMENT_STATUS_DEPOSIT_NOT_CLEARED = "RDNC";
+  public static final String PAYMENT_STATUS_PAYMENT_MADE = "PPM";
+  public static final String PAYMENT_STATUS_AWAITING_PAYMENT = "RPAP";
+  public static final String PAYMENT_STATUS_WITHDRAWAL_NOT_CLEARED = "PWNC";
+  public static final String PAYMENT_STATUS_PAYMENT_RECEIVED = "RPR";
 }
