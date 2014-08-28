@@ -97,7 +97,7 @@ OB.APRM.AddTransaction.paymentOnChangeFunction = function (item, view, form, gri
     form.getItem('c_bpartner_id').setValue(data.cBpartnerId);
   };
 
-  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.PaymentTransactionActionHandler', {
+  OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddTransactionOnChangePaymentActionHandler', {
     strPaymentId: strPaymentId
   }, {}, callback);
 };

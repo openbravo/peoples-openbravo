@@ -22,46 +22,59 @@ package org.openbravo.advpaymentmngt.actionHandler;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
-public class PaymentTransactionActionHandler extends BaseActionHandler {
+/**
+ * Handler in Match Statement window | Add new transaction, that controls the Payment field on
+ * change event
+ * 
+ * @author openbravo
+ * 
+ */
+public class AddTransactionOnChangePaymentActionHandler extends BaseActionHandler {
+  protected Logger log = Logger.getLogger(AddTransactionOnChangePaymentActionHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
+    JSONObject result = new JSONObject();
+
     try {
+      OBContext.setAdminMode(true);
       final JSONObject jsonData = new JSONObject(data);
-      final String strPaymentId = jsonData.getString("strPaymentId");
-      String description = "";
-      JSONObject result = new JSONObject();
-      if ("".equals(strPaymentId)) {
+      if (jsonData.isNull("strPaymentId")) {
         result.put("description", "");
         result.put("depositamt", BigDecimal.ZERO);
         result.put("paymentamt", BigDecimal.ZERO);
-      }
-      FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strPaymentId);
-      if ((payment.isReceipt() && payment.getAmount().compareTo(BigDecimal.ZERO) > 0)
-          || (!payment.isReceipt() && payment.getAmount().compareTo(BigDecimal.ZERO) < 0)) {
-        result.put("depositamt", payment.getFinancialTransactionAmount().abs());
-        result.put("paymentamt", BigDecimal.ZERO);
       } else {
-        result.put("depositamt", BigDecimal.ZERO);
-        result.put("paymentamt", payment.getFinancialTransactionAmount().abs());
+        final String strPaymentId = jsonData.getString("strPaymentId");
+        final FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strPaymentId);
+        if ((payment.isReceipt() && payment.getAmount().compareTo(BigDecimal.ZERO) > 0)
+            || (!payment.isReceipt() && payment.getAmount().compareTo(BigDecimal.ZERO) < 0)) {
+          result.put("depositamt", payment.getFinancialTransactionAmount().abs());
+          result.put("paymentamt", BigDecimal.ZERO);
+        } else {
+          result.put("depositamt", BigDecimal.ZERO);
+          result.put("paymentamt", payment.getFinancialTransactionAmount().abs());
+        }
+        if (payment.getBusinessPartner() != null) {
+          result.put("cBpartnerId", payment.getBusinessPartner().getId());
+        }
+        if (payment.getDescription() != null) {
+          result.put("description", payment.getDescription());
+        }
       }
-      if (payment.getBusinessPartner() != null) {
-        result.put("cBpartnerId", payment.getBusinessPartner().getId());
-      }
-      if (payment.getDescription() != null) {
-        result.put("description", payment.getDescription());
-      }
-
-      return result;
-    } catch (Exception e) {
-      throw new OBException(e);
+    } catch (Exception ignore) {
+      log.error(ignore);
+    } finally {
+      OBContext.restorePreviousMode();
     }
+
+    return result;
   }
 
 }
