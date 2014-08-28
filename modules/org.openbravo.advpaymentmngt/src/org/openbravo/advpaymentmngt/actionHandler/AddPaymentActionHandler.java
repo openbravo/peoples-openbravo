@@ -84,6 +84,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     OBContext.setAdminMode(true);
     boolean openedFromMenu = false;
     boolean openedFromAddTransaction = false;
+    String comingFrom = null;
     try {
       VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
       // Get Params
@@ -92,6 +93,9 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
       if (jsonRequest.has("inpwindowId") && jsonRequest.get("inpwindowId") != JSONObject.NULL) {
         openedFromMenu = false;
+        if ("94EAA455D2644E04AB25D93BE5157B6D".equals(jsonRequest.getString("inpwindowId"))) {
+          comingFrom = "TRANSACTION";
+        }
       } else {
         openedFromMenu = "null".equals(parameters.get("windowId").toString()) ? true : false;
       }
@@ -190,7 +194,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           || strAction.equals("PPW")) {
 
         OBError message = processPayment(payment, strAction, strDifferenceAction, differenceAmount,
-            exchangeRate, jsonparams);
+            exchangeRate, jsonparams, comingFrom);
         JSONObject errorMessage = new JSONObject();
         if (!openedFromAddTransaction) {
           errorMessage.put("severity", message.getType().toLowerCase());
@@ -504,7 +508,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
   }
 
   private OBError processPayment(FIN_Payment payment, String strAction, String strDifferenceAction,
-      BigDecimal refundAmount, BigDecimal exchangeRate, JSONObject jsonparams) throws Exception {
+      BigDecimal refundAmount, BigDecimal exchangeRate, JSONObject jsonparams, String comingFrom)
+      throws Exception {
     ConnectionProvider conn = new DalConnectionProvider(true);
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
 
@@ -522,7 +527,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
 
     OBError message = FIN_AddPayment.processPayment(vars, conn,
-        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment);
+        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", payment, comingFrom);
     String strNewPaymentMessage = OBMessageUtils.parseTranslation("@PaymentCreated@" + " "
         + payment.getDocumentNo())
         + ".";
@@ -541,8 +546,9 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     boolean newPayment = !payment.getFINPaymentDetailList().isEmpty();
     FIN_Payment refundPayment = FIN_AddPayment.createRefundPayment(conn, vars, payment,
         refundAmount.negate(), exchangeRate);
-    OBError auxMessage = FIN_AddPayment.processPayment(vars, conn,
-        (strAction.equals("PRP") || strAction.equals("PPP")) ? "P" : "D", refundPayment);
+    OBError auxMessage = FIN_AddPayment
+        .processPayment(vars, conn, (strAction.equals("PRP") || strAction.equals("PPP")) ? "P"
+            : "D", refundPayment, comingFrom);
     if (newPayment && !"Error".equalsIgnoreCase(auxMessage.getType())) {
       final String strNewRefundPaymentMessage = OBMessageUtils
           .parseTranslation("@APRM_RefundPayment@" + ": " + refundPayment.getDocumentNo()) + ".";

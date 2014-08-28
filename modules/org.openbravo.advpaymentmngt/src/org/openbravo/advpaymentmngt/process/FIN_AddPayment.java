@@ -1361,11 +1361,12 @@ public class FIN_AddPayment {
    * @throws Exception
    */
   public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
-      String strAction, FIN_Payment payment) throws Exception {
+      String strAction, FIN_Payment payment, String comingFrom) throws Exception {
     ProcessBundle pb = new ProcessBundle("6255BE488882480599C81284B70CD9B3", vars).init(conn);
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("action", strAction);
     parameters.put("Fin_Payment_ID", payment.getId());
+    parameters.put("comingFrom", comingFrom);
     pb.setParams(parameters);
     OBError myMessage = null;
     new FIN_PaymentProcess().execute(pb);

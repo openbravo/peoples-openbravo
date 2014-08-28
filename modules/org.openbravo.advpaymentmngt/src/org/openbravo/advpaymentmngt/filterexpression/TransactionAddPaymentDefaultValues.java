@@ -133,17 +133,13 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
     for (FinAccPaymentMethod finAccPaymentMethod : getFinancialAccount(requestMap)
         .getFinancialMgmtFinAccPaymentMethodList()) {
       if (finAccPaymentMethod.isDefault()) {
-        if ((isReceipt && finAccPaymentMethod.isPayinAllow() && !finAccPaymentMethod
-            .isAutomaticDeposit())
-            || (!isReceipt && finAccPaymentMethod.isPayoutAllow() && !finAccPaymentMethod
-                .isAutomaticWithdrawn())) {
+        if ((isReceipt && finAccPaymentMethod.isPayinAllow())
+            || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
           return finAccPaymentMethod.getPaymentMethod().getId();
         }
       }
-      if ((isReceipt && finAccPaymentMethod.isPayinAllow() && !finAccPaymentMethod
-          .isAutomaticDeposit())
-          || (!isReceipt && finAccPaymentMethod.isPayoutAllow() && !finAccPaymentMethod
-              .isAutomaticWithdrawn())) {
+      if ((isReceipt && finAccPaymentMethod.isPayinAllow())
+          || (!isReceipt && finAccPaymentMethod.isPayoutAllow())) {
         anyFinAccPaymentMethod = finAccPaymentMethod;
       }
     }
