@@ -29,12 +29,12 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall) {
   };
 
   if (view && typeof view.getContextInfo === 'function' && view.callerField && view.callerField.view && typeof view.callerField.view.getContextInfo === 'function') {
-    var trxSelection = view.getContextInfo()['findtransactiontomatch']['_selection'];
+    var trxSelection = view.getContextInfo().findtransactiontomatch._selection;
 
     if (trxSelection && trxSelection[0]) {
       var trxDepositAmt = trxSelection[0].depositAmount,
           trxPaymentAmt = trxSelection[0].paymentAmount,
-          blineAmt = view.callerField.view.getContextInfo()['match_statement']['_selection'][0].amount,
+          blineAmt = view.callerField.view.getContextInfo().match_statement._selection[0].amount,
           trxAmt = trxDepositAmt - trxPaymentAmt,
           hideSplitConfirmation = OB.PropertyStore.get('APRM_MATCHSTATEMENT_HIDE_PARTIALMATCH_POPUP', view.windowId);
 
