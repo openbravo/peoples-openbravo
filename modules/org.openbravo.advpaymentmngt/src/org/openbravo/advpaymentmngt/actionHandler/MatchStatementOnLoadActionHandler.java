@@ -70,9 +70,10 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       if (reconciliation == null) {
         // Create a new reconciliation
         reconciliation = APRM_MatchingUtility.addNewDraftReconciliation(financialAccount);
-
+        APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
       } else {
         // Reuse last reconciliation
+        APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
         APRM_MatchingUtility.fixMixedLines(reconciliation);
         APRM_MatchingUtility.updateReconciliation(reconciliation, financialAccount, false);
       }
