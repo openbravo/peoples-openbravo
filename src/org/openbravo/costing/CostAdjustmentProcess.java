@@ -227,6 +227,7 @@ public class CostAdjustmentProcess {
       trxCost.setCostDate(referenceDate);
       trxCost.setCostAdjustmentLine(line);
       trxCost.setUnitCost(line.isUnitCost());
+      trxCost.setInvoiceCorrection(line.isInvoiceCorrection());
       Date accountingDate = line.getAccountingDate();
       if (accountingDate == null) {
         accountingDate = trx.getMovementDate();
