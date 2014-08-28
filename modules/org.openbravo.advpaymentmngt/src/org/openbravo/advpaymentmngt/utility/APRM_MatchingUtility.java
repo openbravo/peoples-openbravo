@@ -662,23 +662,18 @@ public class APRM_MatchingUtility {
   }
 
   /**
-   * Updates the dates of a given reconciliation and if the process parameter comes true it
-   * processes the reconciliation
+   * Updates the dates of a given reconciliation and if the process parameter is true it processes
+   * the reconciliation
    */
   public static boolean updateReconciliation(final FIN_Reconciliation reconciliation,
       final FIN_FinancialAccount financialAccount, boolean process) {
     try {
       OBContext.setAdminMode(true);
 
-      if (MatchTransactionDao.islastreconciliation(reconciliation)) {
-        Date maxBSLDate = MatchTransactionDao.getBankStatementLineMaxDate(financialAccount);
-        reconciliation.setEndingDate(maxBSLDate);
-        reconciliation.setTransactionDate(maxBSLDate);
-      } else {
-        Date maxClearItemDate = getClearItemsMaxDate(reconciliation);
-        reconciliation.setEndingDate(maxClearItemDate);
-        reconciliation.setTransactionDate(maxClearItemDate);
-      }
+      final Date maxDate = MatchTransactionDao.islastreconciliation(reconciliation) ? MatchTransactionDao
+          .getBankStatementLineMaxDate(financialAccount) : getClearItemsMaxDate(reconciliation);
+      reconciliation.setEndingDate(maxDate);
+      reconciliation.setTransactionDate(maxDate);
       reconciliation.setEndingBalance(MatchTransactionDao.getEndingBalance(reconciliation));
 
       if (!process) {

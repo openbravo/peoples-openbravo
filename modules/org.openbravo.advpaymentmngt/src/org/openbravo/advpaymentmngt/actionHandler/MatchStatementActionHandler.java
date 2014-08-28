@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MatchStatementActionHandler extends BaseProcessActionHandler {
-  final private static Logger log = LoggerFactory.getLogger(AddPaymentActionHandler.class);
+  final private static Logger log = LoggerFactory.getLogger(MatchStatementActionHandler.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -44,7 +44,7 @@ public class MatchStatementActionHandler extends BaseProcessActionHandler {
     OBContext.setAdminMode(true);
     try {
       JSONObject jsonRequest = new JSONObject(content);
-      String strFinancialAccount = jsonRequest.getString("inpfinFinancialAccountId");
+      final String strFinancialAccount = jsonRequest.getString("Fin_Financial_Account_ID");
       final FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
           strFinancialAccount);
       final FIN_Reconciliation lastReconciliation = TransactionsDao.getLastReconciliation(
