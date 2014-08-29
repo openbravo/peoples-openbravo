@@ -459,7 +459,8 @@
     },
 
     renderMain: function () {
-      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, me = this;
+      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, me=this, defaultpaymentcash, defaultpaymentcashcurrency;
+ 
       if (!OB.UTIL.isSupportedBrowser()) {
         OB.MobileApp.model.renderLogin();
         return false;
@@ -481,13 +482,19 @@
         }
         if (this.get('payments')[i].paymentMethod.iscash) {
           paymentcash = this.get('payments')[i].payment.searchKey;
-        }
-        if (this.get('payments')[i].paymentMethod.iscash && this.get('payments')[i].paymentMethod.currency === this.get('terminal').currency) {
-          paymentcashcurrency = this.get('payments')[i].payment.searchKey;
+          if (this.get('payments')[i].paymentMethod.currency === this.get('terminal').currency) {
+            paymentcashcurrency = this.get('payments')[i].payment.searchKey;
+            if (this.get('payments')[i].paymentMethod.defaultCashPaymentMethod) {
+              defaultpaymentcashcurrency = this.get('payments')[i].payment.searchKey;
+            }
+          }
+          if (this.get('payments')[i].paymentMethod.defaultCashPaymentMethod) {
+            defaultpaymentcash = this.get('payments')[i].payment.searchKey;
+          }
         }
       }
       // sets the default payment method
-      this.set('paymentcash', paymentcashcurrency || paymentcash || paymentlegacy);
+      this.set('paymentcash', defaultpaymentcashcurrency || defaultpaymentcash || paymentcashcurrency || paymentcash || paymentlegacy);
 
       // add the currency converters
       _.each(OB.POS.modelterminal.get('payments'), function (paymentMethod) {
