@@ -166,7 +166,7 @@ function showHideLayer(id, imageId) {
 
 function addRows(htmlText, id) {
   var jsonTable = eval(htmlText);
-  if (typeof jsonTable != undefined) {
+  if (typeof jsonTable != undefined && jsonTable.hasOwnProperty("rows")) {
   for (i=0; i<jsonTable.rows.length; i++) {
     var node=document.getElementById('funcEvenOddRow1'+id);
     var elem=document.createElement('TR');
