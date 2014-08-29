@@ -282,6 +282,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     if (AverageAlgorithm.modifiesAverage(trxType)) {
       // Move average to the movement date.
       Costing bdCosting = getTransaction().getMaterialMgmtCostingList().get(0);
+      if (bdCosting == null) {
+        System.out.println(getTransaction().getId());
+      }
       Costing lastCosting = getLastCosting(bdCosting);
       lastCosting.setEndingDate(bdCosting.getEndingDate());
       OBDal.getInstance().save(lastCosting);
@@ -554,10 +557,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       where.append(" and c." + Costing.PROPERTY_WAREHOUSE + " = :warehouse");
     }
     where.append("   and c." + Costing.PROPERTY_ENDINGDATE + " = :endDate");
-    where.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
-    where.append("     or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-    where.append("       and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " < :trxdate ))");
     where.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " desc");
     where.append("   , trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc");
 
@@ -568,9 +567,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       qryCosting.setNamedParameter("warehouse", bdCosting.getWarehouse());
     }
     qryCosting.setNamedParameter("endDate", bdCosting.getStartingDate());
-    MaterialTransaction trx = bdCosting.getInventoryTransaction();
-    qryCosting.setNamedParameter("mvtdate", trx.getMovementDate());
-    qryCosting.setNamedParameter("trxdate", trx.getTransactionProcessDate());
 
     qryCosting.setMaxResult(1);
 
@@ -587,16 +583,15 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       where.append(" and c." + Costing.PROPERTY_WAREHOUSE + " is null");
     } else {
       where.append(" and c." + Costing.PROPERTY_WAREHOUSE + " = :warehouse");
-
-      where.append("   and c." + Costing.PROPERTY_ENDINGDATE + " >= :trxdate");
-      where.append("   and c." + Costing.PROPERTY_STARTINGDATE + " < : trxdate");
-      where.append(" order by c." + Costing.PROPERTY_STARTINGDATE + " desc");
     }
+    where.append("   and c." + Costing.PROPERTY_ENDINGDATE + " >= :trxdate");
+    where.append("   and c." + Costing.PROPERTY_STARTINGDATE + " < :trxdate");
+    where.append(" order by c." + Costing.PROPERTY_STARTINGDATE + " desc");
 
     OBQuery<Costing> qryCosting = OBDal.getInstance().createQuery(Costing.class, where.toString());
     qryCosting.setNamedParameter("product", trx.getProduct());
-    qryCosting.setNamedParameter("org", isManufacturingProduct ? getCostOrg() : OBDal.getInstance()
-        .get(Organization.class, "0"));
+    qryCosting.setNamedParameter("org",
+        isManufacturingProduct ? OBDal.getInstance().get(Organization.class, "0") : getCostOrg());
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       qryCosting.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse));
     }

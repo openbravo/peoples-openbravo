@@ -153,14 +153,16 @@ public class CostAdjustmentUtils {
   private static Long getNewLineNo(CostAdjustment cadj) {
     StringBuffer where = new StringBuffer();
     where.append(" as cal");
-    where.append(" where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " = :costAdjustment");
+    where.append(" where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT
+        + ".id = :costAdjustment");
     where.append(" order by cal." + CostAdjustmentLine.PROPERTY_LINENO + " desc");
     OBQuery<CostAdjustmentLine> calQry = OBDal.getInstance().createQuery(CostAdjustmentLine.class,
         where.toString());
-    calQry.setNamedParameter("costAdjustment", cadj);
-    if (calQry.count() > 0) {
-      CostAdjustmentLine cal = calQry.list().get(0);
-      return cal.getLineNo() + 10L;
+    calQry.setNamedParameter("costAdjustment", cadj.getId());
+    calQry.setMaxResult(1);
+
+    if (calQry.uniqueResult() != null) {
+      return calQry.uniqueResult().getLineNo() + 10L;
     }
     return 10L;
   }
