@@ -64,14 +64,11 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT,
           payment.getFinancialAccount()));
       for (final FIN_Reconciliation r : recconciliations.list()) {
-        log.error("Error processing cash close: the reconciliation " + r.getDocumentNo() + " ("
-            + r.getAccount().getName() + ") is in draft status");
-        jsonData.put("error", "1");
-        jsonData.put("errorMessage", "OBPOS_LblCashupWithReconciliationDraft");
-        jsonData.put("errorDetail", payment.getCommercialName());
-        jsonData.put("errorNoNavigateToInitialScreen", "true");
-        jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
-        return jsonResponse;
+        // will end up in the pos error window
+        throw new OBException(
+            "Cash up can not proceed, there is a reconcilliation in draft status, payment method: "
+                + payment.getIdentifier() + ", reconcilliation: " + r.getDocumentNo() + " ("
+                + r.getAccount().getName() + ")");
       }
     }
 
