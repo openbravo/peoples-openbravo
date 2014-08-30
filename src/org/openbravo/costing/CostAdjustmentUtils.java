@@ -23,21 +23,24 @@ import java.util.Date;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
+import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public class CostAdjustmentUtils {
-  protected static Logger log4j = Logger.getLogger(CostAdjustmentUtils.class);
+  private static final Logger log4j = Logger.getLogger(CostAdjustmentUtils.class);
   final static String strCategoryCostAdj = "CAD";
   final static String strTableCostAdj = "M_CostAdjustment";
 
@@ -167,28 +170,26 @@ public class CostAdjustmentUtils {
     return 10L;
   }
 
-  public static BigDecimal getTrxCost(CostAdjustment costAdj, MaterialTransaction trx,
-      boolean justUnitCost) {
-    StringBuffer select = new StringBuffer();
-    select.append("select sum(cal." + CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT + ") as cost");
-    select.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
-    select.append("   join cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " as ca");
-    select.append(" where cal." + CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION + ".id = :trx");
-    if (justUnitCost) {
-      select.append("  and cal." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
+  public static BigDecimal getTrxCost(MaterialTransaction trx, boolean justUnitCost,
+      Currency currency) {
+    // log4j.debug("Get Transaction Cost");
+    if (!trx.isCostCalculated()) {
+      // Transaction hasn't been calculated yet.
+      log4j.error("  *** No cost found for transaction " + trx.getIdentifier() + " with id "
+          + trx.getId());
+      throw new OBException("@NoCostFoundForTrxOnDate@ @Transaction@: " + trx.getIdentifier());
     }
-    // Get amounts of processed adjustments and the adjustment that it is being processed.
-    select.append("   and (ca = :ca");
-    select.append("     or ca." + CostAdjustment.PROPERTY_PROCESSED + " = true)");
-
-    Query qryCost = OBDal.getInstance().getSession().createQuery(select.toString());
-    qryCost.setParameter("trx", trx.getId());
-    qryCost.setParameter("ca", costAdj);
-
-    Object adjCost = qryCost.uniqueResult();
-    BigDecimal cost = trx.getTransactionCost();
-    if (adjCost != null) {
-      cost = cost.add((BigDecimal) adjCost);
+    BigDecimal cost = BigDecimal.ZERO;
+    for (TransactionCost trxCost : trx.getTransactionCostList()) {
+      if (!justUnitCost || trxCost.isUnitCost()) {
+        if (trxCost.getCurrency().getId().equals(currency.getId())) {
+          cost = cost.add(trxCost.getCost());
+        } else {
+          cost = cost.add(FinancialUtils.getConvertedAmount(trxCost.getCost(),
+              trxCost.getCurrency(), currency, trxCost.getCostDate(), trxCost.getOrganization(),
+              FinancialUtils.PRECISION_COSTING));
+        }
+      }
     }
     return cost;
   }
