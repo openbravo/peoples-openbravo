@@ -49,6 +49,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="M_LC_MATCHED_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_LC_RECEIPT" name="M_LC_RECEIPTEAMT_INOUTLINE">
         <reference local="M_LC_RECEIPT_ID" foreign="M_LC_RECEIPT_ID"/>
       </foreign-key>
@@ -60,6 +64,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_LC_COST" name="M_LC_RECEIPTLINEAMT_LCCOST" onDelete="cascade">
         <reference local="M_LC_COST_ID" foreign="M_LC_COST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_LC_MATCHED" name="M_LC_RECEIPTLINEAMT_MATCH">
+        <reference local="M_LC_MATCHED_ID" foreign="M_LC_MATCHED_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_LC_RECEIPTLINEAMT_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
