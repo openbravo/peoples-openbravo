@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo,_ */
+/*global enyo, OB */
 
 enyo.kind({
   kind: 'OB.UI.listItemButton',
