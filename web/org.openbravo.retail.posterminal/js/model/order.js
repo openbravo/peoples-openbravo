@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B,_,moment,Backbone,localStorage, enyo */
+/*global B,_,moment,Backbone,localStorage, enyo, OB, BigDecimal, alert, window */
 
 (function () {
 
