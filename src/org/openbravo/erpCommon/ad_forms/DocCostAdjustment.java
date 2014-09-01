@@ -194,12 +194,8 @@ public class DocCostAdjustment extends AcctServer {
       } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_RECEIPT)) {
         Account acct = null;
         // Inventory Asset DR
-        if (line.getIsSource() && line.getSourceProcess().equals("MCC")) { // Manual Cost Correction
-          // Inentory Adjustment CR
-          acct = getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as,
-              line.getWarehouseId(), conn);
-        } else if (line.getIsSource() && line.getSourceProcess().equals("PDC")) { // Price Diff
-                                                                                  // Correction
+        if (line.getIsSource() && line.getSourceProcess().equals("PDC")) { // Price Diff
+                                                                           // Correction
           if (line.getIsInvoiceCorrection()) {
             // Invoice Price Variance CR
             acct = p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn);
@@ -214,7 +210,8 @@ public class DocCostAdjustment extends AcctServer {
           acct = getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn);
         } else {
           // Product Exp CR
-          acct = p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn);
+          acct = getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as,
+              line.getWarehouseId(), conn);
         }
         log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
             + p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn).C_ValidCombination_ID);
