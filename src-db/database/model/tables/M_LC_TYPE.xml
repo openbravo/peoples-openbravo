@@ -45,15 +45,30 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ACCOUNT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="M_PRODUCT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="C_GLITEM" name="M_LC_TYPE_C_GLITEM">
+        <reference local="ACCOUNT_ID" foreign="C_GLITEM_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_LC_TYPE_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_LC_DISTRIBUTION_ALG" name="M_LC_TYPE_DISTALG">
         <reference local="M_LC_DISTRIBUTION_ALG_ID" foreign="M_LC_DISTRIBUTION_ALG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="M_LC_TYPE_M_PRODUCT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_LC_TYPE_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="M_LC_TYPE_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_LC_TYPE_CHECK1"><![CDATA[(ACCOUNT_ID IS NULL) OR (M_PRODUCT_ID IS NULL)]]></check>
     </table>
   </database>
