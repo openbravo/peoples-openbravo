@@ -31,12 +31,12 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.LCReceipt;
 import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCost;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
+import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
@@ -122,27 +122,25 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     qry.append("select lcr.id as lcreceipt"); // 0
     qry.append("   , iol.id as receiptline"); // 1
     qry.append("   , trx." + MaterialTransaction.PROPERTY_CURRENCY + ".id as currency"); // 2
-    qry.append("   , sum(cal." + CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT + ") as cost"); // 3
-    qry.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
-    qry.append("   join cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " as ca");
-    qry.append("   join cal." + CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    qry.append("   , sum(tc." + TransactionCost.PROPERTY_COST + ") as cost"); // 3
+    qry.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
+    qry.append("   join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
     qry.append("   join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
     qry.append(" , " + LCReceipt.ENTITY_NAME + " as lcr");
-    qry.append(" where cal." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
-    qry.append("   and ca." + CostAdjustment.PROPERTY_PROCESSED + " = true");
+    qry.append(" where tc." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
     qry.append("   and ((lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " is not null");
     qry.append("        and lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " = iol)");
     qry.append("         or (lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " is null");
     qry.append("        and lcr." + LCReceipt.PROPERTY_GOODSSHIPMENT + " = iol."
         + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + "))");
-    qry.append("   and lcr." + LCReceipt.PROPERTY_LANDEDCOST + " = :landedCost");
+    qry.append("   and lcr." + LCReceipt.PROPERTY_LANDEDCOST + ".id = :landedCost");
     qry.append(" group by lcr.id, iol.id, trx." + MaterialTransaction.PROPERTY_CURRENCY + ".id");
     if (doOrderBy) {
-      qry.append(" order by sum(cal." + CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT + ")");
+      qry.append(" order by sum(tc." + TransactionCost.PROPERTY_COST + ")");
     }
 
     Query qryReceiptCosts = OBDal.getInstance().getSession().createQuery(qry.toString());
-    qryReceiptCosts.setParameter("landedCost", landedCost);
+    qryReceiptCosts.setParameter("landedCost", landedCost.getId());
 
     return qryReceiptCosts.scroll();
   }
