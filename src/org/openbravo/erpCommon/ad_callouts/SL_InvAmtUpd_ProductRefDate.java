@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.costing.CostAdjustmentUtils;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.service.OBDal;
@@ -64,40 +65,29 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
       referenceDate = outputFormat.parse(info.getStringParameter("inpreferencedate", null));
 
       CostingRule costRule = CostingUtils.getCostDimensionRule(organization, referenceDate);
-      if (product != null) {
-        if (costRule.isWarehouseDimension()) {
-          info.addResult("inpiswarehousedimension", "Y");
-
-          if (warehouseId != null && !warehouseId.isEmpty()) {
-            Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, warehouseId);
-            costDimensions = new HashMap<CostDimension, BaseOBObject>();
-            costDimensions.put(CostDimension.Warehouse, warehouse);
-            currentValuedStock = CostingUtils.getCurrentValuedStock(product, organization,
-                referenceDate, costDimensions, currency);
-            currentStock = CostingUtils.getCurrentStock(product, organization, referenceDate,
-                costDimensions);
-            info.addResult("inpcurInventoryAmount", currentValuedStock);
-            info.addResult("inponhandqty", currentStock);
-            info.addResult(
-                "inpcurUnitcost",
-                currentStock.intValue() == 0 ? BigDecimal.ZERO : currentValuedStock.divide(
-                    currentStock, currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
-          }
-        } else {
-          info.addResult("inpiswarehousedimension", "N");
-          currentValuedStock = CostingUtils
-              .getCurrentValuedStock(product, product.getOrganization(), referenceDate,
-                  CostingUtils.getEmptyDimensions(), currency);
-          currentStock = CostingUtils.getCurrentStock(product, product.getOrganization(),
-              referenceDate, CostingUtils.getEmptyDimensions());
-          info.addResult("inpcurInventoryAmount", currentValuedStock);
-          info.addResult("inponhandqty", currentStock);
-          info.addResult(
-              "inpcurUnitcost",
-              currentStock.intValue() == 0 ? BigDecimal.ZERO : currentValuedStock.divide(
-                  currentStock, currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
-        }
+      if (product == null) {
+        return;
       }
+      costDimensions = CostingUtils.getEmptyDimensions();
+      if (costRule.isWarehouseDimension()) {
+        info.addResult("inpiswarehousedimension", "Y");
+        if (warehouseId != null && !warehouseId.isEmpty()) {
+          Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, warehouseId);
+          costDimensions.put(CostDimension.Warehouse, warehouse);
+        }
+      } else {
+        info.addResult("inpiswarehousedimension", "N");
+      }
+      currentValuedStock = CostAdjustmentUtils.getCurrentValuedStock(product, organization,
+          referenceDate, costDimensions, currency, costRule.isBackdatedTransactionsFixed());
+      currentStock = CostAdjustmentUtils.getCurrentStock(product, organization, referenceDate,
+          costDimensions, costRule.isBackdatedTransactionsFixed());
+      info.addResult("inpcurInventoryAmount", currentValuedStock);
+      info.addResult("inponhandqty", currentStock);
+      info.addResult(
+          "inpcurUnitcost",
+          currentStock.intValue() == 0 ? BigDecimal.ZERO : currentValuedStock.divide(currentStock,
+              currency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
     } catch (ParseException ignore) {
     }
   }

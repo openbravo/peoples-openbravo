@@ -20,13 +20,19 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.financial.FinancialUtils;
@@ -34,10 +40,13 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 public class CostAdjustmentUtils {
   private static final Logger log4j = Logger.getLogger(CostAdjustmentUtils.class);
@@ -192,5 +201,154 @@ public class CostAdjustmentUtils {
       }
     }
     return cost;
+  }
+
+  /**
+   * Calculates the stock of the product on the given date and for the given cost dimensions. It
+   * only takes transactions that have its cost calculated.
+   */
+  public static BigDecimal getCurrentStock(Product product, Organization org, Date _date,
+      HashMap<CostDimension, BaseOBObject> costDimensions, boolean backdatedTransactionsFixed) {
+    // Get child tree of organizations.
+    Date date = _date;
+    Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
+        .getChildTree(org.getId(), true);
+
+    StringBuffer select = new StringBuffer();
+    StringBuffer subSelect = new StringBuffer();
+    select
+        .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
+    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
+    if (backdatedTransactionsFixed) {
+      select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+    } else {
+      subSelect.append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + ")");
+      subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+      subSelect.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " >= :date");
+      Query trxsubQry = OBDal.getInstance().getSession().createQuery(subSelect.toString());
+      trxsubQry.setParameter("date", date);
+      Object trxprocessDate = trxsubQry.uniqueResult();
+      if (trxprocessDate != null) {
+        date = (Date) trxprocessDate;
+        select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+            + " < :date");
+      } else {
+        select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+      }
+    }
+
+    // Include only transactions that have its cost calculated
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    }
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    trxQry.setParameter("product", product.getId());
+    trxQry.setParameter("date", date);
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    }
+    trxQry.setParameterList("orgs", orgs);
+    Object stock = trxQry.uniqueResult();
+    if (stock != null) {
+      return (BigDecimal) stock;
+    }
+    return BigDecimal.ZERO;
+  }
+
+  /**
+   * Calculates the value of the stock of the product on the given date, for the given cost
+   * dimensions and for the given currency. It only takes transactions that have its cost
+   * calculated.
+   */
+  public static BigDecimal getCurrentValuedStock(Product product, Organization org, Date _date,
+      HashMap<CostDimension, BaseOBObject> _costDimensions, Currency currency,
+      boolean backdatedTransactionsFixed) {
+    Date date = _date;
+    HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
+
+    // Get child tree of organizations.
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        org.getClient().getId());
+    Set<String> orgs = osp.getChildTree(org.getId(), true);
+    if (product.isProduction()) {
+      orgs = osp.getChildTree("0", false);
+      costDimensions = CostingUtils.getEmptyDimensions();
+    }
+
+    StringBuffer select = new StringBuffer();
+    StringBuffer subSelect = new StringBuffer();
+    select.append(" select sum(case");
+    select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
+        + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
+    select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost");
+    select.append(" , tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency");
+    select.append(" , coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") as mdate");
+    select.append(" , sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
+
+    select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
+    select.append("  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    select.append("  left join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as line");
+    select.append("  left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
+
+    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
+    // Include only transactions that have its cost calculated
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    if (backdatedTransactionsFixed) {
+      select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+    } else {
+      subSelect.append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + ")");
+      subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+      subSelect.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " >= :date");
+      Query trxsubQry = OBDal.getInstance().getSession().createQuery(subSelect.toString());
+      trxsubQry.setParameter("date", date);
+      Object trxprocessDate = trxsubQry.uniqueResult();
+      if (trxprocessDate != null) {
+        date = (Date) trxprocessDate;
+        select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+            + " < :date");
+      } else {
+        select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+      }
+    }
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    }
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+
+    select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY);
+    select.append("   , coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
+
+    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    trxQry.setParameter("product", product);
+    trxQry.setParameter("date", date);
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    }
+    trxQry.setParameterList("orgs", orgs);
+    @SuppressWarnings("unchecked")
+    List<Object[]> o = trxQry.list();
+    BigDecimal costsum = BigDecimal.ZERO;
+    for (Object[] resultSet : o) {
+      BigDecimal origAmt = (BigDecimal) resultSet[0];
+      Currency origCur = OBDal.getInstance().get(Currency.class, resultSet[1]);
+      Date convDate = (Date) resultSet[2];
+
+      if (origCur != currency) {
+        costsum = costsum.add(FinancialUtils.getConvertedAmount(origAmt, origCur, currency,
+            convDate, org, FinancialUtils.PRECISION_COSTING));
+      } else {
+        costsum = costsum.add(origAmt);
+      }
+    }
+    return costsum;
   }
 }
