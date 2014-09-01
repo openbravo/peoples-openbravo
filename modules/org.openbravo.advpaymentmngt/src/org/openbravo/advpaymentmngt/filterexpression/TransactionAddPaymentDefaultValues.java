@@ -51,6 +51,13 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
 
   @Override
   public String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
+    if ("Y".equals(getDefaultIsSOTrx(requestMap))) {
+      JSONObject context = new JSONObject(requestMap.get("context"));
+      if (context.has("depositamt") && context.has("withdrawalamt")) {
+        return new BigDecimal(context.getString("depositamt")).subtract(
+            new BigDecimal(context.getString("withdrawalamt"))).toString();
+      }
+    }
     return BigDecimal.ZERO.toPlainString();
   }
 
@@ -106,6 +113,11 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
 
   @Override
   public String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    if (context.has("c_bpartner_id") && context.get("c_bpartner_id") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("c_bpartner_id"))) {
+      return context.getString("c_bpartner_id");
+    }
     return "";
   }
 
