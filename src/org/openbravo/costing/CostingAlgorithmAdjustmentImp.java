@@ -108,17 +108,24 @@ public abstract class CostingAlgorithmAdjustmentImp {
    * Process to include in the Cost Adjustment the required lines of transactions whose cost needs
    * to be adjusted as a consequence of other lines already included.
    */
-  protected void searchRelatedTransactionCosts(boolean searchRelatedTransactions) {
-    CostAdjustmentLine costAdjLine = getCostAdjLine();
+  protected void searchRelatedTransactionCosts(CostAdjustmentLine _costAdjLine) {
+    boolean searchRelatedTransactions = true;
+    CostAdjustmentLine costAdjLine;
+    if (_costAdjLine != null) {
+      costAdjLine = _costAdjLine;
+      searchRelatedTransactions = false;
+    } else {
+      costAdjLine = getCostAdjLine();
+    }
 
     // Backdated transactions are inserted with a null adjustment amount.
     if (costAdjLine.isBackdatedTrx()) {
-      calculateBackdatedTrxAdjustment();
+      calculateBackdatedTrxAdjustment(costAdjLine);
     }
 
     // Negative stock correction are inserted with a null adjustment amount.
     if (costAdjLine.isNegativeStockCorrection()) {
-      calculateNegativeStockCorrectionAdjustmentAmount();
+      calculateNegativeStockCorrectionAdjustmentAmount(costAdjLine);
     }
 
     if (costAdjLine.isSource()) {
@@ -339,14 +346,17 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
   }
 
-  protected abstract void calculateNegativeStockCorrectionAdjustmentAmount();
+  protected abstract void calculateNegativeStockCorrectionAdjustmentAmount(
+      CostAdjustmentLine costAdjLine);
 
   protected abstract void getRelatedTransactionsByAlgorithm();
 
-  protected void calculateBackdatedTrxAdjustment() {
+  protected void calculateBackdatedTrxAdjustment(CostAdjustmentLine costAdjLine) {
     BigDecimal adjAmt = BigDecimal.ZERO;
+    TrxType calTrxType = TrxType.getTrxType(costAdjLine.getInventoryTransaction());
+
     // Incoming transactions does not modify the calculated cost
-    switch (trxType) {
+    switch (calTrxType) {
     case ShipmentVoid:
     case ReceiptVoid:
     case IntMovementTo:
@@ -357,33 +367,33 @@ public abstract class CostingAlgorithmAdjustmentImp {
       break;
 
     case Receipt:
-      if (hasOrder()) {
+      if (hasOrder(costAdjLine)) {
         // If the receipt has a related order the cost amount does not depend on the date.
         break;
       }
       // Check receipt default on backdated date.
-      adjAmt = getDefaultCostDifference();
+      adjAmt = getDefaultCostDifference(calTrxType, costAdjLine);
       break;
     case ShipmentReturn:
-      if (hasReturnedReceipt()) {
+      if (hasReturnedReceipt(costAdjLine)) {
         // If the return receipt has a original receipt the cost amount does not depend on the date.
         break;
       }
     case ShipmentNegative:
       // These transaction types are calculated using the default cost. Check if there is a
       // difference.
-      adjAmt = getDefaultCostDifference();
+      adjAmt = getDefaultCostDifference(calTrxType, costAdjLine);
       break;
     case InventoryIncrease:
     case InventoryOpening:
-      if (inventoryHasCost()) {
+      if (inventoryHasCost(costAdjLine)) {
         // If the inventory line defines a unit cost it does not depend on the date.
         break;
       }
     case InternalConsNegative:
       // These transaction types are calculated using the default cost. Check if there is a
       // difference.
-      adjAmt = getDefaultCostDifference();
+      adjAmt = getDefaultCostDifference(calTrxType, costAdjLine);
       break;
 
     case Shipment:
@@ -397,11 +407,10 @@ public abstract class CostingAlgorithmAdjustmentImp {
     case ManufacturingConsumed:
       // These transactions are calculated as regular outgoing transactions. The adjustment amount
       // needs to be calculated by the algorithm.
-      adjAmt = getOutgoingBackdatedTrxAdjAmt();
+      adjAmt = getOutgoingBackdatedTrxAdjAmt(costAdjLine);
     default:
       break;
     }
-    CostAdjustmentLine costAdjLine = getCostAdjLine();
     costAdjLine.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
         strCostCurrencyId));
     costAdjLine.setAdjustmentAmount(adjAmt);
@@ -409,11 +418,11 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
   }
 
-  protected abstract BigDecimal getOutgoingBackdatedTrxAdjAmt();
+  protected abstract BigDecimal getOutgoingBackdatedTrxAdjAmt(CostAdjustmentLine costAdjLine);
 
-  private BigDecimal getDefaultCostDifference() {
-    MaterialTransaction trx = getTransaction();
-    BusinessPartner bp = CostingUtils.getTrxBusinessPartner(trx, trxType);
+  private BigDecimal getDefaultCostDifference(TrxType calTrxType, CostAdjustmentLine costAdjLine) {
+    MaterialTransaction trx = costAdjLine.getInventoryTransaction();
+    BusinessPartner bp = CostingUtils.getTrxBusinessPartner(trx, calTrxType);
 
     BigDecimal defaultCost = CostingUtils.getDefaultCost(trx.getProduct(),
         trx.getMovementQuantity(), getCostOrg(), getCostAdjLine().getTransactionDate(),
@@ -430,8 +439,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
    *          the adjustment line to check.
    * @return true if there is a related order line.
    */
-  private boolean hasOrder() {
-    CostAdjustmentLine costAdjLine = getCostAdjLine();
+  private boolean hasOrder(CostAdjustmentLine costAdjLine) {
     return costAdjLine.getInventoryTransaction().getGoodsShipmentLine().getSalesOrderLine() != null;
   }
 
@@ -442,8 +450,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
    *          the adjustment line to check.
    * @return true if there is a unit cost.
    */
-  private boolean inventoryHasCost() {
-    CostAdjustmentLine costAdjLine = getCostAdjLine();
+  private boolean inventoryHasCost(CostAdjustmentLine costAdjLine) {
     return costAdjLine.getInventoryTransaction().getPhysicalInventoryLine().getCost() != null;
   }
 
@@ -454,8 +461,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
    *          the adjustment line to check.
    * @return true if there is a original shipment line.
    */
-  private boolean hasReturnedReceipt() {
-    CostAdjustmentLine costAdjLine = getCostAdjLine();
+  private boolean hasReturnedReceipt(CostAdjustmentLine costAdjLine) {
     OrderLine shipmentLine = costAdjLine.getInventoryTransaction().getGoodsShipmentLine()
         .getSalesOrderLine();
     return shipmentLine != null && shipmentLine.getGoodsShipmentLine() != null;

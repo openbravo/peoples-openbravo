@@ -189,7 +189,7 @@ public class CostAdjustmentProcess {
       }
       log.debug("costing algorithm imp loaded {}", costAdjImp.getClass().getName());
       costAdjImp.init(line);
-      costAdjImp.searchRelatedTransactionCosts(true);
+      costAdjImp.searchRelatedTransactionCosts(null);
       // Reload cost adjustment object in case the costing algorithm has cleared the session.
       line = OBDal.getInstance().get(CostAdjustmentLine.class, strCostAdjLineId);
       line.setRelatedTransactionAdjusted(true);

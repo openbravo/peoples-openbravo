@@ -181,10 +181,9 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
   }
 
   @Override
-  protected BigDecimal getOutgoingBackdatedTrxAdjAmt() {
+  protected BigDecimal getOutgoingBackdatedTrxAdjAmt(CostAdjustmentLine costAdjLine) {
     // Calculate the standard cost on the transaction's movement date and adjust the cost if needed.
-    MaterialTransaction trx = getTransaction();
-    CostAdjustmentLine costAdjLine = getCostAdjLine();
+    MaterialTransaction trx = costAdjLine.getInventoryTransaction();
 
     BigDecimal cost = CostingUtils.getStandardCost(trx.getProduct(), getCostOrg(),
         costAdjLine.getTransactionDate(), getCostDimensions(), getCostCurrency());
@@ -195,7 +194,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
   }
 
   @Override
-  protected void calculateNegativeStockCorrectionAdjustmentAmount() {
+  protected void calculateNegativeStockCorrectionAdjustmentAmount(CostAdjustmentLine costAdjLine) {
   }
 
   @Override

@@ -85,7 +85,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     CostAdjustmentLine baseCAL = getCostAdjLine();
     for (CostAdjustmentLine costAdjLine : getTrxAdjustmentLines(basetrx)) {
       if (costAdjLine.isSource() && !costAdjLine.isRelatedTransactionAdjusted()) {
-        searchRelatedTransactionCosts(false);
+        searchRelatedTransactionCosts(costAdjLine);
         // OBDal.getInstance().refresh(costAdjLine);
 
         backdatedTrxSourcePending |= costAdjLine.isBackdatedTrx()
@@ -113,7 +113,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     // Initialize current stock qty and value amt.
     BigDecimal currentStock = CostingUtils.getCurrentStock(getCostOrg(), basetrx,
         getCostDimensions(), isManufacturingProduct);
-    BigDecimal currentValueAmt = getCurrentValuedStock();
+    BigDecimal currentValueAmt = getCurrentValuedStock(basetrx);
     log.debug("Adjustment balance: " + adjustmentBalance.toPlainString()
         + ", current stock {}, current value {}", currentStock.toPlainString(),
         currentValueAmt.toPlainString());
@@ -188,7 +188,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         List<CostAdjustmentLine> existingAdjLines = getTrxAdjustmentLines(trx);
         for (CostAdjustmentLine existingCAL : existingAdjLines) {
           if (existingCAL.isSource() && !existingCAL.isRelatedTransactionAdjusted()) {
-            searchRelatedTransactionCosts(false);
+            searchRelatedTransactionCosts(existingCAL);
             // OBDal.getInstance().refresh(costAdjLine);
 
             backdatedTrxSourcePending |= existingCAL.isBackdatedTrx()
@@ -342,21 +342,23 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   }
 
   @Override
-  protected void calculateBackdatedTrxAdjustment() {
-    if (AverageAlgorithm.modifiesAverage(trxType)) {
+  protected void calculateBackdatedTrxAdjustment(CostAdjustmentLine costAdjLine) {
+    MaterialTransaction trx = costAdjLine.getInventoryTransaction();
+    TrxType calTrxType = TrxType.getTrxType(trx);
+    if (AverageAlgorithm.modifiesAverage(calTrxType)) {
       // Move average to the movement date.
-      Costing bdCosting = getTransaction().getMaterialMgmtCostingList().get(0);
+      Costing bdCosting = trx.getMaterialMgmtCostingList().get(0);
       Costing lastCosting = getLastCosting(bdCosting);
       lastCosting.setEndingDate(bdCosting.getEndingDate());
       OBDal.getInstance().save(lastCosting);
     }
-    super.calculateBackdatedTrxAdjustment();
+    super.calculateBackdatedTrxAdjustment(costAdjLine);
   }
 
   @Override
-  protected BigDecimal getOutgoingBackdatedTrxAdjAmt() {
+  protected BigDecimal getOutgoingBackdatedTrxAdjAmt(CostAdjustmentLine costAdjLine) {
     // Calculate the average cost on the transaction's movement date and adjust the cost if needed.
-    MaterialTransaction trx = getTransaction();
+    MaterialTransaction trx = costAdjLine.getInventoryTransaction();
     Costing costing = getTrxProductCost(trx, getCostDimensions(), getCostOrg());
 
     if (costing == null) {
@@ -444,10 +446,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
    * dimensions and for the given currency. It only takes transactions that have its cost
    * calculated.
    */
-  private BigDecimal getCurrentValuedStock() {
+  private BigDecimal getCurrentValuedStock(MaterialTransaction trx) {
     Organization org = getCostOrg();
     Currency currency = getCostCurrency();
-    MaterialTransaction trx = getTransaction();
     HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
 
     // Get child tree of organizations.
@@ -531,11 +532,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   }
 
   @Override
-  protected void calculateNegativeStockCorrectionAdjustmentAmount() {
-    MaterialTransaction basetrx = getTransaction();
-    BigDecimal currentStock = CostingUtils.getCurrentStock(getCostOrg(), getTransaction(),
+  protected void calculateNegativeStockCorrectionAdjustmentAmount(CostAdjustmentLine costAdjLine) {
+    MaterialTransaction basetrx = costAdjLine.getInventoryTransaction();
+    BigDecimal currentStock = CostingUtils.getCurrentStock(getCostOrg(), basetrx,
         getCostDimensions(), isManufacturingProduct);
-    BigDecimal currentValueAmt = getCurrentValuedStock();
+    BigDecimal currentValueAmt = getCurrentValuedStock(basetrx);
     int precission = getCostCurrency().getCostingPrecision().intValue();
 
     BigDecimal trxCost = CostAdjustmentUtils.getTrxCost(basetrx, false, getCostCurrency());
@@ -545,7 +546,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     // .subtract(currentValueAmt);
     BigDecimal adjustAmt = currentStock.multiply(trxUnitCost).subtract(currentValueAmt);
 
-    CostAdjustmentLine costAdjLine = getCostAdjLine();
     costAdjLine.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
         strCostCurrencyId));
     costAdjLine.setAdjustmentAmount(adjustAmt);
