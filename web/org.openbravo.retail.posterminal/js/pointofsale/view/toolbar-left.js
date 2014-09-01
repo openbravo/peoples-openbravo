@@ -89,7 +89,6 @@ enyo.kind({
   }
 });
 
-
 enyo.kind({
   name: 'OB.UI.ButtonDelete',
   kind: 'OB.UI.ToolbarButton',
@@ -189,13 +188,34 @@ enyo.kind({
       return true;
     }
     this.isEnabled = !inEvent.status;
-    this.setDisabled(inEvent.status);
+    this.disabledChanged(inEvent.status);
   },
   disableButton: function () {
-    this.setDisabled(true);
+    this.disabledChanged(true);
   },
   enableButton: function () {
-    this.setDisabled(false);
+    this.disabledChanged(false);
+  },
+  disabledChanged: function (isDisabled) {
+    // if the button is requested to be enabled, verify that the conditions are met
+    if (isDisabled === false) {
+      // disable it unless all conditions are met
+      isDisabled = true;
+      if (this.model) {
+        var receipt = this.model.get('order');
+        if (receipt) {
+          if (receipt.get('id')) {
+            if (receipt.get('isEditable') === false && !receipt.get('isLayaway')) {
+              isDisabled = true;
+            } else {
+              isDisabled = false;
+            }
+          }
+        }
+      }
+    }
+    this.disabled = isDisabled; // for getDisabled() to return the correct value
+    this.setAttribute('disabled', isDisabled); // to effectively turn the button enabled or disabled
   },
   events: {
     onTabChange: '',
@@ -271,6 +291,7 @@ enyo.kind({
   },
   renderTotal: function (inSender, inEvent) {
     this.$.totalPrinter.renderTotal(inEvent.newTotal);
+    this.disabledChanged(false);
   },
   init: function (model) {
     this.model = model;
@@ -278,13 +299,18 @@ enyo.kind({
       if (newValue) {
         if (newValue.get('isEditable') === false && !newValue.get('isLayaway')) {
           this.tabPanel = null;
-          this.setDisabled(true);
+          this.disabledChanged(true);
           return;
         }
       }
       this.tabPanel = 'payment';
-      this.setDisabled(false);
+      this.disabledChanged(false);
     }, this);
+    this.model.get('order').on('change:id', function (newValue) {
+      this.disabledChanged(false);
+    }, this);
+    // the button state must be set only once, in the initialization
+    this.setDisabled(true);
   }
 });
 
