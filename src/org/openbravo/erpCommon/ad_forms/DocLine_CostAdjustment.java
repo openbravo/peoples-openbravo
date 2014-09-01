@@ -41,6 +41,9 @@ public class DocLine_CostAdjustment extends DocLine {
   private String trxAmt;
   private boolean transactionNegative;
   private String warehouseId;
+  private String sourceProcess;
+  private boolean isInvoiceCorrection;
+  private boolean isSource;
 
   public static final String TRXTYPE_SHIPMENT = "SMT";
   public static final String TRXTYPE_RECEIPT = "RCT";
@@ -50,6 +53,30 @@ public class DocLine_CostAdjustment extends DocLine {
   public static final String TRXTYPE_INTERNALCONSUMPTION = "INTCONS";
   public static final String TRXTYPE_BOM = "BOM";
   public static final String TRXTYPE_MANUFACTURING = "MAN";
+
+  public void setSourceProcess(String p_sourceProcess) {
+    sourceProcess = p_sourceProcess;
+  }
+
+  public String getSourceProcess() {
+    return sourceProcess;
+  }
+
+  public void setIsInvoiceCorrection(boolean p_isInvoiceCorrection) {
+    isInvoiceCorrection = p_isInvoiceCorrection;
+  }
+
+  public boolean getIsInvoiceCorrection() {
+    return isInvoiceCorrection;
+  }
+
+  public void setIsSource(boolean p_isSource) {
+    isSource = p_isSource;
+  }
+
+  public boolean getIsSource() {
+    return isSource;
+  }
 
   public void setTrxType(String transactionId) {
     MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,

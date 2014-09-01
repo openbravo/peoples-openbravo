@@ -99,7 +99,7 @@ public class PriceDifferenceProcess {
       CostAdjustmentLine costAdjLine = CostAdjustmentUtils.insertCostAdjustmentLine(
           materialTransaction, costAdjHeader, adjustAmtMatchInv.subtract(invoiceCorrectionAmt),
           Boolean.TRUE, null, costAdjDateAcct);
-      costAdjLine.setNeedsPosting(Boolean.FALSE);
+      costAdjLine.setNeedsPosting(Boolean.TRUE);
       costAdjLine.setInvoiceCorrection(Boolean.TRUE);
       OBDal.getInstance().save(costAdjLine);
     }
