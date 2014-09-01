@@ -70,33 +70,23 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
       OBDal.getInstance().save(reconciliation);
       OBDal.getInstance().flush();
       if (strAction.equals("P")) {
-        // Check lines exist
-        if (reconciliation.getFINReconciliationLineVList().size() == 0) {
-          msg.setType("Error");
-          msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-          msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
-              "@APRM_ReconciliationNoLines@" + ": " + reconciliation.getDocumentNo()));
-          bundle.setResult(msg);
-          return;
-        } else {
-          for (FIN_ReconciliationLine_v recLine : reconciliation.getFINReconciliationLineVList()) {
-            boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(recLine
-                .getFinancialAccountTransaction().getReconciliation().TABLE_NAME, recLine
-                .getFinancialAccountTransaction().getReconciliation().getId(), recLine
-                .getFinancialAccountTransaction().getReconciliation().TABLE_NAME + "_ID", "LE");
-            if (!FIN_Utility.isPeriodOpen(recLine.getFinancialAccountTransaction().getClient()
-                .getId(), AcctServer.DOCTYPE_Reconciliation, recLine
-                .getFinancialAccountTransaction().getOrganization().getId(),
-                OBDateUtils.formatDate(recLine.getFinancialAccountTransaction().getDateAcct()))
-                && orgLegalWithAccounting) {
-              msg.setType("Error");
-              msg.setTitle(Utility.messageBD(conProvider, "Error", language));
-              msg.setMessage(String.format(Utility.parseTranslation(conProvider, vars, language,
-                  "@APRM_PeriodNotAvailableClearedItem@"), recLine.getIdentifier()));
-              bundle.setResult(msg);
-              OBDal.getInstance().rollbackAndClose();
-              return;
-            }
+        for (FIN_ReconciliationLine_v recLine : reconciliation.getFINReconciliationLineVList()) {
+          boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(recLine
+              .getFinancialAccountTransaction().getReconciliation().TABLE_NAME, recLine
+              .getFinancialAccountTransaction().getReconciliation().getId(), recLine
+              .getFinancialAccountTransaction().getReconciliation().TABLE_NAME + "_ID", "LE");
+          if (!FIN_Utility.isPeriodOpen(recLine.getFinancialAccountTransaction().getClient()
+              .getId(), AcctServer.DOCTYPE_Reconciliation, recLine.getFinancialAccountTransaction()
+              .getOrganization().getId(),
+              OBDateUtils.formatDate(recLine.getFinancialAccountTransaction().getDateAcct()))
+              && orgLegalWithAccounting) {
+            msg.setType("Error");
+            msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+            msg.setMessage(String.format(Utility.parseTranslation(conProvider, vars, language,
+                "@APRM_PeriodNotAvailableClearedItem@"), recLine.getIdentifier()));
+            bundle.setResult(msg);
+            OBDal.getInstance().rollbackAndClose();
+            return;
           }
         }
         updateReconciliations(reconciliation);
