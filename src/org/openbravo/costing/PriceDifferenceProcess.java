@@ -115,7 +115,8 @@ public class PriceDifferenceProcess {
           FinancialUtils.PRECISION_STANDARD);
 
       amtProportionalInitialCost = materialTransaction.getTransactionCost()
-          .divide(ol.getOrderedQuantity()).multiply(ol.getOrderedQuantity().subtract(invoiceQty));
+          .divide(ol.getOrderedQuantity(), 32, RoundingMode.HALF_UP)
+          .multiply(ol.getOrderedQuantity().subtract(invoiceQty));
 
       adjustAmtOther = amtPendingInvoiceConverted.subtract(
           amtProportionalInitialCost.setScale(costCurPrecission, RoundingMode.HALF_UP)).subtract(
