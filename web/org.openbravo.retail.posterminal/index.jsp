@@ -61,7 +61,8 @@
       });
       OB.POS.terminal.write();
     } else {
-      console.error('The WebPOS cannot be loaded. Please, reload (F5). If this error raises again:\n\n- check that the javascript files do not contain syntax errors\n- check that the session was not invalidated in the server\n');
+      console.error("The WebPOS cannot be loaded. Please, reload (F5). If this error raises again:\n\n- check that the server has finished its initialization\n- check that the javascript files do not contain syntax errors\n- check that the server calls have proper timeouts\n- check that the session is not being invalidated in the server\n");
+      document.write("<p style='margin-left: 20px'>The WebPOS cannot be loaded</br>Please reload (F5)</br></br><i>If this error keeps showing, please contact the system administrator</i></p>".fontcolor("lightgray"));
     }
   </script>
 </body>
