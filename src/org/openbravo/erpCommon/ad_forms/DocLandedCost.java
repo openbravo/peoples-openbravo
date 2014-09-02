@@ -167,8 +167,8 @@ public class DocLandedCost extends AcctServer {
 
       log4jDocLandedCost.debug("previous to creteline, line.getAmount(): " + line.getAmount());
 
-      amtDebit = amount.toString();
-      amtCredit = "";
+      amtDebit = "";
+      amtCredit = amount.toString();
 
       fact.createLine(line, getLandedCostAccount(line.getLandedCostTypeId(), amount, as, conn),
           line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),

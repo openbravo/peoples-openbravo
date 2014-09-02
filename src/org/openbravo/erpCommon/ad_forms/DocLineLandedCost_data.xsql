@@ -69,7 +69,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT P_ASSET_ACCT AS ACCOUNT_ID
+        SELECT P_EXPENSE_ACCT AS ACCOUNT_ID
         FROM M_PRODUCT_ACCT 
         WHERE M_PRODUCT_ID = ?
         AND C_ACCTSCHEMA_id = ?

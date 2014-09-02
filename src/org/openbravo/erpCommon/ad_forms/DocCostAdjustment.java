@@ -162,6 +162,7 @@ public class DocCostAdjustment extends AcctServer {
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     String amtDebit = "0";
     String amtCredit = "0";
+
     // Lines
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_CostAdjustment line = (DocLine_CostAdjustment) p_lines[i];
@@ -471,7 +472,20 @@ public class DocCostAdjustment extends AcctServer {
    * not used
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
-    return true;
+    boolean isGeneratedAccounting = false;
+    // Lines
+    for (int i = 0; p_lines != null && i < p_lines.length; i++) {
+      DocLine_CostAdjustment line = (DocLine_CostAdjustment) p_lines[i];
+      BigDecimal amount = new BigDecimal(line.getAmount());
+      if (amount.compareTo(BigDecimal.ZERO) != 0) {
+        isGeneratedAccounting = true;
+      }
+    }
+
+    if (!isGeneratedAccounting) {
+      setStatus(STATUS_DocumentDisabled);
+    }
+    return isGeneratedAccounting;
   }
 
   public Account getAcctByBusinessPartner(String AcctType, String bpId, AcctSchema as,

@@ -42,6 +42,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
+import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
 import org.openbravo.model.materialmgmt.cost.LCReceipt;
 import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
@@ -87,6 +88,7 @@ public class LandedCostProcess {
 
       landedCost = OBDal.getInstance().get(LandedCost.class, landedCost.getId());
       landedCost.setDocumentStatus("CO");
+      landedCost.setProcessed(Boolean.TRUE);
       OBDal.getInstance().save(landedCost);
     } catch (JSONException ignore) {
     } finally {
@@ -198,7 +200,10 @@ public class LandedCostProcess {
           (String) receiptAmt[1]);
       // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
       MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
-      CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true, null, referenceDate);
+      CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
+          null, referenceDate);
+      cal.setNeedsPosting(Boolean.FALSE);
+      OBDal.getInstance().save(cal);
 
       if (i % 100 == 0) {
         OBDal.getInstance().flush();
