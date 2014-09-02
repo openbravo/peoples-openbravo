@@ -98,11 +98,14 @@ public class AddTransactionFilterExpression implements FilterExpression {
   }
 
   String getDefaultTransactionDate() throws JSONException {
-    return OBDateUtils.formatDate(new Date());
+    return getDefaultAccountingDate();
   }
 
   String getDefaultAccountingDate() throws JSONException {
-    return OBDateUtils.formatDate(new Date());
+    String bankStatementLineId = requestMap.get("bankStatementLineId");
+    FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
+        bankStatementLineId);
+    return OBDateUtils.formatDate(bankstatementline.getTransactionDate());
   }
 
   String getDefaultCurrency() throws JSONException {

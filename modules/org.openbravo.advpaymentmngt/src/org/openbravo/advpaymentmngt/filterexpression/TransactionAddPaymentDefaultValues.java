@@ -57,6 +57,10 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
         return new BigDecimal(context.getString("depositamt")).subtract(
             new BigDecimal(context.getString("withdrawalamt"))).toString();
       }
+      if (context.has("inpdepositamt") && context.has("inppaymentamt")) {
+        return new BigDecimal(context.getString("inpdepositamt")).subtract(
+            new BigDecimal(context.getString("inppaymentamt"))).toString();
+      }
     }
     return BigDecimal.ZERO.toPlainString();
   }
@@ -118,6 +122,10 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
         && StringUtils.isNotEmpty(context.getString("c_bpartner_id"))) {
       return context.getString("c_bpartner_id");
     }
+    if (context.has("inpcBpartnerId") && context.get("inpcBpartnerId") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inpcBpartnerId"))) {
+      return context.getString("inpcBpartnerId");
+    }
     return "";
   }
 
@@ -134,6 +142,11 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   @Override
   public String getOrganization(Map<String, String> requestMap) throws JSONException {
     // Organization of the current Payment
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    if (context.has("inpadOrgId") && context.get("inpadOrgId") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inpadOrgId"))) {
+      return context.getString("inpadOrgId");
+    }
     return getFinancialAccount(requestMap).getOrganization().getId();
   }
 
