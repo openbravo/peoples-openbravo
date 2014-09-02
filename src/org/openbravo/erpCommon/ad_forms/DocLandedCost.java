@@ -260,17 +260,13 @@ public class DocLandedCost extends AcctServer {
           Account_ID = data[0].accountId;
         }
       } else {
-        throw new IllegalStateException("DocCostAdjustment - Error: landed cost type "
-            + dataAcctType[0].name + "without accounting information");
-      }
-
-      if (data.length > 0) {
-        Account_ID = data[0].accountId;
+        log4jDocLandedCost.warn("getLandedCostAccount - NO account for landed cost type "
+            + dataAcctType[0].name);
+        return null;
       }
 
       // No account
       if (Account_ID.equals("")) {
-
         log4jDocLandedCost.warn("getLandedCostAccount - NO account for landed cost type ="
             + dataAcctType[0].name);
         return null;
