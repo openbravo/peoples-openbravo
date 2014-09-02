@@ -201,13 +201,12 @@ public class DocCostAdjustment extends AcctServer {
             acct = p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn);
           } else {
             // Non Invoiced Receipts CR
-
             acct = getAcctByBusinessPartner(AcctServer.ACCTTYPE_NotInvoicedReceipts,
                 line.m_C_BPartner_ID, as, conn);
           }
         } else if (line.getIsSource() && line.getSourceProcess().equals("LC")) {
-          // Landed Cost CR
-          acct = getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn);
+          throw new IllegalStateException(
+              "DocCostAdjustment - Error: landed cost should not generate accounting");
         } else {
           // Product Exp CR
           acct = getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as,

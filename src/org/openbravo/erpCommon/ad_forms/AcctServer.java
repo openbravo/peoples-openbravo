@@ -279,6 +279,8 @@ public abstract class AcctServer {
   public static final String DOCTYPE_FinBankStatement = "BST";
   // CostAdjustment
   public static final String DOCTYPE_CostAdjustment = "CAD";
+  // LandedCost
+  public static final String DOCTYPE_LandedCost = "LC";
 
   /*************************************************************************/
 
