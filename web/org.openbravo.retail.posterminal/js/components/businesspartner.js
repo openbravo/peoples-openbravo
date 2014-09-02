@@ -184,6 +184,7 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           kind: 'OB.UI.SmallButton',
+          name: 'OB.UI.Bp.Modal.search',
           classes: 'btnlink-gray btn-icon-small btn-icon-clear',
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
           ontap: 'clearAction'
