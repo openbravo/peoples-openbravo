@@ -229,7 +229,8 @@ public class InventoryCountProcess implements Process {
     // queryInsert.setBoolean("checkReservation", checkReservationQty);
     queryInsert.executeUpdate();
 
-    if (!inventory.getClient().getClientInformationList().get(0).isAllowNegativeStock()) {
+    if (!inventory.getClient().getClientInformationList().get(0).isAllowNegativeStock()
+        && !"C".equals(inventory.getInventoryType())) {
       checkStock(inventory);
     }
 
