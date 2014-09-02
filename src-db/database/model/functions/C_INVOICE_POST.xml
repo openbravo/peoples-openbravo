@@ -1475,12 +1475,12 @@ IF (NOT FINISH_PROCESS) THEN
         UPDATE m_transaction
         SET checkpricedifference = 'Y'
         WHERE m_transaction_id in (
-        SELECT trx.m_transaction_id 
-        FROM c_orderline  ol
-             JOIN c_invoiceline inv ON inv.c_orderline_id = ol.c_orderline_id
-             JOIN m_matchpo mpo ON mpo.c_orderline_id = ol.c_orderline_id
-             JOIN m_transaction trx ON mpo.m_inoutline_id = trx.m_inoutline_id
-        WHERE trx.iscostcalculated = 'Y' AND  inv.c_invoice_id = v_record_id);
+        SELECT TRX.M_TRANSACTION_ID 
+        FROM C_INVOICELINE IL 
+          JOIN M_MATCHINV MI ON IL.C_INVOICELINE_ID = MI.C_INVOICELINE_ID
+          JOIN M_TRANSACTION TRX ON MI.M_INOUTLINE_ID = TRX.M_INOUTLINE_ID
+        WHERE TRX.ISCOSTCALCULATED = 'Y' 
+        AND IL.C_INVOICE_ID = v_record_id);
 
         v_ResultStr:='MatchInv-PO';
         FOR Cur_ILines_PO IN

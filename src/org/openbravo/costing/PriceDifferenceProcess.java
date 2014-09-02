@@ -65,7 +65,7 @@ public class PriceDifferenceProcess {
     int costCurPrecission = materialTransaction.getCurrency().getCostingPrecision().intValue();
 
     BigDecimal priceUnitCost = materialTransaction.getTransactionCost().divide(
-        materialTransaction.getMovementQuantity());
+        materialTransaction.getMovementQuantity(), costCurPrecission, RoundingMode.HALF_UP);
 
     for (org.openbravo.model.procurement.ReceiptInvoiceMatch matchInv : materialTransaction
         .getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList()) {
