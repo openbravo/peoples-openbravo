@@ -93,30 +93,11 @@ public class CostingBackground extends DalBaseProcess {
         batch++;
         for (MaterialTransaction transaction : trxs) {
           counter++;
-          try {
-            log4j.debug("Start transaction process: " + transaction.getId());
-            CostingServer transactionCost = new CostingServer(transaction);
-            transactionCost.process();
-            transaction.setProcessed(true);
-            log4j.debug("Transaction processed: " + counter + "/" + total + " batch: " + batch);
-          } catch (OBException e) {
-            String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
-            log4j.error(e);
-            logger.logln(resultMsg);
-            result.setType("Error");
-            result.setTitle(OBMessageUtils.messageBD("Error"));
-            result.setMessage(resultMsg);
-            bundle.setResult(result);
-            return;
-          } catch (Exception e) {
-            result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext()
-                .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
-            log4j.error(result.getMessage(), e);
-            logger.logln(result.getMessage());
-            bundle.setResult(result);
-            return;
-          }
-
+          log4j.debug("Start transaction process: " + transaction.getId());
+          CostingServer transactionCost = new CostingServer(transaction);
+          transactionCost.process();
+          transaction.setProcessed(true);
+          log4j.debug("Transaction processed: " + counter + "/" + total + " batch: " + batch);
           // If cost has been calculated successfully do a commit.
           OBDal.getInstance().getConnection().commit();
         }
@@ -131,6 +112,15 @@ public class CostingBackground extends DalBaseProcess {
       OBDal.getInstance().rollbackAndClose();
       result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext().toVars(),
           OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+      log4j.error(result.getMessage(), e);
+      logger.logln(result.getMessage());
+      bundle.setResult(result);
+      return;
+    } catch (Exception e) {
+      result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext().toVars(),
+          OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+      result.setType("Error");
+      result.setTitle(OBMessageUtils.messageBD("Error"));
       log4j.error(result.getMessage(), e);
       logger.logln(result.getMessage());
       bundle.setResult(result);

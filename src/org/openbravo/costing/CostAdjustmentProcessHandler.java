@@ -74,6 +74,9 @@ public class CostAdjustmentProcessHandler extends BaseActionHandler {
       try {
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         String strMessage = OBMessageUtils.translateError(ex.getMessage()).getMessage();
+        if (strMessage.isEmpty()) {
+          strMessage = OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@");
+        }
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("title", OBMessageUtils.messageBD("Error"));

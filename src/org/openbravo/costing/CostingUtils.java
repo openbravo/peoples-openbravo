@@ -38,6 +38,8 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
@@ -84,28 +86,44 @@ public class CostingUtils {
   public static BigDecimal getTransactionCost(MaterialTransaction transaction, Date date,
       boolean calculateTrx, Currency currency) {
     log4j.debug("Get Transaction Cost");
-    if (!transaction.isCostCalculated()) {
-      // Transaction hasn't been calculated yet.
-      if (calculateTrx) {
-        log4j.debug("  *** Cost for transaction will be calculated." + transaction.getIdentifier());
-        CostingServer transactionCost = new CostingServer(transaction);
-        transactionCost.process();
-        return transactionCost.getTransactionCost();
+    OBError result = new OBError();
+    try {
+      result.setType("Success");
+      result.setTitle(OBMessageUtils.messageBD("Success"));
+      if (!transaction.isCostCalculated()) {
+        // Transaction hasn't been calculated yet.
+        if (calculateTrx) {
+          log4j.debug("  *** Cost for transaction will be calculated."
+              + transaction.getIdentifier());
+          CostingServer transactionCost = new CostingServer(transaction);
+          transactionCost.process();
+          return transactionCost.getTransactionCost();
+        }
+        log4j.error("  *** No cost found for transaction " + transaction.getIdentifier()
+            + " with id " + transaction.getId() + " on date " + OBDateUtils.formatDate(date));
+        throw new OBException("@NoCostFoundForTrxOnDate@ @Transaction@: "
+            + transaction.getIdentifier() + " @Date@ " + OBDateUtils.formatDate(date));
       }
-      log4j.error("  *** No cost found for transaction " + transaction.getIdentifier()
-          + " with id " + transaction.getId() + " on date " + OBDateUtils.formatDate(date));
-      throw new OBException("@NoCostFoundForTrxOnDate@ @Transaction@: "
-          + transaction.getIdentifier() + " @Date@ " + OBDateUtils.formatDate(date));
-    }
-    BigDecimal cost = BigDecimal.ZERO;
-    for (TransactionCost trxCost : transaction.getTransactionCostList()) {
-      if (!trxCost.getCostDate().after(date)) {
-        cost = cost.add(FinancialUtils.getConvertedAmount(trxCost.getCost(), trxCost.getCurrency(),
-            currency, trxCost.getCostDate(), trxCost.getOrganization(),
-            FinancialUtils.PRECISION_COSTING));
+      BigDecimal cost = BigDecimal.ZERO;
+      for (TransactionCost trxCost : transaction.getTransactionCostList()) {
+        if (!trxCost.getCostDate().after(date)) {
+          cost = cost.add(FinancialUtils.getConvertedAmount(trxCost.getCost(),
+              trxCost.getCurrency(), currency, trxCost.getCostDate(), trxCost.getOrganization(),
+              FinancialUtils.PRECISION_COSTING));
+        }
       }
+      return cost;
+    } catch (OBException e) {
+      OBDal.getInstance().rollbackAndClose();
+      log4j.error(result.getMessage(), e);
+      return null;
+    } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
+      log4j.error(result.getMessage(), e);
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return cost;
   }
 
   public static BigDecimal getDefaultCost(Product product, BigDecimal qty, Organization org,
