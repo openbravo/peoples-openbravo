@@ -232,7 +232,7 @@ enyo.kind({
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListBpsLine',
-  kind: 'OB.UI.SelectButton',
+  kind: 'OB.UI.listItemButton',
   components: [{
     name: 'line',
     style: 'line-height: 23px;',
