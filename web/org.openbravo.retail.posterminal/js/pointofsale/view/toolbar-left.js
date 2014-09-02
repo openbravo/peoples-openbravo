@@ -204,7 +204,7 @@ enyo.kind({
       if (this.model) {
         var receipt = this.model.get('order');
         if (receipt) {
-          if (receipt.get('id')) {
+          if (receipt.get('id') && receipt.get('bp') && receipt.get('bp').get('id')) {
             if (receipt.get('isEditable') === false && !receipt.get('isLayaway')) {
               isDisabled = true;
             } else {
