@@ -473,9 +473,12 @@ public class DocCostAdjustment extends AcctServer {
    */
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     boolean isGeneratedAccounting = false;
+
+    DocLine[] local_p_lines = new DocLine[0];
+    local_p_lines = loadLines(conn);
     // Lines
-    for (int i = 0; p_lines != null && i < p_lines.length; i++) {
-      DocLine_CostAdjustment line = (DocLine_CostAdjustment) p_lines[i];
+    for (int i = 0; local_p_lines != null && i < local_p_lines.length; i++) {
+      DocLine_CostAdjustment line = (DocLine_CostAdjustment) local_p_lines[i];
       BigDecimal amount = new BigDecimal(line.getAmount());
       if (amount.compareTo(BigDecimal.ZERO) != 0) {
         isGeneratedAccounting = true;
