@@ -496,7 +496,8 @@ public class OrderGroupingProcessor {
       paymentSchedule.setOutstandingAmount(grossamount.subtract(totalPaid));
 
     }
-    if (grossamount.compareTo(BigDecimal.ZERO) != 0) {
+
+    if (grossamount.compareTo(BigDecimal.ZERO) == 0) {
       totalPaid = BigDecimal.ZERO;
     }
 
