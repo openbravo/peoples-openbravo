@@ -296,6 +296,9 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     // Return Material
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/return-material/ob-return-material.js", false));
+    // Costing - Landed Cost Match from Invoice
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/costing/ob-lc-matchfrominvoice.js", false));
     // Reservations
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/materialmgmt/ob-reservation.js", false));

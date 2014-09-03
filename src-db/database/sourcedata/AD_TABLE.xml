@@ -11236,6 +11236,76 @@ You can also select if transactions are allowed or not for this organization typ
 <!--B1B7075C46934F0A9FD4C4D0F1457B42-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--B1B7075C46934F0A9FD4C4D0F1457B42--></AD_TABLE>
 
+<!--B2960E2BDCCD4F7599A2433F2681847F--><AD_TABLE>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <AD_TABLE_ID><![CDATA[B2960E2BDCCD4F7599A2433F2681847F]]></AD_TABLE_ID>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <NAME><![CDATA[LCMatchFromInvoice]]></NAME>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <DESCRIPTION><![CDATA[HQL Source table for LC Match P&E on Invoice Lines]]></DESCRIPTION>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <HELP><![CDATA[This table shows all Landed Cost Costs that are open for matching. The type of this costs must be of the same Product or GL Item than the invoice.]]></HELP>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <TABLENAME><![CDATA[LCMatchFromInvoice]]></TABLENAME>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1EF4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <ISTREE><![CDATA[N]]></ISTREE>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <HQLQUERY><![CDATA[select
+  coalesce(lcm.id, lcc.id) as id,
+  case when lcm is not null then true else false end as OB_Selected,
+  lct.name as typename,
+  lcc.amount as costamt,
+  (select hqlagg(to_char(io.documentNo || ' - ' || iol.lineNo)) 
+   from LandedCostReceiptLineAmt lcra
+     join lcra.goodsShipmentLine as iol
+     join iol.shipmentReceipt as io
+   where lcra.landedCostCost = lcc
+  ) as iols,
+  (select hqlagg(to_char(p.name)) 
+   from Product as p
+   where p in (select distinct iol.product
+      from LandedCostReceiptLineAmt lcra
+      join lcra.goodsShipmentLine as iol
+      where lcra.landedCostCost = lcc)
+  ) as products,
+  lcm.amount as amttomatch,
+  (select sum(lcm.amount)
+   from LandedCostMatched as otherlcm
+   where otherlcm.landedCostCost = lcc
+     and otherlcm.invoiceLine != il 
+  )as matchedamt,
+  (select hqlagg(to_char(otheri.documentNo || ' - ' || otheril.lineNo)) 
+   from LandedCostMatched as otherlcm
+   join otherlcm.invoiceLine as otheril
+   join otheril.invoice as otheri
+   where otherlcm.landedCostCost = lcc
+     and otheril != il 
+  ) as ils,
+  lc.referenceDate as refDate,
+  lcc.matched as isMatched,
+  lcc.isMatchingAdjusted as isMatchingAdjusted,
+  lcm.id as m_lc_matched_id,
+  lcc.id as m_lc_cost_id,
+  lc.documentNo as documentNo
+from LandedCostCost as lcc
+  join lcc.landedCost as lc
+  join lcc.landedCostType as lct
+  left join lcc.landedCostMatchedList  as lcm
+  left join lcm.invoiceLine as il
+where (lcc.isMatchingAdjusted = false or lcm is not null)
+  and @additional_filters@
+  and @insertion_point_0@
+group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcm.amount, case when lcm is not null then true else false end, lc.referenceDate, lcc.matched, lcc.isMatchingAdjusted, lcm.id, lcc.id, il, lc.documentNo]]></HQLQUERY>
+<!--B2960E2BDCCD4F7599A2433F2681847F-->  <ENTITY_ALIAS><![CDATA[lcc]]></ENTITY_ALIAS>
+<!--B2960E2BDCCD4F7599A2433F2681847F--></AD_TABLE>
+
 <!--B5FCAD3055044508B4464B6078A711AD--><AD_TABLE>
 <!--B5FCAD3055044508B4464B6078A711AD-->  <AD_TABLE_ID><![CDATA[B5FCAD3055044508B4464B6078A711AD]]></AD_TABLE_ID>
 <!--B5FCAD3055044508B4464B6078A711AD-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
