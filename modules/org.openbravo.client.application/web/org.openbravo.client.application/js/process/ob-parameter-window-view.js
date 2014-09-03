@@ -179,7 +179,7 @@ isc.OBParameterWindowView.addProperties({
         currentValues = isc.shallowClone(form.getValues());
       }
       OB.Utilities.fixNull250(currentValues);
-      parentContext = (this.view.sourceView && this.view.sourceView.getContextInfo(false, true, true, true)) || {};
+      parentContext = this.view.getUnderLyingRecordContext(false, true, true, true);
 
       try {
         if (isc.isA.Function(this.originalShowIf)) {
@@ -301,12 +301,10 @@ isc.OBParameterWindowView.addProperties({
     // allow to add external parameters
     isc.addProperties(params, this.externalParams);
 
-    if (this.sourceView) {
-      params.context = this.sourceView.getContextInfo(false, true, true, true);
-    }
+    params.context = this.getUnderLyingRecordContext(false, true, true, true);
 
     if (this.callerField && this.callerField.view && this.callerField.view.getContextInfo) {
-      isc.addProperties(params.context || {}, this.callerField.view.getContextInfo(true /*excludeGrids*/));
+      isc.addProperties(params.context || {}, this.callerField.view.getContextInfo(true /*excludeGrids*/ ));
     }
 
     OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, params, function (rpcResponse, data, rpcRequest) {
@@ -466,7 +464,7 @@ isc.OBParameterWindowView.addProperties({
 
   doProcess: function (btnValue) {
     var i, tmp, view = this,
-        grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
+        grid, allProperties = this.getUnderLyingRecordContext(false, true, false, true),
         selection, len, allRows, params, tab, actionHandlerCall;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
     if (this.resultLayout && this.resultLayout.destroy) {
@@ -597,7 +595,7 @@ isc.OBParameterWindowView.addProperties({
     if (!form) {
       return;
     }
-    parentContext = (this.sourceView && this.sourceView.getContextInfo(false, true, true, true)) || {};
+    parentContext = this.getUnderLyingRecordContext(false, true, true, true);
 
     fields = form.getFields();
     for (i = 0; i < fields.length; i++) {
@@ -645,6 +643,10 @@ isc.OBParameterWindowView.addProperties({
     }
 
     return result;
+  },
+
+  getUnderLyingRecordContext: function (onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat) {
+    return (this.buttonOwnerView && this.buttonOwnerView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat)) || {};
   },
 
   // returns true if any non-grid required parameter does not have a value

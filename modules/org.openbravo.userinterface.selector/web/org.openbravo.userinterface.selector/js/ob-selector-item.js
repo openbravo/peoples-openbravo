@@ -386,9 +386,13 @@ isc.OBSelectorPopupWindow.addProperties({
     // on purpose not passing the third boolean param
     if (this.selector && this.selector.form && this.selector.form.view && this.selector.form.view.getContextInfo) {
       isc.addProperties(data, this.selector.form.view.getContextInfo(false, true));
+    } else if (this.view && this.view.getUnderLyingRecordContext) {
+      isc.addProperties(data, this.view.getUnderLyingRecordContext(false, true));
     } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
       isc.addProperties(data, this.view.sourceView.getContextInfo(false, true));
     }
+
+
 
     callback = function (resp, data, req) {
       selectorWindow.fetchDefaultsCallback(resp, data, req);
@@ -1024,6 +1028,8 @@ isc.OBSelectorItem.addClassMethods({
     if (selector.form && selector.form.view && selector.form.view.getContextInfo) {
       // for table and table dir reference values needs to be transformed to classic (ex.: true -> Y)
       isc.addProperties(params, selector.form.view.getContextInfo(false, true, null, selector.isComboReference));
+    } else if (selector.view && selector.view.getUnderLyingRecordContext) {
+      isc.addProperties(params, selector.view.getUnderLyingRecordContext(false, true, null, selector.isComboReference));
     } else if (selector.view && selector.view.sourceView && selector.view.sourceView.getContextInfo) {
       isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true, null, selector.isComboReference));
     } else if (selector.grid && selector.grid.contentView && selector.grid.contentView.getContextInfo) {
