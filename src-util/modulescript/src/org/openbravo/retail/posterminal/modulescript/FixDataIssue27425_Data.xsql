@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2014 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<SqlClass name="FixDataIssue27425Data" package="org.openbravo.retail.posterminal.modulescript">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="isFixed" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT COUNT(1) AS counted
+        FROM c_invoice
+        INNER JOIN c_invoiceline ON c_invoice.c_invoice_id = c_invoiceline.c_invoice_id
+        LEFT JOIN fin_payment_schedule ON c_invoice.c_invoice_id = fin_payment_schedule.c_invoice_id
+        INNER JOIN c_orderline ON c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
+        INNER JOIN c_order ON c_orderline.c_order_id = c_order.c_order_id
+        WHERE c_order.em_obpos_app_cashup_id IS NOT null AND c_invoice.ispaid = 'N'
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="fixWebPOSCashupInvoicesWithGrossZeroI" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE fin_payment_schedule AS a
+        SET paidamt = amount
+        WHERE a.c_invoice_id IN (
+        SELECT c_invoice.c_invoice_id
+        FROM c_invoice
+        INNER JOIN c_invoiceline ON c_invoice.c_invoice_id = c_invoiceline.c_invoice_id
+        LEFT JOIN fin_payment_schedule ON c_invoice.c_invoice_id = fin_payment_schedule.c_invoice_id
+        INNER JOIN c_orderline ON c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
+        INNER JOIN c_order ON c_orderline.c_order_id = c_order.c_order_id
+        WHERE c_order.em_obpos_app_cashup_id IS NOT null AND fin_payment_schedule.fin_payment_schedule_id IS NOT NULL AND c_invoice.ispaid = 'N'
+        )
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="fixWebPOSCashupInvoicesWithGrossZeroII" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE c_invoice AS a
+        SET   totalpaid = grandtotal,
+          outstandingamt = 0,
+          finalsettlement = created,
+          ispaid = 'Y'
+        WHERE a.c_invoice_id IN (
+        SELECT c_invoice.c_invoice_id
+        FROM c_invoice
+        INNER JOIN c_invoiceline ON c_invoice.c_invoice_id = c_invoiceline.c_invoice_id
+        LEFT JOIN fin_payment_schedule ON c_invoice.c_invoice_id = fin_payment_schedule.c_invoice_id
+        INNER JOIN c_orderline ON c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
+        INNER JOIN c_order ON c_orderline.c_order_id = c_order.c_order_id
+        WHERE c_order.em_obpos_app_cashup_id IS NOT null AND fin_payment_schedule.fin_payment_schedule_id IS NOT NULL AND c_invoice.ispaid = 'N'
+        )
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="fixWebPOSCashupInvoicesSetAsNotPaid" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE c_invoice AS a
+        SET   totalpaid = 0,
+          outstandingamt = 0,
+          finalsettlement = created,
+          ispaid = 'Y'
+        WHERE a.c_invoice_id IN (
+        SELECT c_invoice.c_invoice_id
+        FROM c_invoice
+        INNER JOIN c_invoiceline ON c_invoice.c_invoice_id = c_invoiceline.c_invoice_id
+        LEFT JOIN fin_payment_schedule ON c_invoice.c_invoice_id = fin_payment_schedule.c_invoice_id
+        INNER JOIN c_orderline ON c_invoiceline.c_orderline_id = c_orderline.c_orderline_id
+        INNER JOIN c_order ON c_orderline.c_order_id = c_order.c_order_id
+        WHERE c_order.em_obpos_app_cashup_id IS NOT null AND fin_payment_schedule.fin_payment_schedule_id IS NULL AND (c_invoice.totalpaid + c_invoice.outstandingamt = 0) AND c_invoice.ispaid = 'N'
+        )
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>
