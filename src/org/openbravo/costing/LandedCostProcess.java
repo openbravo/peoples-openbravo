@@ -34,6 +34,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
@@ -44,6 +45,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
+import org.openbravo.model.materialmgmt.cost.LCMatched;
 import org.openbravo.model.materialmgmt.cost.LCReceipt;
 import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCost;
@@ -163,6 +165,9 @@ public class LandedCostProcess {
           .getLandedCostDistributionAlgorithm());
 
       lcDistAlg.distributeAmount(lcCost);
+      if (lcCost.getInvoiceLine() != null) {
+        matchCostWithInvoiceLine(lcCost);
+      }
     }
     OBDal.getInstance().flush();
   }
@@ -237,5 +242,17 @@ public class LandedCostProcess {
     LandedCostProcess lcp = WeldUtils.getInstanceFromStaticBeanManager(LandedCostProcess.class);
     JSONObject message = lcp.processLandedCost(landedCost);
     return message;
+  }
+
+  private void matchCostWithInvoiceLine(LandedCostCost lcc) {
+    LCMatched lcm = OBProvider.getInstance().get(LCMatched.class);
+    lcm.setOrganization(lcc.getOrganization());
+    lcm.setLandedCostCost(lcc);
+    lcm.setAmount(lcc.getAmount());
+    lcm.setInvoiceLine(lcc.getInvoiceLine());
+    OBDal.getInstance().save(lcm);
+
+    lcc.setMatched(Boolean.TRUE);
+    OBDal.getInstance().save(lcc);
   }
 }
