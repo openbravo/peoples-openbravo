@@ -2332,7 +2332,6 @@ isc.OBStandardView.addProperties({
   },
 
   setHalfSplit: function () {
-    this.setHeight('100%');
     var i, tab, pane;
     if (this.members[1]) {
       // divide the space between the first and second level
@@ -2344,7 +2343,6 @@ isc.OBStandardView.addProperties({
         // makes a difference what the order of resizing is, first resize the 
         // one which will be larger, then the one which will be smaller.
         this.members[1].setHeight('50%');
-        this.members[0].setHeight('50%');
       }
       this.members[1].setState(isc.OBStandardView.STATE_IN_MID);
     } else {
