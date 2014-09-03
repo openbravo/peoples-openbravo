@@ -22,11 +22,12 @@ OB.Costing = OB.Costing || {};
 OB.Costing.MatchFromInvoiceAmtValidation = function (item, validator, value, record) {
   var selectedRecords = item.grid.getSelectedRecords(),
       selectedRecordsLength = selectedRecords.length,
-      invoiceamt = BigDecimal.prototype.ZERO,
+      context = item.grid.view.parentWindow.activeView.getContextInfo(false, false, false, true),
       matchedamt = BigDecimal.prototype.ZERO,
-      editedRecord, i;
-  
-  if(!isc.isA.Number(value)) {
+      editedRecord, i, invoiceamt;
+
+  invoiceamt = new BigDecimal(String(context['@InvoiceLine.lineNetAmount@']));
+  if (!isc.isA.Number(value)) {
     item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_NotValidNumber'));
     return false;
   }
@@ -35,7 +36,10 @@ OB.Costing.MatchFromInvoiceAmtValidation = function (item, validator, value, rec
     editedRecord = isc.addProperties({}, selectedRecords[i], item.grid.getEditedRecord(selectedRecords[i]));
     matchedamt = matchedamt.add(new BigDecimal(String(editedRecord.matchedAmt)));
   }
-
+  if (matchedamt.compareTo(invoiceamt) > 0) {
+    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_Costing_MachedMoreThanInvoice', [invoiceamt.toString()]));
+    return false;
+  }
 
   return true;
 };
