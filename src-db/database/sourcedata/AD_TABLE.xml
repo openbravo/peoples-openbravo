@@ -11293,7 +11293,8 @@ You can also select if transactions are allowed or not for this organization typ
   lcc.isMatchingAdjusted as isMatchingAdjusted,
   lcm.id as m_lc_matched_id,
   lcc.id as m_lc_cost_id,
-  lc.documentNo as documentNo
+  lc.documentNo as documentNo,
+  lcc.lineNo as line
 from LandedCostCost as lcc
   join lcc.landedCost as lc
   join lcc.landedCostType as lct
@@ -11302,7 +11303,7 @@ from LandedCostCost as lcc
 where (lcc.isMatchingAdjusted = false or lcm is not null)
   and @additional_filters@
   and @insertion_point_0@
-group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcm.amount, case when lcm is not null then true else false end, lc.referenceDate, lcc.matched, lcc.isMatchingAdjusted, lcm.id, lcc.id, il, lc.documentNo]]></HQLQUERY>
+group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcm.amount, case when lcm is not null then true else false end, lc.referenceDate, lcc.matched, lcc.isMatchingAdjusted, lcm.id, lcc.id, il, lc.documentNo, lcc.lineNo]]></HQLQUERY>
 <!--B2960E2BDCCD4F7599A2433F2681847F-->  <ENTITY_ALIAS><![CDATA[lcc]]></ENTITY_ALIAS>
 <!--B2960E2BDCCD4F7599A2433F2681847F--></AD_TABLE>
 
