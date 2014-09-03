@@ -157,7 +157,11 @@ enyo.kind({
         action: function () {
           OB.POS.navigate('retail.pointofsale');
         }
-      }]);
+      }], {
+        autoDismiss: false,
+        onHideFunction: function () {
+          OB.POS.navigate('retail.pointofsale');
+      }});
     }, this);
     //finishedWrongly
     this.model.on('change:finishedWrongly', function () {
@@ -167,7 +171,11 @@ enyo.kind({
         action: function () {
           OB.POS.navigate('retail.pointofsale');
         }
-      }]);
+      }], {
+        autoDismiss: false,
+        onHideFunction: function () {
+          OB.POS.navigate('retail.pointofsale');
+      }});
     }, this);
   },
 
