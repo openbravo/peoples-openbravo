@@ -59,4 +59,15 @@
         </Sql>
         <Parameter name="Id" optional="true" type="replace" after="WHERE fin_payment_id IN (" text="'1'"/>
     </SqlMethod>
+
+    <SqlMethod name="updateOrderDatePrinted" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE C_Order
+        SET DATEPRINTED=now() WHERE C_Order_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="cOrderId"/>
+  </SqlMethod>
 </SqlClass>

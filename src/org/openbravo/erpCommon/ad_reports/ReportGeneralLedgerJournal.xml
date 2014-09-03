@@ -56,6 +56,10 @@
   <PARAMETER id="paramShowDivideUp" name="showDivideUp" boolean="checked" withId="fieldCheck"/>
   <PARAMETER id="paramShowDescription" name="showDescription" boolean="checked" withId="fieldCheck"/>
   <PARAMETER id="paramDocument" name="document"/>
+  <PARAMETER id="paramElementvalueIdTo" name="paramElementvalueIdTo" attribute="value"/>
+  <PARAMETER id="paramElementvalueIdFrom" name="paramElementvalueIdFrom" attribute="value"/>
+  <PARAMETER id="inpElementValueIdTo_DES" name="inpElementValueIdTo_DES" attribute="value"/>
+  <PARAMETER id="inpElementValueIdFrom_DES" name="inpElementValueIdFrom_DES" attribute="value"/>
  
   <PARAMETER id="jsDisablePreviousNext" name="jsDisablePreviousNext" default=""/>
 

@@ -61,8 +61,9 @@
   v_IsBinding CHAR(1):='Y';
   v_istaxincluded CHAR(1);
   --
-  ToDeliver NUMBER;
-  ToInvoice NUMBER;
+  ToDeliver NUMBER:=0;
+  ToInvoice NUMBER:=0;
+  ToDeliverOrToInvoice NUMBER:=0;
   --
   InOut_ID VARCHAR2(32);
   Invoice_ID VARCHAR2(32);
@@ -125,6 +126,7 @@
 
   v_iscashvat C_Order.IsCashVat%TYPE;
   v_recalculateDiscounts VARCHAR(1):='Y';
+  v_isactive VARCHAR2(1):='N';
 
   BEGIN
     IF (p_PInstance_ID IS NOT NULL) THEN
@@ -177,6 +179,15 @@
         RAISE_APPLICATION_ERROR(-20000, '@QuantitiesNotMatch@') ;
       END IF;
     END LOOP;
+  END IF;
+
+  /* Check active business partner*/
+  SELECT isactive INTO v_isactive
+  FROM C_Bpartner
+  WHERE C_Bpartner_ID = v_C_Bpartner_ID;
+
+  IF(v_isactive = 'N') THEN
+    RAISE_APPLICATION_ERROR(-20000, '@InActiveBusinessPartner@');
   END IF;
   
     /**
@@ -1243,7 +1254,8 @@
                   -- Update so_res_status
                   UPDATE c_orderline
                   SET so_res_status = CASE WHEN cur_orderline.qtyordered = v_reservedqty THEN 'CR'
-                                           ELSE 'PR'
+					   WHEN cur_orderline.qtyordered > v_reservedqty AND v_reservedqty > 0 THEN 'PR'
+                                           ELSE 'NR'
                                       END
                   WHERE c_orderline_id = cur_orderline.c_orderline_id;
                 END IF;
@@ -1359,14 +1371,11 @@
      */
       BEGIN
         v_ResultStr:='OrderCompleteCheck';
-        SELECT SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyDelivered*hex_to_int(C_OrderLine_ID)),
-            SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyInvoiced*hex_to_int(C_OrderLine_ID))
-          INTO ToDeliver,
-            ToInvoice
-        FROM C_ORDERLINE
-        WHERE C_Order_ID=v_Record_ID;
-        -- If no lines, ToDeliver is NULL
-        IF ((ToDeliver=0 AND ToInvoice=0) OR(ToDeliver IS NULL AND ToInvoice IS NULL)) THEN
+        SELECT COUNT(*) INTO ToDeliverOrToInvoice FROM DUAL
+        WHERE 0 <> ANY (select QtyOrdered - QtyDelivered from c_orderline where c_order_id = v_Record_ID)
+        OR    0 <> ANY (select QtyOrdered - QtyInvoiced  from c_orderline where c_order_id = v_Record_ID);
+        -- If something to deliver or to invoice, then ToDeliverOrToInvoice = 1
+        IF (ToDeliverOrToInvoice = 0) THEN
           DBMS_OUTPUT.PUT_LINE('OrderComplete') ;
           IF (v_DocAction='CL') THEN
             END_PROCESSING:=TRUE;
@@ -1509,12 +1518,10 @@
      /**
       * Final Completeness check
       */
-      SELECT SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyDelivered*hex_to_int(C_OrderLine_ID)),
-          SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyInvoiced*hex_to_int(C_OrderLine_ID))
-        INTO ToDeliver,
-          ToInvoice
-      FROM C_ORDERLINE
-      WHERE C_Order_ID=v_Record_ID;
+      SELECT COUNT(*) INTO ToDeliver FROM DUAL
+      WHERE 0 <> ANY (select QtyOrdered - QtyDelivered from c_orderline where c_order_id = v_Record_ID);
+      SELECT COUNT(*) INTO ToInvoice FROM DUAL
+      WHERE 0 <> ANY (select QtyOrdered - QtyInvoiced from c_orderline where c_order_id = v_Record_ID);
       DBMS_OUTPUT.PUT_LINE('To deliver - ' || ToDeliver) ;
       DBMS_OUTPUT.PUT_LINE('ToInvoice - ' || ToInvoice) ;
       DBMS_OUTPUT.PUT_LINE('v_DocSubTypeSO - ' || v_DocSubTypeSO) ;

@@ -36,7 +36,7 @@ isc.OBSelectorPopupWindow.addProperties({
 
   initWidget: function () {
     var selectorWindow = this,
-        okButton, cancelButton, operator, i, hasIdentifier;
+        okButton, createNewButton, cancelButton, operator, i;
 
     this.setFilterEditorProperties(this.selectorGridFields);
 
@@ -44,6 +44,32 @@ isc.OBSelectorPopupWindow.addProperties({
       title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
       click: function () {
         selectorWindow.setValueInField();
+      }
+    });
+    createNewButton = isc.OBFormButton.create({
+      title: OB.I18N.getLabel('UINAVBA_CREATE_NEW'),
+      showIf: function () {
+        if (selectorWindow.selector.processId) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      click: function () {
+        var enteredValues = [],
+            criteria, value, i;
+        if (selectorWindow && selectorWindow.selectorGrid && selectorWindow.selectorGrid.filterEditor && selectorWindow.selectorGrid.filterEditor.getValues()) {
+          criteria = selectorWindow.selectorGrid.filterEditor.getValues().criteria;
+          if (Object.prototype.toString.call(criteria) === '[object Array]') {
+            for (i = 0; i < criteria.length; i++) {
+              value = {};
+              value[criteria[i].fieldName] = criteria[i].value;
+              enteredValues.push(value);
+            }
+          }
+        }
+        selectorWindow.closeClick();
+        selectorWindow.selector.openProcess(enteredValues);
       }
     });
     cancelButton = isc.OBFormButton.create({
@@ -61,17 +87,17 @@ isc.OBSelectorPopupWindow.addProperties({
       operator = 'iStartsWith';
     }
 
-    hasIdentifier = false;
     for (i = 0; i < this.selectorGridFields.length; i++) {
       this.selectorGridFields[i].canSort = (this.selectorGridFields[i].canSort === false ? false : true);
-      this.selectorGridFields[i].escapeHTML = (this.selectorGridFields[i].escapeHTML === false ? false : true);
+      if (this.selectorGridFields[i].name === OB.Constants.IDENTIFIER) {
+        this.selectorGridFields[i].escapeHTML = true;
+      } else {
+        this.selectorGridFields[i].escapeHTML = (this.selectorGridFields[i].escapeHTML === false ? false : true);
+      }
       if (this.selectorGridFields[i].disableFilter) {
         this.selectorGridFields[i].canFilter = false;
       } else {
         this.selectorGridFields[i].canFilter = true;
-      }
-      if (this.selectorGridFields[i].name === OB.Constants.IDENTIFIER) {
-        hasIdentifier = true;
       }
       // apply the proper operator for the filter of text fields
       if (isc.SimpleType.inheritsFrom(this.selectorGridFields[i].type, 'text')) {
@@ -86,12 +112,6 @@ isc.OBSelectorPopupWindow.addProperties({
       }
     }
     if (!this.dataSource.fields || !this.dataSource.fields.length || this.dataSource.fields.length === 0) {
-      if (!hasIdentifier && this.selectorGridFields) {
-        this.selectorGridFields.push({
-          name: OB.Constants.IDENTIFIER,
-          escapeHTML: true
-        });
-      }
       this.dataSource.fields = this.selectorGridFields;
       this.dataSource.init();
     }
@@ -117,6 +137,7 @@ isc.OBSelectorPopupWindow.addProperties({
       sortField: this.displayField,
 
       onFetchData: function (criteria, requestProperties) {
+        this.setFechingData();
         requestProperties = requestProperties || {};
         requestProperties.params = this.getFetchRequestParams(requestProperties.params);
       },
@@ -259,6 +280,8 @@ isc.OBSelectorPopupWindow.addProperties({
       height: this.buttonBarHeight,
       defaultLayoutAlign: 'center',
       members: [isc.LayoutSpacer.create({}), okButton, isc.LayoutSpacer.create({
+        width: this.buttonBarSpace
+      }), createNewButton, isc.LayoutSpacer.create({
         width: this.buttonBarSpace
       }), cancelButton, isc.LayoutSpacer.create({})]
     })];
@@ -584,7 +607,7 @@ isc.OBSelectorItem.addProperties({
       caller.openSelectorWindow();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('Selector_ShowPopup', ['OBSelectorItem', 'OBSelectorItem.icon'], ksAction_ShowPopup);
+    OB.KeyboardManager.Shortcuts.set('Selector_ShowPopup', ['OBSelectorItem', 'OBSelectorItem.icon', 'OBSelectorItem.add'], ksAction_ShowPopup);
   },
 
   init: function () {
@@ -604,6 +627,31 @@ isc.OBSelectorItem.addProperties({
       },
       click: function (form, item, icon) {
         item.openSelectorWindow();
+      }
+    }, {
+      selector: this,
+      src: this.addIconSrc,
+      width: this.addIconWidth,
+      height: this.addIconHeight,
+      hspace: this.addIconHspace,
+      showIf: function () {
+        if (this.selector.processId) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      keyPress: function (keyName, character, form, item, icon) {
+        var response = OB.KeyboardManager.Shortcuts.monitor('OBSelectorItem.add', this.selector);
+        if (response !== false) {
+          response = this.Super('keyPress', arguments);
+        }
+        return response;
+      },
+      click: function (form, item, icon) {
+        var enteredValue = {};
+        enteredValue[item.defaultPopupFilterField] = item.getEnteredValue();
+        item.openProcess([enteredValue]);
       }
     }];
 
@@ -634,10 +682,11 @@ isc.OBSelectorItem.addProperties({
     return this.Super('init', arguments);
   },
 
-  setValueFromRecord: function (record, fromPopup) {
+  setValueFromRecord: function (record, fromPopup, addToValueMap) {
     var currentValue = this.getValue(),
         identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
-        i;
+        valueMapObj = {},
+        displayFieldValue, i;
     this._notUpdatingManually = true;
     if (!record) {
       this.storeValue(null);
@@ -651,7 +700,27 @@ isc.OBSelectorItem.addProperties({
         this.form.grid.setEditValue(this.form.grid.getEditRow(), this.name + OB.Constants.FIELDSEPARATOR + this.displayField, '');
       }
     } else {
+      if (OB.Utilities.getObjectSize(record) === 2 && //
+      Object.prototype.toString.call(record.value) === '[object String]' && //
+      Object.prototype.toString.call(record.map) === '[object String]') {
+        // This function admits the record provided as a full record (as it has come from the database with all the columns with their proper names)
+        // or as a simplified record where only the value of the input and its mapping (value to display) are known (but not the DB names of the columns that need to be stored and shown)
+        // In case of have a simplified record, it should come as {value: 'theValueToBeStored', map: 'theDisplayValueToBeShown'}
+        // Here it happens the adaptation of the 'record' object from the 'value' and 'map' nomenclature to the proper one based on DB names
+        if (this.valueField !== 'value') {
+          record[this.valueField] = record.value;
+          delete record.value;
+        }
+        if (this.displayField !== 'map') {
+          record[this.displayField] = record.map;
+          delete record.map;
+        }
+      }
       this.handleOutFields(record);
+      if (addToValueMap) {
+        valueMapObj[record[this.valueField]] = record[this.displayField];
+        this.setValueMap(valueMapObj);
+      }
       this.storeValue(record[this.valueField]);
       this.form.setValue(this.name + OB.Constants.FIELDSEPARATOR + this.displayField, record[this.displayField]);
       this.form.setValue(identifierFieldName, record[OB.Constants.IDENTIFIER]);
@@ -664,7 +733,12 @@ isc.OBSelectorItem.addProperties({
       }
 
       if (record[this.valueField]) { // it can be undefined in case of empty (null) entry
-        this.valueMap[record[this.valueField]] = record[this.displayField].replace(/[\n\r]/g, '');
+        if (this.displayField.indexOf(OB.Constants.FIELDSEPARATOR) !== -1) {
+          displayFieldValue = this.displayField.substring(this.displayField.indexOf(OB.Constants.FIELDSEPARATOR) + 1, this.displayField.length);
+        } else {
+          displayFieldValue = this.displayField;
+        }
+        this.valueMap[record[this.valueField]] = record[displayFieldValue].replace(/[\n\r]/g, '');
       }
 
       this.updateValueMap();
@@ -678,7 +752,7 @@ isc.OBSelectorItem.addProperties({
     // only jump to the next field if the value has really been set
     // do not jump to the next field if the event has been triggered by the Tab key,
     // to prevent a field from being skipped (see https://issues.openbravo.com/view.php?id=21419)
-    if (currentValue && this.form.focusInNextItem && isc.EH.getKeyName() !== 'Tab') {
+    if ((currentValue || fromPopup) && this.form.focusInNextItem && isc.EH.getKeyName() !== 'Tab') {
       this.form.focusInNextItem(this.name);
     }
     delete this._notUpdatingManually;
@@ -767,6 +841,18 @@ isc.OBSelectorItem.addProperties({
       this.selectorWindow.selectorGrid.invalidateCache();
     }
     this.selectorWindow.open();
+  },
+
+  openProcess: function (enteredValues) {
+    var standardWindow = this.form.view.standardWindow;
+    standardWindow.openProcess({
+      callerField: this,
+      enteredValues: enteredValues,
+      paramWindow: true,
+      processId: this.processId,
+      windowId: this.form.view.windowId,
+      windowTitle: OB.I18N.getLabel('OBUISEL_AddNewRecord', [this.title])
+    });
   },
 
   keyPress: function (item, form, keyName, characterValue) {
@@ -934,6 +1020,12 @@ isc.OBSelectorItem.addClassMethods({
       isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true, null, selector.isComboReference));
     } else if (selector.grid && selector.grid.contentView && selector.grid.contentView.getContextInfo) {
       isc.addProperties(params, selector.grid.contentView.getContextInfo(false, true, null, selector.isComboReference));
+    } else if (selector.form && selector.form.paramWindow && selector.form.paramWindow.getContextInfo) {
+      isc.addProperties(params, selector.form.paramWindow.getContextInfo());
+      if (!params.inpadOrgId) {
+        // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
+        params.inpadOrgId = params.ad_org_id || OB.User.organizationId;
+      }
     }
 
     if (selector.form && selector.form.view && selector.form.view.standardWindow) {

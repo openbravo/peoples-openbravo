@@ -19,19 +19,30 @@
 
 package org.openbravo.client.kernel.reference;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.utility.Tree;
+import org.openbravo.model.ad.utility.TreeNode;
+import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 
 public class CharacteristicsUIDefinition extends TextUIDefinition {
+
+  private static final Logger log4j = Logger.getLogger(CharacteristicsUIDefinition.class);
 
   @Override
   public String getFormEditorType() {
@@ -75,8 +86,8 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
 
       JSONObject jsonValue = new JSONObject();
       for (ProductCharacteristicValue charValue : product.getProductCharacteristicValueList()) {
-        jsonValue.put(charValue.getCharacteristic().getIdentifier(), charValue
-            .getCharacteristicValue().getIdentifier());
+        jsonValue.put(charValue.getCharacteristic().getIdentifier(),
+            getValue(charValue.getCharacteristicValue()));
       }
 
       value.put("characteristics", jsonValue);
@@ -89,6 +100,54 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private String getValue(CharacteristicValue characValue) {
+    int levels = 0;
+
+    try {
+      String levelsPreference = Preferences.getPreferenceValue("ShowProductCharacteristicsParents",
+          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), null);
+      levels = Integer.parseInt(levelsPreference);
+    } catch (Exception e) {
+      if (e instanceof NumberFormatException) {
+        log4j.error("ShowProductCharacteristicsParents preference is not a number", e);
+      } else {
+        log4j.error("Error finding ShowProductCharacteristicsParents preference", e);
+      }
+    }
+
+    String value = characValue.getIdentifier();
+    if (levels > 0) {
+      CharacteristicValue currentCharValue = characValue;
+      int i = 0;
+      boolean existsParent = true;
+
+      while (i < levels && existsParent) {
+        existsParent = false;
+        // Find parent
+        OBCriteria<TreeNode> treeNodeCri = OBDal.getInstance().createCriteria(TreeNode.class);
+        treeNodeCri.createAlias(TreeNode.PROPERTY_TREE, "tree");
+        treeNodeCri.add(Restrictions.eq("tree." + Tree.PROPERTY_CLIENT, OBContext.getOBContext()
+            .getCurrentClient()));
+        treeNodeCri.add(Restrictions.eq("tree." + Tree.PROPERTY_TYPEAREA, "CH"));
+        treeNodeCri.add(Restrictions.eq(TreeNode.PROPERTY_NODE, currentCharValue.getId()));
+        List<TreeNode> treeNodeList = treeNodeCri.list();
+        if (treeNodeList.size() == 1 && !treeNodeList.get(0).getReportSet().equals("0")) {
+          // Parent Exists
+          currentCharValue = OBDal.getInstance().get(CharacteristicValue.class,
+              treeNodeList.get(0).getReportSet());
+          value = currentCharValue.getIdentifier() + " / " + value;
+          existsParent = true;
+        }
+        i++;
+      }
+
+    }
+
+    return value;
   }
 
 }

@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2010-2013 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2010-2014 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -70,7 +70,7 @@ BEGIN
   END IF;
     
   IF (INSERTING OR UPDATING) THEN
-    SELECT COUNT(C_TAX_ID) INTO v_Count
+    SELECT COUNT(1) INTO v_Count
     FROM C_ORDERTAX
     WHERE C_ORDER_ID = :NEW.C_Order_ID
     AND C_TAX_ID = :NEW.C_TAX_ID;

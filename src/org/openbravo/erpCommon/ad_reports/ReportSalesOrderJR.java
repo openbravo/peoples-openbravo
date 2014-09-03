@@ -213,8 +213,8 @@ public class ReportSalesOrderJR extends HttpSecureAppServlet {
       data = OrderEditionData.select(this, strCurrencyId,
           Utility.getContext(this, vars, "#AccessibleOrgTree", "SalesOrderFilterJR"),
           Utility.getContext(this, vars, "#User_Client", "SalesOrderFilterJR"), strdateFrom,
-          strdateTo, strmWarehouseId, strcProjectId, strcRegionId, strmProductCategoryId,
-          strcBpartnerId, strmProductId);
+          strdateTo, strmWarehouseId, strcProjectId, strcRegionId.equals("('')") ? "" : strcRegionId, 
+          strmProductCategoryId, strcBpartnerId, strmProductId);
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }

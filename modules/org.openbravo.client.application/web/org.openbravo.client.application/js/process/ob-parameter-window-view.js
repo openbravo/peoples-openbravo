@@ -51,8 +51,10 @@ isc.OBParameterWindowView.addProperties({
     var i, field, items = [],
         buttonLayout = [],
         newButton, cancelButton, view = this,
-        newShowIf, params, updatedExpandSection;
+        newShowIf, context, updatedExpandSection;
 
+    // this flag can be used by Selenium to determine when defaults are set
+    this.defaultsAreSet = false;
 
     // Buttons
 
@@ -121,10 +123,15 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup) {
       cancelButton = isc.OBFormButton.create({
+        process: this,
         title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
         realTitle: '',
         click: function () {
-          view.closeClick();
+          if (this.process.isExpandedRecord) {
+            this.process.callerField.grid.collapseRecord(this.process.callerField.record);
+          } else {
+            view.closeClick();
+          }
         }
       });
       buttonLayout.push(cancelButton);
@@ -245,6 +252,7 @@ isc.OBParameterWindowView.addProperties({
           this.isPickAndExecuteWindow = true;
         }
         this.theForm.setItems(items);
+        this.theForm.setFieldSections();
         this.formContainerLayout = isc.OBFormContainerLayout.create({});
         this.formContainerLayout.addMember(this.theForm);
         this.members.push(this.formContainerLayout);
@@ -254,7 +262,8 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.popup) {
       this.firstFocusedItem = this.okButton;
-      this.popupButtons = isc.HLayout.create({
+      this.popupButtons = isc.OBFormContainerLayout.create({
+        defaultLayoutAlign: 'center',
         align: 'center',
         width: '100%',
         height: OB.Styles.Process.PickAndExecute.buttonLayoutHeight,
@@ -280,15 +289,12 @@ isc.OBParameterWindowView.addProperties({
     this.members.push(this.loading);
     this.Super('initWidget', arguments);
 
-    params = {
-      processId: this.processId
-    };
+    context = this.sourceView ? this.sourceView.getContextInfo(false, true, true, true) : {};
 
-    if (this.sourceView) {
-      params.context = this.sourceView.getContextInfo(false, true, true, true);
-    }
-
-    OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, params, function (rpcResponse, data, rpcRequest) {
+    OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', context, {
+      processId: this.processId,
+      windowId: this.windowId
+    }, function (rpcResponse, data, rpcRequest) {
       view.handleDefaults(data);
     });
 
@@ -299,7 +305,7 @@ isc.OBParameterWindowView.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_FormContainerLayout_' + this.processId, this.formContainerLayout);
   },
 
-  handleResponse: function (refresh, message, responseActions, retryExecution, data) {
+  handleResponse: function (refreshParent, message, responseActions, retryExecution, data) {
     var window = this.parentWindow,
         tab = OB.MainView.TabSet.getTab(this.viewTabId),
         i;
@@ -369,7 +375,7 @@ isc.OBParameterWindowView.addProperties({
     if (this.popup && !retryExecution) {
       this.buttonOwnerView.setAsActiveView();
 
-      if (refresh) {
+      if (refreshParent) {
         window.refresh();
       }
 
@@ -459,7 +465,7 @@ isc.OBParameterWindowView.addProperties({
         processId: me.processId,
         windowId: me.windowId
       }, function (rpcResponse, data, rpcRequest) {
-        view.handleResponse(true, (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
+        view.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);
       });
     };
 
@@ -531,6 +537,9 @@ isc.OBParameterWindowView.addProperties({
     this.okButton.setEnabled(this.allRequiredParametersSet());
 
     this.handleDisplayLogicForGridColumns();
+
+    // this flag can be used by Selenium to determine when defaults are set
+    this.defaultsAreSet = true;
   },
 
   /**

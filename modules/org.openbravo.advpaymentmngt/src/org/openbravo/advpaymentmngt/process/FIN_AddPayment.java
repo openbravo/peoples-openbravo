@@ -1138,7 +1138,11 @@ public class FIN_AddPayment {
    *          Amount of the Payment Schedule Detail or Payment Detail
    * @param writeOffAmount
    *          Write off amount, null or 0 if not applicable.
+   * 
+   * @Deprecated This method doesn't support Cash VAT flow, so it's better to use
+   *             {@link #updatePaymentDetail(FIN_PaymentScheduleDetail, FIN_Payment, BigDecimal, boolean)}
    */
+  @Deprecated
   public static void updatePaymentScheduleAmounts(FIN_PaymentSchedule paymentSchedule,
       BigDecimal amount, BigDecimal writeOffAmount) {
     updatePaymentScheduleAmounts(null, paymentSchedule, amount, writeOffAmount);

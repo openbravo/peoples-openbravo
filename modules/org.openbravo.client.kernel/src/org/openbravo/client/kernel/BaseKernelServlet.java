@@ -68,9 +68,14 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
 
     if (localResponse.getRedirectTarget() != null) {
       if (!response.isCommitted()) {
+        // get where the request originated
+        String referer = RequestContext.get().getRequest().getHeader("referer");
+        // if we can't get where the request originated, redirect to the ERP
+        if (referer == null) {
+          referer = localResponse.getRedirectTarget();
+        }
         // will this always work.... not if the writer is already closed
-        response.getWriter().write(
-            "window.location.href = '" + localResponse.getRedirectTarget() + "';");
+        response.getWriter().write("window.location.href = '" + referer + "';");
         response.setHeader("Content-Type", KernelConstants.JAVASCRIPT_CONTENTTYPE);
         // prevent caching
         response.setHeader(RESPONSE_HEADER_ETAG, "" + System.currentTimeMillis());

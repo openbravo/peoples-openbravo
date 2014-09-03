@@ -229,6 +229,27 @@ public class PriceAdjustment {
     hql += "          and o.organization.id = :org )) ";
     hql += "    ) ";
 
+    // product characteristic
+    hql += "and ((includedCharacteristics='Y' ";
+    hql += "  and not exists (select 1 ";
+    hql += "         from Characteristic c ";
+    hql += "           join c.pricingAdjustmentCharacteristicList pac ";
+    hql += "           join c.productCharacteristicValueList pcv ";
+    hql += "         where  pcv.product = :product ";
+    hql += "          and pac.offer = p ";
+    hql += "          and m_isparent_ch_value(pcv.characteristicValue.id, pac.chValue.id, pac.characteristic.id) != -1 ";
+    hql += "          )) ";
+    hql += "   or (includedCharacteristics='N' ";
+    hql += "  and  exists (select 1 ";
+    hql += "         from Characteristic c ";
+    hql += "           join c.pricingAdjustmentCharacteristicList pac ";
+    hql += "           join c.productCharacteristicValueList pcv ";
+    hql += "         where  pcv.product = :product ";
+    hql += "          and pac.offer = p ";
+    hql += "          and m_isparent_ch_value(pcv.characteristicValue.id, pac.chValue.id, pac.characteristic.id) != -1 ";
+    hql += "          )) ";
+    hql += "    ) ";
+
     hql += " order by priority, id";
 
     OBQuery<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> q = OBDal.getInstance()

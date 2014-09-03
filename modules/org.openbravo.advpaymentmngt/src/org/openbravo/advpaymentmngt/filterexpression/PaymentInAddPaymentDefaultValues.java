@@ -26,6 +26,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
 @ComponentProvider.Qualifier(APRMConstants.PAYMENT_IN_WINDOW_ID)
@@ -141,6 +142,12 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
   String getOrganization(Map<String, String> requestMap) throws JSONException {
     // Organization of the current Payment
     return getPayment(requestMap).getOrganization().getId();
+  }
+
+  @Override
+  String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
+    // Payment Date of the current payment
+    return OBDateUtils.formatDate(getPayment(requestMap).getPaymentDate());
   }
 
 }

@@ -354,7 +354,9 @@ isc.OBClassicWindow.addMethods({
       while (parentFrame.name !== '') {
         parentFrame = parentFrame.parent;
       }
-      parentFrame.activeFrame = iFrame;
+      if (parentFrame.parent) {
+        parentFrame.parent.activeFrame = iFrame;
+      }
     }
   }
 });

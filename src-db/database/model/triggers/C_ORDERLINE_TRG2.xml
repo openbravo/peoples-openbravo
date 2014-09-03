@@ -19,25 +19,12 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2012 Openbravo SLU
+    * All portions are Copyright (C) 2001-2014 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
 
-   TYPE RECORD IS REF CURSOR;
-   Cur_Offer RECORD;
-
-  v_OrderLine_Offer_ID VARCHAR2(32);
-  v_lineno NUMBER:=0;
-  v_Price NUMBER;
-  v_PriceNew NUMBER;
-  v_Amt NUMBER;
-  v_BPartner_ID VARCHAR2(32);
-  v_Order_ID VARCHAR2(32);
-  v_Insert BOOLEAN :=FALSE;
   v_istaxincluded CHAR(1) ;
-  v_Precision NUMBER;
-  v_PriceList_ID VARCHAR2(32);
   v_Processed C_ORDER.PROCESSED%TYPE;
   v_ID VARCHAR2(32);
   v_oldLine NUMBER;
@@ -49,8 +36,9 @@
   v_grandtotal NUMBER:=0;
   v_taxAmt NUMBER;
   v_Prec C_CURRENCY.STDPRECISION%TYPE;
-  v_BaseAmount C_TAX.BASEAMOUNT%TYPE;
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
+  v_oldLineAlternate NUMBER;
+  v_create CHAR(1):='Y';
     
 BEGIN
     
@@ -73,49 +61,61 @@ END IF;
         JOIN c_currency ON c_order.c_currency_id = c_currency.c_currency_id
         JOIN m_pricelist ON c_order.m_pricelist_id = m_pricelist.m_pricelist_id
  WHERE C_Order_ID=v_ID;
- v_oldLine:=0;
- v_newLineNetAmt:=0;
- IF (v_istaxincluded = 'Y') THEN
-  IF (DELETING) THEN
-    v_oldgrossamt := :old.line_gross_amount;
-  ELSIF (UPDATING) THEN
-    v_oldgrossamt := :old.line_gross_amount;
-    v_newgrossamt := :new.line_gross_amount;
-  ELSE
-    v_newgrossamt := :new.line_gross_amount;
-  END IF;
- END IF;
+
 
  IF(v_Processed='N') THEN
+   v_oldLine:=0;
+   v_newLineNetAmt:=0;
+   IF (v_istaxincluded = 'Y') THEN
+    IF (DELETING) THEN
+      v_oldgrossamt := :old.line_gross_amount;
+    ELSIF (UPDATING) THEN
+      v_oldgrossamt := :old.line_gross_amount;
+      v_newgrossamt := :new.line_gross_amount;
+    ELSE
+      v_newgrossamt := :new.line_gross_amount;
+    END IF;
+   END IF;
+ 
   -- Calculate taxes
   IF(UPDATING OR DELETING) THEN
     v_oldLine:= COALESCE(:old.LineNetAmt,0) + COALESCE(:old.FreightAmt,0) + COALESCE(:old.ChargeAmt,0);
   END IF;  
   IF (INSERTING OR UPDATING) THEN
-    DELETE FROM C_ORDERLINETAX WHERE C_ORDERLINE_ID = :new.C_OrderLine_ID;
     v_newLineNetAmt := COALESCE(:new.LineNetAmt,0) + COALESCE(:new.FreightAmt,0) + COALESCE(:new.ChargeAmt,0);
     v_newLineAlternate := COALESCE(:new.TaxBaseAmt,0) + COALESCE(:new.FreightAmt,0) + COALESCE(:new.ChargeAmt,0);
-    SELECT BaseAmount INTO v_BaseAmount
-    FROM C_TAX
-    WHERE C_TAX_ID = :new.C_Tax_ID;
-    C_ORDERLINETAX_INSERT(:new.AD_Org_ID, :new.C_Order_ID, :new.C_OrderLine_ID, :new.UpdatedBy, :new.C_Tax_ID, :new.C_Tax_ID, v_newLineNetAmt, v_newLineAlternate, v_Prec);
-    IF (v_istaxincluded = 'Y') THEN
-      C_ORDERLINETAX_ROUNDING(:new.C_OrderLine_ID, :new.line_gross_amount, v_newLineNetAmt);
+
+    IF (UPDATING) THEN
+      v_oldLineAlternate := COALESCE(:old.TaxBaseAmt,0) + COALESCE(:old.FreightAmt,0) + COALESCE(:old.ChargeAmt,0);
+      IF (:new.AD_Org_ID <> :old.AD_Org_ID OR :new.C_Tax_ID <> :old.C_Tax_ID OR
+          v_newLineNetAmt <> v_oldLine OR v_newLineAlternate <> v_oldLineAlternate OR
+          :new.line_gross_amount <> :old.line_gross_amount) THEN
+        DELETE FROM C_ORDERLINETAX WHERE C_ORDERLINE_ID = :new.C_OrderLine_ID;
+        v_create := 'Y';
+      ELSE
+        v_create := 'N';
+      END IF;
     END IF;
-    -- Get Total Tax Amt
-    SELECT SUM(TaxAmt) INTO v_taxAmt
-    FROM C_OrderTax
-    WHERE C_Order_ID=:new.C_Order_ID;
-    -- DBMS_OUTPUT.PUT_LINE('TaxAmt = ' || v_taxAmt);
-    -- Update Header
-    UPDATE C_Order
-    SET TotalLines = TotalLines - v_oldLine + v_newLineNetAmt,
-        GrandTotal = CASE v_istaxincluded
+
+    IF (v_create = 'Y') THEN
+      C_ORDERLINETAX_INSERT(:new.AD_Org_ID, :new.C_Order_ID, :new.C_OrderLine_ID, :new.UpdatedBy, :new.C_Tax_ID, :new.C_Tax_ID, v_newLineNetAmt, v_newLineAlternate, v_Prec);
+      IF (v_istaxincluded = 'Y') THEN
+        C_ORDERLINETAX_ROUNDING(:new.C_OrderLine_ID, :new.line_gross_amount, v_newLineNetAmt);
+      END IF;
+      -- Get Total Tax Amt
+      SELECT SUM(TaxAmt) INTO v_taxAmt
+      FROM C_OrderTax
+      WHERE C_Order_ID=:new.C_Order_ID;
+      -- DBMS_OUTPUT.PUT_LINE('TaxAmt = ' || v_taxAmt);
+      -- Update Header
+      UPDATE C_Order
+      SET TotalLines = TotalLines - v_oldLine + v_newLineNetAmt,
+          GrandTotal = CASE v_istaxincluded
                        WHEN 'Y' THEN grandtotal - v_oldgrossamt + v_newgrossamt
                        ELSE TotalLines - v_oldLine + v_newLineNetAmt + COALESCE(v_taxAmt, 0)
-                     END
-    --  Updated = SysDate -- Don't update as otherwise it does not save changes
-    WHERE C_Order_ID = :new.C_Order_ID;
+                       END
+      WHERE C_Order_ID = :new.C_Order_ID;
+    END IF;
   ELSE -- DELETING
     SELECT SUM(TaxAmt) INTO v_taxAmt
     FROM C_OrderTax
@@ -128,7 +128,6 @@ END IF;
                        WHEN 'Y' THEN grandtotal - v_oldgrossamt
                        ELSE TotalLines - v_oldLine + v_newLineNetAmt + COALESCE(v_taxAmt, 0)
                      END
-    --  Updated = SysDate -- Don't update as otherwise it does not save changes
     WHERE C_Order_ID=:old.C_Order_ID;
   END IF;
   IF (v_istaxincluded = 'Y') THEN

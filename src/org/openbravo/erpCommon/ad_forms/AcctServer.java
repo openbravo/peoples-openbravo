@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
@@ -52,6 +53,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -720,8 +722,8 @@ public abstract class AcctServer {
         errors++;
         Status = AcctServer.STATUS_Error;
         save(conn, vars.getUser());
-        log4j.warn(e);
-        e.printStackTrace();
+        log4j.error(
+            "An error ocurred posting RecordId: " + strClave + " - tableId: " + AD_Table_ID, e);
       }
     } catch (ServletException e) {
       log4j.error(e);
@@ -1099,9 +1101,21 @@ public abstract class AcctServer {
     // createFacts
     try {
       m_fact[index] = createFact(m_as[index], conn, con, vars);
+    } catch (OBException e) {
+      log4j.warn(
+          "Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
+      String strMessageError = e.getMessage();
+      if (strMessageError.indexOf("") != -1) {
+        setMessageResult(OBMessageUtils.translateError(strMessageError));
+        if ("@NotConvertible@".equals(strMessageError)) {
+          return STATUS_NotConvertible;
+        }
+      }
+      return STATUS_Error;
     } catch (Exception e) {
-      log4j.warn(e);
-      e.printStackTrace();
+      log4j.warn(
+          "Accounting process failed. RecordID: " + Record_ID + " - TableId: " + AD_Table_ID, e);
+      return STATUS_Error;
     }
     if (!Status.equals(STATUS_NotPosted))
       return Status;
@@ -2406,8 +2420,13 @@ public abstract class AcctServer {
       if (conversionRateDoc != null) {
         amtFrom = applyRate(_amount, conversionRateDoc, false);
       } else {
-        amtFrom = new BigDecimal(getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
-            conversionDate, "", AD_Client_ID, AD_Org_ID, conn));
+        String convertedAmt = getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
+            conversionDate, "", AD_Client_ID, AD_Org_ID, conn);
+        if (convertedAmt != null && !"".equals(convertedAmt)) {
+          amtFrom = new BigDecimal(convertedAmt);
+        } else {
+          throw new OBException("@NotConvertible@");
+        }
       }
     }
     ConversionRateDoc conversionRateCurrentDoc = getConversionRateDoc(AD_Table_ID, Record_ID,
@@ -2431,6 +2450,8 @@ public abstract class AcctServer {
       conversionDate = dateFormat.format(transaction.getDateAcct());
       conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Transaction, transaction.getId(),
           currencyIDFrom, currencyIDTo);
+    } else {
+      conversionDate = dateAcct;
     }
     if (conversionRateCurrentDoc != null) {
       amtTo = applyRate(_amount, conversionRateCurrentDoc, true);
@@ -2450,8 +2471,13 @@ public abstract class AcctServer {
         amtTo = applyRate(_amount, conversionRateCurrentDoc, false);
         amtFromSourcecurrency = applyRate(amtFrom, conversionRateCurrentDoc, true);
       } else {
-        amtTo = new BigDecimal(getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
-            conversionDate, "", AD_Client_ID, AD_Org_ID, conn));
+        String convertedAmt = getConvertedAmt(_amount.toString(), currencyIDFrom, currencyIDTo,
+            conversionDate, "", AD_Client_ID, AD_Org_ID, conn);
+        if (convertedAmt != null && !"".equals(convertedAmt)) {
+          amtTo = new BigDecimal(convertedAmt);
+        } else {
+          throw new OBException("@NotConvertible@");
+        }
         amtFromSourcecurrency = amtFrom.multiply(_amount).divide(amtTo, conversionRatePrecision,
             BigDecimal.ROUND_HALF_EVEN);
       }

@@ -266,7 +266,11 @@ OB.ViewFormProperties = {
   },
 
   editNewRecord: function (preventFocus) {
+    var grid = this.view.viewGrid;
     this.clearValues();
+    if (grid.lazyFiltering && !isc.isA.ResultSet(grid.data)) {
+      OB.Utilities.createResultSetManually(grid);
+    }
     var ret = this.Super('editNewRecord', arguments);
     this.doEditRecordActions(preventFocus, true);
     return ret;
@@ -1032,7 +1036,7 @@ OB.ViewFormProperties = {
       isDate = field.type && (typeInstance.inheritsFrom === 'date' || typeInstance.inheritsFrom === 'time');
       isDateTime = field.type && typeInstance.inheritsFrom === 'datetime';
       isImage = field.type && typeInstance.inheritsFrom === 'image';
-      if (isDateTime && typeInstance.editorType && new Function('return isc.' + typeInstance.editorType + '.getPrototype().isAbsoluteDateTime')()) {
+      if (isDateTime && typeInstance.editorType && OB.Utilities.getCanvasProp(typeInstance.editorType, 'isAbsoluteDateTime')) {
         isAbsoluteDateTime = true;
         isDateTime = false;
       }
@@ -1566,7 +1570,9 @@ OB.ViewFormProperties = {
       // if no recordIndex then select explicitly
       if (recordIndex === -1) {
         record = view.viewGrid.data.find('id', id);
-        recordIndex = view.viewGrid.data.indexOf(record);
+        if (record !== null) {
+          recordIndex = view.viewGrid.data.indexOf(record);
+        }
       }
 
       // not in the filter, insert the record in the cachedata so it will be made visible

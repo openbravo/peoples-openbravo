@@ -72,18 +72,16 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
     String filterString = null;
 
     int startRow = -1, endRow = -1, num = 0;
-    ;
+
+    OBContext.setAdminMode(true);
     try {
+      // check access to current entity
       field = OBDal.getInstance().get(Field.class, fieldId);
       column = field.getColumn();
       targetEntity = ModelProvider.getInstance().getEntityByTableId(
           (String) DalUtil.getId(column.getTable()));
       OBContext.getOBContext().getEntityAccessChecker().checkReadable(targetEntity);
-    } catch (Exception e1) {
-      throw new OBException(e1);
-    }
-    OBContext.setAdminMode(true);
-    try {
+
       if (!StringUtils.isEmpty(parameters.get("criteria"))) {
         String criteria = parameters.get("criteria");
         for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
@@ -155,15 +153,21 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       newParameters = comboTableData.fillSQLParametersIntoMap(new DalConnectionProvider(false),
           vars, new FieldProviderFactory(parameters), windowId, null);
 
-      if (parameters.get("_currentValue") != null) {
+      if (parameters.get("_currentValue") != null && StringUtils.isEmpty(filterString)) {
         newParameters.put("@ACTUAL_VALUE@", parameters.get("_currentValue"));
       }
 
       if (!StringUtils.isEmpty(filterString)) {
         newParameters.put("FILTER_VALUE", filterString);
       }
-      fps = comboTableData.select(new DalConnectionProvider(false), newParameters, true, startRow,
-          endRow);
+
+      boolean optionalFieldNonFirstPage = !column.isMandatory() && startRow > 0
+          && StringUtils.isEmpty(filterString);
+      // non-mandatory fields add a blank record at the beginning of 1st page, this needs to be
+      // taken into account in subsequent pages
+
+      fps = comboTableData.select(new DalConnectionProvider(false), newParameters, true, startRow
+          - (optionalFieldNonFirstPage ? 1 : 0), endRow - (optionalFieldNonFirstPage ? 1 : 0));
 
       ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
       // If column is mandatory we add an initial blank value in the first page if not filtered

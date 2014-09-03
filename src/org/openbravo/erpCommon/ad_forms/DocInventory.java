@@ -184,7 +184,8 @@ public class DocInventory extends AcctServer {
         setStatus(STATUS_NotCalculatedCost);
       }
 
-      if (line.transaction.getTransactionCost().compareTo(ZERO) == 0) {
+      if (line.transaction.getTransactionCost() != null
+          && line.transaction.getTransactionCost().compareTo(ZERO) == 0) {
         countInvLinesWithTrnCostZero++;
       }
     }

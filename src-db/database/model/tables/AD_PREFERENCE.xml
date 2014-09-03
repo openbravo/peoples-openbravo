@@ -101,6 +101,12 @@
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_PREFERENCE" onDelete="cascade">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
+      <index name="AD_PREFERENCE_ATTR_IDX" unique="false">
+        <index-column name="ATTRIBUTE"/>
+      </index>
+      <index name="AD_PREFERENCE_LIST_IDX" unique="false">
+        <index-column name="PROPERTY"/>
+      </index>
       <check name="AD_PREFERENCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_PREFERENCE_LIST_CHECK"><![CDATA[(((ISPROPERTYLIST = 'Y') AND (PROPERTY IS NOT NULL)) AND (ATTRIBUTE IS NULL)) OR (((ISPROPERTYLIST = 'N') AND (ATTRIBUTE IS NOT NULL)) AND (PROPERTY IS NULL))]]></check>
       <check name="AD_PREFERENCE_SELECTED_CHECK"><![CDATA[SELECTED IN ('Y', 'N')]]></check>

@@ -97,8 +97,8 @@ OB.APRM.AddPayment.onLoad = function (view) {
       glitemGrid = form.getItem('glitem').canvas.viewGrid,
       creditUseGrid = form.getItem('credit_to_use').canvas.viewGrid,
       overpaymentAction = form.getItem('overpayment_action'),
-      payment = form.getItem('fin_payment_id').getValue();
-
+      payment = form.getItem('fin_payment_id').getValue(),
+      issotrx = form.getItem('issotrx').getValue();
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, view.theForm, !payment);
   glitemGrid.fetchData();
   creditUseGrid.fetchData();
@@ -111,6 +111,9 @@ OB.APRM.AddPayment.onLoad = function (view) {
   form.isCreditAllowed = form.getItem('received_from').getValue() !== undefined;
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
   overpaymentAction.originalValueMap = isc.addProperties({}, overpaymentAction.getValueMap());
+  if (issotrx) {
+    form.focusInItem(form.getItem('actual_payment'));
+  }
 };
 
 OB.APRM.AddPayment.addNewGLItem = function (grid) {
@@ -281,8 +284,22 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       glitemamt = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       orderInvoiceData = orderInvoice.data.localData,
       total = orderInvoice.data.totalRows,
-      writeoff, amt, outstandingAmount, i;
+      writeoff, amt, outstandingAmount, i, showMessageProperty, showMessage, message;
 
+  if (orderInvoice.data.cachedRows < (orderInvoice.data.totalRows)) {
+    showMessageProperty = OB.PropertyStore.get('APRM_ShowNoDistributeMsg');
+    showMessage = (showMessageProperty !== 'N' && showMessageProperty !== '"N"');
+    if (showMessage) {
+      orderInvoice.contentView.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + OB.I18N.getLabel('APRM_NoDistributeMsg') + '</div><div class="' + OB.Styles.MessageBar.rightMsgContainerStyle + '"><a href="#" class="' + OB.Styles.MessageBar.rightMsgTextStyle + '" onclick="' + 'window[\'' + orderInvoice.contentView.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'APRM_ShowNoDistributeMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
+    }
+    return;
+  } else {
+	// hide the message bar if it is still showing the APRM_NoDistributeMsg message and the distribution is about to be done
+    message = orderInvoice.contentView.messageBar.text.contents;
+    if (message.contains(OB.I18N.getLabel('APRM_NoDistributeMsg'))) {
+      orderInvoice.contentView.messageBar.hide();
+    }
+  }
   // subtract glitem amount
   amount = amount.subtract(glitemamt);
   // add credit amount
@@ -417,12 +434,12 @@ OB.APRM.AddPayment.updateDifferenceActions = function (form) {
 OB.APRM.AddPayment.updateInvOrderTotal = function (form, grid) {
   var totalAmt = BigDecimal.prototype.ZERO,
       amountField = grid.getFieldByColumnName('amount'),
-      selectedRecords = grid.getSelectedRecords(),
+      selectedRecords = grid.selectedIds,
       invOrdTotalItem = form.getItem('amount_inv_ords'),
       amt, i, bdAmt;
 
   for (i = 0; i < selectedRecords.length; i++) {
-    amt = grid.getEditedCell(grid.getRecordIndex(selectedRecords[i]), amountField);
+    amt = grid.getEditedCell(grid.getRecordIndex(grid.data.localData.find('id', grid.selectedIds[i])), amountField);
     bdAmt = new BigDecimal(String(amt));
     totalAmt = totalAmt.add(bdAmt);
   }
@@ -497,11 +514,11 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       generateCredit = new BigDecimal(String(form.getItem('generateCredit').getValue() || 0)),
       glitemtotal = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
-      selectedRecords = orderInvoice.getSelectedRecords(),
+      selectedRecords = orderInvoice.selectedIds,
       actpayment, i;
   for (i = 0; i < selectedRecords.length; i++) {
-    totalAmountoutstanding = totalAmountoutstanding.add(new BigDecimal(String(orderInvoice.getEditedCell(orderInvoice.getRecordIndex(selectedRecords[i]), orderInvoice.getFieldByColumnName('outstandingAmount')))));
-    totalAmount = totalAmount.add(new BigDecimal(String(orderInvoice.getEditedCell(orderInvoice.getRecordIndex(selectedRecords[i]), orderInvoice.getFieldByColumnName('amount')))));
+    totalAmountoutstanding = totalAmountoutstanding.add(new BigDecimal(String(orderInvoice.getEditedCell(orderInvoice.getRecordIndex(orderInvoice.data.localData.find('id', orderInvoice.selectedIds[i])), orderInvoice.getFieldByColumnName('outstandingAmount')))));
+    totalAmount = totalAmount.add(new BigDecimal(String(orderInvoice.getEditedCell(orderInvoice.getRecordIndex(orderInvoice.data.localData.find('id', orderInvoice.selectedIds[i])), orderInvoice.getFieldByColumnName('amount')))));
   }
   if (selectedRecords.length > 0) {
     expectedPayment.setValue(Number(totalAmountoutstanding));
@@ -747,7 +764,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
 
   // Check if there is pending amount to distribute that could be distributed
   for (i = 0; i < selectedRecords.length; i++) {
-    outstandingAmount = new BigDecimal(String(orderInvoiceGrid.getRecord(i).outstandingAmount));
+    outstandingAmount = new BigDecimal(String(selectedRecords[i].outstandingAmount));
     totalOustandingAmount = totalOustandingAmount.add(outstandingAmount);
   }
   for (i = 0; i < orderInvoiceGrid.data.totalRows; i++) {
@@ -764,6 +781,11 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
   // If there is Overpayment check it exists a business partner
   if (overpaymentAction && receivedFrom === null) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithoutBPartner'));
+    return false;
+  }
+  //If Actual Payment amount is negative, it is not necessary to use credit.
+  if ((total.compareTo(BigDecimal.prototype.ZERO) < 0) && (creditTotalItem.signum() !== 0)) {
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_CreditWithNegativeAmt'));
     return false;
   }
 

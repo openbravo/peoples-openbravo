@@ -108,7 +108,6 @@ isc.OBToolbar.addClassProperties({
     action: function () {
       var view = this.view,
           grid = view.viewGrid;
-
       // In case of no record selected getRecordIndex(undefined) returns -1,
       // which is the top position, other case it adds bellow current selected row.
       if (grid.getSelectedRecord()) {
@@ -131,7 +130,8 @@ isc.OBToolbar.addClassProperties({
 
   NEW_DOC_BUTTON_PROPERTIES: {
     action: function () {
-      this.view.newDocument();
+      var view = this.view;
+      view.newDocument();
     },
     buttonType: 'newDoc',
     sortPosition: 10,
@@ -242,7 +242,7 @@ isc.OBToolbar.addClassProperties({
     sortPosition: 80,
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
     updateState: function () {
-      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.windowId) === 'N');
+      this.setDisabled(this.view.isShowingForm || this.view.viewGrid.getTotalRows() === 0 || OB.PropertyStore.get("ExportToCsv", this.view.standardWindow.windowId) === 'N' || this.view.isShowingTree);
     },
     keyboardShortcutId: 'ToolBar_Export'
   },
@@ -1513,6 +1513,8 @@ isc.OBToolbar.addProperties({
       }
     }
   },
+
+
 
   addMembers: 'null',
 

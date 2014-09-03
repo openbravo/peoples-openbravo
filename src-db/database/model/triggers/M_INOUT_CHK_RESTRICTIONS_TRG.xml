@@ -18,12 +18,13 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2012 Openbravo SLU
+    * All portions are Copyright (C) 2001-2014 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
 
   v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
+  v_n NUMBER;
 
      
 BEGIN
@@ -68,6 +69,16 @@ BEGIN
       OR(COALESCE(:old.USER2_ID, '0') <> COALESCE(:new.USER2_ID, '0')))) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
+    IF (COALESCE(:OLD.C_BPartner_ID, '0')!=COALESCE(:NEW.C_BPartner_ID, '0')) THEN
+      SELECT COUNT(*)
+        INTO v_n
+        FROM M_INOUTLINE
+       WHERE M_Inout_ID = :NEW.M_Inout_ID;
+
+       IF v_n>0 THEN
+         RAISE_APPLICATION_ERROR(-20000, '@20552@') ;
+       END IF;
+     END IF;
   END IF;
   IF(DELETING) THEN
     IF(:old.Processed='Y') THEN

@@ -32,6 +32,7 @@ v_PaidAmount NUMBER;
 V_OutstandingAmount NUMBER;
 V_DueAmount NUMBER;
 V_DayStillDue NUMBER;
+v_ConvertedAmount NUMBER;
 
 v_Client_ID VARCHAR2(32);
 v_Org_ID VARCHAR2(32);
@@ -43,6 +44,7 @@ v_GrandTotal NUMBER:=0;
 v_PaymentTerm C_INVOICE.C_PaymentTerm_ID%TYPE;
 v_PaymentRule C_INVOICE.PaymentRule%TYPE;
 v_Currency_ID VARCHAR2(32);
+v_bpCurrency_id VARCHAR2(32);
 v_BPartner_ID VARCHAR2(32);
 v_DateInvoiced DATE;
 v_TotalLines NUMBER;
@@ -134,6 +136,20 @@ BEGIN
   
   IF (v_IsSOTrx = 'N') THEN
     v_creditmultiplier := -1;
+  END IF;
+
+  --Gets the business partner's currency
+  SELECT BP_Currency_ID
+  INTO v_bpCurrency_id
+  from C_BPartner
+  WHERE C_BPartner_ID = v_BPartner_ID;
+  
+  IF (v_bpCurrency_id is null) THEN
+    v_bpCurrency_id:= v_Currency_ID;
+
+    update c_bpartner
+    set BP_Currency_ID = v_bpCurrency_id
+    where c_bpartner_id =v_BPartner_ID;
   END IF;
 
   -- complete invoice
@@ -438,7 +454,7 @@ BEGIN
               --When difference amount is not 0 the payment schedule detail of the order has to be split. The difference
               --amount is the amount of the new psd that is not related to any invoice.
 
-              IF (v_differenceamount <> 0) THEN
+              IF (v_differenceamount * v_negativePS > 0) THEN
                 v_new_scheduledetailid := get_uuid();
                 INSERT INTO fin_payment_scheduledetail
                 (
@@ -510,7 +526,7 @@ BEGIN
 
 	      -- Create C_InvoiceTax_CashVAT records
 	      IF (v_IsCashVAT = 'Y' AND order_schdet.fin_payment_detail_id IS NOT NULL) THEN
-                v_PercentageCashVAT := abs(c_currency_round(v_scheduledetailamount * 100 / v_GrandTotal, v_Currency_ID, null));
+                v_PercentageCashVAT := c_currency_round(v_scheduledetailamount * 100 / v_GrandTotal, v_Currency_ID, null);
 		FOR cur_cinvoicetax IN (
 		  SELECT it.C_InvoiceTax_ID, it.taxamt, it.taxbaseamt
                   FROM C_InvoiceTax it INNER JOIN C_Tax t on (it.c_tax_id = t.c_tax_id)
@@ -595,8 +611,29 @@ BEGIN
       WHERE C_INVOICE_ID = P_RECORD_ID;
 
       -- Updating SO_CREDITUSED when Invoices are being processed
+      if(v_bpCurrency_id <> v_Currency_id) THEN
+        SELECT COUNT(*)
+        INTO v_Count
+        FROM C_Conversion_Rate_Document
+        WHERE C_Invoice_ID = P_RECORD_ID
+        AND C_Currency_ID = v_Currency_id
+        AND C_Currency_Id_To = v_bpCurrency_id;
+
+        IF v_Count >0 THEN
+          SELECT RATE*COALESCE(V_OutstandingAmount, 0) * v_creditmultiplier
+          INTO v_ConvertedAmount
+          FROM C_Conversion_Rate_Document
+          WHERE C_Invoice_ID = P_RECORD_ID
+          AND C_Currency_ID = v_Currency_id
+          AND C_Currency_Id_To = v_bpCurrency_id;        
+        ELSE
+          v_ConvertedAmount := C_Currency_Convert((COALESCE(V_OutstandingAmount, 0) * v_creditmultiplier), v_Currency_id, v_bpCurrency_id, v_DateInvoiced,'S', v_Client_ID, v_Org_ID);
+        END IF;
+      else
+        v_ConvertedAmount := COALESCE(V_OutstandingAmount, 0) * v_creditmultiplier;
+      end if;
       UPDATE C_BPARTNER
-      SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) + (COALESCE(V_OutstandingAmount, 0) * v_creditmultiplier)
+      SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) + v_ConvertedAmount
       WHERE C_BPARTNER_ID = v_BPartner_ID;
 
       -- Automatic creation of payment and financial transaction
@@ -773,7 +810,7 @@ BEGIN
                   
                 -- Create C_InvoiceTax_CashVAT records
 	      IF (v_IsCashVAT = 'Y') THEN
-                v_PercentageCashVAT := abs(c_currency_round(cur_linktopayment_scheddetails.AMOUNT * 100 / v_GrandTotal, v_Currency_ID, null));
+                v_PercentageCashVAT := c_currency_round(cur_linktopayment_scheddetails.AMOUNT * 100 / v_GrandTotal, v_Currency_ID, null);
                 FOR cur_cinvoicetax IN (
                   SELECT it.C_InvoiceTax_ID, it.taxamt, it.taxbaseamt
                   FROM C_InvoiceTax it INNER JOIN C_Tax t on (it.c_tax_id = t.c_tax_id)
@@ -923,8 +960,29 @@ BEGIN
                 WHERE C_INVOICE_ID = P_RECORD_ID
                   AND TOTALPAID = GRANDTOTAL;
                 -- Updating SO_CREDITUSED when PAYMENT OCCUR and is not set in RPAE status
+                if (v_bpCurrency_id <> v_Currency_id) then
+                  SELECT COUNT(*)
+                  INTO v_Count
+                  FROM C_Conversion_Rate_Document
+                  WHERE C_Invoice_ID = P_RECORD_ID
+                  AND C_Currency_ID = v_Currency_id
+                  AND C_Currency_Id_To = v_bpCurrency_id;
+
+                  IF v_Count >0 THEN
+                    SELECT RATE*(COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0) * v_creditmultiplier)
+                    INTO v_ConvertedAmount
+                    FROM C_Conversion_Rate_Document
+                    WHERE C_Invoice_ID = P_RECORD_ID
+                    AND C_Currency_ID = v_Currency_id
+                    AND C_Currency_Id_To = v_bpCurrency_id;
+                  ELSE
+                    v_ConvertedAmount := C_Currency_Convert((COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0) * v_creditmultiplier), v_Currency_id, v_bpCurrency_id, v_DateInvoiced,'S', v_Client_ID, v_Org_ID);
+                  END IF;  
+                else
+                  v_ConvertedAmount := (COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0) * v_creditmultiplier);
+                end if;
                 UPDATE C_BPARTNER
-                SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - (COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0) * v_creditmultiplier)
+                SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - v_ConvertedAmount
                 WHERE C_BPARTNER_ID = v_BPartner_ID;
               END IF;
             END LOOP;
@@ -1023,8 +1081,30 @@ BEGIN
       INTO v_PaidAmount, v_PaymentPlanExpectedTotal
       FROM FIN_PAYMENT_SCHEDULE
       WHERE FIN_PAYMENT_SCHEDULE.C_INVOICE_ID = p_record_id ;
+
+      if v_bpCurrency_id <> v_Currency_id then
+        SELECT COUNT(*)
+        INTO v_Count
+        FROM C_Conversion_Rate_Document
+        WHERE C_Invoice_ID = P_RECORD_ID
+        AND C_Currency_ID = v_Currency_id
+        AND C_Currency_Id_To = v_bpCurrency_id;
+
+        IF v_Count >0 THEN
+          SELECT RATE*((v_PaymentPlanExpectedTotal - v_PaidAmount) * v_creditmultiplier)
+          INTO v_ConvertedAmount
+          FROM C_Conversion_Rate_Document
+          WHERE C_Invoice_ID = P_RECORD_ID
+          AND C_Currency_ID = v_Currency_id
+          AND C_Currency_Id_To = v_bpCurrency_id;
+        ELSE
+          v_ConvertedAmount := C_Currency_Convert(((v_PaymentPlanExpectedTotal - v_PaidAmount) * v_creditmultiplier), v_Currency_id, v_bpCurrency_id, v_DateInvoiced,'S', v_Client_ID, v_Org_ID);
+        END IF;  
+      else
+        v_ConvertedAmount := ((v_PaymentPlanExpectedTotal - v_PaidAmount) * v_creditmultiplier);
+      END IF;
       UPDATE C_BPARTNER
-         SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - ((v_PaymentPlanExpectedTotal - v_PaidAmount) * v_creditmultiplier)
+         SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - v_convertedAmount
       WHERE C_BPARTNER_ID = v_BPartner_ID;
     END;
 

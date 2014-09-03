@@ -11,13 +11,16 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.client.kernel.freemarker.test;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +33,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -64,9 +68,9 @@ public class FreemarkerTemplateProcessorTest extends WeldBaseTest {
   @TemplateProcessor.Qualifier(FreemarkerTemplateProcessor.QUALIFIER)
   private TemplateProcessor templateProcessor;
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
+  @Before
+  public void setUpFt() throws Exception {
+    // super.setUp();
 
     // after super.setUp, must be done after initializing dal layer in super class
     final Entity entity = ModelProvider.getInstance().getEntity(Template.ENTITY_NAME);

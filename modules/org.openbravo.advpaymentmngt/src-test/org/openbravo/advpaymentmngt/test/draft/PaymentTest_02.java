@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -19,10 +19,14 @@
 
 package org.openbravo.advpaymentmngt.test.draft;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -42,14 +46,14 @@ import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.test.base.BaseTest;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * The PaymentTest_02 class used to test the partial payment document generation and reactivating
  * the in APRM.
  * 
  */
-public class PaymentTest_02 extends BaseTest {
+public class PaymentTest_02 extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(PaymentTest_01.class);
 
@@ -65,10 +69,13 @@ public class PaymentTest_02 extends BaseTest {
 
   /**
    * Initial Set up.
+   * 
+   * This before method is named setUpP02() to avoid overwriting the super 
+   * setUp method that is invoke automatically before this one.
+   * 
    */
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @Before
+  public void setUpP02() throws Exception {
     TestUtility.setTestContext();
   }
 

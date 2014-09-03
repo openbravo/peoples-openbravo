@@ -702,7 +702,7 @@ isc.OBStandardView.addProperties({
 
   getDirectLinkUrl: function () {
     var url = window.location.href,
-        crit;
+        crit, fkCache;
     var qIndex = url.indexOf('?');
     var dIndex = url.indexOf('#');
     var index = -1;
@@ -735,6 +735,13 @@ isc.OBStandardView.addProperties({
           prettyPrint: false,
           dateFormat: 'dateConstructor'
         }));
+        fkCache = this.viewGrid.getFKFilterAuxiliaryCache(crit);
+        if (isc.isA.Array(fkCache) && fkCache.length > 0) {
+          url = url + '&fkCache=' + escape(isc.JSON.encode(fkCache, {
+            prettyPrint: false,
+            dateFormat: 'dateConstructor'
+          })) + '&';
+        }
       }
     }
 
@@ -755,9 +762,10 @@ isc.OBStandardView.addProperties({
 
     this.standardWindow.addView(childView);
 
-    if (this.childTabSet.tabs.length > 0) {
-      // If it is a child tab that is not in the first position, load a basic child view
-      // to ensure a lazy inizialitazion of the contents.
+    if (this.childTabSet.tabs.length > 0 && !this.standardWindow.targetTabId) {
+      // If it is a child tab that is not in the first position and if it is not a
+      // direct navigation to the record (issue 27008), load a basic child view
+      // to ensure a lazy initialization of the contents.
       // Once the tab be selected, the proper content will be loaded.
       this.prepareBasicChildView(childView);
     } else {
@@ -833,7 +841,6 @@ isc.OBStandardView.addProperties({
       // the logic doesn't pass through the 'setAsActiveView' so the 'prepareFullChildView' should be done
       // on the tab selection instead.
       me.prepareFullChildView(childView, childTabDef);
-      childTabDef.pane.parentTabSet.doHandleClick();
     };
 
     childTabDef.pane.destroy = function () {
@@ -1763,18 +1770,23 @@ isc.OBStandardView.addProperties({
 
   getParentRecord: function () {
     var grid = null;
-    if (!this.parentView || !this.parentView.viewGrid.getSelectedRecords() || this.parentView.viewGrid.getSelectedRecords().length !== 1) {
+    // if there is no parent view, there is no parent record
+    if (!this.parentView) {
       return null;
     }
-
-    // a new parent is not a real parent
-    if (this.parentView.viewGrid.getSelectedRecord()._new) {
-      return null;
-    }
+    // use the standard tree of the tree grid depending on the view being shown
     if (this.parentView.isShowingTree) {
       grid = this.parentView.treeGrid;
     } else {
       grid = this.parentView.viewGrid;
+    }
+    // if the parent grid does not have exactly one selected record, return null
+    if (!grid.getSelectedRecords() || grid.getSelectedRecords().length !== 1) {
+      return null;
+    }
+    // a new parent is not a real parent
+    if (!this.parentView.isShowingTree && this.parentView.viewGrid.getSelectedRecord()._new) {
+      return null;
     }
     return grid.getSelectedRecord();
   },
@@ -2489,7 +2501,7 @@ isc.OBStandardView.addProperties({
         field = component.getField(propertyObj.property);
         if (field && field.editorType //
         && Object.prototype.toString.call(value) === '[object Date]' //
-        && new Function('return isc.' + field.editorType + '.getPrototype().isAbsoluteDateTime')()) { //
+        && OB.Utilities.getCanvasProp(field.editorType, 'isAbsoluteDateTime')) {
           // In the case of an absolute datetime, it needs to be converted in order to avoid the UTC conversion
           // http://forums.smartclient.com/showthread.php?p=116135
           value = OB.Utilities.Date.addTimezoneOffset(value);

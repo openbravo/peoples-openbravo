@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2013 Openbravo SLU
+* All portions are Copyright (C) 2013-2014 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -23,6 +23,8 @@
   v_Parent_ID         VARCHAR2(32);
   v_NextNo            VARCHAR2(32);
   v_count             NUMBER;
+  v_active            VARCHAR2(32):='N';
+  v_exist NUMBER:=0;
 
 BEGIN
   IF (AD_isTriggerEnabled()='N') THEN
@@ -63,12 +65,25 @@ BEGIN
           END
       );
     END IF;
+
+    select count(*) into v_exist
+    from ad_preference
+    where ad_client_id=:new.ad_client_id
+    and property='IsActiveNewChValueProd';
+
+    IF (v_exist > 0) THEN
+      select value into v_active
+      from ad_preference
+      where ad_client_id=:new.ad_client_id
+      and property='IsActiveNewChValueProd';
+    END IF;  
+
     INSERT INTO m_product_ch_conf (
       m_product_ch_conf_id, ad_client_id, ad_org_id, isactive,
       created, createdby, updated, updatedby,
       m_product_ch_id, m_ch_value_id, skcode
     ) SELECT
-      get_uuid(), :new.ad_client_id, :new.ad_org_id, 'N',
+      get_uuid(), :new.ad_client_id, :new.ad_org_id, v_active,
       now(), :new.createdby, now(), :new.updatedby,
       pch.m_product_ch_id, :new.m_ch_value_id, :new.skcode
       FROM m_product_ch pch

@@ -146,6 +146,11 @@ public abstract class AuthenticationManager {
       setDBSession(request, userId, SUCCESS_SESSION_STANDARD, true);
     }
 
+    // if we in 'forceLogin' state, there is no need to process any other code
+    if (userId == null && "Y".equals(request.getSession().getAttribute("forceLogin"))) {
+      return null;
+    }
+
     // A restricted resource can define a custom login URL
     // It just need to set an the attribute loginURL in the request
     final String customLoginURL = (String) request.getAttribute("loginURL");

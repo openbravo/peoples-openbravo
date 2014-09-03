@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Vector;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 
 import javax.servlet.ServletConfig;
@@ -61,11 +61,11 @@ import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.erpCommon.utility.poc.EmailType;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 import org.openbravo.erpCommon.utility.reporting.Report;
-import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.ReportManager;
 import org.openbravo.erpCommon.utility.reporting.ReportingException;
 import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
+import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.system.Language;
@@ -361,8 +361,9 @@ public class PrintController extends HttpSecureAppServlet {
             }
 
             if (report == null)
-              throw new ServletException(
-                  Utility.messageBD(this, "NoDataReport", vars.getLanguage()) + documentId);
+              throw new ServletException(Utility
+                  .messageBD(this, "NoDataReport", vars.getLanguage())
+                  + documentId);
             // Check if the document is not in status 'draft'
             if (!report.isDraft()) {
               // Check if the report is already attached
@@ -389,9 +390,8 @@ public class PrintController extends HttpSecureAppServlet {
                   log4j.debug("Document is not attached.");
               }
               final String senderAddress = vars.getStringParameter("fromEmail");
-              sendDocumentEmail(report, vars,
-                  (Vector<Object>) request.getSession().getAttribute("files"), documentData,
-                  senderAddress, checks, documentType);
+              sendDocumentEmail(report, vars, (Vector<Object>) request.getSession().getAttribute(
+                  "files"), documentData, senderAddress, checks, documentType);
               nrOfEmailsSend++;
             }
           }
@@ -429,7 +429,7 @@ public class PrintController extends HttpSecureAppServlet {
             }
           }
 
-          response.setContentType("application/json");
+          response.setContentType("application/json; charset=UTF-8");
           final PrintWriter out = response.getWriter();
           out.println(o.toString());
           out.close();
@@ -452,7 +452,7 @@ public class PrintController extends HttpSecureAppServlet {
             }
           }
 
-          response.setContentType("application/json");
+          response.setContentType("application/json; charset=UTF-8");
           final PrintWriter out = response.getWriter();
           out.println(o.toString());
           out.close();
@@ -464,8 +464,8 @@ public class PrintController extends HttpSecureAppServlet {
       // Catching the exception here instead of throwing it to HSAS because this is used in multi
       // part request making the mechanism to detect popup not to work.
       log4j.error("Error captured: ", e);
-      bdErrorGeneralPopUp(request, response, "Error",
-          Utility.translateError(this, vars, vars.getLanguage(), e.getMessage()).getMessage());
+      bdErrorGeneralPopUp(request, response, "Error", Utility.translateError(this, vars,
+          vars.getLanguage(), e.getMessage()).getMessage());
     }
   }
 
@@ -491,9 +491,20 @@ public class PrintController extends HttpSecureAppServlet {
         response.setContentType("application/pdf");
         concatReport(reports.toArray(new Report[] {}), response);
       }
+      for (Iterator<Report> iterator = reports.iterator(); iterator.hasNext();) {
+        Report report = iterator.next();
+        switch (report.getDocumentType()) {
+        case SALESORDER:
+          PrintControllerData.updateOrderDatePrinted(this, report.getDocumentId());
+        default:
+          break;
+        }
+      }
     } catch (IOException e) {
       log4j.error(e.getMessage());
     } catch (JRException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
       e.printStackTrace();
     } finally {
       try {
@@ -739,14 +750,14 @@ public class PrintController extends HttpSecureAppServlet {
     emailSubject = emailSubject.replaceAll("@sal_nam@", Matcher.quoteReplacement(replyToName));
     emailSubject = emailSubject
         .replaceAll("@bp_nam@", Matcher.quoteReplacement(report.getBPName()));
-    emailSubject = emailSubject.replaceAll("@doc_date@",
-        Matcher.quoteReplacement(report.getDocDate()));
-    emailSubject = emailSubject.replaceAll("@doc_nextduedate@",
-        Matcher.quoteReplacement(report.getMinDueDate()));
-    emailSubject = emailSubject.replaceAll("@doc_lastduedate@",
-        Matcher.quoteReplacement(report.getMaxDueDate()));
-    emailSubject = emailSubject.replaceAll("@doc_desc@",
-        Matcher.quoteReplacement(report.getDocDescription()));
+    emailSubject = emailSubject.replaceAll("@doc_date@", Matcher.quoteReplacement(report
+        .getDocDate()));
+    emailSubject = emailSubject.replaceAll("@doc_nextduedate@", Matcher.quoteReplacement(report
+        .getMinDueDate()));
+    emailSubject = emailSubject.replaceAll("@doc_lastduedate@", Matcher.quoteReplacement(report
+        .getMaxDueDate()));
+    emailSubject = emailSubject.replaceAll("@doc_desc@", Matcher.quoteReplacement(report
+        .getDocDescription()));
 
     emailBody = emailBody.replaceAll("@cus_ref@", Matcher.quoteReplacement(cusReference));
     emailBody = emailBody.replaceAll("@our_ref@", Matcher.quoteReplacement(ourReference));
@@ -754,12 +765,12 @@ public class PrintController extends HttpSecureAppServlet {
     emailBody = emailBody.replaceAll("@sal_nam@", Matcher.quoteReplacement(replyToName));
     emailBody = emailBody.replaceAll("@bp_nam@", Matcher.quoteReplacement(report.getBPName()));
     emailBody = emailBody.replaceAll("@doc_date@", Matcher.quoteReplacement(report.getDocDate()));
-    emailBody = emailBody.replaceAll("@doc_nextduedate@",
-        Matcher.quoteReplacement(report.getMinDueDate()));
-    emailBody = emailBody.replaceAll("@doc_lastduedate@",
-        Matcher.quoteReplacement(report.getMaxDueDate()));
-    emailBody = emailBody.replaceAll("@doc_desc@",
-        Matcher.quoteReplacement(report.getDocDescription()));
+    emailBody = emailBody.replaceAll("@doc_nextduedate@", Matcher.quoteReplacement(report
+        .getMinDueDate()));
+    emailBody = emailBody.replaceAll("@doc_lastduedate@", Matcher.quoteReplacement(report
+        .getMaxDueDate()));
+    emailBody = emailBody.replaceAll("@doc_desc@", Matcher.quoteReplacement(report
+        .getDocDescription()));
 
     String host = null;
     boolean auth = true;
@@ -815,7 +826,7 @@ public class PrintController extends HttpSecureAppServlet {
     try {
       EmailManager.sendEmail(host, auth, username, password, connSecurity, port, senderAddress,
           recipientTO, recipientCC, recipientBCC, replyTo, emailSubject, emailBody, contentType,
-          attachments, null, null);
+          attachments, new Date(), null);
     } catch (Exception exception) {
       log4j.error(exception);
       final String exceptionClass = exception.getClass().toString().replace("class ", "");
@@ -834,12 +845,11 @@ public class PrintController extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("New email id: " + newEmailId);
 
-      EmailData.insertEmail(conn, this, newEmailId, vars.getClient(), report.getOrgId(),
-          vars.getUser(), EmailType.OUTGOING.getStringValue(), replyTo, recipientTO, recipientCC,
+      EmailData.insertEmail(conn, this, newEmailId, vars.getClient(), report.getOrgId(), vars
+          .getUser(), EmailType.OUTGOING.getStringValue(), replyTo, recipientTO, recipientCC,
           recipientBCC, Utility.formatDate(new Date(), "yyyyMMddHHmmss"), emailSubject, emailBody,
-          report.getBPartnerId(),
-          ToolsData.getTableId(this, report.getDocumentType().getTableName()),
-          documentData.documentId);
+          report.getBPartnerId(), ToolsData.getTableId(this, report.getDocumentType()
+              .getTableName()), documentData.documentId);
 
       releaseCommitConnection(conn);
     } catch (final NoConnectionAvailableException exception) {

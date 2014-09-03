@@ -63,7 +63,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MSTOCKPROPOSED">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PINSTANCE" name="AD_PINSTANCE_MSTOCKPROPOSED">
+      <foreign-key foreignTable="AD_PINSTANCE" name="AD_PINSTANCE_MSTOCKPROPOSED" onDelete="cascade">
         <reference local="AD_PINSTANCE_ID" foreign="AD_PINSTANCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_STORAGE_DETAIL" name="M_STORAGEDET_MSTOCKPROPOSED">

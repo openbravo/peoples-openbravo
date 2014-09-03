@@ -65,6 +65,10 @@ isc.OBPickAndExecuteGrid.addProperties({
     return true;
   },
 
+  //** {{{ dataPageSize }}} **
+  // The data page size used for loading paged data from the server.
+  dataPageSize: 100,
+
   initWidget: function () {
     var i, len = this.fields.length,
         theGrid, me = this,
@@ -459,6 +463,9 @@ isc.OBPickAndExecuteGrid.addProperties({
         record[this.selectionProperty] = true;
         if (this.data.savedData) {
           savedRecord = this.data.savedData.find('id', this.selectedIds[i]);
+          if (!savedRecord) {
+            continue;
+          }
           //Setting editable fields from saved Data to retain values.
           for (j = 0; j < fields.length; j++) {
             if (fields[j].canEdit !== false) {
@@ -550,6 +557,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (this.sqlOrderByClause) {
       params[OB.Constants.SQL_ORDERBY_PARAMETER] = this.sqlOrderByClause;
     }
+
+    // prevent the count operation
+    params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
 
     if (this.filterClause) {
       if (props.whereClause) {

@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2008 Openbravo SLU 
+* All portions are Copyright (C) 2001-2014 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -35,6 +35,18 @@
   <PARAMETER id="paramDateToRef" name="dateToRef" attribute="value"/>
   <PARAMETER id="paramDateToRef" name="dateToRefdisplayFormat" attribute="displayformat" replace="xx"/>
   <PARAMETER id="paramDateToRef" name="dateToRefsaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateFromRef2" name="dateFromRef2" attribute="value"/>
+  <PARAMETER id="paramDateFromRef2" name="dateFromRef2displayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateFromRef2" name="dateFromRef2saveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateToRef2" name="dateToRef2" attribute="value"/>
+  <PARAMETER id="paramDateToRef2" name="dateToRef2displayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateToRef2" name="dateToRef2saveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateFromRef3" name="dateFromRef3" attribute="value"/>
+  <PARAMETER id="paramDateFromRef3" name="dateFromRef3displayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateFromRef3" name="dateFromRef3saveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateToRef3" name="dateToRef3" attribute="value"/>
+  <PARAMETER id="paramDateToRef3" name="dateToRef3displayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateToRef3" name="dateToRef3saveFormat" attribute="saveformat" replace="yy"/>
   <!--PARAMETER id="paramBPartnerId" name="paramBPartnerId" attribute="value"/>
 <PARAMETER id="paramBPartnerDescription" name="bPartnerDescription" attribute="value"/>
 <PARAMETER id="paramProductId" name="mProduct" attribute="value"/>
@@ -106,5 +118,8 @@
   <SUBREPORT id="reportC_Currency_ID" name="reportC_Currency_ID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramC_Currency_ID"/>
   </SUBREPORT> 
+  <SUBREPORT id="reportCDocTypeId_IN" name="reportCDocTypeId_IN" report="org/openbravo/erpCommon/reference/List">
+      <ARGUMENT name="parameterListSelected" withId="paramVacio"/>
+  </SUBREPORT>
   <DISCARD id="discard"/>
 </REPORT>
