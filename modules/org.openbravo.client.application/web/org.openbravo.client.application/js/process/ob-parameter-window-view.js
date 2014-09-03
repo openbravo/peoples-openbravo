@@ -51,7 +51,7 @@ isc.OBParameterWindowView.addProperties({
     var i, field, items = [],
         buttonLayout = [],
         newButton, cancelButton, view = this,
-        newShowIf, params, updatedExpandSection;
+        newShowIf, context, updatedExpandSection;
 
     // this flag can be used by Selenium to determine when defaults are set
     this.defaultsAreSet = false;
@@ -289,16 +289,12 @@ isc.OBParameterWindowView.addProperties({
     this.members.push(this.loading);
     this.Super('initWidget', arguments);
 
-    params = {
+    context = this.sourceView ? this.sourceView.getContextInfo(false, true, true, true) : {};
+
+    OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', context, {
       processId: this.processId,
       windowId: this.windowId
-    };
-
-    if (this.sourceView) {
-      params.context = this.sourceView.getContextInfo(false, true, true, true);
-    }
-
-    OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', {}, params, function (rpcResponse, data, rpcRequest) {
+    }, function (rpcResponse, data, rpcRequest) {
       view.handleDefaults(data);
     });
 
