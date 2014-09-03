@@ -1300,6 +1300,31 @@
     <return>true</return>
     <documentTypeForOrder xsi:nil="true"/>
   </DocumentType>
+  <DocumentType id="DB5E0CFE9D8642ABB6AB63F794C8E054" identifier="Landed Cost Cost">
+    <id>DB5E0CFE9D8642ABB6AB63F794C8E054</id>
+    <active>true</active>
+    <name>Landed Cost Cost</name>
+    <printText>Landed Cost Cost</printText>
+    <description xsi:nil="true"/>
+    <documentCategory>LCC</documentCategory>
+    <salesTransaction>false</salesTransaction>
+    <sOSubType xsi:nil="true"/>
+    <documentTypeForShipment xsi:nil="true"/>
+    <documentTypeForInvoice xsi:nil="true"/>
+    <sequencedDocument>false</sequencedDocument>
+    <documentSequence xsi:nil="true"/>
+    <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
+    <comments xsi:nil="true"/>
+    <default>false</default>
+    <numberOfCopies>1</numberOfCopies>
+    <table id="55A984C314FD4C4FB5E7C32DE36BB07B" entity-name="ADTable" identifier="M_LC_Cost"/>
+    <filterByOrganization>false</filterByOrganization>
+    <documentCancelled xsi:nil="true"/>
+    <expense>false</expense>
+    <reversal>false</reversal>
+    <return>false</return>
+    <documentTypeForOrder xsi:nil="true"/>
+  </DocumentType>
   <DocumentType id="E7F4802D902A42A59143DCCBEDE4DE85" identifier="Credit Order">
     <id>E7F4802D902A42A59143DCCBEDE4DE85</id>
     <active>false</active>
