@@ -48,6 +48,8 @@ public class AddTransactionFilterExpression implements FilterExpression {
         return getDefaulGLItem();
       case Description:
         return getDefaulDescription();
+      case DocumentCategory:
+        return getDefaulDocumentCategory();
       }
     } catch (Exception e) {
       log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(), e);
@@ -61,7 +63,7 @@ public class AddTransactionFilterExpression implements FilterExpression {
     TransactionType("trxtype"), Currency("c_currency_id"), Organization("ad_org_id"), TransactionDate(
         "trxdate"), AccountingDate("dateacct"), DepositAmount("depositamt"), WithdrawalAmount(
         "withdrawalamt"), BusinessPartner("c_bpartner_id"), GLItem("c_glitem_id"), Description(
-        "description");
+        "description"), DocumentCategory("DOCBASETYPE");
 
     private String columnname;
 
@@ -179,5 +181,9 @@ public class AddTransactionFilterExpression implements FilterExpression {
     FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
         bankStatementLineId);
     return bankstatementline.getDescription();
+  }
+
+  String getDefaulDocumentCategory() {
+    return "FAT";
   }
 }
