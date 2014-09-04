@@ -85,6 +85,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CANCEL_MATCHING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="MATCHING_COSTADJUSTMENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_LC_COST_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -102,6 +110,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_LANDEDCOST" name="M_LC_COST_LC">
         <reference local="M_LANDEDCOST_ID" foreign="M_LANDEDCOST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_COSTADJUSTMENT" name="M_LC_COST_MATCHCOSTADJ">
+        <reference local="MATCHING_COSTADJUSTMENT_ID" foreign="M_COSTADJUSTMENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_LC_COST_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>

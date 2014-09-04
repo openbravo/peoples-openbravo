@@ -19,6 +19,7 @@
 
 package org.openbravo.costing;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
@@ -27,6 +28,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -54,51 +56,7 @@ public class CancelCostAdjustment extends BaseActionHandler {
       final JSONObject jsonData = new JSONObject(data);
       String caId = jsonData.getString("inpmCostadjustmentId");
       CostAdjustment costAdjustmentOrig = OBDal.getInstance().get(CostAdjustment.class, caId);
-      CostAdjustment costAdjustmentCancel = (CostAdjustment) DalUtil.copy(costAdjustmentOrig, true);
-
-      final DocumentType docType = FIN_Utility.getDocumentType(
-          costAdjustmentOrig.getOrganization(), strCategoryCostAdj);
-      final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
-      costAdjustmentCancel.setDocumentNo(docNo);
-      costAdjustmentOrig.setCostAdjustmentCancel(costAdjustmentCancel);
-      costAdjustmentOrig.setDocumentStatus("VO");
-      OBDal.getInstance().save(costAdjustmentOrig);
-      OBDal.getInstance().save(costAdjustmentCancel);
-      OBDal.getInstance().flush();
-      // Call cost
-      OBCriteria<CostAdjustmentLine> qLines = OBDal.getInstance().createCriteria(
-          CostAdjustmentLine.class);
-      qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustmentCancel));
-      ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
-      try {
-        int cnt = 0;
-        while (scrollLines.next()) {
-          final CostAdjustmentLine line = (CostAdjustmentLine) scrollLines.get()[0];
-          line.setSource(true);
-          line.setAdjustmentAmount(line.getAdjustmentAmount().negate());
-          if (line.getInventoryTransaction().isCostPermanent()) {
-            line.getInventoryTransaction().setCostPermanent(Boolean.FALSE);
-            OBDal.getInstance().save(line.getInventoryTransaction());
-          }
-          OBDal.getInstance().save(line);
-          if ((cnt++ % 10) == 0) {
-            OBDal.getInstance().flush();
-            // clear session after each line iteration because the number of objects read in memory
-            // is
-            // big
-            OBDal.getInstance().getSession().clear();
-          }
-
-        }
-      } finally {
-        scrollLines.close();
-      }
-      JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentCancel);
-      CostAdjustment costAdjCancel = OBDal.getInstance().get(CostAdjustment.class,
-          costAdjustmentCancel.getId());
-      costAdjCancel.setDocumentStatus("VO");
-      OBDal.getInstance().save(costAdjCancel);
-      OBDal.getInstance().flush();
+      JSONObject message = doCancelCostAdjustment(costAdjustmentOrig);
       result.put("message", message);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
@@ -117,5 +75,64 @@ public class CancelCostAdjustment extends BaseActionHandler {
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  public static JSONObject doCancelCostAdjustment(CostAdjustment costAdjustmentOrig)
+      throws OBException, JSONException {
+    CostAdjustment costAdjustmentCancel = (CostAdjustment) DalUtil.copy(costAdjustmentOrig, false);
+
+    final DocumentType docType = FIN_Utility.getDocumentType(costAdjustmentOrig.getOrganization(),
+        strCategoryCostAdj);
+    final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
+    costAdjustmentCancel.setDocumentNo(docNo);
+    costAdjustmentOrig.setCostAdjustmentCancel(costAdjustmentCancel);
+    costAdjustmentOrig.setDocumentStatus("VO");
+    OBDal.getInstance().save(costAdjustmentOrig);
+    OBDal.getInstance().save(costAdjustmentCancel);
+    OBDal.getInstance().flush();
+
+    CostAdjustment cacProxy = (CostAdjustment) OBDal.getInstance().getProxy(
+        CostAdjustment.ENTITY_NAME, costAdjustmentCancel.getId());
+    // Call cost
+    OBCriteria<CostAdjustmentLine> qLines = OBDal.getInstance().createCriteria(
+        CostAdjustmentLine.class);
+    qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustmentOrig));
+    qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISSOURCE, true));
+    ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
+    try {
+      int cnt = 0;
+      while (scrollLines.next()) {
+        final CostAdjustmentLine lineOrig = (CostAdjustmentLine) scrollLines.get()[0];
+        CostAdjustmentLine lineCancel = (CostAdjustmentLine) DalUtil.copy(lineOrig, false);
+        lineCancel.setCostAdjustment(cacProxy);
+        lineCancel.setAdjustmentAmount(lineOrig.getAdjustmentAmount().negate());
+        if (lineOrig.getInventoryTransaction().isCostPermanent()) {
+          lineOrig.getInventoryTransaction().setCostPermanent(Boolean.FALSE);
+          OBDal.getInstance().save(lineOrig.getInventoryTransaction());
+        }
+        OBDal.getInstance().save(lineCancel);
+        if ((cnt++ % 10) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+      }
+    } finally {
+      scrollLines.close();
+    }
+    JSONObject message = new JSONObject();
+    message.put("severity", "success");
+    String strResult = OBMessageUtils.messageBD("CostAdjustmentCanceled");
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("documentNo", docNo);
+    message.put("title", OBMessageUtils.messageBD("Success"));
+    message.put("text", OBMessageUtils.parseTranslation(strResult, map));
+
+    CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentCancel);
+    CostAdjustment costAdjCancel = OBDal.getInstance().get(CostAdjustment.class,
+        costAdjustmentCancel.getId());
+    costAdjCancel.setDocumentStatus("VO");
+    OBDal.getInstance().save(costAdjCancel);
+    OBDal.getInstance().flush();
+    return message;
   }
 }

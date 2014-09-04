@@ -94,7 +94,10 @@ public class LCMatchingProcess {
 
       if (lcCost.isMatchingAdjusted() && lcCost.getAmount().compareTo(matchedAmt) != 0) {
         distributeAmounts(lcCost);
-        generateCostAdjustment(lcCost.getId(), message);
+        String strMatchCAId = generateCostAdjustment(lcCost.getId(), message);
+        lcCost.setMatchingCostAdjustment((CostAdjustment) OBDal.getInstance().getProxy(
+            CostAdjustment.ENTITY_NAME, strMatchCAId));
+        OBDal.getInstance().save(lcCost);
       }
 
       lcCost = OBDal.getInstance().get(LandedCostCost.class, lcCost.getId());
@@ -132,7 +135,8 @@ public class LCMatchingProcess {
     OBDal.getInstance().flush();
   }
 
-  private void generateCostAdjustment(String strLCCostId, JSONObject message) throws JSONException {
+  private String generateCostAdjustment(String strLCCostId, JSONObject message)
+      throws JSONException {
     LandedCostCost lcCost = OBDal.getInstance().get(LandedCostCost.class, strLCCostId);
     // FIXME: Take new date from lcCost !!
     Date referenceDate = lcCost.getLandedCost().getReferenceDate();
@@ -177,8 +181,9 @@ public class LCMatchingProcess {
       }
       i++;
     }
-
+    ca = OBDal.getInstance().get(CostAdjustment.class, ca.getId());
     CostAdjustmentProcess.doProcessCostAdjustment(ca);
+    return ca.getId();
   }
 
   private LandedCostDistributionAlgorithm getDistributionAlgorithm(LCDistributionAlgorithm lcDistAlg) {
