@@ -2111,7 +2111,7 @@ isc.OBStandardView.addProperties({
 
   deleteSelectedRows: function (autoSaveDone) {
     var msg, dialogTitle, view = this,
-        deleteCount, callback;
+        deleteCount, callback, currentGrid;
 
     if (!this.readOnly && this.isDeleteableTable) {
       // first save what we have edited
@@ -2153,7 +2153,7 @@ isc.OBStandardView.addProperties({
 
         removeCallBack = function (resp, data, req) {
           var length, localData = resp.dataObject || resp.data || data,
-              i, updateTotalRows;
+              i, updateTotalRows, currentGrid;
 
           if (!localData) {
             // bail out, an error occured which should be displayed to the user now
