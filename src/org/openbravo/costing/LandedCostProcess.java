@@ -253,6 +253,7 @@ public class LandedCostProcess {
     OBDal.getInstance().save(lcm);
 
     lcc.setMatched(Boolean.TRUE);
+    lcc.setProcessed(Boolean.TRUE);
     lcc.setMatchingAmount(lcc.getAmount());
     OBDal.getInstance().save(lcc);
   }

@@ -73,7 +73,23 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="POSTED" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="PROCESSING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="DATEACCT" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
       <column name="LINE" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_DOCTYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -83,6 +99,10 @@
       </column>
       <column name="MATCHING_AMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="PROCESSED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="CANCEL_MATCHING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
@@ -101,6 +121,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_LC_DISTRIBUTION_ALG" name="M_LC_COST_DISTALG">
         <reference local="M_LC_DISTRIBUTION_ALG_ID" foreign="M_LC_DISTRIBUTION_ALG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="M_LC_COST_DOCTYPE">
+        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_INOUT" name="M_LC_COST_INOUT">
         <reference local="M_INOUT_ID" foreign="M_INOUT_ID"/>

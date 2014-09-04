@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ******************************************************************************
+ * The contents of this file are subject to the   Compiere License  Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * You may obtain a copy of the License at http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an  "AS IS"  basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * The Original Code is                  Compiere  ERP & CRM  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
+ * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
+ * Contributor(s): Openbravo SLU
+ * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ ******************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="DocLineLCCostData" package="org.openbravo.erpCommon.ad_forms">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT LCM.M_LC_MATCHED_ID, LCM.AD_CLIENT_ID, LCM.AD_ORG_ID,
+        LCC.M_LC_COST_ID, LCM.AMOUNT, LCC.M_LC_TYPE_ID, IL.M_PRODUCT_ID, I.C_BPARTNER_ID,  
+        COALESCE(IL.C_PROJECT_ID, I.C_PROJECT_ID) AS C_PROJECT_ID, LCC.ISMATCHINGADJUSTED,
+        I.C_CURRENCY_ID, '' AS M_WAREHOUSE_ID, '' AS ACCOUNT_ID, '' AS NAME, '' AS GLITEM_DEBIT_ACCT, '' AS GLITEM_CREDIT_ACCT 
+        FROM M_LC_MATCHED LCM, M_LC_COST LCC, C_INVOICELINE IL, C_INVOICE I
+        WHERE LCM.ISACTIVE='Y'
+        AND LCM.M_LC_COST_ID = LCC.M_LC_COST_ID
+        AND LCM.C_INVOICELINE_ID = IL.C_INVOICELINE_ID
+        AND IL.C_INVOICE_ID = I.C_INVOICE_ID
+        AND LCM.M_LC_COST_ID = ?
+     ]]>
+     </Sql>
+     <Parameter name="LCCostId"/>
+   </SqlMethod>
+  <SqlMethod name="selectRcptLineAmt" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT LCR.AD_CLIENT_ID, LCR.AD_ORG_ID, 
+        LCR.M_LC_COST_ID, LCR.AMOUNT, LCC.M_LC_TYPE_ID, L.M_WAREHOUSE_ID, IOL.M_PRODUCT_ID, IO.C_BPARTNER_ID,
+        LCC.C_CURRENCY_ID, COALESCE(IOL.C_PROJECT_ID, IO.C_PROJECT_ID) AS C_PROJECT_ID
+        FROM M_LC_RECEIPTLINE_AMT  LCR, M_INOUTLINE IOL, M_INOUT IO, M_LC_COST LCC, M_LOCATOR L
+        WHERE LCR.ISACTIVE='Y'
+        AND LCR.M_INOUTLINE_ID = IOL.M_INOUTLINE_ID
+        AND IOL.M_INOUT_ID = IO.M_INOUT_ID
+        AND LCR.M_LC_COST_ID = LCC.M_LC_COST_ID
+        AND IOL.M_LOCATOR_ID = L.M_LOCATOR_ID
+        AND LCR.ISMATCHADJUSTMENT = 'Y'
+        AND LCC.M_LC_COST_ID = ?
+        ORDER BY IO.DOCUMENTNO, IO.M_INOUT_ID, IOL.LINE
+     ]]>
+     </Sql>
+     <Parameter name="LCCostId"/>
+   </SqlMethod>
+   <SqlMethod name="selectLCAccount" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT COALESCE(LCT.ACCOUNT_ID, '') AS ACCOUNT_ID, COALESCE(LCT.M_PRODUCT_ID, '') AS M_PRODUCT_ID, NAME
+        FROM M_LC_TYPE LCT 
+        WHERE LCT.M_LC_TYPE_ID = ?
+     ]]>
+     </Sql>
+     <Parameter name="Lc_Type_Id"/>
+   </SqlMethod>
+   <SqlMethod name="selectGlitem" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT GLITEM_DEBIT_ACCT, GLITEM_CREDIT_ACCT
+        FROM C_GLITEM_ACCT 
+        WHERE C_GLITEM_id = ?
+        AND C_ACCTSCHEMA_id = ?
+     ]]>
+     </Sql>
+     <Parameter name="C_Glitem_ID"/>
+     <Parameter name="C_AcctSchema_ID"/>
+   </SqlMethod>
+   <SqlMethod name="selectLCProduct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT P_EXPENSE_ACCT AS ACCOUNT_ID
+        FROM M_PRODUCT_ACCT 
+        WHERE M_PRODUCT_ID = ?
+        AND C_ACCTSCHEMA_id = ?
+     ]]>
+     </Sql>
+     <Parameter name="M_Product_ID"/>
+     <Parameter name="C_AcctSchema_ID"/>
+   </SqlMethod>  
+ </SqlClass>

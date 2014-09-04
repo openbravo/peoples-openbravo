@@ -283,6 +283,8 @@ public abstract class AcctServer {
   public static final String DOCTYPE_CostAdjustment = "CAD";
   // LandedCost
   public static final String DOCTYPE_LandedCost = "LDC";
+  // LandedCostCost
+  public static final String DOCTYPE_LandedCostCost = "LCC";
 
   /*************************************************************************/
 

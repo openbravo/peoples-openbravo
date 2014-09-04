@@ -93,6 +93,7 @@ public class DocLandedCost extends AcctServer {
         docLine.m_M_Product_ID = data[i].mProductId;
         docLine.m_DateAcct = DateDoc;
         docLine.setLandedCostTypeId(data[i].mLcTypeId);
+        docLine.m_C_Project_ID = data[i].cProjectId;
         // -- Source Amounts
         String amt = data[i].amount;
         docLine.setAmount(amt);
@@ -170,13 +171,20 @@ public class DocLandedCost extends AcctServer {
       amtDebit = "";
       amtCredit = amount.toString();
 
-      fact.createLine(line, getLandedCostAccount(line.getLandedCostTypeId(), amount, as, conn),
-          line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, line.m_DateAcct, null, conn);
-
       fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
           line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, line.m_DateAcct, null, conn);
+
+      DocLine line2 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
+      line2.copyInfo(line);
+
+      line2.m_C_BPartner_ID = "";
+      line2.m_M_Product_ID = "";
+      line2.m_C_Project_ID = "";
+      fact.createLine(line2, getLandedCostAccount(line.getLandedCostTypeId(), amount, as, conn),
+          line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, line.m_DateAcct, null, conn);
+
     }
 
     SeqNo = "0";

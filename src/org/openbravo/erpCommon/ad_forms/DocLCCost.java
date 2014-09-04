@@ -1,0 +1,353 @@
+/*
+ ******************************************************************************
+ * The contents of this file are subject to the   Compiere License  Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * You may obtain a copy of the License at http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an  "AS IS"  basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * The Original Code is                  Compiere  ERP & CRM  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
+ * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
+ * Contributor(s): Openbravo SLU
+ * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ ******************************************************************************
+ */
+package org.openbravo.erpCommon.ad_forms;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+
+import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+
+public class DocLCCost extends AcctServer {
+
+  private static final long serialVersionUID = 1L;
+  static Logger log4jDocLCCost = Logger.getLogger(DocLCCost.class);
+
+  /** AD_Table_ID */
+  private String SeqNo = "0";
+  private BigDecimal differenceAmt = BigDecimal.ZERO;
+
+  public DocLCCost() {
+  }
+
+  /**
+   * Constructor
+   * 
+   * @param AD_Client_ID
+   *          AD_Client_ID
+   */
+  public DocLCCost(String AD_Client_ID, String AD_Org_ID, ConnectionProvider connectionProvider) {
+    super(AD_Client_ID, AD_Org_ID, connectionProvider);
+  }
+
+  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
+  String AD_Client_ID, String Id) throws ServletException {
+    setObjectFieldProvider(DocLCCostData.selectRegistro(conn, AD_Client_ID, Id));
+  }
+
+  /**
+   * Load Document Details
+   * 
+   * @return true if loadDocumentType was set
+   */
+  public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
+    C_Currency_ID = NO_CURRENCY;
+
+    // TODO: SACAR CURRENCY
+    DocumentType = AcctServer.DOCTYPE_LandedCostCost;
+    log4jDocLCCost.debug("loadDocumentDetails - C_Currency_ID : " + C_Currency_ID);
+    DateDoc = data[0].getField("DateTrx");
+    differenceAmt = new BigDecimal(data[0].getField("differenceamt"));
+    loadDocumentType(); // lines require doc type
+    // Contained Objects
+    p_lines = loadLines(conn);
+    return true;
+  } // loadDocumentDetails
+
+  /**
+   * Load Invoice Line
+   * 
+   * @return DocLine Array
+   */
+  private DocLine[] loadLines(ConnectionProvider conn) {
+    ArrayList<Object> list = new ArrayList<Object>();
+
+    DocLineLCCostData[] data = null;
+    try {
+      data = DocLineLCCostData.select(conn, Record_ID);
+      for (int i = 0; i < data.length; i++) {
+        String Line_ID = data[i].mLcMatchedId;
+        DocLine_LCCost docLine = new DocLine_LCCost(DocumentType, Record_ID, Line_ID);
+        docLine.loadAttributes(data[i], this);
+        docLine.m_C_Currency_ID = data[i].cCurrencyId;
+        docLine.setWarehouseId(data[i].mWarehouseId);
+        docLine.m_C_BPartner_ID = data[i].cBpartnerId;
+        docLine.m_M_Product_ID = data[i].mProductId;
+        docLine.m_DateAcct = DateDoc;
+        docLine.setLandedCostTypeId(data[i].mLcTypeId);
+        docLine.setIsMatchingAdjusted(data[i].ismatchingadjusted);
+        docLine.setLcCostId(data[i].mLcCostId);
+        // -- Source Amounts
+        String amt = data[i].amount;
+        docLine.setAmount(amt);
+        list.add(docLine);
+      }
+    } catch (ServletException e) {
+      log4jDocLCCost.warn(e);
+    }
+    // Return Array
+    DocLine[] dl = new DocLine[list.size()];
+    list.toArray(dl);
+    return dl;
+  } // loadLines
+
+  /**
+   * Get Balance
+   * 
+   * @return Zero (always balanced)
+   */
+  public BigDecimal getBalance() {
+    BigDecimal retValue = ZERO;
+    return retValue;
+  } // getBalance
+
+  /**
+   * Create Facts (the accounting logic) for MMS, MMR.
+   * 
+   * <pre>
+   *  Shipment
+   *      CoGS            DR
+   *      Inventory               CR
+   *  Shipment of Project Issue
+   *      CoGS            DR
+   *      Project                 CR
+   *  Receipt
+   *      Inventory       DR
+   *      NotInvoicedReceipt      CR
+   * </pre>
+   * 
+   * @param as
+   *          accounting schema
+   * @return Fact
+   */
+  public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
+      VariablesSecureApp vars) throws ServletException {
+    // Select specific definition
+    String strClassname = AcctServerData
+        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    if (strClassname.equals(""))
+      strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    if (!strClassname.equals("")) {
+      try {
+        DocLCCostTemplate newTemplate = (DocLCCostTemplate) Class.forName(strClassname)
+            .newInstance();
+        return newTemplate.createFact(this, as, conn, con, vars);
+      } catch (Exception e) {
+        log4j.error("Error while creating new instance for DocLCCostTemplate - " + e);
+      }
+    }
+    C_Currency_ID = as.getC_Currency_ID();
+    // create Fact Header
+    Fact fact = new Fact(this, as, Fact.POST_Actual);
+    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
+    String amtDebit = "0";
+    String amtCredit = "0";
+    // Lines
+    for (int i = 0; p_lines != null && i < p_lines.length; i++) {
+      DocLine_LCCost line = (DocLine_LCCost) p_lines[i];
+
+      BigDecimal amount = new BigDecimal(line.getAmount());
+      Account acctLC = getLandedCostAccount(line.getLandedCostTypeId(), amount, as, conn);
+
+      log4jDocLCCost.debug("previous to creteline, line.getAmount(): " + line.getAmount());
+
+      amtDebit = "";
+      amtCredit = amount.toString();
+
+      fact.createLine(line, acctLC, line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
+
+      DocLine line2 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
+      line2.copyInfo(line);
+
+      line2.m_C_BPartner_ID = "";
+      line2.m_M_Product_ID = "";
+      line2.m_C_Project_ID = "";
+      fact.createLine(line2, acctLC, line2.m_C_Currency_ID, amtCredit, amtDebit,
+          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null, conn);
+
+      // if there is difference between matched amt and cost amt, then accounting is generated
+      if (differenceAmt.compareTo(BigDecimal.ZERO) != 0) {
+        // if cost adjustment has been generated, then the account is distributed between the goods
+        // shipments lines
+        if ("Y".equals(line.getIsMatchingAdjusted())) {
+          DocLineLCCostData[] dataRcptLineAmt = DocLineLCCostData.selectRcptLineAmt(conn,
+              line.getLcCostId());
+
+          for (int j = 0; j < dataRcptLineAmt.length; j++) {
+            DocLineLCCostData lineRcpt = dataRcptLineAmt[j];
+
+            amtDebit = "";
+            amtCredit = lineRcpt.amount;
+
+            DocLine line3 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
+            line3.copyInfo(line);
+
+            line3.m_C_BPartner_ID = "";
+            line3.m_M_Product_ID = "";
+            line3.m_C_Project_ID = "";
+            fact.createLine(line3, acctLC, line3.m_C_Currency_ID, amtDebit, amtCredit,
+                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line3.m_DateAcct, null, conn);
+
+            DocLine line4 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
+            line4.copyInfo(line);
+
+            line4.m_C_BPartner_ID = "";
+            line4.m_M_Product_ID = lineRcpt.mProductId;
+            line4.m_C_Project_ID = "";
+
+            ProductInfo p = new ProductInfo(line4.m_M_Product_ID, conn);
+
+            fact.createLine(line4, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+                line4.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+                DocumentType, line4.m_DateAcct, null, conn);
+
+          }
+
+        } else {
+          amtDebit = differenceAmt.toString();
+          amtCredit = "";
+
+          fact.createLine(line2, acctLC, line2.m_C_Currency_ID, amtDebit, amtCredit,
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null, conn);
+
+          fact.createLine(line2, as.getCurrencyBalancing_Acct(), line2.m_C_Currency_ID, amtCredit,
+              amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null,
+              conn);
+        }
+      }
+    }
+
+    SeqNo = "0";
+    return fact;
+  } // createFact
+
+  /**
+   * @return the log4jDocLCCost
+   */
+  public static Logger getlog4jDocLCCost() {
+    return log4jDocLCCost;
+  }
+
+  /**
+   * @param log4jDocLCCost
+   *          the log4jDocLCCost to set
+   */
+  public static void setlog4jDocLCCost(Logger log4jDocLCCost) {
+    DocLCCost.log4jDocLCCost = log4jDocLCCost;
+  }
+
+  /**
+   * @return the seqNo
+   */
+  public String getSeqNo() {
+    return SeqNo;
+  }
+
+  /**
+   * @param seqNo
+   *          the seqNo to set
+   */
+  public void setSeqNo(String seqNo) {
+    SeqNo = seqNo;
+  }
+
+  /**
+   * @return the serialVersionUID
+   */
+  public static long getSerialVersionUID() {
+    return serialVersionUID;
+  }
+
+  public String nextSeqNo(String oldSeqNo) {
+    log4jDocLCCost.debug("DocLCCost - oldSeqNo = " + oldSeqNo);
+    BigDecimal seqNo = new BigDecimal(oldSeqNo);
+    SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
+    log4jDocLCCost.debug("DocLCCost - nextSeqNo = " + SeqNo);
+    return SeqNo;
+  }
+
+  /**
+   * Get the account for Accounting Schema
+   * 
+   * @param AcctType
+   *          see ACCTTYPE_*
+   * @param as
+   *          accounting schema
+   * @return Account
+   */
+  public final Account getLandedCostAccount(String lcTypeId, BigDecimal amount, AcctSchema as,
+      ConnectionProvider conn) {
+    String Account_ID = "";
+    DocLineLCCostData[] data = null;
+    Account acct = null;
+    try {
+      DocLineLCCostData[] dataAcctType = DocLineLCCostData.selectLCAccount(conn, lcTypeId);
+      if (!"".equals(dataAcctType[0].accountId)) {
+        data = DocLineLCCostData.selectGlitem(conn, dataAcctType[0].accountId,
+            as.getC_AcctSchema_ID());
+        if (data.length > 0) {
+          Account_ID = data[0].glitemDebitAcct;
+          if (amount != null && amount.signum() < 0) {
+            Account_ID = data[0].glitemCreditAcct;
+          }
+        }
+      } else if (!"".equals(dataAcctType[0].mProductId)) {
+        data = DocLineLCCostData.selectLCProduct(conn, dataAcctType[0].mProductId,
+            as.getC_AcctSchema_ID());
+        if (data.length > 0) {
+          Account_ID = data[0].accountId;
+        }
+      } else {
+        log4jDocLCCost.warn("getLCCostAccount - NO account for landed cost type "
+            + dataAcctType[0].name);
+        return null;
+      }
+
+      // No account
+      if (Account_ID.equals("")) {
+        log4jDocLCCost.warn("getLCCostAccount - NO account for landed cost type ="
+            + dataAcctType[0].name);
+        return null;
+      }
+      // Return Account
+      acct = Account.getAccount(conn, Account_ID);
+    } catch (ServletException e) {
+      log4jDocLCCost.warn(e);
+    }
+    return acct;
+  } // getAccount
+
+  /**
+   * Get Document Confirmation
+   * 
+   * not used
+   */
+  public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
+    return true;
+  }
+
+  public String getServletInfo() {
+    return "Servlet for the accounting";
+  } // end of getServletInfo() method
+}

@@ -102,6 +102,7 @@ public class LCMatchingProcess {
 
       lcCost = OBDal.getInstance().get(LandedCostCost.class, lcCost.getId());
       lcCost.setMatched(Boolean.TRUE);
+      lcCost.setProcessed(Boolean.TRUE);
       OBDal.getInstance().save(lcCost);
     } catch (JSONException ignore) {
     } finally {

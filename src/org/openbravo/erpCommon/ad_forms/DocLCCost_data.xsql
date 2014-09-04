@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ******************************************************************************
+ * The contents of this file are subject to the   Compiere License  Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * You may obtain a copy of the License at http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an  "AS IS"  basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * The Original Code is                  Compiere  ERP & CRM  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
+ * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
+ * Contributor(s): Openbravo SLU
+ * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ ******************************************************************************
+-->
+
+<SqlClass name="DocLCCostData" package="org.openbravo.erpCommon.ad_forms">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT '' AS M_LC_COST_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID, '' AS ISACTIVE,
+          '' AS CREATED, '' AS CREATEDBY, '' AS UPDATED, '' AS UPDATEDBY, '' AS DATETRX, '' AS PROCESSING,
+          '' AS PROCESSED, '' AS POSTED, '' AS DATEACCT, '' AS DATEDOC, '' AS C_CURRENCY_ID, '' AS DIFFERENCEAMT
+        FROM DUAL
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="selectRegistro" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        SELECT LCC.M_LC_COST_ID, LCC.AD_CLIENT_ID, LCC.AD_ORG_ID, LCC.ISACTIVE, LCC.CREATED, LCC.CREATEDBY, LCC.UPDATED,        
+        LCC.UPDATEDBY, LCC.DATEACCT AS DATETRX, LCC.PROCESSING,        
+        LCC.PROCESSED AS PROCESSED, LCC.POSTED, LCC.DATEACCT, LCC.DATEACCT AS DATEDOC, LCC.C_CURRENCY_ID, 
+        LCC.AMOUNT - LCC.MATCHING_AMT AS DIFFERENCEAMT
+        FROM M_LC_COST LCC      
+        WHERE LCC.AD_Client_ID=?
+        AND LCC.M_LC_COST_ID=?
+    ]]>
+    </Sql>
+    <Parameter name="client"/>
+    <Parameter name="id"/>
+    </SqlMethod>
+   </SqlClass>
