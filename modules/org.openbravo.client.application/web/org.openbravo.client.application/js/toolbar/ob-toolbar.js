@@ -159,16 +159,20 @@ isc.OBToolbar.addClassProperties({
     updateState: function () {
       var view = this.view,
           form = view.viewForm,
-          grid = view.viewGrid,
-          selectedRecords = grid.getSelectedRecords(),
-          length = selectedRecords.length,
-          i;
+          currentGrid, length, selectedRecords, i;
+      if (view.isShowingTree) {
+        currentGrid = view.treeGrid;
+      } else {
+        currentGrid = view.viewGrid;
+      }
+      selectedRecords = currentGrid.getSelectedRecords();
+      length = selectedRecords.length;
       if (!this.view.isDeleteableTable) {
         this.setDisabled(true);
         return;
       }
       for (i = 0; i < length; i++) {
-        if (!grid.isWritable(selectedRecords[i])) {
+        if (!currentGrid.isWritable(selectedRecords[i])) {
           this.setDisabled(true);
           return;
         }
@@ -180,7 +184,7 @@ isc.OBToolbar.addClassProperties({
       if (view.isShowingForm) {
         this.setDisabled(form.isSaving || form.readOnly || view.singleRecord || !view.hasValidState() || form.isNew || (view.standardWindow.allowDelete === 'N'));
       } else {
-        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !grid.getSelectedRecords() || grid.getSelectedRecords().length === 0 || (view.standardWindow.allowDelete === 'N'));
+        this.setDisabled(view.readOnly || view.singleRecord || !view.hasValidState() || !currentGrid.getSelectedRecords() || currentGrid.getSelectedRecords().length === 0 || (view.standardWindow.allowDelete === 'N'));
       }
     },
     keyboardShortcutId: 'ToolBar_Eliminate'
