@@ -100,6 +100,8 @@ OB.APRM.AddPayment.onLoad = function (view) {
       payment = form.getItem('fin_payment_id').getValue(),
       issotrx = form.getItem('issotrx').getValue(),
       trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
+      trxtypeParam = null,
+      orgParam = null,
       bankStatementLineId;
   if (view && view.callerField && view.callerField.view && view.callerField.view.callerField && view.callerField.view.callerField.record && //
   typeof view.callerField.view.callerField.record.affinity !== 'undefined' && //
@@ -130,8 +132,12 @@ OB.APRM.AddPayment.onLoad = function (view) {
     form.focusInItem(form.getItem('actual_payment'));
   }
   if (trxtype === "") {
+    trxtypeParam = form.getField(0);
     form.removeField(0);
+    orgParam = form.getField(0);
     form.removeField(0);
+    form.addField(trxtypeParam);
+    form.addField(orgParam);
   }
 };
 
@@ -358,7 +364,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
     }
     return;
   } else {
-	// hide the message bar if it is still showing the APRM_NoDistributeMsg message and the distribution is about to be done
+    // hide the message bar if it is still showing the APRM_NoDistributeMsg message and the distribution is about to be done
     message = orderInvoice.contentView.messageBar.text.contents;
     if (message.contains(OB.I18N.getLabel('APRM_NoDistributeMsg'))) {
       orderInvoice.contentView.messageBar.hide();
