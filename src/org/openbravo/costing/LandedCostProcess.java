@@ -56,7 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LandedCostProcess {
-  private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcessHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(LandedCostProcess.class);
   @Inject
   @Any
   private Instance<LandedCostProcessCheck> landedCostProcessChecks;
@@ -164,7 +164,7 @@ public class LandedCostProcess {
       LandedCostDistributionAlgorithm lcDistAlg = getDistributionAlgorithm(lcCost
           .getLandedCostDistributionAlgorithm());
 
-      lcDistAlg.distributeAmount(lcCost);
+      lcDistAlg.distributeAmount(lcCost, false);
       if (lcCost.getInvoiceLine() != null) {
         matchCostWithInvoiceLine(lcCost);
       }
@@ -253,6 +253,7 @@ public class LandedCostProcess {
     OBDal.getInstance().save(lcm);
 
     lcc.setMatched(Boolean.TRUE);
+    lcc.setMatchingAmount(lcc.getAmount());
     OBDal.getInstance().save(lcc);
   }
 }

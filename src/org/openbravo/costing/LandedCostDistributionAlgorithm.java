@@ -22,6 +22,6 @@ import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 
 public abstract class LandedCostDistributionAlgorithm {
 
-  public abstract void distributeAmount(LandedCostCost lcCost);
+  public abstract void distributeAmount(LandedCostCost lcCost, boolean isMatchingAdjustment);
 
 }

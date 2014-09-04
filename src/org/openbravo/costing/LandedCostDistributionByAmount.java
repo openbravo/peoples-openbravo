@@ -43,14 +43,19 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 public class LandedCostDistributionByAmount extends LandedCostDistributionAlgorithm {
 
   @Override
-  public void distributeAmount(LandedCostCost lcCost) {
+  public void distributeAmount(LandedCostCost lcCost, boolean isMatching) {
     // Calculate total amount of all receipt lines assigned to the landed cost.
     LandedCost landedCost = lcCost.getLandedCost();
     String strCurId = landedCost.getCurrency().getId();
     String strOrgId = landedCost.getOrganization().getId();
     Date dateReference = landedCost.getReferenceDate();
     int precission = landedCost.getCurrency().getStandardPrecision().intValue();
-    BigDecimal baseAmt = lcCost.getAmount();
+    BigDecimal baseAmt;
+    if (isMatching) {
+      baseAmt = lcCost.getMatchingAmount().subtract(lcCost.getAmount());
+    } else {
+      baseAmt = lcCost.getAmount();
+    }
     if (!lcCost.getCurrency().getId().equals(strCurId)) {
       baseAmt = FinancialUtils.getConvertedAmount(baseAmt, lcCost.getCurrency(),
           landedCost.getCurrency(), dateReference, landedCost.getOrganization(), "C");
@@ -107,6 +112,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
           LandedCostCost.ENTITY_NAME, lcCost.getId()));
       lcrla.setLandedCostReceipt(lcrl);
       lcrla.setGoodsShipmentLine(receiptline);
+      lcrla.setMatchingAdjustment(isMatching);
       lcrla.setAmount(receiptAmt);
       OBDal.getInstance().save(lcrla);
       if (i % 100 == 0) {
