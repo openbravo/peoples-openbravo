@@ -209,6 +209,9 @@
         <index-column name="FIN_RECONCILIATION_ID"/>
         <index-column name="STATUS"/>
       </index>
+      <index name="FIN_FINACC_TRANSACTION_POSTED" unique="false">
+        <index-column name="POSTED"/>
+      </index>
       <unique name="FIN_FINACC_TRANSACTION_UN">
         <unique-column name="FIN_PAYMENT_ID"/>
       </unique>

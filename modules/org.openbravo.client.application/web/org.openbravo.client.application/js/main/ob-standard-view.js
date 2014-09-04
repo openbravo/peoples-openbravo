@@ -2111,7 +2111,7 @@ isc.OBStandardView.addProperties({
 
   deleteSelectedRows: function (autoSaveDone) {
     var msg, dialogTitle, view = this,
-        deleteCount, callback;
+        deleteCount, callback, currentGrid;
 
     if (!this.readOnly && this.isDeleteableTable) {
       // first save what we have edited
@@ -2124,14 +2124,18 @@ isc.OBStandardView.addProperties({
         this.standardWindow.doActionAfterAutoSave(actionObject, false);
         return;
       }
-
-      deleteCount = this.viewGrid.getSelection().length;
+      if (this.isShowingTree) {
+        currentGrid = this.treeGrid;
+      } else {
+        currentGrid = this.viewGrid;
+      }
+      deleteCount = currentGrid.getSelection().length;
 
       if (deleteCount === 1) {
         msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationSingle');
         dialogTitle = OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteRecord');
       } else {
-        msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [this.viewGrid.getSelection().length]);
+        msg = OB.I18N.getLabel('OBUIAPP_DeleteConfirmationMultiple', [deleteCount]);
         dialogTitle = OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteRecords');
       }
 
@@ -2149,7 +2153,7 @@ isc.OBStandardView.addProperties({
 
         removeCallBack = function (resp, data, req) {
           var length, localData = resp.dataObject || resp.data || data,
-              i, updateTotalRows;
+              i, updateTotalRows, currentGrid;
 
           if (!localData) {
             // bail out, an error occured which should be displayed to the user now
@@ -2165,6 +2169,11 @@ isc.OBStandardView.addProperties({
             status = localData.response.status;
           }
           if (status === isc.RPCResponse.STATUS_SUCCESS) {
+            if (view.isShowingTree) {
+              currentGrid = view.treeGrid;
+            } else {
+              currentGrid = view.viewGrid;
+            }
             if (view.isShowingForm) {
               view.switchFormGridVisibility();
             }
@@ -2172,7 +2181,7 @@ isc.OBStandardView.addProperties({
             if (deleteData) {
               // note totalrows is used when inserting a new row, to determine after which
               // record to add a new row
-              updateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
+              updateTotalRows = (currentGrid.data.getLength() === currentGrid.data.totalRows);
               // deleteData is computed below
               length = deleteData.ids.length;
               for (i = 0; i < length; i++) {
@@ -2180,15 +2189,14 @@ isc.OBStandardView.addProperties({
                   id: deleteData.ids[i]
                 });
               }
-              view.viewGrid.data.handleUpdate('remove', recordInfos, false, req);
+              currentGrid.data.handleUpdate('remove', recordInfos, false, req);
               if (updateTotalRows) {
-                view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
+                currentGrid.data.totalRows = currentGrid.data.getLength();
               }
             } else if (doUpdateTotalRows) {
-              view.viewGrid.data.totalRows = view.viewGrid.data.getLength();
+              currentGrid.data.totalRows = currentGrid.data.getLength();
             }
             view.viewGrid.updateRowCountDisplay();
-
             // Refresh the grid based on Refresh After Deletion preference
             if (OB.PropertyStore.get("OBUIAPP_RefreshAfterDeletion", view.standardWindow.windowId) === 'Y') {
               view.viewGrid.refreshGrid();
@@ -2215,9 +2223,16 @@ isc.OBStandardView.addProperties({
           isc.clearPrompt();
         };
         if (ok) {
-          selection = view.viewGrid.getSelection().duplicate();
+
+          if (view.isShowingTree) {
+            currentGrid = view.treeGrid;
+          } else {
+            currentGrid = view.viewGrid;
+          }
+
+          selection = currentGrid.getSelection().duplicate();
           // deselect the current records
-          view.viewGrid.deselectAllRecords();
+          currentGrid.deselectAllRecords();
 
           if (selection.length > 1) {
             deleteData = {};
@@ -2233,7 +2248,7 @@ isc.OBStandardView.addProperties({
           } else {
             // note totalrows is used when inserting a new row, to determine after which
             // record to add a new row
-            doUpdateTotalRows = (view.viewGrid.data.getLength() === view.viewGrid.data.totalRows);
+            doUpdateTotalRows = (currentGrid.data.getLength() === currentGrid.data.totalRows);
             // note remove data expects only the id, the record key as the first param
             view.viewGrid.removeData({
               id: selection[0].id
@@ -2332,7 +2347,6 @@ isc.OBStandardView.addProperties({
   },
 
   setHalfSplit: function () {
-    this.setHeight('100%');
     var i, tab, pane;
     if (this.members[1]) {
       // divide the space between the first and second level
@@ -2344,7 +2358,6 @@ isc.OBStandardView.addProperties({
         // makes a difference what the order of resizing is, first resize the 
         // one which will be larger, then the one which will be smaller.
         this.members[1].setHeight('50%');
-        this.members[0].setHeight('50%');
       }
       this.members[1].setState(isc.OBStandardView.STATE_IN_MID);
     } else {
