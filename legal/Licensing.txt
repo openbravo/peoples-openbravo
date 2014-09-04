@@ -210,13 +210,13 @@ Under the LGPL license (included as LGPL-2.1.txt in this folder)
 Under the MIT license (available at http://www.slf4j.org/license.html)
 
 # cdi-api.jar
-# google-collect-1.0.jar
+# guava-18.0.jar
 # javax.inject.jar
 # jboss-interceptor-core-2.0.0.CR1.jar
 # jboss-interceptor-spi-2.0.0.CR1.jar
 # weld-api.jar
-# weld-core.jar
-# weld-servlet-core.jar
+# weld-core-1.1.24.Final.jar
+# weld-servlet-core-1.1.24.Final.jar
 # weld-spi.jar
 # arquillian-api-1.0.0.Alpha4.jar
 # arquillian-impl-base-1.0.0.Alpha4.jar
