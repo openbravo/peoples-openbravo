@@ -83,7 +83,6 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     JSONObject jsonResponse = new JSONObject();
     OBContext.setAdminMode(true);
     boolean openedFromMenu = false;
-    boolean openedFromAddTransaction = false;
     String comingFrom = null;
     try {
       VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
@@ -98,11 +97,6 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         }
       } else {
         openedFromMenu = "null".equals(parameters.get("windowId").toString()) ? true : false;
-      }
-      if (jsonparams.has("bankStatementLineId")
-          && jsonparams.get("bankStatementLineId") != JSONObject.NULL) {
-        openedFromAddTransaction = "null".equals(jsonparams.get("bankStatementLineId").toString()) ? false
-            : true;
       }
       String strOrgId = null;
       if (jsonRequest.has("inpadOrgId") && jsonRequest.get("inpadOrgId") != JSONObject.NULL) {
@@ -196,13 +190,15 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         OBError message = processPayment(payment, strAction, strDifferenceAction, differenceAmount,
             exchangeRate, jsonparams, comingFrom);
         JSONObject errorMessage = new JSONObject();
-        if (!openedFromAddTransaction) {
+        if (!"TRANSACTION".equals(comingFrom)) {
           errorMessage.put("severity", message.getType().toLowerCase());
           errorMessage.put("title", message.getTitle());
           errorMessage.put("text", message.getMessage());
           jsonResponse.put("retryExecution", openedFromMenu);
           jsonResponse.put("message", errorMessage);
           jsonResponse.put("refreshParent", true);
+        } else {
+          jsonResponse.put("refreshParent", false);
         }
         JSONObject setSelectorValueFromRecord = new JSONObject();
         JSONObject record = new JSONObject();
