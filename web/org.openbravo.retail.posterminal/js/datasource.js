@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $, Backbone, _, enyo, Audio */
+/*global OB, $, Backbone, _, enyo, Audio, setTimeout, setInterval, clearTimeout */
 
 // HWServer: TODO: this should be implemented in HW Manager module
 OB.DS.HWResource = function (res) {

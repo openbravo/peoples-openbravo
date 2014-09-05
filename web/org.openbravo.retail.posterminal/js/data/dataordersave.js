@@ -7,11 +7,10 @@
  ************************************************************************************
  */
 
-/*global B,_*/
+/*global OB, _, window */
 
 (function () {
 
-  OB = window.OB || {};
   OB.DATA = window.OB.DATA || {};
 
   OB.DATA.OrderSave = function (model) {

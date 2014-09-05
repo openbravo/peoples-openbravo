@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone */
+/*global OB, Backbone */
 
 (function () {
   var DocumentSequence = Backbone.Model.extend({
