@@ -839,7 +839,7 @@
         }
       }
       this.save();
-      OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostAddProductToOrder', {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
         receipt: this,
         productToAdd: p,
         orderline: line,
