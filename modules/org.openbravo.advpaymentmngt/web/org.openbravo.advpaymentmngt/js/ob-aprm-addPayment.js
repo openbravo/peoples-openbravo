@@ -214,11 +214,12 @@ OB.APRM.AddPayment.financialAccountOnChange = function (item, view, form, grid) 
 
 OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
   var ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
-      defaultFilter = {
-      paymentMethodName: item.getElementValue()
-      },
+      defaultFilter = ordinvgrid.filterEditor.getEditForm().getValues(),
       trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
       affectedParams = [];
+  isc.addProperties(defaultFilter, {
+    paymentMethodName: item.getElementValue()
+  })
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
   if (trxtype !== "") {
@@ -875,9 +876,7 @@ OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
       isSOTrx = form.getItem('issotrx').getValue(),
       financialAccount = form.getItem('fin_financial_account_id').getValue(),
       ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
-      defaultFilter = {
-      businessPartnerName: item.getElementValue()
-      };
+      newCriteria = {};
   affectedParams.push(form.getField('credit_to_use_display_logic').paramId);
   OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic(form, view, affectedParams);
 
@@ -893,8 +892,13 @@ OB.APRM.AddPayment.receivedFromOnChange = function (item, view, form, grid) {
       isSOTrx: isSOTrx,
       financialAccount: financialAccount
     }, {}, callback);
-    ordinvgrid.setFilterEditorCriteria(defaultFilter);
-    ordinvgrid.filterByEditor();
+    newCriteria = ordinvgrid.addSelectedIDsToCriteria(ordinvgrid.getCriteria(), true);
+    newCriteria.criteria = newCriteria.criteria || [];
+    // add dummy criterion to force fetch
+    newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    ordinvgrid.invalidateCache();
+
+    form.redraw();
   }
 };
 
