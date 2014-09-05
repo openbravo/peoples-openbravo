@@ -60,7 +60,7 @@ public class TestCosting extends BaseDataSourceTestDal {
     OBContext.setAdminMode(false);
 
     try {
-      Order purchaseOrder = cloneOrder("E8D703003128490C80FFECBF893ABDDC");
+      Order purchaseOrder = cloneOrder("2C9CEDC0761A41DCB276A5124F8AAA90");
       bookOrder(purchaseOrder);
       runCostingBackground();
 
