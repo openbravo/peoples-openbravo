@@ -43,3 +43,10 @@ OB.Costing.MatchFromInvoiceAmtValidation = function (item, validator, value, rec
 
   return true;
 };
+
+OB.Costing.MatchFromInvoiceAmtSelectionChange = function (grid, record, state) {
+  if (!state && record.matched) {
+    // do not allow to deselect matched records. 
+    grid.selectRecord(record);
+  }
+};
