@@ -139,8 +139,7 @@ public class LCMatchingProcess {
   private String generateCostAdjustment(String strLCCostId, JSONObject message)
       throws JSONException {
     LandedCostCost lcCost = OBDal.getInstance().get(LandedCostCost.class, strLCCostId);
-    // FIXME: Take new date from lcCost !!
-    Date referenceDate = lcCost.getLandedCost().getReferenceDate();
+    Date referenceDate = lcCost.getAccountingDate();
     CostAdjustment ca = CostAdjustmentUtils.insertCostAdjustmentHeader(lcCost.getOrganization(),
         "LC");
 
