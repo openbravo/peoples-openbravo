@@ -197,14 +197,8 @@ public class DocCostAdjustment extends AcctServer {
         // Inventory Asset DR
         if (line.getIsSource() && line.getSourceProcess().equals("PDC")) { // Price Diff
                                                                            // Correction
-          if (line.getIsInvoiceCorrection()) {
-            // Invoice Price Variance CR
-            acct = p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn);
-          } else {
-            // Non Invoiced Receipts CR
-            acct = getAcctByBusinessPartner(AcctServer.ACCTTYPE_NotInvoicedReceipts,
-                line.m_C_BPartner_ID, as, conn);
-          }
+          // Invoice Price Variance CR
+          acct = p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn);
         } else if (line.getIsSource() && line.getSourceProcess().equals("LC")) {
           throw new IllegalStateException(
               "DocCostAdjustment - Error: landed cost should not generate accounting");
