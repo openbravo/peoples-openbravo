@@ -46,6 +46,7 @@ import org.openbravo.service.db.DalBaseProcess;
  */
 public class CostingBackground extends DalBaseProcess {
   private static final Logger log4j = Logger.getLogger(CostingBackground.class);
+  public static final String AD_PROCESS_ID = "3F2B4AAC707B4CE7B98D2005CF7310B5";
   private ProcessLogger logger;
   private int maxTransactions = 0;
 
