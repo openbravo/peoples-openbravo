@@ -93,6 +93,9 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
       JSONObject line = selectedLines.getJSONObject(i);
       final String strLCMatchedId = line.getString("matchedLandedCost");
       final String strLCCostId = line.getString("landedCostCost");
+      boolean isMatchingAdjusted = line.getBoolean("isMatchingAdjusted");
+      boolean isMatched = line.getBoolean("matched");
+      boolean processMatching = line.getBoolean("processMatching");
       LCMatched match = null;
       if (strLCMatchedId.isEmpty()) {
         // Create new match record
@@ -106,10 +109,24 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
         match = OBDal.getInstance().get(LCMatched.class, strLCMatchedId);
         existingMatchings.remove(strLCMatchedId);
       }
+      if (isMatched) {
+        continue;
+      }
+
       final BigDecimal amount = new BigDecimal(line.getString("matchedAmt"));
       if (amount.compareTo(match.getAmount()) != 0) {
         match.setAmount(amount);
         OBDal.getInstance().save(match);
+      }
+      // load landedcostcost
+      LandedCostCost lcCost = OBDal.getInstance().get(LandedCostCost.class, strLCCostId);
+      // update isMatchingAdj flag
+      if (lcCost.isMatchingAdjusted() != isMatchingAdjusted) {
+        lcCost.setMatchingAdjusted(isMatchingAdjusted);
+        OBDal.getInstance().save(lcCost);
+      }
+      if (processMatching) {
+        LCMatchingProcess.doProcessLCMatching(lcCost);
       }
     }
     // Delete unselected matches
