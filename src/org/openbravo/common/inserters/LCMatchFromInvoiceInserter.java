@@ -33,12 +33,14 @@ public class LCMatchFromInvoiceInserter extends HqlInserter {
   @Override
   public String insertHql(Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
-    // The query fails with a NPE when using the queryNamedParameters
     final String strInvoiceLineID = requestParameters.get("@InvoiceLine.id@");
     Check.isTrue(IsIDFilter.instance.accept(strInvoiceLineID), "Value " + strInvoiceLineID
         + " is not a valid id.");
-    String strWhereClause = " (il is null or il.id = '" + strInvoiceLineID + "') ";
+    String strWhereClause = " (il is null or il.id = :invlineid2) ";
+    queryNamedParameters.put("invlineid", strInvoiceLineID);
+    queryNamedParameters.put("invlineid2", strInvoiceLineID);
 
+    // The query fails with a NPE when using the queryNamedParameters
     final String strProductId = requestParameters.get("@InvoiceLine.product@");
     if (StringUtils.isNotEmpty(strProductId)) {
       Check.isTrue(IsIDFilter.instance.accept(strProductId), "Value " + strProductId
