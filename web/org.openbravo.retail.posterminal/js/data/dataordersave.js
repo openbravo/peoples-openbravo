@@ -66,7 +66,8 @@
       }
       OB.trace("Receipt integrity: OK");
 
-      OB.UTIL.updateDocumentSequenceInDB(docno);
+      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
+
 
       delete this.receipt.attributes.json;
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
@@ -165,7 +166,7 @@
 
       this.receipt.set('hasbeenpaid', 'Y');
 
-      OB.UTIL.updateDocumentSequenceInDB(docno);
+      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
 
       delete this.receipt.attributes.json;
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());

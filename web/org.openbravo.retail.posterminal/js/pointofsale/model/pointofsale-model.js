@@ -380,7 +380,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     ordersave = new OB.DATA.OrderSave(this);
     taxes = new OB.DATA.OrderTaxes(receipt);
 
-    OB.POS.modelterminal.saveDocumentSequenceInDB();
     OB.MobileApp.model.runSyncProcess(function () {
       me.loadCheckedMultiorders();
     }, function () {

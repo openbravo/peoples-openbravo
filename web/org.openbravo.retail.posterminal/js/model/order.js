@@ -267,6 +267,8 @@
         this.set('posTerminal', attributes.posTerminal);
         this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
         this.set('orderDate', new Date(attributes.orderDate));
+        this.set('documentnoSuffix', attributes.documentnoSuffix);
+        this.set('quotationnoSuffix', attributes.quotationnoSuffix);
         this.set('documentNo', attributes.documentNo);
         this.set('undo', attributes.undo);
         this.set('bp', new Backbone.Model(attributes.bp));
@@ -578,6 +580,8 @@
       this.set('posTerminal', null);
       this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('orderDate', new Date());
+      this.set('documentnoSuffix', -1);
+      this.set('quotationnoSuffix', -1);
       this.set('documentNo', '');
       this.set('undo', null);
       this.set('bp', null);
@@ -1395,10 +1399,9 @@
       this.set('isPaid', false);
       this.set('isEditable', true);
       this.set('orderDate', new Date());
-      documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
-      documentseqstr = OB.UTIL.padNumber(documentseq, 7);
-      OB.POS.modelterminal.set('documentsequence', documentseq);
-      this.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
+      var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
+      this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
+      this.set('documentNo',  nextDocumentno.documentNo);
       this.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
       this.save();
       if (updatePrices) {
@@ -2085,10 +2088,9 @@
       order.set('isLayaway', false);
       order.set('taxes', null);
 
-      documentseq = OB.POS.modelterminal.get('documentsequence') + 1;
-      documentseqstr = OB.UTIL.padNumber(documentseq, 7);
-      OB.POS.modelterminal.set('documentsequence', documentseq);
-      order.set('documentNo', OB.POS.modelterminal.get('terminal').docNoPrefix + '/' + documentseqstr);
+      var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
+      order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
+      order.set('documentNo',  nextDocumentno.documentNo);
 
       order.set('bp', OB.POS.modelterminal.get('businessPartner'));
       order.set('print', true);
@@ -2288,10 +2290,10 @@
       this.current.set('isQuotation', true);
       this.current.set('generateInvoice', false);
       this.current.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
-      documentseq = OB.POS.modelterminal.get('quotationDocumentSequence') + 1;
-      documentseqstr = OB.UTIL.padNumber(documentseq, 7);
-      OB.POS.modelterminal.set('quotationDocumentSequence', documentseq);
-      this.current.set('documentNo', OB.POS.modelterminal.get('terminal').quotationDocNoPrefix + '/' + documentseqstr);
+      var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
+      this.current.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
+      this.current.set('documentNo',  nextQuotationno.documentNo);
+
       this.add(this.current);
       this.loadCurrent();
     },
