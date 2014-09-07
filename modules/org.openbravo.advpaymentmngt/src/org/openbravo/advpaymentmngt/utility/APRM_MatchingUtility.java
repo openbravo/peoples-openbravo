@@ -235,6 +235,7 @@ public class APRM_MatchingUtility {
         bankStatementLine
             .setMatchingtype(StringUtils.isBlank(matchLevel) ? FIN_MatchedTransaction.MANUALMATCH
                 : matchLevel);
+        bankStatementLine.setMatchedDocument(getMatchedDocument(transaction));
         transaction.setStatus(APRMConstants.PAYMENT_STATUS_PAYMENT_CLEARED);
         transaction.setReconciliation(reconciliation);
         if (transaction.getFinPayment() != null) {
@@ -260,6 +261,36 @@ public class APRM_MatchingUtility {
     return true;
   }
 
+  private static String getMatchedDocument(FIN_FinaccTransaction transaction) {
+    final String MATCHED_AGAINST_TRANSACTION = "T";
+    final String MATCHED_AGAINST_PAYMENT = "P";
+    final String MATCHED_AGAINST_CREDIT = "C";
+    final String MATCHED_AGAINST_INVOICE = "I";
+    final String MATCHED_AGAINST_ORDER = "O";
+    if (!transaction.isCreatedByAlgorithm() || transaction.getFinPayment() == null) {
+      return MATCHED_AGAINST_TRANSACTION;
+    } else if (transaction.getFinPayment() != null
+        && !transaction.getFinPayment().isCreatedByAlgorithm()) {
+      return MATCHED_AGAINST_PAYMENT;
+    } else if (transaction.getFinPayment() != null
+        && transaction.getFinPayment().isCreatedByAlgorithm()
+        && transaction.getFinPayment().isCreatedByAlgorithm()
+        && transaction.getFinPayment().getFINPaymentDetailList().get(0)
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() == null
+        && transaction.getFinPayment().getFINPaymentDetailList().get(0)
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() == null) {
+      return MATCHED_AGAINST_CREDIT;
+    } else if (transaction.getFinPayment() != null
+        && transaction.getFinPayment().isCreatedByAlgorithm()
+        && transaction.getFinPayment().isCreatedByAlgorithm()
+        && transaction.getFinPayment().getFINPaymentDetailList().get(0)
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null) {
+      return MATCHED_AGAINST_INVOICE;
+    } else {
+      return MATCHED_AGAINST_ORDER;
+    }
+  }
+
   /**
    * Remove the match of a bank statement line with a transaction
    * 
@@ -274,6 +305,7 @@ public class APRM_MatchingUtility {
         finTrans.setReconciliation(null);
         bsline.setFinancialAccountTransaction(null);
         bsline.setMatchingtype(null);
+        bsline.setMatchedDocument(null);
 
         OBDal.getInstance().save(finTrans);
         OBDal.getInstance().save(bsline);

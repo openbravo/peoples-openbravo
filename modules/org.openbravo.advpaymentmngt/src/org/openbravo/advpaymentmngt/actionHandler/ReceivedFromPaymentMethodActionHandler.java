@@ -50,7 +50,8 @@ public class ReceivedFromPaymentMethodActionHandler extends BaseActionHandler {
           if (jsonData.getString("isSOTrx").toString().equals("true")) {
             paymentMethod = businessPartner.getPaymentMethod().getId();
           } else {
-            paymentMethod = businessPartner.getPOPaymentMethod().getId();
+            paymentMethod = businessPartner.getPOPaymentMethod() != null ? businessPartner
+                .getPOPaymentMethod().getId() : "";
           }
           for (FinAccPaymentMethod finAccPaymentMethod : financialAccount
               .getFinancialMgmtFinAccPaymentMethodList()) {
