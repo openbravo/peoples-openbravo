@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global $ Backbone enyo _ localStorage */
+/*global OB, Backbone, enyo, _, localStorage, BigDecimal */
 
 OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
 OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};

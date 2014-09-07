@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $, _, console, enyo, Backbone, window, confirm, $LAB, SynchronizationHelper, OB, BigDecimal, document, setTimeout, setInterval */
+/*global OB, _, enyo, Backbone, window, console, SynchronizationHelper, BigDecimal, document, setTimeout, setInterval */
 
 (function () {
   var executeWhenDOMReady;
