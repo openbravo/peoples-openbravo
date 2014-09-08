@@ -62,7 +62,7 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
     if (context.has("inptrxtype") && !context.isNull("inptrxtype")) {
       document = context.getString("inptrxtype");
     }
-    if (context.has("issotrx") && !context.isNull("issotrx")) {
+    if (context.has("trxtype") && !context.isNull("trxtype")) {
       document = context.getString("trxtype");
     }
     if (document != null) {

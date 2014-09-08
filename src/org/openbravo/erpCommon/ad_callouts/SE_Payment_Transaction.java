@@ -34,7 +34,8 @@ public class SE_Payment_Transaction extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
     try {
       final String strPaymentId = info.getStringParameter("inpfinPaymentId", IsIDFilter.instance);
-      if ("".equals(strPaymentId)) {
+      final String strcGlitemId = info.getStringParameter("inpcGlitemId", IsIDFilter.instance);
+      if ("".equals(strPaymentId) && "".equals(strcGlitemId)) {
         info.addResult("inpdescription", "");
         info.addResult("inpdepositamt", BigDecimal.ZERO);
         info.addResult("inppaymentamt", BigDecimal.ZERO);

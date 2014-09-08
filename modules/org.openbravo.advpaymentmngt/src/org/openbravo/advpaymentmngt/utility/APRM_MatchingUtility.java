@@ -894,7 +894,7 @@ public class APRM_MatchingUtility {
       final FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(OBDal
           .getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId), "N");
       APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, finTrans, reconciliation,
-          null, true);
+          "AD", true);
     }
   }
 

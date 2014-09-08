@@ -31,23 +31,20 @@ public class SE_Trxtype_Transaction extends SimpleCallout {
     try {
       final String strTrxType = info.getStringParameter("inptrxtype", null);
       if ("BF".equals(strTrxType)) {
-        info.addResult("inpfinPaymentId", "");
-        info.addResult("inpcGlitemId", "");
+        info.addResult("inpfinPaymentId", null);
+        info.addResult("inpcGlitemId", null);
         info.addResult("inpdepositamt", BigDecimal.ZERO);
         info.addResult("inppaymentamt", BigDecimal.ZERO);
         info.addResult("inpissotrx", "Y");
-      }
-      if ("BPW".equals(strTrxType)) {
-        info.addResult("inpfinPaymentId", "");
+      } else if ("BPW".equals(strTrxType)) {
+        info.addResult("inpfinPaymentId", null);
         info.addResult("inpdepositamt", BigDecimal.ZERO);
         info.addResult("inpissotrx", "N");
-      }
-      if ("BPD".equals(strTrxType)) {
-        info.addResult("inpfinPaymentId", "");
+      } else if ("BPD".equals(strTrxType)) {
+        info.addResult("inpfinPaymentId", null);
         info.addResult("inppaymentamt", BigDecimal.ZERO);
         info.addResult("inpissotrx", "Y");
       }
-
     } catch (Exception e) {
       return;
     }

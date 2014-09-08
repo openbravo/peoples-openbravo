@@ -50,10 +50,8 @@ OB.APRM.MatchStatement.onLoad = function (view) {
 OB.APRM.MatchStatement.onRefresh = function (view) {
   var grid = view.theForm.getItem('match_statement').canvas.viewGrid,
       newCriteria = {};
-  newCriteria.criteria = [];
-  // add dummy criterion to force fetch
-  newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
-  grid.fetchData(newCriteria);
+  grid.setFilterEditorCriteria(grid.filterEditor.getEditForm().getValues());
+  grid.filterByEditor();
 };
 
 OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall) {
