@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013 - 2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -52,10 +52,26 @@
     source: 'org.openbravo.retail.posterminal.master.DiscountFilterRole'
   });
 
+  var promotionsCharacteristics = Backbone.Model.extend({
+    modelName: 'DiscountFilterCharacteristic',
+    generatedStructure: true,
+    entityName: 'PricingAdjustmentCharacteristic',
+    source: 'org.openbravo.retail.posterminal.master.DiscountFilterCharacteristic'
+  });
+
+  var promotionsCharacteristicValue = Backbone.Model.extend({
+    modelName: 'ProductCharacteristicValue',
+    generatedStructure: true,
+    entityName: 'ProductCharacteristicValue',
+    source: 'org.openbravo.retail.posterminal.master.ProductProductChValue'
+  });
+
   OB.Data.Registry.registerModel(promotions);
   OB.Data.Registry.registerModel(promotionsBP);
   OB.Data.Registry.registerModel(promotionsBPCategory);
   OB.Data.Registry.registerModel(promotionsProduct);
   OB.Data.Registry.registerModel(promotionsProductCategory);
   OB.Data.Registry.registerModel(promotionsRole);
+  OB.Data.Registry.registerModel(promotionsCharacteristics);
+  OB.Data.Registry.registerModel(promotionsCharacteristicValue);
 }());
