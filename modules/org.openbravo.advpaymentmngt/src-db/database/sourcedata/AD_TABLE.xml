@@ -204,13 +204,15 @@ and @insertion_point_0@]]></HQLQUERY>
 <!--BC21981DCF0846338D631887BEDFE7FA-->  <HQLQUERY><![CDATA[select bsl.transactionDate as banklineDate, case when bp is null then bsl.bpartnername  else bp.name end AS businessPartner, bsl.referenceNo as referenceNo, bsl.cramount - bsl.dramount as amount, bsl.id as match, bsl.matchingtype as affinity, 
 case when fat is null then false else true end AS cleared,
 bsl.matchingtype as matchingtype, bsl.id as id, 
-fat.transactionDate as transactionDate, transactionBP.name as transactionBPName, fat.depositAmount - fat.paymentAmount as transactionAmount, bsl.lineNo as lineNo, fat as fin_finacc_transaction_id, bsl.description, case when bsl.cramount - bsl.dramount >0 then 'D' else 'P' end as type, bsl.matchedDocument, bsl.gLItem
+fat.transactionDate as transactionDate, transactionBP.name as transactionBPName, fat.depositAmount - fat.paymentAmount as transactionAmount, bsl.lineNo as lineNo, fat as fin_finacc_transaction_id, bsl.description, case when bsl.cramount - bsl.dramount >0 then 'D' else 'P' end as type, bsl.matchedDocument, transactionGLItem.name as transactionGLItemName, glitem.name as glitemName
  @selectClause@
 from FIN_BankStatementLine as bsl
  join bsl.bankStatement as bs
 left outer join bsl.financialAccountTransaction as fat
 left outer join bsl.businessPartner AS bp
 left outer join fat.businessPartner as transactionBP
+left outer join fat.gLItem as transactionGLItem
+left outer join bsl.gLItem as glitem
 @joinClause@
 where @additional_filters@
 and bs.processed = 'Y'
