@@ -297,12 +297,14 @@
     + "   AND OP.M_PRODUCT_CATEGORY_ID = P.M_PRODUCT_CATEGORY_ID" //
     + " ))) ",
     additionalFilters: [],
+    //extensible to add additional filters
     computeStandardFilter: function (receipt) {
       var filter = OB.Model.Discounts.standardFilter;
       var i, additionalFilter;
       for (i = 0; i < OB.Model.Discounts.additionalFilters.length; i++) {
         additionalFilter = OB.Model.Discounts.additionalFilters[i];
         if (additionalFilter.generateFilter) {
+          //generateFilter: must be a  non-empty string starting with the word AND with also a starting space
           filter += additionalFilter.generateFilter(receipt);
         }
       }
