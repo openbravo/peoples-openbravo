@@ -350,7 +350,7 @@
       }
       discountRule.set('qtyOffer', qty);
       receipt.addPromotion(line, discountRule, {
-        amt: (linePrice - OB.DEC.toNumber(new BigDecimal(String(discountedLinePrice)))) * qty
+        amt: OB.DEC.toNumber((linePrice - (new BigDecimal(String(discountedLinePrice)))) * qty)
       });
       line.set('discountedLinePrice', discountedLinePrice);
     }
