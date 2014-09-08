@@ -74,11 +74,9 @@
       this.addPropertiesLoader({
         properties: ['terminal'],
         loadFunction: function (terminalModel) {
-          var synchId = SynchronizationHelper.busyUntilFinishes('addPropertiesLoader');
           OB.info('Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(null, function (data) {
-            SynchronizationHelper.finished(synchId, 'addPropertiesLoader');
             if (data.exception) {
               if (OB.I18N.hasLabel(data.exception.message)) {
                 OB.UTIL.showLoading(false);
