@@ -79,16 +79,14 @@ OB.APRM.AddTransaction.trxTypeOnChangeFunction = function (item, view, form, gri
   } else {
     form.getItem('depositamt').setDisabled(false);
     form.getItem('withdrawalamt').setDisabled(false);
+    form.getItem('description').setValue('');
+    form.getItem('c_glitem_id').setValue(null);
+    form.getItem('fin_payment_id').setValue(null);
   }
 };
 
 OB.APRM.AddTransaction.paymentOnChangeFunction = function (item, view, form, grid) {
   var callback, strPaymentId = item.getValue();
-  if (strPaymentId !== null) {
-    form.getItem('c_glitem_id').visible = false;
-  } else {
-    form.getItem('c_glitem_id').visible = true;
-  }
 
   callback = function (response, data, request) {
     form.getItem('description').setValue(data.description);
@@ -104,12 +102,6 @@ OB.APRM.AddTransaction.paymentOnChangeFunction = function (item, view, form, gri
 
 OB.APRM.AddTransaction.glitemOnChangeFunction = function (item, view, form, grid) {
   var callback, strGLItemId = item.getValue();
-
-  if (strGLItemId !== null) {
-    form.getItem('fin_payment_id').visible = false;
-  } else {
-    form.getItem('fin_payment_id').visible = true;
-  }
 
   callback = function (response, data, request) {
     form.getItem('description').setValue(data.description);
