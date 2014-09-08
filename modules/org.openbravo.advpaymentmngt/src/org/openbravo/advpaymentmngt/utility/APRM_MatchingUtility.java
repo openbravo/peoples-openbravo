@@ -702,8 +702,11 @@ public class APRM_MatchingUtility {
     try {
       OBContext.setAdminMode(true);
 
-      final Date maxDate = MatchTransactionDao.islastreconciliation(reconciliation) ? MatchTransactionDao
+      Date maxDate = MatchTransactionDao.islastreconciliation(reconciliation) ? MatchTransactionDao
           .getBankStatementLineMaxDate(financialAccount) : getClearItemsMaxDate(reconciliation);
+      if (maxDate == null) {
+        maxDate = new Date();
+      }
       reconciliation.setEndingDate(maxDate);
       reconciliation.setTransactionDate(maxDate);
       reconciliation.setEndingBalance(MatchTransactionDao.getEndingBalance(reconciliation));
@@ -739,7 +742,8 @@ public class APRM_MatchingUtility {
     obc.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
     obc.addOrder(Order.desc(FIN_ReconciliationLine_v.PROPERTY_TRANSACTIONDATE));
     obc.setMaxResults(1);
-    return ((FIN_ReconciliationLine_v) obc.uniqueResult()).getTransactionDate();
+    FIN_ReconciliationLine_v line = ((FIN_ReconciliationLine_v) obc.uniqueResult());
+    return (line != null) ? line.getTransactionDate() : null;
   }
 
   /**
