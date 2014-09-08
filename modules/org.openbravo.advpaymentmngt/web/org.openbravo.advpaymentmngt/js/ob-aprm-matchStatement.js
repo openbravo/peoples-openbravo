@@ -44,7 +44,11 @@ OB.APRM.MatchStatement.onLoad = function (view) {
       grid.parentElement.messageBar.text.setContents(grid.parentElement.messageBar.text.contents.replace(OB.I18N.getLabel('OBUIAPP_ClearFilters'), OB.I18N.getLabel('OBUIAPP_ClearFilters') + '<br/>' + OB.I18N.getLabel('APRM_GRID_PERSIST_MESSAGE')));
     }
   };
-  isc.confirm(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
+  if (isc.isA.emptyObject(OB.TestRegistry.registry)) {
+    isc.confirm(OB.I18N.getLabel('APRM_AlgorithmConfirm'), execute);
+  } else {
+    execute(false);
+  }
 };
 
 OB.APRM.MatchStatement.onRefresh = function (view) {
