@@ -48,9 +48,7 @@ OB.APRM.MatchStatement.onLoad = function (view) {
 };
 
 OB.APRM.MatchStatement.onRefresh = function (view) {
-  var grid = view.theForm.getItem('match_statement').canvas.viewGrid,
-      newCriteria = {};
-  grid.setFilterEditorCriteria(grid.filterEditor.getEditForm().getValues());
+  var grid = view.theForm.getItem('match_statement').canvas.viewGrid;
   grid.filterByEditor();
 };
 
