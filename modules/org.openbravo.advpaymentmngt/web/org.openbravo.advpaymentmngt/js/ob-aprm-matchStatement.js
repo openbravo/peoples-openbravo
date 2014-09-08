@@ -61,6 +61,8 @@ OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall) {
   execute = function (ok) {
     if (ok) {
       actionHandlerCall(view);
+    } else {
+      view.parentElement.parentElement.closeClick();
     }
   };
   isc.confirm(OB.I18N.getLabel('APRM_ProcessReconciliation'), execute);
