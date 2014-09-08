@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, $, _, OB */
+/*global OB, enyo, _, SynchronizationHelper */
 
 /*left toolbar*/
 enyo.kind({
