@@ -135,8 +135,6 @@
             } else {
               OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');
             }
-          }, function () {
-            OB.error("The terminal info could not be retrieved from the server");
           });
         }
       });
