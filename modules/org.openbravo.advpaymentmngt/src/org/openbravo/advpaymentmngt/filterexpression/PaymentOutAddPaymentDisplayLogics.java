@@ -92,4 +92,10 @@ public class PaymentOutAddPaymentDisplayLogics extends AddPaymentDisplayLogicsHa
     return getPayment(requestMap).getGeneratedCredit();
   }
 
+  @Override
+  public boolean getBankStatementLineDisplayLogic(Map<String, String> requestMap)
+      throws JSONException {
+    // BankStatementLineDisplayLogic
+    return false;
+  }
 }

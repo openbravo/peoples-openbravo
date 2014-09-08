@@ -79,6 +79,9 @@ public abstract class AddPaymentDefaultValuesHandler {
 
   public abstract String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException;
 
+  public abstract String getBankStatementLineAmount(Map<String, String> requestMap)
+      throws JSONException;
+
   protected abstract long getSeq();
 
   public String getDefaultCurrencyTo(Map<String, String> requestMap) throws JSONException {
@@ -262,4 +265,5 @@ public abstract class AddPaymentDefaultValuesHandler {
       return null;
     }
   }
+
 }

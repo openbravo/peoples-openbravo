@@ -102,6 +102,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
       trxtype = (form.getItem('trxtype')) ? form.getItem('trxtype').getValue() : "",
       trxtypeParam = null,
       orgParam = null,
+      bankStatementLineAmount = null,
       bankStatementLineId;
   if (view && view.callerField && view.callerField.view && view.callerField.view.callerField && view.callerField.view.callerField.record && //
   typeof view.callerField.view.callerField.record.affinity !== 'undefined' && //
@@ -136,8 +137,11 @@ OB.APRM.AddPayment.onLoad = function (view) {
     form.removeField(0);
     orgParam = form.getField(0);
     form.removeField(0);
+    bankStatementLineAmount=form.getField(0);
+    form.removeField(0);
     form.addField(trxtypeParam);
     form.addField(orgParam);
+    form.addField(bankStatementLineAmount);
   }
 };
 
@@ -219,7 +223,7 @@ OB.APRM.AddPayment.paymentMethodOnChange = function (item, view, form, grid) {
       affectedParams = [];
   isc.addProperties(defaultFilter, {
     paymentMethodName: item.getElementValue()
-  })
+  });
   OB.APRM.AddPayment.paymentMethodMulticurrency(view, form, true);
   OB.APRM.AddPayment.checkSingleActionAvailable(form);
   if (trxtype !== "") {

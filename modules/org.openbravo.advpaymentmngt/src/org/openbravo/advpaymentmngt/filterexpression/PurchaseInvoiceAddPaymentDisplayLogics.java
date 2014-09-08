@@ -82,4 +82,10 @@ public class PurchaseInvoiceAddPaymentDisplayLogics extends AddPaymentDisplayLog
     return BigDecimal.ZERO;
   }
 
+  @Override
+  public boolean getBankStatementLineDisplayLogic(Map<String, String> requestMap)
+      throws JSONException {
+    // BankStatementLineDisplayLogic
+    return false;
+  }
 }

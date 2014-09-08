@@ -237,4 +237,14 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
     }
     return null;
   }
+
+  @Override
+  public String getBankStatementLineAmount(Map<String, String> requestMap) throws JSONException {
+    JSONObject context = new JSONObject(requestMap.get("context"));
+    if (context.has("depositamt") && context.has("withdrawalamt")) {
+      return new BigDecimal(context.getString("depositamt")).subtract(
+          new BigDecimal(context.getString("withdrawalamt"))).toString();
+    }
+    return BigDecimal.ZERO.toPlainString();
+  }
 }

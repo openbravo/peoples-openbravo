@@ -38,6 +38,9 @@ public abstract class AddPaymentDisplayLogicsHandler {
   public abstract boolean getCreditToUseDisplayLogic(Map<String, String> requestMap)
       throws JSONException;
 
+  public abstract boolean getBankStatementLineDisplayLogic(Map<String, String> requestMap)
+      throws JSONException;
+
   protected abstract long getSeq();
 
   public boolean getOverpaymentActionDisplayLogic(Map<String, String> requestMap)
@@ -60,4 +63,5 @@ public abstract class AddPaymentDisplayLogicsHandler {
     }
 
   }
+
 }

@@ -66,6 +66,8 @@ public class AddPaymentDisplayLogicsExpression implements FilterExpression {
           return handler.getCreditToUseDisplayLogic(requestMap) ? "Y" : "N";
         case OverpaymentAction:
           return handler.getOverpaymentActionDisplayLogic(requestMap) ? "Y" : "N";
+        case BankStatementLine:
+          return handler.getBankStatementLineDisplayLogic(requestMap) ? "Y" : "N";
         }
       } catch (Exception e) {
         log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(),
@@ -110,7 +112,8 @@ public class AddPaymentDisplayLogicsExpression implements FilterExpression {
 
   private enum Parameters {
     Organization("ad_org_id_display_logic"), Document("trxtype_display_logic"), CreditToUse(
-        "credit_to_use_display_logic"), OverpaymentAction("overpayment_action_display_logic");
+        "credit_to_use_display_logic"), OverpaymentAction("overpayment_action_display_logic"), BankStatementLine(
+        "bslamount_display_logic");
 
     private String columnname;
 

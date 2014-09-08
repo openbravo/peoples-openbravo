@@ -156,4 +156,10 @@ public class PaymentInAddPaymentDefaultValues extends AddPaymentDefaultValuesHan
     return "";
   }
 
+  @Override
+  public String getBankStatementLineAmount(Map<String, String> requestMap) throws JSONException {
+    // BankStatementLineAmount
+    return "";
+  }
+
 }

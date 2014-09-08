@@ -84,4 +84,11 @@ public class PaymentInAddPaymentDisplayLogics extends AddPaymentDisplayLogicsHan
     return payment;
   }
 
+  @Override
+  public boolean getBankStatementLineDisplayLogic(Map<String, String> requestMap)
+      throws JSONException {
+    // BankStatementLineDisplayLogic
+    return false;
+  }
+
 }

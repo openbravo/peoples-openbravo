@@ -96,4 +96,19 @@ public class TransactionAddPaymentDisplayLogics extends AddPaymentDisplayLogicsH
   BigDecimal getDefaultGeneratedCredit(Map<String, String> requestMap) throws JSONException {
     return BigDecimal.ZERO;
   }
+
+  @Override
+  public boolean getBankStatementLineDisplayLogic(Map<String, String> requestMap)
+      throws JSONException {
+    JSONObject context = new JSONObject(requestMap.get("context"));
+
+    // BankStatementLineDisplayLogic
+    if (context.has("trxtype")) {
+      return true;
+    } else {
+      return false;
+
+    }
+
+  }
 }

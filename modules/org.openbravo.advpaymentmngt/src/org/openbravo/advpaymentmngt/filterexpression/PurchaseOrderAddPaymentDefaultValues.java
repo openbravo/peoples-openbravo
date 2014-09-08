@@ -144,4 +144,10 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
     return OBDateUtils.formatDate(new Date());
   }
 
+  @Override
+  public String getBankStatementLineAmount(Map<String, String> requestMap) throws JSONException {
+    // BankStatementLineAmount
+    return "";
+  }
+
 }

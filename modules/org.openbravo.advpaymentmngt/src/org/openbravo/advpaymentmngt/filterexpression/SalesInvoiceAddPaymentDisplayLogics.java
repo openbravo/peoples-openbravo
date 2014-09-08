@@ -74,4 +74,10 @@ public class SalesInvoiceAddPaymentDisplayLogics extends AddPaymentDisplayLogics
     return OBDal.getInstance().get(Invoice.class, context.getString("inpcInvoiceId"));
   }
 
+  @Override
+  public boolean getBankStatementLineDisplayLogic(Map<String, String> requestMap)
+      throws JSONException {
+    // BankStatementLineDisplayLogic
+    return false;
+  }
 }
