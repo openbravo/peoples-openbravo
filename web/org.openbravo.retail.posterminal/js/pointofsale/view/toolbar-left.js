@@ -199,16 +199,19 @@ enyo.kind({
   disabledChanged: function (isDisabled) {
     // if the button is requested to be enabled, verify that the conditions are met
     if (isDisabled === false) {
-      // disable it unless all conditions are met
+      // by default, disabled
       isDisabled = true;
-      if (this.model) {
-        var receipt = this.model.get('order');
-        if (receipt) {
-          if (receipt.get('id') && receipt.get('bp') && receipt.get('bp').get('id')) {
-            if (receipt.get('isEditable') === false && !receipt.get('isLayaway')) {
-              isDisabled = true;
-            } else {
-              isDisabled = false;
+      if (SynchronizationHelper.isSynchronized()) {
+        if (this.model) {
+          var receipt = this.model.get('order');
+          if (receipt) {
+            if (receipt.get('id') && receipt.get('documentNo') && receipt.get('documentNo').length > 3 && receipt.get('bp') && receipt.get('bp').get('id')) {
+              if (receipt.get('lines') && receipt.get('lines').length > 0) {
+                if (receipt.get('hasbeenpaid') === 'N') {
+                  // enable it if all conditions are met
+                  isDisabled = false;
+                }
+              }
             }
           }
         }
