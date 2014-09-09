@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UnMatchTransactionActionHandler extends BaseActionHandler {
-  private static Logger log = LoggerFactory.getLogger(UnMatchTransactionActionHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(UnMatchTransactionActionHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
@@ -60,7 +60,7 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
       }
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      log.error(e.getMessage(), e);
+      log.error("Error Unmatching Transaction", e);
       try {
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
@@ -70,8 +70,7 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
         errorMessage.put("text", message);
         result.put("message", errorMessage);
       } catch (Exception e2) {
-        log.error(e.getMessage(), e2);
-        // do nothing, give up
+        log.error("Message could not be built", e2);
       }
     } finally {
       OBContext.restorePreviousMode();

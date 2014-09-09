@@ -96,12 +96,12 @@ public class APRM_MatchingUtility {
    * 
    * @param reconciliation
    *          Reconciliation to be checked
-   * @return
+   * @return List of transaction manually reconciled (without bank statement)
    */
   public static List<FIN_FinaccTransaction> getManualReconciliationLines(
       FIN_Reconciliation reconciliation) {
     List<FIN_FinaccTransaction> result = new ArrayList<FIN_FinaccTransaction>();
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     try {
       final OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance().createCriteria(
           FIN_ReconciliationLine_v.class);
@@ -180,7 +180,7 @@ public class APRM_MatchingUtility {
    *          String with the action of the process. {P, D, R}
    * @param reconciliation
    *          Reconciliation that needs to be processed
-   * @return
+   * @return returns error/success message
    * @throws Exception
    */
   public static OBError processReconciliation(String strAction, FIN_Reconciliation reconciliation)
@@ -243,6 +243,8 @@ public class APRM_MatchingUtility {
         }
         OBDal.getInstance().save(transaction);
         OBDal.getInstance().save(bankStatementLine);
+        // Required to persist current matching so that it is not rollbacked afterwards because of a
+        // future error
         OBDal.getInstance().flush();
         OBDal.getInstance().getConnection().commit();
       }
@@ -367,7 +369,7 @@ public class APRM_MatchingUtility {
     obc.add(Restrictions.eq(FIN_BankStatementLine.PROPERTY_LINENO, bsline.getLineNo()));
     obc.add(Restrictions.ne(FIN_BankStatementLine.PROPERTY_ID, bsline.getId()));
     obc.add(Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION));
-
+    // Following list should contain just 2 elements maximum
     final List<FIN_BankStatementLine> splitLines = obc.list();
 
     if (!splitLines.isEmpty()) {
@@ -437,7 +439,7 @@ public class APRM_MatchingUtility {
       }
       OBError msg = processTransaction(vars, conn, "R", transaction);
       if ("Success".equals(msg.getType())) {
-        OBContext.setAdminMode();
+        OBContext.setAdminMode(false);
         try {
           OBDal.getInstance().remove(transaction);
           OBDal.getInstance().flush();
@@ -481,7 +483,7 @@ public class APRM_MatchingUtility {
       }
       OBError msg = FIN_AddPayment.processPayment(vars, conn, "R", payment);
       if ("Success".equals(msg.getType())) {
-        OBContext.setAdminMode();
+        OBContext.setAdminMode(false);
         try {
           OBDal.getInstance().remove(payment);
           OBDal.getInstance().flush();
@@ -618,8 +620,7 @@ public class APRM_MatchingUtility {
       final StringBuilder whereClause = new StringBuilder();
       whereClause.append(" as bsl ");
       whereClause.append(" where bsl.").append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
-      whereClause.append(".").append(FIN_BankStatement.PROPERTY_ACCOUNT).append(".id = '");
-      whereClause.append(strFinancialAccountId).append("'");
+      whereClause.append(".").append(FIN_BankStatement.PROPERTY_ACCOUNT).append(".id = :account");
       whereClause.append(" and bsl.bankStatement.processed = 'Y'");
       if (!isLastReconciliation) {
         whereClause.append(" and  bsl.").append(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE)
@@ -631,6 +632,7 @@ public class APRM_MatchingUtility {
       whereClause.append(", bsl.").append(FIN_BankStatementLine.PROPERTY_BPARTNERNAME);
       final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance().createQuery(
           FIN_BankStatementLine.class, whereClause.toString());
+      obData.setNamedParameter("account", strFinancialAccountId);
       if (!isLastReconciliation) {
         obData.setNamedParameter("endingdate", reconciliation.getEndingDate());
       }
@@ -727,7 +729,7 @@ public class APRM_MatchingUtility {
         }
       }
     } catch (Exception ex) {
-      throw new OBException(ex.getMessage());
+      throw new OBException(ex);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -743,7 +745,8 @@ public class APRM_MatchingUtility {
     obc.addOrder(Order.desc(FIN_ReconciliationLine_v.PROPERTY_TRANSACTIONDATE));
     obc.setMaxResults(1);
     FIN_ReconciliationLine_v line = ((FIN_ReconciliationLine_v) obc.uniqueResult());
-    return (line != null) ? line.getTransactionDate() : null;
+    // If there are no lines use reconciliation ending Date
+    return line != null ? line.getTransactionDate() : reconciliation.getEndingDate();
   }
 
   /**

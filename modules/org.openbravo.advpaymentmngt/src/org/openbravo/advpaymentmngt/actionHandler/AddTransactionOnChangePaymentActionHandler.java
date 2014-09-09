@@ -22,22 +22,22 @@ package org.openbravo.advpaymentmngt.actionHandler;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handler in Match Statement window | Add new transaction, that controls the Payment field on
  * change event
  * 
- * @author openbravo
- * 
  */
 public class AddTransactionOnChangePaymentActionHandler extends BaseActionHandler {
-  protected Logger log = Logger.getLogger(AddTransactionOnChangePaymentActionHandler.class);
+  private static final Logger log = LoggerFactory
+      .getLogger(AddTransactionOnChangePaymentActionHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
@@ -68,8 +68,8 @@ public class AddTransactionOnChangePaymentActionHandler extends BaseActionHandle
           result.put("description", payment.getDescription());
         }
       }
-    } catch (Exception ignore) {
-      log.error(ignore);
+    } catch (Exception e) {
+      log.error("Error when executing AddTransactionOnChangePaymentActionHandler", e);
     } finally {
       OBContext.restorePreviousMode();
     }

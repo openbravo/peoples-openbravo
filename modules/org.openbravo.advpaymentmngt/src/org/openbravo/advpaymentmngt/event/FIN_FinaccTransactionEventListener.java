@@ -22,7 +22,6 @@ package org.openbravo.advpaymentmngt.event;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -34,9 +33,12 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FIN_FinaccTransactionEventListener extends EntityPersistenceEventObserver {
-  protected Logger logger = Logger.getLogger(this.getClass());
+  private static final Logger logger = LoggerFactory
+      .getLogger(FIN_FinaccTransactionEventListener.class);
 
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       FIN_FinaccTransaction.ENTITY_NAME) };

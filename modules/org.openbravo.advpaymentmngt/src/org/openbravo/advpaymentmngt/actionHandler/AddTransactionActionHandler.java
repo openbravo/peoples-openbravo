@@ -85,7 +85,7 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
           strDepositAmount, strWithdrawalamt, strDescription, params);
     } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      log.error(e.getMessage(), e);
+      log.error("Error when executing AddTransactionActionHandler", e);
       try {
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         final JSONArray actions = APRM_MatchingUtility.createMessageInProcessView(ex.getMessage(),
@@ -93,8 +93,7 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
         result.put("responseActions", actions);
         result.put("retryExecution", true);
       } catch (Exception e2) {
-        log.error(e2.getMessage(), e2);
-        // do nothing, give up
+        log.error("Error message could not be built", e2);
       }
     }
     return result;

@@ -65,11 +65,7 @@ public class TransactionAddPaymentDisplayLogics extends AddPaymentDisplayLogicsH
         Organization org = OBDal.getInstance().get(Organization.class, context.get("ad_org_id"));
         BigDecimal customerCredit = new AdvPaymentMngtDao().getCustomerCredit(bpartner,
             "RCIN".equals(document), org);
-        if (customerCredit.signum() > 0) {
-          return true;
-        } else {
-          return false;
-        }
+        return customerCredit.signum() > 0;
       } else {
         return false;
       }

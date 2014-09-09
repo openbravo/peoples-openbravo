@@ -53,11 +53,7 @@ public abstract class AddPaymentDisplayLogicsHandler {
     if (context.has("difference")) {
       double diff = context.getDouble("difference");
       BigDecimal difference = new BigDecimal(diff);
-      if (difference.signum() > 0) {
-        return true;
-      } else {
-        return false;
-      }
+      return (difference.signum() > 0);
     } else {
       return false;
     }

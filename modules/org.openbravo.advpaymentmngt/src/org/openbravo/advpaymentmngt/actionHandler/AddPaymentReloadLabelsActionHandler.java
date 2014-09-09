@@ -19,7 +19,6 @@
 
 package org.openbravo.advpaymentmngt.actionHandler;
 
-import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
@@ -37,7 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
-  private static Logger log = LoggerFactory.getLogger(AddPaymentReloadLabelsActionHandler.class);
+  private static final Logger log = LoggerFactory
+      .getLogger(AddPaymentReloadLabelsActionHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
@@ -60,12 +60,13 @@ public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
       obcBP.add(Restrictions.eq(ElementTrl.PROPERTY_ID, businessPartner.getApplicationElement()
           .getId()));
       obcBP.add(Restrictions.eq(ElementTrl.PROPERTY_LANGUAGE, language));
-      final List<ElementTrl> obcListBP = obcBP.list();
-      if (obcListBP.size() > 0) {
+      obcBP.setMaxResults(1);
+      final ElementTrl elementBP = (ElementTrl) obcBP.uniqueResult();
+      if (elementBP != null) {
         if (issotrx) {
-          values.put("businessPartner", obcListBP.get(0).getName());
+          values.put("businessPartner", elementBP.getName());
         } else {
-          values.put("businessPartner", obcListBP.get(0).getPurchaseOrderName());
+          values.put("businessPartner", elementBP.getPurchaseOrderName());
         }
       } else {
         if (issotrx) {
@@ -80,12 +81,13 @@ public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
       obcFA.add(Restrictions.eq(ElementTrl.PROPERTY_ID, financialAccount.getApplicationElement()
           .getId()));
       obcFA.add(Restrictions.eq(ElementTrl.PROPERTY_LANGUAGE, language));
-      final List<ElementTrl> obcListFA = obcFA.list();
-      if (obcListFA.size() > 0) {
+      obcFA.setMaxResults(1);
+      final ElementTrl elementFA = (ElementTrl) obcFA.uniqueResult();
+      if (elementFA != null) {
         if (issotrx) {
-          values.put("financialAccount", obcListFA.get(0).getName());
+          values.put("financialAccount", elementFA.getName());
         } else {
-          values.put("financialAccount", obcListFA.get(0).getPurchaseOrderName());
+          values.put("financialAccount", elementFA.getPurchaseOrderName());
         }
       } else {
         if (issotrx) {
@@ -103,7 +105,7 @@ public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
       result.put("message", errorMessage);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      log.error(e.getMessage(), e);
+      log.error("Error obtaining labels when executing AddPaymentReloadLabelsActionHandler", e);
       try {
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
@@ -113,7 +115,7 @@ public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
         errorMessage.put("text", message);
         result.put("message", errorMessage);
       } catch (Exception e2) {
-        log.error(e.getMessage(), e2);
+        log.error("Error message could not be built", e2);
         // do nothing, give up
       }
     } finally {

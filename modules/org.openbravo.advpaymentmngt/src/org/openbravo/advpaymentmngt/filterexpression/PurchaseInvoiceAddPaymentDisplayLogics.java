@@ -61,11 +61,7 @@ public class PurchaseInvoiceAddPaymentDisplayLogics extends AddPaymentDisplayLog
       if (bpartner != null) {
         Organization org = invoice.getOrganization();
         BigDecimal customerCredit = new AdvPaymentMngtDao().getCustomerCredit(bpartner, false, org);
-        if (customerCredit.signum() > 0) {
-          return true;
-        } else {
-          return false;
-        }
+        return customerCredit.signum() > 0;
       } else {
         return false;
       }

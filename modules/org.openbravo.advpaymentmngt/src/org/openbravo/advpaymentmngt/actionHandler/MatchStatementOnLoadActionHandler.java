@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
-  final private static Logger log = LoggerFactory
+  private static final Logger log = LoggerFactory
       .getLogger(MatchStatementOnLoadActionHandler.class);
 
   @Override
@@ -102,7 +102,7 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       }
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      log.error("Exception handling the match statement", e);
+      log.error("Exception loading match statement", e);
 
       try {
         jsonResponse = new JSONObject();

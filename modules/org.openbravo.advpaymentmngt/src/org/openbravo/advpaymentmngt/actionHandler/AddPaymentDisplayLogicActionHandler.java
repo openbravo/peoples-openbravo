@@ -40,7 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AddPaymentDisplayLogicActionHandler extends BaseActionHandler {
-  private static Logger log = LoggerFactory.getLogger(AddPaymentDisplayLogicActionHandler.class);
+  private static final Logger log = LoggerFactory
+      .getLogger(AddPaymentDisplayLogicActionHandler.class);
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String data) {
@@ -78,7 +79,7 @@ public class AddPaymentDisplayLogicActionHandler extends BaseActionHandler {
       result.put("message", errorMessage);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      log.error(e.getMessage(), e);
+      log.error("Error executing AddPaymentDisplayLogicActionHandler", e);
       try {
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
@@ -88,8 +89,9 @@ public class AddPaymentDisplayLogicActionHandler extends BaseActionHandler {
         errorMessage.put("text", message);
         result.put("message", errorMessage);
       } catch (Exception e2) {
-        log.error(e.getMessage(), e2);
-        // do nothing, give up
+        log.error(
+            "Error happend when building error messsage for AddPaymentDisplayLogicActionHandler",
+            e2);
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -101,7 +103,7 @@ public class AddPaymentDisplayLogicActionHandler extends BaseActionHandler {
    * The request map is <String, Object> because includes the HTTP request and HTTP session, is not
    * required to handle process parameters
    */
-  protected Map<String, String> fixRequestMap(Map<String, Object> parameters) {
+  private Map<String, String> fixRequestMap(Map<String, Object> parameters) {
     final Map<String, String> retval = new HashMap<String, String>();
     for (Entry<String, Object> entries : parameters.entrySet()) {
       if (entries.getKey().equals(KernelConstants.HTTP_REQUEST)

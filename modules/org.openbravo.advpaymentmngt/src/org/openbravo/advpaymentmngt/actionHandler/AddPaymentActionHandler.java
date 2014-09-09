@@ -34,6 +34,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
+import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
@@ -92,7 +93,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
       if (jsonRequest.has("inpwindowId") && jsonRequest.get("inpwindowId") != JSONObject.NULL) {
         openedFromMenu = false;
-        if ("94EAA455D2644E04AB25D93BE5157B6D".equals(jsonRequest.getString("inpwindowId"))) {
+        if (APRMConstants.TRANSACTION_WINDOW_ID.equals(jsonRequest.getString("inpwindowId"))) {
           comingFrom = "TRANSACTION";
         }
       } else {

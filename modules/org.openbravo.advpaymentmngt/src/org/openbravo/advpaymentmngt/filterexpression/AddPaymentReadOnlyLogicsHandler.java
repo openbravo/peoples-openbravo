@@ -59,13 +59,13 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
 
   protected abstract long getSeq();
 
-  public boolean getConvertedAmountReadOnlyLogic(Map<String, String> requestMap)
+  protected boolean getConvertedAmountReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException {
     String strContext = requestMap.get("context");
     if (strContext == null) {
       return false;
     }
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     JSONObject context = new JSONObject(strContext);
     String strWindow = context.getString("inpwindowId");
     Window window = OBDal.getInstance().get(Window.class, strWindow == null ? "" : strWindow);
@@ -75,23 +75,19 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
           "NotAllowChangeExchange", true, OBContext.getOBContext().getCurrentClient(), OBContext
               .getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), window);
-      if ("Y".equals(value)) {
-        return true;
-      } else {
-        return false;
-      }
+      return "Y".equals(value);
     } catch (PropertyNotFoundException e) {
-      // logger.log("Property not found \n");
+      logger.log("Property not found");
       return false;
     } catch (PropertyException e) {
-      // logger.log("PropertyException, there is a conflict for NotAllowChangeExchange property\n");
+      logger.logln("PropertyException, there is a conflict for NotAllowChangeExchange property");
       return false;
     } finally {
       OBContext.restorePreviousMode();
     }
   }
 
-  public boolean getConversionRateReadOnlyLogic(Map<String, String> requestMap)
+  protected boolean getConversionRateReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException {
     String strContext = requestMap.get("context");
     if (strContext == null) {

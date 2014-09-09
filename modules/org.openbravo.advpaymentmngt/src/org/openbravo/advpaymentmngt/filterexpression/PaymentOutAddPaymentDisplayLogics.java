@@ -60,11 +60,7 @@ public class PaymentOutAddPaymentDisplayLogics extends AddPaymentDisplayLogicsHa
       if (bpartner != null) {
         Organization org = paymentOut.getOrganization();
         BigDecimal customerCredit = new AdvPaymentMngtDao().getCustomerCredit(bpartner, false, org);
-        if (customerCredit.signum() > 0) {
-          return true;
-        } else {
-          return false;
-        }
+        return customerCredit.signum() > 0;
       } else {
         return false;
       }

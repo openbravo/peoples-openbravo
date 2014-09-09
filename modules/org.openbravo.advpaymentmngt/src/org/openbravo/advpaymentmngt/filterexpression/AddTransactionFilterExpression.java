@@ -16,9 +16,8 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 
 public class AddTransactionFilterExpression implements FilterExpression {
 
-  private Logger log = Logger.getLogger(AddTransactionFilterExpression.class);
+  private static final Logger log = Logger.getLogger(AddTransactionFilterExpression.class);
   private Map<String, String> requestMap;
-  String result = null;
 
   @Override
   public String getExpression(Map<String, String> _requestMap) {

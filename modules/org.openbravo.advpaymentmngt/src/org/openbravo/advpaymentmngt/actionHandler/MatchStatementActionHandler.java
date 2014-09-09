@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MatchStatementActionHandler extends BaseProcessActionHandler {
-  final private static Logger log = LoggerFactory.getLogger(MatchStatementActionHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(MatchStatementActionHandler.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
