@@ -42,14 +42,8 @@ public class LCMatchingCancelHandler extends BaseActionHandler {
       JSONObject message = new JSONObject();
       final String strLCCostId = jsonContent.getString("M_LC_Cost_ID");
       LandedCostCost lcCost = OBDal.getInstance().get(LandedCostCost.class, strLCCostId);
-      if (lcCost.getMatchingCostAdjustment() != null) {
-        message = CancelCostAdjustment.doCancelCostAdjustment(lcCost.getMatchingCostAdjustment());
-      }
-      // Reload in case the cancel cost adjustment has cleared the session.
-      lcCost = OBDal.getInstance().get(LandedCostCost.class, strLCCostId);
-      lcCost.setMatchingCostAdjustment(null);
-      lcCost.setMatched(false);
-      OBDal.getInstance().save(lcCost);
+
+      message = doCancelMatchingLandedCost(lcCost);
 
       jsonResponse.put("message", message);
     } catch (OBException e) {
@@ -89,5 +83,22 @@ public class LCMatchingCancelHandler extends BaseActionHandler {
       }
     }
     return jsonResponse;
+  }
+
+  public static JSONObject doCancelMatchingLandedCost(LandedCostCost lcCost) throws JSONException {
+
+    String strLCCostId = lcCost.getId();
+    JSONObject message = new JSONObject();
+    if (lcCost.getMatchingCostAdjustment() != null) {
+      message = CancelCostAdjustment.doCancelCostAdjustment(lcCost.getMatchingCostAdjustment());
+    }
+    // Reload in case the cancel cost adjustment has cleared the session.
+    lcCost = OBDal.getInstance().get(LandedCostCost.class, strLCCostId);
+    lcCost.setMatchingCostAdjustment(null);
+    lcCost.setMatched(false);
+    lcCost.setMatchingAmount(null);
+    OBDal.getInstance().save(lcCost);
+
+    return message;
   }
 }

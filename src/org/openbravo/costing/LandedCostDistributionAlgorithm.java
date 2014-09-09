@@ -18,10 +18,60 @@
  */
 package org.openbravo.costing;
 
+import java.util.List;
+
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
+import org.openbravo.service.db.DbUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class LandedCostDistributionAlgorithm {
+  private static Logger log = LoggerFactory.getLogger(LandedCostDistributionAlgorithm.class);
 
   public abstract void distributeAmount(LandedCostCost lcCost, boolean isMatchingAdjustment);
 
+  public JSONObject cancelDistributeAmount(LandedCostCost lcCost) {
+
+    JSONObject messageResponse = new JSONObject();
+    try {
+      messageResponse.put("severity", "success");
+      int i = 0;
+      List<String> idList = OBDao.getIDListFromOBObject(lcCost.getLandedCostReceiptLineAmtList());
+
+      for (String id : idList) {
+        i++;
+        LCReceiptLineAmt lcrla = OBDal.getInstance().get(LCReceiptLineAmt.class, id);
+        lcCost.getLandedCostReceiptLineAmtList().remove(lcrla);
+        OBDal.getInstance().remove(lcrla);
+        if (i % 100 == 0) {
+          OBDal.getInstance().save(lcCost);
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+      }
+
+      OBDal.getInstance().save(lcCost);
+      OBDal.getInstance().flush();
+    } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
+      log.error("Error in LCMatchingProcessHandler: " + e.getMessage(), e);
+      try {
+        Throwable ex = DbUtility.getUnderlyingSQLException(e);
+        String strMessage = OBMessageUtils.translateError(ex.getMessage()).getMessage();
+        messageResponse.put("severity", "error");
+        messageResponse.put("title", OBMessageUtils.messageBD("Error"));
+        messageResponse.put("text", strMessage);
+      } catch (Exception ignore) {
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return messageResponse;
+  }
 }

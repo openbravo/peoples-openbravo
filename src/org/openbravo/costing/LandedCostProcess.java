@@ -86,9 +86,10 @@ public class LandedCostProcess {
         return message;
       }
       distributeAmounts(landedCost);
-      generateCostAdjustment(landedCost.getId(), message);
+      CostAdjustment ca = generateCostAdjustment(landedCost.getId(), message);
 
       landedCost = OBDal.getInstance().get(LandedCost.class, landedCost.getId());
+      landedCost.setCostAdjustment(ca);
       landedCost.setDocumentStatus("CO");
       landedCost.setProcessed(Boolean.TRUE);
       OBDal.getInstance().save(landedCost);
@@ -172,7 +173,7 @@ public class LandedCostProcess {
     OBDal.getInstance().flush();
   }
 
-  private void generateCostAdjustment(String strLandedCostId, JSONObject message)
+  private CostAdjustment generateCostAdjustment(String strLandedCostId, JSONObject message)
       throws JSONException {
     LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLandedCostId);
     Date referenceDate = landedCost.getReferenceDate();
@@ -219,6 +220,8 @@ public class LandedCostProcess {
     }
 
     CostAdjustmentProcess.doProcessCostAdjustment(ca);
+
+    return ca;
   }
 
   private LandedCostDistributionAlgorithm getDistributionAlgorithm(LCDistributionAlgorithm lcDistAlg) {
