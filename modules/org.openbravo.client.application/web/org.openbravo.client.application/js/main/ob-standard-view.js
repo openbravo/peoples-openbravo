@@ -2189,7 +2189,10 @@ isc.OBStandardView.addProperties({
                   id: deleteData.ids[i]
                 });
               }
-              currentGrid.data.handleUpdate('remove', recordInfos, false, req);
+              view.viewGrid.data.handleUpdate('remove', recordInfos, false, req);
+              if (view.treeGrid) {
+                view.treeGrid.data.handleUpdate('remove', recordInfos, false, req);
+              }
               if (updateTotalRows) {
                 currentGrid.data.totalRows = currentGrid.data.getLength();
               }
@@ -2203,7 +2206,6 @@ isc.OBStandardView.addProperties({
             } else {
               view.refreshChildViews();
             }
-
             view.refreshParentRecord();
           } else {
             // get the error message from the dataObject 
@@ -2246,6 +2248,13 @@ isc.OBStandardView.addProperties({
               refreshGrid: true
             });
           } else {
+            if (view.isShowingTree) {
+              deleteData = {};
+              deleteData.entity = view.entity;
+              deleteData.ids = [];
+              length = selection.length;
+              deleteData.ids.push(selection[0][OB.Constants.ID]);
+            }
             // note totalrows is used when inserting a new row, to determine after which
             // record to add a new row
             doUpdateTotalRows = (currentGrid.data.getLength() === currentGrid.data.totalRows);

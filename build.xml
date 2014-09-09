@@ -1158,9 +1158,9 @@ export.database: exports database structure and data to xml files.
         <pathelement path="${base.lib}/runtime/postgresql-9.0-801.jdbc4.jar" />
         <pathelement path="${base.lib}/runtime/ojdbc6.jar" />
         <pathelement path="${base.lib}/runtime/commons-collectionsi-3.2.1.jar" />
-        <pathelement path="${base.lib}/runtime/ant-1.7.1.jar" />
-        <pathelement path="${base.lib}/runtime/ant-launcher.jar" />
-        <pathelement path="${base.lib}/runtime/ant-apache-log4j.jar" />
+        <pathelement path="${base.lib}/runtime/ant-1.9.2.jar" />
+        <pathelement path="${base.lib}/runtime/ant-launcher-1.9.2.jar" />
+        <pathelement path="${base.lib}/runtime/ant-apache-log4j-1.9.2.jar" />
         <pathelement path="${base.lib}/runtime/ant-nodeps.jar" />
       </classpath>
     </java>
