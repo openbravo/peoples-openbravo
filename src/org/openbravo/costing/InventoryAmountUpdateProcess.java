@@ -174,9 +174,12 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
 
   protected void createInventories(String lineId, Warehouse warehouse, String ruleId,
       Set<String> childOrgs, Date date) {
+
+    CostingRule costRule = OBDal.getInstance().get(CostingRule.class, ruleId);
     InventoryAmountUpdateLine line = OBDal.getInstance().get(InventoryAmountUpdateLine.class,
         lineId);
-    ScrollableResults stockLines = getStockLines(childOrgs, date, line.getProduct(), warehouse);
+    ScrollableResults stockLines = getStockLines(childOrgs, date, line.getProduct(), warehouse,
+        costRule.isFixBackdatedTransactions());
     // The key of the Map is the concatenation of orgId and warehouseId
     Map<String, String> inventories = new HashMap<String, String>();
     Map<String, Long> maxLineNumbers = new HashMap<String, Long>();
@@ -249,8 +252,10 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
   }
 
   private ScrollableResults getStockLines(Set<String> childOrgs, Date date, Product product,
-      Warehouse warehouse) {
+      Warehouse warehouse, boolean backdatedTransactionsFixed) {
     StringBuffer select = new StringBuffer();
+    StringBuffer subSelect = new StringBuffer();
+
     select.append("select trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id");
     select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
     select.append(", trx." + MaterialTransaction.PROPERTY_ORDERUOM + ".id");
@@ -262,7 +267,24 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     select.append("    join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
     select.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     if (date != null) {
-      select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+      if (backdatedTransactionsFixed) {
+        select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
+      } else {
+        subSelect.append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+            + ")");
+        subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+        subSelect.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
+        Query trxsubQry = OBDal.getInstance().getSession().createQuery(subSelect.toString());
+        trxsubQry.setParameter("date", date);
+        Object trxprocessDate = trxsubQry.uniqueResult();
+        if (trxprocessDate != null) {
+          date = (Date) trxprocessDate;
+          select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+              + " < :date");
+        } else {
+          select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
+        }
+      }
     }
     if (warehouse != null) {
       select.append("   and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
