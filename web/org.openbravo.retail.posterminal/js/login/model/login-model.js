@@ -10,8 +10,6 @@
 /*global OB, _, enyo, Backbone, window, console, SynchronizationHelper, BigDecimal, document, setTimeout, setInterval */
 
 (function () {
-  var executeWhenDOMReady;
-
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
     initialize: function () {
       var me = this;
@@ -133,6 +131,11 @@
             } else {
               OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');
             }
+          }, function (data) {
+            // connection error.
+            OB.UTIL.Debug.execute(function () {
+              console.error("Error while retrieving the terminal info " + data.exception);
+            });
           });
         }
       });
@@ -317,7 +320,6 @@
         criteria: {}
       });
 
-
       this.get('dataSyncModels').push({
         model: OB.Model.Order,
         className: 'org.openbravo.retail.posterminal.OrderLoader',
@@ -382,14 +384,6 @@
         }
 
         OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {});
-      });
-
-      this.on('logout', function () {
-        // Logged out. go to login window
-        me.off('loginfail');
-        // Redirect to login window
-        window.localStorage.setItem('target-window', window.location.href);
-        //window.location = window.location.pathname + '?terminal=' + window.encodeURIComponent(OB.POS.paramTerminal);
       });
 
       OB.Model.Terminal.prototype.initialize.call(me);
@@ -462,6 +456,14 @@
     },
 
     renderMain: function () {
+      if (!this.get('terminal')) {
+        OB.UTIL.Debug.execute(function () {
+          // show an error while in debug mode to help debugging and testing
+          console.error("OB.MobileApp.model.get('terminal') properties have not been loaded");
+        });
+        return;
+      }
+
       var i, paymentcashcurrency, paymentcash, paymentlegacy, max, me = this,
           defaultpaymentcash, defaultpaymentcashcurrency;
 
@@ -949,16 +951,5 @@
   OB.I18N = window.OB.I18N || {};
 
   OB.I18N.labels = {};
-
-  executeWhenDOMReady = function () {
-    if (document.readyState === "interactive" || document.readyState === "complete") {
-      OB.POS.modelterminal.off('loginfail');
-    } else {
-      setTimeout(function () {
-        executeWhenDOMReady();
-      }, 50);
-    }
-  };
-  executeWhenDOMReady();
 
 }());
