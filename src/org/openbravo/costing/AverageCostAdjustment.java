@@ -378,9 +378,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     return expectedCostAmt.subtract(currentCost);
   }
 
-  // TODO: el trx process date de la trx sea >= startdate de la costing rule
-  // hacerlo aquí y en el insert de las lineas
-  // hacerlo tb en el resto de getRelatedTrxs del FIFO y Std Cost adjs
   private ScrollableResults getRelatedTransactions() {
     CostingRule costingRule = getCostingRule();
     HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
