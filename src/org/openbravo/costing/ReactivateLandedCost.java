@@ -87,7 +87,7 @@ public class ReactivateLandedCost extends BaseActionHandler {
     landedCost = OBDal.getInstance().get(LandedCost.class, strLCostId);
     for (LandedCostCost lcc : landedCost.getLandedCostCostList()) {
       if (lcc.isMatched()) {
-        message = LCMatchingCancelHandler.doCancelMatchingLandedCost(lcc);
+        message = LCMatchingCancelHandler.doCancelMatchingLandedCost(lcc.getId());
       }
       if (message.has("severity") && !message.get("severity").equals("success")) {
         return message;

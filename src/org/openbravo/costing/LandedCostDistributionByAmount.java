@@ -114,6 +114,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
       lcrla.setGoodsShipmentLine(receiptline);
       lcrla.setMatchingAdjustment(isMatching);
       lcrla.setAmount(receiptAmt);
+      lcrla.setOrganization(lcCost.getOrganization());
       OBDal.getInstance().save(lcrla);
       if (i % 100 == 0) {
         OBDal.getInstance().flush();
