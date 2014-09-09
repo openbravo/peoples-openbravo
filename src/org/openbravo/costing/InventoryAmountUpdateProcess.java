@@ -273,9 +273,24 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         subSelect.append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
             + ")");
         subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-        subSelect.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
+        subSelect.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+        subSelect.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
+        subSelect.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
+        // Include only transactions that have its cost calculated
+        subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+        if (warehouse != null) {
+          subSelect.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+        }
+        subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
+            + ".id in (:orgs)");
+
         Query trxsubQry = OBDal.getInstance().getSession().createQuery(subSelect.toString());
         trxsubQry.setParameter("date", date);
+        trxsubQry.setParameter("product", product.getId());
+        if (warehouse != null) {
+          trxsubQry.setParameter("warehouse", warehouse.getId());
+        }
+        trxsubQry.setParameterList("orgs", childOrgs);
         Object trxprocessDate = trxsubQry.uniqueResult();
         if (trxprocessDate != null) {
           date = (Date) trxprocessDate;

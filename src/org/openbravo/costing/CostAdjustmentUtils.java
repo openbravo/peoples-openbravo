@@ -227,9 +227,25 @@ public class CostAdjustmentUtils {
       subSelect.append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + ")");
       subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-      subSelect.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
+      subSelect.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+      subSelect.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
+      subSelect.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
+      // Include only transactions that have its cost calculated
+      subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+      if (costDimensions.get(CostDimension.Warehouse) != null) {
+        subSelect.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+      }
+      subSelect
+          .append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+
       Query trxsubQry = OBDal.getInstance().getSession().createQuery(subSelect.toString());
       trxsubQry.setParameter("date", date);
+      trxsubQry.setParameter("product", product.getId());
+      if (costDimensions.get(CostDimension.Warehouse) != null) {
+        trxsubQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+      }
+      trxsubQry.setParameterList("orgs", orgs);
+
       Object trxprocessDate = trxsubQry.uniqueResult();
       if (trxprocessDate != null) {
         date = (Date) trxprocessDate;
@@ -306,9 +322,24 @@ public class CostAdjustmentUtils {
       subSelect.append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + ")");
       subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-      subSelect.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
+      subSelect.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+      subSelect.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
+      subSelect.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
+      // Include only transactions that have its cost calculated
+      subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+      if (costDimensions.get(CostDimension.Warehouse) != null) {
+        subSelect.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+      }
+      subSelect
+          .append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+
       Query trxsubQry = OBDal.getInstance().getSession().createQuery(subSelect.toString());
       trxsubQry.setParameter("date", date);
+      trxsubQry.setParameter("product", product.getId());
+      if (costDimensions.get(CostDimension.Warehouse) != null) {
+        trxsubQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+      }
+      trxsubQry.setParameterList("orgs", orgs);
       Object trxprocessDate = trxsubQry.uniqueResult();
       if (trxprocessDate != null) {
         date = (Date) trxprocessDate;
