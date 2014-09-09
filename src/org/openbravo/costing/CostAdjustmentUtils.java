@@ -234,7 +234,7 @@ public class CostAdjustmentUtils {
       if (trxprocessDate != null) {
         date = (Date) trxprocessDate;
         select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-            + " < :date");
+            + " <= :date");
       } else {
         select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
       }
@@ -313,7 +313,7 @@ public class CostAdjustmentUtils {
       if (trxprocessDate != null) {
         date = (Date) trxprocessDate;
         select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-            + " < :date");
+            + " <= :date");
       } else {
         select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
       }
