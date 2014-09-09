@@ -655,7 +655,9 @@ isc.OBSelectorItem.addProperties({
       click: function (form, item, icon) {
         var enteredValue = {};
         enteredValue[item.defaultPopupFilterField] = item.getEnteredValue();
-        item.openProcess([enteredValue]);
+        item.openProcess([enteredValue], {
+          processOwnerView: form.view
+        });
       }
     }];
 
@@ -847,16 +849,20 @@ isc.OBSelectorItem.addProperties({
     this.selectorWindow.open();
   },
 
-  openProcess: function (enteredValues) {
-    var standardWindow = this.form.view.standardWindow;
-    standardWindow.openProcess({
+  openProcess: function (enteredValues, additionalProcessProperties) {
+    var params, standardWindow = this.form.view.standardWindow;
+    params = {
       callerField: this,
       enteredValues: enteredValues,
       paramWindow: true,
       processId: this.processId,
       windowId: this.form.view.windowId,
       windowTitle: OB.I18N.getLabel('OBUISEL_AddNewRecord', [this.title])
-    });
+    };
+    if (additionalProcessProperties) {
+      isc.addProperties(params, additionalProcessProperties);
+    }
+    standardWindow.openProcess(params);
   },
 
   keyPress: function (item, form, keyName, characterValue) {
