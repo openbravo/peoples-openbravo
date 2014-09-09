@@ -37,7 +37,7 @@ OB.APRM.MatchStatement.onLoad = function (view) {
         OB.Utilities.Action.executeJSON(data.responseActions, null, null, view);
       }
       grid.dataSource = grid.dataSourceOrig;
-      view.onRefreshFunction(view);
+      grid.filterByEditor();
     };
     OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.MatchStatementOnLoadActionHandler', {}, params, onLoadCallback);
     if (grid && grid.parentElement && grid.parentElement.messageBar && grid.parentElement.messageBar.text && grid.parentElement.messageBar.text.contents) {
@@ -52,8 +52,12 @@ OB.APRM.MatchStatement.onLoad = function (view) {
 };
 
 OB.APRM.MatchStatement.onRefresh = function (view) {
-  var grid = view.theForm.getItem('match_statement').canvas.viewGrid;
-  grid.filterByEditor();
+  var grid = view.theForm.getItem('match_statement').canvas.viewGrid,
+      newCriteria = {};
+  newCriteria.criteria = [];
+  // add dummy criterion to force fetch
+  newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+  grid.fetchData(newCriteria);
 };
 
 OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall) {

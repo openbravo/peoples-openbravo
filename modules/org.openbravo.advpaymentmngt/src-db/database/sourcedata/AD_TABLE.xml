@@ -210,9 +210,9 @@ from FIN_BankStatementLine as bsl
  join bsl.bankStatement as bs
 left outer join bsl.financialAccountTransaction as fat
 left outer join bsl.businessPartner AS bp
+left outer join bsl.gLItem as glitem
 left outer join fat.businessPartner as transactionBP
 left outer join fat.gLItem as transactionGLItem
-left outer join bsl.gLItem as glitem
 @joinClause@
 where @additional_filters@
 and bs.processed = 'Y'
