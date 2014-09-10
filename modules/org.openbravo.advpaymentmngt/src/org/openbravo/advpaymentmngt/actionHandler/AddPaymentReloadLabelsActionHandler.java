@@ -97,7 +97,7 @@ public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
               .getPurchaseOrderName());
         }
       }
-
+      result.put("values", values);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error("Error obtaining labels when executing AddPaymentReloadLabelsActionHandler", e);
