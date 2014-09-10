@@ -341,6 +341,8 @@ public class APRM_MatchingUtility {
           OBDal.getInstance().getConnection().commit();
           bs.setProcessed(true);
           OBDal.getInstance().save(bs);
+          // Required to persist current unmatch so that it is not rollbacked afterwards because of
+          // a future error
           OBDal.getInstance().flush();
         }
       }
@@ -395,7 +397,8 @@ public class APRM_MatchingUtility {
         bsline.setCramount(totalCredit);
         bsline.setDramount(totalDebit);
       }
-
+      // Required to persist current bank statement line merges so that it is not rollbacked
+      // afterwards because of a future error
       OBDal.getInstance().save(bsline);
       OBDal.getInstance().flush();
 
@@ -656,14 +659,13 @@ public class APRM_MatchingUtility {
       final String strDocType = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
           parameters, null);
       if (strDocType == null || strDocType.equals("")) {
-        throw new OBException("No Document Type defined for the Reconciliation");
+        throw new OBException(OBMessageUtils.messageBD("APRM_NoDocTypeRec"));
       }
       DocumentType docType = OBDal.getInstance().get(DocumentType.class, strDocType);
       final String strDocumentNo = FIN_Utility.getDocumentNo(financialAccount.getOrganization(),
           docType.getDocumentCategory(), "FIN_Reconciliation", true);
       if (strDocumentNo == null || strDocumentNo.equals("")) {
-        throw new OBException(
-            "No Reconciliation Document Number obtained for the defined Document Type");
+        throw new OBException(OBMessageUtils.messageBD("APRM_NoDocNumberDocType"));
       }
       String strDocStatus = "DR";
       newData.setActive(true);
