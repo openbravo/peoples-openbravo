@@ -225,15 +225,8 @@ public class DocLCCost extends AcctServer {
           }
 
         } else {
-          amtDebit = differenceAmt.toString();
-          amtCredit = "";
-
-          fact.createLine(line2, acctLC, line2.m_C_Currency_ID, amtDebit, amtCredit,
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null, conn);
-
-          fact.createLine(line2, as.getCurrencyBalancing_Acct(), line2.m_C_Currency_ID, amtCredit,
-              amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null,
-              conn);
+          // if the difference is not adjusted, then no accounting is generated
+          ;
         }
       }
     }
