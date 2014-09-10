@@ -24,9 +24,12 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.common.currency.Currency;
 
 public class DocLCCost extends AcctServer {
 
@@ -93,6 +96,14 @@ public class DocLCCost extends AcctServer {
         docLine.setWarehouseId(data[i].mWarehouseId);
         docLine.m_C_BPartner_ID = data[i].cBpartnerId;
         docLine.m_M_Product_ID = data[i].mProductId;
+
+        docLine.m_C_Costcenter_ID = data[i].cCostcenterId;
+        docLine.m_User1_ID = data[i].user1id;
+        docLine.m_User2_ID = data[i].user2id;
+        docLine.m_C_Activity_ID = data[i].cActivityId;
+        docLine.m_C_Campaign_ID = data[i].cCampaignId;
+        docLine.m_A_Asset_ID = data[i].aAssetId;
+
         docLine.m_DateAcct = DateDoc;
         docLine.setLandedCostTypeId(data[i].mLcTypeId);
         docLine.setIsMatchingAdjusted(data[i].ismatchingadjusted);
@@ -157,17 +168,29 @@ public class DocLCCost extends AcctServer {
       }
     }
     C_Currency_ID = as.getC_Currency_ID();
+    int stdPrecision = 0;
+    OBContext.setAdminMode(true);
+    try {
+      stdPrecision = OBDal.getInstance().get(Currency.class, this.C_Currency_ID)
+          .getStandardPrecision().intValue();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
     // create Fact Header
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     String amtDebit = "0";
     String amtCredit = "0";
+    DocLine_LCCost line = null;
+    Account acctLC = null;
     // Lines
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
-      DocLine_LCCost line = (DocLine_LCCost) p_lines[i];
+      line = (DocLine_LCCost) p_lines[i];
 
-      BigDecimal amount = new BigDecimal(line.getAmount());
-      Account acctLC = getLandedCostAccount(line.getLandedCostTypeId(), amount, as, conn);
+      BigDecimal amount = new BigDecimal(line.getAmount()).setScale(stdPrecision,
+          BigDecimal.ROUND_HALF_UP);
+      acctLC = getLandedCostAccount(line.getLandedCostTypeId(), amount, as, conn);
 
       log4jDocLCCost.debug("previous to creteline, line.getAmount(): " + line.getAmount());
 
@@ -183,51 +206,74 @@ public class DocLCCost extends AcctServer {
       line2.m_C_BPartner_ID = "";
       line2.m_M_Product_ID = "";
       line2.m_C_Project_ID = "";
+      line2.m_C_Costcenter_ID = "";
+      line2.m_User1_ID = "";
+      line2.m_User2_ID = "";
+      line2.m_C_Activity_ID = "";
+      line2.m_C_Campaign_ID = "";
+      line2.m_A_Asset_ID = "";
+
       fact.createLine(line2, acctLC, line2.m_C_Currency_ID, amtCredit, amtDebit,
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null, conn);
 
-      // if there is difference between matched amt and cost amt, then accounting is generated
-      if (differenceAmt.compareTo(BigDecimal.ZERO) != 0) {
-        // if cost adjustment has been generated, then the account is distributed between the goods
-        // shipments lines
-        if ("Y".equals(line.getIsMatchingAdjusted())) {
-          DocLineLCCostData[] dataRcptLineAmt = DocLineLCCostData.selectRcptLineAmt(conn,
-              line.getLcCostId());
+    }
 
-          for (int j = 0; j < dataRcptLineAmt.length; j++) {
-            DocLineLCCostData lineRcpt = dataRcptLineAmt[j];
+    // if there is difference between matched amt and cost amt, then accounting is generated
+    if (differenceAmt.compareTo(BigDecimal.ZERO) != 0) {
+      // if cost adjustment has been generated, then the account is distributed between the goods
+      // shipments lines
+      if ("Y".equals(line.getIsMatchingAdjusted())) {
+        DocLineLCCostData[] dataRcptLineAmt = DocLineLCCostData.selectRcptLineAmt(conn,
+            line.getLcCostId());
 
-            amtDebit = "";
-            amtCredit = lineRcpt.amount;
+        for (int j = 0; j < dataRcptLineAmt.length; j++) {
+          DocLineLCCostData lineRcpt = dataRcptLineAmt[j];
 
-            DocLine line3 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
-            line3.copyInfo(line);
+          BigDecimal rcptAmount = new BigDecimal(lineRcpt.amount).setScale(stdPrecision,
+              BigDecimal.ROUND_HALF_UP);
+          amtDebit = "";
+          amtCredit = rcptAmount.toString();
 
-            line3.m_C_BPartner_ID = "";
-            line3.m_M_Product_ID = "";
-            line3.m_C_Project_ID = "";
-            fact.createLine(line3, acctLC, line3.m_C_Currency_ID, amtDebit, amtCredit,
-                Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line3.m_DateAcct, null, conn);
+          DocLine line3 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
+          line3.copyInfo(line);
 
-            DocLine line4 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
-            line4.copyInfo(line);
+          line3.m_C_BPartner_ID = "";
+          line3.m_M_Product_ID = "";
+          line3.m_C_Project_ID = "";
+          line3.m_C_Costcenter_ID = "";
+          line3.m_User1_ID = "";
+          line3.m_User2_ID = "";
+          line3.m_C_Activity_ID = "";
+          line3.m_C_Campaign_ID = "";
+          line3.m_A_Asset_ID = "";
+          fact.createLine(line3, acctLC, line3.m_C_Currency_ID, amtDebit, amtCredit,
+              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line3.m_DateAcct, null, conn);
 
-            line4.m_C_BPartner_ID = "";
-            line4.m_M_Product_ID = lineRcpt.mProductId;
-            line4.m_C_Project_ID = "";
+          DocLine line4 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
+          line4.copyInfo(line);
 
-            ProductInfo p = new ProductInfo(line4.m_M_Product_ID, conn);
+          // TODO: revisar con EAR si hay que pasar más dimensiones o no
+          line4.m_C_BPartner_ID = "";
+          line4.m_M_Product_ID = lineRcpt.mProductId;
+          line4.m_C_Project_ID = "";
+          line4.m_C_Costcenter_ID = "";
+          line4.m_User1_ID = "";
+          line4.m_User2_ID = "";
+          line4.m_C_Activity_ID = "";
+          line4.m_C_Campaign_ID = "";
+          line4.m_A_Asset_ID = "";
 
-            fact.createLine(line4, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-                line4.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-                DocumentType, line4.m_DateAcct, null, conn);
+          ProductInfo p = new ProductInfo(line4.m_M_Product_ID, conn);
 
-          }
+          fact.createLine(line4, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+              line4.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line4.m_DateAcct, null, conn);
 
-        } else {
-          // if the difference is not adjusted, then no accounting is generated
-          ;
         }
+
+      } else {
+        // if the difference is not adjusted, then no accounting is generated
+        ;
       }
     }
 

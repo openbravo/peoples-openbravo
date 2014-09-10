@@ -94,6 +94,13 @@ public class DocLandedCost extends AcctServer {
         docLine.m_DateAcct = DateDoc;
         docLine.setLandedCostTypeId(data[i].mLcTypeId);
         docLine.m_C_Project_ID = data[i].cProjectId;
+        docLine.m_C_Costcenter_ID = data[i].cCostcenterId;
+        docLine.m_User1_ID = data[i].user1id;
+        docLine.m_User2_ID = data[i].user2id;
+        docLine.m_C_Activity_ID = data[i].cActivityId;
+        docLine.m_C_Campaign_ID = data[i].cCampaignId;
+        docLine.m_A_Asset_ID = data[i].aAssetId;
+
         // -- Source Amounts
         String amt = data[i].amount;
         docLine.setAmount(amt);
@@ -181,6 +188,13 @@ public class DocLandedCost extends AcctServer {
       line2.m_C_BPartner_ID = "";
       line2.m_M_Product_ID = "";
       line2.m_C_Project_ID = "";
+      line2.m_C_Costcenter_ID = "";
+      line2.m_User1_ID = "";
+      line2.m_User2_ID = "";
+      line2.m_C_Activity_ID = "";
+      line2.m_C_Campaign_ID = "";
+      line2.m_A_Asset_ID = "";
+
       fact.createLine(line2, getLandedCostAccount(line.getLandedCostTypeId(), amount, as, conn),
           line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, line.m_DateAcct, null, conn);
