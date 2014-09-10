@@ -73,10 +73,6 @@ public class AddPaymentDisplayLogicActionHandler extends BaseActionHandler {
       }
       result.put("values", values);
 
-      String message = "Ok";
-      errorMessage.put("severity", "success");
-      errorMessage.put("text", message);
-      result.put("message", errorMessage);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error("Error executing AddPaymentDisplayLogicActionHandler", e);

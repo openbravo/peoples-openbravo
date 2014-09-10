@@ -24,42 +24,102 @@ import javax.enterprise.context.RequestScoped;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.advpaymentmngt.actionHandler.AddPaymentDisplayLogicActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.scheduling.ProcessLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RequestScoped
+// Public class to allow extend the functionality, for example Add Payment popup opening from menu
 public abstract class AddPaymentReadOnlyLogicsHandler {
 
-  private static ProcessLogger logger;
+  private static final Logger logger = LoggerFactory
+      .getLogger(AddPaymentDisplayLogicActionHandler.class);
 
+  /**
+   * boolean value to set document number read only logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public abstract boolean getPaymentDocumentNoReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * boolean value to set business partner read only logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public abstract boolean getReceivedFromReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * boolean value to set payment method read only logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public abstract boolean getPaymentMethodReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * boolean value to set actual payment read only logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public abstract boolean getActualPaymentReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * boolean value to set payment date read only logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public abstract boolean getPaymentDateReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * boolean value to set financial account read only logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public abstract boolean getFinancialAccountReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * boolean value to set currency read only logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public abstract boolean getCurrencyReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException;
 
   protected abstract long getSeq();
 
-  protected boolean getConvertedAmountReadOnlyLogic(Map<String, String> requestMap)
+  /**
+   * boolean value to set converted amount read only logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
+  public boolean getConvertedAmountReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException {
     String strContext = requestMap.get("context");
     if (strContext == null) {
@@ -77,17 +137,24 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
           OBContext.getOBContext().getRole(), window);
       return "Y".equals(value);
     } catch (PropertyNotFoundException e) {
-      logger.log("Property not found");
+      logger.error("Property not found");
       return false;
     } catch (PropertyException e) {
-      logger.logln("PropertyException, there is a conflict for NotAllowChangeExchange property");
+      logger.error("PropertyException, there is a conflict for NotAllowChangeExchange property");
       return false;
     } finally {
       OBContext.restorePreviousMode();
     }
   }
 
-  protected boolean getConversionRateReadOnlyLogic(Map<String, String> requestMap)
+  /**
+   * boolean value to set conversion rate read only logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
+  public boolean getConversionRateReadOnlyLogic(Map<String, String> requestMap)
       throws JSONException {
     String strContext = requestMap.get("context");
     if (strContext == null) {
@@ -103,16 +170,12 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
           "NotAllowChangeExchange", true, OBContext.getOBContext().getCurrentClient(), OBContext
               .getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), window);
-      if ("Y".equals(value)) {
-        return true;
-      } else {
-        return false;
-      }
+      return "Y".equals(value);
     } catch (PropertyNotFoundException e) {
-      // logger.log("Property not found \n");
+      logger.error("Property not found \n");
       return false;
     } catch (PropertyException e) {
-      // logger.log("PropertyException, there is a conflict for NotAllowChangeExchange property\n");
+      logger.error("PropertyException, there is a conflict for NotAllowChangeExchange property\n");
       return false;
     } finally {
       OBContext.restorePreviousMode();

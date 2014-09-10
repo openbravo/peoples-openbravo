@@ -40,50 +40,152 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 
 @RequestScoped
+// Public class to allow extend the functionality, for example Add Payment popup opening from menu
 public abstract class AddPaymentDefaultValuesHandler {
-
+  /**
+   * Expected amount default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultExpectedAmount(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * Actual Payment default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultActualAmount(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * Expected Payment default value
+   * 
+   * @param requestMap
+   *          requestMap with parameters
+   */
   public abstract String getDefaultIsSOTrx(Map<String, String> requestMap) throws JSONException;
 
+  /**
+   * Transaction Type default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultTransactionType(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * fin_payment_id default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException;
 
+  /**
+   * c_order_id default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultOrderType(Map<String, String> requestMap) throws JSONException;
 
+  /**
+   * c_invoice_id default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException;
 
+  /**
+   * Conversion rate default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultConversionRate(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * Converted amount default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultConvertedAmount(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * Business partner default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultReceivedFrom(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * Standard Precision default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultStandardPrecision(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * Currency default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultCurrency(Map<String, String> requestMap) throws JSONException;
 
+  /**
+   * Organization default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getOrganization(Map<String, String> requestMap) throws JSONException;
 
+  /**
+   * Document default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultDocument(Map<String, String> requestMap) throws JSONException;
 
+  /**
+   * Payment date default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException;
 
+  /**
+   * Bank Statement Line Amount default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public abstract String getBankStatementLineAmount(Map<String, String> requestMap)
       throws JSONException;
 
   protected abstract long getSeq();
 
+  /**
+   * Currency to Amount default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public String getDefaultCurrencyTo(Map<String, String> requestMap) throws JSONException {
     String strContext = requestMap.get("context");
     if (strContext == null) {
@@ -112,6 +214,12 @@ public abstract class AddPaymentDefaultValuesHandler {
     return null;
   }
 
+  /**
+   * Customer credit default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public String getDefaultCustomerCredit(Map<String, String> requestMap) throws JSONException {
     String strBusinessPartnerId = getDefaultReceivedFrom(requestMap);
     String strOrgId = getOrganization(requestMap);
@@ -127,6 +235,12 @@ public abstract class AddPaymentDefaultValuesHandler {
 
   }
 
+  /**
+   * Document number default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public String getDefaultDocumentNo(Map<String, String> requestMap) throws JSONException {
     String strContext = requestMap.get("context");
     String strOrgId = getOrganization(requestMap);
@@ -143,6 +257,12 @@ public abstract class AddPaymentDefaultValuesHandler {
     return "<" + strDocNo + ">";
   }
 
+  /**
+   * Financial Account default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public String getDefaultFinancialAccount(Map<String, String> requestMap) throws JSONException {
     String strContext = requestMap.get("context");
     if (strContext == null) {
@@ -188,6 +308,12 @@ public abstract class AddPaymentDefaultValuesHandler {
     return null;
   }
 
+  /**
+   * Payment method default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public String getDefaultPaymentMethod(Map<String, String> requestMap) throws JSONException {
     String strContext = requestMap.get("context");
     if (strContext == null) {
@@ -231,11 +357,23 @@ public abstract class AddPaymentDefaultValuesHandler {
     return pendingAmt;
   }
 
+  /**
+   * Generated Credit default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public String getDefaultGeneratedCredit(Map<String, String> requestMap) throws JSONException {
     BigDecimal generateCredit = BigDecimal.ZERO;
     return generateCredit.toPlainString();
   }
 
+  /**
+   * Document category default value
+   * 
+   * @param requestMap
+   *          map with parameters
+   */
   public String getDefaultDocumentCategory(Map<String, String> requestMap) throws JSONException {
     boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
     if (isSOTrx) {

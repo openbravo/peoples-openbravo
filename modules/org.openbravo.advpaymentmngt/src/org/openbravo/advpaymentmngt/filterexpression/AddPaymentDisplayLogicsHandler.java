@@ -27,22 +27,58 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 @RequestScoped
+// Public class to allow extend the functionality, for example Add Payment popup opening from menu
 public abstract class AddPaymentDisplayLogicsHandler {
 
+  /**
+   * boolean value to set organization display logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public abstract boolean getOrganizationDisplayLogic(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * boolean value to set document display logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public abstract boolean getDocumentDisplayLogic(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * boolean value to set Credit to use display logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public abstract boolean getCreditToUseDisplayLogic(Map<String, String> requestMap)
       throws JSONException;
 
+  /**
+   * boolean value to set bank statement line display logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public abstract boolean getBankStatementLineDisplayLogic(Map<String, String> requestMap)
       throws JSONException;
 
   protected abstract long getSeq();
 
+  /**
+   * boolean value to set overpayment action display logic
+   * 
+   * @param requestMap
+   *          map with parameters
+   * 
+   */
   public boolean getOverpaymentActionDisplayLogic(Map<String, String> requestMap)
       throws JSONException {
     String strContext = requestMap.get("context");

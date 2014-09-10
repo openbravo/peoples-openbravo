@@ -98,11 +98,6 @@ public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
         }
       }
 
-      String message = "Ok";
-      errorMessage.put("severity", "success");
-      errorMessage.put("text", message);
-      result.put("values", values);
-      result.put("message", errorMessage);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error("Error obtaining labels when executing AddPaymentReloadLabelsActionHandler", e);

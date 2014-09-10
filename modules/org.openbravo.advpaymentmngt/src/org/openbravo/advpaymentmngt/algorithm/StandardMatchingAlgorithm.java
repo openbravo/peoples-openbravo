@@ -97,7 +97,8 @@ public class StandardMatchingAlgorithm implements FIN_MatchingAlgorithm {
     VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
         OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
             .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
-    ConnectionProvider conn = new DalConnectionProvider();
+    // flush is set to true because pl is called in removeTransaction and removePayment
+    ConnectionProvider conn = new DalConnectionProvider(true);
     if (_transaction.isCreatedByAlgorithm()) {
       APRM_MatchingUtility.removeTransaction(vars, conn, _transaction);
     } else
