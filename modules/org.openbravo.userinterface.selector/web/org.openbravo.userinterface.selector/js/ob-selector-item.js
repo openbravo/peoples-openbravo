@@ -392,8 +392,6 @@ isc.OBSelectorPopupWindow.addProperties({
       isc.addProperties(data, this.view.sourceView.getContextInfo(false, true));
     }
 
-
-
     callback = function (resp, data, req) {
       selectorWindow.fetchDefaultsCallback(resp, data, req);
     };
@@ -655,7 +653,9 @@ isc.OBSelectorItem.addProperties({
       click: function (form, item, icon) {
         var enteredValue = {};
         enteredValue[item.defaultPopupFilterField] = item.getEnteredValue();
-        item.openProcess([enteredValue]);
+        item.openProcess([enteredValue], {
+          processOwnerView: form.view
+        });
       }
     }];
 
@@ -847,8 +847,8 @@ isc.OBSelectorItem.addProperties({
     this.selectorWindow.open();
   },
 
-  openProcess: function (enteredValues) {
-    var view, standardWindow;
+  openProcess: function (enteredValues, additionalProcessProperties) {
+    var params, view, standardWindow;
     if (this.form && this.form.view) {
       // If the selector is in a standard window
       view = this.form.view;
@@ -856,15 +856,19 @@ isc.OBSelectorItem.addProperties({
       // If the selector is in a parameter window
       view = this.form.paramWindow.parentWindow.view;
     }
-    standardWindow = view.standardWindow;
-    standardWindow.openProcess({
+    params = {
       callerField: this,
       enteredValues: enteredValues,
       paramWindow: true,
       processId: this.processId,
       windowId: view.windowId,
       windowTitle: OB.I18N.getLabel('OBUISEL_AddNewRecord', [this.title])
-    });
+    };
+    if (additionalProcessProperties) {
+      isc.addProperties(params, additionalProcessProperties);
+    }
+    standardWindow = view.standardWindow;
+    standardWindow.openProcess(params);
   },
 
   keyPress: function (item, form, keyName, characterValue) {

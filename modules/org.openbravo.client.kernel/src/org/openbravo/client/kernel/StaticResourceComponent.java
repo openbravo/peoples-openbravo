@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
 import org.openbravo.dal.core.OBContext;
@@ -243,7 +244,8 @@ public class StaticResourceComponent extends BaseComponent {
        * 
        * TODO: don't load the ob-debug.js file if not in use
        */
-      if (isInDevelopment() || referer.indexOf("/ret-") > 0) {
+      if (isInDevelopment()
+          || OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")) {
         sb.insert(0, "var isDebug = true;\n\n");
       }
       sb.append("if (window.onerror && window.onerror.name === '"
@@ -264,7 +266,8 @@ public class StaticResourceComponent extends BaseComponent {
     // when changing development status, system needs to be restarted.
     final String output;
     // in classicmode the isc combined is included, compressing that gives errors
-    if (!isInDevelopment() && !isClassicMode()) {
+    if (!isInDevelopment() && !isClassicMode()
+        && !OBPropertiesProvider.getInstance().getBooleanProperty("test.environment")) {
       output = JSCompressor.getInstance().compress(sb.toString());
     } else {
       output = sb.toString();

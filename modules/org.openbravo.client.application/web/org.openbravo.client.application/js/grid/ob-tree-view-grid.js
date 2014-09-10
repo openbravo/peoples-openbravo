@@ -459,5 +459,9 @@ isc.OBTreeViewGrid.addProperties({
       this.setData([]);
       this.fetchData(this.getCriteria());
     }
+  },
+
+  isWritable: function (record) {
+    return !record._readOnly;
   }
 });
