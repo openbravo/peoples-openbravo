@@ -2,8 +2,8 @@ package org.openbravo.advpaymentmngt.modulescript;
 
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
-import java.sql.PreparedStatement;
 
+// This modulescript initializes the colum TRXTYPE (Transaction Type) in FIN_FINACC_TRANSACTION TABLE
 public class UpdateTransactionTypeTransactionTab extends ModuleScript {
  
   public void execute() {

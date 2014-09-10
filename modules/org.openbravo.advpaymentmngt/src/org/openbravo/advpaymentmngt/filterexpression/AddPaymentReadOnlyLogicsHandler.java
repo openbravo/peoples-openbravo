@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.actionHandler.AddPaymentDisplayLogicActionHandler;
@@ -127,7 +128,11 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
     }
     OBContext.setAdminMode(false);
     JSONObject context = new JSONObject(strContext);
-    String strWindow = context.getString("inpwindowId");
+    String strWindow = null;
+    if (context.has("inpwindowId") && context.get("inpwindowId") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inpwindowId"))) {
+      strWindow = context.getString("inpwindowId");
+    }
     Window window = OBDal.getInstance().get(Window.class, strWindow == null ? "" : strWindow);
 
     try {
@@ -160,9 +165,13 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
     if (strContext == null) {
       return false;
     }
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(false);
     JSONObject context = new JSONObject(strContext);
-    String strWindow = context.getString("inpwindowId");
+    String strWindow = null;
+    if (context.has("inpwindowId") && context.get("inpwindowId") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("inpwindowId"))) {
+      strWindow = context.getString("inpwindowId");
+    }
     Window window = OBDal.getInstance().get(Window.class, strWindow == null ? "" : strWindow);
 
     try {

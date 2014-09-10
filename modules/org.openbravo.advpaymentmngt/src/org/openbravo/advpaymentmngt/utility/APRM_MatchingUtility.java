@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -646,7 +645,7 @@ public class APRM_MatchingUtility {
    * Creates a new draft reconciliation for the given financial account
    */
   public static FIN_Reconciliation addNewDraftReconciliation(
-      final FIN_FinancialAccount financialAccount) throws ServletException {
+      final FIN_FinancialAccount financialAccount) {
     final FIN_Reconciliation newData = OBProvider.getInstance().get(FIN_Reconciliation.class);
     try {
       OBContext.setAdminMode(true);
@@ -657,14 +656,12 @@ public class APRM_MatchingUtility {
       final String strDocType = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
           parameters, null);
       if (strDocType == null || strDocType.equals("")) {
-        // FIXME : Well-formed error message
         throw new OBException("No Document Type defined for the Reconciliation");
       }
       DocumentType docType = OBDal.getInstance().get(DocumentType.class, strDocType);
       final String strDocumentNo = FIN_Utility.getDocumentNo(financialAccount.getOrganization(),
           docType.getDocumentCategory(), "FIN_Reconciliation", true);
       if (strDocumentNo == null || strDocumentNo.equals("")) {
-        // FIXME : Well-formed error message
         throw new OBException(
             "No Reconciliation Document Number obtained for the defined Document Type");
       }
