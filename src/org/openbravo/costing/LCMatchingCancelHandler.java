@@ -40,11 +40,11 @@ public class LCMatchingCancelHandler extends BaseActionHandler {
     try {
       JSONObject jsonContent = new JSONObject(content);
       JSONObject message = new JSONObject();
+
       final String strLCCostId = jsonContent.getString("M_LC_Cost_ID");
       LandedCostCost lcCost = OBDal.getInstance().get(LandedCostCost.class, strLCCostId);
-
+      doChecks(lcCost);
       message = doCancelMatchingLandedCost(lcCost.getId());
-
       jsonResponse.put("message", message);
     } catch (OBException e) {
       OBDal.getInstance().rollbackAndClose();
@@ -100,5 +100,13 @@ public class LCMatchingCancelHandler extends BaseActionHandler {
     OBDal.getInstance().save(lcCost);
 
     return message;
+  }
+
+  private void doChecks(LandedCostCost lcCost) {
+    if ("Y".equals(lcCost.getPosted())) {
+      String errorMsg = OBMessageUtils.messageBD("DocumentPosted");
+      log.error("Document Posted");
+      throw new OBException(errorMsg);
+    }
   }
 }
