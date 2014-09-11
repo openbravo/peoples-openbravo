@@ -137,7 +137,7 @@ OB.APRM.AddPayment.onLoad = function (view) {
     form.removeField(0);
     orgParam = form.getField(0);
     form.removeField(0);
-    bankStatementLineAmount=form.getField(0);
+    bankStatementLineAmount = form.getField(0);
     form.removeField(0);
     form.addField(trxtypeParam);
     form.addField(orgParam);
@@ -869,6 +869,33 @@ OB.APRM.AddPayment.documentOnChange = function (item, view, form, grid) {
     OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentDocumentNoActionHandler', {
       organization: organization.getValue(),
       issotrx: issotrx.getValue()
+    }, {}, callback);
+  }
+};
+
+OB.APRM.AddPayment.organizationOnChange = function (item, view, form, grid) {
+  var ordinvgrid = form.getItem('order_invoice').canvas.viewGrid,
+      organization = (form.getItem('ad_org_id')) ? form.getItem('ad_org_id').getValue() : "",
+      newCriteria, callback;
+  form.getItem('fin_paymentmethod_id').setValue(null);
+  form.getItem('received_from').setValue(null);
+  form.getItem('fin_financial_account_id').setValue(null);
+  callback = function (response, data, request) {
+    form.getItem('c_currency_id').setValue(data.currency);
+    form.getItem('c_currency_id').valueMap[data.currency] = data.currencyIdIdentifier;
+    // fetch data after change organization, filters should be preserved and ids of
+    // the selected records should be sent
+    newCriteria = ordinvgrid.addSelectedIDsToCriteria(ordinvgrid.getCriteria(), true);
+    newCriteria.criteria = newCriteria.criteria || [];
+    // add dummy criterion to force fetch
+    newCriteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+    ordinvgrid.invalidateCache();
+    form.redraw();
+  };
+
+  if (organization !== "") {
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentOrganizationActionHandler', {
+      organization: organization
     }, {}, callback);
   }
 };

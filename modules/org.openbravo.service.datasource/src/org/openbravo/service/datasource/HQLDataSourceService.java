@@ -296,7 +296,12 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       // Injection and transforms might have modified the query removing named parameters. Check
       // that key is still in the query.
       if (hqlQuery.contains(key)) {
-        query.setParameter(key, queryNamedParameters.get(key));
+        Object parameter = queryNamedParameters.get(key);
+        if (parameter instanceof Set<?>) {
+          query.setParameterList(key, (Set<String>) parameter);
+        } else {
+          query.setParameter(key, parameter);
+        }
       }
     }
 
