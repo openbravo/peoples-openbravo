@@ -1054,7 +1054,7 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall) {
     return false;
   }
 
-  if (document !== null && document !== '' && actualPayment.compareTo(BigDecimal.prototype.ZERO) === 0 && view.parentWindow.windowId) {
+  if (document !== null && document !== '' && actualPayment.compareTo(BigDecimal.prototype.ZERO) === 0 && view.parentWindow && view.parentWindow.windowId) {
     view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_ZEROAMOUNTPAYMENTTRANSACTION'));
     return false;
   }
