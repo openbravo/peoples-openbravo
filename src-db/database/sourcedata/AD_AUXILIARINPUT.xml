@@ -697,7 +697,7 @@ from C_AcctSchema_Element
 where ad_client_id = @ad_client_id@
 and elementtype = 'PJ'
 and ad_isorgincluded (@ad_org_id@, ad_org_id ,ad_client_id) <> -1
-group by elementtype) as query]]></CODE>
+group by elementtype)  query]]></CODE>
 <!--0389829094184BC4A99B307868F278EE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0389829094184BC4A99B307868F278EE--></AD_AUXILIARINPUT>
 
@@ -982,7 +982,7 @@ from C_AcctSchema_Element
 where ad_client_id = @ad_client_id@
 and elementtype = 'SR'
 and ad_isorgincluded (@ad_org_id@, ad_org_id ,ad_client_id) <> -1
-group by elementtype) as query]]></CODE>
+group by elementtype)  query]]></CODE>
 <!--154056E8BD07443E9760F8C76FA9533F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--154056E8BD07443E9760F8C76FA9533F--></AD_AUXILIARINPUT>
 
@@ -1807,7 +1807,7 @@ from C_AcctSchema_Element
 where ad_client_id = @ad_client_id@
 and elementtype = 'CC'
 and ad_isorgincluded (@ad_org_id@, ad_org_id ,ad_client_id) <> -1
-group by elementtype) as query]]></CODE>
+group by elementtype)  query]]></CODE>
 <!--4A555D695EE84BD08225721AF0DB4660-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4A555D695EE84BD08225721AF0DB4660--></AD_AUXILIARINPUT>
 
@@ -2023,7 +2023,7 @@ from C_AcctSchema_Element
 where ad_client_id = @ad_client_id@
 and elementtype = 'U1'
 and ad_isorgincluded (@ad_org_id@, ad_org_id ,ad_client_id) <> -1
-group by elementtype) as query]]></CODE>
+group by elementtype)  query]]></CODE>
 <!--5AA02067B7A046B39F6C1D0D5072CC9F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5AA02067B7A046B39F6C1D0D5072CC9F--></AD_AUXILIARINPUT>
 
@@ -2051,7 +2051,7 @@ from C_AcctSchema_Element
 where ad_client_id = @ad_client_id@
 and elementtype = 'OO'
 and ad_isorgincluded (@ad_org_id@, ad_org_id ,ad_client_id) <> -1
-group by elementtype) as query]]></CODE>
+group by elementtype)  query]]></CODE>
 <!--5BB2952CE3234414A146E35032539257-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5BB2952CE3234414A146E35032539257--></AD_AUXILIARINPUT>
 
@@ -2068,7 +2068,7 @@ from C_AcctSchema_Element
 where ad_client_id = @ad_client_id@
 and elementtype = 'PR'
 and ad_isorgincluded (@ad_org_id@, ad_org_id ,ad_client_id) <> -1
-group by elementtype) as query]]></CODE>
+group by elementtype) query]]></CODE>
 <!--5BF658979C8C4F29949B1542FD065423-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5BF658979C8C4F29949B1542FD065423--></AD_AUXILIARINPUT>
 
@@ -2351,7 +2351,7 @@ from C_AcctSchema_Element
 where ad_client_id = @ad_client_id@
 and elementtype = 'AY'
 and ad_isorgincluded (@ad_org_id@, ad_org_id ,ad_client_id) <> -1
-group by elementtype) as query]]></CODE>
+group by elementtype)  query]]></CODE>
 <!--7B7890725A7C4C06BBD98CBBFB325D39-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7B7890725A7C4C06BBD98CBBFB325D39--></AD_AUXILIARINPUT>
 
@@ -2938,7 +2938,7 @@ from C_AcctSchema_Element
 where ad_client_id = @ad_client_id@
 and elementtype = 'U2'
 and ad_isorgincluded (@ad_org_id@, ad_org_id ,ad_client_id) <> -1
-group by elementtype) as query]]></CODE>
+group by elementtype)  query]]></CODE>
 <!--AA110F79CC9C4DD8B51EBBB234E3AD1B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--AA110F79CC9C4DD8B51EBBB234E3AD1B--></AD_AUXILIARINPUT>
 
@@ -3555,7 +3555,7 @@ from C_AcctSchema_Element
 where ad_client_id = @ad_client_id@
 and elementtype = 'MC'
 and ad_isorgincluded (@ad_org_id@, ad_org_id ,ad_client_id) <> -1
-group by elementtype) as query]]></CODE>
+group by elementtype) query]]></CODE>
 <!--E396BAA4096A4AA0ABA0CEC0A52BF983-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E396BAA4096A4AA0ABA0CEC0A52BF983--></AD_AUXILIARINPUT>
 
@@ -3695,7 +3695,7 @@ from C_AcctSchema_Element
 where ad_client_id = @ad_client_id@
 and elementtype = 'BP'
 and ad_isorgincluded (@ad_org_id@, ad_org_id ,ad_client_id) <> -1
-group by elementtype) as query]]></CODE>
+group by elementtype)  query]]></CODE>
 <!--EBFF532722F5438BAACA625CE5E69A41-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--EBFF532722F5438BAACA625CE5E69A41--></AD_AUXILIARINPUT>
 
