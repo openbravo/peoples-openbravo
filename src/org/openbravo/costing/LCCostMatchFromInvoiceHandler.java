@@ -31,6 +31,7 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.materialmgmt.cost.LCMatched;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
@@ -97,11 +98,13 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
       boolean isMatched = line.getBoolean("matched");
       boolean processMatching = line.getBoolean("processMatching");
       LCMatched match = null;
+      LandedCostCost lcc = (LandedCostCost) OBDal.getInstance().getProxy(
+          LandedCostCost.ENTITY_NAME, strLCCostId);
+
       if (strLCMatchedId.isEmpty()) {
         // Create new match record
         match = OBProvider.getInstance().get(LCMatched.class);
-        match.setLandedCostCost((LandedCostCost) OBDal.getInstance().getProxy(
-            LandedCostCost.ENTITY_NAME, strLCCostId));
+        match.setLandedCostCost(lcc);
         match.setInvoiceLine(il);
         match.setAmount(BigDecimal.ZERO);
       } else {
@@ -113,8 +116,14 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
         continue;
       }
 
-      final BigDecimal amount = new BigDecimal(line.getString("matchedAmt"));
+      BigDecimal amount = new BigDecimal(line.getString("matchedAmt"));
       if (amount.compareTo(match.getAmount()) != 0) {
+        match.setAmountInInvoiceCurrency(amount);
+        if (lcc.getCurrency() != il.getInvoice().getCurrency()) {
+          amount = FinancialUtils.getConvertedAmount(amount, il.getInvoice().getCurrency(),
+              lcc.getCurrency(), lcc.getAccountingDate(), lcc.getOrganization(),
+              FinancialUtils.PRECISION_STANDARD);
+        }
         match.setAmount(amount);
         OBDal.getInstance().save(match);
       }
