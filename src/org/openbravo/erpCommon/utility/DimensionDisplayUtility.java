@@ -563,6 +563,17 @@ public class DimensionDisplayUtility {
     return cad;
   }
 
+  /**
+   * Calculates the list of session variables that will be used for computing the display logic of
+   * the parameter.
+   * 
+   * @param process
+   *          Process Definition
+   * @param parameter
+   *          Parameter of Process Definition
+   * @return
+   */
+  @SuppressWarnings("unchecked")
   public static List<String> getRequiredSessionVariablesForTab(Process process, Parameter parameter) {
     List<String> sessionVariables = new ArrayList<String>();
     if (columnDimensionMap == null) {
@@ -630,6 +641,15 @@ public class DimensionDisplayUtility {
     return sessionVariables;
   }
 
+  /**
+   * Compute the JavaScript code to embed in the process definition for computing the display logic.
+   * 
+   * @param process
+   *          Process Definition
+   * @param parameter
+   *          Parameter of Process Definition
+   * @return
+   */
   public static String computeAccountingDimensionDisplayLogic(Process process, Parameter parameter) {
     // Example
     // (context.$IsAcctDimCentrally === 'N' && context.$Element_U2 === 'Y') ||
