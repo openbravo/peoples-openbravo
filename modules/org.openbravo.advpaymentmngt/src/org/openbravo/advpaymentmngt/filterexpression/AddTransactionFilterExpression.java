@@ -1,7 +1,6 @@
 package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -112,15 +111,11 @@ public class AddTransactionFilterExpression implements FilterExpression {
     return OBDateUtils.formatDate(bankstatementline.getTransactionDate());
   }
 
-  public String getDefaultCurrency() throws JSONException {
-    return OBDateUtils.formatDate(new Date());
-  }
-
   public String getDefaultCurrency(Map<String, String> _requestMap) throws JSONException {
     return getFinancialAccount(_requestMap).getCurrency().getId().toString();
   }
 
-  public FIN_FinancialAccount getFinancialAccount(Map<String, String> requestMap)
+  private FIN_FinancialAccount getFinancialAccount(Map<String, String> requestMap)
       throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     if (context.has("inpfinFinancialAccountId") && !context.isNull("inpfinFinancialAccountId")

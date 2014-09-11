@@ -61,7 +61,6 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
     boolean processedNewStatus = (Boolean) event.getPreviousState(processedProperty);
     String newStatus = (String) event.getCurrentState(statusProperty);
     final FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) event.getTargetInstance();
-    // TODO: Review: What happens when deleting???
     if (processedNewStatus) {
       if ((oldStatus.equals(STATUS_DEPOSIT) | oldStatus.equals(STATUS_WITHDRAWN))
           & newStatus.equals(STATUS_CLEARED)) {

@@ -72,7 +72,7 @@ public class TransactionAddPaymentReadOnlyLogics extends AddPaymentReadOnlyLogic
         return true;
       }
     } else if ((context.has("inpwindowId") && context.get("inpwindowId").equals(
-        "94EAA455D2644E04AB25D93BE5157B6D"))) {
+        APRMConstants.TRANSACTION_WINDOW_ID))) {
       return false;
     } else {
       return true;
