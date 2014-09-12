@@ -238,7 +238,8 @@
             if (data[0]) {
               lastCashUp = new OB.Model.CashUp();
               lastCashUp.set(data[0]);
-              lastCashUpPayments = JSON.parse(lastCashUp.get('cashPaymentMethodInfo'));
+              lastCashUpPayments = lastCashUp.get('cashPaymentMethodInfo');
+              //lastCashUpPayments = JSON.parse(lastCashUp.get('cashPaymentMethodInfo'));
             } else {
               // Set all  to 0
               lastCashUpPayments = null;
