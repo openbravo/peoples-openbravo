@@ -132,7 +132,6 @@ public class CostingServer {
 
   private void checkCostAdjustments() {
     boolean doNotCheckPriceCorrectionTrxs = false;
-    boolean doNotCheckBackDatedTrxs = false;
     boolean doNotCheckNegativeStockCorrectionTrxs = false;
     // check if price correction is needed
     try {
@@ -221,19 +220,9 @@ public class CostingServer {
       }
     }
 
-    // check if cost adjustment should be done
-    try {
-      doNotCheckBackDatedTrxs = Preferences.getPreferenceValue("doNotCheckBackDatedTrxs", true,
-          OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null).equals("Y");
-    } catch (PropertyException e1) {
-      doNotCheckBackDatedTrxs = false;
-    }
-    if (!doNotCheckBackDatedTrxs
+    if (getCostingRule().isBackdatedTransactionsFixed()
         && CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction, getCostingRule()
             .isWarehouseDimension())) {
-
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
           transaction.getOrganization(), "BDT"); // BDT= Backdated transaction
 
@@ -257,7 +246,7 @@ public class CostingServer {
 
     // check if negative stock correction should be done
     try {
-      doNotCheckBackDatedTrxs = Preferences.getPreferenceValue(
+      doNotCheckNegativeStockCorrectionTrxs = Preferences.getPreferenceValue(
           "doNotCheckNegativeStockCorrecctionTrxs", true,
           OBContext.getOBContext().getCurrentClient(),
           OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),

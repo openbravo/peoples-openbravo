@@ -22,10 +22,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.Costing;
@@ -83,19 +80,9 @@ public class StandardAlgorithm extends CostingAlgorithm {
   }
 
   private boolean isNotBackdatedTrx() {
-    boolean doNotCheckBackDatedTrxs = false;
-    try {
-      doNotCheckBackDatedTrxs = Preferences.getPreferenceValue("doNotCheckBackDatedTrxs", true,
-          OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null).equals("Y");
-    } catch (PropertyException ignore) {
-      doNotCheckBackDatedTrxs = false;
-    }
-    if (doNotCheckBackDatedTrxs) {
+    if (!costingRule.isBackdatedTransactionsFixed()) {
       return true;
     }
-
     return !CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction,
         costingRule.isWarehouseDimension());
   }
