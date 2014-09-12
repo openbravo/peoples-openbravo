@@ -412,6 +412,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     if (warehouse != null) {
       where.append("  and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
     }
+    where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+        + " > :startdate ))");
     where.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
     where.append("   , trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTLINE);
@@ -432,6 +434,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     if (costingRule.getEndingDate() != null) {
       trxQry.setNamedParameter("enddate", costingRule.getEndingDate());
     }
+    trxQry.setNamedParameter("startdate", costingRule.getStartingDate());
     trxQry.setNamedParameter("orgs", orgs);
     trxQry.setNamedParameter("product", trx.getProduct());
     if (warehouse != null) {
