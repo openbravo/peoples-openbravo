@@ -19,6 +19,7 @@
 package org.openbravo.service.datasource;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -296,7 +297,12 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       // Injection and transforms might have modified the query removing named parameters. Check
       // that key is still in the query.
       if (hqlQuery.contains(key)) {
-        query.setParameter(key, queryNamedParameters.get(key));
+        Object parameter = queryNamedParameters.get(key);
+        if (parameter instanceof Collection<?>) {
+          query.setParameterList(key, (Collection<?>) parameter);
+        } else {
+          query.setParameter(key, parameter);
+        }
       }
     }
 
