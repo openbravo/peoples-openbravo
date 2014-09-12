@@ -857,7 +857,7 @@ public class APRM_MatchingUtility {
     final JSONObject msg = new JSONObject();
     msg.put("msgType", msgType);
     msg.put("msgTitle", "");
-    msg.put("msgText", message);
+    msg.put("msgText", String.format(message, messageParams));
     msg.put("force", true);
 
     final JSONObject msgTotalAction = new JSONObject();
