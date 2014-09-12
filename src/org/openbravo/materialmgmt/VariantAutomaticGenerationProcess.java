@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -141,7 +141,8 @@ public class VariantAutomaticGenerationProcess implements Process {
         variant.setProductAccountsList(Collections.<ProductAccounts> emptyList());
         variant.setGeneric(false);
         for (ProductCharacteristic prCh : variant.getProductCharacteristicList()) {
-          prCh.setProductCharacteristicConfList(Collections.<ProductCharacteristicConf> emptyList());
+          prCh
+              .setProductCharacteristicConfList(Collections.<ProductCharacteristicConf> emptyList());
         }
 
         String searchKey = product.getSearchKey();
@@ -183,6 +184,7 @@ public class VariantAutomaticGenerationProcess implements Process {
           }
         }
         OBDal.getInstance().save(variant);
+        OBDal.getInstance().flush();
         new VariantChDescUpdateProcess().update(variant.getId(), null);
 
         for (i = 0; i < chNumber; i++) {
