@@ -23,13 +23,16 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +55,12 @@ public class MatchStatementActionHandler extends BaseProcessActionHandler {
       strReconciliationId = lastReconciliation.getId();
       APRM_MatchingUtility.setProcessingReconciliation(lastReconciliation);
       if (APRM_MatchingUtility.updateReconciliation(lastReconciliation, finAccount, true)) {
-        final OBError message = OBMessageUtils.translateError("@Success@");
+        final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
         final JSONObject msg = new JSONObject();
         msg.put("severity", "success");
-        msg.put("title", message.getTitle());
-        msg.put("text", message.getMessage());
+        msg.put("title", "");
+        msg.put("text", Utility.parseTranslation(new DalConnectionProvider(false), vars,
+            vars.getLanguage(), "@Success@"));
         jsonResponse.put("message", msg);
       }
     } catch (Exception e) {

@@ -56,6 +56,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -849,12 +850,14 @@ public class APRM_MatchingUtility {
    */
   public static JSONArray createMessageInProcessView(final String messageSearchKey,
       final String msgType, Object... messageParams) throws JSONException {
-    final OBError message = OBMessageUtils.translateError(messageSearchKey);
+    final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+    final String message = Utility.parseTranslation(new DalConnectionProvider(false), vars,
+        vars.getLanguage(), messageSearchKey);
 
     final JSONObject msg = new JSONObject();
     msg.put("msgType", msgType);
-    msg.put("msgTitle", message.getTitle());
-    msg.put("msgText", String.format(message.getMessage(), messageParams));
+    msg.put("msgTitle", "");
+    msg.put("msgText", message);
     msg.put("force", true);
 
     final JSONObject msgTotalAction = new JSONObject();
