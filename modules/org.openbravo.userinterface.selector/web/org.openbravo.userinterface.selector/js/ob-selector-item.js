@@ -1034,6 +1034,9 @@ isc.OBSelectorItem.addClassMethods({
       isc.addProperties(params, selector.form.view.getContextInfo(false, true, null, selector.isComboReference));
     } else if (selector.view && selector.view.getUnderLyingRecordContext) {
       isc.addProperties(params, selector.view.getUnderLyingRecordContext(false, true, null, selector.isComboReference));
+      if (selector.form && selector.form.paramWindow && selector.form.paramWindow.getContextInfo) {
+        isc.addProperties(params, selector.form.paramWindow.getContextInfo());
+      }
       if (!params.inpadOrgId) {
         // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
         params.inpadOrgId = params.ad_org_id || OB.User.organizationId;
