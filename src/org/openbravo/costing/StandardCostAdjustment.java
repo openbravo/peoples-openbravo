@@ -45,7 +45,6 @@ import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.Costing;
-import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 @ComponentProvider.Qualifier("6A39D8B46CD94FE682D48758D3B7726B")
@@ -113,7 +112,6 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
         (String) DalUtil.getId(getCostOrg().getClient()));
     HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
     Set<String> orgs = osp.getChildTree(strCostOrgId, true);
-    CostingRule costingRule = getCostingRule();
     if (isManufacturingProduct) {
       orgs = osp.getChildTree("0", false);
       costDimensions = CostingUtils.getEmptyDimensions();
@@ -133,9 +131,6 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     if (warehouse != null) {
       where.append("  and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
     }
-    where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " > :startdate ))");
-
     where.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
     where.append("   , trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTLINE);
@@ -157,7 +152,6 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     if (warehouse != null) {
       trxQry.setNamedParameter("warehouse", warehouse);
     }
-    trxQry.setNamedParameter("startdate", costingRule.getStartingDate());
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
 
