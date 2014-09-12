@@ -1,3 +1,11 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2014 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
 package org.openbravo.retail.posterminal.master;
 
 import java.util.List;
@@ -44,6 +52,7 @@ public class Cashup extends JSONProcessSimple {
       final Query cashupquery = session.createQuery(querybuilder.getHQLQuery());
       cashupquery.setParameter("isprocessed", isprocessed.equalsIgnoreCase("Y"));
       cashupquery.setParameter("terminal", posId);
+      @SuppressWarnings("unchecked")
       List<Object[]> cashupList = cashupquery.list();
       DataToJsonConverter converter = new DataToJsonConverter();
 
@@ -76,9 +85,9 @@ public class Cashup extends JSONProcessSimple {
 
     } catch (Exception e) {
       System.out.println(e.getMessage());
+      return result;
     } finally {
       OBContext.restorePreviousMode();
-      return result;
     }
 
   }
@@ -93,11 +102,10 @@ public class Cashup extends JSONProcessSimple {
     final Session session = OBDal.getInstance().getSession();
     final Query paymentsquery = session.createQuery(querybuilder.getHQLQuery());
     paymentsquery.setParameter("cashupId", cashupId);
+    @SuppressWarnings("unchecked")
     List<BaseOBObject> paymentMethodList = paymentsquery.list();
-    // TODO: remove obsolete attributes
     for (BaseOBObject paymentMethod : paymentMethodList) {
       JSONObject paymentMethodJSON = converter.toJsonObject(paymentMethod, DataResolvingMode.FULL);
-      JSONObject result = new JSONObject();
       paymentMethodJSON.put("cashup_id", paymentMethodJSON.get("cashUp"));
       paymentMethodJSON.put("searchKey", paymentMethodJSON.get("searchkey"));
       paymentMethodJSON.put("paymentmethod_id", paymentMethodJSON.get("paymentType"));
@@ -106,7 +114,6 @@ public class Cashup extends JSONProcessSimple {
       paymentMethodJSON.put("totalSales", paymentMethodJSON.get("totalsales"));
       paymentMethodJSON.put("totalReturns", paymentMethodJSON.get("totalreturns"));
       respArray.put(paymentMethodJSON);
-      // respArray.put(converter.toJsonObject(paymentMethod, DataResolvingMode.FULL));
     }
 
     return respArray;
@@ -122,6 +129,7 @@ public class Cashup extends JSONProcessSimple {
     final Session session = OBDal.getInstance().getSession();
     final Query taxesquery = session.createQuery(querybuilder.getHQLQuery());
     taxesquery.setParameter("cashupId", cashupId);
+    @SuppressWarnings("unchecked")
     List<BaseOBObject> taxesList = taxesquery.list();
     for (BaseOBObject tax : taxesList) {
       JSONObject taxJSON = converter.toJsonObject(tax, DataResolvingMode.FULL);
