@@ -94,6 +94,9 @@ public class DimensionDisplayUtility {
   public static final String LEVELS_REFERENCE = "3DDC9BFFE43342C4826EC65E97D40586";
   public static final String ELEMENT = "$Element";
 
+  public final static String ADD_TRANSACTION_PROCESS_ID = "E68790A7B65F4D45AB35E2BAE34C1F39";
+  public final static String FIN_FINACC_TRANSACTION_TABLE_ID = "4D8C3B3C31D1410DA046140C9F024D17";
+
   private static Map<String, String> columnDimensionMap = null;
 
   private static void initialize() {
@@ -587,8 +590,8 @@ public class DimensionDisplayUtility {
       // Table Id of FIN_Finacc_Transaction
       // The dimensions displayed in Add Transaction would be the sames as Transaction tab in
       // Financial Account
-      if ("E68790A7B65F4D45AB35E2BAE34C1F39".equals(process.getId())) {
-        tableId = "4D8C3B3C31D1410DA046140C9F024D17";
+      if (ADD_TRANSACTION_PROCESS_ID.equals(process.getId())) {
+        tableId = FIN_FINACC_TRANSACTION_TABLE_ID;
       } else {
         return new ArrayList<String>();
       }
@@ -671,8 +674,8 @@ public class DimensionDisplayUtility {
       // The dimensions displayed in Add Transaction would be the sames as Transaction tab in
       // Financial Account
       String tableId = null;
-      if ("E68790A7B65F4D45AB35E2BAE34C1F39".equals(process.getId())) {
-        tableId = "4D8C3B3C31D1410DA046140C9F024D17";
+      if (ADD_TRANSACTION_PROCESS_ID.equals(process.getId())) {
+        tableId = FIN_FINACC_TRANSACTION_TABLE_ID;
       } else {
         return "";
       }
