@@ -85,6 +85,6 @@
       <foreign-key foreignTable="AD_ORG" name="OBPOS_PMCASHUP_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="OBPOS_APPCASH_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBPOS_PMCASHUP_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
