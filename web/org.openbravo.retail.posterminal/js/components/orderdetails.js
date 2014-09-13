@@ -19,11 +19,15 @@ enyo.kind({
   },
   initComponents: function () {},
   renderData: function (docNo) {
-    var content, me = this;
-    if (this.order.get('orderDate') instanceof Date) {
-      content = OB.I18N.formatHour(this.order.get('orderDate')) + ' - ' + docNo;
+    var content, me = this,
+        orderDate = this.order.get('orderDate');
+    if (this.order.get('hasbeenpaid') === 'Y') {
+      orderDate = this.order.get('creationDate');
+    }
+    if (orderDate instanceof Date) {
+      content = OB.I18N.formatHour(orderDate) + ' - ' + docNo;
     } else {
-      content = this.order.get('orderDate') + ' - ' + docNo;
+      content = orderDate + ' - ' + docNo;
     }
     OB.UTIL.HookManager.executeHooks('OBPOS_OrderDetailContentHook', {
       content: content,
@@ -33,10 +37,34 @@ enyo.kind({
       me.setContent(args.content);
     });
   },
+  renderDataFromModel: function (order) {
+    var content, me = this,
+        orderDate = order.get('orderDate'),
+        docNo = order.get('documentNo');
+    if (order.get('hasbeenpaid') === 'Y') {
+      orderDate = order.get('creationDate');
+    }
+    if (orderDate instanceof Date) {
+      content = OB.I18N.formatHour(orderDate) + ' - ' + docNo;
+    } else {
+      content = orderDate + ' - ' + docNo;
+    }
+    OB.UTIL.HookManager.executeHooks('OBPOS_OrderDetailContentHook', {
+      content: content,
+      docNo: docNo,
+      order: order,
+      orderDate: orderDate
+    }, function (args) {
+      me.setContent(args.content);
+    });
+  },
   orderChanged: function (oldValue) {
     this.renderData(this.order.get('documentNo'));
     this.order.on('change:documentNo', function (model) {
       this.renderData(model.get('documentNo'));
+    }, this);
+    this.order.on('change:creationDate', function (model) {
+      this.renderDataFromModel(model);
     }, this);
   }
 });
