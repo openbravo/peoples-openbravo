@@ -230,7 +230,7 @@ OB.DS.HWServer.prototype._send = function (data, callback) {
       cacheBust: false,
       method: 'POST',
       handleAs: 'json',
-      timeout: 6000,
+      timeout: 20000,
       contentType: 'application/xml;charset=utf-8',
       data: data,
       success: function (inSender, inResponse) {
@@ -273,7 +273,7 @@ OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
       cacheBust: false,
       method: 'POST',
       handleAs: 'json',
-      timeout: 3000,
+      timeout: 20000,
       contentType: 'application/json;charset=utf-8',
       data: data,
       success: function (inSender, inResponse) {
