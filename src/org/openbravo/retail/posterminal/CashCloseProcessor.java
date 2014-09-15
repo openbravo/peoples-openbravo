@@ -141,7 +141,7 @@ public class CashCloseProcessor {
 
     long t3 = System.currentTimeMillis();
 
-    logger.info("Cash Up Processor. Total time: " + (t3 - t0) + ". Processing: " + (t1 - t0)
+    logger.debug("Cash Up Processor. Total time: " + (t3 - t0) + ". Processing: " + (t1 - t0)
         + ". Hooks: " + (t2 - t1) + ". Flush: " + (t3 - t2));
 
     JSONObject result = new JSONObject();

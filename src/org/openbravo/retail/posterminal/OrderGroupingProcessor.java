@@ -239,7 +239,7 @@ public class OrderGroupingProcessor {
     // OBDal.getInstance().getConnection().commit();
     long t3 = System.currentTimeMillis();
 
-    log.info("Total time: " + (t3 - t0));
+    log.debug("Total time: " + (t3 - t0));
     JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return jsonResponse;
