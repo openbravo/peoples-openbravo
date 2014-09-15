@@ -131,6 +131,7 @@ public class CancelCostAdjustment extends BaseActionHandler {
     CostAdjustment costAdjCancel = OBDal.getInstance().get(CostAdjustment.class,
         costAdjustmentCancel.getId());
     costAdjCancel.setDocumentStatus("VO");
+    costAdjCancel.setPosted("N");
     OBDal.getInstance().save(costAdjCancel);
     OBDal.getInstance().flush();
     return message;
