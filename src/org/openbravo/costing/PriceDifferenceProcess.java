@@ -46,8 +46,8 @@ public class PriceDifferenceProcess {
   private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcessHandler.class);
   private static CostAdjustment costAdjHeader = null;
 
-  public static void processPriceDifferenceTransaction(MaterialTransaction materialTransaction)
-      throws OBException, JSONException {
+  private static void processPriceDifferenceForTransaction(MaterialTransaction materialTransaction)
+      throws OBException {
 
     Date costAdjDateAcct = null;
     BigDecimal orderAmt = BigDecimal.ZERO;
@@ -137,6 +137,36 @@ public class PriceDifferenceProcess {
 
   }
 
+  public static JSONObject processPriceDifferenceTransaction(MaterialTransaction materialTransaction)
+      throws OBException {
+    costAdjHeader = null;
+
+    processPriceDifferenceForTransaction(materialTransaction);
+
+    if (costAdjHeader != null) {
+      try {
+        JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
+
+        if (message.get("severity") != "success") {
+          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
+              + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
+        }
+        return message;
+      } catch (JSONException e) {
+        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+      }
+    } else {
+      JSONObject message = new JSONObject();
+      try {
+        message.put("severity", "success");
+        message.put("title", "");
+        message.put("text", OBMessageUtils.messageBD("Success"));
+      } catch (JSONException ignore) {
+      }
+      return message;
+    }
+  }
+
   /**
    * Method to process a cost adjustment.
    * 
@@ -148,8 +178,7 @@ public class PriceDifferenceProcess {
    *           when there is an error that prevents the cost adjustment to be processed.
    * @throws JSONException
    */
-  public static JSONObject processPriceDifference(Date date, Product product) throws OBException,
-      JSONException {
+  public static JSONObject processPriceDifference(Date date, Product product) throws OBException {
 
     costAdjHeader = null;
 
@@ -166,9 +195,13 @@ public class PriceDifferenceProcess {
     mTrxs.addOrderBy(MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE, true);
     ScrollableResults lines = mTrxs.scroll(ScrollMode.FORWARD_ONLY);
 
-    while (lines.next()) {
-      MaterialTransaction line = (MaterialTransaction) lines.get(0);
-      processPriceDifferenceTransaction(line);
+    try {
+      while (lines.next()) {
+        MaterialTransaction line = (MaterialTransaction) lines.get(0);
+        processPriceDifferenceForTransaction(line);
+      }
+    } finally {
+      lines.close();
     }
     if (costAdjHeader != null) {
       try {
@@ -184,9 +217,12 @@ public class PriceDifferenceProcess {
       }
     } else {
       JSONObject message = new JSONObject();
-      message.put("severity", "success");
-      message.put("title", "");
-      message.put("text", OBMessageUtils.messageBD("Success"));
+      try {
+        message.put("severity", "success");
+        message.put("title", "");
+        message.put("text", OBMessageUtils.messageBD("Success"));
+      } catch (JSONException ignore) {
+      }
       return message;
     }
   }

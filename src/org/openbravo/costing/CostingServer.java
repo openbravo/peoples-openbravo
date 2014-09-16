@@ -145,11 +145,7 @@ public class CostingServer {
     if (!doNotCheckPriceCorrectionTrxs && transaction.getGoodsShipmentLine() != null
         && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList() != null
         && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList().size() != 0) {
-      try {
-        PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
-      } catch (JSONException e) {
-        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
-      }
+      PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
     }
 
     // check if landed cost need to be processed
