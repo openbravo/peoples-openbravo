@@ -145,6 +145,7 @@ public class FixBackdatedTransactionsProcess implements Process {
     select.append("select trx as trx");
     select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     select.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    select.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     select.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " >= (:startDate)");
     if (endDate != null) {
       select.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= (:endDate)");
