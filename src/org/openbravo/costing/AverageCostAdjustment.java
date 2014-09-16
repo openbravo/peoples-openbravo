@@ -85,8 +85,10 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     CostAdjustmentLine baseCAL = getCostAdjLine();
     for (CostAdjustmentLine costAdjLine : getTrxAdjustmentLines(basetrx)) {
       if (costAdjLine.isSource() && !costAdjLine.isRelatedTransactionAdjusted()) {
-        searchRelatedTransactionCosts(costAdjLine);
-        // OBDal.getInstance().refresh(costAdjLine);
+        if (!costAdjLine.getId().equals(strCostAdjLineId)) {
+          searchRelatedTransactionCosts(costAdjLine);
+          // OBDal.getInstance().refresh(costAdjLine);
+        }
 
         backdatedTrxSourcePending |= costAdjLine.isBackdatedTrx()
             && basetrx.getMaterialMgmtCostingList().size() > 0;
@@ -162,12 +164,19 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           OBDal.getInstance().save(sourceCosting);
           // Fire trigger to allow to modify the average cost and starting date.
           OBDal.getInstance().flush();
-          sourceCosting.setEndingDate(prevCosting.getEndingDate());
+          if (prevCosting != null) {
+            sourceCosting.setEndingDate(prevCosting.getEndingDate());
+          } else {
+            // There isn't any previous costing.
+            sourceCosting.setEndingDate(trx.getTransactionProcessDate());
+          }
           sourceCosting.setStartingDate(trx.getTransactionProcessDate());
           sourceCosting.setPermanent(Boolean.TRUE);
           OBDal.getInstance().save(sourceCosting);
-          prevCosting.setEndingDate(trx.getTransactionProcessDate());
-          OBDal.getInstance().save(prevCosting);
+          if (prevCosting != null) {
+            prevCosting.setEndingDate(trx.getTransactionProcessDate());
+            OBDal.getInstance().save(prevCosting);
+          }
 
           // This update is done only on the first related transaction.
           backdatedTrxSourcePending = false;
@@ -404,16 +413,16 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     where.append("    or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
     where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
         + " > :trxdate ))");
-    if (costingRule.getEndingDate() != null) {
-      where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " <= :enddate");
-    }
     where.append("  and org.id in (:orgs)");
     if (warehouse != null) {
       where.append("  and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
     }
+    if (costingRule.getEndingDate() != null) {
+      where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " <= :enddate");
+    }
     where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " > :startdate ))");
+        + " > :startdate ");
     where.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
     where.append("   , trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTLINE);
