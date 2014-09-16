@@ -25,9 +25,11 @@ import java.util.HashMap;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Order;
@@ -41,6 +43,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
@@ -100,6 +103,35 @@ public class CostAdjustmentProcess {
   }
 
   private void doChecks(CostAdjustment costAdjustment, JSONObject message) {
+
+    // Check that there are not permanently adjusted transactions in the sources.
+    Date minDate = null;
+    StringBuffer select = new StringBuffer();
+    select.append(" select min(cal." + CostAdjustmentLine.PROPERTY_TRANSACTIONDATE + ") as date");
+    select.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
+    select.append(" where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + ".id = :costAdjId");
+    select.append(" and cal." + CostAdjustmentLine.PROPERTY_ISSOURCE + " = true");
+
+    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    trxQry.setParameter("costAdjId", costAdjustment.getId());
+    Object objMinDate = trxQry.uniqueResult();
+    if (objMinDate != null) {
+      minDate = (Date) objMinDate;
+    }
+    // check if there is period closed between reference date and max transaction date
+    try {
+      Date maxDate = CostingUtils.getMaxTransactionDate(costAdjustment.getOrganization());
+      Period periodClosed = CostingUtils.periodClosed(costAdjustment.getOrganization(), minDate,
+          maxDate, "CAD");
+      if (periodClosed != null) {
+        String errorMsg = OBMessageUtils.getI18NMessage("DocumentTypePeriodClosed", new String[] {
+            "CAD", periodClosed.getIdentifier() });
+        throw new OBException(errorMsg);
+      }
+    } catch (ServletException e) {
+      throw new OBException(e.getMessage());
+    }
+
     // Check that there are not permanently adjusted transactions in the sources.
     OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
         CostAdjustmentLine.class);

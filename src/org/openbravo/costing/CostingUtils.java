@@ -19,15 +19,19 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
@@ -50,6 +54,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
@@ -58,6 +63,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class CostingUtils {
   protected static Logger log4j = Logger.getLogger(CostingUtils.class);
@@ -610,5 +616,48 @@ public class CostingUtils {
       return (BigDecimal) stock;
     }
     return BigDecimal.ZERO;
+  }
+
+  /**
+   * Returns the max transaction date with cost calculated
+   */
+  public static Date getMaxTransactionDate(Organization org) {
+    // Get child tree of organizations.
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        org.getClient().getId());
+    Set<String> orgs = osp.getChildTree(org.getId(), true);
+
+    StringBuffer select = new StringBuffer();
+    select.append(" select max(trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") as date");
+    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    select.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    trxQry.setParameterList("orgs", orgs);
+    Object maxDate = trxQry.uniqueResult();
+    if (maxDate != null) {
+      return (Date) maxDate;
+    }
+    return null;
+  }
+
+  /**
+   * Search period control closed between dateFrom and dateTo
+   */
+
+  public static Period periodClosed(Organization org, Date dateFrom, Date dateTo, String docType)
+      throws ServletException {
+    String strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
+    final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+
+    String strDateFrom = dateFormat.format(dateFrom);
+    String strDateTo = dateFormat.format(dateTo);
+    CostingUtilsData[] per = CostingUtilsData.periodClosed(new DalConnectionProvider(false),
+        org.getId(), strDateFrom, strDateTo, org.getClient().getId(), docType);
+    if (per.length > 0) {
+      return OBDal.getInstance().get(Period.class, per[0].period);
+    }
+    return null;
   }
 }

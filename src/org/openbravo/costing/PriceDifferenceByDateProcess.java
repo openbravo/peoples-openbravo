@@ -22,14 +22,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
@@ -52,7 +57,7 @@ public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
       String orgId = params.getString("ad_org_id");
 
       Date movementdate = JsonUtils.createDateFormat().parse(mvdate);
-      doChecks(movementdate, message);
+      doChecks(orgId, movementdate);
 
       String strUpdate = "UPDATE MaterialMgmtMaterialTransaction trx"
           + " SET checkpricedifference = 'Y'"
@@ -112,8 +117,18 @@ public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
     return jsonRequest;
   }
 
-  private void doChecks(Date movementdate, String message) {
-    // FIXME: The date is in a open period (and following periods are opened too)
-    // throw new OBException("");
+  private void doChecks(String orgId, Date movementdate) {
+    try {
+      Organization org = OBDal.getInstance().get(Organization.class, orgId);
+      Date maxDate = CostingUtils.getMaxTransactionDate(org);
+      Period periodClosed = CostingUtils.periodClosed(org, movementdate, maxDate, "CAD");
+      if (periodClosed != null) {
+        String errorMsg = OBMessageUtils.getI18NMessage("DocumentTypePeriodClosed", new String[] {
+            "CAD", periodClosed.getIdentifier() });
+        throw new OBException(errorMsg);
+      }
+    } catch (ServletException e) {
+      throw new OBException(e.getMessage());
+    }
   }
 }

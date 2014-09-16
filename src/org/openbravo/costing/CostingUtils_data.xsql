@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ******************************************************************************
+ * The contents of this file are subject to the   Compiere License  Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * You may obtain a copy of the License at http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an  "AS IS"  basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * The Original Code is                  Compiere  ERP & CRM  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
+ * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
+ * Contributor(s): Openbravo SLU
+ * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ ******************************************************************************
+-->
+
+<SqlClass name="CostingUtilsData" package="org.openbravo.costing">
+  <SqlClassComment></SqlClassComment>
+    <SqlMethod name="periodClosed" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+        SELECT p.c_period_id as period 
+        FROM C_PERIOD P, C_YEAR Y, 
+            (SELECT Y.YEAR, P.PERIODNO, P.AD_ORG_ID
+                          FROM C_PERIOD P, C_YEAR Y
+                          WHERE P.AD_ORG_ID = ?
+                          AND P.STARTDATE <= to_date(?)
+                          AND P.ENDDATE >= to_date(?)
+                          AND P.C_YEAR_ID = Y.C_YEAR_ID) AS P1, 
+            (SELECT Y.YEAR, P.PERIODNO, P.AD_ORG_ID
+                          FROM C_PERIOD P, C_YEAR Y
+                          WHERE P.AD_ORG_ID = ?
+                          AND P.STARTDATE <= to_date(?)
+                          AND P.ENDDATE >= to_date(?)
+                          AND P.C_YEAR_ID = Y.C_YEAR_ID) AS P2
+        WHERE P.AD_CLIENT_ID = ?
+        AND P.AD_ORG_ID = P1.AD_ORG_ID             
+        AND P.C_YEAR_ID = Y.C_YEAR_ID
+        AND (Y.YEAR = P1.YEAR AND P.PERIODNO >= P1.PERIODNO
+             OR Y.YEAR > P1.YEAR)
+        AND P.AD_ORG_ID = P2.AD_ORG_ID
+        AND (Y.YEAR = P2.YEAR AND P.PERIODNO <= P2.PERIODNO
+             OR Y.YEAR < P2.YEAR)
+        AND NOT EXISTS (SELECT 1 FROM C_PERIODCONTROL PC
+                        WHERE PC.C_PERIOD_ID = P.C_PERIOD_ID
+                        AND PC.DOCBASETYPE =?
+                        AND PC.AD_ORG_ID = P.AD_ORG_ID
+                        AND PC.PERIODSTATUS = 'O')
+      ]]>
+      </Sql>
+      <Parameter name="Org"/>
+      <Parameter name="StartDateAcct"/>
+      <Parameter name="StartDateAcct"/>
+      <Parameter name="Org"/>
+      <Parameter name="EndDateAcct"/>
+      <Parameter name="EndDateAcct"/>
+      <Parameter name="AD_Client_ID"/>
+      <Parameter name="DocumentType"/>
+   </SqlMethod>  
+  </SqlClass>
