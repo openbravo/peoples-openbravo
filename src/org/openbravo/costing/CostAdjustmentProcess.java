@@ -29,7 +29,6 @@ import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Order;
@@ -104,21 +103,16 @@ public class CostAdjustmentProcess {
 
   private void doChecks(CostAdjustment costAdjustment, JSONObject message) {
 
-    // Check that there are not permanently adjusted transactions in the sources.
-    Date minDate = null;
-    StringBuffer select = new StringBuffer();
-    select.append(" select min(cal." + CostAdjustmentLine.PROPERTY_TRANSACTIONDATE + ") as date");
-    select.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
-    select.append(" where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + ".id = :costAdjId");
-    select.append(" and cal." + CostAdjustmentLine.PROPERTY_ISSOURCE + " = true");
-
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
-    trxQry.setParameter("costAdjId", costAdjustment.getId());
-    Object objMinDate = trxQry.uniqueResult();
-    if (objMinDate != null) {
-      minDate = (Date) objMinDate;
-    }
     // check if there is period closed between reference date and max transaction date
+    Date minDate = null;
+    OBDal.getInstance().refresh(costAdjustment);
+    for (CostAdjustmentLine cal : costAdjustment.getCostAdjustmentLineList()) {
+      if (cal.isSource() && (minDate == null || minDate.after(cal.getTransactionDate()))) {
+        minDate = (cal.getTransactionDate() == null ? cal.getAccountingDate() : cal
+            .getTransactionDate());
+      }
+    }
+
     try {
       Date maxDate = CostingUtils.getMaxTransactionDate(costAdjustment.getOrganization());
       Period periodClosed = CostingUtils.periodClosed(costAdjustment.getOrganization(), minDate,
