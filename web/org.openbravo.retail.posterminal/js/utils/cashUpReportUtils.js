@@ -7,11 +7,10 @@
  ************************************************************************************
  */
 
-/*global B,_,Backbone*/
+/*global OB, _, Backbone, window */
 
 (function () {
 
-  OB = window.OB || {};
   OB.UTIL = window.OB.UTIL || {};
 
   function findAndSave(cashuptaxes, i, finishCallback) {
