@@ -18,6 +18,7 @@
  */
 package org.openbravo.costing;
 
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
@@ -25,7 +26,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
@@ -91,7 +94,9 @@ public class LCMatchingCancelHandler extends BaseActionHandler {
     JSONObject message = new JSONObject();
     if (lcCost.getMatchingCostAdjustment() != null) {
       message = CancelCostAdjustment.doCancelCostAdjustment(lcCost.getMatchingCostAdjustment());
+      doDeleteReceiptLineAmtMatched(lcCost);
     }
+
     // Reload in case the cancel cost adjustment has cleared the session.
     lcCost = OBDal.getInstance().get(LandedCostCost.class, strLcCostId);
     lcCost.setMatchingCostAdjustment(null);
@@ -107,6 +112,37 @@ public class LCMatchingCancelHandler extends BaseActionHandler {
       String errorMsg = OBMessageUtils.messageBD("DocumentPosted");
       log.error("Document Posted");
       throw new OBException(errorMsg);
+    }
+  }
+
+  public static void doDeleteReceiptLineAmtMatched(LandedCostCost lcCost) {
+
+    try {
+      int i = 1;
+      lcCost = OBDal.getInstance().get(LandedCostCost.class, lcCost.getId());
+      OBDal.getInstance().refresh(lcCost);
+      List<String> idList = OBDao.getIDListFromOBObject(lcCost.getLandedCostReceiptLineAmtList());
+
+      for (String id : idList) {
+        LCReceiptLineAmt lcrla = OBDal.getInstance().get(LCReceiptLineAmt.class, id);
+        if (lcrla.isMatchingAdjustment()) {
+          i++;
+          lcCost.getLandedCostReceiptLineAmtList().remove(lcrla);
+          OBDal.getInstance().remove(lcrla);
+        }
+        if (i % 100 == 0) {
+          OBDal.getInstance().save(lcCost);
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+      }
+
+      OBDal.getInstance().save(lcCost);
+      OBDal.getInstance().flush();
+    } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
+      log.error("Error in DeleteReceiptLineAmtMatched: " + e.getMessage(), e);
+      throw new OBException(e.getMessage());
     }
   }
 }

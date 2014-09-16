@@ -105,6 +105,7 @@ public class CostAdjustmentProcess {
 
     // check if there is period closed between reference date and max transaction date
     Date minDate = null;
+    costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
     OBDal.getInstance().refresh(costAdjustment);
     for (CostAdjustmentLine cal : costAdjustment.getCostAdjustmentLineList()) {
       if (cal.isSource() && (minDate == null || minDate.after(cal.getTransactionDate()))) {
