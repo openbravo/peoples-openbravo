@@ -538,7 +538,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (this.view && this.view.getContextInfo) {
       context = this.view.getContextInfo();
       for (i in context) {
-        if (context.hasOwnProperty(i) && (i.indexOf('organization') !== -1 || i.indexOf('ad_org_id') !== -1)) {
+        if (context.hasOwnProperty(i) && (i.indexOf('organization') !== -1 || i === ('ad_org_id'))) {
           return context[i];
         }
       }
@@ -547,7 +547,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (this.view.buttonOwnerView) {
       context = this.view.buttonOwnerView.getContextInfo(true, false);
       for (i in context) {
-        if (context.hasOwnProperty(i) && (i.indexOf('organization') !== -1 || i.indexOf('ad_org_id') !== -1)) {
+        if (context.hasOwnProperty(i) && (i.indexOf('organization') !== -1 || i === ('ad_org_id'))) {
           return context[i];
         }
       }
