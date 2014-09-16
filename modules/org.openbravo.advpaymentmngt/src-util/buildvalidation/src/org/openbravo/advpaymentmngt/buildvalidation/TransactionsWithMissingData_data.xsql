@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 
-<SqlClass name="ZeroPaymentamtDepositAmtTransactionsData" package="org.openbravo.advpaymentmngt.buildvalidation">
+<SqlClass name="TransactionsWithMissingDataData" package="org.openbravo.advpaymentmngt.buildvalidation">
   <SqlMethod name="dummy" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
@@ -27,13 +27,14 @@
       FROM DUAL
     ]]></Sql>
   </SqlMethod>
-  <SqlMethod name="selectZeroPaymentamtDepositamtTransactions" type="preparedStatement" return="multiple">
-    <SqlMethodComment>This query returns payments that are wrongly linked to more than one transaction</SqlMethodComment>
+  <SqlMethod name="selectTransactionsWithMissingData" type="preparedStatement" return="multiple">
+    <SqlMethodComment>This query returns transactions with deposit and payment amount equal to Zero and/or Transaction Date null and/or Accounting Date null</SqlMethodComment>
     <Sql><![CDATA[
       SELECT ad_column_identifier('fin_finacc_transaction_id', fin_finacc_transaction_id, 'en_US') as documentno, fin_finacc_transaction_id, ad_client_id, ad_org_id 
       FROM fin_finacc_transaction
-      WHERE depositamt = 0
-      AND paymentamt = 0
+      WHERE (depositamt = 0 AND paymentamt = 0)
+      OR statementdate IS NULL 
+      OR dateacct IS NULL
     ]]></Sql>
   </SqlMethod>
   <SqlMethod name="getAlertRuleId" type="preparedStatement" return="string">
