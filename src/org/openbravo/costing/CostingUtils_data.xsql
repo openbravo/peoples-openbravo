@@ -31,13 +31,13 @@
                           WHERE P.AD_ORG_ID = ?
                           AND P.STARTDATE <= to_date(?)
                           AND P.ENDDATE >= to_date(?)
-                          AND P.C_YEAR_ID = Y.C_YEAR_ID) AS P1, 
+                          AND P.C_YEAR_ID = Y.C_YEAR_ID) P1, 
             (SELECT Y.YEAR, P.PERIODNO, P.AD_ORG_ID
                           FROM C_PERIOD P, C_YEAR Y
                           WHERE P.AD_ORG_ID = ?
                           AND P.STARTDATE <= to_date(?)
                           AND P.ENDDATE >= to_date(?)
-                          AND P.C_YEAR_ID = Y.C_YEAR_ID) AS P2
+                          AND P.C_YEAR_ID = Y.C_YEAR_ID) P2
         WHERE P.AD_CLIENT_ID = ?
         AND P.AD_ORG_ID = P1.AD_ORG_ID             
         AND P.C_YEAR_ID = Y.C_YEAR_ID
