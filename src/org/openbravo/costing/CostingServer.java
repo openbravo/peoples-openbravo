@@ -201,7 +201,7 @@ public class CostingServer {
         }
 
         if (landedCost != null) {
-
+          OBDal.getInstance().flush();
           JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
 
           if (message.get("severity") != "success") {
@@ -229,6 +229,7 @@ public class CostingServer {
       OBDal.getInstance().save(cal);
 
       try {
+        OBDal.getInstance().flush();
         JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
 
         if (message.get("severity") != "success") {
@@ -266,6 +267,7 @@ public class CostingServer {
       cal.setNegativeStockCorrection(Boolean.TRUE);
 
       try {
+        OBDal.getInstance().flush();
         JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
 
         if (message.get("severity") != "success") {

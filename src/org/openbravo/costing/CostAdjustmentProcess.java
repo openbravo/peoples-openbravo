@@ -220,6 +220,7 @@ public class CostAdjustmentProcess {
       line = OBDal.getInstance().get(CostAdjustmentLine.class, strCostAdjLineId);
       line.setRelatedTransactionAdjusted(true);
       OBDal.getInstance().save(line);
+      OBDal.getInstance().flush();
       generateTransactionCosts(line);
       OBDal.getInstance().flush();
       OBDal.getInstance().getSession().clear();
