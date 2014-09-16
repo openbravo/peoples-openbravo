@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, _, $, SynchronizationHelper */
+/*global OB, enyo, Backbone, _, $ */
 
 OB.OBPOSCashUp = OB.OBPOSCashUp || {};
 OB.OBPOSCashUp.Model = OB.OBPOSCashUp.Model || {};
@@ -30,7 +30,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     //Check for orders which are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
-    var synchId = SynchronizationHelper.busyUntilFinishes('cashup.init');
     var undf, me = this,
         newstep, expected = 0,
         totalStartings = 0,
@@ -105,7 +104,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             index: index
           });
         }, this);
-        SynchronizationHelper.finished(synchId, 'init');
       });
     }, this);
 
@@ -353,7 +351,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
   //Step 4
   getCountCashSummary: function () {
-    var synchId = SynchronizationHelper.busyUntilFinishes('getCountCashSummary');
     var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, undf, model, value = OB.DEC.Zero,
         second = OB.DEC.Zero;
     countCashSummary = {
@@ -442,13 +439,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }
       }
     }
-    SynchronizationHelper.finished(synchId, 'getCountCashSummary');
     return countCashSummary;
   },
   additionalProperties: [],
   propertyFunctions: [],
   processAndFinishCashUp: function () {
-    var synchId = SynchronizationHelper.busyUntilFinishes('processAndFinishCashUp');
     OB.UTIL.showLoading(true);
     var currentMe = this;
     OB.Dal.find(OB.Model.CashUp, {

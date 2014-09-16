@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _, $*/
+/*global OB, enyo, _, $, SynchronizationHelper */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.Button',
@@ -122,6 +122,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUp',
   kind: 'OB.UI.WindowView',
+  synchId: null,
   statics: {
     TitleExtensions: [],
     getTitleExtensions: function () {
@@ -217,6 +218,7 @@ enyo.kind({
     OB.POS.navigate('retail.pointofsale');
   },
   init: function () {
+    this.synchId = SynchronizationHelper.busyUntilFinishes("cashup");
     var me = this;
     this.inherited(arguments);
 
@@ -281,7 +283,6 @@ enyo.kind({
     //finished
     this.model.on('change:finished', function () {
 
-      // this.model.messages ????
       var content;
       var i;
       var messages = this.model.get('messages');
@@ -363,6 +364,10 @@ enyo.kind({
     }, this);
 
     this.refreshButtons();
+  },
+
+  rendered: function () {
+    SynchronizationHelper.finished(this.synchId, "cashup");
   },
 
   refreshButtons: function () {
