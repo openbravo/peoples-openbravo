@@ -43,10 +43,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PriceDifferenceProcess {
-  private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcessHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(PriceDifferenceProcess.class);
   private static CostAdjustment costAdjHeader = null;
 
-  private static void processPriceDifferenceForTransaction(MaterialTransaction materialTransaction)
+  private static void calculateTransactionPriceDifference(MaterialTransaction materialTransaction)
       throws OBException {
 
     Date costAdjDateAcct = null;
@@ -85,7 +85,8 @@ public class PriceDifferenceProcess {
       }
     }
     for (TransactionCost trxCosts : materialTransaction.getTransactionCostList()) {
-      if (trxCosts.isInvoiceCorrection()) {
+      // if (trxCosts.isInvoiceCorrection()) {
+      if (true) {
         invoiceCorrectionAmt = invoiceCorrectionAmt.add(trxCosts.getCost());
       } else if (trxCosts.isUnitCost()) {
         otherCorrectionAmt = otherCorrectionAmt.add(trxCosts.getCost());
@@ -100,7 +101,7 @@ public class PriceDifferenceProcess {
           materialTransaction, costAdjHeader, adjustAmtMatchInv.subtract(invoiceCorrectionAmt),
           Boolean.TRUE, null, costAdjDateAcct);
       costAdjLine.setNeedsPosting(Boolean.TRUE);
-      costAdjLine.setInvoiceCorrection(Boolean.TRUE);
+      // costAdjLine.setInvoiceCorrection(Boolean.TRUE);
       OBDal.getInstance().save(costAdjLine);
     }
 
@@ -141,10 +142,11 @@ public class PriceDifferenceProcess {
       throws OBException {
     costAdjHeader = null;
 
-    processPriceDifferenceForTransaction(materialTransaction);
+    calculateTransactionPriceDifference(materialTransaction);
 
     if (costAdjHeader != null) {
       try {
+        OBDal.getInstance().flush();
         JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
 
         if (message.get("severity") != "success") {
@@ -198,13 +200,14 @@ public class PriceDifferenceProcess {
     try {
       while (lines.next()) {
         MaterialTransaction line = (MaterialTransaction) lines.get(0);
-        processPriceDifferenceForTransaction(line);
+        calculateTransactionPriceDifference(line);
       }
     } finally {
       lines.close();
     }
     if (costAdjHeader != null) {
       try {
+        OBDal.getInstance().flush();
         JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
 
         if (message.get("severity") != "success") {
