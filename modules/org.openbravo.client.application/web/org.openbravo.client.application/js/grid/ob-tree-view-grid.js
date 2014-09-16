@@ -305,8 +305,14 @@ isc.OBTreeViewGrid.addProperties({
   movedToSameParent: function (nodes, newParent) {
     var i, len = nodes.length;
     for (i = 0; i < len; i++) {
-      if (nodes[i].parentId !== newParent.id) {
-        return false;
+      if (nodes[i].parentId === this.dataProperties.rootValue) {
+        if (nodes[i].parentId !== newParent.nodeId) {
+          return false;
+        }
+      } else {
+        if (nodes[i].parentId !== newParent.id) {
+          return false;
+        }
       }
     }
     return true;
