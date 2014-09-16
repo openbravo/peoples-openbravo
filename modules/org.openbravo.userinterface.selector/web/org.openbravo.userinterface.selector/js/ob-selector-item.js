@@ -597,11 +597,16 @@ isc.OBSelectorItem.addProperties({
   setPickListWidth: function () {
     var extraWidth = 0,
         fieldWidth = this.getVisibleWidth();
+    // minimum width for smaller fields.
+    fieldWidth = (fieldWidth < 150 ? 150 : fieldWidth);
+    // Dropdown selector that shows more than one column.
     if (this.pickListFields.length > 1) {
-      extraWidth = 150 * (this.pickListFields.length - 1);
+      // prevents a pickListWidth longer than width of the grid.
+      // 89 is the width of checkBox + edit in form + edit in grid.
+      extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - 89);
     }
 
-    this.pickListWidth = (fieldWidth < 150 ? 150 : fieldWidth) + extraWidth;
+    this.pickListWidth = fieldWidth + extraWidth;
   },
 
   enableShortcuts: function () {
