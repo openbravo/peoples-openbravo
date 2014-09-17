@@ -319,7 +319,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       trxs.close();
     }
 
-    if (getCostingRule().getEndingDate() == null) {
+    if (getCostingRule().getEndingDate() == null && cost != null) {
       // This is the current costing rule. Check if current average cost needs to be updated.
       Costing currentCosting = AverageAlgorithm.getProductCost(new Date(), basetrx.getProduct(),
           getCostDimensions(), getCostOrg());
