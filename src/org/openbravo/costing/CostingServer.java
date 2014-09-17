@@ -122,8 +122,8 @@ public class CostingServer {
       OBDal.getInstance().save(transaction);
       OBDal.getInstance().flush();
 
-      checkCostAdjustments();
       setNotPostedTransaction();
+      checkCostAdjustments();
     } finally {
       OBContext.restorePreviousMode();
     }
