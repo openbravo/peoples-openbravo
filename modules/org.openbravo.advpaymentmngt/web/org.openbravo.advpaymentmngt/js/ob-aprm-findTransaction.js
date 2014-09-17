@@ -21,7 +21,7 @@ OB.APRM.FindTransactions = {};
 
 OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall) {
   var execute;
-  
+
   execute = function (ok) {
     if (ok) {
       actionHandlerCall(view);
@@ -44,7 +44,11 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall) {
           // Continue with the match
           actionHandlerCall(view);
         } else {
-          isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm'), execute);
+          if (isc.isA.emptyObject(OB.TestRegistry.registry)) {
+            isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm'), execute);
+          } else {
+            execute(true);
+          }
         }
       } else {
         // Continue with the match
