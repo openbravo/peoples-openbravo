@@ -393,6 +393,9 @@
       var me = this;
       if (window.localStorage.getItem('terminalAuthentication') === 'Y') {
         var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckTerminalAuth');
+
+        OB.trace("Checking authentication");
+
         process.exec({
           terminalName: window.localStorage.getItem('terminalName'),
           terminalKeyIdentifier: window.localStorage.getItem('terminalKeyIdentifier'),
@@ -423,10 +426,13 @@
               }
             });
           } else {
+            OB.trace("Executing pre synch hook");
             OB.UTIL.HookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
               OB.UTIL.showI18NWarning('OBPOS_SynchronizingDataMessage', 'OBPOS_SynchronizationWasSuccessfulMessage');
+              OB.trace("Synch all models.");
               OB.MobileApp.model.syncAllModels(function () {
                 OB.UTIL.showI18NSuccess('OBPOS_SynchronizationWasSuccessfulMessage', 'OBPOS_SynchronizingDataMessage');
+                OB.trace("Synch success");
                 if (successCallback) {
                   successCallback();
                 }
@@ -435,10 +441,13 @@
           }
         });
       } else {
+        OB.trace("Executing pre synch hook");
         OB.UTIL.HookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
           OB.UTIL.showI18NWarning('OBPOS_SynchronizingDataMessage', 'OBPOS_SynchronizationWasSuccessfulMessage');
+          OB.trace("Synch all models.");
           OB.MobileApp.model.syncAllModels(function () {
             OB.UTIL.showI18NSuccess('OBPOS_SynchronizationWasSuccessfulMessage', 'OBPOS_SynchronizingDataMessage');
+            OB.trace("Synch success");
             if (successCallback) {
               successCallback();
             }
