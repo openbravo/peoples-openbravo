@@ -108,9 +108,8 @@ public class CostAdjustmentProcess {
     costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
     OBDal.getInstance().refresh(costAdjustment);
     for (CostAdjustmentLine cal : costAdjustment.getCostAdjustmentLineList()) {
-      if (cal.isSource() && (minDate == null || minDate.after(cal.getTransactionDate()))) {
-        minDate = (cal.getTransactionDate() == null ? cal.getAccountingDate() : cal
-            .getTransactionDate());
+      if (cal.isSource() && (minDate == null || minDate.after(cal.getAccountingDate()))) {
+        minDate = cal.getAccountingDate();
       }
     }
 
@@ -266,7 +265,6 @@ public class CostAdjustmentProcess {
         trxCost.setCostDate(referenceDate);
         trxCost.setCostAdjustmentLine(line);
         trxCost.setUnitCost(line.isUnitCost());
-        trxCost.setInvoiceCorrection(line.isInvoiceCorrection());
         Date accountingDate = line.getAccountingDate();
         if (accountingDate == null) {
           accountingDate = trx.getMovementDate();

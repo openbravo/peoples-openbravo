@@ -97,7 +97,6 @@ public class DocCostAdjustment extends AcctServer {
         docLine.m_DateAcct = data[i].dateacct;
         docLine.m_C_BPartner_ID = data[i].cBpartnerId;
         docLine.setSourceProcess(data[i].sourceProcess);
-        docLine.setIsInvoiceCorrection("Y".equals(data[i].isinvoicecorrection));
         docLine.setIsSource("Y".equals(data[i].issource));
         // -- Source Amounts
         String amt = data[i].adjustmentAmount;

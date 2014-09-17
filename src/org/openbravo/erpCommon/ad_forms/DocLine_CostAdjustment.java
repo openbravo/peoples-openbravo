@@ -44,7 +44,6 @@ public class DocLine_CostAdjustment extends DocLine {
   private boolean transactionNegative;
   private String warehouseId;
   private String sourceProcess;
-  private boolean isInvoiceCorrection;
   private boolean isSource;
 
   public static final String TRXTYPE_SHIPMENT = "SMT";
@@ -62,14 +61,6 @@ public class DocLine_CostAdjustment extends DocLine {
 
   public String getSourceProcess() {
     return sourceProcess;
-  }
-
-  public void setIsInvoiceCorrection(boolean p_isInvoiceCorrection) {
-    isInvoiceCorrection = p_isInvoiceCorrection;
-  }
-
-  public boolean getIsInvoiceCorrection() {
-    return isInvoiceCorrection;
   }
 
   public void setIsSource(boolean p_isSource) {
