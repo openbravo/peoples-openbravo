@@ -227,9 +227,9 @@ public class APRM_MatchingUtility {
    * {@link #splitBankStatementLine(FIN_Reconciliation, FIN_BankStatementLine, FIN_FinaccTransaction)}
    * 
    * 
-   * @return If success, the method automatically run a commit and returns true. In case of
-   *         exceptions, the method will either throw the exception or return false. This behavior
-   *         is controlled by the throwException boolean parameter
+   * @return If success, the method automatically flushes. In case of exceptions, the method will
+   *         either throw the exception or return false. This behavior is controlled by the
+   *         throwException boolean parameter
    * 
    */
   public static boolean matchBankStatementLine(final FIN_BankStatementLine _bankStatementLine,
@@ -262,10 +262,7 @@ public class APRM_MatchingUtility {
         }
         OBDal.getInstance().save(transaction);
         OBDal.getInstance().save(bankStatementLine);
-        // Required to persist current matching so that it is not rollbacked afterwards because of a
-        // future error
         OBDal.getInstance().flush();
-        OBDal.getInstance().getConnection().commit();
       }
     } catch (Exception e) {
       log4j.error("Error during matchBankStatementLine, performing a rollback");
@@ -348,9 +345,10 @@ public class APRM_MatchingUtility {
         final MatchingAlgorithm ma = bsline.getBankStatement().getAccount().getMatchingAlgorithm();
         final FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
             ma.getJavaClassName());
-        matchingTransaction.unmatch(finTrans);
-
-        OBDal.getInstance().getConnection().commit();
+        if (finTrans.isCreatedByAlgorithm()) {
+          matchingTransaction.unmatch(finTrans);
+        }
+        OBDal.getInstance().flush();
 
         // Do not allow bank statement lines of 0
         if (bsline.getCramount().compareTo(BigDecimal.ZERO) == 0
@@ -359,7 +357,6 @@ public class APRM_MatchingUtility {
           bs.setProcessed(false);
           OBDal.getInstance().save(bs);
           OBDal.getInstance().remove(bsline);
-          OBDal.getInstance().getConnection().commit();
           bs.setProcessed(true);
           OBDal.getInstance().save(bs);
           // Required to persist current unmatch so that it is not rollbacked afterwards because of

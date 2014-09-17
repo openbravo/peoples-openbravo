@@ -143,8 +143,14 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
                 reconciliation, matched.getMatchLevel(), false)) {
           excluded.add(transaction);
           matchedLines++;
+          // Required to persist current matching so that it is not rollbacked afterwards because of
+          // a
+          // future error
+          OBDal.getInstance().getConnection().commit();
         }
       }
+    } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
     } finally {
       bankLinesSR.close();
     }
