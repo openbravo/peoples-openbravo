@@ -58,7 +58,7 @@ public class PriceDifferenceProcess {
     Date trxDate = materialTransaction.getMovementDate();
     int costCurPrecission = trxCurrency.getCostingPrecision().intValue();
     ShipmentInOutLine receiptLine = materialTransaction.getGoodsShipmentLine();
-    if (receiptLine == null) {
+    if (receiptLine == null || receiptLine.getShipmentReceipt().isSalesTransaction()) {
       // We can only adjust cost of receipt lines.
       return;
     }
@@ -141,7 +141,7 @@ public class PriceDifferenceProcess {
       OBDal.getInstance().save(costAdjLine);
     }
 
-    materialTransaction.setCheckpricedifference(false);
+    materialTransaction.setCheckpricedifference(Boolean.FALSE);
     OBDal.getInstance().save(materialTransaction);
   }
 
