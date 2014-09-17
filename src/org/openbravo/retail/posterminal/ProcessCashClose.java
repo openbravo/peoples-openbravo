@@ -69,11 +69,11 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
         recconciliations.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT,
             payment.getFinancialAccount()));
         for (final FIN_Reconciliation r : recconciliations.list()) {
-        // will end up in the pos error window
-        throw new OBException(
-            "Cash up can not proceed, there is a reconcilliation in draft status, payment method: "
-                + payment.getIdentifier() + ", reconcilliation: " + r.getDocumentNo() + " ("
-                + r.getAccount().getName() + ")");
+          // will end up in the pos error window
+          throw new OBException(
+              "Cash up can not proceed, there is a reconcilliation in draft status, payment method: "
+                  + payment.getIdentifier() + ", reconcilliation: " + r.getDocumentNo() + " ("
+                  + r.getAccount().getName() + ")");
         }
       }
 
@@ -136,7 +136,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
         OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
             jsonCashup.getString("posterminal"));
         cashUp = OBProvider.getInstance().get(OBPOSAppCashup.class);
-        cashUp.setNewOBObject(true);
         cashUp.setId(cashUpId);
         cashUp.setOrganization(posTerminal.getOrganization());
         cashUp.setCashUpDate(cashUpDate);
@@ -152,6 +151,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
         // cashUp.setTotalretailtransactions(null);
         // cashUp.setActive(true);
         // cashUp.setProcessed(null);
+        cashUp.setNewOBObject(true);
         OBDal.getInstance().save(cashUp);
 
         // create OBPOSAppCashup
