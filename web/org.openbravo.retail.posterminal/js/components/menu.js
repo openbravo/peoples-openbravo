@@ -391,17 +391,6 @@ enyo.kind({
     if (OB.POS.modelterminal.hasPermission(this.permission)) {
       this.doPrintReceipt();
     }
-  },
-  init: function (model) {
-    var receipt = model.get('order'),
-        me = this;
-    receipt.on('change:isQuotation', function (model) {
-      if (!model.get('isQuotation')) {
-        me.show();
-      } else {
-        me.hide();
-      }
-    }, this);
   }
 });
 
