@@ -33,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.LockOptions;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Order;
@@ -68,7 +67,6 @@ import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.model.financialmgmt.accounting.Costcenter;
 import org.openbravo.model.financialmgmt.accounting.UserDimension1;
 import org.openbravo.model.financialmgmt.accounting.UserDimension2;
-import org.openbravo.model.financialmgmt.cashmgmt.BankStatementLine;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatement;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
@@ -217,8 +215,8 @@ public class APRM_MatchingUtility {
       final String matchLevel, boolean throwException) {
     try {
       OBContext.setAdminMode(true);
-      OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
-          .lock(BankStatementLine.ENTITY_NAME, bankStatementLine);
+      // OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
+      // .lock(BankStatementLine.ENTITY_NAME, bankStatementLine);
 
       if (transaction != null) {
         // Unmatch the previous line
@@ -375,6 +373,7 @@ public class APRM_MatchingUtility {
     final List<FIN_BankStatementLine> splitLines = obc.list();
 
     if (!splitLines.isEmpty()) {
+      // bs is set a false, because it is processed bs cannot be edited
       bs.setProcessed(false);
       OBDal.getInstance().save(bs);
       OBDal.getInstance().flush();
@@ -403,6 +402,7 @@ public class APRM_MatchingUtility {
       OBDal.getInstance().save(bsline);
       OBDal.getInstance().flush();
 
+      // bs is set a true, because it was the status at the beginning of this function
       bs.setProcessed(true);
       OBDal.getInstance().save(bs);
       OBDal.getInstance().flush();
@@ -581,6 +581,7 @@ public class APRM_MatchingUtility {
     waitIfNecessary(reconciliation);
     reconciliation.setProcessNow(true);
     reconciliation.setAprmProcessingSession(getContextSessionId());
+    // Necessary to save in database the session id
     OBDal.getInstance().save(reconciliation);
     OBDal.getInstance().flush();
     OBDal.getInstance().getConnection().commit();
