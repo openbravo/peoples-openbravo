@@ -139,9 +139,23 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
       }
     }
     // Delete unselected matches
-    for (String strLCMatchId : existingMatchings) {
-      LCMatched matchToRemove = OBDal.getInstance().get(LCMatched.class, strLCMatchId);
-      OBDal.getInstance().remove(matchToRemove);
+    if (!existingMatchings.isEmpty()) {
+      LandedCostCost lcCost = null;
+      il = OBDal.getInstance().get(InvoiceLine.class, il.getId());
+      OBDal.getInstance().refresh(il);
+
+      for (String strLCMatchId : existingMatchings) {
+        LCMatched matchToRemove = OBDal.getInstance().get(LCMatched.class, strLCMatchId);
+
+        // load landedcostcost
+        lcCost = OBDal.getInstance().get(LandedCostCost.class,
+            matchToRemove.getLandedCostCost().getId());
+        lcCost.getLandedCostMatchedList().remove(matchToRemove);
+        il.getLandedCostCostList().remove(matchToRemove);
+        OBDal.getInstance().save(lcCost);
+        OBDal.getInstance().remove(matchToRemove);
+      }
+      OBDal.getInstance().save(il);
     }
   }
 }
