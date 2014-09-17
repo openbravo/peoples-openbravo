@@ -43,6 +43,8 @@
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
       this.receipt.set('created', creationDate.getTime());
       this.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
+
+      OB.trace('Executing pre order save hook.');
       // The order will not be processed if the navigator is offline
       if (OB.POS.modelterminal.get('connectedToERP')) {
         this.receipt.set('isbeingprocessed', 'Y');
@@ -61,14 +63,19 @@
             auxReceipt = new OB.Model.Order(),
             currentDocNo = receipt.get('documentNo') || docno;
 
+        OB.trace("Execution of pre order save hook OK.");
         receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         receipt.set('json', JSON.stringify(receipt.toJSON()));
 
+        OB.trace("Calculationg cashup information.");
         auxReceipt.clearWith(receipt);
         OB.UTIL.cashUpReport(auxReceipt, OB.UTIL.calculateCurrentCash);
 
+        OB.trace("Saving receipt.");
         OB.Dal.save(receipt, function () {
           var successCallback = function (model) {
+
+              OB.trace("Sync process success.");
               //In case the processed document is a quotation, we remove its id so it can be reactivated
               if (model && !_.isNull(model)) {
                 if (model.get('order') && model.get('order').get('isQuotation')) {
@@ -84,7 +91,10 @@
                   }
                 }
               }
+              OB.trace("Order successfully removed.");
               };
+
+          OB.trace("Executing of post order save hook.");
           if (eventParams && eventParams.callback) {
             eventParams.callback();
           }
@@ -95,9 +105,9 @@
       });
     }, this);
 
-
-
     this.context.get('multiOrders').on('closed', function (receipt) {
+
+      OB.warn('Multiorders ticket closed.');
       if (!_.isUndefined(receipt)) {
         this.receipt = receipt;
       }
@@ -129,19 +139,27 @@
       if (OB.POS.modelterminal.get('connectedToERP')) {
         this.receipt.set('isbeingprocessed', 'Y');
       }
+
+      OB.trace("Executing pre order save hook.");
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
         context: this,
         model: model,
         receipt: this.receipt
       }, function (args) {
+
+        OB.trace("Execution of pre order save hook OK.");
         if (args && args.cancellation && args.cancellation === true) {
           args.context.receipt.set('isbeingprocessed', 'N');
           return true;
         }
+
+        OB.trace('Saving receipt.');
         OB.Dal.save(me.receipt, function () {
           OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
             var successCallback, errorCallback;
             successCallback = function () {
+
+              OB.trace("Sync process success.");
               OB.UTIL.showLoading(false);
               if (me.hasInvLayaways) {
                 OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
@@ -152,6 +170,7 @@
             errorCallback = function () {
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
             };
+
             if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
               me.hasInvLayaways = true;
             }
@@ -160,6 +179,8 @@
             me.ordersToSend += 1;
             if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
               model.get('multiOrders').resetValues();
+
+              OB.trace("Execution Sync process.");
               OB.MobileApp.model.runSyncProcess(model, successCallback);
               me.ordersToSend = OB.DEC.Zero;
             }
