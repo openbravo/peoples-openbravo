@@ -88,23 +88,32 @@ public class CostingBackground extends DalBaseProcess {
       // Fix the Not Processed flag for those Transactions with Cost Not Calculated
       setNotProcessedWhenNotCalculatedTransactions(orgsWithRule);
 
-      List<MaterialTransaction> trxs = getTransactionsBatch(orgsWithRule);
-      int counter = 0, total = trxs.size(), batch = 0;
-      while (counter < maxTransactions) {
-        batch++;
-        for (MaterialTransaction transaction : trxs) {
+      ScrollableResults trxs = getTransactions(orgsWithRule);
+      int counter = 0;
+      try {
+        while (trxs.next()) {
+          MaterialTransaction transaction = (MaterialTransaction) trxs.get()[0];
           counter++;
+          if ("S".equals(transaction.getCostingStatus())) {
+            // Do not calculate trx in skip status.
+            continue;
+          }
           log4j.debug("Start transaction process: " + transaction.getId());
+          OBDal.getInstance().refresh(transaction);
           CostingServer transactionCost = new CostingServer(transaction);
           transactionCost.process();
-          transaction.setProcessed(true);
-          log4j.debug("Transaction processed: " + counter + "/" + total + " batch: " + batch);
+          log4j.debug("Transaction processed: " + counter + "/" + maxTransactions);
           // If cost has been calculated successfully do a commit.
-          OBDal.getInstance().getConnection().commit();
+          OBDal.getInstance().getConnection(true).commit();
+          if (counter % 1 == 0) {
+            OBDal.getInstance().getSession().clear();
+          }
         }
-        OBDal.getInstance().getSession().clear();
-        trxs = getTransactionsBatch(orgsWithRule);
-        total += trxs.size();
+      } finally {
+        // Set the processed flag to true to those transactions whose cost has been calculated.
+        setCalculatedTransactionsAsProcessed(orgsWithRule);
+
+        trxs.close();
       }
 
       logger.logln(OBMessageUtils.messageBD("Success"));
@@ -135,18 +144,27 @@ public class CostingBackground extends DalBaseProcess {
     ScrollableResults trxs = getTransactionsNotCalculated(orgsWithRule);
     while (trxs.next()) {
       MaterialTransaction transaction = (MaterialTransaction) trxs.get(0);
-      transaction.setProcessed(false);
+      transaction.setProcessed(Boolean.FALSE);
       OBDal.getInstance().save(transaction);
     }
     OBDal.getInstance().flush();
   }
 
-  private List<MaterialTransaction> getTransactionsBatch(List<String> orgsWithRule) {
+  private void setCalculatedTransactionsAsProcessed(List<String> orgsWithRule) {
+    ScrollableResults trxs = getTransactionsCalculated(orgsWithRule);
+    while (trxs.next()) {
+      MaterialTransaction transaction = (MaterialTransaction) trxs.get(0);
+      transaction.setProcessed(Boolean.TRUE);
+      OBDal.getInstance().save(transaction);
+    }
+    OBDal.getInstance().flush();
+  }
+
+  private ScrollableResults getTransactions(List<String> orgsWithRule) {
     StringBuffer where = new StringBuffer();
     where.append(" as trx");
     where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
     where.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
@@ -170,9 +188,9 @@ public class CostingBackground extends DalBaseProcess {
     if (maxTransactions == 0) {
       maxTransactions = trxQry.count();
     }
-    trxQry.setMaxResult(1000);
+    // trxQry.setMaxResult(1000);
 
-    return trxQry.list();
+    return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
   /**
@@ -189,6 +207,24 @@ public class CostingBackground extends DalBaseProcess {
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setNamedParameter("orgs", orgsWithRule);
     trxQry.setFetchSize(10);
+
+    return trxQry.scroll(ScrollMode.FORWARD_ONLY);
+  }
+
+  /**
+   * Get Transactions with Processed flag = 'N' but it's cost is Calculated
+   */
+  private ScrollableResults getTransactionsCalculated(List<String> orgsWithRule) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as trx");
+    where.append(" where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
+        MaterialTransaction.class, where.toString());
+    trxQry.setFilterOnReadableOrganization(false);
+    trxQry.setNamedParameter("orgs", orgsWithRule);
+    trxQry.setFetchSize(100);
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }
