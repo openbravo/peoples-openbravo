@@ -106,7 +106,7 @@ public class PriceDifferenceProcess {
       }
     }
 
-    BigDecimal notInvoicedQty = invoiceQty.subtract(receiptQty);
+    BigDecimal notInvoicedQty = receiptQty.subtract(invoiceQty);
     if (notInvoicedQty.signum() > 0) {
       // Not all the receipt line is invoiced, add pending invoice quantity valued with current
       // order price if exists or original unit cost.
