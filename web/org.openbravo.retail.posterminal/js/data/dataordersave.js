@@ -47,7 +47,7 @@
       if (OB.POS.modelterminal.get('connectedToERP')) {
         this.receipt.set('isbeingprocessed', 'Y');
       }
-      OB.trace("Executing pre order save hook.");
+      OB.trace('Executing pre order save hook.');
 
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
         context: this,
@@ -62,7 +62,7 @@
             auxReceipt = new OB.Model.Order(),
             currentDocNo = receipt.get('documentNo') || docno;
 
-        OB.trace("Execution of pre order save hook OK.");
+        OB.trace('Execution of pre order save hook OK.');
 
         receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         // convert returns
@@ -75,17 +75,17 @@
         }
         receipt.set('json', JSON.stringify(receipt.toJSON()));
 
-        OB.trace("Calculationg cashup information.");
+        OB.trace('Calculationg cashup information.');
 
         auxReceipt.clearWith(receipt);
         OB.UTIL.cashUpReport(auxReceipt, OB.UTIL.calculateCurrentCash);
 
-        OB.trace("Saving receipt.");
+        OB.trace('Saving receipt.');
 
         OB.Dal.save(receipt, function () {
           var successCallback = function (model) {
 
-              OB.trace("Sync process success.");
+              OB.trace('Sync process success.');
 
               //In case the processed document is a quotation, we remove its id so it can be reactivated
               if (model && !_.isNull(model)) {
@@ -103,15 +103,15 @@
                 }
               }
 
-              OB.trace("Order successfully removed.");
+              OB.trace('Order successfully removed.');
               };
 
-          OB.trace("Executing of post order save hook.");
+          OB.trace('Executing of post order save hook.');
 
           if (OB.MobileApp.model.hookManager.get('OBPOS_PostSyncReceipt')) {
             //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
             //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
-            OB.trace("Execution Sync process.");
+            OB.trace('Execution Sync process.');
 
             OB.MobileApp.model.runSyncProcess(function () {
               OB.MobileApp.model.hookManager.executeHooks('OBPOS_PostSyncReceipt', {
@@ -133,7 +133,7 @@
             });
           } else {
 
-            OB.trace("Execution Sync process.");
+            OB.trace('Execution Sync process.');
 
             //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
             OB.MobileApp.model.runSyncProcess(function () {
@@ -186,7 +186,7 @@
         this.receipt.set('isbeingprocessed', 'Y');
       }
 
-      OB.trace("Executing pre order save hook.");
+      OB.trace('Executing pre order save hook.');
 
       OB.MobileApp.model.hookManager.executeHooks('OBPOS_PreOrderSave', {
         context: this,
@@ -194,20 +194,20 @@
         receipt: this.receipt
       }, function (args) {
 
-        OB.trace("Execution of pre order save hook OK.");
+        OB.trace('Execution of pre order save hook OK.');
         if (args && args.cancellation && args.cancellation === true) {
           args.context.receipt.set('isbeingprocessed', 'N');
           return true;
         }
 
-        OB.trace("Saving receipt.");
+        OB.trace('Saving receipt.');
 
         OB.Dal.save(me.receipt, function () {
           OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
             var successCallback, errorCallback;
             successCallback = function () {
 
-              OB.trace("Sync process success.");
+              OB.trace('Sync process success.');
               OB.UTIL.showLoading(false);
               if (me.hasInvLayaways) {
                 OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
@@ -229,7 +229,7 @@
             if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
               model.get('multiOrders').resetValues();
 
-              OB.trace("Execution Sync process.");
+              OB.trace('Execution Sync process.');
 
               OB.MobileApp.model.runSyncProcess(successCallback);
               me.ordersToSend = OB.DEC.Zero;
