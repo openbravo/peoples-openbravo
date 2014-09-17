@@ -2007,6 +2007,15 @@
         desc += '{Product: ' + l.get('product').get('_identifier') + ', Quantity: ' + l.get('qty') + ' Gross: ' + l.get('gross') + '}';
         i++;
       });
+      desc += '] Payments: [';
+      i=0;
+      this.get('payments').forEach(function (l) {
+        if (i !== 0) {
+          desc += ",";
+        }
+        desc += '{PaymentMethod: ' + l.get('kind') + ', Amount: ' + l.get('amount') + ' OrigAmount: ' + l.get('origAmount') + ' Date: '+l.get('date')+' isocode: '+l.get('isocode')+'}';
+        i++;
+      });
       desc += ']';
       return desc;
     }
