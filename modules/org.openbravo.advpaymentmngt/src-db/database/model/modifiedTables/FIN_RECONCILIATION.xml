@@ -21,10 +21,6 @@
         <default><![CDATA[P]]></default>
         <onCreateDefault/>
       </column>
-      <column name="EM_APRM_PROCESSING_SESSION" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <check name="EM_APRM_REC_PRINTDET_CHK"><![CDATA[EM_APRM_PRINTDETAILED IN ('Y', 'N')]]></check>
       <check name="EM_APRM_REC_PRINTSUM_CHK"><![CDATA[EM_APRM_PRINTSUMMARY IN ('Y', 'N')]]></check>
     </table>

@@ -96,19 +96,33 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
         var processId = '154CB4F9274A479CB38A285E16984539',
             grid = me.grid,
             record = me.record,
-            standardWindow = grid.view.parentWindow.view.standardWindow;
-
-        var process = standardWindow.openProcess({
-          callerField: me,
-          paramWindow: true,
-          processId: processId,
-          windowId: grid.view.windowId,
-          externalParams: {
-            bankStatementLineId: record.id,
-            transactionDate: record.transactionDate
-          },
-          windowTitle: OB.I18N.getLabel('APRM_MATCHTRANSACTION_SEARCH_BUTTON', [this.title])
-        });
+            standardWindow = grid.view.parentWindow.view.standardWindow, 
+            process, 
+            callback, 
+            bankStatementLineId = me.record.id, 
+            updated = me.record.bslUpdated.getTime() + me.record.bslUpdated.getTimezoneOffset() * 60000,
+            view = me.grid.view;
+	    callback = function (response, data, request) {
+	      view.onRefreshFunction(view);
+	      if (data && data.message && data.message.severity === 'error') {
+	        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
+	      }else{
+            var process = standardWindow.openProcess({
+              callerField: me,
+              paramWindow: true,
+              processId: processId,
+              windowId: grid.view.windowId,
+              externalParams: {
+                bankStatementLineId: record.id,
+                transactionDate: record.transactionDate
+              },
+              windowTitle: OB.I18N.getLabel('APRM_MATCHTRANSACTION_SEARCH_BUTTON', [this.title])
+            });
+	      }
+	    };
+	    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.CheckRecordChangedActionHandler', {
+	      bankStatementLineId: bankStatementLineId, updated: updated
+	    }, {}, callback);
       }
     });
 
@@ -120,18 +134,32 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
         var processId = 'E68790A7B65F4D45AB35E2BAE34C1F39',
             grid = me.grid,
             record = me.record,
-            standardWindow = grid.view.parentWindow.view.standardWindow;
-
-        var process = standardWindow.openProcess({
-          callerField: me,
-          paramWindow: true,
-          processId: processId,
-          windowId: grid.view.windowId,
-          externalParams: {
-            bankStatementLineId: me.record.id
-          },
-          windowTitle: OB.I18N.getLabel('APRM_MATCHTRANSACTION_ADD_BUTTON', [this.title])
-        });
+            standardWindow = grid.view.parentWindow.view.standardWindow, 
+            process, 
+            callback, 
+            bankStatementLineId = me.record.id, 
+            updated = me.record.bslUpdated.getTime() + me.record.bslUpdated.getTimezoneOffset() * 60000,
+            view = me.grid.view;
+	    callback = function (response, data, request) {
+	      view.onRefreshFunction(view);
+	      if (data && data.message && data.message.severity === 'error') {
+	        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
+	      }else{
+	        process = standardWindow.openProcess({
+	            callerField: me,
+	            paramWindow: true,
+	            processId: processId,
+	            windowId: grid.view.windowId,
+	            externalParams: {
+	              bankStatementLineId: me.record.id
+	            },
+	            windowTitle: OB.I18N.getLabel('APRM_MATCHTRANSACTION_ADD_BUTTON', [this.title])
+	          });
+	      }
+	    };
+	    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.CheckRecordChangedActionHandler', {
+	      bankStatementLineId: bankStatementLineId, updated: updated
+	    }, {}, callback);
       }
     });
 
@@ -141,7 +169,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       originalPrompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_DELETE_BUTTON'),
       prompt: OB.I18N.getLabel('APRM_MATCHTRANSACTION_DELETE_BUTTON'),
       action: function () {
-        var callback, bankStatementLineId = me.record.id,
+        var callback, bankStatementLineId = me.record.id, updated = me.record.bslUpdated.getTime() + me.record.bslUpdated.getTimezoneOffset() * 60000,
             view = me.grid.view;
         callback = function (response, data, request) {
           view.onRefreshFunction(view);
@@ -150,7 +178,7 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
           }
         };
         OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.UnMatchTransactionActionHandler', {
-          bankStatementLineId: bankStatementLineId
+          bankStatementLineId: bankStatementLineId, updated: updated
         }, {}, callback);
       }
     });

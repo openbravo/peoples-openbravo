@@ -20,12 +20,10 @@
 package org.openbravo.advpaymentmngt.utility;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpSession;
 
@@ -33,8 +31,11 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
@@ -56,7 +57,6 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
@@ -197,6 +197,28 @@ public class APRM_MatchingUtility {
   }
 
   /**
+   * Process to get and lock a Bank Statement Line. Required for processes which should manage
+   * concurrency
+   * 
+   * @param id
+   *          String containing Bank Statement Line id.
+   * @return Returns related Bank Statement line object performing a select for update
+   */
+  public static FIN_BankStatementLine getLockedBSL(String id) {
+    FIN_BankStatementLine result = null;
+    final StringBuilder hqlString = new StringBuilder();
+    hqlString.append(" select e");
+    hqlString.append(" from FIN_BankStatementLine as e");
+    hqlString.append(" where e.id = :id");
+    final Session session = OBDal.getInstance().getSession();
+    Query query = session.createQuery(hqlString.toString());
+    query.setParameter("id", id);
+    query.setLockMode("e", LockMode.PESSIMISTIC_WRITE);
+    result = (FIN_BankStatementLine) query.uniqueResult();
+    return result;
+  }
+
+  /**
    * Match a bank statement line with a financial account transaction. If the bank statement has
    * associated a transaction, it is first unmatched and then matched against the given transaction.
    * 
@@ -210,13 +232,12 @@ public class APRM_MatchingUtility {
    *         is controlled by the throwException boolean parameter
    * 
    */
-  public static boolean matchBankStatementLine(final FIN_BankStatementLine bankStatementLine,
+  public static boolean matchBankStatementLine(final FIN_BankStatementLine _bankStatementLine,
       final FIN_FinaccTransaction transaction, final FIN_Reconciliation reconciliation,
       final String matchLevel, boolean throwException) {
     try {
       OBContext.setAdminMode(true);
-      // OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
-      // .lock(BankStatementLine.ENTITY_NAME, bankStatementLine);
+      FIN_BankStatementLine bankStatementLine = getLockedBSL(_bankStatementLine.getId());
 
       if (transaction != null) {
         // Unmatch the previous line
@@ -297,9 +318,10 @@ public class APRM_MatchingUtility {
    * @param bsline
    *          Bank Statement Line to be unmatched from a transaction
    */
-  public static void unmatch(final FIN_BankStatementLine bsline) {
+  public static void unmatch(final FIN_BankStatementLine _bsline) {
     try {
       OBContext.setAdminMode(true);
+      FIN_BankStatementLine bsline = getLockedBSL(_bsline.getId());
       final FIN_FinaccTransaction finTrans = bsline.getFinancialAccountTransaction();
       if (finTrans != null) {
         finTrans.setReconciliation(null);
@@ -359,7 +381,7 @@ public class APRM_MatchingUtility {
    * @param bsline
    *          Bank Statement Line.
    */
-  public static void mergeBankStatementLine(FIN_BankStatementLine bsline) {
+  private static void mergeBankStatementLine(FIN_BankStatementLine bsline) {
     BigDecimal totalCredit = bsline.getCramount();
     BigDecimal totalDebit = bsline.getDramount();
     FIN_BankStatement bs = bsline.getBankStatement();
@@ -527,38 +549,6 @@ public class APRM_MatchingUtility {
   }
 
   /**
-   * Wait till a reconciliation is not being processed by an active session different from the
-   * current context session
-   * 
-   * @param reconciliation
-   *          The reconciliation that is being processing
-   */
-  public static void waitIfNecessary(FIN_Reconciliation reconciliation) throws InterruptedException {
-    try {
-      OBContext.setAdminMode(true);
-      final String contextSessionId = getContextSessionId();
-      final String reconciliationProcessSessionId = reconciliation.getAprmProcessingSession();
-      Session reconciliationProcessSession = null;
-
-      if (StringUtils.isNotBlank(reconciliationProcessSessionId)) {
-        reconciliationProcessSession = OBDal.getInstance().get(Session.class,
-            reconciliationProcessSessionId);
-      }
-      while (reconciliation.isProcessNow()
-          && !StringUtils.equals(contextSessionId, reconciliationProcessSessionId)
-          && reconciliationProcessSession != null && reconciliationProcessSession.isSessionActive()) {
-        TimeUnit.MILLISECONDS.sleep(200);
-        OBDal.getInstance().refresh(reconciliation);
-        if (reconciliationProcessSession != null) {
-          OBDal.getInstance().refresh(reconciliationProcessSession);
-        }
-      }
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  /**
    * Returns the current context session ID (from HttpSession)
    * 
    * @return ID with the #AD_SESSION_ID
@@ -566,47 +556,6 @@ public class APRM_MatchingUtility {
   public static String getContextSessionId() {
     final HttpSession httpSession = RequestContext.get().getSession();
     return (String) httpSession.getAttribute("#AD_SESSION_ID");
-  }
-
-  /**
-   * Sets the reconciliation as being processed pointing to the session ID that have requested it
-   * and flushes to the database.
-   * 
-   * If the reconciliation is being processed by another active session, then this method will wait
-   * until the other process unlock it (see {@link #waitIfNecessary(FIN_Reconciliation)}.
-   * 
-   */
-  public static void setProcessingReconciliation(final FIN_Reconciliation reconciliation)
-      throws InterruptedException, SQLException {
-    waitIfNecessary(reconciliation);
-    reconciliation.setProcessNow(true);
-    reconciliation.setAprmProcessingSession(getContextSessionId());
-    // Necessary to save in database the session id
-    OBDal.getInstance().save(reconciliation);
-    OBDal.getInstance().flush();
-    OBDal.getInstance().getConnection().commit();
-  }
-
-  /**
-   * Sets the reconciliation as not being processed, removes the information about the session ID
-   * that previously processed it and flushes to the database
-   * 
-   */
-  public static void setNotProcessingReconciliation(final String reconciliationId) {
-    if (StringUtils.isNotBlank(reconciliationId)) {
-      try {
-        OBContext.setAdminMode(true);
-        final FIN_Reconciliation reconciliation = OBDal.getInstance().get(FIN_Reconciliation.class,
-            reconciliationId);
-        reconciliation.setProcessNow(false);
-        reconciliation.setAprmProcessingSession(null);
-        OBDal.getInstance().save(reconciliation);
-      } finally {
-        OBContext.restorePreviousMode();
-      }
-
-      OBDal.getInstance().flush();
-    }
   }
 
   /**
@@ -757,7 +706,7 @@ public class APRM_MatchingUtility {
    * transaction
    * 
    */
-  public static void splitBankStatementLine(final FIN_Reconciliation reconciliation,
+  private static void splitBankStatementLine(final FIN_Reconciliation reconciliation,
       final FIN_BankStatementLine bankStatementLine, final FIN_FinaccTransaction transaction) {
     try {
       OBContext.setAdminMode(true);

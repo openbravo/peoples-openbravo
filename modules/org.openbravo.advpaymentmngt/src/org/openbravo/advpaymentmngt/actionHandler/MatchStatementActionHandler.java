@@ -53,7 +53,7 @@ public class MatchStatementActionHandler extends BaseProcessActionHandler {
       final FIN_Reconciliation lastReconciliation = TransactionsDao.getLastReconciliation(
           finAccount, "N");
       strReconciliationId = lastReconciliation.getId();
-      APRM_MatchingUtility.setProcessingReconciliation(lastReconciliation);
+      // APRM_MatchingUtility.setProcessingReconciliation(lastReconciliation);
       if (APRM_MatchingUtility.updateReconciliation(lastReconciliation, finAccount, true)) {
         final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
         final JSONObject msg = new JSONObject();
@@ -80,7 +80,7 @@ public class MatchStatementActionHandler extends BaseProcessActionHandler {
       }
     } finally {
       OBContext.restorePreviousMode();
-      APRM_MatchingUtility.setNotProcessingReconciliation(strReconciliationId);
+      // APRM_MatchingUtility.setNotProcessingReconciliation(strReconciliationId);
     }
     return jsonResponse;
   }

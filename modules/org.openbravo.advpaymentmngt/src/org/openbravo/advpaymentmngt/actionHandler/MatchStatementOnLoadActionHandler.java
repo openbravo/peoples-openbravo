@@ -70,10 +70,7 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       if (reconciliation == null) {
         // Create a new reconciliation
         reconciliation = APRM_MatchingUtility.addNewDraftReconciliation(financialAccount);
-        APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
       } else {
-        // Reuse last reconciliation
-        APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
         APRM_MatchingUtility.fixMixedLines(reconciliation);
         APRM_MatchingUtility.updateReconciliation(reconciliation, financialAccount, false);
       }
@@ -113,7 +110,6 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
       }
     } finally {
       OBContext.restorePreviousMode();
-      APRM_MatchingUtility.setNotProcessingReconciliation(strReconciliationId);
     }
 
     return jsonResponse;
@@ -122,7 +118,6 @@ public class MatchStatementOnLoadActionHandler extends BaseActionHandler {
   private int runAutoMatchingAlgorithm(String strReconciliationId,
       final String strFinancialAccountId, final FIN_FinancialAccount financialAccount,
       FIN_Reconciliation reconciliation) throws InterruptedException, SQLException {
-    APRM_MatchingUtility.setProcessingReconciliation(reconciliation);
     final MatchingAlgorithm ma = financialAccount.getMatchingAlgorithm();
     final FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
         ma.getJavaClassName());

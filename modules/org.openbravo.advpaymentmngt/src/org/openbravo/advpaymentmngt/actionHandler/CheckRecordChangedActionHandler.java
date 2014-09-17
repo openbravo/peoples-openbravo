@@ -23,21 +23,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
-import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
-import org.openbravo.service.db.DbUtility;
-import org.openbravo.service.json.OBStaleObjectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UnMatchTransactionActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(UnMatchTransactionActionHandler.class);
+public class CheckRecordChangedActionHandler extends BaseActionHandler {
+  private static final Logger log = LoggerFactory.getLogger(CheckRecordChangedActionHandler.class);
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
@@ -51,29 +48,26 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
       final FIN_BankStatementLine bsline = OBDal.getInstance().get(FIN_BankStatementLine.class,
           strBankStatementLineId);
       Date bbddBSLUpdated = bsline.getUpdated();
-      // Remove milis
+      // Remove milliseconds to compare against updated from UI
       Calendar calendar = Calendar.getInstance();
       calendar.setTime(bbddBSLUpdated);
       calendar.setLenient(true);
       calendar.set(Calendar.MILLISECOND, 0);
       if (updated != calendar.getTimeInMillis()) {
-        throw new OBStaleObjectException("@APRM_StaleDate@");
-      }
-      final FIN_FinaccTransaction transaction = bsline.getFinancialAccountTransaction();
-
-      if (transaction != null) {
-        APRM_MatchingUtility.unmatch(bsline);
-      }
-    } catch (Exception e) {
-      OBDal.getInstance().rollbackAndClose();
-      log.error("Error Unmatching Transaction", e);
-      try {
-        Throwable ex = DbUtility.getUnderlyingSQLException(e);
-        String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("title", "Error");
-        errorMessage.put("text", message);
+        errorMessage.put("text", OBMessageUtils.messageBD("APRM_StaleDate"));
+        result.put("message", errorMessage);
+        return result;
+      }
+    } catch (JSONException e) {
+      log.error("Error parsing JSON Object.", e);
+      try {
+        errorMessage = new JSONObject();
+        errorMessage.put("severity", "error");
+        errorMessage.put("title", "Error");
+        errorMessage.put("text", "");
         result.put("message", errorMessage);
       } catch (Exception e2) {
         log.error("Message could not be built", e2);
@@ -83,5 +77,4 @@ public class UnMatchTransactionActionHandler extends BaseActionHandler {
     }
     return result;
   }
-
 }
