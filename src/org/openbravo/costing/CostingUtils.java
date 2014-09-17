@@ -94,6 +94,7 @@ public class CostingUtils {
     log4j.debug("Get Transaction Cost");
     OBError result = new OBError();
     try {
+      OBContext.setAdminMode(true);
       result.setType("Success");
       result.setTitle(OBMessageUtils.messageBD("Success"));
       if (!transaction.isCostCalculated()) {
