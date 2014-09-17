@@ -62,9 +62,6 @@
       extendHWResource(this.templatelayaway, "printLayawayTemplate");
       this.templatecashup = new OB.DS.HWResource(terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate);
       extendHWResource(this.templatecashup, "printCashUpTemplate");
-      this.templatequotation = new OB.DS.HWResource(terminal.printQuotationTemplate || OB.OBPOSPointOfSale.Print.QuotationTemplate);
-      extendHWResource(this.templatequotation, "printQuotationTemplate");
-
 
       this.templategoodbye = new OB.DS.HWResource(terminal.printGoodByeTemplate || OB.OBPOSPointOfSale.Print.GoodByeTemplate);
       extendHWResource(this.templategoodbye, "printGoodByeTemplate");
@@ -321,5 +318,5 @@
   OB.OBPOSPointOfSale.Print.CashUpTemplate = '../org.openbravo.retail.posterminal/res/printcashup.xml';
   OB.OBPOSPointOfSale.Print.GoodByeTemplate = '../org.openbravo.retail.posterminal/res/goodbye.xml';
   OB.OBPOSPointOfSale.Print.WelcomeTemplate = '../org.openbravo.retail.posterminal/res/welcome.xml';
-  OB.OBPOSPointOfSale.Print.QuotationTemplate = '../org.openbravo.retail.posterminal/res/printquotation.xml';
+
 }());
