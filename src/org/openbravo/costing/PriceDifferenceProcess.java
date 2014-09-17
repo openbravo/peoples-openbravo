@@ -32,13 +32,14 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
-import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,94 +49,100 @@ public class PriceDifferenceProcess {
 
   private static void calculateTransactionPriceDifference(MaterialTransaction materialTransaction)
       throws OBException {
+    if (materialTransaction.isCostPermanent()) {
+      // Permanently adjusted transaction costs are not checked for price differences.
+      return;
+    }
+    Currency trxCurrency = materialTransaction.getCurrency();
+    Organization trxOrg = materialTransaction.getOrganization();
+    Date trxDate = materialTransaction.getMovementDate();
+    int costCurPrecission = trxCurrency.getCostingPrecision().intValue();
+    ShipmentInOutLine receiptLine = materialTransaction.getGoodsShipmentLine();
+    if (receiptLine == null) {
+      // We can only adjust cost of receipt lines.
+      return;
+    }
+    BigDecimal receiptQty = receiptLine.getMovementQuantity();
+    boolean isNegativeReceipt = receiptQty.signum() == -1;
+    if (isNegativeReceipt) {
+      // If the receipt is negative convert the quantity to positive.
+      receiptQty = receiptQty.negate();
+    }
 
     Date costAdjDateAcct = null;
-    BigDecimal orderAmt = BigDecimal.ZERO;
     BigDecimal invoiceAmt = BigDecimal.ZERO;
-    BigDecimal invoiceAmtConverted = BigDecimal.ZERO;
+
+    // Calculate current transaction unit cost including existing adjustments.
+    BigDecimal currentTrxUnitCost = CostAdjustmentUtils.getTrxCost(materialTransaction, true,
+        trxCurrency);
+
+    // Calculate expected transaction unit cost based on current invoice amounts and purchase price.
+    BigDecimal expectedCost = BigDecimal.ZERO;
     BigDecimal invoiceQty = BigDecimal.ZERO;
-    BigDecimal adjustAmtMatchInv = BigDecimal.ZERO;
-    BigDecimal adjustAmtOther = BigDecimal.ZERO;
-    BigDecimal newAmountCost = BigDecimal.ZERO;
-    BigDecimal invoiceCorrectionAmt = BigDecimal.ZERO;
-    BigDecimal amtPendingInvoice = BigDecimal.ZERO;
-    BigDecimal amtPendingInvoiceConverted = BigDecimal.ZERO;
-    BigDecimal otherCorrectionAmt = BigDecimal.ZERO;
-    BigDecimal amtProportionalInitialCost = BigDecimal.ZERO;
-    int costCurPrecission = materialTransaction.getCurrency().getCostingPrecision().intValue();
-
-    BigDecimal priceUnitCost = materialTransaction.getTransactionCost().divide(
-        materialTransaction.getMovementQuantity(), costCurPrecission, RoundingMode.HALF_UP);
-
-    for (org.openbravo.model.procurement.ReceiptInvoiceMatch matchInv : materialTransaction
-        .getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList()) {
-      invoiceQty = invoiceQty.add(matchInv.getQuantity());
+    for (ReceiptInvoiceMatch matchInv : receiptLine.getProcurementReceiptInvoiceMatchList()) {
+      if (matchInv.getInvoiceLine().getInvoice().getDocumentStatus().equals("VO")) {
+        // Skip voided invoices.
+        continue;
+      }
+      if (!matchInv.getInvoiceLine().getInvoice().isProcessed()) {
+        // Skip not processed invoices.
+        continue;
+      }
+      if (isNegativeReceipt) {
+        // If the receipt is negative negate the invoiced quantities.
+        invoiceQty = invoiceQty.add(matchInv.getQuantity().negate());
+      } else {
+        invoiceQty = invoiceQty.add(matchInv.getQuantity());
+      }
       invoiceAmt = matchInv.getQuantity().multiply(matchInv.getInvoiceLine().getUnitPrice());
-      invoiceAmtConverted = FinancialUtils.getConvertedAmount(invoiceAmt, matchInv.getInvoiceLine()
-          .getInvoice().getCurrency(), materialTransaction.getCurrency(),
-          materialTransaction.getMovementDate(), materialTransaction.getOrganization(),
+      invoiceAmt = FinancialUtils.getConvertedAmount(invoiceAmt, matchInv.getInvoiceLine()
+          .getInvoice().getCurrency(), trxCurrency, trxDate, trxOrg,
           FinancialUtils.PRECISION_STANDARD);
-      orderAmt = matchInv.getQuantity().multiply(priceUnitCost);
-      adjustAmtMatchInv = adjustAmtMatchInv.add(invoiceAmtConverted.subtract(orderAmt));
+      expectedCost = expectedCost.add(invoiceAmt);
 
-      newAmountCost = newAmountCost.add(adjustAmtMatchInv);
-      if ((costAdjDateAcct == null)
-          || (costAdjDateAcct.before(matchInv.getInvoiceLine().getInvoice().getInvoiceDate()))) {
-        costAdjDateAcct = matchInv.getInvoiceLine().getInvoice().getInvoiceDate();
-      }
-    }
-    for (TransactionCost trxCosts : materialTransaction.getTransactionCostList()) {
-      // if (trxCosts.isInvoiceCorrection()) {
-      if (true) {
-        invoiceCorrectionAmt = invoiceCorrectionAmt.add(trxCosts.getCost());
-      } else if (trxCosts.isUnitCost()) {
-        otherCorrectionAmt = otherCorrectionAmt.add(trxCosts.getCost());
+      Date invoiceDate = matchInv.getInvoiceLine().getInvoice().getInvoiceDate();
+      if (costAdjDateAcct == null || costAdjDateAcct.before(invoiceDate)) {
+        costAdjDateAcct = invoiceDate;
       }
     }
 
+    BigDecimal notInvoicedQty = invoiceQty.subtract(receiptQty);
+    if (notInvoicedQty.signum() > 0) {
+      // Not all the receipt line is invoiced, add pending invoice quantity valued with current
+      // order price if exists or original unit cost.
+      BigDecimal basePrice = BigDecimal.ZERO;
+      Currency baseCurrency = trxCurrency;
+      if (receiptLine.getSalesOrderLine() != null) {
+        basePrice = receiptLine.getSalesOrderLine().getUnitPrice();
+        baseCurrency = receiptLine.getSalesOrderLine().getSalesOrder().getCurrency();
+      } else {
+        basePrice = materialTransaction.getTransactionCost().divide(receiptQty, costCurPrecission,
+            RoundingMode.HALF_UP);
+      }
+      BigDecimal baseAmt = notInvoicedQty.multiply(basePrice).setScale(costCurPrecission,
+          RoundingMode.HALF_UP);
+      if (!baseCurrency.getId().equals(trxCurrency.getId())) {
+        baseAmt = FinancialUtils.getConvertedAmount(baseAmt, baseCurrency, trxCurrency, trxDate,
+            trxOrg, FinancialUtils.PRECISION_STANDARD);
+      }
+      expectedCost = expectedCost.add(baseAmt);
+    }
     // if the sum of trx costs with flag "isInvoiceCorrection" is distinct that the amount cost
     // generated by Match Invoice then New Cost Adjustment line is created by the difference
-    if (invoiceCorrectionAmt.compareTo(adjustAmtMatchInv) != 0) {
-      createCostAdjustmenHeader(materialTransaction.getOrganization());
+    if (expectedCost.compareTo(currentTrxUnitCost) != 0) {
+      if (costAdjDateAcct == null) {
+        costAdjDateAcct = trxDate;
+      }
+      createCostAdjustmenHeader(trxOrg);
       CostAdjustmentLine costAdjLine = CostAdjustmentUtils.insertCostAdjustmentLine(
-          materialTransaction, costAdjHeader, adjustAmtMatchInv.subtract(invoiceCorrectionAmt),
+          materialTransaction, costAdjHeader, expectedCost.subtract(currentTrxUnitCost),
           Boolean.TRUE, null, costAdjDateAcct);
       costAdjLine.setNeedsPosting(Boolean.TRUE);
-      // costAdjLine.setInvoiceCorrection(Boolean.TRUE);
       OBDal.getInstance().save(costAdjLine);
-    }
-
-    // check if there is some difference in the qty ordered not invoiced
-    if (materialTransaction.getGoodsShipmentLine().getSalesOrderLine() != null) {
-      OrderLine ol = materialTransaction.getGoodsShipmentLine().getSalesOrderLine();
-
-      amtPendingInvoice = ol.getOrderedQuantity().subtract(invoiceQty).multiply(ol.getUnitPrice());
-      amtPendingInvoiceConverted = FinancialUtils.getConvertedAmount(amtPendingInvoice, ol
-          .getSalesOrder().getCurrency(), materialTransaction.getCurrency(), materialTransaction
-          .getMovementDate(), materialTransaction.getOrganization(),
-          FinancialUtils.PRECISION_STANDARD);
-
-      amtProportionalInitialCost = materialTransaction.getTransactionCost()
-          .divide(ol.getOrderedQuantity(), 32, RoundingMode.HALF_UP)
-          .multiply(ol.getOrderedQuantity().subtract(invoiceQty));
-
-      adjustAmtOther = amtPendingInvoiceConverted.subtract(
-          amtProportionalInitialCost.setScale(costCurPrecission, RoundingMode.HALF_UP)).subtract(
-          otherCorrectionAmt.subtract(materialTransaction.getTransactionCost()));
-
-      if (adjustAmtOther.compareTo(BigDecimal.ZERO) != 0) {
-        createCostAdjustmenHeader(materialTransaction.getOrganization());
-        CostAdjustmentLine costAdjLine = CostAdjustmentUtils.insertCostAdjustmentLine(
-            materialTransaction, costAdjHeader, adjustAmtOther, Boolean.TRUE, null,
-            materialTransaction.getGoodsShipmentLine().getShipmentReceipt().getMovementDate());
-        costAdjLine.setNeedsPosting(Boolean.TRUE);
-        OBDal.getInstance().save(costAdjLine);
-      }
     }
 
     materialTransaction.setCheckpricedifference(false);
     OBDal.getInstance().save(materialTransaction);
-
   }
 
   public static JSONObject processPriceDifferenceTransaction(MaterialTransaction materialTransaction)
@@ -232,8 +239,8 @@ public class PriceDifferenceProcess {
 
   private static void createCostAdjustmenHeader(Organization org) {
     if (costAdjHeader == null) {
-      costAdjHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(org, "PDC"); // Price Dif
-                                                                                  // Correction
+      costAdjHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(org, "PDC");
+      // PDC: Price Dif Correction
     }
   }
 }

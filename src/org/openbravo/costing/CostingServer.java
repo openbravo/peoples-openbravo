@@ -142,9 +142,7 @@ public class CostingServer {
     } catch (PropertyException e1) {
       doNotCheckPriceCorrectionTrxs = false;
     }
-    if (!doNotCheckPriceCorrectionTrxs && transaction.getGoodsShipmentLine() != null
-        && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList() != null
-        && transaction.getGoodsShipmentLine().getProcurementReceiptInvoiceMatchList().size() != 0) {
+    if (!doNotCheckPriceCorrectionTrxs && transaction.isCheckpricedifference()) {
       PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
     }
 
