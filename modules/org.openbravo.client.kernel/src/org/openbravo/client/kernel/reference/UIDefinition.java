@@ -525,6 +525,18 @@ public abstract class UIDefinition {
       FieldProvider[] fps = null;
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
+      // handles a corner case when the whole text of the selector field is removed, FIC call is
+      // done with comboReload, but reload is not necessary for the changed column as we have just
+      // entered empty value. Refer issue https://issues.openbravo.com/view.php?id=27612
+      if (!isListReference
+          && "".equals(columnValue)
+          && vars.getStringParameter("CHANGED_COLUMN").equals(
+              "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()))) {
+        JSONObject entry = new JSONObject();
+        entry.put(JsonConstants.ID, (String) columnValue);
+        entry.put(JsonConstants.IDENTIFIER, (String) columnValue);
+        return entry.toString();
+      }
       boolean comboreload = rq.getRequestParameter("donotaddcurrentelement") != null
           && rq.getRequestParameter("donotaddcurrentelement").equals("true");
 

@@ -1111,8 +1111,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       return;
     }
 
-    boolean localChanges = verifyLocalChanges(vars);
-    if (localChanges) {
+    String localChanges = verifyLocalChanges(vars);
+    if (localChanges != null) {
       final PrintWriter out = response.getWriter();
       final String discardlc[] = {};
       final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -1121,8 +1121,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("theme", vars.getTheme());
-      xmlDocument.setParameter("welcome", Replace.replace(
-          Utility.messageBD(this, "ErrorLocalChanges", vars.getLanguage()), "\\n", "<br/>"));
+      xmlDocument.setParameter("welcome", Replace.replace(localChanges, "\\n", "<br/>"));
       out.println(xmlDocument.print());
       out.close();
       return;
@@ -2668,10 +2667,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Checks if there are local changes in the application
    */
-  private boolean verifyLocalChanges(VariablesSecureApp vars) {
-    long t1 = System.currentTimeMillis();
+  private String verifyLocalChanges(VariablesSecureApp vars) {
     Connection connection = OBDal.getInstance().getConnection();
+    List<String> tablesModified = new ArrayList<String>();
     PreparedStatement ps = null;
+    String localChanges = null;
     try {
       ps = connection.prepareStatement("SELECT ad_db_modified('N') FROM DUAL");
       ps.execute();
@@ -2679,7 +2679,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
       rs.next();
       String answer = rs.getString(1);
       if (answer.equalsIgnoreCase("Y")) {
-        return true;
+        localChanges = Utility.messageBD(this, "ErrorLocalChanges", vars.getLanguage());
+        localChanges = localChanges.concat(" <br><br> "
+            + Utility.messageBD(this, "StructuralChangesInDB", vars.getLanguage()));
       }
     } catch (Exception e) {
       log4j.error("Couldn't verify local changes");
@@ -2727,9 +2729,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final Platform platform = PlatformFactory.createNewPlatformInstance(datasource);
 
     OBDataset ad = new OBDataset(platform, db, "AD");
-    boolean datachange = ad.hasChanged(connection, log4j);
-    return datachange;
-
+    boolean datachange = ad.hasChanged(connection, log4j, tablesModified);
+    if (datachange) {
+      if (localChanges == null) {
+        localChanges = Utility.messageBD(this, "ErrorLocalChanges", vars.getLanguage());
+      }
+      localChanges = localChanges.concat(" <br><br> "
+          + Utility.messageBD(this, "ModifiedTablesInDB", vars.getLanguage()) + " : ");
+      localChanges = localChanges.concat(" " + tablesModified.toString());
+    }
+    return localChanges;
   }
-
 }
