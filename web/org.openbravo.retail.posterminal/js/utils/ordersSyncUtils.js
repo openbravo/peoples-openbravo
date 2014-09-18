@@ -64,6 +64,7 @@
         // a-> timeout -> Don't remove from local DB. We are not sure if the information was or not processed. If yes we will send again the orders and the mechanism to detect duplicates will act.
         // b-> At least one error -> Remove the orders which was saved in the backend (correctly or as an error). Don't remove those which failed.
         if (data.exception && data.exception.status && data.exception.status.timeout) {
+          OB.warn("OrderLoader (a): Server not available, keeping " + orders.length + " orders in local");
           //FLOW A
           orders.each(function (order) {
             order.set('isbeingprocessed', 'N');
@@ -73,8 +74,10 @@
           });
         } else {
           // FLOW B
+          OB.warn("OrderLoader (b1):  Error in " + orders.length + " orders...");
           if (data.exception && data.exception.status && data.exception.status.errorids && data.exception.status.errorids.length > 0) {
             var notProcessedOrders = data.exception.status.errorids;
+            var removedCount = 0;
             orders.each(function (order) {
               var isErrorId = _.find(notProcessedOrders, function (errId) {
                 if (order.get('id') === errId) {
@@ -90,12 +93,16 @@
                 if (model) {
                   model.get('orderList').remove(order);
                 }
+                removedCount += 1;
                 OB.Dal.remove(order, null, function (tx, err) {
+                  removedCount -= 1;
                   OB.UTIL.showError(err);
                 });
               }
             });
+            OB.warn("OrderLoader (b2): Error in " + (orders.length - removedCount) + " orders. Removed " + removedCount + " correctly sent to the server");
           } else {
+            OB.warn("OrderLoader (c): Server not available, keeping " + orders.length + " orders in local");
             //Others, Again flow A. Don't remove from local DB.
             orders.each(function (order) {
               order.set('isbeingprocessed', 'N');
@@ -110,13 +117,17 @@
         }
       } else {
         // NORMAL FLOW: Orders have been processed, delete them
+        OB.warn("OrderLoader (d1): " + orders.length + " orders correctly sent to the server. Removing from local...");
         var me = this;
         me.updatedLastDocNumber = false;
+        var removedCount2 = 0;
         orders.each(function (order) {
           if (model) {
             model.get('orderList').remove(order);
           }
+          removedCount2 += 1;
           OB.Dal.remove(order, null, function (tx, err) {
+            removedCount2 -= 1;
             OB.UTIL.showError(err);
           });
           // update the terminal info with the last document number sent to backoffice
@@ -135,6 +146,7 @@
           }
         });
         // if has been updated the last doc number then terminalinfo is updated
+        OB.warn("OrderLoader (d2): " + orders.length + " orders correctly sent to the server. Removed " + removedCount2 + " from local.");
         if (me.updatedLastDocNumber) {
           OB.POS.terminal.terminal.saveTerminalInfo();
         }

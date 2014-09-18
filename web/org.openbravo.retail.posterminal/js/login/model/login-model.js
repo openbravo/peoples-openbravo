@@ -346,8 +346,10 @@
       var i, paymentcashcurrency, paymentcash, paymentlegacy, max, loadModelsIncFunc;
       if (!OB.UTIL.isSupportedBrowser()) {
         OB.MobileApp.model.renderLogin();
+        OB.error("renderMain fail: incompatible browser");
         return false;
       }
+      OB.warn("renderMain. Next: 'ready' event");
       OB.DS.commonParams = OB.DS.commonParams || {};
       OB.DS.commonParams = {
         client: this.get('terminal').client,
@@ -389,9 +391,11 @@
         var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000;
         if (minIncRefresh) {
           if (!OB.MobileApp.model.get('FullRefreshWasDone')) {
+            OB.warn("Performing incremental refresh" );
             OB.MobileApp.model.loadModels(null, true);
           }
           loadModelsIncFunc = function () {
+            OB.warn("Performing incremental refresh" );
             OB.MobileApp.model.loadModels(null, true);
           };
           setInterval(loadModelsIncFunc, minIncRefresh);
