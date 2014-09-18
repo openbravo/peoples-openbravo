@@ -25,7 +25,6 @@ import javax.enterprise.context.RequestScoped;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.advpaymentmngt.actionHandler.AddPaymentDisplayLogicActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -39,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AddPaymentReadOnlyLogicsHandler {
 
   private static final Logger logger = LoggerFactory
-      .getLogger(AddPaymentDisplayLogicActionHandler.class);
+      .getLogger(AddPaymentReadOnlyLogicsHandler.class);
 
   /**
    * boolean value to set document number read only logic
@@ -142,7 +141,7 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
           OBContext.getOBContext().getRole(), window);
       return "Y".equals(value);
     } catch (PropertyNotFoundException e) {
-      logger.error("Property not found");
+      logger.debug("Property NotAllowChangeExchange not found");
       return false;
     } catch (PropertyException e) {
       logger.error("PropertyException, there is a conflict for NotAllowChangeExchange property");
@@ -181,7 +180,7 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
           OBContext.getOBContext().getRole(), window);
       return "Y".equals(value);
     } catch (PropertyNotFoundException e) {
-      logger.error("Property not found \n");
+      logger.debug("Property NotAllowChangeExchange not found");
       return false;
     } catch (PropertyException e) {
       logger.error("PropertyException, there is a conflict for NotAllowChangeExchange property\n");
