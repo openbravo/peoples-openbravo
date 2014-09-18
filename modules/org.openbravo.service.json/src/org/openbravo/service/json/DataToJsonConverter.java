@@ -391,11 +391,11 @@ public class DataToJsonConverter {
       // See issue https://issues.openbravo.com/view.php?id=22971
       return "";
     }
-    if (value instanceof Date) {
-      return xmlDateFormat.format(value);
-    }
     if (value instanceof Timestamp) {
       return xmlDateTimeFormat.format(value);
+    }
+    if (value instanceof Date) {
+      return xmlDateFormat.format(value);
     }
     return value;
   }
