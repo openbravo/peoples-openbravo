@@ -85,8 +85,7 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
         costAdjusted = newAmountCost.subtract(totalCost);
       }
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
-          costAdjustmentHeader, costAdjusted, Boolean.TRUE,
-          transaction.getTransactionProcessDate(), acctDate);
+          costAdjustmentHeader, costAdjusted, Boolean.TRUE, acctDate);
       if (isIncremental) {
         cal.setUnitCost(isUnitCost);
       }

@@ -217,12 +217,12 @@ public class CostingServer {
     if (getCostingRule().isBackdatedTransactionsFixed()
         && CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction, getCostingRule()
             .isWarehouseDimension())) {
+      // BDT= Backdated transaction
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
-          transaction.getOrganization(), "BDT"); // BDT= Backdated transaction
+          transaction.getOrganization(), "BDT");
 
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
-          costAdjustmentHeader, null, Boolean.TRUE,
-          OBDateUtils.getEndOfDay(transaction.getMovementDate()), transaction.getMovementDate());
+          costAdjustmentHeader, null, Boolean.TRUE, transaction.getMovementDate());
       cal.setBackdatedTrx(Boolean.TRUE);
       OBDal.getInstance().save(cal);
 
@@ -262,9 +262,9 @@ public class CostingServer {
 
       Date acctDate = transaction.getMovementDate();
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
-          costAdjustmentHeader, null, Boolean.TRUE, transaction.getTransactionProcessDate(),
-          acctDate);
+          costAdjustmentHeader, null, Boolean.TRUE, acctDate);
       cal.setNegativeStockCorrection(Boolean.TRUE);
+      OBDal.getInstance().save(cal);
 
       try {
         OBDal.getInstance().flush();

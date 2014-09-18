@@ -192,7 +192,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
     CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
         (CostAdjustment) OBDal.getInstance().getProxy(CostAdjustment.ENTITY_NAME, strCostAdjId),
-        adjustmentamt, false, trx.getTransactionProcessDate(), dateAcct);
+        adjustmentamt, false, dateAcct);
     newCAL.setRelatedTransactionAdjusted(false);
     newCAL.setParentCostAdjustmentLine(parentLine);
 
@@ -423,10 +423,16 @@ public abstract class CostingAlgorithmAdjustmentImp {
   private BigDecimal getDefaultCostDifference(TrxType calTrxType, CostAdjustmentLine costAdjLine) {
     MaterialTransaction trx = costAdjLine.getInventoryTransaction();
     BusinessPartner bp = CostingUtils.getTrxBusinessPartner(trx, calTrxType);
+    Organization costOrg = getCostOrg();
+    Date trxDate = CostAdjustmentUtils.getLastTrxDateOfMvmntDate(trx.getMovementDate(),
+        trx.getProduct(), costOrg, getCostDimensions());
+    if (trxDate == null) {
+      trxDate = trx.getTransactionProcessDate();
+    }
 
     BigDecimal defaultCost = CostingUtils.getDefaultCost(trx.getProduct(),
-        trx.getMovementQuantity(), getCostOrg(), getCostAdjLine().getTransactionDate(),
-        trx.getMovementDate(), bp, getCostCurrency(), getCostDimensions());
+        trx.getMovementQuantity(), costOrg, trxDate, trx.getMovementDate(), bp, getCostCurrency(),
+        getCostDimensions());
     // FIXME: Review if previous adjustment cost need to be considered.
     BigDecimal trxCalculatedCost = trx.getTransactionCost();
     return trxCalculatedCost.subtract(defaultCost);

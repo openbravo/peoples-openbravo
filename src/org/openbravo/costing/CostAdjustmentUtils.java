@@ -40,6 +40,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
@@ -96,7 +97,7 @@ public class CostAdjustmentUtils {
    */
   public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
-      Date transactionDate, Date accountingDate) {
+      Date accountingDate) {
 
     CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
     costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
@@ -105,7 +106,6 @@ public class CostAdjustmentUtils {
     costAdjustmentLine.setCurrency(transaction.getCurrency());
     costAdjustmentLine.setInventoryTransaction(transaction);
     costAdjustmentLine.setSource(isSource);
-    costAdjustmentLine.setTransactionDate(transactionDate);
     costAdjustmentLine.setAccountingDate(accountingDate);
     costAdjustmentLine.setLineNo(getNewLineNo(costAdjustmentHeader));
 
@@ -381,5 +381,81 @@ public class CostAdjustmentUtils {
       }
     }
     return costsum;
+  }
+
+  /*
+   * Returns the last transaction process date of a non backdated transactions for the given
+   * movement date or previous date.
+   */
+  public static Date getLastTrxDateOfMvmntDate(Date refDate, Product product, Organization org,
+      HashMap<CostDimension, BaseOBObject> costDimensions) {
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        org.getClient().getId());
+    Set<String> orgs = osp.getChildTree(org.getId(), true);
+    Warehouse wh = (Warehouse) costDimensions.get(CostDimension.Warehouse);
+
+    // Calculate the transaction process date of the first transaction with a movement date
+    // after the given date. Any transaction with a transaction process date after this min date on
+    // the given date or before is a backdated transaction.
+    StringBuffer select = new StringBuffer();
+    select.append(" select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+        + ") as date");
+    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    if (wh != null) {
+      select.append("    join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
+    }
+    select.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :mvntdate");
+    if (wh != null) {
+      select.append("   and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
+    }
+    Query qryMinDate = OBDal.getInstance().getSession().createQuery(select.toString());
+    qryMinDate.setParameterList("orgs", orgs);
+    qryMinDate.setParameter("product", product);
+    qryMinDate.setParameter("mvntdate", refDate);
+    if (wh != null) {
+      qryMinDate.setParameter("warehouse", wh);
+    }
+    Object objMinDate = qryMinDate.uniqueResult();
+    if (objMinDate == null) {
+      return null;
+    }
+
+    // Get the last transaction process date of transactions with movement date equal or before the
+    // given date and a transaction process date before the previously calculated min date.
+    Date minNextDate = (Date) objMinDate;
+    select = new StringBuffer();
+    select.append(" select max(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+        + ") as date");
+    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    if (wh != null) {
+      select.append("    join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
+    }
+    select.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :mvntdate");
+    select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+        + " < :trxdate");
+    if (wh != null) {
+      select.append("   and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
+    }
+    Query qryMaxDate = OBDal.getInstance().getSession().createQuery(select.toString());
+    qryMaxDate.setParameterList("orgs", orgs);
+    qryMaxDate.setParameter("product", product);
+    qryMaxDate.setParameter("mvntdate", refDate);
+    qryMaxDate.setParameter("trxdate", minNextDate);
+    if (wh != null) {
+      qryMaxDate.setParameter("warehouse", wh);
+    }
+
+    Object objMaxDate = qryMaxDate.uniqueResult();
+    if (objMaxDate == null) {
+      return null;
+    }
+
+    return (Date) objMaxDate;
   }
 }

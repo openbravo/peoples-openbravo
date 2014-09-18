@@ -380,7 +380,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     if (costing == null) {
       throw new OBException("@NoAvgCostDefined@ @Organization@: " + getCostOrg().getName()
           + ", @Product@: " + trx.getProduct().getName() + ", @Date@: "
-          + OBDateUtils.formatDate(getCostAdjLine().getTransactionDate()));
+          + OBDateUtils.formatDate(trx.getMovementDate()));
     }
     BigDecimal cost = costing.getCost();
     Currency costCurrency = getCostCurrency();

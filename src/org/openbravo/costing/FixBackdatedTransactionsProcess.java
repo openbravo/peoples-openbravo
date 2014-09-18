@@ -31,7 +31,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Organization;
@@ -73,8 +72,7 @@ public class FixBackdatedTransactionsProcess implements Process {
               rule.isWarehouseDimension())) {
             createCostAdjustmenHeader(rule.getOrganization());
             CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
-                costAdjHeader, null, Boolean.TRUE, OBDateUtils.getEndOfDay(trx.getMovementDate()),
-                trx.getMovementDate());
+                costAdjHeader, null, Boolean.TRUE, trx.getMovementDate());
             cal.setBackdatedTrx(Boolean.TRUE);
             OBDal.getInstance().save(cal);
             i++;

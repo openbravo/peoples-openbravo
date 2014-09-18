@@ -20,12 +20,10 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -54,7 +52,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
   @Override
   protected void getRelatedTransactionsByAlgorithm() {
     // Inventory opening transactions are the only transaction types that can generates a new
-    // Standard Cost. Having a new Standard COst on a backdated transaction forces to adjust the
+    // Standard Cost. Having a new Standard Cost on a backdated transaction forces to adjust the
     // cost off all the transactions from the backdated transaction to the next defined standard
     // cost.
     if (trxType == TrxType.InventoryOpening) {
@@ -65,25 +63,28 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
           .setScale(costCurPrecission, RoundingMode.HALF_UP);
 
       // Cost is effective on the beginning of the following date.
-      Date firstDate = DateUtils.truncate(
-          DateUtils.addDays(getCostAdjLine().getTransactionDate(), 1), Calendar.DATE);
+      Date backDatedTrxDate = CostAdjustmentUtils.getLastTrxDateOfMvmntDate(trx.getMovementDate(),
+          trx.getProduct(), getCostOrg(), getCostDimensions());
+      if (backDatedTrxDate == null) {
+        backDatedTrxDate = trx.getTransactionProcessDate();
+      }
 
       Costing stdCost = CostingUtils.getStandardCostDefinition(trx.getProduct(), getCostOrg(),
-          firstDate, getCostDimensions());
+          backDatedTrxDate, getCostDimensions());
       // Modify isManufacturingProduct flag in case it has changed at some point.
       isManufacturingProduct = ((String) DalUtil.getId(stdCost.getOrganization())).equals("0");
 
       BigDecimal baseCurrentCost = stdCost.getCost();
       if (!stdCost.getCurrency().equals(strCostCurrencyId)) {
         baseCurrentCost = FinancialUtils.getConvertedAmount(baseCurrentCost, stdCost.getCurrency(),
-            getCostCurrency(), firstDate, getCostOrg(), "C");
+            getCostCurrency(), trx.getMovementDate(), getCostOrg(), "C");
       }
       if (baseCurrentCost.compareTo(unitCost) == 0) {
         // If current cost is the same than the unit cost there is no need to create a new costing
         // so it is not needed to adjust any other transaction.
         return;
       }
-      Costing newCosting = insertCost(stdCost, unitCost);
+      Costing newCosting = insertCost(stdCost, unitCost, backDatedTrxDate);
       // Adjust all transactions calculated with the previous costing.
       ScrollableResults trxs = getRelatedTransactions(newCosting.getStartingDate(),
           newCosting.getEndingDate());
@@ -163,14 +164,12 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
   }
 
-  private Costing insertCost(Costing currentCosting, BigDecimal newCost) {
+  private Costing insertCost(Costing currentCosting, BigDecimal newCost, Date backDatedTrxDate) {
     MaterialTransaction transaction = getTransaction();
-    currentCosting.setEndingDate(transaction.getTransactionProcessDate());
-    OBDal.getInstance().save(currentCosting);
 
     Costing cost = (Costing) DalUtil.copy(currentCosting, false);
     cost.setCost(newCost);
-    cost.setStartingDate(transaction.getTransactionProcessDate());
+    cost.setStartingDate(backDatedTrxDate);
     cost.setCurrency(getCostCurrency());
     cost.setInventoryTransaction(transaction);
     if (isManufacturingProduct) {
@@ -181,8 +180,10 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     cost.setCostType("STA");
     cost.setManual(false);
     cost.setPermanent(true);
-
     OBDal.getInstance().save(cost);
+
+    currentCosting.setEndingDate(backDatedTrxDate);
+    OBDal.getInstance().save(currentCosting);
     return cost;
   }
 
@@ -191,8 +192,14 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     // Calculate the standard cost on the transaction's movement date and adjust the cost if needed.
     MaterialTransaction trx = costAdjLine.getInventoryTransaction();
 
-    BigDecimal cost = CostingUtils.getStandardCost(trx.getProduct(), getCostOrg(),
-        costAdjLine.getTransactionDate(), getCostDimensions(), getCostCurrency());
+    Date trxDate = CostAdjustmentUtils.getLastTrxDateOfMvmntDate(trx.getMovementDate(),
+        trx.getProduct(), getCostOrg(), getCostDimensions());
+    if (trxDate == null) {
+      trxDate = trx.getTransactionProcessDate();
+    }
+
+    BigDecimal cost = CostingUtils.getStandardCost(trx.getProduct(), getCostOrg(), trxDate,
+        getCostDimensions(), getCostCurrency());
 
     BigDecimal expectedCostAmt = trx.getMovementQuantity().abs().multiply(cost);
     BigDecimal currentCost = trx.getTransactionCost();

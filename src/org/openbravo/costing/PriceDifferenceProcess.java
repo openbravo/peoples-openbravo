@@ -136,7 +136,7 @@ public class PriceDifferenceProcess {
       createCostAdjustmenHeader(trxOrg);
       CostAdjustmentLine costAdjLine = CostAdjustmentUtils.insertCostAdjustmentLine(
           materialTransaction, costAdjHeader, expectedCost.subtract(currentTrxUnitCost),
-          Boolean.TRUE, null, costAdjDateAcct);
+          Boolean.TRUE, costAdjDateAcct);
       costAdjLine.setNeedsPosting(Boolean.TRUE);
       OBDal.getInstance().save(costAdjLine);
     }

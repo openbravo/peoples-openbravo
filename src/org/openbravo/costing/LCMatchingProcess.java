@@ -170,7 +170,7 @@ public class LCMatchingProcess {
       // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
       MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
-          null, referenceDate);
+          referenceDate);
       cal.setNeedsPosting(Boolean.FALSE);
       OBDal.getInstance().save(cal);
 
