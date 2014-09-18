@@ -20,24 +20,26 @@
 package org.openbravo.advpaymentmngt.utility;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.LockMode;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.jfree.util.Log;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
@@ -53,7 +55,9 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
@@ -83,6 +87,7 @@ import org.openbravo.model.sales.SalesRegion;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.db.QueryTimeOutUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,18 +209,73 @@ public class APRM_MatchingUtility {
    *          String containing Bank Statement Line id.
    * @return Returns related Bank Statement line object performing a select for update
    */
+  // public static FIN_BankStatementLine getLockedBSL(String id) {
+  // FIN_BankStatementLine result = null;
+  // final StringBuilder hqlString = new StringBuilder();
+  // hqlString.append(" select e");
+  // hqlString.append(" from FIN_BankStatementLine as e");
+  // hqlString.append(" where e.id = :id");
+  // final Session session = OBDal.getInstance().getSession();
+  // Query query = session.createQuery(hqlString.toString());
+  // query.setParameter("id", id);
+  // query.setLockMode("e", LockMode.PESSIMISTIC_WRITE);
+  // result = (FIN_BankStatementLine) query.uniqueResult();
+  // return result;
+  // }
+
   public static FIN_BankStatementLine getLockedBSL(String id) {
-    FIN_BankStatementLine result = null;
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString.append(" select e");
-    hqlString.append(" from FIN_BankStatementLine as e");
-    hqlString.append(" where e.id = :id");
-    final Session session = OBDal.getInstance().getSession();
-    Query query = session.createQuery(hqlString.toString());
-    query.setParameter("id", id);
-    query.setLockMode("e", LockMode.PESSIMISTIC_WRITE);
-    result = (FIN_BankStatementLine) query.uniqueResult();
-    return result;
+    return getLockedBSL(new DalConnectionProvider(), id);
+  }
+
+  /**
+   * @param connectionProvider
+   *          Connection Provider used for the query
+   * @param id
+   *          Bank Statement Line id
+   * @return Returns related Bank Statement line object performing a select for update
+   * @throws ServletException
+   */
+  public static FIN_BankStatementLine getLockedBSL(ConnectionProvider connectionProvider, String id) {
+    String strReturn = "";
+    try {
+      String strSql = "";
+      strSql = strSql + "        SELECT FIN_BankstatementLine_ID "
+          + "        FROM FIN_BankstatementLine "
+          + "        WHERE FIN_BankstatementLine_ID = ? FOR UPDATE";
+
+      ResultSet result;
+      PreparedStatement st = null;
+
+      int iParameter = 0;
+      try {
+        st = connectionProvider.getPreparedStatement(strSql);
+        QueryTimeOutUtil.getInstance().setQueryTimeOut(st, SessionInfo.getQueryProfile());
+        iParameter++;
+        UtilSql.setValue(st, iParameter, 12, null, id);
+
+        result = st.executeQuery();
+        if (result.next()) {
+          strReturn = UtilSql.getValue(result, "FIN_BankstatementLine_ID");
+        }
+        result.close();
+      } catch (SQLException e) {
+        log4j.error("SQL error in query: " + strSql + "Exception:" + e);
+        throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
+            + e.getMessage());
+      } catch (Exception ex) {
+        log4j.error("Exception in query: " + strSql + "Exception:" + ex);
+        throw new ServletException("@CODE=@" + ex.getMessage());
+      } finally {
+        try {
+          connectionProvider.releasePreparedStatement(st);
+        } catch (Exception ignore) {
+          ignore.printStackTrace();
+        }
+      }
+    } catch (ServletException e) {
+      Log.error("Error executing select for update for this record:" + id, e);
+    }
+    return OBDal.getInstance().get(FIN_BankStatementLine.class, strReturn);
   }
 
   /**
@@ -319,6 +379,13 @@ public class APRM_MatchingUtility {
     try {
       OBContext.setAdminMode(true);
       FIN_BankStatementLine bsline = getLockedBSL(_bsline.getId());
+      // TODO: Remove after testing
+      // long t0, t1;
+      // t0 = System.currentTimeMillis();
+      // do {
+      // t1 = System.currentTimeMillis();
+      // } while ((t1 - t0) < 200000);
+
       final FIN_FinaccTransaction finTrans = bsline.getFinancialAccountTransaction();
       if (finTrans != null) {
         finTrans.setReconciliation(null);
