@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -299,9 +299,16 @@ public class SystemInfo {
     validateConnection(conn);
     String strSystemIdentifier = SystemInfoData.selectSystemIdentifier(conn);
     if (strSystemIdentifier == null || strSystemIdentifier.equals("")) {
-      strSystemIdentifier = UUID.randomUUID().toString();
+      if (systemIdentifier != null) {
+        // system identifier was previously calculated but it was not persisted in DB, let's update
+        // it again
+        strSystemIdentifier = systemIdentifier;
+      } else {
+        strSystemIdentifier = UUID.randomUUID().toString();
+      }
       SystemInfoData.updateSystemIdentifier(conn, strSystemIdentifier);
     }
+    systemIdentifier = strSystemIdentifier;
     return strSystemIdentifier;
   }
 

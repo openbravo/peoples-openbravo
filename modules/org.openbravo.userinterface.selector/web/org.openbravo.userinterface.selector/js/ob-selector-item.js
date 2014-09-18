@@ -386,9 +386,13 @@ isc.OBSelectorPopupWindow.addProperties({
     // on purpose not passing the third boolean param
     if (this.selector && this.selector.form && this.selector.form.view && this.selector.form.view.getContextInfo) {
       isc.addProperties(data, this.selector.form.view.getContextInfo(false, true));
+    } else if (this.view && this.view.getUnderLyingRecordContext) {
+      isc.addProperties(data, this.view.getUnderLyingRecordContext(false, true));
     } else if (this.view && this.view.sourceView && this.view.sourceView.getContextInfo) {
       isc.addProperties(data, this.view.sourceView.getContextInfo(false, true));
     }
+
+
 
     callback = function (resp, data, req) {
       selectorWindow.fetchDefaultsCallback(resp, data, req);
@@ -593,11 +597,16 @@ isc.OBSelectorItem.addProperties({
   setPickListWidth: function () {
     var extraWidth = 0,
         fieldWidth = this.getVisibleWidth();
+    // minimum width for smaller fields.
+    fieldWidth = (fieldWidth < 150 ? 150 : fieldWidth);
+    // Dropdown selector that shows more than one column.
     if (this.pickListFields.length > 1) {
-      extraWidth = 150 * (this.pickListFields.length - 1);
+      // prevents a pickListWidth longer than width of the grid.
+      // 89 is the width of checkBox + edit in form + edit in grid.
+      extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - 89);
     }
 
-    this.pickListWidth = (fieldWidth < 150 ? 150 : fieldWidth) + extraWidth;
+    this.pickListWidth = fieldWidth + extraWidth;
   },
 
   enableShortcuts: function () {
@@ -651,7 +660,9 @@ isc.OBSelectorItem.addProperties({
       click: function (form, item, icon) {
         var enteredValue = {};
         enteredValue[item.defaultPopupFilterField] = item.getEnteredValue();
-        item.openProcess([enteredValue]);
+        item.openProcess([enteredValue], {
+          processOwnerView: form.view
+        });
       }
     }];
 
@@ -843,16 +854,20 @@ isc.OBSelectorItem.addProperties({
     this.selectorWindow.open();
   },
 
-  openProcess: function (enteredValues) {
-    var standardWindow = this.form.view.standardWindow;
-    standardWindow.openProcess({
+  openProcess: function (enteredValues, additionalProcessProperties) {
+    var params, standardWindow = this.form.view.standardWindow;
+    params = {
       callerField: this,
       enteredValues: enteredValues,
       paramWindow: true,
       processId: this.processId,
       windowId: this.form.view.windowId,
       windowTitle: OB.I18N.getLabel('OBUISEL_AddNewRecord', [this.title])
-    });
+    };
+    if (additionalProcessProperties) {
+      isc.addProperties(params, additionalProcessProperties);
+    }
+    standardWindow.openProcess(params);
   },
 
   keyPress: function (item, form, keyName, characterValue) {
@@ -1016,6 +1031,15 @@ isc.OBSelectorItem.addClassMethods({
     if (selector.form && selector.form.view && selector.form.view.getContextInfo) {
       // for table and table dir reference values needs to be transformed to classic (ex.: true -> Y)
       isc.addProperties(params, selector.form.view.getContextInfo(false, true, null, selector.isComboReference));
+    } else if (selector.view && selector.view.getUnderLyingRecordContext) {
+      isc.addProperties(params, selector.view.getUnderLyingRecordContext(false, true, null, selector.isComboReference));
+      if (selector.form && selector.form.paramWindow && selector.form.paramWindow.getContextInfo) {
+        isc.addProperties(params, selector.form.paramWindow.getContextInfo());
+      }
+      if (!params.inpadOrgId) {
+        // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
+        params.inpadOrgId = params.ad_org_id || OB.User.organizationId;
+      }
     } else if (selector.view && selector.view.sourceView && selector.view.sourceView.getContextInfo) {
       isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true, null, selector.isComboReference));
     } else if (selector.grid && selector.grid.contentView && selector.grid.contentView.getContextInfo) {

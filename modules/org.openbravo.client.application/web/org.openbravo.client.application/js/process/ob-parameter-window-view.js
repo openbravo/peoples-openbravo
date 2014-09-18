@@ -179,7 +179,7 @@ isc.OBParameterWindowView.addProperties({
         currentValues = isc.shallowClone(form.getValues());
       }
       OB.Utilities.fixNull250(currentValues);
-      parentContext = (this.view.sourceView && this.view.sourceView.getContextInfo(false, true, true, true)) || {};
+      parentContext = this.view.getUnderLyingRecordContext(false, true, true, true);
 
       try {
         if (isc.isA.Function(this.originalShowIf)) {
@@ -289,7 +289,7 @@ isc.OBParameterWindowView.addProperties({
     this.members.push(this.loading);
     this.Super('initWidget', arguments);
 
-    context = this.sourceView ? this.sourceView.getContextInfo(false, true, true, true) : {};
+    context =  this.getUnderLyingRecordContext(false, true, true, true);
 
     OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', context, {
       processId: this.processId,
@@ -442,7 +442,7 @@ isc.OBParameterWindowView.addProperties({
 
   doProcess: function (btnValue) {
     var i, tmp, view = this,
-        grid, allProperties = (this.sourceView && this.sourceView.getContextInfo(false, true, false, true)) || {},
+        grid, allProperties = this.getUnderLyingRecordContext(false, true, false, true),
         selection, len, allRows, params, tab, actionHandlerCall;
     // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
     if (this.resultLayout && this.resultLayout.destroy) {
@@ -570,7 +570,7 @@ isc.OBParameterWindowView.addProperties({
     if (!form) {
       return;
     }
-    parentContext = (this.sourceView && this.sourceView.getContextInfo(false, true, true, true)) || {};
+    parentContext = this.getUnderLyingRecordContext(false, true, true, true);
 
     fields = form.getFields();
     for (i = 0; i < fields.length; i++) {
@@ -615,6 +615,10 @@ isc.OBParameterWindowView.addProperties({
     }
 
     return result;
+  },
+
+  getUnderLyingRecordContext: function (onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat) {
+    return (this.buttonOwnerView && this.buttonOwnerView.getContextInfo(onlySessionProperties, classicMode, forceSettingContextVars, convertToClassicFormat)) || {};
   },
 
   // returns true if any non-grid required parameter does not have a value

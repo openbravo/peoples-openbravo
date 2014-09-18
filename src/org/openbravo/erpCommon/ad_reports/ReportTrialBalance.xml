@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2014 Openbravo SLU 
+* All portions are Copyright (C) 2001-2009 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -51,9 +51,7 @@
   <PARAMETER id="paramSelectedGroupBy" name="groupbyselected" attribute="value" default=""/>
   <PARAMETER id="paramPageNo" name="PageNo" attribute="value"/>
   <PARAMETER id="fieldCheck" name="check" default="Y"/>
-  <PARAMETER id="fieldNotInitialBalance" name="notInitialBalance" boolean="checked" withId="fieldCheck"/>
-  <PARAMETER id="parameterZeroFigures" name="all" default="Y"/>
-  <PARAMETER id="paramIncludeZeroFigures" name="paramZeroFigures" boolean="checked" withId="parameterZeroFigures" default="N"/>  
+  <PARAMETER id="fieldNotInitialBalance" name="notInitialBalance" boolean="checked" withId="fieldCheck"/> 
 
   <SUBREPORT id="reportCBPartnerId_IN" name="reportCBPartnerId_IN" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramVacio"/>

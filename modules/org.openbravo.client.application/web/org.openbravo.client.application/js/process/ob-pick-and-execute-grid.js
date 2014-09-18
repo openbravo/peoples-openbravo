@@ -170,6 +170,7 @@ isc.OBPickAndExecuteGrid.addProperties({
         // include in the request the values of the parameters of the parameter window
         isc.addProperties(dsRequest.params, me.view.theForm.getValues());
       }
+      dsRequest.params[OB.Constants.ORG_PARAMETER] = me.getOrgParameter();
       return this.Super('transformRequest', arguments);
     };
     filterableProperties = this.getFields().findAll('canFilter', true);
@@ -511,24 +512,41 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   getOrgParameter: function () {
-    var view = this.view && this.view.buttonOwnerView,
-        context, i;
-
-    if (view) {
-      context = view.getContextInfo(true, false);
-
+    var context, i;
+    // try to get the org from the parameters
+    if (this.view && this.view.getContextInfo) {
+      context = this.view.getContextInfo();
       for (i in context) {
-        if (context.hasOwnProperty(i) && i.indexOf('organization') !== -1) {
+        if (context.hasOwnProperty(i) && (i.indexOf('organization') !== -1 || i === ('ad_org_id'))) {
           return context[i];
         }
       }
     }
+    // if not in the parameter window, look in the view where the process is defined
+    if (this.view.buttonOwnerView) {
+      context = this.view.buttonOwnerView.getContextInfo(true, false);
+      for (i in context) {
+        if (context.hasOwnProperty(i) && (i.indexOf('organization') !== -1 || i === ('ad_org_id'))) {
+          return context[i];
+        }
+      }
+    }
+    // if not there, use the organization of the user
     return OB.User.organizationId;
   },
 
   onFetchData: function (criteria, requestProperties) {
     requestProperties = requestProperties || {};
     requestProperties.params = this.getFetchRequestParams(requestProperties.params);
+    this.setFechingData();
+  },
+
+  setFechingData: function () {
+    this.fetchingData = true;
+  },
+
+  isFetchingData: function () {
+    return this.fetchingData;
   },
 
   clearFilter: function () {

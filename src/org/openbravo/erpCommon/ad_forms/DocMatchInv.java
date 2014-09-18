@@ -28,9 +28,9 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.costing.CostingUtils;
+import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -66,8 +66,8 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
-  String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn,
+      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -249,9 +249,8 @@ public class DocMatchInv extends AcctServer {
       // If the Product is not checked as book using PO Price, the Cost of the
       // Transaction will be used to create the FactAcct Line
       MaterialTransaction transaction = getTransaction(Record_ID);
-      Organization legalEntity = OBContext.getOBContext()
-          .getOrganizationStructureProvider(AD_Client_ID)
-          .getLegalEntity(inOutLine.getShipmentReceipt().getOrganization());
+      Organization legalEntity = OBContext.getOBContext().getOrganizationStructureProvider(
+          AD_Client_ID).getLegalEntity(inOutLine.getShipmentReceipt().getOrganization());
       HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
       if (inOutLine.getStorageBin() == null) {
         costDimensions.put(CostDimension.Warehouse, inOutLine.getShipmentReceipt().getWarehouse());
@@ -263,10 +262,8 @@ public class DocMatchInv extends AcctServer {
             .getShipmentReceipt().getAccountingDate(), costDimensions)) {
           Map<String, String> parameters = new HashMap<String, String>();
           parameters.put("Product", inOutLine.getProduct().getIdentifier());
-          parameters.put(
-              "Date",
-              (OBDateUtils.formatDate(OBDal.getInstance().get(ReceiptInvoiceMatch.class, Record_ID)
-                  .getTransactionDate())).toString());
+          parameters.put("Date", (OBDateUtils.formatDate(OBDal.getInstance().get(
+              ReceiptInvoiceMatch.class, Record_ID).getTransactionDate())).toString());
           setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
           throw new IllegalStateException();
 
@@ -297,8 +294,8 @@ public class DocMatchInv extends AcctServer {
       bdCost = CostingStatus.getInstance().isMigrated() ? trxCost.divide(
           transaction == null ? new BigDecimal(data[0].getField("Qty")).abs() : transaction
               .getMovementQuantity().abs(), 10, RoundingMode.HALF_UP) : new BigDecimal(
-          DocMatchInvData.selectProductAverageCost(conn, data[0].getField("M_Product_Id"),
-              data[0].getField("orderAcctDate")));
+          DocMatchInvData.selectProductAverageCost(conn, data[0].getField("M_Product_Id"), data[0]
+              .getField("orderAcctDate")));
       Long scale = costCurrency.getStandardPrecision();
       BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
       bdCost = bdCost.multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);
@@ -313,8 +310,8 @@ public class DocMatchInv extends AcctServer {
     String strRecordId = invoiceData[0].cInvoiceId;
     String strReceiptDate = data[0].getField("ORDERDATEACCT");
     BigDecimal bdExpenses = new BigDecimal(strExpenses);
-    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(
-        data[0].getField("MOVEMENTQTY"))).signum())
+    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(data[0]
+        .getField("MOVEMENTQTY"))).signum())
         && data[0].getField("InOutStatus").equals("VO")) {
       bdExpenses = bdExpenses.multiply(new BigDecimal(-1));
     }
@@ -369,18 +366,21 @@ public class DocMatchInv extends AcctServer {
     BigDecimal totalLines = BigDecimal.ZERO;
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Invoice line = (DocLine_Invoice) p_lines[i];
-      BigDecimal lineAmount = bdExpensesAcctCurrency.multiply(new BigDecimal(line.getAmount()))
-          .divide(
-              new BigDecimal(invoiceData[0].linenetamt),
-              OBDal.getInstance().get(Currency.class, strInvoiceCurrency).getStandardPrecision()
-                  .intValue(), BigDecimal.ROUND_HALF_UP);
-      if (i == p_lines.length - 1) {
-        lineAmount = bdExpensesAcctCurrency.subtract(totalLines);
+      BigDecimal lineAmount = BigDecimal.ZERO;
+      BigDecimal linenetamt = new BigDecimal(invoiceData[0].linenetamt);
+      if (!(linenetamt.compareTo(BigDecimal.ZERO) == 0)) {
+        lineAmount = bdExpensesAcctCurrency.multiply(new BigDecimal(line.getAmount())).divide(
+            linenetamt,
+            OBDal.getInstance().get(Currency.class, strInvoiceCurrency).getStandardPrecision()
+                .intValue(), BigDecimal.ROUND_HALF_UP);
+        if (i == p_lines.length - 1) {
+          lineAmount = bdExpensesAcctCurrency.subtract(totalLines);
+        }
+        cr = fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+            as.m_C_Currency_ID, "0", lineAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, conn);
+        totalLines = totalLines.add(lineAmount);
       }
-      cr = fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-          as.m_C_Currency_ID, "0", lineAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn);
-      totalLines = totalLines.add(lineAmount);
     }
     if (cr == null && ZERO.compareTo(bdExpenses) != 0) {
       log4j.warn("createFact - unable to calculate line with "
