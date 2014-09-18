@@ -91,7 +91,7 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
       cacheBust: false,
       method: 'POST',
       handleAs: 'json',
-      timeout: 6000,
+      timeout: 20000,
       contentType: 'application/xml;charset=utf-8',
       data: params ? _.template(templatedata, params) : templatedata,
       success: function (inSender, inResponse) {

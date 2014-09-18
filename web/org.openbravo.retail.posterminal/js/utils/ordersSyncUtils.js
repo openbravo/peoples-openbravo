@@ -127,9 +127,9 @@
               me.updatedLastDocNumber = true;
             }
           } else {
-            var numSequence = OB.UTIL.getNumberOfSequence(order.get('documentNo'), true);
-            if (!OB.UTIL.isNullOrUndefined(numSequence) && OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber < numSequence) {
-              OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber = numSequence;
+            var numSequence2 = OB.UTIL.getNumberOfSequence(order.get('documentNo'), true);
+            if (!OB.UTIL.isNullOrUndefined(numSequence2) && OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber < numSequence2) {
+              OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber = numSequence2;
               me.updatedLastDocNumber = true;
             }
           }
@@ -142,6 +142,6 @@
           successCallback();
         }
       }
-    }, null, null, 7000);
+    }, null, null, 20000);
   };
 }());

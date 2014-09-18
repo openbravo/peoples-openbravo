@@ -43,7 +43,7 @@
               successCallback();
             }
           }
-        }, null, null, 4000);
+        }, null, null, 20000);
       } else {
         if (successCallback) {
           successCallback();

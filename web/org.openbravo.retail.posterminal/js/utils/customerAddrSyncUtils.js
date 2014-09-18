@@ -47,7 +47,7 @@
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorRemovingLocallyProcessedBPLoc'));
           });
         }
-      }, null, null, 4000);
+      }, null, null, 20000);
     }
   };
 }());

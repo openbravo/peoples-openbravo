@@ -43,7 +43,7 @@
               }
             });
           }
-        }, null, null, 4000);
+        }, null, null, 600000);
       }
     }, null, this);
   };
