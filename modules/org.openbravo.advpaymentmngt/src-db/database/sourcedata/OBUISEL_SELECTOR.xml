@@ -204,7 +204,6 @@
 <!--EE54530EA4884AD5A10365E480015325-->  <AD_REFERENCE_ID><![CDATA[3F7FDB0EAC9A42B69E8238335FFA59EC]]></AD_REFERENCE_ID>
 <!--EE54530EA4884AD5A10365E480015325-->  <AD_TABLE_ID><![CDATA[D1A97202E832470285C9B1EB026D54E2]]></AD_TABLE_ID>
 <!--EE54530EA4884AD5A10365E480015325-->  <WHERECLAUSE><![CDATA[e.status in ('RPR', 'PPM') and e.amount <>0 and exists ( select 1 from FinancialMgmtFinAccPaymentMethod as  fapm join fapm.account as fa where fapm.paymentMethod = e.paymentMethod and fa.id = @Fin_Financial_Account_ID@ and (case when e.receipt = true then fapm.payinAllow else fapm.payoutAllow end) = true and fa.currency = e.account.currency) and not exists (select 1 from FIN_Finacc_Transaction as ft where e = ft.finPayment) and AD_ISORGINCLUDED(@inpadOrgId@, e.organization.id,e.client.id)<>-1]]></WHERECLAUSE>
-<!--EE54530EA4884AD5A10365E480015325-->  <FILTER_EXPRESSION><![CDATA["e.account.id = @Fin_Financial_Account_ID@"]]></FILTER_EXPRESSION>
 <!--EE54530EA4884AD5A10365E480015325-->  <OBCLKER_TEMPLATE_ID><![CDATA[9314DE8599AD44E7BFC4CC50699042AB]]></OBCLKER_TEMPLATE_ID>
 <!--EE54530EA4884AD5A10365E480015325-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--EE54530EA4884AD5A10365E480015325-->  <SUGGESTIONTEXTMATCHSTYLE><![CDATA[substring]]></SUGGESTIONTEXTMATCHSTYLE>
