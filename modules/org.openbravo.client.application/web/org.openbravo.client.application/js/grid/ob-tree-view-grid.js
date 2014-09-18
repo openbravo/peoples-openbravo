@@ -442,6 +442,8 @@ isc.OBTreeViewGrid.addProperties({
   },
 
   dataArrived: function (startRow, endRow) {
+	// reset noDataEmptyMessage to prevent showing "loading..." indefinitely if the datasource does not return any data
+    this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_NoDataInGrid') + '</span>';
     this.resetEmptyMessage();
     if (this.actionAfterDataArrived) {
       this.actionAfterDataArrived();
