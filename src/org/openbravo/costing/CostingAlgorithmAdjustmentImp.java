@@ -133,6 +133,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
     if (costAdjLine.isSource()) {
       addCostDependingTrx(null);
+      if (BigDecimal.ZERO.compareTo(costAdjLine.getAdjustmentAmount()) == 0) {
+        costAdjLine.setNeedsPosting(Boolean.FALSE);
+      }
     }
 
     if (searchRelatedTransactions) {
