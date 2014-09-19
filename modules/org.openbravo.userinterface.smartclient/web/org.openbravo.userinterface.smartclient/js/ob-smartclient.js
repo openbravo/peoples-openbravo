@@ -771,6 +771,14 @@ isc.RPCManager.addClassProperties({
     if (!request.willHandleError) {
       isc.RPCManager.handleError(response, request);
     }
+  },
+  _originalEvalResult: isc.RPCManager.evalResult,
+  evalResult: function (request, response, results) {
+	// if the response contains an error status, call the errorCallback
+    if (response.status !== isc.RPCResponse.STATUS_SUCCESS && isc.isA.Function(request.errorCallback)) {
+      request.errorCallback(request, response);
+    }
+    return this._originalEvalResult(request, response, results);
   }
 });
 
