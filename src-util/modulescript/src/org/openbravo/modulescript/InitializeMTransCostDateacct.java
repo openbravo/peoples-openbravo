@@ -32,6 +32,7 @@ public class InitializeMTransCostDateacct extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
       if (InitializeMTransCostDateacctData.hasMTransCostDateacct(cp.getConnection(), cp)) {
         InitializeMTransCostDateacctData.initializeMTransCostDateacct(cp.getConnection(), cp);
+        InitializeMTransCostDateacctData.initializeMTransCostDateacct2(cp.getConnection(), cp);
       }
     } catch (Exception e) {
       handleError(e);
