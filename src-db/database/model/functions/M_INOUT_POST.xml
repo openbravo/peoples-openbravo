@@ -1130,6 +1130,14 @@
             UpdatedBy=v_User,
             DocStatus='VO' -- the reversal transaction
           WHERE M_InOut_ID=v_RInOut_ID;
+
+          -- transactions related with original inout and with voided inout will be mark as is cost permanent
+          UPDATE M_TRANSACTION TRX
+          SET ISCOSTPERMANENT='Y'
+          WHERE TRX.M_INOUTLINE_ID IN (SELECT M_INOUTLINE_ID 
+                                       FROM M_INOUTLINE
+                                       WHERE (M_INOUT_ID = v_RInOut_ID 
+                                              OR M_INOUT_ID = Cur_InOut.m_inout_id));
         END IF; -- ReverseCorrection
 
         --M_Inout_Post - Finish_Process Extension Point
