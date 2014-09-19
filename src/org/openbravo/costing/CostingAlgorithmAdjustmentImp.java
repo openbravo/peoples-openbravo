@@ -28,11 +28,14 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
@@ -332,18 +335,34 @@ public abstract class CostingAlgorithmAdjustmentImp {
     ShipmentInOutLine inoutline = costAdjLine.getInventoryTransaction().getGoodsShipmentLine();
     BigDecimal costAdjAmt = costAdjLine.getAdjustmentAmount().negate();
     int precission = getCostCurrency().getStandardPrecision().intValue();
-    // FIXME: PERFORMANCE: change loops to OBQuery
-    for (OrderLine returnorderline : inoutline.getOrderLineList()) {
-      for (ShipmentInOutLine retinoutline : returnorderline.getMaterialMgmtShipmentInOutLineList()) {
-        for (MaterialTransaction rettrx : retinoutline.getMaterialMgmtMaterialTransactionList()) {
-          // TODO: Generate cost adjustment line
-          BigDecimal adjAmt = costAdjAmt.multiply(rettrx.getMovementQuantity().abs()).divide(
-              inoutline.getMovementQuantity().abs(), precission, RoundingMode.HALF_UP);
-          insertCostAdjustmentLine(rettrx, adjAmt, _costAdjLine);
+    StringBuffer where = new StringBuffer();
+    where.append(" as trx");
+    where.append(" join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
+    where.append(" join iol." + ShipmentInOutLine.PROPERTY_SALESORDERLINE + " as ol");
+    where.append(" where ol." + OrderLine.PROPERTY_GOODSSHIPMENTLINE + " = :shipment");
+    OBQuery<MaterialTransaction> qryTrx = OBDal.getInstance().createQuery(
+        MaterialTransaction.class, where.toString());
+    qryTrx.setFilterOnReadableOrganization(false);
+    qryTrx.setNamedParameter("shipment", inoutline);
+    ScrollableResults trxs = qryTrx.scroll(ScrollMode.FORWARD_ONLY);
+    try {
+      int counter = 0;
+      while (trxs.next()) {
+        counter++;
+
+        MaterialTransaction trx = (MaterialTransaction) trxs.get()[0];
+        BigDecimal adjAmt = costAdjAmt.multiply(trx.getMovementQuantity().abs()).divide(
+            inoutline.getMovementQuantity().abs(), precission, RoundingMode.HALF_UP);
+        insertCostAdjustmentLine(trx, adjAmt, _costAdjLine);
+
+        if (counter % 1000 == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
         }
       }
+    } finally {
+      trxs.close();
     }
-
   }
 
   protected abstract void calculateNegativeStockCorrectionAdjustmentAmount(
