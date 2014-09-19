@@ -131,7 +131,10 @@ public class CostAdjustmentProcess {
         CostAdjustmentLine.class);
     critLines.createAlias(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, "trx");
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustment));
-    critLines.add(Restrictions.eq("trx." + MaterialTransaction.PROPERTY_ISCOSTPERMANENT, true));
+    critLines.add(Restrictions.eq("trx." + MaterialTransaction.PROPERTY_ISCOSTPERMANENT,
+        Boolean.TRUE));
+    critLines.add(Restrictions.ne(CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT, BigDecimal.ZERO));
+    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_UNITCOST, Boolean.TRUE));
     critLines.addOrder(Order.asc(CostAdjustmentLine.PROPERTY_LINENO));
 
     ScrollableResults lines = critLines.scroll(ScrollMode.FORWARD_ONLY);
