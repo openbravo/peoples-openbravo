@@ -209,6 +209,7 @@ public class LandedCostProcess {
       CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
           referenceDate);
       cal.setNeedsPosting(Boolean.FALSE);
+      cal.setUnitCost(Boolean.FALSE);
       OBDal.getInstance().save(cal);
 
       if (i % 100 == 0) {
