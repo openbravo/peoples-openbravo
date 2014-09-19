@@ -420,6 +420,7 @@ public class CostingRuleProcess implements Process {
     closeInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
         warehouseId));
     closeInv.setMovementDate(localDate);
+    closeInv.setInventoryType("C");
     cri.setCloseInventory(closeInv);
 
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
@@ -430,6 +431,7 @@ public class CostingRuleProcess implements Process {
     initInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
         warehouseId));
     initInv.setMovementDate(localDate);
+    initInv.setInventoryType("O");
     cri.setInitInventory(initInv);
     OBDal.getInstance().save(rule);
     OBDal.getInstance().save(closeInv);
