@@ -102,13 +102,7 @@ isc.OBToolbarActionButton.addProperties({
 
       if (!me.opening) {
         me.opening = true; // To avoid button could be clicked twice
-        try {
-          theView.setContextInfo(sessionProperties, callbackFunction, true);
-        } catch (e) {
-          // to reset the button in case of any errors when processing button action.
-          // refer issue https://issues.openbravo.com/view.php?id=27621
-          me.opening = false;
-        }
+        theView.setContextInfo(sessionProperties, callbackFunction, true);
       }
       return;
     }
