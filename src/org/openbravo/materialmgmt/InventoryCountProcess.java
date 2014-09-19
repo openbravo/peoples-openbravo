@@ -146,6 +146,11 @@ public class InventoryCountProcess implements Process {
 
   public OBError processInventory(InventoryCount inventory, boolean checkReservationQty)
       throws OBException {
+    return processInventory(inventory, true, false);
+  }
+
+  public OBError processInventory(InventoryCount inventory, boolean checkReservationQty,
+      boolean checkPermanentCost) throws OBException {
     OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
@@ -180,6 +185,7 @@ public class InventoryCountProcess implements Process {
     insert.append(", " + MaterialTransaction.PROPERTY_UPDATEDBY);
     insert.append(", " + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
     insert.append(", " + MaterialTransaction.PROPERTY_CHECKRESERVEDQUANTITY);
+    insert.append(", " + MaterialTransaction.PROPERTY_ISCOSTPERMANENT);
     insert.append(", " + MaterialTransaction.PROPERTY_MOVEMENTDATE);
     insert.append(", " + MaterialTransaction.PROPERTY_STORAGEBIN);
     insert.append(", " + MaterialTransaction.PROPERTY_PRODUCT);
@@ -201,7 +207,18 @@ public class InventoryCountProcess implements Process {
     insert.append(", u");
     insert.append(", 'I+'");
     // We have to set check reservation quantity flag equal to checkReservationQty
+    // InventoryCountLine.PROPERTY_ACTIVE-->> Y
+    // InventoryCountLine.PROPERTY_PHYSINVENTORY + "." + InventoryCount.PROPERTY_PROCESSED -->> N
     if (checkReservationQty) {
+      insert.append(", e." + InventoryCountLine.PROPERTY_ACTIVE);
+    } else {
+      insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
+          + InventoryCount.PROPERTY_PROCESSED);
+    }
+    // We have to set check permanent cost flag
+    // InventoryCountLine.PROPERTY_ACTIVE-->> Y
+    // InventoryCountLine.PROPERTY_PHYSINVENTORY + "." + InventoryCount.PROPERTY_PROCESSED -->> N
+    if (checkPermanentCost) {
       insert.append(", e." + InventoryCountLine.PROPERTY_ACTIVE);
     } else {
       insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."

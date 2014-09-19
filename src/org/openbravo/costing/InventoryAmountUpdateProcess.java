@@ -135,7 +135,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         try {
           while (invLines.next()) {
             final InventoryCount inventory = (InventoryCount) invLines.get()[0];
-            new InventoryCountProcess().processInventory(inventory, false);
+            new InventoryCountProcess().processInventory(inventory, false, true);
           }
         } finally {
           invLines.close();
