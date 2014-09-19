@@ -43,6 +43,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Locator;
@@ -237,9 +238,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             currentValueAmt.toPlainString());
 
         TrxType currentTrxType = TrxType.getTrxType(trx);
-        if (isVoidedTrx(trx, currentTrxType)) {
-          continue;
-        }
 
         if (AverageAlgorithm.modifiesAverage(currentTrxType)) {
           // Recalculate average, if current stock is zero the average is not modified
@@ -267,6 +265,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx, negCorrAmt, null);
             newCAL.setNegativeStockCorrection(true);
             newCAL.setRelatedTransactionAdjusted(true);
+            newCAL.setUnitCost(Boolean.FALSE);
             OBDal.getInstance().save(newCAL);
             cost = trxPrice;
             log.debug("Negative stock correction. Amount: {}, new cost {}",
@@ -291,7 +290,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             curCosting.setPermanent(Boolean.TRUE);
             OBDal.getInstance().save(curCosting);
           }
-        } else if (!trx.isCostPermanent() && cost != null) {
+        } else if (!trx.isCostPermanent() && cost != null && !isVoidedTrx(trx, currentTrxType)) {
           // Check current trx unit cost matches new expected cost
           BigDecimal expectedCost = cost.multiply(trx.getMovementQuantity().abs());
           BigDecimal unitCost = CostAdjustmentUtils.getTrxCost(trx, true,
@@ -378,9 +377,20 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     Costing costing = getTrxProductCost(trx, getCostDimensions(), getCostOrg());
 
     if (costing == null) {
-      throw new OBException("@NoAvgCostDefined@ @Organization@: " + getCostOrg().getName()
-          + ", @Product@: " + trx.getProduct().getName() + ", @Date@: "
+      // In case the backdated transaction is on a date where the stock was not initialized there
+      // isn't any costing entry related to an inventory transaction which results in a null
+      // costing.
+      // Try again with average algorithm getProductCost method using the movement date as
+      // parameter.
+      costing = AverageAlgorithm.getProductCost(trx.getMovementDate(), trx.getProduct(),
+          getCostDimensions(), getCostOrg());
+    }
+
+    if (costing == null) {
+      String errorMessage = OBMessageUtils.parseTranslation("@NoAvgCostDefined@ @Organization@: "
+          + getCostOrg().getName() + ", @Product@: " + trx.getProduct().getName() + ", @Date@: "
           + OBDateUtils.formatDate(trx.getMovementDate()));
+      throw new OBException(errorMessage);
     }
     BigDecimal cost = costing.getCost();
     Currency costCurrency = getCostCurrency();
