@@ -21,7 +21,6 @@ public class FixDataIssue26444 extends ModuleScript {
       String isFixed = FixDataIssue26444Data.isFixed(cp);
       // if there are not records affected, do not execute
       if (isFixed.equals("0")) {
-        // log4j.debug("Fix 26444 not needed.");
         return;
       }
       FixDataIssue26444Data.fixInvoice(cp);
