@@ -286,11 +286,16 @@ public abstract class CostingAlgorithmAdjustmentImp {
     } else {
       costAdjLine = getCostAdjLine();
     }
-    InternalConsumptionLine intCons = costAdjLine.getInventoryTransaction()
+
+    List<InternalConsumptionLine> intConsVoidedList = costAdjLine.getInventoryTransaction()
         .getInternalConsumptionLine()
-        .getMaterialMgmtInternalConsumptionLineVoidedInternalConsumptionLineList().get(0);
-    MaterialTransaction voidedTrx = intCons.getMaterialMgmtMaterialTransactionList().get(0);
-    insertCostAdjustmentLine(voidedTrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
+        .getMaterialMgmtInternalConsumptionLineVoidedInternalConsumptionLineList();
+
+    if (!intConsVoidedList.isEmpty()) {
+      InternalConsumptionLine intCons = intConsVoidedList.get(0);
+      MaterialTransaction voidedTrx = intCons.getMaterialMgmtMaterialTransactionList().get(0);
+      insertCostAdjustmentLine(voidedTrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
+    }
   }
 
   protected void searchIntMovementTo(CostAdjustmentLine _costAdjLine) {
