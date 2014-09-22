@@ -40,7 +40,9 @@ public class TransactionsWithMissingData extends BuildValidation {
           String message = "You cannot apply this Advanced Payables and Receivables Management module version because your instance fails in a pre-validation. "
               + "It is not allowed to upgrade to this version having transactions with Payment Amount and Deposit Amount of ZERO and/or null Transaction Date and/or null Accounting Date. "
               + "To fix this problem in your instance, have a look to generated alerts (Transactions with Missing Data) and identify the affected transactions. "
-              + "If you have a transaction like that, fix the problem updating Payment Amount or Deposit Amount to an Amount different to ZERO and/or filling Transaction Date and/or Accounting Date. ";
+              + "If you have a transaction like that, fix the problem updating Payment Amount or Deposit Amount to an Amount different to ZERO and/or filling Transaction Date and/or Accounting Date. "
+              + "It can be very helpful to visit <a href=http://wiki.openbravo.com/wiki/Update_Transaction_Refactor >Learn more</a>";
+
           errors.add(message);
         }
 
