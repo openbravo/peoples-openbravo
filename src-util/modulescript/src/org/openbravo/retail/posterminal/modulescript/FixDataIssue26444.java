@@ -8,23 +8,26 @@
  */
 package org.openbravo.retail.posterminal.modulescript;
 
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 
 public class FixDataIssue26444 extends ModuleScript {
 
   @Override
-  // Inserting m_inoutline_id for invoicelines which have this field as null
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      CallableStatement cs = cp.getConnection().prepareCall("{call OBPOS_FIXISSUE26444()}");
-      cs.execute();
-      cs.close();
+
+      String isFixed = FixDataIssue26444Data.isFixed(cp);
+      // if there are not records affected, do not execute
+      if (isFixed.equals("0")) {
+        // log4j.debug("Fix 26444 not needed.");
+        return;
+      }
+      FixDataIssue26444Data.fixInvoice(cp);
+      FixDataIssue26444Data.fixPaymentScheduleDetail(cp);
+      FixDataIssue26444Data.deletePaymentSchedule(cp);
     } catch (Exception e) {
-      System.out.println("error");
       handleError(e);
     }
   }
