@@ -596,16 +596,22 @@ isc.OBSelectorItem.addProperties({
 
   setPickListWidth: function () {
     var extraWidth = 0,
+        leftFieldsWidth = 0,
+        i = 0,
+        nameField = this.name,
         fieldWidth = this.getVisibleWidth();
     // minimum width for smaller fields.
     fieldWidth = (fieldWidth < 150 ? 150 : fieldWidth);
     // Dropdown selector that shows more than one column.
     if (this.pickListFields.length > 1) {
+      // calculate width of checkBox and first fields before selector field
+      while (i < this.grid.fields.size() && nameField.localeCompare(this.grid.fields.get(i).valueField) != 0) {
+        leftFieldsWidth = leftFieldsWidth + this.grid.fields.get(i).width;
+        i++;
+      }
       // prevents a pickListWidth longer than width of the grid.
-      // 89 is the width of checkBox + edit in form + edit in grid.
-      extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - 89);
+      extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - leftFieldsWidth);
     }
-
     this.pickListWidth = fieldWidth + extraWidth;
   },
 
