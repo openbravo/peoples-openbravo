@@ -108,6 +108,8 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
       }
       pendingAmt = pendingAmt.subtract(receiptAmt);
       LCReceiptLineAmt lcrla = OBProvider.getInstance().get(LCReceiptLineAmt.class);
+      // TODO: Review this
+      lcrla.setNewOBObject(true);
       lcrla.setLandedCostCost((LandedCostCost) OBDal.getInstance().getProxy(
           LandedCostCost.ENTITY_NAME, lcCost.getId()));
       lcrla.setLandedCostReceipt(lcrl);

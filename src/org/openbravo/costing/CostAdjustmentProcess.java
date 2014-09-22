@@ -263,6 +263,8 @@ public class CostAdjustmentProcess {
           continue;
         }
         TransactionCost trxCost = OBProvider.getInstance().get(TransactionCost.class);
+        // TODO: Review this
+        trxCost.setNewOBObject(true);
         MaterialTransaction trx = line.getInventoryTransaction();
         trxCost.setInventoryTransaction(trx);
         trxCost.setOrganization(trx.getOrganization());

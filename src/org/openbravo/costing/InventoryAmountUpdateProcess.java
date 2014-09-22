@@ -339,6 +339,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     String clientId = (String) DalUtil.getId(invLine.getClient());
     String orgId = (String) DalUtil.getId(invLine.getOrganization());
     InvAmtUpdLnInventories inv = OBProvider.getInstance().get(InvAmtUpdLnInventories.class);
+    // TODO: Review this
+    inv.setNewOBObject(true);
     inv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
     inv.setOrganization((Organization) OBDal.getInstance()
         .getProxy(Organization.ENTITY_NAME, orgId));
@@ -383,6 +385,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
       BigDecimal qtyBook, BigDecimal orderQtyCount, BigDecimal orderQtyBook, Long lineNo,
       InventoryCountLine relatedInventoryLine, BigDecimal cost) {
     InventoryCountLine icl = OBProvider.getInstance().get(InventoryCountLine.class);
+    // TODO: Review this
+    icl.setNewOBObject(true);
     icl.setClient(inventory.getClient());
     icl.setOrganization(inventory.getOrganization());
     icl.setPhysInventory(inventory);

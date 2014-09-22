@@ -329,6 +329,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         currentCosting.setEndingDate(newDate);
         OBDal.getInstance().save(currentCosting);
         Costing newCosting = OBProvider.getInstance().get(Costing.class);
+        // TODO: Review this
+        newCosting.setNewOBObject(true);
         newCosting.setCost(cost);
         newCosting.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
             strCurrentCurId));

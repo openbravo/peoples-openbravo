@@ -82,13 +82,15 @@ public class CostingStatus implements OBSingleton {
     }
     OBContext.setAdminMode(false);
     try {
-      Preference MigratedPreference = OBProvider.getInstance().get(Preference.class);
-      MigratedPreference.setAttribute("Cost_Eng_Ins_Migrated");
-      MigratedPreference.setSearchKey("Y");
-      MigratedPreference.setClient(OBDal.getInstance().get(Client.class, "0"));
-      MigratedPreference.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
-      MigratedPreference.setPropertyList(false);
-      OBDal.getInstance().save(MigratedPreference);
+      Preference migratedPreference = OBProvider.getInstance().get(Preference.class);
+      // TODO: Review this
+      migratedPreference.setNewOBObject(true);
+      migratedPreference.setAttribute("Cost_Eng_Ins_Migrated");
+      migratedPreference.setSearchKey("Y");
+      migratedPreference.setClient(OBDal.getInstance().get(Client.class, "0"));
+      migratedPreference.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
+      migratedPreference.setPropertyList(false);
+      OBDal.getInstance().save(migratedPreference);
       OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();

@@ -131,6 +131,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
       }
     }
     Costing cost = OBProvider.getInstance().get(Costing.class);
+    // TODO: Review this
+    cost.setNewOBObject(true);
     cost.setCost(newCost);
     cost.setCurrency(costCurrency);
     cost.setStartingDate(transaction.getTransactionProcessDate());

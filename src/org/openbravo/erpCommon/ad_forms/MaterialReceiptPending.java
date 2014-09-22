@@ -386,10 +386,11 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
             MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(),
                 dataLine[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line),
                 dataLine[0].description, strmInoutId, strOrderlineId, strLocator,
-                dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N",
-                dataLine[0].mAttributesetinstanceId, "N", qtyorder, dataLine[0].mProductUomId,
-                dataLine[0].cProjectId, dataLine[0].user1Id, dataLine[0].user2Id,
-                dataLine[0].cCostcenterId, dataLine[0].aAssetId);
+                dataLine[0].mProductId, dataLine[0].cUomId,
+                new BigDecimal(strQtyordered).toString(), "N", dataLine[0].mAttributesetinstanceId,
+                "N", qtyorder, dataLine[0].mProductUomId, dataLine[0].cProjectId,
+                dataLine[0].user1Id, dataLine[0].user2Id, dataLine[0].cCostcenterId,
+                dataLine[0].aAssetId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

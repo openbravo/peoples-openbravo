@@ -19,6 +19,7 @@
 
 package org.openbravo.costing;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,7 +86,14 @@ public class CancelCostAdjustment extends BaseActionHandler {
         strCategoryCostAdj);
     final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
     costAdjustmentCancel.setDocumentNo(docNo);
+    costAdjustmentCancel.setNewOBObject(true);
+    costAdjustmentCancel.setUpdated(new Date());
+    costAdjustmentCancel.setUpdatedBy(OBContext.getOBContext().getUser());
+    costAdjustmentCancel.setCreationDate(new Date());
+    costAdjustmentCancel.setCreatedBy(OBContext.getOBContext().getUser());
     costAdjustmentOrig.setCostAdjustmentCancel(costAdjustmentCancel);
+    costAdjustmentCancel.setProcessed(false);
+    costAdjustmentCancel.setPosted("N");
     costAdjustmentOrig.setDocumentStatus("VO");
     OBDal.getInstance().save(costAdjustmentOrig);
     OBDal.getInstance().save(costAdjustmentCancel);
@@ -104,7 +112,12 @@ public class CancelCostAdjustment extends BaseActionHandler {
       while (scrollLines.next()) {
         final CostAdjustmentLine lineOrig = (CostAdjustmentLine) scrollLines.get()[0];
         CostAdjustmentLine lineCancel = (CostAdjustmentLine) DalUtil.copy(lineOrig, false);
-        lineCancel.setCostAdjustment(cacProxy);
+        lineCancel.setNewOBObject(true);
+        lineCancel.setUpdated(new Date());
+        lineCancel.setUpdatedBy(OBContext.getOBContext().getUser());
+        lineCancel.setCreationDate(new Date());
+        lineCancel.setCreatedBy(OBContext.getOBContext().getUser());
+        lineCancel.setCostAdjustment(costAdjustmentCancel);
         lineCancel.setAdjustmentAmount(lineOrig.getAdjustmentAmount().negate());
         if (lineOrig.getInventoryTransaction().isCostPermanent()) {
           lineOrig.getInventoryTransaction().setCostPermanent(Boolean.FALSE);
@@ -119,6 +132,7 @@ public class CancelCostAdjustment extends BaseActionHandler {
     } finally {
       scrollLines.close();
     }
+    OBDal.getInstance().flush();
     JSONObject message = new JSONObject();
     message.put("severity", "success");
     String strResult = OBMessageUtils.messageBD("CostAdjustmentCanceled");
