@@ -489,9 +489,8 @@ public class CostingRuleProcess implements Process {
         trx.setTransactionProcessDate(DateUtils.addSeconds(startingDate, -1));
         BigDecimal trxCost = BigDecimal.ZERO;
         BigDecimal cost = null;
+        Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
         if (existsPreviousRule) {
-          Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
-
           trxCost = CostingUtils.getTransactionCost(trx, startingDate, true, cur);
           if (trx.getMovementQuantity().compareTo(BigDecimal.ZERO) != 0) {
             cost = trxCost.divide(trx.getMovementQuantity().abs(), cur.getCostingPrecision()
@@ -499,6 +498,7 @@ public class CostingRuleProcess implements Process {
           }
         } else {
           // Insert transaction cost record big ZERO cost.
+          cur = trx.getClient().getCurrency();
           TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
           // TODO: Review this. Object not saved??
           transactionCost.setNewOBObject(true);
@@ -516,7 +516,7 @@ public class CostingRuleProcess implements Process {
 
         trx.setCostCalculated(true);
         trx.setCostingStatus("CC");
-        trx.setCurrency(trx.getClient().getCurrency());
+        trx.setCurrency(cur);
         trx.setTransactionCost(trxCost);
         OBDal.getInstance().save(trx);
         InventoryCountLine initICL = getInitIcl(cri.getInitInventory(), icl);
