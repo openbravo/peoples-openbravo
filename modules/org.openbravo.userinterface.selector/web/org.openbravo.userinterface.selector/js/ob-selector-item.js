@@ -605,7 +605,7 @@ isc.OBSelectorItem.addProperties({
     // Dropdown selector that shows more than one column.
     if (this.pickListFields.length > 1) {
       // calculate width of checkBox and first fields before selector field
-      while (i < this.grid.fields.size() && nameField.localeCompare(this.grid.fields.get(i).valueField) != 0) {
+      while (i < this.grid.fields.size() && nameField.localeCompare(this.grid.fields.get(i).valueField) !== 0) {
         leftFieldsWidth = leftFieldsWidth + this.grid.fields.get(i).width;
         i++;
       }
