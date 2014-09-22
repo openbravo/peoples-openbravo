@@ -15,7 +15,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        select count(*) from c_invoice i where grandtotal=0 and exists (
+        select count(*) as cnt from c_invoice i where grandtotal=0 and exists (
         select 1 from fin_payment_schedule ps 
          where ps.c_invoice_id = i.c_invoice_id
         )
