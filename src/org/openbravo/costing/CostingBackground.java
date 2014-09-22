@@ -18,6 +18,8 @@
  */
 package org.openbravo.costing;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -181,6 +183,7 @@ public class CostingBackground extends DalBaseProcess {
     }
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
+
     trxQry.setNamedParameter("now", new Date());
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setNamedParameter("orgs", orgsWithRule);
@@ -188,7 +191,12 @@ public class CostingBackground extends DalBaseProcess {
     if (maxTransactions == 0) {
       maxTransactions = trxQry.count();
     }
-    // trxQry.setMaxResult(1000);
+    try {
+      OBDal.getInstance().getConnection().setHoldability(ResultSet.HOLD_CURSORS_OVER_COMMIT);
+    } catch (SQLException e) {
+      log4j.error("error: " + e.getMessage(), e);
+      throw new OBException(e.getMessage());
+    }
 
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }
