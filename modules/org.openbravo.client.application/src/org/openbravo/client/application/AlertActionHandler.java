@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,9 +84,16 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
       Long total = 0L;
       if (!"Y".equals(vars.getSessionValue("ApplyModules|BuildRunning"))) {
         // select the alert rules
-        final String hql = "select distinct(e.alertRule) from  " + AlertRecipient.ENTITY_NAME
+        final String hql = "select distinct(e.alertRule) from  "
+            + AlertRecipient.ENTITY_NAME
             + " e where e.alertRule.active = true and (e.userContact.id=? "
-            + " or (e.userContact.id = null and e.role.id = ?))";
+            + " or (e.userContact.id = null and e.role.id = ?))"
+
+            // select only those rules that are client/org visible from current role
+            + " and e.alertRule.client.id " + OBDal.getInstance().getReadableClientsInClause()
+            + " and e.alertRule.organization.id "
+            + OBDal.getInstance().getReadableOrganizationsInClause();
+
         final Query qry = OBDal.getInstance().getSession().createQuery(hql);
         qry.setParameter(0, OBContext.getOBContext().getUser().getId());
         qry.setParameter(1, OBContext.getOBContext().getRole().getId());
