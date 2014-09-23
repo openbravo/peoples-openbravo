@@ -106,6 +106,8 @@ public class KernelServlet extends BaseKernelServlet {
         count += 1;
       }
       session.setAttribute("forcedSessionsRequestCount", count);
+      log.warn("The KernelServlet should not be used for unauthenticated access, this functionality is deprecated, "
+          + "see this issue https://issues.openbravo.com/view.php?id=27248 for more information");
     }
   }
 
@@ -120,6 +122,8 @@ public class KernelServlet extends BaseKernelServlet {
       } else {
         session.setAttribute("forcedSessionsRequestCount", count);
       }
+      log.warn("The KernelServlet should not be used for unauthenticated access, this functionality is deprecated, "
+          + "see this issue https://issues.openbravo.com/view.php?id=27248 for more information");
     }
   }
 
@@ -175,6 +179,8 @@ public class KernelServlet extends BaseKernelServlet {
     }
   }
 
+  // NOTE: this exact same method is present in the MobileCoreComponentServlet in the mobile core
+  // module, if changed here, please also check the method in the MobileCoreComponentServlet class
   private Component getComponent(HttpServletRequest request) {
 
     final int nameIndex = request.getRequestURI().indexOf(servletPathPart);
@@ -201,6 +207,8 @@ public class KernelServlet extends BaseKernelServlet {
     return component;
   }
 
+  // NOTE: this exact same method is present in the MobileCoreComponentServlet in the mobile core
+  // module, if changed here, please also check the method in the MobileCoreComponentServlet class
   protected void processComponentRequest(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     Component component = getComponent(request);
