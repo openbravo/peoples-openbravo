@@ -162,7 +162,7 @@ public class VariantAutomaticGenerationProcess implements Process {
         searchKey += productNo;
         variant.setSearchKey(searchKey);
         OBDal.getInstance().save(variant);
-
+        String strChDesc = "";
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = OBDal.getInstance().get(
               ProductCharacteristicConf.class, currentValues[i]);
@@ -171,6 +171,11 @@ public class VariantAutomaticGenerationProcess implements Process {
           newPrChValue.setCharacteristic(prChConf.getCharacteristicOfProduct().getCharacteristic());
           newPrChValue.setCharacteristicValue(prChConf.getCharacteristicValue());
           newPrChValue.setProduct(variant);
+          if (StringUtils.isNotBlank(strChDesc)) {
+            strChDesc += ", ";
+          }
+          strChDesc += prChConf.getCharacteristicOfProduct().getCharacteristic().getName() + ":";
+          strChDesc += " " + prChConf.getCharacteristicValue().getName();
           OBDal.getInstance().save(newPrChValue);
           if (prChConf.getCharacteristicOfProduct().isDefinesPrice()
               && prChConf.getNetUnitPrice() != null) {
@@ -183,9 +188,8 @@ public class VariantAutomaticGenerationProcess implements Process {
             variant.setImage(newImage);
           }
         }
+        variant.setCharacteristicDescription(strChDesc);
         OBDal.getInstance().save(variant);
-        OBDal.getInstance().flush();
-        new VariantChDescUpdateProcess().update(variant.getId(), null);
 
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicAux prChConfAux = prChUseCode.get(prChs.get(i));
