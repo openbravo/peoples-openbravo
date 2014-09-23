@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, Backbone, window */
+/*global OB, _, Backbone, window, Promise */
 
 (function () {
 
@@ -184,11 +184,16 @@
       });
 
       //current cashup
-      _.each(cashup.get('cashPaymentMethodInfo'), function (paymentMethodCashUp) {
-        var paymentMethodCashUpModel = new OB.Model.PaymentMethodCashUp();
-        paymentMethodCashUpModel.set(paymentMethodCashUp);
-        OB.Dal.save(paymentMethodCashUpModel, null, null, true);
-      });
+      if (cashup.get('cashPaymentMethodInfo').length !== 0) {
+        _.each(cashup.get('cashPaymentMethodInfo'), function (paymentMethodCashUp) {
+          var paymentMethodCashUpModel = new OB.Model.PaymentMethodCashUp();
+          paymentMethodCashUpModel.set(paymentMethodCashUp);
+          OB.Dal.save(paymentMethodCashUpModel, null, null, true);
+        });
+      } else {
+        OB.UTIL.initializePaymentMethodCashup(null, cashup);
+      }
+
       if (callback) {
         callback();
       }
@@ -229,6 +234,9 @@
         if (lastCashUp.length !== 0) {
           lastCashUpPayments = JSON.parse(lastCashUp.at(0).get('objToSend')).cashCloseInfo;
           OB.UTIL.initializePaymentMethodCashup(lastCashUpPayments);
+          if (callback) {
+            callback();
+          }
         } else {
           //2. Search in server	
           new OB.DS.Process('org.openbravo.retail.posterminal.master.Cashup').exec({
@@ -244,21 +252,34 @@
               lastCashUpPayments = null;
             }
             OB.UTIL.initializePaymentMethodCashup(lastCashUpPayments, null, true);
+            if (callback) {
+              callback();
+            }
+          }, function () {
+            // error
+            //console.error("OB.Model.CashUp fail");
           });
         }
+      }, function () {
+        // error
+        //console.error("OB.Model.CashUp find");
       });
-      if (callback) {
-        callback();
-      }
-    }, null, true);
+    }, function () {
+      // error
+      //console.error("OB.Model.CashUp fail");
+    }, true);
 
   };
   OB.UTIL.initializePaymentMethodCashup = function (lastCashUpPayments, cashup, funcType) {
     _.each(OB.POS.modelterminal.get('payments'), function (payment) {
       var startingCash = payment.currentBalance,
-          pAux;
+          pAux, cashupId;
+      if (cashup) {
+        cashupId = cashup.get('id');
+      } else {
+        cashupId = OB.MobileApp.model.get('terminal').cashUpId;
+      }
       if (lastCashUpPayments) {
-        //if(funcType === true) {
         pAux = lastCashUpPayments.filter(function (payMthd) {
           return payMthd.paymentTypeId === payment.payment.id;
         })[0];
@@ -278,7 +299,7 @@
         totalReturns: OB.DEC.Zero,
         rate: payment.rate,
         isocode: payment.isocode,
-        cashup_id: OB.MobileApp.model.get('terminal').cashUpId
+        cashup_id: cashupId
       }), null, null, true);
     }, this);
   };
@@ -293,8 +314,7 @@
     var criteria = {
       'isprocessed': 'N',
       '_orderByClause': 'createdDate desc'
-    },
-        lastCashUpPayments;
+    };
     OB.Dal.find(OB.Model.CashUp, criteria, function (cashUp) { //OB.Dal.find success
       if (cashUp.length === 0) {
         // Search in the backoffice
@@ -305,9 +325,11 @@
           if (data[0]) {
             cashUp = new OB.Model.CashUp();
             cashUp.set(data[0]);
-            OB.UTIL.createNewCashupFromServer(cashUp, callback);
+            OB.UTIL.createNewCashupFromServer(cashUp, function (callback) {
+              OB.UTIL.calculateCurrentCash(callback);
+            });
           } else {
-            OB.UTIL.createNewCashup();
+            OB.UTIL.createNewCashup(callback);
           }
         });
       } else {

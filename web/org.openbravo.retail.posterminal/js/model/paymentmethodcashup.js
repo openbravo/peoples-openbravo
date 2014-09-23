@@ -14,7 +14,7 @@
   var PaymentMethodCashUp = OB.Data.ExtensibleModel.extend({
     modelName: 'PaymentMethodCashUp',
     tableName: 'paymentmethodcashup',
-    entityName: '',
+    entityName: 'PaymentMethodCashUp',
     source: '',
     local: true
   });

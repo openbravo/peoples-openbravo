@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, _, $ */
+/*global OB, enyo, Backbone, _, $, SynchronizationHelper */
 
 OB.OBPOSCashUp = OB.OBPOSCashUp || {};
 OB.OBPOSCashUp.Model = OB.OBPOSCashUp.Model || {};
@@ -27,6 +27,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   },
   cashupstepsdefinition: ['OB.CashUp.StepPendingOrders', 'OB.CashUp.CashPayments', 'OB.CashUp.PaymentMethods', 'OB.CashUp.CashToKeep', 'OB.CashUp.PostPrintAndClose'],
   init: function () {
+    var synchId = SynchronizationHelper.busyUntilFinishes('cashup-model.init');
     //Check for orders which are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
@@ -57,6 +58,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         'cashup_id': cashUp.at(0).get('id'),
         '_orderByClause': 'name asc'
       }, function (payMthds) { //OB.Dal.find success
+        SynchronizationHelper.finished(synchId, 'cashup-model.init');
         _.each(OB.POS.modelterminal.get('payments'), function (payment, index) {
           expected = 0;
           var auxPay = payMthds.filter(function (payMthd) {
@@ -65,6 +67,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
             return;
           }
+          var synchId = SynchronizationHelper.busyUntilFinishes('cashup-model.init II');
           auxPay.set('_id', payment.payment.searchKey);
           auxPay.set('isocode', payment.isocode);
           auxPay.set('paymentMethod', payment.paymentMethod);
@@ -73,7 +76,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             'cashup_id': cashUp.at(0).get('id'),
             'paymentMethodId': payment.payment.id
           }, function (cashMgmts, args) {
-
+            SynchronizationHelper.finished(synchId, 'cashup-model.init II');
             var cStartingCash = auxPay.get('startingCash');
             var cTotalReturns = auxPay.get('totalReturns');
             var cTotalSales = auxPay.get('totalSales');
@@ -99,11 +102,19 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
               me.set('totalDifference', OB.DEC.sub(me.get('totalDifference'), me.get('totalExpected')));
               me.setIgnoreStep3();
             }
-          }, null, {
+          }, function () {
+            // error
+            //console.error("OB.Model.CashManagement find");
+            SynchronizationHelper.finished(synchId, 'cashup-model.init II');
+          }, {
             me: me,
             index: index
           });
         }, this);
+      }, function () {
+        // error
+        //console.error("OB.Model.PaymentMethodCashUp find");
+        SynchronizationHelper.finished(synchId);
       });
     }, this);
 
@@ -491,8 +502,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
               me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
             }
-            OB.UTIL.showLoading(false);
-            me.set("finished", true);
+            OB.MobileApp.model.runSyncProcess(function () {
+              OB.UTIL.showLoading(false);
+              me.set("finished", true);
+            });
           }, null, null);
         }, null);
       }, null, this);

@@ -47,10 +47,10 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
         cashUpDate = (Date) JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.DATETIME,
             ((String) strCashUpDate).subSequence(0, ((String) strCashUpDate).lastIndexOf(".")));
       } else {
-        log.error("Error processing cash close: error retrieving cashUp date. Using current date");
+        log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
       }
     } catch (Exception e) {
-      log.error("Error processing cash close: error retrieving cashUp date. Using current date");
+      log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
     }
 
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,

@@ -14,7 +14,7 @@
   var TaxCashUp = OB.Data.ExtensibleModel.extend({
     modelName: 'TaxCashUp',
     tableName: 'taxcashup',
-    entityName: '',
+    entityName: 'TaxCashUp',
     source: '',
     local: true
   });
