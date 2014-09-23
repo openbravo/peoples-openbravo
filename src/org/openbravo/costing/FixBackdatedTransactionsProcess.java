@@ -62,6 +62,7 @@ public class FixBackdatedTransactionsProcess implements Process {
           .getOrganizationStructureProvider(rule.getClient().getId());
       final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
 
+      // TODO: Discuss filter by date when there are periods closed.
       ScrollableResults transactions = getTransactions(childOrgs, rule.getStartingDate(),
           rule.getEndingDate());
       int i = 0;
@@ -132,6 +133,7 @@ public class FixBackdatedTransactionsProcess implements Process {
       msg.setTitle(OBMessageUtils.messageBD("Success"));
     }
 
+    rule = OBDal.getInstance().get(CostingRule.class, ruleId);
     rule.setBackdatedTransactionsFixed(Boolean.TRUE);
     OBDal.getInstance().save(rule);
 
@@ -148,7 +150,7 @@ public class FixBackdatedTransactionsProcess implements Process {
         + " >= (:startDate)");
     if (endDate != null) {
       select.append(" and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " <= (:endDate)");
+          + " < (:endDate)");
     }
     select.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
 
