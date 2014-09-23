@@ -22,6 +22,24 @@
       ]]>
     </Sql>
   </SqlMethod>
+  <SqlMethod name="insertPreference" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO AD_PREFERENCE 
+      (AD_PREFERENCE_ID,AD_CLIENT_ID,AD_ORG_ID,ISACTIVE,CREATED,CREATEDBY,UPDATED,UPDATEDBY,AD_WINDOW_ID,AD_USER_ID,ATTRIBUTE,VALUE,PROPERTY,ISPROPERTYLIST,VISIBLEAT_CLIENT_ID,VISIBLEAT_ORG_ID,VISIBLEAT_ROLE_ID,SELECTED,AD_MODULE_ID) 
+      VALUES (get_uuid(),'0','0','Y',now(),'100',now(),'100',null,null,'Fix 26444 executed','Y',null,'N',null,null,null,'N',null)
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="selectExistsPreference" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT COUNT(1) as cnt FROM AD_PREFERENCE WHERE ATTRIBUTE  = 'Fix 26444 executed'
+      ]]>
+    </Sql>
+  </SqlMethod>
   <SqlMethod name="fixInvoice" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

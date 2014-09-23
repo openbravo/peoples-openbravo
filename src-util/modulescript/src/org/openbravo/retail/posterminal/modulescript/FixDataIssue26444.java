@@ -18,14 +18,14 @@ public class FixDataIssue26444 extends ModuleScript {
     try {
       ConnectionProvider cp = getConnectionProvider();
 
-      String isFixed = FixDataIssue26444Data.isFixed(cp);
-      // if there are not records affected, do not execute
+      String isFixed = FixDataIssue26444Data.selectExistsPreference(cp);
       if (isFixed.equals("0")) {
         return;
       }
       FixDataIssue26444Data.fixInvoice(cp);
       FixDataIssue26444Data.fixPaymentScheduleDetail(cp);
       FixDataIssue26444Data.deletePaymentSchedule(cp);
+      FixDataIssue26444Data.insertPreference(cp);
     } catch (Exception e) {
       handleError(e);
     }
