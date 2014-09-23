@@ -2622,7 +2622,8 @@ isc.OBStandardView.addProperties({
     return null;
   },
 
-  setContextInfo: function (sessionProperties, callbackFunction, forced) {
+  // if defined, the errorCallbackFunction will be executed if the FIC call returns with an error status (i.e. connectivity error)
+  setContextInfo: function (sessionProperties, callbackFunction, forced, errorCallbackFunction) {
     var newCallback, me = this,
         gridVisibleProperties = [],
         len, i, originalID;
@@ -2679,7 +2680,7 @@ isc.OBStandardView.addProperties({
       TAB_ID: this.tabId,
       PARENT_ID: this.getParentId(),
       ROW_ID: this.viewGrid.getSelectedRecord() ? this.viewGrid.getSelectedRecord().id : this.getCurrentValues().id
-    }, newCallback);
+    }, newCallback, null, errorCallbackFunction);
 
   },
 
