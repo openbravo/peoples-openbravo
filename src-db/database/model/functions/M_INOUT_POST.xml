@@ -872,6 +872,13 @@
                   )
                   ;
               END LOOP;
+              -- Set check price difference to true in case the receipt line has a related invoice.
+              UPDATE M_TRANSACTION
+              SET checkpricedifference = 'Y'
+              WHERE M_INOUTLINE_ID IN (SELECT DISTINCT il.m_inoutline_id
+                                       FROM m_inoutline il
+                                          JOIN m_matchinv mi ON il.m_inoutline_id = mi.m_inoutline_id
+                                       WHERE il.m_inout_id = Cur_InOut.M_InOut_ID);
             END;
           ELSE
             --Void document is created automatically from main document . 
