@@ -119,6 +119,8 @@ public class CancelCostAdjustment extends BaseActionHandler {
         lineCancel.setCreatedBy(OBContext.getOBContext().getUser());
         lineCancel.setCostAdjustment(costAdjustmentCancel);
         lineCancel.setAdjustmentAmount(lineOrig.getAdjustmentAmount().negate());
+        lineCancel.setBackdatedTrx(Boolean.FALSE);
+        lineCancel.setNegativeStockCorrection(Boolean.FALSE);
         if (lineOrig.getInventoryTransaction().isCostPermanent()) {
           lineOrig.getInventoryTransaction().setCostPermanent(Boolean.FALSE);
           OBDal.getInstance().save(lineOrig.getInventoryTransaction());

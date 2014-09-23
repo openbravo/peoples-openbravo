@@ -295,6 +295,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           BigDecimal expectedCost = cost.multiply(trx.getMovementQuantity().abs());
           BigDecimal unitCost = CostAdjustmentUtils.getTrxCost(trx, true,
               OBDal.getInstance().get(Currency.class, strCurrentCurId));
+          unitCost = unitCost.add(trxAdjAmt);
           log.debug("Is adjustment needed? Expected {} vs Current {}",
               expectedCost.toPlainString(), unitCost.toPlainString());
           if (expectedCost.compareTo(unitCost) != 0) {

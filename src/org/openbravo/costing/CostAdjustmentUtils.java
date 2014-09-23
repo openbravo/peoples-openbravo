@@ -99,9 +99,6 @@ public class CostAdjustmentUtils {
   public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate) {
-    if (BigDecimal.ZERO.compareTo(costAdjusted) == 0) {
-      return null;
-    }
     CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
     costAdjustmentLine.setNewOBObject(true);
     costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
