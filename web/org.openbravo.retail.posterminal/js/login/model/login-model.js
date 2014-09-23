@@ -671,7 +671,7 @@
           var orderlist = OB.MobileApp.model.orderList;
           if (orderlist && orderlist.models.length > 0 && orderlist.current) {
             if (orderlist.current.get('lines') && orderlist.current.get('lines').length === 0) {
-              if (orderlist.current.get('documentnoSuffix') <= me.documentnoThreshold) {
+              if (me.documentnoThreshold !== 0 && orderlist.current.get('documentnoSuffix') <= me.documentnoThreshold) {
                 orderlist.deleteCurrent();
               }
             }
@@ -679,11 +679,18 @@
           };
 
       // verify that the values are higher than the local variables
-      if (documentnoSuffix > this.documentnoThreshold) {
+      // if we do not find a sequence with the prefix documentnoThreshold is -1 (Pos Terminal prefix has changed)
+      if (this.documentnoThreshold !== -1 && documentnoSuffix > this.documentnoThreshold) {
         this.documentnoThreshold = documentnoSuffix;
+      } else if (this.documentnoThreshold === -1) {
+        //Because Pos Terminal prefix has changed we initialize it
+        this.documentnoThreshold = 0;
       }
       if (quotationnoSuffix > this.quotationnoThreshold) {
         this.quotationnoThreshold = quotationnoSuffix;
+      } else if (this.quotationnoThreshold === -1) {
+        //Because Pos Terminal prefix has changed we initialize it
+        this.quotationnoThreshold = 0;
       }
 
       // verify the database values
@@ -696,10 +703,10 @@
           // There can only be one documentSequence model in the list (posSearchKey is unique)
           docSeq = documentSequenceList.models[0];
           // verify if the new values are higher
-          if (docSeq.get('documentSequence') > me.documentnoThreshold) {
+          if (me.documentnoThreshold !== 0 && docSeq.get('documentSequence') > me.documentnoThreshold) {
             me.documentnoThreshold = docSeq.get('documentSequence');
           }
-          if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold) {
+          if (me.quotationnoThreshold !== 0 && docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold) {
             me.quotationnoThreshold = docSeq.get('quotationDocumentSequence');
           }
         } else {
