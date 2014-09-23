@@ -48,6 +48,12 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
 
   protected abstract long getSeq();
 
+  /**
+   * This method gets called to obtain the default filtering values for the grid. It can be
+   * overwritten using Injections.
+   * 
+   * @return String containing the value for the filter expression
+   */
   String getFilterExpression(Map<String, String> requestMap) throws JSONException {
     return getDefaultPaymentMethod(requestMap);
   }
@@ -76,8 +82,8 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
     final String strWindowId = context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
     AddPaymentDefaultValuesHandler handler = getDefaultsHandler(strWindowId);
     String paymentMethodId = handler.getDefaultPaymentMethod(requestMap);
-    if (context.has("inpfinPaymentId") && context.get("inpfinPaymentId") != null
-        && StringUtils.isNotBlank((String) context.get("inpfinPaymentId"))) {
+    if (context.has("inpfinPaymentId") && context.get("inpfinPaymentId") != JSONObject.NULL
+        && StringUtils.isNotBlank((String) context.getString("inpfinPaymentId"))) {
       if (hasDetailsWithDifferentPaymentMethods((String) context.get("inpfinPaymentId"))) {
         return "";
       } else {

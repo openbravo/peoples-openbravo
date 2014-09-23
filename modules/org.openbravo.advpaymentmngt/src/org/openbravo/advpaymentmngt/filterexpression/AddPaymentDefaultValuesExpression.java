@@ -102,6 +102,10 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
           return handler.getDefaultCurrency(requestMap);
         case Organization:
           return handler.getOrganization(requestMap);
+        case Document:
+          return handler.getDefaultDocument(requestMap);
+        case BankStatementLineAmount:
+          return handler.getBankStatementLineAmount(requestMap);
         }
       } catch (Exception e) {
         log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(),
@@ -118,8 +122,13 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
 
   private String getWindowId(Map<String, String> requestMap) throws JSONException {
     final String strContext = requestMap.get("context");
-    JSONObject context = new JSONObject(strContext);
-    return context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
+    if (strContext != null) {
+      JSONObject context = new JSONObject(strContext);
+      if (context != null && context.has(OBBindingsConstants.WINDOW_ID_PARAM)) {
+        return context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
+      }
+    }
+    return "NULLWINDOWID";
   }
 
   private AddPaymentDefaultValuesHandler getHandler(String strWindowId) {
@@ -147,7 +156,8 @@ public class AddPaymentDefaultValuesExpression implements FilterExpression {
         "customer_credit"), IsSOTrx("issotrx"), Payment("fin_payment_id"), Invoice("c_invoice_id"), Order(
         "c_order_id"), ConversionRate("conversion_rate"), ConvertedAmount("converted_amount"), StandardPrecision(
         "StdPrecision"), GenerateCredit("generateCredit"), DocumentCategory("DOCBASETYPE"), ReferenceNo(
-        "reference_no"), Currency("c_currency_id"), Organization("ad_org_id");
+        "reference_no"), Currency("c_currency_id"), Organization("ad_org_id"), Document("trxtype"), BankStatementLineAmount(
+        "bslamount");
 
     private String columnname;
 

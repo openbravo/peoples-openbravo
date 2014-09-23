@@ -72,10 +72,14 @@ isc.OBPickEditGridItem.addProperties({
     pickAndExecuteViewProperties.onGridLoadFunction = this.onGridLoadFunction;
     if (this.view.isPickAndExecuteWindow) {
       this.view.resized = function (messagebarVisible) {
+        var heightCorrection = 95;
+        if (me.view.isExpandedRecord) {
+          heightCorrection = heightCorrection - 61;
+        }
         if (messagebarVisible) {
-          me.canvas.setHeight(me.view.height - (95 + me.view.messageBar.height));
+          me.canvas.setHeight(me.view.height - (heightCorrection + me.view.messageBar.height));
         } else {
-          me.canvas.setHeight(me.view.height - 95);
+          me.canvas.setHeight(me.view.height - heightCorrection);
         }
         me.canvas.redraw();
       };

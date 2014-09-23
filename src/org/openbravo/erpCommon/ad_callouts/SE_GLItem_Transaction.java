@@ -37,28 +37,36 @@ public class SE_GLItem_Transaction extends SimpleCallout {
       final String strTransactionId = info.getStringParameter("Fin_Finacc_Transaction_ID",
           IsIDFilter.instance);
       if ("".equals(strGLItemId)) {
-        return;
+        info.addResult("inpdescription", "");
       }
       GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
       FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
           strTransactionId);
-      GLItem oldGLItem = transaction.getGLItem();
-      String description = transaction.getDescription();
-      String oldGlItemString = Utility.messageBD(this, "APRM_GLItem", info.vars.getLanguage())
-          + ": " + oldGLItem.getName();
-      String newGlItemString = Utility.messageBD(this, "APRM_GLItem", info.vars.getLanguage())
-          + ": " + glItem.getName();
-      if (description != null && !description.isEmpty()) {
-        description = description.indexOf(oldGlItemString) != -1 ? (description
-            .indexOf(oldGlItemString) == 0 ? "" : description.substring(0,
-            description.indexOf(oldGlItemString) - 1)
-            + "\n")
-            + newGlItemString
-            + description.substring(
-                oldGlItemString.length() + description.indexOf(oldGlItemString),
-                description.length()) : description;
+      String description = "";
+      if (transaction != null) {
+        GLItem oldGLItem = transaction.getGLItem();
+        description = transaction.getDescription();
+        String oldGlItemString = Utility.messageBD(this, "APRM_GLItem", info.vars.getLanguage())
+            + ": " + oldGLItem.getName();
+        String newGlItemString = Utility.messageBD(this, "APRM_GLItem", info.vars.getLanguage())
+            + ": " + glItem.getName();
+        if (description != null && !description.isEmpty()) {
+          description = description.indexOf(oldGlItemString) != -1 ? (description
+              .indexOf(oldGlItemString) == 0 ? "" : description.substring(0,
+              description.indexOf(oldGlItemString) - 1)
+              + "\n")
+              + newGlItemString
+              + description.substring(
+                  oldGlItemString.length() + description.indexOf(oldGlItemString),
+                  description.length()) : description;
+        }
+        description = (description == null || description.isEmpty()) ? newGlItemString
+            : description;
+      } else {
+        description = Utility.messageBD(this, "APRM_GLItem", info.vars.getLanguage()) + ": "
+            + glItem.getName();
+        ;
       }
-      description = (description == null || description.isEmpty()) ? newGlItemString : description;
       info.addResult("inpdescription", description);
     } catch (Exception e) {
       return;
