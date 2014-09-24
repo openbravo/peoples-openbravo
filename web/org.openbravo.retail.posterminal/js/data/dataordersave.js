@@ -105,8 +105,8 @@
         OB.trace('Saving receipt.');
 
         OB.Dal.save(receipt, function () {
-          var successCallback = function (model) {
 
+          var successCallback = function (model) {
               OB.trace('Sync process success.');
 
               //In case the processed document is a quotation, we remove its id so it can be reactivated

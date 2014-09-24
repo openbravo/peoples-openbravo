@@ -104,29 +104,33 @@
         </line>
       <%
         }
-          if (payments.at(i).get('paymentData')) {
-          var pinfo = payments.at(i).get('paymentData');
+          if (payments.at(i).get('gatewayData')) {
+          var pinfo = payments.at(i).get('gatewayData');
       %>
         <line>
           <text align="left" length="2"></text>
           <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentTran') %></text>
-          <text align="left" length="20"><%= pinfo.TransactionID %></text>
+          <text align="left" length="20"><%= pinfo.transaction %></text>
         </line>      
         <line>
           <text align="left" length="2"></text>
           <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentApproval') %></text>
-          <text align="left" length="20"><%= pinfo.ApprovalNumber %></text>
+          <text align="left" length="20"><%= pinfo.authorization %></text>
         </line>      
+        <% if (pinfo.cardmasked) { %>
         <line>
           <text align="left" length="2"></text>
           <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentAct') %></text>
-          <text align="left" length="20"><%= pinfo.CardNumberMasked %></text>
-        </line>      
+          <text align="left" length="20"><%= pinfo.cardmasked %></text>
+        </line>  
+        <% } %>
+        <% if (pinfo.cardlogo) { %>    
         <line>
           <text align="left" length="2"></text>
           <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentLogo') %></text>
-          <text align="left" length="20"><%= pinfo.CardLogo %></text>
-        </line>      
+          <text align="left" length="20"><%= pinfo.cardlogo %></text>
+        </line>
+        <% } %>   
             
       <%
           }

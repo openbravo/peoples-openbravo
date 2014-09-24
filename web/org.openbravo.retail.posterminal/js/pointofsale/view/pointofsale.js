@@ -76,6 +76,7 @@ enyo.kind({
   },
   events: {
     onShowPopup: '',
+    onHidePopup: '',
     onButtonStatusChanged: ''
   },
   components: [{
@@ -143,6 +144,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalPayment',
       name: "modalpayment"
+    }, {
+      kind: 'OB.UI.ModalPaymentVoid',
+      name: "modalpaymentvoid"
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
       name: 'modalConfigurationRequiredForCrossStore'
@@ -679,60 +683,95 @@ enyo.kind({
   },
   removePayment: function (inSender, inEvent) {
     var me = this;
-    if (inEvent.payment.get('paymentData')) {
-      if (!confirm(OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'))) {
-        if (inEvent.removeCallback) {
-          inEvent.removeCallback();
+    var voidTransaction;
+    var voidConfirmation;
+
+    var removeTransaction = function () {
+        //      if (!me.model.get('multiOrders').get('isMultiOrders')) {
+        //        me.model.get('order').removePayment(inEvent.payment);
+        //      } else {
+        //        me.model.get('multiOrders').removePayment(inEvent.payment);
+        //      }      
+        if (me.model.get('leftColumnViewManager').isOrder()) {
+          me.model.get('order').removePayment(inEvent.payment);
+          me.model.get('order').trigger('displayTotal');
+          return;
         }
-        //canceled, not remove
-        return;
-      } else {
+        if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+          me.model.get('multiOrders').removePayment(inEvent.payment);
+          me.model.get('multiOrders').trigger('displayTotal');
+          return;
+        }
+        };
+
+    var callVoidTransaction = function () {
         //To remove this payment we've to connect with server
         //a callback is defined to receive the confirmation
-        var callback = function (hasError, error) {
-            if (inEvent.removeCallback) {
-              inEvent.removeCallback();
-            }
-            if (hasError) {
-              OB.UTIL.showError(error);
-            } else {
-              //            if (!me.model.get('multiOrders').get('isMultiOrders')) {
-              //              me.model.get('order').removePayment(inEvent.payment);
-              //            } else {
-              //              me.model.get('multiOrders').removePayment(inEvent.payment);
-              //            }
-              if (me.model.get('leftColumnViewManager').isOrder()) {
-                me.model.get('order').removePayment(inEvent.payment);
-                me.model.get('order').trigger('displayTotal');
-                return;
-              }
-              if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-                me.model.get('multiOrders').removePayment(inEvent.payment);
-                me.model.get('multiOrders').trigger('displayTotal');
-                return;
-              }
-            }
-            };
-        //async call with defined callback
-        inEvent.payment.get('paymentData').voidTransaction(callback);
+        me.doShowPopup({
+          popup: 'modalpaymentvoid',
+          args: {
+            'amount': inEvent.payment.get('amount')
+          }
+        });
+
+
+
+        voidTransaction(function (hasError, error) {
+
+          me.doHidePopup({
+            popup: 'modalpaymentvoid'
+          });
+
+          if (inEvent.removeCallback) {
+            inEvent.removeCallback();
+          }
+          if (hasError) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblPaymentMethod'), error, [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              isConfirmButton: true
+            }], {
+              autoDismiss: false
+            });
+          } else {
+            removeTransaction();
+          }
+        });
+        };
+
+    if (inEvent.payment.get('paymentData')) {
+      voidTransaction = inEvent.payment.get('paymentData').voidTransaction;
+      voidConfirmation = inEvent.payment.get('paymentData').voidConfirmation;
+
+      if (voidConfirmation === false) {
+        callVoidTransaction();
         return;
       }
+
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblPaymentMethod'), OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        isConfirmButton: true,
+        action: function () {
+          callVoidTransaction();
+          return true;
+        }
+      }, {
+        label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+        action: function () {
+          if (inEvent.removeCallback) {
+            inEvent.removeCallback();
+          }
+          return true;
+        }
+      }], {
+        autoDismiss: false,
+        onHideFunction: function () {
+          if (inEvent.removeCallback) {
+            inEvent.removeCallback();
+          }
+        }
+      });
     } else {
-      //      if (!me.model.get('multiOrders').get('isMultiOrders')) {
-      //        me.model.get('order').removePayment(inEvent.payment);
-      //      } else {
-      //        me.model.get('multiOrders').removePayment(inEvent.payment);
-      //      }
-      if (me.model.get('leftColumnViewManager').isOrder()) {
-        me.model.get('order').removePayment(inEvent.payment);
-        me.model.get('order').trigger('displayTotal');
-        return;
-      }
-      if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-        me.model.get('multiOrders').removePayment(inEvent.payment);
-        me.model.get('multiOrders').trigger('displayTotal');
-        return;
-      }
+      removeTransaction();
     }
   },
   changeSubWindow: function (inSender, inEvent) {
