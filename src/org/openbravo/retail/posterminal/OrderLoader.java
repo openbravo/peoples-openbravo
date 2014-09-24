@@ -272,9 +272,11 @@ public class OrderLoader extends POSDataSynchronizationProcess {
     }
     long t5 = System.currentTimeMillis();
     OBDal.getInstance().flush();
-    log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
-        + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: " + (t4 - t3)
-        + "; Process Payments:" + (t5 - t4) + " Final flush: " + (System.currentTimeMillis() - t5));
+    log.info("Order with docno: " + order.getDocumentNo() + " (uuid: " + order.getId()
+        + ") saved correctly. Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1)
+        + "; Save bobs:" + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: "
+        + (t4 - t3) + "; Process Payments:" + (t5 - t4) + " Final flush: "
+        + (System.currentTimeMillis() - t5));
 
     return successMessage(jsonorder);
   }
@@ -1407,7 +1409,8 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         } else {
           amount = amount.subtract(writeoffAmt.abs()).setScale(stdPrecision, RoundingMode.HALF_UP);
         }
-      } else if (writeoffAmt.signum() == -1 && (!isLayaway && !checkPaidOnCreditChecked)) {
+      } else if (writeoffAmt.signum() == -1
+          && (!isLayaway && !partialpayLayaway && !fullpayLayaway && !checkPaidOnCreditChecked)) {
         if (totalIsNegative) {
           amount = amount.add(writeoffAmt).setScale(stdPrecision, RoundingMode.HALF_UP);
         } else {
