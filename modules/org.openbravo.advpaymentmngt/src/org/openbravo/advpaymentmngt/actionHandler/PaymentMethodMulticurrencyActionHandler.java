@@ -46,14 +46,24 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
       final String paymentMethodId = jsonData.getString("paymentMethodId");
       final String financialAccountId = jsonData.getString("financialAccountId");
       final boolean isSOTrx = jsonData.getBoolean("isSOTrx");
-      final String currencyId = jsonData.getString("currencyId");
+      String currencyId = jsonData.getString("currencyId");
       final String strPaymentDate = jsonData.getString("paymentDate");
       Date paymentDate = JsonUtils.createDateFormat().parse(strPaymentDate);
       final String strOrgId = jsonData.getString("orgId");
 
+      JSONObject result = new JSONObject();
+
+      if ("null".equals(currencyId) && !"null".equals(financialAccountId)
+          && !"".equals(financialAccountId)) {
+        FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+            financialAccountId);
+        currencyId = financialAccount.getCurrency().getId();
+        result.put("currencyIdIdentifier", financialAccount.getCurrency().getIdentifier());
+        result.put("currencyId", currencyId);
+      }
+
       final FinAccPaymentMethod finAccPaymentMethod = getFinancialAccountPaymentMethod(
           paymentMethodId, financialAccountId);
-      JSONObject result = new JSONObject();
       if (finAccPaymentMethod != null) {
         result.put("isPayIsMulticurrency", isSOTrx ? finAccPaymentMethod.isPayinIsMulticurrency()
             : finAccPaymentMethod.isPayoutIsMulticurrency());

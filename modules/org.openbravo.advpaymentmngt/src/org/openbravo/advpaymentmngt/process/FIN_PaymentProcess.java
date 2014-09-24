@@ -81,6 +81,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
     try {
       // retrieve custom params
       final String strAction = (String) bundle.getParams().get("action");
+      final String comingFrom = (String) bundle.getParams().get("comingFrom");
       // retrieve standard params
       final String recordID = (String) bundle.getParams().get("Fin_Payment_ID");
       final FIN_Payment payment = dao.getObject(FIN_Payment.class, recordID);
@@ -478,7 +479,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             payment.setStatus(isReceipt ? "RPR" : "PPM");
 
             if ((strAction.equals("D") || FIN_Utility.isAutomaticDepositWithdrawn(payment))
-                && payment.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+                && payment.getAmount().compareTo(BigDecimal.ZERO) != 0
+                && !"TRANSACTION".equals(comingFrom)) {
               OBError result = triggerAutomaticFinancialAccountTransaction(vars, conProvider,
                   payment);
               if ("Error".equals(result.getType())) {

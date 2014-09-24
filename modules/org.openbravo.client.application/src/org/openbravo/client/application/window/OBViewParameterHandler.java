@@ -60,7 +60,7 @@ public class OBViewParameterHandler {
     for (Parameter param : process.getOBUIAPPParameterList()) {
       if (param.isActive() && param.getDisplayLogic() != null && !param.getDisplayLogic().isEmpty()) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(param.getDisplayLogic(),
-            param.getObuiappProcess(), true);
+            param, true);
         displayLogicMap.put(param, parser.getJSExpression());
         for (Parameter parameterExpression : parser.getParameters()) {
           if (!parametersInExpression.contains(parameterExpression)) {
@@ -76,7 +76,7 @@ public class OBViewParameterHandler {
       if (param.isActive() && !param.isFixed() && param.getReadOnlyLogic() != null
           && !param.getReadOnlyLogic().isEmpty()) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(
-            param.getReadOnlyLogic(), param.getObuiappProcess(), true);
+            param.getReadOnlyLogic(), param, true);
         readOnlyLogicMap.put(param, parser.getJSExpression());
         for (Parameter parameterExpression : parser.getParameters()) {
           if (!parametersInExpression.contains(parameterExpression)) {

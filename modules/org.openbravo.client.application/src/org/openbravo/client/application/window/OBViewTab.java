@@ -628,6 +628,14 @@ public class OBViewTab extends BaseTemplateComponent {
     return true;
   }
 
+  public String getSelectionType() {
+    if (tab.getObuiappSelectionType() != null) {
+      return tab.getObuiappSelectionType();
+    }
+    // "M" or "Multiple" is the default value
+    return "M";
+  }
+
   public String getNewFunction() {
     if (tab.getOBUIAPPNewFn() != null) {
       return tab.getOBUIAPPNewFn();

@@ -392,8 +392,6 @@ isc.OBSelectorPopupWindow.addProperties({
       isc.addProperties(data, this.view.sourceView.getContextInfo(false, true));
     }
 
-
-
     callback = function (resp, data, req) {
       selectorWindow.fetchDefaultsCallback(resp, data, req);
     };
@@ -596,12 +594,23 @@ isc.OBSelectorItem.addProperties({
 
   setPickListWidth: function () {
     var extraWidth = 0,
+        leftFieldsWidth = 0,
+        i = 0,
+        nameField = this.name,
         fieldWidth = this.getVisibleWidth();
+    // minimum width for smaller fields.
+    fieldWidth = (fieldWidth < 150 ? 150 : fieldWidth);
+    // Dropdown selector that shows more than one column.
     if (this.pickListFields.length > 1) {
-      extraWidth = 150 * (this.pickListFields.length - 1);
+      // calculate width of checkBox and first fields before selector field
+      while (i < this.grid.fields.size() && nameField.localeCompare(this.grid.fields.get(i).valueField) !== 0) {
+        leftFieldsWidth = leftFieldsWidth + this.grid.fields.get(i).width;
+        i++;
+      }
+      // prevents a pickListWidth longer than width of the grid.
+      extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - leftFieldsWidth);
     }
-
-    this.pickListWidth = (fieldWidth < 150 ? 150 : fieldWidth) + extraWidth;
+    this.pickListWidth = fieldWidth + extraWidth;
   },
 
   enableShortcuts: function () {
@@ -655,7 +664,9 @@ isc.OBSelectorItem.addProperties({
       click: function (form, item, icon) {
         var enteredValue = {};
         enteredValue[item.defaultPopupFilterField] = item.getEnteredValue();
-        item.openProcess([enteredValue]);
+        item.openProcess([enteredValue], {
+          processOwnerView: form.view
+        });
       }
     }];
 
@@ -847,16 +858,28 @@ isc.OBSelectorItem.addProperties({
     this.selectorWindow.open();
   },
 
-  openProcess: function (enteredValues) {
-    var standardWindow = this.form.view.standardWindow;
-    standardWindow.openProcess({
+  openProcess: function (enteredValues, additionalProcessProperties) {
+    var params, view, standardWindow;
+    if (this.form && this.form.view) {
+      // If the selector is in a standard window
+      view = this.form.view;
+    } else if (this.form && this.form.paramWindow && this.form.paramWindow.parentWindow && this.form.paramWindow.parentWindow.view) {
+      // If the selector is in a parameter window
+      view = this.form.paramWindow.parentWindow.view;
+    }
+    params = {
       callerField: this,
       enteredValues: enteredValues,
       paramWindow: true,
       processId: this.processId,
-      windowId: this.form.view.windowId,
+      windowId: view.windowId,
       windowTitle: OB.I18N.getLabel('OBUISEL_AddNewRecord', [this.title])
-    });
+    };
+    if (additionalProcessProperties) {
+      isc.addProperties(params, additionalProcessProperties);
+    }
+    standardWindow = view.standardWindow;
+    standardWindow.openProcess(params);
   },
 
   keyPress: function (item, form, keyName, characterValue) {
@@ -1022,6 +1045,13 @@ isc.OBSelectorItem.addClassMethods({
       isc.addProperties(params, selector.form.view.getContextInfo(false, true, null, selector.isComboReference));
     } else if (selector.view && selector.view.getUnderLyingRecordContext) {
       isc.addProperties(params, selector.view.getUnderLyingRecordContext(false, true, null, selector.isComboReference));
+      if (selector.form && selector.form.paramWindow && selector.form.paramWindow.getContextInfo) {
+        isc.addProperties(params, selector.form.paramWindow.getContextInfo());
+      }
+      if (!params.inpadOrgId) {
+        // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
+        params.inpadOrgId = params.ad_org_id || OB.User.organizationId;
+      }
     } else if (selector.view && selector.view.sourceView && selector.view.sourceView.getContextInfo) {
       isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true, null, selector.isComboReference));
     } else if (selector.grid && selector.grid.contentView && selector.grid.contentView.getContextInfo) {

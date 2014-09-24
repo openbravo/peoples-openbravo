@@ -31,6 +31,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
@@ -103,6 +104,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
         "true".equals(requestParameters.get("issotrx")) ? true : false);
     queryNamedParameters.put("businessPartnerId", requestParameters.get("received_from"));
     queryNamedParameters.put("paymentId", requestParameters.get("fin_payment_id"));
+    queryNamedParameters.put("orgIds",
+        new OrganizationStructureProvider().getChildTree(requestParameters.get("ad_org_id"), true));
     return transformedHql;
   }
 
@@ -162,6 +165,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       Map<String, String> requestParameters, List<String> selectedPSDs) {
     String strBusinessPartnerId = requestParameters.get("received_from");
     String strFinPaymentId = requestParameters.get("fin_payment_id");
+    String strOrganizationId = requestParameters.get("ad_org_id");
 
     StringBuffer whereClause = new StringBuffer();
     // Create WhereClause
@@ -171,6 +175,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       whereClause.append(" or (fp.id = :paymentId and (ips is not null or ops is not null)) ");
     }
     whereClause.append(") ");
+    if (strOrganizationId != null) {
+      whereClause.append(" and psd.organization.id in :orgIds ");
+    }
 
     whereClause.append(" and (oinfo is null or oinfo.active = true) ");
     whereClause.append("  and ( ");
@@ -322,9 +329,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     int orgFilterIndex = hqlQuery.indexOf(" psd.organization in ", whereIndex);
     int beginIndex = hqlQuery.indexOf(" AND ", orgFilterIndex);
     int endIndex = hqlQuery.indexOf("and @whereClause@");
-    String gridFilters = hqlQuery.substring(beginIndex, endIndex);
-
-    hqlQuery = hqlQuery.replace(gridFilters, " ");
+    if (beginIndex != -1) {
+      String gridFilters = hqlQuery.substring(beginIndex, endIndex);
+      hqlQuery = hqlQuery.replace(gridFilters, " ");
+    }
     return hqlQuery;
   }
 
@@ -448,10 +456,10 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     if (havingGridFilters.contains("@amount@")) {
       havingGridFilters = havingGridFilters.replaceAll("@amount@", "COALESCE(sum(fp.amount), 0)");
     }
-
-    havingClause.append(" having ( " + havingGridFilters + " )");
+    if (havingGridFilters != null && !"".equals(havingGridFilters.trim())) {
+      havingClause.append(" having ( " + havingGridFilters + " )");
+    }
     hqlQuery = hqlQuery.replace("@havingClause@", havingClause.toString());
-
     return hqlQuery;
   }
 

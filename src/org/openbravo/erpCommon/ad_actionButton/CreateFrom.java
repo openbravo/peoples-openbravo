@@ -1884,8 +1884,12 @@ public class CreateFrom extends HttpSecureAppServlet {
         if (!strPO.equals("")) {
           try {
             final int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
-            if (total == 0)
-              CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+            if (total == 0) {
+              int noOfOrders = Integer.valueOf(CreateFromShipmentData.countOrders(conn, this, strKey));
+              if (noOfOrders == 1) {
+                CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+              }
+            }
           } catch (final ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

@@ -60,7 +60,7 @@ isc.OBToolbarActionButton.addProperties({
         me = this,
         standardWindow = this.view.standardWindow,
         autosaveButton = this.autosave,
-        param, allProperties, sessionProperties, callbackFunction, popupParams;
+        param, allProperties, sessionProperties, callbackFunction, popupParams, errorCallback;
     //Modified check from 'rowNum to 'rowNum ! = null' to handle case where rowNum is 0.
     if (rowNum !== null && !theView.viewGrid.getSelectedRecord()) {
       // Current selection was lost, restore it
@@ -102,7 +102,12 @@ isc.OBToolbarActionButton.addProperties({
 
       if (!me.opening) {
         me.opening = true; // To avoid button could be clicked twice
-        theView.setContextInfo(sessionProperties, callbackFunction, true);
+        // prevent blocking the button by setting me.opening to false if there is a problem in the request done in theView.setContextInfo 
+        errorCallback = function () {
+          me.opening = false;
+        };
+        theView.setContextInfo(sessionProperties, callbackFunction, true, errorCallback);
+
       }
       return;
     }

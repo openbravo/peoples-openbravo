@@ -286,7 +286,11 @@ isc.OBStandardWindow.addProperties({
       processClass = isc[className] || isc[originalClassName];
 
       if (processClass) {
-        processOwnerView = this.getProcessOwnerView(params.processId);
+        if (params.processOwnerView) {
+          processOwnerView = params.processOwnerView;
+        } else {
+          processOwnerView = this.getProcessOwnerView(params.processId);
+        }
         runningProcess = processClass.create(isc.addProperties({}, params, {
           parentWindow: this,
           sourceView: this.activeView,

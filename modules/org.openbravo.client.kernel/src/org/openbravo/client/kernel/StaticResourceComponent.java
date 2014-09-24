@@ -225,7 +225,6 @@ public class StaticResourceComponent extends BaseComponent {
     }
 
     if (!"".equals(sb.toString())) {
-      final String referer = RequestContext.get().getRequest().getHeader("referer");
       /*
        * If a module is in development or the application is running the tests, add the isDebug
        * variable to the generated javascript file.

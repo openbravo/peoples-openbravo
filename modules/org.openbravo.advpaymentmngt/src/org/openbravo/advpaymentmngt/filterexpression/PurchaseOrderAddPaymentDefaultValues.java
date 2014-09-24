@@ -40,7 +40,7 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   @Override
-  String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultExpectedAmount(Map<String, String> requestMap) throws JSONException {
     // Expected amount is the amount pending to pay on the Purchase Order
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strOrderId = context.getString("inpcOrderId");
@@ -49,7 +49,7 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   @Override
-  String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultActualAmount(Map<String, String> requestMap) throws JSONException {
     // Actual amount is the amount pending to pay on the Purchase Order
     JSONObject context = new JSONObject(requestMap.get("context"));
     String strOrderId = context.getString("inpcOrderId");
@@ -58,12 +58,12 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   @Override
-  String getDefaultIsSOTrx(Map<String, String> requestMap) {
+  public String getDefaultIsSOTrx(Map<String, String> requestMap) {
     return "N";
   }
 
   @Override
-  String getDefaultTransactionType(Map<String, String> requestMap) {
+  public String getDefaultTransactionType(Map<String, String> requestMap) {
     return "O";
   }
 
@@ -74,33 +74,33 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   @Override
-  String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultPaymentType(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultOrderType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultOrderType(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     return context.getString("inpcOrderId");
   }
 
   @Override
-  String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultInvoiceType(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultConversionRate(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultConvertedAmount(Map<String, String> requestMap) throws JSONException {
     return "";
   }
 
   @Override
-  String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultReceivedFrom(Map<String, String> requestMap) throws JSONException {
     // Business Partner of the current Purchase Order
     JSONObject context = new JSONObject(requestMap.get("context"));
     Order order = getOrder(context);
@@ -108,7 +108,7 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   @Override
-  String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultStandardPrecision(Map<String, String> requestMap) throws JSONException {
     // Standard Precision of the currency
     JSONObject context = new JSONObject(requestMap.get("context"));
     Order order = getOrder(context);
@@ -116,7 +116,7 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   @Override
-  String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultCurrency(Map<String, String> requestMap) throws JSONException {
     // Currency of the current Purchase Order
     JSONObject context = new JSONObject(requestMap.get("context"));
     Order order = getOrder(context);
@@ -124,9 +124,15 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   @Override
-  String getOrganization(Map<String, String> requestMap) throws JSONException {
+  public String getOrganization(Map<String, String> requestMap) throws JSONException {
     // Organization of the current Purchase Order
     return getOrder(new JSONObject(requestMap.get("context"))).getOrganization().getId();
+  }
+
+  @Override
+  public String getDefaultDocument(Map<String, String> requestMap) throws JSONException {
+    // Document Type
+    return "";
   }
 
   Order getOrder(JSONObject context) throws JSONException {
@@ -134,8 +140,14 @@ public class PurchaseOrderAddPaymentDefaultValues extends AddPaymentDefaultValue
   }
 
   @Override
-  String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
+  public String getDefaultPaymentDate(Map<String, String> requestMap) throws JSONException {
     return OBDateUtils.formatDate(new Date());
+  }
+
+  @Override
+  public String getBankStatementLineAmount(Map<String, String> requestMap) throws JSONException {
+    // BankStatementLineAmount
+    return "";
   }
 
 }
