@@ -61,26 +61,28 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     // Boot code
 
     resources
-        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate");
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate");
     resources
-        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxZone&modelName=TaxZone&source=org.openbravo.retail.posterminal.master.TaxZone");
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxZone&modelName=TaxZone&source=org.openbravo.retail.posterminal.master.TaxZone");
     resources
-        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice");
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice");
 
     resources
-        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount");
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount");
     resources
-        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner");
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner");
     resources
-        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup");
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup");
     resources
-        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct");
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct");
     resources
-        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory");
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory");
     resources
-        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=PricingAdjustmentCharacteristic&modelName=DiscountFilterCharacteristic&source=org.openbravo.retail.posterminal.master.DiscountFilterCharacteristic");
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=OBDISC_Offer_Role&modelName=DiscountFilterRole&source=org.openbravo.retail.posterminal.master.DiscountFilterRole");
     resources
-        .add("../../org.openbravo.client.kernel/OBMOBC_Main/ClientModel?entity=ProductCharacteristicValue&modelName=ProductCharacteristicValue&source=org.openbravo.retail.posterminal.master.ProductProductChValue");
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentCharacteristic&modelName=DiscountFilterCharacteristic&source=org.openbravo.retail.posterminal.master.DiscountFilterCharacteristic");
+    resources
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=ProductCharacteristicValue&modelName=ProductCharacteristicValue&source=org.openbravo.retail.posterminal.master.ProductProductChValue");
 
     // default print templates
     resources.add("../../web/org.openbravo.retail.posterminal/res/printcashup.xml");
@@ -107,7 +109,7 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     }
 
     resources
-        .add("../../org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS");
+        .add("../../org.openbravo.mobile.core/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS");
 
     // include all resources defined by other modules
     for (POSAppCacheResourceProvider resourceProvider : resourceProviders) {
