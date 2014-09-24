@@ -55,20 +55,20 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE m_transaction_cost mc 
-            SET dateacct = (
-            SELECT COALESCE (inot.dateacct,m.movementdate) 
-                FROM m_transaction_cost mc1 
-                LEFT JOIN m_transaction m ON m.m_transaction_id = mc.m_transaction_id 
-                LEFT JOIN m_inoutline inoutl ON inoutl.m_inoutline_id = m.m_inoutline_id 
-                LEFT JOIN m_inout inot ON inoutl.m_inout_id = inot.m_inout_id 
-                WHERE mc.m_transaction_cost_id = mc1.m_transaction_cost_id
-                )
-            WHERE m_transaction_id in (SELECT m.m_transaction_id
-                                       FROM m_transaction m 
-                                       LEFT JOIN m_inoutline inoutl ON inoutl.m_inoutline_id = m.m_inoutline_id 
-                                       LEFT JOIN m_inout inot ON inoutl.m_inout_id = inot.m_inout_id 
-                                       where  inot.dateacct <> inot.movementdate)
+        UPDATE m_transaction_cost
+        SET dateacct = (
+            SELECT COALESCE (inot.dateacct, m.movementdate)
+            FROM m_transaction_cost mc
+              LEFT JOIN m_transaction m ON m.m_transaction_id = m_transaction_cost.m_transaction_id
+              LEFT JOIN m_inoutline inoutl ON inoutl.m_inoutline_id = m.m_inoutline_id
+              LEFT JOIN m_inout inot ON inoutl.m_inout_id = inot.m_inout_id
+            WHERE m_transaction_cost.m_transaction_cost_id = mc.m_transaction_cost_id
+            )
+        WHERE m_transaction_id in (SELECT m.m_transaction_id
+                                   FROM m_transaction m
+                                     LEFT JOIN m_inoutline inoutl ON inoutl.m_inoutline_id = m.m_inoutline_id
+                                     LEFT JOIN m_inout inot ON inoutl.m_inout_id = inot.m_inout_id
+                                   where  inot.dateacct <> inot.movementdate)
       ]]>
     </Sql>
   </SqlMethod>
