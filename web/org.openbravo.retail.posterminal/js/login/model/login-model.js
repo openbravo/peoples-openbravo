@@ -399,14 +399,14 @@
           OB.UTIL.showI18NWarning('OBPOS_SynchronizingDataMessage', 'OBPOS_SynchronizationWasSuccessfulMessage');
           OB.debug('Synch all models.');
           OB.MobileApp.model.syncAllModels(function () {
-            OB.UTIL.SynchronizationHelper.finished(synchId);
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'runSyncProcess');
             OB.UTIL.showI18NSuccess('OBPOS_SynchronizationWasSuccessfulMessage', 'OBPOS_SynchronizingDataMessage');
             OB.debug('Synch success.');
             if (successCallback) {
               successCallback();
             }
           }, function () {
-            OB.UTIL.SynchronizationHelper.finished(synchId);
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'runSyncProcess');
             OB.warn("runSyncProcess failed. The WebPOS is most likely to be offline, but a real error could be present.");
             // OB.UTIL.showI18NError('OBPOS_SynchronizationFailedMessage', 'OBPOS_SynchronizingDataMessage');
             if (errorCallback) {

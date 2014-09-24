@@ -114,7 +114,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       }, function () {
         // error
         //console.error("OB.Model.PaymentMethodCashUp find");
-        OB.UTIL.SynchronizationHelper.finished(synchId);
+        OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init');
       });
     }, this);
 

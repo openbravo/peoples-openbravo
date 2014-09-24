@@ -367,7 +367,7 @@ enyo.kind({
   },
 
   rendered: function () {
-    OB.UTIL.SynchronizationHelper.finished(this.synchId, "cashup");
+    OB.UTIL.SynchronizationHelper.finished(this.synchId, 'cashup');
   },
 
   refreshButtons: function () {
