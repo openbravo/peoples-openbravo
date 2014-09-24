@@ -393,7 +393,6 @@
       var me = this;
 
       function run() {
-        console.error("login-model.js:399 runSyncProcess");
         var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('runSyncProcess');
         OB.debug('Executing pre synch hook.');
         OB.UTIL.HookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
