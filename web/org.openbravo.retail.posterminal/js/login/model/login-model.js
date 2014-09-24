@@ -408,8 +408,8 @@
             }
           }, function () {
             OB.UTIL.SynchronizationHelper.finished(synchId);
-            OB.UTIL.showI18NError('OBPOS_SynchronizationFailedMessage', 'OBPOS_SynchronizingDataMessage');
-            console.error("runSyncProcess failed");
+            OB.warn("runSyncProcess failed. The WebPOS is most likely to be offline, but a real error could be present.");
+            // OB.UTIL.showI18NError('OBPOS_SynchronizationFailedMessage', 'OBPOS_SynchronizingDataMessage');
             if (errorCallback) {
               errorCallback();
             }
