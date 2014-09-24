@@ -85,6 +85,9 @@ public class ReactivateLandedCost extends BaseActionHandler {
     String strPartialMessage = "";
     // Reload in case the cancel cost adjustment has cleared the session.
     landedCost = OBDal.getInstance().get(LandedCost.class, strLCostId);
+    landedCost.setProcessed(Boolean.FALSE);
+    OBDal.getInstance().save(landedCost);
+    OBDal.getInstance().flush();
     for (LandedCostCost lcc : landedCost.getLandedCostCostList()) {
       if (lcc.isMatched()) {
         message = LCMatchingCancelHandler.doCancelMatchingLandedCost(lcc.getId());
@@ -109,7 +112,6 @@ public class ReactivateLandedCost extends BaseActionHandler {
     // Reload in case the cancel cost adjustment has cleared the session.
     landedCost = OBDal.getInstance().get(LandedCost.class, strLCostId);
     landedCost.setDocumentStatus("DR");
-    landedCost.setProcessed(Boolean.FALSE);
     landedCost.setCostAdjustment(null);
     OBDal.getInstance().save(landedCost);
 
