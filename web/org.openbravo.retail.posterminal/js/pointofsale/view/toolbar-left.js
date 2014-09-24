@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _, SynchronizationHelper */
+/*global OB, enyo, _ */
 
 /*left toolbar*/
 enyo.kind({
@@ -201,7 +201,7 @@ enyo.kind({
     if (isDisabled === false) {
       // by default, disabled
       isDisabled = true;
-      if (SynchronizationHelper.isSynchronized()) {
+      if (OB.UTIL.SynchronizationHelper.isSynchronized()) {
         if (this.model) {
           var receipt = this.model.get('order');
           if (receipt) {

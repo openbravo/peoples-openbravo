@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone, console, _, SynchronizationHelper */
+/*global OB, Backbone, console, _ */
 
 /**
  * OB.Model.Executor provides a mechanism to execute actions synchronously even each of
@@ -44,7 +44,7 @@ OB.Model.Executor = Backbone.Model.extend({
     this.set('eventQueue', evtQueue);
   },
   addEvent: function (event, replaceExistent) {
-    var synchId = SynchronizationHelper.busyUntilFinishes('executor');
+    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('executor');
     var evtQueue = this.get('eventQueue'),
         currentEvt, actionQueue, currentExecutionQueue;
     if (replaceExistent && evtQueue) {
@@ -64,7 +64,7 @@ OB.Model.Executor = Backbone.Model.extend({
 
     this.set('exec', (this.get('exec') || 0) + 1);
     event.reportSynchronizationHelper = function () {
-      SynchronizationHelper.finished(synchId, 'executor');
+      OB.UTIL.SynchronizationHelper.finished(synchId, 'executor');
     };
     event.on('finish', function () {
       event.reportSynchronizationHelper();

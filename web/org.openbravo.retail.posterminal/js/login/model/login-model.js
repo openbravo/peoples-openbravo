@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, Backbone, window, console, SynchronizationHelper, BigDecimal, document, setTimeout, setInterval */
+/*global OB, _, enyo, Backbone, console, BigDecimal */
 
 (function () {
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
@@ -394,20 +394,20 @@
 
       function run() {
         console.error("login-model.js:399 runSyncProcess");
-        var synchId = SynchronizationHelper.busyUntilFinishes('runSyncProcess');
+        var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('runSyncProcess');
         OB.debug('Executing pre synch hook.');
         OB.UTIL.HookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
           OB.UTIL.showI18NWarning('OBPOS_SynchronizingDataMessage', 'OBPOS_SynchronizationWasSuccessfulMessage');
           OB.debug('Synch all models.');
           OB.MobileApp.model.syncAllModels(function () {
-            SynchronizationHelper.finished(synchId);
+            OB.UTIL.SynchronizationHelper.finished(synchId);
             OB.UTIL.showI18NSuccess('OBPOS_SynchronizationWasSuccessfulMessage', 'OBPOS_SynchronizingDataMessage');
             OB.debug('Synch success.');
             if (successCallback) {
               successCallback();
             }
           }, function () {
-            SynchronizationHelper.finished(synchId);
+            OB.UTIL.SynchronizationHelper.finished(synchId);
             OB.UTIL.showI18NError('OBPOS_SynchronizationFailedMessage', 'OBPOS_SynchronizingDataMessage');
             console.error("runSyncProcess failed");
             if (errorCallback) {

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _, $, SynchronizationHelper */
+/*global OB, enyo, _, $ */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.Button',
@@ -218,7 +218,7 @@ enyo.kind({
     OB.POS.navigate('retail.pointofsale');
   },
   init: function () {
-    this.synchId = SynchronizationHelper.busyUntilFinishes("cashup");
+    this.synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("cashup");
     var me = this;
     this.inherited(arguments);
 
@@ -367,7 +367,7 @@ enyo.kind({
   },
 
   rendered: function () {
-    SynchronizationHelper.finished(this.synchId, "cashup");
+    OB.UTIL.SynchronizationHelper.finished(this.synchId, "cashup");
   },
 
   refreshButtons: function () {
