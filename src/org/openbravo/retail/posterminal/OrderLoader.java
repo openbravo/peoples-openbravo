@@ -1404,7 +1404,8 @@ public class OrderLoader extends POSDataSynchronizationProcess {
         } else {
           amount = amount.subtract(writeoffAmt.abs()).setScale(stdPrecision, RoundingMode.HALF_UP);
         }
-      } else if (writeoffAmt.signum() == -1 && (!isLayaway && !checkPaidOnCreditChecked)) {
+      } else if (writeoffAmt.signum() == -1
+          && (!partialpayLayaway && !fullpayLayaway && !checkPaidOnCreditChecked)) {
         if (totalIsNegative) {
           amount = amount.add(writeoffAmt).setScale(stdPrecision, RoundingMode.HALF_UP);
         } else {
