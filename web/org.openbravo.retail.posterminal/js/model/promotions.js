@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, $, _, Backbone */
+/*global OB, Backbone */
 (function () {
 
   var promotions = Backbone.Model.extend({
