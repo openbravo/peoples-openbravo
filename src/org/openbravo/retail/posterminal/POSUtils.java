@@ -336,7 +336,7 @@ public class POSUtils {
     int maxDocNo;
     Object result = query.uniqueResult();
     if (result == null) {
-      maxDocNo = -1;
+      maxDocNo = 0;
     } else if (curDbms.equals("POSTGRE")) {
       maxDocNo = ((BigDecimal) result).intValue();
     } else if (curDbms.equals("ORACLE")) {
