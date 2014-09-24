@@ -36,7 +36,11 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.client.kernel.reference.FKComboUIDefinition;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.json.JsonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -236,6 +240,30 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
     // error should be raised
     assertTrue(getStatus(jsonResponse).equals(
         String.valueOf(JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR)));
+  }
+
+  /**
+   * Test to check when empty value is rendered in UIDefinition, proper data is returned. Refer
+   * issue https://issues.openbravo.com/view.php?id=27612
+   * 
+   * @throws Exception
+   */
+  @Test
+  public void testForIssue27612() throws Exception {
+    setOBContext("100");
+    RequestContext rq = RequestContext.get();
+    FKComboUIDefinition fkCombo = new FKComboUIDefinition();
+    Field field = OBDal.getInstance().get(Field.class, "2052");
+    rq.setRequestParameter("inpadOrgId", "");
+    rq.setRequestParameter("CHANGED_COLUMN", "inpadOrgId");
+    try {
+      OBContext.setAdminMode();
+      fkCombo.setReference(field.getColumn().getReference());
+      JSONObject jsonObject = new JSONObject(fkCombo.getFieldProperties(field, true));
+      assertTrue("".equals(jsonObject.get("_identifier")));
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
