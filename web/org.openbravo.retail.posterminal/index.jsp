@@ -10,9 +10,6 @@
 
   <link rel="shortcut icon" type="image/x-icon" href="../../web/images/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="../../org.openbravo.mobile.core/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS"/>
-</head>
-
-<body class="enyo-body-fit webkitOverflowScrolling ob-body-standard">
 
   <script src="../../org.openbravo.mobile.core/OBMOBC_Main/Lib?_id=Enyo"></script>
   <script src="../../org.openbravo.mobile.core/OBMOBC_Main/Lib?_id=Deps"></script>
@@ -24,7 +21,21 @@
 
   <script>
     (function () {
+      // catch uncaught errors
+      window.onerror = function (e, url, line) {
+        var errorInfo;
+        if (typeof (e) === 'string') {
+          errorInfo = e + '. Line number: ' + line + '. File uuid: ' + url + '.';
+          if (OB.UTIL.error) {
+            OB.UTIL.error(errorInfo);
+          } else {
+            console.error(errorInfo);
+          }
+        }
+      };
+      // manage manifest
       window.addEventListener('load', function (e) {
+        // manage manifest
         window.applicationCache.addEventListener('updateready', function (e) {
           if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
             OB.Dal.find(OB.Model.Order, {}, function (orders) {
@@ -42,28 +53,25 @@
             // Manifest didn't change
           }
         }, false);
+
       }, false);
     }());
   </script>
-
+</head>
+<body class="ob-body-standard">
   <script>
-    // catch loading errors
-    window.onerror = function (e, url, line) {
-      var errorInfo;
-      if (typeof (e) === 'string') {
-        errorInfo = e + '. Line number: ' + line + '. File uuid: ' + url + '.';
-        console.error(errorInfo);
+    (function () {
+      if ((typeof OB !== 'undefined') && (typeof OB.POS !== 'undefined')) {
+        OB.POS.terminal = new OB.UI.Terminal({
+          terminal: OB.POS.modelterminal
+        });
+        // replace this body content with the final application
+        OB.POS.terminal.renderInto(document.body);
+      } else {
+        console.error("The WebPOS cannot be loaded. Please, reload (F5). If this error raises again:\n\n- check that the server has finished its initialization\n- check that the javascript files do not contain syntax errors\n- check that the server calls have proper timeouts\n- check that the session is not being invalidated in the server\n");
+        document.write("<p style='margin-left: 20px'>The WebPOS cannot be loaded</br>Please reload (F5)</br></br><i>If this error keeps showing, please contact the system administrator</i></p>".fontcolor("lightgray"));
       }
-    };
-    if ((typeof OB !== 'undefined') && (typeof OB.POS !== 'undefined')) {
-      OB.POS.terminal = new OB.UI.Terminal({
-        terminal: OB.POS.modelterminal
-      });
-      OB.POS.terminal.write();
-    } else {
-      console.error("The WebPOS cannot be loaded. Please, reload (F5). If this error raises again:\n\n- check that the server has finished its initialization\n- check that the javascript files do not contain syntax errors\n- check that the server calls have proper timeouts\n- check that the session is not being invalidated in the server\n");
-      document.write("<p style='margin-left: 20px'>The WebPOS cannot be loaded</br>Please reload (F5)</br></br><i>If this error keeps showing, please contact the system administrator</i></p>".fontcolor("lightgray"));
-    }
+    }());
   </script>
 </body>
 </html>
