@@ -171,6 +171,7 @@ public class CostingBackground extends DalBaseProcess {
     where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
     where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    // TODO: Check order for backdated transactions ??
     where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTLINE);
     // This makes M- to go before M+. In Oracle it must go with desc as if not, M+ would go before

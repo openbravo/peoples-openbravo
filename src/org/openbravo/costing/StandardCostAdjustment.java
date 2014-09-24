@@ -208,6 +208,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
   @Override
   protected void calculateNegativeStockCorrectionAdjustmentAmount(CostAdjustmentLine costAdjLine) {
+    // Do nothing
   }
 
   @Override

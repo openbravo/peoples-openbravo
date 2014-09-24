@@ -84,7 +84,7 @@ public class CostingStatus implements OBSingleton {
     try {
       Preference migratedPreference = OBProvider.getInstance().get(Preference.class);
       // TODO: Review this
-      migratedPreference.setNewOBObject(true);
+      // migratedPreference.setNewOBObject(true);
       migratedPreference.setAttribute("Cost_Eng_Ins_Migrated");
       migratedPreference.setSearchKey("Y");
       migratedPreference.setClient(OBDal.getInstance().get(Client.class, "0"));

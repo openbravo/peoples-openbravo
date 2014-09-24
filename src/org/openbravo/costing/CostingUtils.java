@@ -571,9 +571,12 @@ public class CostingUtils {
   /**
    * Calculates the stock of the product on the given date and for the given cost dimensions. It
    * only takes transactions that have its cost calculated.
+   * 
+   * @param areBackdatedTrxFixed
    */
   public static BigDecimal getCurrentStock(Organization org, MaterialTransaction trx,
-      HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct) {
+      HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
+      boolean areBackdatedTrxFixed) {
 
     // Get child tree of organizations.
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
@@ -593,20 +596,27 @@ public class CostingUtils {
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
     // Include only transactions that have its cost calculated. Should be all.
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    // Consider only transactions with movement date equal or lower than the movement date of the
-    // adjusted transaction. But for transactions with the same movement date only those with a
-    // transaction date equal or before the process date of the adjusted transaction.
-    select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
-    select.append("     or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-    select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " <= :trxdate ))");
+    if (areBackdatedTrxFixed) {
+      // Consider only transactions with movement date equal or lower than the movement date of the
+      // adjusted transaction. But for transactions with the same movement date only those with a
+      // transaction date equal or before the process date of the adjusted transaction.
+      select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
+      select.append("     or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
+      select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " <= :trxdate ))");
+    } else {
+      select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " <= :trxdate ");
+    }
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", trx.getProduct());
-    trxQry.setParameter("mvtdate", trx.getMovementDate());
+    if (areBackdatedTrxFixed) {
+      trxQry.setParameter("mvtdate", trx.getMovementDate());
+    }
     trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
@@ -645,7 +655,6 @@ public class CostingUtils {
   /**
    * Search period control closed between dateFrom and dateTo
    */
-
   public static Period periodClosed(Organization org, Date dateFrom, Date dateTo, String docType)
       throws ServletException {
     String strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()

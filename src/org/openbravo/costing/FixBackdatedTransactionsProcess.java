@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.costing;
 import java.util.Date;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
@@ -42,10 +41,13 @@ import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DbUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FixBackdatedTransactionsProcess implements Process {
   private ProcessLogger logger;
-  private static final Logger log4j = Logger.getLogger(FixBackdatedTransactionsProcess.class);
+  private static final Logger log4j = LoggerFactory
+      .getLogger(FixBackdatedTransactionsProcess.class);
   private static CostAdjustment costAdjHeader = null;
 
   @Override
@@ -55,6 +57,8 @@ public class FixBackdatedTransactionsProcess implements Process {
     OBError msg = new OBError();
     final String ruleId = (String) bundle.getParams().get("M_Costing_Rule_ID");
     CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+    rule.setBackdatedTransactionsFixed(Boolean.TRUE);
+    OBDal.getInstance().save(rule);
 
     try {
       OBContext.setAdminMode(false);
@@ -132,10 +136,6 @@ public class FixBackdatedTransactionsProcess implements Process {
       msg.setType("Success");
       msg.setTitle(OBMessageUtils.messageBD("Success"));
     }
-
-    rule = OBDal.getInstance().get(CostingRule.class, ruleId);
-    rule.setBackdatedTransactionsFixed(Boolean.TRUE);
-    OBDal.getInstance().save(rule);
 
     bundle.setResult(msg);
   }

@@ -11,14 +11,13 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
 package org.openbravo.costing;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -27,13 +26,15 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DalBaseProcess;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mdejuana
  * 
  */
 public class PriceDifferenceBackground extends DalBaseProcess {
-  private static final Logger log4j = Logger.getLogger(PriceDifferenceBackground.class);
+  private static final Logger log4j = LoggerFactory.getLogger(PriceDifferenceBackground.class);
   private ProcessLogger logger;
 
   @Override

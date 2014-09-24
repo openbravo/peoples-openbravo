@@ -100,7 +100,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
    */
   protected BigDecimal getInventoryClosingCost() {
     BigDecimal cost = CostingUtils.getCurrentValuedStockByAttrAndLocator(transaction.getProduct(),
-        costOrg, transaction.getTransactionProcessDate(), transaction.getAttributeSetValue(),
+        costOrg, transaction.getMovementDate(), transaction.getAttributeSetValue(),
         transaction.getStorageBin(), costCurrency);
     return cost;
   }
@@ -132,7 +132,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     Costing cost = OBProvider.getInstance().get(Costing.class);
     // TODO: Review this
-    cost.setNewOBObject(true);
+    // cost.setNewOBObject(true);
     cost.setCost(newCost);
     cost.setCurrency(costCurrency);
     cost.setStartingDate(transaction.getTransactionProcessDate());

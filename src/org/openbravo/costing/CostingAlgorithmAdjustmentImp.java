@@ -67,6 +67,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
   protected Date startingDate;
   protected String strClientId;
   protected boolean isManufacturingProduct;
+  protected boolean areBackdatedTrxFixed;
   protected HashMap<CostDimension, String> costDimensionIds = new HashMap<CostDimension, String>();
 
   /**
@@ -92,6 +93,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     strCostingRuleId = costingRule.getId();
     startingDate = costingRule.getStartingDate();
     strClientId = costingRule.getClient().getId();
+    areBackdatedTrxFixed = costingRule.isBackdatedTransactionsFixed();
 
     HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
     // Production products cannot be calculated by warehouse dimension.
@@ -328,7 +330,6 @@ public abstract class CostingAlgorithmAdjustmentImp {
       return;
     }
     for (MaterialTransaction trx : voidedinoutline.getMaterialMgmtMaterialTransactionList()) {
-      // TODO: Generate cost adjustment line. Check if adjustment amount is properly calculated
       insertCostAdjustmentLine(trx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
     }
   }
@@ -461,7 +462,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
         trx.getMovementQuantity(), costOrg, trxDate, trx.getMovementDate(), bp, getCostCurrency(),
         getCostDimensions());
     // FIXME: Review if previous adjustment cost need to be considered.
-    BigDecimal trxCalculatedCost = trx.getTransactionCost();
+    BigDecimal trxCalculatedCost = CostAdjustmentUtils.getTrxCost(trx, true, getCostCurrency());
     return trxCalculatedCost.subtract(defaultCost);
   }
 
@@ -473,7 +474,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
    * @return true if there is a related order line.
    */
   private boolean hasOrder(CostAdjustmentLine costAdjLine) {
-    return costAdjLine.getInventoryTransaction().getGoodsShipmentLine().getSalesOrderLine() != null;
+    return costAdjLine.getInventoryTransaction().getGoodsShipmentLine() != null
+        && costAdjLine.getInventoryTransaction().getGoodsShipmentLine().getSalesOrderLine() != null;
   }
 
   /**
@@ -484,7 +486,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
    * @return true if there is a unit cost.
    */
   private boolean inventoryHasCost(CostAdjustmentLine costAdjLine) {
-    return costAdjLine.getInventoryTransaction().getPhysicalInventoryLine().getCost() != null;
+    return costAdjLine.getInventoryTransaction().getPhysicalInventoryLine() != null
+        && costAdjLine.getInventoryTransaction().getPhysicalInventoryLine().getCost() != null;
   }
 
   /**

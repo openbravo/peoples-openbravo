@@ -105,8 +105,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
           if ((cnt++ % 10) == 0) {
             OBDal.getInstance().flush();
             // clear session after each line iteration because the number of objects read in memory
-            // is
-            // big
+            // is big
             OBDal.getInstance().getSession().clear();
           }
 
@@ -120,13 +119,12 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
 
         StringBuffer where = new StringBuffer();
         where.append(" as inv");
-        where
-            .append(" where  exists (select 1 from InventoryAmountUpdateLineInventories invAmtUpd where invAmtUpd."
-                + InvAmtUpdLnInventories.PROPERTY_CAINVENTORYAMTLINE
-                + "."
-                + InventoryAmountUpdateLine.PROPERTY_CAINVENTORYAMT
-                + ".id =:invAmtUpdId and invAmtUpd."
-                + InvAmtUpdLnInventories.PROPERTY_INITINVENTORY + "= inv)");
+        where.append(" where exists (");
+        where.append("      select 1 from " + InvAmtUpdLnInventories.ENTITY_NAME + " invAmtUpd");
+        where.append("      where invAmtUpd." + InvAmtUpdLnInventories.PROPERTY_CAINVENTORYAMTLINE
+            + "." + InventoryAmountUpdateLine.PROPERTY_CAINVENTORYAMT + ".id =:invAmtUpdId");
+        where.append("        and invAmtUpd." + InvAmtUpdLnInventories.PROPERTY_INITINVENTORY
+            + "= inv)");
         OBQuery<InventoryCount> qry = OBDal.getInstance().createQuery(InventoryCount.class,
             where.toString());
         qry.setNamedParameter("invAmtUpdId", invAmtUpdId);
@@ -340,7 +338,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     String orgId = (String) DalUtil.getId(invLine.getOrganization());
     InvAmtUpdLnInventories inv = OBProvider.getInstance().get(InvAmtUpdLnInventories.class);
     // TODO: Review this
-    inv.setNewOBObject(true);
+    // inv.setNewOBObject(true);
     inv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
     inv.setOrganization((Organization) OBDal.getInstance()
         .getProxy(Organization.ENTITY_NAME, orgId));
@@ -386,7 +384,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
       InventoryCountLine relatedInventoryLine, BigDecimal cost) {
     InventoryCountLine icl = OBProvider.getInstance().get(InventoryCountLine.class);
     // TODO: Review this
-    icl.setNewOBObject(true);
+    // icl.setNewOBObject(true);
     icl.setClient(inventory.getClient());
     icl.setOrganization(inventory.getOrganization());
     icl.setPhysInventory(inventory);

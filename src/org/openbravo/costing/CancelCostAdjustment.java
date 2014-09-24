@@ -86,16 +86,18 @@ public class CancelCostAdjustment extends BaseActionHandler {
         strCategoryCostAdj);
     final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
     costAdjustmentCancel.setDocumentNo(docNo);
-    costAdjustmentCancel.setNewOBObject(true);
+    // TODO: review setNewOBObject
+    // costAdjustmentCancel.setNewOBObject(true);
     costAdjustmentCancel.setUpdated(new Date());
     costAdjustmentCancel.setUpdatedBy(OBContext.getOBContext().getUser());
     costAdjustmentCancel.setCreationDate(new Date());
     costAdjustmentCancel.setCreatedBy(OBContext.getOBContext().getUser());
-    costAdjustmentOrig.setCostAdjustmentCancel(costAdjustmentCancel);
     costAdjustmentCancel.setProcessed(false);
     costAdjustmentCancel.setPosted("N");
-    costAdjustmentOrig.setDocumentStatus("VO");
     OBDal.getInstance().save(costAdjustmentOrig);
+
+    costAdjustmentOrig.setCostAdjustmentCancel(costAdjustmentCancel);
+    costAdjustmentOrig.setDocumentStatus("VO");
     OBDal.getInstance().save(costAdjustmentCancel);
     OBDal.getInstance().flush();
 
@@ -112,12 +114,13 @@ public class CancelCostAdjustment extends BaseActionHandler {
       while (scrollLines.next()) {
         final CostAdjustmentLine lineOrig = (CostAdjustmentLine) scrollLines.get()[0];
         CostAdjustmentLine lineCancel = (CostAdjustmentLine) DalUtil.copy(lineOrig, false);
-        lineCancel.setNewOBObject(true);
+        // TODO: review setNewOBObject
+        // lineCancel.setNewOBObject(true);
         lineCancel.setUpdated(new Date());
         lineCancel.setUpdatedBy(OBContext.getOBContext().getUser());
         lineCancel.setCreationDate(new Date());
         lineCancel.setCreatedBy(OBContext.getOBContext().getUser());
-        lineCancel.setCostAdjustment(costAdjustmentCancel);
+        lineCancel.setCostAdjustment(cacProxy);
         lineCancel.setAdjustmentAmount(lineOrig.getAdjustmentAmount().negate());
         lineCancel.setBackdatedTrx(Boolean.FALSE);
         lineCancel.setNegativeStockCorrection(Boolean.FALSE);

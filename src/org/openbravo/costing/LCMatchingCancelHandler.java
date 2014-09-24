@@ -94,6 +94,7 @@ public class LCMatchingCancelHandler extends BaseActionHandler {
     JSONObject message = new JSONObject();
     if (lcCost.getMatchingCostAdjustment() != null) {
       message = CancelCostAdjustment.doCancelCostAdjustment(lcCost.getMatchingCostAdjustment());
+      lcCost = OBDal.getInstance().get(LandedCostCost.class, strLcCostId);
       doDeleteReceiptLineAmtMatched(lcCost);
     }
 
@@ -119,8 +120,6 @@ public class LCMatchingCancelHandler extends BaseActionHandler {
 
     try {
       int i = 1;
-      lcCost = OBDal.getInstance().get(LandedCostCost.class, lcCost.getId());
-      OBDal.getInstance().refresh(lcCost);
       List<String> idList = OBDao.getIDListFromOBObject(lcCost.getLandedCostReceiptLineAmtList());
 
       for (String id : idList) {

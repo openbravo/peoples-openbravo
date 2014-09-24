@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
 @ComponentProvider.Qualifier("B069080A0AE149A79CF1FA0E24F16AB6")
 public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcess.class);
+  private String bdCostingId = "";
 
   @Override
   protected void getRelatedTransactionsByAlgorithm() {
@@ -115,7 +116,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     // Initialize current stock qty and value amt.
     BigDecimal currentStock = CostingUtils.getCurrentStock(getCostOrg(), basetrx,
-        getCostDimensions(), isManufacturingProduct);
+        getCostDimensions(), isManufacturingProduct, areBackdatedTrxFixed);
     BigDecimal currentValueAmt = getCurrentValuedStock(basetrx);
     log.debug("Adjustment balance: " + adjustmentBalance.toPlainString()
         + ", current stock {}, current value {}", currentStock.toPlainString(),
@@ -144,6 +145,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         }
         curCosting.setCost(cost);
         curCosting.setPermanent(Boolean.TRUE);
+        OBDal.getInstance().flush();
         OBDal.getInstance().save(curCosting);
       }
     }
@@ -162,7 +164,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         if (backdatedTrxSourcePending) {
           // If there is a backdated source adjustment pending modify the dates of its m_costing
           Costing prevCosting = getPreviousCosting(trx);
-          Costing sourceCosting = basetrx.getMaterialMgmtCostingList().get(0);
+          Costing sourceCosting = OBDal.getInstance().get(Costing.class, bdCostingId);
           sourceCosting.setPermanent(Boolean.FALSE);
           OBDal.getInstance().save(sourceCosting);
           // Fire trigger to allow to modify the average cost and starting date.
@@ -182,6 +184,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           }
 
           // This update is done only on the first related transaction.
+          bdCostingId = "";
           backdatedTrxSourcePending = false;
         }
 
@@ -206,7 +209,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             // OBDal.getInstance().refresh(costAdjLine);
 
             backdatedTrxSourcePending |= existingCAL.isBackdatedTrx()
-                && basetrx.getMaterialMgmtCostingList().size() > 0;
+                && trx.getMaterialMgmtCostingList().size() > 0;
           }
           if (existingCAL.getTransactionCostList().isEmpty()
               && !existingCAL.isRelatedTransactionAdjusted()) {
@@ -273,7 +276,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           }
 
           Costing curCosting = trx.getMaterialMgmtCostingList().get(0);
-          if (curCosting.getCost().compareTo(cost) == 0) {
+          if (curCosting.getCost().compareTo(cost) == 0 && !backdatedTrxSourcePending) {
             // new cost hasn't changed, following transactions will have the same cost, so no more
             // related transactions are needed to include.
             log.debug("New cost matches existing cost. Adjustment finished.");
@@ -331,7 +334,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         OBDal.getInstance().save(currentCosting);
         Costing newCosting = OBProvider.getInstance().get(Costing.class);
         // TODO: Review this
-        newCosting.setNewOBObject(true);
+        // newCosting.setNewOBObject(true);
         newCosting.setCost(cost);
         newCosting.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
             strCurrentCurId));
@@ -366,6 +369,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     if (AverageAlgorithm.modifiesAverage(calTrxType)) {
       // Move average to the movement date.
       Costing bdCosting = trx.getMaterialMgmtCostingList().get(0);
+      bdCostingId = bdCosting.getId();
       Costing lastCosting = getLastCosting(bdCosting);
       lastCosting.setEndingDate(bdCosting.getEndingDate());
       OBDal.getInstance().save(lastCosting);
@@ -377,7 +381,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   protected BigDecimal getOutgoingBackdatedTrxAdjAmt(CostAdjustmentLine costAdjLine) {
     // Calculate the average cost on the transaction's movement date and adjust the cost if needed.
     MaterialTransaction trx = costAdjLine.getInventoryTransaction();
-    Costing costing = getTrxProductCost(trx, getCostDimensions(), getCostOrg());
+    Costing costing = getTrxProductCost(trx, getCostDimensions(), getCostOrg(),
+        areBackdatedTrxFixed);
 
     if (costing == null) {
       // In case the backdated transaction is on a date where the stock was not initialized there
@@ -429,10 +434,15 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     // Consider only transactions with movement date equal or later than the movement date of the
     // adjusted transaction. But for transactions with the same movement date only those with a
     // transaction date after the process date of the adjusted transaction.
-    where.append("  and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :mvtdate");
-    where.append("    or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-    where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " > :trxdate ))");
+    if (areBackdatedTrxFixed) {
+      where.append("  and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :mvtdate");
+      where.append("    or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
+      where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " > :trxdate ))");
+    } else {
+      where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " > :trxdate");
+    }
     where.append("  and org.id in (:orgs)");
     if (warehouse != null) {
       where.append("  and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
@@ -443,8 +453,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     where.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
         + " > :startdate ");
-    where.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
-    where.append("   , trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+    where.append(" order by ");
+    if (areBackdatedTrxFixed) {
+      where.append(" trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ", ");
+    }
+    where.append(" trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     where.append("   , trx." + MaterialTransaction.PROPERTY_MOVEMENTLINE);
     // This makes M- to go before M+. In Oracle it must go with desc as if not, M+ would go before
     // M-.
@@ -458,7 +471,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         MaterialTransaction.class, where.toString());
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setFilterOnReadableClients(false);
-    trxQry.setNamedParameter("mvtdate", trx.getMovementDate());
+    if (areBackdatedTrxFixed) {
+      trxQry.setNamedParameter("mvtdate", trx.getMovementDate());
+    }
     trxQry.setNamedParameter("trxdate", trx.getTransactionProcessDate());
     if (costingRule.getEndingDate() != null) {
       trxQry.setNamedParameter("enddate", costingRule.getEndingDate());
@@ -511,13 +526,18 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
     // Include only transactions that have its cost calculated
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    // Consider only transactions with movement date equal or lower than the movement date of the
-    // adjusted transaction. But for transactions with the same movement date only those with a
-    // transaction date equal or before the process date of the adjusted transaction.
-    select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
-    select.append("     or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-    select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " <= :trxdate ))");
+    if (areBackdatedTrxFixed) {
+      // Consider only transactions with movement date equal or lower than the movement date of the
+      // adjusted transaction. But for transactions with the same movement date only those with a
+      // transaction date equal or before the process date of the adjusted transaction.
+      select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
+      select.append("     or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
+      select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " <= :trxdate ))");
+    } else {
+      select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " <= :trxdate");
+    }
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
@@ -529,7 +549,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", trx.getProduct());
-    trxQry.setParameter("mvtdate", trx.getMovementDate());
+    if (areBackdatedTrxFixed) {
+      trxQry.setParameter("mvtdate", trx.getMovementDate());
+    }
     trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
@@ -567,7 +589,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   protected void calculateNegativeStockCorrectionAdjustmentAmount(CostAdjustmentLine costAdjLine) {
     MaterialTransaction basetrx = costAdjLine.getInventoryTransaction();
     BigDecimal currentStock = CostingUtils.getCurrentStock(getCostOrg(), basetrx,
-        getCostDimensions(), isManufacturingProduct);
+        getCostDimensions(), isManufacturingProduct, areBackdatedTrxFixed);
     BigDecimal currentValueAmt = getCurrentValuedStock(basetrx);
     int precission = getCostCurrency().getCostingPrecision().intValue();
 
@@ -588,9 +610,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
    * Calculates the value of the stock of the product on the given date, for the given cost
    * dimensions and for the given currency. It only takes transactions that have its cost
    * calculated.
+   * 
+   * @param areBackdatedTrxFixed
    */
   protected static Costing getTrxProductCost(MaterialTransaction trx,
-      HashMap<CostDimension, BaseOBObject> costDimensions, Organization costOrg) {
+      HashMap<CostDimension, BaseOBObject> costDimensions, Organization costOrg,
+      boolean areBackdatedTrxFixed) {
 
     // Get child tree of organizations.
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
@@ -605,21 +630,29 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
 
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
-    // Consider only transactions with movement date equal or lower than the movement date of the
-    // adjusted transaction. But for transactions with the same movement date only those with a
-    // transaction date equal or before the process date of the adjusted transaction.
-    select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
-    select.append("     or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-    select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " <= :trxdate ))");
+    if (areBackdatedTrxFixed) {
+      // Consider only transactions with movement date equal or lower than the movement date of the
+      // adjusted transaction. But for transactions with the same movement date only those with a
+      // transaction date equal or before the process date of the adjusted transaction.
+      select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
+      select.append("     or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
+      select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " <= :trxdate ))");
+    } else {
+      select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+          + " <= :trxdate");
+    }
     // Include only transactions that have its cost calculated
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    select.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ", trx."
-        + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+    select.append(" order by ");
+    if (areBackdatedTrxFixed) {
+      select.append(" trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ", ");
+    }
+    select.append(" trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
 
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", trx.getProduct().getId());
@@ -650,8 +683,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       where.append(" and c." + Costing.PROPERTY_WAREHOUSE + " = :warehouse");
     }
     where.append("   and c." + Costing.PROPERTY_ENDINGDATE + " = :endDate");
-    where.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " desc");
-    where.append("   , trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc");
+
+    where.append(" order by ");
+    if (areBackdatedTrxFixed) {
+      where.append(" trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " desc, ");
+    }
+    where.append(" trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc");
 
     OBQuery<Costing> qryCosting = OBDal.getInstance().createQuery(Costing.class, where.toString());
     qryCosting.setNamedParameter("product", bdCosting.getProduct());
@@ -677,6 +714,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     } else {
       where.append(" and c." + Costing.PROPERTY_WAREHOUSE + " = :warehouse");
     }
+    where.append("   and c.id != :sourceid");
     where.append("   and c." + Costing.PROPERTY_ENDINGDATE + " >= :trxdate");
     where.append("   and c." + Costing.PROPERTY_STARTINGDATE + " < :trxdate");
     where.append(" order by c." + Costing.PROPERTY_STARTINGDATE + " desc");
@@ -688,6 +726,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       qryCosting.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse));
     }
+    qryCosting.setNamedParameter("sourceid", bdCostingId);
     qryCosting.setNamedParameter("trxdate", trx.getTransactionProcessDate());
 
     qryCosting.setMaxResult(1);

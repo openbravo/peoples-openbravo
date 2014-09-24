@@ -181,7 +181,7 @@ public class CostingServer {
 
             landedCost = OBProvider.getInstance().get(LandedCost.class);
             // TODO: Review this
-            landedCost.setNewOBObject(true);
+            // landedCost.setNewOBObject(true);
             landedCost.setReferenceDate(new Date());
             landedCost.setDocumentType(docType);
             landedCost.setDocumentNo(docNo);
@@ -254,7 +254,8 @@ public class CostingServer {
 
     boolean modifiesAvg = AverageAlgorithm.modifiesAverage(TrxType.getTrxType(transaction));
     BigDecimal currentStock = CostingUtils.getCurrentStock(getOrganization(), transaction,
-        getCostingAlgorithm().costDimensions, transaction.getProduct().isProduction());
+        getCostingAlgorithm().costDimensions, transaction.getProduct().isProduction(),
+        costingRule.isBackdatedTransactionsFixed());
     // the stock previous to transaction was negative
     if (!doNotCheckNegativeStockCorrectionTrxs
         && currentStock.compareTo(transaction.getMovementQuantity()) < 0 && modifiesAvg) {
@@ -394,7 +395,7 @@ public class CostingServer {
   private void createTransactionCost() {
     TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
     // TODO:Review this
-    transactionCost.setNewOBObject(true);
+    // transactionCost.setNewOBObject(true);
     transactionCost.setInventoryTransaction(transaction);
     transactionCost.setOrganization(transaction.getOrganization());
     transactionCost.setCost(trxCost);

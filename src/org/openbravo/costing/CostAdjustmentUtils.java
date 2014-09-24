@@ -69,7 +69,8 @@ public class CostAdjustmentUtils {
     final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
 
     CostAdjustment costAdjustment = OBProvider.getInstance().get(CostAdjustment.class);
-    costAdjustment.setNewOBObject(true);
+    // TODO: review setNewOBObject
+    // costAdjustment.setNewOBObject(true);
     costAdjustment.setOrganization(org);
     costAdjustment.setDocumentType(docType);
     costAdjustment.setDocumentNo(docNo);
@@ -100,7 +101,8 @@ public class CostAdjustmentUtils {
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate) {
     CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
-    costAdjustmentLine.setNewOBObject(true);
+    // TODO: review setNewOBObject
+    // costAdjustmentLine.setNewOBObject(true);
     costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
     costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
     costAdjustmentLine.setAdjustmentAmount(costAdjusted);
