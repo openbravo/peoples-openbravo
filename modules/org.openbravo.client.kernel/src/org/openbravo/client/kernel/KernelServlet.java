@@ -107,6 +107,7 @@ public class KernelServlet extends BaseKernelServlet {
       }
       session.setAttribute("forcedSessionsRequestCount", count);
       log.warn("The KernelServlet should not be used for unauthenticated access, this functionality is deprecated, "
+          + "use 'org.openbravo.mobile.core' instead of 'org.openbravo.client.kernel'; "
           + "see this issue https://issues.openbravo.com/view.php?id=27248 for more information");
     }
   }
@@ -123,6 +124,7 @@ public class KernelServlet extends BaseKernelServlet {
         session.setAttribute("forcedSessionsRequestCount", count);
       }
       log.warn("The KernelServlet should not be used for unauthenticated access, this functionality is deprecated, "
+          + "use 'org.openbravo.mobile.core' instead of 'org.openbravo.client.kernel'; "
           + "see this issue https://issues.openbravo.com/view.php?id=27248 for more information");
     }
   }
