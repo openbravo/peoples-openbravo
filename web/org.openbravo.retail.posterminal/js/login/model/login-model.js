@@ -736,7 +736,7 @@
         var i = OB.MobileApp.model.orderList.models.length - 1;
         while (lastSuffix === null && i >= 0) {
           var order = OB.MobileApp.model.orderList.models[i];
-          if (!order.get('isPaid') && !order.get('isQuotation')) {
+          if (!order.get('isPaid') && !order.get('isQuotation') && order.get('docNoPrefix') === OB.MobileApp.model.get('terminal').docNoPrefix) {
             lastSuffix = order.get('documentnoSuffix');
           }
           i--;
@@ -754,7 +754,7 @@
         var i = OB.MobileApp.model.orderList.models.length - 1;
         while (lastSuffix === null && i >= 0) {
           var order = OB.MobileApp.model.orderList.models[i];
-          if (order.get('isQuotation')) {
+          if (order.get('isQuotation') && order.get('quotationDocNoPrefix') === OB.MobileApp.model.get('terminal').quotationDocNoPrefix) {
             lastSuffix = order.get('quotationnoSuffix');
           }
           i--;
