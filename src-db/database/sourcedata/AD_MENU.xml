@@ -2420,7 +2420,7 @@
 <!--800040-->  <AD_MENU_ID><![CDATA[800040]]></AD_MENU_ID>
 <!--800040-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800040-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800040-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800040-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800040-->  <NAME><![CDATA[Invoice Consignment Report]]></NAME>
 <!--800040-->  <DESCRIPTION><![CDATA[Report To Invoice Consignment]]></DESCRIPTION>
 <!--800040-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
