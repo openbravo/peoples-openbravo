@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application.window.servlet;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -36,5 +37,10 @@ public class CalloutHttpServletResponse extends HttpServletResponseWrapper {
 
   public String getOutputFromWriter() {
     return sWriter.toString();
+  }
+
+  @Override
+  public PrintWriter getWriter() throws IOException {
+    return writer;
   }
 }
