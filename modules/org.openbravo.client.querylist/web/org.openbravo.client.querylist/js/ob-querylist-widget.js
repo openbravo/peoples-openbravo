@@ -181,19 +181,24 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
 
   setTotalRows: function (totalRows) {
+    // totalRows is the total number of rows retrieved from backend, in order to
+    // improve performance count of actual number of records is not performed, so
+    // we can only give a hint about having more items in case it is equal to the
+    // rows num parameter
     this.totalRows = totalRows;
     if (this.viewMode === 'maximized') {
-      this.setTitle(this.widgetTitle + " (" + this.totalRows + ")");
       this.showAllLabel.hide();
       return;
     }
-    if (this.showAllLabel.getMembers()[0]) {
-      this.showAllLabel.getMembers()[0].setContents(
-      OB.I18N.getLabel('OBCQL_RowsNumber', [this.parameters.RowsNumber, this.totalRows]));
-    }
-    if (this.parameters.showAll || this.totalRows <= this.parameters.RowsNumber) {
+
+    if (this.parameters.showAll || this.totalRows < this.parameters.RowsNumber) {
+      // if showing pagination or all the records, hide the label
       this.showAllLabel.hide();
     } else {
+      if (this.showAllLabel.getMembers()[0]) {
+        this.showAllLabel.getMembers()[0].setContents(
+        OB.I18N.getLabel('OBCQL_RowsNumber', [this.parameters.RowsNumber]));
+      }
       this.showAllLabel.show();
     }
     this.setWidgetHeight();
@@ -218,6 +223,9 @@ isc.OBQueryListGrid.addProperties({
   autoFetchData: false,
   canAutoFitFields: false,
   showGridSummary: true,
+
+  // prevent multiple requests for 1st page
+  drawAllMaxCells: 0,
 
   summaryRowProperties: {
     showEmptyMessage: false
@@ -287,6 +295,9 @@ isc.OBQueryListGrid.addProperties({
     params.viewMode = this.widget.viewMode;
     params.showAll = this.widget.parameters.showAll;
     params.UTCOffsetMiliseconds = OB.Utilities.Date.getUTCOffsetInMiliseconds();
+
+    // prevent the count operation
+    params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
     return params;
   },
 
@@ -336,10 +347,8 @@ isc.OBQueryListGrid.addProperties({
       requestProperties.params.showAll = true;
       // sometimes we get here before the datasource
       // is set
-      if (this.dataSource) {
-        this.dataSource.fetchData(criteria, function (dsResponse, data, dsRequest) {
-          dsResponse.clientContext.grid.widget.setTotalRows(dsResponse.totalRows);
-        }, requestProperties);
+      if (dsResponse) {
+        this.widget.setTotalRows(dsResponse.totalRows);
       }
     } else {
       this.widget.setTotalRows(dsResponse.totalRows);
