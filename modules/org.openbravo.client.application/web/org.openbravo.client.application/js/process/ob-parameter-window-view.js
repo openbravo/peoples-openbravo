@@ -281,7 +281,11 @@ isc.OBParameterWindowView.addProperties({
         this.closeClick = function () {
           return true;
         }; // To avoid loop when "Super call"
-        this.parentElement.parentElement.closeClick(); // Super call
+        if (this.isExpandedRecord) {
+          this.callerField.grid.collapseRecord(this.callerField.record);
+        } else {
+          this.parentElement.parentElement.closeClick(); // Super call
+        }
       };
     }
     this.loading = OB.Utilities.createLoadingLayout(OB.I18N.getLabel('OBUIAPP_PROCESSING'));
@@ -289,7 +293,14 @@ isc.OBParameterWindowView.addProperties({
     this.members.push(this.loading);
     this.Super('initWidget', arguments);
 
-    context =  this.getUnderLyingRecordContext(false, true, true, true);
+    context = this.getUnderLyingRecordContext(false, true, true, true);
+
+    // allow to add external parameters
+    isc.addProperties(context, this.externalParams);
+
+    if (this.callerField && this.callerField.view && this.callerField.view.getContextInfo) {
+      isc.addProperties(context || {}, this.callerField.view.getContextInfo(true /*excludeGrids*/ ));
+    }
 
     OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', context, {
       processId: this.processId,
@@ -376,13 +387,22 @@ isc.OBParameterWindowView.addProperties({
       this.buttonOwnerView.setAsActiveView();
 
       if (refreshParent) {
-        window.refresh();
+        if (this.callerField && this.callerField.view && typeof this.callerField.view.onRefreshFunction === 'function') {
+          // In this case we are inside a process called from another process, so we want to refresh the caller process instead of the main window.
+          this.callerField.view.onRefreshFunction(this.callerField.view);
+        } else {
+          window.refresh();
+        }
       }
 
       this.closeClick = function () {
         return true;
       }; // To avoid loop when "Super call"
-      this.parentElement.parentElement.closeClick(); // Super call
+      if (this.isExpandedRecord) {
+        this.callerField.grid.collapseRecord(this.callerField.record);
+      } else {
+        this.parentElement.parentElement.closeClick(); // Super call
+      }
     }
   },
 
@@ -458,6 +478,9 @@ isc.OBParameterWindowView.addProperties({
     allProperties._buttonValue = btnValue || 'DONE';
 
     allProperties._params = this.getContextInfo();
+
+    // allow to add external parameters
+    isc.addProperties(allProperties._params, this.externalParams);
 
     actionHandlerCall = function (me) {
       me.showProcessing(true);
@@ -600,7 +623,7 @@ isc.OBParameterWindowView.addProperties({
     }
   },
 
-  getContextInfo: function () {
+  getContextInfo: function (excludeGrids) {
     var result = {},
         params, i;
     if (!this.theForm) {
@@ -610,6 +633,9 @@ isc.OBParameterWindowView.addProperties({
     if (this.theForm && this.theForm.getItems) {
       params = this.theForm.getItems();
       for (i = 0; i < params.length; i++) {
+        if (excludeGrids && params[i].type === 'OBPickEditGridItem') {
+          continue;
+        }
         result[params[i].name] = params[i].getValue();
       }
     }

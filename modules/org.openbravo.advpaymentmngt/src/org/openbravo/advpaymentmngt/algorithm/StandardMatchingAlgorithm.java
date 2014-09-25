@@ -26,11 +26,17 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
+import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchedTransaction;
 import org.openbravo.advpaymentmngt.utility.FIN_MatchingAlgorithm;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
+import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.MatchingAlgorithm;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class StandardMatchingAlgorithm implements FIN_MatchingAlgorithm {
 
@@ -85,6 +91,21 @@ public class StandardMatchingAlgorithm implements FIN_MatchingAlgorithm {
   }
 
   public void unmatch(FIN_FinaccTransaction _transaction) throws ServletException {
+    if (_transaction == null)
+      return;
+    FIN_Payment payment = _transaction.getFinPayment();
+    VariablesSecureApp vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+        OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId());
+    // flush is set to true because pl is called in removeTransaction and removePayment
+    ConnectionProvider conn = new DalConnectionProvider(true);
+    if (_transaction.isCreatedByAlgorithm()) {
+      APRM_MatchingUtility.removeTransaction(vars, conn, _transaction);
+    } else
+      return;
+    if (payment.isCreatedByAlgorithm()) {
+      APRM_MatchingUtility.removePayment(vars, conn, payment);
+    }
     return;
   }
 }

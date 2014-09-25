@@ -392,8 +392,6 @@ isc.OBSelectorPopupWindow.addProperties({
       isc.addProperties(data, this.view.sourceView.getContextInfo(false, true));
     }
 
-
-
     callback = function (resp, data, req) {
       selectorWindow.fetchDefaultsCallback(resp, data, req);
     };
@@ -596,16 +594,22 @@ isc.OBSelectorItem.addProperties({
 
   setPickListWidth: function () {
     var extraWidth = 0,
+        leftFieldsWidth = 0,
+        i = 0,
+        nameField = this.name,
         fieldWidth = this.getVisibleWidth();
     // minimum width for smaller fields.
     fieldWidth = (fieldWidth < 150 ? 150 : fieldWidth);
     // Dropdown selector that shows more than one column.
     if (this.pickListFields.length > 1) {
+      // calculate width of checkBox and first fields before selector field
+      while (i < this.grid.fields.size() && nameField.localeCompare(this.grid.fields.get(i).valueField) !== 0) {
+        leftFieldsWidth = leftFieldsWidth + this.grid.fields.get(i).width;
+        i++;
+      }
       // prevents a pickListWidth longer than width of the grid.
-      // 89 is the width of checkBox + edit in form + edit in grid.
-      extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - 89);
+      extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - leftFieldsWidth);
     }
-
     this.pickListWidth = fieldWidth + extraWidth;
   },
 
@@ -855,18 +859,26 @@ isc.OBSelectorItem.addProperties({
   },
 
   openProcess: function (enteredValues, additionalProcessProperties) {
-    var params, standardWindow = this.form.view.standardWindow;
+    var params, view, standardWindow;
+    if (this.form && this.form.view) {
+      // If the selector is in a standard window
+      view = this.form.view;
+    } else if (this.form && this.form.paramWindow && this.form.paramWindow.parentWindow && this.form.paramWindow.parentWindow.view) {
+      // If the selector is in a parameter window
+      view = this.form.paramWindow.parentWindow.view;
+    }
     params = {
       callerField: this,
       enteredValues: enteredValues,
       paramWindow: true,
       processId: this.processId,
-      windowId: this.form.view.windowId,
+      windowId: view.windowId,
       windowTitle: OB.I18N.getLabel('OBUISEL_AddNewRecord', [this.title])
     };
     if (additionalProcessProperties) {
       isc.addProperties(params, additionalProcessProperties);
     }
+    standardWindow = view.standardWindow;
     standardWindow.openProcess(params);
   },
 

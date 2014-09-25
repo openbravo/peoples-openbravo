@@ -1172,6 +1172,22 @@ isc.OBGrid.addProperties({
     return ret;
   },
 
+  selectionChanged: function (record, state) {
+    if (record._collapseOnRecordDeselection && !state) {
+      var me = this;
+      setTimeout(function () {
+        // Due to multiple 'record selection' calls due to multiple 'record selection' handlers
+        // There are sometimes where selectionChanged is called three times in a 'true' - 'false' - 'true' sequence
+        // or even more complex sequences, so a timeout is needed to ensure after a short time span that really
+        // the record has been deselected
+        if (!me.isSelected(record)) {
+          me.collapseRecord(record);
+        }
+      }, 100);
+    }
+    return this.Super('selectionChanged', arguments);
+  },
+
   //** {{{ openExpansionProcess }}} **
   //
   // Opens a process inside a grid row.
@@ -1181,13 +1197,14 @@ isc.OBGrid.addProperties({
   //  * {{{selectOnOpen}}} It indicates if the record will be selected when the process be opened (true by default)
   //  * {{{deselectAllOnOpen}}} It indicates if all other records will be unselected when the process be opened. It is applied before 'selectOnOpen' (true by default)
   //  * {{{collapseOthersOnOpen}}} It indicates if any other opened process should be closed (true by default)
+  //  * {{{collapseOnRecordDeselection}}} It indicates if the process should be closed once the record is deselected (true by default)
   //  * {{{width}}} The width of the opened process (100% by default)
   //  * {{{height}}} The height of the opened process (7 grid rows + 'bottom buttons layout' by default)
   //  * {{{topMargin}}} The top margin of the process. (10 by default)
   //  * {{{rightMargin}}} The right margin of the process. (30 by default)
   //  * {{{bottomMargin}}} The bottom margin of the process. (10 by default)
   //  * {{{leftMargin}}} The left margin of the process. (30 by default)
-  openExpansionProcess: function (process, record, selectOnOpen, deselectAllOnOpen, collapseOthersOnOpen, width, height, topMargin, rightMargin, bottomMargin, leftMargin) {
+  openExpansionProcess: function (process, record, selectOnOpen, deselectAllOnOpen, collapseOthersOnOpen, collapseOnRecordDeselection, width, height, topMargin, rightMargin, bottomMargin, leftMargin) {
     var defaultHeight;
 
     if (!process || !record) {
@@ -1211,6 +1228,9 @@ isc.OBGrid.addProperties({
     }
     if (typeof collapseOthersOnOpen === 'undefined' || collapseOthersOnOpen === null) {
       collapseOthersOnOpen = true;
+    }
+    if (typeof collapseOnRecordDeselection === 'undefined' || collapseOnRecordDeselection === null) {
+      collapseOnRecordDeselection = true;
     }
     if (typeof topMargin === 'undefined' || topMargin === null) {
       topMargin = (process.expandedTopMargin ? process.expandedTopMargin : 10);
@@ -1273,6 +1293,7 @@ isc.OBGrid.addProperties({
     };
 
     this.canExpandMultipleRecords = !collapseOthersOnOpen;
+    record._collapseOnRecordDeselection = collapseOnRecordDeselection;
 
     this.expandRecord(record);
 

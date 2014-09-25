@@ -66,6 +66,7 @@ isc.OBParameterWindowForm.addProperties({
     setTimeout(function () {
       me.paramWindow.okButton.setEnabled(me.paramWindow.allRequiredParametersSet());
     }, 200);
+    item._hasChanged = false;
   },
 
   setFieldSections: function () {

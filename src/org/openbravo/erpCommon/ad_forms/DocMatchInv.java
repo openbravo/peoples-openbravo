@@ -119,6 +119,7 @@ public class DocMatchInv extends AcctServer {
       } finally {
         OBContext.restorePreviousMode();
       }
+      // TODO: Review line Net Amt, it should hold just delivered amt (Amount in the Match Inv)
       String strQty = data[i].qtyinvoiced;
       docLine.setQty(strQty);
       String LineNetAmt = data[i].linenetamt;

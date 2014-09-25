@@ -54,42 +54,47 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
         FIN_FinaccTransaction.ENTITY_NAME);
     final Property statusProperty = transactionEntity
         .getProperty(FIN_FinaccTransaction.PROPERTY_STATUS);
+    final Property processedProperty = transactionEntity
+        .getProperty(FIN_FinaccTransaction.PROPERTY_PROCESSED);
     String oldStatus = (String) event.getPreviousState(statusProperty);
+    // boolean processedOldStatus = (Boolean) event.getPreviousState(processedProperty);
+    boolean processedNewStatus = (Boolean) event.getPreviousState(processedProperty);
     String newStatus = (String) event.getCurrentState(statusProperty);
     final FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) event.getTargetInstance();
+    if (processedNewStatus) {
+      if ((oldStatus.equals(STATUS_DEPOSIT) | oldStatus.equals(STATUS_WITHDRAWN))
+          & newStatus.equals(STATUS_CLEARED)) {
 
-    if ((oldStatus.equals(STATUS_DEPOSIT) | oldStatus.equals(STATUS_WITHDRAWN))
-        & newStatus.equals(STATUS_CLEARED)) {
+        Boolean invoicePaidold = false;
 
-      Boolean invoicePaidold = false;
-
-      if (transaction.getFinPayment() != null) {
-        for (FIN_PaymentDetail pd : transaction.getFinPayment().getFINPaymentDetailList()) {
-          for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-            invoicePaidold = psd.isInvoicePaid();
-            if (!invoicePaidold) {
-              if (newStatus.equals(transaction.getFinPayment().getStatus())) {
-                psd.setInvoicePaid(true);
-              }
-              if (psd.isInvoicePaid()) {
-                FIN_Utility.updatePaymentAmounts(psd);
-                FIN_Utility.updateBusinessPartnerCredit(transaction.getFinPayment());
+        if (transaction.getFinPayment() != null) {
+          for (FIN_PaymentDetail pd : transaction.getFinPayment().getFINPaymentDetailList()) {
+            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+              invoicePaidold = psd.isInvoicePaid();
+              if (!invoicePaidold) {
+                if (newStatus.equals(transaction.getFinPayment().getStatus())) {
+                  psd.setInvoicePaid(true);
+                }
+                if (psd.isInvoicePaid()) {
+                  FIN_Utility.updatePaymentAmounts(psd);
+                  FIN_Utility.updateBusinessPartnerCredit(transaction.getFinPayment());
+                }
               }
             }
           }
         }
-      }
 
-    } else if ((newStatus.equals(STATUS_DEPOSIT) | newStatus.equals(STATUS_WITHDRAWN))
-        & oldStatus.equals(STATUS_CLEARED)) {
-      Boolean invoicePaidold = false;
-      if (transaction.getFinPayment() != null) {
-        for (FIN_PaymentDetail pd : transaction.getFinPayment().getFINPaymentDetailList()) {
-          for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
-            invoicePaidold = psd.isInvoicePaid();
-            if (invoicePaidold) {
-              if (oldStatus.equals(FIN_Utility.invoicePaymentStatus(transaction.getFinPayment()))) {
-                FIN_Utility.restorePaidAmounts(psd);
+      } else if ((newStatus.equals(STATUS_DEPOSIT) | newStatus.equals(STATUS_WITHDRAWN))
+          & oldStatus.equals(STATUS_CLEARED)) {
+        Boolean invoicePaidold = false;
+        if (transaction.getFinPayment() != null) {
+          for (FIN_PaymentDetail pd : transaction.getFinPayment().getFINPaymentDetailList()) {
+            for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
+              invoicePaidold = psd.isInvoicePaid();
+              if (invoicePaidold) {
+                if (oldStatus.equals(FIN_Utility.invoicePaymentStatus(transaction.getFinPayment()))) {
+                  FIN_Utility.restorePaidAmounts(psd);
+                }
               }
             }
           }

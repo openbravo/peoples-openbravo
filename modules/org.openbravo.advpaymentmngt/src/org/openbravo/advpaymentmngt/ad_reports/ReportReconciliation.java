@@ -190,6 +190,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       OBCriteria<FIN_FinaccTransaction> obcTrans = OBDal.getInstance().createCriteria(
           FIN_FinaccTransaction.class);
       obcTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT, recon.getAccount()));
+      obcTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_PROCESSED, true));
       obcTrans.add(Restrictions.le(FIN_FinaccTransaction.PROPERTY_TRANSACTIONDATE,
           recon.getEndingDate()));
       List<FIN_Reconciliation> afterReconciliations = MatchTransactionDao
@@ -298,6 +299,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       OBCriteria<FIN_FinaccTransaction> obcTrans = OBDal.getInstance().createCriteria(
           FIN_FinaccTransaction.class);
       obcTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT, recon.getAccount()));
+      obcTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_PROCESSED, true));
       obcTrans.add(Restrictions.gt(FIN_FinaccTransaction.PROPERTY_TRANSACTIONDATE,
           recon.getEndingDate()));
       ProjectionList projections = Projections.projectionList();

@@ -266,6 +266,8 @@ public class MatchTransactionDao {
       whereClause.append(".id = '").append(strFinancialAccountId).append("'");
       whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION);
       whereClause.append(" is null");
+      whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_PROCESSED);
+      whereClause.append(" = true");
       whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_STATUS);
       whereClause.append(" <> 'RPPC' ");
       whereClause.append("   and (ft.").append(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT);
@@ -323,6 +325,8 @@ public class MatchTransactionDao {
       whereClause.append(".id = '").append(strFinancialAccountId).append("'");
       whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION);
       whereClause.append(" is null");
+      whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_PROCESSED);
+      whereClause.append(" = true");
       whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_STATUS);
       whereClause.append(" <> 'RPPC' ");
       whereClause.append("   and (ft.").append(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT);
@@ -376,6 +380,8 @@ public class MatchTransactionDao {
     whereClause.append(".id = '").append(strFinancialAccountId).append("'");
     whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION);
     whereClause.append(" is null");
+    whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_PROCESSED);
+    whereClause.append(" = true");
     whereClause.append("   and ft.").append(FIN_FinaccTransaction.PROPERTY_STATUS);
     whereClause.append(" <> 'RPPC' ");
     whereClause.append("   and (ft.").append(FIN_FinaccTransaction.PROPERTY_DEPOSITAMOUNT);

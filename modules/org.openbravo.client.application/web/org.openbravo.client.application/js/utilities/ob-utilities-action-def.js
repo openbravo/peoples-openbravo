@@ -73,6 +73,9 @@ OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
   var processView = paramObj._processView;
   if (processView.messageBar && paramObj.force === true) {
     processView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
+  } else if (processView.callerField && processView.callerField.view && processView.callerField.view.messageBar) {
+    // In the case we are inside a process called from another process we want to show the message inside the caller process instead of the main window.
+    processView.callerField.view.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
   } else if (processView.popup && processView.buttonOwnerView && processView.buttonOwnerView.messageBar) {
     processView.buttonOwnerView.messageBar.setMessage(paramObj.msgType, paramObj.msgTitle, paramObj.msgText);
   } else if (processView.messageBar) {
