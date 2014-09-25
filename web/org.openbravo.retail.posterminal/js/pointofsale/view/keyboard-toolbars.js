@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _ */
+/*global OB, enyo, _ */
 
 OB.OBPOSPointOfSale.UI.ToolbarScan = {
   name: 'toolbarscan',

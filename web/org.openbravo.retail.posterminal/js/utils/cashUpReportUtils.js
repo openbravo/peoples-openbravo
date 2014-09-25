@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, Backbone, window, Promise */
+/*global OB, _, Backbone, window */
 
 (function () {
 

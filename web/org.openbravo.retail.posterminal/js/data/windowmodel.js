@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone, _ */
+/*global OB, Backbone, _ */
 
 OB.Model.WindowModel = Backbone.Model.extend({
   data: {},

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global B, Backbone, $, _, enyo */
+/*global OB, Backbone, _, enyo */
 
 enyo.kind({
   kind: 'OB.UI.Button',

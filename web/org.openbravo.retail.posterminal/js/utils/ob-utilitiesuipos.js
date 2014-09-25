@@ -7,9 +7,8 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, console, _ */
+/*global OB, enyo, Backbone, console, _ */
 
-OB = window.OB || {};
 OB.UTIL = window.OB.UTIL || {};
 
 OB.UTIL.isDisableDiscount = function (receipt) {

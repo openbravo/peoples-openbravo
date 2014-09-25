@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _, OB */
+/*global OB, enyo, Backbone, _ */
 
 enyo.kind({
   name: 'OB.UI.OrderHeader',

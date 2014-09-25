@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone, _, enyo */
+/*global OB, Backbone, _, enyo */
 
 // Renders lines of deposits/drops
 enyo.kind({

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _ */
+/*global OB, enyo, Backbone, _, alert */
 
 enyo.kind({
   name: 'OB.UTIL.Approval',

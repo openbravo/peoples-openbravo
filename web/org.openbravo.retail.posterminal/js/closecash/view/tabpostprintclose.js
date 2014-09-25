@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, OB */
+/*global OB, enyo */
 
 //Renders the summary of deposits/drops and contains a list (OB.OBPOSCasgMgmt.UI.RenderDepositsDrops)
 //with detailed information for each payment typ

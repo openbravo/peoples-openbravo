@@ -9,7 +9,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _, $ */
+/*global OB, enyo, _, $ */
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.ModalConfigurationRequiredForCreateCustomers',

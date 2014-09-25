@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _*/
+/*global OB, enyo, Backbone, _*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts',
   handlers: {

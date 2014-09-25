@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, $ */
+/*global OB, enyo, Backbone, $ */
 
 enyo.kind({
   name: 'OB.UI.ModalReceiptPropertiesImpl',
