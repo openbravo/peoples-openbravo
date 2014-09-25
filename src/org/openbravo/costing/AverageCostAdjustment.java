@@ -367,7 +367,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     MaterialTransaction trx = costAdjLine.getInventoryTransaction();
     TrxType calTrxType = TrxType.getTrxType(trx);
     if (AverageAlgorithm.modifiesAverage(calTrxType)) {
-      // Move average to the movement date.
+      // The bdCosting average related to the backdated transaction needs to be moved to its correct
+      // date range, the last costing is the average cost that currently finishes when the costing
+      // that needs to be moved starts. The "lastCosting" ending date needs to be updated to end in
+      // the same date than the backdated costing so there is no gap between average costs.
+      // The bdCosting dates are updated later when the first related transaction is checked.
       Costing bdCosting = trx.getMaterialMgmtCostingList().get(0);
       bdCostingId = bdCosting.getId();
       Costing lastCosting = getLastCosting(bdCosting);
@@ -671,12 +675,20 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     return o.get(0);
   }
 
+  /**
+   * Calculates the Average Costing that ends when the backdated costing starts.
+   * 
+   * @param bdCosting
+   *          the backdated costing
+   * @return the lastCosting that needs to be extended
+   */
   private Costing getLastCosting(Costing bdCosting) {
     StringBuffer where = new StringBuffer();
     where.append(" as c");
     where.append("  join c." + Costing.PROPERTY_INVENTORYTRANSACTION + " as trx");
     where.append(" where c." + Costing.PROPERTY_PRODUCT + " = :product");
     where.append("   and c." + Costing.PROPERTY_ORGANIZATION + " = :org");
+    where.append("   and c." + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
     if (bdCosting.getWarehouse() == null) {
       where.append(" and c." + Costing.PROPERTY_WAREHOUSE + " is null");
     } else {

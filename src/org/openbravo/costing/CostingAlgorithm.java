@@ -489,6 +489,8 @@ public abstract class CostingAlgorithm {
     for (ProductionLine prodLine : parts) {
       MaterialTransaction partTransaction = prodLine.getMaterialMgmtMaterialTransactionList()
           .get(0);
+      // Reload from database in case previous partTrx cost calculation has cleared the session.
+      partTransaction = OBDal.getInstance().get(MaterialTransaction.class, partTransaction.getId());
       // Calculate transaction cost if it is not calculated yet.
       BigDecimal trxCost = CostingUtils.getTransactionCost(partTransaction,
           transaction.getTransactionProcessDate(), true, costCurrency);

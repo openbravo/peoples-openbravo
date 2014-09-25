@@ -282,6 +282,7 @@ public class CostingServer {
       }
     }
     // update trxCost after cost adjustments
+    transaction = OBDal.getInstance().get(MaterialTransaction.class, transaction.getId());
     trxCost = CostAdjustmentUtils.getTrxCost(transaction, false, getCostCurrency());
   }
 

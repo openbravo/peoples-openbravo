@@ -239,9 +239,9 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     // FIXME: remove when manufacturing costs are fully migrated
     if (product.isProduction()) {
-      costQry.setNamedParameter("client", costOrg.getClient());
+      costQry.setNamedParameter("client", costOrg.getClient().getId());
     } else {
-      costQry.setNamedParameter("org", costOrg);
+      costQry.setNamedParameter("org", costOrg.getId());
     }
 
     List<Costing> costList = costQry.list();

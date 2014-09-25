@@ -112,17 +112,22 @@ public class CostingBackground extends DalBaseProcess {
           }
         }
       } finally {
-        trxs.close();
+        try {
+          trxs.close();
+        } catch (Exception ignore) {
+        }
       }
 
       logger.logln(OBMessageUtils.messageBD("Success"));
       bundle.setResult(result);
     } catch (OBException e) {
       OBDal.getInstance().rollbackAndClose();
-      result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext().toVars(),
-          OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
-      log4j.error(result.getMessage(), e);
-      logger.logln(result.getMessage());
+      String message = OBMessageUtils.parseTranslation(bundle.getConnection(), bundle.getContext()
+          .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
+      result.setMessage(message);
+      result.setType("Error");
+      log4j.error(message, e);
+      logger.logln(message);
       bundle.setResult(result);
       return;
     } catch (Exception e) {
