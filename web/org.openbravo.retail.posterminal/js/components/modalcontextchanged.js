@@ -18,7 +18,7 @@ enyo.kind({
     onHideThisPopup: ''
   },
   tap: function () {
-    OB.POS.modelterminal.logout();
+    OB.MobileApp.model.logout();
   }
 });
 

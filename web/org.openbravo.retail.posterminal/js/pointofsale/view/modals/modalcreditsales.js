@@ -30,7 +30,7 @@ enyo.kind({
     var currSymbol;
     var rate = 1,
         i;
-    var paymentList = OB.POS.modelterminal.get('payments');
+    var paymentList = OB.MobileApp.model.get('payments');
     for (i = 0; i < paymentList.length; i++) {
       if (paymentList[i].payment.searchKey === selectedPaymentMethod) {
         rate = paymentList[i].mulrate;

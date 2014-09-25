@@ -10,10 +10,10 @@
 /*global OB, _, enyo, Backbone, console, BigDecimal */
 
 (function () {
+  // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available
+  OB.Model.POSTerminal = new(OB.Model.Terminal.extend({
 
-  OB.Model.POSTerminal = OB.Model.Terminal.extend({
-
-    setTerminalName: function(terminalName) {
+    setTerminalName: function (terminalName) {
       this.set('terminalName', terminalName);
       this.set('loginUtilsParams', {
         terminalName: terminalName
@@ -518,8 +518,8 @@
       this.set('paymentcash', defaultpaymentcashcurrency || defaultpaymentcash || paymentcashcurrency || paymentcash || paymentlegacy);
 
       // add the currency converters
-      _.each(OB.POS.modelterminal.get('payments'), function (paymentMethod) {
-        var fromCurrencyId = parseInt(OB.POS.modelterminal.get('currency').id, 10);
+      _.each(OB.MobileApp.model.get('payments'), function (paymentMethod) {
+        var fromCurrencyId = parseInt(OB.MobileApp.model.get('currency').id, 10);
         var toCurrencyId = parseInt(paymentMethod.paymentMethod.currency, 10);
         if (fromCurrencyId !== toCurrencyId) {
           OB.UTIL.currency.addConversion(toCurrencyId, fromCurrencyId, paymentMethod.rate);
@@ -923,30 +923,30 @@
       }).go(params);
     }
 
-  });
+  }))();
 
   OB.POS = {
-    modelterminal: new OB.Model.POSTerminal(),
+    modelterminal: OB.MobileApp.model, // kept fot backward compatibility. Deprecation id: 27646
     paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
     paramTerminal: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
     hrefWindow: function (windowname) {
       return '?terminal=' + window.encodeURIComponent(OB.MobileApp.model.get('terminalName')) + '&window=' + window.encodeURIComponent(windowname);
     },
     logout: function (callback) {
-      this.modelterminal.logout();
+      OB.MobileApp.model.logout();
     },
     lock: function (callback) {
-      this.modelterminal.lock();
+      OB.MobileApp.model.lock();
     },
     windows: null,
     navigate: function (route) {
-      this.modelterminal.navigate(route);
+      OB.MobileApp.model.navigate(route);
     },
     registerWindow: function (window) {
       OB.MobileApp.windowRegistry.registerWindow(window);
     },
     cleanWindows: function () {
-      this.modelterminal.cleanWindows();
+      OB.MobileApp.model.cleanWindows();
     }
   };
 

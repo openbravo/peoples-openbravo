@@ -72,7 +72,7 @@ enyo.kind({
     }]
   }],
   tap: function () {
-    if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.layawayReceipt')) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_receipt.layawayReceipt')) {
       this.doShowPopup({
         popup: 'modalmultiorderslayaway',
         args: this.owner.model

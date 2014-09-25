@@ -170,7 +170,7 @@ enyo.kind({
     });
   },
   updateVisibility: function (isVisible) {
-    if (!OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.hide();
       return;
     }
@@ -277,9 +277,9 @@ enyo.kind({
     this.taxIdValidation(this.model.get('order'));
   },
   taxIdValidation: function (model) {
-    if (!OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
+    if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
       this.doCancelReceiptToInvoice();
-    } else if (OB.POS.modelterminal.hasPermission('OBPOS_retail.restricttaxidinvoice') && !model.get('bp').get('taxID')) {
+    } else if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice') && !model.get('bp').get('taxID')) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
       this.doCancelReceiptToInvoice();
     } else {
@@ -388,7 +388,7 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doPrintReceipt();
     }
   },
@@ -418,8 +418,8 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations) {
-      if (OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations) {
+      if (OB.MobileApp.model.hasPermission(this.permission)) {
         if (this.model.get('leftColumnViewManager').isMultiOrder()) {
           if (this.model.get('multiorders')) {
             this.model.get('multiorders').resetValues();
@@ -489,7 +489,7 @@ enyo.kind({
     this.receipt = model.get('order');
     //set disabled until ticket has lines
     me.setDisabled(true);
-    if (!OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (!OB.MobileApp.model.hasPermission(this.permission)) {
       //no permissions, never will be enabled
       return;
     }
@@ -520,7 +520,7 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
-    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.inherited(arguments); // Manual dropdown menu closure
       this.doShowPopup({
         popup: 'modalCreateOrderFromQuotation'
@@ -528,7 +528,7 @@ enyo.kind({
     }
   },
   updateVisibility: function (model) {
-    if (OB.POS.modelterminal.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
+    if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
       this.show();
     } else {
       this.hide();
@@ -570,7 +570,7 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doRejectQuotation();
     }
   },
@@ -606,12 +606,12 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doShowReactivateQuotation();
     }
   },
   updateVisibility: function (model) {
-    if (OB.POS.modelterminal.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
+    if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
       this.show();
     } else {
       this.hide();
@@ -653,11 +653,11 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (!OB.POS.modelterminal.get('connectedToERP')) {
+    if (!OB.MobileApp.model.get('connectedToERP')) {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
       return;
     }
-    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doPaidReceipts({
         isQuotation: false
       });
@@ -678,11 +678,11 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (!OB.POS.modelterminal.get('connectedToERP')) {
+    if (!OB.MobileApp.model.get('connectedToERP')) {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
       return;
     }
-    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doQuotations();
     }
   }
@@ -701,11 +701,11 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (!OB.POS.modelterminal.get('connectedToERP')) {
+    if (!OB.MobileApp.model.get('connectedToERP')) {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
       return;
     }
-    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doLayaways();
     }
   }
@@ -724,11 +724,11 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (!OB.POS.modelterminal.get('connectedToERP')) {
+    if (!OB.MobileApp.model.get('connectedToERP')) {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
       return;
     }
-    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doMultiOrders();
     }
   }
@@ -748,7 +748,7 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doBackOffice({
         url: this.url
       });

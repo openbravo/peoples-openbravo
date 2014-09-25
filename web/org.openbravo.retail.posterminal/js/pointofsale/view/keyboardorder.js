@@ -328,7 +328,7 @@ enyo.kind({
     var me = this;
     var currenciesManaged = {};
 
-    _.each(OB.POS.modelterminal.get('payments'), function (payment) {
+    _.each(OB.MobileApp.model.get('payments'), function (payment) {
       // Is cash method if is checked as iscash or is the legacy hardcoded cash method for euros.
       if ((payment.paymentMethod.iscash && payment.paymentMethod.showkeypad) && !currenciesManaged[payment.paymentMethod.currency]) {
         // register that is already built

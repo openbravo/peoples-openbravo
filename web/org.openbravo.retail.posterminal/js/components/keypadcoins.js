@@ -191,7 +191,7 @@ enyo.kind({
     btn.applyStyle('border', '10px solid ' + (this.bordercolor || this.background));
   },
   tap: function () {
-    if (OB.POS.modelterminal.hasPermission(this.paymenttype)) {
+    if (OB.MobileApp.model.hasPermission(this.paymenttype)) {
       var me = this,
           myWindowModel = this.owner.owner.owner.owner.owner.owner.model;
       //FIXME: TOO MANY OWNERS
@@ -201,8 +201,8 @@ enyo.kind({
           isCash = false,
           allowOpenDrawer = false,
           printtwice = false;
-      for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
-        p = OB.POS.modelterminal.get('payments')[i];
+      for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
+        p = OB.MobileApp.model.get('payments')[i];
         if (p.payment.searchKey === me.paymenttype) {
           if (p.paymentMethod.openDrawer) {
             openDrawer = p.paymentMethod.openDrawer;
@@ -221,7 +221,7 @@ enyo.kind({
       }
       myWindowModel.addPayment(new OB.Model.PaymentLine({
         kind: me.paymenttype,
-        name: OB.POS.modelterminal.getPaymentName(me.paymenttype),
+        name: OB.MobileApp.model.getPaymentName(me.paymenttype),
         amount: OB.DEC.number(me.amount),
         rate: p.rate,
         mulrate: p.mulrate,

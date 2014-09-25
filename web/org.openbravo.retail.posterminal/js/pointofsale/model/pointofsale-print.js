@@ -12,7 +12,7 @@
 (function () {
 
   var PrintReceipt = function (model) {
-      var terminal = OB.POS.modelterminal.get('terminal');
+      var terminal = OB.MobileApp.model.get('terminal');
 
       function dumyFunction() {}
 
@@ -106,7 +106,7 @@
               label: OB.I18N.getLabel('OBMOBC_LblCancel')
             }], {
               onHideFunction: function (dialog) {
-                if (printargs.offline && OB.POS.modelterminal.get('terminal').printoffline) {
+                if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
                   OB.Dal.save(new OB.Model.OfflinePrinter({
                     data: result.data,
                     sendfunction: '_sendPDF'
@@ -163,7 +163,7 @@
       if (args.template.ispdf) {
         args.template.dateFormat = OB.Format.date;
         printPDF(receipt, args);
-        if (receipt.get('orderType') === 1 && !OB.POS.modelterminal.hasPermission('OBPOS_print.once')) {
+        if (receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) {
           printPDF(receipt, args);
         }
       } else {
@@ -189,7 +189,7 @@
               }
             }], {
               onHideFunction: function (dialog) {
-                if (printargs.offline && OB.POS.modelterminal.get('terminal').printoffline) {
+                if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
                   OB.Dal.save(new OB.Model.OfflinePrinter({
                     data: result.data,
                     sendfunction: '_send'
@@ -214,7 +214,7 @@
           }
         }
         //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
-        if ((receipt.get('orderType') === 1 && !OB.POS.modelterminal.hasPermission('OBPOS_print.once')) || _.filter(receipt.get('payments').models, function (iter) {
+        if ((receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) || _.filter(receipt.get('payments').models, function (iter) {
           if (iter.get('printtwice')) {
             return iter;
           }
@@ -234,7 +234,7 @@
                 label: OB.I18N.getLabel('OBMOBC_LblCancel')
               }], {
                 onHideFunction: function (dialog) {
-                  if (printargs.offline && OB.POS.modelterminal.get('terminal').printoffline) {
+                  if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
                     OB.Dal.save(new OB.Model.OfflinePrinter({
                       data: result.data,
                       sendfunction: '_send'

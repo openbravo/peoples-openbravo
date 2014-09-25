@@ -181,15 +181,15 @@ enyo.kind({
     var params = this.parent.parent.parent.parent.parent.parent.parent.parent.params;
 
     this.filters = {
-      documentType: params.isQuotation ? ([OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations]) : ([OB.POS.modelterminal.get('terminal').terminalType.documentType, OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns]),
+      documentType: params.isQuotation ? ([OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations]) : ([OB.MobileApp.model.get('terminal').terminalType.documentType, OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns]),
       docstatus: params.isQuotation ? 'UE' : null,
       isQuotation: params.isQuotation ? true : false,
       isLayaway: params.isLayaway ? true : false,
       isReturn: params.isReturn ? true : false,
       filterText: this.$.filterText.getValue(),
-      pos: OB.POS.modelterminal.get('terminal').id,
-      client: OB.POS.modelterminal.get('terminal').client,
-      organization: OB.POS.modelterminal.get('terminal').organization
+      pos: OB.MobileApp.model.get('terminal').id,
+      client: OB.MobileApp.model.get('terminal').client,
+      organization: OB.MobileApp.model.get('terminal').organization
     };
 
     if (!this.getDateFilters()) {
@@ -230,7 +230,7 @@ enyo.kind({
   create: function () {
     var returnLabel = '';
     this.inherited(arguments);
-    if (this.model.get('documentTypeId') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
+    if (this.model.get('documentTypeId') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
       this.model.set('totalamount', OB.DEC.mul(this.model.get('totalamount'), -1));
       returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
     }

@@ -29,10 +29,10 @@ enyo.kind({
     }
   },
   init: function (model) {
-    if (!OB.POS.modelterminal.hasPermission(this.permission)) {
+    if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.parent.parent.parent.hide();
     } else {
-      if (!OB.POS.modelterminal.hasPermission(this.permissionOption)) {
+      if (!OB.MobileApp.model.hasPermission(this.permissionOption)) {
         this.parent.parent.parent.hide();
       }
     }

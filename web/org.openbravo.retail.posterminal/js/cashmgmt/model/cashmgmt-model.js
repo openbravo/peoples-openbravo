@@ -21,8 +21,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         me = this,
         paymentMth, criteria, runSyncProcessCM, error, addedCashMgmt, selectedPayment;
     this.set('payments', new Backbone.Collection());
-    this.set('cashMgmtDropEvents', new Backbone.Collection(OB.POS.modelterminal.get('cashMgmtDropEvents')));
-    this.set('cashMgmtDepositEvents', new Backbone.Collection(OB.POS.modelterminal.get('cashMgmtDepositEvents')));
+    this.set('cashMgmtDropEvents', new Backbone.Collection(OB.MobileApp.model.get('cashMgmtDropEvents')));
+    this.set('cashMgmtDepositEvents', new Backbone.Collection(OB.MobileApp.model.get('cashMgmtDepositEvents')));
 
     OB.Dal.find(OB.Model.CashUp, {
       'isprocessed': 'N'
@@ -37,7 +37,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
             'paymentMethodId': pay.get('paymentmethod_id'),
             'cashup_id': cashUp.at(0).get('id')
           };
-          paymentMth = OB.POS.modelterminal.get('payments').filter(function (payment) {
+          paymentMth = OB.MobileApp.model.get('payments').filter(function (payment) {
             return payment.payment.id === pay.get('paymentmethod_id');
           })[0].paymentMethod;
 
@@ -78,8 +78,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           type: p.type,
           reasonId: model.get('id'),
           paymentMethodId: p.id,
-          user: OB.POS.modelterminal.get('context').user._identifier,
-          userId: OB.POS.modelterminal.get('context').user.id,
+          user: OB.MobileApp.model.get('context').user._identifier,
+          userId: OB.MobileApp.model.get('context').user.id,
           time: new Date().toString().substring(16, 21),
           isocode: p.isocode,
           glItem: p.glItem,
@@ -124,14 +124,14 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           OB.MobileApp.model.runSyncProcess(function () {
             OB.UTIL.showLoading(false);
             me.set("finished", true);
-            if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashmanagement')) {
+            if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
               me.printCashMgmt.print(me.depsdropstosave.toJSON());
             }
           });
         } else {
           OB.UTIL.showLoading(false);
           me.set("finished", true);
-          if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashmanagement')) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
             me.printCashMgmt.print(me.depsdropstosave.toJSON());
           }
         }

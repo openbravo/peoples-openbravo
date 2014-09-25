@@ -548,9 +548,9 @@ enyo.kind({
   }],
   create: function () {
     this.inherited(arguments);
-    this.$.store.setContent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.POS.modelterminal.get('terminal').organization$_identifier);
-    this.$.terminal.setContent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.POS.modelterminal.get('terminal')._identifier);
-    this.$.user.setContent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.POS.modelterminal.get('context').user._identifier);
+    this.$.store.setContent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.MobileApp.model.get('terminal').organization$_identifier);
+    this.$.terminal.setContent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.MobileApp.model.get('terminal')._identifier);
+    this.$.user.setContent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.MobileApp.model.get('context').user._identifier);
     this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(new Date()) + ' - ' + OB.I18N.formatHour(new Date()));
   },
   init: function (model) {

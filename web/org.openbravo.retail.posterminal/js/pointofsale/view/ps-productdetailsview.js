@@ -206,7 +206,7 @@ enyo.kind({
     if (defaultWarehouse) {
       this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [defaultWarehouse.get('warehousename'), defaultWarehouse.get('warehouseqty')]));
     } else {
-      this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [OB.POS.modelterminal.get('warehouses')[0].warehousename, '0']));
+      this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [OB.MobileApp.model.get('warehouses')[0].warehousename, '0']));
     }
   },
   getStoreStock: function () {
@@ -214,7 +214,7 @@ enyo.kind({
         me = this;
     this.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
     serverCallStoreDetailedStock.exec({
-      organization: OB.POS.modelterminal.get('terminal').organization,
+      organization: OB.MobileApp.model.get('terminal').organization,
       product: this.product.get('id')
     }, function (data) {
       if (data && data.exception) {
@@ -242,7 +242,7 @@ enyo.kind({
         me = this;
     this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
     serverCallStoreDetailedStock.exec({
-      organization: OB.POS.modelterminal.get('terminal').organization,
+      organization: OB.MobileApp.model.get('terminal').organization,
       product: this.product.get('id')
     }, function (data) {
       if (data && data.exception) {
@@ -259,7 +259,7 @@ enyo.kind({
     });
   },
   beforeSetShowing: function (params) {
-    if (!params.product || OB.POS.modelterminal.get('warehouses').length === 0) {
+    if (!params.product || OB.MobileApp.model.get('warehouses').length === 0) {
       this.doShowPopup({
         popup: 'modalConfigurationRequiredForCrossStore'
       });
@@ -272,7 +272,7 @@ enyo.kind({
     if (params.warehouse) {
       this.warehouse = params.warehouse;
     } else {
-      this.warehouse = OB.POS.modelterminal.get('warehouses')[0];
+      this.warehouse = OB.MobileApp.model.get('warehouses')[0];
     }
     this.headerComponent.$.productName.setContent(params.product.get('_identifier') + ' (' + params.product.get('uOMsymbol') + ')');
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {

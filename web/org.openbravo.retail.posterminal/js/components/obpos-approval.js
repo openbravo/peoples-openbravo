@@ -26,14 +26,14 @@ enyo.kind({
 
       if (_.isArray(approvalType)) {
         haspermission = _.every(approvalType, function (a) {
-          return OB.POS.modelterminal.hasPermission(a, true);
+          return OB.MobileApp.model.hasPermission(a, true);
         });
       } else {
-        haspermission = OB.POS.modelterminal.hasPermission(approvalType, true);
+        haspermission = OB.MobileApp.model.hasPermission(approvalType, true);
       }
 
       if (haspermission) {
-        model.approvedRequest(true, new Backbone.Model(OB.POS.modelterminal.get('context').user), approvalType, callback); // I'am a supervisor
+        model.approvedRequest(true, new Backbone.Model(OB.MobileApp.model.get('context').user), approvalType, callback); // I'am a supervisor
       } else {
         dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
           kind: 'OB.UTIL.Approval',

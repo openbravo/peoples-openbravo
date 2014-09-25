@@ -63,7 +63,7 @@
     (function () {
       if ((typeof OB !== 'undefined') && (typeof OB.POS !== 'undefined')) {
         OB.POS.terminal = new OB.UI.Terminal({
-          terminal: OB.POS.modelterminal
+          terminal: OB.MobileApp.model
         });
         // replace this body content with the final application
         OB.POS.terminal.renderInto(document.body);

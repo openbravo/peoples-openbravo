@@ -405,7 +405,7 @@ enyo.kind({
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
         if (model.get('paidOnCredit')) {
           this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidOnCredit'));
-        } else if (model.get('documentType') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
+        } else if (model.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
           this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidReturn'));
         } else {
           this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paid'));

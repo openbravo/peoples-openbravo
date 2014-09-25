@@ -272,7 +272,7 @@ enyo.kind({
   }],
   classModel: new Backbone.Model(),
   printReceipt: function () {
-    if (OB.POS.modelterminal.hasPermission('OBPOS_print.receipt')) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_print.receipt')) {
       if (this.model.get('leftColumnViewManager').isOrder()) {
         var receipt = this.model.get('order');
         if (receipt.get("isPaid")) {
@@ -370,7 +370,7 @@ enyo.kind({
     if (inEvent.ignoreStockTab) {
       this.showOrder(inSender, inEvent);
     } else {
-      if (inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
+      if (inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         if (enyo.Panels.isScreenNarrow()) {

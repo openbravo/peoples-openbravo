@@ -149,7 +149,7 @@
   OB.UTIL.deleteCashUps = function (cashUpModels) {
     var deleteCallback = function (models) {
         models.each(function (model) {
-          //TODO: see the correct criterial for delete cashup 
+          //TODO: see the correct criterial for delete cashup
           OB.Dal.remove(model, null, function (tx, err) {
             OB.UTIL.showError(err);
           });
@@ -176,7 +176,7 @@
   OB.UTIL.createNewCashupFromServer = function (cashup, callback) {
     OB.Dal.save(cashup, function () {
 
-      // Create taxes      
+      // Create taxes
       _.each(cashup.get('cashTaxInfo'), function (taxCashup) {
         var taxModel = new OB.Model.TaxCashUp();
         taxModel.set(taxCashup);
@@ -214,7 +214,7 @@
       grossReturns: OB.DEC.Zero,
       totalRetailTransactions: OB.DEC.Zero,
       createdDate: new Date(),
-      userId: OB.POS.modelterminal.get('context').user.id,
+      userId: OB.MobileApp.model.get('context').user.id,
       objToSend: null,
       cashTaxInfo: [],
       cashCloseInfo: [],
@@ -238,7 +238,7 @@
             callback();
           }
         } else {
-          //2. Search in server	
+          //2. Search in server
           new OB.DS.Process('org.openbravo.retail.posterminal.master.Cashup').exec({
             isprocessed: 'Y'
           }, function (data) {
@@ -271,7 +271,7 @@
 
   };
   OB.UTIL.initializePaymentMethodCashup = function (lastCashUpPayments, cashup, funcType) {
-    _.each(OB.POS.modelterminal.get('payments'), function (payment) {
+    _.each(OB.MobileApp.model.get('payments'), function (payment) {
       var startingCash = payment.currentBalance,
           pAux, cashupId;
       if (cashup) {
@@ -352,7 +352,7 @@
         'cashup_id': cashUp.at(0).get('id')
       }, function (payMthds) { //OB.Dal.find success
         var payMthdsCash;
-        _.each(OB.POS.modelterminal.get('payments'), function (paymentType, index) {
+        _.each(OB.MobileApp.model.get('payments'), function (paymentType, index) {
           var cash = 0,
               auxPay = payMthds.filter(function (payMthd) {
               return payMthd.get('paymentmethod_id') === paymentType.payment.id;
@@ -397,7 +397,7 @@
   };
 
   OB.UTIL.getPaymethodCashUp = function (payMthds, objToSend, cashUp) {
-    _.each(OB.POS.modelterminal.get('payments'), function (curModel) {
+    _.each(OB.MobileApp.model.get('payments'), function (curModel) {
       var cashPaymentMethodInfo = {
         paymentMethodId: 0,
         name: "",
@@ -431,8 +431,8 @@
   };
 
   OB.UTIL.saveComposeInfo = function (me, callback, objToSend, cashUp) {
-    cashUp.at(0).set('userId', OB.POS.modelterminal.get('context').user.id);
-    objToSend.set('userId', OB.POS.modelterminal.get('context').user.id);
+    cashUp.at(0).set('userId', OB.MobileApp.model.get('context').user.id);
+    objToSend.set('userId', OB.MobileApp.model.get('context').user.id);
     cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
     if (callback) {
       OB.Dal.save(cashUp.at(0), callback(me), null);
@@ -461,7 +461,7 @@
 
   OB.UTIL.composeCashupInfo = function (cashUp, me, callback) {
     var objToSend = new Backbone.Model({
-      posterminal: OB.POS.modelterminal.get('terminal').id,
+      posterminal: OB.MobileApp.model.get('terminal').id,
       id: cashUp.at(0).get('id'),
       isprocessed: cashUp.at(0).get('isprocessed'),
       isbeingprocessed: cashUp.at(0).get('isbeingprocessed'),
@@ -483,7 +483,7 @@
     }, function (payMthds) {
       OB.UTIL.getPaymethodCashUp(payMthds, objToSend, cashUp);
 
-      //process the taxs cash ups    
+      //process the taxs cash ups
       OB.Dal.find(OB.Model.TaxCashUp, {
         'cashup_id': cashUp.at(0).get('id'),
         '_orderByClause': 'name asc'

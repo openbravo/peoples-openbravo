@@ -223,7 +223,7 @@ enyo.kind({
   initComponents: function () {
     var paymentDate;
     this.inherited(arguments);
-    this.$.name.setContent(OB.POS.modelterminal.getPaymentName(this.model.get('kind')) || this.model.get('name'));
+    this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
     if (OB.UTIL.isNullOrUndefined(this.model.get('paymentDate'))) {
       paymentDate = new Date();
     } else {

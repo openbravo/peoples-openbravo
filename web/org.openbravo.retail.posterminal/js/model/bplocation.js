@@ -62,10 +62,10 @@
         this.set('name', null);
         this.set('postalCode', null);
         this.set('cityName', null);
-        this.set('countryId', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry);
-        this.set('countryName', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry_name);
-        this.set('client', OB.POS.modelterminal.get('terminal').client);
-        this.set('organization', OB.POS.modelterminal.get('terminal').defaultbp_bporg);
+        this.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
+        this.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
+        this.set('client', OB.MobileApp.model.get('terminal').client);
+        this.set('organization', OB.MobileApp.model.get('terminal').defaultbp_bporg);
         this.set('_identifier', null);
       } else {
         _.each(_.keys(cusToLoad.attributes), function (key) {

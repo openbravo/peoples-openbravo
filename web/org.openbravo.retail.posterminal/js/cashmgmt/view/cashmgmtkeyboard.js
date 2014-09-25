@@ -63,7 +63,7 @@ enyo.kind({
       }
     });
     _.bind(this.getPayment, this);
-    _.each(OB.POS.modelterminal.get('payments'), function (paymentMethod) {
+    _.each(OB.MobileApp.model.get('payments'), function (paymentMethod) {
       var payment = paymentMethod.payment;
       if (paymentMethod.paymentMethod.allowdeposits) {
         buttons.push({

@@ -27,10 +27,10 @@
           customersListToChange;
 
       bpToSave.set('isbeingprocessed', 'N');
-      this.customer.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
-      bpToSave.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
+      this.customer.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      bpToSave.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       if (customerId) {
-        this.customer.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
+        this.customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         bpToSave.set('json', JSON.stringify(this.customer.serializeToJSON()));
         bpToSave.set('c_bpartner_id', this.customer.get('id'));
       } else {
@@ -47,8 +47,8 @@
         bpLocToSave.set('postalCode', me.customer.get('postalCode'));
         bpLocToSave.set('cityName', me.customer.get('cityName'));
         if (isNew) {
-          bpLocToSave.set('countryName', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry_name);
-          bpLocToSave.set('countryId', OB.POS.modelterminal.get('terminal').defaultbp_bpcountry);
+          bpLocToSave.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
+          bpLocToSave.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
         } else {
           bpLocToSave.set('countryName', me.customer.get('countryName'));
           bpLocToSave.set('countryId', me.customer.get('country'));
@@ -59,7 +59,7 @@
         }, isNew);
 
         if (isNew) {
-          me.customer.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
+          me.customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
           bpToSave.set('json', JSON.stringify(me.customer.serializeToJSON()));
           bpToSave.set('c_bpartner_id', me.customer.get('id'));
         }

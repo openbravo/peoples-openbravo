@@ -13,7 +13,7 @@ OB.UTIL = window.OB.UTIL || {};
 
 OB.UTIL.isDisableDiscount = function (receipt) {
   if (receipt.get('lines').length > 0) {
-    return OB.POS.modelterminal.get('isDisableDiscount');
+    return OB.MobileApp.model.get('isDisableDiscount');
   } else {
     return true;
   }
@@ -73,7 +73,7 @@ OB.UTIL.getNumberOfSequence = function (documentNo, isQuotation) {
 OB.UTIL.currency = {
   conversions: [],
   webPOSDefaultCurrencyId: function () {
-    return parseInt(OB.POS.modelterminal.get('currency').id, 10);
+    return parseInt(OB.MobileApp.model.get('currency').id, 10);
   },
   isDefaultCurrencyId: function (currencyId) {
     currencyId = parseInt(currencyId, 10);
@@ -173,7 +173,7 @@ OB.UTIL.currency = {
   },
 /**
    * Returns a converter whose original currency is not the WebPOS currency. e.g: USD in sampledata
-   * and whose destiny curency is the WebPOS default currency. i.e: OB.POS.modelterminal.get('currency').id
+   * and whose destiny curency is the WebPOS default currency. i.e: OB.MobileApp.model.get('currency').id
     return this.getConverter(webPOSDefaultCurrencyId(), toCurrencyId);
    * @param  {currencyId} fromCurrencyId  the currencyId of the original currency
    * @return {converter}                  the converter to convert amounts from fromCurrencyId to the WebPOS default currency
@@ -184,7 +184,7 @@ OB.UTIL.currency = {
   },
   /**
    * Returns a converter whose destiny currency is not the WebPOS currency. e.g: USD in sampledata
-   * and whose original curency is the WebPOS default currency. i.e: OB.POS.modelterminal.get('currency').id
+   * and whose original curency is the WebPOS default currency. i.e: OB.MobileApp.model.get('currency').id
    * @param  {currencyId} toCurrencyId  the currencyId of the destiny currency
    * @return {converter}                the converter to convert amounts from WebPOS default currency to toCurrencyId
    */

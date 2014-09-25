@@ -33,7 +33,7 @@
         return;
       }
 
-      if (OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true)) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
         var auxReceipt = new OB.Model.Order(),
             auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true;
         auxReceipt.clearWith(receipt);
@@ -170,7 +170,7 @@
           lines.forEach(function (l) {
             // with new flow discounts -> skipSave =true
             // in other case -> false
-            this.applyPromotionsImp(receipt, l, OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true));
+            this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true));
           }, this);
         }
       }

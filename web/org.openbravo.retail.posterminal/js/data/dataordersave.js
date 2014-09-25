@@ -51,7 +51,7 @@
       // check if the amount of the lines is different from the gross
       if (oldGross !== realGross || oldGross === 0) {
         OB.error("Receipt integrity: FAILED");
-        if (OB.POS.modelterminal.hasPermission('OBPOS_TicketIntegrityCheck', true)) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_TicketIntegrityCheck', true)) {
           if (this.receipt.get('id')) {
             OB.Dal.remove(model.get('orderList').current, null, null);
           }

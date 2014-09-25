@@ -133,7 +133,7 @@
       var promotions = this.get('promotions'),
           i;
       if (promotions) {
-        if (OB.POS.modelterminal.get('terminal').bestDealCase && promotions.length > 0) {
+        if (OB.MobileApp.model.get('terminal').bestDealCase && promotions.length > 0) {
           // best deal case can only apply one promotion per line
           return true;
         }
@@ -311,7 +311,7 @@
       undoCopy = this.get('undo');
       this.unset('undo');
       this.set('json', JSON.stringify(this.toJSON()));
-      if (!OB.POS.modelterminal.get('preventOrderSave')) {
+      if (!OB.MobileApp.model.get('preventOrderSave')) {
         OB.Dal.save(this, function () {}, function () {
           OB.error(arguments);
         });
@@ -1087,7 +1087,7 @@
       for (i = 0; i < promotions.length; i++) {
         if (disc._idx !== -1 && disc._idx < promotions[i]._idx) {
           // Trying to apply promotions in incorrect order: recalculate whole line again
-          if (OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true)) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
             OB.Model.Discounts.applyPromotionsImp(this, line, true);
           } else {
             OB.Model.Discounts.applyPromotionsImp(this, line, false);
@@ -1151,7 +1151,7 @@
     //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
       var me = this;
-      if (OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn) {
+      if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn) {
         var negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
@@ -1173,8 +1173,8 @@
         priceList: OB.DEC.number(p.get('listPrice')),
         priceIncludesTax: this.get('priceIncludesTax'),
         warehouse: {
-          id: OB.POS.modelterminal.get('warehouses')[0].warehouseid,
-          warehousename: OB.POS.modelterminal.get('warehouses')[0].warehousename
+          id: OB.MobileApp.model.get('warehouses')[0].warehouseid,
+          warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename
         }
       });
       if (!_.isUndefined(attrs)) {
@@ -1211,7 +1211,7 @@
     },
     returnLine: function (line, options, skipValidaton) {
       var me = this;
-      if (OB.POS.modelterminal.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
+      if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
         //The value of qty need to be negate because we want to change it
         var negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('qty') < 0;
@@ -1275,14 +1275,14 @@
     setOrderType: function (permission, orderType, options) {
       var me = this;
       if (orderType === OB.DEC.One) {
-        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns);
+        this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns);
         _.each(this.get('lines').models, function (line) {
           if (line.get('qty') > 0) {
             me.returnLine(line, null, true);
           }
         }, this);
       } else {
-        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
+        this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
       }
       this.set('orderType', orderType); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
       if (orderType !== 3) { //Void this Layaway, do not need to save
@@ -1318,7 +1318,7 @@
     },
 
     setOrderInvoice: function () {
-      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', true);
         this.save();
       }
@@ -1358,10 +1358,10 @@
     },
 
     createQuotation: function () {
-      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.quotation')) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_receipt.quotation')) {
         this.set('isQuotation', true);
         this.set('generateInvoice', false);
-        this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
+        this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
         this.save();
       }
     },
@@ -1395,10 +1395,10 @@
 
       this.set('id', null);
       this.set('isQuotation', false);
-      this.set('generateInvoice', OB.POS.modelterminal.get('terminal').terminalType.generateInvoice);
-      this.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
-      this.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
-      this.set('salesRepresentative', OB.POS.modelterminal.get('context').user.id);
+      this.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
+      this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+      this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      this.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
       this.set('hasbeenpaid', 'N');
       this.set('isPaid', false);
       this.set('isEditable', true);
@@ -1426,7 +1426,7 @@
     reactivateQuotation: function () {
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
-      this.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
+      this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       this.set('oldId', this.get('id'));
       this.set('id', null);
       this.save();
@@ -1437,7 +1437,7 @@
     },
 
     resetOrderInvoice: function () {
-      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', false);
         this.save();
       }
@@ -1463,12 +1463,12 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
-        if (p.get('kind') === OB.POS.modelterminal.get('paymentcash')) {
+        if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
           // The default cash method
           cash = OB.DEC.add(cash, p.get('origAmount'));
           pcash = p;
           paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
-        } else if (OB.POS.modelterminal.hasPayment(p.get('kind')) && OB.POS.modelterminal.hasPayment(p.get('kind')).paymentMethod.iscash) {
+        } else if (OB.MobileApp.model.hasPayment(p.get('kind')) && OB.MobileApp.model.hasPayment(p.get('kind')).paymentMethod.iscash) {
           // Another cash method
           origCash = OB.DEC.add(origCash, p.get('origAmount'));
           pcash = p;
@@ -1481,7 +1481,7 @@
       // Calculation of the change....
       //FIXME
       if (pcash) {
-        if (pcash.get('kind') !== OB.POS.modelterminal.get('paymentcash')) {
+        if (pcash.get('kind') !== OB.MobileApp.model.get('paymentcash')) {
           auxCash = origCash;
           prevCash = cash;
         } else {
@@ -2069,34 +2069,34 @@
         }
       }
 
-      order.set('client', OB.POS.modelterminal.get('terminal').client);
-      order.set('organization', OB.POS.modelterminal.get('terminal').organization);
-      order.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
-      order.set('updatedBy', OB.POS.modelterminal.get('orgUserId'));
-      order.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentType);
+      order.set('client', OB.MobileApp.model.get('terminal').client);
+      order.set('organization', OB.MobileApp.model.get('terminal').organization);
+      order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      order.set('updatedBy', OB.MobileApp.model.get('orgUserId'));
+      order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
       order.set('orderType', 0); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
       order.set('generateInvoice', false);
       order.set('isQuotation', false);
       order.set('oldId', null);
-      order.set('session', OB.POS.modelterminal.get('session'));
-      order.set('priceList', OB.POS.modelterminal.get('terminal').priceList);
-      order.set('priceIncludesTax', OB.POS.modelterminal.get('pricelist').priceIncludesTax);
-      if (OB.POS.modelterminal.hasPermission('OBPOS_receipt.invoice')) {
-        if (OB.POS.modelterminal.hasPermission('OBPOS_retail.restricttaxidinvoice') && !OB.POS.modelterminal.get('businessPartner').get('taxID')) {
+      order.set('session', OB.MobileApp.model.get('session'));
+      order.set('priceList', OB.MobileApp.model.get('terminal').priceList);
+      order.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
+      if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice') && !OB.MobileApp.model.get('businessPartner').get('taxID')) {
           order.set('generateInvoice', false);
         } else {
-          order.set('generateInvoice', OB.POS.modelterminal.get('terminal').terminalType.generateInvoice);
+          order.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
         }
       } else {
         order.set('generateInvoice', false);
       }
-      order.set('currency', OB.POS.modelterminal.get('terminal').currency);
-      order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
-      order.set('warehouse', OB.POS.modelterminal.get('terminal').warehouse);
-      order.set('salesRepresentative', OB.POS.modelterminal.get('context').user.id);
-      order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('context').user._identifier);
-      order.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
-      order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.POS.modelterminal.get('terminal')._identifier);
+      order.set('currency', OB.MobileApp.model.get('terminal').currency);
+      order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
+      order.set('warehouse', OB.MobileApp.model.get('terminal').warehouse);
+      order.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
+      order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('context').user._identifier);
+      order.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+      order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
       order.set('orderDate', new Date());
       order.set('isPaid', false);
       order.set('paidOnCredit', false);
@@ -2109,7 +2109,7 @@
       order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
       order.set('documentNo', nextDocumentno.documentNo);
 
-      order.set('bp', OB.POS.modelterminal.get('businessPartner'));
+      order.set('bp', OB.MobileApp.model.get('businessPartner'));
       order.set('print', true);
       order.set('sendEmail', false);
       order.set('openDrawer', false);
@@ -2145,21 +2145,21 @@
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
         order.set('id', null);
-        order.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
+        order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
       }
       if (model.isLayaway) {
         order.set('isLayaway', true);
         order.set('id', model.orderid);
         order.set('createdBy', OB.MobileApp.model.usermodel.id);
         order.set('hasbeenpaid', 'N');
-        order.set('session', OB.POS.modelterminal.get('session'));
+        order.set('session', OB.MobileApp.model.get('session'));
       } else {
         order.set('isPaid', true);
         if (model.receiptPayments.length === 0 && model.totalamount > 0 && !model.isQuotation) {
           order.set('paidOnCredit', true);
         }
         order.set('id', model.orderid);
-        if (order.get('documentType') === OB.POS.modelterminal.get('terminal').terminalType.documentTypeForReturns) {
+        if (order.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
           //return
           order.set('orderType', 1);
         }
@@ -2303,10 +2303,10 @@
       var documentseq, documentseqstr;
       this.saveCurrent();
       this.current = this.newOrder();
-      OB.POS.modelterminal.set('documentsequence', OB.POS.modelterminal.get('documentsequence') - 1);
+      OB.MobileApp.model.set('documentsequence', OB.MobileApp.model.get('documentsequence') - 1);
       this.current.set('isQuotation', true);
       this.current.set('generateInvoice', false);
-      this.current.set('documentType', OB.POS.modelterminal.get('terminal').terminalType.documentTypeForQuotations);
+      this.current.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
       var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
       this.current.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
       this.current.set('documentNo', nextQuotationno.documentNo);
@@ -2421,12 +2421,12 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
-        if (p.get('kind') === OB.POS.modelterminal.get('paymentcash')) {
+        if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
           // The default cash method
           cash = OB.DEC.add(cash, p.get('origAmount'));
           pcash = p;
           paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
-        } else if (OB.POS.modelterminal.hasPayment(p.get('kind')) && OB.POS.modelterminal.hasPayment(p.get('kind')).paymentMethod.iscash) {
+        } else if (OB.MobileApp.model.hasPayment(p.get('kind')) && OB.MobileApp.model.hasPayment(p.get('kind')).paymentMethod.iscash) {
           // Another cash method
           origCash = OB.DEC.add(origCash, p.get('origAmount'));
           pcash = p;
@@ -2439,7 +2439,7 @@
       // Calculation of the change....
       //FIXME
       if (pcash) {
-        if (pcash.get('kind') !== OB.POS.modelterminal.get('paymentcash')) {
+        if (pcash.get('kind') !== OB.MobileApp.model.get('paymentcash')) {
           auxCash = origCash;
           prevCash = cash;
         } else {

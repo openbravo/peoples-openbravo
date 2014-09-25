@@ -56,7 +56,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         model = this,
         criteria = {
         'hasbeenpaid': 'N',
-        'session': OB.POS.modelterminal.get('session')
+        'session': OB.MobileApp.model.get('session')
         };
     OB.Dal.find(OB.Model.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
       var currentOrder = {},
@@ -93,7 +93,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     var checkedMultiOrders, multiOrderList = this.get('multiOrders').get('multiOrdersList'),
         criteria = {
         'hasbeenpaid': 'N',
-        'session': OB.POS.modelterminal.get('session')
+        'session': OB.MobileApp.model.get('session')
         };
     OB.Dal.find(OB.Model.Order, criteria, function (possibleMultiOrder) { //OB.Dal.find success
       if (possibleMultiOrder && possibleMultiOrder.length > 0) {
@@ -189,17 +189,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             successCallbackBPLoc = function (bpLoc) {
               dataBps.set('locId', bpLoc.get('id'));
               dataBps.set('locName', bpLoc.get('name'));
-              OB.POS.modelterminal.set('businessPartner', dataBps);
+              OB.MobileApp.model.set('businessPartner', dataBps);
               me.loadUnpaidOrders();
             };
             OB.Dal.get(OB.Model.BPLocation, partnerAddressId, successCallbackBPLoc, errorCallback);
           } else {
-            OB.POS.modelterminal.set('businessPartner', dataBps);
+            OB.MobileApp.model.set('businessPartner', dataBps);
             me.loadUnpaidOrders();
           }
         }
       }
-      OB.Dal.get(OB.Model.BusinessPartner, OB.POS.modelterminal.get('businesspartner'), successCallbackBPs, errorCallback);
+      OB.Dal.get(OB.Model.BusinessPartner, OB.MobileApp.model.get('businesspartner'), successCallbackBPs, errorCallback);
     }
 
     //Because in terminal we've the BP id and we want to have the BP model.
@@ -419,7 +419,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             clonedCollection.add(new Backbone.Model(model.toJSON()));
           });
           if (!payment.paymentMethod.iscash) {
-            payment = OB.MobileApp.model.paymentnames[OB.POS.modelterminal.get('paymentcash')];
+            payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
           }
           if (receipt.get('payment') >= receipt.get('gross')) {
             receipt.addPayment(new OB.Model.PaymentLine({
@@ -630,7 +630,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var negativeLines = _.filter(me.get('order').get('lines').models, function (line) {
         return line.get('qty') < 0;
       }).length;
-      if (negativeLines > 0 && !OB.POS.modelterminal.get('permissions')['OBPOS_approval.returns']) {
+      if (negativeLines > 0 && !OB.MobileApp.model.get('permissions')['OBPOS_approval.returns']) {
         args.approvals.push('OBPOS_approval.returns');
       }
       if (args.approvals.length > 0) {

@@ -141,7 +141,7 @@ enyo.kind({
       if (line && line.get('warehouse')) {
         this.$.propertyValue.setContent(line.get('warehouse').warehousename);
       } else {
-        this.$.propertyValue.setContent(OB.POS.modelterminal.get('warehouses')[0].warehousename);
+        this.$.propertyValue.setContent(OB.MobileApp.model.get('warehouses')[0].warehousename);
       }
     }
   }],
@@ -259,7 +259,7 @@ enyo.kind({
           },
           init: function (model) {
             this.model = model;
-            if (OB.POS.modelterminal.get('permissions')[this.permission]) {
+            if (OB.MobileApp.model.get('permissions')[this.permission]) {
               this.setShowing(true);
             }
             this.model.get('order').on('change:isPaid change:isLayaway change:isQuotation', function (newValue) {
@@ -269,7 +269,7 @@ enyo.kind({
                   return;
                 }
               }
-              if (OB.POS.modelterminal.get('permissions')[this.permission]) {
+              if (OB.MobileApp.model.get('permissions')[this.permission]) {
                 this.setShowing(true);
               }
             }, this);
@@ -384,7 +384,7 @@ enyo.kind({
     if (this.line) {
       this.line.on('change', this.render, this);
     }
-    if (this.line && (this.line.get('product').get('showstock') || this.line.get('product').get('_showstock')) && !this.line.get('product').get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
+    if (this.line && (this.line.get('product').get('showstock') || this.line.get('product').get('_showstock')) && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
       this.$.checkStockButton.show();
     } else {
       this.$.checkStockButton.hide();
@@ -406,7 +406,7 @@ enyo.kind({
     }
     if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1) {
       this.$.returnLine.hide();
-    } else if (OB.POS.modelterminal.get('permissions')[this.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
+    } else if (OB.MobileApp.model.get('permissions')[this.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
       this.$.returnLine.show();
     }
     this.render();
@@ -508,7 +508,7 @@ enyo.kind({
     var product = this.owner.line.get('product');
     var params = {};
     //show always or just when the product has been set to show stock screen?
-    if ((product.get('showstock') || product.get('_showstock')) && !product.get('ispack') && OB.POS.modelterminal.get('connectedToERP')) {
+    if ((product.get('showstock') || product.get('_showstock')) && !product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
       params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
       params.product = product;
       params.line = line;

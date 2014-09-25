@@ -67,7 +67,7 @@ enyo.kind({
     } else {
       this.setValue('');
       if (this.modelProperty === 'countryName') {
-        this.setValue(OB.POS.modelterminal.get('terminal').defaultbp_bpcountry_name);
+        this.setValue(OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
       }
     }
     if (this.modelProperty === 'customerName' && inEvent.customer !== undefined && inEvent.customer.get('name') !== undefined) {

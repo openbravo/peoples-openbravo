@@ -26,10 +26,10 @@
           customerAddrListToChange;
 
       bpLocToSave.set('isbeingprocessed', 'N');
-      this.customerAddr.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
-      bpLocToSave.set('createdBy', OB.POS.modelterminal.get('orgUserId'));
+      this.customerAddr.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      bpLocToSave.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       if (customerAddrId) {
-        this.customerAddr.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
+        this.customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         bpLocToSave.set('json', JSON.stringify(this.customerAddr.serializeToJSON()));
         bpLocToSave.set('c_bpartner_location_id', this.customerAddr.get('id'));
       } else {
@@ -62,7 +62,7 @@
         OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback);
 
         if (isNew) {
-          me.customerAddr.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
+          me.customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
           bpLocToSave.set('json', JSON.stringify(me.customerAddr.serializeToJSON()));
           bpLocToSave.set('c_bpartner_location_id', me.customerAddr.get('id'));
         }

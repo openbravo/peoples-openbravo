@@ -65,7 +65,7 @@ enyo.kind({
                   }
                 } else if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A') {
                   //variable qty
-                  this.units = OB.POS.modelterminal.get('terminal').currency$_identifier;
+                  this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
                   if (this.model.get('obdiscAmt')) {
                     this.amt = this.model.get('obdiscAmt');
                   }
@@ -81,7 +81,7 @@ enyo.kind({
                   }
                 } else if (this.model.get('discountType') === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
                   //fixed amount
-                  this.units = OB.POS.modelterminal.get('terminal').currency$_identifier;
+                  this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
                   if (!_.isUndefined(this.model.get('obdiscAmt')) && !_.isNull(this.model.get('obdiscAmt'))) {
                     this.amt = this.model.get('obdiscAmt');
                   }

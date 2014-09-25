@@ -145,7 +145,7 @@ enyo.kind({
 
     this.inherited(arguments);
 
-    payments = OB.POS.modelterminal.get('payments');
+    payments = OB.MobileApp.model.get('payments');
 
 
     paymentsdialog = payments.length + this.sideButtons.length > 5;
@@ -153,10 +153,10 @@ enyo.kind({
     countbuttons = 0;
 
     enyo.forEach(payments, function (payment) {
-      if (payment.paymentMethod.id === OB.POS.modelterminal.get('terminal').terminalType.paymentMethod) {
+      if (payment.paymentMethod.id === OB.MobileApp.model.get('terminal').terminalType.paymentMethod) {
         exactdefault = payment;
       }
-      if (payment.payment.searchKey === OB.POS.modelterminal.get('paymentcash')) {
+      if (payment.payment.searchKey === OB.MobileApp.model.get('paymentcash')) {
         cashdefault = payment;
       }
       allpayments[payment.payment.searchKey] = payment;
@@ -235,7 +235,7 @@ enyo.kind({
             amount = OB.DEC.div(me.model.getPending(), exactpayment.rate);
           }
 
-          if (amount > 0 && exactpayment && OB.POS.modelterminal.hasPermission(exactpayment.payment.searchKey)) {
+          if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
             me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
           }
         }
@@ -251,7 +251,7 @@ enyo.kind({
   shown: function () {
     var me = this,
         i, max, p, keyboard = this.owner.owner;
-    keyboard.showKeypad('Coins-' + OB.POS.modelterminal.get('currency').id); // shows the Coins/Notes panel for the terminal currency
+    keyboard.showKeypad('Coins-' + OB.MobileApp.model.get('currency').id); // shows the Coins/Notes panel for the terminal currency
     keyboard.showSidepad('sidedisabled');
 
     keyboard.disableCommandKey(this, {
@@ -259,18 +259,18 @@ enyo.kind({
       disabled: false
     });
 
-    for (i = 0, max = OB.POS.modelterminal.get('payments').length; i < max; i++) {
-      p = OB.POS.modelterminal.get('payments')[i];
-      if (p.paymentMethod.id === OB.POS.modelterminal.get('terminal').terminalType.paymentMethod) {
-        keyboard.defaultcommand = OB.POS.modelterminal.get('payments')[i].payment.searchKey;
-        keyboard.setStatus(OB.POS.modelterminal.get('payments')[i].payment.searchKey);
+    for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
+      p = OB.MobileApp.model.get('payments')[i];
+      if (p.paymentMethod.id === OB.MobileApp.model.get('terminal').terminalType.paymentMethod) {
+        keyboard.defaultcommand = OB.MobileApp.model.get('payments')[i].payment.searchKey;
+        keyboard.setStatus(OB.MobileApp.model.get('payments')[i].payment.searchKey);
         break;
       }
     }
 
-    if (keyboard && OB.POS.modelterminal.get('paymentcash') && keyboard.status === '') {
-      keyboard.defaultcommand = OB.POS.modelterminal.get('paymentcash');
-      keyboard.setStatus(OB.POS.modelterminal.get('paymentcash'));
+    if (keyboard && OB.MobileApp.model.get('paymentcash') && keyboard.status === '') {
+      keyboard.defaultcommand = OB.MobileApp.model.get('paymentcash');
+      keyboard.setStatus(OB.MobileApp.model.get('paymentcash'));
     }
   }
 });

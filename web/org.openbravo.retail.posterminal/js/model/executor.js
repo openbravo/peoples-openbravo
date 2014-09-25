@@ -226,7 +226,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         ruleListener.on('completed', function (obj) {
           if (obj && obj.alerts) {
             // in the new flow discount, the messages are stored in array, so only will be displayed the first time
-            if (OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true)) {
+            if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
               var localArrayMessages = line.get('promotionMessages') || [];
               localArrayMessages.push(obj.alerts);
               line.set('promotionMessages', localArrayMessages);
@@ -241,7 +241,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       ds = rule.implementation(disc, receipt, line, ruleListener);
       if (ds && ds.alerts) {
         // in the new flow discount, the messages are stored in array, so only will be displayed the first time
-        if (OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true)) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
           var localArrayMessages = line.get('promotionMessages') || [];
           localArrayMessages.push(ds.alerts);
           line.set('promotionMessages', localArrayMessages);
@@ -331,7 +331,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
   postAction: function (evt) {
     // if new flow of discounts, then discountsApplied is triggered
-    if (OB.POS.modelterminal.hasPermission('OBPOS_discount.newFlow', true)) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
       if (this.get('eventQueue').filter(function (p) {
         return p.get('receipt') === evt.get('receipt');
       }).length === 0) {
