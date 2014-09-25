@@ -226,7 +226,7 @@ public class CostingServer {
 
     if (getCostingRule().isBackdatedTransactionsFixed()
         && CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction, getCostingRule()
-            .isWarehouseDimension())) {
+            .isWarehouseDimension(), getCostingRule().getStartingDate())) {
       // BDT= Backdated transaction
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
           transaction.getOrganization(), "BDT");

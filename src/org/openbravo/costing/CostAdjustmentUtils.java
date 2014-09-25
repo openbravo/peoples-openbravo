@@ -120,12 +120,15 @@ public class CostAdjustmentUtils {
   /**
    * @param transaction
    *          transaction to check if cost adjustment should be applied
+   * @param startingDate
+   *          initial date of the current Costing Rule. Only transactions calculated by current rule
+   *          needs to be considered.
    * 
    * @param costDimensions
    *          dimensions used in costs
    */
   public static boolean isNeededCostAdjustmentByBackDateTrx(MaterialTransaction transaction,
-      boolean includeWarehouseDimension) {
+      boolean includeWarehouseDimension, Date startingDate) {
 
     final String orgLegalId = OBContext.getOBContext()
         .getOrganizationStructureProvider(transaction.getClient().getId())
@@ -138,11 +141,11 @@ public class CostAdjustmentUtils {
     where.append(" as trx");
     where.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
     where.append(" where trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " < :transactionProcessDate");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE
-        + " > :transactionMovementDate");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT
-        + ".id = :transactionProductId");
+        + " > :crStartDate");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
+        + " < :processDate");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :movementDate");
+    where.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :productId");
     where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
 
     if (includeWarehouseDimension) {
@@ -152,9 +155,10 @@ public class CostAdjustmentUtils {
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
 
-    trxQry.setNamedParameter("transactionProcessDate", transaction.getTransactionProcessDate());
-    trxQry.setNamedParameter("transactionMovementDate", transaction.getMovementDate());
-    trxQry.setNamedParameter("transactionProductId", transaction.getProduct().getId());
+    trxQry.setNamedParameter("crStartDate", startingDate);
+    trxQry.setNamedParameter("processDate", transaction.getTransactionProcessDate());
+    trxQry.setNamedParameter("movementDate", transaction.getMovementDate());
+    trxQry.setNamedParameter("productId", transaction.getProduct().getId());
     trxQry.setNamedParameter("orgs", orgs);
     if (includeWarehouseDimension) {
       trxQry.setNamedParameter("warehouse", transaction.getStorageBin().getWarehouse().getId());
