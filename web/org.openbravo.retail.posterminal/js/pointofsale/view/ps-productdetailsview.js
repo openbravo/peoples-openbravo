@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, $, Backbone, enyo */
+/*global OB, Backbone, enyo */
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore',

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, $, _,  enyo */
+/*global OB, _, enyo */
 
 // Numeric keyboard with buttons for each payment method accepting drops/deposits
 enyo.kind({

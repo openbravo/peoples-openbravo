@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo, $, confirm, _, localStorage, window */
+/*global OB, Backbone, enyo, confirm, _, localStorage */
 
 // Point of sale main window view
 enyo.kind({

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone,$,_ */
+/*global OB, Backbone, _ */
 
 (function () {
   // Because of problems with module dependencies, it is possible this object to already
