@@ -41,11 +41,11 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE m_transaction_cost mc 
+        UPDATE m_transaction_cost
             SET dateacct = (
                 SELECT m.movementdate 
                 FROM m_transaction m 
-                WHERE  m.m_transaction_id = mc.m_transaction_id 
+                WHERE  m.m_transaction_id = m_transaction_cost.m_transaction_id 
                 )
             WHERE dateacct IS NULL
       ]]>
@@ -59,7 +59,7 @@
         SET dateacct = (
             SELECT COALESCE (inot.dateacct, m.movementdate)
             FROM m_transaction_cost mc
-              LEFT JOIN m_transaction m ON m.m_transaction_id = m_transaction_cost.m_transaction_id
+              LEFT JOIN m_transaction m ON m.m_transaction_id = mc.m_transaction_id
               LEFT JOIN m_inoutline inoutl ON inoutl.m_inoutline_id = m.m_inoutline_id
               LEFT JOIN m_inout inot ON inoutl.m_inout_id = inot.m_inout_id
             WHERE m_transaction_cost.m_transaction_cost_id = mc.m_transaction_cost_id
