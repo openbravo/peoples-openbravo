@@ -9,6 +9,7 @@
 
 /*global OB */
 
+OB.POS = window.OB.POS || {};
 OB.POS.UnlinkDevice = window.OB.POS.UnlinkDevice || {};
 
 OB.POS.UnlinkDevice.onLoad = function (view) {
