@@ -528,14 +528,6 @@ public class OrderGroupingProcessor {
       OBDal.getInstance().remove(paymentSchedule);
       OBDal.getInstance().remove(origPaymentSchedule);
     }
-    // Update customer credit
-
-    BigDecimal total = invoice.getGrandTotalAmount();
-
-    if (!invoice.getCurrency().equals(invoice.getBusinessPartner().getPriceList().getCurrency())) {
-      // We need to convert the total taking into account the currency difference
-      total = OrderLoader.convertCurrencyInvoice(invoice);
-    }
 
     OBDal.getInstance().flush();
   }
