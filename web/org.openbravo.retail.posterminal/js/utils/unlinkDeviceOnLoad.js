@@ -7,10 +7,10 @@
  ************************************************************************************
  */
 
-/*global B,_*/
-OB = window.OB || {};
-OB.POS = window.OB.POS || {};
+/*global OB */
+
 OB.POS.UnlinkDevice = window.OB.POS.UnlinkDevice || {};
+
 OB.POS.UnlinkDevice.onLoad = function (view) {
   view.messageBar.setMessage('warning', OB.I18N.getLabel('OBPOS_UnlinkDeviceWarningTitle'), OB.I18N.getLabel('OBPOS_UnlinkDeviceWarningMsg'));
 };
