@@ -46,7 +46,7 @@ import org.openbravo.service.web.WebServiceUtil;
 public class StaticResourceComponent extends BaseComponent {
   private static final Logger log = Logger.getLogger(StaticResourceComponent.class);
 
-  private static final String GEN_TARGET_LOCATION = "web/js/gen";
+  public static final String GEN_TARGET_LOCATION = "web/js/gen";
 
   @Inject
   @Any
