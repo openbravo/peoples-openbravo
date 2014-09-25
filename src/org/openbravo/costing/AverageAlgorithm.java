@@ -116,6 +116,14 @@ public class AverageAlgorithm extends CostingAlgorithm {
     return super.getDefaultCost();
   }
 
+  @Override
+  protected BigDecimal getReceiptDefaultCost() {
+    if (getProductCost() != null) {
+      return getOutgoingTransactionCost();
+    }
+    return super.getReceiptDefaultCost();
+  }
+
   private void insertCost(Costing currentCosting, BigDecimal newCost, BigDecimal currentStock,
       BigDecimal trxCost) {
     Date dateTo = getLastDate();
