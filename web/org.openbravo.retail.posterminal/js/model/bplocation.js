@@ -47,7 +47,7 @@
       });
     },
     newCustomerAddr: function () {
-      //set values of new attrs in bplocation model 
+      //set values of new attrs in bplocation model
       //this values will be copied to the created one
       //in the next instruction
       this.trigger('beforeChangeCustomerAddrForNewOne', this);
@@ -154,6 +154,6 @@
       sort: 'desc'
     }]
   }]);
-  
+
   OB.Data.Registry.registerModel(BPLocation);
 }());

@@ -691,7 +691,7 @@ enyo.kind({
         //        me.model.get('order').removePayment(inEvent.payment);
         //      } else {
         //        me.model.get('multiOrders').removePayment(inEvent.payment);
-        //      }      
+        //      }
         if (me.model.get('leftColumnViewManager').isOrder()) {
           me.model.get('order').removePayment(inEvent.payment);
           me.model.get('order').trigger('displayTotal');

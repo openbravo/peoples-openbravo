@@ -183,7 +183,7 @@ enyo.kind({
       + " )))" //
     }, function (promos) {
       me.discounts.reset(promos.models);
-      //set the keyboard for selected discount 
+      //set the keyboard for selected discount
       me.discountChanged({}, {
         originator: me.$.discountsList
       });
