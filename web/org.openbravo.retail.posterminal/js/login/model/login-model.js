@@ -675,10 +675,10 @@
           };
 
       // verify that the values are higher than the local variables
-      if (documentnoSuffix > this.documentnoThreshold) {
+      if (documentnoSuffix > this.documentnoThreshold || documentnoSuffix === 0) {
         this.documentnoThreshold = documentnoSuffix;
       }
-      if (quotationnoSuffix > this.quotationnoThreshold) {
+      if (quotationnoSuffix > this.quotationnoThreshold || quotationnoSuffix === 0) {
         this.quotationnoThreshold = quotationnoSuffix;
       }
 
@@ -691,11 +691,11 @@
         if (documentSequenceList && documentSequenceList.length > 0) {
           // There can only be one documentSequence model in the list (posSearchKey is unique)
           docSeq = documentSequenceList.models[0];
-          // verify if the new values are higher
-          if (docSeq.get('documentSequence') > me.documentnoThreshold) {
+          // verify if the new values are higher and if it is not undefined or 0
+          if (docSeq.get('documentSequence') > me.documentnoThreshold && documentnoSuffix) {
             me.documentnoThreshold = docSeq.get('documentSequence');
           }
-          if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold) {
+          if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold && quotationnoSuffix) {
             me.quotationnoThreshold = docSeq.get('quotationDocumentSequence');
           }
         } else {
