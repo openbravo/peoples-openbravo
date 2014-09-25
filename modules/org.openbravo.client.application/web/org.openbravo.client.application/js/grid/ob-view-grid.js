@@ -1951,6 +1951,10 @@ isc.OBViewGrid.addProperties({
 
     // note pass in criteria otherwise infinite looping!
     this.resetEmptyMessage(criteria);
+    //convert relative dates to absolute dates. Refer issue https://issues.openbravo.com/view.php?id=27679
+    if (this.dataSource) {
+      criteria = this.dataSource.convertRelativeDates(criteria);
+    }
     if (this.view.parentProperty && !this.isOpenDirectMode) {
       if (this.view.parentView.isShowingTree) {
         selectedValues = this.view.parentView.treeGrid.getSelectedRecords();
