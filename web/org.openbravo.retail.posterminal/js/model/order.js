@@ -1408,7 +1408,7 @@
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
       this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
       this.set('documentNo', nextDocumentno.documentNo);
-      this.set('posTerminal', OB.POS.modelterminal.get('terminal').id);
+      this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       this.save();
       if (updatePrices) {
         this.updatePrices(function (order) {
