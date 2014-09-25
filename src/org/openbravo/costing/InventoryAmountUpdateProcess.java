@@ -76,9 +76,6 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
       String invAmtUpdId = jsonData.getString("M_Ca_Inventoryamt_ID");
       InventoryAmountUpdate invAmtUpd = OBDal.getInstance().get(InventoryAmountUpdate.class,
           invAmtUpdId);
-      invAmtUpd.setProcessed(true);
-      OBDal.getInstance().save(invAmtUpd);
-      OBDal.getInstance().flush();
       final OBCriteria<InventoryAmountUpdateLine> qLines = OBDal.getInstance().createCriteria(
           InventoryAmountUpdateLine.class);
       qLines.add(Restrictions.eq(InventoryAmountUpdateLine.PROPERTY_CAINVENTORYAMT, invAmtUpd));
@@ -108,8 +105,11 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
             // is big
             OBDal.getInstance().getSession().clear();
           }
-
         }
+        invAmtUpd = OBDal.getInstance().get(InventoryAmountUpdate.class, invAmtUpdId);
+        invAmtUpd.setProcessed(true);
+        OBDal.getInstance().save(invAmtUpd);
+        OBDal.getInstance().flush();
 
         try {
           Thread.sleep(2000);
@@ -321,7 +321,9 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     if (date != null) {
       stockLinesQry.setTimestamp("date", date);
     }
-    stockLinesQry.setParameter("warehouse", warehouse);
+    if (warehouse != null) {
+      stockLinesQry.setParameter("warehouse", warehouse);
+    }
     stockLinesQry.setParameter("product", product);
     stockLinesQry.setFetchSize(1000);
     ScrollableResults stockLines = stockLinesQry.scroll(ScrollMode.FORWARD_ONLY);

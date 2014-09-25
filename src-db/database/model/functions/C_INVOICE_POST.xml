@@ -1439,8 +1439,10 @@ IF (NOT FINISH_PROCESS) THEN
                ml.M_Product_ID, ml.MovementQty, il.QtyInvoiced, i.DateAcct
            FROM C_INVOICELINE il
                 INNER JOIN M_INOUTLINE ml ON (il.M_InOutLine_ID=ml.M_InOutLine_ID)
+                INNER JOIN M_INOUT m ON (ml.M_InOut_ID=m.M_InOut_ID)
                 INNER JOIN C_INVOICE i ON(il.C_Invoice_ID=i.C_Invoice_ID)
            WHERE il.M_Product_ID=ml.M_Product_ID
+             AND M.Processed = 'Y'
              AND il.C_Invoice_ID=v_Record_ID
            )
         LOOP
