@@ -131,6 +131,15 @@ public class CostingServer {
   }
 
   private void checkCostAdjustments() {
+    TrxType trxType = TrxType.getTrxType(transaction);
+    if (trxType == TrxType.InventoryClosing) {
+      OBDal.getInstance().refresh(transaction.getPhysicalInventoryLine().getPhysInventory());
+      if (transaction.getPhysicalInventoryLine().getPhysInventory()
+          .getCostingRuleInitCloseInventoryList().size() > 0) {
+        // Closing inventories from costing rule process are not automatically adjusted.
+        return;
+      }
+    }
     boolean doNotCheckPriceCorrectionTrxs = false;
     boolean doNotCheckNegativeStockCorrectionTrxs = false;
     // check if price correction is needed
@@ -147,7 +156,6 @@ public class CostingServer {
     }
 
     // check if landed cost need to be processed
-    TrxType trxType = TrxType.getTrxType(transaction);
     if (trxType == TrxType.Receipt || trxType.name().equals("ReceiptReturn")
         || trxType.name().equals("ReceiptNegative")) {
       StringBuffer where = new StringBuffer();
