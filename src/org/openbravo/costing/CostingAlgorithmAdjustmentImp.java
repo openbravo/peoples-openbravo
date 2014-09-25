@@ -227,6 +227,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
       return;
     }
     MaterialTransaction deptrx = invline.getMaterialMgmtMaterialTransactionList().get(0);
+    if (!deptrx.isCostCalculated()) {
+      return;
+    }
     insertCostAdjustmentLine(deptrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
   }
 
@@ -299,6 +302,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
     if (!intConsVoidedList.isEmpty()) {
       InternalConsumptionLine intCons = intConsVoidedList.get(0);
       MaterialTransaction voidedTrx = intCons.getMaterialMgmtMaterialTransactionList().get(0);
+      if (!voidedTrx.isCostCalculated()) {
+        return;
+      }
       insertCostAdjustmentLine(voidedTrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
     }
   }
@@ -314,6 +320,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
     for (MaterialTransaction movementTransaction : transaction.getMovementLine()
         .getMaterialMgmtMaterialTransactionList()) {
       if (movementTransaction.getId().equals(transaction.getId())) {
+        continue;
+      }
+      if (!movementTransaction.isCostCalculated()) {
         continue;
       }
       insertCostAdjustmentLine(movementTransaction, costAdjLine.getAdjustmentAmount(), _costAdjLine);
@@ -333,6 +342,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
       return;
     }
     for (MaterialTransaction trx : voidedinoutline.getMaterialMgmtMaterialTransactionList()) {
+      if (!trx.isCostCalculated()) {
+        continue;
+      }
       insertCostAdjustmentLine(trx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
     }
   }
@@ -363,9 +375,11 @@ public abstract class CostingAlgorithmAdjustmentImp {
         counter++;
 
         MaterialTransaction trx = (MaterialTransaction) trxs.get()[0];
-        BigDecimal adjAmt = costAdjAmt.multiply(trx.getMovementQuantity().abs()).divide(
-            inoutline.getMovementQuantity().abs(), precission, RoundingMode.HALF_UP);
-        insertCostAdjustmentLine(trx, adjAmt, _costAdjLine);
+        if (trx.isCostCalculated()) {
+          BigDecimal adjAmt = costAdjAmt.multiply(trx.getMovementQuantity().abs()).divide(
+              inoutline.getMovementQuantity().abs(), precission, RoundingMode.HALF_UP);
+          insertCostAdjustmentLine(trx, adjAmt, _costAdjLine);
+        }
 
         if (counter % 1000 == 0) {
           OBDal.getInstance().flush();
