@@ -57,6 +57,7 @@ public class CostingBackground extends DalBaseProcess {
 
     logger = bundle.getLogger();
     OBError result = new OBError();
+    List<String> orgsWithRule = new ArrayList<String>();
     try {
       OBContext.setAdminMode(false);
       result.setType("Success");
@@ -76,7 +77,6 @@ public class CostingBackground extends DalBaseProcess {
       OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
           where.toString());
       List<Organization> orgs = orgQry.list();
-      List<String> orgsWithRule = new ArrayList<String>();
       if (orgs.size() == 0) {
         log4j.debug("No organizations with Costing Rule defined");
         logger.logln(OBMessageUtils.messageBD("Success"));
@@ -112,9 +112,6 @@ public class CostingBackground extends DalBaseProcess {
           }
         }
       } finally {
-        // Set the processed flag to true to those transactions whose cost has been calculated.
-        setCalculatedTransactionsAsProcessed(orgsWithRule);
-
         trxs.close();
       }
 
@@ -138,6 +135,8 @@ public class CostingBackground extends DalBaseProcess {
       bundle.setResult(result);
       return;
     } finally {
+      // Set the processed flag to true to those transactions whose cost has been calculated.
+      setCalculatedTransactionsAsProcessed(orgsWithRule);
       OBContext.restorePreviousMode();
     }
   }

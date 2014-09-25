@@ -277,6 +277,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
         continue;
       }
       MaterialTransaction prodtrx = pline.getMaterialMgmtMaterialTransactionList().get(0);
+      if (!prodtrx.isCostCalculated()) {
+        continue;
+      }
       insertCostAdjustmentLine(prodtrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
     }
   }

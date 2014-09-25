@@ -281,6 +281,8 @@ public class CostingServer {
         throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
       }
     }
+    // update trxCost after cost adjustments
+    trxCost = CostAdjustmentUtils.getTrxCost(transaction, false, getCostCurrency());
   }
 
   private void setNotPostedTransaction() {
