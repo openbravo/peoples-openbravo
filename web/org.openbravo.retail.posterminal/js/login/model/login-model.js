@@ -10,13 +10,22 @@
 /*global OB, _, enyo, Backbone, console, BigDecimal */
 
 (function () {
+
   OB.Model.POSTerminal = OB.Model.Terminal.extend({
+
+    setTerminalName: function(terminalName) {
+      this.set('terminalName', terminalName);
+      this.set('loginUtilsParams', {
+        terminalName: terminalName
+      });
+    },
+
     initialize: function () {
       var me = this;
+
       me.set({
         appName: 'WebPOS',
         appModuleId: 'FF808181326CC34901326D53DBCF0018',
-        terminalName: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
         supportsOffline: true,
         loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
         loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
@@ -52,11 +61,10 @@
         logDBStmtThreshold: 1000
       });
 
+      me.setTerminalName(window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+
       this.initActions(function () {
-        me.set('terminalName', window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
-        me.set('logoutUrlParams', window.localStorage.getItem('terminalAuthentication') === 'Y' ? {} : {
-          terminal: OB.UTIL.getParameterByName("terminal")
-        });
+        me.setTerminalName(window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
         me.set('logConfiguration', {
           deviceIdentifier: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
           logPropertiesExtension: [
@@ -833,6 +841,7 @@
     databaseCannotBeResetAction: function () {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ResetNeededNotSafeTitle'), OB.I18N.getLabel('OBPOS_ResetNeededNotSafeMessage', [window.localStorage.getItem('terminalName')]));
     },
+
     dialog: null,
     preLoadContext: function (callback) {
       if (!window.localStorage.getItem('terminalKeyIdentifier') && !window.localStorage.getItem('terminalName') && window.localStorage.getItem('terminalAuthentication') === 'Y') {
@@ -888,10 +897,8 @@
           });
         } else {
           OB.appCaption = inResponse.appCaption;
-          OB.MobileApp.model.set('terminalName', inResponse.terminalName);
-          OB.POS.modelterminal.get('loginUtilsParams').terminalName = OB.MobileApp.model.get('terminalName');
-          //        OB.MobileApp.model.get('loginUtilsParams').terminalName = OB.MobileApp.model.get('terminalName');
-          window.localStorage.setItem('terminalName', OB.MobileApp.model.get('terminalName'));
+          me.setTerminalName(inResponse.terminalName);
+          window.localStorage.setItem('terminalName', inResponse.terminalName);
           window.localStorage.setItem('terminalKeyIdentifier', inResponse.terminalKeyIdentifier);
           callback();
         }
@@ -900,6 +907,7 @@
         callback();
       }).go(params);
     },
+
     initActions: function (callback) {
       var params = this.get('loginUtilsParams') || {},
           me = this;
@@ -908,15 +916,13 @@
         url: '../../org.openbravo.retail.posterminal.service.loginutils'
       }).response(this, function (inSender, inResponse) {
         window.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
-        OB.MobileApp.model.set('terminalName', window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
-        OB.POS.modelterminal.set('loginUtilsParams', {
-          terminalName: OB.MobileApp.model.get('terminalName')
-        });
+        me.setTerminalName(window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
         callback();
       }).error(function (inSender, inResponse) {
         callback();
       }).go(params);
     }
+
   });
 
   OB.POS = {
@@ -943,10 +949,6 @@
       this.modelterminal.cleanWindows();
     }
   };
-
-  OB.POS.modelterminal.set('loginUtilsParams', {
-    terminalName: OB.MobileApp.model.get('terminalName')
-  });
 
   OB.Constants = {
     FIELDSEPARATOR: '$',
