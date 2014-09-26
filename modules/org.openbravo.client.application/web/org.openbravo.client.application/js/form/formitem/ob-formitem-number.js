@@ -467,7 +467,7 @@ isc.OBNumberItem.addProperties({
       // first check if the number is valid
       if (!isc.isA.String(value)) {
         // format the value to be displayed.
-        value = OB.Utilities.Number.OBPlainToOBMasked(value, this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator);
+        value = OB.Utilities.Number.JSToOBMasked(value, this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator, OB.Format.defaultGroupingSize);
         this.setElementValue(this.mapValueToDisplay(value));
       }
     }
