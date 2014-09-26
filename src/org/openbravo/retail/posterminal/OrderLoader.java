@@ -121,7 +121,6 @@ public class OrderLoader extends POSDataSynchronizationProcess {
 
   @Override
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
-
     executeHooks(orderPreProcesses, jsonorder, null, null, null);
     boolean wasPaidOnCredit = false;
     boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
@@ -247,6 +246,9 @@ public class OrderLoader extends POSDataSynchronizationProcess {
           + (t11 - t116) + "; stock" + (t4 - t3));
 
     } finally {
+      // flush and enable triggers, the rest of this method needs enabled
+      // triggers
+      OBDal.getInstance().flush();
       TriggerHandler.getInstance().enable();
     }
 
@@ -272,7 +274,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
     }
     long t5 = System.currentTimeMillis();
     OBDal.getInstance().flush();
-    log.info("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
+    log.debug("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
         + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: " + (t4 - t3)
         + "; Process Payments:" + (t5 - t4) + " Final flush: " + (System.currentTimeMillis() - t5));
 
@@ -293,8 +295,9 @@ public class OrderLoader extends POSDataSynchronizationProcess {
     }
   }
 
-  private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order,
+  protected void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order,
       ShipmentInOut shipment, Invoice invoice) throws Exception {
+
     for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
       Object proc = procIter.next();
       if (proc instanceof OrderLoaderHook) {
