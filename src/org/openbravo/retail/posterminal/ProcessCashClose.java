@@ -90,21 +90,20 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       TriggerHandler.getInstance().disable();
       try {
         new OrderGroupingProcessor().groupOrders(posTerminal, cashUpId, cashUpDate);
+
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
             jsonCashup.getString("posterminal"));
 
-        CashCloseProcessor processor = WeldUtils
-            .getInstanceFromStaticBeanManager(CashCloseProcessor.class);
+        CashCloseProcessor processor = getCashCloseProcessor();
         JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
         JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
             cashUpDate);
-        cashUp.setProcessedbo(true);
-        OBDal.getInstance().save(cashUp);
         // add the messages returned by processCashClose...
         jsonData.put("messages", result.opt("messages"));
         jsonData.put("next", result.opt("next"));
         jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       } finally {
+        OBDal.getInstance().flush();
         TriggerHandler.getInstance().enable();
       }
     } else {
@@ -112,8 +111,11 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
 
     }
-    OBDal.getInstance().flush();
     return jsonData;
+  }
+
+  protected CashCloseProcessor getCashCloseProcessor() {
+    return WeldUtils.getInstanceFromStaticBeanManager(CashCloseProcessor.class);
   }
 
   /**
