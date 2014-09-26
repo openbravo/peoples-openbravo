@@ -121,6 +121,29 @@ public class CashCloseProcessor {
 
     // Hook for procesing cashups..
     JSONArray messages = new JSONArray(); // all messages returned by hooks
+    String next = executeHooks(messages, posTerminal, cashUp, jsonCashup);
+
+    long t2 = System.currentTimeMillis();
+
+    // done and done
+    cashUp.setProcessedbo(true);
+
+    OBDal.getInstance().flush();
+
+    long t3 = System.currentTimeMillis();
+
+    logger.debug("Cash Up Processor. Total time: " + (t3 - t0) + ". Processing: " + (t1 - t0)
+        + ". Hooks: " + (t2 - t1) + ". Flush: " + (t3 - t2));
+
+    JSONObject result = new JSONObject();
+    result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    result.put("messages", messages);
+    result.put("next", next);
+    return result;
+  }
+
+  protected String executeHooks(JSONArray messages, OBPOSApplications posTerminal,
+      OBPOSAppCashup cashUp, JSONObject jsonCashup) throws Exception {
     String next = null; // the first next action of all hooks wins
     for (CashupHook hook : cashupHooks) {
       CashupHookResult result = hook.exec(posTerminal, cashUp, jsonCashup);
@@ -133,22 +156,7 @@ public class CashCloseProcessor {
         }
       }
     }
-
-    long t2 = System.currentTimeMillis();
-
-    OBDal.getInstance().flush();
-    OBDal.getInstance().commitAndClose();
-
-    long t3 = System.currentTimeMillis();
-
-    logger.debug("Cash Up Processor. Total time: " + (t3 - t0) + ". Processing: " + (t1 - t0)
-        + ". Hooks: " + (t2 - t1) + ". Flush: " + (t3 - t2));
-
-    JSONObject result = new JSONObject();
-    result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-    result.put("messages", messages);
-    result.put("next", next);
-    return result;
+    return next;
   }
 
   protected void associateTransactions(OBPOSAppPayment paymentType,
