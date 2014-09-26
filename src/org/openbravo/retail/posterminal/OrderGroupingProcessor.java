@@ -19,7 +19,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.LockOptions;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
@@ -57,6 +56,12 @@ public class OrderGroupingProcessor {
 
   private static final Logger log = Logger.getLogger(OrderGroupingProcessor.class);
 
+  /**
+   * Creates invoices for the order lines which are part of a cashup. Groups order lines of the same
+   * bp in one invoice, depending on the create invoices for order setting in the (
+   * {@link TerminalType#isGroupingOrders}).
+   * 
+   */
   public JSONObject groupOrders(OBPOSApplications posTerminal, String cashUpId, Date cashUpDate)
       throws JSONException, SQLException {
     // Obtaining order lines that have been created in current terminal and have not already been
@@ -75,7 +80,6 @@ public class OrderGroupingProcessor {
     query.setNamedParameter("terminal", posTerminal);
     query.setNamedParameter("cashUpId", cashUpId);
 
-    long t0 = System.currentTimeMillis();
     ScrollableResults orderLines = query.scroll(ScrollMode.FORWARD_ONLY);
     Invoice invoice = null;
     FIN_PaymentSchedule paymentSchedule = null;
@@ -99,6 +103,7 @@ public class OrderGroupingProcessor {
         String orderId = (String) DalUtil.getId(orderLine.getSalesOrder());
         if (!orderId.equals(currentOrderId)
             && !posTerminal.getObposTerminaltype().isGroupingOrders()) {
+
           // New Order. We need to finish current invoice, and create a new one
           finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule,
               origPaymentSchedule, cashUpDate);
@@ -122,7 +127,6 @@ public class OrderGroupingProcessor {
           OBDal.getInstance().save(invoice);
           OBDal.getInstance().save(paymentSchedule);
           OBDal.getInstance().save(origPaymentSchedule);
-          OBDal.getInstance().flush();
         }
 
         String bpId = (String) DalUtil.getId(orderLine.getBusinessPartner());
@@ -145,8 +149,8 @@ public class OrderGroupingProcessor {
           OBDal.getInstance().save(invoice);
           OBDal.getInstance().save(paymentSchedule);
           OBDal.getInstance().save(origPaymentSchedule);
-          OBDal.getInstance().flush();
         }
+
         List<FIN_PaymentSchedule> finPaymentScheduleList = orderLine.getSalesOrder()
             .getFINPaymentScheduleList();
         if (!processedOrders.contains((String) DalUtil.getId(orderLine.getSalesOrder()))
@@ -169,11 +173,11 @@ public class OrderGroupingProcessor {
         }
         for (int i = 0; i < orderLinesSplittedByShipmentLine.length; i++) {
           OrderLine olSplitted = orderLinesSplittedByShipmentLine[i];
+
           InvoiceLine invoiceLine = createInvoiceLine(olSplitted, orderLine, isMultiShipmentLine);
           invoiceLine.setLineNo(lineno);
           lineno += 10;
           invoiceLine.setInvoice(invoice);
-          OBDal.getInstance().save(invoiceLine);
           totalNetAmount = totalNetAmount.add(invoiceLine.getLineNetAmount());
 
           List<InvoiceLineTax> lineTaxes = createInvoiceLineTaxes(olSplitted);
@@ -198,48 +202,20 @@ public class OrderGroupingProcessor {
             tax.setInvoice(invoice);
             invoiceLine.getInvoiceLineTaxList().add(tax);
             invoice.getInvoiceLineTaxList().add(tax);
-            OBDal.getInstance().save(tax);
             invoiceLine.setTaxableAmount(invoiceLine.getTaxableAmount() == null ? BigDecimal.ZERO
                 : invoiceLine.getTaxableAmount().add(tax.getTaxableAmount()));
           }
-          if (lineno % 500 == 0) {
-            OBDal.getInstance().flush();
-            OBDal.getInstance().getSession().clear();
-            paymentSchedule = OBDal.getInstance().get(FIN_PaymentSchedule.class,
-                paymentSchedule.getId());
-            origPaymentSchedule = OBDal.getInstance().get(Fin_OrigPaymentSchedule.class,
-                origPaymentSchedule.getId());
-          }
-
-          // if isMultiShipmentLine then the order line ficticious are deleted
-          if (isMultiShipmentLine) {
-            OBDal.getInstance().getSession().evict(olSplitted);
-          }
+          OBDal.getInstance().save(invoiceLine);
         }
-
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
-        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
-            .lock(invoice.ENTITY_NAME, invoice);
-        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
-            .lock(paymentSchedule.ENTITY_NAME, paymentSchedule);
-        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
-            .lock(origPaymentSchedule.ENTITY_NAME, origPaymentSchedule);
       }
-
     } finally {
       orderLines.close();
     }
-
     finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule,
         cashUpDate);
-    OBDal.getInstance().getSession().clear();
 
-    // The commit will be done in ProcessCashClose.java (flush), Transactional process.
-    // OBDal.getInstance().getConnection().commit();
-    long t3 = System.currentTimeMillis();
+    OBDal.getInstance().flush();
 
-    log.debug("Total time: " + (t3 - t0));
     JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return jsonResponse;
@@ -348,14 +324,8 @@ public class OrderGroupingProcessor {
     invoiceLine.setInvoicedQuantity(orderLine.getOrderedQuantity());
     invoiceLine.setGrossAmount(orderLine.getLineGrossAmount());
     invoiceLine.setSalesOrderLine(origOrderLine);
-    OBDal.getInstance().refresh(origOrderLine);
+    origOrderLine.getInvoiceLineList().add(invoiceLine);
     origOrderLine.setInvoicedQuantity(origOrderLine.getOrderedQuantity());
-    OBDal.getInstance().save(origOrderLine);
-    // if isMultiShipmentLine = true then evict is done to delete fictitious orderLine and
-    // the setInvoiceQuantity is not saved
-    if (isMultiShipmentLine) {
-      OBDal.getInstance().flush();
-    }
 
     if (orderLine.getGoodsShipmentLine() != null) {
       invoiceLine.setGoodsShipmentLine(orderLine.getGoodsShipmentLine());
@@ -377,12 +347,7 @@ public class OrderGroupingProcessor {
   }
 
   private ShipmentInOutLine getShipmentLine(OrderLine orderLine) {
-    String hqlWhereClause = "as line where line.salesOrderLine = :orderLine ";
-    OBQuery<ShipmentInOutLine> query = OBDal.getInstance().createQuery(ShipmentInOutLine.class,
-        hqlWhereClause);
-    query.setNamedParameter("orderLine", orderLine);
-    query.setMaxResult(1); // it should be a 1:1 relationship
-    List<ShipmentInOutLine> result = query.list();
+    List<ShipmentInOutLine> result = orderLine.getMaterialMgmtShipmentInOutLineList();
     if (result.size() == 0) {
       return null;
     } else {
@@ -479,8 +444,7 @@ public class OrderGroupingProcessor {
 
     OBDal.getInstance().save(invoice);
     BigDecimal grossamount = totalNetAmount;
-    for (String taxId : invoiceTaxes.keySet()) {
-      InvoiceTax tax = invoiceTaxes.get(taxId);
+    for (InvoiceTax tax : invoiceTaxes.values()) {
       tax.setRecalculate(true);
       tax.setInvoice(invoice);
       invoice.getInvoiceTaxList().add(tax);
@@ -528,8 +492,6 @@ public class OrderGroupingProcessor {
       OBDal.getInstance().remove(paymentSchedule);
       OBDal.getInstance().remove(origPaymentSchedule);
     }
-
-    OBDal.getInstance().flush();
   }
 
   OrderLine[] splitOrderLineByShipmentLine(OrderLine ol) {
@@ -539,11 +501,8 @@ public class OrderGroupingProcessor {
       return new OrderLine[] { ol };
     }
 
-    String hqlWhereClause = "as line where line.salesOrderLine = :orderLine ";
-    OBQuery<ShipmentInOutLine> query = OBDal.getInstance().createQuery(ShipmentInOutLine.class,
-        hqlWhereClause);
-    query.setNamedParameter("orderLine", ol);
-    List<ShipmentInOutLine> shipmentLines = query.list();
+    List<ShipmentInOutLine> shipmentLines = ol.getMaterialMgmtShipmentInOutLineList();
+
     int stdPrecision = ol.getSalesOrder().getCurrency().getStandardPrecision().intValue();
     long lineNo = 0;
 
