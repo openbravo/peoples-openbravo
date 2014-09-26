@@ -71,15 +71,14 @@ public class CostAdjustmentProcess {
    *           when there is an error that prevents the cost adjustment to be processed.
    * @throws JSONException
    */
-  private JSONObject processCostAdjustment(CostAdjustment _costAdjustment) throws OBException,
-      JSONException {
+  private JSONObject processCostAdjustment(CostAdjustment _costAdjustment) throws OBException {
     CostAdjustment costAdjustment = _costAdjustment;
     JSONObject message = new JSONObject();
-    message.put("severity", "success");
-    message.put("title", "");
-    message.put("text", OBMessageUtils.messageBD("Success"));
     OBContext.setAdminMode(true);
     try {
+      message.put("severity", "success");
+      message.put("title", "");
+      message.put("text", OBMessageUtils.messageBD("Success"));
       long t1 = System.currentTimeMillis();
       doChecks(costAdjustment, message);
       long t2 = System.currentTimeMillis();
@@ -95,6 +94,7 @@ public class CostAdjustmentProcess {
       costAdjustment.setProcessed(true);
       costAdjustment.setDocumentStatus("CO");
       OBDal.getInstance().save(costAdjustment);
+    } catch (JSONException ignore) {
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -309,7 +309,7 @@ public class CostAdjustmentProcess {
   }
 
   public static synchronized JSONObject doProcessCostAdjustment(CostAdjustment costAdjustment)
-      throws OBException, JSONException {
+      throws OBException {
     String docNo = costAdjustment.getDocumentNo();
     log.debug("Starts process cost adjustment: {}", docNo);
     long t1 = System.currentTimeMillis();

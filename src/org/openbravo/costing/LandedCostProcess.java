@@ -173,8 +173,7 @@ public class LandedCostProcess {
     OBDal.getInstance().flush();
   }
 
-  private CostAdjustment generateCostAdjustment(String strLandedCostId, JSONObject message)
-      throws JSONException {
+  private CostAdjustment generateCostAdjustment(String strLandedCostId, JSONObject message) {
     LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLandedCostId);
     Date referenceDate = landedCost.getReferenceDate();
     CostAdjustment ca = CostAdjustmentUtils.insertCostAdjustmentHeader(
@@ -183,8 +182,11 @@ public class LandedCostProcess {
     String strResult = OBMessageUtils.messageBD("LandedCostProcessed");
     Map<String, String> map = new HashMap<String, String>();
     map.put("documentNo", ca.getDocumentNo());
-    message.put("title", OBMessageUtils.messageBD("Success"));
-    message.put("text", OBMessageUtils.parseTranslation(strResult, map));
+    try {
+      message.put("title", OBMessageUtils.messageBD("Success"));
+      message.put("text", OBMessageUtils.parseTranslation(strResult, map));
+    } catch (JSONException ignore) {
+    }
 
     StringBuffer hql = new StringBuffer();
     hql.append(" select sum(rla." + LCReceiptLineAmt.PROPERTY_AMOUNT + ") as amt");

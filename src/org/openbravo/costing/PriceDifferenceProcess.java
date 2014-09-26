@@ -40,11 +40,8 @@ import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PriceDifferenceProcess {
-  private static final Logger log = LoggerFactory.getLogger(PriceDifferenceProcess.class);
   private static CostAdjustment costAdjHeader = null;
 
   private static void calculateTransactionPriceDifference(MaterialTransaction materialTransaction)
@@ -152,18 +149,18 @@ public class PriceDifferenceProcess {
     calculateTransactionPriceDifference(materialTransaction);
 
     if (costAdjHeader != null) {
+      OBDal.getInstance().flush();
+      JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
       try {
-        OBDal.getInstance().flush();
-        JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
 
         if (message.get("severity") != "success") {
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
               + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
         }
-        return message;
       } catch (JSONException e) {
         throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
       }
+      return message;
     } else {
       JSONObject message = new JSONObject();
       try {
@@ -213,18 +210,17 @@ public class PriceDifferenceProcess {
       lines.close();
     }
     if (costAdjHeader != null) {
+      OBDal.getInstance().flush();
+      JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
       try {
-        OBDal.getInstance().flush();
-        JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
-
         if (message.get("severity") != "success") {
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
               + costAdjHeader.getDocumentNo() + " - " + message.getString("text"));
         }
-        return message;
       } catch (JSONException e) {
         throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
       }
+      return message;
     } else {
       JSONObject message = new JSONObject();
       try {

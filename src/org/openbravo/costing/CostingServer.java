@@ -156,22 +156,18 @@ public class CostingServer {
     }
 
     // check if landed cost need to be processed
-    if (trxType == TrxType.Receipt || trxType.name().equals("ReceiptReturn")
-        || trxType.name().equals("ReceiptNegative")) {
+    if (trxType == TrxType.Receipt || trxType == TrxType.ReceiptReturn
+        || trxType == TrxType.ReceiptNegative) {
       StringBuffer where = new StringBuffer();
       where.append(" as lc");
-      where
-          .append(" where not exists (select 1 from MaterialMgmtMaterialTransaction mtrans where mtrans."
-              + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE
-              + "."
-              + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT
-              + ".id =:inoutId and mtrans."
-              + MaterialTransaction.PROPERTY_ISCOSTCALCULATED
-              + "= false) and lc."
-              + LandedCostCost.PROPERTY_LANDEDCOST
-              + " is null"
-              + " and lc."
-              + LandedCostCost.PROPERTY_GOODSSHIPMENT + ".id =:inoutId");
+      where.append(" where not exists ");
+      where.append("   (select 1 from " + MaterialTransaction.ENTITY_NAME + " mtrans");
+      where.append("     join mtrans." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " iol");
+      where.append("   where iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + ".id = :inoutId");
+      where.append("     and mtrans." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + "= false");
+      where.append("   )");
+      where.append("   and lc." + LandedCostCost.PROPERTY_LANDEDCOST + " is null");
+      where.append("   and lc." + LandedCostCost.PROPERTY_GOODSSHIPMENT + ".id = :inoutId");
       OBQuery<LandedCostCost> qry = OBDal.getInstance().createQuery(LandedCostCost.class,
           where.toString());
       qry.setNamedParameter("inoutId", transaction.getGoodsShipmentLine().getShipmentReceipt()
@@ -236,15 +232,15 @@ public class CostingServer {
       cal.setBackdatedTrx(Boolean.TRUE);
       OBDal.getInstance().save(cal);
 
-      try {
-        OBDal.getInstance().flush();
-        JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
+      OBDal.getInstance().flush();
+      JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
 
+      try {
         if (message.get("severity") != "success") {
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
               + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
         }
-      } catch (JSONException e) {
+      } catch (JSONException ignore) {
         throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
       }
     }
@@ -276,12 +272,12 @@ public class CostingServer {
           costAdjustmentHeader, null, Boolean.TRUE, acctDate);
       cal.setNegativeStockCorrection(Boolean.TRUE);
       OBDal.getInstance().save(cal);
+      OBDal.getInstance().flush();
+
+      JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
 
       try {
-        OBDal.getInstance().flush();
-        JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
-
-        if (message.get("severity") != "success") {
+        if (!"success".equals(message.get("severity"))) {
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
               + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
         }

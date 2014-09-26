@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -78,7 +79,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     BigDecimal signMultiplier = new BigDecimal(basetrx.getMovementQuantity().signum());
     Date trxDate = basetrx.getTransactionProcessDate();
-    boolean backdatedTrxSourcePending = false;
 
     BigDecimal adjustmentBalance = BigDecimal.ZERO;
     // Initialize adjustment balance looping through all cost adjustment lines of current
@@ -86,15 +86,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     log.debug("Initialize adjustment balance");
     CostAdjustmentLine baseCAL = getCostAdjLine();
     for (CostAdjustmentLine costAdjLine : getTrxAdjustmentLines(basetrx)) {
-      if (costAdjLine.isSource() && !costAdjLine.isRelatedTransactionAdjusted()) {
-        if (!costAdjLine.getId().equals(strCostAdjLineId)) {
-          searchRelatedTransactionCosts(costAdjLine);
-          // OBDal.getInstance().refresh(costAdjLine);
-        }
-
-        backdatedTrxSourcePending |= costAdjLine.isBackdatedTrx()
-            && basetrx.getMaterialMgmtCostingList().size() > 0;
+      if (costAdjLine.isSource() && !costAdjLine.isRelatedTransactionAdjusted()
+          && !costAdjLine.getId().equals(strCostAdjLineId)) {
+        searchRelatedTransactionCosts(costAdjLine);
+        // OBDal.getInstance().refresh(costAdjLine);
       }
+
       costAdjLine.setRelatedTransactionAdjusted(Boolean.TRUE);
       if (!costAdjLine.getId().equals(strCostAdjLineId)) {
         costAdjLine.setParentCostAdjustmentLine(baseCAL);
@@ -161,31 +158,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         log.debug("Process related transaction {}", trx.getIdentifier());
         BigDecimal trxSignMultiplier = new BigDecimal(trx.getMovementQuantity().signum());
         BigDecimal trxAdjAmt = BigDecimal.ZERO;
-        if (backdatedTrxSourcePending) {
-          // If there is a backdated source adjustment pending modify the dates of its m_costing
-          Costing prevCosting = getPreviousCosting(trx);
-          Costing sourceCosting = OBDal.getInstance().get(Costing.class, bdCostingId);
-          sourceCosting.setPermanent(Boolean.FALSE);
-          OBDal.getInstance().save(sourceCosting);
-          // Fire trigger to allow to modify the average cost and starting date.
-          OBDal.getInstance().flush();
-          if (prevCosting != null) {
-            sourceCosting.setEndingDate(prevCosting.getEndingDate());
-          } else {
-            // There isn't any previous costing.
-            sourceCosting.setEndingDate(trx.getTransactionProcessDate());
-          }
-          sourceCosting.setStartingDate(trx.getTransactionProcessDate());
-          sourceCosting.setPermanent(Boolean.TRUE);
-          OBDal.getInstance().save(sourceCosting);
-          if (prevCosting != null) {
-            prevCosting.setEndingDate(trx.getTransactionProcessDate());
-            OBDal.getInstance().save(prevCosting);
-          }
-
+        if (StringUtils.isNotEmpty(bdCostingId)) {
+          // If there is a backdated source adjustment pending modify the dates of its m_costing.
+          updateBDCostingTimeRange(trx);
           // This update is done only on the first related transaction.
           bdCostingId = "";
-          backdatedTrxSourcePending = false;
         }
 
         if (!strCurrentCurId.equals(trx.getCurrency().getId())) {
@@ -207,9 +184,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           if (existingCAL.isSource() && !existingCAL.isRelatedTransactionAdjusted()) {
             searchRelatedTransactionCosts(existingCAL);
             // OBDal.getInstance().refresh(costAdjLine);
-
-            backdatedTrxSourcePending |= existingCAL.isBackdatedTrx()
-                && trx.getMaterialMgmtCostingList().size() > 0;
           }
           if (existingCAL.getTransactionCostList().isEmpty()
               && !existingCAL.isRelatedTransactionAdjusted()) {
@@ -276,9 +250,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           }
 
           Costing curCosting = trx.getMaterialMgmtCostingList().get(0);
-          if (curCosting.getCost().compareTo(cost) == 0 && !backdatedTrxSourcePending) {
+          if (curCosting.getCost().compareTo(cost) == 0 && StringUtils.isEmpty(bdCostingId)) {
             // new cost hasn't changed, following transactions will have the same cost, so no more
             // related transactions are needed to include.
+            // If bdCosting is not empty it is needed to loop through the next related transaction
+            // to set the new time ringe of the costing.
             log.debug("New cost matches existing cost. Adjustment finished.");
             return;
           } else {
@@ -373,10 +349,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       // the same date than the backdated costing so there is no gap between average costs.
       // The bdCosting dates are updated later when the first related transaction is checked.
       Costing bdCosting = trx.getMaterialMgmtCostingList().get(0);
-      bdCostingId = bdCosting.getId();
-      Costing lastCosting = getLastCosting(bdCosting);
-      lastCosting.setEndingDate(bdCosting.getEndingDate());
-      OBDal.getInstance().save(lastCosting);
+      extendPreviousCosting(bdCosting);
     }
     super.calculateBackdatedTrxAdjustment(costAdjLine);
   }
@@ -599,9 +572,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     BigDecimal trxCost = CostAdjustmentUtils.getTrxCost(basetrx, false, getCostCurrency());
     BigDecimal trxUnitCost = trxCost.divide(basetrx.getMovementQuantity(), precission);
-    // BigDecimal totalStock = currentStock.add(basetrx.getMovementQuantity());
-    // BigDecimal adjustAmt = totalStock.multiply(trxUnitCost).subtract(trxCost)
-    // .subtract(currentValueAmt);
     BigDecimal adjustAmt = currentStock.multiply(trxUnitCost).subtract(currentValueAmt);
 
     costAdjLine.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME,
@@ -676,13 +646,16 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   }
 
   /**
-   * Calculates the Average Costing that ends when the backdated costing starts.
+   * Extends the Average Costing ending date to include the time range that leaves the given
+   * backdated average costing when this is moved to the correct time range.
+   * 
+   * It stored the backdated costing id in a local field to be updated with the new time range when
+   * the next related transaction is processed.
    * 
    * @param bdCosting
    *          the backdated costing
-   * @return the lastCosting that needs to be extended
    */
-  private Costing getLastCosting(Costing bdCosting) {
+  private void extendPreviousCosting(Costing bdCosting) {
     StringBuffer where = new StringBuffer();
     where.append(" as c");
     where.append("  join c." + Costing.PROPERTY_INVENTORYTRANSACTION + " as trx");
@@ -712,10 +685,52 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     qryCosting.setMaxResult(1);
 
-    return qryCosting.uniqueResult();
+    Costing lastCosting = qryCosting.uniqueResult();
+    bdCostingId = bdCosting.getId();
+    lastCosting.setEndingDate(bdCosting.getEndingDate());
+    OBDal.getInstance().save(lastCosting);
   }
 
-  private Costing getPreviousCosting(MaterialTransaction trx) {
+  /**
+   * Updates the backdated average costing time range.
+   * 
+   * <br>
+   * The starting date of the bdCosting is the transaction process date of the given trx. The ending
+   * date is defined by the average costing that is being shortened.
+   * 
+   * @param trx
+   *          The material transaction that is used as a reference to set the new time range of the
+   *          backdated average costing.
+   */
+  private void updateBDCostingTimeRange(MaterialTransaction trx) {
+    Costing bdCosting = OBDal.getInstance().get(Costing.class, bdCostingId);
+    bdCosting.setPermanent(Boolean.FALSE);
+    OBDal.getInstance().save(bdCosting);
+    // Fire trigger to allow to modify the average cost and starting date.
+    OBDal.getInstance().flush();
+
+    Costing curCosting = getTrxCurrentCosting(trx);
+    if (curCosting != null) {
+      bdCosting.setEndingDate(curCosting.getEndingDate());
+      curCosting.setEndingDate(trx.getTransactionProcessDate());
+      OBDal.getInstance().save(curCosting);
+    } else {
+      // There isn't any previous costing.
+      bdCosting.setEndingDate(trx.getTransactionProcessDate());
+    }
+    bdCosting.setStartingDate(trx.getTransactionProcessDate());
+    bdCosting.setPermanent(Boolean.TRUE);
+    OBDal.getInstance().save(bdCosting);
+  }
+
+  /**
+   * Returns the average costing that is valid on the given transaction process date.
+   * 
+   * @param trx
+   *          MaterialTransaction to be used as time reference.
+   * @return The average Costing
+   */
+  private Costing getTrxCurrentCosting(MaterialTransaction trx) {
     HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
     StringBuffer where = new StringBuffer();
     where.append(" as c");
@@ -728,6 +743,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     where.append("   and c.id != :sourceid");
     where.append("   and c." + Costing.PROPERTY_ENDINGDATE + " >= :trxdate");
+    // The starting date of the costing needs to be before the reference date to avoid the case when
+    // the given transaction has a related average costing.
     where.append("   and c." + Costing.PROPERTY_STARTINGDATE + " < :trxdate");
     where.append(" order by c." + Costing.PROPERTY_STARTINGDATE + " desc");
 
