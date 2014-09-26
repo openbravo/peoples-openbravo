@@ -37,4 +37,16 @@ public interface CostAdjusmentProcessCheck {
    *           when any check fails ant the process is required to stop.
    */
   void doCheck(CostAdjustment costAdjustment, JSONObject message) throws OBException;
+
+  /**
+   * This method executes the needed checks to the cost adjustment when the process endss.
+   * 
+   * @param costAdjustment
+   *          the cost adjustment being processed.
+   * @param message
+   *          a JSONObject with the message that is returned to the user.
+   * @throws OBException
+   *           when any check fails ant the process is required to stop.
+   */
+  void doPostProcessCheck(CostAdjustment costAdjustment, JSONObject message) throws OBException;
 }

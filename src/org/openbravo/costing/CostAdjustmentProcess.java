@@ -80,15 +80,18 @@ public class CostAdjustmentProcess {
       message.put("title", "");
       message.put("text", OBMessageUtils.messageBD("Success"));
       long t1 = System.currentTimeMillis();
-      doChecks(costAdjustment, message);
+      doChecks(costAdjustment.getId(), message);
       long t2 = System.currentTimeMillis();
       log.debug("Checks done: time {}", t2 - t1);
       initializeLines(costAdjustment);
       long t3 = System.currentTimeMillis();
       log.debug("Lines initialized: time {}", t3 - t2);
-      calculateAdjustmentAmount(costAdjustment.getId(), message);
+      calculateAdjustmentAmount(costAdjustment.getId());
       long t4 = System.currentTimeMillis();
-      log.debug("Adjustments done: time {} - total time {}", t4 - t3, t4 - t1);
+      log.debug("Adjustments done: time {}", t4 - t3);
+      doPostProcessChecks(costAdjustment.getId(), message);
+      long t5 = System.currentTimeMillis();
+      log.debug("Post Process checks: time {} - total time {}", t5 - t4, t5 - t1);
 
       costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
       costAdjustment.setProcessed(true);
@@ -102,7 +105,8 @@ public class CostAdjustmentProcess {
     return message;
   }
 
-  private void doChecks(CostAdjustment costAdjustment, JSONObject message) {
+  private void doChecks(String strCostAdjId, JSONObject message) {
+    CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class, strCostAdjId);
 
     // check if there is period closed between reference date and max transaction date
     StringBuffer query = new StringBuffer();
@@ -128,10 +132,31 @@ public class CostAdjustmentProcess {
     }
 
     // Check that there are not permanently adjusted transactions in the sources.
+    checkPermanentelyAdjustedTrx(strCostAdjId);
+
+    // Execute checks added implementing costAdjustmentProcess interface.
+    for (CostAdjusmentProcessCheck checksInstance : costAdjustmentProcessChecks) {
+      checksInstance.doCheck(costAdjustment, message);
+    }
+  }
+
+  private void doPostProcessChecks(String strCostAdjId, JSONObject message) {
+    // Check there are not permanently adjusted transactions in the cost adjustment
+    checkPermanentelyAdjustedTrx(strCostAdjId);
+
+    // Execute checks added implementing costAdjustmentProcess interface.
+    CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class, strCostAdjId);
+    for (CostAdjusmentProcessCheck checksInstance : costAdjustmentProcessChecks) {
+      checksInstance.doPostProcessCheck(costAdjustment, message);
+    }
+  }
+
+  private void checkPermanentelyAdjustedTrx(String strCostAdjId) throws OBException {
     OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
         CostAdjustmentLine.class);
     critLines.createAlias(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, "trx");
-    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustment));
+    critLines.createAlias(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, "ca");
+    critLines.add(Restrictions.eq("ca.id", strCostAdjId));
     critLines.add(Restrictions.eq("trx." + MaterialTransaction.PROPERTY_ISCOSTPERMANENT,
         Boolean.TRUE));
     critLines.add(Restrictions.ne(CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT, BigDecimal.ZERO));
@@ -143,10 +168,10 @@ public class CostAdjustmentProcess {
     try {
       String strLines = "";
       while (lines.next()) {
-        CostAdjustmentLine line = (CostAdjustmentLine) lines.get(0);
+        CostAdjustmentLine line = (CostAdjustmentLine) lines.get()[0];
         strLines += line.getLineNo() + ", ";
 
-        if (count % 1000 == 0) {
+        if (count % 10000 == 0) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
         }
@@ -163,11 +188,6 @@ public class CostAdjustmentProcess {
       OBDal.getInstance().getSession().clear();
     } finally {
       lines.close();
-    }
-
-    // Execute checks added implementing costAdjustmentProcess interface.
-    for (CostAdjusmentProcessCheck checksInstance : costAdjustmentProcessChecks) {
-      checksInstance.doCheck(costAdjustment, message);
     }
   }
 
@@ -198,7 +218,7 @@ public class CostAdjustmentProcess {
     }
   }
 
-  private void calculateAdjustmentAmount(String strCostAdjustmentId, JSONObject message) {
+  private void calculateAdjustmentAmount(String strCostAdjustmentId) {
     CostAdjustmentLine line = getNextLine(strCostAdjustmentId);
     while (line != null) {
       MaterialTransaction trx = line.getInventoryTransaction();
