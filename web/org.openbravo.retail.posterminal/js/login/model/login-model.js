@@ -700,10 +700,10 @@
           // There can only be one documentSequence model in the list (posSearchKey is unique)
           docSeq = documentSequenceList.models[0];
           // verify if the new values are higher and if it is not undefined or 0
-          if (docSeq.get('documentSequence') > me.documentnoThreshold && documentnoSuffix) {
+          if (docSeq.get('documentSequence') > me.documentnoThreshold && documentnoSuffix !== 0) {
             me.documentnoThreshold = docSeq.get('documentSequence');
           }
-          if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold && quotationnoSuffix) {
+          if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold && quotationnoSuffix !== 0) {
             me.quotationnoThreshold = docSeq.get('quotationDocumentSequence');
           }
         } else {
