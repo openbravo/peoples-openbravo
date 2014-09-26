@@ -54,15 +54,28 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
     if ("Y".equals(getDefaultIsSOTrx(requestMap))) {
       JSONObject context = new JSONObject(requestMap.get("context"));
       if (context.has("depositamt") && context.has("withdrawalamt")) {
-        return new BigDecimal(context.getString("depositamt")).subtract(
-            new BigDecimal(context.getString("withdrawalamt"))).toString();
+        return new BigDecimal(convertToSafeDecimalString(context.getString("depositamt")))
+            .subtract(
+                new BigDecimal(convertToSafeDecimalString(context.getString("withdrawalamt"))))
+            .toString();
       }
       if (context.has("inpdepositamt") && context.has("inppaymentamt")) {
-        return new BigDecimal(context.getString("inpdepositamt")).subtract(
-            new BigDecimal(context.getString("inppaymentamt"))).toString();
+        return new BigDecimal(convertToSafeDecimalString(context.getString("inpdepositamt")))
+            .subtract(
+                new BigDecimal(convertToSafeDecimalString(context.getString("inppaymentamt"))))
+            .toString();
       }
     }
     return BigDecimal.ZERO.toPlainString();
+  }
+
+  private String convertToSafeDecimalString(String bigdecimalString) {
+    bigdecimalString = bigdecimalString.replaceAll("[^\\d,\\.]++", "");
+    if (bigdecimalString.matches(".+\\.\\d+,\\d+$"))
+      return bigdecimalString.replaceAll("\\.", "").replaceAll(",", ".");
+    if (bigdecimalString.matches(".+,\\d+\\.\\d+$"))
+      return bigdecimalString.replaceAll(",", "");
+    return bigdecimalString.replaceAll(",", ".");
   }
 
   @Override
