@@ -74,7 +74,7 @@ public class FixBackdatedTransactionsProcess implements Process {
         while (transactions.next()) {
           MaterialTransaction trx = (MaterialTransaction) transactions.get()[0];
           if (CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(trx,
-              rule.isWarehouseDimension())) {
+              rule.isWarehouseDimension(), rule.getStartingDate())) {
             createCostAdjustmenHeader(rule.getOrganization());
             CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
                 costAdjHeader, null, Boolean.TRUE, trx.getMovementDate());
