@@ -80,8 +80,6 @@ public class OrderGroupingProcessor {
     query.setNamedParameter("terminal", posTerminal);
     query.setNamedParameter("cashUpId", cashUpId);
 
-    List<String> invoicesToSetDocumentNos = new ArrayList<String>();
-
     ScrollableResults orderLines = query.scroll(ScrollMode.FORWARD_ONLY);
     Invoice invoice = null;
     FIN_PaymentSchedule paymentSchedule = null;
@@ -109,11 +107,6 @@ public class OrderGroupingProcessor {
           // New Order. We need to finish current invoice, and create a new one
           finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule,
               origPaymentSchedule, cashUpDate);
-
-          if (invoice != null) {
-            invoicesToSetDocumentNos.add(invoice.getId());
-          }
-
           currentOrderId = orderId;
           Order order = OBDal.getInstance().get(Order.class, orderId);
           currentOrder = OBDal.getInstance().get(Order.class, orderId);
@@ -144,11 +137,6 @@ public class OrderGroupingProcessor {
           // New business partner. We need to finish current invoice, and create a new one
           finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule,
               origPaymentSchedule, cashUpDate);
-
-          if (invoice != null) {
-            invoicesToSetDocumentNos.add(invoice.getId());
-          }
-
           currentbpId = bpId;
           currentBp = OBDal.getInstance().get(BusinessPartner.class, bpId);
           invoice = createNewInvoice(posTerminal, currentBp, orderLine, cashUpDate);
@@ -226,19 +214,6 @@ public class OrderGroupingProcessor {
     finishInvoice(invoice, totalNetAmount, invoiceTaxes, paymentSchedule, origPaymentSchedule,
         cashUpDate);
 
-    if (invoice != null) {
-      invoicesToSetDocumentNos.add(invoice.getId());
-    }
-
-    OBDal.getInstance().flush();
-
-    // set the document nos in a separate loop and flush
-    // now set all the document nos
-    for (String invoiceId : invoicesToSetDocumentNos) {
-      invoice = OBDal.getInstance().get(Invoice.class, invoiceId);
-      invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
-          invoice.getDocumentType()));
-    }
     OBDal.getInstance().flush();
 
     JSONObject jsonResponse = new JSONObject();
@@ -420,8 +395,8 @@ public class OrderGroupingProcessor {
         .getDocumentTypeForInvoice());
     invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
         .getDocumentTypeForInvoice());
-    // set to a dummy value, will be set at the end to prevent locking
-    invoice.setDocumentNo("9999");
+    invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
+        invoice.getDocumentType()));
     invoice.setAccountingDate(cashUpDate);
     invoice.setInvoiceDate(cashUpDate);
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
@@ -450,8 +425,8 @@ public class OrderGroupingProcessor {
         .getDocumentTypeForInvoice());
     invoice.setTransactionDocument(terminal.getObposTerminaltype().getDocumentType()
         .getDocumentTypeForInvoice());
-    // set to a dummy value, will be set at the end to prevent locking
-    invoice.setDocumentNo("9999");
+    invoice.setDocumentNo(getInvoiceDocumentNo(invoice.getTransactionDocument(),
+        invoice.getDocumentType()));
     invoice.setAccountingDate(cashUpDate);
     invoice.setInvoiceDate(cashUpDate);
     invoice.setPriceList(firstLine.getSalesOrder().getPriceList());
