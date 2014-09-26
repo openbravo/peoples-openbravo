@@ -11,7 +11,7 @@
 
 (function () {
   // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available
-  OB.Model.POSTerminal = new(OB.Model.Terminal.extend({
+  OB.Model.POSTerminal = OB.Model.Terminal.extend({
 
     setTerminalName: function (terminalName) {
       this.set('terminalName', terminalName);
@@ -923,7 +923,11 @@
       }).go(params);
     }
 
-  }))();
+  });
+
+  // from this point, OB.MobileApp.model will be available
+  // the initialization is done to a dummy variable to allow the model to be extendable
+  var initializeOBModelTerminal = new OB.Model.POSTerminal();
 
   OB.POS = {
     modelterminal: OB.MobileApp.model, // kept fot backward compatibility. Deprecation id: 27646
