@@ -432,7 +432,7 @@
         }, function (data, message) {
           if (data && data.exception) {
             //ERROR or no connection
-            OB.error(OB.I18N.getLabel('OBPOS_TerminalAuthError'));
+            OB.error("runSyncProcess", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
           } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
             if (data.isLinked === false) {
               window.localStorage.removeItem('terminalName');
@@ -538,7 +538,7 @@
           }, function (data, message) {
             if (data && data.exception) {
               //ERROR or no connection
-              OB.error(OB.I18N.getLabel('OBPOS_TerminalAuthError'));
+              OB.error("renderMain", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
             } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
               if (data.isLinked === false) {
                 window.localStorage.removeItem('terminalName');
@@ -629,7 +629,7 @@
         'hasbeenpaid': 'N'
       }, function (orders) {
         var i, j, order, orderlines, orderline, errorFunc = function () {
-            OB.error(arguments);
+            OB.error("postCloseSession", arguments);
             };
         var triggerLogoutFunc = function () {
             OB.MobileApp.model.triggerLogout();
@@ -647,7 +647,7 @@
           OB.Dal.remove(order, i < orders.models.length - 1 ? null : triggerLogoutFunc, errorFunc);
         }
       }, function () {
-        OB.error(arguments);
+        OB.error("postCloseSession", arguments);
         OB.MobileApp.model.triggerLogout();
       });
     },
