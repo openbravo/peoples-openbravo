@@ -142,7 +142,7 @@
           }, function (data) {
             // connection error.
             OB.UTIL.Debug.execute(function () {
-              console.error("Error while retrieving the terminal info " + data.exception);
+              OB.error("Error while retrieving the terminal info ", data);
             });
           });
         }
