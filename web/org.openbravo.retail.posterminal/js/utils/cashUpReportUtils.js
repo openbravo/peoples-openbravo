@@ -175,7 +175,6 @@
   };
   OB.UTIL.createNewCashupFromServer = function (cashup, callback) {
     OB.Dal.save(cashup, function () {
-
       // Create taxes
       _.each(cashup.get('cashTaxInfo'), function (taxCashup) {
         var taxModel = new OB.Model.TaxCashUp();
@@ -273,7 +272,8 @@
   OB.UTIL.initializePaymentMethodCashup = function (lastCashUpPayments, cashup, funcType) {
     _.each(OB.MobileApp.model.get('payments'), function (payment) {
       var startingCash = payment.currentBalance,
-          pAux, cashupId;
+          pAux, cashupId, deposits = payment.payment.totalDeposits,
+          drops = payment.payment.totalDrops;
       if (cashup) {
         cashupId = cashup.get('id');
       } else {
@@ -289,6 +289,12 @@
       } else {
         startingCash = OB.DEC.Zero;
       }
+      if (!deposits) {
+        deposits = OB.DEC.Zero;
+      }
+      if (!drops) {
+        drops = OB.DEC.Zero;
+      }
       OB.Dal.save(new OB.Model.PaymentMethodCashUp({
         id: OB.Dal.get_uuid(),
         paymentmethod_id: payment.payment.id,
@@ -297,6 +303,8 @@
         startingCash: startingCash,
         totalSales: OB.DEC.Zero,
         totalReturns: OB.DEC.Zero,
+        totalDeposits: deposits,
+        totalDrops: drops,
         rate: payment.rate,
         isocode: payment.isocode,
         cashup_id: cashupId
@@ -326,6 +334,7 @@
             cashUp = new OB.Model.CashUp();
             cashUp.set(data[0]);
             OB.UTIL.createNewCashupFromServer(cashUp, function (callback) {
+              OB.UTIL.composeCashupInfo(data, null, null);
               OB.UTIL.calculateCurrentCash(callback);
             });
           } else {
@@ -342,7 +351,38 @@
       }
     });
   };
+  OB.UTIL.sumCashManagementToCashup = function (cashMgmt) {
+    var cashupId = cashMgmt.get('cashup_id'),
+        criteria = {
+        'cashup_id': cashupId,
+        'paymentmethod_id': cashMgmt.get('paymentMethodId')
+        };
 
+    OB.Dal.find(OB.Model.PaymentMethodCashUp, criteria, function (paymentMethods) {
+      var paymentMethod = paymentMethods.at(0),
+          totalDeposits = paymentMethod.get('totalDeposits'),
+          totalDrops = paymentMethod.get('totalDrops');
+
+      if (cashMgmt.get('type') === 'deposit') {
+        totalDeposits = OB.DEC.add(totalDeposits, cashMgmt.get('origAmount'));
+        paymentMethod.set('totalDeposits', totalDeposits);
+      } else {
+        totalDrops = OB.DEC.add(totalDrops, cashMgmt.get('origAmount'));
+        paymentMethod.set('totalDrops', totalDrops);
+      }
+      OB.Dal.save(paymentMethod, function (success) {
+        // Success
+        OB.Dal.find(OB.Model.CashUp, {
+          'id': cashupId
+        }, function (cashUpObj) {
+          OB.UTIL.composeCashupInfo(cashUpObj, null, null);
+        });
+      }, function (error) {
+        // Error
+      });
+    });
+
+  };
   OB.UTIL.calculateCurrentCash = function (callback) {
     var me = this;
     OB.Dal.find(OB.Model.CashUp, {
@@ -422,6 +462,8 @@
       cashPaymentMethodInfo.startingCash = auxPay.get('startingCash');
       cashPaymentMethodInfo.totalSales = auxPay.get('totalSales');
       cashPaymentMethodInfo.totalReturn = auxPay.get('totalReturns');
+      cashPaymentMethodInfo.totalDeposits = auxPay.get('totalDeposits');
+      cashPaymentMethodInfo.totalDrops = auxPay.get('totalDrops');
       cashPaymentMethodInfo.rate = curModel.rate;
       cashPaymentMethodInfo.isocode = curModel.isocode;
       cashPaymentMethodInfo.paymentmethod_id = auxPay.get('paymentmethod_id');

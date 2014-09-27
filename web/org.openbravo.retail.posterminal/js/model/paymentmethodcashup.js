@@ -49,6 +49,14 @@
     column: 'totalReturns',
     type: 'NUMERIC'
   }, {
+    name: 'totalDeposits',
+    column: 'totalDeposits',
+    type: 'NUMERIC'
+  }, {
+    name: 'totalDrops',
+    column: 'totalDrops',
+    type: 'NUMERIC'
+  }, {
     name: 'rate',
     column: 'rate',
     type: 'NUMERIC'
@@ -61,7 +69,6 @@
     column: 'isocode',
     type: 'TEXT'
   }]);
-
 
   OB.Data.Registry.registerModel(PaymentMethodCashUp);
 }());

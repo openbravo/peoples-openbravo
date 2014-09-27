@@ -354,6 +354,19 @@
         criteria: {},
         postProcessingFunction: function (data, callback) {
           OB.UTIL.initCashUp(function () {
+            var cashUpId = data.at(0).get('id');
+            OB.Dal.find(OB.Model.CashUp, {
+              id: cashUpId
+            }, function (cU) {
+              if (cU.length !== 0) {
+                if (!cU.at(0).get('objToSend')) {
+                  OB.UTIL.composeCashupInfo(data, null, function () {
+                    OB.MobileApp.model.runSyncProcess();
+                  });
+                }
+              }
+            });
+            // Get Cashup id, if objToSend is not filled compose and Syn  
             OB.UTIL.deleteCashUps(data);
             callback();
           });

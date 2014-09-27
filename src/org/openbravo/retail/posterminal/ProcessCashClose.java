@@ -25,6 +25,7 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
+import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
@@ -144,19 +145,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
         cashUp.setPOSTerminal(posTerminal);
         cashUp.setUserContact(OBContext.getOBContext().getUser());
         cashUp.setBeingprocessed(jsonCashup.getString("isbeingprocessed").equalsIgnoreCase("Y"));
-
-        // We set these values to null, but they will be overwritten in updateCashupInfo
-        // cashUp.setGrossreturns(null);
-        // cashUp.setGrosssales(null);
-        // cashUp.setNetreturns(null);
-        // cashUp.setNetsales(null);
-        // cashUp.setTotalretailtransactions(null);
-        // cashUp.setActive(true);
-        // cashUp.setProcessed(null);
         cashUp.setNewOBObject(true);
         OBDal.getInstance().save(cashUp);
-
-        // create OBPOSAppCashup
       } catch (JSONException e) {
         e.printStackTrace();
       } catch (Exception e) {
@@ -187,6 +177,19 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       JSONArray paymentCashupInfo = jsonCashup.getJSONArray("cashPaymentMethodInfo");
       for (int i = 0; i < paymentCashupInfo.length(); ++i) {
         JSONObject payment = paymentCashupInfo.getJSONObject(i);
+        // Set Amount To Keep
+        if (jsonCashup.has("cashCloseInfo")) {
+          // Get the paymentMethod id
+          JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
+          for (int j = 0; j < cashCloseInfo.length(); ++j) {
+            JSONObject paymentMethod = cashCloseInfo.getJSONObject(j);
+            if (paymentMethod.getString("paymentTypeId").equals(
+                payment.getString("paymentMethodId"))) {
+              payment.put("amountToKeep",
+                  paymentMethod.getJSONObject("paymentMethod").getString("amountToKeep"));
+            }
+          }
+        }
         createPaymentMethodCashUp(cashup, payment);
       }
     }
@@ -228,7 +231,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       newPaymentMethodCashUp.setNewOBObject(true);
       newPaymentMethodCashUp.setId(jsonCashup.get("id"));
     }
-
+    JSONPropertyToEntity.fillBobFromJSON(newPaymentMethodCashUp.getEntity(),
+        newPaymentMethodCashUp, jsonCashup);
     newPaymentMethodCashUp.setCashUp(cashup);
 
     newPaymentMethodCashUp.setOrganization(cashup.getOrganization());
@@ -240,6 +244,9 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
 
     newPaymentMethodCashUp.setTotalsales(new BigDecimal(jsonCashup.getString("totalSales")));
     newPaymentMethodCashUp.setTotalreturns(new BigDecimal(jsonCashup.getString("totalReturns")));
+    newPaymentMethodCashUp.setTotalDeposits(new BigDecimal(jsonCashup.getString("totalDeposits")));
+    newPaymentMethodCashUp.setTotalDrops(new BigDecimal(jsonCashup.getString("totalDrops")));
+
     if (jsonCashup.has("amountToKeep")) {
       newPaymentMethodCashUp.setAmounttokeep(new BigDecimal(jsonCashup.getString("amountToKeep")));
     }
@@ -270,7 +277,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
       newTax.setNewOBObject(true);
       newTax.setId(jsonCashup.get("id"));
     }
-    // OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+    JSONPropertyToEntity.fillBobFromJSON(newTax.getEntity(), newTax, jsonCashup);
 
     newTax.setCashup(cashup);
     newTax.setName((String) jsonCashup.get("name"));

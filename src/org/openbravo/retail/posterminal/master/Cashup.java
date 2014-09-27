@@ -12,22 +12,30 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
+import org.openbravo.retail.posterminal.OBPOSAppCashup;
+import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
+import org.openbravo.retail.posterminal.OBPOSTaxCashup;
+import org.openbravo.retail.posterminal.ProcessCashClose;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
 
 public class Cashup extends JSONProcessSimple {
+  private static final Logger log = Logger.getLogger(ProcessCashClose.class);
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -84,7 +92,7 @@ public class Cashup extends JSONProcessSimple {
       return result;
 
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      log.error(e);
       return result;
     } finally {
       OBContext.restorePreviousMode();
@@ -94,16 +102,12 @@ public class Cashup extends JSONProcessSimple {
 
   public JSONArray getPayments(String cashupId, DataToJsonConverter converter) throws JSONException {
     JSONArray respArray = new JSONArray();
-    String hqlPayments = "select p from OBPOS_Paymentmethodcashup p where cashUp.id=:cashupId";
-    SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext.getOBContext()
-        .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
-        null);
-
-    final Session session = OBDal.getInstance().getSession();
-    final Query paymentsquery = session.createQuery(querybuilder.getHQLQuery());
-    paymentsquery.setParameter("cashupId", cashupId);
-    @SuppressWarnings("unchecked")
-    List<BaseOBObject> paymentMethodList = paymentsquery.list();
+    OBPOSAppCashup cashupObj = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
+    OBCriteria<OBPOSPaymentMethodCashup> paymentMethodCashupCriteria = OBDal.getInstance()
+        .createCriteria(OBPOSPaymentMethodCashup.class);
+    paymentMethodCashupCriteria.add(Restrictions.eq(OBPOSPaymentMethodCashup.PROPERTY_CASHUP,
+        cashupObj));
+    List<OBPOSPaymentMethodCashup> paymentMethodList = paymentMethodCashupCriteria.list();
     for (BaseOBObject paymentMethod : paymentMethodList) {
       JSONObject paymentMethodJSON = converter.toJsonObject(paymentMethod, DataResolvingMode.FULL);
       paymentMethodJSON.put("cashup_id", paymentMethodJSON.get("cashUp"));
@@ -121,16 +125,11 @@ public class Cashup extends JSONProcessSimple {
 
   public JSONArray getTaxes(String cashupId, DataToJsonConverter converter) throws JSONException {
     JSONArray respArray = new JSONArray();
-    String hqlTaxes = "select t from OBPOS_Taxcashup t where cashup.id=:cashupId";
-    SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlTaxes, OBContext.getOBContext()
-        .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
-        null);
-
-    final Session session = OBDal.getInstance().getSession();
-    final Query taxesquery = session.createQuery(querybuilder.getHQLQuery());
-    taxesquery.setParameter("cashupId", cashupId);
-    @SuppressWarnings("unchecked")
-    List<BaseOBObject> taxesList = taxesquery.list();
+    OBPOSAppCashup cashupObj = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
+    OBCriteria<OBPOSTaxCashup> taxCashupCriteria = OBDal.getInstance().createCriteria(
+        OBPOSTaxCashup.class);
+    taxCashupCriteria.add(Restrictions.eq(OBPOSTaxCashup.PROPERTY_CASHUP, cashupObj));
+    List<OBPOSTaxCashup> taxesList = taxCashupCriteria.list();
     for (BaseOBObject tax : taxesList) {
       JSONObject taxJSON = converter.toJsonObject(tax, DataResolvingMode.FULL);
       JSONObject result = new JSONObject();
