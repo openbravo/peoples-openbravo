@@ -73,6 +73,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="TOTALDEPOSITS" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[0]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="TOTALDROPS" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[0]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBPOS_APP_CASHUP" name="OBPOS_PAYMENTMETHODCAHSUP_FK">
         <reference local="OBPOS_APP_CASHUP_ID" foreign="OBPOS_APP_CASHUP_ID"/>
       </foreign-key>
