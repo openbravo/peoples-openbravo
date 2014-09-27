@@ -27,9 +27,9 @@
         if (typeof (e) === 'string') {
           errorInfo = e + '. Line number: ' + line + '. File uuid: ' + url + '.';
           if (OB.UTIL.error) {
-            OB.UTIL.error(errorInfo);
+            OB.UTIL.error("index.jsp: " + errorInfo);
           } else {
-            console.error(errorInfo);
+            console.error("index.jsp: " + errorInfo);
           }
         }
       };

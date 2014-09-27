@@ -20,7 +20,7 @@ var OB = window.OB || {};
     if (typeof (e) === 'string') {
       errorInfo = e + '. Line number: ' + line + '. File uuid: ' + url + '.';
       OB.UTIL.showError(errorInfo);
-      OB.error(errorInfo);
+      OB.error("main.js: " + errorInfo);
     }
   };
 
