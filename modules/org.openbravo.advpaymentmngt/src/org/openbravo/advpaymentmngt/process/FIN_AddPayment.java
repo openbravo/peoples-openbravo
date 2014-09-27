@@ -1213,8 +1213,10 @@ public class FIN_AddPayment {
             finalSettlementDate));
       }
       invoice.setPaymentComplete(true);
-    } else
+    } else {
       invoice.setPaymentComplete(false);
+      invoice.setFinalSettlementDate(null);
+    }
     List<FIN_PaymentSchedule> paymentSchedList = invoice.getFINPaymentScheduleList();
     Date firstDueDate = null;
     for (FIN_PaymentSchedule paymentSchedule : paymentSchedList) {
