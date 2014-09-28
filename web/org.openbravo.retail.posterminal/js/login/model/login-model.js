@@ -80,7 +80,7 @@
       this.addPropertiesLoader({
         properties: ['terminal'],
         loadFunction: function (terminalModel) {
-          OB.info('Loading... ' + this.properties);
+          OB.debug('Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(null, function (data) {
             if (data.exception) {
@@ -152,7 +152,7 @@
         properties: ['context'],
         sync: false,
         loadFunction: function (terminalModel) {
-          OB.info('Loading... ' + this.properties);
+          OB.debug('Loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.mobile.core.login.Context').exec({
             terminal: OB.MobileApp.model.get('terminalName'),
@@ -169,7 +169,7 @@
       this.addPropertiesLoader({
         properties: ['payments'],
         loadFunction: function (terminalModel) {
-          OB.info('loading... ' + this.properties);
+          OB.debug('loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Payments').exec(null, function (data) {
             if (data) {
@@ -184,7 +184,7 @@
       this.addPropertiesLoader({
         properties: ['cashMgmtDepositEvents'],
         loadFunction: function (terminalModel) {
-          console.log('loading... ' + this.properties);
+          OB.debug('loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.CashMgmtDepositEvents').exec(null, function (data) {
             if (data) {
@@ -198,7 +198,7 @@
       this.addPropertiesLoader({
         properties: ['cashMgmtDropEvents'],
         loadFunction: function (terminalModel) {
-          console.log('loading... ' + this.properties);
+          OB.debug('loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.CashMgmtDropEvents').exec(null, function (data) {
             if (data) {
@@ -212,7 +212,7 @@
       this.addPropertiesLoader({
         properties: ['businesspartner'],
         loadFunction: function (terminalModel) {
-          OB.info('loading... ' + this.properties);
+          OB.debug('loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.BusinessPartner').exec(null, function (data) {
             if (data[0]) {
@@ -227,7 +227,7 @@
       this.addPropertiesLoader({
         properties: ['location'],
         loadFunction: function (terminalModel) {
-          OB.info('loading... ' + this.properties);
+          OB.debug('loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Location').exec(null, function (data) {
             if (data[0]) {
@@ -241,7 +241,7 @@
       this.addPropertiesLoader({
         properties: ['pricelist'],
         loadFunction: function (terminalModel) {
-          OB.info('loading... ' + this.properties);
+          OB.debug('loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.PriceList').exec(null, function (data) {
             if (data[0]) {
@@ -255,7 +255,7 @@
       this.addPropertiesLoader({
         properties: ['warehouses'],
         loadFunction: function (terminalModel) {
-          OB.info('loading... ' + this.properties);
+          OB.debug('loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Warehouses').exec(null, function (data) {
             if (data && data.exception) {
@@ -272,7 +272,7 @@
       this.addPropertiesLoader({
         properties: ['writableOrganizations'],
         loadFunction: function (terminalModel) {
-          OB.info('loading... ' + this.properties);
+          OB.debug('loading... ' + this.properties);
           var me = this;
           new OB.DS.Process('org.openbravo.retail.posterminal.term.WritableOrganizations').exec(null, function (data) {
             if (data.length > 0) {
@@ -286,7 +286,7 @@
       this.addPropertiesLoader({
         properties: ['pricelistversion'],
         loadFunction: function (terminalModel) {
-          OB.info('loading... ' + this.properties);
+          OB.debug('loading... ' + this.properties);
           var me = this;
           var params = {};
           var currentDate = new Date();
@@ -304,7 +304,7 @@
       this.addPropertiesLoader({
         properties: ['currency'],
         loadFunction: function (terminalModel) {
-          OB.info('loading... ' + this.properties);
+          OB.debug('loading... ' + this.properties);
           var me = this;
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Currency').exec(null, function (data) {
             if (data[0]) {
@@ -407,7 +407,7 @@
           OB.debug('Synch all models.');
           OB.MobileApp.model.syncAllModels(function () {
             OB.UTIL.showI18NSuccess('OBPOS_SynchronizationWasSuccessfulMessage', 'OBPOS_SynchronizingDataMessage');
-            OB.debug('Synch success.');
+            OB.info('Synch success.');
             if (successCallback) {
               successCallback();
             }

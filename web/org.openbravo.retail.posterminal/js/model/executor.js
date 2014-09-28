@@ -70,7 +70,7 @@ OB.Model.Executor = Backbone.Model.extend({
       event.reportSynchronizationHelper();
       var currentExecutionQueue = (this.get('exec') || 0) - 1;
       this.set('exec', currentExecutionQueue);
-      OB.info('event execution time', (new Date().getTime()) - event.get('start'), currentExecutionQueue);
+      OB.debug('event execution time', (new Date().getTime()) - event.get('start'), currentExecutionQueue);
       if (currentExecutionQueue === 0 && event.get('receipt')) {
         event.get('receipt').trigger('eventExecutionDone');
       }
