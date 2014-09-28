@@ -21,7 +21,7 @@
 
     this.receipt.on('closed', function (eventParams) {
       this.receipt = model.get('order');
-      OB.warn('Ticket closed. ' + this.receipt.getOrderDescription());
+      OB.warn('Ticket closed', this.receipt.getOrderDescription());
       var me = this,
           docno = this.receipt.get('documentNo'),
           isLayaway = (this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')),
