@@ -248,7 +248,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess {
     newPaymentMethodCashUp.setTotalDrops(new BigDecimal(jsonCashup.getString("totalDrops")));
 
     if (jsonCashup.has("amountToKeep")) {
-      newPaymentMethodCashUp.setAmounttokeep(new BigDecimal(jsonCashup.getString("amountToKeep")));
+      newPaymentMethodCashUp.setAmountToKeep(new BigDecimal(jsonCashup.getString("amountToKeep")));
     }
     newPaymentMethodCashUp.setRate(new BigDecimal(jsonCashup.getString("rate")));
     newPaymentMethodCashUp.setIsocode((String) jsonCashup.get("isocode"));

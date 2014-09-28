@@ -75,8 +75,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           var cStartingCash = auxPay.get('startingCash');
           var cTotalReturns = auxPay.get('totalReturns');
           var cTotalSales = auxPay.get('totalSales');
-          var cTotalDeposits = OB.DEC.sub(auxPay.get('totalDeposits'), auxPay.get('totalDrops'));
-          expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, cTotalReturns)), cTotalDeposits);
+          var cTotalDeposits = OB.DEC.sub(auxPay.get('totalDeposits'), OB.DEC.abs(auxPay.get('totalDrops')));
+          expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, OB.DEC.abs(cTotalReturns))), cTotalDeposits);
           var fromCurrencyId = auxPay.get('paymentMethod').currency;
           auxPay.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
           auxPay.set('foreignExpected', expected);
@@ -94,7 +94,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }, this);
       }, function () {
         // error
-        //console.error("OB.Model.PaymentMethodCashUp find");
         OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init');
       });
     }, this);
@@ -141,13 +140,13 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
         cashUpReport.set('totalDeposits', _.reduce(payMthds.models, function (accum, trx) {
           var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
-          var cTotalDeposits = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, trx.get('totalDeposits'));
+          var cTotalDeposits = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDeposits'), trx.get('totalSales')));
           return OB.DEC.add(accum, cTotalDeposits);
         }, 0));
 
         cashUpReport.set('totalDrops', _.reduce(payMthds.models, function (accum, trx) {
           var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
-          var cTotalDrops = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, trx.get('totalDrops'));
+          var cTotalDrops = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDrops'), trx.get('totalReturns')));
           return OB.DEC.add(accum, cTotalDrops);
         }, 0));
 
@@ -162,25 +161,20 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           var fromCurrencyId = auxPay.paymentMethod.currency;
 
           cashUpReport.get('deposits').push(new Backbone.Model({
-            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('totalDeposits')),
-            amount: OB.DEC.add(0, p.get('totalDeposits')),
+            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
+            amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDeposits'), p.get('totalSales'))),
             description: p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
-          var ccAmount1 = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('totalSales'));
-          cashUpReport.set('totalDeposits', OB.DEC.add(cashUpReport.get('totalDeposits'), ccAmount1));
 
           cashUpReport.get('drops').push(new Backbone.Model({
-            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('totalDrops')),
-            amount: OB.DEC.add(0, p.get('totalDrops')),
+            origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
+            amount: OB.DEC.add(0, OB.DEC.add(p.get('totalDrops'), p.get('totalReturns'))),
             description: p.get('name'),
             isocode: auxPay.isocode,
             rate: p.get('rate')
           }));
-          var ccAmount2 = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('totalReturns'));
-          cashUpReport.set('totalDrops', OB.DEC.add(cashUpReport.get('totalDrops'), ccAmount2));
-
           startings.push(new Backbone.Model({
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('startingCash')),
             amount: OB.DEC.add(0, p.get('startingCash')),

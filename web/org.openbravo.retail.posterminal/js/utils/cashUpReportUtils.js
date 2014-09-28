@@ -404,33 +404,21 @@
           auxPay.set('isocode', paymentType.isocode);
           auxPay.set('paymentMethod', paymentType.paymentMethod);
           auxPay.set('id', paymentType.payment.id);
-          OB.Dal.find(OB.Model.CashManagement, {
-            'cashup_id': cashUp.at(0).get('id'),
-            'paymentMethodId': paymentType.payment.id
-          }, function (cashMgmts, args) {
-            var startingCash = auxPay.get('startingCash'),
-                rate = auxPay.get('rate'),
-                totalSales = auxPay.get('totalSales'),
-                totalReturns = auxPay.get('totalReturns'),
-                cashMgmt = _.reduce(cashMgmts.models, function (accum, trx) {
-                if (trx.get('type') === 'deposit') {
-                  return OB.DEC.add(accum, trx.get('origAmount'));
-                } else {
-                  return OB.DEC.sub(accum, trx.get('origAmount'));
-                }
-              }, 0);
+          var startingCash = auxPay.get('startingCash'),
+              rate = auxPay.get('rate'),
+              totalSales = auxPay.get('totalSales'),
+              totalReturns = auxPay.get('totalReturns'),
+              totalDeps = auxPay.get('totalDeposits'),
+              totalDrops = auxPay.get('totalDrops'),
+              cashMgmt = OB.DEC.sub(totalDeps, totalDrops);
+          var payment = OB.MobileApp.model.paymentnames[paymentType.payment.searchKey];
+          cash = OB.DEC.add(OB.DEC.add(startingCash, OB.DEC.sub(totalSales, totalReturns)), cashMgmt);
+          payment.currentCash = OB.UTIL.currency.toDefaultCurrency(payment.paymentMethod.currency, cash);
+          payment.foreignCash = OB.UTIL.currency.toForeignCurrency(payment.paymentMethod.currency, cash);
 
-            var payment = OB.MobileApp.model.paymentnames[paymentType.payment.searchKey];
-            cash = OB.DEC.add(OB.DEC.add(startingCash, OB.DEC.sub(totalSales, totalReturns)), cashMgmt);
-            payment.currentCash = OB.UTIL.currency.toDefaultCurrency(payment.paymentMethod.currency, cash);
-            payment.foreignCash = OB.UTIL.currency.toForeignCurrency(payment.paymentMethod.currency, cash);
-
-            if (typeof callback === 'function') {
-              callback();
-            }
-          }, null, {
-            me: me
-          });
+          if (typeof callback === 'function') {
+            callback();
+          }
         }, this);
       });
     });

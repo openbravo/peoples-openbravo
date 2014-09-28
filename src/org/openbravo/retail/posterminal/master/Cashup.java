@@ -113,7 +113,6 @@ public class Cashup extends JSONProcessSimple {
       paymentMethodJSON.put("cashup_id", paymentMethodJSON.get("cashUp"));
       paymentMethodJSON.put("searchKey", paymentMethodJSON.get("searchkey"));
       paymentMethodJSON.put("paymentmethod_id", paymentMethodJSON.get("paymentType"));
-      paymentMethodJSON.put("amountToKeep", paymentMethodJSON.get("amounttokeep"));
       paymentMethodJSON.put("startingCash", paymentMethodJSON.get("startingcash"));
       paymentMethodJSON.put("totalSales", paymentMethodJSON.get("totalsales"));
       paymentMethodJSON.put("totalReturns", paymentMethodJSON.get("totalreturns"));
