@@ -41,8 +41,11 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
           + "select oww.warehouse.id from OrganizationWarehouse as oww where oww.organization.id <> '"
           + orgId
           + "' "
-          + ") and "
-          + "ms.product.id = '"
+          + ") and ms.storageBin.warehouse not in ( "
+          + "select owww.warehouse.id from OrganizationWarehouse as owww where owww.organization.id = '"
+          + orgId
+          + "') "
+          + "and ms.product.id = '"
           + prodId
           + "' "
           + "group by ow.organization.id, ow.organization.name, ow.warehouse.id, ow.warehouse.name "
