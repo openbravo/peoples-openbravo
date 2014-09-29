@@ -479,6 +479,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             OB.MobileApp.model.runSyncProcess(function () {
               OB.UTIL.showLoading(false);
               me.set("finished", true);
+            }, function () {
+              OB.UTIL.showLoading(false);
+              me.set("finishedWrongly", true);
             });
           }, null, null);
         }, null);
