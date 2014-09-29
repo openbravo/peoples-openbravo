@@ -610,7 +610,7 @@ isc.OBSelectorItem.addProperties({
       // prevents a pickListWidth longer than width of the grid.
       extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - leftFieldsWidth);
     }
-    this.pickListWidth = fieldWidth + extraWidth;
+    this.pickListWidth = fieldWidth + extraWidth - this.grid.scrollbarSize;
   },
 
   enableShortcuts: function () {
