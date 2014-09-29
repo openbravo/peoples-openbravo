@@ -734,8 +734,6 @@
           // nothing to do
         });
 
-      }, function () {
-        OB.debug("The 'c_document_sequence' table is locked");
       });
     },
 
