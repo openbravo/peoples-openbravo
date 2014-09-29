@@ -602,15 +602,17 @@ isc.OBSelectorItem.addProperties({
     fieldWidth = (fieldWidth < 150 ? 150 : fieldWidth);
     // Dropdown selector that shows more than one column.
     if (this.pickListFields.length > 1) {
-      // calculate width of checkBox and first fields before selector field
-      while (i < this.grid.fields.size() && nameField.localeCompare(this.grid.fields.get(i).valueField) !== 0) {
-        leftFieldsWidth = leftFieldsWidth + this.grid.fields.get(i).width;
-        i++;
+      // calculate width of checkBox and first fields before selector field in viewGrid
+      if (!this.form.view.isShowingForm) {
+        while (i < this.grid.fields.size() && nameField.localeCompare(this.grid.fields.get(i).valueField) !== 0) {
+          leftFieldsWidth = leftFieldsWidth + this.grid.fields.get(i).width;
+          i++;
+        }
+        // prevents a pickListWidth longer than width of the grid.
+        extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - this.grid.scrollbarSize - leftFieldsWidth);
       }
-      // prevents a pickListWidth longer than width of the grid.
-      extraWidth = Math.min(150 * (this.pickListFields.length - 1), this.grid.width - fieldWidth - leftFieldsWidth);
     }
-    this.pickListWidth = fieldWidth + extraWidth - this.grid.scrollbarSize;
+    this.pickListWidth = fieldWidth + extraWidth;
   },
 
   enableShortcuts: function () {
