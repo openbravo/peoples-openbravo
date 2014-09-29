@@ -191,6 +191,14 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
               for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
                 invoicePaidold = psd.isInvoicePaid();
                 if (invoicePaidold) {
+                  if (FIN_Utility.invoicePaymentStatus(payment) == null) {
+                    msg.setType("Error");
+                    msg.setTitle(Utility.messageBD(conProvider, "Error", language));
+                    msg.setMessage(Utility.parseTranslation(conProvider, vars, language,
+                        "@APRM_NoPaymentMethod@" + ": " + payment.getAccount().getName()));
+                    bundle.setResult(msg);
+                    return;
+                  }
                   boolean restore = (FIN_Utility.seqnumberpaymentstatus(payment.getStatus())) == (FIN_Utility
                       .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));
                   if (restore) {
