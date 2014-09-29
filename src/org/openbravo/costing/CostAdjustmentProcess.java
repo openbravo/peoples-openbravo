@@ -231,7 +231,7 @@ public class CostAdjustmentProcess {
 
       // Add transactions that depend on the transaction being adjusted.
       CostingAlgorithmAdjustmentImp costAdjImp = getAlgorithmAdjustmentImp(trx
-          .getCostingAlgorithm().getId());
+          .getCostingAlgorithm().getJavaClassName());
 
       if (costAdjImp == null) {
         throw new OBException(
@@ -314,15 +314,15 @@ public class CostAdjustmentProcess {
     log.debug("Transaction costs created. Time {}", System.currentTimeMillis() - t1);
   }
 
-  private CostingAlgorithmAdjustmentImp getAlgorithmAdjustmentImp(String strCostingAlgorithmId) {
+  private CostingAlgorithmAdjustmentImp getAlgorithmAdjustmentImp(String strJavaClass) {
     CostingAlgorithmAdjustmentImp implementor = null;
     for (CostingAlgorithmAdjustmentImp nextImplementor : costAdjustmentAlgorithms
-        .select(new ComponentProvider.Selector(strCostingAlgorithmId))) {
+        .select(new ComponentProvider.Selector(strJavaClass))) {
       if (implementor == null) {
         implementor = nextImplementor;
       } else {
-        log.warn("More than one class found implementing cost adjustment for algorithm with id {}",
-            strCostingAlgorithmId);
+        log.warn("More than one class found implementing cost adjustment for algorithm with java class {}",
+            strJavaClass);
       }
     }
     return implementor;

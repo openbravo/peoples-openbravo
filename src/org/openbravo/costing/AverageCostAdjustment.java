@@ -61,7 +61,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ComponentProvider.Qualifier("B069080A0AE149A79CF1FA0E24F16AB6")
+@ComponentProvider.Qualifier("org.openbravo.costing.AverageAlgorithm")
 public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcess.class);
   private String bdCostingId = "";

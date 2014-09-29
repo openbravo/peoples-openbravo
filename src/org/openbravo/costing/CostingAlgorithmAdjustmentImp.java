@@ -246,11 +246,19 @@ public abstract class CostingAlgorithmAdjustmentImp {
         .getProductionLine().getProductionPlan().getManufacturingProductionLineList();
     Collections.sort(productionLines, new Comparator<ProductionLine>() {
       public int compare(ProductionLine pline1, ProductionLine pline2) {
-        return pline1.getComponentCost().compareTo(pline2.getComponentCost());
+        BigDecimal cc1 = pline1.getComponentCost();
+        BigDecimal cc2 = pline2.getComponentCost();
+        if (cc1 == null) {
+          cc1 = BigDecimal.ZERO;
+        }
+        if (cc2 == null) {
+          cc2 = BigDecimal.ZERO;
+        }
+        return cc1.compareTo(cc2);
       }
     });
     for (ProductionLine pline : productionLines) {
-      if (!pline.getProductionType().equals("P+")) {
+      if (!pline.getProductionType().equals("+")) {
         continue;
       }
       MaterialTransaction prodtrx = pline.getMaterialMgmtMaterialTransactionList().get(0);

@@ -46,7 +46,7 @@ import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
-@ComponentProvider.Qualifier("6A39D8B46CD94FE682D48758D3B7726B")
+@ComponentProvider.Qualifier("org.openbravo.costing.StandardAlgorithm")
 public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
   @Override
