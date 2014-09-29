@@ -274,7 +274,7 @@ public class OrderLoader extends POSDataSynchronizationProcess {
     }
     long t5 = System.currentTimeMillis();
     OBDal.getInstance().flush();
-    log.debug("Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
+    log.info("Order with docno: "+order.getDocumentNo()+" (uuid: "+order.getId()+") saved correctly. Initial flush: " + (t1 - t0) + "; Generate bobs:" + (t11 - t1) + "; Save bobs:"
         + (t2 - t11) + "; First flush:" + (t3 - t2) + "; Second flush: " + (t4 - t3)
         + "; Process Payments:" + (t5 - t4) + " Final flush: " + (System.currentTimeMillis() - t5));
 
