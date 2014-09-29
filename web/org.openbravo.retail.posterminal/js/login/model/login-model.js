@@ -55,7 +55,7 @@
           size: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.size,
           name: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.name,
           displayName: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.displayName,
-          version: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.major + '.' + OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.minor
+          version: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.dbVersion
         },
         logDBTrxThreshold: 300,
         logDBStmtThreshold: 1000

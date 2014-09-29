@@ -26,7 +26,7 @@ var OB = window.OB || {};
 
   // Add the current WebPOS version
   OB.UTIL.VersionManagement.current.posterminal = {
-    rootName: 'RR14Q',
+    year: '14',
     major: '4',
     minor: '0'
   };
@@ -35,8 +35,7 @@ var OB = window.OB || {};
     name: 'WEBPOS',
     size: 4 * 1024 * 1024,
     displayName: 'Openbravo Web POS',
-    major: '0',
-    minor: '7'
+    dbVersion: OB.UTIL.VersionManagement.current.posterminal.year + "." + OB.UTIL.VersionManagement.current.posterminal.major + OB.UTIL.VersionManagement.current.posterminal.minor
   };
 
 }());
