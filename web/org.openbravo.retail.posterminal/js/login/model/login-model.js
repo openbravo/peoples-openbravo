@@ -487,7 +487,7 @@
       if (!this.get('terminal')) {
         OB.UTIL.Debug.execute(function () {
           // show an error while in debug mode to help debugging and testing
-          console.error("OB.MobileApp.model.get('terminal') properties have not been loaded");
+          throw "OB.MobileApp.model.get('terminal') properties have not been loaded";
         });
         return;
       }
