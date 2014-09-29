@@ -215,7 +215,7 @@ public class DocLCCost extends AcctServer {
       line2.m_C_Campaign_ID = "";
       line2.m_A_Asset_ID = "";
 
-      fact.createLine(line2, acctLC, line2.m_C_Currency_ID, amtCredit, amtDebit,
+      fact.createLine(line2, acctLC, line2.m_C_Currency_ID, amount.add(differenceAmt).toString(), amtDebit,
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null, conn);
 
     }
@@ -235,21 +235,6 @@ public class DocLCCost extends AcctServer {
               BigDecimal.ROUND_HALF_UP);
           amtDebit = "";
           amtCredit = rcptAmount.toString();
-
-          DocLine line3 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
-          line3.copyInfo(line);
-
-          line3.m_C_BPartner_ID = "";
-          line3.m_M_Product_ID = "";
-          line3.m_C_Project_ID = "";
-          line3.m_C_Costcenter_ID = "";
-          line3.m_User1_ID = "";
-          line3.m_User2_ID = "";
-          line3.m_C_Activity_ID = "";
-          line3.m_C_Campaign_ID = "";
-          line3.m_A_Asset_ID = "";
-          fact.createLine(line3, acctLC, line3.m_C_Currency_ID, amtDebit, amtCredit,
-              Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line3.m_DateAcct, null, conn);
 
           DocLine line4 = new DocLine(DocumentType, Record_ID, line.m_TrxLine_ID);
           line4.copyInfo(line);
