@@ -180,7 +180,7 @@ public class DocLandedCost extends AcctServer {
       amtDebit = "";
       amtCredit = amount.toString();
 
-      fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
+      fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
           line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, line.m_DateAcct, null, conn);
 
