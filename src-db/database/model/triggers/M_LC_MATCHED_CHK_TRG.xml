@@ -21,50 +21,54 @@
   v_Processed VARCHAR(60) ;
   v_M_LC_Cost_ID VARCHAR2(32) ;
   v_Posted VARCHAR(60) ;
-        
+
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
-  IF INSERTING THEN
-    v_M_LC_Cost_ID:=:new.M_LC_Cost_ID;
+  IF (INSERTING) THEN
+    v_M_LC_Cost_ID := :new.M_LC_Cost_ID;
   ELSE
-    v_M_LC_Cost_ID:=:old.M_LC_Cost_ID;
+    v_M_LC_Cost_ID := :old.M_LC_Cost_ID;
   END IF;
-  SELECT PROCESSED, POSTED INTO v_Processed, v_Posted FROM M_LC_Cost_ID WHERE M_LC_Cost_ID=v_M_LC_Cost_ID;
-    IF UPDATING THEN  
-      IF(v_Processed='Y'
-        AND ((COALESCE(:old.m_lc_cost_id, '0') <> COALESCE(:new.m_lc_cost_id, '0'))
+  SELECT PROCESSED, POSTED INTO v_Processed, v_Posted
+  FROM M_LC_Cost WHERE M_LC_Cost_ID=v_M_LC_Cost_ID;
+  IF (UPDATING) THEN
+    IF(v_Processed = 'Y'
+      AND ((COALESCE(:old.m_lc_cost_id, '0') <> COALESCE(:new.m_lc_cost_id, '0'))
         OR(COALESCE(:old.c_invoiceline_id, '0') <> COALESCE(:new.c_invoiceline_id, '0'))
         OR(COALESCE(:old.amount, 0) <> COALESCE(:new.amount, 0))
         OR(COALESCE(:old.amt_invoice_currency, 0) <> COALESCE(:new.amt_invoice_currency, 0))
         OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
-        OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0'))))
-        THEN  RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
-      END IF;
-    
-      IF(v_Posted='Y' 
-        AND ((COALESCE(:old.m_lc_cost_id, '0') <> COALESCE(:new.m_lc_cost_id, '0'))
+        OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))
+      ) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20501@');
+    END IF;
+
+    IF (v_Posted = 'Y'
+      AND ((COALESCE(:old.m_lc_cost_id, '0') <> COALESCE(:new.m_lc_cost_id, '0'))
         OR(COALESCE(:old.c_invoiceline_id, '0') <> COALESCE(:new.c_invoiceline_id, '0'))
         OR(COALESCE(:old.amount, 0) <> COALESCE(:new.amount, 0))
         OR(COALESCE(:old.amt_invoice_currency, 0) <> COALESCE(:new.amt_invoice_currency, 0))
         OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
-        OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0'))))
-        THEN RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
-      END IF;    
+        OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))
+      ) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20501@');
     END IF;
-    IF(DELETING) THEN
-      IF(v_Processed='Y') THEN
-        RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
-      END IF;
+  END IF;
+
+  IF (DELETING) THEN
+    IF (v_Processed = 'Y') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20501@');
     END IF;
-    IF(INSERTING) THEN
-      IF(v_Processed='Y') THEN
-        RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
-      END IF;
+  END IF;
+  IF (INSERTING) THEN
+    IF (v_Processed = 'Y') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20501@');
     END IF;
-    END M_LC_MATCHED_CHK_TRG
+  END IF;
+END M_LC_MATCHED_CHK_TRG
 ]]></body>
     </trigger>
   </database>
