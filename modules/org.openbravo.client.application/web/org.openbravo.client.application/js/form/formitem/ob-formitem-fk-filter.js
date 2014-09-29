@@ -560,7 +560,7 @@ isc.OBFKFilterTextItem.addProperties({
   getCriteriaValue: function () {
     var value, values = this.getValue(),
         record, i, criteriaValues = [],
-        recordId;
+        recordIds;
     if (values && this.filterType === 'id') {
       for (i = 0; i < values.length; i++) {
         value = values[i];
@@ -568,12 +568,12 @@ isc.OBFKFilterTextItem.addProperties({
           // if the value has the equals operator prefix, get rid of it
           value = value.substring(2);
         }
-        recordId = this.getRecordIdFromIdentifier(value);
-        if (!recordId) {
+        recordIds = this.getRecordIdsFromIdentifier(value);
+        if (!recordIds) {
           // if the record is not found  or it does not have an id, use the standard criteria value
           return this.Super('getCriteriaValue', arguments);
         } else {
-          criteriaValues.add(recordId);
+          criteriaValues.addAll(recordIds);
         }
       }
       return criteriaValues;
@@ -582,14 +582,19 @@ isc.OBFKFilterTextItem.addProperties({
     }
   },
 
-  getRecordIdFromIdentifier: function (identifier) {
-    var recordId;
+  // given an identifier, returns an array of the filter picklist records that have that identifier 
+  getRecordIdsFromIdentifier: function (identifier) {
+    var records, recordIds = [],
+        i;
     if (this.pickList && this.pickList.data.find(OB.Constants.IDENTIFIER, identifier)) {
-      recordId = this.pickList.data.find(OB.Constants.IDENTIFIER, identifier)[OB.Constants.ID];
+      records = this.pickList.data.findAll(OB.Constants.IDENTIFIER, identifier);
     } else if (this.filterAuxCache && this.filterAuxCache.find(OB.Constants.IDENTIFIER, identifier)) {
-      recordId = this.filterAuxCache.find(OB.Constants.IDENTIFIER, identifier)[OB.Constants.ID];
+      records = this.filterAuxCache.findAll(OB.Constants.IDENTIFIER, identifier);
     }
-    return recordId;
+    for (i = 0; i < records.length; i++) {
+      recordIds.add(records[i][OB.Constants.ID]);
+    }
+    return recordIds;
   },
 
   getRecordIdentifierFromId: function (id) {
