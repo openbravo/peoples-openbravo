@@ -498,7 +498,7 @@ isc.OBStandardWindow.addProperties({
                 }
                 for (stBtns = 0; stBtns < stView.toolBar.rightMembers.length; stBtns++) {
                   stBtn = stView.toolBar.rightMembers[stBtns];
-                  if (stBtn.contextView === button.contextView && stBtn.property && !tab.fields[stBtn.property]) {
+                  if (stBtn.contextView === button.contextView && button.property === stBtn.property && !tab.fields[stBtn.property]) {
                     stBtn.readOnlyIf = alwaysReadOnly;
                     break;
                   }
