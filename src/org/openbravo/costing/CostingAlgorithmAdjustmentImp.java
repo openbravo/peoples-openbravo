@@ -34,8 +34,11 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
@@ -68,6 +71,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
   protected String strClientId;
   protected boolean isManufacturingProduct;
   protected boolean areBackdatedTrxFixed;
+  protected boolean checkNegativeStockCorrection;
   protected HashMap<CostDimension, String> costDimensionIds = new HashMap<CostDimension, String>();
 
   /**
@@ -106,6 +110,15 @@ public abstract class CostingAlgorithmAdjustmentImp {
         value = (String) costDimensions.get(costDimension).getId();
       }
       costDimensionIds.put(costDimension, value);
+    }
+    try {
+      checkNegativeStockCorrection = Preferences.getPreferenceValue(
+          CostAdjustmentUtils.ENABLE_NEGATIVE_STOCK_CORRECTION_PREF, true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null).equals("Y");
+    } catch (PropertyException e1) {
+      checkNegativeStockCorrection = false;
     }
   }
 

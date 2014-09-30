@@ -140,18 +140,19 @@ public class CostingServer {
         return;
       }
     }
-    boolean doNotCheckPriceCorrectionTrxs = false;
-    boolean doNotCheckNegativeStockCorrectionTrxs = false;
+    boolean checkPriceCorrectionTrxs = false;
+    boolean checkNegativeStockCorrectionTrxs = false;
     // check if price correction is needed
     try {
-      doNotCheckPriceCorrectionTrxs = Preferences.getPreferenceValue(
-          "doNotCheckPriceCorrectionTrxs", true, OBContext.getOBContext().getCurrentClient(),
+      checkPriceCorrectionTrxs = Preferences.getPreferenceValue(
+          CostAdjustmentUtils.ENABLE_AUTO_PRICE_CORRECTION_PREF, true,
+          OBContext.getOBContext().getCurrentClient(),
           OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), null).equals("Y");
     } catch (PropertyException e1) {
-      doNotCheckPriceCorrectionTrxs = false;
+      checkPriceCorrectionTrxs = false;
     }
-    if (!doNotCheckPriceCorrectionTrxs && transaction.isCheckpricedifference()) {
+    if (checkPriceCorrectionTrxs && transaction.isCheckpricedifference()) {
       PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
     }
 
@@ -247,21 +248,21 @@ public class CostingServer {
 
     // check if negative stock correction should be done
     try {
-      doNotCheckNegativeStockCorrectionTrxs = Preferences.getPreferenceValue(
-          "doNotCheckNegativeStockCorrecctionTrxs", true,
+      checkNegativeStockCorrectionTrxs = Preferences.getPreferenceValue(
+          CostAdjustmentUtils.ENABLE_NEGATIVE_STOCK_CORRECTION_PREF, true,
           OBContext.getOBContext().getCurrentClient(),
           OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), null).equals("Y");
     } catch (PropertyException e1) {
-      doNotCheckNegativeStockCorrectionTrxs = false;
+      checkNegativeStockCorrectionTrxs = false;
     }
 
     boolean modifiesAvg = AverageAlgorithm.modifiesAverage(TrxType.getTrxType(transaction));
-    BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(), transaction,
-        getCostingAlgorithm().costDimensions, transaction.getProduct().isProduction(),
+    BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
+        transaction, getCostingAlgorithm().costDimensions, transaction.getProduct().isProduction(),
         costingRule.isBackdatedTransactionsFixed());
     // the stock previous to transaction was negative
-    if (!doNotCheckNegativeStockCorrectionTrxs
+    if (checkNegativeStockCorrectionTrxs
         && currentStock.compareTo(transaction.getMovementQuantity()) < 0 && modifiesAvg) {
 
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(

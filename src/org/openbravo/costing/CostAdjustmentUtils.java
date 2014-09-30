@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -50,15 +49,19 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CostAdjustmentUtils {
-  private static final Logger log4j = Logger.getLogger(CostAdjustmentUtils.class);
-  final static String strCategoryCostAdj = "CAD";
-  final static String strTableCostAdj = "M_CostAdjustment";
-  final static String propADListPriority = org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER;
-  final static String propADListReference = org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE;
-  final static String propADListValue = org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY;
-  final static String MovementTypeRefID = "189";
+  private static final Logger log4j = LoggerFactory.getLogger(CostAdjustmentUtils.class);
+  public static final String strCategoryCostAdj = "CAD";
+  public static final String strTableCostAdj = "M_CostAdjustment";
+  public static final String propADListPriority = org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER;
+  public static final String propADListReference = org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE;
+  public static final String propADListValue = org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY;
+  public static final String MovementTypeRefID = "189";
+  public static final String ENABLE_AUTO_PRICE_CORRECTION_PREF = "enableAutomaticPriceCorrectionTrxs";
+  public static final String ENABLE_NEGATIVE_STOCK_CORRECTION_PREF = "enableNegativeStockCorrections";
 
   /**
    * @param organization
@@ -214,8 +217,8 @@ public class CostAdjustmentUtils {
     // log4j.debug("Get Transaction Cost");
     if (!trx.isCostCalculated()) {
       // Transaction hasn't been calculated yet.
-      log4j.error("  *** No cost found for transaction " + trx.getIdentifier() + " with id "
-          + trx.getId());
+      log4j.error("  *** No cost found for transaction {} with id {}", trx.getIdentifier(),
+          trx.getId());
       throw new OBException("@NoCostFoundForTrxOnDate@ @Transaction@: " + trx.getIdentifier());
     }
     BigDecimal cost = BigDecimal.ZERO;
