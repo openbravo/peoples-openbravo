@@ -42,6 +42,7 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
@@ -64,6 +65,8 @@ public class CostAdjustmentUtils {
   public static final String ENABLE_NEGATIVE_STOCK_CORRECTION_PREF = "enableNegativeStockCorrections";
 
   /**
+   * Returns a new header for a Cost Adjustment
+   * 
    * @param organization
    *          organization set in record
    * 
@@ -92,6 +95,8 @@ public class CostAdjustmentUtils {
   }
 
   /**
+   * Creates a new Cost Adjustment Line and returns it.
+   * 
    * @param transaction
    *          transaction to apply the cost adjustment
    * 
@@ -127,11 +132,7 @@ public class CostAdjustmentUtils {
   }
 
   /**
-   * @param transaction
-   *          transaction to check if cost adjustment should be applied
-   * @param startingDate
-   *          initial date of the current Costing Rule. Only transactions calculated by current rule
-   *          needs to be considered.
+   * Calculates if the given Material Transaction is a beckdated transaction or not.
    */
   public static boolean isNeededBackdatedCostAdjustment(MaterialTransaction transaction,
       boolean includeWarehouseDimension, Date startingDate) {
@@ -312,8 +313,6 @@ public class CostAdjustmentUtils {
   /**
    * Calculates the stock of the product on the given date and for the given cost dimensions. It
    * only takes transactions that have its cost calculated.
-   * 
-   * @param areBackdatedTrxFixed
    */
   public static BigDecimal getStockOnTransactionDate(Organization costorg, MaterialTransaction trx,
       HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
@@ -395,6 +394,19 @@ public class CostAdjustmentUtils {
   public static BigDecimal getValuedStockOnMovementDate(Product product, Organization org,
       Date _date, HashMap<CostDimension, BaseOBObject> _costDimensions, Currency currency,
       boolean backdatedTransactionsFixed) {
+    return getValuedStockOnMovementDateByAttrAndLocator(product, org, _date, _costDimensions, null,
+        null, currency, backdatedTransactionsFixed);
+  }
+
+  /**
+   * Calculates the value of the stock of the product on the given date, for the given cost
+   * dimensions and for the given currency. It only takes transactions that have its cost
+   * calculated.
+   */
+  public static BigDecimal getValuedStockOnMovementDateByAttrAndLocator(Product product,
+      Organization org, Date _date, HashMap<CostDimension, BaseOBObject> _costDimensions,
+      Locator locator, AttributeSetInstance asi, Currency currency,
+      boolean backdatedTransactionsFixed) {
     Date date = _date;
     HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
 
@@ -463,6 +475,12 @@ public class CostAdjustmentUtils {
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
+    if (locator != null) {
+      select.append("   and locator = :locator");
+    }
+    if (asi != null) {
+      select.append("   and trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + " = :asi");
+    }
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
 
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY);
@@ -474,6 +492,12 @@ public class CostAdjustmentUtils {
     trxQry.setParameter("date", date);
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    }
+    if (locator != null) {
+      trxQry.setParameter("locator", locator);
+    }
+    if (asi != null) {
+      trxQry.setParameter("asi", asi);
     }
     trxQry.setParameterList("orgs", orgs);
     @SuppressWarnings("unchecked")
@@ -594,7 +618,7 @@ public class CostAdjustmentUtils {
     return costsum;
   }
 
-  /*
+  /**
    * Returns the last transaction process date of a non backdated transactions for the given
    * movement date or previous date.
    */

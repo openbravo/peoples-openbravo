@@ -224,7 +224,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     return newCAL;
   }
 
-  /*
+  /**
    * When the cost of a Closing Inventory is adjusted it is needed to adjust with the same amount
    * the related Opening Inventory.
    */
@@ -466,12 +466,14 @@ public abstract class CostingAlgorithmAdjustmentImp {
       // difference.
       adjAmt = getDefaultCostDifference(calTrxType, costAdjLine);
       break;
+    case InventoryClosing:
+      adjAmt = getInventoryClosingAmt(costAdjLine);
+      break;
 
     case Shipment:
     case ReceiptReturn:
     case ReceiptNegative:
     case InventoryDecrease:
-    case InventoryClosing:
     case IntMovementFrom:
     case InternalCons:
     case BOMPart:
@@ -504,9 +506,18 @@ public abstract class CostingAlgorithmAdjustmentImp {
     BigDecimal defaultCost = CostingUtils.getDefaultCost(trx.getProduct(),
         trx.getMovementQuantity(), costOrg, trxDate, trx.getMovementDate(), bp, getCostCurrency(),
         getCostDimensions());
-    // FIXME: Review if previous adjustment cost need to be considered.
     BigDecimal trxCalculatedCost = CostAdjustmentUtils.getTrxCost(trx, true, getCostCurrency());
-    return trxCalculatedCost.subtract(defaultCost);
+    return defaultCost.subtract(trxCalculatedCost);
+  }
+
+  private BigDecimal getInventoryClosingAmt(CostAdjustmentLine costAdjLine) {
+    MaterialTransaction trx = costAdjLine.getInventoryTransaction();
+    BigDecimal trxCalculatedCost = CostAdjustmentUtils.getTrxCost(trx, true, getCostCurrency());
+    BigDecimal trxExpectedCost = CostAdjustmentUtils.getValuedStockOnMovementDateByAttrAndLocator(
+        trx.getProduct(), getCostOrg(), trx.getMovementDate(), getCostDimensions(),
+        trx.getStorageBin(), trx.getAttributeSetValue(), getCostCurrency(), areBackdatedTrxFixed);
+
+    return trxExpectedCost.subtract(trxCalculatedCost);
   }
 
   /**
