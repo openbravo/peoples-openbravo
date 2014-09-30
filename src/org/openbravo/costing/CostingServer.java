@@ -221,7 +221,7 @@ public class CostingServer {
     }
 
     if (getCostingRule().isBackdatedTransactionsFixed()
-        && CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction, getCostingRule()
+        && CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction, getCostingRule()
             .isWarehouseDimension(), getCostingRule().getStartingDate())) {
       // BDT= Backdated transaction
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
@@ -257,7 +257,7 @@ public class CostingServer {
     }
 
     boolean modifiesAvg = AverageAlgorithm.modifiesAverage(TrxType.getTrxType(transaction));
-    BigDecimal currentStock = CostingUtils.getCurrentStock(getOrganization(), transaction,
+    BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(), transaction,
         getCostingAlgorithm().costDimensions, transaction.getProduct().isProduction(),
         costingRule.isBackdatedTransactionsFixed());
     // the stock previous to transaction was negative

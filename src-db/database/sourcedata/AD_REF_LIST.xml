@@ -2135,6 +2135,7 @@
 <!--312-->  <NAME><![CDATA[Customer Shipment]]></NAME>
 <!--312-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
 <!--312-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--312-->  <SEQNO><![CDATA[80]]></SEQNO>
 <!--312--></AD_REF_LIST>
 
 <!--313--><AD_REF_LIST>
@@ -2157,6 +2158,7 @@
 <!--314-->  <NAME><![CDATA[Vendor Receipts]]></NAME>
 <!--314-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
 <!--314-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--314-->  <SEQNO><![CDATA[10]]></SEQNO>
 <!--314--></AD_REF_LIST>
 
 <!--315--><AD_REF_LIST>
@@ -2179,6 +2181,7 @@
 <!--316-->  <NAME><![CDATA[Inventory Out]]></NAME>
 <!--316-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
 <!--316-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--316-->  <SEQNO><![CDATA[50]]></SEQNO>
 <!--316--></AD_REF_LIST>
 
 <!--317--><AD_REF_LIST>
@@ -2190,6 +2193,7 @@
 <!--317-->  <NAME><![CDATA[Inventory In]]></NAME>
 <!--317-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
 <!--317-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--317-->  <SEQNO><![CDATA[20]]></SEQNO>
 <!--317--></AD_REF_LIST>
 
 <!--318--><AD_REF_LIST>
@@ -2514,6 +2518,7 @@
 <!--349-->  <NAME><![CDATA[Movement From]]></NAME>
 <!--349-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
 <!--349-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--349-->  <SEQNO><![CDATA[30]]></SEQNO>
 <!--349--></AD_REF_LIST>
 
 <!--350--><AD_REF_LIST>
@@ -2525,6 +2530,7 @@
 <!--350-->  <NAME><![CDATA[Movement To]]></NAME>
 <!--350-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
 <!--350-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--350-->  <SEQNO><![CDATA[40]]></SEQNO>
 <!--350--></AD_REF_LIST>
 
 <!--351--><AD_REF_LIST>
@@ -2933,6 +2939,7 @@
 <!--391-->  <NAME><![CDATA[Production +]]></NAME>
 <!--391-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
 <!--391-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--391-->  <SEQNO><![CDATA[70]]></SEQNO>
 <!--391--></AD_REF_LIST>
 
 <!--392--><AD_REF_LIST>
@@ -2944,6 +2951,7 @@
 <!--392-->  <NAME><![CDATA[Production -]]></NAME>
 <!--392-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
 <!--392-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--392-->  <SEQNO><![CDATA[60]]></SEQNO>
 <!--392--></AD_REF_LIST>
 
 <!--393--><AD_REF_LIST>
@@ -6008,6 +6016,7 @@
 <!--800141-->  <NAME><![CDATA[Internal Consumption +]]></NAME>
 <!--800141-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
 <!--800141-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800141-->  <SEQNO><![CDATA[100]]></SEQNO>
 <!--800141--></AD_REF_LIST>
 
 <!--800142--><AD_REF_LIST>
@@ -6019,6 +6028,7 @@
 <!--800142-->  <NAME><![CDATA[Internal Consumption -]]></NAME>
 <!--800142-->  <AD_REFERENCE_ID><![CDATA[189]]></AD_REFERENCE_ID>
 <!--800142-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--800142-->  <SEQNO><![CDATA[90]]></SEQNO>
 <!--800142--></AD_REF_LIST>
 
 <!--800143--><AD_REF_LIST>

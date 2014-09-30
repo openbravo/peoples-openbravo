@@ -83,7 +83,7 @@ public class StandardAlgorithm extends CostingAlgorithm {
     if (!costingRule.isBackdatedTransactionsFixed()) {
       return true;
     }
-    return !CostAdjustmentUtils.isNeededCostAdjustmentByBackDateTrx(transaction,
+    return !CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction,
         costingRule.isWarehouseDimension(), costingRule.getStartingDate());
   }
 

@@ -441,7 +441,7 @@ public class CostingUtils {
    * amount is converted to given currency. It only takes transactions that have its cost
    * calculated.
    */
-  public static BigDecimal getCurrentValuedStockByAttrAndLocator(Product product, Organization org,
+  public static BigDecimal getValuedStockByAttrAndLocatorOnMovementDate(Product product, Organization org,
       Date date, AttributeSetInstance attributesetinstance, Locator locator, Currency currency) {
     // Get child tree of organizations.
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
@@ -463,7 +463,7 @@ public class CostingUtils {
     select.append("  left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
 
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
-    select.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :date");
+    select.append("  and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
     select.append("  and trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + " = :attrib");
     select.append("  and trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " = :locator");
     // Include only transactions that have its cost calculated
@@ -566,67 +566,6 @@ public class CostingUtils {
           + org.getName() + ", @Date@: " + OBDateUtils.formatDate(date));
     }
     return costRules.get(0);
-  }
-
-  /**
-   * Calculates the stock of the product on the given date and for the given cost dimensions. It
-   * only takes transactions that have its cost calculated.
-   * 
-   * @param areBackdatedTrxFixed
-   */
-  public static BigDecimal getCurrentStock(Organization org, MaterialTransaction trx,
-      HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
-      boolean areBackdatedTrxFixed) {
-
-    // Get child tree of organizations.
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        trx.getClient().getId());
-    Set<String> orgs = osp.getChildTree(org.getId(), true);
-    HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
-    if (isManufacturingProduct) {
-      orgs = osp.getChildTree("0", false);
-      costDimensions = CostingUtils.getEmptyDimensions();
-    }
-
-    StringBuffer select = new StringBuffer();
-    select
-        .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
-    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
-    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    // Include only transactions that have its cost calculated. Should be all.
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    if (areBackdatedTrxFixed) {
-      // Consider only transactions with movement date equal or lower than the movement date of the
-      // adjusted transaction. But for transactions with the same movement date only those with a
-      // transaction date equal or before the process date of the adjusted transaction.
-      select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
-      select.append("     or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-      select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " <= :trxdate ))");
-    } else {
-      select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " <= :trxdate ");
-    }
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
-    }
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
-    trxQry.setParameter("product", trx.getProduct());
-    if (areBackdatedTrxFixed) {
-      trxQry.setParameter("mvtdate", trx.getMovementDate());
-    }
-    trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
-    }
-    trxQry.setParameterList("orgs", orgs);
-    Object stock = trxQry.uniqueResult();
-    if (stock != null) {
-      return (BigDecimal) stock;
-    }
-    return BigDecimal.ZERO;
   }
 
   /**

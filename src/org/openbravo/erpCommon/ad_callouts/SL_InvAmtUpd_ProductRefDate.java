@@ -78,9 +78,9 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
       } else {
         info.addResult("inpiswarehousedimension", "N");
       }
-      currentValuedStock = CostAdjustmentUtils.getCurrentValuedStock(product, organization,
+      currentValuedStock = CostAdjustmentUtils.getValuedStockOnMovementDate(product, organization,
           referenceDate, costDimensions, currency, costRule.isBackdatedTransactionsFixed());
-      currentStock = CostAdjustmentUtils.getCurrentStock(product, organization, referenceDate,
+      currentStock = CostAdjustmentUtils.getStockOnMovementDate(product, organization, referenceDate,
           costDimensions, costRule.isBackdatedTransactionsFixed());
       info.addResult("inpcurInventoryAmount", currentValuedStock);
       info.addResult("inponhandqty", currentStock);
