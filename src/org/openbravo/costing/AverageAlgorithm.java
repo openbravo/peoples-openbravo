@@ -99,7 +99,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
    * Closing inventories cost is calculated with the current stock balance.
    */
   protected BigDecimal getInventoryClosingCost() {
-    BigDecimal cost = CostingUtils.getCurrentValuedStockByAttrAndLocator(transaction.getProduct(),
+    BigDecimal cost = CostingUtils.getValuedStockByAttrAndLocatorOnMovementDate(transaction.getProduct(),
         costOrg, transaction.getMovementDate(), transaction.getAttributeSetValue(),
         transaction.getStorageBin(), costCurrency);
     return cost;
