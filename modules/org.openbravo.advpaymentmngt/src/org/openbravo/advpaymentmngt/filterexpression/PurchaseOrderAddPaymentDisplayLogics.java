@@ -61,11 +61,7 @@ public class PurchaseOrderAddPaymentDisplayLogics extends AddPaymentDisplayLogic
       if (bpartner != null) {
         Organization org = order.getOrganization();
         BigDecimal customerCredit = new AdvPaymentMngtDao().getCustomerCredit(bpartner, false, org);
-        if (customerCredit.signum() > 0) {
-          return true;
-        } else {
-          return false;
-        }
+        return (customerCredit.signum() > 0);
       } else {
         return false;
       }

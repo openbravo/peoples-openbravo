@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -34,6 +34,19 @@ BEGIN
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
+  IF(INSERTING OR UPDATING) THEN
+    IF (:new.ISPERIODCONTROLALLOWED = 'Y') THEN
+      SELECT COUNT(*)
+      INTO v_count
+      FROM ad_orgtype
+      WHERE ad_orgtype_id=:new.AD_ORGTYPE_ID
+      AND (ISBUSINESSUNIT='Y' OR (ISLEGALENTITY='Y' AND ISACCTLEGALENTITY='Y'));
+
+      IF (v_count = 0) THEN
+        RAISE_APPLICATION_ERROR(-20000,'@OrgTypeDoesNotAllowPeriodControl@');
+      END IF;
+    END IF;
+  END IF;
 
   IF(INSERTING) THEN
     -- Add to all roles of the client

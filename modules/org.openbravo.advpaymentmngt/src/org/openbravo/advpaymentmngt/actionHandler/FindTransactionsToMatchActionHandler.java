@@ -67,7 +67,6 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
             null, true);
 
       } else {
-        // FIXME try to control this from the UI (disable Done if no record is selected)
         final JSONArray actions = APRM_MatchingUtility.createMessageInProcessView(
             "@APRM_SELECT_RECORD_ERROR@", "error");
         result.put("responseActions", actions);

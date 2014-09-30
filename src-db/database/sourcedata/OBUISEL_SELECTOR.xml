@@ -862,6 +862,7 @@ join plv.priceList pl
 left join pl.currency c
 left join e.genericProduct gp
 where e.isGeneric = 'N'
+and e.active = 'Y'
 and plv.active = 'Y'
   and @additional_filters@]]></HQL>
 <!--EB3C41F0973A4EDA91E475833792A6D4-->  <ENTITY_ALIAS><![CDATA[pp]]></ENTITY_ALIAS>

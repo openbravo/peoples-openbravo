@@ -111,7 +111,6 @@ public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
         result.put("message", errorMessage);
       } catch (Exception e2) {
         log.error("Error message could not be built", e2);
-        // do nothing, give up
       }
     } finally {
       OBContext.restorePreviousMode();
