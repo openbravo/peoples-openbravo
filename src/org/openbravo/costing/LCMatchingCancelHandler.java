@@ -91,6 +91,9 @@ public class LCMatchingCancelHandler extends BaseActionHandler {
   public static JSONObject doCancelMatchingLandedCost(String strLcCostId) throws JSONException {
 
     LandedCostCost lcCost = OBDal.getInstance().get(LandedCostCost.class, strLcCostId);
+    lcCost.setProcessed(false);
+    OBDal.getInstance().save(lcCost);
+    OBDal.getInstance().flush();
     JSONObject message = new JSONObject();
     if (lcCost.getMatchingCostAdjustment() != null) {
       message = CancelCostAdjustment.doCancelCostAdjustment(lcCost.getMatchingCostAdjustment());
