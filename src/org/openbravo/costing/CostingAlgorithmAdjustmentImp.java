@@ -260,7 +260,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     OBCriteria<ProductionLine> critPL = OBDal.getInstance().createCriteria(ProductionLine.class);
     critPL.createAlias(ProductionLine.PROPERTY_PRODUCT, "pr");
     critPL.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN, pl.getProductionPlan()));
-    critPL.add(Restrictions.gt(ProductionLine.PROPERTY_PRODUCTIONTYPE, "+"));
+    critPL.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONTYPE, "+"));
     critPL.addOrderBy(ProductionLine.PROPERTY_COMPONENTCOST, true);
 
     BigDecimal pendingAmt = costAdjLine.getAdjustmentAmount();
@@ -277,6 +277,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
         continue;
       }
       MaterialTransaction prodtrx = pline.getMaterialMgmtMaterialTransactionList().get(0);
+      if (!prodtrx.isCostCalculated()) {
+        continue;
+      }
       CostAdjustmentLine newCAL = insertCostAdjustmentLine(prodtrx, adjAmt, _costAdjLine);
 
       lastAdjLine = newCAL;

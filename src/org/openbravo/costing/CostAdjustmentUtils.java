@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -114,12 +115,14 @@ public class CostAdjustmentUtils {
   public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate) {
+    Long stdPrecission = transaction.getCurrency().getStandardPrecision();
     CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
     // TODO: review setNewOBObject
     // costAdjustmentLine.setNewOBObject(true);
     costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
     costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
-    costAdjustmentLine.setAdjustmentAmount(costAdjusted);
+    costAdjustmentLine.setAdjustmentAmount(costAdjusted.setScale(stdPrecission.intValue(),
+        RoundingMode.HALF_UP));
     costAdjustmentLine.setCurrency(transaction.getCurrency());
     costAdjustmentLine.setInventoryTransaction(transaction);
     costAdjustmentLine.setSource(isSource);
