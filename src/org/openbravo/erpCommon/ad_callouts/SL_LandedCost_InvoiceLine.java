@@ -18,73 +18,58 @@
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.math.BigDecimal;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.materialmgmt.cost.LandedCost;
 
-public class SL_LandedCost_InvoiceLine extends HttpSecureAppServlet {
+public class SL_LandedCost_InvoiceLine extends SimpleCallout {
 
   private static final long serialVersionUID = 1L;
 
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strLCId = vars.getStringParameter("inpmLandedcostId");
-      String strInvLineId = vars.getStringParameter("inpcInvoicelineId");
-      try {
-        printPage(response, vars, strLCId, strInvLineId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-
-    } else
-      pageError(response);
-
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strLCId,
-      String strInvLineId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_LandedCost_InvoiceLine';\n\n");
-    resultado.append("var respuesta = new Array(");
-
+  @Override
+  protected void execute(CalloutInfo info) throws ServletException {
+    VariablesSecureApp vars = info.vars;
+    String strLCId = vars.getStringParameter("inpmLandedcostId");
+    String strInvLineId = vars.getStringParameter("inpcInvoicelineId");
     String strAmount = "";
     String strCurrencyId = "";
     if (!"".equals(strInvLineId)) {
-      SLLandedCostInvoiceLineData[] data = SLLandedCostInvoiceLineData.select(this, strInvLineId);
-      strAmount = data[0].linenetamt;
-      strCurrencyId = data[0].cCurrencyId;
+      InvoiceLine invoiceLine = OBDal.getInstance().get(InvoiceLine.class, strInvLineId);
+      strAmount = getAmount(invoiceLine);
+      strCurrencyId = invoiceLine.getInvoice().getCurrency().getId();
     } else {
       strAmount = "0";
-      strCurrencyId = SLLandedCostInvoiceLineData.selectLCCurrency(this, strLCId);
+      LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLCId);
+      strCurrencyId = landedCost.getCurrency().getId();
     }
-    resultado.append("new Array(\"inpamount\", \"" + strAmount + "\"),\n ");
-    resultado.append("new Array(\"inpcCurrencyId\", \"" + strCurrencyId + "\")\n ");
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    info.addResult("inpamount", strAmount);
+    info.addResult("inpcCurrencyId", strCurrencyId);
+  }
+
+  private String getAmount(InvoiceLine invoiceLine) {
+    BigDecimal totalAssigned = BigDecimal.ZERO;
+    OBContext.setAdminMode(false);
+    try {
+      final StringBuilder hqlString = new StringBuilder();
+      hqlString.append("select coalesce(sum(e.amount),0)");
+      hqlString.append(" from LandedCostCost as e");
+      hqlString.append(" where e.invoiceLine = :invoiceLine");
+      final Session session = OBDal.getInstance().getSession();
+      final Query query = session.createQuery(hqlString.toString());
+      query.setParameter("invoiceLine", invoiceLine);
+      totalAssigned = (BigDecimal) query.uniqueResult();
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return invoiceLine.getLineNetAmount().subtract(totalAssigned).toString();
   }
 }
