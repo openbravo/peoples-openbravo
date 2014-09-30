@@ -489,6 +489,7 @@
           // show an error while in debug mode to help debugging and testing
           throw "OB.MobileApp.model.get('terminal') properties have not been loaded";
         });
+        OB.MobileApp.model.navigate('login');
         return;
       }
 
