@@ -28,9 +28,9 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.costing.CostingUtils;
-import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -119,7 +119,6 @@ public class DocMatchInv extends AcctServer {
       } finally {
         OBContext.restorePreviousMode();
       }
-      // TODO: Review line Net Amt, it should hold just delivered amt (Amount in the Match Inv)
       String strQty = data[i].qtyinvoiced;
       docLine.setQty(strQty);
       String LineNetAmt = data[i].linenetamt;
@@ -250,8 +249,9 @@ public class DocMatchInv extends AcctServer {
       // If the Product is not checked as book using PO Price, the Cost of the
       // Transaction will be used to create the FactAcct Line
       MaterialTransaction transaction = getTransaction(Record_ID);
-      Organization legalEntity = OBContext.getOBContext().getOrganizationStructureProvider(
-          AD_Client_ID).getLegalEntity(inOutLine.getShipmentReceipt().getOrganization());
+      Organization legalEntity = OBContext.getOBContext()
+          .getOrganizationStructureProvider(AD_Client_ID)
+          .getLegalEntity(inOutLine.getShipmentReceipt().getOrganization());
       HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
       if (inOutLine.getStorageBin() == null) {
         costDimensions.put(CostDimension.Warehouse, inOutLine.getShipmentReceipt().getWarehouse());
@@ -263,8 +263,10 @@ public class DocMatchInv extends AcctServer {
             .getShipmentReceipt().getAccountingDate(), costDimensions)) {
           Map<String, String> parameters = new HashMap<String, String>();
           parameters.put("Product", inOutLine.getProduct().getIdentifier());
-          parameters.put("Date", (OBDateUtils.formatDate(OBDal.getInstance().get(
-              ReceiptInvoiceMatch.class, Record_ID).getTransactionDate())).toString());
+          parameters.put(
+              "Date",
+              (OBDateUtils.formatDate(OBDal.getInstance().get(ReceiptInvoiceMatch.class, Record_ID)
+                  .getTransactionDate())).toString());
           setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
           throw new IllegalStateException();
 
@@ -295,8 +297,8 @@ public class DocMatchInv extends AcctServer {
       bdCost = CostingStatus.getInstance().isMigrated() ? trxCost.divide(
           transaction == null ? new BigDecimal(data[0].getField("Qty")).abs() : transaction
               .getMovementQuantity().abs(), 10, RoundingMode.HALF_UP) : new BigDecimal(
-          DocMatchInvData.selectProductAverageCost(conn, data[0].getField("M_Product_Id"), data[0]
-              .getField("orderAcctDate")));
+          DocMatchInvData.selectProductAverageCost(conn, data[0].getField("M_Product_Id"),
+              data[0].getField("orderAcctDate")));
       Long scale = costCurrency.getStandardPrecision();
       BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
       bdCost = bdCost.multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);
@@ -311,8 +313,8 @@ public class DocMatchInv extends AcctServer {
     String strRecordId = invoiceData[0].cInvoiceId;
     String strReceiptDate = data[0].getField("ORDERDATEACCT");
     BigDecimal bdExpenses = new BigDecimal(strExpenses);
-    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(data[0]
-        .getField("MOVEMENTQTY"))).signum())
+    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(
+        data[0].getField("MOVEMENTQTY"))).signum())
         && data[0].getField("InOutStatus").equals("VO")) {
       bdExpenses = bdExpenses.multiply(new BigDecimal(-1));
     }

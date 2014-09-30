@@ -20,16 +20,12 @@
 package org.openbravo.advpaymentmngt.utility;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -39,13 +35,11 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.jfree.util.Log;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_ReconciliationProcess;
-import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -55,9 +49,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
@@ -84,10 +76,10 @@ import org.openbravo.model.marketing.Campaign;
 import org.openbravo.model.materialmgmt.cost.ABCActivity;
 import org.openbravo.model.project.Project;
 import org.openbravo.model.sales.SalesRegion;
+import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.service.db.QueryTimeOutUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +93,7 @@ public class APRM_MatchingUtility {
    *          Reconciliation to be checked
    * @return List of transaction manually reconciled (without bank statement)
    */
-  public static List<FIN_FinaccTransaction> getManualReconciliationLines(
+  private static List<FIN_FinaccTransaction> getManualReconciliationLines(
       FIN_Reconciliation reconciliation) {
     List<FIN_FinaccTransaction> result = new ArrayList<FIN_FinaccTransaction>();
     OBContext.setAdminMode(false);
@@ -110,9 +102,8 @@ public class APRM_MatchingUtility {
           FIN_ReconciliationLine_v.class);
       obc.add(Restrictions.eq(FIN_ReconciliationLine_v.PROPERTY_RECONCILIATION, reconciliation));
       obc.add(Restrictions.isNull(FIN_ReconciliationLine_v.PROPERTY_BANKSTATEMENTLINE));
-      obc.setMaxResults(1);
-      for (FIN_ReconciliationLine_v line : obc.list()) {
-        result.add(line.getFinancialAccountTransaction());
+      for (FIN_ReconciliationLine_v recLine : obc.list()) {
+        result.add(recLine.getFinancialAccountTransaction());
       }
       return result;
     } finally {
@@ -201,81 +192,14 @@ public class APRM_MatchingUtility {
     return myMessage;
   }
 
-  /**
-   * Process to get and lock a Bank Statement Line. Required for processes which should manage
-   * concurrency
-   * 
-   * @param id
-   *          String containing Bank Statement Line id.
-   * @return Returns related Bank Statement line object performing a select for update
-   */
-  // public static FIN_BankStatementLine getLockedBSL(String id) {
-  // FIN_BankStatementLine result = null;
-  // final StringBuilder hqlString = new StringBuilder();
-  // hqlString.append(" select e");
-  // hqlString.append(" from FIN_BankStatementLine as e");
-  // hqlString.append(" where e.id = :id");
-  // final Session session = OBDal.getInstance().getSession();
-  // Query query = session.createQuery(hqlString.toString());
-  // query.setParameter("id", id);
-  // query.setLockMode("e", LockMode.PESSIMISTIC_WRITE);
-  // result = (FIN_BankStatementLine) query.uniqueResult();
-  // return result;
-  // }
-
   public static FIN_BankStatementLine getLockedBSL(String id) {
-    return getLockedBSL(new DalConnectionProvider(), id);
-  }
-
-  /**
-   * @param connectionProvider
-   *          Connection Provider used for the query
-   * @param id
-   *          Bank Statement Line id
-   * @return Returns related Bank Statement line object performing a select for update
-   * @throws ServletException
-   */
-  public static FIN_BankStatementLine getLockedBSL(ConnectionProvider connectionProvider, String id) {
-    String strReturn = "";
     try {
-      String strSql = "";
-      strSql = strSql + "        SELECT FIN_BankstatementLine_ID "
-          + "        FROM FIN_BankstatementLine "
-          + "        WHERE FIN_BankstatementLine_ID = ? FOR UPDATE";
-
-      ResultSet result;
-      PreparedStatement st = null;
-
-      int iParameter = 0;
-      try {
-        st = connectionProvider.getPreparedStatement(strSql);
-        QueryTimeOutUtil.getInstance().setQueryTimeOut(st, SessionInfo.getQueryProfile());
-        iParameter++;
-        UtilSql.setValue(st, iParameter, 12, null, id);
-
-        result = st.executeQuery();
-        if (result.next()) {
-          strReturn = UtilSql.getValue(result, "FIN_BankstatementLine_ID");
-        }
-        result.close();
-      } catch (SQLException e) {
-        log4j.error("SQL error in query: " + strSql + "Exception:" + e);
-        throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-            + e.getMessage());
-      } catch (Exception ex) {
-        log4j.error("Exception in query: " + strSql + "Exception:" + ex);
-        throw new ServletException("@CODE=@" + ex.getMessage());
-      } finally {
-        try {
-          connectionProvider.releasePreparedStatement(st);
-        } catch (Exception ignore) {
-          ignore.printStackTrace();
-        }
-      }
+      return OBDal.getInstance().get(FIN_BankStatementLine.class,
+          APRMUtilityData.getLockedBSL(new DalConnectionProvider(false), id));
     } catch (ServletException e) {
-      Log.error("Error executing select for update for this record:" + id, e);
+      log4j.error("Error executing select for update for this record:" + id, e);
     }
-    return OBDal.getInstance().get(FIN_BankStatementLine.class, strReturn);
+    return null;
   }
 
   /**
@@ -351,7 +275,7 @@ public class APRM_MatchingUtility {
         && !transaction.getFinPayment().isCreatedByAlgorithm()) {
       return MATCHED_AGAINST_PAYMENT;
     } else if (transaction.getFinPayment() != null
-        && transaction.getFinPayment().isCreatedByAlgorithm()
+        && transaction.isCreatedByAlgorithm()
         && transaction.getFinPayment().isCreatedByAlgorithm()
         && transaction.getFinPayment().getFINPaymentDetailList().get(0)
             .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() == null
@@ -359,7 +283,7 @@ public class APRM_MatchingUtility {
             .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() == null) {
       return MATCHED_AGAINST_CREDIT;
     } else if (transaction.getFinPayment() != null
-        && transaction.getFinPayment().isCreatedByAlgorithm()
+        && transaction.isCreatedByAlgorithm()
         && transaction.getFinPayment().isCreatedByAlgorithm()
         && transaction.getFinPayment().getFINPaymentDetailList().get(0)
             .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null) {
@@ -379,13 +303,6 @@ public class APRM_MatchingUtility {
     try {
       OBContext.setAdminMode(true);
       FIN_BankStatementLine bsline = getLockedBSL(_bsline.getId());
-      // TODO: Remove after testing
-      // long t0, t1;
-      // t0 = System.currentTimeMillis();
-      // do {
-      // t1 = System.currentTimeMillis();
-      // } while ((t1 - t0) < 200000);
-
       final FIN_FinaccTransaction finTrans = bsline.getFinancialAccountTransaction();
       if (finTrans != null) {
         finTrans.setReconciliation(null);
@@ -424,10 +341,9 @@ public class APRM_MatchingUtility {
           bs.setProcessed(false);
           OBDal.getInstance().save(bs);
           OBDal.getInstance().remove(bsline);
+          // bs is set a true, because it was the status at the beginning of this function
           bs.setProcessed(true);
           OBDal.getInstance().save(bs);
-          // Required to persist current unmatch so that it is not rollbacked afterwards because of
-          // a future error
           OBDal.getInstance().flush();
         }
       }
@@ -520,10 +436,10 @@ public class APRM_MatchingUtility {
                 transaction.getId()));
         for (AccountingFact accountingEntry : accountingEntries) {
           OBDal.getInstance().remove(accountingEntry);
-          OBDal.getInstance().flush();
         }
         transaction.setPosted("N");
         OBDal.getInstance().save(transaction);
+        // the transaction must have the value posted=N to execute processTransaction function
         OBDal.getInstance().flush();
       }
       OBError msg = processTransaction(vars, conn, "R", transaction);
@@ -531,6 +447,7 @@ public class APRM_MatchingUtility {
         OBContext.setAdminMode(false);
         try {
           OBDal.getInstance().remove(transaction);
+          // to ensure that the transaction has been deleted
           OBDal.getInstance().flush();
         } finally {
           OBContext.restorePreviousMode();
@@ -564,10 +481,10 @@ public class APRM_MatchingUtility {
                 FIN_PAYMENT_TABLE)), new Value(AccountingFact.PROPERTY_RECORDID, payment.getId()));
         for (AccountingFact accountingEntry : accountingEntries) {
           OBDal.getInstance().remove(accountingEntry);
-          OBDal.getInstance().flush();
         }
         payment.setPosted("N");
         OBDal.getInstance().save(payment);
+        // the payment must have the value posted=N to execute processPayment function
         OBDal.getInstance().flush();
       }
       OBError msg = FIN_AddPayment.processPayment(vars, conn, "R", payment);
@@ -575,6 +492,7 @@ public class APRM_MatchingUtility {
         OBContext.setAdminMode(false);
         try {
           OBDal.getInstance().remove(payment);
+          // to ensure that the payment has been deleted
           OBDal.getInstance().flush();
         } finally {
           OBContext.restorePreviousMode();
@@ -607,19 +525,9 @@ public class APRM_MatchingUtility {
     parameters.put("Fin_FinAcc_Transaction_ID", transaction.getId());
     pb.setParams(parameters);
     OBError myMessage = null;
-    new FIN_TransactionProcess().execute(pb);
+    OBScheduler.getInstance().schedule(pb);
     myMessage = (OBError) pb.getResult();
     return myMessage;
-  }
-
-  /**
-   * Returns the current context session ID (from HttpSession)
-   * 
-   * @return ID with the #AD_SESSION_ID
-   */
-  public static String getContextSessionId() {
-    final HttpSession httpSession = RequestContext.get().getSession();
-    return (String) httpSession.getAttribute("#AD_SESSION_ID");
   }
 
   /**
