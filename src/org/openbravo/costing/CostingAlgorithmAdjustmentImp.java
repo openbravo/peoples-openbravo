@@ -20,8 +20,6 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +28,13 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -44,6 +44,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
@@ -248,42 +249,36 @@ public abstract class CostingAlgorithmAdjustmentImp {
   }
 
   protected void searchManufacturingProduced(CostAdjustmentLine _costAdjLine) {
-    CostAdjustmentLine lastAdjLine = null;
     CostAdjustmentLine costAdjLine;
     if (_costAdjLine != null) {
       costAdjLine = _costAdjLine;
     } else {
       costAdjLine = getCostAdjLine();
     }
+    ProductionLine pl = costAdjLine.getInventoryTransaction().getProductionLine();
+
+    OBCriteria<ProductionLine> critPL = OBDal.getInstance().createCriteria(ProductionLine.class);
+    critPL.createAlias(ProductionLine.PROPERTY_PRODUCT, "pr");
+    critPL.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN, pl.getProductionPlan()));
+    critPL.add(Restrictions.gt(ProductionLine.PROPERTY_PRODUCTIONTYPE, "+"));
+    critPL.addOrderBy(ProductionLine.PROPERTY_COMPONENTCOST, true);
+
     BigDecimal pendingAmt = costAdjLine.getAdjustmentAmount();
-    List<ProductionLine> productionLines = costAdjLine.getInventoryTransaction()
-        .getProductionLine().getProductionPlan().getManufacturingProductionLineList();
-    Collections.sort(productionLines, new Comparator<ProductionLine>() {
-      public int compare(ProductionLine pline1, ProductionLine pline2) {
-        BigDecimal cc1 = pline1.getComponentCost();
-        BigDecimal cc2 = pline2.getComponentCost();
-        if (cc1 == null) {
-          cc1 = BigDecimal.ZERO;
-        }
-        if (cc2 == null) {
-          cc2 = BigDecimal.ZERO;
-        }
-        return cc1.compareTo(cc2);
-      }
-    });
-    for (ProductionLine pline : productionLines) {
-      if (!pline.getProductionType().equals("+")) {
+    CostAdjustmentLine lastAdjLine = null;
+    for (ProductionLine pline : critPL.list()) {
+      BigDecimal adjAmt = costAdjLine.getAdjustmentAmount().multiply(pline.getComponentCost());
+      pendingAmt = pendingAmt.subtract(adjAmt);
+      if (!pline.getProduct().isStocked() || !"I".equals(pline.getProduct().getProductType())) {
         continue;
       }
       if (pline.getMaterialMgmtMaterialTransactionList().isEmpty()) {
-        log4j.error("Work effort has no related transaction (M_Transaction).");
+        log4j.error("Production Line with id {} has no related transaction (M_Transaction).",
+            pline.getId());
         continue;
       }
       MaterialTransaction prodtrx = pline.getMaterialMgmtMaterialTransactionList().get(0);
-      BigDecimal adjAmt = costAdjLine.getAdjustmentAmount().multiply(pline.getComponentCost());
       CostAdjustmentLine newCAL = insertCostAdjustmentLine(prodtrx, adjAmt, _costAdjLine);
 
-      pendingAmt = pendingAmt.subtract(adjAmt);
       lastAdjLine = newCAL;
     }
     // If there is more than one P+ product there can be some amount left to assign due to rounding.
@@ -300,9 +295,17 @@ public abstract class CostingAlgorithmAdjustmentImp {
     } else {
       costAdjLine = getCostAdjLine();
     }
-    for (ProductionLine pline : costAdjLine.getInventoryTransaction().getProductionLine()
-        .getProductionPlan().getManufacturingProductionLineList()) {
-      if (pline.getMovementQuantity().signum() <= 0) {
+    ProductionLine pl = costAdjLine.getInventoryTransaction().getProductionLine();
+    OBCriteria<ProductionLine> critBOM = OBDal.getInstance().createCriteria(ProductionLine.class);
+    critBOM.createAlias(ProductionLine.PROPERTY_PRODUCT, "pr");
+    critBOM.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN, pl.getProductionPlan()));
+    critBOM.add(Restrictions.gt(ProductionLine.PROPERTY_MOVEMENTQUANTITY, BigDecimal.ZERO));
+    critBOM.add(Restrictions.eq("pr." + Product.PROPERTY_STOCKED, true));
+    critBOM.add(Restrictions.eq("pr." + Product.PROPERTY_PRODUCTTYPE, "I"));
+    for (ProductionLine pline : critBOM.list()) {
+      if (pline.getMaterialMgmtMaterialTransactionList().isEmpty()) {
+        log4j.error("BOM Produced with id {} has no related transaction (M_Transaction).",
+            pline.getId());
         continue;
       }
       MaterialTransaction prodtrx = pline.getMaterialMgmtMaterialTransactionList().get(0);
@@ -325,14 +328,15 @@ public abstract class CostingAlgorithmAdjustmentImp {
         .getInternalConsumptionLine()
         .getMaterialMgmtInternalConsumptionLineVoidedInternalConsumptionLineList();
 
-    if (!intConsVoidedList.isEmpty()) {
-      InternalConsumptionLine intCons = intConsVoidedList.get(0);
-      MaterialTransaction voidedTrx = intCons.getMaterialMgmtMaterialTransactionList().get(0);
-      if (!voidedTrx.isCostCalculated()) {
-        return;
-      }
-      insertCostAdjustmentLine(voidedTrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
+    if (intConsVoidedList.isEmpty()) {
+      return;
     }
+    InternalConsumptionLine intCons = intConsVoidedList.get(0);
+    MaterialTransaction voidedTrx = intCons.getMaterialMgmtMaterialTransactionList().get(0);
+    if (!voidedTrx.isCostCalculated()) {
+      return;
+    }
+    insertCostAdjustmentLine(voidedTrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
   }
 
   protected void searchIntMovementTo(CostAdjustmentLine _costAdjLine) {
