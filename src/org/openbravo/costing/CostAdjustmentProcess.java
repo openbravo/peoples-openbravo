@@ -225,7 +225,7 @@ public class CostAdjustmentProcess {
       log.debug("Start processing line: {}, transaction: {}", line.getLineNo(), trx.getIdentifier());
       if (trx.getCostingAlgorithm() == null) {
         log.error("Transaction is cost calculated with legacy cost engine.");
-        throw new OBException("Cannot adjust transactions calculated with legacy cost engine.");
+        throw new OBException(OBMessageUtils.messageBD("NotAdjustLegacyEngineTrx"));
       }
       final String strCostAdjLineId = line.getId();
 
@@ -234,8 +234,7 @@ public class CostAdjustmentProcess {
           .getCostingAlgorithm().getJavaClassName());
 
       if (costAdjImp == null) {
-        throw new OBException(
-            "The algorithm used to calculate the cost of the transaction does not implement cost adjustments.");
+        throw new OBException(OBMessageUtils.messageBD("CostAlgorithmWithoutAdjustment"));
       }
       log.debug("costing algorithm imp loaded {}", costAdjImp.getClass().getName());
       costAdjImp.init(line);
@@ -321,7 +320,8 @@ public class CostAdjustmentProcess {
       if (implementor == null) {
         implementor = nextImplementor;
       } else {
-        log.warn("More than one class found implementing cost adjustment for algorithm with java class {}",
+        log.warn(
+            "More than one class found implementing cost adjustment for algorithm with java class {}",
             strJavaClass);
       }
     }
