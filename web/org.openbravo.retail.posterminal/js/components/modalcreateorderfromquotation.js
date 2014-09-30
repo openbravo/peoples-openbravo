@@ -54,6 +54,19 @@ enyo.kind({
     components: [{
       style: 'height: 40px; width: 120px; float:left;'
     }, {
+      style: 'text-align: justify; padding: 8px; float: left; width: 304px; background: #dddddd;',
+      initComponents: function () {
+        this.setContent(OB.I18N.getLabel('OBPOS_QuotationUpdatePricesText'));
+      }
+    }, {
+      style: 'clear: both;'
+    }, {
+      style: 'height: 10px; width: 120px; float:left;'
+    }, {
+      style: 'clear: both;'
+    }, {
+      style: 'height: 40px; width: 120px; float:left;'
+    }, {
       style: 'height: 40px; width: 50px; background-color: rgb(226, 226, 226); float:left',
       components: [{
         kind: 'OB.UI.updateprices',
