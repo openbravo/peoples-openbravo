@@ -112,6 +112,8 @@
     v_penqty NUMBER;
     v_qtysumorders NUMBER;
     v_released  NUMBER;
+    
+    v_bp_isactive c_bpartner.isactive%Type;
 
   BEGIN
   
@@ -157,6 +159,7 @@
         FINISH_PROCESS:=true;
       END IF;
     END IF;
+    
   BEGIN --BODY
   	IF(NOT FINISH_PROCESS) THEN
   	  v_PUser:=v_User;
@@ -253,6 +256,17 @@
           RAISE_APPLICATION_ERROR(-20000, '@MovementQtyCheck@'||' '||'@Inlines@'||' '||v_message);
         end if;
       end if;
+    
+    
+    /* Check active business partner*/
+      select bp.isactive into v_bp_isactive
+      from m_inout io 
+      left join c_bpartner bp on io.C_BPARTNER_ID = bp.C_BPARTNER_ID
+      where io.M_INOUT_ID = v_Record_ID;
+
+      IF(v_bp_isactive = 'N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@InActiveBusinessPartner@');
+      END IF;
 
       --Check whether warehouse belongs to the organization.
       SELECT count(AD_ORG_ID)

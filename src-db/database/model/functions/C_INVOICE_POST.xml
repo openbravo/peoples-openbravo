@@ -82,6 +82,7 @@
   v_DateInvoiced DATE;
   v_DocumentNo C_INVOICE.DocumentNo%TYPE;
   v_BPartner_ID VARCHAR2(32);
+  v_bp_isactive c_bpartner.isactive%TYPE;
   v_BPartner_User_ID VARCHAR2(32);
   v_IsSOTrx C_INVOICE.IsSOTrx%TYPE;
   v_Posted C_INVOICE.Posted%TYPE;
@@ -323,6 +324,15 @@ BEGIN --BODY
 
     IF (v_count > 0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@CashVATNotMatch@');
+    END IF;
+  
+    /* Check active business partner*/
+    SELECT isactive INTO v_bp_isactive
+    FROM C_Bpartner
+    WHERE C_Bpartner_ID = v_BPartner_ID;
+
+    IF(v_bp_isactive = 'N') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@InActiveBusinessPartner@');
     END IF;
 
     /*
