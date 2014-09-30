@@ -842,7 +842,17 @@
     },
 
     databaseCannotBeResetAction: function () {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ResetNeededNotSafeTitle'), OB.I18N.getLabel('OBPOS_ResetNeededNotSafeMessage', [window.localStorage.getItem('terminalName')]));
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ResetNeededNotSafeTitle'), OB.I18N.getLabel('OBPOS_ResetNeededNotSafeMessage'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        isConfirmButton: true,
+        action: function () {
+          OB.MobileApp.model.lock();
+        }
+      }], {
+        onHideFunction: function () {
+          OB.MobileApp.model.lock();
+        }
+      });
     },
 
     dialog: null,
