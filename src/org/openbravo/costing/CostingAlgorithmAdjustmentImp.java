@@ -262,6 +262,10 @@ public abstract class CostingAlgorithmAdjustmentImp {
       if (!pline.getProductionType().equals("+")) {
         continue;
       }
+      if (pline.getMaterialMgmtMaterialTransactionList().isEmpty()) {
+        log4j.error("Work effort has no related transaction (M_Transaction).");
+        continue;
+      }
       MaterialTransaction prodtrx = pline.getMaterialMgmtMaterialTransactionList().get(0);
       BigDecimal adjAmt = costAdjLine.getAdjustmentAmount().multiply(pline.getComponentCost());
       CostAdjustmentLine newCAL = insertCostAdjustmentLine(prodtrx, adjAmt, _costAdjLine);

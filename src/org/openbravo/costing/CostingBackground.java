@@ -141,7 +141,9 @@ public class CostingBackground extends DalBaseProcess {
       return;
     } finally {
       // Set the processed flag to true to those transactions whose cost has been calculated.
-      setCalculatedTransactionsAsProcessed(orgsWithRule);
+      if (!orgsWithRule.isEmpty()) {
+        setCalculatedTransactionsAsProcessed(orgsWithRule);
+      }
       OBContext.restorePreviousMode();
     }
   }
