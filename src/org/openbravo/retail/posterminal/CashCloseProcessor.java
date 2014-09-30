@@ -57,7 +57,8 @@ public class CashCloseProcessor {
 
     String cashUpId = jsonCashup.getString("id");
     JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
-    OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+    OBPOSAppCashup cashUp = createCashUp(posTerminal, cashUpId, cashUpDate);
+    OBDal.getInstance().save(cashUp);
 
     for (int i = 0; i < cashCloseInfo.length(); i++) {
 
@@ -123,9 +124,6 @@ public class CashCloseProcessor {
 
     long t2 = System.currentTimeMillis();
 
-    // done and done
-    cashUp.setProcessedbo(true);
-
     OBDal.getInstance().flush();
 
     long t3 = System.currentTimeMillis();
@@ -178,12 +176,14 @@ public class CashCloseProcessor {
         // Won't happen
       }
     }
-    OBQuery<FIN_FinaccTransaction> cashMgmtTransactionsQuery = OBDal.getInstance().createQuery(
-        FIN_FinaccTransaction.class, "where obposAppCashup.id=:cashupId and account.id=:account");
-    cashMgmtTransactionsQuery.setNamedParameter("cashupId", cashUpId);
-    cashMgmtTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount()
-        .getId());
-    associateTransactionsFromQuery(cashMgmtTransactionsQuery, reconciliation);
+    if (cashMgmtIdsList.size() > 0) {
+      OBQuery<FIN_FinaccTransaction> cashMgmtTransactionsQuery = OBDal.getInstance().createQuery(
+          FIN_FinaccTransaction.class, "where obposAppCashup.id=:cashupId and account.id=:account");
+      cashMgmtTransactionsQuery.setNamedParameter("cashupId", cashUpId);
+      cashMgmtTransactionsQuery.setNamedParameter("account", paymentType.getFinancialAccount()
+          .getId());
+      associateTransactionsFromQuery(cashMgmtTransactionsQuery, reconciliation);
+    }
   }
 
   protected void associateTransactionsFromQuery(OBQuery<FIN_FinaccTransaction> transactionQuery,

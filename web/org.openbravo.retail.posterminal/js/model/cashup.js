@@ -60,14 +60,6 @@
     name: 'isbeingprocessed',
     column: 'isbeingprocessed',
     type: 'TEXT'
-  }, {
-    name: 'isprocessed',
-    column: 'isprocessed',
-    type: 'TEXT'
-  }, {
-    name: 'posterminal',
-    column: 'posterminal',
-    type: 'TEXT'
   }]);
 
 

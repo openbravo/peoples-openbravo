@@ -14,7 +14,7 @@
   var PaymentMethodCashUp = OB.Data.ExtensibleModel.extend({
     modelName: 'PaymentMethodCashUp',
     tableName: 'paymentmethodcashup',
-    entityName: 'PaymentMethodCashUp',
+    entityName: '',
     source: '',
     local: true
   });
@@ -49,14 +49,6 @@
     column: 'totalReturns',
     type: 'NUMERIC'
   }, {
-    name: 'totalDeposits',
-    column: 'totalDeposits',
-    type: 'NUMERIC'
-  }, {
-    name: 'totalDrops',
-    column: 'totalDrops',
-    type: 'NUMERIC'
-  }, {
     name: 'rate',
     column: 'rate',
     type: 'NUMERIC'
@@ -69,6 +61,7 @@
     column: 'isocode',
     type: 'TEXT'
   }]);
+
 
   OB.Data.Registry.registerModel(PaymentMethodCashUp);
 }());

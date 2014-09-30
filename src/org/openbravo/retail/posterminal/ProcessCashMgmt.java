@@ -41,8 +41,6 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess {
     BigDecimal origAmount = BigDecimal.valueOf(jsonsent.getDouble("origAmount"));
     String type = jsonsent.getString("type");
     String cashManagementReasonId = jsonsent.getString("reasonId");
-    String cashupId = jsonsent.getString("cashup_id");
-    OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
     TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
     GLItem glItemMain;
     GLItem glItemSecondary;
@@ -61,7 +59,6 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess {
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
     transaction.setNewOBObject(true);
     transaction.setId(jsonsent.getString("id"));
-    transaction.setObposAppCashup(cashup);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
@@ -91,7 +88,6 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess {
       FIN_FinaccTransaction secondTransaction = OBProvider.getInstance().get(
           FIN_FinaccTransaction.class);
       secondTransaction.setCurrency(secondAccount.getCurrency());
-      secondTransaction.setObposAppCashup(cashup);
       secondTransaction.setAccount(secondAccount);
       secondTransaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(event
           .getFinancialAccount()) + 10);
