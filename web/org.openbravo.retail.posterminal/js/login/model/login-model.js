@@ -19,7 +19,7 @@
         terminalName: terminalName
       });
       // set the terminal only if it was empty. this variable is used to detect if the terminal changed
-      if (!window.localStorage.getItem('terminalName')) {
+      if (terminalName && !window.localStorage.getItem('terminalName')) {
         window.localStorage.setItem('terminalName', terminalName);
       }
     },
