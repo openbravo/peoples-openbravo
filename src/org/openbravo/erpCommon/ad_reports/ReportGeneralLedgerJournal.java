@@ -472,6 +472,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               strcAcctSchemaId, strOrgFamily, strCheck, data[0].dateacct, data[0].identifier);
       } else {
         data = ReportGeneralLedgerJournalData.selectDirect(this,
+            "Y".equals(strShowDescription) ? "'Y'" : "'N'",
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
             strRecord, strcAcctSchemaId, vars.getLanguage(), initRecordNumber,
@@ -485,6 +486,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       }
     } else if (vars.commandIn("DIRECT")) {
       data = ReportGeneralLedgerJournalData.selectDirect(this,
+          "Y".equals(strShowDescription) ? "'Y'" : "'N'",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
           strRecord, strcAcctSchemaId, vars.getLanguage());
@@ -663,6 +665,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           strOrgFamily, strCheck, vars.getLanguage());
     } else
       data = ReportGeneralLedgerJournalData.selectDirect(this,
+          "Y".equals(strShowDescription) ? "'Y'" : "'N'",
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"), strTable,
           strRecord, strcAcctSchemaId, vars.getLanguage());
