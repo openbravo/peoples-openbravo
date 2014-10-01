@@ -312,9 +312,9 @@ public class DocMatchInv extends AcctServer {
     String strIsSOTrx = invoiceData[0].issotrx;
     String strRecordId = invoiceData[0].cInvoiceId;
     String strReceiptDate = data[0].getField("ORDERDATEACCT");
-    BigDecimal bdExpenses = new BigDecimal(strExpenses);
-    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(
-        data[0].getField("MOVEMENTQTY"))).signum())
+    BigDecimal bdExpenses = new BigDecimal(strExpenses).multiply(new BigDecimal(data[0].getField("QTY"))).divide(new BigDecimal(data[0].getField("QTYINVOICED")));
+    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(data[0]
+        .getField("MOVEMENTQTY"))).signum())
         && data[0].getField("InOutStatus").equals("VO")) {
       bdExpenses = bdExpenses.multiply(new BigDecimal(-1));
     }

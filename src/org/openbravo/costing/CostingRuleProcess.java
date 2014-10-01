@@ -246,6 +246,8 @@ public class CostingRuleProcess implements Process {
         MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
 
         TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
+        // TODO: Review this
+        // transactionCost.setNewOBObject(true);
         transactionCost.setInventoryTransaction(trx);
         transactionCost.setCostDate(trx.getTransactionProcessDate());
         transactionCost.setClient(trx.getClient());
@@ -403,6 +405,8 @@ public class CostingRuleProcess implements Process {
     String clientId = (String) DalUtil.getId(rule.getClient());
     String orgId = (String) DalUtil.getId(rule.getOrganization());
     CostingRuleInit cri = OBProvider.getInstance().get(CostingRuleInit.class);
+    // TODO:Review this. Why onjectr is not saved??
+    // cri.setNewOBObject(true);
     cri.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
     cri.setOrganization((Organization) OBDal.getInstance()
         .getProxy(Organization.ENTITY_NAME, orgId));
@@ -420,6 +424,7 @@ public class CostingRuleProcess implements Process {
     closeInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
         warehouseId));
     closeInv.setMovementDate(localDate);
+    closeInv.setInventoryType("C");
     cri.setCloseInventory(closeInv);
 
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
@@ -430,6 +435,7 @@ public class CostingRuleProcess implements Process {
     initInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
         warehouseId));
     initInv.setMovementDate(localDate);
+    initInv.setInventoryType("O");
     cri.setInitInventory(initInv);
     OBDal.getInstance().save(rule);
     OBDal.getInstance().save(closeInv);
@@ -445,6 +451,8 @@ public class CostingRuleProcess implements Process {
       BigDecimal qtyBook, BigDecimal orderQtyCount, BigDecimal orderQtyBook, Long lineNo,
       InventoryCountLine relatedInventoryLine) {
     InventoryCountLine icl = OBProvider.getInstance().get(InventoryCountLine.class);
+    // TODO: Review this. Why object is not saved
+    // icl.setNewOBObject(true);
     icl.setClient(inventory.getClient());
     icl.setOrganization(inventory.getOrganization());
     icl.setPhysInventory(inventory);
@@ -481,9 +489,8 @@ public class CostingRuleProcess implements Process {
         trx.setTransactionProcessDate(DateUtils.addSeconds(startingDate, -1));
         BigDecimal trxCost = BigDecimal.ZERO;
         BigDecimal cost = null;
+        Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
         if (existsPreviousRule) {
-          Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
-
           trxCost = CostingUtils.getTransactionCost(trx, startingDate, true, cur);
           if (trx.getMovementQuantity().compareTo(BigDecimal.ZERO) != 0) {
             cost = trxCost.divide(trx.getMovementQuantity().abs(), cur.getCostingPrecision()
@@ -491,7 +498,10 @@ public class CostingRuleProcess implements Process {
           }
         } else {
           // Insert transaction cost record big ZERO cost.
+          cur = trx.getClient().getCurrency();
           TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
+          // TODO: Review this. Object not saved??
+          // transactionCost.setNewOBObject(true);
           transactionCost.setInventoryTransaction(trx);
           transactionCost.setCostDate(trx.getTransactionProcessDate());
           transactionCost.setClient(trx.getClient());
@@ -506,7 +516,7 @@ public class CostingRuleProcess implements Process {
 
         trx.setCostCalculated(true);
         trx.setCostingStatus("CC");
-        trx.setCurrency(trx.getClient().getCurrency());
+        trx.setCurrency(cur);
         trx.setTransactionCost(trxCost);
         OBDal.getInstance().save(trx);
         InventoryCountLine initICL = getInitIcl(cri.getInitInventory(), icl);
