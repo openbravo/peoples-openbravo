@@ -668,6 +668,13 @@
      */
     saveDocumentSequence: function (documentnoSuffix, quotationnoSuffix) {
       var me = this;
+      if (me.restartingDocNo === true) {
+        return;
+      }
+      //If documentnoSuffix === 0, it means that we have restarted documentNo prefix, so we block this method while we save the new documentNo in localStorage
+      if (documentnoSuffix === 0) {
+        me.restartingDocNo = true;
+      }
 
       /**
        * If for whatever reason the maxSuffix is not the current order suffix (most likely, the server returning a higher docno value)
@@ -680,7 +687,7 @@
           var orderlist = OB.MobileApp.model.orderList;
           if (orderlist && orderlist.models.length > 0 && orderlist.current) {
             if (orderlist.current.get('lines') && orderlist.current.get('lines').length === 0) {
-              if (orderlist.current.get('documentnoSuffix') <= me.documentnoThreshold) {
+              if (orderlist.current.get('documentnoSuffix') <= me.documentnoThreshold || me.documentnoThreshold === 0) {
                 orderlist.deleteCurrent();
               }
             }
@@ -722,10 +729,13 @@
         docSeq.set('quotationDocumentSequence', me.quotationnoThreshold);
         OB.Dal.save(docSeq, function () {
           synchronizeCurrentOrder();
+          me.restartingDocNo = false;
         }, function () {
-          // nothing to do
+          me.restartingDocNo = false;
         });
 
+      }, function () {
+        me.restartingDocNo = false;
       });
     },
 
