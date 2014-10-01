@@ -79,6 +79,9 @@
       <index name="M_TRANSACTION_COST_TRX" unique="false">
         <index-column name="M_TRANSACTION_ID"/>
       </index>
+      <index name="M_TRXCOST_COSTADJLINE_IDX" unique="false">
+        <index-column name="M_COSTADJUSTMENTLINE_ID"/>
+      </index>
       <check name="M_TRANSACTION_COST_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_TRANSACTION_COST_UNITCOST"><![CDATA[ISUNITCOST IN ('Y', 'N')]]></check>
     </table>

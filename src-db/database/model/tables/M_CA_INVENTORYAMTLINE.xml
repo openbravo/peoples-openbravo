@@ -84,6 +84,9 @@
       <foreign-key foreignTable="M_CA_INVENTORYAMT" name="M_CA_INVAMT_LINE">
         <reference local="M_CA_INVENTORYAMT_ID" foreign="M_CA_INVENTORYAMT_ID"/>
       </foreign-key>
+      <index name="M_CA_INVENTORYAMTLINE_INVAMT" unique="false">
+        <index-column name="M_CA_INVENTORYAMT_ID"/>
+      </index>
       <check name="M_CA_INAMTLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

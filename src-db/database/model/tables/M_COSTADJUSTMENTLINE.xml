@@ -106,6 +106,12 @@
       <index name="M_COSTADJLINE_COSTADJ_IDX" unique="false">
         <index-column name="M_COSTADJUSTMENT_ID"/>
       </index>
+      <index name="M_COSTADJLINE_PARENT_IDX" unique="false">
+        <index-column name="PARENT_COSTADJUSTMENTLINE_ID"/>
+      </index>
+      <index name="M_COSTADJLINE_TRX_IDX" unique="false">
+        <index-column name="M_TRANSACTION_ID"/>
+      </index>
       <check name="M_COSTADJLINE_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_COSTADJLINE_POSTING_CHK"><![CDATA[NEEDSPOSTING IN ('Y', 'N')]]></check>
       <check name="M_COSTADJLINE_SOURCE_CHK"><![CDATA[ISSOURCE IN ('Y', 'N')]]></check>
