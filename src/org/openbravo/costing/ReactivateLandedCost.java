@@ -136,7 +136,7 @@ public class ReactivateLandedCost extends BaseActionHandler {
       map.put("distalg", lcDistAlg.getIdentifier());
       throw new OBException(OBMessageUtils.parseTranslation(strError, map));
     } finally {
-      OBContext.setAdminMode(false);
+      OBContext.restorePreviousMode();
     }
     return lcDistAlgInstance;
   }

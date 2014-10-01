@@ -39,6 +39,7 @@ public abstract class LandedCostDistributionAlgorithm {
   public JSONObject cancelDistributeAmount(LandedCostCost lcCost) {
 
     JSONObject messageResponse = new JSONObject();
+    OBContext.setAdminMode(false);
     try {
       messageResponse.put("severity", "success");
       int i = 0;
