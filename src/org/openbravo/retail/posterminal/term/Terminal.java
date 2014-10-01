@@ -62,7 +62,7 @@ public class Terminal extends ProcessHQLQuery {
         doctypeIds);
     int lastQuotationDocumentNumber = 0;
     if (quotationsDocTypeId != null) {
-      lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberForPOS(
+      lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberQuotationForPOS(
           pOSTerminal.getSearchKey(), quotationsDocTypeId);
     }
     String warehouseId = POSUtils.getWarehouseForTerminal(pOSTerminal).getId();

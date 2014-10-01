@@ -371,10 +371,94 @@ public class POSUtils {
     return maxDocNo;
   }
 
+  public static int getLastDocumentNumberQuotationForPOS(String searchKey,
+      List<String> documentTypeIds) {
+    OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance().createCriteria(
+        OBPOSApplications.class);
+    termCrit.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, searchKey));
+    if (termCrit.count() != 1) {
+      throw new OBException("Error while loading the terminal " + searchKey);
+    }
+    OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
+
+    String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("bbdd.rdbms");
+    String sqlToExecute;
+    String doctypeIds = "";
+    for (String doctypeId : documentTypeIds) {
+      if (!doctypeIds.equals("")) {
+        doctypeIds += ",";
+      }
+      doctypeIds += "'" + doctypeId + "'";
+    }
+
+    if (curDbms.equals("POSTGRE")) {
+      sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
+          + doctypeIds
+          + ") and documentno like (select quotationdocno_prefix from obpos_applications where value = ?)||'%') a";
+    } else if (curDbms.equals("ORACLE")) {
+      sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
+          + doctypeIds
+          + ") and documentno like (select quotationdocno_prefix from obpos_applications where value = ?)||'%' ) a";
+    } else {
+      // unknow DBMS
+      // shouldn't happen
+      log.error("Error getting max documentNo because the DBMS is unknown.");
+      return 0;
+    }
+
+    SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
+    query.setString(0, searchKey);
+    query.setString(1, searchKey);
+    int maxDocNo;
+    Object result = query.uniqueResult();
+    if (result == null) {
+      maxDocNo = 0;
+    } else if (curDbms.equals("POSTGRE")) {
+      maxDocNo = ((BigDecimal) result).intValue();
+    } else if (curDbms.equals("ORACLE")) {
+      maxDocNo = ((Long) result).intValue();
+    } else {
+      maxDocNo = 0;
+    }
+
+    // This number will be compared against the maximum number of the failed orders
+    OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "order"));
+    List<OBPOSErrors> errors = errorCrit.list();
+    for (OBPOSErrors error : errors) {
+      try {
+        JSONObject jsonError = new JSONObject(error.getJsoninfo());
+        if (jsonError.has("documentNo")) {
+          String documentNo = jsonError.getString("documentNo");
+          if (documentNo.indexOf("/") != 0) {
+            String number = documentNo.substring(documentNo.indexOf("/") + 1);
+            int errorNumber = new Long(number).intValue();
+            if (errorNumber > maxDocNo) {
+              maxDocNo = errorNumber;
+            }
+          }
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        // If not parseable, we continue
+      }
+    }
+    return maxDocNo;
+  }
+
   public static int getLastDocumentNumberForPOS(String searchKey, String documentTypeId) {
     ArrayList<String> doctypeId = new ArrayList<String>();
     doctypeId.add(documentTypeId);
     return getLastDocumentNumberForPOS(searchKey, doctypeId);
+
+  }
+
+  public static int getLastDocumentNumberQuotationForPOS(String searchKey, String documentTypeId) {
+    ArrayList<String> doctypeId = new ArrayList<String>();
+    doctypeId.add(documentTypeId);
+    return getLastDocumentNumberQuotationForPOS(searchKey, doctypeId);
 
   }
 

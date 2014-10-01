@@ -671,8 +671,8 @@
       if (me.restartingDocNo === true) {
         return;
       }
-      //If documentnoSuffix === 0, it means that we have restarted documentNo prefix, so we block this method while we save the new documentNo in localStorage
-      if (documentnoSuffix === 0) {
+      //If documentnoSuffix === 0 || quotationnoSuffix === 0, it means that we have restarted documentNo prefix, so we block this method while we save the new documentNo in localStorage
+      if (documentnoSuffix === 0 || quotationnoSuffix === 0) {
         me.restartingDocNo = true;
       }
 
