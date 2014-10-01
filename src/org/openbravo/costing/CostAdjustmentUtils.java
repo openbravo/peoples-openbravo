@@ -121,8 +121,12 @@ public class CostAdjustmentUtils {
     // costAdjustmentLine.setNewOBObject(true);
     costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
     costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
-    costAdjustmentLine.setAdjustmentAmount(costAdjusted.setScale(stdPrecission.intValue(),
-        RoundingMode.HALF_UP));
+    if (costAdjusted == null) {
+      costAdjustmentLine.setAdjustmentAmount(null);
+    } else {
+      costAdjustmentLine.setAdjustmentAmount(costAdjusted.setScale(stdPrecission.intValue(),
+          RoundingMode.HALF_UP));
+    }
     costAdjustmentLine.setCurrency(transaction.getCurrency());
     costAdjustmentLine.setInventoryTransaction(transaction);
     costAdjustmentLine.setSource(isSource);
