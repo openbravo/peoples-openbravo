@@ -39,7 +39,7 @@
       // check receipt integrity
       // sum the amounts of the lines
       var oldGross = this.receipt.getGross();
-      var realGross = 0;
+      var realGross = 0, hasPromotions = false;
       this.receipt.get('lines').forEach(function (line) {
         line.calculateGross();
         if (line.get('priceIncludesTax')) {
@@ -47,9 +47,12 @@
         } else {
           realGross = OB.DEC.add(realGross, line.get('discountedGross'));
         }
+        if(line.get('promotions').length > 0){
+          hasPromotions	= true;
+        }
       });
       // check if the amount of the lines is different from the gross
-      if (oldGross !== realGross || oldGross === 0) {
+      if (oldGross !== realGross || (realGross === 0 && hasPromotions === false)) {
         OB.error("Receipt integrity: FAILED");
         if (OB.MobileApp.model.hasPermission('OBPOS_TicketIntegrityCheck', true)) {
           if (this.receipt.get('id')) {
