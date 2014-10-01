@@ -83,7 +83,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                 return OB.DEC.sub(accum, trx.get('origAmount'));
               }
             }, 0);
-            expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, cTotalReturns)), cTotalDeposits);
+            expected = OB.DEC.add(OB.DEC.add(cStartingCash, OB.DEC.sub(cTotalSales, OB.DEC.abs(cTotalReturns))), cTotalDeposits);
 
             var fromCurrencyId = auxPay.get('paymentMethod').currency;
             auxPay.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));

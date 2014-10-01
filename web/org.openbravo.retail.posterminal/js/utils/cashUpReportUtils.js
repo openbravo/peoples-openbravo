@@ -124,7 +124,6 @@
             OB.Dal.save(auxPay, null, null);
           }, this);
           findAndSave(cashuptaxes, 0, function () {
-            OB.UTIL.composeCashupInfo(cashUp, null, null);
             updateCashUpInfo(cashUp, receipt, j + 1, callback);
           });
         });
