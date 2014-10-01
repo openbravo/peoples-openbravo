@@ -68,6 +68,12 @@
       <foreign-key foreignTable="AD_ORG" name="M_LC_RECEIPTLINEAMT_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="M_LC_RECEIPTLINE_LCCOST" unique="false">
+        <index-column name="M_LC_COST_ID"/>
+      </index>
+      <index name="M_LC_RECEIPTLINE_LCRECEIPT" unique="false">
+        <index-column name="M_LC_RECEIPT_ID"/>
+      </index>
       <check name="M_LC_RECEIPTLINEAMT_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_LC_RECEIPTLINEAMT_ISMATCH"><![CDATA[ISMATCHADJUSTMENT IN ('Y', 'N')]]></check>
     </table>

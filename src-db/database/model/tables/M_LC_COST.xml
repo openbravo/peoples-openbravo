@@ -143,6 +143,15 @@
       <foreign-key foreignTable="M_LC_TYPE" name="M_LC_COST_TYPE">
         <reference local="M_LC_TYPE_ID" foreign="M_LC_TYPE_ID"/>
       </foreign-key>
+      <index name="M_LC_COST_INOUT" unique="false">
+        <index-column name="M_INOUT_ID"/>
+      </index>
+      <index name="M_LC_COST_INVOICELINE" unique="false">
+        <index-column name="C_INVOICELINE_ID"/>
+      </index>
+      <index name="M_LC_COST_LANDEDCOST" unique="false">
+        <index-column name="M_LANDEDCOST_ID"/>
+      </index>
       <check name="M_LC_COST_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_LC_COST_MATCHADJ"><![CDATA[ISMATCHINGADJUSTED IN ('Y', 'N')]]></check>
       <check name="M_LC_COST_MATCHED"><![CDATA[ISMATCHED IN ('Y', 'N')]]></check>

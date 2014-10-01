@@ -96,6 +96,9 @@
       <foreign-key foreignTable="AD_ORG" name="M_LANDEDCOST_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="M_LANDEDCOST_COSTADJ" unique="false">
+        <index-column name="M_COSTADJUSTMENT_ID"/>
+      </index>
       <check name="M_LANDEDCOST_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
