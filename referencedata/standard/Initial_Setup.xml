@@ -1075,8 +1075,8 @@
     <return>false</return>
     <documentTypeForOrder xsi:nil="true"/>
   </DocumentType>
-  <DocumentType id="A81987B047E34EA2A1C869D9DA762DCE" identifier="Return Material Sales Invoice">
-    <id>A81987B047E34EA2A1C869D9DA762DCE</id>
+  <DocumentType id="56AA9305B32C44A08554D3DB16E2B4E2" identifier="Return Material Sales Invoice">
+    <id>56AA9305B32C44A08554D3DB16E2B4E2</id>
     <active>true</active>
     <name>Return Material Sales Invoice</name>
     <printText>Return Material Sales Invoice</printText>
@@ -1087,7 +1087,7 @@
     <documentTypeForShipment xsi:nil="true"/>
     <documentTypeForInvoice xsi:nil="true"/>
     <sequencedDocument>true</sequencedDocument>
-    <documentSequence id="8DC398DE3B8745AD889F512CA6C48C41" entity-name="ADSequence" identifier="Return Material Sales Invoice"/>
+    <documentSequence id="CD179732385848B09607674D35D1C447" entity-name="ADSequence" identifier="Return Material Sales Invoice"/>
     <gLCategory id="102C08DF5D4341D5B7FDF758632503D2" entity-name="FinancialMgmtGLCategory" identifier="AR Invoice"/>
     <comments xsi:nil="true"/>
     <default>false</default>
@@ -1135,7 +1135,7 @@
     <salesTransaction>true</salesTransaction>
     <sOSubType>SO</sOSubType>
     <documentTypeForShipment id="6FC1637EEE784A368157D86E0BDD852A" entity-name="DocumentType" identifier="RFC Receipt"/>
-    <documentTypeForInvoice id="A81987B047E34EA2A1C869D9DA762DCE" entity-name="DocumentType" identifier="Return Material Sales Invoice"/>
+    <documentTypeForInvoice id="56AA9305B32C44A08554D3DB16E2B4E2" entity-name="DocumentType" identifier="Return Material Sales Invoice"/>
     <sequencedDocument>true</sequencedDocument>
     <documentSequence id="78E54919CD7742EEA66B2CA1AD41C87E" entity-name="ADSequence" identifier="RFC Order"/>
     <gLCategory id="745A2B441A2644DF934D1B1E462292E9" entity-name="FinancialMgmtGLCategory" identifier="None"/>
@@ -1690,8 +1690,8 @@
     <usedForRecordID>false</usedForRecordID>
     <restartSequenceEveryYear>false</restartSequenceEveryYear>
   </ADSequence>
-  <ADSequence id="8DC398DE3B8745AD889F512CA6C48C41" identifier="Return Material Sales Invoice">
-    <id>8DC398DE3B8745AD889F512CA6C48C41</id>
+  <ADSequence id="CD179732385848B09607674D35D1C447" identifier="Return Material Sales Invoice">
+    <id>CD179732385848B09607674D35D1C447</id>
     <active>true</active>
     <name>Return Material Sales Invoice</name>
     <description>Return Material Sales Invoice</description>
@@ -1966,10 +1966,10 @@
     <showlogo>true</showlogo>
     <headermargin xsi:nil="true"/>
   </DocumentTemplate>
-  <DocumentTemplate id="5A0996BE50DA4C3DA3AAFC68E6A38A58" identifier="Return Material Sales Invoice Report template">
-    <id>5A0996BE50DA4C3DA3AAFC68E6A38A58</id>
+  <DocumentTemplate id="B1D6986BD45E4E108B0C3121FC90D3B5" identifier="Return Material Sales Invoice Report template">
+    <id>B1D6986BD45E4E108B0C3121FC90D3B5</id>
     <active>true</active>
-    <documentType id="A81987B047E34EA2A1C869D9DA762DCE" entity-name="DocumentType" identifier="Return Material Sales Invoice"/>
+    <documentType id="56AA9305B32C44A08554D3DB16E2B4E2" entity-name="DocumentType" identifier="Return Material Sales Invoice"/>
     <name>Return Material Sales Invoice Report template</name>
     <templateLocation>@basedesign@/org/openbravo/erpReports</templateLocation>
     <reportFilename>Return Material Invoice-@our_ref@</reportFilename>
