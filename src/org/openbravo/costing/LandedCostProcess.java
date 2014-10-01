@@ -79,13 +79,16 @@ public class LandedCostProcess {
       message.put("title", "");
       message.put("text", OBMessageUtils.messageBD("Success"));
       try {
+        log.debug("Start doChecks");
         doChecks(landedCost, message);
       } catch (OBException e) {
         message.put("severity", "error");
         message.put("text", e.getMessage());
         return message;
       }
+      log.debug("Start Distribute Amounts");
       distributeAmounts(landedCost);
+      log.debug("Start generateCostAdjustment");
       CostAdjustment ca = generateCostAdjustment(landedCost.getId(), message);
 
       landedCost = OBDal.getInstance().get(LandedCost.class, landedCost.getId());
@@ -161,12 +164,15 @@ public class LandedCostProcess {
 
   private void distributeAmounts(LandedCost landedCost) {
     for (LandedCostCost lcCost : landedCost.getLandedCostCostList()) {
+      log.debug("Start Distributing lcCost {}", lcCost.getIdentifier());
       // Load distribution algorithm
       LandedCostDistributionAlgorithm lcDistAlg = getDistributionAlgorithm(lcCost
           .getLandedCostDistributionAlgorithm());
 
       lcDistAlg.distributeAmount(lcCost, false);
+      lcCost = OBDal.getInstance().get(LandedCostCost.class, lcCost.getId());
       if (lcCost.getInvoiceLine() != null) {
+        log.debug("Match with invoice line {}", lcCost.getInvoiceLine().getIdentifier());
         matchCostWithInvoiceLine(lcCost);
       }
     }
@@ -202,6 +208,7 @@ public class LandedCostProcess {
     ScrollableResults receiptamts = qryLCRLA.scroll(ScrollMode.FORWARD_ONLY);
     int i = 0;
     while (receiptamts.next()) {
+      log.debug("Process receipt amounts");
       Object[] receiptAmt = receiptamts.get();
       BigDecimal amt = (BigDecimal) receiptAmt[0];
       ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
