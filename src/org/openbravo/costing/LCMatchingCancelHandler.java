@@ -107,6 +107,7 @@ public class LCMatchingCancelHandler extends BaseActionHandler {
     lcCost.setMatched(false);
     lcCost.setMatchingAmount(null);
     OBDal.getInstance().save(lcCost);
+    OBDal.getInstance().flush();
 
     return message;
   }
