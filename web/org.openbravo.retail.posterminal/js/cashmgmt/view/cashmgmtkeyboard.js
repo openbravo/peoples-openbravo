@@ -22,6 +22,10 @@ enyo.kind({
       permission: key,
       action: function (keyboard, txt) {
         txt = OB.I18N.parseNumber(txt);
+        if (txt === 0) {
+          OB.UTIL.showI18NWarning('OBPOS_NoCashMgmtZero', 'OBPOS_NoCashMgmtZero');
+          return;
+        }
         keyboard.owner.owner.owner.currentPayment = {
           id: id,
           amount: txt,
