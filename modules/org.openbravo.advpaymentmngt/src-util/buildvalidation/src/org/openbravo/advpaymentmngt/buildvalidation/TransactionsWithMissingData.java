@@ -38,7 +38,7 @@ public class TransactionsWithMissingData extends BuildValidation {
             .selectTransactionsWithMissingData(cp);
         if (listofTransactions != null && listofTransactions.length > 0) {
           String message = "You cannot update your instance, because a pre-validation fails. "
-              + "It is not allowed to upgrade to this version having transactions with Transaction Date and/or null Accounting Date. "
+              + "It is not allowed to upgrade to this version having transactions with null Transaction Date and/or null Accounting Date. "
               + "To fix this problem in your instance, have a look to generated alerts (Transactions with Missing Data) and identify the affected transactions. "
               + "If you have a transaction like that, fix the problem filling Transaction Date and/or Accounting Date. "
               + "It can be very helpful to visit <a href=http://wiki.openbravo.com/wiki/Update_Transaction_Refactor >Learn more</a>";
