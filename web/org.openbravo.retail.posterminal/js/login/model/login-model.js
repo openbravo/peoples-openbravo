@@ -835,12 +835,16 @@
             callbackIsNotSafe();
             return;
           }
-          OB.Dal.find(OB.Model.CashUp, {
-            isbeingprocessed: 'Y'
-          }, function (models) {
-            if (models.length > 0) {
+          OB.Dal.find(OB.Model.CashUp, {}, function (models) {
+            if (models.length > 1) {
               callbackIsNotSafe();
               return;
+            } else if (models.length === 1) {
+              var currentCashupInfo = models.at(0);
+              if (currentCashupInfo.get('netSales') !== 0 || currentCashupInfo.get('grossSales') !== 0 || currentCashupInfo.get('netReturns') !== 0 || currentCashupInfo.get('grossReturns') !== 0) {
+                callbackIsNotSafe();
+                return;
+              }
             }
 
             OB.Dal.find(OB.Model.ChangedBusinessPartners, null, function (models) {
