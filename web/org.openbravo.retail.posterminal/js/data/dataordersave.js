@@ -39,7 +39,9 @@
       // check receipt integrity
       // sum the amounts of the lines
       var oldGross = this.receipt.getGross();
-      var realGross = 0, hasPromotions = true, discountedAmt = 0;
+      var realGross = 0,
+          hasPromotions = true,
+          discountedAmt = 0;
       this.receipt.get('lines').forEach(function (line) {
         line.calculateGross();
         if (line.get('priceIncludesTax')) {
@@ -49,11 +51,17 @@
         }
         discountedAmt = 0;
         // Sum the discounted amount for this line
-        line.get('promotions').forEach(function (promo){
-          discountedAmt = OB.DEC.add(discountedAmt, promo.amt);
-        });
+        if (line.get('promotions')) {
+          line.get('promotions').forEach(function (promo) {
+            var amt = 0;
+            if (promo.amt) {
+              amt = promo.amt;
+            }
+            discountedAmt = OB.DEC.add(discountedAmt, amt);
+          });
+        }
         // Check if the discounts are 100% of the amount of the line
-        if(discountedAmt < line.get('gross') || line.get('gross') === 0){
+        if (discountedAmt < line.get('gross') || line.get('gross') === 0) {
           hasPromotions = false;
         }
       });
