@@ -85,7 +85,8 @@ public class CostingRuleProcess implements Process {
 
       // Checks
       migrationCheck();
-      boolean existsPreviousRule = existsPreviousRule(rule);
+      CostingRule prevCostingRule = getPreviousRule(rule);
+      boolean existsPreviousRule = prevCostingRule != null;
       boolean existsTransactions = existsTransactions(naturalOrgs, childOrgs);
       if (existsPreviousRule) {
         // Product with costing rule. All trx must be calculated.
@@ -112,6 +113,8 @@ public class CostingRuleProcess implements Process {
           startingDate = DateUtils.truncate(new Date(), Calendar.SECOND);
           rule.setStartingDate(startingDate);
           log4j.debug("setting starting date " + startingDate);
+          prevCostingRule.setEndingDate(startingDate);
+          OBDal.getInstance().save(prevCostingRule);
           OBDal.getInstance().flush();
         }
         createCostingRuleInits(ruleId, childOrgs, startingDate);
@@ -156,17 +159,19 @@ public class CostingRuleProcess implements Process {
     }
   }
 
-  private boolean existsPreviousRule(CostingRule rule) {
+  private CostingRule getPreviousRule(CostingRule rule) {
     StringBuffer where = new StringBuffer();
     where.append(" as cr");
     where.append(" where cr." + CostingRule.PROPERTY_ORGANIZATION + " = :ruleOrg");
     where.append("   and cr." + CostingRule.PROPERTY_VALIDATED + " = true");
+    where.append("   order by cr." + CostingRule.PROPERTY_STARTINGDATE + " desc");
 
     OBQuery<CostingRule> crQry = OBDal.getInstance().createQuery(CostingRule.class,
         where.toString());
     crQry.setFilterOnReadableOrganization(false);
     crQry.setNamedParameter("ruleOrg", rule.getOrganization());
-    return crQry.count() > 0;
+    crQry.setMaxResult(1);
+    return (CostingRule) crQry.uniqueResult();
   }
 
   private boolean existsTransactions(Set<String> naturalOrgs, Set<String> childOrgs) {
