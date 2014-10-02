@@ -202,7 +202,7 @@
             objToSend: null,
             isbeingprocessed: 'N'
           }), function () {
-            _.each(OB.POS.modelterminal.get('payments'), function (payment) {
+            _.each(OB.MobileApp.model.get('payments'), function (payment) {
               var startingCash = payment.currentBalance,
                   pAux;
               if (lastCashUpPayments) {

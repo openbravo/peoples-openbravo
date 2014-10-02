@@ -27,6 +27,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   },
   cashupstepsdefinition: ['OB.CashUp.StepPendingOrders', 'OB.CashUp.CashPayments', 'OB.CashUp.PaymentMethods', 'OB.CashUp.CashToKeep', 'OB.CashUp.PostPrintAndClose'],
   init: function () {
+    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init');
     //Check for orders which are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
@@ -57,6 +58,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         'cashup_id': cashUp.at(0).get('id'),
         '_orderByClause': 'name asc'
       }, function (payMthds) { //OB.Dal.find success
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init');
         _.each(OB.MobileApp.model.get('payments'), function (payment, index) {
           expected = 0;
           var auxPay = payMthds.filter(function (payMthd) {
@@ -65,6 +67,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
             return;
           }
+          var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init II');
           auxPay.set('_id', payment.payment.searchKey);
           auxPay.set('isocode', payment.isocode);
           auxPay.set('paymentMethod', payment.paymentMethod);
@@ -98,11 +101,14 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
               me.set('totalDifference', OB.DEC.sub(me.get('totalDifference'), me.get('totalExpected')));
               me.setIgnoreStep3();
             }
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init II');
           }, null, {
             me: me,
             index: index
           });
         }, this);
+      }, function(){
+        OB.UTIL.SynchronizationHelper.finished(synchId, 'cashup-model.init');
       });
     }, this);
 
@@ -445,7 +451,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   processAndFinishCashUp: function () {
     var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('processAndFinishCashUp'),
         objToSend = {
-        posTerminal: OB.POS.modelterminal.get('terminal').id,
+        posTerminal: OB.MobileApp.model.get('terminal').id,
         id: OB.UTIL.get_UUID(),
         cashCloseInfo: [],
         cashUpDate: this.get('cashUpReport').at(0).get('time')
@@ -458,13 +464,13 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       'isbeingprocessed': 'N'
     }, function (cashUp) {
       objToSend = new Backbone.Model({
-        posTerminal: OB.POS.modelterminal.get('terminal').id,
+        posTerminal: OB.MobileApp.model.get('terminal').id,
         id: cashUp.at(0).get('id'),
         cashCloseInfo: [],
         cashUpDate: me.get('cashUpReport').at(0).get('time')
       });
       for (i = 0; i < me.additionalProperties.length; i++) {
-        objToSend.set(me.additionalProperties[i], me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0)));
+        objToSend.set(me.additionalProperties[i], me.propertyFunctions[i](OB.MobileApp.model.get('terminal').id, cashUp.at(0)));
       }
       _.each(me.get('paymentList').models, function (curModel) {
 
@@ -491,14 +497,14 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         _.each(cashMgmts.models, function (cashMgmt) {
           objToSend.get('cashMgmtIds').push(cashMgmt.get('id'));
         });
-        cashUp.at(0).set('userId', OB.POS.modelterminal.get('context').user.id);
-        objToSend.set('userId', OB.POS.modelterminal.get('context').user.id);
+        cashUp.at(0).set('userId', OB.MobileApp.model.get('context').user.id);
+        objToSend.set('userId', OB.MobileApp.model.get('context').user.id);
         cashUp.at(0).set('objToSend', JSON.stringify(objToSend.toJSON()));
         cashUp.at(0).set('isbeingprocessed', 'Y');
         OB.Dal.save(cashUp.at(0), null, null);
         if (OB.MobileApp.model.get('connectedToERP')) {
 
-          if (OB.POS.modelterminal.hasPermission('OBPOS_print.cashup')) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
             me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary());
           }
           OB.MobileApp.model.runSyncProcess(function () {
