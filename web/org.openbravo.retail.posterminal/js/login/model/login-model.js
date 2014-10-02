@@ -366,6 +366,8 @@
       });
 
       this.on('ready', function () {
+        OB.debug("next process: 'retail.pointofsale' window");
+
         var terminal = this.get('terminal');
         OB.UTIL.initCashUp();
         // Set Hardware..
@@ -476,6 +478,7 @@
     },
 
     renderMain: function () {
+      OB.debug("next process: trigger 'ready'");
       if (!this.get('terminal')) {
         OB.UTIL.Debug.execute(function () {
           // show an error while in debug mode to help debugging and testing
@@ -578,6 +581,7 @@
     },
 
     postLoginActions: function () {
+      OB.debug("next process: renderTerminalMain");
       var me = this,
           loadModelsIncFunc;
       //MASTER DATA REFRESH
