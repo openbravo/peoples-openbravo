@@ -3066,6 +3066,13 @@ isc.OBViewGrid.addProperties({
     var newRow = nextEditCell && nextEditCell[0] !== rowNum;
     var enterKey = editCompletionEvent === 'enter';
 
+    // if event was triggered by pressing the enter key, do not continue if the current edit field is not the one focused when the enter key was pressed
+    // this happens for instance when a value is selected from a pick list by pressing enter. if that happens the value is selected, the focus is moved to the 
+    // next form item and the cellEditEnd function can be invoked for the form item that just got the focus
+    if (enterKey && editField.name !== this.getEditForm().lastKeyDownItem.name) {
+      return;
+    }
+
     // no newValue, compute it, this because in the super method there is a check
     // how many arguments are passed on, sometimes the newValue is not passed in
     // and then it must be recomputed, so if we then use the undefined newValue
