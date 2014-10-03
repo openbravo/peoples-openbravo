@@ -258,12 +258,6 @@ build.war: build a war file in the lib directory.
     <workflow friendlyWarnings="${friendlyWarnings}" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" />
   </target> 
 
-  <target name="run.api.test.javascript">
-  	<taskdef name="jstest" classname="org.openbravo.test.javascript.JavaScriptAntTest" classpathref="project.class.path" />
-	<property name="export" value="no" />
-	<jstest apiDetailsPath="${api.test.javascript.details}" jsPath="${base.web}/js" export="${export}" />
-  </target>
-
   <path id="my-src-dirs">
     <pathelement path="${basedir}" />
     <pathelement path="${build.sqlc}/src" />
