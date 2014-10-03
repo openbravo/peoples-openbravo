@@ -20,9 +20,10 @@ package org.openbravo.common.inserters;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.util.Check;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.materialmgmt.cost.LandedCostType;
 import org.openbravo.service.datasource.hql.HQLInserterQualifier;
 import org.openbravo.service.datasource.hql.HqlInserter;
@@ -36,29 +37,20 @@ public class LCMatchFromInvoiceInserter extends HqlInserter {
     final String strInvoiceLineID = requestParameters.get("@InvoiceLine.id@");
     Check.isTrue(IsIDFilter.instance.accept(strInvoiceLineID), "Value " + strInvoiceLineID
         + " is not a valid id.");
-    String strWhereClause = " (il is null or il.id = :invlineid2) ";
+    String strWhereClause = " (il is null or il.id = :invlineid) ";
+    strWhereClause += "and (lcc.matched = false or lcc.invoiceLine.id = :invlineid) ";
     queryNamedParameters.put("invlineid", strInvoiceLineID);
-    queryNamedParameters.put("invlineid2", strInvoiceLineID);
 
-    // The query fails with a NPE when using the queryNamedParameters
-    final String strProductId = requestParameters.get("@InvoiceLine.product@");
-    if (StringUtils.isNotEmpty(strProductId)) {
-      Check.isTrue(IsIDFilter.instance.accept(strProductId), "Value " + strProductId
-          + " is not a valid id.");
-      strWhereClause += " and lct." + LandedCostType.PROPERTY_PRODUCT + ".id = '" + strProductId
-          + "' ";
-      // strWhereClause = "lct." + LandedCostType.PROPERTY_PRODUCT + ".id = :typeproduct ";
-      // queryNamedParameters.put("typeproduct", strProductId);
+    final String strInvoiceLineId = requestParameters.get("@InvoiceLine.id@");
+    InvoiceLine invLine = OBDal.getInstance().get(InvoiceLine.class, strInvoiceLineId);
+    if (invLine.getProduct() != null) {
+      strWhereClause += " and lct." + LandedCostType.PROPERTY_PRODUCT + ".id = :product ";
+      queryNamedParameters.put("product", invLine.getProduct().getId());
     }
 
-    final String strGLItemId = requestParameters.get("@InvoiceLine.account@");
-    if (StringUtils.isNotEmpty(strGLItemId)) {
-      Check.isTrue(IsIDFilter.instance.accept(strGLItemId), "Value " + strGLItemId
-          + " is not a valid id.");
-      strWhereClause += " and lct." + LandedCostType.PROPERTY_ACCOUNT + ".id = '" + strGLItemId
-          + "' ";
-      // strWhereClause += " and lct." + LandedCostType.PROPERTY_ACCOUNT + ".id = :typeglitem ";
-      // queryNamedParameters.put("typeglitem", strGLItemId);
+    if (invLine.getAccount() != null) {
+      strWhereClause += " and lct." + LandedCostType.PROPERTY_ACCOUNT + ".id = :glitem ";
+      queryNamedParameters.put("glitem", invLine.getAccount().getId());
     }
     return strWhereClause;
   }
