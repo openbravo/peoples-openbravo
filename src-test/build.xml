@@ -90,4 +90,10 @@
       </test>
     </junit>
   </target>
+
+  <target name="run.api.test.javascript" depends="compile.test">
+    <taskdef name="jstest" classname="org.openbravo.test.javascript.JavaScriptAntTest" classpathref="project.class.path" />
+    <property name="export" value="no" />
+    <jstest apiDetailsPath="${api.test.javascript.details}" jsPath="${base.web}/js" export="${export}" />
+  </target>
 </project>
