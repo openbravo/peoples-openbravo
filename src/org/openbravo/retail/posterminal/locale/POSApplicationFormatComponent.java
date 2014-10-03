@@ -9,6 +9,7 @@
 
 package org.openbravo.retail.posterminal.locale;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.client.kernel.ApplicationComponent;
 import org.openbravo.dal.core.OBContext;
@@ -29,7 +30,7 @@ public class POSApplicationFormatComponent extends ApplicationComponent {
     if (StringUtils.isEmpty(decimalSymbol)) {
       return super.getDefaultDecimalSymbol();
     } else {
-      return decimalSymbol;
+      return StringEscapeUtils.escapeJavaScript(decimalSymbol);
     }
   }
 
@@ -40,7 +41,7 @@ public class POSApplicationFormatComponent extends ApplicationComponent {
     if (StringUtils.isEmpty(groupSymbol)) {
       return super.getDefaultGroupingSymbol();
     } else {
-      return groupSymbol;
+      return StringEscapeUtils.escapeJavaScript(groupSymbol);
     }
   }
 
