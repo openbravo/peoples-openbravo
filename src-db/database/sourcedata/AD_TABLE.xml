@@ -11398,7 +11398,7 @@ You can also select if transactions are allowed or not for this organization typ
   lcc.id as m_lc_cost_id,
   lc.documentNo as documentNo,
   lcc.lineNo as line,
-  case when 1=1 then false else true end as processMatching, 
+ lcc.processed as processMatching, 
   lcc.currency.iSOCode as currency
 from LandedCostCost as lcc
   join lcc.landedCost as lc
