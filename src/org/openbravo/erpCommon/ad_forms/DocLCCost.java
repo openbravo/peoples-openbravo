@@ -215,8 +215,13 @@ public class DocLCCost extends AcctServer {
       line2.m_C_Campaign_ID = "";
       line2.m_A_Asset_ID = "";
 
-      fact.createLine(line2, acctLC, line2.m_C_Currency_ID, amount.add(differenceAmt).toString(), amtDebit,
-          Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, line2.m_DateAcct, null, conn);
+      fact.createLine(
+          line2,
+          acctLC,
+          line2.m_C_Currency_ID,
+          "Y".equals(line.getIsMatchingAdjusted()) ? amount.add(differenceAmt).toString() : amount
+              .toString(), amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
+          line2.m_DateAcct, null, conn);
 
     }
 
