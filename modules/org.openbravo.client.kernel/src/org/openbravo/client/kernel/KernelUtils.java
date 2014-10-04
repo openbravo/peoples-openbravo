@@ -292,7 +292,7 @@ public class KernelUtils {
     }
   }
 
-  private int computeLowLevelCode(Module module, List<Module> modules) {
+  protected int computeLowLevelCode(Module module, List<Module> modules) {
     if (module.getId().equals("0")) {
       return 0;
     }
@@ -461,7 +461,7 @@ public class KernelUtils {
     return DalUtil.getPropertyFromPath(entity, field.getProperty());
   }
 
-  private class ModuleDependencyCycleException extends OBException {
+  public class ModuleDependencyCycleException extends OBException {
 
     private static final long serialVersionUID = 1L;
 
