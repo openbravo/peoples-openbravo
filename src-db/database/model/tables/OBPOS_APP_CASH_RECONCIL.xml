@@ -60,6 +60,9 @@
       <foreign-key foreignTable="OBPOS_APP_PAYMENT" name="OBPOS_APPCASHREC_PAY">
         <reference local="OBPOS_APP_PAYMENT_ID" foreign="OBPOS_APP_PAYMENT_ID"/>
       </foreign-key>
+      <index name="OBPOS_APP_CASH_REC_CASHUP_IDX" unique="false">
+        <index-column name="OBPOS_APP_CASHUP_ID"/>
+      </index>
       <index name="OBPOS_APP_CASH_REC_PAYMNT_IDX" unique="false">
         <index-column name="OBPOS_APP_PAYMENT_ID"/>
       </index>
