@@ -199,6 +199,9 @@ public class CustomerLoader extends POSDataSynchronizationProcess {
       final OBCriteria<org.openbravo.model.ad.access.User> userCriteria = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.access.User.class);
       userCriteria.add(Restrictions.eq("username", possibleUsername));
+      userCriteria.setFilterOnReadableClients(false);
+      userCriteria.setFilterOnReadableOrganization(false);
+      userCriteria.setFilterOnActive(false);
       userCriteria.setMaxResults(1);
       usersWithPossibleUsername = userCriteria.count();
 
