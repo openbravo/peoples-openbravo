@@ -297,13 +297,16 @@ enyo.kind({
 
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        isConfirmButton: true,
         action: function () {
           me.finalAction();
           return true;
         }
       }], {
-        autoDismiss: false
-      });
+        autoDismiss: false,
+        onHideFunction: function () {
+          me.finalAction();
+      }});
 
     }, this);
     //finishedWrongly
@@ -321,19 +324,29 @@ enyo.kind({
         model.set("finishedWrongly", false);
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message, [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
           action: function () {
             me.waterfall('onEnableNextButton');
             return true;
           }
-        }]);
+        }], {
+          autoDismiss: false,
+          onHideFunction: function () {
+            me.waterfall('onEnableNextButton');
+        }});
       } else {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'), message, [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
           action: function () {
             OB.POS.navigate('retail.pointofsale');
             return true;
           }
-        }]);
+        }], {
+          autoDismiss: false,
+          onHideFunction: function () {
+            OB.POS.navigate('retail.pointofsale');
+        }});
       }
     }, this);
 
