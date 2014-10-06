@@ -22,6 +22,7 @@ package org.openbravo.retail.posterminal.ad_reports;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -137,6 +138,7 @@ public class CashUpReport extends HttpSecureAppServlet {
           OBPOSAppCashReconcil.class, hqlRecons);
       reconsQuery.setNamedParameter("cashUpId", cashup.getId());
       List<OBPOSAppCashReconcil> recons = reconsQuery.list();
+      Date cashUpDate = cashup.getCashUpDate();
       for (int i = 0; i < recons.size(); i++) {
 
         expected = BigDecimal.ZERO;
@@ -145,11 +147,12 @@ public class CashUpReport extends HttpSecureAppServlet {
           reconIds = reconIds + ",";
         reconIds = reconIds + "'" + recons.get(i).getReconciliation().getId().toString() + "'";
 
-        String hqlConversionRate = "select c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, null, null, payment.obposApplications.client.id, payment.obposApplications.organization.id) as rate, payment.financialAccount.currency.iSOCode as isocode "
+        String hqlConversionRate = "select c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, ?, null, payment.obposApplications.client.id, payment.obposApplications.organization.id) as rate, payment.financialAccount.currency.iSOCode as isocode "
             + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
             + "where trans.reconciliation.id=? and trans.account=payment.financialAccount ";
         Query conversionRateQuery = OBDal.getInstance().getSession().createQuery(hqlConversionRate);
-        conversionRateQuery.setString(0, recons.get(i).getReconciliation().getId());
+        conversionRateQuery.setDate(0, cashUpDate);
+        conversionRateQuery.setString(1, recons.get(i).getReconciliation().getId());
         List<?> conversionRateList = conversionRateQuery.list();
         if (!conversionRateList.isEmpty()) {
           conversionRate = new BigDecimal(((Object[]) conversionRateList.get(0))[0].toString());
@@ -188,12 +191,14 @@ public class CashUpReport extends HttpSecureAppServlet {
         /******************************* DROPS DEPOSIT ***************************************************************/
         // Total drops and deposits computation
 
-        String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount , c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, null, null, payment.obposApplications.client.id, payment.obposApplications.organization.id) as rate, payment.financialAccount.currency.iSOCode as isocode "
+        String hqlDropsDeposits = "select trans.description, trans.paymentAmount, trans.depositAmount , c_currency_rate(payment.financialAccount.currency, payment.obposApplications.organization.currency, ?, null, payment.obposApplications.client.id, payment.obposApplications.organization.id) as rate, payment.financialAccount.currency.iSOCode as isocode "
             + "from org.openbravo.retail.posterminal.OBPOSAppPayment as payment, org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
             + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation=? "
             + "and trans.account=payment.financialAccount order by payment.commercialName";
         Query dropsDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlDropsDeposits);
-        dropsDepositsQuery.setString(0, recons.get(i).getReconciliation().getId());
+
+        dropsDepositsQuery.setDate(0, cashUpDate);
+        dropsDepositsQuery.setString(1, recons.get(i).getReconciliation().getId());
         List<?> dropsDepositList = dropsDepositsQuery.list();
 
         for (Object obj : dropsDepositList) {
@@ -244,7 +249,7 @@ public class CashUpReport extends HttpSecureAppServlet {
           }
         }
 
-        String hqlSalesDeposits = "select obpay.commercialName, sum(trans.paymentAmount), sum(trans.depositAmount),  c_currency_rate(obpay.financialAccount.currency, obpay.obposApplications.organization.currency, null, null, obpay.obposApplications.client.id, obpay.obposApplications.organization.id) as rate, obpay.financialAccount.currency.iSOCode as isocode "
+        String hqlSalesDeposits = "select obpay.commercialName, sum(trans.paymentAmount), sum(trans.depositAmount),  c_currency_rate(obpay.financialAccount.currency, obpay.obposApplications.organization.currency, ?, null, obpay.obposApplications.client.id, obpay.obposApplications.organization.id) as rate, obpay.financialAccount.currency.iSOCode as isocode "
             + " from org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
             + "inner join trans.finPayment as pay, "
             + "org.openbravo.retail.posterminal.OBPOSAppPayment as obpay "
@@ -254,7 +259,8 @@ public class CashUpReport extends HttpSecureAppServlet {
             + " order by obpay.commercialName";
 
         Query salesDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlSalesDeposits);
-        salesDepositsQuery.setString(0, recons.get(i).getReconciliation().getId());
+        salesDepositsQuery.setDate(0, cashUpDate);
+        salesDepositsQuery.setString(1, recons.get(i).getReconciliation().getId());
         @SuppressWarnings("unchecked")
         List<Object> sales = salesDepositsQuery.list();
         if (sales.size() > 0) {
