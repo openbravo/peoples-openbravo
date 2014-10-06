@@ -73,7 +73,7 @@
             item.set('paid', -item.get('paid'));
           });
         }
-        receipt.set('json', JSON.stringify(receipt.toJSON()));
+        receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
 
         OB.trace('Calculationg cashup information.');
 
