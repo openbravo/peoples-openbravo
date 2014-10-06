@@ -55,7 +55,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     return entities;
   }
 
-  public void onSave(@Observes EntityNewEvent event) {
+  public void onSave(@Observes
+  EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -90,12 +91,14 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
           .getCurrentState(charConfListProperty);
       Set<String[]> newChValues = getValuesToAdd(prCh);
       for (String[] strChValueId : newChValues) {
-        prChConfs.add(getCharacteristicConf(prCh, strChValueId[0], strChValueId[1]));
+        prChConfs
+            .add(getCharacteristicConf(prCh, strChValueId[0], strChValueId[1], strChValueId[2]));
       }
     }
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -150,13 +153,15 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
               ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
           prChConfCrit.add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
               OBDal.getInstance().get(CharacteristicValue.class, strNewValue[0])));
+          prChConfCrit.setFilterOnActive(false);
           ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
               .uniqueResult();
           prChConf.setCode(strNewValue[1]);
+          prChConf.setActive(Boolean.parseBoolean(strNewValue[2]));
           OBDal.getInstance().save(prChConf);
           continue;
         }
-        prChConfs.add(getCharacteristicConf(prCh, strNewValue[0], strNewValue[1]));
+        prChConfs.add(getCharacteristicConf(prCh, strNewValue[0], strNewValue[1], strNewValue[2]));
       }
       // remove not needed
       if (!existingValues.isEmpty()) {
@@ -167,6 +172,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
               ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
           prChConfCrit.add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
               OBDal.getInstance().get(CharacteristicValue.class, strChValueId)));
+          prChConfCrit.setFilterOnActive(false);
           ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
               .uniqueResult();
 
@@ -195,7 +201,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     // Add all not summary values.
     for (CharacteristicValue chValue : prCh.getCharacteristic().getCharacteristicValueList()) {
       if (!chValue.isSummaryLevel()) {
-        String[] strValues = { chValue.getId(), chValue.getCode() };
+        String[] strValues = { chValue.getId(), chValue.getCode(),
+            chValue.get(CharacteristicValue.PROPERTY_ACTIVE).toString() };
         chValues.add(strValues);
       }
     }
@@ -203,7 +210,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
   }
 
   private ProductCharacteristicConf getCharacteristicConf(ProductCharacteristic prCh,
-      String strCharacteristicValueId, String strCode) {
+      String strCharacteristicValueId, String strCode, String strActive) {
     ProductCharacteristicConf charConf = OBProvider.getInstance().get(
         ProductCharacteristicConf.class);
     charConf.setCharacteristicOfProduct(prCh);
@@ -211,6 +218,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     charConf.setCharacteristicValue((CharacteristicValue) OBDal.getInstance().getProxy(
         CharacteristicValue.ENTITY_NAME, strCharacteristicValueId));
     charConf.setCode(strCode);
+    charConf.setActive(Boolean.parseBoolean(strActive));
     return charConf;
   }
 }
